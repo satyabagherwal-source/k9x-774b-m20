@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T12:54:48.660Z",
+  "last_updated": "2026-11-13T13:02:57.477Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8353,8 +8353,8 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "8edc639f",
-      "content_hash": "8808a67e82e75809bb09629b8454cf971c7f13c4cf5cbd93d734e08e06676fec",
+      "source_version": "3e489c5f",
+      "content_hash": "96844938badb6f83c9974b9529223b504538e15d48e4d7c4a471451e86ecf6d1",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
@@ -8371,6 +8371,11 @@
         {
           "number": null,
           "title": "datastore): schedule and securitycontext migration jobs from the DataStore (#140",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "metrics): list only certificate secrets (#1416)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8419,7 +8424,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T07:54:27.536Z",
+      "verified_at": "2026-11-13T13:02:46.946Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10600,8 +10605,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "af417d1d",
-      "content_hash": "1f5048ebe1fa9e9aa0739174175c960e0b20c5de34f423534a94fce46b711828",
+      "source_version": "72f2df8f",
+      "content_hash": "50afdb8e00df729e561c193dd1b9a6d2f72e1bde19b0784359252a29a49ba377",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -10748,6 +10753,11 @@
         {
           "number": null,
           "title": "build(deps): bump @hono/node-server in /.claude/skills (#5042)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (#5044)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -11101,7 +11111,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T23:42:00.499Z",
+      "verified_at": "2026-11-13T13:02:56.707Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35520,7 +35530,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "5acdb1cda1f6086c62f9e8bd14678d2af377f908dc349def8fadc5c80911865b",
+      "content_hash": "f2b1ff8ab0b6f333c48ed67bf043d9100ff9a360425690ff1e52b60bfede0044",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [
@@ -35602,7 +35612,7 @@
         "learn-huggingface-hf-xingchen-agi-teleocr-mv44etxd",
         "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw"
       ],
-      "verified_at": "2026-11-08T12:26:19.673Z",
+      "verified_at": "2026-11-13T13:02:24.540Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65804,8 +65814,8 @@
       "slug": "typewhisper-typewhisper-mac",
       "platform": "github",
       "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
-      "source_version": "c262c237",
-      "content_hash": "32ec46b8b8a5df183099fa37136915aad3bce7dee3bf14e8f922567edbba815c",
+      "source_version": "bf7bb1c5",
+      "content_hash": "a00b4d0b55648780b660baac82be6226e2f621e8be60975a389ba351d1569bb0",
       "dossier_path": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "promoted_rules": [
@@ -65827,6 +65837,11 @@
         {
           "number": null,
           "title": "Lossless Integer-Quantized Audio Transit for Remote LLM/ASR Gateways",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "(bug) Keep recording briefly after a push-to-talk release so the last word is no",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -65860,7 +65875,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T03:05:59.196Z",
+      "verified_at": "2026-11-13T13:02:44.476Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69005,8 +69020,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "64d040b5",
-      "content_hash": "c8616073b9ad62fa8882f4002ebe24c2bacdf3fedd73d46e6cf2ad361dcacdb4",
+      "source_version": "54d901da",
+      "content_hash": "04a7886f758949123d7c43df84da84ec707f1f178eafb1113f89a2d502241ac4",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -69033,6 +69048,11 @@
         {
           "number": null,
           "title": "YT-30385: Fix lease timeout assertions and force transaction cleanup",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "contrib/libs/grpc: zstd decompressor spins forever on an empty trailing slice",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -69116,7 +69136,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T06:27:13.637Z",
+      "verified_at": "2026-11-13T13:02:57.448Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T12:55:09.358Z",
+  "last_updated": "2026-11-13T13:03:17.805Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8786,6 +8786,24 @@
       "source_repo": "freenet-freenet-core",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-312633-bin-run-the-node-on-a-worker-thread-not-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-79F498",
+      "directive_title": "(bug) Keep recording briefly after a push-to-talk release so the last word is no",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "typewhisper-typewhisper-mac",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-79F498--bug-keep-recording-briefly-after-a-push.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-F5DD12",
+      "directive_title": "metrics): list only certificate secrets (#1416)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clastix-kamaji",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F5DD12-metrics-list-only-certificate-secrets-14.md",
       "staged_date": "2026-11-13"
     }
   ]

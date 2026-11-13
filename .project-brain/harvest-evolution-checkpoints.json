@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T12:55:09.453Z",
+  "last_updated": "2026-11-13T13:03:17.851Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T12:42:51.302Z",
@@ -943,7 +943,7 @@
       "staged_for_review": 1
     },
     "clastix-kamaji-learnings.md": {
-      "processed_at": "2026-11-12T07:54:33.809Z",
+      "processed_at": "2026-11-13T13:03:17.808Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1806,9 +1806,19 @@
       "processed_at": "2026-11-13T12:55:09.330Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-xingchen-agi-teleocr-learnings.md": {
+      "processed_at": "2026-11-13T13:03:17.759Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "typewhisper-typewhisper-mac-learnings.md": {
+      "processed_at": "2026-11-13T13:03:17.785Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 561,
-  "total_canonical_promoted": 97,
-  "total_staged_for_review": 461
+  "total_dossiers_evaluated": 564,
+  "total_canonical_promoted": 98,
+  "total_staged_for_review": 463
 }

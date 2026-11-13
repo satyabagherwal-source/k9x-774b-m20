@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T12:55:09.329Z",
+  "updated_at": "2026-11-13T13:03:17.758Z",
   "statistics": {
-    "total_nodes": 86,
-    "total_edges": 46,
+    "total_nodes": 87,
+    "total_edges": 47,
     "domain_distribution": {
-      "D": 67,
+      "D": 68,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 46
+      "CONSTRAINED_BY_ARCHITECTURE": 47
     }
   },
   "nodes": {
@@ -1912,6 +1912,29 @@
       ],
       "created_at": "2026-11-13T12:55:09.328Z",
       "updated_at": "2026-11-13T12:55:09.328Z"
+    },
+    "DOM-D-DD9B1ABE": {
+      "id": "DOM-D-DD9B1ABE",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): XingChen-AGI/TeleOCR",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-xingchen-agi-teleocr/hf-xingchen-agi-teleocr-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T13:03:05.057Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-xingchen-agi-teleocr)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T13:03:17.757Z",
+      "updated_at": "2026-11-13T13:03:17.757Z"
     }
   },
   "edges": [
@@ -2374,6 +2397,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-J-782C1A9D [J] with Domain D",
       "created_at": "2026-11-13T12:55:09.329Z"
+    },
+    {
+      "id": "EDGE-F6EF1D7C7700",
+      "sourceId": "DOM-D-DD9B1ABE",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-DD9B1ABE [D] with Domain M",
+      "created_at": "2026-11-13T13:03:17.758Z"
     }
   ]
 }

@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T12:54:48.819Z",
-  "total_cycles_completed": 9235,
-  "total_learnings_persisted": 9235,
-  "total_rules_promoted": 9009,
+  "last_updated": "2026-11-13T13:02:57.642Z",
+  "total_cycles_completed": 9240,
+  "total_learnings_persisted": 9240,
+  "total_rules_promoted": 9013,
   "history": [
-    {
-      "timestamp": "2026-11-12T21:41:56.939Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:42:00.847Z",
-      "repository": "zilliztech/claude-context",
-      "learningId": "learn-github-zilliztech-claude-context",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:42:01.760Z",
-      "repository": "SynaLinks/synalinks-skills",
-      "learningId": "learn-github-synalinks-synalinks-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:49:16.212Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:49:19.866Z",
-      "repository": "yshrsmz/BuildKonfig",
-      "learningId": "learn-github-yshrsmz-buildkonfig",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T21:49:31.028Z",
       "repository": "lancedb/lancedb",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-13T12:54:48.819Z",
       "repository": "Orange-OpenSource/hurl",
       "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T13:02:24.674Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T13:02:44.767Z",
+      "repository": "TypeWhisper/typewhisper-mac",
+      "learningId": "learn-github-typewhisper-typewhisper-mac",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T13:02:47.240Z",
+      "repository": "clastix/kamaji",
+      "learningId": "learn-github-clastix-kamaji",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T13:02:56.854Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T13:02:57.642Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

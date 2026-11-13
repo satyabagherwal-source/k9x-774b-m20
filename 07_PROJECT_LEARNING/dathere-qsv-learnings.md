@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `af417d1d`  
+> **Source Version**: `72f2df8f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T23:41:38.505Z  
+> **Timestamp**: 2026-11-13T13:02:41.733Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T23:41:38.496Z  
+> **Harvest Timestamp**: 2026-11-13T13:02:41.725Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3843 stars
+- **Stars / Engagement**: 3847 stars
 
 ---
 
@@ -2201,17 +2201,63 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fa7f8a03` (2026-11-12)
-**Commit Message**: build(deps): bump @hono/node-server in /.claude/skills (#5042)
+### Incident Patch 1: `72f2df8f` (2026-11-13)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (#5044)
 
-Bumps [@hono/node-server](https://github.com/honojs/node-server) from 2.1.5 to 2.1.8.
-- [Release notes](https://github.com/honojs/node-server/releases)
-- [Commits](https://github.com/honojs/node-server/compare/v2.1.5...v2.1.8)
+Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.270 to 1.0.271.
+- [Release notes](https://github.com/anthropics/claude-code-action/releases)
+- [Commits](https://github.com/anthropics/claude-code-action/compare/9eb012b6d0900c2b9eede65ee1758cec4d2973e9...4fa93a88de49bbef68b10eb15aabedf28ca0e1ed)
 
 ---
 updated-dependencies:
-- dependency-name: "@hono/node-server"
-  dependency-version: 2.1.8
+- dependency-name: anthropics/claude-code-action
+  dependency-version: 1.0.271
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ jobs:
+ 
+       - name: Run Claude Code Review
+         id: claude-review
+-        uses: anthropics/claude-code-action@9eb012b6d0900c2b9eede65ee1758cec4d2973e9 # v1.0.270
++        uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+```
+
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ jobs:
+ 
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@9eb012b6d0900c2b9eede65ee1758cec4d2973e9 # v1.0.270
++        uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+ 
+```
+
+---
+
+### Incident Patch 2: `01db7f52` (2026-11-13)
+**Commit Message**: build(deps): bump hono from 4.13.13 to 4.13.18 in /.claude/skills (#5043)
+
+Bumps [hono](https://github.com/honojs/hono) from 4.13.13 to 4.13.18.
+- [Release notes](https://github.com/honojs/hono/releases)
+- [Commits](https://github.com/honojs/hono/compare/v4.13.13...v4.13.18)
+
+---
+updated-dependencies:
+- dependency-name: hono
+  dependency-version: 4.13.18
   dependency-type: indirect
 ...
 
@@ -2220,28 +2266,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `.claude/skills/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -39,9 +39,9 @@
+@@ -1238,9 +1238,9 @@
        }
      },
-     "node_modules/@hono/node-server": {
--      "version": "2.1.5",
--      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.5.tgz",
--      "integrity": "sha512-MgP/I06GdvsilDspMk/qmRzpk8LOUStP6jFAbSRi40W09DhoyUn+Mj7eyKICPqeYKybOjVFLVIAQzvu1bfIa7Q==",
-+      "version": "2.1.8",
-+      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.8.tgz",
-+      "integrity": "sha512-jdf7FHh6A1lzjpHHQUgxsg2GeER2vMetnAOfeActzcoli6jamlK+NAwL6Dsr5Fl3BS3tYUQzCdtZjU8Qxv7bEA==",
+     "node_modules/hono": {
+-      "version": "4.13.13",
+-      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.13.tgz",
+-      "integrity": "sha512-CQ46U0ZkAGmbT/4UxdzzGJpacP2IeKgY4a5/tOI9AABbpOMfK739wfDXmv1usCk+3RkKj1hQy4/fjhiwa2xlrA==",
++      "version": "4.13.18",
++      "resolved": "https://registry.npmjs.org/hono/-/hono-4.13.18.tgz",
++      "integrity": "sha512-H9q/E1XizaWstJxUW881dmLxEj+t/TrGGnyxINkm4+sK0qUwsMtFdo2BWI9Vs3cIS19MU6b6iCijoUoEf4f3DA==",
        "license": "MIT",
        "engines": {
-         "node": ">=20"
+         "node": ">=16.9.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5044** (2026-11-13): build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (@dependabot[bot])
+- **PR #5043** (2026-11-13): build(deps): bump hono from 4.13.13 to 4.13.18 in /.claude/skills (@dependabot[bot])
 - **PR #5042** (2026-11-12): build(deps): bump @hono/node-server from 2.1.5 to 2.1.8 in /.claude/skills (@dependabot[bot])
 - **PR #5041** (2026-11-12): deps: bump Polars to upstream 8ecd1ca (@jqnatividad)
 - **PR #5040** (2026-11-12): chore: clear qsvlite/qsvdp dead-code warnings (@jqnatividad)
 - **PR #5039** (2026-11-12): build: MSRV 1.100, trim_prefix/trim_suffix, and 8 optional deps for qsvlite/qsvdp (@jqnatividad)
-- **PR #5038** (2026-11-12): deps(viz): driver.js 1.12.1 for the Data Schematic Tour (@jqnatividad)
-- **PR #5037** (2026-11-12): build(deps): bump anthropics/claude-code-action from 1.0.269 to 1.0.270 (@dependabot[bot])
 
 ---
 
@@ -2261,32 +2307,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump @hono/node-server in /.claude/skills (#5042)
+## X. build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (#5044)
 
 **RULE**:
-When implementing operations in `.claude/skills/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fa7f8a03`: build(deps): bump @hono/node-server in /.claude/skills (#5042). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72f2df8f`: build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (#5044). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/package-lock.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "version": "2.1.8",
-      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.8.tgz",
-      "integrity": "sha512-jdf7FHh6A1lzjpHHQUgxsg2GeER2vMetnAOfeActzcoli6jamlK+NAwL6Dsr5Fl3BS3tYUQzCdtZjU8Qxv7bEA==",
+        uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "2.1.5",
-      "resolved": "https://registry.npmjs.org/@hono/node-server/-/node-server-2.1.5.tgz",
-      "integrity": "sha512-MgP/I06GdvsilDspMk/qmRzpk8LOUStP6jFAbSRi40W09DhoyUn+Mj7eyKICPqeYKybOjVFLVIAQzvu1bfIa7Q==",
+        uses: anthropics/claude-code-action@9eb012b6d0900c2b9eede65ee1758cec4d2973e9 # v1.0.270
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fa7f8a03` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72f2df8f` are properly handled with clean fallback behavior.

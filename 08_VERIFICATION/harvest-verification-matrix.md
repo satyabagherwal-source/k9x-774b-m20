@@ -9471,3 +9471,9 @@
 | `CYCLE-20261113-B71X` | `2026-11-13T12:54:40.245Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6167bc4a...`) |
 | `CYCLE-20261113-BDNG` | `2026-11-13T12:54:48.796Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1aaa6cad...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T12:55:09.330Z` | `hf-meta-llama-llama-3.1-8b-instruct` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-782C1A9D` [Domain J] | Yes (`d43a7ca0...`) |
+| `CYCLE-20261113-L5EH` | `2026-11-13T13:02:24.665Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`f2b1ff8a...`) |
+| `CYCLE-20261113-LKWH` | `2026-11-13T13:02:44.753Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a00b4d0b...`) |
+| `CYCLE-20261113-LMT3` | `2026-11-13T13:02:47.223Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`96844938...`) |
+| `CYCLE-20261113-LU8C` | `2026-11-13T13:02:56.844Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`50afdb8e...`) |
+| `CYCLE-20261113-LUTV` | `2026-11-13T13:02:57.619Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`04a7886f...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:03:17.758Z` | `hf-xingchen-agi-teleocr` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DD9B1ABE` [Domain D] | Yes (`a01df40b...`) |

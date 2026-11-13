@@ -305,8 +305,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceVersion": "hf-xingchen-agi-teleocr",
     "license": "Open-Source",
-    "contentHash": "5acdb1cda1f6086c62f9e8bd14678d2af377f908dc349def8fadc5c80911865b",
-    "lastHarvestedAt": "2026-11-08T12:26:19.786Z",
+    "contentHash": "f2b1ff8ab0b6f333c48ed67bf043d9100ff9a360425690ff1e52b60bfede0044",
+    "lastHarvestedAt": "2026-11-13T13:02:24.669Z",
     "learningId": "learn-huggingface-xingchen-agi-teleocr"
   },
   "hf-qwen-qwen-image-2.1": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "af417d1d",
+    "sourceVersion": "72f2df8f",
     "license": "NOASSERTION",
-    "contentHash": "1f5048ebe1fa9e9aa0739174175c960e0b20c5de34f423534a94fce46b711828",
-    "lastHarvestedAt": "2026-11-12T23:42:00.819Z",
+    "contentHash": "50afdb8e00df729e561c193dd1b9a6d2f72e1bde19b0784359252a29a49ba377",
+    "lastHarvestedAt": "2026-11-13T13:02:56.848Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "8edc639f",
+    "sourceVersion": "3e489c5f",
     "license": "Apache-2.0",
-    "contentHash": "8808a67e82e75809bb09629b8454cf971c7f13c4cf5cbd93d734e08e06676fec",
-    "lastHarvestedAt": "2026-11-12T07:54:27.737Z",
+    "contentHash": "96844938badb6f83c9974b9529223b504538e15d48e4d7c4a471451e86ecf6d1",
+    "lastHarvestedAt": "2026-11-13T13:02:47.231Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "64d040b5",
+    "sourceVersion": "54d901da",
     "license": "Apache-2.0",
-    "contentHash": "c8616073b9ad62fa8882f4002ebe24c2bacdf3fedd73d46e6cf2ad361dcacdb4",
-    "lastHarvestedAt": "2026-11-12T06:27:13.767Z",
+    "contentHash": "04a7886f758949123d7c43df84da84ec707f1f178eafb1113f89a2d502241ac4",
+    "lastHarvestedAt": "2026-11-13T13:02:57.622Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -10103,10 +10103,10 @@
     "repository": "TypeWhisper/typewhisper-mac",
     "platform": "github",
     "sourceUrl": "https://github.com/TypeWhisper/typewhisper-mac",
-    "sourceVersion": "c262c237",
+    "sourceVersion": "bf7bb1c5",
     "license": "GPL-3.0",
-    "contentHash": "32ec46b8b8a5df183099fa37136915aad3bce7dee3bf14e8f922567edbba815c",
-    "lastHarvestedAt": "2026-11-09T03:05:59.327Z",
+    "contentHash": "a00b4d0b55648780b660baac82be6226e2f621e8be60975a389ba351d1569bb0",
+    "lastHarvestedAt": "2026-11-13T13:02:44.758Z",
     "learningId": "learn-github-typewhisper-typewhisper-mac"
   },
   "vitest-dev-vitest": {

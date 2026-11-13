@@ -9480,3 +9480,9 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `23080e91` | Multi-dimensional audit evidence | 2026-11-13T12:54:40.249Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `eba47841` | Multi-dimensional audit evidence | 2026-11-13T12:54:48.800Z |
 | `learn-dom-j-782c1a9d` | `project://hf-meta-llama-llama-3.1-8b-instruct` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | 2026-11-13T12:55:09.330Z |
+| `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-13T13:02:24.669Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `bf7bb1c5` | Multi-dimensional audit evidence | 2026-11-13T13:02:44.758Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `3e489c5f` | Multi-dimensional audit evidence | 2026-11-13T13:02:47.231Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `72f2df8f` | Multi-dimensional audit evidence | 2026-11-13T13:02:56.848Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `54d901da` | Multi-dimensional audit evidence | 2026-11-13T13:02:57.622Z |
+| `learn-dom-d-dd9b1abe` | `project://hf-xingchen-agi-teleocr` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | 2026-11-13T13:03:17.758Z |

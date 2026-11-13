@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `8edc639f`  
+> **Source Version**: `3e489c5f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T07:54:13.190Z  
+> **Timestamp**: 2026-11-13T13:02:34.377Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T07:54:13.183Z  
+> **Harvest Timestamp**: 2026-11-13T13:02:34.368Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2083 stars
+- **Stars / Engagement**: 2085 stars
 
 ---
 
@@ -375,8 +375,9 @@ func (s *CertificateLifecycle) refreshCertificatesMetrics(ctx context.Context) e
 		countsByTenantControlPlane[namespacedName] = metrics.NewCertificateStatusCounts()
 	}
 
+	// Filter in the cache to avoid deep-copying every Secret of the cluster.
 	var secretList corev1.SecretList
-	if err := s.client.List(ctx, &secretList); err != nil {
+	if err := s.client.List(ctx, &secretList, client.HasLabels{constants.ControlPlaneLabelKey, constants.ControllerLabelResource}); err != nil {
 		return err
 	}
 
@@ -722,11 +723,11 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1415** (2026-11-12): **Certificate metrics refresh deep-copies every Secret of the management cluster on each reconciliation**
+  *Symptoms*: ## Summary  `CertificateLifecycle.refreshCertificatesMetrics` lists **every** Secret of the management cluster through the manager's cached client, and then discards in a loop the ones lacking the Kamaji certificate labels. The cached client deep-copies each listed object, so every refresh allocates a full copy of all the Secrets of the cluster only to keep a handful of them.  The refresh is deferred in `Reconcile`, so it runs after **every** `CertificateLifecycle` reconciliation, plus once at start-up from a Runnable. Each TenantControlPlane owns 9 certificate Secrets (5 x509 + 4 kubeconfig), all reconciled when the manager starts.  ### Where  `controllers/certificate_lifecycle_controller.go` (master @ 8edc639):  ```go func (s *CertificateLifecycle) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) { 	logger := log.FromContext(ctx) 	defer func(c context.Context) { 		// ... 		if err := s.refreshCertificatesMetrics(metricCtx); err != nil { ```  ```go 	var secretList corev1.SecretList 	if err := s.client.List(ctx, &secretList); err != nil { // no selector 		return err 	}  	for i := range secretList.Items { 		// ...skip Secrets without ControlPlaneLabelKey / ControllerLabelResource ```  Introduced with the certificate gauges in #1108, present since 26.4.3-edge.  ### Impact  - Memory: the cost of a refresh grows with the total size of the Secrets in the management cluster, which commonly hosts many unrelated ones (Helm release storage above all),
+
 - **Issue #1299** (2026-09-10): **kamaji_handler_time_seconds: two kubeconfig handler labels are never exported**
   *Symptoms*: ## What happens  `kamaji_handler_time_seconds` never exposes the label values `handler="controller-manager-kubeconfig"` and `handler="scheduler-kubeconfig"`. Their observations are attributed to `handler="admin-kubeconfig"` instead, so that label reports 4x the invocations of every other handler.  From a production Kamaji managing 735 ready TenantControlPlanes:  ```    122548  handler=admin-kubeconfig        <- 4 x     30673  handler=upgrade     30637  handler=konnectivity-kubeconfig     30637  handler=ca     30637  handler=kubeadmconfig     ... (controller-manager-kubeconfig and scheduler-kubeconfig: no series at all) ```  The effect is that the kubeconfig handlers cannot be told apart in dashboards or alerts, and `admin-kubeconfig` looks like it does four times the work it actually does. It cost me a wrong conclusion while investigating something else, which is why I chased it down.  ## Why  `controllers/resources.go` declares four `KubeconfigResource` instances with three distinct names:  ```go &resources.KubeconfigResource{Name: "admin-kubeconfig",              KubeConfigFileName: resources.AdminKubeConfigFileName}, &resources.KubeconfigResource{Name: "admin-kubeconfig",              KubeConfigFileName: resources.SuperAdminKubeConfigFileName}, &resources.KubeconfigResource{Name: "controller-manager-kubeconfig", KubeConfigFileName: resources.ControllerManagerKubeConfigFileName}, &resources.KubeconfigResource{Name: "scheduler-kubeconfig",          KubeConfigFileName: resour
-
-- **Issue #1294** (2026-09-09): **Allow configuring resources for the Konnectivity agent**
-  *Symptoms*: # Allow configuring resources for the Konnectivity agent  ## Summary  `KonnectivityServerSpec` exposes `Resources`, but `KonnectivityAgentSpec` does not. The agent container is therefore created with no requests and no limits, which places every agent Pod in the **BestEffort** QoS class with no supported way to change it.  On a busy cluster this makes the agent the first thing the kubelet starves of CPU and the first thing it evicts — degrading the tunnel that `kubectl exec`, `kubectl logs` and `kubectl port-forward` depend on, while the cluster otherwise looks healthy.  ## What we saw  On a 115-node GPU cluster (hosted control plane, agents in `DaemonSet` mode with `hostNetwork: true` and `tolerations: [{operator: Exists}]`), users began reporting:  ``` error: unable to upgrade connection: ... ```  on `kubectl exec`, intermittently and under load. Ordinary API reads were unaffected throughout, so nothing looked wrong from the outside.  What we found:  **1. konnectivity-server was shedding agent traffic.** Its log carried, across 16 distinct `agentID`s inside a 45-second window:  ``` server.go:841] "Receive channel from agent is full" agentID="..." ```  interleaved with streams being set up and torn down almost immediately:  ``` server.go:934] "Proxy connection established" ... dialAddress="<node>:10250" dialDuration="2.4ms" server.go:523] "Stream read from frontend cancelled" userAgent=["grpc-go/1.72.2"] server.go:990] "could not get frontend client for closing" agentID="...
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -743,940 +744,350 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d2089911` (2026-11-10)
-**Commit Message**: feat(datastore): schedule and securitycontext migration jobs from the DataStore (#1403)
+### Incident Patch 1: `d6e2f755` (2026-11-12)
+**Commit Message**: fix(metrics): list only certificate secrets (#1416)
 
-* feat(datastore): add migration scheduling fields
+refreshCertificatesMetrics runs after every CertificateLifecycle
+reconciliation and once at start-up. It listed every Secret of the
+management cluster through the cached client, which deep-copies each
+object, and then discarded in the loop the ones lacking the Kamaji
+certificate labels.
 
-Add spec.migration to DataStore, holding the nodeSelector, tolerations
-and affinity for the Job migrating a Tenant Control Plane to it.
-Generated files come from controller-gen v0.20.0, yq and crdoc.
+On management clusters storing many unrelated Secrets (Helm release
+storage above all) each refresh copied all of them: with ~450 Secrets
+(~10 MB) and a single TenantControlPlane, the nine reconciliations at
+start-up allocated ~100 MB of short-lived garbage in a few seconds,
+which contributed to the manager being OOMKilled under the chart's
+default 100Mi limit.
 
-* feat(datastore): schedule the migration job
+List with client.HasLabels on the control-plane and controller labels,
+which the loop requires: the cache applies the label selector before
+deep-copying, so unrelated Secrets are never copied. The gauges are
+unchanged.
 
-Copy spec.migration of the target DataStore to the migration Job, so it
-can run on tainted nodes. Without it the Job is created as before.
+Signed-off-by: Alberto Estévez <[REDACTED_EMAIL]>
 
-* docs(datastore): describe migration scheduling
-
-* feat(datastore): harden the migration job
-
-Run the migration Job with a fixed securityContext, so it is admitted
-under the restricted Pod Security Standard. The values come from #1240
-by Jakob3xD. The kine and konnectivity parts stay there.
-
-* feat(datastore): configure the migration security context
-
-Add podSecurityContext and securityContext to spec.migration of the
-DataStore, used for the migration Job pod and its container. When unset,
-the restricted defaults from #1240 still apply.
-
-* fix(datastore): wait for the old migration pod
-
-A Job whose template changes is deleted and created back, since Jobs
-are imm
-
-**File**: `api/v1alpha1/datastore_types.go` (modified, +23/-0)
+**File**: `controllers/certificate_lifecycle_controller.go` (modified, +2/-1)
 ```diff
-@@ -48,6 +48,29 @@ type DataStoreSpec struct {
- 	// Defines the TLS/SSL configuration required to connect to the data store in a secure way.
- 	// This value is optional.
- 	TLSConfig *TLSConfig `json:"tlsConfig,omitempty"`
-+	// Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
-+	// This value is optional.
-+	Migration *DataStoreMigration `json:"migration,omitempty"`
-+}
-+
-+// DataStoreMigration contains the settings of the Job migrating a Tenant Control Plane to this data store.
-+type DataStoreMigration struct {
-+	// NodeSelector is a selector which must be true for the migration Job pod to fit on a node.
-+	// Selector which must match a node's labels for the pod to be scheduled on that node.
-+	// More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-+	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
-+	// If specified, the migration Job pod's tolerations.
-+	// More info: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-+	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
-+	// If specified, the migration Job pod's scheduling constraints.
-+	// More info: https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/
-+	Affinity *corev1.Affinity `json:"affinity,omitempty"`
-+	// PodSecurityContext allows to specify the security context for the migration Job pod.
-+	// If unset, the pod runs as non-root with the RuntimeDefault seccomp profile.
-+	PodSecurityContext *corev1.PodSecurityContext `json:"podSecurityContext,omitempty"`
-+	// SecurityContext allows to specify the security context for the migrate container.
-+	// If unset, privilege escalation is disallowed and all the capabilities are dropped.
-+	SecurityContext *corev1.SecurityContext `json:"securityContext,omitempty"`
- }
+@@ -247,8 +247,9 @@ func (s *CertificateLifecycle) refreshCertificatesMetrics(ctx context.Context) e
+ 		countsByTenantControlPlane[namespacedName] = metrics.NewCertificateStatusCounts()
+ 	}
  
- // TLSConfig contains the information used to connect to the data store using a secured connection.
++	// Filter in the cache to avoid deep-copying every Secret of the cluster.
+ 	var secretList corev1.SecretList
+-	if err := s.client.List(ctx, &secretList); err != nil {
++	if err := s.client.List(ctx, &secretList, client.HasLabels{constants.ControlPlaneLabelKey, constants.ControllerLabelResource}); err != nil {
+ 		return err
+ 	}
+ 
 ```
 
-**File**: `api/v1alpha1/datastore_types_test.go` (modified, +45/-0)
+**File**: `controllers/certificate_lifecycle_controller_metrics_test.go` (modified, +106/-0)
 ```diff
-@@ -8,8 +8,11 @@ import (
- 
- 	. "github.com/onsi/ginkgo/v2"
- 	. "github.com/onsi/gomega"
-+	corev1 "k8s.io/api/core/v1"
- 	apierrors "k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/utils/ptr"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
- )
- 
- var _ = Describe("DataStore endpoints validation", func() {
-@@ -63,4 +66,46 @@ var _ = Describe("DataStore endpoints validation", func() {
- 		Expect(err).To(HaveOccurred())
- 		Expect(err.Error()).To(ContainSubstring("an IPv6 endpoint address must be bracketed"))
- 	})
-+
-+	It("keeps the migration Job scheduling constraints and security contexts", func() {
-+		migration := &DataStoreMigration{
-+			NodeSelector: map[string]string{"node-role.kubernetes.io/control-plane": ""},
-+			Tolerations: []corev1.Toleration{{
-+				Key:      "node-role.kubernetes.io/control-plane",
-+				Operator: corev1.TolerationOpExists,
-+				Effect:   corev1.TaintEffectNoSchedule,
-+			}},
-+			Affinity: &corev1.Affinity{
-+				NodeAffinity: &corev1.NodeAffinity{
-+					RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
-+						NodeSelectorTerms: []corev1.NodeSelectorTerm{{
-+							MatchExpressions: []corev1.NodeSelectorRequirement{{
-+								Key:      "kubernetes.io/arch",
-+								Operator: corev1.NodeSelectorOpIn,
-+								Values:   []string{"amd64"},
-+							}},
-+						}},
-+					},
-+				},
-+			},
-+			PodSecurityContext: &corev1.PodSecurityContext{
-+				RunAsNonRoot:   ptr.To(true),
-+				RunAsUser:      ptr.To[int64](1000),
-+				SeccompProfile: &corev1.SeccompProfile{Type: corev1.SeccompProfileTypeRuntimeDefault},
-+			},
-+			SecurityContext: &corev1.SecurityContext{
-+				AllowPrivilegeEscalation: ptr.To(false),
-+				ReadOnlyRootFilesystem:   ptr.To(true),
-+				Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{"ALL"}},
-+			},
-+		}
-+
-+		ds.Spec.Endpoints = Endpoints{"10.0.0.1:2379"}
-+		ds.Spec.Migration = migration
-+		Expect(k8sClient.Create(ctx, ds)).To(Succeed())
-+
-+		var got DataStore
-+		Expect(k8sClient.Get(ctx, client.ObjectKeyFromObject(ds), &got)).To(Succeed())
-+		Expect(got.Spec.Migration).To(Equal(migration))
-+	})
- })
-```
-
-**File**: `api/v1alpha1/zz_generated.deepcopy.go` (modified, +75/-26)
-```diff
-@@ -8,9 +8,9 @@
- package v1alpha1
+@@ -4,20 +4,24 @@
+ package controllers
  
  import (
--	corev1 "k8s.io/api/core/v1"
-+	"k8s.io/api/core/v1"
- 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
--	"k8s.io/apimachinery/pkg/apis/meta/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/runtime"
- 	apisv1 "sigs.k8s.io/gateway-api/apis/v1"
- )
-@@ -86,21 +86,21 @@ func (in *AdditionalVolumeMounts) DeepCopyInto(out *AdditionalVolumeMounts) {
- 	*out = *in
- 	if in.APIServer != nil {
- 		in, out := &in.APIServer, &out.APIServer
--		*out = make([]corev1.VolumeMount, len(*in))
-+		*out = make([]v1.VolumeMount, len(*in))
- 		for i := range *in {
- 			(*in)[i].DeepCopyInto(&(*out)[i])
- 		}
- 	}
- 	if in.ControllerManager != nil {
- 		in, out := &in.ControllerManager, &out.ControllerManager
--		*out = make([]corev1.VolumeMount, len(*in))
-+		*out = make([]v1.VolumeMount, len(*in))
- 		for i := range *in {
- 			(*in)[i].DeepCopyInto(&(*out)[i])
- 		}
- 	}
- 	if in.Scheduler != nil {
- 		in, out := &in.Scheduler, &out.Scheduler
--		*out = make([]corev1.VolumeMount, len(*in))
-+		*out = make([]v1.VolumeMount, len(*in))
- 		for i := range *in {
- 			(*in)[i].DeepCopyInto(&(*out)[i])
- 		}
-@@ -385,22 +385,22 @@ func (in *ControlPlaneComponentsResources) DeepCopyInto(out *ControlPlaneCompone
- 	*out = *in
- 	if in.APIServer != nil {
- 		in, out := &in.APIServer, &out.APIServer
--		*out = new(corev1.ResourceRequirements)
-+		*out = new(v1.ResourceRequirements)
- 		(*in).DeepCopyInto(*out)
- 	}
- 	if in.ControllerManager != nil {
- 		in, out := &in.ControllerManager, &out.ControllerManager
--		*out = new(corev1.ResourceRequirements)
-+		*out = new(v1.ResourceRequirements)
- 		(*in).DeepCopyInto(*out)
- 	}
- 	if in.Scheduler != nil {
- 		in, out := &in.Scheduler, &out.Scheduler
--		*out = new(corev1.ResourceRequirements)
-+		*out = new(v1.ResourceRequirements)
- 		(*in).DeepCopyInto(*out)
- 	}
- 	if in.Kine != nil {
- 		in, out := &in.Kine, &out.Kine
--		*out = new(corev1.ResourceRequirements)
-+		*out = new(v1.ResourceRequirements)
- 		(*in).DeepCopyInto(*out)
- 	}
- }
-@@ -420,17 +420,17 @@ func (in *ControlPlaneContainerSecurityContexts) DeepCopyInto(out *ControlPlaneC
- 	*out = *in
- 	if in.APIServer != nil {
- 		in, out := &in.APIServer, &out.APIServer
--		*out = new(corev1.SecurityContext)
-+		*out = new(v1.SecurityContext)
- 		(*in).DeepCopyInto(*out)
- 	}
- 	if in.ControllerManager != nil {
- 		in, out := &in.ControllerManager, &out.ControllerManager
--		*out = new(corev1.SecurityContext)
-+		*out = new(v1.SecurityContext)
- 		(*in).DeepCopyInto(*out)
- 	}
- 	if in.Scheduler != nil {
- 		in, out := &in.Scheduler, &out.Scheduler
--		*out = new(corev1.SecurityContext)
-+		*out = new(v1.SecurityContext)
- 		(*in).DeepCopyInto(*out)
- 	}
- }
-@@ -615,6 +615,50 @@ func (in *DataStoreList) DeepCopyObject() runtime.Object {
- 	return nil
- }
- 
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *DataStoreMigration) DeepCopyInto(out *DataStoreMigration) {
-+	*out = *in
-+	if in.NodeSelector != nil {
-+		in, out := &in.NodeSelector, &out.NodeSelector
-+		*out = make(map[string]string, len(*in))
-+		for key, val := range *in {
-+			(*out)[key] = val
-+		}
-+	}
-+	if in.Tolerations != nil {
-+		in, out := &in.Tolerations, &out.Tolerations
-+		*out = make([]v1.Toleration, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
-+	}
-+	if in.Affinity != nil {
-+		in, out := &in.Affinity, &out.Affinity
-+		*out = new(v1.Affinity)
-+		(*in).DeepCopyInto(*out)
-+	}
-+	if in.PodSecurityContext != nil {
-+		in, out := &in.PodSecurityContext, &out.PodSecurityContext
-+		*out = new(v1.PodSecurityContext)
-+		(*in).DeepCopyInto(*out)
-+	}
-+	if in.SecurityContext != nil {
-+		in, out := &in.SecurityContext, &out.SecurityContext
-+		*out = new(v1.SecurityContext)
-+		(*in).DeepCopyInto(*out)
-+	}
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new DataStoreMigration.
-+func (in *DataStoreMigration) DeepCopy() *DataStoreMigration {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(DataStoreMigration)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
- // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
- func (in *DataStoreOverride) DeepCopyInto(out *DataStoreOverride) {
- 	*out = *in
-@@ -664,6 +708,11 @@ func (in *DataStoreSpec) DeepCopyInto(out *DataStoreSpec) {
- 		*out = new(TLSConfig)
- 		(*in).DeepCopyInto(*out)
- 	}
-+	if in.Migration != nil {
-+		in, out := &in.Migration, &out.Migration
-+		*out = new(DataStoreMigration)
-+		(*in).DeepCopyInto(*out)
-+	}
- }
- 
- // DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new DataStoreSpec.
-@@ -686,7 +735,7 @@ func (in *DataStoreStatus) DeepCopyInto(out *DataStoreStatus) {
- 	}
- 	if in.Conditions != nil {
- 		in, out := &in.Conditions, &out.Conditions
--		*out = make([]v1.Condition, len(*in))
-+		*out = make([]metav1.Condition, len(*in))
- 		for i := range *in {
- 			(*in)[i].DeepCopyInto(
-```
-
-**File**: `charts/kamaji-crds/hack/kamaji.clastix.io_datastores_spec.yaml` (modified, +1343/-0)
-```diff
-@@ -131,6 +131,1349 @@ versions:
-                 x-kubernetes-validations:
-                   - message: an IPv6 endpoint address must be bracketed, e.g. [2001:db8::1]:2379
-                     rule: self.all(e, e.startsWith('[') || e.split(':').size() <= 2)
-+              migration:
-+                description: |-
-+                  Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
-+                  This value is optional.
-+                properties:
-+                  affinity:
-+                    description: |-
-+                      If specified, the migration Job pod's scheduling constraints.
-+                      More info: https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/
-+                    properties:
-+                      nodeAffinity:
-+                        description: Describes node affinity scheduling rules for the pod.
-+                        properties:
-+                          preferredDuringSchedulingIgnoredDuringExecution:
-+                            description: |-
-+                              The scheduler will prefer to schedule pods to nodes that satisfy
-+                              the affinity expressions specified by this field, but it may choose
-+                              a node that violates one or more of the expressions. The node that is
-+                              most preferred is the one with the greatest sum of weights, i.e.
-+                              for each node that meets all of the scheduling requirements (resource
-+                              request, requiredDuringScheduling affinity expressions, etc.),
-+                              compute a sum by iterating through the elements of this field and adding
-+                              "weight" to the sum if the node matches the corresponding matchExpressions; the
-+                              node(s) with the highest sum are the most preferred.
-+                            items:
-+                              description: |-
-+                                An empty preferred scheduling term matches all objects with implicit weight 0
-+                                (i.e. it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a no-op).
-+                              properties:
-+                                preference:
-+                                  description: A node selector term, associated with the corresponding weight.
-+                                  properties:
-+                                    matchExpressions:
-+                                      description: A list of node selector requirements by node's labels.
-+                                      items:
-+                                        description: |-
-+                                          A node selector requirement is a selector that contains values, a key, and an operator
-+                                          that relates the key and values.
-+                                        properties:
-+                                          key:
-+                                            description: The label key that the selector applies to.
-+                                            type: string
-+                                          operator:
-+                                            description: |-
-+                                              Represents a key's relationship to a set of values.
-+                                              Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
-+                                            type: string
-+                                          values:
-+                                            description: |-
-+                                              An array of string values. If the operator is In or NotIn,
-+                                              the values array must be non-empty. If the operator is Exists or DoesNotExist,
-+                                              the values array must be empty. If the operator is Gt or Lt, the values
-+                                              array must have a single element, which will be interpreted as an integer.
-+                                              This array is replaced during a strategic merge patch.
-+                                            items:
-+                                              type: string
-+                                            type: array
-+                                            x-kubernetes-list-type: atomic
-+                                        required:
-+                                          - key
-+                                          - operator
-+                                        type: object
-+                                      type: array
-+                                      x-kubernetes-list-type: atomic
-+                                    matchFields:
-+                   
-```
-
-**File**: `charts/kamaji/crds/kamaji.clastix.io_datastores.yaml` (modified, +1343/-0)
-```diff
-@@ -140,6 +140,1349 @@ spec:
-                   x-kubernetes-validations:
-                     - message: an IPv6 endpoint address must be bracketed, e.g. [2001:db8::1]:2379
-                       rule: self.all(e, e.startsWith('[') || e.split(':').size() <= 2)
-+                migration:
-+                  description: |-
-+                    Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
-+                    This value is optional.
-+                  properties:
-+                    affinity:
-+                      description: |-
-+                        If specified, the migration Job pod's scheduling constraints.
-+                        More info: https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/
-+                      properties:
-+                        nodeAffinity:
-+                          description: Describes node affinity scheduling rules for the pod.
-+                          properties:
-+                            preferredDuringSchedulingIgnoredDuringExecution:
-+                              description: |-
-+                                The scheduler will prefer to schedule pods to nodes that satisfy
-+                                the affinity expressions specified by this field, but it may choose
-+                                a node that violates one or more of the expressions. The node that is
-+                                most preferred is the one with the greatest sum of weights, i.e.
-+                                for each node that meets all of the scheduling requirements (resource
-+                                request, requiredDuringScheduling affinity expressions, etc.),
-+                                compute a sum by iterating through the elements of this field and adding
-+                                "weight" to the sum if the node matches the corresponding matchExpressions; the
-+                                node(s) with the highest sum are the most preferred.
-+                              items:
-+                                description: |-
-+                                  An empty preferred scheduling term matches all objects with implicit weight 0
-+                                  (i.e. it's a no-op). A null preferred scheduling term matches no objects (i.e. is also a no-op).
-+                                properties:
-+                                  preference:
-+                                    description: A node selector term, associated with the corresponding weight.
-+                                    properties:
-+                                      matchExpressions:
-+                                        description: A list of node selector requirements by node's labels.
-+                                        items:
-+                                          description: |-
-+                                            A node selector requirement is a selector that contains values, a key, and an operator
-+                                            that relates the key and values.
-+                                          properties:
-+                                            key:
-+                                              description: The label key that the selector applies to.
-+                                              type: string
-+                                            operator:
-+                                              description: |-
-+                                                Represents a key's relationship to a set of values.
-+                                                Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
-+                                              type: string
-+                                            values:
-+                                              description: |-
-+                                                An array of string values. If the operator is In or NotIn,
-+                                                the values array must be non-empty. If the operator is Exists or DoesNotExist,
-+                                                the values array must be empty. If the operator is Gt or Lt, the values
-+                                                array must have a single element, which will be interpreted as an integer.
-+                                                This array is replaced during a strategic merge patch.
-+                                              items:
-+                                                type: string
-+                                              type: array
-+                                              x-kubernetes-list-type: atomic
-+                                          required:
-+                                            - key
-+                                            - operator
-+                                          type: object
-+                                        type: array
-+           
-```
-
-**File**: `docs/content/guides/datastore-migration.md` (modified, +59/-0)
-```diff
-@@ -179,6 +179,40 @@ However, that timeout can be customized at the `TenantControlPlane` level with t
-     leading to unexpected results such as old data still available.
-     The annotation `kamaji.clastix.io/cleanup-prior-migration=true` allows to enforce the clean-up of the target `DataStore` schema in case of collision.
- 
-+## Scheduling the migration Job
-+The migration Job doesn't inherit the scheduling settings of the Tenant Control Plane, so it can stay `Pending` on a Management Cluster with tainted nodes.
-+Set them on the target `DataStore`, the one the Tenant Control Plane is moving to, using `spec.migration`:
-+
-+```yaml
-+apiVersion: kamaji.clastix.io/v1alpha1
-+kind: DataStore
-+metadata:
-+  name: dedicated
-+spec:
-+  driver: etcd
-+  # ...
-+  migration:
-+    nodeSelector:
-+      node-role.kubernetes.io/control-plane: ""
-+    tolerations:
-+    - key: node-role.kubernetes.io/control-plane
-+      operator: Exists
-+      effect: NoSchedule
-+    affinity:
-+      nodeAffinity:
-+        requiredDuringSchedulingIgnoredDuringExecution:
-+          nodeSelectorTerms:
-+          - matchExpressions:
-+            - key: kubernetes.io/arch
-+              operator: In
-+              values:
-+              - amd64
-+```
-+
-+The fields `nodeSelector`, `tolerations` and `affinity` are all optional, and have the same meaning as in a Pod.
-+The security context of the Job can be set in the same struct, see [Migration Job Security Context](#migration-job-security-context).
-+Changing them during a migration deletes the Job, waits for its Pod to be removed, and creates it back with the new values, which also solves a Job stuck in `Pending`.
-+
- ## Post migration
- After migrating data to the new datastore, complete the migration procedure by restarting the `kubelet.service` on all the tenant worker nodes.
- 
-@@ -202,3 +236,28 @@ kubectl -n kamaji-system patch serviceaccount kamaji-controller-manager \
- 
- This command patches the kamaji-controller-manager service account to include your registry secret, allowing the migration job to pull images from the private registry successfully.
- 
-+### Migration Job Security Context
-+By default, the migration Job runs with a `securityContext` compliant with the `restricted` [Pod Security Standard](https://kubernetes.io/docs/concepts/security/pod-security-standards/): `runAsNonRoot: true` and the `RuntimeDefault` seccomp profile for the Pod, `allowPrivilegeEscalation: false` and all the capabilities dropped for the container.
-+
-+These defaults can be replaced on the target `DataStore` with `spec.migration.podSecurityContext` for the Pod, and `spec.migration.securityContext` for the container:
-+
-+```yaml
-+spec:
-+  migration:
-+    podSecurityContext:
-+      runAsNonRoot: true
-+      runAsUser: 1000
-+      seccompProfile:
-+        type: RuntimeDefault
-+    securityContext:
-+      allowPrivilegeEscalation: false
-+      readOnlyRootFilesystem: true
-+      capabilities:
-+        drop:
-+        - ALL
-+```
-+
-+A field that is set replaces its default as a whole, so repeat the default values you want to keep.
-+
-+No `runAsUser` is enforced by default, so the user of the image applies: the default image runs as UID `65532`. An image set with `--migrate-image` must declare a numeric non-root user as well, or `runAsUser` must be set in `podSecurityContext`, otherwise the kubelet refuses to start the container.
-+
-```
-
-**File**: `docs/content/reference/api.md` (modified, +2471/-0)
-```diff
-@@ -29796,6 +29796,14 @@ No need for protocol, just bare IP/FQDN and port.<br/>
-         <td>object</td>
-         <td>
-           In case of authentication enabled for the given data store, specifies the username and password pair.
-+This value is optional.<br/>
-+        </td>
-+        <td>false</td>
-+      </tr><tr>
-+        <td><b><a href="#datastorespecmigration">migration</a></b></td>
-+        <td>object</td>
-+        <td>
-+          Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
- This value is optional.<br/>
-         </td>
-         <td>false</td>
-@@ -29994,6 +30002,2469 @@ This value is mandatory.<br/>
- </table>
- 
- 
-+<span id="datastorespecmigration">`DataStore.spec.migration`</span>
-+
-+
-+Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
-+This value is optional.
-+
-+<table>
-+    <thead>
-+        <tr>
-+            <th>Name</th>
-+            <th>Type</th>
-+            <th>Description</th>
-+            <th>Required</th>
-+        </tr>
-+    </thead>
-+    <tbody><tr>
-+        <td><b><a href="#datastorespecmigrationaffinity">affinity</a></b></td>
-+        <td>object</td>
-+        <td>
-+          If specified, the migration Job pod's scheduling constraints.
-+More info: https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/<br/>
-+        </td>
-+        <td>false</td>
-+      </tr><tr>
-+        <td><b>nodeSelector</b></td>
-+        <td>map[string]string</td>
-+        <td>
-+          NodeSelector is a selector which must be true for the migration Job pod to fit on a node.
-+Selector which must match a node's labels for the pod to be scheduled on that node.
-+More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/<br/>
-+        </td>
-+        <td>false</td>
-+      </tr><tr>
-+        <td><b><a href="#datastorespecmigrationpodsecuritycontext">podSecurityContext</a></b></td>
-+        <td>object</td>
-+        <td>
-+          PodSecurityContext allows to specify the security context for the migration Job pod.
-+If unset, the pod runs as non-root with the RuntimeDefault seccomp profile.<br/>
-+        </td>
-+        <td>false</td>
-+      </tr><tr>
-+        <td><b><a href="#datastorespecmigrationsecuritycontext">securityContext</a></b></td>
-+        <td>object</td>
-+        <td>
-+          SecurityContext allows to specify the security context for the migrate container.
-+If unset, privilege escalation is disallowed and all the capabilities are dropped.<br/>
-+        </td>
-+        <td>false</td>
-+      </tr><tr>
-+        <td><b><a href="#datastorespecmigrationtolerationsindex">tolerations</a></b></td>
-+        <td>[]object</td>
-+        <td>
-+          If specified, the migration Job pod's tolerations.
-+More info: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/<br/>
-+        </td>
-+        <td>false</td>
-+      </tr></tbody>
-+</table>
-+
-+
-+<span id="datastorespecmigrationaffinity">`DataStore.spec.migration.affinity`</span>
-+
-+
-+If specified, the migration Job pod's scheduling constraints.
-+More info: https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/
-+
-+<table>
-+    <thead>
-+        <tr>
-+            <th>Name</th>
-+            <th>Type</th>
-+            <th>Description</th>
-+            <th>Required</th>
-+        </tr>
-+    </thead>
-+    <tbody><tr>
-+        <td><b><a href="#datastorespecmigrationaffinitynodeaffinity">nodeAffinity</a></b></td>
-+        <td>object</td>
-+        <td>
-+          Describes node affinity scheduling rules for the pod.<br/>
-+        </td>
-+        <td>false</td>
-+      </tr><tr>
-+        <td><b><a href="#datastorespecmigrationaffinitypodaffinity">podAffinity</a></b></td>
-+        <td>object</td>
-+        <td>
-+          Describes pod affinity scheduling rules (e.g. co-locate this pod in the same node, zone, etc. as some other pod(s)).<br/>
-+        </td>
-+        <td>false</td>
-+      </tr><tr>
-+        <td><b><a href="#datastorespecmigrationaffinitypodantiaffinity">podAntiAffinity</a></b></td>
-+        <td>object</td>
-+        <td>
-+          Describes pod anti-affinity scheduling rules (e.g. avoid putting this pod in the same node, zone, etc. as some other pod(s)).<br/>
-+        </td>
-+        <td>false</td>
-+      </tr></tbody>
-+</table>
-+
-+
-+<span id="datastorespecmigrationaffinitynodeaffinity">`DataStore.spec.migration.affinity.nodeAffinity`</span>
-+
-+
-+Describes node affinity scheduling rules for the pod.
-+
-+<table>
-+    <thead>
-+        <tr>
-+            <th>Name</th>
-+            <th>Type</th>
-+            <th>Description</th>
-+            <th>Required</th>
-+        </tr>
-+    </thead>
-+    <tbody><tr>
-+        <td><b><a href="#datastorespecmigrationaffinitynodeaffinitypreferredduringschedulingignoredduringexecutionindex">preferredDuringSchedulingIgnoredDuringExecution</a></b></td>
-+        <td>[]object</td>
-+        <td>
-+          The scheduler will prefer to schedule pods to nodes
-```
-
-**File**: `internal/resources/datastore/datastore_migrate.go` (modified, +53/-1)
-```diff
-@@ -16,6 +16,7 @@ import (
- 	"k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/utils/ptr"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
- 
-@@ -108,6 +109,14 @@ func (d *Migrate) CreateOrUpdate(ctx context.Context, tenantControlPlane *kamaji
- 		return controllerutil.OperationResultNone, nil
- 	}
- 
-+	// A replaced Job is deleted in the foreground: wait for its Pods to be gone,
-+	// so the old and the new migration never run at the same time.
-+	if d.job.GetDeletionTimestamp() != nil {
-+		d.inProgress = true
-+
-+		return controllerutil.OperationResultNone, kamajierrors.MigrationInProcessError{}
-+	}
-+
- 	// The freeze webhook must be active in the tenant cluster before the migration Job is allowed
- 	// to start copying data: see ensureFreezeWebhook for why this has to be synchronous.
- 	if err := d.ensureFreezeWebhook(ctx, tenantControlPlane); err != nil {
-@@ -124,9 +133,11 @@ func (d *Migrate) CreateOrUpdate(ctx context.Context, tenantControlPlane *kamaji
- 		d.job.Spec.Template.ObjectMeta.Labels = utilities.MergeMaps(d.job.Spec.Template.ObjectMeta.Labels, d.job.Spec.Template.ObjectMeta.Labels)
- 		d.job.Spec.Template.Spec.ServiceAccountName = d.KamajiServiceAccount
- 		d.job.Spec.Template.Spec.RestartPolicy = corev1.RestartPolicyOnFailure
-+		d.setScheduling()
- 		if len(d.job.Spec.Template.Spec.Containers) == 0 {
- 			d.job.Spec.Template.Spec.Containers = append(d.job.Spec.Template.Spec.Containers, corev1.Container{})
- 		}
-+		d.setSecurityContext()
- 		d.job.Spec.Template.Spec.Containers[0].Name = "migrate"
- 		d.job.Spec.Template.Spec.Containers[0].Image = d.MigrateImage
- 		d.job.Spec.Template.Spec.Containers[0].Args = []string{
-@@ -151,7 +162,9 @@ func (d *Migrate) CreateOrUpdate(ctx context.Context, tenantControlPlane *kamaji
- 		// these are useless for Kamaji, and we don't have proper RBAC.
- 		// If the Job has a UUID, it means it's an update, and we're expecting that error.
- 		if errors.IsForbidden(err) && d.job.UID != "" {
--			_ = d.Client.Delete(ctx, d.job)
-+			if dErr := d.deleteJob(ctx); dErr != nil {
-+				return controllerutil.OperationResultNone, dErr
-+			}
- 
- 			return controllerutil.OperationResultNone, fmt.Errorf("migration job must be cretaed back due to immutable fields")
- 		}
-@@ -197,6 +210,45 @@ func (d *Migrate) UpdateTenantControlPlaneStatus(_ context.Context, tenantContro
- 	return nil
- }
- 
-+func (d *Migrate) deleteJob(ctx context.Context) error {
-+	if err := d.Client.Delete(ctx, d.job, client.PropagationPolicy(metav1.DeletePropagationForeground)); err != nil && !errors.IsNotFound(err) {
-+		return fmt.Errorf("unable to delete the migration job: %w", err)
-+	}
-+
-+	return nil
-+}
-+
-+// setScheduling copies the scheduling constraints of the target DataStore to the migration Job.
-+func (d *Migrate) setScheduling() {
-+	migration := ptr.Deref(d.desiredDatastore.Spec.Migration, kamajiv1alpha1.DataStoreMigration{})
-+
-+	d.job.Spec.Template.Spec.NodeSelector = migration.NodeSelector
-+	d.job.Spec.Template.Spec.Tolerations = migration.Tolerations
-+	d.job.Spec.Template.Spec.Affinity = migration.Affinity
-+}
-+
-+// setSecurityContext copies the security contexts of the target DataStore to the migration Job.
-+// When unset, the defaults keep the Job admissible under the "restricted" Pod Security Standard.
-+func (d *Migrate) setSecurityContext() {
-+	migration := ptr.Deref(d.desiredDatastore.Spec.Migration, kamajiv1alpha1.DataStoreMigration{})
-+
-+	d.job.Spec.Template.Spec.SecurityContext = migration.PodSecurityContext
-+	if d.job.Spec.Template.Spec.SecurityContext == nil {
-+		d.job.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{
-+			RunAsNonRoot:   ptr.To(true),
-+			SeccompProfile: &corev1.SeccompProfile{Type: corev1.SeccompProfileTypeRuntimeDefault},
-+		}
-+	}
-+
-+	d.job.Spec.Template.Spec.Containers[0].SecurityContext = migration.SecurityContext
-+	if d.job.Spec.Template.Spec.Containers[0].SecurityContext == nil {
-+		d.job.Spec.Template.Spec.Containers[0].SecurityContext = &corev1.SecurityContext{
-+			AllowPrivilegeEscalation: ptr.To(false),
-+			Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{"ALL"}},
-+		}
-+	}
-+}
-+
- // ensureFreezeWebhook installs the tenant-side "kamaji-freeze" ValidatingWebhookConfiguration
- // and waits for it to be persisted before the caller is allowed to start the migration Job.
- //
-```
-
----
-
-### Incident Patch 2: `f4294254` (2026-11-10)
-**Commit Message**: fix(datastore): allow rerunning the MySQL migration (#1414)
-
-The native copy introduced in #1339 dropped the DROP TABLE IF EXISTS that
-go-mysqldump emitted before each CREATE TABLE. A second run against the
-same target, after the migrate container is restarted or the migration
-Job is replaced, then failed on the CREATE TABLE and left the
-TenantControlPlane in Migrating.
-
-The table is now dropped on the target before being created, so a rerun
-starts over from the source like the PostgreSQL and etcd drivers do.
-
-Signed-off-by: Dario Tranchitella <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `internal/datastore/mysql.go` (modified, +8/-0)
-```diff
-@@ -139,6 +139,14 @@ func migrateTable(ctx context.Context, tx *sql.Tx, targetDB *sql.DB, schema, tab
- 
- 	createTableStatement = strings.Replace(createTableStatement, "CREATE TABLE "+quoteMySQLIdentifier(table), "CREATE TABLE "+qualifiedTable, 1)
- 
-+	// The migration can run more than once against the same target: the container is
-+	// restarted on failure, and the Job is replaced when its template changes. Dropping
-+	// the table first discards what a previous run copied, as go-mysqldump's DROP TABLE
-+	// IF EXISTS did before, instead of failing on the CREATE TABLE below.
-+	if _, err := targetDB.ExecContext(ctx, "DROP TABLE IF EXISTS "+qualifiedTable); err != nil {
-+		return fmt.Errorf("unable to drop table on target: %w", err)
-+	}
-+
- 	if _, err := targetDB.ExecContext(ctx, createTableStatement); err != nil {
- 		return fmt.Errorf("unable to create table on target: %w", err)
- 	}
-```
-
-**File**: `internal/datastore/mysql_migrate_integration_test.go` (modified, +76/-0)
-```diff
-@@ -258,6 +258,82 @@ func TestMySQLMigrateDiscoversTables(t *testing.T) {
- 	}
- }
- 
-+// TestMySQLMigrateRerun checks that Migrate() can run again against a target that already
-+// holds a copy, complete or partial, as happens when the migration container is restarted or
-+// the migration Job is replaced while copying: the rerun must succeed and leave the target
-+// with exactly the rows of the source.
-+func TestMySQLMigrateRerun(t *testing.T) {
-+	if os.Getenv("KAMAJI_MYSQL_MIGRATE_IT") == "" {
-+		t.Skip("set KAMAJI_MYSQL_MIGRATE_IT=1 to run (spins up real MariaDB containers via Docker)")
-+	}
-+
-+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
-+	defer cancel()
-+
-+	source := startMariaDB(ctx, t)
-+	target := startMariaDB(ctx, t)
-+
-+	const (
-+		schema   = "default_tenant00"
-+		rowCount = 10
-+	)
-+
-+	setupDB := openMariaDB(t, source, "")
-+	defer setupDB.Close()
-+
-+	mustExec(ctx, t, setupDB, fmt.Sprintf("CREATE DATABASE `%s`", schema))
-+	mustExec(ctx, t, setupDB, kineTableDDL(schema))
-+
-+	for i := 1; i <= rowCount; i++ {
-+		if _, err := setupDB.ExecContext(ctx, fmt.Sprintf("INSERT INTO `%s`.kine (id, name, value) VALUES (?, ?, ?)", schema), i, fmt.Sprintf("/registry/test/%d", i), []byte(fmt.Sprintf("value-%d", i))); err != nil {
-+			t.Fatalf("seed source row %d: %v", i, err)
-+		}
-+	}
-+
-+	// An interrupted previous run: the table is on the target with only some of the rows.
-+	targetSetupDB := openMariaDB(t, target, "")
-+	defer targetSetupDB.Close()
-+
-+	mustExec(ctx, t, targetSetupDB, fmt.Sprintf("CREATE DATABASE `%s`", schema))
-+	mustExec(ctx, t, targetSetupDB, kineTableDDL(schema))
-+	mustExec(ctx, t, targetSetupDB, fmt.Sprintf("INSERT INTO `%s`.kine (id, name, value) VALUES (1, '/registry/test/1', 'value-1')", schema))
-+
-+	sourceConn := mustMySQLConnection(t, source)
-+	targetConn := mustMySQLConnection(t, target)
-+
-+	tcp := kamajiv1alpha1.TenantControlPlane{ObjectMeta: metav1.ObjectMeta{UID: types.UID("test-migrate-uid")}}
-+	tcp.Status.Storage.Setup.Schema = schema
-+
-+	if err := sourceConn.Migrate(ctx, tcp, targetConn); err != nil {
-+		t.Fatalf("Migrate over a partial copy: %v", err)
-+	}
-+
-+	if err := sourceConn.Migrate(ctx, tcp, targetConn); err != nil {
-+		t.Fatalf("Migrate over a complete copy: %v", err)
-+	}
-+
-+	verifyDB := openMariaDB(t, target, schema)
-+	defer verifyDB.Close()
-+
-+	var count int
-+	if err := verifyDB.QueryRowContext(ctx, "SELECT COUNT(*) FROM kine").Scan(&count); err != nil {
-+		t.Fatalf("count migrated rows: %v", err)
-+	}
-+
-+	if count != rowCount {
-+		t.Fatalf("expected %d migrated rows, got %d", rowCount, count)
-+	}
-+
-+	var value []byte
-+	if err := verifyDB.QueryRowContext(ctx, "SELECT value FROM kine WHERE id = ?", rowCount).Scan(&value); err != nil {
-+		t.Fatalf("read back last row: %v", err)
-+	}
-+
-+	if want := fmt.Sprintf("value-%d", rowCount); string(value) != want {
-+		t.Fatalf("last row value = %q, want %q", value, want)
-+	}
-+}
-+
- // kineTableDDL returns a CREATE TABLE statement for a schema-qualified kine table shaped like
- // a real kine sidecar's (fewer indexes, Migrate() doesn't care about those).
- func kineTableDDL(schema string) string {
-```
-
----
-
-### Incident Patch 3: `8edc639f` (2026-11-11)
-**Commit Message**: fix(soot): cache only kube-system and kube-public (#1413)
-
-The soot manager was created with the default cache options, so every
-kind watched by the soot controllers (ConfigMap, Deployment, Service,
-ServiceAccount, DaemonSet, Role, RoleBinding) was listed and watched
-across all the namespaces of the tenant cluster.
-
-The soot controllers manage only objects living in kube-system, plus
-the cluster-info ConfigMap in kube-public: caching the remaining
-namespaces made the Kamaji memory footprint, and the watch traffic
-from the tenant API servers, grow with the tenant workloads.
-
-Restrict the default namespaces of the soot cache to kube-system and
-kube-public. Cluster-scoped kinds are not affected.
-
-Signed-off-by: Pushkar Acharya <[REDACTED_EMAIL]>
-Co-authored-by: Pushkar Acharya <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `controllers/soot/manager.go` (modified, +11/-0)
-```diff
-@@ -10,11 +10,13 @@ import (
++	"context"
+ 	"crypto/rand"
+ 	"crypto/rsa"
+ 	"crypto/x509"
+ 	"crypto/x509/pkix"
+ 	"encoding/pem"
+ 	"math/big"
++	"slices"
+ 	"testing"
  	"time"
  
- 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/client-go/rest"
- 	"k8s.io/client-go/util/retry"
- 	"k8s.io/utils/ptr"
- 	controllerruntime "sigs.k8s.io/controller-runtime"
- 	"sigs.k8s.io/controller-runtime/pkg/builder"
-+	"sigs.k8s.io/controller-runtime/pkg/cache"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	"sigs.k8s.io/controller-runtime/pkg/controller"
- 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
-@@ -262,6 +264,15 @@ func (m *Manager) Reconcile(ctx context.Context, request reconcile.Request) (res
+ 	"github.com/prometheus/client_golang/prometheus"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime"
++	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
  
- 			return client.New(config, opts)
- 		},
-+		// The soot controllers only manage namespaced objects in kube-system and kube-public:
-+		// caching every namespace would make memory grow with the tenant workloads.
-+		// A soot controller watching a namespaced object elsewhere must add its namespace here.
-+		Cache: cache.Options{
-+			DefaultNamespaces: map[string]cache.Config{
-+				metav1.NamespaceSystem: {},
-+				metav1.NamespacePublic: {},
+ 	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
+ 	"github.com/clastix/kamaji/internal/constants"
+@@ -110,6 +114,108 @@ func TestCertificateRefreshMetrics(t *testing.T) {
+ 	}
+ }
+ 
++func TestCertificateRefreshMetricsListsOnlyLabelledSecrets(t *testing.T) {
++	t.Parallel()
++
++	scheme := runtime.NewScheme()
++	if err := kamajiv1alpha1.AddToScheme(scheme); err != nil {
++		t.Fatalf("failed adding kamaji scheme: %v", err)
++	}
++	if err := corev1.AddToScheme(scheme); err != nil {
++		t.Fatalf("failed adding corev1 scheme: %v", err)
++	}
++
++	validCertPEM, err := testCertificatePEM(time.Now().Add(48 * time.Hour))
++	if err != nil {
++		t.Fatalf("failed generating valid cert: %v", err)
++	}
++
++	var listedSecrets []string
++
++	reader := fake.NewClientBuilder().WithScheme(scheme).WithObjects(
++		&kamajiv1alpha1.TenantControlPlane{ObjectMeta: metav1.ObjectMeta{Name: "tcp-a", Namespace: "default"}},
++		&corev1.Secret{
++			ObjectMeta: metav1.ObjectMeta{
++				Name:      "cert-valid",
++				Namespace: "default",
++				Labels: map[string]string{
++					constants.ControlPlaneLabelKey:    "tcp-a",
++					constants.ControllerLabelResource: utilities.CertificateX509Label,
++				},
++			},
++			Data: map[string][]byte{"tls.crt": validCertPEM},
++		},
++		// Both labels but an unsupported strategy: listed, then skipped by the loop.
++		&corev1.Secret{
++			ObjectMeta: metav1.ObjectMeta{
++				Name:      "unsupported-strategy",
++				Namespace: "default",
++				Labels: map[string]string{
++					constants.ControlPlaneLabelKey:    "tcp-a",
++					constants.ControllerLabelResource: "unsupported",
++				},
 +			},
 +		},
- 	})
++		// Secrets missing at least one of the labels, e.g. Helm release storage: not listed.
++		&corev1.Secret{
++			ObjectMeta: metav1.ObjectMeta{Name: "sh.helm.release.v1.app.v1", Namespace: "default"},
++			Type:       "helm.sh/release.v1",
++			Data:       map[string][]byte{"release": []byte("payload")},
++		},
++		&corev1.Secret{
++			ObjectMeta: metav1.ObjectMeta{
++				Name:      "only-tcp-label",
++				Namespace: "default",
++				Labels:    map[string]string{constants.ControlPlaneLabelKey: "tcp-a"},
++			},
++		},
++		&corev1.Secret{
++			ObjectMeta: metav1.ObjectMeta{
++				Name:      "only-controller-label",
++				Namespace: "other",
++				Labels:    map[string]string{constants.ControllerLabelResource: utilities.CertificateX509Label},
++			},
++		},
++	).WithInterceptorFuncs(interceptor.Funcs{
++		List: func(ctx context.Context, c client.WithWatch, list client.ObjectList, opts ...client.ListOption) error {
++			if err := c.List(ctx, list, opts...); err != nil {
++				return err
++			}
++
++			if secrets, ok := list.(*corev1.SecretList); ok {
++				for _, secret := range secrets.Items {
++					listedSecrets = append(listedSecrets, secret.Namespace+"/"+secret.Name)
++				}
++			}
++
++			return nil
++		},
++	}).Build()
++
++	registry := prometheus.NewRegistry()
++
++	s := &CertificateLifecycle{
++		Deadline: 24 * time.Hour,
++		client:   reader,
++		Metrics:  metrics.NewRecorder(registry),
++	}
++
++	if err := s.refreshCertificatesMetrics(t.Context()); err != nil {
++		t.Fatalf("refreshCertificatesMetrics returned error: %v", err)
++	}
++
++	expectedSecrets := []string{"default/cert-valid", "default/unsupported-strategy"}
++	slices.Sort(listedSecrets)
++	if !slices.Equal(listedSecrets, expectedSecrets) {
++		t.Fatalf("expected %v to be listed, got %v", expectedSecrets, listedSecrets)
++	}
++
++	family := mustMetricFamilyFromGatherer(t, registry, "kamaji_certificates_current")
++	if got := gaugeValueByLabels(t, family, map[string]string{"tcp_namespace": "default", "tcp_name": "tcp-a", "status": metrics.CertificateStatusValid, "strategy": metrics.CertificateStrategyX509}); got != 1 {
++		t.Fatalf("expected valid/x509 certificates gauge to be 1, got %v", got)
++	}
++}
++
+ func testCertificatePEM(notAfter time.Time) ([]byte, error) {
+ 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
  	if err != nil {
- 		return reconcile.Result{}, err
+```
+
+---
+
+### Incident Patch 2: `3e489c5f` (2026-11-12)
+**Commit Message**: fix(kine): apply the default image to existing TenantControlPlanes (#1398)
+
+* fix(kine): apply the default image to existing TenantControlPlanes
+
+Since #1254 the kine container and its chmod init container only get
+--kine-image when they have no image yet. That is the case for new
+Deployments only: existing ones keep the image they were created with,
+so bumping --kine-image no longer reaches any TenantControlPlane that
+already exists.
+
+The image is now always set from the manager flag, unless the
+TenantControlPlane names its own image through an additional container
+(or additional init container) with the same name, which keeps the
+per-tenant override from #1254.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_0174qW9TSZR5ddTVXvrm1TBL
+
+* fix(kine): keep the kine image of Recreate TenantControlPlanes
+
+A TenantControlPlane with the Recreate strategy loses its control plane
+while a rollout replaces its pods, so a changed --kine-image must not
+roll it. Its kine and chmod containers keep their current image; new
+Deployments still get the default.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/
+
+**File**: `internal/builders/controlplane/deployment.go` (modified, +19/-6)
+```diff
+@@ -968,6 +968,23 @@ func (d Deployment) removeKineInitContainers(podSpec *corev1.PodSpec) {
+ 	}
+ }
+ 
++// kineImage returns the image of the user-space container with the given name, if any, and the
++// manager's default kine image otherwise: the image of an existing Deployment must not be kept,
++// or a new default would never reach the TenantControlPlanes created before it.
++// TenantControlPlanes using the Recreate strategy keep their current image, since a rollout
++// takes their control plane down until the new pods are ready.
++func (d Deployment) kineImage(tcp kamajiv1alpha1.TenantControlPlane, current string, additional []corev1.Container, name string) string {
++	if tcp.Spec.ControlPlane.Deployment.Strategy.Type == appsv1.RecreateDeploymentStrategyType && current != "" {
++		return current
++	}
++
++	if found, index := utilities.HasNamedContainer(additional, name); found && additional[index].Image != "" {
++		return additional[index].Image
++	}
++
++	return d.KineContainerImage
++}
++
+ func (d Deployment) buildKine(podSpec *corev1.PodSpec, tcp kamajiv1alpha1.TenantControlPlane) {
+ 	if d.DataStore.Spec.Driver == kamajiv1alpha1.EtcdDriver {
+ 		d.removeKineContainers(podSpec)
+@@ -991,9 +1008,7 @@ func (d Deployment) buildKine(podSpec *corev1.PodSpec, tcp kamajiv1alpha1.Tenant
+ 		}
+ 
+ 		podSpec.InitContainers[index].Name = kineInitContainerName
+-		if podSpec.InitContainers[index].Image == "" {
+-			podSpec.InitContainers[index].Image = d.KineContainerImage
+-		}
++		podSpec.InitContainers[index].Image = d.kineImage(tcp, podSpec.InitContainers[index].Image, tcp.Spec.ControlPlane.Deployment.AdditionalInitContainers, kineInitContainerName)
+ 		podSpec.InitContainers[index].Command = []string{"sh"}
+ 
+ 		podSpec.InitContainers[index].Args = []string{
+@@ -1052,9 +1067,7 @@ func (d Deployment) buildKine(podSpec *corev1.PodSpec, tcp kamajiv1alpha1.Tenant
+ 	}
+ 
+ 	podSpec.Containers[index].Name = kineContainerName
+-	if podSpec.Containers[index].Image == "" {
+-		podSpec.Containers[index].Image = d.KineContainerImage
+-	}
++	podSpec.Containers[index].Image = d.kineImage(tcp, podSpec.Containers[index].Image, tcp.Spec.ControlPlane.Deployment.AdditionalContainers, kineContainerName)
+ 	podSpec.Containers[index].Command = []string{"/bin/kine"}
+ 	podSpec.Containers[index].Args = utilities.ArgsFromMapToSlice(args)
+ 	podSpec.Containers[index].VolumeMounts = []corev1.VolumeMount{
+```
+
+**File**: `internal/builders/controlplane/deployment_test.go` (modified, +69/-0)
+```diff
+@@ -522,6 +522,75 @@ var _ = Describe("Controlplane Deployment", func() {
+ 			Expect(found).To(BeTrue())
+ 			Expect(podSpec.Containers[index].Image).To(Equal("custom-kine:latest"))
+ 		})
++
++		It("should replace the kine image of an existing deployment when the default changes", func() {
++			d.DataStore.Spec.TLSConfig = &kamajiv1alpha1.TLSConfig{}
++			podSpec := &corev1.PodSpec{
++				InitContainers: []corev1.Container{{Name: "chmod", Image: "rancher/kine:v0.10.0"}},
++				Containers: []corev1.Container{
++					{Name: "kube-apiserver"},
++					{Name: "kine", Image: "rancher/kine:v0.10.0"},
++				},
++			}
++
++			d.setInitContainers(podSpec, tcp)
++			d.setAdditionalContainers(podSpec, tcp)
++			d.buildKine(podSpec, tcp)
++
++			found, index := utilities.HasNamedContainer(podSpec.Containers, "kine")
++			Expect(found).To(BeTrue())
++			Expect(podSpec.Containers[index].Image).To(Equal("rancher/kine:v0.11.0"))
++			found, index = utilities.HasNamedContainer(podSpec.InitContainers, "chmod")
++			Expect(found).To(BeTrue())
++			Expect(podSpec.InitContainers[index].Image).To(Equal("rancher/kine:v0.11.0"))
++		})
++
++		It("should keep the kine image of an existing deployment with the Recreate strategy", func() {
++			d.DataStore.Spec.TLSConfig = &kamajiv1alpha1.TLSConfig{}
++			tcp.Spec.ControlPlane.Deployment.Strategy.Type = appsv1.RecreateDeploymentStrategyType
++			podSpec := &corev1.PodSpec{
++				InitContainers: []corev1.Container{{Name: "chmod", Image: "rancher/kine:v0.10.0"}},
++				Containers: []corev1.Container{
++					{Name: "kube-apiserver"},
++					{Name: "kine", Image: "rancher/kine:v0.10.0"},
++				},
++			}
++
++			d.setInitContainers(podSpec, tcp)
++			d.setAdditionalContainers(podSpec, tcp)
++			d.buildKine(podSpec, tcp)
++
++			found, index := utilities.HasNamedContainer(podSpec.Containers, "kine")
++			Expect(found).To(BeTrue())
++			Expect(podSpec.Containers[index].Image).To(Equal("rancher/kine:v0.10.0"))
++			found, index = utilities.HasNamedContainer(podSpec.InitContainers, "chmod")
++			Expect(found).To(BeTrue())
++			Expect(podSpec.InitContainers[index].Image).To(Equal("rancher/kine:v0.10.0"))
++		})
++
++		It("should keep the custom kine image of an existing deployment when the default changes", func() {
++			d.DataStore.Spec.TLSConfig = &kamajiv1alpha1.TLSConfig{}
++			tcp.Spec.ControlPlane.Deployment.AdditionalContainers = []corev1.Container{
++				{Name: "kine", Image: "custom-kine:latest"},
++			}
++			podSpec := &corev1.PodSpec{}
++
++			d.setInitContainers(podSpec, tcp)
++			d.setAdditionalContainers(podSpec, tcp)
++			d.buildKine(podSpec, tcp)
++
++			d.KineContainerImage = "rancher/kine:v0.12.0"
++			d.setInitContainers(podSpec, tcp)
++			d.setAdditionalContainers(podSpec, tcp)
++			d.buildKine(podSpec, tcp)
++
++			found, index := utilities.HasNamedContainer(podSpec.Containers, "kine")
++			Expect(found).To(BeTrue())
++			Expect(podSpec.Containers[index].Image).To(Equal("custom-kine:latest"))
++			found, index = utilities.HasNamedContainer(podSpec.InitContainers, "chmod")
++			Expect(found).To(BeTrue())
++			Expect(podSpec.InitContainers[index].Image).To(Equal("rancher/kine:v0.12.0"))
++		})
+ 	})
+ 
+ 	Describe("component network flags", func() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1416** (2026-11-12): fix(metrics): list only certificate secrets (@albertoec)
 - **PR #1414** (2026-11-10): fix(datastore): allow rerunning the MySQL migration (@prometherion)
 - **PR #1413** (2026-11-11): fix(soot): cache only kube-system and kube-public (@pacharya-pf9)
 - **PR #1410** (2026-11-10): feat(deps): bump github.com/testcontainers/testcontainers-go from 0.44.0 to 0.45.0 (@dependabot[bot])
 - **PR #1409** (2026-11-09): feat(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 (@dependabot[bot])
 - **PR #1408** (2026-11-09): feat(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (@dependabot[bot])
-- **PR #1407** (2026-11-06): fix(konnectivity): keep additional Service ports (@themoriarti)
 
 ---
 
@@ -1696,46 +1107,29 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. datastore): schedule and securitycontext migration jobs from the DataStore (#140
+## X. metrics): list only certificate secrets (#1416)
 
 **RULE**:
-When implementing operations in `api/v1alpha1/datastore_types.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `controllers/certificate_lifecycle_controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d2089911`: datastore): schedule and securitycontext migration jobs from the DataStore (#1403). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d6e2f755`: metrics): list only certificate secrets (#1416). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v1alpha1/datastore_types.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/certificate_lifecycle_controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Defines how the Job migrating a Tenant Control Plane to this data store is scheduled.
-	// This value is optional.
-	Migration *DataStoreMigration `json:"migration,omitempty"`
-}
-
-// DataStoreMigration contains the settings of the Job migrating a Tenant Control Plane to this data store.
-type DataStoreMigration struct {
-	// NodeSelector is a selector which must be true for the migration Job pod to fit on a node.
-	// Selector which must match a node's labels for the pod to be scheduled on that node.
-	// More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
-	// If specified, the migration Job pod's tolerations.
-	// More info: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
-	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
-	// If specified, the migration Job pod's scheduling constraints.
-	// More info: https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/
-	Affinity *corev1.Affinity `json:"affinity,omitempty"`
-	// PodSecurityContext allows to specify the security context for the migration Job pod.
-	// If unset, the
+	// Filter in the cache to avoid deep-copying every Secret of the cluster.
+	if err := s.client.List(ctx, &secretList, client.HasLabels{constants.ControlPlaneLabelKey, constants.ControllerLabelResource}); err != nil {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	if err := s.client.List(ctx, &secretList); err != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d2089911` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d6e2f755` are properly handled with clean fallback behavior.

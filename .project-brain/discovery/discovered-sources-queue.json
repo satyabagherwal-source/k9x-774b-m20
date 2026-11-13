@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T12:55:09.441Z",
+  "updated_at": "2026-11-13T13:03:17.843Z",
   "stats": {
-    "total_discovered": 2453,
-    "approved_pending_harvest": 2283,
+    "total_discovered": 2457,
+    "approved_pending_harvest": 2287,
     "harvested_count": 0,
     "rejected_count": 170,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2276,
+      "COMMUNITY_AND_EXPERT": 2280,
       "OFFICIAL_DOCUMENTATION": 93,
       "STANDARDS_AND_SPECIFICATIONS": 74,
       "ENGINEERING_BLOGS": 1,
@@ -52795,6 +52795,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
         "fileName": "freenet-freenet-core-learnings.md"
+      }
+    },
+    "SRC-684BB42CF75E": {
+      "id": "SRC-684BB42CF75E",
+      "url": "https://huggingface.co/XingChen-AGI/TeleOCR",
+      "title": "https://huggingface.co/XingChen-AGI/TeleOCR",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:03:17.767Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
+        "fileName": "hf-xingchen-agi-teleocr-learnings.md"
+      }
+    },
+    "SRC-291F9380DD77": {
+      "id": "SRC-291F9380DD77",
+      "url": "https://github.com/TypeWhisper/typewhisper-mac",
+      "title": "https://github.com/TypeWhisper/typewhisper-mac",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:03:17.793Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
+        "fileName": "typewhisper-typewhisper-mac-learnings.md"
+      }
+    },
+    "SRC-736F24074BDD": {
+      "id": "SRC-736F24074BDD",
+      "url": "https://claude.ai/code/session_0174qW9TSZR5ddTVXvrm1TBL",
+      "title": "https://claude.ai/code/session_0174qW9TSZR5ddTVXvrm1TBL",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:03:17.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
+        "fileName": "clastix-kamaji-learnings.md"
+      }
+    },
+    "SRC-579B04947A3B": {
+      "id": "SRC-579B04947A3B",
+      "url": "https://claude.ai/code",
+      "title": "https://claude.ai/code",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:03:17.843Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
+        "fileName": "clastix-kamaji-learnings.md"
       }
     }
   }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `64d040b5`  
+> **Source Version**: `54d901da`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T06:27:04.301Z  
+> **Timestamp**: 2026-11-13T13:02:42.291Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T06:27:04.296Z  
+> **Harvest Timestamp**: 2026-11-13T13:02:42.283Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1195,141 +1195,387 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `df0b544e` (2026-11-11)
-**Commit Message**: YT-30385: Fix lease timeout assertions and force transaction cleanup
+### Incident Patch 1: `54d901da` (2026-11-13)
+**Commit Message**: fix contrib/libs/grpc: zstd decompressor spins forever on an empty trailing slice
 
-The lease revocation test introduced in https://nda.ya.ru/t/-tbdDpB27wJmXy rejects a valid timeout: the driver reports "Operation timed out" (code 3), while the assertion requires "Request timed out". The worker exception reaches join() before unreference_lease(), leaving cleanup waiting for the held reference.
-commit_hash:4eb268d491e58881392019c1869e4161fd11c1f0
+The zstd decompressor in zstd_common could loop forever and allocate memory until OOM.
 
-**File**: `yt/yt/tests/integration/dynamic_tables/test_dynamic_tables_leases.py` (modified, +9/-2)
+For the last slice the loop ran until ZSTD_decompressStream returned 0. With an empty last slice that never happens: given no input, zstd only returns a non-zero hint that it expects more data. The loop therefore never ended and allocated a new 1 KiB output block on every iteration. A message gets such a slice from a zero-length DATA frame, for example the one that carries END_STREAM when the client half-closes after its last message.
+
+The fix makes zstd compression and decompression follow zlib_body: empty slices are skipped, ZSTD_e_end is passed with the last non-empty slice, and the loop over the current slice repeats only while the output block is completely full and zstd has more to produce, or while input remains. If the frame is still unfinished after all slices, an error is returned.
+commit_hash:bd228e50a3ab8ddda0d5d8a568d04882e6c797c7
+
+**File**: `contrib/libs/grpc/src/core/lib/compression/message_compress.cc` (modified, +55/-18)
 ```diff
-@@ -10,6 +10,8 @@
+@@ -145,10 +145,16 @@ static int zlib_decompress(grpc_slice_buffer* input, grpc_slice_buffer* output,
+ }
  
- from yt_driver_bindings import Driver
+ struct CompressTraits {
+-  static std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> CreateContext() {
+-    return std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)>(
++  static std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> CreateContext(size_t input_length) {
++    std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> context(
+        ZSTD_createCCtx(),
+        &ZSTD_freeCCtx);
++    if (context) {
++      // Content size goes into the frame header; zstd sizes the window to it.
++      size_t rc = ZSTD_CCtx_setPledgedSrcSize(context.get(), input_length);
++      if (ZSTD_isError(rc)) context.reset();
++    }
++    return context;
+   }
  
-+import yt_error_codes
-+
- from yt_helpers import master_exit_read_only_sync
+   static size_t ProcessPart(
+@@ -162,7 +168,7 @@ struct CompressTraits {
+ };
  
- from yt.test_helpers import (
-@@ -30,6 +32,9 @@ class TestDynamicTablesLeases(YTEnvSetup):
-     NUM_NODES = 3
-     USE_DYNAMIC_TABLES = True
+ struct DecompressTraits {
+-  static std::unique_ptr<ZSTD_DCtx, decltype(&ZSTD_freeDCtx)> CreateContext() {
++  static std::unique_ptr<ZSTD_DCtx, decltype(&ZSTD_freeDCtx)> CreateContext(size_t /* input_length */) {
+     return std::unique_ptr<ZSTD_DCtx, decltype(&ZSTD_freeDCtx)>(
+        ZSTD_createDCtx(),
+        &ZSTD_freeDCtx);
+@@ -179,37 +185,68 @@ struct DecompressTraits {
  
-+    # Failed assertions can leave deliberately held lease references blocking cleanup.
-+    FORCE_ABORT_TRANSACTIONS_ON_CLEANUP = True
-+
-     LEASE_ID = "1-2-3-4"
- 
-     DELTA_MASTER_CONFIG = {
-@@ -730,8 +735,10 @@ def test_lease_revocation_timeout(self):
-         driver = Driver(driver_config)
- 
-         def run_abort():
--            with raises_yt_error("Request timed out|Request queue size limit exceeded"):
-+            with raises_yt_error() as error:
-                 abort_transaction(tx, driver=driver, verbose=False)
-+            assert error[0].contains_code(yt_error_codes.Timeout) or error[0].contains_code(
-+                yt_error_codes.RequestQueueSizeLimitExceeded)
- 
-         abort_requests = [
-             self.spawn_additional_thread(target=run_abort)
-@@ -743,7 +750,7 @@ def run_abort():
- 
-         # NB: If all previous requests aren't stuck this request won't get
-         # "RequestQueueSizeLimitExceeded" error.
--        with raises_yt_error("Request timed out"):
-+        with raises_yt_error(code=yt_error_codes.Timeout):
-             abort_transaction(tx, driver=driver)
- 
-         self._check_lease(cell_id, "revoking", 1, 0, lease_id=tx)
-```
-
-**File**: `yt/yt/tests/library/yt_env_setup.py` (modified, +5/-1)
-```diff
-@@ -505,6 +505,7 @@ class YTEnvSetup(object):
-     TEST_MAINTENANCE_FLAGS = False
- 
-     WAIT_FOR_DYNAMIC_CONFIG = True
-+    FORCE_ABORT_TRANSACTIONS_ON_CLEANUP = False
- 
-     ENABLE_MULTIDAEMON = False
- 
-@@ -2256,7 +2257,10 @@ def _abort_transactions(self, driver=None):
-         test_cleanup.abort_transactions(
-             list_action=lambda *args, **kwargs: yt_commands.ls(*args, driver=driver, **kwargs),
-             abort_action=lambda transaction_id: requests.append(
--                yt_commands.make_batch_request(abort_command, transaction_id=transaction_id)),
-+                yt_commands.make_batch_request(
-+                    abort_command,
-+                    transaction_id=transaction_id,
-+                    force=self.FORCE_ABORT_TRANSACTIONS_ON_CLEANUP)),
-             exists_action=lambda *args, **kwargs: yt_commands.exists(*args, driver=driver, **kwargs),
-             get_action=lambda *args, **kwargs: yt_commands.get(*args, driver=driver, **kwargs))
+ template<typename Traits>
+ static bool zstd_common(grpc_slice_buffer* input, grpc_slice_buffer* output) {
+-  const auto context_ptr = Traits::CreateContext();
++  const auto context_ptr = Traits::CreateContext(input->length);
+   if (!context_ptr) {
+     gpr_log(GPR_INFO, "Failed create zstd context");
+     return false;
+   }
++  // ZSTD_e_end goes with the last non-empty slice. Empty slices are skipped:
++  // zstd given no input only asks for more, which looped forever.
++  size_t last = input->count;
++  for (size_t i = input->count; i-- > 0;) {
++    if (GRPC_SLICE_LENGTH(input->slices[i]) != 0) {
++      last = i;
++      break;
++    }
++  }
++  grpc_slice outbuf = GRPC_SLICE_MALLOC(OUTPUT_BLOCK_SIZE);
++  ZSTD_outBuffer zstd_output;
++  zstd_output.dst = GRPC_SLICE_START_PTR(outbuf);
++  zstd_output.size = GRPC_SLICE_LENGTH(outbuf);
++  zstd_output.pos = 0;
++  size_t process_result = 0;  // Do not fail on an empty input.
+   for (size_t i = 0; i < input->count; i++) {
+-    const bool is_last_chunk = (i == input->count - 1);
++    const bool is_last_chunk = (i == last);
+     ZSTD_inBuffer zstd_input;
+     zstd_input.src = GRPC_SLICE_START_PTR(input->slices[i]);
+     zstd_input.size = GRPC_SLICE_LENGTH(input->slices[i]);
+     zstd_input.pos = 0;
+-    bool should_continue = true;
+-    while (should_continue) {
+-      grpc_slice outbuf = GRPC_SLICE_MALLOC(OUTPUT_BLOCK_SIZE);
+-      ZSTD_outBuffer zstd_output;
+-      zstd_output.dst = GRPC_SLICE_START_PTR(outbuf);
+-      zstd_output.size = GRPC_SLICE_LENGTH(outbuf);
+-      zstd_output.pos = 0;
+-      size_t const process_result = Traits::ProcessPart(context_ptr.get(), &zstd_output, &zstd_input, is_last_chunk);
++    if (zstd_input.size == 0) continue;
++    // Repeat while the block fills up and zstd still has data to flush, or
++    // input remains (the next frame of a multi-frame message).
++    do {
++      if (zstd_output.pos == zstd_output.size) {
++        grpc_slice_buffer_add_indexed(output, outbuf);
++        outbuf = GRPC_SLICE_MALLOC(OUTPUT_BLOCK_SIZE);
++        zstd_output.dst = GRPC_SLICE_START_PTR(outbuf);
++        zstd_output.size = GRPC_SLICE_LENGTH(outbuf);
++        zstd_output.pos = 0;
++      }
++      process_result = Traits::ProcessPart(context_ptr.get(), &zstd_output, &zstd_input, is_last_chunk);
+       if (ZSTD_isError(process_result)) {
+         gpr_log(GPR_INFO, "zstd error code (%d)", ZSTD_getErrorCode(process_result));
+         grpc_core::CSliceUnref(outbuf);
+         return false;
+       }
+-      const auto out_data_left = zstd_output.size - zstd_output.pos;
+-      outbuf.data.refcounted.length -= out_data_left;
+-      grpc_slice_buffer_add_indexed(output, outbuf);
+-
+-      should_continue = is_last_chunk ? (process_result != 0) : (zstd_input.pos != zstd_input.size);
++    } while ((zstd_output.pos == zstd_output.size && process_result != 0) ||
++             zstd_input.pos != zstd_input.size);
++    if (zstd_input.pos != zstd_input.size) {
++      gpr_log(GPR_INFO, "zstd: not all input consumed");
++      grpc_core::CSliceUnref(outbuf);
++      return false;
+     }
+   }
++  if (process_result != 0) {
++    gpr_log(GPR_INFO, "zstd: incomplete stream");
++    grpc_core::CSliceUnref(outbuf);
++    return false;
++  }
++  if (zstd_output.pos == 0) {
++    grpc_core::CSliceUnref(outbuf);
++  } else {
++    outbuf.data.refcounted.length = zstd_output.pos;
++    grpc_slice_buffer_add_indexed(output, outbuf);
++  }
+   return true;
+ }
  
 ```
 
 ---
 
-### Incident Patch 2: `884fc894` (2026-11-11)
-**Commit Message**: Fix transaction cleanup in Sequoia reconstructor tests
-commit_hash:a6992634534551a2c2995ee2ab7e59ba8b985323
+### Incident Patch 2: `b0300142` (2026-11-13)
+**Commit Message**: Take the arm64 Linux tick rate from CNTFRQ_EL0
 
-**File**: `yt/yt/tests/integration/sequoia/test_sequoia_reconstructor.py` (modified, +2/-2)
+On arm64 Linux, cpu_clock fell back to NHPTimer, which estimates the tick rate by sleeping 9 x 5 ms, and on some hosts this estimate is systematically off. CPU instants are recalibrated against TInstant::Now once per 1B ticks: a fraction of a second with an x86-64 TSC, but tens of seconds with the tens-of-MHz generic timers common on arm64. Between recalibrations GetInstant drifts away from the wall clock, so code that mixes the two clocks sees short waits expire at once, and the process wakes up many times more often than on x86-64.
+
+Now the tick rate is taken from CNTFRQ_EL0, the frequency of the generic timer virtual counter that GetCpuInstant reads on arm64, if it lies within [1 MHz, 2 GHz]; otherwise NHPTimer remains the fallback. This also saves the ~45 ms NHPTimer spends on calibration at startup.
+commit_hash:b9446571a8e288fef7d0a42b043faae6080c6f8a
+
+**File**: `library/cpp/yt/cpu_clock/clock.cpp` (modified, +13/-0)
 ```diff
-@@ -2,7 +2,7 @@
+@@ -222,6 +222,13 @@ std::optional<double> TryMeasureTicksPerSecond()
+     return std::nullopt;
+ }
  
- from yt_commands import (
-     authors, create, create_user, make_ace, remove, write_table,
--    start_transaction, abort_transaction, abort_all_transactions,
-+    start_transaction, abort_transaction, abort_all_user_transactions,
-     commit_transaction, get, lock, link, set)
- 
- from sequoia_reconstructor import check_single_cell_sequoia_reconstructor
-@@ -35,7 +35,7 @@ def cypress_root(self):
-         path = "//cypress"
-         create("map_node", path, attributes={"account": "tmp"})
-         yield path
--        abort_all_transactions()
-+        abort_all_user_transactions()
-         remove(path, recursive=True)
- 
-     @authors("grphil")
-```
-
----
-
-### Incident Patch 3: `49906e19` (2026-11-11)
-**Commit Message**: YQL-21692 prebuilt embedded
-
-#### Execute YQL jobs through the prebuilt embedded ABI ✎
-
-- A new set of C ABI functions exposes job descriptors (Calc, InferSchema, User) and a `Run` entry point so that YQL jobs can be executed inside a prebuilt embedded library. Job descriptors are available before factory construction.
-- When the library is used as a prebuilt binary, proxy job classes are auto-registered in the host job registry; when source-linked, the existing native registrations are detected and no proxies are added.
-- Errors propagate across the ABI boundary with their original type preserved: `TSystemError` status codes (including zero) are surfaced through a dedicated accessor, while other exceptions are returned as generic error strings.
-- YT runtime initialization now checks whether the process is already dispatched as a YT job (via the `YT_JOB_ID` environment variable) and skips re-dispatch in that case.
-- Prebuilt embedded ABI resource IDs are now set for default and RelWithDebInfo builds.
-
-<a href="https://nda.ya.ru/t/qa0kX64r7DqvtN"><font size="2">Autodescription by Yandex Code Assistant</font></a>
-commit_hash:631450ac25037a2101604bfe3591f4d3ed670768
-
-**File**: `yql/essentials/udfs/common/python/python_udf/python_udf.cpp` (modified, +5/-3)
-```diff
-@@ -82,9 +82,11 @@ class TPythonModule: public IUdfModule {
-         }
++#elif defined(_arm64_) && defined(_linux_)
++
++bool IsSaneTicksPerSecond(double ticksPerSecond)
++{
++    return ticksPerSecond >= 1e6 && ticksPerSecond <= 2e9;
++}
++
  #endif
  
--        char executableVar[] = "executable"; // PySys_{Get,Set}Object take a non-const char* arg
--        TPyObjectPtr pyExecutableStr = PyRepr(GetExecPath().data());
--        Y_ABORT_UNLESS(PySys_SetObject(executableVar, pyExecutableStr.Get()) >= 0, "Can't set sys.executable");
-+        {
-+            char executableVar[] = "executable"; // PySys_{Get,Set}Object take a non-const char* arg
-+            TPyObjectPtr pyExecutableStr = PyRepr(GetExecPath().data());
-+            Y_ABORT_UNLESS(PySys_SetObject(executableVar, pyExecutableStr.Get()) >= 0, "Can't set sys.executable");
-+        }
+ double ComputeTicksPerSecond()
+@@ -248,6 +255,12 @@ double ComputeTicksPerSecond()
+     if (auto ticksPerSecond = TryMeasureTicksPerSecond()) {
+         return *ticksPerSecond;
+     }
++#elif defined(_arm64_) && defined(_linux_)
++    ui64 frequency;
++    __asm__ __volatile__("mrs %0, cntfrq_el0" : "=r"(frequency));
++    if (IsSaneTicksPerSecond(frequency)) {
++        return static_cast<double>(frequency);
++    }
+ #endif
+     return NHPTimer::GetCyclesPerSecond();
+ }
+```
+
+**File**: `library/cpp/yt/cpu_clock/unittests/clock_ut.cpp` (modified, +10/-0)
+```diff
+@@ -40,6 +40,16 @@ TEST(TTimingTest, DurationVSCpuDuration)
+     EXPECT_LE(DiffMS(duration1, duration2), 10);
+ }
  
-         if (Standalone_) {
-             PyEval_InitThreads();
++#if defined(_arm64_) && defined(_linux_)
++TEST(TTimingTest, TicksPerSecondFromCntfrq)
++{
++    ui64 frequency;
++    __asm__ __volatile__("mrs %0, cntfrq_el0" : "=r"(frequency));
++    ASSERT_NE(frequency, 0u);
++    EXPECT_NEAR(DurationToCpuDuration(TDuration::Seconds(1)), static_cast<TCpuDuration>(frequency), 1);
++}
++#endif
++
+ ////////////////////////////////////////////////////////////////////////////////
+ 
+ } // namespace
+```
+
+---
+
+### Incident Patch 3: `c60ba9f3` (2026-11-13)
+**Commit Message**: Fix fiber introspection locking
+commit_hash:f16b78d6a55c6914affcdc01c61aff95775eeefd
+
+**File**: `yt/yt/core/concurrency/fiber.cpp` (modified, +10/-6)
+```diff
+@@ -334,7 +334,7 @@ std::optional<TDuration> TFiberIntrospectionBase::SetRunning()
+     auto observed = GetState();
+     std::optional<NProfiling::TWallTimer> lockedTimer;
+ 
+-    do {
++    while (true) {
+         // NB(arkady-e1ppa): We expect SetRunning to have
+         // either SetIdle, SetWaiting or Ctor in HB relation to this call.
+         // If we have SetIdle in HB relation then we must
+@@ -356,11 +356,15 @@ std::optional<TDuration> TFiberIntrospectionBase::SetRunning()
+             continue;
+         }
+         // TryAcquire lock.
+-    } while (!State_.compare_exchange_weak(
+-        observed,
+-        EFiberState::Running,
+-        std::memory_order::acquire,
+-        std::memory_order::relaxed));
++        if (State_.compare_exchange_weak(
++            observed,
++            EFiberState::Running,
++            std::memory_order::acquire,
++            std::memory_order::relaxed))
++        {
++            break;
++        }
++    }
+ 
+     return lockedTimer.has_value()
+         ? std::optional(lockedTimer->GetElapsedTime())
+```
+
+**File**: `yt/yt/core/concurrency/unittests/CMakeLists.darwin-arm64.txt` (modified, +1/-0)
+```diff
+@@ -67,6 +67,7 @@ target_sources(unittester-core-concurrency PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_share_thread_pool_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_manager_ut.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fls_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/hazard_ptr_reclaim_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/invoker_alarm_ut.cpp
+```
+
+**File**: `yt/yt/core/concurrency/unittests/CMakeLists.darwin-x86_64.txt` (modified, +1/-0)
+```diff
+@@ -68,6 +68,7 @@ target_sources(unittester-core-concurrency PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_share_thread_pool_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_manager_ut.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fls_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/hazard_ptr_reclaim_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/invoker_alarm_ut.cpp
+```
+
+**File**: `yt/yt/core/concurrency/unittests/CMakeLists.linux-aarch64.txt` (modified, +1/-0)
+```diff
+@@ -73,6 +73,7 @@ target_sources(unittester-core-concurrency PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_share_thread_pool_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_manager_ut.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fls_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/hazard_ptr_reclaim_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/invoker_alarm_ut.cpp
+```
+
+**File**: `yt/yt/core/concurrency/unittests/CMakeLists.linux-x86_64.txt` (modified, +1/-0)
+```diff
+@@ -75,6 +75,7 @@ target_sources(unittester-core-concurrency PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_share_thread_pool_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_manager_ut.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fls_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/hazard_ptr_reclaim_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/invoker_alarm_ut.cpp
+```
+
+**File**: `yt/yt/core/concurrency/unittests/CMakeLists.windows-x86_64.txt` (modified, +1/-0)
+```diff
+@@ -50,6 +50,7 @@ target_sources(unittester-core-concurrency PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_share_thread_pool_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_manager_ut.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fls_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/hazard_ptr_reclaim_ut.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/invoker_alarm_ut.cpp
+```
+
+**File**: `yt/yt/core/concurrency/unittests/fiber_ut.cpp` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++#include <yt/yt/core/test_framework/framework.h>
++
++#include <yt/yt/core/concurrency/fiber.h>
++
++#include <yt/yt/core/misc/finally.h>
++
++#include <library/cpp/yt/system/event_count.h>
++
++#include <thread>
++
++namespace NYT::NConcurrency {
++namespace {
++
++////////////////////////////////////////////////////////////////////////////////
++
++TEST(TFiberTest, SetRunningTransitions)
++{
++    auto* fiber = TFiber::CreateFiber();
++    fiber->SetRunning();
++    auto releaseFiber = Finally([&] {
++        TFiber::ReleaseFiber(fiber);
++    });
++
++    auto noop = [] { };
++    EFiberState state;
++    EXPECT_FALSE(fiber->TryLockForIntrospection(&state, noop));
++    EXPECT_EQ(EFiberState::Running, state);
++
++    fiber->SetIdle();
++    fiber->SetRunning();
++    EXPECT_FALSE(fiber->TryLockForIntrospection(&state, noop));
++    EXPECT_EQ(EFiberState::Running, state);
++
++    fiber->SetWaiting();
++    EXPECT_TRUE(fiber->TryLockForIntrospection(&state, noop));
++    fiber->SetRunning();
++    EXPECT_FALSE(fiber->TryLockForIntrospection(&state, noop));
++    EXPECT_EQ(EFiberState::Running, state);
++}
++
++TEST(TFiberTest, SetRunningWaitsForIntrospection)
++{
++    auto* fiber = TFiber::CreateFiber();
++    fiber->SetRunning();
++    auto releaseFiber = Finally([&] {
++        TFiber::ReleaseFiber(fiber);
++    });
++    fiber->SetWaiting();
++
++    TEvent started;
++    TEvent resumed;
++    std::thread scheduler;
++    auto noop = [] { };
++    EFiberState state;
++    auto introspect = [&] {
++        scheduler = std::thread([&] {
++            started.NotifyAll();
++            fiber->SetRunning();
++            resumed.NotifyAll();
++        });
++        started.Wait();
++        EXPECT_FALSE(resumed.Wait(TDuration::MilliSeconds(200)));
++
++        EFiberState lockedState;
++        EXPECT_FALSE(fiber->TryLockForIntrospection(&lockedState, noop));
++        EXPECT_EQ(EFiberState::Introspecting, lockedState);
++    };
++    EXPECT_TRUE(fiber->TryLockForIntrospection(&state, introspect));
++
++    scheduler.join();
++    EXPECT_FALSE(fiber->TryLockForIntrospection(&state, noop));
++    EXPECT_EQ(EFiberState::Running, state);
++}
++
++////////////////////////////////////////////////////////////////////////////////
++
++} // namespace
++} // namespace NYT::NConcurrency
+```
+
+**File**: `yt/yt/core/concurrency/unittests/ya.make` (modified, +1/-0)
+```diff
+@@ -22,6 +22,7 @@ SRCS(
+     fair_share_thread_pool_ut.cpp
+     fair_throttler_ut.cpp
+     fiber_manager_ut.cpp
++    fiber_ut.cpp
+     fls_ut.cpp
+     hazard_ptr_reclaim_ut.cpp
+     invoker_alarm_ut.cpp
 ```
 
 #### Recent Merged Pull Requests:
@@ -1358,37 +1604,70 @@ commit_hash:631450ac25037a2101604bfe3591f4d3ed670768
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-30385: Fix lease timeout assertions and force transaction cleanup
+## X. contrib/libs/grpc: zstd decompressor spins forever on an empty trailing slice
 
 **RULE**:
-When implementing operations in `yt/yt/tests/integration/dynamic_tables/test_dynamic_tables_leases.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `contrib/libs/grpc/src/core/lib/compression/message_compress.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `df0b544e`: YT-30385: Fix lease timeout assertions and force transaction cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `54d901da`: contrib/libs/grpc: zstd decompressor spins forever on an empty trailing slice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/tests/integration/dynamic_tables/test_dynamic_tables_leases.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `contrib/libs/grpc/src/core/lib/compression/message_compress.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-import yt_error_codes
-
-    # Failed assertions can leave deliberately held lease references blocking cleanup.
-    FORCE_ABORT_TRANSACTIONS_ON_CLEANUP = True
-
-            with raises_yt_error() as error:
-            assert error[0].contains_code(yt_error_codes.Timeout) or error[0].contains_code(
-                yt_error_codes.RequestQueueSizeLimitExceeded)
-        with raises_yt_error(code=yt_error_codes.Timeout):
+  static std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> CreateContext(size_t input_length) {
+    std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> context(
+    if (context) {
+      // Content size goes into the frame header; zstd sizes the window to it.
+      size_t rc = ZSTD_CCtx_setPledgedSrcSize(context.get(), input_length);
+      if (ZSTD_isError(rc)) context.reset();
+    }
+    return context;
+  static std::unique_ptr<ZSTD_DCtx, decltype(&ZSTD_freeDCtx)> CreateContext(size_t /* input_length */) {
+  const auto context_ptr = Traits::CreateContext(input->length);
+  // ZSTD_e_end goes with the last non-empty slice. Empty slices are skipped:
+  // zstd given no input only asks for more, which looped forever.
+  size_t last = input->count;
+  for (size_t i = input->count; i-- > 0;) {
+    if (GRPC_SLICE_LENGTH(input->slices[i]) != 0) {
+      last = i;
+      break;
+    }
+  }
+  grpc_slice outbuf = GRPC_SLICE_MALLOC(OUTPUT_BLOCK_SIZE);
+  ZSTD_outBuffer zstd_output;
+  zstd_output.dst = GRPC_SLICE_START_PTR(outbuf);
+  zstd_output.size = GRPC_SLICE_LENGTH(outbuf);
+  zstd_output.pos = 0;
+  size_t process_result = 0;  // Do not fail on an empty input.
+    const bool is_last_chunk = (i =
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-            with raises_yt_error("Request timed out|Request queue size limit exceeded"):
-        with raises_yt_error("Request timed out"):
+  static std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> CreateContext() {
+    return std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)>(
+  static std::unique_ptr<ZSTD_DCtx, decltype(&ZSTD_freeDCtx)> CreateContext() {
+  const auto context_ptr = Traits::CreateContext();
+    const bool is_last_chunk = (i == input->count - 1);
+    bool should_continue = true;
+    while (should_continue) {
+      grpc_slice outbuf = GRPC_SLICE_MALLOC(OUTPUT_BLOCK_SIZE);
+      ZSTD_outBuffer zstd_output;
+      zstd_output.dst = GRPC_SLICE_START_PTR(outbuf);
+      zstd_output.size = GRPC_SLICE_LENGTH(outbuf);
+      zstd_output.pos = 0;
+      size_t const process_result = Traits::ProcessPart(context_ptr.get(), &zstd_output, &zstd_input, is_last_chunk);
+      const auto out_data_left = zstd_output.size - zstd_output.pos;
+      outbuf.data.refcounted.length -= out_data_left;
+      grpc_slice_buffer_add_indexed(output, outbuf);
+
+      should_continue = is_last_chunk ? (process_result != 0) : (zstd_input.pos != zstd_input.size);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `df0b544e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `54d901da` are properly handled with clean fallback behavior.
