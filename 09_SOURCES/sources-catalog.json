@@ -365,8 +365,8 @@
     "sourceUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
     "sourceVersion": "hf-viggle-qwen-image-2.1-viggle-turbo",
     "license": "Open-Source",
-    "contentHash": "911cb94cd8452cba318b70a9c3af2200450e0d387d20682794d0d067a365e741",
-    "lastHarvestedAt": "2026-11-13T14:17:21.432Z",
+    "contentHash": "f0ce52b240c556969f15a941b4659b564c9d25c3e31b96b56b72a9598dcb9db4",
+    "lastHarvestedAt": "2026-11-13T14:55:30.235Z",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
@@ -3345,8 +3345,8 @@
     "sourceUrl": "https://github.com/cilium/cilium",
     "sourceVersion": "294cd0ad",
     "license": "Apache-2.0",
-    "contentHash": "098662001841d4e02e7db9f7273c0ac6b87ae6e4c14f9c1806d9bc4e44d90e9c",
-    "lastHarvestedAt": "2026-11-13T14:17:45.981Z",
+    "contentHash": "672c544da25fb14dacee9785aee406d6cbb28a0ce7f2be90dbb333b587aa7dfd",
+    "lastHarvestedAt": "2026-11-13T14:55:43.741Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

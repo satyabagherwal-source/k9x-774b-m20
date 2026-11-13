@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:47:07.010Z",
+  "timestamp": "2026-11-13T14:55:47.872Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-zvec-ai-zvec-grep-learnings",
+  "learning_id": "LEARN-EVO-zvec-ai-zvec-grep-learnings",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zvec-ai-zvec-grep-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:47:07.010Z`  
-> **Learning ID**: `LEARN-REEXTRACT-zvec-ai-zvec-grep-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T14:55:47.872Z`  
+> **Learning ID**: `LEARN-EVO-zvec-ai-zvec-grep-learnings`
 
 
 ## 1. Agent Role & Persona Contract
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `e06ff066`  
+> **Source Version**: `08120405`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T02:31:48.579Z  
+> **Timestamp**: 2026-11-12T22:40:51.153Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T02:31:37.295Z  
+> **Harvest Timestamp**: 2026-11-12T22:40:50.912Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4298 stars
+- **Stars / Engagement**: 4309 stars
 
 ---
 
@@ -1123,11 +1123,11 @@ def render_report(report: dict[str, Any]) -> str:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #297** (2026-11-06): **[Bug]: installation error: npm error Failed to detect CUDA version from `nvcc --version`: Unsupported CUDA version: 13**
-  *Symptoms*: ### Description  ``` server@jyz1:~$ npm install -g @zvec/zvec-grep npm warn deprecated boolean@3.2.0: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info. npm error code 1 npm error path /home/server/.nvm/versions/node/v24.19.0/lib/node_modules/@zvec/zvec-grep/node_modules/onnxruntime-node npm error command failed npm error command sh -c node ./script/install npm error Downloading "undefined"... npm error Failed to detect CUDA version from `nvcc --version`: Unsupported CUDA version: 13 npm error node:events:487 npm error       throw er; // Unhandled 'error' event npm error       ^ npm error npm error Error: connect ECONNREFUSED 127.0.0.1:443 npm error     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1864:16) npm error Emitted 'error' event on ClientRequest instance at: npm error     at emitErrorEvent (node:_http_client:112:11) npm error     at TLSSocket.socketErrorListener (node:_http_client:745:5) npm error     at TLSSocket.emit (node:events:509:28) npm error     at TLSSocket.emit (node:domain:489:12) npm error     at emitErrorNT (node:internal/streams/destroy:170:8) npm error     at emitErrorCloseNT (node:internal/streams/destroy:129:3) npm error     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) { npm error   errno: -111, npm error   code: 'ECONNREFUSED', npm error   syscall: 'connect', npm error   address: '127.0.0.1', npm error   port: 443 npm error } npm error npm error Node.js v24.19.0 
+- **Issue #397** (2026-11-12): **[Bug]: Strict rustdoc build fails on private links in GraphEdgeKind**
+  *Symptoms*: ### Description  `zg-engine` fails to build its public API documentation when rustdoc warnings are treated as errors. The public `GraphEdgeKind` docs link to `PendingRef` and `FileEdge`, which are both `pub(crate)` and omitted from the public docs.  Source: [`domain/graph.rs:28`](https://github.com/zvec-ai/zvec-grep/blob/074dc96967480ce7353b5cb8d8961a6d8d3c66bc/rust/crates/zg-engine/src/domain/graph.rs#L28).  ### Steps to Reproduce  From the repository root:  ```sh cd rust RUSTDOCFLAGS='-D warnings' cargo doc -p zg-engine --no-deps ```  **Actual:** Rustdoc reports `private_intra_doc_links`, and the strict build exits with an error.  **Expected:** The public API docs build without warnings.  ### Suggested Fix  Render `PendingRef` and `FileEdge` as inline code in the comment, preserving the explanation and the types' visibility.  ### Version and Diagnostics  - `zg-engine` 0.3.0, built from source - Rust 1.98.0 on macOS 15.7.5 (Apple Silicon) - Affected area: Rust API documentation
 
-- **Issue #177** (2026-09-21): **[Bug]: Rust zg rejects zero vectors accepted by zvec, failing whole-file indexing**
-  *Symptoms*: ## Description  The Rust indexer fails an entire file when one `local/potion-code-16m-v2` fragment contains no recognized tokens. Model2Vec returns an all-zero embedding for that fragment, and Rust storage rejects it for the cosine index. In the same corpus, the published Node.js package (`@zvec/zvec-grep@0.2.1`) indexed the file successfully but persisted that zero vector. This is a difference in storage validation, not evidence that Node.js produced a usable embedding.  ## Reproduction  1. Build the Rust package from [`3e16b18`](https://github.com/Cuiyus/zvec-grep/commit/3e16b1861ad8f8529fe4e70268448217f37d0a6d), or use the `package-retrieval-candidate` artifact from [fork CI run 35558324124](https://github.com/Cuiyus/zvec-grep/actions/runs/35558324124). 2. Check out `matplotlib/matplotlib` at `a5e1f6086e92d5cc0a23f85685d03d85b89a8395`. 3. Index it on Linux x86_64 with `zg index <absolute-repository-root> --mode direct --embedding local/potion-code-16m-v2 --device cpu --debug`, using the run's frozen code-extension selection (which includes `.eps`) and 1 MB file-size limit.  Rust reports:  ```text Failed: lib/matplotlib/tests/baseline_images/test_axes/pcolormesh_small.eps: commit: cosine vectors must have a non-zero norm Files: scanned=1223 added=1223 modified=0 deleted=0 unchanged=0 failed=1 ```  `zg status --check-ready` subsequently rejects the index. The separate `zg index` exit-status/`ready` contradiction is tracked in #175.  ## Root-cause evidence  - The `.eps` file 
+- **Issue #382** (2026-11-10): **[Bug]: --preview full returns only the matched fragment for chunked Markdown/code entities**
+  *Symptoms*: ### Description  When an indexed Markdown/code entity is split into retrieval fragments, `--preview full` can display only the matched fragment, even though the result header identifies the complete entity.  The expected behavior is to show the entire matched **entity**, regardless of its internal fragment boundaries. This does not mean returning the entire file.  ### Steps to Reproduce  Observed in a local indexed Markdown workspace containing `katoann.md`, using `local/all-minilm-l6-v2`:  ```sh zg "How does KatoANN reduce memory traffic?" -t markdown --preview full --limit 1 --mode direct --refresh off ```  The result header is:  ```text #1 katoann.md:17-47 heading: 1 INTRODUCTION heading_level: 1 ```  However, the source body contains only lines **21–26**. Lines 17–20 and 27–47 from the same stored entity are absent. There is no error.  The reproduction requires an entity whose selected retrieval fragment covers only part of its content. An entity represented by a `Range::Full` fragment does not expose this issue. The concrete runtime reproduction above is Markdown; code entities share the same affected branch.  ### Expected Behavior  - `--preview full` returns all of the matched entity's stored content; in the observed case, lines **17–47**. - Fragment coordinates remain available as match evidence or a preview anchor, but do not cap the content available to full preview. - `none` and `short` remain bounded presentation modes. Their output should be selected by preview ru
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1144,1091 +1144,1113 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e06ff066` (2026-11-09)
-**Commit Message**: fix(models): add download User-Agent and IPv4 fallback (#370)
+### Incident Patch 1: `bc175f00` (2026-11-12)
+**Commit Message**: fix(engine): restore text fallback for unknown file extensions (#394)
 
-* fix(models): add download user agent and IPv4 fallback
+Restore default text indexing for readable files outside the format catalog so upgrades and rebuilds no longer silently omit them. Preserve bounded content checks, extensionless shebang detection, and filename-based filters, with regression coverage for indexing and retrieval.
 
-Refs #219.
-
-* test(models): verify Hugging Face and ModelScope independently
-
-* test(models): verify every local model against both download sources
-
-* test(models): buffer mock HTTP responses before writing sockets
-
----------
-
-Co-authored-by: BigBob <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/rust-ci.yml` (modified, +49/-0)
+**File**: `rust/crates/zg-engine/src/domain/source/format.rs` (modified, +2/-6)
 ```diff
-@@ -531,6 +531,55 @@ jobs:
-           assert len(binaries) == 1, f"Expected one zg-engine test executable: {binaries}"
-           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-               output.write(f"path={binaries[0]}\n")
-+      - name: Verify every local model from both live sources independently
-+        if: ${{ !matrix.cuda && matrix.platform == 'linux' }}
-+        shell: python
-+        env:
-+          MODEL_TEST_BINARY: ${{ steps.model-test.outputs.path }}
-+        run: |
-+          import json, os, pathlib, re, subprocess
-+          # Each suite downloads every local catalog model into its own fresh
-+          # temporary cache using only the suite's selected source.
-+          # Reuse the CPU test executable; no inference or extra build is needed.
-+          logs = pathlib.Path("model-logs")
-+          logs.mkdir(exist_ok=True)
-+          log_path = logs / "live-sources.log"
-+          try:
-+              with log_path.open("w", encoding="utf-8") as log:
-+                  subprocess.run([os.environ["MODEL_TEST_BINARY"],
-+                      "models::artifacts::downloader::tests::live_sources::",
-+                      "--ignored", "--nocapture", "--test-threads=1"],
-+                      stdout=log, stderr=subprocess.STDOUT, timeout=3600, check=True)
-+              output = log_path.read_text(encoding="utf-8", errors="replace")
-+              if not re.search(r"test result: ok\. 2 passed; 0 failed; 0 ignored;", output):
-+                  raise RuntimeError("Expected exactly two passing live-source suites, with none skipped")
-+              catalogs, results = {}, {}
-+              for kind, payload in re.findall(r"LIVE_SOURCE_(CATALOG|RESULT)=(\{[^\n]+\})", output):
-+                  record = json.loads(payload)
-+                  source = record["source"]
-+                  if kind == "CATALOG":
-+                      if source in catalogs:
-+                          raise RuntimeError(f"Duplicate live-source catalog: {source}")
-+                      models = record["models"]
-+                      if not models or len(models) != len(set(models)):
-+                          raise RuntimeError(f"Empty or duplicate local model catalog: {source}")
-+                      catalogs[source] = set(models)
-+                  else:
-+                      case = (source, record["model"])
-+                      if case in results or record["status"] != "passed":
-+                          raise RuntimeError(f"Duplicate or unsuccessful live-source case: {record}")
-+                      results[case] = record
-+              if set(catalogs) != {"huggingface", "modelscope"}:
-+                  raise RuntimeError(f"Missing or unexpected live-source catalogs: {catalogs}")
-+              if catalogs["huggingface"] != catalogs["modelscope"]:
-+                  raise RuntimeError("Live-source suites must cover the same complete local catalog")
-+              expected = {(source, model) for source, models in catalogs.items() for model in models}
-+              if set(results) != expected:
-+                  raise RuntimeError(f"Live-source coverage mismatch: missing={expected - set(results)}, "
-+                                     f"unexpected={set(results) - expected}")
-+              print(f"Verified {len(results)} model/source cases across {len(catalogs['huggingface'])} local models")
-+          finally:
-+              print(log_path.read_text(encoding="utf-8", errors="replace"), flush=True)
-       - name: Verify real models using the existing test binary
-         if: ${{ !matrix.cuda || runner.os != 'Linux' }}
-         shell: python
-```
-
-**File**: `rust/Cargo.lock` (modified, +4/-0)
-```diff
-@@ -4618,7 +4618,10 @@ dependencies = [
-  "grep",
-  "half",
-  "hex",
-+ "http",
-  "httpdate",
-+ "hyper",
-+ "hyper-util",
-  "ignore",
-  "llama-cpp-2",
-  "ort",
-@@ -4636,6 +4639,7 @@ dependencies = [
-  "tokenizers",
-  "tokio",
-  "tokio-util",
-+ "tower-service",
-  "tracing",
-  "tracing-subscriber",
-  "tree-sitter",
-```
-
-**File**: `rust/README.md` (modified, +40/-0)
-```diff
-@@ -181,6 +181,46 @@ dropped, and native model destruction runs outside the cache lock.
- surfaces model downloads through `IndexProgress::embedding`. The reporter is
- runtime-only and is omitted from serialized daemon requests.
+@@ -94,7 +94,7 @@ impl FileFormat {
+         formats
+     }
  
-+Model artifact downloads send a `zvec-grep/<version>` User-Agent, including after
-+CDN redirects. A transient connection failure or header/read timeout retries the
-+same artifact once over IPv4 before trying the next source (Hugging Face, then
-+ModelScope). Failed partial files are discarded and the retry is cancellable.
-+HTTP status errors, certificate errors, and integrity failures do not trigger an
-+IPv4 retry. Proxy settings remain in effect; with a proxy, the IPv4 constraint
-+applies to the connection to the proxy, which may resolve the destination itself.
-+
-+The two live-source download suites are ignored by ordinary `cargo test` runs.
-+Run both explicitly from `rust/`:
-+
-+```sh
-+cargo test --locked -p zg-engine --lib models::artifacts::downloader::tests::live_sources:: -- --ignored --nocapture --test-threads=1
-+```
-+
-+Each suite dynamically enumerates every local catalog model and fully downloads
-+its pinned artifacts from the selected source (Hugging Face or ModelScope), using
-+a fresh temporary cache for every model/source pair and verifying artifact
-+integrity. Remote API models are excluded. The current catalog has 11 local
-+models and 34 artifacts, requiring about 2.48 GB per source (4.96 GB combined).
-+The suites require live network access, never fall back to the other source, and
-+do not run inference. They emit a catalog manifest and a JSON result for every
-+model/source pair. The normal Linux CPU CI job runs both suites using its existing
-+test binary, allows up to one hour, and requires passing results for every
-+model/source pair in both catalog manifests; CUDA and Windows-only manual runs
-+skip this gate.
-+
-+To recheck one model from one source after a failure, set
-+`ZVEC_GREP_TEST_DOWNLOAD_MODEL` to its local catalog reference and select the exact
-+source suite, for example:
-+
-+```sh
-+ZVEC_GREP_TEST_DOWNLOAD_MODEL=local/potion-multilingual-128m cargo test --locked -p zg-engine --lib models::artifacts::downloader::tests::live_sources::downloads_all_local_models_from_hugging_face -- --ignored --exact --nocapture
-+```
-+
-+An unknown model reference fails the test. Without this variable, both suites
-+cover the full local catalog. Filtered runs still emit the complete catalog
-+manifest, so CI rejects partial coverage and continues to require every
-+model/source pair.
-+
- The daemon enables an index read-session cache with a 60-second idle timeout.
- Sequential and concurrent queries reuse the same generation's native storage
- handles. Each request still reads current workspace metadata and resolves its
-```
-
-**File**: `rust/crates/zg-engine/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -30,8 +30,11 @@ globset.workspace = true
- grep.workspace = true
- half = "2.7.1"
- hex = "0.4.3"
-+http.workspace = true
- ignore.workspace = true
- httpdate = "1.0.3"
-+hyper.workspace = true
-+hyper-util = { workspace = true, features = ["client-legacy", "client-proxy"] }
- llama-cpp-2.workspace = true
- # Use the same pinned official runtime in Cargo tests and every native package.
- # API selection does not select the download version; build.rs owns that pin.
-@@ -49,6 +52,7 @@ thiserror.workspace = true
- tokio = { workspace = true, features = ["fs", "io-util", "macros", "process", "rt", "sync", "time"] }
- tokio-util = { workspace = true, features = ["rt"] }
- tokenizers = { version = "0.23.1", default-features = false, features = ["fancy-regex"] }
-+tower-service = "0.3.3"
- tracing.workspace = true
- tree-sitter.workspace = true
- tree-sitter-c.workspace = true
-```
-
-**File**: `rust/crates/zg-engine/src/models/artifacts/downloader.rs` (modified, +35/-16)
-```diff
-@@ -23,7 +23,8 @@ use super::identity::{CompleteFileStamp, complete_file_stamp, complete_file_stam
- use super::manifest::has_valid_complete_marker;
- use super::{
-     cache_lock::CacheLock,
--    error::{ArtifactDownloadError, FailureKind, filesystem_error},
-+    error::{ArtifactDownloadError, FailureKind, filesystem_error, network_error},
-+    http_client::ArtifactHttpClient,
-     identity::inspect_file_identity,
-     manifest::{
-         Manifest, validate_artifact, validate_snapshot, write_complete_marker,
-@@ -52,7 +53,7 @@ pub(crate) struct ResolvedArtifacts {
- }
- 
- pub(crate) async fn resolve_model_artifacts(
--    client: &reqwest::Client,
-+    client: &ArtifactHttpClient,
-     mut request: ResolveArtifacts<'_>,
- ) -> Result<ResolvedArtifacts, ModelError> {
-     validate_request(&request).map_err(ArtifactDownloadError::into_model_error)?;
-@@ -197,7 +198,7 @@ fn resolved_result(
- }
- 
- async fn download_source_snapshot(
--    client: &reqwest::Client,
-+    client: &ArtifactHttpClient,
-     request: &ResolveArtifacts<'_>,
-     source: &ArtifactSource,
-     manifest: &Manifest,
-@@ -224,11 +225,33 @@ async fn download_source_snapshot(
-     write_complete_marker(source, request.artifacts, manifest).await
- }
- 
-+async fn download_artifact(
-+    client: &ArtifactHttpClient,
-+    request: &ResolveArtifacts<'_>,
-+    source: &ArtifactSource,
-+    artifact: &ArtifactConfig,
-+    lock: &CacheLock,
-+) -> Result<(), ArtifactDownloadError> {
-+    match download_artifact_attempt(client.default_client(), request, source, artifact, lock).await
-+    {
-+        Err(first) if first.ipv4_retry_allowed() => {
-+            // A TCP connection can succeed over IPv6 and then fail during TLS or
-+            // transfer. Happy Eyeballs no longer helps at that point. Retry the
-+            // same artifact once over IPv4 before abandoning this source. Each
-+            // attempt owns its partial file, so failed bytes are never reused.
-+            download_artifact_attempt(client.ipv4_client(), request, source, artifact, lock)
-+                .await
-+                .map_err(|error| error.after_ipv4_retry(&first))
-+        }
-+        result => result,
-+    }
-+}
-+
- #[expect(
-     clippy::too_many_lines,
-     reason = "the network stream, integrity check, and fenced publication form one transaction"
- )]
--async fn download_artifact(
-+async fn download_artifact_attempt(
-     client: &reqwest::Client,
-     request: &ResolveArtifacts<'_>,
-     source: &ArtifactSource,
-@@ -275,12 +298,9 @@ async fn download_artifact(
-         .at_artifact(artifact.path)
-     })?
-     .map_err(|error| {
--        ArtifactDownloadError::new(
--            FailureKind::Network,
--            format!("unable to request model artifact: {error}"),
--        )
--        .at_source(source.kind)
--        .at_artifact(artifact.path)
-+        network_error("unable to request model artifact", error)
-+            .at_source(source.kind)
-+            .at_artifact(artifact.path)
-     })?;
-     if !response.status().is_success() {
-         let status = response.status().as_u16();
-@@ -328,12 +348,9 @@ async fn download_artifact(
-         })?;
-         let Some(chunk) = next else { break };
-         let chunk = chunk.map_err(|error| {
--            ArtifactDownloadError::new(
--                FailureKind::Network,
--                format!("model download stream failed: {error}"),
--            )
--            .at_source(source.kind)
--            .at_artifact(artifact.path)
-+            network_error("model download stream failed", error)
-+                .at_source(source.kind)
-+                .at_artifact(artifact.path)
-         })?;
-         file.write_all(&chunk).await.map_err(|error| {
-             filesystem_error(
-@@ -425,8 +442,10 @@ async fn wait_or_cancel<T>(
-     signal: Option<&CancellationToken>,
-     future: impl std::future::Future<Output = T>,
- ) -> Result<T, ArtifactDownloadError> {
-+    check_cancelled(signal)?;
-     if let Some(signal) = signal {
-         tokio::select! {
-+            biased;
-             () = signal.cancelled() => Err(cancelled()),
-             output = future => Ok(output),
+-    /// Trusts catalog matches; probes only unmatched files without a suffix.
++    /// Trusts catalog matches; probes unmatched files for readable text.
+     pub(crate) fn from_path(path: &Path) -> EngineResult<Vec<Self>> {
+         let file_name = path.file_name().ok_or_else(|| {
+             EngineError::invalid_argument(format!(
+@@ -106,10 +106,6 @@ impl FileFormat {
+         if formats != [Self::Unknown] {
+             return Ok(formats);
          }
+-        if path.extension().is_some() {
+-            return Ok(vec![Self::Unknown]);
+-        }
+-
+         let metadata = fs::metadata(path).map_err(|error| {
+             EngineError::from_io(
+                 format!(
+@@ -151,7 +147,7 @@ impl FileFormat {
+         let complete = header.len() <= HEADER_BYTES;
+         header.truncate(HEADER_BYTES);
+         Ok(vec![
+-            sniff::script(&header, complete).unwrap_or(Self::Unknown),
++            sniff::format(&header, complete, path.extension().is_none()).unwrap_or(Self::Unknown),
+         ])
+     }
+ }
 ```
 
-**File**: `rust/crates/zg-engine/src/models/artifacts/downloader/tests.rs` (modified, +66/-28)
+**File**: `rust/crates/zg-engine/src/domain/source/format/sniff.rs` (modified, +8/-4)
 ```diff
-@@ -9,6 +9,10 @@ use std::{
-     time::{Duration, SystemTime, UNIX_EPOCH},
- };
+@@ -2,17 +2,21 @@ use crate::utils::decode_text;
  
-+mod live_sources;
-+mod network;
-+mod proxy;
-+
- use super::*;
- use crate::domain::model::ModelProgress;
- use crate::models::artifacts::ArtifactSourceConfig;
-@@ -57,7 +61,7 @@ async fn resolve(
-     reporter: &ModelDownloadProgressReporter,
- ) -> Result<ResolvedArtifacts, ModelError> {
-     resolve_model_artifacts(
--        &reqwest::Client::new(),
-+        &ArtifactHttpClient::new(),
-         ResolveArtifacts {
-             model: "local/test-model",
-             sources: sources(root, base_url),
-@@ -81,6 +85,14 @@ impl TestServer {
-         handler: impl Fn(usize, String, TcpStream) + Send + Sync + 'static,
-     ) -> Self {
-         let listener = TcpListener::bind("127.0.0.1:0").expect("bind test server");
-+        Self::spawn_on(listener, expected_requests, handler)
+ use super::FileFormat;
+ 
+-/// A suffixless file is indexable only if its readable header names a supported interpreter.
+-pub(super) fn script(bytes: &[u8], complete: bool) -> Option<FileFormat> {
++/// Unknown suffixes use text chunks; only suffixless files can supply interpreter hints.
++pub(super) fn format(bytes: &[u8], complete: bool, extensionless: bool) -> Option<FileFormat> {
+     let text = decode_text(bytes, complete)?;
+-    if text.trim().is_empty()
++    if text.is_empty()
+         || text
+             .chars()
+             .any(|ch| ch.is_control() && !ch.is_whitespace())
+     {
+         return None;
+     }
+-    shebang(&text, complete)
++    if extensionless {
++        Some(shebang(&text, complete).unwrap_or(FileFormat::Text))
++    } else {
++        Some(FileFormat::Text)
 +    }
-+
-+    fn spawn_on(
-+        listener: TcpListener,
-+        expected_requests: usize,
-+        handler: impl Fn(usize, String, TcpStream) + Send + Sync + 'static,
-+    ) -> Self {
-         let address = listener.local_addr().expect("test server address");
-         let requests = Arc::new(AtomicUsize::new(0));
-         let counted = Arc::clone(&requests);
-@@ -92,11 +104,18 @@ impl TestServer {
-                 counted.fetch_add(1, Ordering::SeqCst);
-                 let handler = Arc::clone(&handler);
-                 workers.push(thread::spawn(move || {
--                    let mut line = String::new();
--                    BufReader::new(stream.try_clone().expect("clone request stream"))
--                        .read_line(&mut line)
--                        .expect("read request line");
--                    handler(index, line, stream);
-+                    let mut reader =
-+                        BufReader::new(stream.try_clone().expect("clone request stream"));
-+                    let mut request = String::new();
-+                    loop {
-+                        let mut line = String::new();
-+                        let read = reader.read_line(&mut line).expect("read request headers");
-+                        request.push_str(&line);
-+                        if read == 0 || line == "\r\n" {
-+                            break;
-+                        }
-+                    }
-+                    handler(index, request, stream);
-                 }));
-             }
-             for worker in workers {
-@@ -122,13 +141,15 @@ impl TestServer {
- 
- fn respond(mut stream: TcpStream, status: u16, body: &[u8]) {
-     let reason = if status == 200 { "OK" } else { "Unavailable" };
--    write!(
--        stream,
-+    // Error responses may be rejected as soon as their headers arrive. Queue
-+    // the complete response together before the client can close the socket.
-+    let mut response = format!(
-         "HTTP/1.1 {status} {reason}\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
-         body.len()
-     )
--    .expect("write response headers");
--    stream.write_all(body).expect("write response body");
-+    .into_bytes();
-+    response.extend_from_slice(body);
-+    stream.write_all(&response).expect("write response");
  }
  
- fn partial_files(path: &Path) -> Vec<PathBuf> {
-@@ -168,6 +189,21 @@ fn encodes_source_urls_like_node() {
-     );
- }
- 
-+#[test]
-+fn encodes_modelscope_source_url_with_models_prefix() {
-+    let source = ArtifactSource::model_scope(
-+        ArtifactSourceConfig {
-+            repo: "owner/model's name",
-+            revision: "release/(one)!",
-+        },
-+        PathBuf::from("cache"),
-+    );
-+    assert_eq!(
-+        artifact_url(&source, "onnx/model q4.onnx"),
-+        "https://modelscope.cn/models/owner/model's%20name/resolve/release%2F(one)!/onnx/model%20q4.onnx"
-+    );
-+}
-+
- #[test]
- fn fingerprints_manifests_like_node() {
-     let source = ArtifactSource::hugging_face(HF, PathBuf::from("cache"));
-@@ -355,14 +391,15 @@ async fn unavailable_hugging_face_falls_back_to_modelscope() {
- #[tokio::test]
- async fn interrupted_stream_falls_back_and_removes_partial_file() {
-     let root = tempfile::tempdir().expect("cache root");
--    let server = TestServer::spawn(2, |_index, request, mut stream| {
-+    let server = TestServer::spawn(3, |_index, request, mut stream| {
-         if request.contains("/owner/model/") {
--            write!(
--                stream,
-+            let headers = format!(
-                 "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
-                 BYTES.len()
--            )
--            .expect("write response headers");
-+            );
-+            stream
-+                .write_all(headers.as_bytes())
-+                .expect("write response headers");
-             stream.write_all(&BYTES[..4]).expect("write partial body");
-         } else {
-             respond(stream, 200, BYTES);
-@@ -373,7 +410,7 @@ async fn interrupted_stream_falls_back_and_removes_partial_file() {
-         .await
-         .expect("interrupted stream fallback");
-     assert!(resolved.paths[ARTIFACTS[0].pat
+ fn shebang(text: &str, complete: bool) -> Option<FileFormat> {
 ```
 
-**File**: `rust/crates/zg-engine/src/models/artifacts/downloader/tests/live_sources.rs` (added, +277/-0)
+**File**: `rust/crates/zg-engine/src/domain/source/format/tests.rs` (modified, +50/-38)
 ```diff
-@@ -0,0 +1,277 @@
-+//! Explicit public-network checks for every catalog model with local artifacts.
-+//! Each source downloads ~2.48 GB into fresh per-model temporary caches. Normal
-+//! HTTP/proxy configuration applies; no existing cache or model runtime is needed.
-+
-+use std::{collections::HashSet, panic::AssertUnwindSafe, path::Path, time::Duration};
-+
-+use futures_util::FutureExt;
-+
-+use super::{
-+    ArtifactHttpClient, ArtifactSource, ArtifactSourceKind, Manifest,
-+    ModelDownloadProgressReporter, ResolveArtifacts, async_fs, download_source_snapshot,
-+    has_valid_complete_marker, partial_files, validate_request,
-+};
-+use crate::models::{
-+    artifacts::ArtifactDownloadConfig,
-+    catalog::{EmbeddingCatalogEntry, list_embedding_models},
-+};
-+
-+const DOWNLOAD_TIMEOUT: Duration = Duration::from_mins(10);
-+
-+#[tokio::test]
-+#[ignore = "requires Hugging Face/CDN access; downloads all local models (~2.48 GB)"]
-+async fn downloads_all_local_models_from_hugging_face() {
-+    download_all_local_models_from(ArtifactSourceKind::HuggingFace).await;
-+}
-+
-+#[tokio::test]
-+#[ignore = "requires ModelScope/CDN access; downloads all local models (~2.48 GB)"]
-+async fn downloads_all_local_models_from_model_scope() {
-+    download_all_local_models_from(ArtifactSourceKind::ModelScope).await;
-+}
-+
-+fn local_models() -> Vec<(&'static str, &'static ArtifactDownloadConfig)> {
-+    list_embedding_models()
-+        .into_iter()
-+        .filter_map(|entry| {
-+            let download = match entry {
-+                EmbeddingCatalogEntry::LlamaCpp(config) => config.download,
-+                EmbeddingCatalogEntry::Transformers(config) => config.download,
-+                EmbeddingCatalogEntry::Model2Vec(config) => config.download,
-+                // Qwen API entries have no downloadable local artifacts.
-+                EmbeddingCatalogEntry::Qwen(_) => return None,
-+            };
-+            Some((entry.reference(), download))
-+        })
-+        .collect()
-+}
-+
-+async fn download_all_local_models_from(kind: ArtifactSourceKind) {
-+    let models = local_models();
-+    assert!(!models.is_empty(), "catalog must contain local models");
-+    // Allow an explicit local recheck without downloading already-passing models.
-+    // Keep the emitted catalog complete so CI's coverage check rejects partial runs.
-+    let selected_model = std::env::var("ZVEC_GREP_TEST_DOWNLOAD_MODEL").ok();
-+    if let Some(selected) = &selected_model {
-+        assert!(
-+            models.iter().any(|(model, _)| model == selected),
-+            "unknown local model: {selected}"
+@@ -365,40 +365,52 @@ fn catalog_matches_do_not_probe_content() {
+ }
+ 
+ #[test]
+-fn unmatched_paths_only_detect_shebang_scripts() {
++fn unmatched_paths_detect_readable_text_and_extensionless_shebang_scripts() {
+     let directory = tempdir().expect("temporary directory");
+     let cases: &[(&str, &[u8], FileFormat)] = &[
+         ("image", b"\x89PNG\r\n\x1a\n", Unknown),
+-        ("document", b"%PDF-1.7\n", Unknown),
++        ("document", b"%PDF-1.7\n", Text),
+         (
+             "script",
+             b"#!/usr/bin/env python3\nprint('hello')\n",
+             Python,
+         ),
+-        ("script.custom", b"#!/bin/sh\necho hello\n", Unknown),
++        ("script.custom", b"#!/bin/sh\necho hello\n", Text),
+         (
+             "unsupported-script",
+             b"#!/usr/bin/env awk\nBEGIN {}\n",
+-            Unknown,
++            Text,
+         ),
+-        ("hashbang-text", b"not a script\n#!/bin/sh\n", Unknown),
+-        ("README", b"Plain text without an extension.\n", Unknown),
+-        ("unexpected.custom", b"plain text", Unknown),
+-        ("main.RS", b"fn main() {}\n", Unknown),
++        ("hashbang-text", b"not a script\n#!/bin/sh\n", Text),
++        ("README", b"Plain text without an extension.\n", Text),
++        ("unexpected.custom", b"plain text", Text),
++        (
++            "module.bsl",
++            "Процедура Привет()\nКонецПроцедуры\n".as_bytes(),
++            Text,
++        ),
++        (
++            "bom-module.bsl",
++            "\u{feff}Процедура Привет()\nКонецПроцедуры\n".as_bytes(),
++            Text,
++        ),
++        ("main.RS", b"fn main() {}\n", Text),
+         ("image.RS", b"\x89PNG\r\n\x1a\n", Unknown),
+         (
+             "drawing.EPS",
+             b"%!PS-Adobe-3.0 EPSF-3.0\n%%BoundingBox: 0 0 1 1\n",
+-            Unknown,
++            Text,
+         ),
+-        ("drawing.custom", b"%!PS-Adobe-3.0 EPSF-3.0\n", Unknown),
+-        ("utf16", b"\xff\xfeh\0i\0\n\0", Unknown),
+-        ("encoded", b"-----BEGIN CERTIFICATE-----\nMIIB", Unknown),
++        ("drawing.custom", b"%!PS-Adobe-3.0 EPSF-3.0\n", Text),
++        ("utf16", b"\xff\xfeh\0i\0\n\0", Text),
++        ("encoded", b"-----BEGIN CERTIFICATE-----\nMIIB", Text),
+         ("binary", b"\0\x01\x02\xff", Unknown),
+         ("binary.custom", b"\0\x01\x02\xff", Unknown),
+         ("invalid-utf8", b"otherwise readable\xff", Unknown),
++        ("invalid-utf8.custom", b"otherwise readable\xff", Unknown),
++        ("control.custom", b"otherwise readable\x01", Unknown),
+         ("empty", b"", Unknown),
+-        ("whitespace", b" \t\r\n", Unknown),
++        ("whitespace", b" \t\r\n", Text),
+     ];
+     for &(name, bytes, expected) in cases {
+         let path = directory.path().join(name);
+@@ -431,23 +443,27 @@ fn catalog_ambiguity_does_not_probe_content() {
+ #[test]
+ fn probing_respects_sample_boundaries() {
+     let directory = tempdir().expect("temporary directory");
+-    let path = directory.path().join("script");
+-    let mut bytes = b"#!/bin/sh\n".to_vec();
+-    bytes.resize(HEADER_BYTES - 2, b'a');
+-    bytes.extend_from_slice(b"\xe4\xb8");
+-    assert_eq!(bytes.len(), HEADER_BYTES);
+-    fs::write(&path, &bytes).expect("write incomplete character at EOF");
+-    assert_eq!(
+-        FileFormat::from_path(&path).expect("complete file"),
+-        [Unknown]
+-    );
++    for (name, expected) in [("script", Shell), ("script.custom", Text)] {
++        let path = directory.path().join(name);
++        let mut bytes = b"#!/bin/sh\n".to_vec();
++        bytes.resize(HEADER_BYTES - 2, b'a');
++        bytes.extend_from_slice(b"\xe4\xb8");
++        assert_eq!(bytes.len(), HEADER_BYTES);
++        fs::write(&path, &bytes).expect("write incomplete character at EOF");
++        assert_eq!(
++            FileFormat::from_path(&path).expect("complete file"),
++            [Unknown],
++            "{name}"
++        );
+ 
+-    bytes.extend_from_slice(b"\xad");
+-    fs::write(&path, &bytes).expect("write character spanning the sample boundary");
+-    assert_eq!(
+-        FileFormat::from_path(&path).expect("partial sample"),
+-        [Shell]
+-    );
++        bytes.extend_from_slice(b"\xad");
++        fs::write(&path, &bytes).expect("write character spanning the sample boundary");
++        assert_eq!(
++            FileFormat::from_path(&path).expect("partial sample"),
++            [expected],
++            "{name}"
 +        );
 +    }
-+    println!(
-+        "LIVE_SOURCE_CATALOG={}",
-+        serde_json::json!({
-+            "source": kind.label(),
-+            "models": models.iter().map(|(model, _)| *model).collect::<Vec<_>>(),
-+        })
-+    );
-+    let mut failures = Vec::new();
-+    for (model, download) in models {
-+        if selected_model
-+            .as_ref()
-+            .is_some_and(|selected| selected != model)
-+        {
-+            continue;
-+        }
-+        // Isolate failures, including panics, so every catalog entry is attempted.
-+        let result = AssertUnwindSafe(tokio::time::timeout(
-+            DOWNLOAD_TIMEOUT,
-+            download_local_model_from(model, download, kind),
-+        ))
-+        .catch_unwind()
-+        .await;
-+        let result = match result {
-+            Ok(Ok(result)) => result,
-+            Ok(Err(_)) => Err("download and verification exceeded 10 minutes".to_owned()),
-+            Err(_) => Err("live download check panicked".to_owned()),
-+        };
-+        let mut record = serde_json::json!({
-+            "model": model,
-+            "source": kind.label(),
-+            // Manifest totals, including when an incomplete download fails.
-+            "files": download.artifacts.len(),
-+            "bytes": download.artifacts.iter().map(|artifact| artifact.size).sum::<u64>(),
-+            "status": if result.is_ok() { "passed" } else { "failed" },
-+        });
-+        if let Err(error) = result {
-+            failures.push(format!("{model}: {error}"));
-+            record["error"] = error.into();
-+        }
-+        println!("LIVE_SOURCE_RESULT={record}");
-+    }
-+    assert!(
-+        failures.is_empty(),
-+        "{} failed for {} local models:\n{}",
-+        kind.label(),
-+        failures.len(),
-+        failures.join("\n")
-+    );
-+}
-+
-+fn request<'a>(
-+    model: &'static str,
-+    download: &'static ArtifactDownloadConfig,
-+    root: &Path,
-+    reporter: &'a ModelDownloadProgressReporter,
-+) -> ResolveArtifacts<'a> {
-+    ResolveArtifacts {
-+        model,
-+        sources: [
-+            ArtifactSource::hugging_face(download.hugging_face, root.join("huggingface")),
-+            ArtifactSource::model_scope(download.model_scope, root.join("modelscope")),
-+        ],
-+        artifacts: download.artifacts,
-+        reporter,
-+        signal: None,
-+    }
-+}
-+
-+async fn download_local_model_from(
-+    model: &'static str,
-+
-```
-
-**File**: `rust/crates/zg-engine/src/models/artifacts/downloader/tests/network.rs` (added, +283/-0)
-```diff
-@@ -0,0 +1,283 @@
-+use std::{
-+    net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr},
-+    sync::mpsc,
-+};
-+
-+use super::*;
-+use crate::models::artifacts::test_support::ipv6_unavailable;
-+
-+fn assert_user_agent(request: &str) {
-+    let expected = concat!("zvec-grep/", env!("CARGO_PKG_VERSION"));
-+    assert!(request.lines().any(|line| {
-+        line.split_once(':').is_some_and(|(name, value)| {
-+            name.eq_ignore_ascii_case("user-agent") && value.trim() == expected
-+        })
-+    }));
-+}
-+
-+fn respond_partial(stream: &mut TcpStream) {
-+    let headers = format!(
-+        "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
-+        BYTES.len()
-+    );
-+    stream
-+        .write_all(headers.as_bytes())
-+        .expect("write response headers");
-+    stream.write_all(&BYTES[..4]).expect("write partial body");
-+    stream.flush().expect("flush partial body");
-+}
-+
-+#[tokio::test]
-+async fn connection_closed_before_response_headers_retries_same_source() {
-+    let root = tempfile::tempdir().expect("cache root");
-+    let server = TestServer::spawn(2, |index, request, stream| {
-+        assert!(request.contains("/owner/model/resolve/hf-revision/"));
-+        if index == 0 {
-+            stream
-+                .shutdown(std::net::Shutdown::Both)
-+                .expect("close connection before response");
-+        } else {
-+            respond(stream, 200, BYTES);
-+        }
-+    });
-+    let events = Arc::new(Mutex::new(Vec::new()));
-+    let resolved = resolve(root.path(), Some(&server.base_url), &reporter(&events))
-+        .await
-+        .expect("same-source request recovery");
-+
-+    assert_eq!(server.finish(), 2);
-+    assert!(resolved.paths[ARTIFACTS[0].path].starts_with(root.path().join("huggingface")));
-+    assert!(partial_files(root.path()).is_empty());
-+    assert!(!root.path().join("modelscope").exists());
-+}
-+
-+#[tokio::test]
-+async fn interrupted_stream_retries_same_source_and_publishes_only_verified_bytes() {
-+    let root = tempfile::tempdir().expect("cache root");
-+    let server = TestServer::spawn(2, |index, request, mut stream| {
-+        assert!(request.contains("/owner/model/resolve/hf-revision/"));
-+        assert_user_agent(&request);
-+        if index == 0 {
-+            respond_partial(&mut stream);
-+        } else {
-+            respond(stream, 200, BYTES);
-+        }
-+    });
-+    let events = Arc::new(Mutex::new(Vec::new()));
-+    let resolved = resolve(root.path(), Some(&server.base_url), &reporter(&events))
-+        .await
-+        .expect("same-source recovery");
-+
-+    assert_eq!(server.finish(), 2);
-+    let destination = root.path().join("huggingface").join(ARTIFACTS[0].path);
-+    assert_eq!(resolved.paths[ARTIFACTS[0].path], destination);
-+    assert_eq!(async_fs::read(destination).await.expect("artifact"), BYTES);
-+    assert!(partial_files(root.path()).is_empty());
-+    assert!(!root.path().join("modelscope").exists());
-+}
-+
-+#[tokio::test]
-+async fn failed_ipv6_response_retries_over_ipv4_before_switching_sources() {
-+    let root = tempfile::tempdir().expect("cache root");
-+    let ipv4_listener = TcpListener::bind((Ipv4Addr::LOCALHOST, 0)).expect("bind IPv4 server");
-+    let port = ipv4_listener.local_addr().expect("IPv4 address").port();
-+    let ipv6_listener = match TcpListener::bind((Ipv6Addr::LOCALHOST, port)) {
-+        Ok(listener) => listener,
-+        Err(error) if ipv6_unavailable(&error) => {
-+            // Some CI hosts disable IPv6 entirely; the same-source recovery test
-+            // above still exercises the retry and publication contract there.
-+            return;
-+        }
-+        Err(error) => panic!("bind IPv6 server: {error}"),
-+    };
-+    let ipv6 = TestServer::spawn_on(ipv6_listener, 1, |_index, request, mut stream| {
-+        assert!(request.contains("/owner/model/resolve/hf-revision/"));
-+        assert_user_agent(&request);
-+        respond_partial(&mut stream);
-+    });
-+    let ipv4 = TestServer::spawn_on(ipv4_listener, 1, |_index, request, stream| {
-+        assert!(request.contains("/owner/model/resolve/hf-revision/"));
-+        assert_user_agent(&request);
-+        respond(stream, 200, BYTES);
-+    });
-+    let addresses = [
-+        SocketAddr::from((Ipv6Addr::LOCALHOST, port)),
-+        SocketAddr::from((Ipv4Addr::LOCALHOST, port)),
-+    ];
-+    let builder = || {
-+        reqwest::Client::builder()
-+            .no_proxy()
-+            .resolve_to_addrs("artifact.test", &addresses)
-+    };
-+    // Model the failing IPv6 path deterministically; Happy Eyeballs must not
-+    // race it against the healthy IPv4 server during the first attempt.
-+    let client = ArtifactHttpClient::with_builders(
-+        builder().local_address(IpAddr::V6(Ipv6Addr::LOCALHOST)),
-+        builder(),
-+    );
-+    let base_url = format!("http://artifact.test:{port}");
-+    let events = Arc::new(Mutex::new(Vec::new()));
-+    let resolved = resolve_model_artifacts(
-+        &client,
-+        ResolveArtifacts {
-+            mode
-```
-
----
-
-### Incident Patch 2: `6ed52ed1` (2026-11-09)
-**Commit Message**: fix(release): wait for installable npm package metadata (#355)
-
-**File**: `rust/scripts/npm-release-registry.mjs` (modified, +45/-9)
-```diff
-@@ -225,42 +225,78 @@ export async function checkPublishedPackage(entry, registryFetch = fetch, signal
-       `npm registry returned ${response.status} for ${entry.name}@${entry.version}`,
-     );
-   const metadata = await response.json();
-+  verifyPublishedIntegrity(entry, metadata);
-+  return true;
-+}
-+
-+function verifyPublishedIntegrity(entry, metadata) {
-   if (metadata.dist?.integrity !== entry.integrity) {
-     throw new Error(
-       `npm already contains different bytes for ${entry.name}@${entry.version}; choose a new version`,
-     );
-   }
-+}
-+
-+async function checkInstallMetadata(entry, accept, registryFetch, signal) {
-+  // Match npm's package URL, including its escaped scope separator. Version
-+  // metadata and full/abbreviated package documents can propagate independently.
-+  const url = `https://registry.npmjs.org/${entry.name.replace("/", "%2f")}`;
-+  const response = await registryFetch(url, {
-+    headers: { accept },
-+    signal: AbortSignal.any([signal, AbortSignal.timeout(30_000)]),
-+  });
-+  if (response.status === 404) return false;
-+  if (!response.ok) {
-+    throw new Error(`npm registry returned ${response.status} for ${entry.name}@${entry.version} (${accept})`);
-+  }
-+  const document = await response.json();
-+  const metadata = document.versions?.[entry.version];
-+  if (!metadata) return false;
-+  verifyPublishedIntegrity(entry, metadata);
-   return true;
  }
  
- export async function waitForPublishedPackages(packages, {
-   registryFetch = fetch,
--  timeoutMs = 600_000,
-+  timeoutMs = 1_200_000,
-   intervalMs = 10_000,
- } = {}) {
-   const signal = AbortSignal.timeout(timeoutMs);
--  const pending = [...packages];
-+  const pending = packages.map((entry) => ({ entry, checks: [
-+    { label: "version metadata" },
-+    { label: "full package metadata", accept: "application/json" },
-+    { label: "abbreviated package metadata", accept: "application/vnd.npm.install-v1+json" },
-+  ] }));
-+  const missing = () => pending.map(({ entry, checks }) =>
-+    `${entry.name}@${entry.version} (${checks[0].label})`).join(", ");
-   try {
-     // Publication can succeed before every registry replica serves the metadata.
--    // Share one deadline across all packages and retain successful integrity checks.
-+    // Share one deadline across all packages and retain successful integrity checks
-+    // for each document. npm install must be able to resolve optional dependencies.
-     while (pending.length) {
--      for (const entry of [...pending]) {
--        signal.throwIfAborted();
--        if (await checkPublishedPackage(entry, registryFetch, signal)) {
--          pending.splice(pending.indexOf(entry), 1);
-+      for (const state of [...pending]) {
-+        while (state.checks.length) {
-+          signal.throwIfAborted();
-+          const { accept } = state.checks[0];
-+          const ready = accept
-+            ? await checkInstallMetadata(state.entry, accept, registryFetch, signal)
-+            : await checkPublishedPackage(state.entry, registryFetch, signal);
-+          if (!ready) break;
-+          state.checks.shift();
-         }
-+        if (!state.checks.length) pending.splice(pending.indexOf(state), 1);
-       }
-       if (pending.length) {
-         console.log(`Waiting for npm registry metadata (${pending.length} packages): ${
--          pending.map((entry) => `${entry.name}@${entry.version}`).join(", ")
-+          missing()
-         }; retrying in ${intervalMs} ms`);
-         await sleep(intervalMs, undefined, { signal });
-       }
+ #[test]
+@@ -464,10 +480,9 @@ fn invalid_paths_report_errors() {
+         FileFormat::from_path(&directory.path().join("missing.rs")).expect("catalog"),
+         [Rust]
+     );
+-    assert_eq!(
+-        FileFormat::from_path(&directory.path().join("missing.RS")).expect("unknown suffix"),
+-        [Unknown]
+-    );
++    let error = FileFormat::from_path(&directory.path().join("missing.RS"))
++        .expect_err("unknown suffix requires content detection");
++    assert_eq!(error.code(), EngineError::NOT_FOUND);
+ 
+     let child = directory.path().join("directory");
+     fs::create_dir(&child).expect("create dire
+```
+
+**File**: `rust/crates/zg-engine/src/pipelines/indexing/pipeline.rs` (modified, +36/-9)
+```diff
+@@ -4375,7 +4375,7 @@ mod tests {
      }
-   } catch (error) {
-     if (signal.aborted) {
-       throw new Error(`timed out after ${timeoutMs} ms waiting for npm registry metadata; registry candidate is missing: ${
--        pending.map((entry) => `${entry.name}@${entry.version}`).join(", ")
-+        missing()
-       }`, { cause: error });
-     }
-     throw error;
-```
-
-**File**: `rust/scripts/npm-release-registry.test.mjs` (modified, +73/-3)
-```diff
-@@ -121,6 +121,70 @@ test("registry metadata polling aborts an in-flight request at the shared deadli
-   }), /timed out.*registry candidate is missing: @zvec\/zvec-grep@0.0.1/);
- });
  
-+for (const [accept, label] of [
-+  ["application/json", "full package metadata"],
-+  ["application/vnd.npm.install-v1+json", "abbreviated package metadata"],
-+]) {
-+  const metadata = { dist: { integrity: entry.integrity } };
-+  const ready = (url) => ({ ok: true, json: async () => url.endsWith(`/${entry.version}`)
-+    ? metadata : { versions: { [entry.version]: metadata } } });
-+
-+  test(`registry metadata polling retries a missing ${label} without repeating verified documents`, async () => {
-+    const requests = new Map();
-+    await waitForPublishedPackages([entry], {
-+      timeoutMs: 1_000, intervalMs: 0,
-+      registryFetch: async (url, { headers }) => {
-+        const format = headers?.accept ?? "version";
-+        const count = (requests.get(format) ?? 0) + 1;
-+        requests.set(format, count);
-+        if (format !== "version") assert.equal(url, "https://registry.npmjs.org/@zvec%2fzvec-grep");
-+        if (format === accept && count < 3) return { status: 404 };
-+        return ready(url);
-+      },
-+    });
-+    assert.equal(requests.get("version"), 1);
-+    assert.equal(requests.get("application/json"), accept === "application/json" ? 3 : 1);
-+    assert.equal(requests.get("application/vnd.npm.install-v1+json"), accept === "application/json" ? 1 : 3);
-+  });
-+
-+  test(`registry metadata polling rejects corrupt or forbidden ${label} immediately`, async () => {
-+    for (const [response, message] of [
-+      [{ ok: true, json: async () => ({ versions: { [entry.version]: { dist: { integrity: "sha512-wrong" } } } }) }, /different bytes/],
-+      [{ status: 403 }, /registry returned 403/],
-+      [{ status: 503 }, /registry returned 503/],
-+    ]) {
-+      let rejectedRequests = 0;
-+      await assert.rejects(waitForPublishedPackages([entry], {
-+        timeoutMs: 1_000, intervalMs: 0,
-+        registryFetch: async (url, { headers }) => {
-+          if (headers?.accept !== accept) return ready(url);
-+          rejectedRequests++;
-+          return response;
-+        },
-+      }), message);
-+      assert.equal(rejectedRequests, 1);
-+    }
-+  });
-+
-+  test(`registry metadata polling reports ${label} when its request exceeds the shared deadline`, async () => {
-+    await assert.rejects(waitForPublishedPackages([entry], {
-+      timeoutMs: 100,
-+      registryFetch: async (url, { headers, signal }) => {
-+        if (headers?.accept !== accept) return ready(url);
-+        const timer = setTimeout(() => assert.fail("package request was not aborted"), 1_000);
-+        try {
-+          await new Promise((_, reject) => {
-+            signal.throwIfAborted();
-+            signal.addEventListener("abort", () => reject(signal.reason), { once: true });
-+          });
-+        } finally {
-+          clearTimeout(timer);
-+        }
-+      },
-+    }), new RegExp(`timed out.*${label}`));
-+  });
-+}
-+
- async function releaseFixture(
-   t,
-   { includeCompliance = false, targets, mutateMetadata, mutateChecksums } = {},
-@@ -329,10 +393,16 @@ test("verification metadata preserves collected bytes and supports registry smok
-     release: JSON.parse(await readFile(join(destination, "release.json"), "utf8")),
-     baseline: "0.2.2", prefixRoot,
-     registryFetch: async (url) => {
--      const pkg = release.packages.find((pkg) => url.endsWith(`/${encodeURIComponent(pkg.name)}/${pkg.version}`));
-+      const path = decodeURIComponent(new URL(url).pathname);
-+      const pkg = release.packages.find((pkg) =>
-+        path === `/${pkg.name}` || path === `/${pkg.name}/${pkg.version}`);
-       assert.ok(pkg);
--      verifiedPackages++;
--      return { ok: true, json: async () => ({ dist: { integrity: pkg.integrity } }) };
-+      const metadata = { dist: { integrity: pkg.integrity } };
-+      if (path.endsWith(`/${pkg.version}`)) {
-+        verifiedPackages++;
-+        return { ok: true, json: async () => metadata };
-+      }
-+      return { ok: true, json: async () => ({ versions: { [pkg.version]: metadata } }) };
-     },
-     runNpm: (_, args) => {
-       assert.ok(args.includes("--registry=https://registry.npmjs.org"));
-```
-
-**File**: `rust/scripts/npm-release-smoke.test.mjs` (modified, +48/-10)
-```diff
-@@ -21,6 +21,12 @@ const release = {
-   ],
- };
- 
-+function registryMetadataResponse(pkg, url) {
-+  const metadata = { dist: { integrity: pkg.integrity } };
-+  return { ok: true, json: async () => url.endsWith(`/${pkg.version}`)
-+    ? metadata : { versions: { [pkg.version]: metadata } } };
-+}
-+
- async function artifactFixture(t, withComponents = false, componentTarget = "linux-x64-gnu") {
-   const root = await mkdtemp(join(tmpdir(), "zg-artifact-smoke-"));
-   t.after(() => rm(root, { recursive: true, force: true }));
-@@ -425,12 +431,7 @@ test("registry smoke installs only the meta package and exercises a distinct upd
-     release,
-     baseline: "0.2.2",
-     prefixRoot,
--    registryFetch: async () => ({
--      ok: true,
--      json: async () => ({
--        dist: { integrity: release.packages[0].integrity },
--      }),
--    }),
-+    registryFetch: async (url) => registryMetadataResponse(release.packages[0], url),
-     runNpm: (_, args, { env }) => {
-       assert.ok(args.includes("--registry=https://registry.npmjs.org"));
-       assert.ok(!args.some((arg) => arg.endsWith(".tgz")));
-@@ -479,7 +480,7 @@ for (const contamination of ["receipt", "library", "cache", "download"]) {
-     let probes = 0;
-     await assert.rejects(smokeRegistryRelease({
-       manifest: fixtureManifest, release, baseline: "0.2.2", prefixRoot,
--      registryFetch: async () => ({ ok: true, json: async () => ({ dist: { integrity: release.packages[0].integrity } }) }),
-+      registryFetch: async (url) => registryMetadataResponse(release.packages[0], url),
-       runNpm: async (_, args, { env }) => {
-         assert.equal(args[0], "install", "explicit CUDA rebuild must follow CPU upgrade validation");
-         installs++;
-@@ -522,13 +523,15 @@ test("registry smoke waits for delayed metadata for every package before install
-     manifest, release: candidate, baseline: "0.2.2", prefixRoot,
-     registryWait: { timeoutMs: 1_000, intervalMs: 0 },
-     registryFetch: async (url) => {
-+      const path = decodeURIComponent(new URL(url).pathname);
-       const pkg = candidate.packages.find((pkg) =>
--        url.endsWith(`/${encodeURIComponent(pkg.name)}/${pkg.version}`));
-+        path === `/${pkg.name}` || path === `/${pkg.name}/${pkg.version}`);
-       assert.ok(pkg);
-+      if (!path.endsWith(`/${pkg.version}`)) return registryMetadataResponse(pkg, url);
-       const count = (requests.get(pkg.name) ?? 0) + 1;
-       requests.set(pkg.name, count);
-       if (pkg === component && count < 3) return { status: 404 };
--      return { ok: true, json: async () => ({ dist: { integrity: pkg.integrity } }) };
-+      return registryMetadataResponse(pkg, url);
-     },
-     runNpm: () => {
-       assert.equal(requests.get(component.name), 3);
-@@ -552,13 +555,48 @@ test("a missing registry candidate times out before any npm installation", async
-   );
- });
- 
-+for (const delayedAccept of ["application/json", "application/vnd.npm.install-v1+json"]) {
-+  test(`registry smoke waits for ${delayedAccept} after version metadata is visible`, async (t) => {
-+    const prefixRoot = await mkdtemp(join(tmpdir(), "zg-registry-packument-"));
-+    t.after(() => rm(prefixRoot, { recursive: true, force: true }));
-+    const platform = {
-+      name: "@zvec/zvec-grep-win32-arm64-msvc",
-+      version: release.version,
-+      integrity: "sha512-arm64-platform",
-+    };
-+    const candidate = { ...release, packages: [...release.packages, platform] };
-+    let delayedRequests = 0;
-+    await assert.rejects(smokeRegistryRelease({
-+      manifest, release: candidate, baseline: "0.2.2", prefixRoot,
-+      registryWait: { timeoutMs: 1_000, intervalMs: 0 },
-+      registryFetch: async (url, { headers } = {}) => {
-+        const path = decodeURIComponent(new URL(url).pathname);
-+        const pkg = candidate.packages.find((pkg) =>
-+          path === `/${pkg.name}` || path === `/${pkg.name}/${pkg.version}`);
-+        assert.ok(pkg);
-+        const metadata = { dist: { integrity: pkg.integrity } };
-+        if (path.endsWith(`/${pkg.version}`)) return { ok: true, json: async () => metadata };
-+        if (pkg === platform && headers?.accept === delayedAccept && ++delayedRequests < 3) {
-+          // The package exists, but npm cannot resolve the newly published version.
-+          return { ok: true, json: async () => ({ versions: {} }) };
-+        }
-+        return { ok: true, json: async () => ({ versions: { [pkg.version]: metadata } }) };
-+      },
-+      runNpm: () => {
-+        assert.equal(delayedRequests, 3, "must not install before npm can resolve the platform package");
-+        throw new Error("reached registry installation");
-+      },
-+    }), /reached registry installation/);
-+  });
-+}
-+
- test("registry model failure prevents update, rollback and a success report", async (t) => {
-   const prefixRoot = await mkdtemp(join(tmpdir(), "zg-registry-model-failure-"));
-   t.after(() => rm(prefixRoot, { recursive: true, force: true }));
-   const installs = [];
-   await assert.rej
-```
-
----
-
-### Incident Patch 3: `0f674f97` (2026-11-09)
-**Commit Message**: fix(tests): stabilize Windows daemon migration fixtures (#354)
-
-**File**: `rust/crates/zg/tests/server_lifecycle/migration_safety.rs` (modified, +52/-20)
-```diff
-@@ -126,29 +126,11 @@ impl DecoyServer {
-         let worker_requests = Arc::clone(&shutdown_requests);
-         let thread = std::thread::spawn(move || {
-             while !worker_stop.load(Ordering::SeqCst) {
--                let Ok((mut stream, _)) = listener.accept() else {
-+                let Ok((stream, _)) = listener.accept() else {
-                     std::thread::sleep(Duration::from_millis(5));
-                     continue;
-                 };
--                let _ = stream.set_read_timeout(Some(Duration::from_secs(2)));
--                let mut reader = BufReader::new(&mut stream);
--                let mut line = String::new();
--                if reader.read_line(&mut line).is_err() {
--                    continue;
--                }
--                if line.starts_with("POST /control/shutdown ") {
--                    worker_requests.fetch_add(1, Ordering::SeqCst);
--                }
--                loop {
--                    line.clear();
--                    if reader.read_line(&mut line).unwrap_or(0) == 0 || line == "\r\n" {
--                        break;
--                    }
--                }
--                let _ = write!(
--                    stream,
--                    "HTTP/1.1 {status} Fixture\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
--                );
-+                let _ = Self::respond(stream, status, &worker_requests);
-             }
-         });
-         Ok(Self {
-@@ -157,6 +139,33 @@ impl DecoyServer {
-             thread: Some(thread),
+     #[tokio::test]
+-    async fn indexes_catalog_sources_and_shebang_scripts_only() {
++    async fn indexes_catalog_sources_readable_text_and_shebang_scripts() {
+         let directory = tempdir().expect("temporary directory");
+         std::fs::write(directory.path().join("readable"), "ordinary text 中文 😀").expect("text");
+         std::fs::write(directory.path().join("known.txt"), "ordinary text 中文 😀")
+@@ -4412,12 +4412,33 @@ mod tests {
          })
+         .await
+         .expect("index supported sources");
+-        assert_eq!(result.files_added, 2);
++        assert_eq!(result.files_added, 4);
+         let files = storage.list_files().expect("files");
+-        assert_eq!(files.len(), 2);
++        assert_eq!(files.len(), 4);
+         assert!(files.iter().all(|file| file.index_status().is_indexed()));
+-        assert_eq!(storage.identities.lock().expect("catalog").len(), 2);
+-        assert_eq!(result.skipped.len(), 5);
++        assert_eq!(
++            files
++                .iter()
++                .map(|file| file.relative_path().to_path_buf())
++                .collect::<HashSet<_>>(),
++            ["readable", "known.txt", "script", "encoded"]
++                .into_iter()
++                .map(PathBuf::from)
++                .collect()
++        );
++        assert_eq!(storage.identities.lock().expect("catalog").len(), 4);
++        assert_eq!(result.skipped.len(), 3);
++        assert_eq!(
++            result
++                .skipped
++                .iter()
++                .map(|file| file.path.clone())
++                .collect::<HashSet<_>>(),
++            ["database", "unrecognized", "document.pdf"]
++                .into_iter()
++                .map(|name| workspace.source_root().join(name))
++                .collect()
++        );
      }
-+
-+    fn respond(
-+        mut stream: TcpStream,
-+        status: u16,
-+        shutdown_requests: &AtomicUsize,
-+    ) -> std::io::Result<()> {
-+        // Windows accepts sockets with the listener's nonblocking mode.
-+        // The synchronous request reader must wait for bytes to arrive.
-+        stream.set_nonblocking(false)?;
-+        stream.set_read_timeout(Some(Duration::from_secs(2)))?;
-+        let mut reader = BufReader::new(&mut stream);
-+        let mut line = String::new();
-+        reader.read_line(&mut line)?;
-+        if line.starts_with("POST /control/shutdown ") {
-+            shutdown_requests.fetch_add(1, Ordering::SeqCst);
-+        }
-+        loop {
-+            line.clear();
-+            if reader.read_line(&mut line)? == 0 || line == "\r\n" {
-+                break;
-+            }
-+        }
-+        write!(
-+            stream,
-+            "HTTP/1.1 {status} Fixture\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
-+        )
+ 
+     #[tokio::test]
+@@ -4633,7 +4654,7 @@ mod tests {
+     }
+ 
+     #[tokio::test]
+-    async fn large_unchanged_extensionless_text_is_skipped_after_classification() {
++    async fn large_unchanged_extensionless_text_is_retained_after_classification() {
+         let directory = tempdir().expect("temporary directory");
+         let workspace = workspace(directory.path());
+         let size = MIN_DEFAULT_FILE_SIZE_BYTES + 1;
+@@ -4671,9 +4692,15 @@ mod tests {
+         )
+         .await
+         .expect("text classification");
+-        assert!(scanned.is_empty());
+-        assert_eq!(skipped[0].reason, SkippedFileReason::Unsupported);
+-        assert_eq!(compute_diff(scanned, &[stored]).deleted.len(), 1);
++        assert_eq!(scanned.len(), 1);
++        assert!(skipped.is_empty());
++        assert_eq!(
++            scanned[0].formats.as_deref(),
++            Some([FileFormat::Text].as_slice())
++        );
++        let diff = compute_diff(scanned, &[stored]);
++        assert_eq!(diff.unchanged, 1);
++        assert!(diff.deleted.is_empty());
+     }
+ 
+     #[test]
+```
+
+**File**: `rust/crates/zg-engine/tests/engine_storage.rs` (modified, +111/-9)
+```diff
+@@ -150,6 +150,110 @@ async fn extensionless_scripts_preserve_outline_language_across_reopen() -> Test
+     Ok(())
+ }
+ 
++#[tokio::test]
++async fn unknown_extensions_are_indexed_and_searchable_as_text() -> TestResult {
++    let temporary = tempdir()?;
++    let root = temporary.path();
++    let server = EmbeddingServer::start()?;
++    configure_remote_model(root, server.address)?;
++    let sources = [
++        (
++            "module.bsl",
++            "Процедура ОбработатьЗаказ()\n    Сообщить(\"orchardguide\");\nКонецПроцедуры\n",
++        ),
++        (
++            "bom.bsl",
++            "\u{feff}Процедура Проверка()\n    Сообщить(\"orchardguide\");\nКонецПроцедуры\n",
++        ),
++        ("thing.custom", "orchardguide custom text"),
++        ("settings.conf", "orchardguide configuration"),
++        ("Caddyfile", "orchardguide server configuration"),
++        ("noext", "orchardguide extensionless text"),
++    ];
++    for (name, content) in sources {
++        fs::write(root.join(name), content)?;
 +    }
- }
- 
- impl Drop for DecoyServer {
-@@ -168,6 +177,29 @@ impl Drop for DecoyServer {
-     }
- }
- 
-+#[test]
-+fn decoy_waits_for_delayed_request_on_nonblocking_connection() -> Result<(), Box<dyn Error>> {
-+    let listener = TcpListener::bind("127.0.0.1:0")?;
-+    let mut client = TcpStream::connect(listener.local_addr()?)?;
-+    client.set_read_timeout(Some(Duration::from_secs(5)))?;
-+    let (stream, _) = listener.accept()?;
-+    // Reproduce Windows' inherited nonblocking mode on every platform.
-+    stream.set_nonblocking(true)?;
-+    let request = std::thread::spawn(move || -> std::io::Result<String> {
-+        std::thread::sleep(Duration::from_millis(50));
-+        client
-+            .write_all(b"GET /healthz HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n")?;
-+        let mut response = String::new();
-+        client.read_to_string(&mut response)?;
-+        Ok(response)
-+    });
-+    let response = DecoyServer::respond(stream, 200, &AtomicUsize::new(0));
-+    let received = request.join().expect("decoy client thread panicked");
-+    response?;
-+    assert!(received?.starts_with("HTTP/1.1 200"));
++    fs::write(root.join("binary.bsl"), [0, 1, 2, 255])?;
++    fs::write(root.join("nul.bsl"), b"orchardguide\0binary")?;
++    fs::write(root.join("empty.bsl"), "")?;
++    let expected = sources
++        .map(|(name, _)| PathBuf::from(name))
++        .into_iter()
++        .collect::<BTreeSet<_>>();
++    let engine = ZvecGrep::new();
++    for rebuild in [false, true] {
++        let indexed = engine
++            .index(IndexOptions {
++                rebuild,
++                ..index_options(root)
++            })
++            .await?;
++        assert_eq!(
++            (indexed.files_added, indexed.files_failed),
++            (6, 0),
++            "{indexed:?}"
++        );
++        assert_eq!(indexed.skipped_counts["unsupported"], 2);
++        assert_eq!(indexed.skipped_counts["empty"], 1);
++        for mode in [ContextRouteMode::Fts, ContextRouteMode::Vector] {
++            let result = engine
++                .context(ContextOptions {
++                    root: Some(root.to_path_buf()),
++                    routes: vec![ContextRoute {
++                        mode,
++                        query: "orchardguide".into(),
++                    }],
++                    auto_update: false,
++                    allow_remote: true,
++                    limit: Some(20),
++                    ..ContextOptions::default()
++                })
++                .await?;
++            assert_eq!(
++                result
++                    .items
++                    .iter()
++                    .map(|item| item.relative_path.clone())
++                    .collect::<BTreeSet<_>>(),
++                expected
++            );
++            assert!(result.items.iter().all(|item| item.metadata.is_none()));
++        }
++    }
++    let info = engine.info(info_options(root)).await?;
++    let entities = native_documents(&info.index_path.join("entities"))?;
++    assert_eq!(entities.len(), sources.len());
++    for entity in entities {
++        let payload: Value =
++            serde_json::from_str(&entity.get_string("payload")?.expect("payload"))?;
++        assert_eq!(payload["content"]["kind"], "text");
++    }
++    let inputs = server.inputs.load(Ordering::Acquire);
++    let unchanged = engine.index(index_options(root)).await?;
++    assert_eq!((unchanged.files_unchanged, unchanged.files_failed), (6, 0));
++    assert_eq!(server.inputs.load(Ordering::Acquire), inputs);
++    engine.close();
++
++    let engine = ZvecGrep::new();
++    fs::write(root.join("module.bsl"), "Сообщить(\"replacementguide\");\n")?;
++    let updated = engine.index(index_options(root)).await?;
++    assert_eq!(
++        (
++            updated.files_modified,
++            updated.files_deleted,
++            updated.files_failed
++        ),
++        (1, 0, 0)
++    );
++    assert_eq!(
++        fts_paths(&engine, root, "replacementguide").await?,
++        [PathBuf::from("module.bsl")]
++    );
++    engine.drop_index(info_options(root)).await?;
++    engine.close();
 +    Ok(())
 +}
 +
- #[test]
- fn localhost_migration_reaches_ipv6_without_shutting_down_an_ipv4_service()
- -> Result<(), Box<dyn Error>> {
+ #[tokio::test]
+ async fn text_and_code_share_one_model_and_support_incremental_search() -> TestResult {
+     let temporary = tempdir()?;
+@@ -763,12 +867,10 @@ async fn public_engine_persists_searches_updates_and_drops_real_storage() -> Tes
+ 
+     let engine = ZvecGrep::new();
+     let initial = engine.index(index_options(root)).await?;
+-    assert_eq!(initial.files_added, 2, "{initial:?}");
+-    assert!(
+-        initial
+-            .skipped
+-            .iter()
+-            .any(|file| file.path == root.join("tmp"))
++    assert_eq!(initial.files_added, 3, "{initial:?}");
++    assert_eq!(
++        fts_paths(&engine, root, "memorandum").await?,
++        [PathBuf::from("tmp")]
+     );
+     assert_eq!(initial.files_failed, 0);
+     let info = engine.info(info_options(root)).await?;
+@@ -783,7 +885,7 @@ async fn public_engine_persists_searches_updates_and_drops_real_storage() -> Tes
+         .expect("FTS info");
+     assert_eq!(fts.tokenizer, "jieba");
+     assert_eq!(fts.filters, ["lowercase"]);
+-    
+```
+
+**File**: `rust/crates/zg-engine/tests/file_selection.rs` (modified, +67/-4)
+```diff
+@@ -125,6 +125,63 @@ async fn assert_index_and_queries(
+     Ok(())
+ }
+ 
++#[tokio::test]
++async fn unknown_text_respects_globs_and_filename_filters() -> TestResult {
++    let temporary = tempfile::tempdir()?;
++    let root = temporary.path();
++    let server = EmbeddingServer::start()?;
++    configure_remote_model(root, server.address)?;
++    write_sources(
++        root,
++        &[
++            ("module.bsl", "Сообщить(\"orchard\");\n"),
++            ("excluded.bsl", "orchard excluded source"),
++            ("large.bsl", &"orchard".repeat(32)),
++            ("note.txt", "orchard catalog text"),
++            ("other.custom", "orchard custom text"),
++        ],
++    )?;
++    fs::write(root.join("binary.bsl"), b"orchard\0binary")?;
++    let filter = QueryFilter {
++        globs: vec!["*.bsl".into(), "!excluded.bsl".into()],
++        ..QueryFilter::default()
++    };
++    let engine = ZvecGrep::new();
++    let indexed = engine
++        .index(IndexOptions {
++            scan: ScanRulesUpdate {
++                globs: Some(filter.globs.clone()),
++                max_file_size_bytes: Some(Some(64)),
++                ..ScanRulesUpdate::default()
++            },
++            ..index_options(root)
++        })
++        .await?;
++    assert_eq!((indexed.files_added, indexed.files_failed), (1, 0));
++    assert_eq!(indexed.skipped_counts["too_large"], 1);
++    assert_eq!(indexed.skipped_counts["unsupported"], 1);
++    assert_index_and_queries(&engine, root, &filter, &paths(&["module.bsl"])).await?;
++    for mode in [ContextRouteMode::Fts, ContextRouteMode::Vector] {
++        assert!(
++            search_paths(
++                &engine,
++                root,
++                mode,
++                QueryFilter {
++                    included_formats: vec![FileFormat::Text],
++                    ..QueryFilter::default()
++                }
++            )
++            .await?
++            .is_empty(),
++            "text fallback does not change filename-based filters"
++        );
++    }
++    engine.drop_index(info_options(root)).await?;
++    engine.close();
++    Ok(())
++}
++
+ #[tokio::test]
+ async fn ordered_globs_have_the_same_membership_during_indexing_and_both_query_routes() -> TestResult
+ {
+@@ -615,19 +672,25 @@ async fn filename_formats_and_categories_filter_queries_without_limiting_indexin
+             updated.files_deleted,
+             updated.files_failed
+         ),
+-        (0, 1, 0)
++        (1, 0, 0)
+     );
+     let files = native_file_records(&info.index_path)?;
+     assert!(
+         files
+             .iter()
+-            .all(|file| stored_file_path(file) != Path::new("script"))
++            .any(|file| stored_file_path(file) == Path::new("script"))
+     );
+     assert_index_and_queries(
+         &engine,
+         root,
+         &QueryFilter::default(),
+-        &paths(&["page.html", "note.md", "settings.json", "source.rs"]),
++        &paths(&[
++            "script",
++            "page.html",
++            "note.md",
++            "settings.json",
++            "source.rs",
++        ]),
+     )
+     .await?;
+     for mode in [ContextRouteMode::Fts, ContextRouteMode::Vector] {
+@@ -685,7 +748,7 @@ async fn catalog_name_predicates_filter_both_native_search_routes() -> TestResul
+     write_sources(root, &sources)?;
+     let engine = ZvecGrep::new();
+     let indexed = engine.index(index_options(root)).await?;
+-    assert_eq!((indexed.files_added, indexed.files_failed), (5, 0));
++    assert_eq!((indexed.files_added, indexed.files_failed), (7, 0));
+     for (name, _) in sources {
+         fs::remove_file(root.join(name))?;
+     }
+```
+
+---
+
+### Incident Patch 2: `e6298f57` (2026-11-10)
+**Commit Message**: fix(release): use glibc 2.28 Linux build images (#378)
+
+* fix(release): target glibc 2.28 in Linux build containers
+
+Pin manylinux builders and validate artifacts on AlmaLinux 8.10 without
+relaxing ABI checks. The llama SDK downgrade is separate follow-up work.
+
+* fix(release): pin glibc 2.28 llama SDK and audit PR packages
+
+* ci: remove package glibc and standalone ORT jobs
+
+* fix(release): replace retired macOS ARM64 runner
+
+Use macos-15 for release builds and registry validation so ARM64 jobs can
+start after macos-14 retirement, and guard both matrices with a regression test.
+
+* fix(release): validate ARM64 model runtimes on glibc 2.28
+
+Exercise installed ORT and real CPU inference on Linux ARM64, retain
+network-disabled Vulkan ORT preparation, and align validation docs with
+the release workflow instead of the removed standalone ORT entry point.
+
+* fix(release): compile ORT check before disabling network access
+
+The rustc proxy can make rustup sync toolchain metadata in a fresh
+container. Compile the check in the online build stage, then execute it
+offline without weakening network isolation or cached-runtime checks.
+
+* fix(test): restrict Linux workflow shell tests to Linux
+
+Sk
+
+**File**: `.github/workflows/rust-ci.yml` (modified, +0/-122)
+```diff
+@@ -34,10 +34,6 @@ on:
+         description: Optional reviewed source ref; empty uses the commit selected for this run
+         type: string
+         default: ""
+-      ort_validation:
+-        description: Validate all ONNX catalog models and compare 1.21/1.28 CPU throughput on Linux x64/ARM64
+-        type: boolean
+-        default: false
+ 
+ permissions: {}
+ 
+@@ -145,124 +141,6 @@ jobs:
+       - name: Test npm packaging
+         run: node --test scripts/npm-*.test.mjs npm/meta/install.test.cjs
+ 
+-  ort-glibc:
+-    name: ORT on glibc 2.31 (${{ matrix.target }})
+-    needs: source
+-    permissions:
+-      contents: read
+-    strategy:
+-      fail-fast: false
+-      matrix:
+-        include:
+-          - target: x86_64-unknown-linux-gnu
+-            runner: ubuntu-24.04
+-            cuda: true
+-          - target: aarch64-unknown-linux-gnu
+-            runner: ubuntu-24.04-arm
+-            cuda: false
+-    runs-on: ${{ matrix.runner }}
+-    timeout-minutes: 20
+-    steps:
+-      - uses: actions/checkout@v6
+-        with:
+-          ref: ${{ needs.source.outputs.sha }}
+-          persist-credentials: false
+-      - uses: actions/cache@v5
+-        with:
+-          path: rust/target/ort-prebuilt
+-          key: ort-1.21-${{ matrix.target }}-${{ hashFiles('rust/scripts/onnxruntime-distributions.json') }}
+-      - name: Prepare and audit official CPU runtime
+-        run: |
+-          python3 scripts/prepare-onnxruntime.py --target ${{ matrix.target }} --cache-dir target/ort-prebuilt --destination target/ort-cpu
+-          python3 scripts/check-glibc.py target/ort-cpu --max 2.31
+-      - name: Load CPU runtime on glibc 2.31
+-        run: |
+-          docker run --rm --volume "$PWD:/work:ro" --workdir /work ubuntu:20.04 bash -euc '
+-            apt-get update -qq
+-            apt-get install -y --no-install-recommends python3 libstdc++6 >/dev/null
+-            test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.31"
+-            python3 scripts/check-onnxruntime.py target/ort-cpu/libonnxruntime.so.1
+-          '
+-      - name: Verify Vulkan does not require a custom ORT at build time
+-        run: |
+-          CARGO_MANIFEST_DIR="$PWD/crates/zg-engine" rustc --edition=2024 crates/zg-engine/build.rs -o target/ort-build-script
+-          env -u ORT_DYLIB_PATH CARGO_FEATURE_VULKAN=1 CARGO_NET_OFFLINE=true \
+-            TARGET=${{ matrix.target }} OUT_DIR="$PWD/target/ort-vulkan/debug/build/zg-engine/out" \
+-            ZG_ORT_CACHE_DIR="$PWD/target/ort-prebuilt" target/ort-build-script
+-      - name: Audit the CUDA 12 provider without requiring a GPU
+-        if: matrix.cuda
+-        run: |
+-          python3 scripts/prepare-onnxruntime.py --target ${{ matrix.target }} --cuda --cache-dir target/ort-prebuilt --destination target/ort-cuda
+-          python3 scripts/check-glibc.py target/ort-cuda --max 2.31
+-
+-  ort-models:
+-    name: ONNX catalog and CPU runtime comparison (${{ matrix.target }})
+-    if: github.event_name == 'workflow_dispatch' && inputs.ort_validation
+-    needs: source
+-    runs-on: ${{ matrix.runner }}
+-    timeout-minutes: 60
+-    permissions:
+-      contents: read
+-    strategy:
+-      fail-fast: false
+-      matrix:
+-        include:
+-          - target: x86_64-unknown-linux-gnu
+-            runner: ubuntu-24.04
+-          - target: aarch64-unknown-linux-gnu
+-            runner: ubuntu-24.04-arm
+-    env:
+-      LLAMA_CPP_BUILD_MODE: prebuilt
+-      CARGO_BUILD_JOBS: "4"
+-    steps:
+-      - uses: actions/checkout@v6
+-        with:
+-          ref: ${{ needs.source.outputs.sha }}
+-          persist-credentials: false
+-      - name: Install build dependencies and the pinned toolchain
+-        run: |
+-          sudo apt-get update -qq
+-          sudo apt-get install -y clang libclang-dev cmake ninja-build pkg-config
+-          rustup show active-toolchain
+-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+-        with:
+-          prefix-key: rust-ort-models-v1-${{ matrix.target }}
+-          workspaces: rust -> target
+-      - name: Cache the pinned catalog graphs
+-        uses: actions/cache@v5
+-        with:
+-          path: ${{ runner.temp }}/ort-catalog-models
+-          key: ort-catalog-v1-${{ hashFiles('rust/crates/zg-engine/src/models/catalog/**') }}
+-      - name: Build one release test binary for both runtimes
+-        run: |
+-          mkdir -p target
+-          cargo test --release --locked -p zg-engine --lib --no-run --message-format=json > target/ort-tests.json
+-      - name: Validate all ONNX models and compare q4 CPU throughput
+-        shell: python
+-        env:
+-          MODEL_CACHE: ${{ runner.temp }}/ort-catalog-models
+-          ORT_TARGET: ${{ matrix.target }}
+-        run: |
+-          import json, os, pathlib, subprocess, sys
+-          records = [json.loads(line) for line in pathlib.Path("target/ort-tests.json").read_text().splitlines()]
+-          binaries = [record["executable"] for record in records if record.get("reason") == "compiler-artifact"
+-    
+```
+
+**File**: `.github/workflows/rust-package-build.yml` (modified, +36/-16)
+```diff
+@@ -104,8 +104,8 @@ jobs:
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/git/db/
+             rust/target/release/
+           # Per-commit keys would exhaust the 10 GB repository cache quota and evict Rust CI caches.
+-          # Isolate Ubuntu 20.04 output from older host/container build caches.
+-          key: rust-release-${{ runner.os == 'Linux' && 'v5-ubuntu20.04' || 'v3' }}-${{ inputs.target }}-${{ inputs.runner }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml') }}
++          # Keep objects linked against newer glibc out of the release cache.
++          key: rust-release-${{ runner.os == 'Linux' && 'v6-manylinux2.28' || 'v3' }}-${{ inputs.target }}-${{ inputs.runner }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/release-builder.Dockerfile') }}
+       - name: Cache the pinned llama native SDK
+         uses: actions/cache@v5
+         with:
+@@ -125,16 +125,18 @@ jobs:
+       - name: Preserve the Intel macOS deployment target
+         if: inputs.target == 'darwin-x64'
+         run: echo "MACOSX_DEPLOYMENT_TARGET=14.0" >> "$GITHUB_ENV"
+-      - name: Build the Ubuntu 20.04 Rust builder without a CUDA compiler
++      - name: Build the manylinux 2.28 Rust builder without a CUDA compiler
+         if: runner.os == 'Linux'
+         working-directory: ${{ github.workspace }}
++        env:
++          BUILD_IMAGE: ${{ inputs.target == 'linux-arm64-gnu' && 'quay.io/pypa/manylinux_2_28_aarch64:2026.03.01-1@sha256:34368babc008d6405b4b74c77868d6a5d15b6010cb953574d1f2bb9184392a9b' || 'quay.io/pypa/manylinux_2_28_x86_64:2026.03.01-1@sha256:d5f19b5957cf25df7ac15465924cafe2358754a187e510af386bf9596598a372' }}
+         run: >-
+           docker build --platform ${{ inputs.target == 'linux-arm64-gnu' && 'linux/arm64' || 'linux/amd64' }}
+-          --file rust/scripts/cuda/cuda-builder.Dockerfile
+-          --build-arg CUDA_IMAGE=ubuntu:20.04
++          --file rust/scripts/release-builder.Dockerfile
++          --build-arg BUILD_IMAGE="$BUILD_IMAGE"
+           --build-arg RUST_VERSION=${{ steps.rust-version.outputs.channel }}
+-          --tag zvec-grep-cuda-builder .
+-      - name: Build the Linux release on glibc 2.31
++          --tag zvec-grep-release-builder .
++      - name: Build the Linux release on glibc 2.28
+         if: runner.os == 'Linux'
+         working-directory: ${{ github.workspace }}
+         run: |
+@@ -148,13 +150,31 @@ jobs:
+             --env CARGO_BUILD_JOBS --env CMAKE_BUILD_PARALLEL_LEVEL \
+             --env LLAMA_CPP_BUILD_MODE=prebuilt --env LLAMA_CPP_RUNTIME_CACHE=/work-target/llama-runtimes \
+             --env RELEASE_TARGET=${{ inputs.target }} \
+-            zvec-grep-cuda-builder bash -euo pipefail -c '
+-              test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.31"
++            --env ORT_TARGET=${{ inputs.target == 'linux-arm64-gnu' && 'aarch64-unknown-linux-gnu' || 'x86_64-unknown-linux-gnu' }} \
++            zvec-grep-release-builder bash -euo pipefail -c '
++              test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.28"
+               if [[ "$RELEASE_TARGET" == linux-x64-gnu ]]; then
+                 bash scripts/cuda/build.sh --primary-only
+               else
+                 cargo build --locked --release --package zg
+               fi
++              python3 scripts/prepare-onnxruntime.py --target "$ORT_TARGET" \
++                --cache-dir /work-target/ort-prebuilt --destination /work-target/ort-cpu
++              CARGO_MANIFEST_DIR="$PWD/crates/zg-engine" rustc --edition=2024 crates/zg-engine/build.rs -o /work-target/ort-build-script
++            '
++      - name: Verify Linux Vulkan ORT preparation without network access
++        if: runner.os == 'Linux'
++        working-directory: ${{ github.workspace }}
++        run: |
++          docker run --rm --network none --platform ${{ inputs.target == 'linux-arm64-gnu' && 'linux/arm64' || 'linux/amd64' }} \
++            --volume "${GITHUB_WORKSPACE}:/work:ro" \
++            --volume "${GITHUB_WORKSPACE}/rust/target:/work-target" \
++            --env ORT_TARGET=${{ inputs.target == 'linux-arm64-gnu' && 'aarch64-unknown-linux-gnu' || 'x86_64-unknown-linux-gnu' }} \
++            zvec-grep-release-builder bash -euo pipefail -c '
++              env -u ORT_DYLIB_PATH -u CARGO_FEATURE_CUDA CARGO_FEATURE_VULKAN=1 CARGO_NET_OFFLINE=true \
++                TARGET="$ORT_TARGET" OUT_DIR=/work-target/ort-vulkan/debug/build/zg-engine/out \
++                ZG_ORT_CACHE_DIR=/work-target/ort-prebuilt /work-target/ort-build-script
++              cmp /work-target/ort-cpu/libonnxruntime.so.1 /work-target/ort-vulkan/debug/libonnxruntime.so.1
+             '
+       - name: Audit the Linux prebuilt CUDA 13 and CUDA 12 bundle
+         if: inputs.target == 'linux-x64-gnu'
+@@ -163,9 +183,9 @@ jobs:
+           docker run --rm --platform linux/amd64 \
+             --volume "${GITHUB_WORKSPACE}:/work:ro" \
+             --volume "${GITHUB_WORKSPACE}/rust/target:/work-target" \
+-            zvec-grep-c
+```
+
+**File**: `.github/workflows/rust-publish.yml` (modified, +16/-12)
+```diff
+@@ -72,7 +72,7 @@ jobs:
+           import { appendFileSync } from 'node:fs';
+           const platform = process.env.BUILD_PLATFORM;
+           const platforms = [
+-            { target: 'darwin-arm64', runner: 'macos-14', gpu_runner: '' },
++            { target: 'darwin-arm64', runner: 'macos-15', gpu_runner: '' },
+             { target: 'darwin-x64', runner: 'macos-15-intel', gpu_runner: '' },
+             { target: 'linux-x64-gnu', runner: 'ubuntu-24.04', gpu_runner: 'gpu-linux-t4' },
+             { target: 'linux-arm64-gnu', runner: 'ubuntu-24.04-arm', gpu_runner: '' },
+@@ -270,12 +270,12 @@ jobs:
+           name: rust-verification-${{ needs.source.outputs.version }}
+           path: rust/dist/npm/release/tarballs
+       - name: Restore the real model cache
+-        if: matrix.cuda_package
++        if: matrix.cuda_package || matrix.target == 'linux-arm64-gnu'
+         uses: actions/cache@v5
+         with:
+           path: ${{ runner.temp }}/zvec-grep-model-cache
+           key: cuda-cli-models-v1-${{ runner.os }}-${{ hashFiles('rust/crates/zg-engine/src/models/catalog/**', 'rust/scripts/cuda/e2e.py') }}
+-      - name: Install and exercise Linux artifacts on Ubuntu 20.04 without CUDA libraries
++      - name: Install and exercise Linux artifacts on glibc 2.28 without CUDA libraries
+         if: runner.os == 'Linux'
+         shell: bash
+         working-directory: ${{ github.workspace }}
+@@ -287,19 +287,23 @@ jobs:
+             --volume "${GITHUB_WORKSPACE}:/work" \
+             --volume "${node_root}:/opt/node:ro" \
+             --volume "${RUNNER_TEMP}/zvec-grep-model-cache:/model-cache" \
+-            --workdir /work/rust --env DEBIAN_FRONTEND=noninteractive \
++            --workdir /work/rust \
+             --env RELEASE_TARGET=${{ matrix.target }} \
+             --env PATH=/opt/node/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+-            ubuntu:20.04 bash -euo pipefail -c '
+-              apt-get update -qq
+-              apt-get install --yes --no-install-recommends python3 ca-certificates libstdc++6 >/dev/null
+-              test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.31"
++            almalinux:8.10@sha256:2d0f2eb2a83cc09dbc2eb92fade4dbe8f709628149e81aa00aec70630406603b bash -euo pipefail -c '
++              dnf install --assumeyes --setopt=install_weak_deps=False python3.12 ca-certificates libstdc++ >/dev/null
++              ln -s /usr/bin/python3.12 /usr/local/bin/python3
++              test "$(getconf GNU_LIBC_VERSION)" = "glibc 2.28"
+               npm run release:artifact-smoke -- --expect-cpu
++              bundle=dist/npm/release/artifact-smoke/prefix/lib/node_modules/@zvec/zvec-grep
++              python3 scripts/check-onnxruntime.py "$bundle/lib/libonnxruntime.so.1" 2>&1 | tee /work/cpu-logs/onnxruntime-load.log
+               if [[ "$RELEASE_TARGET" == linux-x64-gnu ]]; then
+-                python3 scripts/cuda/e2e.py --cpu-only \
+-                  --bundle dist/npm/release/artifact-smoke/prefix/lib/node_modules/@zvec/zvec-grep \
+-                  --model-cache /model-cache --logs /work/cpu-logs
++                cpu_mode=--cpu-only
++              else
++                cpu_mode=--explicit-cpu
+               fi
++              python3 scripts/cuda/e2e.py "$cpu_mode" --bundle "$bundle" \
++                --model-cache /model-cache --logs /work/cpu-logs
+             '
+       - name: Install and exercise the downloaded artifacts without Windows CUDA libraries
+         if: matrix.target == 'win32-x64-msvc'
+@@ -389,7 +393,7 @@ jobs:
+           - target: darwin-x64
+             runner: macos-15-intel
+           - target: darwin-arm64
+-            runner: macos-14
++            runner: macos-15
+           - target: linux-x64-gnu
+             runner: ubuntu-24.04
+           - target: linux-arm64-gnu
+```
+
+**File**: `rust/CONTRIBUTING.md` (modified, +65/-23)
+```diff
+@@ -173,9 +173,11 @@ package-level validation. It runs only through manual dispatch. Runs with both
+ without allocating GPUs or publishing
+ to npm. Compilation always stays on CPU runners, including when `cuda=true` or
+ `publish=true`; Linux/Windows x64 still build the default CUDA-capable bundles.
+-Linux x64 and ARM64 release builds use Ubuntu 20.04 containers on native runners
+-and audit the executable and bundled libraries against glibc 2.31. The host
+-runner's Ubuntu version does not set the release package's compatibility baseline.
++Linux x64 and ARM64 release builds use digest-pinned `manylinux_2_28`
++`2026.03.01-1` containers on native runners and audit the executable and bundled
++libraries against the `GLIBC_2.28` ceiling. Clean runtime checks use AlmaLinux
++8.10 (glibc 2.28); the host runner's Ubuntu version does not set the release
++package's compatibility baseline.
+ Set `cuda=true,publish=false` to add GPU validation without publishing.
+ Separate GPU jobs download the exact native npm artifacts from the same run and
+ invoke `.github/actions/cuda-cli-e2e`, without recompiling native code or repacking. Publication
+@@ -185,7 +187,17 @@ Failures retain candidates and do not skip the other validation path, but every
+ required check must pass before publication. Collection alone is not approval.
+ 
+ The manual `platform` input selects `all` (the default) or one of `darwin-arm64`,
+-`darwin-x64`, `linux-x64-gnu`, `linux-arm64-gnu`, and `win32-x64-msvc`.
++`darwin-x64`, `linux-x64-gnu`, `linux-arm64-gnu`, `win32-x64-msvc`, and
++`win32-arm64-msvc`.
++To validate Linux ARM64 without publishing or allocating GPUs, run in the chosen
++repository (or add `--repo OWNER/REPO`):
++
++```sh
++gh workflow run rust-publish.yml -f publish=false -f cuda=false -f platform=linux-arm64-gnu
++```
++
++For Linux x64, replace the platform with `linux-x64-gnu`. Add `--ref BRANCH`
++to validate a specific branch; otherwise GitHub uses the default branch.
+ Selected platforms compile in parallel; Intel macOS does not gate the others.
+ All-platform runs collect `rust-release-<version>`; a single-platform run collects
+ `rust-candidate-<version>` with `partial: true` in `release.json`. The latter is
+@@ -201,13 +213,16 @@ behavior on the real CPU host. An isolated loopback registry serves only this
+ run's CUDA archives: any CUDA metadata/tarball request (even a failed optional
+ attempt), installed plugin or populated plugin cache fails CPU validation.
+ `cpu-downloads.json` retains the request evidence; no public registry is used.
+-They verify CLI and daemon IPC. Linux x64 and ARM64 install and exercise the
+-artifacts in plain Ubuntu 20.04 containers. Linux/Windows x64 then
+-run `scripts/cuda/e2e.py --cpu-only` against the installed meta
+-package. This checks both explicit `--device cpu` and default automatic CPU
+-fallback for real GGUF/ONNX indexing and vector queries. Windows excludes toolkit
+-paths. Both x64 model checks require CUDA host libraries to be unavailable and
+-retain `cpu-artifact-evidence-*` logs on failure.
++The `artifact-cpu-smoke` jobs verify CLI and daemon IPC. Linux x64 and ARM64
++install and exercise the artifacts in clean AlmaLinux 8.10 (glibc 2.28)
++containers; both load the installed `libonnxruntime.so.1` and verify ORT 1.21.0
++and API 21. Linux/Windows x64 run `scripts/cuda/e2e.py --cpu-only` against the
++installed meta package, checking both explicit `--device cpu` and default
++automatic CPU fallback for real GGUF/ONNX indexing and vector queries. Linux
++ARM64 runs the same real-model index/query checks with `--explicit-cpu` only.
++macOS and Windows ARM64 retain CLI/daemon-only artifact smoke coverage.
++Windows x64 excludes toolkit paths. Both x64 model checks require CUDA host
++libraries to be unavailable. Failures retain `cpu-artifact-evidence-*` logs.
+ CPU artifact validation runs even when `publish=false`; failure blocks npm
+ publication, while the downloaded candidate remains available for diagnosis.
+ 
+@@ -327,15 +342,42 @@ macOS model routing continues to select CPU.
+ 
+ Run `python3 scripts/test-prepare-onnxruntime.py` for offline deployment checks
+ and `python3 scripts/test-check-glibc.py` for the compatibility checker tests.
+-The ORT CI gate loads Linux x64/ARM64 CPU cores on glibc 2.31 and audits their
+-ELF imports, including the x64 CUDA provider. `scripts/check-glibc.py <payload>`
+-can also audit a complete ELF package. The release workflow builds Linux x64/ARM64
+-packages on Ubuntu 20.04, applies this audit to the executable and bundled native
+-libraries, and verifies the installed artifacts on that baseline.
+-
+-Dispatch Rust CI with `ort_validation=true` to validate all six catalog ONNX
+-graphs on Linux x64/ARM64 and compare official ORT 1.21/1.28 q4 CPU throughput.
+-The comparison uses one release binary, fixed CPU/batch/concurrency settings,
+-warmup and alternating runtime order. It measures the native runtime change;
+-it is not a comparison of different Rust bindings or the former Pyke static
+-build. R
+```
+
+**File**: `rust/Cargo.lock` (modified, +2/-2)
+```diff
+@@ -1842,7 +1842,7 @@ checksum = "47d9d19d1d6efa0109d2f65ff4c85cddd50bd572e5a00127ab10987290bcefae"
+ [[package]]
+ name = "llama-cpp-2"
+ version = "0.1.154"
+-source = "git+https://github.com/zvec-ai/llama-cpp-rs.git?rev=b55399ac6c2035f2301120547c4c967e741d25d3#b55399ac6c2035f2301120547c4c967e741d25d3"
++source = "git+https://github.com/zvec-ai/llama-cpp-rs.git?rev=79305567e63ee551eb1798c0537eab87d9595a23#79305567e63ee551eb1798c0537eab87d9595a23"
+ dependencies = [
+  "encoding_rs",
+  "enumflags2",
+@@ -1855,7 +1855,7 @@ dependencies = [
+ [[package]]
+ name = "llama-cpp-sys-2"
+ version = "0.1.154"
+-source = "git+https://github.com/zvec-ai/llama-cpp-rs.git?rev=b55399ac6c2035f2301120547c4c967e741d25d3#b55399ac6c2035f2301120547c4c967e741d25d3"
++source = "git+https://github.com/zvec-ai/llama-cpp-rs.git?rev=79305567e63ee551eb1798c0537eab87d9595a23#79305567e63ee551eb1798c0537eab87d9595a23"
+ dependencies = [
+  "bindgen",
+  "cc",
+```
+
+**File**: `rust/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -13,8 +13,8 @@ publish = false
+ 
+ [workspace.dependencies]
+ # Keep the safe API and the C5 FFI boundary on the same pinned native ABI.
+-llama-cpp-2 = { git = "https://github.com/zvec-ai/llama-cpp-rs.git", rev = "b55399ac6c2035f2301120547c4c967e741d25d3", default-features = false }
+-llama-cpp-sys-2 = { git = "https://github.com/zvec-ai/llama-cpp-rs.git", rev = "b55399ac6c2035f2301120547c4c967e741d25d3", default-features = false }
++llama-cpp-2 = { git = "https://github.com/zvec-ai/llama-cpp-rs.git", rev = "79305567e63ee551eb1798c0537eab87d9595a23", default-features = false }
++llama-cpp-sys-2 = { git = "https://github.com/zvec-ai/llama-cpp-rs.git", rev = "79305567e63ee551eb1798c0537eab87d9595a23", default-features = false }
+ async-trait = "0.1.89"
+ axum = "0.8"
+ bytes = "1.12.1"
+```
+
+**File**: `rust/README.md` (modified, +34/-18)
+```diff
+@@ -742,12 +742,17 @@ bash scripts/check.sh
+ ## Native and CUDA builds
+ 
+ The safe llama API and the C5 FFI boundary share the same pinned
+-`zvec-ai/llama-cpp-rs` revision (`b55399ac6c2035f2301120547c4c967e741d25d3`),
+-from branch `prebuilt/0.1.154-cpu-r2-glibc-2.31`.
++`zvec-ai/llama-cpp-rs` revision (`79305567e63ee551eb1798c0537eab87d9595a23`),
++from branch `prebuilt/0.1.154-cpu-r2-glibc-2.28`.
+ Its sys crate automatically selects a SHA256-pinned SDK when target, features
+ and native options match. Linux x64 CPU, Linux ARM64 CPU and Linux x64 CUDA use
+-`zvec-0.1.154-glibc-2.31-r1`, built on Ubuntu 20.04 and verified against a glibc
+-2.31 baseline. Windows x64/ARM64 CPU use `zvec-0.1.154-cpu-r2`; macOS and
++`zvec-0.1.154-glibc-2.28-r1`, built on manylinux 2.28 and verified with real
++CPU/CUDA inference in clean AlmaLinux 8.10 (glibc 2.28) containers. These Linux
++SDKs disable the optional upstream subprocess helper (`LLAMA_SUBPROCESS=OFF`);
++zg's inference and MCP server remain unchanged. SDK verification used EL8 GCC
++Toolset 13 for final static linkage; deployment machines do not need that
++compiler toolset.
++Windows x64/ARM64 CPU use `zvec-0.1.154-cpu-r2`; macOS and
+ CUDA-enabled Windows x64 use `zvec-0.1.154-r1`. CUDA architecture coverage is
+ unchanged. Matching builds reuse native
+ libraries and bindings without executing bindgen, CMake, C++ or CUDA compilation;
+@@ -757,6 +762,11 @@ backends and both CUDA plugins. Custom native configurations use source builds
+ in default `auto` mode. A download or integrity failure is an error, not a silent
+ source fallback.
+ 
++The Linux release workflow audits the executable and all bundled shared
++libraries against glibc 2.28, including both x64 CUDA plugins. This gate also
++runs for validation-only candidates (`publish=false`); it is not part of
++ordinary PR CI.
++
+ The fork no longer registers llama.cpp as a Git submodule. Cargo fetches only
+ the Rust bindings; matching SDK builds never fetch native source. Only explicit
+ `source` builds or a configuration mismatch in `auto` acquire the hash-verified,
+@@ -828,7 +838,7 @@ so neither a second CMake build nor the fallback toolchain is needed.
+ Publish CI requires prebuilt llama SDKs on all six targets, including the
+ Windows ARM64 static CPU SDK. CUDA Rust CI also requires
+ prebuilt mode instead of recompiling only for its T4 GPU. Linux publish builds
+-run in Ubuntu 20.04 containers without a CUDA compiler. Runtime libraries,
++run in digest-pinned `manylinux_2_28` containers without a CUDA compiler. Runtime libraries,
+ driver checks, link audits and real CPU/GPU inference gates remain required. Runtime staging
+ reads the current Cargo invocation's `GGML_BACKENDS_DIR`, not the newest directory
+ under `target/build`; only runtime libraries, not SDK import archives or bindings,
+@@ -1076,13 +1086,14 @@ GGUF plugin and its dependencies before inference; this CI setup does not change
+ the package's host CUDA runtime requirements.
+ Publishing always requires GPU validation regardless of `cuda`. Candidate
+ collection happens first, followed by parallel CPU and requested GPU validation.
+-All selected platforms get the installed CLI/daemon checks; Linux/Windows x64
+-also get the CPU model/fallback checks. A GPU failure does not block CPU checks
++All selected platforms get the installed CLI/daemon checks; Linux x64/ARM64
++and Windows x64 also get real GGUF/ONNX CPU model checks, with automatic CPU
++fallback checks on the CUDA-capable x64 packages. A GPU failure does not block CPU checks
+ or candidate retention, but all required CPU/GPU checks must pass before npm
+ publication. A downloadable candidate is not proof of runtime validation.
+ CPU runners compile Rust and assemble the default CUDA-capable bundles using
+-the pinned native SDK. Linux x64 and ARM64 use Ubuntu 20.04 containers on native
+-runners, without nvcc. Windows needs the Rust/MSVC linker but
++the pinned native SDK. Linux x64 and ARM64 use digest-pinned `manylinux_2_28`
++containers on native runners, without nvcc. Windows needs the Rust/MSVC linker but
+ does not install CUDA compilers for packaging. Ordinary PR CI
+ does not compile CUDA packages. `rust-ci.yml` is the single entry point for
+ workspace and real-model verification. Push/PR runs use ordinary runners on
+@@ -1094,7 +1105,7 @@ For manual runs, `cuda_verify=true` enables `zg/cuda` from the first compilation
+ requiring the matching prebuilt SDK, but compilation, workspace tests, all three
+ CPU model checks and build-cache uploads still run on ordinary CPU runners.
+ These Linux workspace tests use an Ubuntu 24.04 builder without GPU access or
+-CUDA runtime libraries; the npm release build uses Ubuntu 20.04 as described above.
++CUDA runtime libraries; the npm release build uses `manylinux_2_28` as described above.
+ Windows uses `windows-2022`, matching the GPU image's OS generation.
+ Before the test harness copies any libraries, CUDA jobs run `cargo build --features cuda`
+ and exercise the original `target/de
+```
+
+**File**: `rust/npm/README.md` (modified, +31/-6)
+```diff
+@@ -130,11 +130,21 @@ Published target/backend support is:
+ | --- | --- | --- |
+ | macOS ARM64 | CPU + Metal | CPU (CoreML deliberately not selected) |
+ | macOS x64 (14+) | CPU + Metal where available | CPU (CoreML deliberately not selected) |
+-| Linux x64 glibc (Ubuntu 20.04 / glibc 2.31 baseline) | CPU + CUDA 13.1, CUDA 12.4 fallback | CPU + CUDA 12 |
+-| Linux ARM64 glibc (Ubuntu 20.04 / glibc 2.31 baseline) | CPU | CPU |
++| Linux x64 glibc (glibc 2.28 baseline) | CPU + CUDA 13.1, CUDA 12.4 fallback | CPU + CUDA 12 |
++| Linux ARM64 glibc (glibc 2.28 baseline) | CPU | CPU |
+ | Windows x64 | CPU + CUDA 13.1, CUDA 12.4 fallback | CPU + CUDA 12 |
+ | Windows ARM64 | CPU | CPU + DirectML |
+ 
++Linux x64/ARM64 release builders use digest-pinned `manylinux_2_28`
++`2026.03.01-1` images. The executable and bundled libraries are audited against
++`GLIBC_2.28`; installed artifacts are exercised in clean AlmaLinux 8.10
++(glibc 2.28) containers, independently of the host runner's Ubuntu version.
++The Linux builds also check offline CPU ORT preparation by executing the real
++`zg-engine/build.rs` with `CARGO_FEATURE_VULKAN=1` and `CARGO_NET_OFFLINE=true`
++in a network-disabled builder, using cached official CPU ORT and no
++`ORT_DYLIB_PATH` or CUDA feature. This uses separate output, does not change
++release artifacts and is not a full Vulkan backend compilation.
++
+ A deliberate CPU-only Windows build retains DirectML. The published Windows
+ CUDA bundle uses the official ONNX Runtime 1.21.0 CUDA 12 provider and does not
+ claim DirectML support. ORT requires CUDA 12 runtime/cuBLAS and cuDNN 9 even
+@@ -255,7 +265,15 @@ artifact, then checks real installation, CLI startup, managed-rg and daemon IPC.
+ The workflow runs only through manual dispatch and does not publish unless
+ `publish` is enabled. The manual
+ `platform` input defaults to `all`; each of the six target names can be selected
+-individually.
++individually. For Linux ARM64 validation, run in the chosen repository (or add
++`--repo OWNER/REPO`):
++
++```sh
++gh workflow run rust-publish.yml -f publish=false -f cuda=false -f platform=linux-arm64-gnu
++```
++
++Replace the platform with `linux-x64-gnu` for Linux x64. Add `--ref BRANCH`
++to validate a specific branch instead of the repository's default branch.
+ `publish=true` requires `platform=all`; a subset is a validation-only candidate,
+ not a complete release. Manual runs with `publish=false, cuda=false` use ordinary CPU runners;
+ they do not allocate GPUs or publish packages. All six package builds require
+@@ -312,11 +330,18 @@ or repacking. A loopback registry exposes only this run's CUDA archives and
+ records requests. CPU installation must make zero CUDA metadata/tarball requests,
+ leave the plugin cache empty and install no CUDA components; optional download
+ failure followed by CPU fallback is not a pass. No public registry is used.
+-They verify checksums, CLI startup and daemon IPC. Linux/Windows x64 also verify real
+-GGUF/ONNX indexing and vector queries with
+-explicit CPU selection and default CPU fallback, without CUDA host libraries.
++The `artifact-cpu-smoke` jobs verify checksums, CLI startup and daemon IPC.
++Both Linux targets use clean AlmaLinux 8.10 (glibc 2.28) containers and load the
++installed `libonnxruntime.so.1`, verifying ORT 1.21.0 and API 21. Linux/Windows
++x64 run `scripts/cuda/e2e.py --cpu-only` for real GGUF/ONNX indexing and vector
++queries with explicit CPU selection and default CPU fallback, without CUDA
++host libraries. Linux ARM64 uses `--explicit-cpu` for real GGUF/ONNX index/query
++checks; macOS and Windows ARM64 retain CLI/daemon-only artifact smoke coverage.
+ These checks also run for unpublished candidates and must pass before npm
+ publication; failures retain the candidate and `cpu-artifact-evidence-*` logs.
++They are release-workflow checks, not a separate ORT gate in ordinary PR CI.
++For local full-catalog ONNX/performance checks without a workflow entry point,
++see [ONNX Runtime distributions](../CONTRIBUTING.md#onnx-runtime-distributions).
+ 
+ The package GPU jobs use the hosted T4 runners with CUDA runtime libraries,
+ not Rust/C++/CUDA compiler setup. They verify the downloaded native package's
+```
+
+---
+
+### Incident Patch 3: `08120405` (2026-11-12)
+**Commit Message**: fix(docs): avoid private links in GraphEdgeKind rustdoc (#400)
+
+Render the crate-private PendingRef and FileEdge names as inline code in the public GraphEdgeKind docs so strict rustdoc builds pass.
+
+Fixes #397.
+
+**File**: `rust/crates/zg-engine/src/domain/graph.rs` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ pub enum Direction {
+ /// Resolved edges and buffered name references share this vocabulary because
+ /// they become rows of the same table: the pending queue stores the kind the
+ /// resolved edge will carry. Resolution state is therefore structural, not a
+-/// kind — a [`PendingRef`] has no target, a [`FileEdge`] requires one — and the
++/// kind — a `PendingRef` has no target, a `FileEdge` requires one — and the
+ /// store keeps the same split in its `status` column.
+ ///
+ /// `Contains` comes only from containment, which is collected as a resolved
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #376** (closed): fix(engine): send User-Agent on model artifact downloads (@ouyangjiahong26)
-- **PR #370** (2026-11-09): fix(models): add download User-Agent and IPv4 fallback (@feihongxu0824)
-- **PR #365** (2026-11-05): feat(engine): query persisted callers and callees (@liulx20)
-- **PR #364** (2026-11-03): docs: allow package scripts in npm installation commands (@egolearner)
-- **PR #362** (2026-11-04): feat(bench): add model inference micro-benchmark (@feihongxu0824)
-- **PR #361** (2026-11-05): fix(search): preserve source boundaries and bounded preview evidence (@Cuiyus)
+- **PR #400** (2026-11-12): fix(docs): avoid private links in GraphEdgeKind rustdoc (@liulx20)
+- **PR #394** (2026-11-12): fix(engine): restore text fallback for unknown file extensions (@egolearner)
+- **PR #385** (2026-11-12): feat(benchmarks): add QA pairs and Entity retrieval diagnostics (@Cuiyus)
+- **PR #384** (2026-11-10): fix(search): return complete entities in full previews (@feihongxu0824)
+- **PR #383** (2026-11-10): fix(models): restore compilation and configured source checks (@egolearner)
+- **PR #381** (2026-11-10): fix(install): ignore directory dotenv candidates (@egolearner)
 
 ---
 
@@ -2248,51 +2270,37 @@ Co-authored-by: BigBob <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. models): add download User-Agent and IPv4 fallback (#370)
+## X. engine): restore text fallback for unknown file extensions (#394)
 
 **RULE**:
-When implementing operations in `.github/workflows/rust-ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/crates/zg-engine/src/domain/source/format.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e06ff066`: models): add download User-Agent and IPv4 fallback (#370). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bc175f00`: engine): restore text fallback for unknown file extensions (#394). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust-ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-engine/src/domain/source/format.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - name: Verify every local model from both live sources independently
-        if: ${{ !matrix.cuda && matrix.platform == 'linux' }}
-        shell: python
-        env:
-          MODEL_TEST_BINARY: ${{ steps.model-test.outputs.path }}
-        run: |
-          import json, os, pathlib, re, subprocess
-          # Each suite downloads every local catalog model into its own fresh
-          # temporary cache using only the suite's selected source.
-          # Reuse the CPU test executable; no inference or extra build is needed.
-          logs = pathlib.Path("model-logs")
-          logs.mkdir(exist_ok=True)
-          log_path = logs / "live-sources.log"
-          try:
-              with log_path.open("w", encoding="utf-8") as log:
-                  subprocess.run([os.environ["MODEL_TEST_BINARY"],
-                      "models::artifacts::downloader::tests::live_sources::",
-                      "--ignored", "--nocapture", "--test-threads=1"],
-                      stdout=log, stderr=subprocess.STDOUT, timeout=3600, check=True)
-              output = log_path.read_text(encoding="utf-8", errors="replace")
-              if not re.search(r"test result: ok\. 2 passed; 0 failed; 0 ignored;
+    /// Trusts catalog matches; probes unmatched files for readable text.
+            sniff::format(&header, complete, path.extension().is_none()).unwrap_or(Self::Unknown),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    /// Trusts catalog matches; probes only unmatched files without a suffix.
+        if path.extension().is_some() {
+            return Ok(vec![Self::Unknown]);
+        }
+
+            sniff::script(&header, complete).unwrap_or(Self::Unknown),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e06ff066` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bc175f00` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

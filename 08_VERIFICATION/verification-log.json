@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-Q0WJ",
-    "timestamp": "2026-11-12T12:50:32.083Z",
-    "repository": "webpack/webpack",
-    "learningId": "learn-github-webpack-webpack",
-    "contentHash": "e4e2dc2708de500861458c06a43de149cb9b542639ae762dad3b4d520c371266",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-ZQSJ",
-    "timestamp": "2026-11-12T12:58:05.539Z",
-    "repository": "rollup/rollup",
-    "learningId": "learn-github-rollup-rollup",
-    "contentHash": "5e8eb1101fba84d45ad7abef4d5bf4621606b530b8da2f48e00511487f2e9b0e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-FJUS",
     "timestamp": "2026-11-12T13:10:23.044Z",
     "repository": "yvgude/lean-ctx",
@@ -7490,6 +7460,36 @@
     "repository": "test-org/continuous-harvester-proof",
     "learningId": "LEARN-TEST-LIVE-1794574429836",
     "contentHash": "6fed2fb4f5c82f38fc7887f3a83954e5b1dec489cf320d9c8e96cb52e9943451",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-ML6F",
+    "timestamp": "2026-11-13T14:55:30.231Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+    "contentHash": "f0ce52b240c556969f15a941b4659b564c9d25c3e31b96b56b72a9598dcb9db4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-MVLL",
+    "timestamp": "2026-11-13T14:55:43.737Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "672c544da25fb14dacee9785aee406d6cbb28a0ce7f2be90dbb333b587aa7dfd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

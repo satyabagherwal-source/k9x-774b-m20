@@ -4,45 +4,31 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "294cd0ad",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T14:55:43.955Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `294cd0ad`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T14:55:43.955Z`  
+> **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `cilium/cilium` (Commit: `historical`)
+- **Target Repository**: `cilium/cilium` (Commit: `294cd0ad`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
-> **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `d947de73`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T08:52:46.997Z  
-> **Learning ID**: `learn-github-cilium-cilium`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): cilium/cilium
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T08:52:46.992Z  
+> **Harvest Timestamp**: 2026-11-13T14:55:43.203Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25822 stars
+- **Stars / Engagement**: 25827 stars
 
 ---
 
@@ -1284,14 +1270,14 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49982** (2026-11-12): **Stale tcx links left attached after a managed host device is renamed (pins under old name never cleaned up), causing duplicate cil_from_netdev/cil_to_netdev and egress loss**
-  *Symptoms*: ### Is there an existing issue for this? - [x] I have searched the existing issues  Related but different trigger: #44194 (duplicate tcx after restart, closed as stale), #47847 (duplicate tcx due to extra bpffs mount), #49058, PR #49755.  ### Version v1.18.8 (tcx enabled, kube-proxy-replacement=true, native routing, `devices` not set → auto-detection). Kernel 6.17 (Ubuntu 24.04, AWS).  ### What happened? On nodes that boot with secondary ENIs already attached, the agent auto-detects them as `eth1`/`eth2`, attaches `cil_from_netdev`/`cil_to_netdev` via tcx and pins the links under:  ``` /sys/fs/bpf/cilium/devices/eth1/links/{cil_from_netdev,cil_to_netdev} /sys/fs/bpf/cilium/devices/eth2/links/{cil_from_netdev,cil_to_netdev} ```  Shortly after, an external component renames the **same netdev** (same ifindex) to a new name, e.g. `eth2` -> `ext-public0`. The agent treats the new name as a new device and attaches a second pair of programs, pinned under `.../devices/ext-public0/links/`. The old links pinned under `eth2/` stay attached to the renamed device:  ``` # bpftool link show pinned /sys/fs/bpf/cilium/devices/eth2/links/cil_to_netdev 35: tcx  prog 823  ifindex ext-public0(4)  attach_type tcx_egress # bpftool net show dev ext-public0 ext-public0(4) tcx/ingress cil_from_netdev prog_id 778  link_id 34   <- stale (pinned under eth2/) ext-public0(4) tcx/ingress cil_from_netdev prog_id 1067 link_id 47   <- current ext-public0(4) tcx/egress  cil_to_netdev   prog_id 823  link_id 35  
-
-- **Issue #49973** (2026-11-12): **fix(deps): update module golang.org/x/crypto to v0.59.0 [security] (v1.18)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto) | [`v0.58.0` → `v0.59.0`](https://cs.opensource.google/go/x/crypto/+/refs/tags/v0.58.0...refs/tags/v0.59.0) | ![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fcrypto/v0.59.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fcrypto/v0.58.0/v0.59.0?slim=true) |  ---  ### The golang.org/x/crypto/openpgp package is unmaintained, unsafe by design, and has known security issues [GO-2026-5932](https://pkg.go.dev/vuln/GO-2026-5932)  <details> <summary>More information</summary>  #### Details The golang.org/x/crypto/openpgp package is unsafe by design, has numerous known security issues, is not maintained, and should not be used.  If you are required to interoperate with OpenPGP systems and need a maintained package, consider github.com/ProtonMail/go-crypto/openpgp which is a maintained fork that aims to be a drop-in replacement for this package.  #### Severity Unknown  #### References - [https://go.dev/issue/44226](https://go.dev/issue/44226) - [https://go.dev/issue/81227](https://go.dev/issue/81227)  This data is provided by [OSV](https://osv.dev/vulnerability/GO-2026-5932) and the [Go Vulnerability Database](https://redirect.github.com/golang/vulndb) ([CC
+- **Issue #49999** (2026-11-12): **fix(linux/adnr): reconcile direct routes before node table initialization**
+  *Symptoms*: This PR allows ADNR to publish direct routes while ClusterMesh initializes the node table. Waiting for node table initialization creates a dependency cycle: ClusterMesh waits for direct routes before completing its initializer, while ADNR waits for that initializer before reconciling the routes.  AIL:0  
   **Post-Mortem & Fix Analysis**:
-  > ### ℹ️ Artifact update notice  ##### File name: go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 7 additional dependencies were updated   Details:   | **Package**              | **Change**                                                                   | | :----------------------- | :--------------------------------------------------------------------------- | | `golang.org/x/mod`       | `v0.41.0` -> `v0.42.0`                                                       | | `golang.org/x/sync`      | `v0.24.0` -> `v0.25.0`                                                       | | `golang.org/x/sys`       | `v0.49.0` -> `v0.50.0`                                                       | | `golang.org/x/term`      | `v0.47.0` -> `v0.48.0`                                                       | | `golang.org/x/text`      | `v0.43.0` -> `v0.44.0`                                    
   > /test
+  > /ci-kpr-aks
+
+- **Issue #49998** (2026-11-12): **chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.19)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) |  | patch | `v0.20.2` → `v0.20.3` | | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | patch | `v0.20.2` → `v0.20.3` |  ---  ### Release Notes  <details> <summary>cilium/cilium-cli</summary>  ### [`v0.20.3`](https://redirect.github.com/cilium/cilium-cli/releases/tag/v0.20.3)  [Compare Source](https://redirect.github.com/cilium/cilium-cli/compare/v0.20.2...v0.20.3)  ## Summary of Changes  **Minor Changes:**  - cilium-cli: Apply standard scheduling params to all connectivity pods ([cilium/cilium#49113](https://redirect.github.com/cilium/cilium/issues/49113), [@&#8203;HadrienPatte](https://redirect.github.com/HadrienPatte)) - helm: move SPIRE chart values under ztunnel ([cilium/cilium#48942](https://redirect.github.com/cilium/cilium/issues/48942), [@&#8203;mhofstetter](https://redirect.github.com/mhofstetter))  **CI Changes:**  - cilium-cli: Fix unschedulable client pod on 2-node clusters ([cilium/cilium#49776](https://redirect.github.com/cilium/cilium/issues/49776), [@&#8203;aanm](https://redirect.github.com/aanm)) - cilium-cli: Ignore restarts of never-started containers ([cilium/cilium#49641](https://redirect.github.com/cilium/cilium/issues/49641), [@&#8203;aanm](https://redirect.github.com/aanm)) - cilium-cli: restore v2alpha1 BGP deprecation log exception ([cilium/cilium#49919](http
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1308,167 +1294,91 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c7204ac` (2026-10-29)
-**Commit Message**: bpf:tests: add encrypt_host_masq suite for encrypted packets
+### Incident Patch 1: `3b61ed8f` (2026-11-03)
+**Commit Message**: ciliumenvoyconfig: clone resources retained by the script fixture
 
-Add a test suite checking the interaction between BPF masquerading and
-encryption in to-netdev, for both IPsec and WireGuard. A pod packet
-leaving the cluster is first checked to be masqueraded, then the same
-packet marked with MARK_MAGIC_ENCRYPT is checked to be left untouched.
+The fake Envoy server retained caller-owned protobufs that the reconciler
+could later modify outside the fixture's lock. This raced with resource
+comparison and formatting in the script tests.
 
-Signed-off-by: Simone Magnani <[REDACTED_EMAIL]>
+Clone resources when storing them so the fixture owns independent
+snapshots. The existing CEC tests pass 20 race-enabled runs after the fix.
 
-**File**: `bpf/tests/encrypt_host_masq.h` (added, +117/-0)
+Signed-off-by: Jarno Rajahalme <[REDACTED_EMAIL]>
+
+**File**: `pkg/ciliumenvoyconfig/script_test.go` (modified, +7/-5)
 ```diff
-@@ -0,0 +1,117 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+ * Copyright Authors of Cilium
-+ */
-+
-+#include <bpf/ctx/skb.h>
-+#include "common.h"
-+#include "pktgen.h"
-+
-+#define ENABLE_IPV4			1
-+#define ENABLE_NODEPORT			1
-+
-+#define SRC_POD_V4			v4_pod_one
-+#define SRC_POD_SEC_IDENTITY		(CIDR_IDENTITY_RANGE_START - 2)
-+#define NODE_IP				v4_node_one
-+#define SERVER_IP			v4_ext_one
-+
-+#define SRC_PORT			bpf_htons(50000)
-+#define DST_PORT			bpf_htons(80)
-+
-+#include "nodeport_defaults.h"
-+
-+#include "lib/bpf_host.h"
-+
-+#include "lib/endpoint.h"
-+#include "lib/ipcache.h"
-+
-+ASSIGN_CONFIG(union v4addr, nat_ipv4_masquerade, { .be32 = NODE_IP })
-+ASSIGN_CONFIG(bool, enable_masquerade_ipv4, true)
-+ASSIGN_CONFIG(bool, enable_identity_mark, true)
-+
-+static __always_inline
-+int v4_build_packet(struct __ctx_buff *ctx)
-+{
-+	struct pktgen builder;
-+	struct udphdr *l4;
-+
-+	pktgen__init(&builder, ctx);
-+
-+	l4 = pktgen__push_ipv4_udp_packet(&builder, (__u8 *)mac_one, (__u8 *)mac_two,
-+					  SRC_POD_V4, SERVER_IP, SRC_PORT, DST_PORT);
-+	if (!l4)
-+		return TEST_ERROR;
-+
-+	pktgen__finish(&builder);
-+	return 0;
-+}
-+
-+static __always_inline
-+int check(const struct __ctx_buff *ctx, __be32 expected_saddr)
-+{
-+	void *data;
-+	void *data_end;
-+	__u32 *status_code;
-+	struct iphdr *l3;
-+
-+	test_init();
-+
-+	data = (void *)(long)ctx->data;
-+	data_end = (void *)(long)ctx->data_end;
-+
-+	if (data + sizeof(*status_code) + sizeof(struct ethhdr) + sizeof(*l3) > data_end)
-+		test_fatal("packet out of bounds");
-+
-+	status_code = data;
-+	assert(*status_code == CTX_ACT_OK);
-+
-+	l3 = data + sizeof(*status_code) + sizeof(struct ethhdr);
-+	assert(l3->saddr == expected_saddr);
-+
-+	test_finish();
-+}
-+
-+/* Validate that a pod packet leaving the cluster is masqueraded. */
-+PKTGEN(PROG_TYPE, "encrypt_masq_v4_1_unencrypted")
-+int encrypt_masq_v4_1_unencrypted_pktgen(struct __ctx_buff *ctx)
-+{
-+	return v4_build_packet(ctx);
-+}
-+
-+SETUP(PROG_TYPE, "encrypt_masq_v4_1_unencrypted")
-+int encrypt_masq_v4_1_unencrypted_setup(struct __ctx_buff *ctx)
-+{
-+	endpoint_v4_add_entry(SRC_POD_V4, 0, 0, 0, SRC_POD_SEC_IDENTITY,
-+			      0, (__u8 *)mac_one, (__u8 *)mac_two);
-+	ipcache_v4_add_world_entry();
-+
-+	set_identity_mark(ctx, SRC_POD_SEC_IDENTITY, MARK_MAGIC_IDENTITY);
-+
-+	return netdev_send_packet(ctx);
-+}
-+
-+CHECK(PROG_TYPE, "encrypt_masq_v4_1_unencrypted")
-+int encrypt_masq_v4_1_unencrypted_check(const struct __ctx_buff *ctx)
-+{
-+	return check(ctx, NODE_IP);
-+}
-+
-+/* Validate that an already encrypted packet is not masqueraded. */
-+PKTGEN(PROG_TYPE, "encrypt_masq_v4_2_encrypted")
-+int encrypt_masq_v4_2_encrypted_pktgen(struct __ctx_buff *ctx)
-+{
-+	return v4_build_packet(ctx);
-+}
-+
-+SETUP(PROG_TYPE, "encrypt_masq_v4_2_encrypted")
-+int encrypt_masq_v4_2_encrypted_setup(struct __ctx_buff *ctx)
-+{
-+	ctx->mark = MARK_MAGIC_ENCRYPT;
-+
-+	return netdev_send_packet(ctx);
-+}
-+
-+CHECK(PROG_TYPE, "encrypt_masq_v4_2_encrypted")
-+int encrypt_masq_v4_2_encrypted_check(const struct __ctx_buff *ctx)
-+{
-+	return check(ctx, SRC_POD_V4);
-+}
+@@ -290,21 +290,23 @@ func (rs resourceStore) equal(other resourceStore) bool {
+ 	return maps.EqualFunc(rs, other, proto.Equal)
+ }
+ 
++// Retain independent snapshots: the reconciler may reuse and modify its
++// protobufs after this call returns, outside the fake server's lock.
+ func (rs resourceStore) update(res *xds.Resources) {
+ 	for _, l := range res.Listeners {
+-		rs[resourceKey{kind: listenerKey, name: l.Name}.String()] = l
++		rs[resourceKey{kind: listenerKey, name: l.Name}.String()] = proto.Clone(l)
+ 	}
+ 	for _, s := range res.Secrets {
+-		rs[resourceKey{kind: secretKey, name: s.Name}.String()] = s
++		rs[resourceKey{kind: secretKey, name: s.Name}.String()] = proto.Clone(s)
+ 	}
+ 	for _, r := range res.Routes {
+-		rs[resourceKey{kind: routeKey, name: r.Name}.String()] = r
++		rs[resourceKey{kind: routeKey, name: r.Name}.String()] = proto.Clone(r)
+ 	}
+ 	for _, c := range res.Clusters {
+-		rs[resourceKey{kind: clustersKey, name: c.Name}.String()] = c
++		rs[resourceKey{kind: clustersKey, name: c.Name}.String()] = proto.Clone(c)
+ 	}
+ 	for _, e := range res.Endpoints {
+-		rs[resourceKey{kind: endpointsKey, name: e.ClusterName}.String()] = e
++		rs[resourceKey{kind: endpointsKey, name: e.ClusterName}.String()] = proto.Clone(e)
+ 	}
+ }
+ 
 ```
 
-**File**: `bpf/tests/encrypt_host_masq_ipsec.c` (added, +6/-0)
+---
+
+### Incident Patch 2: `9b96f436` (2026-11-12)
+**Commit Message**: ci: update docs-builder
+
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/documentation.yaml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/* Copyright Authors of Cilium */
-+
-+#include "encrypt_host_masq.h"
-+
-+ASSIGN_CONFIG(bool, enable_ipsec, true)
+@@ -70,7 +70,7 @@ jobs:
+         uses: ./.github/actions/disk-cleanup
+ 
+       - name: Build HTML
+-        uses: docker://quay.io/cilium/docs-builder:c4c4f10b28886b2990bceabf0cf6f2c33791b96d@sha256:35459bcbc27746250d39dc10db56c7f8421fc9e859da8bb598c51df217259f7b
++        uses: docker://quay.io/cilium/docs-builder:c14b3ecf2124dc8d3f040342fc45dd3273cba9cf@sha256:01e640859ee21e03e2481e5b1959fee3b126ea172018d2f47e089c3ed5d4482b
+         with:
+           entrypoint: ./Documentation/check-build.sh
+           args: html
 ```
 
-**File**: `bpf/tests/encrypt_host_masq_wireguard.c` (added, +6/-0)
+**File**: `Documentation/Makefile` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,6 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/* Copyright Authors of Cilium */
-+
-+#include "encrypt_host_masq.h"
-+
-+ASSIGN_CONFIG(bool, enable_wireguard, true)
+@@ -14,7 +14,7 @@ SPHINX_OPTS := "-j=auto"
+ 
+ .PHONY: default clean help cilium-build cmdref epub latex html
+ 
+-DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:c4c4f10b28886b2990bceabf0cf6f2c33791b96d@sha256:35459bcbc27746250d39dc10db56c7f8421fc9e859da8bb598c51df217259f7b
++DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:c14b3ecf2124dc8d3f040342fc45dd3273cba9cf@sha256:01e640859ee21e03e2481e5b1959fee3b126ea172018d2f47e089c3ed5d4482b
+ 
+ .PHONY: update-docs-builder-image
+ update-docs-builder-image: DOCS_BUILDER_TAG=$(word 3,$(shell git ls-tree --full-tree HEAD -- $(DOCS_BUILDER_DIR)))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49973** (2026-11-12): fix(deps): update module golang.org/x/crypto to v0.59.0 [security] (v1.18) (@cilium-renovate[bot])
-- **PR #49972** (2026-11-12): fix(deps): update module golang.org/x/crypto to v0.59.0 [security] (v1.19) (@cilium-renovate[bot])
-- **PR #49971** (2026-11-11): fix(deps): update module golang.org/x/crypto to v0.59.0 [security] (v1.20) (@cilium-renovate[bot])
-- **PR #49970** (2026-11-11): fix(deps): update module golang.org/x/crypto to v0.59.0 [security] (main) (@cilium-renovate[bot])
-- **PR #49961** (2026-11-11): docs: add note on wg port reservation (@darox)
-- **PR #49955** (2026-11-11): network driver: update RX queue steering as Pods change (@aarcamp)
+- **PR #49999** (2026-11-12): fix(linux/adnr): reconcile direct routes before node table initialization (@andreaterzolo)
+- **PR #49998** (2026-11-12): chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.19) (@cilium-renovate[bot])
+- **PR #49997** (2026-11-12): chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.20) (@cilium-renovate[bot])
+- **PR #49995** (2026-11-13): gha: install the delegated IPAM conflist once Cilium is ready (@ekoops)
+- **PR #49994** (2026-11-13): rbac: restrict agents to only accessing their own Node and CiliumNodes (@squeed)
+- **PR #49987** (2026-11-12): datapath: correctly set nodeport/ipv4 configs in tests (@ekoops)
 
 ---
 
@@ -1488,83 +1398,41 @@ Signed-off-by: Simone Magnani <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bpf:tests: add encrypt_host_masq suite for encrypted packets
+## X. ciliumenvoyconfig: clone resources retained by the script fixture
 
 **RULE**:
-When implementing operations in `bpf/tests/encrypt_host_masq.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ciliumenvoyconfig/script_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c7204ac`: bpf:tests: add encrypt_host_masq suite for encrypted packets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b61ed8f`: ciliumenvoyconfig: clone resources retained by the script fixture. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/tests/encrypt_host_masq.h`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ciliumenvoyconfig/script_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- * Copyright Authors of Cilium
- */
-
-#include <bpf/ctx/skb.h>
-#include "common.h"
-#include "pktgen.h"
-
-#define ENABLE_IPV4			1
-#define ENABLE_NODEPORT			1
-
-#define SRC_POD_V4			v4_pod_one
-#define SRC_POD_SEC_IDENTITY		(CIDR_IDENTITY_RANGE_START - 2)
-#define NODE_IP				v4_node_one
-#define SERVER_IP			v4_ext_one
-
-#define SRC_PORT			bpf_htons(50000)
-#define DST_PORT			bpf_htons(80)
-
-#include "nodeport_defaults.h"
-
-#include "lib/bpf_host.h"
-
-#include "lib/endpoint.h"
-#include "lib/ipcache.h"
-
-ASSIGN_CONFIG(union v4addr, nat_ipv4_masquerade, { .be32 = NODE_IP })
-ASSIGN_CONFIG(bool, enable_masquerade_ipv4, true)
-ASSIGN_CONFIG(bool, enable_identity_mark, true)
-
-static __always_inline
-int v4_build_packet(struct __ctx_buff *ctx)
-{
-	struct pktgen builder;
-	struct udphdr *l4;
-
-	pktgen__init(&builder, ctx);
-
-	l4 = pktgen__push_ipv4_udp_packet(&builder, (__u8 *)mac_one, (__u8 *)mac_two,
-					  SRC_POD_V4, SERVER_IP, SRC_PORT, DST_PORT);
-	if (!l4)
-		return TEST_ERROR;
-
-	pktgen__finish(&builder);
-	return 0;
-}
-
-static __always_inline
-int check(const struct __ctx_buff *ctx, __be32 expected_saddr)
-{
-	void *data;
-	void *data_end;
-	__u32 *statu
+// Retain independent snapshots: the reconciler may reuse and modify its
+// protobufs after this call returns, outside the fake server's lock.
+		rs[resourceKey{kind: listenerKey, name: l.Name}.String()] = proto.Clone(l)
+		rs[resourceKey{kind: secretKey, name: s.Name}.String()] = proto.Clone(s)
+		rs[resourceKey{kind: routeKey, name: r.Name}.String()] = proto.Clone(r)
+		rs[resourceKey{kind: clustersKey, name: c.Name}.String()] = proto.Clone(c)
+		rs[resourceKey{kind: endpointsKey, name: e.ClusterName}.String()] = proto.Clone(e)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+		rs[resourceKey{kind: listenerKey, name: l.Name}.String()] = l
+		rs[resourceKey{kind: secretKey, name: s.Name}.String()] = s
+		rs[resourceKey{kind: routeKey, name: r.Name}.String()] = r
+		rs[resourceKey{kind: clustersKey, name: c.Name}.String()] = c
+		rs[resourceKey{kind: endpointsKey, name: e.ClusterName}.String()] = e
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c7204ac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b61ed8f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

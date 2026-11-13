@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:34:30.416Z",
+  "last_updated": "2026-11-13T14:55:48.346Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T13:34:34.562Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-13T13:34:34.597Z",
+      "processed_at": "2026-11-13T14:55:47.755Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -398,7 +398,7 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-13T14:18:05.935Z",
+      "processed_at": "2026-11-13T14:55:47.197Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1878,8 +1878,8 @@
       "staged_for_review": 1
     },
     "hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md": {
-      "processed_at": "2026-11-13T14:18:05.915Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-13T14:55:46.911Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-xingchen-agi-xing4.0-29b-a4b-learnings.md": {
@@ -1903,7 +1903,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 591,
+  "total_dossiers_evaluated": 594,
   "total_canonical_promoted": 107,
-  "total_staged_for_review": 481
+  "total_staged_for_review": 483
 }

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T14:34:08.277Z",
-  "total_cycles_completed": 9270,
-  "total_learnings_persisted": 9270,
-  "total_rules_promoted": 9032,
+  "last_updated": "2026-11-13T14:55:43.763Z",
+  "total_cycles_completed": 9272,
+  "total_learnings_persisted": 9272,
+  "total_rules_promoted": 9033,
   "history": [
-    {
-      "timestamp": "2026-11-12T23:42:16.740Z",
-      "repository": "fastapi/fastapi",
-      "learningId": "learn-github-fastapi-fastapi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T23:54:54.633Z",
-      "repository": "zenbu-labs/terminal-browser",
-      "learningId": "learn-github-zenbu-labs-terminal-browser",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T23:55:04.631Z",
       "repository": "touchlab/Kermit",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T14:34:08.277Z",
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:55:30.241Z",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T14:55:43.763Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

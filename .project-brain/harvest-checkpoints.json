@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T14:34:08.281Z",
+  "last_updated": "2026-11-13T14:55:43.769Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -440,14 +440,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "content_hash": "911cb94cd8452cba318b70a9c3af2200450e0d387d20682794d0d067a365e741",
-      "verified_at": "2026-11-13T14:17:21.442Z",
+      "content_hash": "f0ce52b240c556969f15a941b4659b564c9d25c3e31b96b56b72a9598dcb9db4",
+      "verified_at": "2026-11-13T14:55:30.245Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:17:21.442Z"
+      "last_updated": "2026-11-13T14:55:30.245Z"
     },
     "XingChen-AGI/Xing4.0-29B-A4B": {
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "098662001841d4e02e7db9f7273c0ac6b87ae6e4c14f9c1806d9bc4e44d90e9c",
-      "verified_at": "2026-11-13T14:17:46.005Z",
+      "content_hash": "672c544da25fb14dacee9785aee406d6cbb28a0ce7f2be90dbb333b587aa7dfd",
+      "verified_at": "2026-11-13T14:55:43.768Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:17:46.005Z"
+      "last_updated": "2026-11-13T14:55:43.768Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",

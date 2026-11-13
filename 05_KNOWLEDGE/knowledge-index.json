@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T14:34:08.099Z",
+  "last_updated": "2026-11-13T14:55:48.254Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7923,7 +7923,7 @@
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
       "source_version": "294cd0ad",
-      "content_hash": "098662001841d4e02e7db9f7273c0ac6b87ae6e4c14f9c1806d9bc4e44d90e9c",
+      "content_hash": "672c544da25fb14dacee9785aee406d6cbb28a0ce7f2be90dbb333b587aa7dfd",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -8258,7 +8258,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T14:17:45.843Z",
+      "verified_at": "2026-11-13T14:55:43.612Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35086,7 +35086,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "911cb94cd8452cba318b70a9c3af2200450e0d387d20682794d0d067a365e741",
+      "content_hash": "f0ce52b240c556969f15a941b4659b564c9d25c3e31b96b56b72a9598dcb9db4",
       "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "promoted_rules": [
@@ -35141,7 +35141,7 @@
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv451vsw",
         "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4ibcf4"
       ],
-      "verified_at": "2026-11-13T14:17:21.337Z",
+      "verified_at": "2026-11-13T14:55:30.098Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -192863,6 +192863,138 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "domain_intelligence-research-knowledge-intelligence-viggle-qwen-image-2-1-viggle-turbo-core-invarian": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-viggle-qwen-image-2-1-viggle-turbo-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-viggle-qwen-image-2-1-viggle-turbo-research-knowledge-intelligence-viggle-qwe.md",
+      "title": "Research & Knowledge Intelligence: Viggle/Qwen-Image-2.1-viggle-turbo Core Invariants",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
+      "content_hash": "e2f02137387310e9182b04e0a64ab1acea21a525064199c09d49457cf885745a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T14:55:30.416Z"
+    },
+    "candidate_directive-ciliumenvoyconfig-clone-resources-retained-by-the-script-fixture": {
+      "item_id": "candidate_directive-ciliumenvoyconfig-clone-resources-retained-by-the-script-fixture",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MYHB-ciliumenvoyconfig-clone-resources-retained-by-the-script-fixture.md",
+      "title": "ciliumenvoyconfig: clone resources retained by the script fixture",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4b3453d579695a7b175ebfbdc1896d5bd117c5a7231b63d06701374a3e98f424",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-13T14:55:47.471Z"
+    },
+    "domain_intelligence-product-intelligence-cilium-cilium-core-invariants": {
+      "item_id": "domain_intelligence-product-intelligence-cilium-cilium-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
+      "title": "Product Intelligence: cilium/cilium Core Invariants",
+      "repository": "cilium/cilium",
+      "source_version": "294cd0ad",
+      "content_hash": "8007ad9067e9ce3f83b9134e5e925ab9281a67085dfc24ebb9e365fd3eb96ff4",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-13T14:55:44.052Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
+      "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
+      "repository": "cilium/cilium",
+      "source_version": "294cd0ad",
+      "content_hash": "9078b99779622d9811b0cc8a4e8a18608556ab7e92c41e5b644ea9eb84602f1f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T14:55:44.146Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-research-knowledge-intelligence-.md",
+      "title": "Research & Knowledge Intelligence: hf-viggle-qwen-image-2.1-viggle-turbo-learnings Core Invariants",
+      "repository": "hf-viggle-qwen-image-2.1-viggle-turbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2e7d8b7662c651a500d04021ef3064940ef954a77da8743b1f51df18f67dd2cf",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T14:55:47.093Z"
+    },
+    "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants": {
+      "item_id": "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
+      "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "940da9a61775ec16b7446fd5ffcb1deafd74bee2653d3e75769188bedd62f89b",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-13T14:55:47.565Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/cilium-cilium-learnings-verification-protocol-empirical-defect-shield-for-cilium.md",
+      "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a97bb7626dfb0550157e54221b874173b3b807f49f3a4170e6bf458d85887eb3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T14:55:47.659Z"
+    },
+    "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
+      "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MYV7-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
+      "title": "engine): restore text fallback for unknown file extensions (#394)",
+      "repository": "zvec-ai-zvec-grep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ffd4d0fbe4cd43aec094ec41358426f84f6d7648b8e96a0aeb48d84bb9ddae9c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T14:55:47.976Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
+      "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
+      "repository": "zvec-ai-zvec-grep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9978605bb773af021a1953331dadb2ec2af08394d4d8010b270b3c89dd1e62e2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T14:55:48.068Z"
+    },
+    "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/zvec-ai-zvec-grep-learnings-agent-contract-zvec-ai-zvec-grep-learnings-autonomou.md",
+      "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
+      "repository": "zvec-ai-zvec-grep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a37399713649695b78d2fe99b80371bb76b00edcbbc86d3ac3928aa913c45dd7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T14:55:48.163Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/zvec-ai-zvec-grep-learnings-verification-protocol-empirical-defect-shield-for-zv.md",
+      "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
+      "repository": "zvec-ai-zvec-grep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9e87fe129de931b4746e55e33163a14fee4085530c03c22431aa92a97cd22e6b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T14:55:48.254Z"
     }
   },
   "aliases": {
@@ -198860,5 +198992,6 @@
     ],
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
-  }
+  },
+  "total_items": 9044
 }

@@ -9525,3 +9525,5 @@ Every entry in this ledger must capture:
 | `learn-github-infracost-infracost` | `https://github.com/infracost/infracost` | `34e9cd06` | Multi-dimensional audit evidence | 2026-11-13T14:34:03.406Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `e00dd078` | Multi-dimensional audit evidence | 2026-11-13T14:34:08.257Z |
 | `learn-dom-d-acecc835` | `project://hf-supersoniclabs-julia-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | 2026-11-13T14:34:29.708Z |
+| `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-13T14:55:30.235Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `294cd0ad` | Multi-dimensional audit evidence | 2026-11-13T14:55:43.741Z |
