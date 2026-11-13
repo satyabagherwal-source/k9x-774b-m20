@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T12:24:54.932Z",
+  "updated_at": "2026-11-13T12:33:10.577Z",
   "statistics": {
-    "total_nodes": 83,
-    "total_edges": 43,
+    "total_nodes": 84,
+    "total_edges": 44,
     "domain_distribution": {
-      "D": 65,
+      "D": 66,
       "M": 1,
       "H": 9,
       "J": 2,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 43
+      "CONSTRAINED_BY_ARCHITECTURE": 44
     }
   },
   "nodes": {
@@ -1843,6 +1843,29 @@
       ],
       "created_at": "2026-11-13T12:24:54.931Z",
       "updated_at": "2026-11-13T12:24:54.931Z"
+    },
+    "DOM-D-1551B43D": {
+      "id": "DOM-D-1551B43D",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): moonshotai/Kimi-K3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-moonshotai-kimi-k3/hf-moonshotai-kimi-k3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T12:32:55.958Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-moonshotai-kimi-k3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T12:33:10.577Z",
+      "updated_at": "2026-11-13T12:33:10.577Z"
     }
   },
   "edges": [
@@ -2275,6 +2298,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-7533F859 [D] with Domain M",
       "created_at": "2026-11-13T12:24:54.932Z"
+    },
+    {
+      "id": "EDGE-4E203AC30B1B",
+      "sourceId": "DOM-D-1551B43D",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-1551B43D [D] with Domain M",
+      "created_at": "2026-11-13T12:33:10.577Z"
     }
   ]
 }

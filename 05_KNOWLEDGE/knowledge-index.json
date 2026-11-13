@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T12:24:39.660Z",
+  "last_updated": "2026-11-13T12:32:50.438Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -127,8 +127,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "02152f3a",
-      "content_hash": "45f9398e3350d6ece94872281dfb344020c89c30639420f5e89366629a7642c9",
+      "source_version": "3e94495c",
+      "content_hash": "0d3f6ab9ffbe3db056a4ea6999105bbd08e55081ae59cfce507a0f524fcf5344",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -150,6 +150,11 @@
         {
           "number": null,
           "title": "tui): keep the terminal in TUI mode when a draw panic is recovered",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "tui: batch streamed text at 250ms on unfocused clients, keep the spinner at 80ms",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -258,7 +263,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T19:46:16.944Z",
+      "verified_at": "2026-11-13T12:32:44.495Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30367,7 +30372,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
       "source_version": "hf-moonshotai-kimi-k3",
-      "content_hash": "ba1ebe0b84b1f1bd101d882ea70f24e5b954bab3e19b29e085ed0252f63a1b38",
+      "content_hash": "f38998a919c0e86e5117bc06c65a47ef4d467cad420d8440ba0bbea751ebe40a",
       "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "promoted_rules": [
@@ -30445,7 +30450,7 @@
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4438bt",
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y"
       ],
-      "verified_at": "2026-11-08T11:13:50.311Z",
+      "verified_at": "2026-11-13T12:32:30.243Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -39399,14 +39404,19 @@
       "slug": "keyboardkit-keyboardkit",
       "platform": "github",
       "source_url": "https://github.com/KeyboardKit/KeyboardKit",
-      "source_version": "623e673f",
-      "content_hash": "dc88c6477a5d26a0db9198ad6b887e77d978acbd930e486929a9a9264091df4d",
+      "source_version": "0e3c01c8",
+      "content_hash": "3501820c15f0e4d1c47b0b532dad3a5007927580a1953ad80194315c7ac3b927",
       "dossier_path": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Update README to include Text Input section",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Update package to 11.2.3",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -39435,7 +39445,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T02:28:05.106Z",
+      "verified_at": "2026-11-13T12:32:50.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

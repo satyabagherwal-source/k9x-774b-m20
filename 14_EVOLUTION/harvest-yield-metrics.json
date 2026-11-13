@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T12:24:39.757Z",
-  "total_cycles_completed": 9228,
-  "total_learnings_persisted": 9228,
-  "total_rules_promoted": 9005,
+  "last_updated": "2026-11-13T12:32:50.572Z",
+  "total_cycles_completed": 9231,
+  "total_learnings_persisted": 9231,
+  "total_rules_promoted": 9007,
   "history": [
-    {
-      "timestamp": "2026-11-12T21:30:57.149Z",
-      "repository": "jestjs/jest",
-      "learningId": "learn-github-jestjs-jest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:31:11.101Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:31:14.546Z",
-      "repository": "langchain4j/langchain4j",
-      "learningId": "learn-github-langchain4j-langchain4j",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T21:31:14.862Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-13T12:24:39.757Z",
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T12:32:30.387Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T12:32:44.692Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T12:32:50.572Z",
+      "repository": "KeyboardKit/KeyboardKit",
+      "learningId": "learn-github-keyboardkit-keyboardkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

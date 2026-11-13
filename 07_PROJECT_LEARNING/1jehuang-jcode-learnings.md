@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `02152f3a`  
+> **Source Version**: `3e94495c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T19:46:03.274Z  
+> **Timestamp**: 2026-11-13T12:32:32.546Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T19:46:03.043Z  
+> **Harvest Timestamp**: 2026-11-13T12:32:32.539Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21701 stars
+- **Stars / Engagement**: 21747 stars
 
 ---
 
@@ -335,20 +335,23 @@ pub(super) fn stable_hash_str(value: &str) -> u64 {
     hasher.finish()
 }
 
+/// The one place cache signatures encode JSON. A value that cannot be
+/// serialized signs as the empty string, the same as before.
+fn encode_json<T: serde::Serialize + ?Sized>(value: &T) -> String {
+    serde_json::to_string(value).unwrap_or_default()
+}
+
 #[cfg(test)]
 fn stable_hash_json<T: serde::Serialize + ?Sized>(value: &T) -> u64 {
-    let encoded = serde_json::to_string(value).unwrap_or_default();
-    stable_hash_str(&encoded)
+    stable_hash_str(&encode_json(value))
 }
 
 pub(super) fn stable_json_len<T: serde::Serialize + ?Sized>(value: &T) -> usize {
-    serde_json::to_string(value)
-        .map(|encoded| encoded.len())
-        .unwrap_or_default()
+    encode_json(value).len()
 }
 
 fn json_hash_and_len<T: serde::Serialize + ?Sized>(value: &T) -> (u64, usize) {
-    let encoded = serde_json::to_string(value).unwrap_or_default();
+    let encoded = encode_json(value);
     (stable_hash_str(&encoded), encoded.len())
 }
 
@@ -364,7 +367,7 @@ fn projected_message_hashes(messages: &[Message]) -> (u64, Vec<u64>) {
             aggregate.write(b",");
         }
         let projected = crate::message::cache_relevant_message_value(message);
-        let encoded = serde_json::to_string(&projected).unwrap_or_default();
+        let encoded = encode_json(&projected);
         hashes.push(stable_hash_str(&encoded));
         aggregate.write(encoded.as_bytes());
     }
@@ -2324,509 +2327,388 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6234b21e` (2026-11-11)
-**Commit Message**: fix(tui): keep the terminal in TUI mode when a draw panic is recovered
+### Incident Patch 1: `1c33cd2f` (2026-11-13)
+**Commit Message**: tui: batch streamed text at 250ms on unfocused clients, keep the spinner at 80ms
 
-ratatui::init installs a panic hook that restores the terminal on every
-panic, including draw panics that jcode catches and recovers from. After
-such a panic (for example a tmux pane squeezed to one row on older
-builds) jcode kept running in cooked mode on the primary screen with
-mouse reporting on, so the pane filled with escape sequences.
+An unfocused client that mirrors a streaming turn drew a full frame every
+100ms to reveal text. That frame was also the only thing moving the spinner,
+because the one-cell spinner repaint was disabled whenever streamed text was
+on screen.
 
-Add jcode_tui_style::init_terminal with a hook that skips the restore
-inside catch_recoverable_panic scopes, and use it at every init site.
-Add regression tests for the hook, clear_area clipping, and tiny panes.
+Unfocused text reveal now batches at 250ms, and the one-cell spinner repaint
+stays available while unfocused text streams, so the spinner keeps its 80ms
+motion between batches. Focused clients are unchanged.
 
-**File**: `crates/jcode-tui-permissions/src/lib.rs` (modified, +2/-11)
+Measured on private sockets, unfocused client, 10s windows during an essay
+streaming turn, three alternating rounds against the previous build:
+
+  main thread CPU   89 to 108 ticks  ->  55 to 59 ticks
+  process CPU       10.5% (one round read)  ->  5.8% (one round read)
+  full-frame ticks  98 to 101  ->  37 to 40
+  spinner repaints  0  ->  120 to 121
+
+Total wakeups did not drop: 78.7/s before (one round read) and 77.8/s after
+(one round read). The server still delivers about 19 turn events a second and
+each one wakes the loop, and the spinner thread now adds 12.5/s.
+
+test_active_swarm_spinner_keeps_redrawing_at_deep_idle fails with and without
+this change.
+
+**File**: `crates/jcode-tui/src/tui/app/run_shell.rs` (modified, +4/-1)
 ```diff
-@@ -511,17 +511,8 @@ impl PermissionsApp {
-             anyhow::bail!("permissions viewer requires an interactive terminal");
+@@ -116,8 +116,11 @@ pub(super) fn status_spinner_only_symbol(app: &App) -> Option<&'static str> {
+     // responsive instead of choppy at the ~1 Hz passive-liveness redraw rate.
+     // When decorative animations are off it advances at the smooth liveness
+     // rate; otherwise it uses the full-rate spinner clock.
++    // A focused client streams text as full frames fast enough to carry the
++    // spinner. An unfocused one batches text slowly, so the spinner needs this
++    // path to keep its normal 80ms motion between batches.
+     if !app.is_processing
+-        || !app.streaming.streaming_text.is_empty()
++        || (!app.streaming.streaming_text.is_empty() && app.client_focused())
+         || app.centered_mode()
+         || app.has_pending_mouse_scroll_animation()
+         || app.remote_startup_phase_active()
+```
+
+**File**: `crates/jcode-tui/src/tui/app/tests/spinner_slash_commands.rs` (modified, +24/-0)
+```diff
+@@ -24,3 +24,27 @@ fn slash_palette_remains_navigable_while_streaming_spinner_is_active() {
+     assert!(app.input.starts_with('/'));
+     assert!(!app.cancel_requested, "palette input must not interrupt the turn");
+ }
++
++/// An unfocused client batches streamed text slowly, so the one-cell spinner
++/// repaint has to stay available between batches. A focused client streams
++/// full frames fast enough to carry the spinner and keeps the old behaviour.
++#[test]
++fn unfocused_streaming_keeps_the_one_cell_spinner_path() {
++    let mut app = create_test_app();
++    app.is_processing = true;
++    app.status = ProcessingStatus::Streaming;
++    app.processing_started = Some(Instant::now());
++    app.streaming.streaming_text = "partial reply".to_string();
++
++    app.set_client_focused(true);
++    assert!(
++        super::run_shell::status_spinner_only_symbol(&app).is_none(),
++        "focused streaming draws the spinner with its full frames"
++    );
++
++    app.set_client_focused(false);
++    assert!(
++        super::run_shell::status_spinner_only_symbol(&app).is_some(),
++        "unfocused streaming must keep the spinner moving between text batches"
++    );
++}
+```
+
+**File**: `crates/jcode-tui/src/tui/redraw_schedule.rs` (modified, +12/-4)
+```diff
+@@ -27,6 +27,12 @@ pub(crate) const REDRAW_STATIC_STREAM: Duration = Duration::from_millis(80);
+ /// closely at a background pane, but agent swarms keep a dozen of them
+ /// streaming at once, so full-rate repaints there are pure battery cost.
+ pub(crate) const REDRAW_UNFOCUSED_MIN: Duration = Duration::from_millis(100);
++/// Text batching rate for an unfocused client that is streaming a reply. Each
++/// batch is a full frame, so this is the expensive part of a mirrored working
++/// window: at 100ms it measured 10 full frames/s and about 9% of a core. The
++/// spinner does not depend on this rate, it is repainted as a single cell on
++/// its own 80ms clock (see `status_spinner_only_symbol`).
++pub(crate) const REDRAW_UNFOCUSED_STREAM: Duration = Duration::from_millis(250);
+ 
+ /// Whether this session has been left alone long enough to be treated as
+ /// dormant (deep idle): no stream activity *and* no user interaction for
+@@ -425,14 +431,16 @@ pub(crate) fn redraw_interval_with_policy_and_animation(
+     }
+ }
+ 
+-/// Fastest tick for an unfocused client. Text that is still being revealed
+-/// (or a scroll animation) keeps [`REDRAW_UNFOCUSED_MIN`] so a visible tiled
+-/// pane still shows live output. A background turn that is only thinking or
++/// Fastest tick for an unfocused client. A scroll animation keeps
++/// [`REDRAW_UNFOCUSED_MIN`]. Text that is still being revealed is batched at
++/// [`REDRAW_UNFOCUSED_STREAM`], so a visible tiled pane still shows live output. A background turn that is only thinking or
+ /// running a tool has nothing but a spinner and timer to move, so it ticks at
+ /// the passive liveness rate: measured 10 full frames/s per such session before.
+ fn unfocused_redraw_min(state: &dyn TuiState) -> Duration {
+-    if state.stream_reveal_pending() || state.has_pending_mouse_scroll_animation() {
++    if state.has_pending_mouse_scroll_animation() {
+         REDRAW_UNFOCUSED_MIN
++    } else if state.stream_reveal_pending() {
++        REDRAW_UNFOCUSED_STREAM
+     } else {
+         REDRAW_PASSIVE_LIVENESS
+     }
+```
+
+**File**: `crates/jcode-tui/src/tui/ui_tests/basic/redraw_cadence.rs` (modified, +1/-1)
+```diff
+@@ -367,7 +367,7 @@ fn unfocused_streaming_client_is_capped_but_focused_is_not() {
+     state.unfocused = true;
+     assert_eq!(
+         crate::tui::redraw_interval_with_policy(&state, &policy),
+-        crate::tui::redraw_schedule::REDRAW_UNFOCUSED_MIN
++        crate::tui::redraw_schedule::REDRAW_UNFOCUSED_STREAM
+     );
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `3288e0ee` (2026-11-13)
+**Commit Message**: tui: read server events in batches on an unfocused client mirroring a turn
+
+An unfocused client that mirrors a streaming turn woke its event loop once
+per server event, about 19 to 26 times a second, although it only reveals
+text every 250ms. It now handles everything already delivered in one wakeup
+and then leaves the socket alone for one text batch. Focused clients and
+clients with no turn in flight read each event as it arrives, as before.
+
+Measured on private sockets, unfocused client, 10s windows during an essay
+streaming turn, three alternating rounds against the previous commit:
+
+  process wakeups   77.7 to 79.8/s  ->  65.0 to 69.3/s
+  main thread       32.2 to 33.5/s  ->  19.9 to 20.5/s
+  runtime worker    31.4 to 34.8/s  ->  32.4 to 36.1/s (unchanged)
+  spinner repaints  121 to 125 per 10s on both
+
+Process CPU did not improve in these runs: 2.4%, 5.4%, 4.1% before and 4.7%,
+4.3%, 5.2% after. The "before" windows each began in the thinking phase, so
+the CPU figures are not a like-for-like comparison.
+
+A turn's last event can now reach an unfocused window up to 250ms later.
+
+**File**: `crates/jcode-tui/src/tui/app/run_shell.rs` (modified, +67/-17)
+```diff
+@@ -70,6 +70,16 @@ pub(crate) fn refresh_preview_redraw_timer(
+     }
+ }
+ 
++/// Most server events handled in one wakeup while they are being batched.
++const SERVER_EVENT_DRAIN_MAX: usize = 256;
++
++/// Whether server events may be read in batches instead of one per wakeup:
++/// only for an unfocused client that is mirroring a turn in flight. A focused
++/// client, or one with nothing running, reads every event as it arrives.
++pub(super) fn hold_server_events_while_unfocused(app: &App) -> bool {
++    app.is_processing && !app.client_focused()
++}
++
+ /// Spinner cadence. Not a runtime timer: see [`SpinnerTicker`] for why that
+ /// cost four thread wakeups per frame.
+ pub(super) fn status_spinner_interval() -> SpinnerTicker {
+@@ -941,6 +951,11 @@ impl App {
+ 
+             let mut input_redraw = true;
+             let mut deferred_redraw_at: Option<tokio::time::Instant> = None;
++            // While set, server events stay in the socket buffer. An unfocused
++            // client mirroring a turn was woken about 19 times a second by
++            // them, one event per wakeup, and nothing on screen needs that
++            // rate: text is revealed in REDRAW_UNFOCUSED_STREAM batches.
++            let mut server_events_held_until: Option<tokio::time::Instant> = None;
+             // Main event loop
+             loop {
+                 self.sync_sleep_guard();
+@@ -1072,24 +1087,59 @@ impl App {
+                         super::wake_stats::note("deferred_redraw");
+                         deferred_redraw_at = None;
+                     }
+-                    event = remote_conn.next_event() => {
+-                        match &event {
+-                            crate::tui::backend::RemoteRead::Event(event) => super::wake_stats::note_debug("server", event),
+-                            crate::tui::backend::RemoteRead::Disconnected(_) => super::wake_stats::note("server:closed"),
++                    _ = async {
++                        match server_events_held_until {
++                            Some(at) => tokio::time::sleep_until(at).await,
++                            None => futures::future::pending::<()>().await,
+                         }
+-                        let (outcome, event_redraw) = remote::handle_remote_event(
+-                            &mut self,
+-                            &mut terminal,
+-                            &mut remote_conn,
+-                            &mut remote_state,
+-                            event,
+-                        )
+-                        .await?;
+-                        needs_redraw |= event_redraw;
+-                        match outcome {
+-                            remote::RemoteEventOutcome::Continue => {}
+-                            remote::RemoteEventOutcome::Reconnect => continue 'outer,
+-                            remote::RemoteEventOutcome::Quit => break 'outer,
++                    } => {
++                        super::wake_stats::note("server_events_released");
++                        server_events_held_until = None;
++                    }
++                    event = remote_conn.next_event(), if server_events_held_until.is_none() || self.client_focused() => {
++                        server_events_held_until = None;
++                        let mut event = event;
++                        let mut drained = 0usize;
++                        loop {
++                            match &event {
++                                crate::tui::backend::RemoteRead::Event(event) => super::wake_stats::note_debug("server", event),
++                                crate::tui::backend::RemoteRead::Disconnected(_) => super::wake_stats::note("server:closed"),
++                            }
++                            let (outcome, event_redraw) = remote::handle_remote_event(
++                                &mut self,
++                                &mut terminal,
++                                &mut remote_conn,
++                                &mut remote_state,
++                                event,
++                            )
++                            .await?;
++                            needs_redraw |= event_redraw;
++                            match outcome {
++                                remote::RemoteEventOutcome::Continue => {}
++                                remote::RemoteEventOutcome::Reconnect => continue 'outer,
++                                remote::RemoteEventOutcome::Quit => break 'outer,
++                            }
++                            // Unfocused mid-turn: take everything already
++                            // delivered in this one wakeup, then leave the
++                            // socket alone for one text batch. Bounded so a
++                            // flood cannot starve input or drawing.
++                            if !hold_server_events_while_unfocused(&self) {
++                                break;
++                            }
++                            drained += 1;
++                            if dra
+```
+
+**File**: `crates/jcode-tui/src/tui/app/tests/spinner_slash_commands.rs` (modified, +15/-0)
+```diff
+@@ -48,3 +48,18 @@ fn unfocused_streaming_keeps_the_one_cell_spinner_path() {
+         "unfocused streaming must keep the spinner moving between text batches"
+     );
+ }
++
++/// Server events are batched only for an unfocused client with a turn in
++/// flight. Focus, or an idle session, must read each event as it arrives.
++#[test]
++fn server_events_are_held_only_while_unfocused_and_processing() {
++    let mut app = create_test_app();
++    app.set_client_focused(false);
++    assert!(!super::run_shell::hold_server_events_while_unfocused(&app));
++
++    app.is_processing = true;
++    assert!(super::run_shell::hold_server_events_while_unfocused(&app));
++
++    app.set_client_focused(true);
++    assert!(!super::run_shell::hold_server_events_while_unfocused(&app));
++}
+```
+
+---
+
+### Incident Patch 3: `eb539b77` (2026-11-12)
+**Commit Message**: tui: do not wake the spinner thread for a reset to the phase it already has
+
+Full frames call reset_after several times a second while a turn
+streams, and nearly all of them ask for the frame boundary the thread
+is already sleeping towards. Each one woke the thread to say so. A
+live mirrored window on the previous build showed the thread at 16.4
+wakeups/s against a 12.5/s frame rate.
+
+Covered by unit tests. Not measured in isolation: one private run on a
+build containing this change read 12.5/s on the thread.
+
+**File**: `crates/jcode-tui/src/tui/app/spinner_ticker.rs` (modified, +54/-4)
+```diff
+@@ -117,9 +117,16 @@ impl SpinnerTicker {
+             // Nobody is waiting for ticks. Remember the phase without waking
+             // the thread: an idle client repaints full frames too.
+             self.restart_delay = delay;
+-        } else {
+-            self.schedule(self.fallback_next);
++            return;
          }
- 
--        let mut terminal = std::panic::catch_unwind(std::panic::AssertUnwindSafe(ratatui::init))
--            .map_err(|payload| {
--                let msg = if let Some(s) = payload.downcast_ref::<&str>() {
--                    (*s).to_string()
--                } else if let Some(s) = payload.downcast_ref::<String>() {
--                    s.clone()
--                } else {
--                    "unknown panic".to_string()
--                };
--                anyhow::anyhow!("failed to initialize terminal: {}", msg)
--            })?;
-+        let mut terminal = jcode_tui_style::init_terminal()
-+            .map_err(|error| anyhow::anyhow!("failed to initialize terminal: {error}"))?;
- 
-         let result = loop {
-             terminal.draw(|frame| self.render(frame))?;
-```
-
-**File**: `crates/jcode-tui-render/src/chrome.rs` (modified, +32/-0)
-```diff
-@@ -100,3 +100,35 @@ pub fn align_if_unset(line: Line<'static>, align: Alignment) -> Line<'static> {
-         line.alignment(align)
-     }
- }
-+
-+#[cfg(test)]
-+mod clear_area_tests {
-+    use super::clear_area;
-+    use ratatui::{Terminal, backend::TestBackend, layout::Rect};
-+
-+    /// A tmux pane squeezed to one row still gets bands laid out below row 0.
-+    /// Clearing them must clip to the buffer instead of indexing outside it.
-+    #[test]
-+    fn clear_area_clips_to_a_one_row_buffer() {
-+        let mut terminal = Terminal::new(TestBackend::new(54, 1)).unwrap();
-+        terminal
-+            .draw(|frame| {
-+                for x in 0..54 {
-+                    frame.buffer_mut()[(x, 0)].set_symbol("x");
-+                }
-+                // Entirely below the buffer: the reported panic was (1, 1) in 54x1.
-+                clear_area(frame, Rect::new(1, 1, 53, 3));
-+                assert_eq!(frame.buffer_mut()[(1, 0)].symbol(), "x");
-+                // Partly inside: only the visible cells are cleared.
-+                clear_area(frame, Rect::new(1, 0, 10, 5));
-+                clear_area(frame, Rect::new(50, 0, 40, 1));
-+            })
-+            .unwrap();
-+        let buffer = terminal.backend().buffer();
-+        let row: String = (0..54).map(|x| buffer[(x, 0)].symbol()).collect();
-+        assert_eq!(
-+            row,
-+            format!("x{}{}{}", " ".repeat(10), "x".repeat(39), " ".repeat(4))
-+        );
-+    }
-+}
-```
-
-**File**: `crates/jcode-tui-style/src/lib.rs` (modified, +97/-0)
-```diff
-@@ -34,3 +34,100 @@ pub fn restore_terminal_quietly() {
-         jcode_logging::warn(&format!("failed to restore terminal: {error}"));
-     }
- }
-+
-+thread_local! {
-+    /// Nesting depth of `catch_recoverable_panic` scopes on this thread.
-+    static RECOVERABLE_PANIC_DEPTH: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
-+}
-+
-+/// Run `f` and catch a panic that the caller recovers from and keeps running.
-+///
-+/// The panic hook runs before unwinding starts, so it cannot tell a fatal
-+/// panic from one a `catch_unwind` is about to absorb. Without this scope the
-+/// hook restored the terminal for a draw panic the TUI then recovered from:
-+/// jcode kept running on the primary screen in cooked mode with mouse
-+/// reporting still on, so the pane filled with escape garbage and ignored
-+/// keys. A tmux pane squeezed to one row was enough to trigger it.
-+pub fn catch_recoverable_panic<R>(f: impl FnOnce() -> R) -> std::thread::Result<R> {
-+    struct Scope;
-+    impl Drop for Scope {
-+        fn drop(&mut self) {
-+            RECOVERABLE_PANIC_DEPTH.with(|depth| depth.set(depth.get().saturating_sub(1)));
-+        }
-+    }
-+    RECOVERABLE_PANIC_DEPTH.with(|depth| depth.set(depth.get() + 1));
-+    let _scope = Scope;
-+    std::panic::catch_unwind(std::panic::AssertUnwindSafe(f))
-+}
-+
-+/// Whether a panic raised on this thread right now will be recovered.
-+pub fn panic_will_be_recovered() -> bool {
-+    RECOVERABLE_PANIC_DEPTH.with(|depth| depth.get() > 0)
-+}
-+
-+fn install_panic_hook_with(restore: fn()) {
-+    let previous = std::panic::take_hook();
-+    std::panic::set_hook(Box::new(move |info| {
-+        if panic_will_be_recovered() {
-+            // The TUI is still live on the alternate screen. Restoring the
-+            // terminal or printing a backtrace here would corrupt it.
-+            jcode_logging::error(&format!("recovered panic: {info}"));
++        // Full frames arrive several times a second while a turn streams, and
++        // nearly all of them ask for the frame boundary the thread is already
++        // sleeping towards. Waking it to hear that costs a wakeup per frame.
++        let current = lock(&self.shared.state).next;
++        if current.is_some_and(|next| same_phase(next, self.fallback_next, self.period)) {
 +            return;
 +        }
-+        restore();
-+        previous(info);
-+    }));
++        self.schedule(self.fallback_next);
+     }
+ 
+     fn schedule(&self, next: Instant) {
+@@ -144,6 +151,15 @@ fn lock(state: &Mutex<State>) -> std::sync::MutexGuard<'_, State> {
+         .unwrap_or_else(std::sync::PoisonError::into_inner)
+ }
+ 
++/// Whether two deadlines sit on the same frame grid, give or take an eighth of
++/// a frame. Scheduling jitter and the `f32` elapsed clock both move a deadline
++/// by a millisecond or so, which is not worth a wakeup to correct.
++fn same_phase(a: Instant, b: Instant, period: Duration) -> bool {
++    let period = period.as_nanos().max(1);
++    let apart = if a > b { a - b } else { b - a }.as_nanos() % period;
++    apart.min(period - apart) <= period / 8
 +}
 +
-+/// Enter raw mode and the alternate screen, like `ratatui::init`.
-+///
-+/// Always use this instead of `ratatui::init`, whose panic hook restores the
-+/// terminal on every panic, including recovered ones (see
-+/// [`catch_recoverable_panic`]). The hook is installed once per process, so
-+/// re-entering the TUI after an editor handoff does not stack hooks.
-+pub fn init_terminal() -> std::io::Result<ratatui::DefaultTerminal> {
-+    use ratatui::crossterm::{execute, terminal};
+ /// First point after `now` on the grid `previous + n * period`. Missed frames
+ /// are skipped rather than replayed: the spinner is liveness, not simulated time.
+ fn next_on_grid(previous: Instant, period: Duration, now: Instant) -> Instant {
+@@ -276,8 +292,8 @@ mod tests {
+             start.elapsed()
+         );
+ 
+-        // While running, it reschedules the thread.
+-        ticker.reset_after(Duration::from_millis(10));
++        // While running, a reset to a different phase reschedules the thread.
++        ticker.reset_after(Duration::from_millis(100));
+         let start = Instant::now();
+         ticker.tick().await;
+         assert!(
+@@ -287,6 +303,40 @@ mod tests {
+         );
+     }
+ 
++    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++    async fn reset_to_the_same_phase_leaves_the_thread_asleep() {
++        let period = Duration::from_millis(400);
++        let mut ticker = SpinnerTicker::new(period, period);
++        ticker.tick().await;
++        let scheduled = lock(&ticker.shared.state).next.expect("running");
 +
-+    static HOOK: std::sync::Once = std::sync::Once::new();
-+    HOOK.call_once(|| install_panic_hook_with(restore_terminal_quietly));
++        // A full frame asking for the boundary already scheduled, a little off.
++        let delay = scheduled.saturating_duration_since(Instant::now()) + Duration::from_millis(3);
++        ticker.reset_after(delay);
++        assert_eq!(lock(&ticker.shared.state).next, Some(scheduled));
++        // One whole frame later is still the same grid.
++        ticker.reset_after(delay + period);
++        assert_eq!(lock(&ticker.shared.state).next, Some(scheduled));
 +
-+    terminal::enable_raw_mode()?;
-+    execute!(std::io::stdout(), terminal::EnterAlternateScreen)?;
-+    ratatui::Terminal::new(ratatui::backend::CrosstermBackend::new(std::io::stdout()))
-+}
-+
-+#[cfg(test)]
-+mod panic_hook_tests {
-+    use super::*;
-+
-+    thread_local! {
-+        static RESTORES: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
-+    }
-+
-+    fn count_restore() {
-+        RESTORES.with(|restores| restores.set(restores.get() + 1));
++        // Half a frame off is a real phase change.
++        ticker.reset_after(delay + period / 2);
++        assert_ne!(lock(&ticker.shared.state).next, Some(scheduled));
 +    }
 +
 +    #[test]
-+    fn recovered_panics_do_not_restore_the_terminal() {
-+        // The hook runs on the panicking thread, so a thread-local counter
-+        // isolates this test from panics in tests running in parallel.
-+        install_panic_hook_with(count_restore);
-+
-+        assert!(!panic_will_be_recovered());
-+        let recovered = catch_recoverable_panic(|| {
-+            assert!(panic_will_be_recovered());
-+            panic!("draw outside buffer");
-+        });
-+        assert!(recovered.is_err());
-+        assert!(!panic_will_be_recovered(), "scope must end on unwind");
-+        assert_eq!(RESTORES.with(std::cell::Cell::get), 0);
-+
-+        assert_eq!(catch_recoverable_panic(|| 7).ok(), Some(7));
-+        assert!(!panic_will_be_recovered());
-+
-+        let fatal = std::panic::catch_unwind(|| panic!("fatal"));
-+        assert!(fatal.is_err());
-+        assert_eq!(RESTORES.with(std::cell::Cell::get), 1);
-+    }
-+}
-```
-
-**File**: `crates/jcode-tui/src/tui/app/commands.rs` (modified, +5/-1)
-```diff
-@@ -3316,7 +3316,11 @@ fn resume_terminal_after_editor() {
-     // signal arriving while these modes are re-armed runs the full cleanup.
-     // Re-enter the TUI before returning to the event loop. The existing
-     // ratatui Terminal remains usable and the next loop iteration redraws it.
--    let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(ratatui::init));
-+    if let Err(error) = jcode_tui_style::init_terminal() {
-+        crate::logging::warn(&format!(
-+            "failed to re-enter the TUI after the editor: {error}"
-+        ));
-+    }
-     let policy = crate::perf::tui_policy();
-     let _ = crossterm::execute!(std::io::stdout(), EnableBracketedPaste);
-     if policy.enable_focus_change {
-```
-
-**File**: `crates/jcode-tui/src/tui/session_picker.rs` (modified, +3/-11)
-```diff
-@@ -2425,17 +2425,9 @@ impl SessionPicker {
-         }
-         // Detect light/dark terminal background before raw mode (OSC 11 query).
-         super::theme_detect::init_theme_mode();
--        let mut terminal = std::panic::catch_unwind(std::panic::AssertUnwindSafe(ratatui::init))
--            .map_err(|payload| {
--                let msg = if let Some(s) = payload.downcast_ref::<&str>() {
--                    (*s).to_string()
--                } else if let Some(s) = payload.downcast_ref::<String>() {
--                    s.clone()
--                } else {
--                    "unknown panic payload".to_string()
--                };
--                anyhow::anyhow!("failed to initialize session picker terminal: {}", msg)
--            })?;
-+        let mut terminal = jcode_tui_style::init_terminal().map_err(|error| {
-+            anyhow::anyhow!("failed to initialize session picker terminal: {error}")
-+        })?;
-         // Initialize mermaid image picker (fast default, optional probe via env)
-         super::mermaid::init_picker();
-         let perf_policy = crate::perf::tui_policy();
-```
-
-**File**: `crates/jcode-tui/src/tui/ui.rs` (modified, +2/-2)
-```diff
-@@ -2958,9 +2958,9 @@ pub fn draw(frame: &mut Frame, app: &dyn TuiState) {
-     // epoch here so the memo is scoped to exactly this frame.
-     app.advance_command_suggestions_epoch();
-     crate::tui::mermaid::begin_terminal_image_frame();
--    match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-+    match jcode_tui_style::catch_recoverable_panic(|| {
-         crate::tui::markdown::with_deferred_mermaid_render_context(|| draw_inner(frame, app))
--    })) {
-+    }) {
-         Ok(()) => layout_support::draw_side_panel_restore(frame, app),
-         Err(payload) => render_recovered_panic_frame(frame, &payload),
-     }
-```
-
-**File**: `crates/jcode-tui/src/tui/ui/draw_recovery.rs` (modified, +5/-0)
-```diff
-@@ -9,6 +9,11 @@ use super::theme_support::dim_color;
- /// Number of recovered panics while rendering the frame.
- static DRAW_PANIC_COUNT: AtomicUsize = AtomicUsize::new(0);
- 
-+#[cfg(test)]
-+pub(super) fn recovered_panic_count() -> usize {
-+    DRAW_PANIC_COUNT.load(Ordering::Relaxed)
-+}
-+
- pub(super) fn render_recovered_panic_frame(
-     frame: &mut Frame,
-     payload: &(dyn std::any::Any + Send),
-```
-
-**File**: `crates/jcode-tui/src/tui/ui_tests/pinned_todo_regressions.rs` (modified, +31/-0)
-```diff
-@@ -383,3 +383,34 @@ fn pinned_todo_regression_hidden_message_has_zero_length_cache_boundary() {
-         );
-     });
- }
-+
-+/// tmux users squeeze a pane to a row or two until they need it again. Every
-+/// such size must draw cleanly rather than rely on draw-panic recovery.
-+#[test]
-+fn tiny_panes_draw_without_a_recovered_panic() {
-+    with_pinned_todos_config(|| {
-+        let state = TestState {
-+            pinned_todos_payload: Some(todo_payload()),
-+            display_messages: vec![
-+                DisplayMessage::user("resize the tmux pane"),
-+                DisplayMessage::assistant("line\n".repeat(60)),
-+            ],
-+            ..Default::default()
-+        };
-+        for width in [1, 2, 8, 54, 120] {
-+            for height in 1..=6 {
-+                let before = draw_recovery::recovered_panic_count();
-+                let mut terminal = Terminal::new(TestBackend::new(width, height)).unwrap();
-+                terminal
-+                    .draw(|frame| crate::tui::ui::draw(frame, &state))
-+                    .unwrap();
-+                assert_eq!(
-+                    draw_recovery::recovered_panic_count(),
-+                    before,
-+                    "draw panicked at {width}x{height}:\n{}",
-+                    terminal_text(&terminal)
-+                );
-+            }
-+        }
-+    });
-+}
-```
-
----
-
-### Incident Patch 2: `8435b912` (2026-11-11)
-**Commit Message**: Respect terminal color capability in blocker rendering tests
-
-**File**: `crates/jcode-tui/src/tui/ui_tests/todo_blocker_notes.rs` (modified, +2/-2)
-```diff
-@@ -16,7 +16,7 @@ fn blocker_footer_is_cell_bounded_and_clears_when_resolved() {
-         assert!(lines.iter().all(|line| line.width() <= usize::from(width)));
-         if width > 0 {
-             for line in &lines {
--                assert_eq!(line.style.fg, Some(Color::Rgb(225, 180, 80)));
-+                assert_eq!(line.style.fg, Some(rgb(225, 180, 80)));
-             }
-         }
-         if width >= 80 {
-@@ -66,7 +66,7 @@ fn blocker_footer_renders_immediately_above_input() {
-     );
-     let blocker_row = &terminal.backend().buffer().content[(input_row - 1) * 120..input_row * 120];
-     for cell in blocker_row.iter().take("Blocked".len()) {
--        assert_eq!(cell.fg, Color::Rgb(225, 180, 80));
-+        assert_eq!(cell.fg, rgb(225, 180, 80));
-     }
- }
- 
-```
-
----
-
-### Incident Patch 3: `02152f3a` (2026-11-11)
-**Commit Message**: tui: show the account email on failover switches and drop repeated failover lines
-
-Binding a Claude account clears the token cache, so the switch notice had no
-email until the first request. Resolve it from the explicit binding instead.
-Collapse the in-flight switching line into the confirmed notice and stop
-repeating the provider error in the manual hint.
-
-**File**: `crates/jcode-provider-anthropic-runtime/src/account_binding_tests.rs` (modified, +25/-0)
-```diff
-@@ -115,6 +115,31 @@ async fn active_oauth_email_follows_cached_unbound_credentials_not_global_accoun
-     assert_eq!(provider.active_oauth_account_email(), None);
- }
- 
-+/// Switching to a saved account must identify it immediately, before the
-+/// first request repopulates the token cache.
-+#[test]
-+fn active_oauth_email_is_known_right_after_binding_an_account() {
-+    let _lock = jcode_base::storage::lock_test_env();
-+    let _sandbox = AccountSandbox::new();
-+    let personal = save_account("new-personal", "personal-access", "personal-refresh");
-+    let work = save_account("new-work", "work-access", "work-refresh");
-+    auth::claude::update_account_profile(&personal, Some("personal@example.com".into())).unwrap();
-+    auth::claude::update_account_profile(&work, Some("work@example.com".into())).unwrap();
-+    auth::claude::set_active_account(&personal).unwrap();
-+    let provider = AnthropicProvider::new();
-+    provider
-+        .set_credential_mode(AnthropicCredentialMode::OAuth)
-+        .unwrap();
-+    provider.set_oauth_account(Some(&work)).unwrap();
-+    assert_eq!(
-+        provider.active_oauth_account_email().as_deref(),
-+        Some("work@example.com")
-+    );
-+    // Unbinding returns to unknown rather than the global active account.
-+    provider.set_oauth_account(None).unwrap();
-+    assert_eq!(provider.active_oauth_account_email(), None);
-+}
-+
- #[tokio::test]
- #[allow(clippy::await_holding_lock)]
- async fn oauth_account_binding_survives_global_switch_refresh_and_fork() {
-```
-
-**File**: `crates/jcode-provider-anthropic-runtime/src/lib.rs` (modified, +11/-1)
-```diff
-@@ -1437,7 +1437,6 @@ impl Provider for AnthropicProvider {
-                 return None;
-             }
-         };
--        let cached = cached.as_ref()?;
-         let accounts = match auth::claude::list_accounts() {
-             Ok(accounts) => accounts,
-             Err(error) => {
-@@ -1447,6 +1446,17 @@ impl Provider for AnthropicProvider {
-                 return None;
-             }
-         };
-+        let Some(cached) = cached.as_ref() else {
-+            // Binding an account clears the token cache until the next request.
-+            // The explicit binding still names the exact account that will
-+            // serve, so a just-switched route can show its identity at once.
-+            // An unbound runtime stays unknown: never guess the global account.
-+            let label = self.oauth_account_label()?;
-+            return accounts
-+                .into_iter()
-+                .find(|account| account.label == label)
-+                .and_then(|account| account.email);
-+        };
-         accounts.into_iter().find_map(|account| {
-             let matches = (!cached.access_token.is_empty()
-                 && account.access == cached.access_token)
-```
-
-**File**: `crates/jcode-tui/src/tui/app/model_context.rs` (modified, +33/-8)
-```diff
-@@ -256,6 +256,22 @@ impl App {
-         format!("↪ Switching to {to_label} in 3s. Esc to cancel.")
-     }
- 
-+    fn failover_switching_message(to_label: &str) -> String {
-+        format!("↪ Switching to {to_label} and retrying.")
++    fn same_phase_tolerates_jitter_and_whole_frames() {
++        let period = Duration::from_millis(80);
++        let base = Instant::now();
++        let ms = Duration::from_millis;
++        assert!(same_phase(base, base, period));
++        assert!(same_phase(base, base + ms(9), period));
++        assert!(same_phase(base + ms(9), base, period));
++        assert!(same_phase(base, base + ms(160), period));
++        assert!(same_phase(base, base + ms(75), period));
++        assert!(!same_phase(base, base + ms(20), period));
++        assert!(!same_phase(base, base + ms(120), period));
 +    }
 +
-+    /// The in-flight switch line is superseded by the confirmed
-+    /// "Switched to model" notice, which names the model and account.
-+    pub(super) fn remove_failover_switching_message(&mut self) {
-+        if let Some(idx) = self.display_messages.iter().rposition(|message| {
-+            message.role == "system"
-+                && message.content.starts_with("↪ Switching to ")
-+                && message.content.ends_with(" and retrying.")
-+        }) {
-+            self.remove_display_message(idx);
-+        }
-+    }
-+
-     /// The countdown line is only meaningful while the countdown runs. Once the
-     /// switch happens (or is canceled), drop it so the transcript keeps just the
-     /// outcome rather than how long we waited.
-@@ -389,10 +405,20 @@ impl App {
-         self.pending_automatic_failover_route = None;
-         self.clear_pending_fallback_offer();
-         let reason = Self::compact_provider_failure(&prompt.reason);
--        let manual_message = format!(
--            "{} unavailable: {}\nUse /model to switch to {} and resend.",
--            prompt.from_label, reason, prompt.to_label,
--        );
-+        // The caller often printed the provider error just above. Do not
-+        // repeat the same cause on the next line.
-+        let cause_already_shown = self
-+            .display_messages
-+            .last()
-+            .is_some_and(|message| message.role == "error" && message.content.contains(&reason));
-+        let manual_message = if cause_already_shown {
-+            format!("Use /model to switch to {} and resend.", prompt.to_label)
-+        } else {
-+            format!(
-+                "{} unavailable: {}\nUse /model to switch to {} and resend.",
-+                prompt.from_label, reason, prompt.to_label,
-+            )
-+        };
- 
-         let config = crate::config::Config::load().provider;
-         if remote_resend
-@@ -451,10 +477,9 @@ impl App {
-                     // and remote route acknowledgement before resending the payload.
-                     self.maybe_progress_provider_failover_countdown();
-                     if self.pending_automatic_failover_route.is_some() {
--                        self.push_display_message(DisplayMessage::system(format!(
--                            "↪ Switching to {}. Retrying after route confirmation.",
--                            prompt.to_label
--                        )));
-+                        self.push_display_message(DisplayMessage::system(
-+                            Self::failover_switching_message(&prompt.to_label),
-+                        ));
-                     }
-                     return;
-                 }
-```
-
-**File**: `crates/jcode-tui/src/tui/app/remote/server_events.rs` (modified, +11/-2)
-```diff
-@@ -2746,6 +2746,7 @@ fn handle_server_event_inner(
-                 if let Some(ref pname) = provider_name {
-                     app.remote_provider_name = Some(pname.clone());
-                 }
-+                let automatic_failover = automatic_route.is_some();
-                 if let Some(selection) = automatic_route {
-                     app.session.route_api_method = Some(selection.api_method);
-                 }
-@@ -2806,9 +2807,17 @@ fn handle_server_event_inner(
-                             .filter(|_| is_oauth)
-                             .map(|email| email.as_str()),
-                     );
-+                    // One line for an automatic failover: the confirmed route
-+                    // replaces the in-flight "Switching to" line.
-+                    let retrying = if automatic_failover {
-+                        app.remove_failover_switching_message();
-+                        ". Retrying."
-+                    } else {
-+                        ""
-+                    };
-                     app.push_display_message(DisplayMessage::system(format!(
--                        "✓ Switched to model: {}{}",
--                        model, suffix
-+                        "✓ Switched to model: {}{}{}",
-+                        model, suffix, retrying
-                     )));
-                 }
-                 if model_actually_changed {
+     #[test]
+     fn late_grid_points_are_skipped_not_replayed() {
+         let period = Duration::from_millis(80);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2130** (closed): style: cargo fmt on master (@alecuba16)
 - **PR #2098** (closed): fix(webfetch): Report truncation length in bytes (@tayoonabule)
 - **PR #2080** (closed): fix: preserve runtime context when opening swarm agents (@fardjad)
 - **PR #2078** (closed): fix(tui): emit OSC 52 before native clipboard in SSH sessions (@osmanaksu)
 - **PR #2072** (2026-11-06): fix(browser): keep requested browser across scoped handoff inputs (@ptlnextdoor)
 - **PR #2065** (closed): fix(build): sweep stale launcher backups on Windows publish (@gdamprint-cmyk)
-- **PR #2063** (closed): feat(tui): copy session ID from picker (@Aafimalek)
 
 ---
 
@@ -2846,39 +2728,31 @@ repeating the provider error in the manual hint.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui): keep the terminal in TUI mode when a draw panic is recovered
+## X. tui: batch streamed text at 250ms on unfocused clients, keep the spinner at 80ms
 
 **RULE**:
-When implementing operations in `crates/jcode-tui-permissions/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/jcode-tui/src/tui/app/run_shell.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6234b21e`: tui): keep the terminal in TUI mode when a draw panic is recovered. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1c33cd2f`: tui: batch streamed text at 250ms on unfocused clients, keep the spinner at 80ms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui-permissions/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/app/run_shell.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let mut terminal = jcode_tui_style::init_terminal()
-            .map_err(|error| anyhow::anyhow!("failed to initialize terminal: {error}"))?;
+    // A focused client streams text as full frames fast enough to carry the
+    // spinner. An unfocused one batches text slowly, so the spinner needs this
+    // path to keep its normal 80ms motion between batches.
+        || (!app.streaming.streaming_text.is_empty() && app.client_focused())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let mut terminal = std::panic::catch_unwind(std::panic::AssertUnwindSafe(ratatui::init))
-            .map_err(|payload| {
-                let msg = if let Some(s) = payload.downcast_ref::<&str>() {
-                    (*s).to_string()
-                } else if let Some(s) = payload.downcast_ref::<String>() {
-                    s.clone()
-                } else {
-                    "unknown panic".to_string()
-                };
-                anyhow::anyhow!("failed to initialize terminal: {}", msg)
-            })?;
+        || !app.streaming.streaming_text.is_empty()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6234b21e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1c33cd2f` are properly handled with clean fallback behavior.

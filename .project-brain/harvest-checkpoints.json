@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T12:24:39.760Z",
+  "last_updated": "2026-11-13T12:32:50.577Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -305,14 +305,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-moonshotai-kimi-k3",
-      "content_hash": "ba1ebe0b84b1f1bd101d882ea70f24e5b954bab3e19b29e085ed0252f63a1b38",
-      "verified_at": "2026-11-08T11:13:50.452Z",
+      "content_hash": "f38998a919c0e86e5117bc06c65a47ef4d467cad420d8440ba0bbea751ebe40a",
+      "verified_at": "2026-11-13T12:32:30.391Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T11:13:50.452Z"
+      "last_updated": "2026-11-13T12:32:30.391Z"
     },
     "stabilityai/stable-diffusion-xl-base-1.0": {
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "45f9398e3350d6ece94872281dfb344020c89c30639420f5e89366629a7642c9",
-      "verified_at": "2026-11-11T19:46:17.210Z",
+      "content_hash": "0d3f6ab9ffbe3db056a4ea6999105bbd08e55081ae59cfce507a0f524fcf5344",
+      "verified_at": "2026-11-13T12:32:44.697Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T19:46:17.210Z"
+      "last_updated": "2026-11-13T12:32:44.697Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -15051,14 +15051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keyboardkit-keyboardkit",
-      "content_hash": "dc88c6477a5d26a0db9198ad6b887e77d978acbd930e486929a9a9264091df4d",
-      "verified_at": "2026-11-09T02:28:05.239Z",
+      "content_hash": "3501820c15f0e4d1c47b0b532dad3a5007927580a1953ad80194315c7ac3b927",
+      "verified_at": "2026-11-13T12:32:50.576Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:28:05.239Z"
+      "last_updated": "2026-11-13T12:32:50.576Z"
     },
     "evanw/esbuild": {
       "repository": "evanw/esbuild",

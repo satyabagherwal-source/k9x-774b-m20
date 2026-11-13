@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T12:24:54.996Z",
+  "last_updated": "2026-11-13T12:33:10.772Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T11:14:09.154Z",
@@ -548,7 +548,7 @@
       "staged_for_review": 1
     },
     "1jehuang-jcode-learnings.md": {
-      "processed_at": "2026-11-11T19:46:38.203Z",
+      "processed_at": "2026-11-13T12:32:55.946Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1786,9 +1786,19 @@
       "processed_at": "2026-11-13T12:24:54.932Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-moonshotai-kimi-k3-learnings.md": {
+      "processed_at": "2026-11-13T12:33:10.578Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "keyboardkit-keyboardkit-learnings.md": {
+      "processed_at": "2026-11-13T12:33:10.608Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 552,
-  "total_canonical_promoted": 94,
-  "total_staged_for_review": 455
+  "total_dossiers_evaluated": 555,
+  "total_canonical_promoted": 95,
+  "total_staged_for_review": 457
 }

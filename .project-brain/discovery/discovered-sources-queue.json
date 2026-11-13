@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T12:24:54.978Z",
+  "updated_at": "2026-11-13T12:33:10.761Z",
   "stats": {
-    "total_discovered": 2438,
-    "approved_pending_harvest": 2268,
+    "total_discovered": 2447,
+    "approved_pending_harvest": 2277,
     "harvested_count": 0,
     "rejected_count": 170,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2261,
+      "COMMUNITY_AND_EXPERT": 2270,
       "OFFICIAL_DOCUMENTATION": 93,
       "STANDARDS_AND_SPECIFICATIONS": 74,
       "ENGINEERING_BLOGS": 1,
@@ -52465,6 +52465,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
         "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-E7129E9021B6": {
+      "id": "SRC-E7129E9021B6",
+      "url": "https://huggingface.co/moonshotai/Kimi-K3",
+      "title": "https://huggingface.co/moonshotai/Kimi-K3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:33:10.588Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
+        "fileName": "hf-moonshotai-kimi-k3-learnings.md"
+      }
+    },
+    "SRC-E73C4125AF8B": {
+      "id": "SRC-E73C4125AF8B",
+      "url": "https://github.com/KeyboardKit/KeyboardKit",
+      "title": "https://github.com/KeyboardKit/KeyboardKit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:33:10.617Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
+      }
+    },
+    "SRC-858BECF2EB52": {
+      "id": "SRC-858BECF2EB52",
+      "url": "https://keyboardkit.github.io/KeyboardKitPro/documentation/keyboardkitpro",
+      "title": "https://keyboardkit.github.io/KeyboardKitPro/documentation/keyboardkitpro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:33:10.637Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
+      }
+    },
+    "SRC-3B072001D379": {
+      "id": "SRC-3B072001D379",
+      "url": "https://keyboardkit.com/",
+      "title": "https://keyboardkit.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:33:10.656Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
+      }
+    },
+    "SRC-42CBCBB2821D": {
+      "id": "SRC-42CBCBB2821D",
+      "url": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.1/KeyboardKit.zip",
+      "title": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.1/KeyboardKit.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:33:10.683Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
+      }
+    },
+    "SRC-7A45BA63BCE5": {
+      "id": "SRC-7A45BA63BCE5",
+      "url": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.3/KeyboardKit.zip",
+      "title": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.3/KeyboardKit.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:33:10.702Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
+      }
+    },
+    "SRC-CDBF098CFFA2": {
+      "id": "SRC-CDBF098CFFA2",
+      "url": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.0/KeyboardKit.zip",
+      "title": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.0/KeyboardKit.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:33:10.722Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
+      }
+    },
+    "SRC-97B28839159F": {
+      "id": "SRC-97B28839159F",
+      "url": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.0/KeyboardKitAutocompletePlugin.zip",
+      "title": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.0/KeyboardKitAutocompletePlugin.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:33:10.741Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
+      }
+    },
+    "SRC-A891C11ADD91": {
+      "id": "SRC-A891C11ADD91",
+      "url": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.1/KeyboardKitAutocompletePlugin.zip",
+      "title": "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.2.1/KeyboardKitAutocompletePlugin.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:33:10.761Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
+        "fileName": "keyboardkit-keyboardkit-learnings.md"
       }
     }
   }

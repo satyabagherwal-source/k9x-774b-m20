@@ -275,8 +275,8 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3",
     "sourceVersion": "hf-moonshotai-kimi-k3",
     "license": "Open-Source",
-    "contentHash": "ba1ebe0b84b1f1bd101d882ea70f24e5b954bab3e19b29e085ed0252f63a1b38",
-    "lastHarvestedAt": "2026-11-08T11:13:50.443Z",
+    "contentHash": "f38998a919c0e86e5117bc06c65a47ef4d467cad420d8440ba0bbea751ebe40a",
+    "lastHarvestedAt": "2026-11-13T12:32:30.381Z",
     "learningId": "learn-huggingface-moonshotai-kimi-k3"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "02152f3a",
+    "sourceVersion": "3e94495c",
     "license": "MIT",
-    "contentHash": "45f9398e3350d6ece94872281dfb344020c89c30639420f5e89366629a7642c9",
-    "lastHarvestedAt": "2026-11-11T19:46:17.194Z",
+    "contentHash": "0d3f6ab9ffbe3db056a4ea6999105bbd08e55081ae59cfce507a0f524fcf5344",
+    "lastHarvestedAt": "2026-11-13T12:32:44.682Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -10003,10 +10003,10 @@
     "repository": "KeyboardKit/KeyboardKit",
     "platform": "github",
     "sourceUrl": "https://github.com/KeyboardKit/KeyboardKit",
-    "sourceVersion": "623e673f",
+    "sourceVersion": "0e3c01c8",
     "license": "NOASSERTION",
-    "contentHash": "dc88c6477a5d26a0db9198ad6b887e77d978acbd930e486929a9a9264091df4d",
-    "lastHarvestedAt": "2026-11-09T02:28:05.220Z",
+    "contentHash": "3501820c15f0e4d1c47b0b532dad3a5007927580a1953ad80194315c7ac3b927",
+    "lastHarvestedAt": "2026-11-13T12:32:50.565Z",
     "learningId": "learn-github-keyboardkit-keyboardkit"
   },
   "evanw-esbuild": {

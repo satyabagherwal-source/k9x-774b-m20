@@ -9470,3 +9470,7 @@ Every entry in this ledger must capture:
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `41c26a74` | Multi-dimensional audit evidence | 2026-11-13T12:24:23.065Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `acbe836e` | Multi-dimensional audit evidence | 2026-11-13T12:24:39.752Z |
 | `learn-dom-d-7533f859` | `project://hf-deepseek-ai-deepseek-r1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | 2026-11-13T12:24:54.932Z |
+| `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-13T12:32:30.381Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `3e94495c` | Multi-dimensional audit evidence | 2026-11-13T12:32:44.682Z |
+| `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `0e3c01c8` | Multi-dimensional audit evidence | 2026-11-13T12:32:50.565Z |
+| `learn-dom-d-1551b43d` | `project://hf-moonshotai-kimi-k3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | 2026-11-13T12:33:10.578Z |

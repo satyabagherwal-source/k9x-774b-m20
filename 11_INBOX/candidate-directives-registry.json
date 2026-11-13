@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T12:24:54.951Z",
+  "last_updated": "2026-11-13T12:33:10.606Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8732,6 +8732,24 @@
       "source_repo": "ydb-platform-ydb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B33F5F-datashard-allow-read-only-prepares-on-cd.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-E919FB",
+      "directive_title": "tui: batch streamed text at 250ms on unfocused clients, keep the spinner at 80ms",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "1jehuang-jcode",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E919FB-tui-batch-streamed-text-at-250ms-on-unfo.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-5D0EE8",
+      "directive_title": "Update package to 11.2.3",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "keyboardkit-keyboardkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5D0EE8-update-package-to-11-2-3.md",
       "staged_date": "2026-11-13"
     }
   ]
