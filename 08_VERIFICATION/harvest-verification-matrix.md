@@ -9384,3 +9384,5 @@
 | `CYCLE-20261113-JT6F` | `2026-11-13T07:25:26.775Z` | `Nanbeige/Nanbeige4.3-33B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md` | Yes (`abab0fd2...`) |
 | `CYCLE-20261113-KAL9` | `2026-11-13T07:25:49.341Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7c398043...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T07:26:07.275Z` | `hf-nanbeige-nanbeige4.3-33b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-263ECAA8` [Domain D] | Yes (`10a5c4b3...`) |
+| `CYCLE-20261113-1OYX` | `2026-11-13T07:39:21.129Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md` | Yes (`cd861169...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T07:39:41.794Z` | `hf-briaai-fibo-2.0-dev` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CE32BB74` [Domain D] | Yes (`2d531889...`) |

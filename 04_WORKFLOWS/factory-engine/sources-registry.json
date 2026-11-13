@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T07:25:53.915Z",
-    "lastVerified": "2026-11-13T07:25:53.915Z",
+    "lastChecked": "2026-11-13T07:39:33.114Z",
+    "lastVerified": "2026-11-13T07:39:33.114Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -468,8 +468,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T06:58:22.164Z",
-    "lastVerified": "2026-11-13T06:58:22.164Z",
+    "lastChecked": "2026-11-13T07:39:33.102Z",
+    "lastVerified": "2026-11-13T07:39:33.102Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1324,12 +1324,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-fd": {
-    "name": "sharkdp/fd",
+    "name": "fd",
     "officialUrl": "https://github.com/sharkdp/fd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T14:38:29.300Z",
-    "lastVerified": "2026-11-11T14:38:29.300Z",
+    "lastChecked": "2026-11-13T07:39:18.127Z",
+    "lastVerified": "2026-11-13T07:39:18.127Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-fd",
@@ -1338,7 +1338,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "24d90b28"
   },
   "hf-qwen-qwen-image-2.1": {
     "name": "Qwen/Qwen-Image-2.1",
@@ -1831,12 +1832,12 @@
     "lastVerified": "2026-11-13T03:10:34.099Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T01:57:28.743Z",
-    "lastVerified": "2026-11-13T01:57:28.743Z",
+    "lastChecked": "2026-11-13T07:39:28.224Z",
+    "lastVerified": "2026-11-13T07:39:28.224Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1845,7 +1846,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9066683f"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -3567,9 +3569,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-12T02:48:33.707Z",
+    "lastChecked": "2026-11-13T07:39:25.667Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-12T02:48:33.707Z"
+    "lastVerified": "2026-11-13T07:39:25.667Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -5606,9 +5608,9 @@
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
     "officialUrl": "https://github.com/orbitinghail/sqlsync",
-    "lastChecked": "2026-11-12T01:31:15.802Z",
+    "lastChecked": "2026-11-13T07:39:30.578Z",
     "revisionIdentifier": "7dc1af6b",
-    "lastVerified": "2026-11-12T01:31:15.802Z"
+    "lastVerified": "2026-11-13T07:39:30.578Z"
   },
   "async-rs-async-std": {
     "name": "async-std",
@@ -11898,9 +11900,9 @@
   "williewangwei-swiftui-tutorials": {
     "name": "SwiftUI-Tutorials",
     "officialUrl": "https://github.com/WillieWangWei/SwiftUI-Tutorials",
-    "lastChecked": "2026-11-08T23:36:22.489Z",
+    "lastChecked": "2026-11-13T07:39:23.123Z",
     "revisionIdentifier": "0ced68b2",
-    "lastVerified": "2026-11-08T23:36:22.489Z"
+    "lastVerified": "2026-11-13T07:39:23.123Z"
   },
   "rdflib-pyshacl": {
     "name": "pySHACL",
@@ -13588,13 +13590,13 @@
     "officialUrl": "https://huggingface.co/briaai/Fibo-2.0-dev",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T06:12:16.854Z",
-    "lastVerified": "2026-11-08T06:12:16.854Z",
+    "lastChecked": "2026-11-13T07:39:20.725Z",
+    "lastVerified": "2026-11-13T07:39:20.725Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-    "contentHash": "144281002bea7d6442557a5cafb9a657a13afdef5cc6d6906624bebe41b833b8",
-    "promotedRulesCount": 2,
+    "contentHash": "cd861169bd54da2377c70ee21076d37f4e0155d4fd30f0ee9f6ed2a6bdf1881b",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T07:26:07.275Z",
+  "updated_at": "2026-11-13T07:39:41.793Z",
   "statistics": {
-    "total_nodes": 59,
-    "total_edges": 29,
+    "total_nodes": 60,
+    "total_edges": 30,
     "domain_distribution": {
-      "D": 45,
+      "D": 46,
       "M": 1,
       "H": 8,
       "J": 2,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 29
+      "CONSTRAINED_BY_ARCHITECTURE": 30
     }
   },
   "nodes": {
@@ -1319,6 +1319,29 @@
       ],
       "created_at": "2026-11-13T07:26:07.275Z",
       "updated_at": "2026-11-13T07:26:07.275Z"
+    },
+    "DOM-D-CE32BB74": {
+      "id": "DOM-D-CE32BB74",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): briaai/Fibo-2.0-dev",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-briaai-fibo-2.0-dev/hf-briaai-fibo-2.0-dev-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T07:39:33.195Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-briaai-fibo-2.0-dev)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T07:39:41.793Z",
+      "updated_at": "2026-11-13T07:39:41.793Z"
     }
   },
   "edges": [
@@ -1611,6 +1634,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-263ECAA8 [D] with Domain M",
       "created_at": "2026-11-13T07:26:07.275Z"
+    },
+    {
+      "id": "EDGE-0A5780E21903",
+      "sourceId": "DOM-D-CE32BB74",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-CE32BB74 [D] with Domain M",
+      "created_at": "2026-11-13T07:39:41.793Z"
     }
   ]
 }

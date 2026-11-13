@@ -10765,8 +10765,8 @@
     "sourceUrl": "https://huggingface.co/briaai/Fibo-2.0-dev",
     "sourceVersion": "hf-briaai-fibo-2.0-dev",
     "license": "Open-Source",
-    "contentHash": "144281002bea7d6442557a5cafb9a657a13afdef5cc6d6906624bebe41b833b8",
-    "lastHarvestedAt": "2026-11-08T06:12:30.521Z",
+    "contentHash": "cd861169bd54da2377c70ee21076d37f4e0155d4fd30f0ee9f6ed2a6bdf1881b",
+    "lastHarvestedAt": "2026-11-13T07:39:21.132Z",
     "learningId": "learn-huggingface-briaai-fibo-2-0-dev"
   },
   "vincentwei1021-video-shotcraft": {

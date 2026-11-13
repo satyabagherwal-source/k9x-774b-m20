@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T07:26:07.309Z",
+  "updated_at": "2026-11-13T07:39:41.803Z",
   "stats": {
-    "total_discovered": 2245,
-    "approved_pending_harvest": 2087,
+    "total_discovered": 2246,
+    "approved_pending_harvest": 2088,
     "harvested_count": 0,
     "rejected_count": 158,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2074,
+      "COMMUNITY_AND_EXPERT": 2075,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 72,
       "ENGINEERING_BLOGS": 1,
@@ -48302,6 +48302,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
         "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-02AA9DE59F02": {
+      "id": "SRC-02AA9DE59F02",
+      "url": "https://huggingface.co/briaai/Fibo-2.0-dev",
+      "title": "https://huggingface.co/briaai/Fibo-2.0-dev",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:39:41.803Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md",
+        "fileName": "hf-briaai-fibo-2.0-dev-learnings.md"
       }
     }
   }

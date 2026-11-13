@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T07:25:49.185Z",
+  "last_updated": "2026-11-13T07:39:21.056Z",
   "total_verified_learnings": 1262,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -148035,7 +148035,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/briaai/Fibo-2.0-dev",
       "source_version": "hf-briaai-fibo-2.0-dev",
-      "content_hash": "144281002bea7d6442557a5cafb9a657a13afdef5cc6d6906624bebe41b833b8",
+      "content_hash": "cd861169bd54da2377c70ee21076d37f4e0155d4fd30f0ee9f6ed2a6bdf1881b",
       "dossier_path": "07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md",
       "promoted_rules": [
@@ -148085,7 +148085,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T06:12:30.402Z",
+      "verified_at": "2026-11-13T07:39:21.034Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

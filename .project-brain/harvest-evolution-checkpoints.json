@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T07:26:07.421Z",
+  "last_updated": "2026-11-13T07:39:41.978Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-13T05:23:59.465Z",
+      "processed_at": "2026-11-13T07:39:41.956Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-13T07:26:07.326Z",
+      "processed_at": "2026-11-13T07:39:41.851Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1636,9 +1636,14 @@
       "processed_at": "2026-11-13T07:26:07.301Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-briaai-fibo-2.0-dev-learnings.md": {
+      "processed_at": "2026-11-13T07:39:41.794Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 495,
-  "total_canonical_promoted": 72,
-  "total_staged_for_review": 420
+  "total_dossiers_evaluated": 498,
+  "total_canonical_promoted": 73,
+  "total_staged_for_review": 422
 }

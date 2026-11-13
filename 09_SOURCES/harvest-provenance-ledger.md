@@ -9393,3 +9393,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-11-13T07:25:26.779Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `0e0b0958` | Multi-dimensional audit evidence | 2026-11-13T07:25:49.344Z |
 | `learn-dom-d-263ecaa8` | `project://hf-nanbeige-nanbeige4.3-33b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md` | 2026-11-13T07:26:07.275Z |
+| `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-13T07:39:21.132Z |
+| `learn-dom-d-ce32bb74` | `project://hf-briaai-fibo-2.0-dev` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md` | 2026-11-13T07:39:41.794Z |
