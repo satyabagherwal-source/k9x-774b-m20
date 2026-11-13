@@ -9648,3 +9648,6 @@ Every entry in this ledger must capture:
 | `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `37b5e4a9` | Multi-dimensional audit evidence | 2026-11-13T20:36:51.772Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `7ca6e772` | Multi-dimensional audit evidence | 2026-11-13T20:36:53.601Z |
 | `learn-dom-d-a812096f` | `project://hf-cloudflare-clef-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md` | 2026-11-13T20:37:26.656Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-13T20:47:01.788Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `73f1acad` | Multi-dimensional audit evidence | 2026-11-13T20:47:10.927Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `0c2e67a2` | Multi-dimensional audit evidence | 2026-11-13T20:47:16.609Z |

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:39.203Z",
+  "timestamp": "2026-11-13T20:47:20.334Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-temporalio-temporal-learnings",
+  "learning_id": "LEARN-EVO-temporalio-temporal-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [temporalio-temporal-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:39.203Z`  
-> **Learning ID**: `LEARN-REEXTRACT-temporalio-temporal-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T20:47:20.334Z`  
+> **Learning ID**: `LEARN-EVO-temporalio-temporal-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `03ecd1d2`  
+> **Source Version**: `73f1acad`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T11:00:30.591Z  
+> **Timestamp**: 2026-11-13T20:47:09.875Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T11:00:30.587Z  
+> **Harvest Timestamp**: 2026-11-13T20:47:09.868Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24330 stars
+- **Stars / Engagement**: 24383 stars
 
 ---
 
@@ -2146,481 +2146,272 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `915dbdc6` (2026-11-10)
-**Commit Message**: Fix history_size/history_count CompletionStats double emitting (#12931)
+### Incident Patch 1: `cbeb97f4` (2026-11-13)
+**Commit Message**: Require matching request IDs for Nexus completions (#13077)
 
 ## What changed?
-
-- `emitWorkflowHistoryStats` records `history_size` and `history_count`
-under `operation=CompletionStats` only when the transaction wrote
-history events.
-- `executeWorkflowTransaction` passes
-`wroteEvents(payload.ExecutionEvents)`, the same check
-`emitCompletionMetrics` already uses for the `workflow_*` counters.
+Require asynchronous Nexus completions to carry a request ID matching
+the pending operation in both HSM and CHASM. Frontend rejects a
+completion token with an empty request ID as an invalid callback token
+(BadRequest). History also rejects empty or mismatched IDs with NotFound
+before applying a completion transition, covering direct internal
+requests.
 
 ## Why?
-
-`CompletionStats` is meant to describe each run once, at close. But a
-closed run can be persisted again without new events, for example by a
-task refresh or a visibility close cleanup, and each of those updates
-record `CompletionStats` again with the same values. This means one
-close can produce several samples, which inflates anything that counts
-or sums them.
-
-The `workflow_*` counters had the same problem and were fixed in #8353
-and #10988. An already closed WF run doesn't record new history events,
-so gating on them would stop us from double emitting this metric.
+An empty request ID previously skipped the operation identity check,
+allowing a completion token to be retargeted to another pending
+operation. The Frontend check treats a missing required token field as
+an invalid request; the History checks prevent an invalid completion
+from changing operation state.
 
 ## How did you test it?
-
 - [x] built
 - [ ] run locally and tested manually
 - [x] covered by existing tests
 - [x] added new unit test(s)
-- [ ] added new functional test(s)
+- [x] added new functional test(s)
 
-`TestEmitWorkflowHistoryStats` covers
+## Potential risks
+Completion tokens issued without a request ID will now be rejected if
+their operations remain pending, which may affect long-running
+operations in older self-hosted deployments. HTTP callbacks with an
+empty request ID now receive BadRequest.
 
-**File**: `service/history/workflow/context.go` (modified, +1/-0)
+**File**: `chasm/lib/nexusoperation/operation.go` (modified, +1/-1)
 ```diff
-@@ -1120,6 +1120,7 @@ func (c *ContextImpl) executeWorkflowTransaction(
- 		c.metricsHandler,
- 		c.GetNamespace(shardContext),
- 		c.MutableState.GetExecutionState().State,
-+		wroteEvents(payload.ExecutionEvents),
- 		int(c.MutableState.GetExecutionInfo().ExecutionStats.HistorySize),
- 		int(c.MutableState.GetNextEventID()-1),
- 	)
-```
-
-**File**: `service/history/workflow/context_test.go` (modified, +13/-0)
-```diff
-@@ -583,8 +583,21 @@ func (s *contextSuite) TestRefreshTask() {
- 
- 			tc.setupMock(s.mockShard)
- 
-+			handler := metricstest.NewCaptureHandler()
-+			capture := handler.StartCapture()
-+			defer handler.StopCapture(capture)
-+			s.workflowContext.metricsHandler = handler
-+
- 			err = s.workflowContext.RefreshTasks(context.Background(), s.mockShard)
- 			s.NoError(err)
-+
-+			// A refresh writes no events, so even a closed run must not record completion stats again.
-+			snapshot := capture.Snapshot()
-+			for _, metricName := range []string{metrics.HistorySize.Name(), metrics.HistoryCount.Name()} {
-+				recordings := snapshot[metricName]
-+				s.Len(recordings, 1, metricName)
-+				s.Equal(metrics.ExecutionStatsScope, recordings[0].Tags[metrics.OperationTagName], metricName)
-+			}
- 		})
+@@ -307,7 +307,7 @@ func (o *Operation) HandleNexusCompletion(
+ 	completion *persistencespb.ChasmNexusCompletion,
+ ) error {
+ 	// Request ID lets us reject a stale or misrouted completion.
+-	if completion.GetRequestId() != "" && o.GetRequestId() != completion.GetRequestId() {
++	if completion.GetRequestId() == "" || o.GetRequestId() != completion.GetRequestId() {
+ 		return serviceerror.NewNotFound("operation not found")
  	}
- }
-```
-
-**File**: `service/history/workflow/metrics.go` (modified, +2/-1)
-```diff
-@@ -21,6 +21,7 @@ func emitWorkflowHistoryStats(
- 	metricsHandler metrics.Handler,
- 	namespace namespace.Name,
- 	state enumsspb.WorkflowExecutionState,
-+	wroteEventsInTransaction bool,
- 	historySize int,
- 	historyCount int,
- ) {
-@@ -29,7 +30,7 @@ func emitWorkflowHistoryStats(
- 	metrics.HistorySize.With(executionScope).Record(int64(historySize))
- 	metrics.HistoryCount.With(executionScope).Record(int64(historyCount))
  
--	if state == enumsspb.WORKFLOW_EXECUTION_STATE_COMPLETED {
-+	if state == enumsspb.WORKFLOW_EXECUTION_STATE_COMPLETED && wroteEventsInTransaction {
- 		completionScope := handler.WithTags(metrics.OperationTag(metrics.WorkflowCompletionStatsScope))
- 		metrics.HistorySize.With(completionScope).Record(int64(historySize))
- 		metrics.HistoryCount.With(completionScope).Record(int64(historyCount))
 ```
 
-**File**: `service/history/workflow/metrics_test.go` (modified, +40/-0)
+**File**: `chasm/lib/nexusoperation/operation_test.go` (modified, +19/-0)
 ```diff
-@@ -7,6 +7,7 @@ import (
- 	"github.com/stretchr/testify/require"
+@@ -10,6 +10,7 @@ import (
+ 	commonpb "go.temporal.io/api/common/v1"
  	enumspb "go.temporal.io/api/enums/v1"
- 	deploymentspb "go.temporal.io/server/api/deployment/v1"
-+	enumsspb "go.temporal.io/server/api/enums/v1"
+ 	failurepb "go.temporal.io/api/failure/v1"
++	"go.temporal.io/api/serviceerror"
+ 	"go.temporal.io/api/workflowservice/v1"
+ 	persistencespb "go.temporal.io/server/api/persistence/v1"
  	"go.temporal.io/server/chasm"
- 	chasmworkflow "go.temporal.io/server/chasm/lib/workflow"
- 	"go.temporal.io/server/common/clock"
-@@ -557,3 +558,42 @@ func testActivityMetricTags(operation string) []metrics.Tag {
- 		metrics.ActivityTypeTag("test-activity"),
+@@ -249,6 +250,24 @@ func TestHandleNexusCompletion(t *testing.T) {
+ 		}
  	}
- }
+ 
++	t.Run("InvalidRequestID", func(t *testing.T) {
++		for _, tc := range []struct{ name, requestID string }{
++			{"empty", ""},
++			{"mismatched", "other-request-id"},
++		} {
++			t.Run(tc.name, func(t *testing.T) {
++				ctx := newCtx()
++				op := newScheduledTestOperation(t, ctx)
++				err := op.HandleNexusCompletion(ctx, &persistencespb.ChasmNexusCompletion{
++					RequestId: tc.requestID,
++					Outcome:   &persistencespb.ChasmNexusCompletion_Success{Success: mustToPayload(t, "result")},
++				})
++				require.ErrorAs(t, err, new(*serviceerror.NotFound))
++				require.Equal(t, nexusoperationpb.OPERATION_STATUS_SCHEDULED, op.GetStatus())
++			})
++		}
++	})
 +
-+func TestEmitWorkflowHistoryStats(t *testing.T) {
-+	for _, tc := range []struct {
-+		name                     string
-+		state                    enumsspb.WorkflowExecutionState
-+		wroteEventsInTransaction bool
-+		expectedOperations       []string
-+	}{
-+		{
-+			name:                     "closing transaction",
-+			state:                    enumsspb.WORKFLOW_EXECUTION_STATE_COMPLETED,
-+			wroteEventsInTransaction: true,
-+			expectedOperations:       []string{metrics.ExecutionStatsScope, metrics.WorkflowCompletionStatsScope},
-+		},
-+		{
-+			name:                     "closed workflow updated without events",
-+			state:                    enumsspb.WORKFLOW_EXECUTION_STATE_COMPLETED,
-+			wroteEventsInTransaction: false,
-+			expectedOperations:       []string{metrics.ExecutionStatsScope},
-+		},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			handler := metricstest.NewCaptureHandler()
-+			capture := handler.StartCapture()
-+			defer handler.StopCapture(capture)
-+
-+			emitWorkflowHistoryStats(handler, "test-namespace", tc.state, tc.wroteEventsInTransaction, 1024, 12)
-+
-+			snapshot := capture.Snapshot()
-+			for _, metricName := range []string{metrics.HistorySize.Name(), metrics.HistoryCount.Name()} {
-+				var operations []string
-+				for _, recording := range snapshot[metricName] {
-+					operations = append(operations, recording.Tags[metrics.OperationTagName])
-+				}
-+				require.ElementsMatch(t, tc.expectedOperations, operations, metricName)
-+			}
-+		})
+ 	t.Run("Success", func(t *testing.T) {
+ 		t.Run("AfterStarted", func(t *testing.T) {
+ 			ctx := newCtx()
+```
+
+**File**: `service/frontend/nexus_completion_http_handler.go` (modified, +3/-0)
+```diff
+@@ -135,6 +135,9 @@ func (h *nexusCompletionHandler) CompleteOperation(ctx context.Context, r *nexus
+ 		h.Logger.Error("failed to decode completion from token", tag.Error(err))
+ 		return nexus.NewHandlerErrorf(nexus.HandlerErrorTypeBadRequest, "invalid callback token")
+ 	}
++	if completion.GetRequestId() == "" {
++		return nexus.NewHandlerErrorf(nexus.HandlerErrorTypeBadRequest, "invalid callback token")
 +	}
-+}
+ 
+ 	// Determine the target namespace, workflow, and run ID from the completion token. The CHASM
+ 	// ComponentRef is canonical when present; otherwise the top-level HSM fields are used. Shared
 ```
 
----
-
-### Incident Patch 2: `862b2db4` (2026-11-10)
-**Commit Message**: Fix await accepting cancelled attempts as successful (#12868)
-
-## What changed?
-Require an uncancelled attempt for `await.Require` success.
-
-## Why?
-A soft-deadlock cancellation can make a blocked callback return without
-assertions, falsely satisfying the polling condition and skipping
-subsequent attempts.
-
-**File**: `common/testing/await/require_ctx.go` (modified, +4/-2)
+**File**: `service/history/hsm/nexusoperations/completion.go` (modified, +8/-8)
 ```diff
-@@ -120,6 +120,8 @@ func run(
- 
- 		// Run attempt.
- 		res := runAttempt(t, condition, attemptCancel, funcName, cancellable)
-+		// Capture the error before cleanup; attemptCancel marks every attempt canceled.
-+		attemptErr := attemptCtx.Err()
- 		attemptCancel()
- 		if res.panicVal != nil {
- 			panic(res.panicVal) // propagate to caller
-@@ -140,7 +142,7 @@ func run(
- 		// Attempt-timeout expiry: attemptCtx is done but awaitCtx is not.
- 		// An attempt timeout is retryable while the await is still active. Track
- 		// it separately so the final report identifies the responsible timeout.
--		attemptHitOwnTimeout := attemptCtx.Err() == context.DeadlineExceeded && awaitCtx.Err() == nil
-+		attemptHitOwnTimeout := attemptErr == context.DeadlineExceeded && awaitCtx.Err() == nil
- 		if attemptHitOwnTimeout {
- 			report.recordAttemptTimeout()
+@@ -179,9 +179,10 @@ func (h *CompletionHandler) Handle(
+ 	result *commonpb.Payload,
+ 	opFailedError *nexus.OperationError,
+ ) error {
+-	// The initial version of the completion token did not include a request ID.
+-	// Only retry Access without a run ID if the request ID is not empty.
+-	isRetryableNotFoundErr := requestID != ""
++	if requestID == "" {
++		return serviceerror.NewNotFound("operation not found")
++	}
++	isRetryableNotFoundErr := true
+ 	// emitMetrics is populated inside the Access closure and invoked only after the write
+ 	// transaction commits successfully, so a failed commit (which retries the completion) does not
+ 	// double-count the metric. See operationMetricsHandler's doc comment.
+@@ -194,18 +195,17 @@ func (h *CompletionHandler) Handle(
+ 		if err != nil {
+ 			return err
  		}
-@@ -165,7 +167,7 @@ func run(
++		if operation.RequestId != requestID {
++			isRetryableNotFoundErr = false
++			return serviceerror.NewNotFound("operation not found")
++		}
+ 		// If the operation has not started yet, this completion arrived before the start response and
+ 		// fabricateStartedEventIfMissing will transition it to started below; the executor never emitted
+ 		// schedule-to-start in that case, so we emit it here.
+ 		fabricatedStart := TransitionStarted.Possible(operation)
+ 		if err := fabricateStartedEventIfMissing(node, requestID, operationToken, startTime, links); err != nil {
+ 			return err
  		}
- 
- 		// Success: attempt completed without failures.
--		if !res.stopped && !t.Failed() && !attemptHitOwnTimeout {
-+		if !res.stopped && !t.Failed() && attemptErr == nil {
- 			return
- 		}
- 
+-		if requestID != "" && operation.RequestId != requestID {
+-			isRetryableNotFoundErr = false
+-			return serviceerror.NewNotFound("operation not found")
+-		}
+-
+ 		if opFailedError != nil {
+ 			err = handleOperationError(node, operation, opFailedError)
+ 		} else {
 ```
 
-**File**: `common/testing/await/require_ctx_test.go` (modified, +19/-18)
+**File**: `service/history/hsm/nexusoperations/completion_test.go` (modified, +33/-8)
 ```diff
-@@ -9,6 +9,7 @@ import (
- 	"sync"
- 	"sync/atomic"
- 	"testing"
-+	"testing/synctest"
- 	"time"
- 
+@@ -9,6 +9,8 @@ import (
  	"github.com/stretchr/testify/require"
-@@ -394,28 +395,28 @@ func TestRequire_FailureScenarios(t *testing.T) {
- 	})
- }
+ 	commonpb "go.temporal.io/api/common/v1"
+ 	historypb "go.temporal.io/api/history/v1"
++	"go.temporal.io/api/serviceerror"
++	enumsspb "go.temporal.io/server/api/enums/v1"
+ 	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
+ 	"go.temporal.io/server/common/dynamicconfig"
+ 	"go.temporal.io/server/common/metrics/metricstest"
+@@ -18,6 +20,27 @@ import (
+ 	"google.golang.org/protobuf/types/known/durationpb"
+ )
  
--func TestRequire_SoftDeadlockLogsAndCancels(t *testing.T) {
-+func TestRequire_RetriesAfterSoftCancellation(t *testing.T) {
- 	// not using T.Parallel() so it can use t.Setenv to override the deadlock timeouts
--	t.Setenv("TEMPORAL_AWAIT_SOFT_DEADLOCK_TIMEOUT", "50ms")
--	t.Setenv("TEMPORAL_AWAIT_HARD_DEADLOCK_TIMEOUT", "5s")
-+	t.Setenv("TEMPORAL_AWAIT_SOFT_DEADLOCK_TIMEOUT", "1ms")
- 
--	const awaitTimeout = 10 * time.Second
-+	synctest.Test(t, func(t *testing.T) {
-+		tb := newRecordingTB()
-+		attempts := 0
- 
--	ctx := testcontext.For(t)
--	tb := newRecordingTB()
--	start := time.Now()
--	tb.run(func() {
--		// Await timeout is long so parent-cancel doesn't beat the soft timer.
--		await.Require(ctx, tb, func(t *await.T) {
--			<-t.Context().Done() // exits as soon as soft cancel fires
--		}, awaitTimeout, 100*time.Millisecond)
-+		tb.run(func() {
-+			// Await timeout is long so parent-cancel doesn't beat the soft timer.
-+			await.Require(t.Context(), tb, func(t *await.T) {
-+				attempts++
-+				if attempts == 1 {
-+					<-t.Context().Done() // exits as soon as soft cancel fires
-+				}
-+			}, 5*time.Millisecond, time.Millisecond)
-+		})
-+
-+		require.Equal(t, 2, attempts)
-+		require.False(t, tb.Failed())
-+		require.Contains(t, tb.logs(), "soft deadlock")
- 	})
--	elapsed := time.Since(start)
--	require.False(t, tb.Failed(), "soft deadlock + clean exit should succeed")
--	require.Contains(t, tb.logs(), "soft deadlock")
--	require.NotContains(t, tb.fatals(), "still running")
--	require.Less(t, elapsed, awaitTimeout,
--		"should return shortly after soft cancel, not wait the full await timeout (elapsed=%v)", elapsed)
- }
- 
- func TestRequire_DeadlockDetected(t *testing.T) {
-```
-
----
-
-### Incident Patch 3: `03ecd1d2` (2026-11-11)
-**Commit Message**: Fix V2 schedules closing before their final action starts (#13016)
-
-## What changed?
-`computeLastEventTime` now counts buffered starts that have no RunId
-yet, using their `ActualTime`. Previously it only saw starts via
-`recentActions()`, which skips unstarted ones.
-
-## Why?
-The generator tick that buffers a schedule's **final** action (no next
-spec wakeup) also arms the idle task, at `lastEventTime + IdleTime`.
-Because the just-buffered start wasn't counted, `lastEventTime` fell
-back to the previous event (create / update / previous start). If the
-final action was more than `IdleTime` (default 7d) after that, the
-deadline was already in the past: the idle task was due immediately, its
-`Validate` recomputed the same stale deadline and passed, and the
-schedule closed before `InvokerExecuteTask` started the workflow. The
-final run was silently dropped and Describe returned NotFound.
-
-Affected:
-- one-shot calendar specs (fixed year, or `EndTime` just after the fire
-time) more than 7d after the last event
-- any spec with an `EndTime` whose final gap is > 7d (the last run is
-always dropped)
-- weekly + `EndTime`: a race. The deadline was the final nominal time +
-the previous run's start l
-
-**File**: `chasm/lib/scheduler/config.go` (modified, +2/-0)
-```diff
-@@ -18,6 +18,7 @@ type (
- 		CanceledTerminatedCountAsFailures bool          // Whether cancelled+terminated count for pause-on-failure
- 		MaxActionsPerExecution            int           // Limits the number of actions (startWorkflow, terminate/cancel) taken by ExecuteTask in a single iteration
- 		EnableGeneratorJitterFix          bool          // Preserve pending jittered actions across empty generator wakeups; disable to restore the legacy cursor behavior.
-+		EnablePendingStartIdleFix         bool          // Count pending starts as activity when calculating idle expiration. Disabling does not rewind persisted LastEventTime.
- 		EnableVersioningOverride          bool          // Whether to forward versioning overrides to started workflows
- 		IdleTime                          time.Duration // How long to keep schedules after they're done
- 		EventLogMaxEntries                int           // Maximum EventLog entries retained per component; the earliest entries are dropped beyond this.
-@@ -95,6 +96,7 @@ var (
- 		MaxActionsPerExecution:            5,
- 		EnableVersioningOverride:          true,
- 		EnableGeneratorJitterFix:          true,
-+		EnablePendingStartIdleFix:         true,
- 		IdleTime:                          7 * 24 * time.Hour,
- 		EventLogMaxEntries:                30,
- 		EventLogMaxMessageLen:             1000,
-```
-
-**File**: `chasm/lib/scheduler/idle_pending_start_test.go` (added, +330/-0)
-```diff
-@@ -0,0 +1,330 @@
-+package scheduler_test
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	enumspb "go.temporal.io/api/enums/v1"
-+	schedulepb "go.temporal.io/api/schedule/v1"
-+	"go.temporal.io/api/workflowservice/v1"
-+	schedulespb "go.temporal.io/server/api/schedule/v1"
-+	"go.temporal.io/server/chasm"
-+	"go.temporal.io/server/chasm/lib/scheduler"
-+	"go.temporal.io/server/chasm/lib/scheduler/gen/schedulerpb/v1"
-+	"go.temporal.io/server/common/clock"
-+	"google.golang.org/protobuf/types/known/durationpb"
-+	"google.golang.org/protobuf/types/known/timestamppb"
-+)
-+
-+const idleWeek = 7 * 24 * time.Hour
-+
-+var (
-+	pendingCreateTime  = time.Date(2026, 1, 5, 10, 0, 0, 500000000, time.UTC)
-+	pendingUnpauseTime = pendingCreateTime.Add(1265 * time.Millisecond)
-+)
-+
-+func TestPendingStartIdleFix(t *testing.T) {
++func TestCompletionHandlerRejectsInvalidRequestID(t *testing.T) {
 +	t.Parallel()
-+	fire := pendingCreateTime.Add(idleWeek + time.Hour)
-+	for _, tc := range []struct {
-+		name                 string
-+		enabled              bool
-+		lastEventTime        time.Time
-+		expectedDeadline     time.Time
-+		expectedOldTaskValid bool
-+	}{
-+		{
-+			name: "enabled", enabled: true, lastEventTime: pendingCreateTime,
-+			expectedDeadline: fire.Add(idleWeek), expectedOldTaskValid: false,
-+		},
-+		{
-+			name: "disabled", enabled: false, lastEventTime: pendingCreateTime,
-+			expectedDeadline: pendingCreateTime.Add(idleWeek), expectedOldTaskValid: true,
-+		},
-+		{
-+			name: "disabled after watermark persisted", enabled: false, lastEventTime: fire,
-+			expectedDeadline: fire.Add(idleWeek), expectedOldTaskValid: false,
-+		},
++	for _, tc := range []struct{ name, requestID string }{
++		{"empty", ""},
++		{"mismatched", "other-request-id"},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
 +			t.Parallel()
-+			env := newTestEnv(t)
-+			tweakables := scheduler.DefaultTweakables
-+			tweakables.EnablePendingStartIdleFix = tc.enabled
-+			ctx := scheduler.ContextWithTweakables(env.ReadContext(), tweakables)
-+			sched := env.Scheduler
-+			anchorLastEventTo(sched, pendingCreateTime)
-+			sched.LastEventTime = timestamppb.New(tc.lastEventTime)
-+			sched.Invoker.Get(ctx).BufferedStarts = []*schedulespb.BufferedStart{{
-+				ActualTime: timestamppb.New(fire),
-+			}}
-+
-+			require.Equal(t, tc.expectedDeadline, sched.IdleDeadline(ctx, idleWeek))
-+			valid, err := newIdleHandler(idleWeek).Validate(ctx, sched, chasm.TaskInvocation{
-+				TaskAttributes: chasm.TaskAttributes{ScheduledTime: pendingCreateTime.Add(idleWeek)},
-+			}, &schedulerpb.SchedulerIdleTask{IdleTimeTotal: durationpb.New(idleWeek)})
++			node := newOperationNode(t, &hsmtest.NodeBackend{}, mustNewScheduledEvent(time.Now(), &historypb.NexusOperationScheduledEventAttributes{
++				RequestId: "request-id", ScheduleToCloseTimeout: durationpb.New(time.Hour),
++			}))
++			handler := nexusoperations.NewCompletionHandler(metricstest.NewCaptureHandler(), &nexusoperations.Config{})
++			err := handler.Handle(context.Background(), fakeEnv{node: node}, hsm.Ref{}, tc.requestID, "token", nil, nil, &commonpb.Payload{}, nil)
++			require.ErrorAs(t, err, new(*serviceerror.NotFound))
++			op, err := hsm.MachineData[nexusoperations.Operation](node)
 +			require.NoError(t, err)
-+			require.Equal(t, tc.expectedOldTaskValid, valid)
++			require.Equal(t, enumsspb.NEXUS_OPERATION_STATE_SCHEDULED, op.NexusOperationInfo.State)
 +		})
 +	}
 +}
 +
-+func oneShotSpec(fire time.Time) *schedulepb.ScheduleSpec {
-+	r := func(v int) []*schedulepb.Range { return []*schedulepb.Range{{Start: int32(v)}} }
-+	return &schedulepb.ScheduleSpec{
-+		StructuredCalendar: []*schedulepb.StructuredCalendarSpec{
-+			// Keep-alive entry past EndTime, so it never fires.
-+			{
-+				Second: r(59), Minute: r(59), Hour: r(23),
-+				DayOfMonth: r(31), Month: r(12), Year: r(2100),
-+				DayOfWeek: []*schedulepb.Range{{End: 6, Step: 1}},
-+			},
-+			{
-+				Second: r(fire.Second()), Minute: r(fire.Minute()), Hour: r(fire.Hour()),
-+				DayOfMonth: r(fire.Day()), Month: r(int(fire.Month())), Year: r(fire.Year()),
-+				DayOfWeek: []*schedulepb.Range{{End: 6}},
-+			},
-+		},
-+		StartTime:    timestamppb.New(time.Unix(0, 0)),
-+		EndTime:      timestamppb.New(time.Date(2099, 1, 1, 0, 0, 0, 0, time.UTC)),
-+		TimezoneName: "Etc/GMT",
-+	}
-+}
-+
-+// intervalSpecFiringAt returns an interval spec phased so that it fires at fire.
-+func intervalSpecFiringAt(every time.Duration, fire time.Time, end time.Time) *schedulepb.ScheduleSpec {
-+	phase := time.Duration(fire.Unix()%int64(every/time.Second)) * time.Second
-+	spec := &schedulepb.ScheduleSpec{Interval: []*schedulepb.IntervalSpec{{
-+		Interval: durationpb.New(every),
-+		Phase:    durationpb.New(phase),
-+	}}}
-+	if !end.IsZero() {
-+		spec.EndTime = timestamppb.New(end)
-+	}
-+	return spec
-+}
-+
-+// newPausedThenUnpaused creates the schedule paused, then unpauses it ~1s later
-+// via UpdateSchedule.
-+func newPausedThenUnpaused(t *testing.T, spec *schedulepb.ScheduleSpec, limited int64) (*schedulerTestEngine, *clock.EventTimeSource) {
-+	t.Helper()
-+	ts := clock.NewEventTimeSource()
-+	ts.Update(pendingCreateTime)
-+	build := func(paused bool) *schedulepb.Schedule {
-+		s := defaultSchedule()
-+		s.Spec = spec
-+		s.Policies = &schedulepb.SchedulePolicies{}
-+		s.State = &schedulepb.ScheduleState{
-+			Paused:           paused,
-+			LimitedActions:   limited > 0,
-+			RemainingActions: limited,
-+		}
-+		return s
-+	}
-+	e := newSchedulerTestEngine(t, build(true), withEngineTimeSource(ts))
-+
-+	ts.Update(pendingUnpauseTime)
-+	_, err := scheduler.NewTestHandler(e.logger).UpdateSchedule(e.engineCtx, &schedulerpb.UpdateScheduleRequest{
-+		NamespaceId: namespaceID,
-+		FrontendRequest: &workflowservice.UpdateScheduleRequest{
-+			Namespace:  namespace,
-+			ScheduleId: scheduleID,
-+			Schedule:   build(false),
-+			RequestId:  "unpause",
-+		},
-+	})
-+	require.NoError(t, err)
-+	return e, ts
-+}
-+
+ func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
+ 	// All cases drive a completion that arrives before the start response, so the handler
+ 	// fabricates the started transition (emitting schedule-to-start) and then resolves the
+@@ -66,6 +89,7 @@ func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
+ 			backend := &hsmtest.NodeBackend{}
+ 			node := newOperationNode(t, backend, mustNewScheduledEvent(time.Now(), &historypb.NexusOperationScheduledEventAttributes{
+ 				ScheduleToCloseTimeout: durationpb.New(time.Hour),
++				RequestId:              "request-id",
+ 			}))
+ 
+ 			captureHandler := metricstest.NewCaptureHandler()
+@@ -79,10 +103,10 @@ func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
+ 				context.Background(),
+ 				fakeEnv{node: node},
+ 				hsm.Ref{},
+-				"",      // requestID (empty skips the request-id match check)
+-				"token", // operationToken
+-				nil,     // startTime
+-				nil,     // links
++				"request-id", // requestID
++				"token",      // operationToken
++				nil,          // startTime
++				nil,          // links
+ 				tc.result,
+ 				tc.opErr,
+ 			))
+@@ -130,6 +154,7 @@ func TestCompletionHandler_AlreadyStartedMetricsUseWorkflowTime(t *testing.T) {
+ 	backend := &hsmtest.NodeBackend{WorkflowTimeFn: func() time.Time { return workflowNow }}
+ 	node := newOperationNode(t, backend, mustNewScheduledEvent(scheduledTime, &historypb.NexusOperationScheduledEventAttributes{
+ 		ScheduleToCloseTimeout: durationpb.New(time.Hour),
++		RequestId:              "request-id",
+ 	}))
+ 	require.NoError(t, hsm.MachineTransition(node, func(operation nexusoperations.Operation) (hsm.TransitionOutput, error) {
+ 		return nexusoperations.TransitionStarted.Apply(operation, nexusoperations.EventStarted{
+@@ -150,10 +175,10 @@ func TestCompletionHandler_AlreadyStartedMetricsUseWorkflowTime(t *testing.T) {
+ 		context.Background(),
+ 		fakeEnv{node: node, nowFn: func() time.Time { return wallNow }},
+ 		hsm.Ref{},
+-		"",      // requestID (empty skips the request-id match check)
+-		"token", // operationToken
+-		nil,     // startTime
+-		nil,     // links
++		"request-id", // requestID
++		"token",      // operationToken
++		nil,          // startTime
++		nil,          // links
+ 		&commonpb.Payload{},
+ 		nil,
+ 	))
 ```
 
-**File**: `chasm/lib/scheduler/scheduler.go` (modified, +11/-0)
+**File**: `tests/nexus_workflow_test.go` (modified, +25/-0)
 ```diff
-@@ -557,6 +557,17 @@ func (s *Scheduler) computeLastEventTime(ctx chasm.Context) time.Time {
- 		latest = util.MaxTime(latest, a.GetActualTime().AsTime())
- 	}
+@@ -2019,6 +2019,31 @@ func (s *NexusWorkflowTestSuite) TestNexusOperationAsyncCompletionErrors(chasmEn
+ 		s.Contains(handlerErr.Error(), "invalid callback token", "Response should indicate invalid callback token")
+ 	})
  
-+	// recentActions skips starts without a RunId. Count them by scheduled time,
-+	// or the tick that buffers a schedule's final action can arm the idle task in
-+	// the past and close it before InvokerExecuteTask runs.
-+	if tweakablesFromContext(ctx).EnablePendingStartIdleFix {
-+		for _, start := range s.Invoker.Get(ctx).GetBufferedStarts() {
-+			if start.GetRunId() == "" {
-+				latest = util.MaxTime(latest, start.GetActualTime().AsTime())
-+			}
-+		}
-+	}
++	s.Run("CallbackTokenWithoutRequestID", func(s *NexusWorkflowTestSuite) {
++		env := s.newTestEnv(chasmEnabled)
++		gen := &commonnexus.CallbackTokenGenerator{}
++		validToken, err := s.generateValidCallbackToken(env.NamespaceID().String(), testcore.RandomizeStr("workflow"), uuid.NewString())
++		s.NoError(err)
++		decodedToken, err := commonnexus.DecodeCallbackToken(validToken)
++		s.NoError(err)
++		completionToken, err := gen.DecodeCompletion(decodedToken)
++		s.NoError(err)
++		completionToken.RequestId = ""
++		invalidToken, err := gen.Tokenize(completionToken)
++		s.NoError(err)
 +
- 	return latest
- }
- 
++		completion := nexusrpc.CompleteOperationOptions{
++			Result: testcore.MustToPayload(s.T(), "result"),
++			Header: nexus.Header{commonnexus.CallbackTokenHeader: invalidToken},
++		}
++		publicCallbackURL := "http://" + env.HttpAPIAddress() + "/" + commonnexus.RouteCompletionCallback.Path(env.Namespace().String())
++		err = s.sendNexusCompletionRequest(s.Context(), publicCallbackURL, completion)
++		var handlerErr *nexus.HandlerError
++		s.ErrorAs(err, &handlerErr)
++		s.Equal(nexus.HandlerErrorTypeBadRequest, handlerErr.Type)
++		s.Contains(handlerErr.Error(), "invalid callback token")
++	})
++
+ 	s.Run("InvalidCallbackTokenNoIdentifier", func(s *NexusWorkflowTestSuite) {
+ 		env := s.newTestEnv(chasmEnabled)
+ 		completion := nexusrpc.CompleteOperationOptions{
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13022** (2026-11-10): Update go.temporal.io/api to v1.64.3 (@veeral-patel)
-- **PR #13021** (2026-11-10): Emit the SDK-reported poller target in worker metrics (@veeral-patel)
-- **PR #13020** (closed): Emit the SDK-reported poller target in worker metrics (@veeral-patel)
-- **PR #13016** (2026-11-11): Fix V2 schedules closing before their final action starts (@davidporter-id-au)
-- **PR #13009** (closed): Time skipping fix chasm tasks reference time (@feiyang3cat)
-- **PR #13008** (2026-11-10): rename and add more time-skipping util functions (@feiyang3cat)
+- **PR #13077** (2026-11-13): Require matching request IDs for Nexus completions (@tekkaya)
+- **PR #13075** (2026-11-13): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13069** (2026-11-13): Keep CHASM schedule buffers progressing after discarded or failed starts (@chaptersix)
+- **PR #13068** (2026-11-12): Fix flakes: `TestWorkerRegistry_CountWorkers` (@carlydf)
+- **PR #13058** (closed): Add Zap integration for the shared testlogger (@stephanos)
+- **PR #13052** (2026-11-12): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 
 ---
 
@@ -2640,31 +2431,31 @@ the previous run's start l
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. history_size/history_count CompletionStats double emitting (#12931)
+## X. Require matching request IDs for Nexus completions
 
 **RULE**:
-When implementing operations in `service/history/workflow/context.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `chasm/lib/nexusoperation/operation.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `915dbdc6`: history_size/history_count CompletionStats double emitting (#12931). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cbeb97f4`: Require matching request IDs for Nexus completions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/history/workflow/context.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/nexusoperation/operation.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		wroteEvents(payload.ExecutionEvents),
+	if completion.GetRequestId() == "" || o.GetRequestId() != completion.GetRequestId() {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+	if completion.GetRequestId() != "" && o.GetRequestId() != completion.GetRequestId() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `915dbdc6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cbeb97f4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

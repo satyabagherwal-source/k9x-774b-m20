@@ -9615,3 +9615,6 @@
 | `CYCLE-20261113-TKU0` | `2026-11-13T20:36:51.768Z` | `zulip/zulip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8375` | Yes (`0539f00d...`) |
 | `CYCLE-20261113-TM8T` | `2026-11-13T20:36:53.597Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8376` | Yes (`cd8ee374...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:37:26.656Z` | `hf-cloudflare-clef-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A812096F` [Domain D] | Yes (`1caf143b...`) |
+| `CYCLE-20261113-6NIV` | `2026-11-13T20:47:01.783Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`835a087c...`) |
+| `CYCLE-20261113-6UKQ` | `2026-11-13T20:47:10.922Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8377` | Yes (`c0564083...`) |
+| `CYCLE-20261113-6YYK` | `2026-11-13T20:47:16.604Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8378` | Yes (`56e4128e...`) |

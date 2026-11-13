@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T20:37:27.198Z",
+  "last_updated": "2026-11-13T20:47:21.030Z",
   "directives": [
     {
       "id": "CD-001",
@@ -10267,6 +10267,57 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-13",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-71XD",
+      "directive_title": "Require matching request IDs for Nexus completions",
+      "source_repo": "temporalio-temporal-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-71XD-require-matching-request-ids-for-nexus-completions.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-6Z4I",
+      "directive_title": "constrain record INT8 kernels to dispatched ISA",
+      "source_repo": "alibaba/zvec",
+      "source_commit": "0c2e67a2",
+      "staged_file": "11_INBOX/candidate-directives/CD-6Z4I-constrain-record-int8-kernels-to-dispatched-isa.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-13",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-5C9BE5",
+      "directive_title": "Forensic Learning Record (Deep Inspection): sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5C9BE5-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-51810F",
+      "directive_title": "Require matching request IDs for Nexus completions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "temporalio-temporal",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-51810F-require-matching-request-ids-for-nexus-c.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-72DC",
+      "directive_title": "turbo): constrain record INT8 kernels to dispatched ISA",
+      "source_repo": "alibaba-zvec-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-72DC-turbo-constrain-record-int8-kernels-to-dispatched-isa.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "I"
     }
   ]
 }

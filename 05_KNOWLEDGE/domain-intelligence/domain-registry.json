@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T20:37:27.295Z",
-  "total_records": 338,
+  "last_updated": "2026-11-13T20:47:21.142Z",
+  "total_records": 344,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 183,
+      "total": 185,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -216,7 +216,9 @@
         "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-flash-core-invariants",
         "DOM-D-A812096F",
-        "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-flash-learnings-core-invarian"
+        "domain_intelligence-research-knowledge-intelligence-hf-cloudflare-clef-flash-learnings-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mi",
+        "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual"
       ]
     },
     "E": {
@@ -356,7 +358,7 @@
       ]
     },
     "I": {
-      "total": 10,
+      "total": 14,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -367,7 +369,11 @@
         "domain_intelligence-content-information-intelligence-iliyami-macsai-core-invariants",
         "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-mattermost-mattermost-core-invariants",
-        "domain_intelligence-content-information-intelligence-mattermost-mattermost-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-mattermost-mattermost-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-temporalio-temporal-core-invariants",
+        "domain_intelligence-content-information-intelligence-alibaba-zvec-core-invariants",
+        "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-alibaba-zvec-learnings-core-invariants"
       ]
     },
     "J": {
@@ -8711,6 +8717,60 @@
       "repository": "hf-cloudflare-clef-flash-learnings",
       "content_hash": "f3245a3c4f35be26364830e9011774f9732ad5ecbd8d1ed33a5c745a46186dfe",
       "created_at": "2026-11-13T20:37:26.841Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mi": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mi",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-research-knowledg.md",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "content_hash": "2baf522771c0e929b0de3d6615ea687d2fa9936f91f4f36f9912e32259fc199a",
+      "created_at": "2026-11-13T20:47:01.989Z"
+    },
+    "domain_intelligence-content-information-intelligence-temporalio-temporal-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: temporalio/temporal Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-temporalio-temporal-content-information-intelligence-temporalio-temporal-core-in.md",
+      "repository": "temporalio/temporal",
+      "content_hash": "ea449237751c2ce45c6f90dac91f86e5a71bfc17243bdf04af7076c6c3d24e32",
+      "created_at": "2026-11-13T20:47:11.283Z"
+    },
+    "domain_intelligence-content-information-intelligence-alibaba-zvec-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-alibaba-zvec-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: alibaba/zvec Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-alibaba-zvec-content-information-intelligence-alibaba-zvec-core-invariants.md",
+      "repository": "alibaba/zvec",
+      "content_hash": "845e7ace5388cdcec648b598051eb8e27389a15e5fd9d48535f7c5742ae5fe32",
+      "created_at": "2026-11-13T20:47:16.937Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings-researc.md",
+      "repository": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings",
+      "content_hash": "b0dbe8c2cabe53a7f0e099e0ec2431cf45d45eb62f21acab52c65a49ffc949bf",
+      "created_at": "2026-11-13T20:47:20.085Z"
+    },
+    "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: temporalio-temporal-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-temporalio-temporal-learnings-content-information-intelligence-temporalio-tempor.md",
+      "repository": "temporalio-temporal-learnings",
+      "content_hash": "ff84cc8c6da10a78b7d30892c3a6ee9d7b79b56c89f925fa716a04c9fe47dcd6",
+      "created_at": "2026-11-13T20:47:20.566Z"
+    },
+    "domain_intelligence-content-information-intelligence-alibaba-zvec-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-alibaba-zvec-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: alibaba-zvec-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-alibaba-zvec-learnings-content-information-intelligence-alibaba-zvec-learnings-c.md",
+      "repository": "alibaba-zvec-learnings",
+      "content_hash": "51923df6ccda23a7fd2a752daf240a73ce4f2fc3ffb8b77181012819f8a0b35d",
+      "created_at": "2026-11-13T20:47:21.142Z"
     }
   }
 }

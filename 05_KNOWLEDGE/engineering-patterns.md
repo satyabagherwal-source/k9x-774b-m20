@@ -601779,3 +601779,167 @@ func (m *ResourceInstanceObjectMeta) PrimaryDeclRangeHCL() *hcl.Range {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7ca6e772` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8377. Require matching request IDs for Nexus completions (Harvested from temporalio/temporal)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Require matching request IDs for Nexus completions",
+  "source": "temporalio/temporal",
+  "source_url": "https://github.com/temporalio/temporal",
+  "source_version": "73f1acad",
+  "license": "MIT",
+  "extracted_at": "2026-11-13T20:47:10.437Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-temporalio-temporal",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `73f1acad`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `chasm/lib/nexusoperation/operation.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cbeb97f4`: Require matching request IDs for Nexus completions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/nexusoperation/operation.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	if completion.GetRequestId() == "" || o.GetRequestId() != completion.GetRequestId() {
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	if completion.GetRequestId() != "" && o.GetRequestId() != completion.GetRequestId() {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cbeb97f4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8378. constrain record INT8 kernels to dispatched ISA (Harvested from alibaba/zvec)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "constrain record INT8 kernels to dispatched ISA",
+  "source": "alibaba/zvec",
+  "source_url": "https://github.com/alibaba/zvec",
+  "source_version": "0c2e67a2",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-13T20:47:16.135Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-alibaba-zvec",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [alibaba/zvec](https://github.com/alibaba/zvec) (Revision: `0c2e67a2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `python/tests/test_refine_query_params.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0c2e67a2`: turbo): constrain record INT8 kernels to dispatched ISA. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/tests/test_refine_query_params.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+    # Lifecycle validation requires an exact hit, not approximate graph recall.
+    query_options = {"is_linear": True} if index_kind == "diskann" else {}
+    plain = zvec.Query("vector", vector=vectors[0], param=query_type(**query_options))
+        "vector",
+        vector=vectors[0],
+        param=query_type(is_using_refiner=True, **query_options),
+            if index_kind == "diskann" and not empty:
+                # Keep the approximate path covered without requiring a global
+                # nearest neighbor that may be absent from the coarse results.
+                coarse = collection.query(
+                    zvec.Query(
+                        "vector", vector=vectors[0], param=zvec.DiskAnnQueryParam()
+                    ),
+                    topk=10,
+                )
+                assert coarse
+                coarse_ids = np.array([int(hit.id) for hit in coarse])
+                distances = np.square(vectors[coarse_ids] - vectors[0]).sum(axis=1)
+                order = np.lexsort((coarse_ids, distances))
+                hits = collection.query(
+                    zvec.Query(
+                        "vector",
+                        vector=vectors[0],
+           
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+    plain = zvec.Query("vector", vector=vectors[0], param=query_type())
+        "vector", vector=vectors[0], param=query_type(is_using_refiner=True)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0c2e67a2` are properly handled with clean fallback behavior.

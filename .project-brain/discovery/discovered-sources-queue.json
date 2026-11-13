@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T20:37:27.011Z",
+  "updated_at": "2026-11-13T20:47:20.813Z",
   "stats": {
-    "total_discovered": 2888,
-    "approved_pending_harvest": 2690,
+    "total_discovered": 2890,
+    "approved_pending_harvest": 2692,
     "harvested_count": 0,
     "rejected_count": 198,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2696,
+      "COMMUNITY_AND_EXPERT": 2698,
       "OFFICIAL_DOCUMENTATION": 100,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -62170,6 +62170,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
         "fileName": "zulip-zulip-learnings.md"
+      }
+    },
+    "SRC-DD80866C23CD": {
+      "id": "SRC-DD80866C23CD",
+      "url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "title": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:47:19.851Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
+        "fileName": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md"
+      }
+    },
+    "SRC-009ACB0E8E60": {
+      "id": "SRC-009ACB0E8E60",
+      "url": "https://github.com/alibaba/zvec",
+      "title": "https://github.com/alibaba/zvec",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:47:20.813Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
+        "fileName": "alibaba-zvec-learnings.md"
       }
     }
   }

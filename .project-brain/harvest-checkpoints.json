@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T20:36:53.610Z",
+  "last_updated": "2026-11-13T20:47:16.620Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -890,14 +890,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "d528e8934abbd8e264ef215b47e1478216b1da235762047b87ab4f797455b3b9",
-      "verified_at": "2026-11-08T19:38:51.465Z",
+      "content_hash": "835a087c5032db702f78c6c1e5d504286e43221638062c5a59e0997763b85c53",
+      "verified_at": "2026-11-13T20:47:01.799Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T19:38:51.465Z"
+      "last_updated": "2026-11-13T20:47:01.799Z"
     },
     "google-bert/bert-base-uncased": {
       "repository": "google-bert/bert-base-uncased",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "dccaca496171ebec87b1fc086adad0e49c5a811af245d71171ca575c3dbd3686",
-      "verified_at": "2026-11-12T22:21:23.162Z",
+      "content_hash": "c05640832794c2ce471502994377c80d91c498b6e0592067383251833db01afb",
+      "verified_at": "2026-11-13T20:47:10.938Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T22:21:23.162Z"
+      "last_updated": "2026-11-13T20:47:10.938Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "17e1b96c428aced8ced69f8a78f2a2ebc10bff5cf4b9c1128effe6935d5d97d9",
-      "verified_at": "2026-11-12T21:19:46.584Z",
+      "content_hash": "56e4128ee25b9b5c120953fd56c4b0b6db69bc9e086f61410910deef0aeb23f4",
+      "verified_at": "2026-11-13T20:47:16.619Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:19:46.584Z"
+      "last_updated": "2026-11-13T20:47:16.619Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",

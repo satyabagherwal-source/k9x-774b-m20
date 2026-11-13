@@ -705,8 +705,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "d528e8934abbd8e264ef215b47e1478216b1da235762047b87ab4f797455b3b9",
-    "lastHarvestedAt": "2026-11-08T19:38:51.456Z",
+    "contentHash": "835a087c5032db702f78c6c1e5d504286e43221638062c5a59e0997763b85c53",
+    "lastHarvestedAt": "2026-11-13T20:47:01.788Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2"
   },
   "hf-google-bert-bert-base-uncased": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "f16ceaa3",
+    "sourceVersion": "73f1acad",
     "license": "MIT",
-    "contentHash": "dccaca496171ebec87b1fc086adad0e49c5a811af245d71171ca575c3dbd3686",
-    "lastHarvestedAt": "2026-11-12T22:21:23.144Z",
+    "contentHash": "c05640832794c2ce471502994377c80d91c498b6e0592067383251833db01afb",
+    "lastHarvestedAt": "2026-11-13T20:47:10.927Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "0e83a2b1",
+    "sourceVersion": "0c2e67a2",
     "license": "Apache-2.0",
-    "contentHash": "17e1b96c428aced8ced69f8a78f2a2ebc10bff5cf4b9c1128effe6935d5d97d9",
-    "lastHarvestedAt": "2026-11-12T21:19:46.565Z",
+    "contentHash": "56e4128ee25b9b5c120953fd56c4b0b6db69bc9e086f61410910deef0aeb23f4",
+    "lastHarvestedAt": "2026-11-13T20:47:16.609Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {

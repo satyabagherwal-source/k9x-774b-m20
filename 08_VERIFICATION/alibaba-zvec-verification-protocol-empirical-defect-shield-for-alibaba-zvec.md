@@ -4,45 +4,31 @@
 {
   "source_repository": "alibaba/zvec",
   "source_url": "https://github.com/alibaba/zvec",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "0c2e67a2",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T20:47:16.823Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-alibaba-zvec",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [alibaba/zvec](https://github.com/alibaba/zvec) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [alibaba/zvec](https://github.com/alibaba/zvec) (Revision: `0c2e67a2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T20:47:16.823Z`  
+> **Learning ID**: `learn-github-alibaba-zvec`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `alibaba/zvec` (Commit: `historical`)
+- **Target Repository**: `alibaba/zvec` (Commit: `0c2e67a2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
-> **Source**: github ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
-> **Source Version**: `d61530f2`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T08:28:04.706Z  
-> **Learning ID**: `learn-github-alibaba-zvec`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): alibaba/zvec
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T08:18:03.487Z  
+> **Harvest Timestamp**: 2026-11-13T20:47:15.558Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A lightweight, lightning-fast, in-process vector database
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 16226 stars
+- **Stars / Engagement**: 16235 stars
 
 ---
 
@@ -1099,8 +1085,8 @@ class HolderCluster {
 - **Issue #886** (2026-11-11): **[Bug]: HNSW + INT8/INT4 + enable_rotate=True returns near-random results after optimize() (regression in 0.8.0)**
   *Symptoms*: ### Description   On 0.8.0 and 0.8.1, a newly created HNSW index with scalar quantization (INT8 or INT4) and QuantizerParam(enable_rotate=True) returns wrong neighbours after Collection.optimize(). A query with a document's own vector almost never returns that document. Results are correct before optimize, and Flat and IVF indexes with the same settings are correct. On 0.7.0 the same script gives full recall.   HNSW collections built with rotation on 0.7.0, then opened, written to and re-optimized on 0.8.1, keep full recall. Only indexes created on 0.8.x are affected.   The same happens at dim=32 and with INT4. In a 4-dimension example, the exact match scores about 1.0 after optimize (it should be about 0), and the ranking is scrambled.   Also reproduces at scale: SIFT1M (1M × 128, L2), HNSW + INT8 + enable_rotate=True on 0.8.1 gives recall@10 = 0.000 at every ef from 40 to 200, with or without the refiner. Plain INT8 HNSW on the same data is unaffected.    Environment: zvec 0.8.1 from PyPI (cp312 wheel), macOS (Darwin 25.5), Apple Silicon arm64, Python 3.12.   Possibly related: the Turbo quantizer and distance-kernel migration in 0.8.0 (#716, #735, #773).  ### Steps to Reproduce  ```python import random, tempfile, zvec   zvec.init(log_dir=tempfile.mkdtemp())  random.seed(0)  dim, n = 128, 500  vecs = {str(i): [random.gauss(0, 1) for _ in range(dim)] for i in range(n)}   for rotate in (False, True):      ip = zvec.HnswIndexParam(          metric_type=zvec.MetricType.COSINE,  
 
-- **Issue #836** (2026-10-22): **[Bug]:**
-  *Symptoms*: ### Description  [zvec_deadlock_bug_report.md](https://github.com/user-attachments/files/33753801/zvec_deadlock_bug_report.md)  ### Steps to Reproduce  ```python import zvec, numpy as np, threading, time  DIM, N, PATH = 768, 20000, "/tmp/zvec_ro_repro"  # 1) create + insert + build index schema = zvec.CollectionSchema(     name="repro",     vectors=zvec.VectorSchema("embedding", zvec.DataType.VECTOR_FP32, DIM), ) col = zvec.create_and_open(PATH, schema) rng = np.random.default_rng(0) for i in range(0, N, 1000):     docs = [         zvec.Doc(id=str(j), vectors={"embedding": rng.standard_normal(DIM).astype("float32")})         for j in range(i, min(i + 1000, N))     ]     col.insert(docs) col.optimize() col.close()  # 2) reopen READ-ONLY and hammer concurrent queries ro = zvec.open(PATH, zvec.CollectionOption(read_only=True, enable_mmap=False)) vq = lambda: zvec.VectorQuery("embedding", vector=rng.standard_normal(DIM).astype("float32"), topk=10)  stop = threading.Event() def worker():     while not stop.is_set():         try:             ro.query(vq(), topk=10)         except Exception:             pass  threads = [threading.Thread(target=worker, daemon=True) for _ in range(32)] [t.start() for t in threads] time.sleep(120)   # in our environment the process deadlocks within seconds~minutes;                   # if it is still alive after 120s the trigger threshold was not reached print("survived") ```  ### Logs / Stack Trace  ```shell  ```  ### Operating System  WSL2  ### Build 
+- **Issue #849** (2026-11-13): **[Bug]: Refiner on unquantized ANN indexes fails only after optimize**
+  *Symptoms*: ### Description  With zvec 0.8.0, enabling the refiner on an unquantized dense HNSW, IVF, or DiskANN field succeeds before `optimize()`, but the same query fails with an internal error after optimization. Optimization itself succeeds, and ordinary queries still work.  The issue is the missing validation and state-dependent behavior of an unsupported parameter combination. Supporting refinement for unquantized ANN indexes is not necessary to resolve this: a clear, consistent `InvalidArgument` from the C++ database query layer would be preferable.  ### Steps to Reproduce  Tested using the published `@zvec/zvec@0.8.0` Node.js binding and its prebuilt macOS ARM64 binary, rather than a locally modified C++ build.  1. Create a dense FP32 field with 64 dimensions and L2 distance. Select HNSW, IVF, or DiskANN with `quantizeType: UNDEFINED`. 2. Insert 12,000 vectors. 3. Query with `isUsingRefiner: true`: succeeds. 4. Call `optimizeSync()`: succeeds, with index completeness reaching 1. 5. Query with `isUsingRefiner: false`: succeeds. 6. Repeat the query with `isUsingRefiner: true`: fails. 7. Repeat with FP16 quantization as a control: all steps succeed for all three index types.  | Index | Quantization | Refiner before optimize | Ordinary query after optimize | Refiner after optimize | | --- | --- | --- | --- | --- | | HNSW | UNDEFINED | Pass | Pass | Fail | | IVF | UNDEFINED | Pass | Pass | Fail | | DiskANN | UNDEFINED | Pass | Pass | Fail | | HNSW | FP16 | Pass | Pass | Pass | | IVF 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1117,288 +1103,926 @@ class HolderCluster {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d61530f2` (2026-11-11)
-**Commit Message**: fix(db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (#887)
+### Incident Patch 1: `0c2e67a2` (2026-11-13)
+**Commit Message**: fix(turbo): constrain record INT8 kernels to dispatched ISA (#902)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `python/tests/test_rotated_quantization.py` (added, +97/-0)
+**File**: `python/tests/test_refine_query_params.py` (modified, +33/-2)
 ```diff
-@@ -0,0 +1,97 @@
-+# Copyright 2025-present the zvec project
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
+@@ -102,9 +102,13 @@ def test_refinement_requires_quantization_through_lifecycle(
+         ],
+     )
+     vectors = np.random.default_rng(849).random((32, 16), dtype=np.float32)
+-    plain = zvec.Query("vector", vector=vectors[0], param=query_type())
++    # Lifecycle validation requires an exact hit, not approximate graph recall.
++    query_options = {"is_linear": True} if index_kind == "diskann" else {}
++    plain = zvec.Query("vector", vector=vectors[0], param=query_type(**query_options))
+     refined = zvec.Query(
+-        "vector", vector=vectors[0], param=query_type(is_using_refiner=True)
++        "vector",
++        vector=vectors[0],
++        param=query_type(is_using_refiner=True, **query_options),
+     )
+     error = re.escape(
+         "Invalid query for field[vector]: refinement is not supported "
+@@ -119,6 +123,33 @@ def check_queries(collection, empty=False):
+                 collection.query(refined, topk=1)
+         else:
+             assert [hit.id for hit in collection.query(refined, topk=1)] == expected_ids
++            if index_kind == "diskann" and not empty:
++                # Keep the approximate path covered without requiring a global
++                # nearest neighbor that may be absent from the coarse results.
++                coarse = collection.query(
++                    zvec.Query(
++                        "vector", vector=vectors[0], param=zvec.DiskAnnQueryParam()
++                    ),
++                    topk=10,
++                )
++                assert coarse
++                coarse_ids = np.array([int(hit.id) for hit in coarse])
++                distances = np.square(vectors[coarse_ids] - vectors[0]).sum(axis=1)
++                order = np.lexsort((coarse_ids, distances))
++                hits = collection.query(
++                    zvec.Query(
++                        "vector",
++                        vector=vectors[0],
++                        param=zvec.DiskAnnQueryParam(
++                            is_using_refiner=True, scale_factor=10.0
++                        ),
++                    ),
++                    topk=1,
++                )
++                assert [hit.id for hit in hits] == [str(coarse_ids[order[0]])]
++                assert hits[0].score == pytest.approx(
++                    float(distances[order[0]]), rel=2e-5, abs=2e-5
++                )
+ 
+     path = str(tmp_path / "index")
+     writer = zvec.create_and_open(path, schema)
+```
+
+**File**: `src/turbo/CMakeLists.txt` (modified, +11/-5)
+```diff
+@@ -167,18 +167,24 @@ if(NOT ANDROID AND AUTO_DETECT_ARCH AND
+         COMPILE_FLAGS "${TURBO_MARCH_FLAG_AVX512}"
+     )
+ 
+-    # These raw kernels promise AVX2 or AVX512F+BW, not the full feature set of
++    # These INT8 kernels promise AVX2 or AVX512F+BW, not the full feature set of
+     # the CPU model selected above. In particular, icelake-server lets Clang
+     # fuse madd+add into VNNI, which older AVX512BW CPUs cannot execute.
+     if(NOT MSVC)
+-      set(_TURBO_RAW_INT8_BASE "-march=x86-64")
++      set(_TURBO_INT8_BASE "-march=x86-64")
+       if(_TURBO_TARGET_ARCH STREQUAL "x86")
+-        set(_TURBO_RAW_INT8_BASE "-march=i686")
++        set(_TURBO_INT8_BASE "-march=i686")
+       endif()
++      file(GLOB AVX2_RECORD_INT8_SRCS
++          ${CMAKE_CURRENT_SOURCE_DIR}/distance/avx2/record_quantized_int8/*.cc)
++      file(GLOB AVX512_RECORD_INT8_SRCS
++          ${CMAKE_CURRENT_SOURCE_DIR}/distance/avx512/record_quantized_int8/*.cc)
+       set_source_files_properties(distance/avx2/raw_int8/distance.cc
+-          PROPERTIES COMPILE_FLAGS "${_TURBO_RAW_INT8_BASE} -mavx2")
++          ${AVX2_RECORD_INT8_SRCS}
++          PROPERTIES COMPILE_FLAGS "${_TURBO_INT8_BASE} -mavx2")
+       set_source_files_properties(distance/avx512/raw_int8/distance.cc
+-          PROPERTIES COMPILE_FLAGS "${_TURBO_RAW_INT8_BASE} -mavx512f -mavx512bw")
++          ${AVX512_RECORD_INT8_SRCS}
++          PROPERTIES COMPILE_FLAGS "${_TURBO_INT8_BASE} -mavx512f -mavx512bw")
+     endif()
+ endif()
+ 
+```
+
+**File**: `src/turbo/distance/avx2/record_quantized_int8/common.h` (modified, +48/-7)
+```diff
+@@ -23,11 +23,20 @@
+ #include <cstddef>
+ #include <cstdint>
+ #include <zvec/ailego/internal/platform.h>
++#include "sse2/simd.h"
+ 
+ namespace zvec::turbo::avx2::internal {
+ 
+ // Raw integer inner product of two int8 code arrays of length `dim`.
+ inline float raw_inner_product(const int8_t *a, const int8_t *b, size_t dim) {
++  // Avoid partial-load, widening, and reduction setup for tiny vectors.
++  if (dim < 8) {
++    int32_t sum = 0;
++    for (size_t i = 0; i < dim; ++i) {
++      sum += static_cast<int32_t>(a[i]) * static_cast<int32_t>(b[i]);
++    }
++    return static_cast<float>(sum);
++  }
+   const __m256i ones = _mm256_set1_epi16(1);
+   __m256i accumulator = _mm256_setzero_si256();
+   size_t i = 0;
+@@ -43,15 +52,38 @@ inline float raw_inner_product(const int8_t *a, const int8_t *b, size_t dim) {
+         _mm256_add_epi32(accumulator, _mm256_madd_epi16(products, ones));
+   }
+ 
++  if (i < dim) {
++    // A few scalar products are cheaper than widening another SIMD block.
++    if (dim - i < 4) {
++      int32_t tail = static_cast<int32_t>(a[i]) * static_cast<int32_t>(b[i]);
++      if (dim - i >= 2) {
++        tail += static_cast<int32_t>(a[i + 1]) * b[i + 1];
++      }
++      if (dim - i == 3) {
++        tail += static_cast<int32_t>(a[i + 2]) * b[i + 2];
++      }
++      alignas(32) int32_t lanes[8];
++      _mm256_store_si256(reinterpret_cast<__m256i *>(lanes), accumulator);
++      int64_t sum = tail;
++      for (int32_t lane : lanes) {
++        sum += lane;
++      }
++      return static_cast<float>(sum);
++    }
++    const __m256i lhs =
++        _mm256_cvtepi8_epi16(sse2::internal::load_partial_int8(a + i, dim - i));
++    const __m256i rhs =
++        _mm256_cvtepi8_epi16(sse2::internal::load_partial_int8(b + i, dim - i));
++    accumulator = _mm256_add_epi32(
++        accumulator, _mm256_madd_epi16(_mm256_mullo_epi16(lhs, rhs), ones));
++  }
 +
-+"""Optimize must keep rotated INT8/INT4 indexes searchable (issue #886)."""
+   alignas(32) int32_t lanes[8];
+   _mm256_store_si256(reinterpret_cast<__m256i *>(lanes), accumulator);
+   int64_t sum = 0;
+   for (int32_t lane : lanes) {
+     sum += lane;
+   }
+-  for (; i < dim; ++i) {
+-    sum += static_cast<int32_t>(a[i]) * static_cast<int32_t>(b[i]);
+-  }
+   return static_cast<float>(sum);
+ }
+ 
+@@ -89,17 +121,26 @@ inline void raw_inner_product_batch_impl(
+     }
+   }
+ 
++  if (d < dim) {
++    const __m256i rhs = _mm256_cvtepi8_epi16(
++        sse2::internal::load_partial_int8(query + d, dim - d));
++    for (size_t i = 0; i < dp_batch; ++i) {
++      if (prefetch_ptrs[i]) ailego_prefetch(prefetch_ptrs[i] + d);
++      const __m256i lhs =
++          _mm256_cvtepi8_epi16(sse2::internal::load_partial_int8(
++              static_cast<const int8_t *>(records[i]) + d, dim - d));
++      accs[i] = _mm256_add_epi32(
++          accs[i], _mm256_madd_epi16(_mm256_mullo_epi16(lhs, rhs), ones));
++    }
++  }
 +
-+from __future__ import annotations
+   for (size_t i = 0; i < dp_batch; ++i) {
+-    const int8_t *record = static_cast<const int8_t *>(records[i]);
+     alignas(32) int32_t lanes[8];
+     _mm256_store_si256(reinterpret_cast<__m256i *>(lanes), accs[i]);
+     int64_t sum = 0;
+     for (int32_t lane : lanes) {
+       sum += lane;
+     }
+-    for (size_t j = d; j < dim; ++j) {
+-      sum += static_cast<int32_t>(record[j]) * static_cast<int32_t>(query[j]);
+-    }
+     results[i] = static_cast<float>(sum);
+   }
+ }
+```
+
+**File**: `src/turbo/distance/avx512/record_quantized_int8/common.h` (modified, +35/-10)
+```diff
+@@ -26,8 +26,19 @@
+ 
+ namespace zvec::turbo::avx512::internal {
+ 
++// Use 512-bit masked byte loads for the tail: their 256-bit forms would also
++// require AVX512VL, which is not part of this backend's F+BW runtime gate.
 +
-+import numpy as np
-+import pytest
+ // Raw integer inner product of two int8 code arrays of length `dim`.
+ inline float raw_inner_product(const int8_t *a, const int8_t *b, size_t dim) {
++  // Skip masked-load and reduction setup when only a few products are needed.
++  if (dim < 4) {
++    int32_t sum = 0;
++    for (size_t i = 0; i < dim; ++i) {
++      sum += static_cast<int32_t>(a[i]) * static_cast<int32_t>(b[i]);
++    }
++    return static_cast<float>(sum);
++  }
+   const __m512i ones = _mm512_set1_epi16(1);
+   __m512i accumulator = _mm512_setzero_si512();
+   size_t i = 0;
+@@ -43,11 +54,16 @@ inline float raw_inner_product(const int8_t *a, const int8_t *b, size_t dim) {
+         _mm512_add_epi32(accumulator, _mm512_madd_epi16(products, ones));
+   }
+ 
+-  int64_t sum = _mm512_reduce_add_epi32(accumulator);
+-  for (; i < dim; ++i) {
+-    sum += static_cast<int32_t>(a[i]) * static_cast<int32_t>(b[i]);
++  if (i < dim) {
++    const __mmask64 mask = (uint64_t{1} << (dim - i)) - 1;
++    const __m512i lhs = _mm512_cvtepi8_epi16(
++        _mm512_castsi512_si256(_mm512_maskz_loadu_epi8(mask, a + i)));
++    const __m512i rhs = _mm512_cvtepi8_epi16(
++        _mm512_castsi512_si256(_mm512_maskz_loadu_epi8(mask, b + i)));
++    accumulator = _mm512_add_epi32(
++        accumulator, _mm512_madd_epi16(_mm512_mullo_epi16(lhs, rhs), ones));
+   }
+-  return static_cast<float>(sum);
++  return static_cast<float>(_mm512_reduce_add_epi32(accumulator));
+ }
+ 
+ // One-to-many raw inner product kernel: the query block is loaded and
+@@ -84,13 +100,22 @@ inline void raw_inner_product_batch_impl(
+     }
+   }
+ 
+-  for (size_t i = 0; i < dp_batch; ++i) {
+-    const int8_t *record = static_cast<const int8_t *>(records[i]);
+-    int64_t sum = _mm512_reduce_add_epi32(accs[i]);
+-    for (size_t j = d; j < dim; ++j) {
+-      sum += static_cast<int32_t>(record[j]) * static_cast<int32_t>(query[j]);
++  if (d < dim) {
++    const __mmask64 mask = (uint64_t{1} << (dim - d)) - 1;
++    const __m512i rhs = _mm512_cvtepi8_epi16(
++        _mm512_castsi512_si256(_mm512_maskz_loadu_epi8(mask, query + d)));
++    for (size_t i = 0; i < dp_batch; ++i) {
++      if (prefetch_ptrs[i]) ailego_prefetch(prefetch_ptrs[i] + d);
++      const __m512i lhs =
++          _mm512_cvtepi8_epi16(_mm512_castsi512_si256(_mm512_maskz_loadu_epi8(
++              mask, static_cast<const int8_t *>(records[i]) + d)));
++      accs[i] = _mm512_add_epi32(
++          accs[i], _mm512_madd_epi16(_mm512_mullo_epi16(lhs, rhs), ones));
+     }
+-    results[i] = static_cast<float>(sum);
++  }
 +
-+import zvec
-+from zvec import (
-+    CollectionSchema,
-+    Doc,
-+    FlatIndexParam,
-+    HnswIndexParam,
-+    Query,
-+    QuantizerParam,
-+    VectorSchema,
-+)
-+from zvec.typing import DataType, MetricType, QuantizeType
++  for (size_t i = 0; i < dp_batch; ++i) {
++    results[i] = static_cast<float>(_mm512_reduce_add_epi32(accs[i]));
+   }
+ }
+ 
+```
+
+**File**: `src/turbo/distance/avx512_vnni/record_quantized_int8/common.h` (modified, +26/-10)
+```diff
+@@ -266,20 +266,36 @@ ailego_force_inline void ip_int8_batch_avx512_vnni_impl(
+       accs[i] = _mm512_dpbusd_epi32(accs[i], q, data_regs[i]);
+     }
+   }
+-  std::array<int, batch_size> temp_results{};
+-  for (size_t i = 0; i < batch_size; ++i) {
+-    temp_results[i] = _mm512_reduce_add_epi32(accs[i]);
+-  }
+-  for (; dim < dimensionality; ++dim) {
+-    int q = static_cast<int>(reinterpret_cast<const uint8_t *>(query)[dim]);
++  if (dim < dimensionality) {
++    // One byte does not justify masked loads and another VNNI operation.
++    if (dimensionality - dim == 1) {
++      const int q = static_cast<const uint8_t *>(query)[dim];
++      for (size_t i = 0; i < batch_size; ++i) {
++        // Preserve the SIMD accumulator's wrapping 32-bit addition.
++        uint32_t sum = static_cast<uint32_t>(_mm512_reduce_add_epi32(accs[i]));
++        sum += static_cast<uint32_t>(
++            q * static_cast<const int8_t *>(vectors[i])[dim]);
++        distances[i] = static_cast<float>(static_cast<int32_t>(sum));
++      }
++      return;
++    }
++    // Zero inactive lanes so short vectors and non-multiple-of-64 tails
++    // use VNNI without reading the record metadata or beyond the buffer.
++    const __mmask64 mask = (uint64_t{1} << (dimensionality - dim)) - 1;
++    const __m512i q = _mm512_maskz_loadu_epi8(
++        mask, reinterpret_cast<const uint8_t *>(query) + dim);
+     for (size_t i = 0; i < batch_size; ++i) {
+-      temp_results[i] +=
+-          q *
+-          static_cast<int>(reinterpret_cast<const int8_t *>(vectors[i])[dim]);
++      if (prefetch_ptrs[i]) {
++        _mm_prefetch(reinterpret_cast<const char *>(prefetch_ptrs[i]) + dim,
++                     _MM_HINT_T0);
++      }
++      const __m512i data = _mm512_maskz_loadu_epi8(
++          mask, reinterpret_cast<const int8_t *>(vectors[i]) + dim);
++      accs[i] = _mm512_dpbusd_epi32(accs[i], q, data);
+     }
+   }
+   for (size_t i = 0; i < batch_size; ++i) {
+-    distances[i] = static_cast<float>(temp_results[i]);
++    distances[i] = static_cast<float>(_mm512_reduce_add_epi32(accs[i]));
+   }
+ }
+ 
+```
+
+**File**: `src/turbo/distance/neon/common/record_batch.h` (modified, +15/-0)
+```diff
+@@ -67,6 +67,21 @@ inline void record_distance_rows(const void *const *vectors, const void *query,
+       }
+     }
+   }
++  if constexpr (Bits == 8) {
++    // Keep 1..3-byte tails in the scalar loop below; padded loads cost more.
++    if (dim - d >= 4) {
++      const int8x16_t tail_q = internal::load_partial_int8(
++          reinterpret_cast<const int8_t *>(q + d), dim - d);
++      for (size_t r = 0; r < Count; ++r) {
++        sums[r] = internal::accumulate_int8_products(
++            sums[r],
++            internal::load_partial_int8(
++                reinterpret_cast<const int8_t *>(rows[r] + d), dim - d),
++            tail_q);
++      }
++      d = dim;
++    }
++  }
+   for (size_t r = 0; r < Count; ++r) totals[r] = vaddvq_s64(sums[r]);
+ #endif
+   for (; d < dim; ++d) {
+```
+
+**File**: `src/turbo/distance/neon/record_quantized_int8/common.h` (modified, +31/-4)
+```diff
+@@ -16,6 +16,7 @@
+ 
+ #include <cstddef>
+ #include <cstdint>
++#include <cstring>
+ #include <zvec/ailego/internal/platform.h>
+ 
+ #if defined(AILEGO_ARM64_NEON)
+@@ -27,6 +28,32 @@
+ namespace zvec::turbo::neon::internal {
+ 
+ #if defined(AILEGO_ARM64_NEON)
++// Load 1..15 bytes with zeroed inactive lanes and no out-of-bounds access.
++inline int8x16_t load_partial_int8(const int8_t *values, size_t count) {
++  if (count >= 8) {
++    const int8x8_t low = vld1_s8(values);
++    const uint64x1_t last = vreinterpret_u64_s8(vld1_s8(values + count - 8));
++    const uint64x1_t high =
++        vshl_u64(last, vdup_n_s64(-static_cast<int64_t>((16 - count) * 8)));
++    return vcombine_s8(low, vreinterpret_s8_u64(high));
++  }
++  uint64_t low = 0;
++  if (count >= 4) {
++    uint32_t first, last;
++    std::memcpy(&first, values, sizeof(first));
++    std::memcpy(&last, values + count - 4, sizeof(last));
++    low = first | ((static_cast<uint64_t>(last) >> ((8 - count) * 8)) << 32);
++  } else if (count >= 2) {
++    uint16_t first;
++    std::memcpy(&first, values, sizeof(first));
++    low = first;
++    if (count == 3) low |= static_cast<uint64_t>(uint8_t(values[2])) << 16;
++  } else if (count == 1) {
++    low = static_cast<uint8_t>(values[0]);
++  }
++  return vcombine_s8(vcreate_s8(low), vdup_n_s8(0));
++}
 +
-+DIMENSION = 128
-+BATCH = 200
-+MIN_HITS = BATCH * 95 // 100
+ inline int64x2_t accumulate_int8_products(int64x2_t sum, int8x16_t lhs,
+                                           int8x16_t rhs) {
+   const int16x8_t product_low = vmull_s8(vget_low_s8(lhs), vget_low_s8(rhs));
+@@ -48,11 +75,11 @@ inline float ip_int8_neon(const void *a, const void *b, size_t size) {
+     sum = accumulate_int8_products(sum, vld1q_s8(lhs + i), vld1q_s8(rhs + i));
+   }
+ 
+-  int64_t result = vaddvq_s64(sum);
+-  for (; i < size; ++i) {
+-    result += static_cast<int64_t>(lhs[i]) * rhs[i];
++  if (i < size) {
++    sum = accumulate_int8_products(sum, load_partial_int8(lhs + i, size - i),
++                                   load_partial_int8(rhs + i, size - i));
+   }
+-  return static_cast<float>(result);
++  return static_cast<float>(vaddvq_s64(sum));
+ #else
+   return scalar::internal::ip_int8_scalar(a, b, size);
+ #endif
+```
+
+**File**: `src/turbo/distance/sse2/record_quantized_int8/distance.cc` (modified, +52/-10)
+```diff
+@@ -32,6 +32,14 @@ inline void widen_int8(__m128i bytes, __m128i *low, __m128i *high) {
+ }
+ 
+ float raw_inner_product(const int8_t *a, const int8_t *b, size_t dim) {
++  // Avoid partial-load, widening, and reduction setup for tiny vectors.
++  if (dim < 8) {
++    int32_t sum = 0;
++    for (size_t i = 0; i < dim; ++i) {
++      sum += static_cast<int32_t>(a[i]) * static_cast<int32_t>(b[i]);
++    }
++    return static_cast<float>(sum);
++  }
+   const __m128i ones = _mm_set1_epi16(1);
+   __m128i accumulator = _mm_setzero_si128();
+   size_t i = 0;
+@@ -47,11 +55,30 @@ float raw_inner_product(const int8_t *a, const int8_t *b, size_t dim) {
+         accumulator, _mm_madd_epi16(_mm_mullo_epi16(lhs_high, rhs_high), ones));
+   }
+ 
+-  int64_t sum = internal::horizontal_sum_i32(accumulator);
+-  for (; i < dim; ++i) {
+-    sum += static_cast<int32_t>(a[i]) * static_cast<int32_t>(b[i]);
++  if (i < dim) {
++    // A few scalar products are cheaper than widening another SIMD block.
++    if (dim - i < 4) {
++      int32_t tail = static_cast<int32_t>(a[i]) * static_cast<int32_t>(b[i]);
++      if (dim - i >= 2) {
++        tail += static_cast<int32_t>(a[i + 1]) * b[i + 1];
++      }
++      if (dim - i == 3) {
++        tail += static_cast<int32_t>(a[i + 2]) * b[i + 2];
++      }
++      return static_cast<float>(internal::horizontal_sum_i32(accumulator) +
++                                tail);
++    }
++    __m128i lhs_low, lhs_high, rhs_low, rhs_high;
++    widen_int8(internal::load_partial_int8(a + i, dim - i), &lhs_low,
++               &lhs_high);
++    widen_int8(internal::load_partial_int8(b + i, dim - i), &rhs_low,
++               &rhs_high);
++    accumulator = _mm_add_epi32(
++        accumulator, _mm_madd_epi16(_mm_mullo_epi16(lhs_low, rhs_low), ones));
++    accumulator = _mm_add_epi32(
++        accumulator, _mm_madd_epi16(_mm_mullo_epi16(lhs_high, rhs_high), ones));
+   }
+-  return static_cast<float>(sum);
++  return static_cast<float>(internal::horizontal_sum_i32(accumulator));
+ }
+ 
+ template <size_t kBatch>
+@@ -89,13 +116,28 @@ void raw_inner_product_batch_impl(const int8_t *query,
+     }
+   }
+ 
+-  for (size_t i = 0; i < kBatch; ++i) {
+-    const auto *record = static_cast<const int8_t *>(records[i]);
+-    int64_t sum = internal::horizontal_sum_i32(accumulators[i]);
+-    for (size_t j = d; j < dim; ++j) {
+-      sum += static_cast<int32_t>(record[j]) * static_cast<int32_t>(query[j]);
++  if (d < dim) {
++    __m128i query_low, query_high;
++    widen_int8(internal::load_partial_int8(query + d, dim - d), &query_low,
++               &query_high);
++    for (size_t i = 0; i < kBatch; ++i) {
++      if (prefetch[i]) ailego_prefetch(prefetch[i] + d);
++      const auto *record = static_cast<const int8_t *>(records[i]);
++      __m128i record_low, record_high;
++      widen_int8(internal::load_partial_int8(record + d, dim - d), &record_low,
++                 &record_high);
++      accumulators[i] = _mm_add_epi32(
++          accumulators[i],
++          _mm_madd_epi16(_mm_mullo_epi16(record_low, query_low), ones));
++      accumulators[i] = _mm_add_epi32(
++          accumulators[i],
++          _mm_madd_epi16(_mm_mullo_epi16(record_high, query_high), ones));
+     }
+-    results[i] = static_cast<float>(sum);
++  }
++
++  for (size_t i = 0; i < kBatch; ++i) {
++    results[i] =
++        static_cast<float>(internal::horizontal_sum_i32(accumulators[i]));
+   }
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `61784056` (2026-11-13)
+**Commit Message**: fix: align parameter defaults and validation across APIs (#885)
+
+**File**: `python/tests/test_collection.py` (modified, +4/-4)
+```diff
+@@ -241,7 +241,7 @@ def test_create_index(self, test_collection: Collection):
+ 
+         index_param = field_schema.index_param
+         assert index_param.type == IndexType.INVERT
+-        assert index_param.enable_range_optimization is False
++        assert index_param.enable_range_optimization is True
+         assert index_param.enable_extended_wildcard is False
+ 
+     def test_drop_index(self, test_collection: Collection):
+@@ -252,7 +252,7 @@ def test_drop_index(self, test_collection: Collection):
+         assert field_schema.name == "name"
+         index_param = field_schema.index_param
+         assert index_param.type == IndexType.INVERT
+-        assert index_param.enable_range_optimization is False
++        assert index_param.enable_range_optimization is True
+         assert index_param.enable_extended_wildcard is False
+ 
+         # drop
+@@ -275,7 +275,7 @@ def test_create_index_field_is_not_exist(self, test_collection: Collection):
+ 
+         index_param = field_schema.index_param
+         assert index_param.type == IndexType.INVERT
+-        assert index_param.enable_range_optimization is False
++        assert index_param.enable_range_optimization is True
+         assert index_param.enable_extended_wildcard is False
+ 
+     def test_drop_index(self, test_collection: Collection):
+@@ -286,7 +286,7 @@ def test_drop_index(self, test_collection: Collection):
+         assert field_schema.name == "name"
+         index_param = field_schema.index_param
+         assert index_param.type == IndexType.INVERT
+-        assert index_param.enable_range_optimization is False
++        assert index_param.enable_range_optimization is True
+         assert index_param.enable_extended_wildcard is False
+ 
+         # drop
+```
+
+**File**: `python/tests/test_ivf_pq.py` (modified, +68/-9)
+```diff
+@@ -1,6 +1,7 @@
+ """Public HNSW/IVF PQ configuration, persistence and coarse/refine behavior."""
+ 
+ import pickle
++import re
+ 
+ import numpy as np
+ import pytest
+@@ -279,17 +280,37 @@ def check(ids):
+ 
+ 
+ @pytest.mark.parametrize(
+-    "kwargs",
++    "kwargs,error",
+     [
+-        {"fast_scan": True, "num_bits": 4},
+-        {"num_chunk": 0},
+-        {"num_chunk": 17},
+-        {"num_bits": 6},
+-        {"num_chunk": 3, "num_bits": 4},
+-        {"enable_rotate": True, "opq_iter": 0},
++        (
++            {"fast_scan": True, "num_bits": 4},
++            "fast_scan requires IVF index_type; got HNSW",
++        ),
++        ({"num_chunk": 0}, "num_chunk must be greater than 0; got 0"),
++        (
++            {"num_chunk": 17},
++            "PQ num_chunk must not exceed dimension; got num_chunk=17, dimension=16",
++        ),
++        ({"num_bits": 6}, "num_bits must be 4 or 8; got 6"),
++        (
++            {"num_chunk": 3, "num_bits": 4},
++            "PQ4 requires dimension divisible by num_chunk; got dimension=16, num_chunk=3",
++        ),
++        (
++            {"enable_rotate": True, "opq_iter": 0},
++            "opq_iter must be greater than 0; got 0",
++        ),
++        (
++            {"enable_rotate": False, "opq_iter": 0},
++            "opq_iter must be greater than 0; got 0",
++        ),
++        (
++            {"enable_rotate": False, "opq_pq_iter": 0},
++            "opq_pq_iter must be greater than 0; got 0",
++        ),
+     ],
+ )
+-def test_hnsw_pq_rejects_invalid_configuration(tmp_path, kwargs):
++def test_hnsw_pq_rejects_invalid_configuration(tmp_path, kwargs, error):
+     schema = zvec.CollectionSchema(
+         name="invalid_pq",
+         vectors=[
+@@ -304,6 +325,44 @@ def test_hnsw_pq_rejects_invalid_configuration(tmp_path, kwargs):
+             )
+         ],
+     )
+-    with pytest.raises(ValueError, match="PQ"):
++    with pytest.raises(ValueError, match=re.escape(error)):
+         coll = zvec.create_and_open(str(tmp_path / "index"), schema)
+         coll.close()
 +
 +
-+def _self_recall(collection, vectors, ids) -> int:
-+    hits = 0
-+    for i in ids:
-+        result = collection.query(Query(field_name="dense", vector=vectors[i]), topk=1)
-+        hits += bool(result) and result[0].id == str(i)
-+    return hits
-+
-+
-+@pytest.mark.parametrize(
-+    "metric", [MetricType.COSINE, MetricType.L2], ids=["cosine", "l2"]
-+)
-+@pytest.mark.parametrize(
-+    "quantize_type", [QuantizeType.INT8, QuantizeType.INT4], ids=["int8", "int4"]
-+)
-+@pytest.mark.parametrize("index_kind", ["hnsw", "flat"])
-+def test_rotated_quantizer_survives_optimize(
-+    tmp_path, index_kind, quantize_type, metric
-+):
-+    zvec.init()
-+    rng = np.random.default_rng(886)
-+    vectors = rng.standard_normal((BATCH * 2, DIMENSION)).astype(np.float32).tolist()
-+
-+    index_cls = HnswIndexParam if index_kind == "hnsw" else FlatIndexParam
-+    index_param = index_cls(
-+        metric_type=metric,
-+        quantize_type=quantize_type,
-+        quantizer_param=QuantizerParam(enable_rotate=True),
-+    )
-+    schema = CollectionSchema(
-+        name="rotated_quantization",
++def test_quantizer_validates_unused_configuration(tmp_path):
++    qp = zvec.QuantizerParam(num_chunk=0)
++    assert not qp.enable_rotate
++    # Construction and pickle remain available; validation happens on schema use.
++    qp = pickle.loads(pickle.dumps(qp))
++    schema = zvec.CollectionSchema(
++        name="invalid_unused_quantizer",
 +        vectors=[
-+            VectorSchema(
-+                "dense", DataType.VECTOR_FP32, DIMENSION, index_param=index_param
++            zvec.VectorSchema(
++                "vector",
++                zvec.DataType.VECTOR_FP32,
++                16,
++                index_param=zvec.HnswIndexParam(
++                    quantize_type=zvec.QuantizeType.UNDEFINED,
++                    quantizer_param=qp,
++                ),
 +            )
 +        ],
 +    )
-+    path = str(tmp_path / "collection")
-+    collection = zvec.create_and_open(path=path, schema=schema)
++    with pytest.raises(ValueError, match="num_chunk must be greater than 0; got 0"):
++        coll = zvec.create_and_open(str(tmp_path / "index"), schema)
++        coll.close()
 +
-+    def insert(ids):
-+        collection.insert([Doc(id=str(i), vectors={"dense": vectors[i]}) for i in ids])
 +
-+    first, second = range(BATCH), range(BATCH, BATCH * 2)
-+
-+    # The first optimize builds the index from one writing segment.
-+    insert(first)
-+    assert _self_recall(collection, vectors, first) >= MIN_HITS
-+    collection.optimize()
-+    assert _self_recall(collection, vectors, first) >= MIN_HITS
-+
-+    # The second optimize merges the indexed segment with a new one.
-+    insert(second)
-+    collection.optimize()
-+    assert _self_recall(collection, vectors, first) >= MIN_HITS
-+    assert _self_recall(collection, vectors, second) >= MIN_HITS
-+
-+    del collection
-+    collection = zvec.open(path)
-+    assert _self_recall(collection, vectors, range(BATCH * 2)) >= MIN_HITS * 2
++def test_default_quantizer_configuration_is_valid(tmp_path):
++    param = zvec.HnswIndexParam(quantize_type=zvec.QuantizeType.PQ)
++    schema = zvec.CollectionSchema(
++        name="default_quantizer",
++        vectors=[
++            zvec.VectorSchema(
++                "vector", zvec.DataType.VECTOR_FP32, 16, index_param=param
++            )
++        ],
++    )
++    coll = zvec.create_and_open(str(tmp_path / "index"), schema)
++    coll.close()
 ```
 
-**File**: `src/db/index/segment/segment.cc` (modified, +1/-1)
+**File**: `python/tests/test_params.py` (modified, +2/-2)
 ```diff
-@@ -1737,7 +1737,7 @@ Status SegmentImpl::create_vector_index(
-     // training continue to consume the raw Flat sources.
-     const auto *quantize_sources = &vector_indexers_[column];
-     if (segment_detail::CanReuseInsertTimeQuantizedVectors(
--            vector_index_params->quantize_type())) {
-+            *vector_index_params)) {
-       auto quant_iter = quant_vector_indexers_.find(column);
-       if (quant_iter != quant_vector_indexers_.end() &&
-           !quant_iter->second.empty() &&
-```
-
-**File**: `src/db/index/segment/segment_helper.cc` (modified, +1/-1)
-```diff
-@@ -736,7 +736,7 @@ Status SegmentHelper::ReduceVectorIndex(
-       // raw Flat sources and train again for the merged segment.
-       auto quant_merge_sources =
-           segment_detail::CanReuseInsertTimeQuantizedVectors(
--              vector_index_params->quantize_type())
-+              *vector_index_params)
-               ? collect_merge_indexers(&Segment::get_quant_vector_indexer)
-               : collect_merge_indexers(&Segment::get_vector_indexer);
+@@ -90,7 +90,7 @@ def test_quantizer_parameter_representation(param_type, quantize_type, expected_
+ class TestInvertIndexParam:
+     def test_default(self):
+         param = InvertIndexParam()
+-        assert param.enable_range_optimization is False
++        assert param.enable_range_optimization is True
+         assert param.enable_extended_wildcard is False
+         assert param.type == IndexType.INVERT
+ 
+@@ -212,7 +212,7 @@ class TestIVFIndexParam:
+     def test_default(self):
+         param = IVFIndexParam()
+         assert param.metric_type == MetricType.IP
+-        assert param.n_list == 10
++        assert param.n_list == 1024
+         assert param.quantize_type == QuantizeType.UNDEFINED
+         assert param.type == IndexType.IVF
  
 ```
 
-**File**: `src/db/index/segment/segment_helper.h` (modified, +11/-1)
+**File**: `python/tests/test_query_internal_ids.py` (modified, +5/-1)
 ```diff
-@@ -43,7 +43,17 @@ inline DataType FlatStorageDataTypeForField(DataType field_data_type,
- 
- // These quantizers encode each record independently and therefore produce a
- // valid quantized index during insert, before optimize sees the full dataset.
--inline bool CanReuseInsertTimeQuantizedVectors(QuantizeType quantize_type) {
-+//
-+// Rotated INT8/INT4 records are the exception: every index draws its own
-+// random rotation, and the merge copies records whose reformer names match
-+// without re-encoding them. Copying them into a new index would pair them with
-+// a different rotation, so they are rebuilt from the raw Flat sources.
-+inline bool CanReuseInsertTimeQuantizedVectors(
-+    const VectorIndexParams &params) {
-+  if (params.quantizer_param().enable_rotate()) {
-+    return false;
-+  }
-+  const QuantizeType quantize_type = params.quantize_type();
-   return quantize_type == QuantizeType::FP16 ||
-          quantize_type == QuantizeType::INT8 ||
-          quantize_type == QuantizeType::INT4;
+@@ -115,7 +115,11 @@ def test_query_internal_ids_topk_contract(tmp_path, populated):
+     query = Query("vector", vector=vector)
+     try:
+         for topk in (0, -1, -(2**80), True, False, np.int64(3), 1.5, "3", None, 100001):
+-            message = "maximum allowed" if topk == 100001 else "positive integer"
++            message = (
++                r"topk must be in \[0, 100000\]; got 100001"
++                if topk == 100001
++                else "positive integer"
++            )
+             with pytest.raises(ValueError, match=message):
+                 reader.query(query, topk=topk)
+             for scores in (False, True):
 ```
 
-**File**: `tests/db/collection_test.cc` (modified, +101/-0)
+**File**: `python/tests/test_refine_query_params.py` (modified, +139/-1)
 ```diff
-@@ -25,6 +25,7 @@
- #include <memory>
- #include <mutex>
- #include <numeric>
-+#include <random>
- #include <string>
- #include <system_error>
- #include <thread>
-@@ -3826,6 +3827,106 @@ TEST_F(CollectionTest, Feature_Optimize_MetricType) {
-   func(MetricType::IP, QuantizeType::FP16);
- }
+@@ -1,7 +1,8 @@
+-"""Refine scale configuration and backward-compatible serialization."""
++"""Refinement configuration, validation and backward-compatible serialization."""
  
-+// Regression test for https://github.com/alibaba/zvec/issues/886: every
-+// rotated INT8/INT4 index draws its own random rotation, so optimize must not
-+// copy insert-time codes into an index that holds a different rotation.
-+TEST_F(CollectionTest, Feature_Optimize_RotatedIntegerQuantizer) {
-+  constexpr uint32_t kDim = 128;
-+  constexpr int kBatch = 200;
-+  constexpr int kMinHits = kBatch * 95 / 100;
-+  std::mt19937 gen(886);
-+  std::normal_distribution<float> dist(0.0f, 1.0f);
-+  std::vector<std::vector<float>> vectors(kBatch * 2, std::vector<float>(kDim));
-+  for (auto &vector : vectors) {
-+    for (auto &value : vector) value = dist(gen);
-+  }
-+
-+  auto func = [&](IndexType index_type, QuantizeType quantize_type,
-+                  MetricType metric_type) {
-+    SCOPED_TRACE(std::string(magic_enum::enum_name(index_type)) + "/" +
-+                 std::string(magic_enum::enum_name(quantize_type)) + "/" +
-+                 std::string(magic_enum::enum_name(metric_type)));
-+    FileHelper::RemoveDirectory(col_path);
-+
-+    IndexParams::Ptr index_params;
-+    if (index_type == IndexType::HNSW) {
-+      index_params = std::make_shared<HnswIndexParams>(
-+          metric_type, 16, 200, quantize_type, false, QuantizerParam(true));
-+    } else {
-+      index_params = std::make_shared<FlatIndexParams>(
-+          metric_type, quantize_type, QuantizerParam(true));
-+    }
-+    CollectionSchema schema("rotate");
-+    ASSERT_TRUE(
-+        schema
-+            .add_field(std::make_shared<FieldSchema>(
-+                "dense", DataType::VECTOR_FP32, kDim, false, index_params))
-+            .ok());
-+    auto created = Collection::CreateAndOpen(col_path, schema, options_);
-+    ASSERT_TRUE(created.has_value()) << created.error().message();
-+    auto collection = std::move(created).value();
-+
-+    auto insert = [&](int begin, int end) {
-+      std::vector<Doc> docs;
-+      for (int i = begin; i < end; ++i) {
-+        Doc doc;
-+        doc.set_pk(std::to_string(i));
-+        doc.set<std::vector<float>>("dense", vectors[i]);
-+        docs.push_back(std::move(doc));
-+      }
-+      auto result = collection->insert(docs);
-+      ASSERT_TRUE(result.has_value()) << result.error().message();
-+      for (const auto &status : result.value()) {
-+        ASSERT_TRUE(status.ok()) << status.message();
-+      }
-+    };
-+    auto self_recall = [&](int begin, int end) {
-+      int hits = 0;
-+      for (int i = begin; i < end; ++i) {
-+        SearchQuery query;
-+        query.topk_ = 1;
-+        query.target_.field_name_ = "dense";
-+        query.target_.set_vector(
-+            std::string(reinterpret_cast<const char *>(vectors[i].data()),
-+                        vectors[i].size() * sizeof(float)));
-+        auto result = collection->query(query);
-+        EXPECT_TRUE(result.has_value()) << result.error().message();
-+        if (result.has_value() && !result.value().empty() &&
-+            result.value()[0]->pk() == std::to_string(i)) {
-+          ++hits;
-+        }
-+      }
-+      return hits;
-+    };
-+
-+    // First optimize builds the index from a single writing segment.
-+    insert(0, kBatch);
-+    ASSERT_GE(self_recall(0, kBatch), kMinHits);
-+    ASSERT_TRUE(collection->optimize().ok());
-+    EXPECT_GE(self_recall(0, kBatch), kMinHits);
-+
-+    // Second optimize merges the indexed segment with a new writing segment.
-+    insert(kBatch, kBatch * 2);
-+    ASSERT_TRUE(collection->optimize().ok());
-+    EXPECT_GE(self_recall(0, kBatch), kMinHits);
-+    EXPECT_GE(self_recall(kBatch, kBatch * 2), kMinHits);
-+
-+    // The rebuilt index must keep its own rotation after reopen.
-+    collection.reset();
-+    auto reopened = Collection::Open(col_path, options_);
-+    ASSERT_TRUE(reopened.has_value()) << reopened.error().message();
-+    collection = std::move(reopened).value();
-+    EXPECT_GE(self_recall(0, kBatch * 2), kMinHits * 2);
-+  };
-+
-+  for (auto index_type : {IndexType::HNSW, IndexType::FLAT}) {
-+    for (auto quantize_type : {QuantizeType::INT8, QuantizeType::INT4}) {
-+      func(index_type, quantize_type, MetricType::COSINE);
-+      func(index_type, quantize_type, MetricType::L2);
-+    }
-+  }
-+}
-+
- TEST_F(CollectionTest, Feature_Optimize_Delete) {
-   int doc_count = 1000;
+ import pickle
+ import platform
++import re
+ import sys
  
+ import numpy as np
+@@ -69,6 +70,143 @@ def test_existing_positional_extra_params_still_work(param_type):
+     assert param.scale_factor == pytest.approx(2.8)
+ 
+ 
++@pytest.mark.parametrize("index_kind", ["hnsw", "ivf", "diskann"])
++@pytest.mark.parametrize(
++    "quantize_type",
++    [zvec.QuantizeType.UNDEFINED, zvec.QuantizeType.FP16],
++    ids=["unquantized", "fp16"],
++)
++def test_refinement_requires_quantization_through_lifecycle(
++    tmp_path, request, index_kind, quantize_type
++):
++    if index_kind == "diskann":
++        request.getfixturevalue("require_diskann")
++    settings = dict(metric_type=zvec.MetricType.L2, quantize_type=quantize_type)
++    if index_kind == "hnsw":
++        index = zvec.HnswIndexParam(m=8, ef_construction=32, **settings)
++        query_type = zvec.HnswQueryParam
++    elif index_kind == "ivf":
++        index = zvec.IVFIndexParam(n_list=2, n_iters=2, **settings)
++        query_type = zvec.IVFQueryParam
++    else:
++        index = zvec.DiskAnnIndexParam(
++            max_degree=8, list_size=32, pq_chunk_num=0, **settings
++        )
++        query_type = zvec.DiskAnnQueryParam
++    schema = zvec.CollectionSchema(
++        name="refinement_validation",
++        vectors=[
++            zvec.VectorSchema(
++                "vector", zvec.DataType.VECTOR_FP32, 16, index_param=index
++            )
++        ],
++    )
++    vectors = np.random.default_rng(849).random((32, 16), dtype=np.float32)
++    plain = zvec.Query("vector", vector=vectors[0], param=query_type())
++    refined = zvec.Query(
++        "vector", vector=vectors[0], param=query_type(is_using_refiner=True)
++    )
++    error = re.escape(
++        "Invalid query for field[vector]: refinement is not supported "
++        f"for this {index_kind.upper()} index configuration"
++    )
++
++    def check_queries(collection, empty=False):
++        expected_ids = [] if empty else ["0"]
++        assert len(collection.query(plain, topk=1)) == len(expected_ids)
++        if quantize_type == zvec.QuantizeType.UNDEFINED:
++            with pytest.raises(ValueError, match=error):
++                collection.query(refined, topk=1)
++        else:
++            assert [hit.id for hit in collection.query(refined, topk=1)] == expected_ids
++
++    path = str(tmp_path / "index")
++    writer = zvec.create_and_open(path, schema)
++    try:
++        check_queries(writer, empty=True)
++        assert all(
++            status.ok()
++            for status in writer.insert(
++                [
++                    zvec.Doc(id=str(i), vectors={"vector": vector.tolist()})
++                    for i, vector in enumerate(vectors)
++                ]
++            )
++        )
++        assert writer.stats.index_completeness["vector"] == 0
++        check_queries(writer)
++        writer.optimize()
++        assert writer.stats.index_completeness["vector"] == 1
++        check_queries(writer)
++    finally:
++        writer.close()
++
++    reader = zvec.open(path, zvec.CollectionOption(read_only=True))
++    try:
++        check_queries(reader)
++        ids = reader.query_internal_ids(plain, topk=1)
++        assert reader.resolve_internal_ids(ids) == [
++            hit.id for hit in reader.query(plain, topk=1)
++        ]
++        if quantize_type == zvec.QuantizeType.UNDEFINED:
++            with pytest.raises(ValueError, match=error):
++                reader.query_internal_ids(refined, topk=1)
++        else:
++            ids = reader.query_internal_ids(refined, topk=1)
++            assert reader.resolve_internal_ids(ids) == ["0"]
++    finally:
++        reader.close()
++
++
++@pytest.mark.parametrize("entry_point", ["multi", "group_by"])
++def test_query_entries_validate_refinement_target(tmp_path, entry_point):
++    schema = zvec.CollectionSchema(
++        name="empty_refinement_validation",
++        fields=[zvec.FieldSchema("bucket", zvec.DataType.INT32)],
++        vectors=[
++            zvec.VectorSchema(
++                "vector",
++                zvec.DataType.VECTOR_FP32,
++                16,
++                index_param=zvec.HnswIndexParam(),
++            )
++        ],
++    )
++    plain = zvec.Query("vector", vector=[0.0] * 16, param=zvec.HnswQueryParam())
++    refined = zvec.Query(
++        "vector",
++        vector=[0.0] * 16,
++        param=zvec.HnswQueryParam(is_using_refiner=True),
++    )
++    collection = zvec.create_and_open(str(tmp_path / "index"), schema)
++    try:
++
++        def search(query):
++            if entry_point == "multi":
++                # The built-in reranker sends both targets to native MultiQuery.
++                return collection.query(
++                    [plain, query], topk=1, reranker=zvec.RrfReRanker()
++                )
++            return collection.group_by_query(query, "bucket", 1, 1)
++
++        error = re.escape(
++ 
+```
+
+**File**: `python/tests/test_schema.py` (modified, +2/-2)
+```diff
+@@ -49,7 +49,7 @@ def test_custom(self):
+         assert field_1.name == "float"
+         assert field_1.data_type == DataType.FLOAT
+         assert field_1.nullable is True
+-        assert field_1.index_param.enable_range_optimization is False
++        assert field_1.index_param.enable_range_optimization is True
+ 
+         field_2 = FieldSchema(
+             name="str",
+@@ -157,7 +157,7 @@ def test_collection_schema_with_single_field(self):
+         assert field.data_type == DataType.INT64
+         assert not field.nullable
+         assert field.index_param.type == IndexType.INVERT
+-        assert not field.index_param.enable_range_optimization
++        assert field.index_param.enable_range_optimization is True
+ 
+         vector = collection_schema.vector("vector")
+         assert vector is not None
+```
+
+**File**: `python/tests/test_uniform_quantization.py` (modified, +2/-7)
+```diff
+@@ -62,13 +62,8 @@ def test_uniform_quantization_rejects_unsupported_index(
+     )
+     path = str(tmp_path / "collection")
+     error = f"quantization is not supported with {index_name}"
+-    # On platforms without DiskANN, its existing platform check runs first.
+-    error_type = ValueError
+-    if index_name == "DISKANN":
+-        error += "|DiskAnn is not supported on this platform"
+-        error_type = (ValueError, RuntimeError)
+     if operation == "create":
+-        with pytest.raises(error_type, match=error):
++        with pytest.raises(ValueError, match=error):
+             collection = zvec.create_and_open(path=path, schema=schema)
+             collection.close()
+         return
+@@ -90,7 +85,7 @@ def test_uniform_quantization_rejects_unsupported_index(
+         before = [(hit.id, hit.score) for hit in collection.query(query, topk=5)]
+         before_schema = collection.schema.vectors[0].index_param.to_dict()
+ 
+-        with pytest.raises(error_type, match=error):
++        with pytest.raises(ValueError, match=error):
+             collection.create_index("dense", unsupported_param)
+ 
+         # Rejection must preserve the trained index, its schema and writeability.
+```
+
+**File**: `python/tests/test_uniform_quantization_support_matrix.py` (modified, +15/-6)
+```diff
+@@ -4,6 +4,8 @@
+ not expose a quantize_type constructor argument.
+ """
+ 
++import re
++
+ import numpy as np
+ import pytest
+ 
+@@ -49,7 +51,18 @@ def test_uniform_rejects_unsupported_field_types(
+             )
+         ],
+     )
+-    with pytest.raises(ValueError, match="Invalid schema:.*quantiz"):
++    if metric == zvec.MetricType.L2:
++        error = (
++            f"data_type={data_type.name} does not support quantization; "
++            f"got quantize_type={quantizer.name}"
++        )
++    else:
++        error = (
++            f"{quantizer.name} quantization only supports L2 metric; got {metric.name}"
++        )
++    with pytest.raises(
++        ValueError, match=re.escape(f"Invalid schema for field[dense]: {error}")
++    ):
+         collection = zvec.create_and_open(str(tmp_path / "collection"), schema=schema)
+         collection.close()
+ 
+@@ -96,11 +109,7 @@ def test_uniform_index_support_matrix(
+             if not supported
+             else "only supports L2 metric"
+         )
+-        error_type = ValueError
+-        if index_name == "DISKANN":
+-            error += "|DiskAnn is not supported on this platform"
+-            error_type = (ValueError, RuntimeError)
+-        with pytest.raises(error_type, match=error):
++        with pytest.raises(ValueError, match=error):
+             collection = zvec.create_and_open(path=path, schema=schema)
+             collection.close()
+         return
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #887** (2026-11-11): fix(db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (@TheAli711)
-- **PR #884** (2026-11-09): ci(deps): bump actions/setup-java from 6.1.0 to 6.2.0 (@dependabot[bot])
-- **PR #882** (2026-11-06): fix(build): add OSS fallbacks for Thrift and Boost downloads (@iaojnh)
-- **PR #880** (2026-11-06): perf(hnsw): reduce optimize memory for fresh graph builds (@iaojnh)
-- **PR #879** (2026-11-05): perf(ivf): reuse stable source vectors during construction (@iaojnh)
-- **PR #877** (2026-11-05): perf: reduce DiskANN PQ training and neighbor storage memory (@iaojnh)
+- **PR #902** (2026-11-13): fix(turbo): constrain record INT8 kernels to dispatched ISA (@luoxiaojian)
+- **PR #899** (closed): Fix/index meta attachment bounds check (@ilike314272)
+- **PR #898** (closed): Fix/segment table bounds check (@ilike314272)
+- **PR #897** (2026-11-12): perf(ivf): reuse query workspaces and prefetch mmap postings (@iaojnh)
+- **PR #896** (2026-11-12): fix(simd): avoid AVX instructions during Windows DLL initialization (@iaojnh)
+- **PR #892** (2026-11-12): fix: preserve reopened group queries, iterator concurrency and cache pages (@iaojnh)
 
 ---
 
@@ -1418,73 +2042,55 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (#887)
+## X. turbo): constrain record INT8 kernels to dispatched ISA
 
 **RULE**:
-When implementing operations in `python/tests/test_rotated_quantization.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/tests/test_refine_query_params.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d61530f2`: db): rebuild rotated INT8/INT4 indexes from raw vectors on optimize (#887). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0c2e67a2`: turbo): constrain record INT8 kernels to dispatched ISA. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/tests/test_rotated_quantization.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/tests/test_refine_query_params.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# Copyright 2025-present the zvec project
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""Optimize must keep rotated INT8/INT4 indexes searchable (issue #886)."""
-
-from __future__ import annotations
-
-import numpy as np
-import pytest
-
-import zvec
-from zvec import (
-    CollectionSchema,
-    Doc,
-    FlatIndexParam,
-    HnswIndexParam,
-    Query,
-    QuantizerParam,
-    VectorSchema,
-)
-from zvec.typing import DataType, MetricType, QuantizeType
-
-DIMENSION = 128
-BATCH = 200
-MIN_HITS = BATCH * 95 // 100
-
-
-def _self_recall(collection, vectors, ids) -> int:
-    hits = 0
-    for i in ids:
-        result = collection.query(Query(field_name="dense", vector=vectors[i]), topk=1)
-        hits += bool(r
+    # Lifecycle validation requires an exact hit, not approximate graph recall.
+    query_options = {"is_linear": True} if index_kind == "diskann" else {}
+    plain = zvec.Query("vector", vector=vectors[0], param=query_type(**query_options))
+        "vector",
+        vector=vectors[0],
+        param=query_type(is_using_refiner=True, **query_options),
+            if index_kind == "diskann" and not empty:
+                # Keep the approximate path covered without requiring a global
+                # nearest neighbor that may be absent from the coarse results.
+                coarse = collection.query(
+                    zvec.Query(
+                        "vector", vector=vectors[0], param=zvec.DiskAnnQueryParam()
+                    ),
+                    topk=10,
+                )
+                assert coarse
+                coarse_ids = np.array([int(hit.id) for hit in coarse])
+                distances = np.square(vectors[coarse_ids] - vectors[0]).sum(axis=1)
+                order = np.lexsort((coarse_ids, distances))
+                hits = collection.query(
+                    zvec.Query(
+                        "vector",
+                        vector=vectors[0],
+           
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    plain = zvec.Query("vector", vector=vectors[0], param=query_type())
+        "vector", vector=vectors[0], param=query_type(is_using_refiner=True)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d61530f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0c2e67a2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T20:37:27.514Z",
+  "last_updated": "2026-11-13T20:47:21.368Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T20:37:26.959Z",
@@ -213,7 +213,7 @@
       "staged_for_review": 1
     },
     "temporalio-temporal-learnings.md": {
-      "processed_at": "2026-11-12T22:21:34.799Z",
+      "processed_at": "2026-11-13T20:47:20.216Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2146,9 +2146,19 @@
       "processed_at": "2026-11-13T20:37:26.656Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md": {
+      "processed_at": "2026-11-13T20:47:19.836Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "alibaba-zvec-learnings.md": {
+      "processed_at": "2026-11-13T20:47:20.801Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 675,
+  "total_dossiers_evaluated": 678,
   "total_canonical_promoted": 130,
-  "total_staged_for_review": 539
+  "total_staged_for_review": 542
 }

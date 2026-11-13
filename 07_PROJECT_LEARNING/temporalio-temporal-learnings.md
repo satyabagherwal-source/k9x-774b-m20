@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `f16ceaa3`  
+> **Source Version**: `73f1acad`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T22:20:57.586Z  
+> **Timestamp**: 2026-11-13T20:47:09.875Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T22:20:57.577Z  
+> **Harvest Timestamp**: 2026-11-13T20:47:09.868Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24363 stars
+- **Stars / Engagement**: 24383 stars
 
 ---
 
@@ -2121,350 +2121,272 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `610f69f8` (2026-11-12)
-**Commit Message**: Fix flakes: `TestWorkerRegistry_CountWorkers` (#13068)
+### Incident Patch 1: `cbeb97f4` (2026-11-13)
+**Commit Message**: Require matching request IDs for Nexus completions (#13077)
 
 ## What changed?
-Don't assert exact system worker count in CountWorkers test. Assert the
-total is at least 3, and check the test's own system worker directly by
-WorkerInstanceKey: counted with IncludeSystemWorkers, not counted
-without it.
+Require asynchronous Nexus completions to carry a request ID matching
+the pending operation in both HSM and CHASM. Frontend rejects a
+completion token with an empty request ID as an invalid callback token
+(BadRequest). History also rejects empty or mismatched IDs with NotFound
+before applying a completion transition, covering direct internal
+requests.
 
 ## Why?
-The cluster's per-namespace system worker can heartbeat into the test
-namespace once heartbeats are enabled, so the IncludeSystemWorkers count
-was sometimes 4 instead of 3 (~4% flake rate).
+An empty request ID previously skipped the operation identity check,
+allowing a completion token to be retargeted to another pending
+operation. The Frontend check treats a missing required token field as
+an invalid request; the History checks prevent an invalid completion
+from changing operation state.
 
 ## How did you test it?
-- [ ] built
+- [x] built
 - [ ] run locally and tested manually
-- [ ] covered by existing tests
-- [ ] added new unit test(s)
-- [ ] added new functional test(s)
+- [x] covered by existing tests
+- [x] added new unit test(s)
+- [x] added new functional test(s)
 
-<!-- CURSOR_SUMMARY -->
----
+## Potential risks
+Completion tokens issued without a request ID will now be rejected if
+their operations remain pending, which may affect long-running
+operations in older self-hosted deployments. HTTP callbacks with an
+empty request ID now receive BadRequest.
 
-> [!NOTE]
-> **Low Risk**
-> Test-only changes to CountWorkers assertions; no production code
-modified.
-> 
-> **Overview**
-> **`TestWorkerRegistry_CountWorkers`** no longer assumes an exact total
-when `IncludeSystemWorkers` is true. It now requires **at least 3**
-workers so a cluster per-namespace system worker that heartbeats into
-the test namespace cannot make the test fail.
-> 
-> The suite also **asserts the test’s own system worker by
-`WorkerInstanceKey`**: count is **1** with `IncludeSystemWorkers`,
-
-**File**: `tests/worker_registry_test.go` (modified, +22/-2)
+**File**: `chasm/lib/nexusoperation/operation.go` (modified, +1/-1)
 ```diff
-@@ -284,14 +284,34 @@ func (s *WorkerRegistryTestSuite) TestWorkerRegistry_CountWorkers() {
- 		s.Equal(int64(2), resp.GetCount())
+@@ -307,7 +307,7 @@ func (o *Operation) HandleNexusCompletion(
+ 	completion *persistencespb.ChasmNexusCompletion,
+ ) error {
+ 	// Request ID lets us reject a stale or misrouted completion.
+-	if completion.GetRequestId() != "" && o.GetRequestId() != completion.GetRequestId() {
++	if completion.GetRequestId() == "" || o.GetRequestId() != completion.GetRequestId() {
+ 		return serviceerror.NewNotFound("operation not found")
  	}
  
--	// Count all workers including system workers
-+	// Count all workers including system workers. The cluster's own per-namespace worker may also
-+	// heartbeat into this namespace, so the total is at least our 3 workers rather than exactly 3.
- 	{
- 		resp, err := env.FrontendClient().CountWorkers(s.Context(), &workflowservice.CountWorkersRequest{
- 			Namespace:            env.Namespace().String(),
- 			IncludeSystemWorkers: true,
- 		})
- 		s.NoError(err)
--		s.Equal(int64(3), resp.GetCount())
-+		s.GreaterOrEqual(resp.GetCount(), int64(3))
+```
+
+**File**: `chasm/lib/nexusoperation/operation_test.go` (modified, +19/-0)
+```diff
+@@ -10,6 +10,7 @@ import (
+ 	commonpb "go.temporal.io/api/common/v1"
+ 	enumspb "go.temporal.io/api/enums/v1"
+ 	failurepb "go.temporal.io/api/failure/v1"
++	"go.temporal.io/api/serviceerror"
+ 	"go.temporal.io/api/workflowservice/v1"
+ 	persistencespb "go.temporal.io/server/api/persistence/v1"
+ 	"go.temporal.io/server/chasm"
+@@ -249,6 +250,24 @@ func TestHandleNexusCompletion(t *testing.T) {
+ 		}
+ 	}
+ 
++	t.Run("InvalidRequestID", func(t *testing.T) {
++		for _, tc := range []struct{ name, requestID string }{
++			{"empty", ""},
++			{"mismatched", "other-request-id"},
++		} {
++			t.Run(tc.name, func(t *testing.T) {
++				ctx := newCtx()
++				op := newScheduledTestOperation(t, ctx)
++				err := op.HandleNexusCompletion(ctx, &persistencespb.ChasmNexusCompletion{
++					RequestId: tc.requestID,
++					Outcome:   &persistencespb.ChasmNexusCompletion_Success{Success: mustToPayload(t, "result")},
++				})
++				require.ErrorAs(t, err, new(*serviceerror.NotFound))
++				require.Equal(t, nexusoperationpb.OPERATION_STATUS_SCHEDULED, op.GetStatus())
++			})
++		}
++	})
++
+ 	t.Run("Success", func(t *testing.T) {
+ 		t.Run("AfterStarted", func(t *testing.T) {
+ 			ctx := newCtx()
+```
+
+**File**: `service/frontend/nexus_completion_http_handler.go` (modified, +3/-0)
+```diff
+@@ -135,6 +135,9 @@ func (h *nexusCompletionHandler) CompleteOperation(ctx context.Context, r *nexus
+ 		h.Logger.Error("failed to decode completion from token", tag.Error(err))
+ 		return nexus.NewHandlerErrorf(nexus.HandlerErrorTypeBadRequest, "invalid callback token")
+ 	}
++	if completion.GetRequestId() == "" {
++		return nexus.NewHandlerErrorf(nexus.HandlerErrorTypeBadRequest, "invalid callback token")
 +	}
-+
-+	// Our system worker is counted only when system workers are included
-+	{
-+		sysWorkerQuery := fmt.Sprintf("WorkerInstanceKey='%s'", sysWorkerKey)
-+		resp, err := env.FrontendClient().CountWorkers(s.Context(), &workflowservice.CountWorkersRequest{
-+			Namespace:            env.Namespace().String(),
-+			Query:                sysWorkerQuery,
-+			IncludeSystemWorkers: true,
-+		})
-+		s.NoError(err)
-+		s.Equal(int64(1), resp.GetCount())
-+
-+		resp, err = env.FrontendClient().CountWorkers(s.Context(), &workflowservice.CountWorkersRequest{
-+			Namespace: env.Namespace().String(),
-+			Query:     sysWorkerQuery,
-+		})
-+		s.NoError(err)
-+		s.Equal(int64(0), resp.GetCount())
- 	}
  
- 	// Count with query filter
+ 	// Determine the target namespace, workflow, and run ID from the completion token. The CHASM
+ 	// ComponentRef is canonical when present; otherwise the top-level HSM fields are used. Shared
 ```
 
----
-
-### Incident Patch 2: `c4cea589` (2026-11-12)
-**Commit Message**: Move parallelsuite into testx (#12855)
-
-## What changed?
-Move `parallelsuite` into `testx` module.
-
-## Why?
-
-Share across Go projects.
-
-**File**: `common/testing/parallelsuite/wrapper.go` (added, +41/-0)
+**File**: `service/history/hsm/nexusoperations/completion.go` (modified, +8/-8)
 ```diff
-@@ -0,0 +1,41 @@
-+package parallelsuite
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	"go.temporal.io/server/common/testing/historyrequire"
-+	"go.temporal.io/server/common/testing/protorequire"
-+	"go.temporal.io/testx/parallelsuite"
-+)
-+
-+type Scope = parallelsuite.Scope
-+
-+// Suite extends the shared parallel suite with server assertions.
-+type Suite[T parallelsuite.TestingSuite] struct {
-+	parallelsuite.Suite[T]
-+	protorequire.ProtoAssertions
-+	historyrequire.HistoryRequire
-+}
-+
-+// InitAssertions binds server assertions to each test, subtest, or await attempt.
-+func (s *Suite[T]) InitAssertions() {
-+	s.ProtoAssertions = protorequire.New(s.AssertionT())
-+	s.HistoryRequire = historyrequire.New(s.AssertionT())
-+}
-+
-+func WithContext(ctx context.Context, scope Scope) Scope {
-+	return parallelsuite.WithContext(ctx, scope)
-+}
-+
-+func Run[T parallelsuite.TestingSuite](t *testing.T, s T, args ...any) {
-+	t.Helper()
-+	parallelsuite.Run(t, s, args...)
-+}
-+
-+// Deprecated: use [Run] for new tests. This only exists for backwards-compatibility
-+// with legacy behavior to ease migration.
-+func RunLegacySequential[T parallelsuite.TestingSuite](t *testing.T, s T, args ...any) {
-+	t.Helper()
-+	parallelsuite.RunLegacySequential(t, s, args...) //nolint:staticcheck // SA1019: forwarding the legacy runner
-+}
+@@ -179,9 +179,10 @@ func (h *CompletionHandler) Handle(
+ 	result *commonpb.Payload,
+ 	opFailedError *nexus.OperationError,
+ ) error {
+-	// The initial version of the completion token did not include a request ID.
+-	// Only retry Access without a run ID if the request ID is not empty.
+-	isRetryableNotFoundErr := requestID != ""
++	if requestID == "" {
++		return serviceerror.NewNotFound("operation not found")
++	}
++	isRetryableNotFoundErr := true
+ 	// emitMetrics is populated inside the Access closure and invoked only after the write
+ 	// transaction commits successfully, so a failed commit (which retries the completion) does not
+ 	// double-count the metric. See operationMetricsHandler's doc comment.
+@@ -194,18 +195,17 @@ func (h *CompletionHandler) Handle(
+ 		if err != nil {
+ 			return err
+ 		}
++		if operation.RequestId != requestID {
++			isRetryableNotFoundErr = false
++			return serviceerror.NewNotFound("operation not found")
++		}
+ 		// If the operation has not started yet, this completion arrived before the start response and
+ 		// fabricateStartedEventIfMissing will transition it to started below; the executor never emitted
+ 		// schedule-to-start in that case, so we emit it here.
+ 		fabricatedStart := TransitionStarted.Possible(operation)
+ 		if err := fabricateStartedEventIfMissing(node, requestID, operationToken, startTime, links); err != nil {
+ 			return err
+ 		}
+-		if requestID != "" && operation.RequestId != requestID {
+-			isRetryableNotFoundErr = false
+-			return serviceerror.NewNotFound("operation not found")
+-		}
+-
+ 		if opFailedError != nil {
+ 			err = handleOperationError(node, operation, opFailedError)
+ 		} else {
 ```
 
-**File**: `common/testx/README.md` (modified, +1/-0)
+**File**: `service/history/hsm/nexusoperations/completion_test.go` (modified, +33/-8)
 ```diff
-@@ -4,4 +4,5 @@ Collection of general-purpose Go test helpers.
- 
- - `await`: context-bounded polling assertions and channel operations.
- - `freeport`: reserve available ports for tests.
-+- `parallelsuite`: isolated parallel test suites with fail-fast assertions.
- - `testcontext`: shared test contexts with deadlines and decorators.
-```
-
-**File**: `common/testx/parallelsuite/guard.go` (renamed, +1/-0)
-```diff
-@@ -17,6 +17,7 @@ type guardT struct {
- 
- func (g *guardT) Helper() {
- 	if g.hasSubtests.Load() {
-+		//nolint:forbidigo // Panics are fine in testing code.
- 		panic(fmt.Sprintf(
- 			"parallelsuite: assertion called on %q after Run() was called; "+
- 				"use the callback parameter's assertions inside Run() instead",
-```
-
-**File**: `common/testx/parallelsuite/suite.go` (renamed, +44/-28)
-```diff
-@@ -12,21 +12,25 @@ import (
- 
+@@ -9,6 +9,8 @@ import (
  	"github.com/stretchr/testify/require"
- 	testifysuite "github.com/stretchr/testify/suite"
--	"go.temporal.io/server/common/testing/await"
--	"go.temporal.io/server/common/testing/historyrequire"
--	"go.temporal.io/server/common/testing/protorequire"
--	"go.temporal.io/server/common/testing/testcontext"
-+	"go.temporal.io/testx/await"
-+	"go.temporal.io/testx/testcontext"
+ 	commonpb "go.temporal.io/api/common/v1"
+ 	historypb "go.temporal.io/api/history/v1"
++	"go.temporal.io/api/serviceerror"
++	enumsspb "go.temporal.io/server/api/enums/v1"
+ 	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
+ 	"go.temporal.io/server/common/dynamicconfig"
+ 	"go.temporal.io/server/common/metrics/metricstest"
+@@ -18,6 +20,27 @@ import (
+ 	"google.golang.org/protobuf/types/known/durationpb"
  )
  
--// testingSuite is the constraint for suite types.
--type testingSuite interface {
-+// TestingSuite is the constraint for suite types.
-+type TestingSuite interface {
- 	testifysuite.TestingSuite
- 	//nolint:revive // ctx is last so callers can pass nil to mean "no override"; SA1012 forbids passing nil as the first ctx arg.
--	copySuite(t *testing.T, parallel bool, assertT require.TestingT, ctx context.Context) testingSuite
-+	copySuite(t *testing.T, parallel bool, assertT require.TestingT, ctx context.Context) TestingSuite
- 	//nolint:revive // see copySuite above.
- 	initSuite(t *testing.T, parallel bool, assertT require.TestingT, ctx context.Context)
- }
- 
-+// AssertionsInitializer may be implemented by an embedded suite to bind
-+// additional assertions after each test, subtest, or await attempt is initialized.
-+type AssertionsInitializer interface {
-+	InitAssertions()
++func TestCompletionHandlerRejectsInvalidRequestID(t *testing.T) {
++	t.Parallel()
++	for _, tc := range []struct{ name, requestID string }{
++		{"empty", ""},
++		{"mismatched", "other-request-id"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++			node := newOperationNode(t, &hsmtest.NodeBackend{}, mustNewScheduledEvent(time.Now(), &historypb.NexusOperationScheduledEventAttributes{
++				RequestId: "request-id", ScheduleToCloseTimeout: durationpb.New(time.Hour),
++			}))
++			handler := nexusoperations.NewCompletionHandler(metricstest.NewCaptureHandler(), &nexusoperations.Config{})
++			err := handler.Handle(context.Background(), fakeEnv{node: node}, hsm.Ref{}, tc.requestID, "token", nil, nil, &commonpb.Payload{}, nil)
++			require.ErrorAs(t, err, new(*serviceerror.NotFound))
++			op, err := hsm.MachineData[nexusoperations.Operation](node)
++			require.NoError(t, err)
++			require.Equal(t, enumsspb.NEXUS_OPERATION_STATE_SCHEDULED, op.NexusOperationInfo.State)
++		})
++	}
 +}
 +
- // Scope provides the context and test handles for a test or await attempt.
- // It is useful for test helpers.
- type Scope interface {
-@@ -54,11 +58,9 @@ func (s contextScope) Context() context.Context {
- //
- // It enforces a strict rule: a test method (or subtest) must either use assertions
- // directly OR create subtests via Run — not both.
--type Suite[T testingSuite] struct {
-+type Suite[T TestingSuite] struct {
- 	testifyBase
- 	*require.Assertions
--	protorequire.ProtoAssertions
--	historyrequire.HistoryRequire
+ func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
+ 	// All cases drive a completion that arrives before the start response, so the handler
+ 	// fabricates the started transition (emitting schedule-to-start) and then resolves the
+@@ -66,6 +89,7 @@ func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
+ 			backend := &hsmtest.NodeBackend{}
+ 			node := newOperationNode(t, backend, mustNewScheduledEvent(time.Now(), &historypb.NexusOperationScheduledEventAttributes{
+ 				ScheduleToCloseTimeout: durationpb.New(time.Hour),
++				RequestId:              "request-id",
+ 			}))
  
- 	guardT      guardT
- 	runParallel bool
-@@ -71,9 +73,12 @@ type Suite[T testingSuite] struct {
- // ctx overrides the suite's context; nil means use the test context (see [Suite.Context]).
- //
- //nolint:revive // ctx is last so callers can pass nil to mean "no override"; SA1012 forbids passing nil as the first ctx arg.
--func (s *Suite[T]) copySuite(t *testing.T, parallel bool, assertT require.TestingT, ctx context.Context) testingSuite {
-+func (s *Suite[T]) copySuite(t *testing.T, parallel bool, assertT require.TestingT, ctx context.Context) TestingSuite {
- 	cp := reflect.New(reflect.TypeFor[T]().Elem()).Interface().(T)
- 	cp.initSuite(t, parallel, assertT, ctx)
-+	if initializer, ok := any(cp).(AssertionsInitializer); ok {
-+		initializer.InitAssertions()
-+	}
- 	return cp
- }
- 
-@@ -93,13 +98,12 @@ func (s *Suite[T]) initSuite(t *testing.T, parallel bool, assertT require.Testin
- 	}
- 	s.assertT = assertT
- 	s.Assertions = require.New(assertT)
--	s.ProtoAssertions = protorequire.New(assertT)
--	s.HistoryRequire = historyrequire.New(assertT)
- }
- 
- // T returns the *testing.T, panicking if the guard has been sealed.
- func (s *Suite[T]) T() *testing.T {
- 	if s.guardT.hasSubtests.Load() {
-+		//nolint:forbidigo // Panics are fine in testing code.
- 		panic("parallelsuite: do not call T() after Run(); use the subtest callback's parameter instead")
- 	}
- 	return s.guardT.T
-@@ -200,23 +204,24 @@ func (s *Suite[T]) AwaitTruef(fn func() bool, timeout, interval time.Duration, m
- // parallel. Any sequential setup must happen before calling Run.
- //
- // The suite must embed [Suite] and have no other fields.
--func Run[T testingSuite](t *testing.T, s T, args ...any) {
-+func Run[T TestingSuite](t *testing.T, s T, args ...any) {
- 	run(t, s, true, args...)
- }
- 
- // RunLegacySequential behaves like [Run] but does not mark test methods as parallel.
- //
- // Deprecated: use [Run] for new tests. This only exists for backwards-compatibility
- // with legacy behavior to ease migration.
--func RunLegacySequential[T testingSuite](t *testing.T, s T, args ...any) {
-+func RunLegacySequential[T TestingSuite](t *testing.T, s T, args ...any) {
- 	run(t, s, false, args...)
- }
- 
--func run[T testingSuite](t *testing.T, s T, methodsParallel bool, args ...any) {
-+func run[T TestingSuite](t *testing.T, s T, methodsParallel bool, args ...any) {
- 	t.Helper()
- 
- 	typ := reflect.TypeFor[T]()
- 	if typ.Kind() != reflect.Pointer || typ.Elem().Kind() != reflect.Struct {
-+		//nolint:forbidigo // Panics are fine in testing code.
- 		panic(fmt.Sprintf("parallelsuite.Run: suite must be a pointer to a struct, got %v", typ))
- 	}
- 	structType := typ.Elem()
-@@ -225,6 +230,7 @@ func run[T testingSuite](t *testing.T, s T, methodsParallel bool, args ...any) {
- 
- 	methods := discoverTestMethods(typ, structType, args)
- 	if len(methods) == 0 {
-+		//nolint:forbidigo // Panics are fine in testing code.
- 		panic(fmt.Sprintf("parallelsuite.Run: suite %s has no Test* methods", structType.Name()))
- 	}
- 
-@@ -239,6 +245,9 @@ func run[T testingSuite](t *testing.T, s T, methodsParallel bool, args ...any) {
- 	}
- 
- 	s.initSuite(t, true, nil, nil)
-+	if initializer, ok := any(s).(AssertionsInitializer); ok {
-+		initializer.
+ 			captureHandler := metricstest.NewCaptureHandler()
+@@ -79,10 +103,10 @@ func TestCompletionHandler_EmitsCallerMetrics(t *testing.T) {
+ 				context.Background(),
+ 				fakeEnv{node: node},
+ 				hsm.Ref{},
+-				"",      // requestID (empty skips the request-id match check)
+-				"token", // operationToken
+-				nil,     // startTime
+-				nil,     // links
++				"request-id", // requestID
++				"token",      // operationToken
++				nil,          // startTime
++				nil,          // links
+ 				tc.result,
+ 				tc.opErr,
+ 			))
+@@ -130,6 +154,7 @@ func TestCompletionHandler_AlreadyStartedMetricsUseWorkflowTime(t *testing.T) {
+ 	backend := &hsmtest.NodeBackend{WorkflowTimeFn: func() time.Time { return workflowNow }}
+ 	node := newOperationNode(t, backend, mustNewScheduledEvent(scheduledTime, &historypb.NexusOperationScheduledEventAttributes{
+ 		ScheduleToCloseTimeout: durationpb.New(time.Hour),
++		RequestId:              "request-id",
+ 	}))
+ 	require.NoError(t, hsm.MachineTransition(node, func(operation nexusoperations.Operation) (hsm.TransitionOutput, error) {
+ 		return nexusoperations.TransitionStarted.Apply(operation, nexusoperations.EventStarted{
+@@ -150,10 +175,10 @@ func TestCompletionHandler_AlreadyStartedMetricsUseWorkflowTime(t *testing.T) {
+ 		context.Background(),
+ 		fakeEnv{node: node, nowFn: func() time.Time { return wallNow }},
+ 		hsm.Ref{},
+-		"",      // requestID (empty skips the request-id match check)
+-		"token", // operationToken
+-		nil,     // startTime
+-		nil,     // links
++		"request-id", // requestID
++		"token",      // operationToken
++		nil,          // startTime
++		nil,          // links
+ 		&commonpb.Payload{},
+ 		nil,
+ 	))
 ```
 
-**File**: `common/testx/parallelsuite/suite_test.go` (renamed, +1/-1)
+**File**: `tests/nexus_workflow_test.go` (modified, +25/-0)
 ```diff
-@@ -9,7 +9,7 @@ import (
- 	"time"
+@@ -2019,6 +2019,31 @@ func (s *NexusWorkflowTestSuite) TestNexusOperationAsyncCompletionErrors(chasmEn
+ 		s.Contains(handlerErr.Error(), "invalid callback token", "Response should indicate invalid callback token")
+ 	})
  
- 	"github.com/stretchr/testify/require"
--	"go.temporal.io/server/common/testing/testcontext"
-+	"go.temporal.io/testx/testcontext"
- )
- 
- type validSuite struct{ Suite[*validSuite] }
-```
-
-**File**: `common/testx/parallelsuite/testify.go` (renamed, +5/-1)
-```diff
-@@ -17,21 +17,25 @@ type testifyBase struct {
- 
- // Deprecated: SetT is managed internally by [Run]. Do not call directly.
- func (b *testifyBase) SetT(_ *testing.T) {
-+	//nolint:forbidigo // Panics are fine in testing code.
- 	panic("parallelsuite: do not call SetT directly; it is managed by parallelsuite.Run")
- }
- 
- // Deprecated: SetS is managed internally by [Run]. Do not call directly.
- func (b *testifyBase) SetS(_ testifysuite.TestingSuite) {
-+	//nolint:forbidigo // Panics are fine in testing code.
- 	panic("parallelsuite: do not call SetS directly; it is managed by parallelsuite.Run")
- }
- 
- // Deprecated: Assert returns non-fatal assertions which are not supported.
- // Use s.NoError, s.Equal, etc. directly (require semantics).
--func (b *testifyBase) Assert() *assert.Assertions {
-+func (b *testifyBase) Assert() *assert.Assertions { //nolint:forbidigo // The disabled testify API must retain its signature.
-+	//nolint:forbidigo // Panics are fine in testing code.
- 	panic("parallelsuite: do not use Assert(); use s.NoError, s.Equal, etc. directly")
- }
- 
- // Deprecated: Require bypasses the guard mechanism. Use s.NoError, s.Equal, etc. directly.
- func (b *testifyBase) Require() *require.Assertions {
-+	//nolint:forbidigo // Panics are fine in testing code.
- 	panic("parallelsuite: do not use Require(); use s.NoError, s.Equal, etc. directly")
- }
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -74,7 +74,7 @@ require (
- 	go.temporal.io/api v1.64.3
- 	go.temporal.io/auto-scaled-workers v0.0.0-20261030203857-75274b664c29
- 	go.temporal.io/sdk v1.49.0
--	go.temporal.io/testx v0.0.0-20261112165046-80ad2c2c7f36
-+	go.temporal.io/testx v0.0.0-20261112165317-388e10c4b213
- 	go.uber.org/fx v1.24.0
- 	go.uber.org/goleak v1.3.0
- 	go.uber.org/mock v0.6.0
++	s.Run("CallbackTokenWithoutRequestID", func(s *NexusWorkflowTestSuite) {
++		env := s.newTestEnv(chasmEnabled)
++		gen := &commonnexus.CallbackTokenGenerator{}
++		validToken, err := s.generateValidCallbackToken(env.NamespaceID().String(), testcore.RandomizeStr("workflow"), uuid.NewString())
++		s.NoError(err)
++		decodedToken, err := commonnexus.DecodeCallbackToken(validToken)
++		s.NoError(err)
++		completionToken, err := gen.DecodeCompletion(decodedToken)
++		s.NoError(err)
++		completionToken.RequestId = ""
++		invalidToken, err := gen.Tokenize(completionToken)
++		s.NoError(err)
++
++		completion := nexusrpc.CompleteOperationOptions{
++			Result: testcore.MustToPayload(s.T(), "result"),
++			Header: nexus.Header{commonnexus.CallbackTokenHeader: invalidToken},
++		}
++		publicCallbackURL := "http://" + env.HttpAPIAddress() + "/" + commonnexus.RouteCompletionCallback.Path(env.Namespace().String())
++		err = s.sendNexusCompletionRequest(s.Context(), publicCallbackURL, completion)
++		var handlerErr *nexus.HandlerError
++		s.ErrorAs(err, &handlerErr)
++		s.Equal(nexus.HandlerErrorTypeBadRequest, handlerErr.Type)
++		s.Contains(handlerErr.Error(), "invalid callback token")
++	})
++
+ 	s.Run("InvalidCallbackTokenNoIdentifier", func(s *NexusWorkflowTestSuite) {
+ 		env := s.newTestEnv(chasmEnabled)
+ 		completion := nexusrpc.CompleteOperationOptions{
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13077** (2026-11-13): Require matching request IDs for Nexus completions (@tekkaya)
+- **PR #13075** (2026-11-13): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13069** (2026-11-13): Keep CHASM schedule buffers progressing after discarded or failed starts (@chaptersix)
 - **PR #13068** (2026-11-12): Fix flakes: `TestWorkerRegistry_CountWorkers` (@carlydf)
+- **PR #13058** (closed): Add Zap integration for the shared testlogger (@stephanos)
 - **PR #13052** (2026-11-12): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13048** (2026-11-12): Use SQLite by default for mixed brain tests (@stephanos)
-- **PR #13043** (closed): Fix CHASM ALLOW_ALL callback race losing action accounting (@chaptersix)
-- **PR #13039** (2026-11-11): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13033** (2026-11-11): [cloud 3.167] Fix V2 schedules closing before their final action starts (@davidporter-id-au)
 
 ---
 
@@ -2484,50 +2406,28 @@ Share across Go projects.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. flakes: `TestWorkerRegistry_CountWorkers` (#13068)
+## X. Require matching request IDs for Nexus completions
 
 **RULE**:
-When implementing operations in `tests/worker_registry_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `chasm/lib/nexusoperation/operation.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `610f69f8`: flakes: `TestWorkerRegistry_CountWorkers` (#13068). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cbeb97f4`: Require matching request IDs for Nexus completions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/worker_registry_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/nexusoperation/operation.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Count all workers including system workers. The cluster's own per-namespace worker may also
-	// heartbeat into this namespace, so the total is at least our 3 workers rather than exactly 3.
-		s.GreaterOrEqual(resp.GetCount(), int64(3))
-	}
-
-	// Our system worker is counted only when system workers are included
-	{
-		sysWorkerQuery := fmt.Sprintf("WorkerInstanceKey='%s'", sysWorkerKey)
-		resp, err := env.FrontendClient().CountWorkers(s.Context(), &workflowservice.CountWorkersRequest{
-			Namespace:            env.Namespace().String(),
-			Query:                sysWorkerQuery,
-			IncludeSystemWorkers: true,
-		})
-		s.NoError(err)
-		s.Equal(int64(1), resp.GetCount())
-
-		resp, err = env.FrontendClient().CountWorkers(s.Context(), &workflowservice.CountWorkersRequest{
-			Namespace: env.Namespace().String(),
-			Query:     sysWorkerQuery,
-		})
-		s.NoError(err)
-		s.Equal(int64(0), resp.GetCount())
+	if completion.GetRequestId() == "" || o.GetRequestId() != completion.GetRequestId() {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	// Count all workers including system workers
-		s.Equal(int64(3), resp.GetCount())
+// Induced defect failure mode:
+	if completion.GetRequestId() != "" && o.GetRequestId() != completion.GetRequestId() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `610f69f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cbeb97f4` are properly handled with clean fallback behavior.

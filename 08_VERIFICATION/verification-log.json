@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-AQ9Z",
-    "timestamp": "2026-11-13T01:14:28.103Z",
-    "repository": "Kong/kubernetes-ingress-controller",
-    "learningId": "learn-github-kong-kubernetes-ingress-controller",
-    "contentHash": "fff643747d360489c6b5bac9a9c9bfa4b3531f5b13e56f390a2180ace461a25a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-WDJS",
-    "timestamp": "2026-11-13T01:31:18.040Z",
-    "repository": "autogluon/chronos-2",
-    "learningId": "learn-huggingface-autogluon-chronos-2",
-    "contentHash": "014f79f87b663583763bd98e6870126218c7fd2507754f048391ac036e64bc76",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-62ZM",
-    "timestamp": "2026-11-13T01:38:50.914Z",
-    "repository": "Comfy-Org/MOSS-Image",
-    "learningId": "learn-huggingface-comfy-org-moss-image",
-    "contentHash": "9acb786a32930ca364954cd58ade9499b5f2cda4ea276035695d71a62dbd1f56",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-6F4P",
     "timestamp": "2026-11-13T01:39:06.649Z",
     "repository": "codewhale-hq/Codewhale",
@@ -7490,6 +7445,51 @@
     "repository": "opentofu/opentofu",
     "learningId": "learn-github-opentofu-opentofu",
     "contentHash": "cd8ee374022c7362d9cd7baddc2235c631aa861c1975dfb8830305f16952bf1d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-6NIV",
+    "timestamp": "2026-11-13T20:47:01.783Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+    "contentHash": "835a087c5032db702f78c6c1e5d504286e43221638062c5a59e0997763b85c53",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-6UKQ",
+    "timestamp": "2026-11-13T20:47:10.922Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "c05640832794c2ce471502994377c80d91c498b6e0592067383251833db01afb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-6YYK",
+    "timestamp": "2026-11-13T20:47:16.604Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "56e4128ee25b9b5c120953fd56c4b0b6db69bc9e086f61410910deef0aeb23f4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
