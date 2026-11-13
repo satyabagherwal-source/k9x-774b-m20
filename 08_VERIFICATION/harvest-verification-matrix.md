@@ -9480,3 +9480,7 @@
 | `CYCLE-20261113-W0OA` | `2026-11-13T13:10:51.754Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`fb32d57e...`) |
 | `CYCLE-20261113-WMIX` | `2026-11-13T13:11:20.073Z` | `apache/incubator-pegasus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ac801a7c...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:11:40.983Z` | `hf-qwen-qwen-image-2.1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A29F5946` [Domain D] | Yes (`347f24af...`) |
+| `CYCLE-20261113-8BOC` | `2026-11-13T13:20:25.884Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`974320fd...`) |
+| `CYCLE-20261113-8LTQ` | `2026-11-13T13:20:39.038Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2d0b8d38...`) |
+| `CYCLE-20261113-8PX3` | `2026-11-13T13:20:44.343Z` | `Planetable/Planet` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b8adec3d...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:21:07.337Z` | `hf-contrastive-lm-clm-v0.1-8b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9802962D` [Domain D] | Yes (`10cc166e...`) |

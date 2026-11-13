@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T13:11:41.177Z",
+  "last_updated": "2026-11-13T13:21:07.721Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T12:42:51.302Z",
@@ -593,7 +593,7 @@
       "staged_for_review": 1
     },
     "clementtsang-bottom-learnings.md": {
-      "processed_at": "2026-11-12T00:45:35.956Z",
+      "processed_at": "2026-11-13T13:20:51.171Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1826,9 +1826,19 @@
       "processed_at": "2026-11-13T13:11:41.028Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-contrastive-lm-clm-v0.1-8b-learnings.md": {
+      "processed_at": "2026-11-13T13:21:07.338Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "planetable-planet-learnings.md": {
+      "processed_at": "2026-11-13T13:21:07.373Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 567,
-  "total_canonical_promoted": 99,
-  "total_staged_for_review": 465
+  "total_dossiers_evaluated": 570,
+  "total_canonical_promoted": 100,
+  "total_staged_for_review": 467
 }

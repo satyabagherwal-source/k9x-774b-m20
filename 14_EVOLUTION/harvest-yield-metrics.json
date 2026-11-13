@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T13:11:20.097Z",
-  "total_cycles_completed": 9242,
-  "total_learnings_persisted": 9242,
-  "total_rules_promoted": 9014,
+  "last_updated": "2026-11-13T13:20:44.355Z",
+  "total_cycles_completed": 9245,
+  "total_learnings_persisted": 9245,
+  "total_rules_promoted": 9016,
   "history": [
-    {
-      "timestamp": "2026-11-12T21:56:36.920Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:56:39.475Z",
-      "repository": "dubzzz/fast-check",
-      "learningId": "learn-github-dubzzz-fast-check",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:56:46.130Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T22:05:24.932Z",
       "repository": "opentofu/opentofu",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-13T13:11:20.097Z",
       "repository": "apache/incubator-pegasus",
       "learningId": "learn-github-apache-incubator-pegasus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T13:20:25.900Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T13:20:39.065Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T13:20:44.355Z",
+      "repository": "Planetable/Planet",
+      "learningId": "learn-github-planetable-planet",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/planetable-planet-learnings.md`  
 > **Source**: github ([https://github.com/Planetable/Planet](https://github.com/Planetable/Planet))  
-> **Source Version**: `5294e71c`  
+> **Source Version**: `544b4253`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:09:14.355Z  
+> **Timestamp**: 2026-11-13T13:20:30.757Z  
 > **Learning ID**: `learn-github-planetable-planet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/planetable-planet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Planetable/Planet](https://github.com/Planetable/Planet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:09:13.993Z  
+> **Harvest Timestamp**: 2026-11-13T13:20:30.749Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build and host decentralized blogs and websites on your Mac
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1807 stars
+- **Stars / Engagement**: 1806 stars
 
 ---
 
@@ -1907,52 +1907,245 @@ struct PlanetAPIConsoleView: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `55d2fe23` (2026-10-24)
-**Commit Message**: Fix crash from concurrent cmark-gfm extension registration
+### Incident Patch 1: `544b4253` (2026-11-11)
+**Commit Message**: Link RSS items by slug
 
-cmark_gfm_core_extensions_ensure_registered() guards with a plain static
-int, so concurrent first calls (e.g. the following-planets refresh task
-group rendering summaries) register the extensions more than once. Each
-registration renumbers the global table node types, so any parse in
-flight fails cmark's containment checks and aborts in finalize()
-(blocks.c:282), as seen in insider-20261006-1 crash reports.
+Every page of a site links an article by its slug when it has one, but
+the feeds linked it by its UUID folder, so a reader who came from a feed
+saw the UUID in the address. Technotes/Slug.md already said the feed
+should use the slug.
 
-Register once via a static let, which Swift initializes exactly once.
+An item's <link> in rss.xml and podcast.xml is now the slug folder when
+the article has a slug. The <guid> stays the UUID folder: a slug can
+change, and a feed reader that knows an item by its guid must not take
+an old article for a new one. The enclosure and the image addresses in
+the description stay under the UUID folder too. An article with no slug
+renders the same lines as before.
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Planet itself knows an article of a feed by its link. A site followed
+or aggregated by the HTTP address of its feed shows each article that
+has a slug once more after the site is published with this change. A
+site followed by IPNS, ENS or DNSLink is read from planet.json, whose
+links were already slugs.
 
-**File**: `Planet/Helper/MarkdownUtils.swift` (modified, +8/-1)
+Rendered with the pinned Stencil revision for an article with a slug,
+with an empty slug and with none. The app was not built: the change is
+one template file.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `Planet/Templates/RSS.xml` (modified, +1/-1)
 ```diff
-@@ -166,6 +166,13 @@ struct StencilExtension {
- }
- 
- struct CMarkRenderer {
-+    // cmark_gfm_core_extensions_ensure_registered() is not thread-safe: concurrent first calls
-+    // register the extensions more than once, which renumbers the global table node types under
-+    // any parse in flight and trips cmark's assertions. A static let is initialized exactly once.
-+    private static let registerExtensions: Void = {
-+        cmark_gfm_core_extensions_ensure_registered()
-+    }()
-+
-     static func replaceYouTubeLinks(_ text: String) -> String {
-         let pattern = #"https?:\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?"#
- 
-@@ -184,7 +191,7 @@ struct CMarkRenderer {
-         // Process 1: Replace all YouTube links with embed code
-         let inputText: String = CMarkRenderer.replaceYouTubeLinks(markdown)
- 
--        cmark_gfm_core_extensions_ensure_registered()
-+        _ = registerExtensions
- 
-         guard let parser = cmark_parser_new(CMARK_OPT_FOOTNOTES) else { return nil }
-         defer { cmark_parser_free(parser) }
+@@ -29,7 +29,7 @@
+     {% for article in planet.articles %}
+     <item>
+         <title>{{ article.title|escape }}</title>
+-        <link>{{ root_prefix }}/{{ article.id }}/</link>
++        <link>{{ root_prefix }}/{% if article.slug.count > 0 %}{{ article.slug }}{% else %}{{ article.id }}{% endif %}/</link>
+         <guid>{{ root_prefix }}/{{ article.id }}/</guid>
+         <pubDate>{{ article.created|rfc822 }}</pubDate>
+         {% if article.heroImage %}
 ```
 
 **File**: `Planet/versioning.xcconfig` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2844
-+CURRENT_PROJECT_VERSION = 2845
+-CURRENT_PROJECT_VERSION = 2853
++CURRENT_PROJECT_VERSION = 2854
+```
+
+**File**: `Technotes/Slug.md` (modified, +5/-1)
+```diff
+@@ -22,4 +22,8 @@ When publishing (saving for public), in addition to the original UUID folder, a
+ 
+ ## Index and RSS
+ 
+-The index page and the RSS feed should use the new slug for links if available.
+\ No newline at end of file
++The index page and the RSS feed should use the new slug for links if available.
++
++In the RSS feed and the podcast feed, an item's `<link>` is the slug folder when the article has a slug. Its `<guid>` stays the UUID folder: a slug can be changed or removed later, and a feed reader that identifies an item by its `<guid>` must not take an old article for a new one. The enclosure and the image addresses in the description also stay under the UUID folder.
++
++Planet itself identifies an article of a followed or aggregated feed by its `<link>`. A site that is followed or aggregated by the HTTP address of its feed therefore shows each article that has a slug once more after the site is published with this change. A site followed by its IPNS, ENS or DNSLink name is read from `planet.json`, whose links were already slugs.
+```
+
+---
+
+### Incident Patch 2: `6d1a3c6c` (2026-11-03)
+**Commit Message**: Drop the IPFS peering list
+
+Two of the four peers no longer answer: the Pinnable node is retired,
+and node-1.ipfs.bit.site has no DNS record. The 4everland peer refused
+dials from two nodes, and Filebase still answers but Pinnable no longer
+uses it. Planet now writes an empty Peering.Peers on each start, because
+earlier builds wrote the old list into the Kubo repo and Kubo would keep
+dialing the dead addresses. Technotes/Peering.md says why, and how to
+bring peering back.
+
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
+
+**File**: `Planet/IPFS/IPFSDaemon.swift` (modified, +7/-37)
+```diff
+@@ -222,16 +222,17 @@ actor IPFSDaemon {
+         }
+          */
+ 
+-        Self.logger.info("Updating peers")
+-        if let result = try? IPFSCommand.setPeers(
+-            peersJSON: String(data: IPFSDaemon.peers.rawData(), encoding: .utf8)!
+-        ).run(),
++        // Peering is off for now (Technotes/Peering.md): the nodes the old list
++        // named no longer answer. Builds before 2026-11 wrote that list into the
++        // repo, so clear it instead of leaving Kubo to dial dead addresses.
++        Self.logger.info("Clearing peers")
++        if let result = try? IPFSCommand.setPeers(peersJSON: "[]").run(),
+             result.ret == 0
+         {
+-            Self.logger.info("Updated peers")
++            Self.logger.info("Cleared peers")
+         }
+         else {
+-            Self.logger.info("Unable to set peers for IPFS")
++            Self.logger.info("Unable to clear peers for IPFS")
+         }
+ 
+         Self.logger.info("Set DNS resolvers")
+@@ -997,37 +998,6 @@ actor IPFSDaemon {
+ }
+ 
+ extension IPFSDaemon {
+-    // IPFS peering
+-    // peers from https://docs.ipfs.io/how-to/peering-with-content-providers/#content-provider-list
+-    static let peers = JSON([
+-        [
+-            "ID": "12D3KooWBJY6ZVV8Tk8UDDFMEqWoxn89Xc8wnpm8uBFSR3ijDkui",
+-            "Addrs": [
+-                "/ip4/167.71.172.216/tcp/4001",
+-                "/ip6/2604:a880:800:10::826:1/tcp/4001",
+-                "/ip4/167.71.172.216/udp/4001/quic",
+-                "/ip6/2604:a880:800:10::826:1/udp/4001/quic",
+-            ],
+-        ],  // Pinnable
+-        [
+-            "ID": "12D3KooWJ6MTkNM8Bu8DzNiRm1GY3Wqh8U8Pp1zRWap6xY3MvsNw",
+-            "Addrs": [
+-                "/dnsaddr/node-1.ipfs.bit.site"
+-            ],
+-        ],  // bit.site
+-        [
+-            "ID": "12D3KooWQ85aSCFwFkByr5e3pUCQeuheVhobVxGSSs1DrRQHGv1t",
+-            "Addrs": [
+-                "/dnsaddr/node-1.ipfs.4everland.net"
+-            ],
+-        ],  // 4everland.io
+-        [
+-            "ID": "12D3KooWGtYkBAaqJMJEmywMxaCiNP7LCEFUAFiLEBASe232c2VH",
+-            "Addrs": [
+-                "/dns4/bitswap.filebase.io/tcp/443/wss"
+-            ],
+-        ],  // Filebase
+-    ])
+     // DoH resolvers
+     static let resolvers = JSON([
+         "bit.": "https://dweb-dns.v2ex.pro/dns-query",
+```
+
+**File**: `Planet/versioning.xcconfig` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-CURRENT_PROJECT_VERSION = 2852
++CURRENT_PROJECT_VERSION = 2853
+```
+
+**File**: `Technotes/Peering.md` (modified, +40/-43)
+```diff
+@@ -1,45 +1,42 @@
+ # Peering
+ 
+-## Pinnable
+-
+-```json
+-{
+-    "ID": "12D3KooWLBMmT1dft1zcJvXNYkAfoUqj2RtRm7f9XkF17YmZsu4o",
+-    "Addrs": [
+-        "/ip4/167.71.172.216/tcp/4001",
+-        "/ip6/2604:a880:800:10::826:1/tcp/4001"
+-    ]
+-}
+-```
+-
+-## eth.limo
+-
+-```json
+-{
+-    "ID": "12D3KooWLBMmT1dft1zcJvXNYkAfoUqj2RtRm7f9XkF17YmZsu4o",
+-    "Addrs": [
+-        "/ip4/104.131.8.159/tcp/4001",
+-        "/ip4/104.131.8.159/udp/4001/quic",
+-        "/ip6/2604:a880:800:10::bc4:e001/tcp/4001",
+-        "/ip6/2604:a880:800:10::bc4:e001/udp/4001/quic"
+-    ]
+-},
+-{
+-    "ID": "12D3KooWMHpq3mdygcbZWbjkuDdCsX5rjZHX31uRbCp9vAZXBxcD",
+-    "Addrs": [
+-        "/ip4/104.131.8.143/tcp/4001",
+-        "/ip4/104.131.8.143/udp/4001/quic",
+-        "/ip6/2604:a880:800:10::ac1:2001/tcp/4001",
+-        "/ip6/2604:a880:800:10::ac1:2001/udp/4001/quic"
+-    ]
+-},
+-{
+-    "ID": "12D3KooWQ1b2WBM1NM1a5jWS5Kny3y93zyK6iPBuVAA6uk95zdyJ",
+-    "Addrs": [
+-        "/ip4/45.55.43.156/tcp/4001",
+-        "/ip4/45.55.43.156/udp/4001/quic",
+-        "/ip6/2604:a880:800:10::c59:6001/tcp/4001",
+-        "/ip6/2604:a880:800:10::c59:6001/udp/4001/quic"
+-    ]
+-}
+-```
+\ No newline at end of file
++Planet sets no `Peering.Peers` since 2026-11-03. On each start, `setupIPFS` in
++`Planet/IPFS/IPFSDaemon.swift` writes an empty list. Builds from 2022-06 to
++2025-10 wrote a list of four peers into the Kubo repo. Without the empty write,
++Kubo would keep dialing those addresses on every launch.
++
++## Why it is off
++
++The old list named four nodes. On 2026-11-03, two of them no longer answered, one
++refused peer dials, and one answers but Pinnable no longer uses it:
++
++| Peer | Address | State on 2026-11-03 |
++| --- | --- | --- |
++| Pinnable `12D3KooWBJY6ZVV8Tk8UDDFMEqWoxn89Xc8wnpm8uBFSR3ijDkui` | `/ip4/167.71.172.216/tcp/4001` and its IPv6 and QUIC forms | The server is retired. Port 4001 does not answer. |
++| bit.site `12D3KooWJ6MTkNM8Bu8DzNiRm1GY3Wqh8U8Pp1zRWap6xY3MvsNw` | `/dnsaddr/node-1.ipfs.bit.site` | The name has no DNS record. |
++| Filebase `12D3KooWGtYkBAaqJMJEmywMxaCiNP7LCEFUAFiLEBASe232c2VH` | `/dns4/bitswap.filebase.io/tcp/443/wss` | Answers. The name is a CNAME to an S3 endpoint now. Pinnable stopped using Filebase on 2026-11-03. |
++| 4everland `12D3KooWQ85aSCFwFkByr5e3pUCQeuheVhobVxGSSs1DrRQHGv1t` | `/dnsaddr/node-1.ipfs.4everland.net` | Port 4001 answers a TCP probe, but peer dials from two nodes failed. |
++
++One live peer that Pinnable no longer uses is not worth a config write on every
++launch. So the list stays empty until Pinnable has a node with a public address
++again. Pinnable's current
++node has only relay addresses, so it cannot be a peer yet.
++
++## History
++
++- 2022-06-01, `6edf06a0`: peering added, with the Pinnable node.
++- 2023-10-19, `ac16b3ea`: eth.limo nodes added.
++- 2024-07-09, `bbd1c1c8`: eth.limo and Cloudflare removed, UDP addresses added.
++- 2026-04-10, `28df4c11`: the eth.sucks node removed.
++- 2026-11-03: all peers removed. The old entries are in this file's history.
++
++## To bring it back
++
++1. Make sure that the node answers on its swarm port from outside: `nc -z <ip> 4001`.
++2. Get its ID and addresses from `ipfs id` on that node.
++3. Add a `static let peers = JSON([...])` list of `{"ID": …, "Addrs": […]}` to
++   `IPFSDaemon.swift`, and pass its JSON to `IPFSCommand.setPeers` in `setupIPFS`
++   in place of `"[]"`.
++
++`tools/monitor-ipfs-peers/peers.txt` still lists the 2023 peers. It is a
++monitor script's input, not app configuration.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1981,35 +2174,28 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crash from concurrent cmark-gfm extension registration
+## X. Link RSS items by slug
 
 **RULE**:
-When implementing operations in `Planet/Helper/MarkdownUtils.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Planetable/Planet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Planet/Templates/RSS.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Planetable/Planet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `55d2fe23`: crash from concurrent cmark-gfm extension registration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `544b4253`: Link RSS items by slug. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Planet/Helper/MarkdownUtils.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Planet/Templates/RSS.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    // cmark_gfm_core_extensions_ensure_registered() is not thread-safe: concurrent first calls
-    // register the extensions more than once, which renumbers the global table node types under
-    // any parse in flight and trips cmark's assertions. A static let is initialized exactly once.
-    private static let registerExtensions: Void = {
-        cmark_gfm_core_extensions_ensure_registered()
-    }()
-
-        _ = registerExtensions
+        <link>{{ root_prefix }}/{% if article.slug.count > 0 %}{{ article.slug }}{% else %}{{ article.id }}{% endif %}/</link>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-        cmark_gfm_core_extensions_ensure_registered()
+        <link>{{ root_prefix }}/{{ article.id }}/</link>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `55d2fe23` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `544b4253` are properly handled with clean fallback behavior.

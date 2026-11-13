@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `e0f4d211`  
+> **Source Version**: `99d586a1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T00:45:21.933Z  
+> **Timestamp**: 2026-11-13T13:20:25.009Z  
 > **Learning ID**: `learn-github-clementtsang-bottom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T00:45:21.585Z  
+> **Harvest Timestamp**: 2026-11-13T13:20:24.841Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14189 stars
+- **Stars / Engagement**: 14196 stars
 
 ---
 
@@ -1601,76 +1601,351 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e0f4d211` (2026-11-11)
-**Commit Message**: deps: bump rustix to 1.1.6 (#2312)
+### Incident Patch 1: `99d586a1` (2026-11-13)
+**Commit Message**: ci: fix Android build by tying gpu feature to sysinfo's, bump cross version to a9301e9 (#2316)
 
-This should hopefully address an unsoundness warning from cargo-audit:
+Make it so our own gpu feature flag controls the sysinfo one, since that's causing the Android build to fail.
 
+Also bumps cross to cross-rs/cross@a9301e9.
+
+**File**: `.github/workflows/build_releases.yml` (modified, +3/-2)
+```diff
+@@ -28,7 +28,7 @@ env:
+   CARGO_HUSKY_DONT_INSTALL_HOOKS: true
+   COMPLETION_DIR: "target/tmp/bottom/completion/"
+   MANPAGE_DIR: "target/tmp/bottom/manpage/"
+-  CROSS_VERSION: "git:d6204e62acdba1a117341f93972f3d52470a3052"
++  CROSS_VERSION: "git:a9301e91f72bba3850460512685f6b16062015ff"
+ 
+ permissions:
+   id-token: write
+@@ -133,7 +133,8 @@ jobs:
+               os: "ubuntu-22.04",
+               artifact_name: "x86_64-unknown-linux-gnu-2-17",
+               cross: true,
+-              cross_image: "ghcr.io/cross-rs/x86_64-unknown-linux-gnu@sha256:ab2070e67704b2c85d0d1fa50a0165ec438ed87fd1dc1a4058692a2348c071cb", # edge-centos
++              # https://github.com/cross-rs/cross/pkgs/container/x86_64-unknown-linux-gnu/1554248584?tag=edge-centos
++              cross_image: "ghcr.io/cross-rs/x86_64-unknown-linux-gnu@sha256:1be9b0f725e4fdd4f7fb90c8e29678414cda08e7ddd2489d78555e6b2fe4176b",
+             }
+ 
+           # Android
 ```
-Crate:     rustix
-Version:   1.1.4
-Warning:   unsound
-Title:     xattr functions mark unwritten bytes as initialized when given a zero-length buffer
-Date:      2026-10-27
-ID:        RUSTSEC-2026-0486
-URL:       https://rustsec.org/advisories/RUSTSEC-2026-0486
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ env:
+   CARGO_HUSKY_DONT_INSTALL_HOOKS: true
+   COMPLETION_DIR: "target/tmp/bottom/completion/"
+   MANPAGE_DIR: "target/tmp/bottom/manpage/"
+-  CROSS_VERSION: "git:d6204e62acdba1a117341f93972f3d52470a3052"
++  CROSS_VERSION: "git:a9301e91f72bba3850460512685f6b16062015ff"
+ 
+ concurrency:
+   group: ${{ github.workflow }}-${{ github.ref }}
 ```
 
 **File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -1398,9 +1398,9 @@ dependencies = [
+@@ -955,9 +955,9 @@ checksum = "61807f77802ff30975e01f4f071c8ba10c022052f98b3294119f3e615d13e5be"
+ 
+ [[package]]
+ name = "ntapi"
+-version = "0.4.2"
++version = "0.4.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c70f219e21142367c70c0b30c6a9e3a14d55b4d12a204d897fbec83a0363f081"
++checksum = "c3b335231dfd352ffb0f8017f3b6027a4917f7df785ea2143d8af2adc66980ae"
+ dependencies = [
+  "winapi",
+ ]
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -66,7 +66,7 @@ doc = false
+ battery = ["dep:starship-battery"]
+ musl_alloc = ["dep:mimalloc"]
+ nvidia = ["gpu", "dep:nvml-wrapper"]
+-gpu = []
++gpu = ["sysinfo/gpu"]
+ zfs = []
+ deploy = ["battery", "nvidia", "zfs"]
+ default = ["deploy"]
+@@ -98,7 +98,7 @@ regex = "1.13.1"
+ rustc-hash = "2.1.3"
+ serde = { version = "1.0.228", features = ["derive"] }
+ starship-battery = { version = "0.12.0", optional = true }
+-sysinfo = "=0.40.3"
++sysinfo = { version = "=0.40.3", default-features = false, features = ["component", "disk", "network", "system", "user"] }
+ timeless = "0.1.0"
+ toml_edit = { version = "0.25.12", features = ["serde"] }
+ unicode-ellipsis = "0.6.0"
+```
+
+**File**: `schema/nightly/bottom.json` (modified, +1/-1)
+```diff
+@@ -301,7 +301,7 @@
+           "$ref": "#/$defs/SortOrder"
+         },
+         "use_binary_prefix": {
+-          "description": "Use binary prefixes (e.g. GiB, MiB) instead of decimal prefixes (e.g. GB, MB).\n\nDefaults to decimal prefixes.",
++          "description": "Use binary prefixes (e.g. GiB, MiB) instead of decimal prefixes (e.g.\nGB, MB).\n\nDefaults to decimal prefixes.",
+           "type": [
+             "boolean",
+             "null"
+```
+
+**File**: `scripts/schema_gen/Cargo.lock` (modified, +7/-7)
+```diff
+@@ -133,6 +133,7 @@ dependencies = [
+  "nvml-wrapper",
+  "ratatui",
+  "ratatui-core",
++ "ratatui-crossterm",
+  "regex",
+  "rustc-hash",
+  "rustix",
+@@ -671,9 +672,9 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
+ 
+ [[package]]
+ name = "libc"
+-version = "0.2.189"
++version = "0.2.191"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
++checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
+ 
+ [[package]]
+ name = "libloading"
+@@ -1028,7 +1029,6 @@ checksum = "3274ba0a2c5e1bcad2a2005d20f4dc59dad26b2eb0940fb094500dba4099d57d"
+ dependencies = [
+  "instability",
+  "ratatui-core",
+- "ratatui-crossterm",
+  "ratatui-widgets",
+  "serde",
+ ]
+@@ -1178,9 +1178,9 @@ dependencies = [
  
  [[package]]
  name = "rustix"
--version = "1.1.4"
+-version = "1.1.5"
 +version = "1.1.6"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
+-checksum = "891efababe418670775f199f0d233d84843c227a0949a883ce15b37c78d6629d"
 +checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
  dependencies = [
-  "bitflags 2.13.0",
+  "bitflags",
   "errno",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -108,7 +108,7 @@ strum = { version = "0.28.0", features = ["derive"], optional = true }
- libc = "0.2.189"
+@@ -1450,9 +1450,9 @@ dependencies = [
  
- [target.'cfg(target_os = "linux")'.dependencies]
--rustix = { version = "1.1.4", features = ["fs", "param"] }
-+rustix = { version = "1.1.6", features = ["fs", "param"] }
- 
- [target.'cfg(all(target_os = "linux", target_env = "musl"))'.dependencies]
- mimalloc = { version = "0.1.52", optional = true }
+ [[package]]
+ name = "sysinfo"
+-version = "0.39.6"
++version = "0.40.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d2071df9448915b71c4fe6d25deaf1c22f12bd234f01540b77312bb8e41361e6"
++checksum = "a86bac2f7d06e6384984118ad727f5694110f0ec44d924d05c8fdec3d030bee6"
+ dependencies = [
+  "libc",
+  "memchr",
 ```
 
 ---
 
-### Incident Patch 2: `2966527b` (2026-11-11)
-**Commit Message**: docs: update changelog with process command viewer (#2310)
+### Incident Patch 2: `b539dafd` (2026-11-12)
+**Commit Message**: Revert "deps: bump sysinfo to 0.40.3 (#2314)"
 
-Update the changelog to include #2263.
+This reverts commit 3843f17467922ef914197194e385bde4f9b1345c.
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +0/-1)
 ```diff
-@@ -27,6 +27,7 @@ That said, these are more guidelines rather than hard rules, though the project
- ### Changes
+@@ -38,7 +38,6 @@ That said, these are more guidelines rather than hard rules, though the project
  
- - [#2296](https://github.com/ClementTsang/bottom/pull/2296): Better truncate CPU usage strings with small widths.
-+- [#2263](https://github.com/ClementTsang/bottom/pull/2263): Add pop-out process command viewer.
+ - [#2302](https://github.com/ClementTsang/bottom/pull/2302): Make the `aarch64-pc-windows-gnullvm` target statically linked.
+ - [#2304](https://github.com/ClementTsang/bottom/pull/2304): Enable same-version upgrades for the Windows MSI installer.
+-- [#2314](https://github.com/ClementTsang/bottom/pull/2314): Update sysinfo to 0.40.3.
  
- ### Bug Fixes
+ ## 0.15.0 - 2026-10-31 🎃
  
 ```
 
+**File**: `Cargo.lock` (modified, +4/-4)
+```diff
+@@ -806,9 +806,9 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
+ 
+ [[package]]
+ name = "libc"
+-version = "0.2.191"
++version = "0.2.189"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
++checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
+ 
+ [[package]]
+ name = "libloading"
+@@ -1690,9 +1690,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "sysinfo"
+-version = "0.40.3"
++version = "0.39.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a86bac2f7d06e6384984118ad727f5694110f0ec44d924d05c8fdec3d030bee6"
++checksum = "d2071df9448915b71c4fe6d25deaf1c22f12bd234f01540b77312bb8e41361e6"
+ dependencies = [
+  "libc",
+  "memchr",
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -98,7 +98,7 @@ regex = "1.13.1"
+ rustc-hash = "2.1.3"
+ serde = { version = "1.0.228", features = ["derive"] }
+ starship-battery = { version = "0.12.0", optional = true }
+-sysinfo = "=0.40.3"
++sysinfo = "=0.39.6"
+ timeless = "0.1.0"
+ toml_edit = { version = "0.25.12", features = ["serde"] }
+ unicode-ellipsis = "0.6.0"
+@@ -114,7 +114,7 @@ schemars = { version = "1.2.2", optional = true }
+ strum = { version = "0.28.0", features = ["derive"], optional = true }
+ 
+ [target.'cfg(unix)'.dependencies]
+-libc = "0.2.191"
++libc = "0.2.189"
+ 
+ [target.'cfg(target_os = "linux")'.dependencies]
+ rustix = { version = "1.1.6", features = ["fs", "param"] }
+```
+
+**File**: `src/collection.rs` (modified, +10/-11)
+```diff
+@@ -133,20 +133,20 @@ pub struct SysinfoSource {
+     pub(crate) users: sysinfo::Users,
+ }
+ 
+-impl SysinfoSource {
+-    fn new() -> Result<Self, sysinfo::Error> {
++impl Default for SysinfoSource {
++    fn default() -> Self {
+         use sysinfo::*;
+ 
+-        Ok(Self {
+-            system: System::new()?,
+-            network: Networks::new()?,
++        Self {
++            system: System::new(),
++            network: Networks::new(),
+             #[cfg(not(target_os = "linux"))]
+-            temps: Components::new()?,
++            temps: Components::new(),
+             #[cfg(not(any(target_os = "linux", target_os = "macos")))]
+-            disks: Disks::new()?,
++            disks: Disks::new(),
+             #[cfg(target_os = "windows")]
+-            users: Users::new()?,
+-        })
++            users: Users::new(),
++        }
+     }
+ }
+ 
+@@ -218,8 +218,7 @@ impl DataCollector {
+ 
+         DataCollector {
+             data: Data::default(),
+-            // FIXME: consider whether we would want to somehow handle this more gracefully, e.g. handle piecemeal failures?
+-            sys: SysinfoSource::new().expect("could not initialize sysinfo data source"),
++            sys: SysinfoSource::default(),
+             #[cfg(target_os = "linux")]
+             prev_process_details: IntHashMap::default(),
+             #[cfg(target_os = "linux")]
+```
+
+**File**: `src/collection/cpu/sysinfo.rs` (modified, +3/-6)
+```diff
+@@ -33,7 +33,7 @@ pub fn get_cpu_data_list(collector: &DataCollector) -> CollectionResult<CpuHarve
+             .enumerate()
+             .map(|(i, cpu)| CpuData {
+                 data_type: CpuDataType::Cpu(i),
+-                usage: cpu.usage(),
++                usage: cpu.cpu_usage(),
+             })
+             .collect::<Vec<_>>(),
+     );
+@@ -45,10 +45,7 @@ pub fn get_cpu_data_list(collector: &DataCollector) -> CollectionResult<CpuHarve
+ pub(crate) fn get_load_avg() -> crate::collection::cpu::LoadAvgHarvest {
+     // The API for sysinfo apparently wants you to call it like this, rather
+     // than using a &System.
+-    let (one, five, fifteen) = match sysinfo::System::load_average() {
+-        Ok(avg) => (avg.one as f32, avg.five as f32, avg.fifteen as f32),
+-        Err(_) => (0.0, 0.0, 0.0),
+-    };
++    let sysinfo::LoadAvg { one, five, fifteen } = sysinfo::System::load_average();
+ 
+-    [one, five, fifteen]
++    [one as f32, five as f32, fifteen as f32]
+ }
+```
+
+**File**: `src/collection/memory/windows.rs` (modified, +1/-2)
+```diff
+@@ -88,8 +88,7 @@ mod tests {
+     fn test_windows_get_swap_usage() {
+         let sys = System::new_with_specifics(
+             RefreshKind::nothing().with_memory(MemoryRefreshKind::nothing().with_swap()),
+-        )
+-        .expect("this is a test");
++        );
+ 
+         let swap_usage = get_swap_usage_inner(&sys);
+         if sys.total_swap() > 0 {
+```
+
+**File**: `src/collection/network/sysinfo.rs` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ pub fn get_network_data(
+ 
+     for (name, network) in networks {
+         let to_keep = if let Some(filter) = filter {
+-            filter.should_keep(&name.to_string_lossy())
++            filter.should_keep(name)
+         } else {
+             true
+         };
+```
+
+**File**: `src/collection/processes/linux/mod.rs` (modified, +2/-2)
+```diff
+@@ -158,7 +158,7 @@ fn read_proc(
+ 
+     let process_state_char = stat.state;
+     let process_state = (
+-        process_status_str(ProcessStatus::from(process_state_char as u8)),
++        process_status_str(ProcessStatus::from(process_state_char)),
+         process_state_char,
+     );
+     let (cpu_usage_percent, new_process_times) = get_linux_cpu_usage(
+@@ -424,7 +424,7 @@ pub(crate) fn linux_process_data(
+         cpu_fraction,
+         total_memory,
+         time_difference_in_secs,
+-        system_uptime: sysinfo::System::uptime().unwrap_or_default(),
++        system_uptime: sysinfo::System::uptime(),
+         get_process_threads: get_threads,
+         get_process_swap: get_swap,
+     };
+```
+
 #### Recent Merged Pull Requests:
+- **PR #2316** (2026-11-13): ci: fix Android build by tying gpu feature to sysinfo's, bump cross version to a9301e9 (@ClementTsang)
+- **PR #2315** (2026-11-13): ci: bump rust version in CI to 1.100.0 (@ClementTsang)
+- **PR #2314** (2026-11-13): deps: bump sysinfo to 0.40.3 (@ClementTsang)
+- **PR #2313** (2026-11-12): other: add cargo binstall metadata (@ClementTsang)
 - **PR #2312** (2026-11-11): deps: bump rustix to 1.1.6 (@ClementTsang)
 - **PR #2311** (2026-11-11): docs: add vegerot as a contributor for code (@allcontributors[bot])
-- **PR #2310** (2026-11-11): docs: update changelog with process command viewer (@ClementTsang)
-- **PR #2308** (2026-11-09): ci: bump macos version in coverage job to 15 (@ClementTsang)
-- **PR #2307** (2026-11-09): other: run nightly format (@ClementTsang)
-- **PR #2306** (2026-11-09): ci: add zizmor check action (@ClementTsang)
 
 ---
 
@@ -1690,30 +1965,31 @@ Update the changelog to include #2263.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: bump rustix to 1.1.6 (#2312)
+## X. ci: fix Android build by tying gpu feature to sysinfo's, bump cross version to a
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build_releases.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e0f4d211`: deps: bump rustix to 1.1.6 (#2312). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `99d586a1`: ci: fix Android build by tying gpu feature to sysinfo's, bump cross version to a9301e9 (#2316). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build_releases.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.1.6"
-checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
+  CROSS_VERSION: "git:a9301e91f72bba3850460512685f6b16062015ff"
+              # https://github.com/cross-rs/cross/pkgs/container/x86_64-unknown-linux-gnu/1554248584?tag=edge-centos
+              cross_image: "ghcr.io/cross-rs/x86_64-unknown-linux-gnu@sha256:1be9b0f725e4fdd4f7fb90c8e29678414cda08e7ddd2489d78555e6b2fe4176b",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.1.4"
-checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
+  CROSS_VERSION: "git:d6204e62acdba1a117341f93972f3d52470a3052"
+              cross_image: "ghcr.io/cross-rs/x86_64-unknown-linux-gnu@sha256:ab2070e67704b2c85d0d1fa50a0165ec438ed87fd1dc1a4058692a2348c071cb", # edge-centos
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e0f4d211` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `99d586a1` are properly handled with clean fallback behavior.

@@ -9489,3 +9489,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-13T13:10:51.759Z |
 | `learn-github-apache-incubator-pegasus` | `https://github.com/apache/incubator-pegasus` | `31da6f5e` | Multi-dimensional audit evidence | 2026-11-13T13:11:20.077Z |
 | `learn-dom-d-a29f5946` | `project://hf-qwen-qwen-image-2.1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | 2026-11-13T13:11:40.983Z |
+| `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-11-13T13:20:25.890Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `99d586a1` | Multi-dimensional audit evidence | 2026-11-13T13:20:39.042Z |
+| `learn-github-planetable-planet` | `https://github.com/Planetable/Planet` | `544b4253` | Multi-dimensional audit evidence | 2026-11-13T13:20:44.348Z |
+| `learn-dom-d-9802962d` | `project://hf-contrastive-lm-clm-v0.1-8b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | 2026-11-13T13:21:07.337Z |

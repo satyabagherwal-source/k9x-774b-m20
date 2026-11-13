@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T13:11:41.088Z",
+  "updated_at": "2026-11-13T13:21:07.701Z",
   "stats": {
-    "total_discovered": 2461,
-    "approved_pending_harvest": 2291,
+    "total_discovered": 2479,
+    "approved_pending_harvest": 2308,
     "harvested_count": 0,
-    "rejected_count": 170,
+    "rejected_count": 171,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2284,
-      "OFFICIAL_DOCUMENTATION": 93,
+      "COMMUNITY_AND_EXPERT": 2301,
+      "OFFICIAL_DOCUMENTATION": 94,
       "STANDARDS_AND_SPECIFICATIONS": 74,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 8,
@@ -52971,6 +52971,395 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-incubator-pegasus-learnings.md",
         "fileName": "apache-incubator-pegasus-learnings.md"
+      }
+    },
+    "SRC-033E06580770": {
+      "id": "SRC-033E06580770",
+      "url": "https://github.com/cross-rs/cross/pkgs/container/x86_64-unknown-linux-gnu/1554248584?tag=edge-centos",
+      "title": "https://github.com/cross-rs/cross/pkgs/container/x86_64-unknown-linux-gnu/1554248584?tag=edge-centos",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:20:51.247Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-B0B30BA0DC04": {
+      "id": "SRC-B0B30BA0DC04",
+      "url": "https://github.com/ClementTsang/bottom/pull/2302",
+      "title": "https://github.com/ClementTsang/bottom/pull/2302",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:20:51.274Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-C2E6216823AE": {
+      "id": "SRC-C2E6216823AE",
+      "url": "https://github.com/ClementTsang/bottom/pull/2304",
+      "title": "https://github.com/ClementTsang/bottom/pull/2304",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:20:51.295Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-948836F3ACF8": {
+      "id": "SRC-948836F3ACF8",
+      "url": "https://github.com/ClementTsang/bottom/pull/2314",
+      "title": "https://github.com/ClementTsang/bottom/pull/2314",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:20:51.313Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-0B272935F82C": {
+      "id": "SRC-0B272935F82C",
+      "url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "title": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.350Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
+        "fileName": "hf-contrastive-lm-clm-v0.1-8b-learnings.md"
+      }
+    },
+    "SRC-58C3DED46EED": {
+      "id": "SRC-58C3DED46EED",
+      "url": "https://github.com/Planetable/Planet",
+      "title": "https://github.com/Planetable/Planet",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.383Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-7CC586C172DA": {
+      "id": "SRC-7CC586C172DA",
+      "url": "https://www.youtube.com/embed/$1",
+      "title": "https://www.youtube.com/embed/$1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.402Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-60692860E23C": {
+      "id": "SRC-60692860E23C",
+      "url": "https://github.com/tw93/MiaoYan/blob/master/Mac/Business/Markdown.swift",
+      "title": "https://github.com/tw93/MiaoYan/blob/master/Mac/Business/Markdown.swift",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.421Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-3CC08E0A19D7": {
+      "id": "SRC-3CC08E0A19D7",
+      "url": "https://github.com/theacodes/cmarkgfm/blob/master/README.rst",
+      "title": "https://github.com/theacodes/cmarkgfm/blob/master/README.rst",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.522Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-0429E8BA6938": {
+      "id": "SRC-0429E8BA6938",
+      "url": "https://developer.apple.com/forums/thread/124617",
+      "title": "https://developer.apple.com/forums/thread/124617",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.541Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-D87D2BEE6FA1": {
+      "id": "SRC-D87D2BEE6FA1",
+      "url": "https://stackoverflow.com/a/42915296/12861158",
+      "title": "https://stackoverflow.com/a/42915296/12861158",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.560Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-423495DF1936": {
+      "id": "SRC-423495DF1936",
+      "url": "http://127.0.0.1/(gatewayPort",
+      "title": "http://127.0.0.1/(gatewayPort",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T13:21:07.579Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-E90893AAA98D": {
+      "id": "SRC-E90893AAA98D",
+      "url": "https://github.com/user-attachments/assets/9fab4bee-b009-4f0f-bc48-366d464bac23",
+      "title": "https://github.com/user-attachments/assets/9fab4bee-b009-4f0f-bc48-366d464bac23",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.598Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-6BE7A0F7A53B": {
+      "id": "SRC-6BE7A0F7A53B",
+      "url": "https://github.com/user-attachments/assets/649f35dd-d817-4c31-b40b-6df955b349a0",
+      "title": "https://github.com/user-attachments/assets/649f35dd-d817-4c31-b40b-6df955b349a0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.617Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-699696CC5F42": {
+      "id": "SRC-699696CC5F42",
+      "url": "https://github.com/Planetable/Planet/blob/dcf6ac56a65bc544b49a5eded47e8449442f1f52/Planet/Entities/MyPlanetModel%2BAggregate.swift",
+      "title": "https://github.com/Planetable/Planet/blob/dcf6ac56a65bc544b49a5eded47e8449442f1f52/Planet/Entities/MyPlanetModel%2BAggregate.swift",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.644Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-D2801386C30C": {
+      "id": "SRC-D2801386C30C",
+      "url": "https://github.com/user-attachments/assets/322613c2-028a-43ac-af97-795951e5e2ff",
+      "title": "https://github.com/user-attachments/assets/322613c2-028a-43ac-af97-795951e5e2ff",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.664Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-4E5F51CBDD26": {
+      "id": "SRC-4E5F51CBDD26",
+      "url": "https://docs.ipfs.io/how-to/peering-with-content-providers",
+      "title": "https://docs.ipfs.io/how-to/peering-with-content-providers",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.682Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-F893DC10A59A": {
+      "id": "SRC-F893DC10A59A",
+      "url": "https://dweb-dns.v2ex.pro/dns-query",
+      "title": "https://dweb-dns.v2ex.pro/dns-query",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:21:07.701Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
       }
     }
   }

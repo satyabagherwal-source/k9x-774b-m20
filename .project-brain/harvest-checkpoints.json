@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T13:11:20.102Z",
+  "last_updated": "2026-11-13T13:20:44.359Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -380,14 +380,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "content_hash": "11979ec87d346050a7d8bb6792925b35d23537ad186a698fa8cacacd3bdc872e",
-      "verified_at": "2026-11-08T13:45:28.517Z",
+      "content_hash": "974320fd1c7d99aaf3e702380d2e0e0c48b5417541ad9f8d67e86029102b1931",
+      "verified_at": "2026-11-13T13:20:25.904Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T13:45:28.517Z"
+      "last_updated": "2026-11-13T13:20:25.904Z"
     },
     "nvidia/Nemotron-3-Diarization": {
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "7ef933bbb4448d286c803eb3410f478af6620c042958a3cd2986ac852d20eeda",
-      "verified_at": "2026-11-12T00:45:31.392Z",
+      "content_hash": "2d0b8d38960e20d310015ecd3d58935f706527788bf7faf02cea51f556579dc1",
+      "verified_at": "2026-11-13T13:20:39.068Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T00:45:31.392Z"
+      "last_updated": "2026-11-13T13:20:39.068Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",
@@ -15261,14 +15261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-planetable-planet",
-      "content_hash": "6d1b3788b4652da6974526cb28693898a436cb4de8bbd0d0a30ccbecc83eb655",
-      "verified_at": "2026-10-27T11:09:14.649Z",
+      "content_hash": "b8adec3d614f250c86c6ba4a2e50189a103dfd25fdcd19a9ab5b6b6f45e562b5",
+      "verified_at": "2026-11-13T13:20:44.358Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:09:14.649Z"
+      "last_updated": "2026-11-13T13:20:44.358Z"
     },
     "mswjs/msw": {
       "repository": "mswjs/msw",

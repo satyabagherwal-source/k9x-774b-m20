@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-37CH",
-    "timestamp": "2026-11-11T09:29:09.617Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "9a4941dcdc4ebaf8f3da50b19a0ea294c30af8149f6a3d3703b0f7361c22fecd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-GU1G",
-    "timestamp": "2026-11-11T09:39:45.556Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "5759c9dec1226de28145439dbb8610563a538338cf73617a37fe83f6433b964b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-GWJ1",
-    "timestamp": "2026-11-11T09:39:48.781Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "050ce85a18a207c5513be2057308746474c4511e8302a09c8a7b2e43cac2affc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-H5I4",
     "timestamp": "2026-11-11T09:40:00.412Z",
     "repository": "lancedb/lancedb",
@@ -7490,6 +7445,51 @@
     "repository": "apache/incubator-pegasus",
     "learningId": "learn-github-apache-incubator-pegasus",
     "contentHash": "ac801a7cb05af2396369c4135aaa12e9572ff54b63c2d293291ee448abdb0b8b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-8BOC",
+    "timestamp": "2026-11-13T13:20:25.884Z",
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+    "contentHash": "974320fd1c7d99aaf3e702380d2e0e0c48b5417541ad9f8d67e86029102b1931",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-8LTQ",
+    "timestamp": "2026-11-13T13:20:39.038Z",
+    "repository": "ClementTsang/bottom",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "2d0b8d38960e20d310015ecd3d58935f706527788bf7faf02cea51f556579dc1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-8PX3",
+    "timestamp": "2026-11-13T13:20:44.343Z",
+    "repository": "Planetable/Planet",
+    "learningId": "learn-github-planetable-planet",
+    "contentHash": "b8adec3d614f250c86c6ba4a2e50189a103dfd25fdcd19a9ab5b6b6f45e562b5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -325,8 +325,8 @@
     "sourceUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
     "sourceVersion": "hf-contrastive-lm-clm-v0.1-8b",
     "license": "Open-Source",
-    "contentHash": "11979ec87d346050a7d8bb6792925b35d23537ad186a698fa8cacacd3bdc872e",
-    "lastHarvestedAt": "2026-11-08T13:45:28.497Z",
+    "contentHash": "974320fd1c7d99aaf3e702380d2e0e0c48b5417541ad9f8d67e86029102b1931",
+    "lastHarvestedAt": "2026-11-13T13:20:25.890Z",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b"
   },
   "hf-nvidia-nemotron-3-diarization": {
@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "e0f4d211",
+    "sourceVersion": "99d586a1",
     "license": "MIT",
-    "contentHash": "7ef933bbb4448d286c803eb3410f478af6620c042958a3cd2986ac852d20eeda",
-    "lastHarvestedAt": "2026-11-12T00:45:31.373Z",
+    "contentHash": "2d0b8d38960e20d310015ecd3d58935f706527788bf7faf02cea51f556579dc1",
+    "lastHarvestedAt": "2026-11-13T13:20:39.042Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {
@@ -10143,10 +10143,10 @@
     "repository": "Planetable/Planet",
     "platform": "github",
     "sourceUrl": "https://github.com/Planetable/Planet",
-    "sourceVersion": "5294e71c",
+    "sourceVersion": "544b4253",
     "license": "MIT",
-    "contentHash": "6d1b3788b4652da6974526cb28693898a436cb4de8bbd0d0a30ccbecc83eb655",
-    "lastHarvestedAt": "2026-10-27T11:09:14.644Z",
+    "contentHash": "b8adec3d614f250c86c6ba4a2e50189a103dfd25fdcd19a9ab5b6b6f45e562b5",
+    "lastHarvestedAt": "2026-11-13T13:20:44.348Z",
     "learningId": "learn-github-planetable-planet"
   },
   "mswjs-msw": {

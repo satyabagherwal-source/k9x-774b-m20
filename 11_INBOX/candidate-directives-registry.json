@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T13:11:41.104Z",
+  "last_updated": "2026-11-13T13:21:07.371Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8822,6 +8822,24 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-CE51D6-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-51C347",
+      "directive_title": "ci: fix Android build by tying gpu feature to sysinfo's, bump cross version to a",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clementtsang-bottom",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-51C347-ci-fix-android-build-by-tying-gpu-featur.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-74556F",
+      "directive_title": "Link RSS items by slug",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "planetable-planet",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-74556F-link-rss-items-by-slug.md",
       "staged_date": "2026-11-13"
     }
   ]

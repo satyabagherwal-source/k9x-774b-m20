@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T13:11:19.933Z",
+  "last_updated": "2026-11-13T13:20:44.195Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8446,14 +8446,19 @@
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "e0f4d211",
-      "content_hash": "7ef933bbb4448d286c803eb3410f478af6620c042958a3cd2986ac852d20eeda",
+      "source_version": "99d586a1",
+      "content_hash": "2d0b8d38960e20d310015ecd3d58935f706527788bf7faf02cea51f556579dc1",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deps: bump rustix to 1.1.6 (#2312)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "ci: fix Android build by tying gpu feature to sysinfo's, bump cross version to a",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -8497,7 +8502,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T00:45:31.191Z",
+      "verified_at": "2026-11-13T13:20:38.863Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24641,7 +24646,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
       "source_version": "hf-contrastive-lm-clm-v0.1-8b",
-      "content_hash": "11979ec87d346050a7d8bb6792925b35d23537ad186a698fa8cacacd3bdc872e",
+      "content_hash": "974320fd1c7d99aaf3e702380d2e0e0c48b5417541ad9f8d67e86029102b1931",
       "dossier_path": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "promoted_rules": [
@@ -24731,7 +24736,7 @@
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv44mqua",
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4hvkw7"
       ],
-      "verified_at": "2026-11-08T13:45:28.372Z",
+      "verified_at": "2026-11-13T13:20:25.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53320,11 +53325,16 @@
       "slug": "planetable-planet",
       "platform": "github",
       "source_url": "https://github.com/Planetable/Planet",
-      "source_version": "5294e71c",
-      "content_hash": "6d1b3788b4652da6974526cb28693898a436cb4de8bbd0d0a30ccbecc83eb655",
+      "source_version": "544b4253",
+      "content_hash": "b8adec3d614f250c86c6ba4a2e50189a103dfd25fdcd19a9ab5b6b6f45e562b5",
       "dossier_path": "07_PROJECT_LEARNING/planetable-planet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/planetable-planet-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Link RSS items by slug",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 3017,
           "title": "macOS 12 crash from dangling unowned planet references",
@@ -53341,7 +53351,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:09:14.585Z",
+      "verified_at": "2026-11-13T13:20:44.144Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
