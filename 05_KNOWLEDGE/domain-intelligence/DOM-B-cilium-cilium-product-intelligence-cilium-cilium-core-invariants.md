@@ -4,23 +4,23 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "294cd0ad",
+  "source_version": "edc81e6f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T14:55:43.955Z",
+  "timestamp": "2026-11-13T20:07:24.205Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `294cd0ad`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T14:55:43.955Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `edc81e6f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T20:07:24.205Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T14:55:43.203Z  
+> **Harvest Timestamp**: 2026-11-13T20:07:23.046Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25827 stars
+- **Stars / Engagement**: 25829 stars
 
 ---
 
@@ -1273,14 +1273,16 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #50008** (2026-11-13): **bgp: Sort attributes by type when printing**
+  *Symptoms*: Let's improve upon the previous fix by sorting the path attributes ourselves before printing them to have control over the order on our side.  AIL: 0 Fixes: 907d31116a0 ("bgp: Reorder expected path attribute in the pod-cidr.txtar") 
+  **Post-Mortem & Fix Analysis**:
+  > /test
+
 - **Issue #49999** (2026-11-12): **fix(linux/adnr): reconcile direct routes before node table initialization**
   *Symptoms*: This PR allows ADNR to publish direct routes while ClusterMesh initializes the node table. Waiting for node table initialization creates a dependency cycle: ClusterMesh waits for direct routes before completing its initializer, while ADNR waits for that initializer before reconciling the routes.  AIL:0  
   **Post-Mortem & Fix Analysis**:
   > /test
   > /ci-kpr-aks
-
-- **Issue #49998** (2026-11-12): **chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.19)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) |  | patch | `v0.20.2` → `v0.20.3` | | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | patch | `v0.20.2` → `v0.20.3` |  ---  ### Release Notes  <details> <summary>cilium/cilium-cli</summary>  ### [`v0.20.3`](https://redirect.github.com/cilium/cilium-cli/releases/tag/v0.20.3)  [Compare Source](https://redirect.github.com/cilium/cilium-cli/compare/v0.20.2...v0.20.3)  ## Summary of Changes  **Minor Changes:**  - cilium-cli: Apply standard scheduling params to all connectivity pods ([cilium/cilium#49113](https://redirect.github.com/cilium/cilium/issues/49113), [@&#8203;HadrienPatte](https://redirect.github.com/HadrienPatte)) - helm: move SPIRE chart values under ztunnel ([cilium/cilium#48942](https://redirect.github.com/cilium/cilium/issues/48942), [@&#8203;mhofstetter](https://redirect.github.com/mhofstetter))  **CI Changes:**  - cilium-cli: Fix unschedulable client pod on 2-node clusters ([cilium/cilium#49776](https://redirect.github.com/cilium/cilium/issues/49776), [@&#8203;aanm](https://redirect.github.com/aanm)) - cilium-cli: Ignore restarts of never-started containers ([cilium/cilium#49641](https://redirect.github.com/cilium/cilium/issues/49641), [@&#8203;aanm](https://redirect.github.com/aanm)) - cilium-cli: restore v2alpha1 BGP deprecation log exception ([cilium/cilium#49919](http
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1297,91 +1299,590 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b61ed8f` (2026-11-03)
-**Commit Message**: ciliumenvoyconfig: clone resources retained by the script fixture
+### Incident Patch 1: `edc81e6f` (2026-10-28)
+**Commit Message**: datapath/iptables: scope NOTRACK tunnel rules to local addresses
 
-The fake Envoy server retained caller-owned protobufs that the reconciler
-could later modify outside the fixture's lock. This raced with resource
-comparison and formatting in the script tests.
+skipping conntrack and simply accepting packets
+for a flow based solely in the destination port
+might cause certain flows (ex: transit flows,
+and NATted flows that happen to pick a tunnel port)
+to not go over the normal path as other non-local traffic
 
-Clone resources when storing them so the fixture owns independent
-snapshots. The existing CEC tests pass 20 race-enabled runs after the fix.
+this PR adds an extra argument to the iptables rules
+targeted at tunnel traffic terminated at the node
+to be more specific and only apply to local addresses.
 
-Signed-off-by: Jarno Rajahalme <[REDACTED_EMAIL]>
+relies on addrtype iptables module
 
-**File**: `pkg/ciliumenvoyconfig/script_test.go` (modified, +7/-5)
+added required modules to system requirements doc
+
+Signed-off-by: Bernardo Soares <[REDACTED_EMAIL]>
+
+**File**: `Documentation/operations/system_requirements.rst` (modified, +2/-1)
 ```diff
-@@ -290,21 +290,23 @@ func (rs resourceStore) equal(other resourceStore) bool {
- 	return maps.EqualFunc(rs, other, proto.Equal)
+@@ -194,7 +194,8 @@ The following kernel configuration options are required for proper operation:
+         CONFIG_VXLAN=y
+         CONFIG_GENEVE=y
+         CONFIG_FIB_RULES=y
+-
++        CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=m
++        CONFIG_NETFILTER_XT_TARGET_CT=m
+ 
+ .. note::
+ 
+```
+
+**File**: `pkg/datapath/iptables/iptables.go` (modified, +27/-27)
+```diff
+@@ -791,41 +791,41 @@ func (m *manager) addCiliumAcceptTunnelRules(tunelPort uint16) (err error) {
+ 	return nil
  }
  
-+// Retain independent snapshots: the reconciler may reuse and modify its
-+// protobufs after this call returns, outside the fake server's lock.
- func (rs resourceStore) update(res *xds.Resources) {
- 	for _, l := range res.Listeners {
--		rs[resourceKey{kind: listenerKey, name: l.Name}.String()] = l
-+		rs[resourceKey{kind: listenerKey, name: l.Name}.String()] = proto.Clone(l)
+-// addCiliumAcceptTunnelRules adds the NOTRACK rule in the cilium raw prerouting
++// installTunnelNoTrackRules adds the NOTRACK rule in the cilium raw prerouting
+ // and output raw chains for udp destination port at `tunnelPort`.
+ func (m *manager) installTunnelNoTrackRules(tunelPort uint16) error {
+-	input := []string{
+-		"-t", "raw",
+-		"-A", ciliumPreRawChain,
+-		"-p", "udp",
+-		"--dport", strconv.Itoa(int(tunelPort)),
+-		"-m", "comment", "--comment", "cilium: NOTRACK for tunnel traffic",
+-		"-j", "CT", "--notrack",
+-	}
+-
+-	output := []string{
+-		"-t", "raw",
+-		"-A", ciliumOutputRawChain,
+-		"-p", "udp",
+-		"--dport", strconv.Itoa(int(tunelPort)),
+-		"-m", "comment", "--comment", "cilium: NOTRACK for tunnel traffic",
+-		"-j", "CT", "--notrack",
+-	}
++	addRule := func(chain, localAddrDir string) error {
++		cmd := []string{"-t", "raw",
++			"-A", chain,
++			"-p", "udp",
++			"--dport", strconv.Itoa(int(tunelPort)),
++			"-m", "addrtype", fmt.Sprintf("--%s-type", localAddrDir), "LOCAL",
++			"-m", "comment", "--comment", "cilium: NOTRACK for tunnel traffic",
++			"-j", "CT", "--notrack",
++		}
+ 
+-	if m.sharedCfg.EnableIPv4 {
+-		if err := m.ip4tables.runProg(input); err != nil {
+-			return err
++		if m.sharedCfg.EnableIPv4 {
++			if err := m.ip4tables.runProg(cmd); err != nil {
++				return err
++			}
+ 		}
+-		if err := m.ip4tables.runProg(output); err != nil {
+-			return err
++
++		if m.sharedCfg.EnableIPv6 {
++			if err := m.ip6tables.runProg(cmd); err != nil {
++				return err
++			}
+ 		}
++
++		return nil
  	}
- 	for _, s := range res.Secrets {
--		rs[resourceKey{kind: secretKey, name: s.Name}.String()] = s
-+		rs[resourceKey{kind: secretKey, name: s.Name}.String()] = proto.Clone(s)
+ 
+-	if m.sharedCfg.EnableIPv6 {
+-		if err := m.ip6tables.runProg(input); err != nil {
+-			return err
++	for _, chain := range []string{ciliumPreRawChain, ciliumOutputRawChain} {
++		localAddrDir := "src"
++		if chain == ciliumPreRawChain {
++			localAddrDir = "dst"
+ 		}
+-		if err := m.ip6tables.runProg(output); err != nil {
++
++		if err := addRule(chain, localAddrDir); err != nil {
+ 			return err
+ 		}
  	}
- 	for _, r := range res.Routes {
--		rs[resourceKey{kind: routeKey, name: r.Name}.String()] = r
-+		rs[resourceKey{kind: routeKey, name: r.Name}.String()] = proto.Clone(r)
+```
+
+**File**: `pkg/datapath/iptables/iptables_test.go` (modified, +11/-4)
+```diff
+@@ -923,12 +923,19 @@ func testTunnelRulesTunnelingEnabled(t *testing.T, port uint16) {
+ 		ip6tables: mockIp6tables,
  	}
- 	for _, c := range res.Clusters {
--		rs[resourceKey{kind: clustersKey, name: c.Name}.String()] = c
-+		rs[resourceKey{kind: clustersKey, name: c.Name}.String()] = proto.Clone(c)
+ 
+-	expected := "%s -A %s -p udp --dport %d -m comment --comment %s"
++	expectedFilter := "%s -A %s -p udp --dport %d -m comment --comment %s"
++	expectedRaw := "%s -A %s -p udp --dport %d -m addrtype --%s-type LOCAL -m comment --comment %s"
+ 
+ 	mockIp4tables.expectations = []expectation{
+-		{args: fmt.Sprintf(expected, "-t filter", "CILIUM_OUTPUT", port, "cilium: ACCEPT for tunnel traffic -j ACCEPT")},
+-		{args: fmt.Sprintf(expected, "-t raw", "CILIUM_PRE_raw", port, "cilium: NOTRACK for tunnel traffic -j CT --notrack")},
+-		{args: fmt.Sprintf(expected, "-t raw", "CILIUM_OUTPUT_raw", port, "cilium: NOTRACK for tunnel traffic -j CT --notrack")},
++		{args: fmt.Sprintf(expectedFilter, "-t filter", "CILIUM_OUTPUT", port, "cilium: ACCEPT for tunnel traffic -j ACCEPT")},
++		{args: fmt.Sprintf(expectedRaw, "-t raw", "CILIUM_PRE_raw", port, "dst", "cilium: NOTRACK for tunnel traffic -j CT --notrack")},
++		{args: fmt.Sprintf(expectedRaw, "-t raw", "CILIUM_OUTPUT_raw", port, "src", "cilium: NOTRACK for tunnel traffic -j CT --notrack")},
++	}
++
++	mockIp6tables.expectations = []expectation{
++		{args: fmt.Sprintf(expectedFilter, "-t filter", "CILIUM_OUTPUT", port, "cilium: ACCEPT for tunnel traffic -j ACCEPT")},
++		{args: fmt.Sprintf(expectedRaw, "-t raw", "CILIUM_PRE_raw", port, "dst", "cilium: NOTRACK for tunnel traffic -j CT --notrack")},
++		{args: fmt.Sprintf(expectedRaw, "-t raw", "CILIUM_OUTPUT_raw", port, "src", "cilium: NOTRACK for tunnel traffic -j CT --notrack")},
  	}
- 	for _, e := range res.Endpoints {
--		rs[resourceKey{kind: endpointsKey, name: e.ClusterName}.String()] = e
-+		rs[resourceKey{kind: endpointsKey, name: e.ClusterName}.String()] = proto.Clone(e)
- 	}
- }
+ 	mockIp6tables.expectations = mockIp4tables.expectations
  
 ```
 
 ---
 
-### Incident Patch 2: `9b96f436` (2026-11-12)
-**Commit Message**: ci: update docs-builder
+### Incident Patch 2: `ec728c98` (2026-11-11)
+**Commit Message**: proxy,bpf: route MARK_MAGIC_PROXY_EGRESS_EPID traffic via cilium_host
 
-Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
+Handling of L7 LB traffic from Envoy is spread over three programs.
+cil_to_container picks it up for local backends behind per-endpoint
+routes, cil_to_netdev for remote backends reached through a direct route,
+and cil_from_host for everything else. All three do the same thing: clear
+the mark and tail call into the source endpoint's egress policy program,
+so that egress policy is enforced after the proxy.
 
-**File**: `.github/workflows/documentation.yaml` (modified, +1/-1)
+Install a routing rule (fwmark 0x0900/0x0f00, table 2005, priority 10)
+that pulls all MARK_MAGIC_PROXY_EGRESS_EPID traffic into cilium_host,
+ahead of both the per-endpoint routes (priority 20/110) and the direct
+routes in the main table. cil_from_host then becomes the path this traffic
+normally takes to re-enter the egress policy program. The previous
+commits prepared the egress path for it: local backends are delivered by
+the endpoint lookup, and anything else is handed back to the stack.
+
+The rule is installed for every Envoy configuration, not just for native
+routing or just when per-endpoint routes are enabled. The traffic has to
+be diverted wherever it would otherwise be steered straight at its
+destination
+
+**File**: `bpf/bpf_host.c` (modified, +12/-0)
 ```diff
-@@ -70,7 +70,7 @@ jobs:
-         uses: ./.github/actions/disk-cleanup
+@@ -1448,6 +1448,18 @@ int cil_to_netdev(struct __ctx_buff *ctx)
+ 		}
+ 	}
  
-       - name: Build HTML
--        uses: docker://quay.io/cilium/docs-builder:c4c4f10b28886b2990bceabf0cf6f2c33791b96d@sha256:35459bcbc27746250d39dc10db56c7f8421fc9e859da8bb598c51df217259f7b
-+        uses: docker://quay.io/cilium/docs-builder:c14b3ecf2124dc8d3f040342fc45dd3273cba9cf@sha256:01e640859ee21e03e2481e5b1959fee3b126ea172018d2f47e089c3ed5d4482b
-         with:
-           entrypoint: ./Documentation/check-build.sh
-           args: html
++	/* L7 LB traffic is normally pulled into cilium_host by the
++	 * MARK_MAGIC_PROXY_EGRESS_EPID ip rule, so that cil_from_host is the
++	 * single place that re-enters the source endpoint's egress policy. This
++	 * is the fallback for when that rule is not in place: on upgrade from a
++	 * version that did not install it, cilium-envoy keeps proxying while the
++	 * agent reloads the datapath, and the rule is only installed at the end
++	 * of Reinitialize(). Without this block a remote backend would be
++	 * reached by a direct route with the egress policy never enforced.
++	 *
++	 * TODO: Remove in v1.22. The rule is installed since v1.21, and upgrades
++	 * are only supported from the previous minor release.
++	 */
+ 	if (CONFIG(enable_l7_lb) && magic == MARK_MAGIC_PROXY_EGRESS_EPID) {
+ 		__u32 lxc_id = get_epid(ctx);
+ 
 ```
 
-**File**: `Documentation/Makefile` (modified, +1/-1)
+**File**: `bpf/bpf_lxc.c` (modified, +44/-17)
 ```diff
-@@ -14,7 +14,7 @@ SPHINX_OPTS := "-j=auto"
+@@ -1171,13 +1171,17 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
+ 	 * the ipv4_local_delivery() function to enforce ingress policies for
+ 	 * that endpoint.
+ 	 *
+-	 * L7 LB traffic is looked up as well. With per-endpoint routes, its
+-	 * egress policy program is tail called from cil_to_container for a
+-	 * local backend, and from cil_to_netdev for a remote one. The lookup
+-	 * delivers the former to the lxc device the ctx already sits on, so
+-	 * that it re-enters cil_to_container with the mark cleared, as with the
+-	 * redirect_self() at pass_to_stack. It misses for the latter, which
+-	 * continues at pass_to_stack.
++	 * L7 LB traffic is normally tail called here from cil_from_host, ie.
++	 * the ctx sits on cilium_host's egress hook rather than on the device
++	 * the packet is leaving by. Look the endpoint up for it as well, so
++	 * that a local backend is delivered here instead of falling through to
++	 * pass_to_stack, which cannot forward it from cilium_host. While the
++	 * MARK_MAGIC_PROXY_EGRESS_EPID ip rule is not in place yet, it is tail
++	 * called from the fallbacks in cil_to_container and cil_to_netdev
++	 * instead: the lookup delivers a local backend the same way, and
++	 * misses for a remote one, which continues at pass_to_stack.
++	 *
++	 * TODO: Remove in v1.22, together with those fallbacks.
+ 	 */
+ 	if (CONFIG(enable_bpf_routing) || hairpin_flow || from_l7lb ||
+ 	    CONFIG(enable_bpf_host_routing)) {
+@@ -1336,17 +1340,21 @@ ipv4_forward_to_destination(struct __ctx_buff *ctx, struct iphdr *ip4,
+ 	 * host. How it continues depends on which hook `cil_lxc_policy_egress`
+ 	 * was tail called from.
+ 	 *
+-	 * From cil_from_host, returning CTX_ACT_OK on cilium_host's egress hook
+-	 * would transmit the packet into the cilium_host/cilium_net veth pair
+-	 * rather than route it, so hairpin it into cilium_host's ingress hook
+-	 * instead and let the stack route it. Going through the stack also keeps
+-	 * the ip rules that select an egress device by source address - the
+-	 * per-ENI rules on AWS, for one - which a FIB lookup here would not
+-	 * consult.
++	 * Normally that is cil_from_host. Returning CTX_ACT_OK on cilium_host's
++	 * egress hook would transmit the packet into the cilium_host/cilium_net
++	 * veth pair rather than route it, so hairpin it into cilium_host's
++	 * ingress hook instead and let the stack route it. Going through the
++	 * stack also keeps the ip rules that select an egress device by source
++	 * address - the per-ENI rules on AWS, for one - which a FIB lookup here
++	 * would not consult.
++	 *
++	 * While the MARK_MAGIC_PROXY_EGRESS_EPID ip rule is not in place yet, it
++	 * is the fallback in cil_to_container or cil_to_netdev instead. The ctx
++	 * then already sits on the device the packet is leaving by, so loop it
++	 * back out of that device, where the hook sees it again with the mark
++	 * cleared.
+ 	 *
+-	 * From cil_to_container or cil_to_netdev, the ctx already sits on the
+-	 * device the packet is leaving by, so loop it back out of that device,
+-	 * where the hook sees it again with the mark cleared.
++	 * TODO: Remove in v1.22, together with the redirect_self() call below.
+ 	 */
+ 	if (!CONFIG(enable_bpf_routing) && from_l7lb) {
+ 		if (ctx_get_ifindex(ctx) == CONFIG(cilium_host_ifindex))
+@@ -2550,6 +2558,25 @@ int cil_to_container(struct __ctx_buff *ctx)
+ 	bpf_clear_meta(ctx);
+ 	check_and_store_ip_trace_id(ctx);
  
- .PHONY: default clean help cilium-build cmdref epub latex html
++	/* Fallback for when the MARK_MAGIC_PROXY_EGRESS_EPID ip rule is missing
++	 * and a per-endpoint route steers L7 LB traffic straight at the backend's
++	 * lxc device instead of into cilium_host. See the equivalent block in
++	 * cil_to_netdev(), and note that inherit_identity_from_host() below has
++	 * no case for this mark: without this block the source endpoint's egress
++	 * policy would be skipped and ingress policy evaluated against WORLD_ID
++	 * rather than the client's identity.
++	 *
++	 * Entering the egress policy program from here is equivalent to entering
++	 * it from cil_from_host: the endpoint lookup opened for from_l7lb finds
++	 * the backend and calls ipv{4,6}_local_delivery(), which ends in
++	 * redirect_ep(ctx, ep->ifindex). As cil_to_container sits on that same
++	 * lxc device's egress hook, the packet re-enters here with the mark
++	 * cleared, as with the redirect_self() taken at pass_to_stack, and
++	 * ingress policy is enforced.
++	 *
++	 * TODO: Remove in v1.22. The rule is installed since v1.21, and upgrades
++	 * are only supported from the previous minor release.
++	 */
+ 	if (CONFIG(enable_l7_lb) &&
+ 	    (ctx->mark & MARK_MAGIC_HOST_MASK) == MARK_MAGIC_PROXY_EGRESS_EPID) {
+ 		__u16 lxc_id = get_epid(ctx);
+```
+
+**File**: `bpf/tests/l7_lb_local_backend.h` (modified, +14/-8)
+```diff
+@@ -10,7 +10,12 @@
+  * - PER_ENDPOINT_ROUTES: 1 for the per-endpoint routes configuration, which
+  *   turns enable_bpf_routing off, or 0 for BPF routing.
+  * - FROM_CIL_TO_CONTAINER: 1 to simulate the egress policy program being tail
+- *   called from cil_to_container, or 0 for the tail call from cil_from_host.
++ *   called from cil_to_container, the fallback for when the
++ *   MARK_MAGIC_PROXY_EGRESS_EPID ip rule is not in place yet, or 0 for the
++ *   tail call from cil_from_host.
++ *
++ *   TODO: Remove in v1.22, together with the cil_to_container fallback. Then
++ *   drop FROM_CIL_TO_CONTAINER and the variants that set it to 1.
+  */
+ #if !defined(PER_ENDPOINT_ROUTES) || !defined(FROM_CIL_TO_CONTAINER)
+ # error "Define PER_ENDPOINT_ROUTES and FROM_CIL_TO_CONTAINER before including this file"
+@@ -93,11 +98,11 @@ mock_tail_call_dynamic(struct __ctx_buff *ctx __maybe_unused,
+ /* BPF_PROG_TEST_RUN are executed with `ctx->ifindex = 1` (loopback device) as in
+  * the kernel `bpf_prog_test_run_skb()` function.
+  * (see https://github.com/torvalds/linux/blob/0257f64bdac7fdca30fa3cae0df8b9ecbec7733a/net/bpf/test_run.c#L991)
+- * When tail called from cil_from_host, the ctx sits on cilium_host: set
+- * cilium_host_ifindex to the ifindex the test run gives us, given we cannot
+- * change ctx->ifindex. To simulate the tail call from cil_to_container
+- * instead, where the ctx sits on the backend's lxc device, give cilium_host
+- * any other ifindex.
++ * L7 LB traffic is normally tail called from cil_from_host, so the ctx sits
++ * on cilium_host: set cilium_host_ifindex to the ifindex the test run gives
++ * us, given we cannot change ctx->ifindex. To simulate the tail call from
++ * cil_to_container instead, where the ctx sits on the backend's lxc device,
++ * give cilium_host any other ifindex.
+  */
+ #if FROM_CIL_TO_CONTAINER
+ ASSIGN_CONFIG(__u32, cilium_host_ifindex, 2)
+@@ -132,8 +137,9 @@ ASSIGN_CONFIG(bool, enable_bpf_routing, !PER_ENDPOINT_ROUTES)
+  * - in case of per-endpoint routes, packet tail calls from
+      cil_from_host, and is redirected into cilium_host's ingress hook so that
+      the stack routes it.
+- * - in case of per-endpoint routes, packet tail calls from
+-     cil_to_container, and it will be hairpinned back to handle ingress policies.
++ * - in case of per-endpoint routes without the ip rule in place, packet tail
++     calls from cil_to_container, and is hairpinned back out of the lxc device
++     so that cil_to_container enforces ingress policy.
+  * Given we cannot import both bpf_host and bpf_lxc, in our SETUP functions
+  * we will simulate hitting the `tail_call_egress_policy(ctx, lxc_id)` codepath.
+  */
+```
+
+**File**: `bpf/tests/l7_lb_local_backend_pod.c` (modified, +6/-0)
+```diff
+@@ -1,6 +1,12 @@
+ // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ /* Copyright Authors of Cilium */
  
--DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:c4c4f10b28886b2990bceabf0cf6f2c33791b96d@sha256:35459bcbc27746250d39dc10db56c7f8421fc9e859da8bb598c51df217259f7b
-+DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:c14b3ecf2124dc8d3f040342fc45dd3273cba9cf@sha256:01e640859ee21e03e2481e5b1959fee3b126ea172018d2f47e089c3ed5d4482b
++/* Per-endpoint routes without the MARK_MAGIC_PROXY_EGRESS_EPID ip rule in
++ * place yet, eg. while upgrading from a version that did not install it: the
++ * per-endpoint route steers L7 LB traffic to the backend's lxc device, and the
++ * egress policy program is tail called from cil_to_container.
++ */
++
+ #define PER_ENDPOINT_ROUTES	1
+ #define FROM_CIL_TO_CONTAINER	1
  
- .PHONY: update-docs-builder-image
- update-docs-builder-image: DOCS_BUILDER_TAG=$(word 3,$(shell git ls-tree --full-tree HEAD -- $(DOCS_BUILDER_DIR)))
+```
+
+**File**: `pkg/proxy/routes.go` (modified, +48/-8)
+```diff
+@@ -44,7 +44,7 @@ func (p *Proxy) ReinstallRoutingRules(ctx context.Context, mtu int, ipsecEnabled
+ 		return fmt.Errorf("failed to retrieve local node: %w", err)
+ 	}
+ 
+-	fromIngressProxy, fromEgressProxy, mtu := requireFromProxyRoutes(ipsecEnabled, wireguardEnabled, mtu)
++	fromIngressProxy, fromEgressProxy, fromProxyEgressEPID, mtu := requireFromProxyRoutes(ipsecEnabled, wireguardEnabled, mtu)
+ 
+ 	rxn := p.db.ReadTxn()
+ 	hostDevice, _, hostDeviceFound := p.devices.Get(rxn, tables.DeviceByName(defaults.HostDevice))
+@@ -59,12 +59,12 @@ func (p *Proxy) ReinstallRoutingRules(ctx context.Context, mtu int, ipsecEnabled
+ 			return err
+ 		}
+ 
+-		if fromIngressProxy || fromEgressProxy {
++		if fromIngressProxy || fromEgressProxy || fromProxyEgressEPID {
+ 			if !hostDeviceFound {
+ 				return fmt.Errorf("failed to get host device %s", defaults.HostDevice)
+ 			}
+ 			internalIP := localNode.GetCiliumInternalIPv4()
+-			if err := installFromProxyRoutesIPv4(p.routeManager, p.routeOwner, internalIP, hostDevice, fromIngressProxy, fromEgressProxy, mtu); err != nil {
++			if err := installFromProxyRoutesIPv4(p.routeManager, p.routeOwner, internalIP, hostDevice, fromIngressProxy, fromEgressProxy, fromProxyEgressEPID, mtu); err != nil {
+ 				return err
+ 			}
+ 		} else {
+@@ -86,7 +86,7 @@ func (p *Proxy) ReinstallRoutingRules(ctx context.Context, mtu int, ipsecEnabled
+ 			return err
+ 		}
+ 
+-		if fromIngressProxy || fromEgressProxy {
++		if fromIngressProxy || fromEgressProxy || fromProxyEgressEPID {
+ 			if !hostDeviceFound {
+ 				return fmt.Errorf("failed to get host device %s", defaults.HostDevice)
+ 			}
+@@ -97,7 +97,7 @@ func (p *Proxy) ReinstallRoutingRules(ctx context.Context, mtu int, ipsecEnabled
+ 			if err != nil {
+ 				return err
+ 			}
+-			if err := installFromProxyRoutesIPv6(p.routeOwner, p.routeManager, ipv6, hostDevice, fromIngressProxy, fromEgressProxy, mtu); err != nil {
++			if err := installFromProxyRoutesIPv6(p.routeOwner, p.routeManager, ipv6, hostDevice, fromIngressProxy, fromEgressProxy, fromProxyEgressEPID, mtu); err != nil {
+ 				return err
+ 			}
+ 		} else {
+@@ -127,7 +127,17 @@ func (p *Proxy) ReinstallRoutingRules(ctx context.Context, mtu int, ipsecEnabled
+ //     as above, and also to account for XFRM overhead on proxy-to-proxy connections.
+ //   - Native routing + WireGuard: install only Ingress routes to account for WireGuard
+ //     overhead on reply packets from Ingress L7 proxy in proxy-to-proxy connections.
+-func requireFromProxyRoutes(ipsecEnabled, wireguardEnabled bool, mtuIn int) (fromIngressProxy, fromEgressProxy bool, mtu int) {
++//   - Envoy: also install the EPID rule, so that all
++//     MARK_MAGIC_PROXY_EGRESS_EPID traffic is pulled into cilium_host and
++//     cil_from_host becomes the single place that re-enters the source
++//     endpoint's egress policy. Unlike the rules above this applies to every
++//     routing mode, because the traffic would otherwise be steered straight to
++//     its destination: to the backend's lxc device by a per-endpoint route, or
++//     out a native device by a direct route to a remote backend.
++func requireFromProxyRoutes(ipsecEnabled, wireguardEnabled bool, mtuIn int) (fromIngressProxy, fromEgressProxy, fromProxyEgressEPID bool, mtu int) {
++	if option.Config.EnableEnvoyConfig {
++		fromProxyEgressEPID = true
++	}
+ 	if option.Config.TunnelingEnabled() {
+ 		return
+ 	}
+@@ -241,6 +251,18 @@ var (
+ 		Table:    linux_defaults.RouteTableFromProxy,
+ 		Protocol: linux_defaults.RTProto,
+ 	}
++
++	// Routing rule for L7 LB traffic marked with the source endpoint ID.
++	// Pulls MARK_MAGIC_PROXY_EGRESS_EPID packets into cilium_host before
++	// per-endpoint routes can redirect them directly to the lxc device,
++	// so that egress policy enforcement always goes through cil_from_host.
++	fromProxyEgressEPIDRule = route.Rule{
++		Priority: linux_defaults.RulePriorityFromProxy,
++		Mark:     uint32(linux_defaults.MagicMarkProxyEgressEPID),
++		Mask:     linux_defaults.MagicMarkHostMask,
++		Table:    linux_defaults.RouteTableFromProxy,
++		Protocol: linux_defaults.RTProto,
++	}
+ )
+ 
+ // installFromProxyRoutesIPv4 configures routes and rules needed to redirect ingress
+@@ -250,7 +272,7 @@ func installFromProxyRoutesIPv4(
+ 	routeOwner *reconciler.RouteOwner,
+ 	ipv4 netip.Addr,
+ 	device *tables.Device,
+-	fromIngressProxy, fromEgressProxy bool,
++	fromIngressProxy, fromEgressProxy, fromProxyEgressEPID bool,
+ 	mtu int,
+ ) error {
+ 	prefix, _ := ipv4.Prefix(ipv4.BitLen())
+@@ -284,6 +306,11 @@ func installFromProxyRoutesIPv4(
+ 			return fmt.Errorf("inserting ipv4 from egress proxy routing rule %v: %w", fromEgressProxyRule, err)
+ 		}
+ 	}
++	if fromProxyEgressEPID {
++		if err := route.ReplaceRule(fromProxyEgressEPIDRule); err != nil {
++			return fmt.Errorf("inserting ipv4 from proxy egress EPID routing rule %v: %w", fromProxyEgressEPIDRule, err)
++		}
++	}
+ 	if err := routeManager.UpsertRouteWait(fromProxyToCiliumHostRoute4); err != nil {
+ 		return fmt.Errorf("inserting ipv4 from proxy to cilium_host rou
+```
+
+**File**: `pkg/proxy/routes_test.go` (modified, +159/-6)
+```diff
+@@ -50,6 +50,115 @@ func filterDefaultRouteIPv6(t *testing.T, rt []netlink.Route) netlink.Route {
+ 	return rt[i]
+ }
+ 
++func TestRequireFromProxyRoutes(t *testing.T) {
++	saved := option.Config
++	t.Cleanup(func() { option.Config = saved })
++
++	// enableEndpointRoutes is deliberately not read by requireFromProxyRoutes:
++	// the EPID rule is needed whether or not per-endpoint routes are in use.
++	// With them, a local backend is steered straight to its lxc device; without
++	// them, a remote backend leaves by a direct route. Neither passes through
++	// cilium_host, and neither cil_to_container nor cil_to_netdev intercepts
++	// the mark any more, so both need the rule. It is varied across the paired
++	// cases below so that they fail if the rule is ever gated on it.
++	tests := []struct {
++		name                 string
++		routingMode          string
++		enableEnvoyConfig    bool
++		enableEndpointRoutes bool
++		ipsecEnabled         bool
++		wireguardEnabled     bool
++		wantIngress          bool
++		wantEgress           bool
++		wantEPID             bool
++	}{
++		{
++			// The EPID rule is not specific to native routing:
++			// cil_from_host is the only remaining handler for the mark in
++			// tunneling mode too.
++			name:                 "tunneling, envoy with per-ep routes",
++			routingMode:          option.RoutingModeTunnel,
++			enableEnvoyConfig:    true,
++			enableEndpointRoutes: true,
++			wantEPID:             true,
++		},
++		{
++			name:                 "tunneling, envoy without per-ep routes",
++			routingMode:          option.RoutingModeTunnel,
++			enableEnvoyConfig:    true,
++			enableEndpointRoutes: false,
++			wantEPID:             true,
++		},
++		{
++			name:                 "tunneling, per-ep routes without envoy",
++			routingMode:          option.RoutingModeTunnel,
++			enableEnvoyConfig:    false,
++			enableEndpointRoutes: true,
++		},
++		{
++			name:        "native, no features",
++			routingMode: option.RoutingModeNative,
++		},
++		{
++			// Remote backends are reached by a direct route out a native
++			// device, so they too must be pulled into cilium_host now that
++			// cil_to_netdev no longer intercepts the mark.
++			name:                 "native, envoy without per-ep routes",
++			routingMode:          option.RoutingModeNative,
++			enableEnvoyConfig:    true,
++			enableEndpointRoutes: false,
++			wantIngress:          true,
++			wantEPID:             true,
++		},
++		{
++			name:                 "native, envoy with per-ep routes",
++			routingMode:          option.RoutingModeNative,
++			enableEnvoyConfig:    true,
++			enableEndpointRoutes: true,
++			wantIngress:          true,
++			wantEPID:             true,
++		},
++		{
++			name:         "native, ipsec",
++			routingMode:  option.RoutingModeNative,
++			ipsecEnabled: true,
++			wantIngress:  true,
++			wantEgress:   true,
++		},
++		{
++			name:             "native, wireguard",
++			routingMode:      option.RoutingModeNative,
++			wireguardEnabled: true,
++			wantIngress:      true,
++		},
++		{
++			name:                 "native, envoy + per-ep routes + ipsec",
++			routingMode:          option.RoutingModeNative,
++			enableEnvoyConfig:    true,
++			enableEndpointRoutes: true,
++			ipsecEnabled:         true,
++			wantIngress:          true,
++			wantEgress:           true,
++			wantEPID:             true,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			option.Config = &option.DaemonConfig{
++				RoutingMode:          tt.routingMode,
++				EnableEnvoyConfig:    tt.enableEnvoyConfig,
++				EnableEndpointRoutes: tt.enableEndpointRoutes,
++			}
++
++			gotIngress, gotEgress, gotEPID, _ := requireFromProxyRoutes(tt.ipsecEnabled, tt.wireguardEnabled, 0)
++			assert.Equal(t, tt.wantIngress, gotIngress, "fromIngressProxy")
++			assert.Equal(t, tt.wantEgress, gotEgress, "fromEgressProxy")
++			assert.Equal(t, tt.wantEPID, gotEPID, "fromProxyEgressEPID")
++		})
++	}
++}
++
+ func TestPrivilegedRoutes(t *testing.T) {
+ 	testutils.PrivilegedTest(t)
+ 
+@@ -193,7 +302,7 @@ func TestPrivilegedRoutes(t *testing.T) {
+ 				}
+ 
+ 				// Install routes and rules the first time.
+-				assert.NoError(t, installFromProxyRoutesIPv4(routeManager, owner, testIPv4, dummyDevice, true, true, defaultMTU))
++				assert.NoError(t, installFromProxyRoutesIPv4(routeManager, owner, testIPv4, dummyDevice, true, true, false, defaultMTU))
+ 
+ 				rules, err := route.ListRules(netlink.FAMILY_V4, &fromIngressProxyRule)
+ 				assert.NoError(t, err)
+@@ -210,7 +319,7 @@ func TestPrivilegedRoutes(t *testing.T) {
+ 				assert.Equal(t, defaultMTU, defaultRoute.MTU)
+ 
+ 				// Ensure idempotence.
+-				assert.NoError(t, installFromProxyRoutesIPv4(routeManager, owner, testIPv4, dummyDevice, true, true, defaultMTU))
++				assert.NoError(t, installFromProxyRoutesIPv4(routeManager, owner, testIPv4, dummyDevice, true, true, false, defaultMTU))
+ 
+ 				// Remove routes installed before.
+ 				assert.NoError(t, removeFromProxyRulesIPv4())
+@@ -219,9 +328,31 @@ func TestPrivilegedRoutes(t *testing.T) {
+ 				owner, err = routeManage
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50008** (2026-11-13): bgp: Sort attributes by type when printing (@joamaki)
 - **PR #49999** (2026-11-12): fix(linux/adnr): reconcile direct routes before node table initialization (@andreaterzolo)
 - **PR #49998** (2026-11-12): chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.19) (@cilium-renovate[bot])
 - **PR #49997** (2026-11-12): chore(deps): update dependency cilium/cilium-cli to v0.20.3 (v1.20) (@cilium-renovate[bot])
 - **PR #49995** (2026-11-13): gha: install the delegated IPAM conflist once Cilium is ready (@ekoops)
 - **PR #49994** (2026-11-13): rbac: restrict agents to only accessing their own Node and CiliumNodes (@squeed)
-- **PR #49987** (2026-11-12): datapath: correctly set nodeport/ipv4 configs in tests (@ekoops)
 
 ---
 
@@ -1401,41 +1902,32 @@ Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ciliumenvoyconfig: clone resources retained by the script fixture
+## X. datapath/iptables: scope NOTRACK tunnel rules to local addresses
 
 **RULE**:
-When implementing operations in `pkg/ciliumenvoyconfig/script_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Documentation/operations/system_requirements.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b61ed8f`: ciliumenvoyconfig: clone resources retained by the script fixture. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `edc81e6f`: datapath/iptables: scope NOTRACK tunnel rules to local addresses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ciliumenvoyconfig/script_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/operations/system_requirements.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// Retain independent snapshots: the reconciler may reuse and modify its
-// protobufs after this call returns, outside the fake server's lock.
-		rs[resourceKey{kind: listenerKey, name: l.Name}.String()] = proto.Clone(l)
-		rs[resourceKey{kind: secretKey, name: s.Name}.String()] = proto.Clone(s)
-		rs[resourceKey{kind: routeKey, name: r.Name}.String()] = proto.Clone(r)
-		rs[resourceKey{kind: clustersKey, name: c.Name}.String()] = proto.Clone(c)
-		rs[resourceKey{kind: endpointsKey, name: e.ClusterName}.String()] = proto.Clone(e)
+        CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=m
+        CONFIG_NETFILTER_XT_TARGET_CT=m
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-		rs[resourceKey{kind: listenerKey, name: l.Name}.String()] = l
-		rs[resourceKey{kind: secretKey, name: s.Name}.String()] = s
-		rs[resourceKey{kind: routeKey, name: r.Name}.String()] = r
-		rs[resourceKey{kind: clustersKey, name: c.Name}.String()] = c
-		rs[resourceKey{kind: endpointsKey, name: e.ClusterName}.String()] = e
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b61ed8f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `edc81e6f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

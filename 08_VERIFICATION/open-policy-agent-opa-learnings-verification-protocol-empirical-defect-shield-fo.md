@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:42:49.334Z",
+  "timestamp": "2026-11-13T20:08:03.599Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-open-policy-agent-opa-learnings",
+  "learning_id": "LEARN-EVO-open-policy-agent-opa-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [open-policy-agent-opa-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:42:49.334Z`  
-> **Learning ID**: `LEARN-REEXTRACT-open-policy-agent-opa-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T20:08:03.599Z`  
+> **Learning ID**: `LEARN-EVO-open-policy-agent-opa-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `ef171a81`  
+> **Source Version**: `8d10da6e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:26:37.570Z  
+> **Timestamp**: 2026-11-13T20:07:19.363Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:26:37.415Z  
+> **Harvest Timestamp**: 2026-11-13T20:07:19.357Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12458 stars
+- **Stars / Engagement**: 12468 stars
 
 ---
 
@@ -992,165 +992,360 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4434f660` (2026-11-06)
-**Commit Message**: topdown: fix net.cidr_merge panic on IPv4-mapped IPv6 CIDRs
+### Incident Patch 1: `8d10da6e` (2026-11-13)
+**Commit Message**: ast: fix negative number location text (for issue #9531) (#9558)
 
-Signed-off-by: Nikita Pivkin <[REDACTED_EMAIL]>
+location text of parser currently captures only `-` sign for
+negative-number terms. This change preserves the full source text while
+leaving the numeric value unchanged, with regression coverage added to
+TestNumberTerms.
+Resolves #9531
 
-**File**: `internal/cidr/merge/merge.go` (modified, +2/-1)
+Signed-off-by: devj <[REDACTED_EMAIL]>
+
+**File**: `v1/ast/parser.go` (modified, +1/-0)
 ```diff
-@@ -106,7 +106,8 @@ func GetAddressRange(ipNet net.IPNet) (net.IP, net.IP) {
- 	firstIP = firstIP.Mask(ipNet.Mask)
- 	lastIP = lastIP.Mask(ipNet.Mask)
+@@ -2760,6 +2760,7 @@ func (p *Parser) parseNumber() *Term {
+ 		return nil
+ 	}
  
--	if firstIP.To4() != nil {
-+	// Only 4-byte addresses need the prefix. IPv4-mapped IPv6 addresses are already 16 bytes long.
-+	if len(firstIP) == net.IPv4len {
- 		firstIP = append(v4Mappedv6Prefix, firstIP...)
- 		lastIP = append(v4Mappedv6Prefix, lastIP...)
++	loc.Text = p.s.Text(loc.Offset, p.s.tokEnd)
+ 	// Note: Use the original string, do *not* round trip from
+ 	// the big.Float as it can cause precision loss.
+ 	return NumberTerm(json.Number(s)).SetLocation(loc)
+```
+
+**File**: `v1/ast/parser_test.go` (modified, +2/-0)
+```diff
+@@ -61,6 +61,7 @@ func TestNumberTerms(t *testing.T) {
+ 		{"0", "0"},
+ 		{"100", "100"},
+ 		{"-1", "-1"},
++		{"-1000", "-1000"},
+ 		{"1e6", "1e6"},
+ 		{"1.1e6", "1.1e6"},
+ 		{"-1e-6", "-1e-6"},
+@@ -90,6 +91,7 @@ func TestNumberTerms(t *testing.T) {
+ 				if !result.Equal(e) {
+ 					t.Errorf("Expected %v for %v but got: %v", e, tc.input, result)
+ 				}
++				assertLocationText(t, tc.input, result.Location)
+ 			}
+ 		})
  	}
 ```
 
-**File**: `v1/test/cases/testdata/v1/netcidrmerge/test-ipv4-mapped-ipv6.yaml` (added, +38/-0)
+---
+
+### Incident Patch 2: `49d3f9fc` (2026-11-12)
+**Commit Message**: topdown/walk: alloc less when building walk paths (#9554)
+
+walk built each path with Array.Append, then copied again before handing
+it to the caller.
+
+pathAppend now copies into an exactly sized slice. Sibling paths never
+share memory, so the second copy is not needed and is removed.
+
+The existing walkbuiltin/array path not overwritten case (issue #7656)
+fails if pathAppend goes back to Append without the copy, so it guards
+this change.
+
+````
+$ go run golang.org/x/perf/cmd/benchstat@latest /tmp/before.txt /tmp/after.txt
+goos: darwin
+goarch: arm64
+pkg: github.com/open-policy-agent/opa/v1/topdown
+cpu: Apple M4 Max
+                          │ /tmp/before.txt │          /tmp/after.txt           │
+                          │     sec/op      │   sec/op     vs base              │
+ObjectSubsetSlow/10-16          10.16µ ± 3%   10.03µ ± 1%       ~ (p=0.132 n=6)
+ObjectSubsetSlow/100-16         73.14µ ± 1%   73.15µ ± 1%       ~ (p=0.589 n=6)
+ObjectSubsetSlow/1000-16        750.4µ ± 6%   756.7µ ± 1%       ~ (p=0.180 n=6)
+ObjectSubsetSlow/10000-16       7.985m ± 2%   7.851m ± 1%  -1.67% (p=0.004 n=6)
+geomean                         258.3µ        256.9µ       -0.52%
+
+                          │ /
+
+**File**: `v1/topdown/walk.go` (modified, +10/-14)
 ```diff
-@@ -0,0 +1,38 @@
-+---
-+cases:
-+  - note: netcidrmerge/ipv4-mapped ipv6, same twice
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
+@@ -29,15 +29,14 @@ func walk(filter, path *ast.Array, input *ast.Term, iter func(*ast.Term) error)
+ 				return err
+ 			}
+ 		} else {
+-			// Shallow copy, as while the array is modified, the elements are not
+-			pathCopy := copyShallow(path)
+-
+ 			// TODO(ae): I'd *really* like these terms to be retrieved from a sync.Pool, and
+ 			// returned after iter is called. However, all my atttempts to do this have failed
+ 			// as there seems to be something holding on to these references after the call,
+ 			// leading to modifications that entirely alter the results. Perhaps this is not
+ 			// possible to do, but if it is,it would be a huge performance win.
+-			if err := iter(ast.ArrayTerm(ast.NewTerm(pathCopy), input)); err != nil {
 +
-+        p := x if {
-+        	net.cidr_merge(["::ffff:10.0.0.0/104", "::ffff:10.0.0.0/104"], x)
-+        }
-+    want_result:
-+      - x:
-+          - 10.0.0.0/8
-+  - note: netcidrmerge/ipv4-mapped ipv6, adjacent
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
++			// The child paths are built from path after this call, so iter must not modify it.
++			if err := iter(ast.ArrayTerm(ast.NewTerm(path), input)); err != nil {
+ 				return err
+ 			}
+ 		}
+@@ -126,12 +125,18 @@ func walkNoPath(input *ast.Term, iter func(*ast.Term) error) error {
+ 	return nil
+ }
+ 
++// pathAppend copies into an exactly sized slice, so sibling paths never share spare capacity.
+ func pathAppend(path *ast.Array, key *ast.Term) *ast.Array {
+ 	if path == nil {
+ 		return ast.NewArray(key)
+ 	}
+ 
+-	return path.Append(key)
++	elems := make([]*ast.Term, path.Len(), path.Len()+1)
++	for i := range elems {
++		elems[i] = path.Elem(i)
++	}
 +
-+        p := x if {
-+        	net.cidr_merge(["::ffff:10.0.0.0/104", "::ffff:11.0.0.0/104"], x)
-+        }
-+    want_result:
-+      - x:
-+          - 10.0.0.0/7
-+  - note: netcidrmerge/ipv4-mapped ipv6 and ipv4, adjacent
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
-+
-+        p := x if {
-+        	net.cidr_merge(["::ffff:10.0.0.0/104", "11.0.0.0/8"], x)
-+        }
-+    want_result:
-+      - x:
-+          - 10.0.0.0/7
++	return ast.NewArray(append(elems, key)...)
+ }
+ 
+ func getOutputPath(operands []*ast.Term) *ast.Array {
+@@ -156,15 +161,6 @@ func pathIsWildcard(operands []*ast.Term) bool {
+ 	return false
+ }
+ 
+-func copyShallow(arr *ast.Array) *ast.Array {
+-	cpy := make([]*ast.Term, arr.Len())
+-	for i := range arr.Len() {
+-		cpy[i] = arr.Elem(i)
+-	}
+-
+-	return ast.NewArray(cpy...)
+-}
+-
+ func init() {
+ 	RegisterBuiltinFunc(ast.WalkBuiltin.Name, evalWalk)
+ }
 ```
 
 ---
 
-### Incident Patch 2: `e58aca58` (2026-11-09)
+### Incident Patch 3: `89f8527b` (2026-11-13)
 **Commit Message**: build(deps): bump the dependencies group across 2 directories with 2 updates
 
-Bumps the dependencies group with 1 update in the / directory: [github.com/spf13/pflag](https://github.com/spf13/pflag).
-Bumps the dependencies group with 1 update in the /e2e directory: [modernc.org/sqlite](https://gitlab.com/cznic/sqlite).
+Bumps the dependencies group with 1 update in the / directory: [golang.org/x/sync](https://github.com/golang/sync).
+Bumps the dependencies group with 1 update in the /e2e directory: [github.com/testcontainers/testcontainers-go](https://github.com/testcontainers/testcontainers-go).
 
 
-Updates `github.com/spf13/pflag` from 1.0.10 to 1.1.0
-- [Release notes](https://github.com/spf13/pflag/releases)
-- [Commits](https://github.com/spf13/pflag/compare/v1.0.10...v1.1.0)
+Updates `golang.org/x/sync` from 0.24.0 to 0.25.0
+- [Commits](https://github.com/golang/sync/compare/v0.24.0...v0.25.0)
 
-Updates `modernc.org/sqlite` from 1.61.0 to 1.61.1
-- [Release notes](https://gitlab.com/cznic/sqlite/tags)
-- [Changelog](https://gitlab.com/cznic/sqlite/blob/master/CHANGELOG.md)
-- [Commits](https://gitlab.com/cznic/sqlite/compare/v1.61.0...v1.61.1)
+Updates `github.com/testcontainers/testcontainers-go` from 0.44.0 to 0.45.0
+- [Release notes](https://github.com/testcontainers/testcontainers-go/releases)
+- [Commits](https://github.com/testcontainers/testcontainers-go/compare/v0.44.0...v0.45.0)
 
 ---
 updated-dependencies:
-- dependency-name: github.com/spf13/pflag
-  dependency-version: 1.1.0
+- dependency-name: github.com/testcontainers/testcontainers-go
+  dependency-version: 0.45.0
   dependency-type: direct:production
   update-type: version-update:semver-minor
   dependency-group: dependencies
-- dependency-name: modernc.org/sqlite
-  dependency-version: 1.61.1
+- dependency-name: golang.org/x/sync
+  dependency-version: 0.25.0
   dependency-type: direct:production
-  update-type: version-update:semver-patch
+  update-type: version-update:semver-minor
   dependency-group: dependencies
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `e2e/go.mod` (modified, +1/-1)
+**File**: `build/tools/go.mod` (modified, +1/-1)
 ```diff
-@@ -15,7 +15,7 @@ require (
+@@ -25,7 +25,7 @@ require (
+ 	github.com/vbauerster/mpb/v8 v8.12.1 // indirect
+ 	golang.org/x/mod v0.35.0 // indirect
+ 	golang.org/x/perf v0.0.0-20260512194132-3cf34090a3db // indirect
+-	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sync v0.25.0 // indirect
+ 	golang.org/x/sys v0.44.0 // indirect
+ 	golang.org/x/telemetry v0.0.0-20260421165255-392afab6f40e // indirect
+ 	golang.org/x/tools v0.44.0 // indirect
+```
+
+**File**: `build/tools/go.sum` (modified, +2/-2)
+```diff
+@@ -36,8 +36,8 @@ golang.org/x/mod v0.35.0 h1:Ww1D637e6Pg+Zb2KrWfHQUnH2dQRLBQyAtpr/haaJeM=
+ golang.org/x/mod v0.35.0/go.mod h1:+GwiRhIInF8wPm+4AoT6L0FA1QWAad3OMdTRx4tFYlU=
+ golang.org/x/perf v0.0.0-20260512194132-3cf34090a3db h1:1EdY5INjhh724sLDk1O/nIzRZ8wmHbmiF8K2cK/mNLw=
+ golang.org/x/perf v0.0.0-20260512194132-3cf34090a3db/go.mod h1:vtQ1uZI2nWugeUDAr4i3qjU4fqZ0yZYuruCC4FKahWE=
+-golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+-golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
++golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.44.0 h1:ildZl3J4uzeKP07r2F++Op7E9B29JRUy+a27EibtBTQ=
+ golang.org/x/sys v0.44.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
+ golang.org/x/telemetry v0.0.0-20260421165255-392afab6f40e h1:OXgN37M6hqjaAvb7CJK9vJ+7Z/6lvIm5bXho5poo/Wk=
+```
+
+**File**: `e2e/go.mod` (modified, +9/-9)
+```diff
+@@ -13,15 +13,15 @@ require (
+ 	github.com/microsoft/go-mssqldb v1.11.2
+ 	github.com/open-policy-agent/opa v1.8.0
  	github.com/rogpeppe/go-internal v1.16.0
- 	github.com/testcontainers/testcontainers-go v0.44.0
+-	github.com/testcontainers/testcontainers-go v0.44.0
++	github.com/testcontainers/testcontainers-go v0.45.0
  	google.golang.org/protobuf v1.36.12
--	modernc.org/sqlite v1.61.0
-+	modernc.org/sqlite v1.61.1
+ 	modernc.org/sqlite v1.61.1
  )
  
  require (
+ 	dario.cat/mergo v1.0.2 // indirect
+ 	filippo.io/edwards25519 v1.2.0 // indirect
+-	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
++	github.com/Azure/go-ansiterm v0.0.0-20261006220739-8c912ac31dd4 // indirect
+ 	github.com/Microsoft/go-winio v0.6.2 // indirect
+ 	github.com/agnivade/levenshtein v1.2.2 // indirect
+ 	github.com/beorn7/perks v1.0.1 // indirect
+@@ -40,7 +40,7 @@ require (
+ 	github.com/dgraph-io/badger/v4 v4.9.6 // indirect
+ 	github.com/dgraph-io/ristretto/v2 v2.2.0 // indirect
+ 	github.com/distribution/reference v0.6.0 // indirect
+-	github.com/docker/go-connections v0.7.0 // indirect
++	github.com/docker/go-connections v0.8.2 // indirect
+ 	github.com/docker/go-units v0.5.0 // indirect
+ 	github.com/dustin/go-humanize v1.1.0 // indirect
+ 	github.com/ebitengine/purego v0.10.1 // indirect
+@@ -70,14 +70,14 @@ require (
+ 	github.com/lestrrat-go/jwx/v3 v3.4.0 // indirect
+ 	github.com/lestrrat-go/option/v2 v2.0.0 // indirect
+ 	github.com/lufia/plan9stats v0.0.0-20260330125221-c963978e514e // indirect
+-	github.com/magiconair/properties v1.8.10 // indirect
++	github.com/magiconair/properties v1.18.12 // indirect
+ 	github.com/mattn/go-colorable v0.1.14 // indirect
+ 	github.com/mattn/go-isatty v0.0.24 // indirect
+ 	github.com/mattn/go-runewidth v0.0.19 // indirect
+ 	github.com/moby/docker-image-spec v1.3.1 // indirect
+-	github.com/moby/go-archive v0.3.0 // indirect
+-	github.com/moby/moby/api v1.55.0 // indirect
+-	github.com/moby/moby/client v0.5.0 // indirect
++	github.com/moby/go-archive v0.3.3 // indirect
++	github.com/moby/moby/api v1.56.1 // indirect
++	github.com/moby/moby/client v0.6.2 // indirect
+ 	github.com/moby/patternmatcher v0.6.1 // indirect
+ 	github.com/moby/sys/sequential v0.7.0 // indirect
+ 	github.com/moby/sys/user v0.4.1 // indirect
+@@ -130,8 +130,8 @@ require (
+ 	go.opentelemetry.io/proto/otlp v1.11.1 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.6 // indirect
+ 	golang.org/x/crypto v0.58.0 // indirect
+-	golang.org/x/net v0.61.0 // indirect
+-	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
++	golang.org/x/sync v0.25.0 // indirect
+ 	golang.org/x/sys v0.49.0 // indirect
+ 	golang.org/x/term v0.47.0 // indirect
+ 	golang.org/x/text v0.43.0 // indirect
 ```
 
-**File**: `e2e/go.sum` (modified, +2/-2)
+**File**: `e2e/go.sum` (modified, +22/-19)
 ```diff
-@@ -367,8 +367,8 @@ modernc.org/opt v0.2.0 h1:tGyef5ApycA7FSEOMraay9SaTk5zmbx7Tu+cJs4QKZg=
- modernc.org/opt v0.2.0/go.mod h1:03fq9lsNfvkYSfxrfUhZCWPk1lm4cq4N+Bh//bEtgns=
- modernc.org/sortutil v1.2.1 h1:+xyoGf15mM3NMlPDnFqrteY07klSFxLElE2PVuWIJ7w=
- modernc.org/sortutil v1.2.1/go.mod h1:7ZI3a3REbai7gzCLcotuw9AC4VZVpYMjDzETGsSMqJE=
--modernc.org/sqlite v1.61.0 h1:sQi63oLQ9uquAUA4CzOisH35Q3pEszkPBuHM0tFL8CY=
--modernc.org/sqlite v1.61.0/go.mod h1:f4gr5tbpx2umklaT/QVtbi/50hNdM+4ng+2zMo8KXJ0=
-+modernc.org/sqlite v1.61.1 h1:TBEE49wz7VlxS+qXRXMQiPUZYOXHJ4ku83daYv1fe04=
-+modernc.org/sqlite v1.61.1/go.mod h1:f4gr5tbpx2umklaT/QVtbi/50hNdM+4ng+2zMo8KXJ0=
- modernc.org/strutil v1.2.1 h1:UneZBkQA+DX2Rp35KcM69cSsNES9ly8mQWD71HKlOA0=
- modernc.org/strutil v1.2.1/go.mod h1:EHkiggD70koQxjVdSBM3JKM7k6L0FbGE5eymy9i3B9A=
- modernc.org/token v1.1.0 h1:Xl7Ap9dKaEs5kLoOQeQmPWevfnk/DM5qcLcYlA8ys6Y=
+@@ -14,8 +14,8 @@ github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azkeys v1.5.0 h1:MaKvxE6
+ github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azkeys v1.5.0/go.mod h1:i2h9fsTFKZorh8RdV2IcSUf/Qj98GlTkrTvUbX/s8as=
+ github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/internal v1.2.0 h1:nCYfgcSyHZXJI8J0IWE5MsCGlb2xp9fJiXyxWgmOFg4=
+ github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/internal v1.2.0/go.mod h1:ucUjca2JtSZboY8IoUqyQyuuXvwbMBVwFOm0vdQPNhA=
+-github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c h1:udKWzYgxTojEKWjV8V+WSxDXJ4NFATAsZjh8iIbsQIg=
+-github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
++github.com/Azure/go-ansiterm v0.0.0-20261006220739-8c912ac31dd4 h1:m2xcjRABtG288vnlV3U/PKh/HnPURxZp50RKNUwBxM8=
++github.com/Azure/go-ansiterm v0.0.0-20261006220739-8c912ac31dd4/go.mod h1:MTUE7ZuZO89FAtAwozGg6AWD83pcdefnEq5gF82MB8s=
+ github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0 h1:Nljr4q1GRA/5vCrMONS+g4u4LRHNgOXVSh3O43J2CnI=
+ github.com/AzureAD/microsoft-authentication-library-for-go v1.8.0/go.mod h1:Y33QHnf0FfdVewFFISOGe20mkZbxX4H839o955/PoeI=
+ github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
+@@ -66,8 +66,8 @@ github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54 h1:SG7nF6SRlWhcT7c
+ github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54/go.mod h1:if7Fbed8SFyPtHLHbg49SI7NAdJiC5WIA09pe59rfAA=
+ github.com/distribution/reference v0.6.0 h1:0IXCQ5g4/QMHHkarYzh5l+u8T3t73zM5QvfrDyIgxBk=
+ github.com/distribution/reference v0.6.0/go.mod h1:BbU0aIcezP1/5jX/8MP0YiH4SdvB5Y4f/wlDRiLyi3E=
+-github.com/docker/go-connections v0.7.0 h1:6SsRfJddP22WMrCkj19x9WKjEDTB+ahsdiGYf0mN39c=
+-github.com/docker/go-connections v0.7.0/go.mod h1:no1qkHdjq7kLMGUXYAduOhYPSJxxvgWBh7ogVvptn3Q=
++github.com/docker/go-connections v0.8.2 h1:9d9DEokx5W7qlr0shkFXIxEA7+TTD+llwzcykSlxMNc=
++github.com/docker/go-connections v0.8.2/go.mod h1:no1qkHdjq7kLMGUXYAduOhYPSJxxvgWBh7ogVvptn3Q=
+ github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
+ github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
+ github.com/dustin/go-humanize v1.1.0 h1:dbKTrvD0klcbBV/h4AWJdMuZogJACoMlvWIWZ5b2xWg=
+@@ -155,8 +155,8 @@ github.com/lib/pq v1.12.3 h1:tTWxr2YLKwIvK90ZXEw8GP7UFHtcbTtty8zsI+YjrfQ=
+ github.com/lib/pq v1.12.3/go.mod h1:/p+8NSbOcwzAEI7wiMXFlgydTwcgTr3OSKMsD2BitpA=
+ github.com/lufia/plan9stats v0.0.0-20260330125221-c963978e514e h1:Q6MvJtQK/iRcRtzAscm/zF23XxJlbECiGPyRicsX+Ak=
+ github.com/lufia/plan9stats v0.0.0-20260330125221-c963978e514e/go.mod h1:autxFIvghDt3jPTLoqZ9OZ7s9qTGNAWmYCjVFWPX/zg=
+-github.com/magiconair/properties v1.8.10 h1:s31yESBquKXCV9a/ScB3ESkOjUYYv+X0rg8SYxI99mE=
+-github.com/magiconair/properties v1.8.10/go.mod h1:Dhd985XPs7jluiymwWYZ0G4Z61jb3vdS329zhj2hYo0=
++github.com/magiconair/properties v1.18.12 h1:sT9zQpvTB3B4gzrX0tmZNTEaGyg8Zw55MFYRE32Mr9I=
++github.com/magiconair/properties v1.18.12/go.mod h1:Dhd985XPs7jluiymwWYZ0G4Z61jb3vdS329zhj2hYo0=
+ github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
+ github.com/mattn/go-colorable v0.1.14/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stgPZH1UqBm1s8=
+ github.com/mattn/go-isatty v0.0.24 h1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=
+@@ -169,14 +169,18 @@ github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
+ github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
+ github.com/moby/docker-image-spec v1.3.1 h1:jMKff3w6PgbfSa69GfNg+zN/XLhfXJGnEx3Nl2EsFP0=
+ github.com/moby/docker-image-spec v1.3.1/go.mod h1:eKmb5VW8vQEh/BAr2yvVNvuiJuY6UIocYsFu/DxxRpo=
+-github.com/moby/go-archive v0.3.0 h1:nos4BtzzUIqB406BgQnWGMI4qib9BZ8XUHU+ucv/n1c=
+-github.com/moby/go-archive v0.3.0/go.mod h1:Npdv43fFqlhZW7Xo8fbm3ZMYFvAGNviUPqX21VERbcE=
+-github.com/moby/moby/api v1.55.0 h1:2/sexvQyqIWS8pRSCFddBfpW2qE7vR7FCL+vN8pxwMc=
+-github.com/moby/moby/api v1.55.0/go.mod h1:+RQ6wluLwtYaTd1WnPLykIDPekkuyD/ROWQClE83pzs=
+-github.com/moby/moby/client v0.5.0 h1:5XhyPk2fuOWf6RlSFa3MkIIgDZkF25xToXW8Q/BH7cc=
+-github.com/moby/moby/client v0.5.0/go.mod h1:rcVpF8ncl9vo5gaIBdol6CnbEtSj1uxMvEV/UrykF/s=
++github.com/moby/go-archive v0.3.3 h1:OxxR9paxsluYi+zDUEXTTaIxtkK3viymW+Ka7vRhhME=
++github.com/moby/go-archive v0.3.3/go.mod h1:Npdv43fFqlhZW7Xo8fbm3ZMYFvAGNviUPqX21VERbcE=
++github.com/moby/moby/api v1.56.1 h1:PpWkvVPB7Fr/No8w+TfyJ/I6rWZ2YPZhT3JorIg+06c=
++github.com/moby/moby/api v1.56.1/go.mod h1:sZ+THbVWkjOmBPPfbnzdD/G1LuIexWhqlSHHPTDQ1Uk=
++github.com/moby/moby/client v0.6.2 h1:ekSPlMccrZGcw6Scb8T9D39qE0mB+XupU/yS0zNw9N4=
++github.com/moby/moby/client v0.6.2/go.mod h1:DGcnO7qmPJrqobx/ggQgQ/AUk+2wgVdQv7uxB0/mEsc=
+ github.com/moby/patternmatcher v0.6.1 h1:qlhtafmr6kgMIJjKJMDmMWq7WLkKIo23hsrpR3x084U=
+ github.com/moby/patternmatcher v0.6.1/go.mod h1:hDPoyOpDY7OrrMDLaYoY3hf52gNCR/YOUYxkhApJIxc=
++github.com/moby/sys/mount v0.3.5 h1:eS3fsZTjHaBihwjp4/+5Z3jxqLXYs
 ```
 
 **File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -27,7 +27,7 @@ require (
- 	github.com/sergi/go-diff v1.4.0
- 	github.com/sirupsen/logrus v1.10.2
- 	github.com/spf13/cobra v1.10.2
--	github.com/spf13/pflag v1.0.10
-+	github.com/spf13/pflag v1.1.0
- 	github.com/tetratelabs/wazero v1.12.0
- 	github.com/vektah/gqlparser/v2 v2.5.64
- 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415
+@@ -45,7 +45,7 @@ require (
+ 	go.opentelemetry.io/otel/trace v1.47.0
+ 	go.opentelemetry.io/proto/otlp v1.11.1
+ 	go.yaml.in/yaml/v3 v3.0.6
+-	golang.org/x/sync v0.24.0
++	golang.org/x/sync v0.25.0
+ 	golang.org/x/term v0.47.0
+ 	golang.org/x/text v0.43.0
+ 	golang.org/x/time v0.16.0
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `go.sum` (modified, +2/-4)
 ```diff
-@@ -157,8 +157,8 @@ github.com/sirupsen/logrus v1.10.2/go.mod h1:SLEg8TqYulVKKfIGHldVp2K2aYz2DKSVBq4
- github.com/spf13/cobra v1.10.2 h1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=
- github.com/spf13/cobra v1.10.2/go.mod h1:7C1pvHqHw5A4vrJfjNwvOdzYu0Gml16OCs2GRiTUUS4=
- github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
--github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
--github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
-+github.com/spf13/pflag v1.1.0 h1:6W6MbVUrnMb8PEhjkqwsVLY7ryuzRfFHF4mQd7L94ag=
-+github.com/spf13/pflag v1.1.0/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
- github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
- github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
- github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
+@@ -241,8 +241,6 @@ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
+ golang.org/x/net v0.15.0/go.mod h1:idbUs1IY1+zTqbi8yxTbhexhEEk5ur9LInksu6HrEpk=
+ golang.org/x/net v0.17.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
+ golang.org/x/net v0.18.0/go.mod h1:/czyP5RqHAH4odGYxBJ1qz0+CE5WZ+2j1YgoEo8F2jQ=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+ golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
+ golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -251,8 +249,8 @@ golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
+ golang.org/x/sync v0.4.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
+ golang.org/x/sync v0.5.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
+-golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+-golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
++golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9542** (2026-11-10): Integrate patch release 1.22.3 (@srenatus)
-- **PR #9537** (2026-11-09): perf: Make sink writer perform on par with bytes.Buffer (@anderseknert)
-- **PR #9536** (2026-11-10): Prepare patch release v1.22.3 (@srenatus)
-- **PR #9535** (2026-11-09): website/events: Update lightning talk time (@charlieegan3)
-- **PR #9534** (2026-11-09): notebook: tweak breadcrumbs, bump plotje (0.18.0) (@srenatus)
-- **PR #9533** (2026-11-09): website: show live code query, highlight output some more (@srenatus)
+- **PR #9558** (2026-11-13): ast: fix negative number location text (for issue #9531) (@devjoshi2005)
+- **PR #9557** (2026-11-13): build(deps): bump the dependencies group across 2 directories with 2 updates (@dependabot[bot])
+- **PR #9555** (2026-11-13): build(deps): bump golang.org/x/net v0.60.0 -> v0.62.0 (@anderseknert)
+- **PR #9554** (2026-11-12): topdown/walk: alloc less when building walk paths (@charlieegan3)
+- **PR #9553** (2026-11-12): repl: allow implicit function bodies (for issue #9539) (@devjoshi2005)
+- **PR #9551** (2026-11-12): docs: Amend security reporting docs to cover scanners (@anderseknert)
 
 ---
 
@@ -1170,32 +1365,31 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. topdown: fix net.cidr_merge panic on IPv4-mapped IPv6 CIDRs
+## X. ast: fix negative number location text (for)
 
 **RULE**:
-When implementing operations in `internal/cidr/merge/merge.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `v1/ast/parser.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4434f660`: topdown: fix net.cidr_merge panic on IPv4-mapped IPv6 CIDRs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8d10da6e`: ast: fix negative number location text (for). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/cidr/merge/merge.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/ast/parser.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Only 4-byte addresses need the prefix. IPv4-mapped IPv6 addresses are already 16 bytes long.
-	if len(firstIP) == net.IPv4len {
+	loc.Text = p.s.Text(loc.Offset, p.s.tokEnd)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	if firstIP.To4() != nil {
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4434f660` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8d10da6e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

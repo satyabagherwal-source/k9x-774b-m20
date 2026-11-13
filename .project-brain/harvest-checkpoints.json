@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T19:54:23.065Z",
+  "last_updated": "2026-11-13T20:07:25.639Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -785,14 +785,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "content_hash": "ef2904b3c7afa80c1c73029690bc7f3103273d62e11081feaa0e9fa0b38ec938",
-      "verified_at": "2026-11-08T18:48:44.636Z",
+      "content_hash": "06ed80162c5b7698e83953db7cd22b8062bb8f716047e5d73a514dc6a6efc68a",
+      "verified_at": "2026-11-13T20:07:10.640Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T18:48:44.636Z"
+      "last_updated": "2026-11-13T20:07:10.640Z"
     },
     "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "672c544da25fb14dacee9785aee406d6cbb28a0ce7f2be90dbb333b587aa7dfd",
-      "verified_at": "2026-11-13T14:55:43.768Z",
+      "content_hash": "041e66a86946ffa02f3b70f132ef54b2406adcf9772e235375f9b016e2e63cd8",
+      "verified_at": "2026-11-13T20:07:24.020Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:55:43.768Z"
+      "last_updated": "2026-11-13T20:07:24.021Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "09b2b64e6fd68d991097b72e702e376c8137a29e679ad0bdcd12d09fcad7492b",
-      "verified_at": "2026-11-12T21:41:55.220Z",
+      "content_hash": "e79d69eda2220ffd771870a5a744ec54e764e3b3eff65076a83fe5dadcefb6ab",
+      "verified_at": "2026-11-13T20:07:20.385Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:41:55.220Z"
+      "last_updated": "2026-11-13T20:07:20.385Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "0a98fb75ad40a75b93957e7b05701ce23381e22c81359f05ace5573a5a24b6d1",
-      "verified_at": "2026-11-12T15:25:30.861Z",
+      "content_hash": "022ecaa20b10da9821709304df45bbcd184a82c666bd6608e465badc175a17c7",
+      "verified_at": "2026-11-13T20:07:25.639Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T15:25:30.861Z"
+      "last_updated": "2026-11-13T20:07:25.639Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",

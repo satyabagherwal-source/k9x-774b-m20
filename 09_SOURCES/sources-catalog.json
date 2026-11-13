@@ -635,8 +635,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "ef2904b3c7afa80c1c73029690bc7f3103273d62e11081feaa0e9fa0b38ec938",
-    "lastHarvestedAt": "2026-11-08T18:48:44.617Z",
+    "contentHash": "06ed80162c5b7698e83953db7cd22b8062bb8f716047e5d73a514dc6a6efc68a",
+    "lastHarvestedAt": "2026-11-13T20:07:10.629Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "294cd0ad",
+    "sourceVersion": "edc81e6f",
     "license": "Apache-2.0",
-    "contentHash": "672c544da25fb14dacee9785aee406d6cbb28a0ce7f2be90dbb333b587aa7dfd",
-    "lastHarvestedAt": "2026-11-13T14:55:43.741Z",
+    "contentHash": "041e66a86946ffa02f3b70f132ef54b2406adcf9772e235375f9b016e2e63cd8",
+    "lastHarvestedAt": "2026-11-13T20:07:24.011Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "80f27558",
+    "sourceVersion": "8d10da6e",
     "license": "Apache-2.0",
-    "contentHash": "09b2b64e6fd68d991097b72e702e376c8137a29e679ad0bdcd12d09fcad7492b",
-    "lastHarvestedAt": "2026-11-12T21:41:55.168Z",
+    "contentHash": "e79d69eda2220ffd771870a5a744ec54e764e3b3eff65076a83fe5dadcefb6ab",
+    "lastHarvestedAt": "2026-11-13T20:07:20.375Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "04ccf364",
+    "sourceVersion": "acc33f63",
     "license": "Apache-2.0",
-    "contentHash": "0a98fb75ad40a75b93957e7b05701ce23381e22c81359f05ace5573a5a24b6d1",
-    "lastHarvestedAt": "2026-11-12T15:25:30.839Z",
+    "contentHash": "022ecaa20b10da9821709304df45bbcd184a82c666bd6608e465badc175a17c7",
+    "lastHarvestedAt": "2026-11-13T20:07:25.629Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {

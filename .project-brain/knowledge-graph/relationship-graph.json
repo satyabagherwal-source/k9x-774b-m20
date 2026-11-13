@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T19:54:48.262Z",
+  "updated_at": "2026-11-13T20:08:02.977Z",
   "statistics": {
-    "total_nodes": 118,
-    "total_edges": 63,
+    "total_nodes": 119,
+    "total_edges": 64,
     "domain_distribution": {
-      "D": 97,
+      "D": 98,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -17,7 +17,7 @@
       "F": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 63
+      "CONSTRAINED_BY_ARCHITECTURE": 64
     }
   },
   "nodes": {
@@ -2634,6 +2634,29 @@
       ],
       "created_at": "2026-11-13T19:54:48.261Z",
       "updated_at": "2026-11-13T19:54:48.261Z"
+    },
+    "DOM-D-218A5260": {
+      "id": "DOM-D-218A5260",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): unsloth/Qwen3.8-27B-GGUF",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-unsloth-qwen3.8-27b-gguf/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T20:07:28.854Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-qwen3.8-27b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T20:08:02.977Z",
+      "updated_at": "2026-11-13T20:08:02.977Z"
     }
   },
   "edges": [
@@ -3266,6 +3289,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-DFE22270 [D] with Domain M",
       "created_at": "2026-11-13T19:54:48.262Z"
+    },
+    {
+      "id": "EDGE-94FC6DF466FD",
+      "sourceId": "DOM-D-218A5260",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-218A5260 [D] with Domain M",
+      "created_at": "2026-11-13T20:08:02.977Z"
     }
   ]
 }

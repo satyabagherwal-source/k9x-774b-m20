@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T19:54:48.797Z",
-  "total_records": 313,
+  "last_updated": "2026-11-13T20:08:04.418Z",
+  "total_records": 319,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 169,
+      "total": 172,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -202,7 +202,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l",
         "domain_intelligence-research-knowledge-intelligence-prunaai-p-h3-image-comfy-core-invariants",
         "DOM-D-DFE22270",
-        "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-comfy-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-comfy-learnings-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-27b-gguf-core-invariants",
+        "DOM-D-218A5260",
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar"
       ]
     },
     "E": {
@@ -261,7 +264,7 @@
       ]
     },
     "H": {
-      "total": 65,
+      "total": 68,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -327,7 +330,10 @@
         "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nervjs-taro-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-telemt-telemt-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-telemt-telemt-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-telemt-telemt-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria"
       ]
     },
     "I": {
@@ -6056,8 +6062,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "8007ad9067e9ce3f83b9134e5e925ab9281a67085dfc24ebb9e365fd3eb96ff4",
-      "created_at": "2026-11-13T14:55:44.052Z"
+      "content_hash": "ec68be447c92138e925f71a8c1d468c21ec19eff3090d5822c511b0aa7877a03",
+      "created_at": "2026-11-13T20:07:24.323Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -6074,8 +6080,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "940da9a61775ec16b7446fd5ffcb1deafd74bee2653d3e75769188bedd62f89b",
-      "created_at": "2026-11-13T14:55:47.565Z"
+      "content_hash": "4df0ae4eccf426307fb184c1bb54e00896e4fb9558cc32ad2c0ab68467b8def1",
+      "created_at": "2026-11-13T20:08:04.418Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -8329,6 +8335,93 @@
       "repository": "krishhgg-insomnia-learnings",
       "content_hash": "2569cdcfc11ca701b9d282d02f82694c410b9122e092ca26e59db5b84656578a",
       "created_at": "2026-11-13T19:54:48.797Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-27b-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-27b-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-27B-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-27b-gguf-research-knowledge-intelligence-unsloth-qwen3-8-27b-.md",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "content_hash": "b9106d4e7ff036274b33eb63ef6242238524a9c5828ff0cf98d3add50798ee4c",
+      "created_at": "2026-11-13T20:07:10.831Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
+      "repository": "open-policy-agent/opa",
+      "content_hash": "bd67234a8b3075bb2a1f681ef857522a67c27de9296ffea5af30e79ea67d16a7",
+      "created_at": "2026-11-13T20:07:20.703Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
+      "repository": "t8y2/dbx",
+      "content_hash": "e3a0816ec859abf4ade075e31f53ec5bff1d44957aacd861c345df39e0b24ce8",
+      "created_at": "2026-11-13T20:07:25.956Z"
+    },
+    "DOM-D-218A5260": {
+      "record_id": "DOM-D-218A5260",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): unsloth/Qwen3.8-27B-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/unsloth/Qwen3.8-27B-GGUF](https://huggingface.co/unsloth/Qwen3.8-27B-GGUF))  \n> **Source Version**: `hf-unsloth-q`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "8e54b8109531d619d10edbf5cbe90f5084a0f4a52a0c05210178cea198cfbadd",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-unsloth-qwen3.8-27b-gguf/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T20:07:28.854Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-qwen3.8-27b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-unsloth-qwen3.8-27b-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T20:08:02.969Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-27b-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-27b-gguf-learnings-research-knowledge-intelligence-hf-unsloth.md",
+      "repository": "hf-unsloth-qwen3.8-27b-gguf-learnings",
+      "content_hash": "1c77a7f5935cd61957ef35a51cc98334354efaeefd8412ee202100aa43615ad0",
+      "created_at": "2026-11-13T20:08:03.207Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-learnings-technical-construction-intelligence-open-policy-.md",
+      "repository": "open-policy-agent-opa-learnings",
+      "content_hash": "20e966b1c26d6766d61d3542af35c29c958289bafac4fcfaac75ed5e26ecbad7",
+      "created_at": "2026-11-13T20:08:03.831Z"
     }
   }
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-13T19:54:48.956Z",
-  "total_verified_learnings": 8379,
+  "last_updated": "2026-11-13T20:08:04.544Z",
+  "total_verified_learnings": 8383,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 16485,
+  "total_items": 16504,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111950,10 +111950,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "294cd0ad",
-      "content_hash": "8007ad9067e9ce3f83b9134e5e925ab9281a67085dfc24ebb9e365fd3eb96ff4",
+      "source_version": "edc81e6f",
+      "content_hash": "ec68be447c92138e925f71a8c1d468c21ec19eff3090d5822c511b0aa7877a03",
       "domain_letter": "B",
-      "persisted_at": "2026-11-13T14:55:44.052Z"
+      "persisted_at": "2026-11-13T20:07:24.323Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -111962,10 +111962,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "294cd0ad",
-      "content_hash": "9078b99779622d9811b0cc8a4e8a18608556ab7e92c41e5b644ea9eb84602f1f",
+      "source_version": "edc81e6f",
+      "content_hash": "6e8845994366e000f4dfe53b4ce9c328ae0f805f9ea7bf7dba8bfcde51c6bc1d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T14:55:44.146Z"
+      "persisted_at": "2026-11-13T20:07:24.436Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -111987,9 +111987,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "940da9a61775ec16b7446fd5ffcb1deafd74bee2653d3e75769188bedd62f89b",
+      "content_hash": "4df0ae4eccf426307fb184c1bb54e00896e4fb9558cc32ad2c0ab68467b8def1",
       "domain_letter": "B",
-      "persisted_at": "2026-11-13T14:55:47.565Z"
+      "persisted_at": "2026-11-13T20:08:04.418Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -111999,9 +111999,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "a97bb7626dfb0550157e54221b874173b3b807f49f3a4170e6bf458d85887eb3",
+      "content_hash": "417a1f26179964ab992a894ce19a8b8adb6e1f1618f71f947d33ff36814432b5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T14:55:47.659Z"
+      "persisted_at": "2026-11-13T20:08:04.544Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -213730,6 +213730,318 @@
       "content_hash": "8c9f26dafe265337db828b9c5c4b35d08034f36ba5f98787cc24226bf8cbd4e2",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T19:54:48.956Z"
+    },
+    "learn-huggingface-unsloth-qwen3-8-27b-gguf": {
+      "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unsloth/Qwen3.8-27B-GGUF",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "slug": "hf-unsloth-qwen3.8-27b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+      "source_version": "hf-unsloth-qwen3.8-27b-gguf",
+      "content_hash": "06ed80162c5b7698e83953db7cd22b8062bb8f716047e5d73a514dc6a6efc68a",
+      "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T20:07:10.469Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-27b-gguf-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-27b-gguf-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-27b-gguf-research-knowledge-intelligence-unsloth-qwen3-8-27b-.md",
+      "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-27B-GGUF Core Invariants",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "source_version": "hf-unsloth-qwen3.8-27b-gguf",
+      "content_hash": "b9106d4e7ff036274b33eb63ef6242238524a9c5828ff0cf98d3add50798ee4c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T20:07:10.831Z"
+    },
+    "learn-github-open-policy-agent-opa": {
+      "learning_id": "learn-github-open-policy-agent-opa",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "open-policy-agent/opa",
+      "repository": "open-policy-agent/opa",
+      "slug": "open-policy-agent-opa",
+      "platform": "github",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "8d10da6e",
+      "content_hash": "e79d69eda2220ffd771870a5a744ec54e764e3b3eff65076a83fe5dadcefb6ab",
+      "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8370,
+          "title": "fix negative number location text (for)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T20:07:20.194Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8370": {
+      "learning_id": "rule-8370",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8370,
+      "title": "fix negative number location text (for)",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "8d10da6e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-13T20:07:20.194Z"
+    },
+    "candidate_directive-fix-negative-number-location-text-for": {
+      "item_id": "candidate_directive-fix-negative-number-location-text-for",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RM6M-fix-negative-number-location-text-for.md",
+      "title": "fix negative number location text (for)",
+      "repository": "open-policy-agent/opa",
+      "source_version": "8d10da6e",
+      "content_hash": "5987d1c35f1bd959c271b733f92961c878a4196cea0a5b636839ff3473cc43dd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T20:07:20.592Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
+      "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
+      "repository": "open-policy-agent/opa",
+      "source_version": "8d10da6e",
+      "content_hash": "bd67234a8b3075bb2a1f681ef857522a67c27de9296ffea5af30e79ea67d16a7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T20:07:20.703Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/open-policy-agent-opa-verification-protocol-empirical-defect-shield-for-open-pol.md",
+      "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent/opa",
+      "repository": "open-policy-agent/opa",
+      "source_version": "8d10da6e",
+      "content_hash": "21a886bfb7d3fc0f8e0eb26a7b901cdea78665a1a71ed272cd1832b1e4370e39",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T20:07:20.815Z"
+    },
+    "learn-github-cilium-cilium": {
+      "learning_id": "learn-github-cilium-cilium",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "cilium/cilium",
+      "repository": "cilium/cilium",
+      "slug": "cilium-cilium",
+      "platform": "github",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "edc81e6f",
+      "content_hash": "041e66a86946ffa02f3b70f132ef54b2406adcf9772e235375f9b016e2e63cd8",
+      "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8371,
+          "title": "datapath/iptables: scope NOTRACK tunnel rules to local addresses",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T20:07:23.853Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8371": {
+      "learning_id": "rule-8371",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8371,
+      "title": "datapath/iptables: scope NOTRACK tunnel rules to local addresses",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "edc81e6f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-13T20:07:23.853Z"
+    },
+    "candidate_directive-datapath-iptables-scope-notrack-tunnel-rules-to-local-addresses": {
+      "item_id": "candidate_directive-datapath-iptables-scope-notrack-tunnel-rules-to-local-addresses",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SJWV-datapath-iptables-scope-notrack-tunnel-rules-to-local-addresses.md",
+      "title": "datapath/iptables: scope NOTRACK tunnel rules to local addresses",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "72e5ae6ab7bcc32c7684db4fb3a082ed15719f85c926691619a0fddea0ea6b2d",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-13T20:08:04.304Z"
+    },
+    "learn-github-t8y2-dbx": {
+      "learning_id": "learn-github-t8y2-dbx",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "t8y2/dbx",
+      "repository": "t8y2/dbx",
+      "slug": "t8y2-dbx",
+      "platform": "github",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "acc33f63",
+      "content_hash": "022ecaa20b10da9821709304df45bbcd184a82c666bd6608e465badc175a17c7",
+      "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8372,
+          "title": "block tuple locator on Greenplum, Cloudberry, Hologres",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T20:07:25.469Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8372": {
+      "learning_id": "rule-8372",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8372,
+      "title": "block tuple locator on Greenplum, Cloudberry, Hologres",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "acc33f63",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-13T20:07:25.469Z"
+    },
+    "candidate_directive-block-tuple-locator-on-greenplum-cloudberry-hologres": {
+      "item_id": "candidate_directive-block-tuple-locator-on-greenplum-cloudberry-hologres",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RQ8G-block-tuple-locator-on-greenplum-cloudberry-hologres.md",
+      "title": "block tuple locator on Greenplum, Cloudberry, Hologres",
+      "repository": "t8y2/dbx",
+      "source_version": "acc33f63",
+      "content_hash": "053b241871b6c6d8abb7a35d69ad9a7bf66f99fb484fcbcf62fd22e0b075756e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T20:07:25.846Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
+      "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
+      "repository": "t8y2/dbx",
+      "source_version": "acc33f63",
+      "content_hash": "e3a0816ec859abf4ade075e31f53ec5bff1d44957aacd861c345df39e0b24ce8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T20:07:25.956Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/t8y2-dbx-verification-protocol-empirical-defect-shield-for-t8y2-dbx.md",
+      "title": "Verification Protocol: Empirical Defect Shield for t8y2/dbx",
+      "repository": "t8y2/dbx",
+      "source_version": "acc33f63",
+      "content_hash": "21912fe3be4c1df786fc1cf34b41105c550f69c72a2c755a522a4d88d8470daf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T20:07:26.071Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-27b-gguf-learnings-research-knowledge-intelligence-hf-unsloth.md",
+      "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-27b-gguf-learnings Core Invariants",
+      "repository": "hf-unsloth-qwen3.8-27b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1c77a7f5935cd61957ef35a51cc98334354efaeefd8412ee202100aa43615ad0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T20:08:03.207Z"
+    },
+    "candidate_directive-ast-fix-negative-number-location-text-for": {
+      "item_id": "candidate_directive-ast-fix-negative-number-location-text-for",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SJG7-ast-fix-negative-number-location-text-for.md",
+      "title": "ast: fix negative number location text (for)",
+      "repository": "open-policy-agent-opa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "81b12a4514d63a5774520fe8d7b325af5b2cbb4f1e958eef1b40ac8ebb6c7899",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T20:08:03.703Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-learnings-technical-construction-intelligence-open-policy-.md",
+      "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
+      "repository": "open-policy-agent-opa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "20e966b1c26d6766d61d3542af35c29c958289bafac4fcfaac75ed5e26ecbad7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T20:08:03.831Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/open-policy-agent-opa-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent-opa-learnings",
+      "repository": "open-policy-agent-opa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6d88d7145dae54281dc7f9c8c30a502c699cdfdd54b32ab11cfa36424f0d50ad",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T20:08:03.958Z"
     }
   },
   "ai-builder-brain": {

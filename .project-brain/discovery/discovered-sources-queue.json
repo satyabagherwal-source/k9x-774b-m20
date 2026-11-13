@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T19:54:48.569Z",
+  "updated_at": "2026-11-13T20:08:04.110Z",
   "stats": {
-    "total_discovered": 2847,
-    "approved_pending_harvest": 2662,
+    "total_discovered": 2852,
+    "approved_pending_harvest": 2667,
     "harvested_count": 0,
     "rejected_count": 185,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2657,
+      "COMMUNITY_AND_EXPERT": 2662,
       "OFFICIAL_DOCUMENTATION": 98,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -61359,6 +61359,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/krishhgg-insomnia-learnings.md",
         "fileName": "krishhgg-insomnia-learnings.md"
+      }
+    },
+    "SRC-BB6E58F54894": {
+      "id": "SRC-BB6E58F54894",
+      "url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+      "title": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:08:02.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
+        "fileName": "hf-unsloth-qwen3.8-27b-gguf-learnings.md"
+      }
+    },
+    "SRC-E10497936719": {
+      "id": "SRC-E10497936719",
+      "url": "https://github.com/testcontainers/testcontainers-go",
+      "title": "https://github.com/testcontainers/testcontainers-go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:08:03.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-581EF220174C": {
+      "id": "SRC-581EF220174C",
+      "url": "https://github.com/testcontainers/testcontainers-go/releases",
+      "title": "https://github.com/testcontainers/testcontainers-go/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:08:03.488Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-B39F9FBE6AFC": {
+      "id": "SRC-B39F9FBE6AFC",
+      "url": "https://github.com/testcontainers/testcontainers-go/compare/v0.44.0...v0.45.0",
+      "title": "https://github.com/testcontainers/testcontainers-go/compare/v0.44.0...v0.45.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:08:03.512Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-98CA40A72CA7": {
+      "id": "SRC-98CA40A72CA7",
+      "url": "https://github.com/torvalds/linux/blob/0257f64bdac7fdca30fa3cae0df8b9ecbec7733a/net/bpf/test_run.c",
+      "title": "https://github.com/torvalds/linux/blob/0257f64bdac7fdca30fa3cae0df8b9ecbec7733a/net/bpf/test_run.c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:08:04.110Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
       }
     }
   }

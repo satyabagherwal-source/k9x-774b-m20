@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `04ccf364`  
+> **Source Version**: `acc33f63`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T15:25:19.468Z  
+> **Timestamp**: 2026-11-13T20:07:24.655Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T15:25:19.460Z  
+> **Harvest Timestamp**: 2026-11-13T20:07:24.647Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 30178 stars
+- **Stars / Engagement**: 30306 stars
 
 ---
 
@@ -1991,14 +1991,11 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14818** (2026-11-12): **[Bug] 生成表 DDL 时 comment on COLUMN 语句之间存在空行**
-  *Symptoms*: ## 环境 - 操作系统：Windows 7 - DBX 版本：0.6.69 - 数据库：Oracle（具体版本未提供）  ## 问题描述 在 DBX 中连接 Oracle，生成表 DDL 时，列注释 `comment on COLUMN ... is ...;` 语句之间会出现空行。截图中可见连续多条 `comment on COLUMN` 语句之间各有一行空白。  查看 DDL 时显示正常，无空行。  ## 截图信息 截图显示了生成 DDL 的约 80–90 行，包含多条 `comment on COLUMN` 语句，语句之间存在空行；部分对象名和注释内容被遮挡或模糊，未还原。  ## 期望行为 生成表 DDL 时，`comment on COLUMN` 语句之间不插入多余空行，与查看 DDL 时的格式一致。  ## 未提供信息 - Oracle 具体版本 - 完整复现步骤 - 相关日志或错误信息 - 具体表结构及完整 DDL  ## 附件  ![DBX issue image 1](https://dl.dbxio.com/issue-feedback/2026/11/fed320ae-c6df-40a0-9d4d-1dd5b3ba663b/1-bb2b1235-e906-4978-8e6a-c3ccdf848e7e.jpg)  ---  _此 Issue 通过 DBX 官网匿名反馈入口提交，发布前已由提交者确认。_
-  **Post-Mortem & Fix Analysis**:
-  > <!-- dbx-similar-issues --> 以下 Issue 可能与当前问题相关：  - #14352  这些结果由机器人自动检索，尚未确认重复。如属于同一问题，建议在已有 Issue 中补充信息。
-  > /claim
+- **Issue #14884** (2026-11-13): **[Bug] 高斯Gauss数据库Schema筛选后无法展开表对象节点**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  Gauss DWS 8.1.2 ,  兼容PostgreSQL 8  ### 问题描述 / Problem description  左侧边栏，录入筛选文本后，Schema可以展示筛选后对象，但其中表（视图）对象节点无法继续展开  <img width="694" height="634" alt="nodecannotbecollapsed" src="https://github.com/user-attachments/assets/8d38716d-3b40-4402-8a9c-cdbe1b0ccc1c" />  ### 支持信息 / Support information  DBX Version: v0.6.70 (0.6.70-beta.20261112.1) Runtime: Desktop Operating System: Windows 11 (10.0.26300.9974) Architecture: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0 Database Types: gaussdb, postgres Local Driver Versions: kafka 0.1.25  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
 
-- **Issue #14803** (2026-11-12): **[Bug] 我只有两个表，搜索出来重复的表了**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  MySQL 8.0  ### 问题描述 / Problem description  <img width="460" height="320" alt="image" src="https://github.com/user-attachments/assets/5f834826-5519-4f6e-8472-d1bf345d3a5c" />  ### 支持信息 / Support information  <img width="471" height="300" alt="image" src="https://github.com/user-attachments/assets/7147fcda-a6cf-4bbe-aceb-d4695539f3e4" />  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+- **Issue #14868** (2026-11-13): **[Bug] 新窗口下的sql编辑器，不能使用AI，点击不起作用，只能回到主窗口才能用，希望能改成在分窗口也能使用**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  doris  ### 问题描述 / Problem description  新窗口下的sql编辑器，不能使用AI，点击不起作用，只能回到主窗口才能用，希望能改成在分窗口也能使用  <img width="3456" height="2056" alt="image" src="https://github.com/user-attachments/assets/81e9a703-6258-46c7-84c2-d66d5d9ca5e1" />  ### 支持信息 / Support information  DBX 版本: v0.6.69 (0.6.69-beta.20261110.1) 运行环境: 桌面端 操作系统: macOS 15.8.1 系统架构: aarch64 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) 数据库类型: dameng/dm, mysql, mysql/doris, oracle, postgres, sqlserver 本地驱动版本: dameng 0.1.103, oracle 0.1.79  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2015,454 +2012,761 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `04ccf364` (2026-11-12)
-**Commit Message**: fix(query): wait for metadata before batch SQL copy (#14838)
+### Incident Patch 1: `e7d19408` (2026-11-13)
+**Commit Message**: fix(postgres): block tuple locator on Greenplum, Cloudberry, Hologres
 
-Reuse the active result metadata request before building the INSERT mapping so the batch does not fail while the table structure is still loading.
+The v0.6.69 keyless-edit tuple locator (tableoid/ctid/xmin) broke
+Cloudberry AO tables and Greenplum (virtual tuple slot / Invalid
+attnum: -3): the query-mode version sniff never fired because native
+postgres pools returned no database info at all, and the data-tab
+injection sites had no engine gate. Probe SELECT version() for native
+postgres pools, keep the full product string, and gate every injection
+site on one shared predicate that also covers Hologres (#12647).
 
-Fixes #14791
+Closes #14745
 
-Co-authored-by: seaways1015-afk <[REDACTED_EMAIL]>
-
-**File**: `apps/desktop/src/stores/__tests__/queryStore.tableDataRefresh.spec.ts` (modified, +34/-1)
+**File**: `apps/desktop/src/components/grid/DataGrid.vue` (modified, +11/-3)
 ```diff
-@@ -5,21 +5,25 @@ import { clearDataGridStructuredFilterStates, loadDataGridStructuredFilterState,
- import { clearDataGridSortBuilderMemoryCache, useDataGridSortBuilder } from "@/composables/useDataGridSortBuilder";
- import { resetRowIdLocatorStateForTests, rowIdLocatorUnsupported } from "@/lib/table/tableRowIdSupport";
- import { canGoNextDataGridPage } from "@/lib/dataGrid/dataGridPagination";
-+import type { TableColumnsLoadResult } from "@/lib/metadata/tableMetadataCache";
-+import { analyzeEditableQueryEditability } from "@/lib/sql/sqlAnalysis";
- 
- const mocks = vi.hoisted(() => ({
-+  analyzeEditableQueryEditability: vi.fn(),
-   buildTableSelectSql: vi.fn(),
-   closeClientConnectionSession: vi.fn(),
-   closeQuerySession: vi.fn(),
-   executeMulti: vi.fn(),
-   getConnectionConfig: vi.fn(),
-   saveOpenTabsState: vi.fn(),
-+  loadTableColumns: vi.fn(),
-   loadTableMetadata: vi.fn(),
-   prepareQueryPaginationExecutionPlan: vi.fn(),
-   metadataGeneration: 0,
+@@ -145,6 +145,7 @@ import {
+   isTdengineExistingRowReadonlyColumn,
+   shouldIncludeSyntheticRowId,
+   showsKeylessEditWarning,
++  postgresTupleLocatorUnsupportedEngine,
+ } from "@/lib/table/tableEditing";
+ import { rowIdLocatorUnsupported } from "@/lib/table/tableRowIdSupport";
+ import { buildDataGridConditionalUpdateSql, buildDataGridContextFilterCondition, buildDataGridCountSql, buildHiveTablePropertiesSql, type DataGridContextFilterMode } from "@/lib/dataGrid/dataGridSql";
+@@ -4722,7 +4723,8 @@ async function refreshSavedRows(request: { dirtyRows: ReadonlyMap<number, Readon
+     ...largeValuePreviewOptions,
+     whereInput: identityConditions.join(" OR "),
+     limit: planResult.plan.sourceIndexes.length + 1,
+-    includeRowId: shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)),
++    includeRowId:
++      shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)) && !postgresTupleLocatorUnsupportedEngine(props.connectionId ? connectionStore.getConfig(props.connectionId) : undefined),
+   });
+   const refreshed = await executeDataGridSavedRowRefreshQuery(api, {
+     connectionId,
+@@ -8403,7 +8405,10 @@ async function applyOrderBySearch(_value?: string, structuredOrderByOverride?: s
+       injectDefaultTimeSeriesWhere: true,
+       limit: pageSize.value,
+       whereInput: currentWhereInput(),
+-      includeRowId: shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)),
++      includeRowId:
++        shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) &&
++        !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)) &&
++        !postgresTupleLocatorUnsupportedEngine(props.connectionId ? connectionStore.getConfig(props.connectionId) : undefined),
+     });
+     markConditionInputsApplied();
+     await props.onExecuteSql(sql);
+@@ -8446,7 +8451,10 @@ async function applyWhereFilter() {
+       limit: pageSize.value,
+       injectDefaultTimeSeriesWhere: true,
+       whereInput,
+-      includeRowId: shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)),
++      includeRowId:
++        shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) &&
++        !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)) &&
++        !postgresTupleLocatorUnsupportedEngine(props.connectionId ? connectionStore.getConfig(props.connectionId) : undefined),
+     });
+     markConditionInputsApplied();
+     await props.onExecuteSql(sql);
+```
+
+**File**: `apps/desktop/src/composables/__tests__/useSidebarDataOpenRuntime.spec.ts` (modified, +1/-0)
+```diff
+@@ -173,6 +173,7 @@ vi.mock("@/lib/table/tableEditing", () => ({
+   },
+   usesSyntheticRowIdKey: () => false,
+   shouldIncludeSyntheticRowId: () => mocks.includeSyntheticRowId,
++  postgresTupleLocatorUnsupportedEngine: () => false,
  }));
- 
- vi.mock("@/lib/backend/api", () => ({
--  analyzeEditableQueryEditability: vi.fn().mockResolvedValue({ editable: false, reason: "complex-query" }),
-+  analyzeEditableQueryEditability: mocks.analyzeEditableQueryEditability,
-   buildTableSelectSql: mocks.buildTableSelectSql,
-   closeClientConnectionSession: mocks.closeClientConnectionSession,
-   closeQuerySession: mocks.closeQuerySession,
-@@ -41,6 +45,7 @@ vi.mock("@/lib/metadata/tableMetadataCache", async (importOriginal) => {
-   const actual = await importOriginal<typeof import("@/lib/metadata/tableMetadataCache")>();
-   return {
-     ...actual,
-+    loadTableColumns: mocks.loadTableColumns,
-     loadTableMetadata: mocks.loadTableMetadata,
-   };
- });
-@@ -70,6 +75,7 @@ describe("queryStore table data refresh", () => {
-     resetRowIdLocatorStateForTests();
-     setActivePinia(createPinia());
-     mocks.metadataGeneration = 0;
-+    mocks.analyzeEditableQueryEditability.mockResolvedValue({ editable: false, reason: "complex-query" });
-     mocks.prepareQueryPaginationExecutionPlan.mockResolvedValue({ useAgentResultSession: false });
-     mocks.getConnectionConfig.mockReturnValue({
-       id: "pg-1",
-@@ -400,6 +406,33 @@ describe("queryStore table data refresh", () => {
-     expect(metadata?.querySourceColumns).toEqual(["name"]);
-   });
- 
-+  it("waits for an active query result's table metadata before batch INSERT mapping", async () => {
-+    const { useQueryStore } = await import("@/stores/queryStore");
-+    mocks.getConnectionConfig.mockReturnValue({ id: "mysql-1", db_type: "mysql", database: "app" });
-+    const store = useQueryStore();
-+    const tabId = store.createTab("mysql-1", "app", "Query", "query");
-+    const tab = store.tabs.find((candidate) => candidate.id === tabId)!;
-+    const sourceStatement = "SELECT name AS label FROM users";
-+    tab.results = [{ columns: ["label"], rows: [["Ada"]], sourceStatement }];
-+    const columns = [{ name: "name", data_type: "varchar", is_nullable: false, column_default: null, is_primary_key: false, extra: null }];
-+    const tableMetadata = { columns, tableName: "users", tableType: "TABLE", cachedAt: Date.now() };
-+    let resolveColumns!: (metadata: TableColumnsLoadResult) => void;
-+    mocks.loadTableColumns.mockReturnValueOnce(new Promise<TableColumnsLoadResult>((resolve) => (resolveColumns = resolve)));
-+    mocks.loadTableMetadata.mockResolvedValueOnce({ metadata: { ...tableMetadata, indexes: [], primaryKeys: [] }, cacheStatus: "miss", ageMs: 0 });
-+    mocks.analyzeEditableQueryEditability.mockResolvedValueOnce(analyzeEditableQueryEditability(sourceStatement));
-+
-+    store.setActiveResultIndex(tabId, 0);
-+    await vi.waitFor(() => expect(mocks.loadTableColumns).toHaveBeenCalled());
-+    expect(tab.tableMeta).toBeUndefined();
-+    const batchMetadata = store.resolveResultMetadataForBatch(tabId, tab.result!);
-+    resolveColumns({ ...tableMetadata, cacheStatus: "miss", ageMs: 0 });
-+
-+    await expect(batchMetadata).resolves.toMatchObject({
-+      tableMeta: { database: "app", tableName: "users", primaryKeys: [] },
-+      querySourceColumns: ["name"],
-+    });
-+  });
-+
-   it("uses JDBC ResultSet offset pagination for Caché data tabs", async () => {
-     mocks.getConnectionConfig.mockReturnValue({
-       id: "cache-1",
+ vi.mock("@/lib/table/tableOpenPageLimit", () => ({ tableOpenPageLimit: () => 100 }));
+ vi.mock("@/lib/tabs/dataTabActivation", () => ({ canActivateExistingDataTableTab: () => false }));
 ```
 
-**File**: `apps/desktop/src/stores/queryStore.ts` (modified, +31/-13)
+**File**: `apps/desktop/src/composables/useDataGridActions.ts` (modified, +2/-2)
 ```diff
-@@ -8123,6 +8123,8 @@ export const useQueryStore = defineStore("query", () => {
-     }
+@@ -8,7 +8,7 @@ import { buildTableSelectSql, quoteTableDataIdentifier } from "@/lib/table/table
+ import { tableOpenPageLimit } from "@/lib/table/tableOpenPageLimit";
+ import { tableDataLargeValuePreviewOptions, tableDataPreviewRowBudget } from "@/lib/dataGrid/dataGridLargeValues";
+ import { elasticsearchCursorPageJumpRequestCount } from "@/lib/dataGrid/dataGridPagination";
+-import { editablePrimaryKeys, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
++import { editablePrimaryKeys, postgresTupleLocatorUnsupportedEngine, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
+ import { markRowIdLocatorUnsupported, rowIdLocatorUnsupported, shouldKeepRowIdLocatorDisabled, shouldRetryWithoutRowIdLocator } from "@/lib/table/tableRowIdSupport";
+ import { tableMetaForDataTab } from "@/lib/table/tableDataTabMeta";
+ import { loadVirtualRowIdentifier } from "@/lib/table/virtualRowIdentifier";
+@@ -124,7 +124,7 @@ export function useDataGridActions(activeTab: ComputedRef<QueryTab | undefined>)
+     const primaryKeys = tab.tableMeta ? tab.tableMeta.primaryKeys : (tableMeta?.primaryKeys ?? []);
+     // 已确认该连接拒绝合成行定位器（如 Hologres 拒绝 tableoid，#12647）时不再注入，
+     // 避免无主键表每次打开都报错。
+-    const useRowId = includeRowId ?? (shouldIncludeSyntheticRowId(effectiveDbType, primaryKeys, tableMeta?.tableType) && !rowIdLocatorUnsupported(tab.connectionId));
++    const useRowId = includeRowId ?? (shouldIncludeSyntheticRowId(effectiveDbType, primaryKeys, tableMeta?.tableType) && !rowIdLocatorUnsupported(tab.connectionId) && !postgresTupleLocatorUnsupportedEngine(config));
+     // 列投影只信任真实元数据列：tableMetaForDataTab 的 fallback 列来自查询
+     // 结果（可能是失败结果的 ["Error"]），进入 SQL 会生成非法投影；
+     // 真实列缺失时省略 columns 让 builder 生成 SELECT *
+```
+
+**File**: `apps/desktop/src/composables/useDataGridLargeValues.ts` (modified, +7/-3)
+```diff
+@@ -2,8 +2,9 @@ import { computed, nextTick, onActivated, onDeactivated, ref, watch, type Comput
+ import * as api from "@/lib/backend/api";
+ import type { CellValue } from "@/lib/dataGrid/cellValue";
+ import { chunkLegacyLargeValueRequests, fetchLegacyLargeValueRequestChunk, legacyLargeValueRowPredicate, resolveCapturedLegacyLargeValueCells, type LegacyLargeValueContext } from "@/lib/dataGrid/legacyLargeValueExport";
++import { useConnectionStore } from "@/stores/connectionStore";
+ import { buildTableSelectSql } from "@/lib/table/tableSelectSql";
+-import { shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
++import { postgresTupleLocatorUnsupportedEngine, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
+ import { rowIdLocatorUnsupported } from "@/lib/table/tableRowIdSupport";
+ import { queryTimeoutSecsForConnection } from "@/lib/sql/queryTimeout";
+ import { SnapshotCompletionError } from "@/lib/export/snapshotCompletion";
+@@ -365,7 +366,10 @@ export function useDataGridLargeValues(options: UseDataGridLargeValuesOptions) {
+       whereInput: predicates.map((predicate) => `(${predicate})`).join(" OR "),
+       limit: requests.size,
+       offset: 0,
+-      includeRowId: shouldIncludeSyntheticRowId(options.databaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(options.connectionId.value ? rowIdLocatorUnsupported(options.connectionId.value) : false),
++      includeRowId:
++        shouldIncludeSyntheticRowId(options.databaseType.value, tableMeta.primaryKeys, tableMeta.tableType) &&
++        !(options.connectionId.value ? rowIdLocatorUnsupported(options.connectionId.value) : false) &&
++        !postgresTupleLocatorUnsupportedEngine(useConnectionStore().getConfig(options.connectionId.value)),
+     });
+     if (!visibleLargeValuePreviewActive || generation !== visibleLargeValuePreviewRequestedGeneration || options.result.value !== sourceResult) return;
+     const connection = options.getConnectionConfig(options.connectionId.value!);
+@@ -504,7 +508,7 @@ export function useDataGridLargeValues(options: UseDataGridLargeValuesOptions) {
+       identifierQuote: options.connectionIdentifierQuote(connectionId),
+       serverVersion: connection?.database_info?.productVersion,
+       includeDatabaseName: options.includeDatabaseName.value,
+-      includeRowId: !!tableMeta && shouldIncludeSyntheticRowId(options.databaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(connectionId ? rowIdLocatorUnsupported(connectionId) : false),
++      includeRowId: !!tableMeta && shouldIncludeSyntheticRowId(options.databaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(connectionId ? rowIdLocatorUnsupported(connectionId) : false) && !postgresTupleLocatorUnsupportedEngine(connection),
+       timeoutSecs: queryTimeoutSecsForConnection(connection, options.globalQueryTimeoutSecs.value),
+     };
    }
- 
-+  const pendingQueryMetadata = new WeakMap<QueryResult, Promise<QueryMetadataPatch | undefined>>();
+```
+
+**File**: `apps/desktop/src/composables/useNavigationTargets.ts` (modified, +3/-3)
+```diff
+@@ -6,7 +6,7 @@ import { isNoSnapshotErrorResult, isQueryExecutionErrorResult } from "@/lib/quer
+ import { buildTableSelectSql, requiresEagerTableMetadataForDataOpen } from "@/lib/table/tableSelectSql";
+ import { resolveTableDefaultSort, applyTableDefaultSortResult } from "@/lib/table/tableDefaultSort";
+ import { tableDataLargeValuePreviewOptions } from "@/lib/dataGrid/dataGridLargeValues";
+-import { editableRowIdentifierColumns, physicalTablePrimaryKeys, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
++import { editableRowIdentifierColumns, physicalTablePrimaryKeys, postgresTupleLocatorUnsupportedEngine, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
+ import { markRowIdLocatorUnsupported, rowIdLocatorUnsupported, shouldKeepRowIdLocatorDisabled, shouldRetryWithoutRowIdLocator } from "@/lib/table/tableRowIdSupport";
+ import { tableOpenPageLimit } from "@/lib/table/tableOpenPageLimit";
+ import { uuid } from "@/lib/common/utils";
+@@ -218,7 +218,7 @@ async function openTableTarget(target: NavigationTarget, options: NavigationOpen
+     }
+     const eagerColumns = eagerMetadata?.metadata.columns ?? [];
+     const eagerPrimaryKeys = eagerMetadata?.metadata.primaryKeys ?? [];
+-    const eagerIncludeRowId = Boolean(eagerMetadata) && shouldIncludeSyntheticRowId(effectiveDbType, eagerPrimaryKeys, targetTableType) && !rowIdLocatorUnsupported(target.connectionId);
++    const eagerIncludeRowId = Boolean(eagerMetadata) && shouldIncludeSyntheticRowId(effectiveDbType, eagerPrimaryKeys, targetTableType) && !rowIdLocatorUnsupported(target.connectionId) && !postgresTupleLocatorUnsupportedEngine(config);
+     const defaultSort = resolveTableDefaultSort(settingsStore.editorSettings, effectiveDbType, physicalTablePrimaryKeys(eagerColumns, eagerMetadata?.metadata.indexes, effectiveDbType), identifierQuote);
+     const tableSelectSqlOptions = {
+       databaseType: effectiveDbType,
+@@ -324,7 +324,7 @@ async function openTableTarget(target: NavigationTarget, options: NavigationOpen
+       // 异步窗口内 tab 可能已被复用为其他目标：旧请求的元数据不得落地、
+       // 不得解除新目标的 pending
+       if (!isCurrentTarget() || !isCurrentGeneration()) return;
+-      const useRowId = shouldIncludeSyntheticRowId(effectiveDbType, primaryKeys, targetTableType) && !rowIdLocatorUnsupported(target.connectionId);
++      const useRowId = shouldIncludeSyntheticRowId(effectiveDbType, primaryKeys, targetTableType) && !rowIdLocatorUnsupported(target.connectionId) && !postgresTupleLocatorUnsupportedEngine(connectionStore.getConfig(target.connectionId));
+       queryStore.setTableMeta(tabId, {
+         schema: tableSchema,
+         catalog: target.catalog,
+```
+
+**File**: `apps/desktop/src/composables/useSidebarDataOpenRuntime.ts` (modified, +2/-2)
+```diff
+@@ -14,7 +14,7 @@ import type { SidebarDataOpenRequest } from "@/lib/sidebar/sidebarDataOpenCoordi
+ import { hasTreeNodeDatabaseContext } from "@/lib/sidebar/treeNodeContext";
+ import { buildTableSelectSql, requiresEagerTableMetadataForDataOpen } from "@/lib/table/tableSelectSql";
+ import { resolveTableDefaultSort, applyTableDefaultSortResult } from "@/lib/table/tableDefaultSort";
+-import { physicalTablePrimaryKeys, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
++import { physicalTablePrimaryKeys, postgresTupleLocatorUnsupportedEngine, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
+ import { markRowIdLocatorUnsupported, rowIdLocatorUnsupported, shouldKeepRowIdLocatorDisabled, shouldRetryWithoutRowIdLocator } from "@/lib/table/tableRowIdSupport";
+ import { tableOpenPageLimit } from "@/lib/table/tableOpenPageLimit";
+ import { tableDataLargeValuePreviewOptions } from "@/lib/dataGrid/dataGridLargeValues";
+@@ -428,7 +428,7 @@ export function useSidebarDataOpenRuntime() {
+       const defaultOrderBy = defaultSort.orderBy;
+       // #12647：首开路径同样尊重"该连接的行定位器已被引擎拒绝"的记忆，否则
+       // 被降级过的连接每次重新单击表都会再发一次注定失败的定位器查询。
+-      const includeRowId = shouldIncludeSyntheticRowId(effectiveDbType, primaryKeys, tableType) && !rowIdLocatorUnsupported(node.connectionId);
++      const includeRowId = shouldIncludeSyntheticRowId(effectiveDbType, primaryKeys, tableType) && !rowIdLocatorUnsupported(node.connectionId) && !postgresTupleLocatorUnsupportedEngine(connectionStore.getConfig(node.connectionId));
+       const buildOpenSql = (withRowId: boolean) =>
+         buildTableSelectSql({
+           databaseType: effectiveDbType,
+```
+
+**File**: `apps/desktop/src/lib/table/__tests__/postgresTupleLocatorEngine.spec.ts` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++import { describe, expect, it } from "vitest";
++import { postgresTupleLocatorUnsupportedEngine, shouldIncludeSyntheticRowId } from "@/lib/table/tableEditing";
 +
-   function analyzeQueryMetadataInBackground(tabId: string, sql: string, result: QueryResult, executionDatabase: string, traceId: string, elapsed: () => string, databaseType: DatabaseType | undefined, hiddenPrimaryKeys: HiddenPrimaryKeyProjection[] = [], connection?: ConnectionConfig) {
-     void (async () => {
-       const tab = tabs.value.find((t) => t.id === tabId);
-@@ -8137,17 +8139,25 @@ export const useQueryStore = defineStore("query", () => {
-       };
-       // Metadata requests outlive the displayed result when another query starts
-       // or a retained run is selected. Analyze this result, not the live tab.
--      const patch = await buildQueryMetadataPatch({ ...tab, result }, sql, executionDatabase, traceId, elapsed, hiddenPrimaryKeys, connection, applyDisplayReady);
--      if (patch?.queryAnalysis && hasHiddenPhysicalRowKey(databaseType, hiddenPrimaryKeys)) {
--        patch.queryAnalysis = { ...patch.queryAnalysis, allowInsert: false };
--      }
--      const current = tabs.value.find((t) => t.id === tabId);
--      if (patch && current?.result === result) {
--        applyQueryMetadataPatch(current, patch, databaseType, executionDatabase);
--        if (activeResultRunOwnsDisplayedResult(current)) syncActiveResultRunFromDisplayed(current);
--        queryExecutionLog("info", "metadata:done", { traceId, elapsed: elapsed() });
--      } else {
--        queryExecutionLog("warn", "metadata:stale", { traceId, elapsed: elapsed() });
-+      const pending = buildQueryMetadataPatch({ ...tab, result }, sql, executionDatabase, traceId, elapsed, hiddenPrimaryKeys, connection, applyDisplayReady);
-+      pendingQueryMetadata.set(result, pending);
++const connection = (dbType: string, productName?: string, productVersion?: string) => ({
++  db_type: dbType,
++  database_info: productName || productVersion ? { productName, productVersion } : undefined,
++});
++
++describe("postgresTupleLocatorUnsupportedEngine (#14745)", () => {
++  it("blocks Greenplum, Cloudberry, and Hologres postgres connections", () => {
++    expect(postgresTupleLocatorUnsupportedEngine(connection("postgres", "Greenplum", "PostgreSQL 9.4.24 (Greenplum Database 6.18.2 build commit)"))).toBe(true);
++    expect(postgresTupleLocatorUnsupportedEngine(connection("postgres", "Apache Cloudberry", "PostgreSQL 14.4 (Apache Cloudberry 1.2.0)"))).toBe(true);
++    // Hologres connections reject tableoid outright (#12647).
++    expect(postgresTupleLocatorUnsupportedEngine(connection("postgres", undefined, "PostgreSQL 14.x (Hologres 2.x)"))).toBe(true);
++  });
++
++  it("keeps vanilla PostgreSQL and engines without product info on the locator", () => {
++    expect(postgresTupleLocatorUnsupportedEngine(connection("postgres", "PostgreSQL", "PostgreSQL 16.2 on x86_64"))).toBe(false);
++    expect(postgresTupleLocatorUnsupportedEngine(connection("postgres"))).toBe(false);
++    expect(postgresTupleLocatorUnsupportedEngine(undefined)).toBe(false);
++    // Non-postgres engine types are decided by their own capability sets.
++    expect(postgresTupleLocatorUnsupportedEngine(connection("mysql", "Greenplum", "whatever"))).toBe(false);
++  });
++
++  it("gates the synthetic row-id decision for keyless base tables (#14745)", () => {
++    const keyless: string[] = [];
++    expect(shouldIncludeSyntheticRowId("postgres", keyless, "TABLE")).toBe(true);
++    // The engine gate is a separate predicate the injection sites combine; the
++    // combination is what keeps Cloudberry AO tables from receiving the
++    // tableoid/ctid/xmin projection.
++    expect(shouldIncludeSyntheticRowId("postgres", keyless, "TABLE") && !postgresTupleLocatorUnsupportedEngine(connection("postgres", "Apache Cloudberry", "PostgreSQL 14.4 (Apache Cloudberry 1.2.0)"))).toBe(false);
++  });
++});
+```
+
+**File**: `apps/desktop/src/lib/table/tableEditing.ts` (modified, +16/-1)
+```diff
+@@ -1,10 +1,25 @@
+-import type { ColumnInfo, DatabaseType, IndexInfo } from "@/types/database";
++import type { ColumnInfo, ConnectionConfig, DatabaseType, IndexInfo } from "@/types/database";
+ import { getDatabaseCapability } from "@/lib/database/databaseCapabilities";
+ 
+ export const DBX_ROWID_COLUMN = "__DBX_ROWID";
+ export const DBX_NEO4J_ELEMENT_ID_COLUMN = "__DBX_ELEMENT_ID";
+ export const DBX_TDENGINE_TBNAME_COLUMN = "tbname";
+ 
++/**
++ * PostgreSQL-family engines whose storage rejects the tableoid/ctid/xmin
++ * tuple locator on at least some tables: Greenplum and Apache Cloudberry AO
++ * tables (`ERROR: virtual tuple table slot does not have system attributes`,
++ * `Invalid attnum: -3`, #14745) and Hologres (#12647, rejects `tableoid`
++ * outright). Detected from the connection's `SELECT version()` product
++ * string; before that probe lands the connection degrades on first
++ * rejection and is remembered per session.
++ */
++export function postgresTupleLocatorUnsupportedEngine(connection: Pick<ConnectionConfig, "db_type" | "database_info"> | undefined): boolean {
++  if (connection?.db_type !== "postgres") return false;
++  const version = `${connection.database_info?.productName ?? ""} ${connection.database_info?.productVersion ?? ""}`.toLowerCase();
++  return version.includes("greenplum") || version.includes("cloudberry") || version.includes("hologres");
++}
++
+ export function isViewTableType(tableType?: string): boolean {
+   return tableType?.toUpperCase().includes("VIEW") === true;
+ }
+```
+
+---
+
+### Incident Patch 2: `325fe1a6` (2026-11-13)
+**Commit Message**: fix(export): clear an idle-expired manual transaction when export fails (#14882)
+
+Exports read through the tab's open manual transaction. When the backend
+idle watcher rolls that session back, the export still sent the stale
+txnSessionId and surfaced the raw expiry error, leaving the dead id on
+the tab so every retry failed the same way.
+
+Handle expiry in both query-result export entry points and in the LOB
+reads an export performs: clear the dead session on the owning tab (with
+the auto-rollback notice when uncommitted work may be lost, or the SQL
+Server transaction-status recovery), then report
+exportProgress.transactionUnavailable instead of the backend string. The
+same cleanup now backs the query-execution expiry path, and the expiry
+matcher accepts the current idle-rollback wording.
+
+Fixes #14795
+
+Co-authored-by: linzhikai <[REDACTED_EMAIL]>
+
+**File**: `apps/desktop/src/composables/__tests__/useDataGridExport.transactionExpiry.spec.ts` (added, +168/-0)
+```diff
+@@ -0,0 +1,168 @@
++import { computed, ref } from "vue";
++import { createPinia, setActivePinia } from "pinia";
++import { beforeEach, describe, expect, it, vi } from "vitest";
++import type { UseDataGridExportOptions } from "@/composables/useDataGridExport";
++import type { QueryResultExportRequest } from "@/lib/backend/api";
++
++const mocks = vi.hoisted(() => ({
++  start: vi.fn(),
++  cancel: vi.fn(),
++  noteExpired: vi.fn(),
++  save: vi.fn(),
++  mode: vi.fn(),
++  toast: vi.fn(),
++}));
++
++vi.mock("@/lib/backend/tauriRuntime", () => ({ isTauriRuntime: () => true }));
++vi.mock("@/lib/backend/api", async (importOriginal) => {
++  const original = await importOriginal<typeof import("@/lib/backend/api")>();
++  return {
++    ...original,
++    startQueryResultExport: mocks.start,
++    cancelQueryResultExport: mocks.cancel,
++    createQueryResultTempFile: vi.fn(async (extension: string) => `C:/exports/temp.${extension}`),
++    openQueryResultTempFile: vi.fn(async () => undefined),
++  };
++});
++vi.mock("@/lib/export/exportPath", () => ({
++  promptExportSavePath: mocks.save,
++  autoRevealExportedPathIfConfigured: vi.fn(),
++}));
++vi.mock("@/lib/export/exportExecutionMode", () => ({ getDefaultExportExecutionMode: mocks.mode }));
++vi.mock("@/stores/queryStore", () => ({ useQueryStore: () => ({ noteExpiredManualTransaction: mocks.noteExpired }) }));
++vi.mock("@/composables/useToast", () => ({ useToast: () => ({ toast: mocks.toast }) }));
++vi.mock("vue-i18n", () => ({ useI18n: () => ({ t: (key: string, params?: { message?: string }) => (params?.message ? `${key}: ${params.message}` : key) }) }));
++vi.mock("@/i18n", () => ({ default: { install() {} } }));
++vi.mock("@/lib/schema/oracleRoutineDeploy", () => ({}));
++vi.mock("@/composables/useDataGridExtractor", () => ({ useDataGridExtractor: () => ({ canCopyWithExtractor: vi.fn() }) }));
++vi.mock("@/stores/connectionStore", () => ({
++  useConnectionStore: () => ({
++    getConfig: () => ({ id: "mysql-1", name: "MySQL", db_type: "mysql", database: "app" }),
++    ensureConnected: vi.fn(async () => undefined),
++    connectionStateRevision: () => 0,
++    isCurrentConnectionStateRevision: () => true,
++  }),
++}));
++vi.mock("@/stores/settingsStore", () => ({
++  useSettingsStore: () => ({
++    editorSettings: {
++      defaultExportMode: "immediate",
++      exportBatchSize: 1000,
++      exportRowLimitEnabled: false,
++      csvQuoteMode: "minimal",
++      csvNullMode: "empty",
++      numericColumnRightAlign: true,
++    },
++  }),
++}));
++
++function expiredTransactionError() {
++  return new Error("Transaction session not found or expired; it may have been auto-rolled back due to inactivity");
++}
++
++function capturedRequest(options: { exportId: string; filePath: string; format: QueryResultExportRequest["format"] }): QueryResultExportRequest {
++  return {
++    exportId: options.exportId,
++    connectionId: "mysql-1",
++    database: "app",
++    sql: "UPDATE users SET active = 1",
++    queryBaseSql: "UPDATE users SET active = 1",
++    databaseType: "mysql",
++    useAgentCursor: false,
++    filePath: options.filePath,
++    format: options.format,
++    pageSize: 1000,
++    keysetOptimizationEnabled: false,
++    txnSessionId: "txn-expired",
++    executionId: "exec-1",
++  };
++}
++
++function fixture() {
++  const progress = ref({
++    title: "",
++    tableName: "",
++    format: "",
++    rowsExported: 0,
++    totalRows: null as number | null,
++    status: "",
++    errorMessage: null as string | null,
++    filePath: null as string | null,
++  });
++  const options: UseDataGridExportOptions = {
++    columns: computed(() => ["ID"]),
++    displayItems: computed(() => []),
++    sql: computed(() => "SELECT ID FROM users"),
++    tableMeta: computed(() => undefined),
++    databaseType: computed(() => "mysql"),
++    connectionId: computed(() => "mysql-1"),
++    database: computed(() => "app"),
++    context: computed(() => "results"),
++    sourceColumns: computed(() => ["ID"]),
++    columnTypes: computed(() => ["INT"]),
++    whereInput: computed(() => undefined),
++    orderBy: computed(() => undefined),
++    exportBatchSize: computed(() => 1000),
++    hasCellSelection: computed(() => false),
++    selectedCells: computed(() => ({ columns: [], rows: [] })),
++    selectedCellMatrix: computed(() => null),
++    selectedRange: computed(() => null),
++    contextCell: ref(null),
++    contextSelectionIsSynthetic: ref(false),
++    getRowItem: () => undefined,
++    selectedRowIds: ref(new Set<number>()),
++    hasRowSelection: computed(() => false),
++    captureQueryResultExportRequest: () => async (buildOptions) => capturedRequest(buildOptions),
++    queryResultExportRequest: async (buildOptions) => capturedRequest(buildOptions),
++    exportProgressState: progress,
++    exportProgressDialog: ref(false),
++    exportCanMinimize: ref(false),
++    exportCancelHandler: ref(null),
++  };
++  return { options, progress };
++}
++
++describe("data grid query result export with an expired manual transaction", () => {
++  beforeEach(() => {
++    v
+```
+
+**File**: `apps/desktop/src/composables/useDataGridExport.ts` (modified, +22/-1)
+```diff
+@@ -27,6 +27,7 @@ import { resolveSqlExportColumnIndexes, sqlExportColumnChoices } from "@/lib/exp
+ import { summarizeExportRows } from "@/lib/export/exportDiagnostics";
+ import { appendDebugLog, appendNativeProcessMemoryLog, getBrowserMemorySnapshot, isDebugLoggingEnabled } from "@/lib/backend/debugLog";
+ import { uuid } from "@/lib/common/utils";
++import { isManualTransactionSessionExpired } from "@/lib/backend/errorUtils";
+ import { useSettingsStore } from "@/stores/settingsStore";
+ import { csvNullLiteralForMode } from "@/lib/export/csvNullMode";
+ import { expandNestedJsonStringsForCopy } from "@/lib/common/jsonCopyValue";
+@@ -47,6 +48,7 @@ import { getDefaultExportExecutionMode } from "@/lib/export/exportExecutionMode"
+ import { SnapshotCompletionError } from "@/lib/export/snapshotCompletion";
+ import type { CapturedLegacyLargeValueExport } from "@/lib/dataGrid/legacyLargeValueExport";
+ import { useConnectionStore } from "@/stores/connectionStore";
++import { useQueryStore } from "@/stores/queryStore";
+ import { connectionConfigFingerprint } from "@/lib/connection/connectionDatabaseInfo";
+ import type { ManualExportMode } from "@/lib/export/manualExportQueue";
+ 
+@@ -1343,6 +1345,10 @@ export function useDataGridExport(options: UseDataGridExportOptions) {
+             return await (native ? api.readLargeValueChunk(request, true) : api.readLargeValueChunk(request));
+           } catch (error) {
+             nativeUnknown = native && (!(error instanceof SnapshotCompletionError) || error.status === "unknown");
++            if (request.txnSessionId && isManualTransactionSessionExpired(error)) {
++              useQueryStore().noteExpiredManualTransaction(request.txnSessionId, error);
++              throw new Error(t("exportProgress.transactionUnavailable"));
++            }
+             throw error;
+           }
+         };
+@@ -2129,6 +2135,10 @@ export function useDataGridExport(options: UseDataGridExportOptions) {
+             return await api.readLargeValueChunk(request, true);
+           } catch (error) {
+             unknown ||= !(error instanceof SnapshotCompletionError) || error.status === "unknown";
++            if (request.txnSessionId && isManualTransactionSessionExpired(error)) {
++              useQueryStore().noteExpiredManualTransaction(request.txnSessionId, error);
++              throw new Error(t("exportProgress.transactionUnavailable"));
++            }
+             throw error;
+           }
+         };
+@@ -2782,6 +2792,17 @@ export function useDataGridExport(options: UseDataGridExportOptions) {
+     };
+     let request: QueryResultExportRequest | undefined;
+     if (mode === "immediate") request = await build();
++    const startExport = async (onProgress: (progress: api.TableExportProgress) => void) => {
 +      try {
-+        const patch = await pending;
-+        if (patch?.queryAnalysis && hasHiddenPhysicalRowKey(databaseType, hiddenPrimaryKeys)) {
-+          patch.queryAnalysis = { ...patch.queryAnalysis, allowInsert: false };
-+        }
-+        const current = tabs.value.find((t) => t.id === tabId);
-+        if (patch && current?.result === result) {
-+          applyQueryMetadataPatch(current, patch, databaseType, executionDatabase);
-+          if (activeResultRunOwnsDisplayedResult(current)) syncActiveResultRunFromDisplayed(current);
-+          queryExecutionLog("info", "metadata:done", { traceId, elapsed: elapsed() });
-+        } else {
-+          queryExecutionLog("warn", "metadata:stale", { traceId, elapsed: elapsed() });
-+        }
++        return await (isTauriRuntime() ? api.startQueryResultExport(request!, onProgress, true) : api.startQueryResultExport(request!, onProgress));
 +      } catch (error) {
-+        queryExecutionLog("warn", "metadata:failed", { traceId, elapsed: elapsed(), error });
-+      } finally {
-+        if (pendingQueryMetadata.get(result) === pending) pendingQueryMetadata.delete(result);
-       }
-     })();
-   }
-@@ -10890,8 +10900,16 @@ export const useQueryStore = defineStore("query", () => {
-     const connection = useConnectionStore().getConfig(location.connectionId);
-     const databaseType = effectiveDatabaseTypeForConnection(connection);
-     if (result === tab.result) {
--      if (tab.mode === "data" && (tab.tableMetaPending || !tab.tableMeta?.columns.length)) return undefined;
--      const tableMeta = tab.mode === "data" ? tableMetaForDataTab(tab) : tab.tableMeta;
-+      let tableMeta = tab.tableMeta;
-+      if (tab.mode === "data") {
-+        if (tab.tableMetaPending || !tableMeta?.columns.length) return undefined;
-+        tableMeta = tableMetaForDataTab(tab);
-+      } else {
-+        // The grid can show rows before background metadata is ready. Await
-+        // the patch for this result, since the active tab can change meanwhile.
-+        const pending = pendingQueryMetadata.get(result);
-+        if (pending) tableMeta = (await pending)?.tableMeta;
++        if (request?.txnSessionId && isManualTransactionSessionExpired(error)) {
++          useQueryStore().noteExpiredManualTransaction(request.txnSessionId, error);
++          throw new Error(t("exportProgress.transactionUnavailable"));
++        }
++        throw error;
 +      }
-       const structure = analyzeSelectStructureForDisplay(result.sourceStatement);
-       const sameTable = structure?.tableName && tableMeta?.tableName && structure.tableName.toLowerCase() === tableMeta.tableName.toLowerCase() && (!structure.schema || !tableMeta.schema || structure.schema.toLowerCase() === tableMeta.schema.toLowerCase());
-       if (!sameTable || !tableMeta?.tableName || !canInsertTableRows(databaseType) || tableMeta.tableType?.toUpperCase().includes("VIEW")) return undefined;
++    };
+     await submitBackendExport({
+       exportId,
+       tableName: "Query Result",
+@@ -2796,7 +2817,7 @@ export function useDataGridExport(options: UseDataGridExportOptions) {
+               request = await build();
+             }
+           : undefined,
+-      start: (onProgress) => (isTauriRuntime() ? api.startQueryResultExport(request!, onProgress, true) : api.startQueryResultExport(request!, onProgress)),
++      start: startExport,
+       cancel: () => api.cancelQueryResultExport(exportId, request!.executionId),
+     });
+     return true;
+```
+
+**File**: `apps/desktop/src/lib/backend/errorUtils.ts` (modified, +7/-1)
+```diff
+@@ -193,7 +193,13 @@ export function normalizeBackendError(error: unknown): BackendError | null {
+ export function isManualTransactionSessionExpired(error: unknown): boolean {
+   if (normalizeBackendError(error)?.code === MANUAL_TRANSACTION_SESSION_EXPIRED_CODE) return true;
+   const message = error instanceof Error ? error.message : typeof error === "string" ? error : undefined;
+-  return message?.startsWith("Transaction session not found or expired;") === true || message === "Transaction was auto-rolled back due to 5 minutes of inactivity";
++  return (
++    message?.startsWith("Transaction session not found or expired;") === true ||
++    // Current backend idle-rollback message, plus the pre-0.6.70 wording that
++    // hardcoded the five-minute timeout.
++    message === "Transaction was auto-rolled back due to inactivity" ||
++    message === "Transaction was auto-rolled back due to 5 minutes of inactivity"
++  );
+ }
+ 
+ export function isUnsupportedManualTransactionMethod(error: unknown): boolean {
+```
+
+**File**: `apps/desktop/src/stores/__tests__/queryStore.directExportQueue.spec.ts` (modified, +23/-0)
+```diff
+@@ -110,3 +110,26 @@ it("finishes a known preparation failure and permits the following independent e
+   expect(pending[0]!.request.sql).toBe("SELECT 2 FROM dual");
+   finish(0);
+ });
++
++it("drops the idle-expired manual transaction and reports the export transaction as unavailable", async () => {
++  const { useQueryStore } = await import("../queryStore");
++  const { useExportTracker } = await import("@/composables/useExportTracker");
++  const { default: i18n } = await import("@/i18n");
++  const store = useQueryStore();
++  const id = store.createTab("oracle-1", "APP", "Query");
++  const tab = store.tabs.find((item) => item.id === id)!;
++  tab.autoCommit = false;
++  tab.txnSessionId = "txn-expired";
++  tab.txnPossiblyDirty = true;
++
++  await store.exportQuerySqlDirect(id, "UPDATE users SET active = 1", "csv", "out.csv");
++  await vi.waitFor(() => expect(pending).toHaveLength(1));
++  expect(pending[0]!.request.txnSessionId).toBe("txn-expired");
++  pending[0]!.reject(new Error("Transaction session not found or expired; it may have been auto-rolled back due to inactivity"));
++
++  const tracker = useExportTracker();
++  await vi.waitFor(() => expect(tracker.tasks.value[0]!.errorMessage).toBe(i18n.global.t("exportProgress.transactionUnavailable")));
++  expect(tab.txnSessionId).toBeUndefined();
++  expect(tab.txnAutoRolledBack).toBe(true);
++  expect(tab.txnPossiblyDirty).toBe(false);
++});
+```
+
+**File**: `apps/desktop/src/stores/queryStore.ts` (modified, +40/-16)
+```diff
+@@ -6349,6 +6349,27 @@ export const useQueryStore = defineStore("query", () => {
+     if (tab.txnPossiblyDirty !== undefined) tab.txnPossiblyDirty = false;
+   }
+ 
++  /** Backend session was removed and rolled back after idle expiry: clear the
++   *  sticky dirty state together with the session. A session proven read-only
++   *  reports no lost work, so it gets no auto-rollback notice (#9831). */
++  function markManualTransactionIdleExpired(tab: QueryTab) {
++    const rollbackNoticeRequired = manualTransactionRollbackNoticeRequired(tab, effectiveDatabaseTypeForConnection(useConnectionStore().getConfig(tab.connectionId)));
++    clearTxnPossiblyDirty(tab);
++    tab.txnSessionId = undefined;
++    tab.txnAutoRolledBack = rollbackNoticeRequired;
++  }
++
++  /** An export observed the backend's idle-expiry error for the transaction it
++   *  was reading through. Drop the dead session from its source tab so a retry
++   *  stops sending the stale id. Returns false when no open tab owns it. */
++  function noteExpiredManualTransaction(txnSessionId: string, error: unknown): boolean {
++    const tab = tabs.value.find((item) => item.txnSessionId === txnSessionId);
++    if (!tab) return false;
++    if (isSqlServerTransactionTab(tab)) reportSqlServerTransactionError(tab, error);
++    else markManualTransactionIdleExpired(tab);
++    return true;
++  }
++
+   function rollbackTabTransaction(tab: QueryTab, options?: { resetAutoCommit?: boolean; resetAutoCommitDbType?: string }) {
+     invalidateManualTransactionTarget(tab);
+     if (tab.txnSessionId) void rollbackTransaction(tab.id);
+@@ -10155,13 +10176,7 @@ export const useQueryStore = defineStore("query", () => {
+         const errMsg: string = e?.message ?? String(e);
+         const idleTimeout = isManualTransactionSessionExpired(e) || errMsg.includes("已自动回滚");
+         if (idleTimeout) {
+-          // Backend session was removed and rolled back after idle expiry: clear
+-          // the sticky dirty state together with the session. Same rule as the
+-          // restart path: a session proven read-only reports no lost work.
+-          const rollbackNoticeRequired = manualTransactionRollbackNoticeRequired(tab, effectiveDatabaseTypeForConnection(useConnectionStore().getConfig(tab.connectionId)));
+-          clearTxnPossiblyDirty(tab);
+-          tab.txnSessionId = undefined;
+-          tab.txnAutoRolledBack = rollbackNoticeRequired;
++          markManualTransactionIdleExpired(tab);
+         } else if (/rolled.?back/i.test(errMsg) || /transaction session not found/i.test(errMsg) || /agent runtime terminated/i.test(errMsg)) {
+           // Statement failure that disposed the manual session: the `rolled back`
+           // message fragment is a frontend cleanup compatibility contract.
+@@ -11923,6 +11938,18 @@ export const useQueryStore = defineStore("query", () => {
+         throw new Error(i18n.global.t("exportProgress.transactionUnavailable"));
+     }
+ 
++    const startExport = async (onProgress: (progress: api.TableExportProgress) => void) => {
++      try {
++        return await (isTauriRuntime() ? api.startQueryResultExport(request, onProgress, true) : api.startQueryResultExport(request, onProgress));
++      } catch (error) {
++        if (request.txnSessionId && isManualTransactionSessionExpired(error)) {
++          noteExpiredManualTransaction(request.txnSessionId, error);
++          throw new Error(i18n.global.t("exportProgress.transactionUnavailable"));
++        }
++        throw error;
++      }
++    };
++
+     const tracker = useExportTracker();
+     if (!isTauriRuntime()) await connStore.ensureConnected(request.connectionId);
+     const task = tracker.addTask("Query Result", format, filePath, request.exportId);
+@@ -11945,14 +11972,10 @@ export const useQueryStore = defineStore("query", () => {
+             return "settled";
+           }
+           invoked = true;
+-          const result = await api.startQueryResultExport(
+-            request,
+-            (progress) => {
+-              terminal ||= progress.status === "Done" || progress.status === "Error" || progress.status === "Cancelled";
+-              tracker.updateTableExportTask(request.exportId, progress);
+-            },
+-            true,
+-          );
++          const result = await startExport((progress) => {
++            terminal ||= progress.status === "Done" || progress.status === "Error" || progress.status === "Cancelled";
++            tracker.updateTableExportTask(request.exportId, progress);
++          });
+           terminal ||= result.status === "Done" || result.status === "Error" || result.status === "Cancelled";
+           tracker.updateTableExportTask(request.exportId, result);
+           return terminal ? "settled" : "unknown";
+@@ -11975,7 +11998,7 @@ export const useQueryStore = defineStore("query", () => {
+ 
+     void (async () => {
+       try {
+-        await api.startQueryResultExport(request, (progress) => tracker.updateTableExportTask(request.exportId, progress));
++        await startExport((pro
 ```
 
 ---
 
-### Incident Patch 2: `dea9faa1` (2026-11-12)
-**Commit Message**: fix(sidebar): apply DDL display preferences to Generate SQL > DDL (#14847)
+### Incident Patch 3: `65efe53b` (2026-11-13)
+**Commit Message**: fix(query): apply configured default schema when opening queries from quick connections (#11844) (#11865)
 
-Generate SQL > DDL only applied the database-name and identifier-quote
-settings, so Oracle DDL kept the blank lines between COMMENT ON
-statements and the storage clauses that View DDL removes through the
-Compact SQL and Storage attributes preferences.
+* fix(query): apply configured default schema when opening queries from quick connections (#11844)
 
-Closes #14818
+* style: format frontend with oxfmt 0.76.0
 
-**File**: `apps/desktop/src/components/sidebar/SidebarTreeRuntimeHost.vue` (modified, +1/-1)
+The two merge commits carried 32 files reformatted by a stale local oxfmt 0.73.0 pre-commit hook; the repo now pins 0.76.0 and CI enforces it. Re-formatting with 0.76.0 restores those files to main's content, leaving only the PR's own 3-file change.
+
+---------
+
+Co-authored-by: zipg <[REDACTED_EMAIL]>
+
+**File**: `apps/desktop/src/App.vue` (modified, +33/-7)
 ```diff
-@@ -2695,7 +2695,7 @@ async function openSidebarMultiTableDdlTab(targets: Array<TreeNode & { connectio
-     async (ddl, target) => {
-       const formatDialect = sqlFormatDialectForDbType(databaseTypeForNode(target));
-       const formatted = await formatSqlForDisplay(ddl, formatDialect, settingsStore.editorSettings.sqlFormatter);
--      return formatSidebarDdlTemplateForDisplay(formatted, formatDialect, databaseTypeForNode(target), settingsStore.editorSettings.generateSqlIncludeDatabaseName, target.database, settingsStore.editorSettings.generateSqlQuoteIdentifiers, target.catalog);
-+      return formatSidebarDdlTemplateForDisplay(formatted, formatDialect, databaseTypeForNode(target), settingsStore.editorSettings.generateSqlIncludeDatabaseName, target.database, settingsStore.editorSettings.generateSqlQuoteIdentifiers, settingsStore.editorSettings, target.catalog);
-     },
-   );
-   connectionStore.activeConnectionId = tabTarget.connectionId;
+@@ -3454,7 +3454,25 @@ async function newQuery(options: NewQueryOptions = {}) {
+     await connectionStore.ensureConnected(target.connectionId);
+     if (target.shouldRefreshDefaultDatabase) {
+       const options = await getDatabaseOptions(target.connectionId);
+-      queryStore.updateDatabase(tabId, resolveDefaultDatabase(conn, options));
++      const nextDb = resolveDefaultDatabase(conn, options);
++      if (nextDb !== target.database) {
++        queryStore.updateDatabase(tabId, nextDb);
++        if (target.schema) {
++          queryStore.updateSchema(tabId, target.schema);
++        }
++      }
++      if (!target.schema && (conn.db_type === "oracle" || conn.db_type === "oceanbase-oracle")) {
++        try {
++          const orderedSchemas = await api.listSchemas(target.connectionId, nextDb);
++          const schema = schemaAfterConnectionSwitch(conn.db_type, orderedSchemas, conn.default_schema);
++          const latestTab = queryStore.tabs.find((candidate) => candidate.id === tabId);
++          if (schema && latestTab && latestTab.connectionId === target.connectionId) {
++            queryStore.updateSchema(tabId, schema);
++          }
++        } catch {
++          // Schema metadata failure must not turn a successful connection into an error.
++        }
++      }
+     }
+   } catch (e: any) {
+     toast(
+@@ -3517,18 +3535,26 @@ async function openConnectionQuery(connectionId: string) {
+     }
+     return;
+   }
+-  // The quick-start page opens a query directly, bypassing newQuery() and its
+-  // default-schema fallback. Pass the configured schema here too, otherwise an
+-  // Oracle connection with a default schema opens the editor without a session
+-  // schema and unqualified tables resolve against the session default (#11844).
+-  const tabId = queryStore.createTab(connectionId, initialTarget.database, undefined, "query", initialTarget.schema);
++  const initialSchema = initialTarget.kind === "query" ? initialTarget.schema : undefined;
++  const tabId = queryStore.createTab(connectionId, initialTarget.database, undefined, "query", initialSchema);
+   try {
+     await connectionStore.ensureConnected(connectionId);
+     const options = await getDatabaseOptions(connectionId);
+     const target = quickConnectionOpenTarget(connection, options);
+     if (target.kind === "query") {
+       queryStore.updateDatabase(tabId, target.database);
+-      if (target.schema) queryStore.updateSchema(tabId, target.schema);
++      if (connection.default_schema || connection.db_type === "oracle" || connection.db_type === "oceanbase-oracle") {
++        try {
++          const orderedSchemas = connection.default_schema ? [] : await api.listSchemas(connectionId, target.database);
++          const schema = schemaAfterConnectionSwitch(connection.db_type, orderedSchemas, connection.default_schema);
++          const latestTab = queryStore.tabs.find((candidate) => candidate.id === tabId);
++          if (schema && latestTab && latestTab.connectionId === connectionId) {
++            queryStore.updateSchema(tabId, schema);
++          }
++        } catch {
++          // Schema metadata failure must not turn a successful connection into an error.
++        }
++      }
+     }
+   } catch (e: any) {
+     toast(
 ```
 
-**File**: `apps/desktop/src/lib/__tests__/sidebar/sidebarDdlTemplate.spec.ts` (modified, +25/-2)
+**File**: `apps/desktop/src/lib/__tests__/connection/connectionOpenTarget.spec.ts` (modified, +13/-4)
 ```diff
-@@ -1,6 +1,19 @@
- import { describe, expect, it, vi } from "vitest";
- import { buildSidebarDdlTemplateSql, formatSidebarDdlTemplateForDisplay, sidebarDdlTargetsForExecutionContext } from "@/lib/sidebar/sidebarDdlTemplate";
- 
-+const KEEP_DDL_TEXT = { includeDdlStorage: true, compactDdlSql: false };
-+
-+// Oracle display DDL as returned for a commented table (statements are separated by blank lines).
-+const ORACLE_COMMENTED_TABLE_DDL = [
-+  'CREATE TABLE "APP"."ORDERS" ("ID" NUMBER(10, 0), "NOTE" VARCHAR2(100)) SEGMENT CREATION DEFERRED TABLESPACE "USERS";',
-+  "",
-+  'COMMENT ON TABLE "APP"."ORDERS" IS \'Orders\';',
-+  "",
-+  'COMMENT ON COLUMN "APP"."ORDERS"."ID" IS \'Id\';',
-+  "",
-+  'COMMENT ON COLUMN "APP"."ORDERS"."NOTE" IS \'Note\';',
-+].join("\n");
-+
- describe("sidebar DDL template", () => {
-   it("preserves the single-target SQL", async () => {
-     const sql = await buildSidebarDdlTemplateSql(
-@@ -30,7 +43,7 @@ describe("sidebar DDL template", () => {
-     const sql = await buildSidebarDdlTemplateSql(
-       [{ databaseType: "oracle" as const, catalog: undefined }],
-       async () => 'CREATE TABLE "SYSTEM"."TEST" ("ID" NUMBER)',
--      async (ddl, target) => formatSidebarDdlTemplateForDisplay(ddl, "oracle", target.databaseType, false, undefined, true, target.catalog),
-+      async (ddl, target) => formatSidebarDdlTemplateForDisplay(ddl, "oracle", target.databaseType, false, undefined, true, KEEP_DDL_TEXT, target.catalog),
-     );
- 
-     expect(sql).toBe('CREATE TABLE "TEST" ("ID" NUMBER)');
-@@ -44,12 +57,22 @@ describe("sidebar DDL template", () => {
-     const sql = await buildSidebarDdlTemplateSql(
-       targets,
-       async (target) => `CREATE TABLE \`iceberg\`.\`analytics\`.\`${target.name}\` (\`id\` bigint)`,
--      async (ddl, target) => formatSidebarDdlTemplateForDisplay(ddl, "mysql", "starrocks", false, undefined, false, target.catalog),
-+      async (ddl, target) => formatSidebarDdlTemplateForDisplay(ddl, "mysql", "starrocks", false, undefined, false, KEEP_DDL_TEXT, target.catalog),
-     );
- 
-     expect(sql).toBe("CREATE TABLE iceberg.analytics.events (id bigint);\n\nCREATE TABLE iceberg.analytics.sessions (id bigint);\n");
+@@ -43,11 +43,20 @@ describe("quickConnectionOpenTarget", () => {
+     });
    });
  
-+  it("applies the DDL viewer text preferences to Oracle DDL", () => {
-+    const sql = formatSidebarDdlTemplateForDisplay(ORACLE_COMMENTED_TABLE_DDL, "oracle", "oracle", true, undefined, true, { includeDdlStorage: false, compactDdlSql: true });
-+
-+    expect(sql).toBe(['CREATE TABLE "APP"."ORDERS" ("ID" NUMBER(10, 0), "NOTE" VARCHAR2(100));', 'COMMENT ON TABLE "APP"."ORDERS" IS \'Orders\';', 'COMMENT ON COLUMN "APP"."ORDERS"."ID" IS \'Id\';', 'COMMENT ON COLUMN "APP"."ORDERS"."NOTE" IS \'Note\';'].join("\n"));
-+  });
-+
-+  it("keeps Oracle blank lines and storage clauses when the preferences are off", () => {
-+    expect(formatSidebarDdlTemplateForDisplay(ORACLE_COMMENTED_TABLE_DDL, "oracle", "oracle", true, undefined, true, KEEP_DDL_TEXT)).toBe(ORACLE_COMMENTED_TABLE_DDL);
-+  });
-+
-   it("keeps DDL targets in the active SQL execution context", () => {
-     const active = { id: "active", connectionId: "c1", database: "db1", catalog: "catalog1" };
-     const sameContext = { id: "same", connectionId: "c1", database: "db1", catalog: "catalog1" };
+-  it("carries the connection's default schema into the query tab (#11844)", () => {
+-    expect(quickConnectionOpenTarget({ ...connection("oracle"), database: "XE", default_schema: "REPORTING" })).toEqual({
++  it("includes configured default schema for Oracle and other query connections", () => {
++    expect(quickConnectionOpenTarget({ ...connection("oracle"), database: "ORCL", default_schema: "HR" })).toEqual({
+       kind: "query",
+-      database: "XE",
+-      schema: "REPORTING",
++      database: "ORCL",
++      schema: "HR",
++    });
++    expect(quickConnectionOpenTarget({ ...connection("oracle"), database: "ORCL", default_schema: "  FINANCE  " })).toEqual({
++      kind: "query",
++      database: "ORCL",
++      schema: "FINANCE",
++    });
++    expect(quickConnectionOpenTarget({ ...connection("oracle"), database: "ORCL", default_schema: "   " })).toEqual({
++      kind: "query",
++      database: "ORCL",
+     });
+   });
+ });
 ```
 
-**File**: `apps/desktop/src/lib/sidebar/sidebarDdlTemplate.ts` (modified, +13/-2)
+**File**: `apps/desktop/src/lib/connection/connectionOpenTarget.ts` (modified, +7/-2)
 ```diff
-@@ -1,5 +1,6 @@
- import { joinExportedDdls } from "@/lib/export/ddlExport";
- import { applyDdlDatabaseQualifier, omitDdlIdentifierQuotes } from "@/lib/sql/ddlDisplay";
-+import { applyDdlTextPreferences } from "@/lib/sql/ddlPreferences";
- import type { SqlFormatDialect } from "@/lib/sql/sqlFormatter";
- import type { DatabaseType } from "@/types/database";
+@@ -3,7 +3,7 @@ import { resolveDefaultDatabase } from "@/lib/database/defaultDatabase";
  
-@@ -21,7 +22,17 @@ export async function buildSidebarDdlTemplateSql<T>(targets: readonly T[], loadD
-   return parts.length === 1 ? parts[0]! : joinExportedDdls(parts);
+ export type QuickConnectionOpenTarget = { kind: "mq-admin" } | { kind: "nacos-admin" } | { kind: "plugin-workbench" } | { kind: "etcd" } | { kind: "zookeeper" } | { kind: "consul" } | { kind: "query"; database: string; schema?: string };
+ 
+-export function quickConnectionOpenTarget(connection: Pick<ConnectionConfig, "db_type" | "database" | "default_schema">, databaseOptions: string[] = []): QuickConnectionOpenTarget {
++export function quickConnectionOpenTarget(connection: Pick<ConnectionConfig, "db_type" | "database"> & Partial<Pick<ConnectionConfig, "default_schema">>, databaseOptions: string[] = []): QuickConnectionOpenTarget {
+   if (connection.db_type === "mq") {
+     return { kind: "mq-admin" };
+   }
+@@ -22,5 +22,10 @@ export function quickConnectionOpenTarget(connection: Pick<ConnectionConfig, "db
+   if (connection.db_type === "consul") {
+     return { kind: "consul" };
+   }
+-  return { kind: "query", database: resolveDefaultDatabase(connection, databaseOptions), schema: connection.default_schema };
++  const configuredSchema = connection.default_schema?.trim() || undefined;
++  return {
++    kind: "query",
++    database: resolveDefaultDatabase(connection, databaseOptions),
++    ...(configuredSchema ? { schema: configuredSchema } : {}),
++  };
  }
- 
--export function formatSidebarDdlTemplateForDisplay(sql: string, dialect: SqlFormatDialect, databaseType: DatabaseType | undefined, includeDatabaseName: boolean, database: string | undefined, quoteIdentifiers: boolean, catalog?: string): string {
-+// Text preferences run last, in the same order as the DDL viewers, so "Generate SQL > DDL" matches "View DDL".
-+export function formatSidebarDdlTemplateForDisplay(
-+  sql: string,
-+  dialect: SqlFormatDialect,
-+  databaseType: DatabaseType | undefined,
-+  includeDatabaseName: boolean,
-+  database: string | undefined,
-+  quoteIdentifiers: boolean,
-+  textPreferences: { includeDdlStorage: boolean; compactDdlSql: boolean },
-+  catalog?: string,
-+): string {
-   const unqualified = applyDdlDatabaseQualifier(sql, dialect, databaseType, includeDatabaseName, database, catalog);
--  return quoteIdentifiers ? unqualified : omitDdlIdentifierQuotes(unqualified, dialect);
-+  return applyDdlTextPreferences(quoteIdentifiers ? unqualified : omitDdlIdentifierQuotes(unqualified, dialect), databaseType, textPreferences);
- }
-```
-
----
-
-### Incident Patch 3: `3dc1b8e8` (2026-11-12)
-**Commit Message**: fix(agent): serialize non-finite JDBC floats as strings
-
-**File**: `agents/common/src/main/java/com/dbx/agent/AbstractJdbcAgent.java` (modified, +1/-1)
-```diff
-@@ -766,7 +766,7 @@ protected Object resultValue(ResultSet rs, int index, int sqlType) {
-                     value = rs.getString(index);
-                     break;
-             }
--            return rs.wasNull() ? null : value;
-+            return rs.wasNull() ? null : JdbcExecutor.normalizeNonFiniteValue(value);
-         });
-     }
- 
-```
-
-**File**: `agents/common/src/main/java/com/dbx/agent/JdbcExecutor.java` (modified, +25/-3)
-```diff
-@@ -852,7 +852,29 @@ public Object defaultResultValue(ResultSet rs, int index, int sqlType) throws SQ
-                 value = normalizeResultValue(rs.getObject(index));
-                 break;
-         }
--        return rs.wasNull() ? null : value;
-+        return rs.wasNull() ? null : normalizeNonFiniteValue(value);
-+    }
-+
-+    /**
-+     * JSON has no representation for NaN or infinities. Keep the same text
-+     * representation the Oracle Go agent uses ("NaN", "+Inf", "-Inf") so every
-+     * agent can return the value instead of failing the whole RPC response.
-+     */
-+    public static Object normalizeNonFiniteValue(Object value) {
-+        if (value instanceof Double number) {
-+            return Double.isFinite(number) ? number : nonFiniteText(number);
-+        }
-+        if (value instanceof Float number) {
-+            return Float.isFinite(number) ? number : nonFiniteText(number.doubleValue());
-+        }
-+        return value;
-+    }
-+
-+    private static String nonFiniteText(double value) {
-+        if (Double.isNaN(value)) {
-+            return "NaN";
-+        }
-+        return value > 0 ? "+Inf" : "-Inf";
-     }
- 
-     public static Object stringResultValue(ResultSet rs, int index, int sqlType) throws SQLException {
-@@ -907,7 +929,7 @@ public static Object normalizeResultValue(Object value) throws SQLException {
-             byte[] bytes = (byte[]) value;
-             return bytesToHex(bytes);
-         }
--        return value instanceof Number || value instanceof Boolean ? value : value.toString();
-+        return value instanceof Number || value instanceof Boolean ? normalizeNonFiniteValue(value) : value.toString();
-     }
- 
-     public static String bytesToHex(byte[] bytes) {
-@@ -1088,7 +1110,7 @@ private List<Object> rowValues(
-             } else {
-                 value = valueReader.read(rs, i, sqlType);
-             }
--            row.add(value);
-+            row.add(normalizeNonFiniteValue(value));
-         }
-         return row;
-     }
-```
-
-**File**: `agents/common/src/test/java/com/dbx/agent/JdbcExecutorTest.java` (modified, +73/-0)
-```diff
-@@ -6,6 +6,7 @@
- import java.lang.reflect.Method;
- import java.lang.reflect.Proxy;
- import java.sql.Connection;
-+import java.sql.DriverManager;
- import java.sql.ResultSet;
- import java.sql.ResultSetMetaData;
- import java.sql.SQLException;
-@@ -16,6 +17,8 @@
- import java.util.Arrays;
- import java.util.Collections;
- import java.util.List;
-+import java.util.Set;
-+import java.util.UUID;
- import java.util.concurrent.atomic.AtomicInteger;
- import javax.sql.rowset.serial.SerialBlob;
- 
-@@ -162,6 +165,76 @@ void defaultResultValueNormalizesBlobObjectsFromFallbackTypes() throws Exception
-         assertEquals("0x0a0b", JdbcExecutor.INSTANCE.defaultResultValue(rs, 1, Types.OTHER));
-     }
- 
-+    @Test
-+    void defaultResultValueReturnsJsonSafeTextForNonFiniteFloats() throws Exception {
-+        try (Connection connection = DriverManager.getConnection(
-+                 "jdbc:h2:mem:nonfinite_default_" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
-+             Statement statement = connection.createStatement();
-+             ResultSet rs = statement.executeQuery(
-+                 "SELECT CAST('NaN' AS DOUBLE), CAST('Infinity' AS REAL), CAST('-Infinity' AS DOUBLE)")) {
-+            assertTrue(rs.next());
-+            assertEquals("NaN", JdbcExecutor.INSTANCE.defaultResultValue(rs, 1, Types.DOUBLE));
-+            assertEquals("+Inf", JdbcExecutor.INSTANCE.defaultResultValue(rs, 2, Types.REAL));
-+            assertEquals("-Inf", JdbcExecutor.INSTANCE.defaultResultValue(rs, 3, Types.DOUBLE));
-+        }
-+    }
-+
-+    @Test
-+    void executeReturnsJsonSafeTextForNonFiniteFloats() throws Exception {
-+        try (Connection connection = DriverManager.getConnection(
-+                 "jdbc:h2:mem:nonfinite_exec_" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1")) {
-+            QueryResult result = JdbcExecutor.INSTANCE.execute(
-+                connection,
-+                "SELECT CAST('NaN' AS DOUBLE), CAST('Infinity' AS REAL), CAST('-Infinity' AS DOUBLE)",
-+                "",
-+                schema -> ""
-+            );
-+
-+            assertEquals(Arrays.asList("NaN", "+Inf", "-Inf"), result.getRows().get(0));
-+        }
-+    }
-+
-+    @Test
-+    void rowValuesNormalizesNonFiniteFloatsFromCustomReaders() throws Exception {
-+        try (Connection connection = DriverManager.getConnection(
-+                 "jdbc:h2:mem:nonfinite_reader_" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1")) {
-+            QueryResult result = JdbcExecutor.INSTANCE.execute(
-+                connection,
-+                "SELECT 1",
-+                "",
-+                schema -> "",
-+                10,
-+                null,
-+                (rs, index, sqlType) -> Double.NaN
-+            );
-+
-+            assertEquals(Collections.singletonList("NaN"), result.getRows().get(0));
-+        }
-+    }
-+
-+    @Test
-+    void normalizeResultValueReturnsJsonSafeTextForNonFiniteNumbers() throws Exception {
-+        assertEquals("NaN", JdbcExecutor.normalizeResultValue(Double.NaN));
-+        assertEquals("+Inf", JdbcExecutor.normalizeResultValue(Float.POSITIVE_INFINITY));
-+        assertEquals("-Inf", JdbcExecutor.normalizeResultValue(Double.NEGATIVE_INFINITY));
-+        assertEquals(Double.valueOf(1.5), JdbcExecutor.normalizeResultValue(1.5));
-+    }
-+
-+    @Test
-+    void abstractAgentResultValueReturnsJsonSafeTextForNonFiniteFloats() throws Exception {
-+        ConfiguredJdbcAgent agent = new ConfiguredJdbcAgent(
-+            new JdbcAgentProfile("org.h2.Driver", "jdbc:h2:mem:abstract_nonfinite", 0, false, Set.of(), List.of("TABLE"))
-+        ) {};
-+
-+        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:abstract_nonfinite");
-+             Statement statement = connection.createStatement();
-+             ResultSet rs = statement.executeQuery("SELECT CAST('NaN' AS DOUBLE), CAST('Infinity' AS REAL)")) {
-+            assertTrue(rs.next());
-+            assertEquals("NaN", agent.resultValue(rs, 1, Types.DOUBLE));
-+            assertEquals("+Inf", agent.resultValue(rs, 2, Types.REAL));
-+        }
-+    }
-+
-     @Test
-     void readResultSetCachesColumnTypeMetadataAcrossRows() {
-         CountingResultSetFixture fixture = countingResultSet(new Object[][]{
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14847** (2026-11-12): fix(sidebar): apply DDL display preferences to Generate SQL > DDL (@jeff377)
-- **PR #14841** (2026-11-12): fix(mongodb): 受限账号 listDatabases 回退到已授权数据库列表 (@Lan-zk)
-- **PR #14838** (2026-11-12): fix(query): wait for metadata before batch SQL copy (@seaways1015-afk)
-- **PR #14835** (2026-11-12): fix(dbx-core): 修掉 secret_codec 的 clippy 报错（type_complexity / needless_borrow） (@zipg)
-- **PR #14815** (closed): fix(core): 用类型别名收敛 secret_codec 的 DPAPI 闭包签名，修复 main 的 clippy 红 (@dienaso)
-- **PR #14792** (2026-11-12): fix(agent): serialize non-finite JDBC floats as strings (@knqiufan)
+- **PR #14882** (2026-11-13): fix(export): clear an idle-expired manual transaction when export fails (@Lan-zk)
+- **PR #14875** (2026-11-13): fix(postgres): use concat() for CRDB metadata relation name (@Pius-x)
+- **PR #14873** (2026-11-13): fix(editor): enable AI in detached SQL windows (@Acd-kk)
+- **PR #14866** (2026-11-13): fix(structure): drop a local column order once the table is rebuilt in a new order (@jeff377)
+- **PR #14864** (2026-11-13): fix(editor): resolve Oracle public synonyms in semantic diagnostics (@zipg)
+- **PR #14861** (2026-11-13): fix(mysql): stop abandoned export streams instead of draining them on close (@jeff377)
 
 ---
 
@@ -2482,44 +2786,40 @@ Closes #14818
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): wait for metadata before batch SQL copy (#14838)
+## X. postgres): block tuple locator on Greenplum, Cloudberry, Hologres
 
 **RULE**:
-When implementing operations in `apps/desktop/src/stores/__tests__/queryStore.tableDataRefresh.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/components/grid/DataGrid.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `04ccf364`: query): wait for metadata before batch SQL copy (#14838). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e7d19408`: postgres): block tuple locator on Greenplum, Cloudberry, Hologres. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/stores/__tests__/queryStore.tableDataRefresh.spec.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/components/grid/DataGrid.vue`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import type { TableColumnsLoadResult } from "@/lib/metadata/tableMetadataCache";
-import { analyzeEditableQueryEditability } from "@/lib/sql/sqlAnalysis";
-  analyzeEditableQueryEditability: vi.fn(),
-  loadTableColumns: vi.fn(),
-  analyzeEditableQueryEditability: mocks.analyzeEditableQueryEditability,
-    loadTableColumns: mocks.loadTableColumns,
-    mocks.analyzeEditableQueryEditability.mockResolvedValue({ editable: false, reason: "complex-query" });
-  it("waits for an active query result's table metadata before batch INSERT mapping", async () => {
-    const { useQueryStore } = await import("@/stores/queryStore");
-    mocks.getConnectionConfig.mockReturnValue({ id: "mysql-1", db_type: "mysql", database: "app" });
-    const store = useQueryStore();
-    const tabId = store.createTab("mysql-1", "app", "Query", "query");
-    const tab = store.tabs.find((candidate) => candidate.id === tabId)!;
-    const sourceStatement = "SELECT name AS label FROM users";
-    tab.results = [{ columns: ["label"], rows: [["Ada"]], sourceStatement }];
-    const columns = [{ name: "name", data_type: "varchar", is_nullable: false, column_default: null, is_primary_key: false, extra: null }];
-    const tableMet
+  postgresTupleLocatorUnsupportedEngine,
+    includeRowId:
+      shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)) && !postgresTupleLocatorUnsupportedEngine(props.connectionId ? connectionStore.getConfig(props.connectionId) : undefined),
+      includeRowId:
+        shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) &&
+        !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)) &&
+        !postgresTupleLocatorUnsupportedEngine(props.connectionId ? connectionStore.getConfig(props.connectionId) : undefined),
+      includeRowId:
+        shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) &&
+        !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)) &&
+        !postgresTupleLocatorUnsupportedEngine(props.connectionId ? connectionStore.getConfig(props.connectionId) : undefined),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-  analyzeEditableQueryEditability: vi.fn().mockResolvedValue({ editable: false, reason: "complex-query" }),
+// Induced defect failure mode:
+    includeRowId: shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)),
+      includeRowId: shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)),
+      includeRowId: shouldIncludeSyntheticRowId(resolvedDatabaseType.value, tableMeta.primaryKeys, tableMeta.tableType) && !(props.connectionId && rowIdLocatorUnsupported(props.connectionId)),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `04ccf364` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e7d19408` are properly handled with clean fallback behavior.

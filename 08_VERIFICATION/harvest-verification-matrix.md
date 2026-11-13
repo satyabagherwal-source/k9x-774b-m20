@@ -9598,3 +9598,8 @@
 | `CYCLE-20261113-AW29` | `2026-11-13T19:54:20.241Z` | `PrunaAI/P-H3-Image-Comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | Yes (`ca3f8aab...`) |
 | `CYCLE-20261113-AY8A` | `2026-11-13T19:54:23.050Z` | `telemt/telemt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8369` | Yes (`0e72d7a5...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T19:54:48.263Z` | `hf-prunaai-p-h3-image-comfy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DFE22270` [Domain D] | Yes (`83b6c9e7...`) |
+| `CYCLE-20261113-REHT` | `2026-11-13T20:07:10.625Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`06ed8016...`) |
+| `CYCLE-20261113-RM0J` | `2026-11-13T20:07:20.371Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8370` | Yes (`e79d69ed...`) |
+| `CYCLE-20261113-ROTJ` | `2026-11-13T20:07:24.007Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8371` | Yes (`041e66a8...`) |
+| `CYCLE-20261113-RQ2H` | `2026-11-13T20:07:25.625Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8372` | Yes (`022ecaa2...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:08:02.979Z` | `hf-unsloth-qwen3.8-27b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-218A5260` [Domain D] | Yes (`8e54b810...`) |

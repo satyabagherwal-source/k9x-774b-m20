@@ -9631,3 +9631,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-prunaai-p-h3-image-comfy` | `https://huggingface.co/PrunaAI/P-H3-Image-Comfy` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-13T19:54:20.244Z |
 | `learn-github-telemt-telemt` | `https://github.com/telemt/telemt` | `b594ee55` | Multi-dimensional audit evidence | 2026-11-13T19:54:23.053Z |
 | `learn-dom-d-dfe22270` | `project://hf-prunaai-p-h3-image-comfy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | 2026-11-13T19:54:48.263Z |
+| `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-13T20:07:10.629Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `8d10da6e` | Multi-dimensional audit evidence | 2026-11-13T20:07:20.375Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `edc81e6f` | Multi-dimensional audit evidence | 2026-11-13T20:07:24.011Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `acc33f63` | Multi-dimensional audit evidence | 2026-11-13T20:07:25.629Z |
+| `learn-dom-d-218a5260` | `project://hf-unsloth-qwen3.8-27b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | 2026-11-13T20:08:02.979Z |
