@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T05:08:22.845Z",
+  "updated_at": "2026-11-13T05:16:25.428Z",
   "stats": {
-    "total_discovered": 2184,
-    "approved_pending_harvest": 2026,
+    "total_discovered": 2199,
+    "approved_pending_harvest": 2041,
     "harvested_count": 0,
     "rejected_count": 158,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2016,
+      "COMMUNITY_AND_EXPERT": 2031,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -46960,6 +46960,336 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
         "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-D07066251C23": {
+      "id": "SRC-D07066251C23",
+      "url": "https://github.com/rtk-ai/rtk",
+      "title": "https://github.com/rtk-ai/rtk",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:10.431Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-E91F5D4FA3D7": {
+      "id": "SRC-E91F5D4FA3D7",
+      "url": "https://cla-assistant.io/pull/badge/not_signed",
+      "title": "https://cla-assistant.io/pull/badge/not_signed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:10.449Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-85EA52FE68F5": {
+      "id": "SRC-85EA52FE68F5",
+      "url": "https://cla-assistant.io/rtk-ai/rtk?pullRequest=5019",
+      "title": "https://cla-assistant.io/rtk-ai/rtk?pullRequest=5019",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:10.469Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-89C354B8FDD0": {
+      "id": "SRC-89C354B8FDD0",
+      "url": "https://help.github.com/articles/why-are-my-commits-linked-to-the-wrong-user",
+      "title": "https://help.github.com/articles/why-are-my-commits-linked-to-the-wrong-user",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:10.485Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-3A5AB741DDFA": {
+      "id": "SRC-3A5AB741DDFA",
+      "url": "https://cla-assistant.io/check/rtk-ai/rtk?pullRequest=5019",
+      "title": "https://cla-assistant.io/check/rtk-ai/rtk?pullRequest=5019",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:10.503Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-68617061391F": {
+      "id": "SRC-68617061391F",
+      "url": "https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png",
+      "title": "https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:10.520Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-09D15596E29E": {
+      "id": "SRC-09D15596E29E",
+      "url": "https://github.com/wshm-dev/wshm",
+      "title": "https://github.com/wshm-dev/wshm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:10.538Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-BFAEAE17E412": {
+      "id": "SRC-BFAEAE17E412",
+      "url": "https://127.0.0.1:9/v3/index.json",
+      "title": "https://127.0.0.1:9/v3/index.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:10.576Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-13BD3882DE01": {
+      "id": "SRC-13BD3882DE01",
+      "url": "https://127.0.0.1:10/v3/index.json",
+      "title": "https://127.0.0.1:10/v3/index.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:10.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-CDDEC18A6133": {
+      "id": "SRC-CDDEC18A6133",
+      "url": "https://github.com/rust-lang/crates.io",
+      "title": "https://github.com/rust-lang/crates.io",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:10.611Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-245877F20829": {
+      "id": "SRC-245877F20829",
+      "url": "https://huggingface.co/Qwen/Qwen3-14B",
+      "title": "https://huggingface.co/Qwen/Qwen3-14B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:25.334Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
+        "fileName": "hf-qwen-qwen3-14b-learnings.md"
+      }
+    },
+    "SRC-F2C5EAC1D181": {
+      "id": "SRC-F2C5EAC1D181",
+      "url": "https://github.com/nats-io/nats.go",
+      "title": "https://github.com/nats-io/nats.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:25.362Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
+        "fileName": "nats-io-nats.go-learnings.md"
+      }
+    },
+    "SRC-4EBAC34C8E88": {
+      "id": "SRC-4EBAC34C8E88",
+      "url": "https://github.com/nats-io/nats.go/blob/e2ac73b92f5baae9aff730a65a8d8cee9d069e4c/jetstream/ordered.go",
+      "title": "https://github.com/nats-io/nats.go/blob/e2ac73b92f5baae9aff730a65a8d8cee9d069e4c/jetstream/ordered.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:25.387Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
+        "fileName": "nats-io-nats.go-learnings.md"
+      }
+    },
+    "SRC-E9F50D9AD959": {
+      "id": "SRC-E9F50D9AD959",
+      "url": "https://natsio.slack.com/archives/CM3T6T7JQ/p1692318754831879",
+      "title": "https://natsio.slack.com/archives/CM3T6T7JQ/p1692318754831879",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:25.411Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
+        "fileName": "nats-io-nats.go-learnings.md"
+      }
+    },
+    "SRC-6C1FBBCD7DCD": {
+      "id": "SRC-6C1FBBCD7DCD",
+      "url": "https://stackoverflow.com/help/mcve",
+      "title": "https://stackoverflow.com/help/mcve",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:16:25.428Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
+        "fileName": "nats-io-nats.go-learnings.md"
       }
     }
   }

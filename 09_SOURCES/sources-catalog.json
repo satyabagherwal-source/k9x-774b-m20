@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "4880fb84",
+    "sourceVersion": "91d00498",
     "license": "Apache-2.0",
-    "contentHash": "cabe22bc288fe4daf297808ffc4484998e6f70122b80079e701ffb7cd26559d7",
-    "lastHarvestedAt": "2026-11-08T17:35:44.656Z",
+    "contentHash": "089a887a8c5d8ddca36b23a54488b8ae4bbf08e7b76af37c251f3d5cf83591ee",
+    "lastHarvestedAt": "2026-11-13T05:16:05.012Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "8bc263a9",
+    "sourceVersion": "2a786dca",
     "license": "Apache-2.0",
-    "contentHash": "425d71a040bf3354d255a1b92b8189806e7544b92746083238747cffbf9bdf4a",
-    "lastHarvestedAt": "2026-11-11T11:00:30.510Z",
+    "contentHash": "98b04d784dda2f20a0c2dd0d2ab6425f4fef0b2c8212d639330ea3c6ade429f9",
+    "lastHarvestedAt": "2026-11-13T05:15:57.874Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {
@@ -10525,8 +10525,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-14B",
     "sourceVersion": "hf-qwen-qwen3-14b",
     "license": "Open-Source",
-    "contentHash": "756c9a6f36fe88877e4f93c64ba0d388af999bd4a6b8e34ef3d83eac85ecd86b",
-    "lastHarvestedAt": "2026-11-08T04:33:56.524Z",
+    "contentHash": "fe486c95f2e4385cd010dfd36c8aee661312e051e9ce4e48ebb149bf45b104e3",
+    "lastHarvestedAt": "2026-11-13T05:15:42.528Z",
     "learningId": "learn-huggingface-qwen-qwen3-14b"
   },
   "solaceproducts-solace-agent-mesh": {

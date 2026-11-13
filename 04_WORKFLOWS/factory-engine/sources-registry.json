@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T05:08:08.655Z",
-    "lastVerified": "2026-11-13T05:08:08.655Z",
+    "lastChecked": "2026-11-13T05:16:10.291Z",
+    "lastVerified": "2026-11-13T05:16:10.291Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -51,14 +51,14 @@
     "officialUrl": "https://github.com/rtk-ai/rtk",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T11:00:22.551Z",
-    "lastVerified": "2026-11-11T11:00:22.551Z",
+    "lastChecked": "2026-11-13T05:15:45.003Z",
+    "lastVerified": "2026-11-13T05:15:45.003Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rtk-ai-rtk",
-    "contentHash": "425d71a040bf3354d255a1b92b8189806e7544b92746083238747cffbf9bdf4a",
+    "contentHash": "98b04d784dda2f20a0c2dd0d2ab6425f4fef0b2c8212d639330ea3c6ade429f9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -468,8 +468,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T04:31:14.499Z",
-    "lastVerified": "2026-11-13T04:31:14.499Z",
+    "lastChecked": "2026-11-13T05:15:54.469Z",
+    "lastVerified": "2026-11-13T05:15:54.469Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -750,9 +750,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-12T23:28:39.184Z",
+    "lastChecked": "2026-11-13T05:15:49.539Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-12T23:28:39.184Z"
+    "lastVerified": "2026-11-13T05:15:49.539Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2718,22 +2718,21 @@
     "lastVerified": "2026-11-09T15:28:52.663Z"
   },
   "nats-io-nats.go": {
-    "name": "nats.go",
+    "name": "nats-io/nats.go",
     "officialUrl": "https://github.com/nats-io/nats.go",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T23:56:53.954Z",
-    "lastVerified": "2026-11-11T23:56:53.954Z",
+    "lastChecked": "2026-11-13T05:15:51.675Z",
+    "lastVerified": "2026-11-13T05:15:51.675Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "cabe22bc288fe4daf297808ffc4484998e6f70122b80079e701ffb7cd26559d7",
+    "contentHash": "089a887a8c5d8ddca36b23a54488b8ae4bbf08e7b76af37c251f3d5cf83591ee",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4880fb84"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "infiniflow-infinity": {
     "name": "infiniflow/infinity",
@@ -4784,12 +4783,12 @@
     "lastVerified": "2026-11-12T07:15:27.916Z"
   },
   "helixdb-helix-db": {
-    "name": "HelixDB/helix-db",
+    "name": "helix-db",
     "officialUrl": "https://github.com/HelixDB/helix-db",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T18:54:58.588Z",
-    "lastVerified": "2026-11-11T18:54:58.588Z",
+    "lastChecked": "2026-11-13T05:15:51.979Z",
+    "lastVerified": "2026-11-13T05:15:51.979Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-helixdb-helix-db",
@@ -4798,7 +4797,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5be60bda"
   },
   "kucherenko-jscpd": {
     "name": "kucherenko/jscpd",
@@ -11616,9 +11616,9 @@
   "paololeonardi-waterfallgrid": {
     "name": "WaterfallGrid",
     "officialUrl": "https://github.com/paololeonardi/WaterfallGrid",
-    "lastChecked": "2026-11-08T21:46:51.862Z",
+    "lastChecked": "2026-11-13T05:15:44.388Z",
     "revisionIdentifier": "c7c08652",
-    "lastVerified": "2026-11-08T21:46:51.862Z"
+    "lastVerified": "2026-11-13T05:15:44.388Z"
   },
   "wooorm-parse-entities": {
     "name": "parse-entities",
@@ -13394,13 +13394,13 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-14B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T04:33:43.785Z",
-    "lastVerified": "2026-11-08T04:33:43.785Z",
+    "lastChecked": "2026-11-13T05:15:42.008Z",
+    "lastVerified": "2026-11-13T05:15:42.008Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-14b",
-    "contentHash": "756c9a6f36fe88877e4f93c64ba0d388af999bd4a6b8e34ef3d83eac85ecd86b",
-    "promotedRulesCount": 3,
+    "contentHash": "fe486c95f2e4385cd010dfd36c8aee661312e051e9ce4e48ebb149bf45b104e3",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

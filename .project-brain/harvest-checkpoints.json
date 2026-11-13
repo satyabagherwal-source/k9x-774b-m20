@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T05:08:01.639Z",
+  "last_updated": "2026-11-13T05:16:05.036Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3981,14 +3981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "cabe22bc288fe4daf297808ffc4484998e6f70122b80079e701ffb7cd26559d7",
-      "verified_at": "2026-11-08T17:35:44.662Z",
+      "content_hash": "089a887a8c5d8ddca36b23a54488b8ae4bbf08e7b76af37c251f3d5cf83591ee",
+      "verified_at": "2026-11-13T05:16:05.035Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T17:35:44.662Z"
+      "last_updated": "2026-11-13T05:16:05.035Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",
@@ -11796,14 +11796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "425d71a040bf3354d255a1b92b8189806e7544b92746083238747cffbf9bdf4a",
-      "verified_at": "2026-11-11T11:00:30.530Z",
+      "content_hash": "98b04d784dda2f20a0c2dd0d2ab6425f4fef0b2c8212d639330ea3c6ade429f9",
+      "verified_at": "2026-11-13T05:15:57.900Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T11:00:30.530Z"
+      "last_updated": "2026-11-13T05:15:57.900Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",
@@ -15816,14 +15816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-14b",
-      "content_hash": "756c9a6f36fe88877e4f93c64ba0d388af999bd4a6b8e34ef3d83eac85ecd86b",
-      "verified_at": "2026-11-08T04:33:56.541Z",
+      "content_hash": "fe486c95f2e4385cd010dfd36c8aee661312e051e9ce4e48ebb149bf45b104e3",
+      "verified_at": "2026-11-13T05:15:42.537Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T04:33:56.541Z"
+      "last_updated": "2026-11-13T05:15:42.537Z"
     },
     "SolaceProducts/solace-agent-mesh": {
       "repository": "SolaceProducts/solace-agent-mesh",

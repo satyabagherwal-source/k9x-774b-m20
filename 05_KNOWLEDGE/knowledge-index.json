@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T05:08:01.440Z",
+  "last_updated": "2026-11-13T05:16:04.875Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47603,14 +47603,19 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "4880fb84",
-      "content_hash": "cabe22bc288fe4daf297808ffc4484998e6f70122b80079e701ffb7cd26559d7",
+      "source_version": "91d00498",
+      "content_hash": "089a887a8c5d8ddca36b23a54488b8ae4bbf08e7b76af37c251f3d5cf83591ee",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "[FIXED] Draining subscriptions resubscribed on reconnect (#2232)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[FIXED] Require a separator before inline header status (#2237)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -47669,7 +47674,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T17:35:44.572Z",
+      "verified_at": "2026-11-13T05:16:04.838Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56732,8 +56737,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "8bc263a9",
-      "content_hash": "425d71a040bf3354d255a1b92b8189806e7544b92746083238747cffbf9bdf4a",
+      "source_version": "2a786dca",
+      "content_hash": "98b04d784dda2f20a0c2dd0d2ab6425f4fef0b2c8212d639330ea3c6ade429f9",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -56765,6 +56770,11 @@
         {
           "number": null,
           "title": "Merge pull request #5053 from rtk-ai/chore/docs-cost-engine-positioning",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "core): send the classifier key and reach local hosts directly on ureq 3",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56838,7 +56848,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T11:00:30.421Z",
+      "verified_at": "2026-11-13T05:15:57.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -133021,7 +133031,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-14B",
       "source_version": "hf-qwen-qwen3-14b",
-      "content_hash": "756c9a6f36fe88877e4f93c64ba0d388af999bd4a6b8e34ef3d83eac85ecd86b",
+      "content_hash": "fe486c95f2e4385cd010dfd36c8aee661312e051e9ce4e48ebb149bf45b104e3",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md",
       "promoted_rules": [
@@ -133081,7 +133091,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T04:33:56.423Z",
+      "verified_at": "2026-11-13T05:15:42.391Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -9354,3 +9354,7 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `c2990d81` | Multi-dimensional audit evidence | 2026-11-13T05:07:57.643Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `e598bd4c` | Multi-dimensional audit evidence | 2026-11-13T05:08:01.615Z |
 | `learn-dom-d-f419ab78` | `project://hf-internscience-sage-a1.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md` | 2026-11-13T05:08:22.677Z |
+| `learn-huggingface-qwen-qwen3-14b` | `https://huggingface.co/Qwen/Qwen3-14B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-13T05:15:42.528Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `2a786dca` | Multi-dimensional audit evidence | 2026-11-13T05:15:57.874Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `91d00498` | Multi-dimensional audit evidence | 2026-11-13T05:16:05.012Z |
+| `learn-dom-d-5a5516b9` | `project://hf-qwen-qwen3-14b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md` | 2026-11-13T05:16:25.325Z |

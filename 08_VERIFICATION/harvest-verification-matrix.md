@@ -9345,3 +9345,7 @@
 | `CYCLE-20261113-N03Q` | `2026-11-13T05:07:57.638Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9fe31a22...`) |
 | `CYCLE-20261113-N361` | `2026-11-13T05:08:01.609Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b732636e...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T05:08:22.677Z` | `hf-internscience-sage-a1.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F419AB78` [Domain D] | Yes (`e6f06008...`) |
+| `CYCLE-20261113-WYT7` | `2026-11-13T05:15:42.523Z` | `Qwen/Qwen3-14B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md` | Yes (`fe486c95...`) |
+| `CYCLE-20261113-XANI` | `2026-11-13T05:15:57.870Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`98b04d78...`) |
+| `CYCLE-20261113-XG5S` | `2026-11-13T05:16:05.008Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`089a887a...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T05:16:25.325Z` | `hf-qwen-qwen3-14b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5A5516B9` [Domain D] | Yes (`b6e91a8e...`) |

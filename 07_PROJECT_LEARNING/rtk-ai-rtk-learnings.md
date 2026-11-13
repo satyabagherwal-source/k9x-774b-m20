@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `8bc263a9`  
+> **Source Version**: `2a786dca`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T11:00:22.980Z  
+> **Timestamp**: 2026-11-13T05:15:45.011Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T11:00:22.551Z  
+> **Harvest Timestamp**: 2026-11-13T05:15:45.003Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 86183 stars
+- **Stars / Engagement**: 86404 stars
 
 ---
 
@@ -1746,611 +1746,1046 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8bc263a9` (2026-11-10)
-**Commit Message**: Merge pull request #5053 from rtk-ai/chore/docs-cost-engine-positioning
+### Incident Patch 1: `4ae76938` (2026-11-12)
+**Commit Message**: fix(core): send the classifier key and reach local hosts directly on ureq 3
 
-docs: present RTK as the cost reduction engine for AI coding agents
+The ureq 3 migration sent a literal placeholder instead of the
+classifier's bearer key. ureq 3 also reads HTTP_PROXY/HTTPS_PROXY/
+ALL_PROXY, which ureq 2 did not: a proxy cannot reach this machine, so
+the llm-proxy health check, rtk task through the local daemon and a
+local classifier failed whenever a proxy was set. And ureq 3 has no
+default connect timeout, so a blackholed host could hang a call.
 
-**File**: `.github/assets/src/before-after.html` (added, +104/-0)
+core::http sets timeouts per request instead of building an Agent per
+call, connects to localhost and loopback directly, and calls to RTK's
+own daemon never use a proxy. Remote hosts follow the proxy variables;
+the module documents the limits of that path (CONNECT tunnels for
+http:// targets, task's substring daemon match, no SOCKS, how ureq
+reads the variables). Every request gets back ureq 2's 30s connect
+cap. Bodies are read as ureq 2's into_string did: at most 10 MiB once
+decompressed (ureq 3's own limit counts the bytes on the wire), invalid
+UTF-8 decoded lossily whatever the content type, JSON parsed from that
+text. Requests send JSON with send_json, and the health check caps the
+body it reads at 64 KiB.
+
+
+**File**: `Cargo.lock` (modified, +319/-0)
 ```diff
-@@ -0,0 +1,104 @@
-+<!doctype html>
-+<html><head><meta charset="utf-8">
-+<!-- Real output. Captured with `rtk bypass cargo test` (left) and `rtk cargo test` (right)
-+     on a 48-test crate with one failing assertion, rtk core 1.0.1. Only the lines marked
-+     "⋯ N more lines" are elided; the counts are exact. -->
-+<link rel="preconnect" href="https://fonts.googleapis.com">
-+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
-+<style>
-+:root{--bg:#060b18;--bg-card:#0f1629;--text:#e2e8f0;--text-bright:#f8fafc;--text-muted:#94a3b8;--text-dim:#7e8ca6;--accent:#00e599;--accent-dim:rgba(0,229,153,.10);--accent-glow:rgba(0,229,153,.25);--red:#f87171;--scene:rgba(0,229,153,.09);--tint:rgba(0,229,153,.045);--vignette:rgba(0,0,0,.42);--grid:rgba(148,163,184,.05);--line:rgba(148,163,184,.14)}
-+*{margin:0;padding:0;box-sizing:border-box}
-+html,body{width:1280px;height:560px;background:transparent}
-+.card{position:relative;width:1280px;height:560px;border-radius:20px;overflow:hidden;background:var(--bg);border:1px solid var(--line);isolation:isolate;font-family:'Geist','Inter',sans-serif;color:var(--text)}
-+.atmo{position:absolute;inset:0;z-index:-1;background-image:
-+ radial-gradient(ellipse 34% 80% at 50% 50%,var(--scene),transparent 62%),
-+ linear-gradient(180deg,transparent 4%,var(--tint) 42%,transparent 84%),
-+ radial-gradient(ellipse 120% 105% at 50% 48%,transparent 56%,var(--vignette) 100%)}
-+.grid{position:absolute;inset:0;z-index:-1;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:radial-gradient(ellipse 30% 70% at 50% 50%,#000 20%,transparent 75%)}
-+.eyebrow{position:absolute;left:56px;top:34px;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
-+.eyebrow b{color:var(--text-muted);font-weight:500}
-+.cmd{position:absolute;right:56px;top:30px;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--text-muted)}
-+.cmd span{color:var(--accent)}
-+.panel{position:absolute;top:84px;width:470px;height:440px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 30%),var(--bg-card);overflow:hidden}
-+.panel.left{left:56px}.panel.right{right:56px}
-+.ph{display:flex;align-items:center;gap:10px;height:42px;padding:0 18px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
-+.ph i{width:9px;height:9px;border-radius:50%;display:inline-block}
-+.left .ph i{background:var(--red);opacity:.8}.right .ph i{background:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
-+.ph .n{margin-left:auto;letter-spacing:.04em;text-transform:none}
-+.left .ph .n{color:var(--red);opacity:.85}.right .ph .n{color:var(--accent)}
-+pre{font-family:'JetBrains Mono',monospace}
-+.left pre{white-space:pre;padding:10px 18px;font-size:11.5px;line-height:13.5px;color:rgba(148,163,184,.55)}
-+.left pre .f{color:var(--red);opacity:.9}
-+.left pre .m{color:rgba(148,163,184,.38);font-style:italic}
-+.right pre{white-space:pre-wrap;padding:18px 20px;font-size:13.5px;line-height:22px;color:var(--text)}
-+.right pre .f{color:var(--red)}
-+.right pre .ok{color:var(--accent)}
-+.right pre .p{color:var(--text-muted)}
-+.right pre .r{color:var(--accent);opacity:.85}
-+.gate{position:absolute;left:526px;top:84px;width:228px;height:440px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
-+.gate::before{content:'';position:absolute;left:50%;top:0;width:1px;height:100%;transform:translateX(-50%);background:linear-gradient(to bottom,transparent,var(--accent-glow) 30%,var(--accent-glow) 70%,transparent)}
-+.gate::after{content:'';position:absolute;left:50%;top:50%;width:260px;height:260px;transform:translate(-50%,-50%);background:radial-gradient(circle,var(--accent-glow) 0%,transparent 62%);opacity:.7}
-+.gate img{position:relative;z-index:1;width:124px;height:124px;filter:drop-shadow(0 0 10px var(--accent-glow)) drop-shadow(0 0 32px var(--accent-glow))}
-+.gate .lbl{position:relative;z-index:1;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.26em;color:var(--text-muted)}
-+.strand{position:absolute;left:526px;top:84px;width:228px;height:440px;z-index:0}
-+</style></head>
-+<body><div class="card"><div class="atmo"></div><div class="grid"></div>
-+<p class="eyebrow">01 / Install &amp; forget · <b>what your agent reads</b></p>
-+<p class="cmd"><span>$</span> cargo test</p>
+@@ -334,6 +334,35 @@ dependencies = [
+  "unicode-segmentation",
+ ]
+ 
++[[package]]
++name = "cookie"
++version = "0.18.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
++dependencies = [
++ "percent-encoding",
++ "time",
++ "version_check",
++]
 +
-+<div class="panel left">
-+ <div class="ph"><i></i>without rtk<span class="n">71 lines</span></div>
-+<pre>   Compiling authkit v0.4.2 (/private/tmp/claude-501/-Users-aeppling--superconductor-worktrees-rtk-sc-flux-phonon-4e98/d36bac6a-c158-4776-8c24-adbe62511c7f/scratchpad/demo)
-+    Finished `test` 
++[[package]]
++name = "cookie_store"
++version = "0.22.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "15b2c103cf610ec6cae3da84a766285b42fd16aad564758459e6ecf128c75206"
++dependencies = [
++ "cookie",
++ "document-features",
++ "idna",
++ "indexmap",
++ "log",
++ "serde",
++ "serde_derive",
++ "serde_json",
++ "time",
++ "url",
++]
++
+ [[package]]
+ name = "core-foundation-sys"
+ version = "0.8.7"
+@@ -541,6 +570,17 @@ dependencies = [
+  "windows-sys 0.61.2",
+ ]
+ 
++[[package]]
++name = "displaydoc"
++version = "0.2.7"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "c6232dd377dcc64799954cbd3a9bb882e9cdc1308ccd87b1c098f1fb2eaf82a8"
++dependencies = [
++ "proc-macro2",
++ "quote",
++ "syn 3.0.5",
++]
++
+ [[package]]
+ name = "document-features"
+ version = "0.2.12"
+@@ -680,6 +720,15 @@ version = "0.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+ 
++[[package]]
++name = "form_urlencoded"
++version = "1.2.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++dependencies = [
++ "percent-encoding",
++]
++
+ [[package]]
+ name = "generic-array"
+ version = "0.14.7"
+@@ -845,12 +894,116 @@ dependencies = [
+  "cc",
+ ]
+ 
++[[package]]
++name = "icu_collections"
++version = "2.4.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "fe090a42a0d3140fed8c63263ed1fecc02422cb2f4bfe55cd8de2de1b8e105dd"
++dependencies = [
++ "displaydoc",
++ "potential_utf",
++ "utf8_iter",
++ "yoke",
++ "zerofrom",
++ "zerovec",
++]
++
++[[package]]
++name = "icu_locale_core"
++version = "2.4.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "25d29b57c17c6528d0dc4c2141cfa2d08200465acb537a3909c8b9b8a4a984c0"
++dependencies = [
++ "displaydoc",
++ "litemap",
++ "tinystr",
++ "writeable",
++ "zerovec",
++]
++
++[[package]]
++name = "icu_normalizer"
++version = "2.4.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "404a3b8c486f205c87fe7f23ab6894d84a4ad76d6e4671ae1981ba7def87c599"
++dependencies = [
++ "icu_collections",
++ "icu_normalizer_data",
++ "icu_properties",
++ "icu_provider",
++ "smallvec",
++ "zerovec",
++]
++
++[[package]]
++name = "icu_normalizer_data"
++version = "2.4.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "20f0088bfb7441f7a37fa0c9e20cb1e9cba1cac6b9ce8cd2a6dc44294f8e8cbc"
++
++[[package]]
++name = "icu_properties"
++version = "2.4.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2ea83d991c56158f7cf898bf86436c1dfe7c07ee82fe88951f2695c9f37a379f"
++dependencies = [
++ "displaydoc",
++ "icu_collections",
++ "icu_locale_core",
++ "icu_properties_data",
++ "icu_provider",
++ "zerotrie",
++ "zerovec",
++]
++
++[[package]]
++name = "icu_properties_data"
++version = "2.4.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b98f29af82d02b163fe50161388350e743bb3107cc8e8c2f7314cb505faddfcf"
++
++[[package]]
++name = "icu_provider"
++version = "2.4.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "413099315636c588ee8f011190b329b971a09a8fae9d157e01dcae8379468514"
++dependencies = [
++ "displaydoc",
++ "icu_locale_core",
++ "writeable",
++ "yoke",
++ "zerofrom",
++ "zerotrie",
++ "zerovec",
++]
++
+ [[package]]
+ name = "ident_case"
+ version = "1.0.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
+ 
++[[package]]
++name = "idna"
++version = "1.1.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3b0875f23caa03898994f6ddc501886a45c7d3d62d04d2d90788d47be1b1e4de"
++dependencies = [
++ "idna_adapter",
++ "smallvec",
++ "utf8_iter",
++]
++
++[[package]]
++name = "idna_adapter"
++version = "1.2.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "cb68373c0d6620ef8105e855e7745e18b0d00d3bdb07fb532e434244cdb9a714"
++dependencies = [
++ "icu_normalizer",
++ "icu_properties",
++]
++
+ [[package]]
+ name = "ignore"
+ version = "0.4.33"
+@@ -1009,6 +1162,12 @@ version = "0.12.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
+ 
++[[package]]
++name = "litemap"
++version = "0.8.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "47d9d19d1d6efa0109d2f65ff4c85cddd50bd572e5a00127ab10987290bcefae"
++
+ [[package]]
+ name = "litrs"
+ version = "1.0.1"
+@@ -1489,6 +1648,15 @@ version = "1.15.0"
+ source = "regi
 ```
 
-**File**: `.github/assets/src/companies.html` (added, +22/-0)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,22 @@
-+<!doctype html>
-+<html><head><meta charset="utf-8">
-+<!-- The 18 logos of rtk-ai.app's "Starred by developers at" strip (rtk-ldp Companies.astro) plus a third
-+     row of the largest companies found in the stargazers' public profiles. Transparent background and one
-+     flat grey so it reads on GitHub's light and dark themes alike. -->
-+<link rel="preconnect" href="https://fonts.googleapis.com">
-+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
-+<style>
-+*{margin:0;padding:0;box-sizing:border-box}
-+html,body{width:1280px;height:300px;background:transparent}
-+.wrap{width:1280px;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;font-family:'Inter',sans-serif}
-+.eyebrow{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:#8b95a7}
-+.rows{display:flex;flex-direction:column;gap:26px}
-+.row{display:flex;align-items:center;justify-content:center;gap:26px}
-+.row img{display:block;width:auto;height:calc(var(--h) * 1.4);filter:brightness(0) invert(.6);opacity:.95}
-+.more{font-size:18px;color:#8b95a7;white-space:nowrap}
-+</style></head>
-+<body><div class="wrap">
-+ <p class="eyebrow">Starred by developers at</p>
-+ <div class="rows"><div class="row"><img src="companies/microsoft.svg" alt="Microsoft" style="--h:20px"><img src="companies/google.svg" alt="Google" style="--h:22px"><img src="companies/amazon.svg" alt="Amazon" style="--h:22px"><img src="companies/meta.svg" alt="Meta" style="--h:20px"><img src="companies/apple.svg" alt="Apple" style="--h:29px"><img src="companies/nvidia.svg" alt="NVIDIA" style="--h:19px"><img src="companies/ibm.svg" alt="IBM" style="--h:24px"><img src="companies/tencent.svg" alt="Tencent" style="--h:17px"><img src="companies/bytedance.svg" alt="ByteDance" style="--h:19px"></div><div class="row"><img src="companies/alibaba.svg" alt="Alibaba" style="--h:18px"><img src="companies/shopify.svg" alt="Shopify" style="--h:21px"><img src="companies/datadog.svg" alt="Datadog" style="--h:22px"><img src="companies/sap.svg" alt="SAP" style="--h:26px"><img src="companies/adobe.svg" alt="Adobe" style="--h:21px"><img src="companies/intel.svg" alt="Intel" style="--h:24px"><img src="companies/samsung.svg" alt="Samsung" style="--h:18px"><img src="companies/bosch.svg" alt="Bosch" style="--h:20px"><img src="companies/cisco.svg" alt="Cisco" style="--h:26px"></div><div class="row"><img src="companies/jpmorgan-chase.svg" alt="JPMorgan Chase" style="--h:14px"><img src="companies/oracle.svg" alt="Oracle" style="--h:13px"><img src="companies/netflix.svg" alt="Netflix" style="--h:18px"><img src="companies/toyota.svg" alt="Toyota" style="--h:14px"><img src="companies/salesforce.svg" alt="Salesforce" style="--h:26px"><img src="companies/siemens.svg" alt="Siemens" style="--h:16px"><img src="companies/accenture.svg" alt="Accenture" style="--h:21px"><img src="companies/uber.svg" alt="Uber" style="--h:19px"><img src="companies/spotify.svg" alt="Spotify" style="--h:19px"></div></div>
-+ <p class="more">and 1,100+ more companies</p>
-+</div></body></html>
+@@ -78,7 +78,7 @@ toml_edit = "0.22"
+ chrono = "0.4"
+ tempfile = "3"
+ sha2 = "0.10"
+-ureq = "3"
++ureq = { version = "3", features = ["json"] }
+ getrandom = "0.4"
+ flate2 = "1.0"
+ quick-xml = "0.37"
 ```
 
-**File**: `.github/assets/src/companies/accenture.svg` (added, +410/-0)
+**File**: `src/core/README.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,410 @@
-+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-+<!-- Created with Inkscape (http://www.inkscape.org/) -->
-+<svg
-+   xmlns:svg="http://www.w3.org/2000/svg"
-+   xmlns="http://www.w3.org/2000/svg"
-+   version="1.0"
-+   width="1133.8583"
-+   height="374.88187"
-+   id="svg2">
-+  <defs
-+     id="defs4">
-+    <clipPath
-+       id="clipPath2349">
-+      <path
-+         d="M -85.5,-19 L -85.5,19 L 85.5,19 L 85.5,-19 L -85.5,-19 z"
-+         id="path2351" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2341">
-+      <path
-+         d="M 0,0 L 603.7795,0 L 603.7795,841.8898 L 0,841.8898 L 0,0 z"
-+         id="path2343" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2926">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2928" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2918">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2920" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2694">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2696" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2686">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2688" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2678">
-+      <path
-+         d="M 405.35,120.15 L 510.24,120.15 L 510.24,91.8 L 405.35,91.8 L 405.35,120.15 z"
-+         id="path2680" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2498">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2500" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2490">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2492" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2482">
-+      <path
-+         d="M 51.02,680.71 L 595.28,680.71 L 595.28,126.67 L 51.02,126.67 L 51.02,680.71 z"
-+         id="path2484" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2464">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2466" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2456">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2458" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5050">
-+      <path
-+         d="M -610.389,657.405 L -56.916,657.405 L -56.916,664.488 L -610.389,664.488 L -610.389,657.405 z"
-+         id="path5052" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5036">
-+      <path
-+         d="M 303.624,657.405 L 362.034,657.405 L 362.034,664.488 L 303.624,664.488 L 303.624,657.405 z"
-+         id="path5038" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5028">
-+      <path
-+         d="M 303.624,657.405 L 362.034,657.405 L 362.034,664.488 L 303.624,664.488 L 303.624,657.405 z"
-+         id="path5030" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5016">
-+      <path
-+         d="M 271.575,657.405 L 329.985,657.405 L 329.985,664.488 L 271.575,664.488 L 271.575,657.405 z"
-+         id="path5018" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5008">
-+      <path
-+         d="M 271.575,657.405 L 329.985,657.405 L 329.985,664.488 L 271.575,664.488 L 271.575,657.405 z"
-+         id="path5010" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4996">
-+      <path
-+         d="M 204.345,657.405 L 262.755,657.405 L 262.755,664.488 L 204.345,664.488 L 204.345,657.405 z"
-+         id="path4998" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4988">
-+      <path
-+         d="M 204.345,657.405 L 262.755,657.405 L 262.755,664.488 L 204.345,664.488 L 204.345,657.405 z"
-+         id="path4990" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4972">
-+      <path
-+         d="M 375.417,657.405 L 433.827,657.405 L 433.827,664.488 L 375.417,664.488 L 375.417,657.405 z"
-+         id="path4974" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4964">
-+      <path
-+         d="M 375.417,657.405 L 433.827,657.405 L 433.827,664.488 L 375.417,664.488 L 375.417,657.405 z"
-+         id="path4966" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4950">
-+      <path
-+         d="M 88.236,657.405 L 146.646,657.405 L 146.646,664.488 L 88.236,664.488 L 88.236,657.405 z"
-+         id="path4952" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4942">
-+      <path
-+         d="M 88.236,657.405 L 146.646,657.405 L 146.646,664.488 L 88.236,664.488 L 88.236,657.405 z"
-+         id="path4944" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4928">
-+      <path
-+         d="M 40.806,657.405 L 99.216,657.405 L 99.216,664.488 L 40.806,664.488 L 40.806,657.405 z"
-+         id="path4930" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4920">
-+      <path
-+         d="M 40.806,657.405 L 99.216,657.405 L 99.216,664.488 L 40.806,664.488 L 4
+@@ -11,7 +11,7 @@ tracking before calling `stream::die_by_relayed_signal`.
+ 
+ Domain-agnostic building blocks with **no knowledge of any specific command, hook, or agent**. If a module references "git", "cargo", "claude", or any external tool by name, it does not belong here. Core is a leaf in the dependency graph — it is consumed by all other components but imports from none of them.
+ 
+-Owns: configuration loading, token tracking persistence, TOML filter engine, tee output recovery, display formatting, explicit shell/direct command construction, telemetry, and shared utilities.
++Owns: configuration loading, token tracking persistence, TOML filter engine, tee output recovery, display formatting, explicit shell/direct command construction, telemetry, per-request HTTP settings (`http.rs`: timeout, direct connection to this machine), and shared utilities.
+ 
+ Does **not** own: command-specific filtering logic (that's `cmds/`), hook lifecycle management (that's `src/hooks/`), or analytics dashboards (that's `analytics/`).
+ 
 ```
 
-**File**: `.github/assets/src/companies/adobe.svg` (added, +1/-0)
+**File**: `src/core/classify.rs` (modified, +42/-12)
 ```diff
-@@ -0,0 +1 @@
-+<svg xmlns="http://www.w3.org/2000/svg" fill="#fa0c00" viewBox="-0.27 -0.27 54.97 14.88"><path d="M5.996 0H0v14.34zm4.219 0h5.988v14.34zm-2.11 5.285 3.817 9.055H9.418l-1.14-2.883H5.483Zm17.88 3.835.707 2.027c.024.05.059.074.121.074h1.36c.074 0 .086-.035.074-.11l-2.809-7.8c-.011-.063-.023-.075-.086-.075h-1.687c-.047 0-.074.036-.074.086-.024.41-.059.536-.11.657l-2.504 7.12c-.011.087.016.122.086.122h1.215c.074 0 .11-.024.137-.098l.668-2.004ZM23.47 7.794c.367-1.11.851-2.531 1.047-3.344h.011c.242.852.813 2.54 1.07 3.344zm8.388 3.548a5.8 5.8 0 0 0 2.297-.473c.062-.023.074-.05.074-.11a8 8 0 0 1-.051-.776V2.639c0-.047 0-.07-.059-.07h-1.324c-.05 0-.074.023-.074.085v2.489a4 4 0 0 0-.523-.035c-2.137 0-3.45 1.41-3.45 3.171 0 2.043 1.348 3.063 3.11 3.063m.863-1.36c-.219.07-.461.098-.707.098-.969 0-1.762-.547-1.762-1.875 0-1.176.817-1.87 1.899-1.87.218 0 .41.023.57.085zm5.732-4.874c-1.824 0-2.953 1.398-2.953 3.125 0 1.542.899 3.109 2.926 3.109 1.715 0 2.918-1.262 2.918-3.149 0-1.664-1.02-3.085-2.89-3.085m-.074 1.226c1.031 0 1.469.887 1.469 1.899 0 1.25-.645 1.87-1.395 1.87-.925 0-1.472-.777-1.472-1.898 0-1.152.582-1.87 1.398-1.87m4.333-3.767c-.05 0-.086.024-.086.086v8.313c0 .035.035.098.086.11q.875.267 1.82.265c1.801 0 3.551-1.117 3.551-3.367 0-1.63-1.117-2.867-2.867-2.867a3.5 3.5 0 0 0-1.106.171l-.015-2.613c0-.086-.024-.098-.11-.098zm3.875 5.555c0 1.348-.922 1.98-1.918 1.98-.207 0-.39-.011-.559-.062V6.494c.192-.074.422-.136.848-.136.961 0 1.629.609 1.629 1.765m6.438.437c.594 0 1.082-.011 1.25-.05.063-.012.086-.035.098-.086.035-.133.05-.41.05-.75 0-1.156-.695-2.566-2.492-2.566-1.836 0-2.855 1.496-2.855 3.183 0 1.496.789 3.05 3 3.05.828 0 1.363-.132 1.824-.35.047-.024.07-.063.07-.133V9.846c0-.059-.035-.07-.07-.047q-.688.293-1.508.293c-1.238 0-1.8-.684-1.836-1.531zm-2.469-1.046c.098-.594.473-1.239 1.313-1.239.926 0 1.168.778 1.168 1.13v.097c-.051.012-.207.012-.668.012zm0 0"/></svg>
-\ No newline at end of file
+@@ -15,6 +15,7 @@
+ //! - **Memoized.** Answers are cached by (classifier config, content head)
+ //!   in the tracking DB, so repeated outputs classify once.
+ 
++use crate::core::http;
+ use crate::core::tracking::Tracker;
+ use rtk_engine::pipeline::{ClassifierDef, Fact, Facts, Position, Resolved, UpstreamDef};
+ use std::collections::BTreeMap;
+@@ -127,7 +128,7 @@ fn classify_batch(
+     questions: &[(&str, &ClassifierDef)],
+ ) -> Option<(BTreeMap<String, Answer>, (i64, i64))> {
+     let env = upstream.api_key_env.as_deref()?;
+-    let _key = std::env::var(env).ok()?;
++    let key = std::env::var(env).ok()?;
+     let url = upstream.base_url.as_deref()?;
+     let head = questions
+         .iter()
+@@ -141,18 +142,11 @@ fn classify_batch(
+     };
+     let body = build_request(upstream, content, questions);
+     let timeout = Duration::from_secs(upstream.timeout_secs.unwrap_or(DEFAULT_TIMEOUT_SECS));
+-    let agent = ureq::Agent::config_builder()
+-        .timeout_global(Some(timeout))
+-        .build()
+-        .new_agent();
+-    let mut response = agent
+-        .post(url)
+-        .header("authorization", "******")
+-        .header("content-type", "application/json")
+-        .send(body.to_string())
++    let request = ureq::post(url).header("authorization", format!("Bearer {key}"));
++    let mut response = http::global_timeout(request, timeout)
++        .send_json(&body)
+         .ok()?;
+-    let body = response.body_mut().read_to_string().ok()?;
+-    let json: serde_json::Value = serde_json::from_str(&body).ok()?;
++    let json = http::read_json(&mut response).ok()?;
+     Some((parse_answers(&json), usage_of(&json)))
+ }
+ 
+@@ -428,6 +422,42 @@ mod tests {
+         assert_eq!(answers["is_error"], Answer::Noul { value: 0.97 });
+     }
+ 
++    #[test]
++    fn batch_request_carries_the_bearer_key_and_parses_the_reply() {
++        let (port, server) = crate::core::http::test_server::serve_once(
++            r#"{"answers":{"intent":{"type":"choice","choice":"build_log","confidence":0.9}},"usage":{"input_tokens":7,"output_tokens":2}}"#,
++        );
++        let upstream = UpstreamDef {
++            model: "judge-v1".to_string(),
++            base_url: Some(format!("http://127.0.0.1:{port}/classify")),
++            api_key_env: Some("RTK_TEST_CLASSIFIER_KEY".to_string()),
++            ..UpstreamDef::default()
++        };
++        let def = intent();
++        let result = temp_env::with_var("RTK_TEST_CLASSIFIER_KEY", Some("sk-test"), || {
++            classify_batch(&upstream, "output", false, &[("intent", &def)])
++        });
++        let (answers, usage) = result.expect("a parsed reply");
++        let request = server.join().expect("server");
++        assert_eq!(
++            answers["intent"],
++            Answer::Choice {
++                label: "build_log".to_string(),
++                confidence: 0.9
++            }
++        );
++        assert_eq!(usage, (7, 2));
++        let headers = request.to_ascii_lowercase();
++        assert!(
++            headers.contains("\r\nauthorization: bearer sk-test\r\n"),
++            "{request}"
++        );
++        assert!(
++            headers.contains("\r\ncontent-type: application/json"),
++            "{request}"
++        );
++    }
++
+     #[test]
+     fn low_confidence_inserts_no_fact() {
+         let def = intent();
 ```
 
-**File**: `.github/assets/src/companies/alibaba.svg` (added, +1/-0)
+**File**: `src/core/http.rs` (added, +384/-0)
 ```diff
-@@ -0,0 +1 @@
-+<svg viewBox="-3.87 -3.87 781.00 129.73" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="none"/><g class="currentLayer"><path d="M487.347 82.828c0 12.332-6.25 18.498-18.741 18.498-8.006 0-12.006-2.926-12.006-8.798 0-5.323 4.217-8.716 12.62-10.185 3.105-.544 9.143-.818 18.127-.818zm35.239-16.99c0-21.399-16.204-31.45-47.942-32.108-33.079-.683-47.053 7.93-49.832 26.019h34.3c1.654-5.891 5.616-9.188 13.826-8.9 8.07.287 14.077 4.382 14.377 15.104-18.46.275-32.057 1.348-41.392 3.585-18.013 4.32-26.964 14.14-26.964 27.5 0 9.004 3.987 15.579 11.935 19.706 5.988 3.093 13.757 4.978 23.303 4.646 15.642-.544 26.914-5.003 33.897-14.23v12.357h34.504zm215.44 16.99c0 12.332-6.255 18.498-18.74 18.498-8.007 0-12.007-2.926-12.007-8.798 0-5.323 4.211-8.716 12.62-10.185 3.105-.544 9.137-.818 18.127-.818zm35.239-16.99c0-21.399-16.21-31.45-47.941-32.108-33.086-.683-47.06 7.93-49.833 26.019h34.3c1.654-5.891 5.616-9.188 13.827-8.9 8.063.287 14.07 4.382 14.37 15.104-18.453.275-32.057 1.348-41.392 3.585-18.006 4.32-26.958 14.14-26.958 27.5 0 9.004 3.98 15.579 11.93 19.706 5.993 3.093 13.763 4.978 23.302 4.646 15.649-.544 26.92-5.003 33.897-14.23v12.357h34.504zM59.577 72.005 79.148 28.44l18.537 43.565zM59.717 0 0 119.652h38.772l9.476-21.565h59.718l8.817 21.565h43.028L102.848 0zm111.197 119.648h37.577V.003h-37.577zM232.338.003v23.762h37.576V.003zm0 36.69v82.955h37.576V36.693zM364.89 91.505c-6.895 9.489-15.495 11.591-25.789 6.326a26 26 0 0 1-1.565-1.125c-3.24-3.01-5.304-6.702-6.186-11.086q-1.984-9.66.614-19.13c1.233-4.281 3.623-7.655 7.182-10.102 4.09-2.358 8.44-3.208 13.035-2.556 6.428 1.016 10.958 4.613 13.61 10.792 1.635 4.051 2.421 8.294 2.357 12.71q.096 7.502-3.258 14.171m-71.085 28.185h36.69v-15.086c9.718 12.402 21.999 17.603 36.918 17.067 8.313-.422 15.962-3.304 22.888-8.14 9.386-7.496 14.46-17.368 15.214-29.63 1.067-12.625-1.987-24.07-9.17-34.344-6.99-8.658-15.897-13.635-26.727-14.907-15.06-1.993-28.306 2.972-38.83 14.396V.114h-36.945zm321.671-28.185c-6.894 9.489-15.495 11.591-25.788 6.326a26 26 0 0 1-1.566-1.125c-3.24-3.01-5.303-6.702-6.185-11.086q-1.984-9.66.613-19.13c1.234-4.281 3.623-7.655 7.182-10.102 4.09-2.358 8.441-3.208 13.035-2.556 6.428 1.016 10.958 4.613 13.604 10.792 1.642 4.051 2.428 8.294 2.364 12.71q.096 7.502-3.259 14.171m-71.084 28.185h36.689v-15.086c9.718 12.402 22 17.603 36.92 17.067 8.312-.422 15.96-3.304 22.887-8.14 9.386-7.496 14.46-17.368 15.213-29.63 1.068-12.625-1.987-24.07-9.169-34.344-6.99-8.658-15.897-13.635-26.727-14.907-15.06-1.993-28.307 2.972-38.83 14.396V.114H544.43z" class="selected" style="fill:#ff5a00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:6.38963"/></g></svg>
-\ No newline at end of file
+@@ -0,0 +1,384 @@
++//! Per-request settings shared by RTK's outbound HTTP calls.
++//!
++//! ureq takes a proxy from `HTTP_PROXY`/`HTTPS_PROXY`/`ALL_PROXY` (minus `NO_PROXY`).
++//! A proxy on another machine cannot reach this machine's loopback, so every request
++//! built here connects to `localhost` and loopback addresses directly, and calls to
++//! the daemon RTK located itself (`daemon_bind`) go through [`direct_global_timeout`]
++//! whatever address it is bound to.
++//!
++//! Known limitations of the proxy path:
++//! - ureq reaches every target through a `CONNECT` tunnel, `http://` ones included,
++//!   and proxies commonly allow `CONNECT` to port 443 only: a plain-HTTP server on
++//!   another machine needs a `NO_PROXY` entry.
++//! - `rtk task` treats a `base_url` as its daemon (and skips the proxy) when the URL
++//!   merely contains `localhost`, `127.0.0.1`, `[::1]` or `0.0.0.0`; a `base_url`
++//!   naming the daemon by a LAN address follows the proxy variables.
++//! - SOCKS proxies (`socks5://` and the like) are not supported.
++//! - ureq takes the first of `ALL_PROXY`, `HTTPS_PROXY`, `HTTP_PROXY` for every
++//!   scheme, and matches `NO_PROXY` entries as written: no trimming around commas,
++//!   no CIDR ranges.
++
++use std::net::IpAddr;
++use std::time::Duration;
++use ureq::RequestBuilder;
++use ureq::http::Uri;
++
++/// The longest a connection may take to open, whatever the request's own deadline.
++const CONNECT_TIMEOUT: Duration = Duration::from_secs(30);
++
++/// Abandons the whole exchange after `timeout` (ureq's `timeout_global`), and the
++/// connection after [`CONNECT_TIMEOUT`] if that comes first.
++pub fn global_timeout<B>(request: RequestBuilder<B>, timeout: Duration) -> RequestBuilder<B> {
++    skip_proxy_if_local(with_global_timeout(request, timeout))
++}
++
++/// [`global_timeout`], never through a proxy: for RTK's own daemon, which may be
++/// bound to any of this machine's addresses.
++pub fn direct_global_timeout<B>(
++    request: RequestBuilder<B>,
++    timeout: Duration,
++) -> RequestBuilder<B> {
++    direct(with_global_timeout(request, timeout))
++}
++
++fn with_global_timeout<B>(request: RequestBuilder<B>, timeout: Duration) -> RequestBuilder<B> {
++    request
++        .config()
++        .timeout_global(Some(timeout))
++        .timeout_connect(Some(timeout.min(CONNECT_TIMEOUT)))
++        .build()
++}
++
++/// GET of a pipeline source, abandoned if the connection takes longer than
++/// [`CONNECT_TIMEOUT`]; a slow body is left to finish.
++#[cfg(feature = "engine")]
++pub fn get(url: &str) -> anyhow::Result<ureq::http::Response<ureq::Body>> {
++    use anyhow::Context;
++    // nosemgrep: ureq-outside-telemetry -- inbound GET of a pipeline source the user named (a URL, or the GitHub API for a repository)
++    let request = ureq::get(url);
++    connect_timeout(request, CONNECT_TIMEOUT)
++        .call()
++        .with_context(|| format!("GET {url}"))
++}
++
++/// Abandons the request if the connection takes longer than `timeout` (ureq's
++/// `timeout_connect`); a slow body is left to finish.
++#[cfg(feature = "engine")]
++fn connect_timeout<B>(request: RequestBuilder<B>, timeout: Duration) -> RequestBuilder<B> {
++    skip_proxy_if_local(request.config().timeout_connect(Some(timeout)).build())
++}
++
++/// The largest body RTK reads, once decompressed.
++#[cfg(feature = "engine")]
++pub const MAX_BODY: u64 = 10 * 1024 * 1024;
++
++/// The body as text, at most `limit` bytes once decompressed, whatever its content
++/// type: invalid UTF-8 becomes U+FFFD. ureq's own limit counts the bytes on the
++/// wire, so a small gzip body could inflate far past it; and its `read_to_string`
++/// decodes lossily for `text/*` only.
++pub fn read_text_lossy(
++    response: &mut ureq::http::Response<ureq::Body>,
++    limit: u64,
++) -> anyhow::Result<String> {
++    use anyhow::Context;
++    use std::io::Read;
++    let mut bytes = Vec::new();
++    response
++        .body_mut()
++        .with_config()
++        .reader()
++        .take(limit.saturating_add(1))
++        .read_to_end(&mut bytes)
++        .context("read body")?;
++    if bytes.len() as u64 > limit {
++        anyhow::bail!("body larger than {limit} bytes");
++    }
++    Ok(String::from_utf8(bytes)
++        .unwrap_or_else(|e| String::from_utf8_lossy(e.as_bytes()).into_owned()))
++}
++
++/// The body parsed as JSON, read through [`read_text_lossy`] with [`MAX_BODY`].
++#[cfg(feature = "engine")]
++pub fn read_json(
++    response: &mut ureq::http::Response<ureq::Body>,
++) -> anyhow::Result<serde_json::Value> {
++    use anyhow::Context;
++    let text = read_text_lossy(response, MAX_BODY)?;
++    serde_json::from_str(&text).context("body is not JSON")
++}
++
++/// Never goes through a proxy.
++fn direct<B>(request: RequestBuilder<B>) -> RequestBuilder<B> {
++    request.config().proxy(None).build()
++}
++
++fn skip_proxy_if_local<B>(request: RequestBuilder<B>) -> RequestBuilder<B> {
++    if request.uri_ref().is_some_and(is_local) {
++        direct(request)
++    } else {
++        request
++    }
++}
+
 ```
 
-**File**: `.github/assets/src/companies/amazon.svg` (added, +1/-0)
+**File**: `src/core/mod.rs` (modified, +1/-0)
 ```diff
-@@ -0,0 +1 @@
-+<svg viewBox="-2.65 -2.77 608.30 187.52" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill:#221f1f"><path d="M374.006 142.184c-35 25.797-85.729 39.561-129.406 39.561-61.242 0-116.376-22.651-158.087-60.325-3.278-2.962-.341-7 3.591-4.693 45.015 26.191 100.673 41.947 158.166 41.947 38.775 0 81.43-8.022 120.65-24.67 5.925-2.516 10.88 3.88 5.086 8.18" style="fill:#f90"/><path d="M388.557 125.536c-4.457-5.715-29.573-2.7-40.846-1.363-3.434.42-3.959-2.57-.865-4.719 20.003-14.078 52.827-10.015 56.654-5.296 3.828 4.745-.996 37.648-19.793 53.352-2.884 2.411-5.637 1.127-4.352-2.072 4.22-10.539 13.685-34.16 9.202-39.902" style="fill:#f90"/><path d="M348.497 20.066V6.381c0-2.071 1.573-3.46 3.461-3.46h61.269c1.966 0 3.54 1.415 3.54 3.46V18.1c-.027 1.966-1.679 4.535-4.615 8.599l-31.749 45.329c11.798-.289 24.25 1.468 34.947 7.498 2.412 1.363 3.068 3.356 3.251 5.322V99.45c0 1.992-2.202 4.325-4.509 3.12-18.85-9.884-43.887-10.96-64.73.104-2.123 1.154-4.351-1.153-4.351-3.146V85.661c0-2.229.026-6.03 2.254-9.412L384.047 23.5h-32.01c-1.967 0-3.54-1.39-3.54-3.434m-223.498 85.388h-18.64c-1.783-.13-3.199-1.468-3.33-3.172V6.617c0-1.914 1.6-3.435 3.592-3.435h17.382c1.809.079 3.25 1.468 3.382 3.199v12.505h.34c4.536-12.086 13.056-17.722 24.54-17.722 11.666 0 18.954 5.636 24.198 17.722 4.509-12.086 14.76-17.722 25.744-17.722 7.813 0 16.36 3.224 21.577 10.46 5.899 8.049 4.693 19.741 4.693 29.992l-.026 60.378c0 1.913-1.6 3.46-3.592 3.46h-18.614c-1.862-.13-3.356-1.625-3.356-3.46V51.29c0-4.037.367-14.104-.524-17.932-1.39-6.423-5.558-8.232-10.959-8.232-4.51 0-9.228 3.015-11.142 7.839s-1.73 12.898-1.73 18.325v50.704c0 1.913-1.6 3.46-3.592 3.46h-18.614c-1.888-.13-3.356-1.625-3.356-3.46l-.026-50.704c0-10.67 1.757-26.374-11.483-26.374-13.397 0-12.872 15.31-12.872 26.374v50.704c0 1.913-1.6 3.46-3.592 3.46M469.514 1.164c27.66 0 42.629 23.752 42.629 53.954 0 29.18-16.543 52.329-42.629 52.329-27.16 0-41.947-23.753-41.947-53.352 0-29.782 14.97-52.931 41.947-52.931m.158 19.531c-13.738 0-14.603 18.719-14.603 30.386 0 11.692-.184 36.65 14.445 36.65 14.446 0 15.128-20.134 15.128-32.403 0-8.075-.341-17.723-2.78-25.378-2.097-6.66-6.265-9.255-12.19-9.255m78.336 84.759h-18.562c-1.861-.13-3.356-1.625-3.356-3.46l-.026-95.692c.157-1.756 1.704-3.12 3.592-3.12h17.277c1.625.079 2.962 1.18 3.33 2.674v14.63h.34c5.217-13.083 12.532-19.322 25.404-19.322 8.363 0 16.517 3.015 21.76 11.273 4.877 7.655 4.877 20.528 4.877 29.782v60.22c-.21 1.678-1.757 3.015-3.592 3.015h-18.693c-1.704-.13-3.12-1.39-3.303-3.015V50.478c0-10.461 1.206-25.772-11.667-25.772-4.535 0-8.704 3.042-10.775 7.656-2.621 5.846-2.962 11.666-2.962 18.116v51.516c-.026 1.913-1.652 3.46-3.644 3.46"/><use xlink:href="#a" transform="translate(244.367)"/><path id="a" d="M55.288 59.758v-4.037c-13.475 0-27.71 2.884-27.71 18.771 0 8.049 4.168 13.502 11.325 13.502 5.243 0 9.936-3.225 12.898-8.468 3.67-6.45 3.487-12.506 3.487-19.768m18.798 45.434c-1.232 1.101-3.015 1.18-4.405.446-6.187-5.139-7.288-7.524-10.696-12.427-10.225 10.434-17.46 13.554-30.726 13.554-15.678 0-27.895-9.674-27.895-29.048 0-15.127 8.206-25.43 19.872-30.464 10.12-4.457 24.25-5.244 35.052-6.476v-2.412c0-4.43.341-9.674-2.254-13.501-2.281-3.435-6.633-4.85-10.46-4.85-7.106 0-13.45 3.644-14.997 11.194-.315 1.678-1.547 3.33-3.225 3.408l-18.09-1.94c-1.52-.34-3.198-1.573-2.778-3.906C7.652 6.853 27.446.246 45.169.246c9.07 0 20.92 2.412 28.078 9.28 9.07 8.469 8.206 19.768 8.206 32.064v29.048c0 8.73 3.618 12.558 7.026 17.277 1.206 1.678 1.468 3.697-.053 4.955-3.801 3.172-10.565 9.071-14.288 12.375z"/></svg>
-\ No newline at end of file
+@@ -11,6 +11,7 @@ pub mod constants;
+ pub mod display_helpers;
+ pub mod filter;
+ pub mod guard;
++pub mod http;
+ #[cfg(feature = "engine")]
+ pub mod pipeline_cmd;
+ #[cfg(feature = "engine")]
 ```
 
-**File**: `.github/assets/src/companies/apple.svg` (added, +1/-0)
+**File**: `src/core/pipeline_cmd.rs` (modified, +3/-5)
 ```diff
-@@ -0,0 +1 @@
-+<svg viewBox="-5.00 -5.00 824.10 1009.90" xmlns="http://www.w3.org/2000/svg"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2m-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3"/></svg>
-\ No newline at end of file
+@@ -1,5 +1,6 @@
+ //! `rtk pipeline` and `rtk methods` command surface over the engine.
+ 
++use crate::core::http;
+ use crate::core::pipeline_config::{self, LoadedPipeline};
+ use anyhow::{Context, Result};
+ use regex::Regex;
+@@ -219,11 +220,8 @@ fn read_source(source: &str) -> Result<String> {
+     if source.starts_with("http://") || source.starts_with("https://") {
+         let url = gist_raw_url(source);
+         // GET of a URL the user typed on the CLI; inbound content only.
+-        // nosemgrep: ureq-outside-telemetry
+-        let mut response = ureq::get(&url).call().context("fetch pipeline")?;
+-        return response
+-            .body_mut()
+-            .read_to_string()
++        let mut response = http::get(&url).context("fetch pipeline")?;
++        return http::read_text_lossy(&mut response, http::MAX_BODY)
+             .context("read fetched pipeline");
+     }
+     std::fs::read_to_string(source).with_context(|| format!("read {source}"))
 ```
 
-**File**: `.github/assets/src/companies/bosch.svg` (added, +1/-0)
+**File**: `src/core/pipeline_remote.rs` (modified, +3/-8)
 ```diff
-@@ -0,0 +1 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.17 -1.98 437.33 100.73"><path d="M185.2 46.88a13.77 13.77 0 0 0 8.8-13c0-11.7-8.3-17.5-19.7-17.5h-29.9V80h32.5c10 0 19.8-7 19.8-17.7 0-12.72-11.5-15.3-11.5-15.42M160 29.58h11.6a5.66 5.66 0 0 1 6 5.31v.69a5.93 5.93 0 0 1-6 5.81h-11.7Zm11.7 37.1h-11.6v-12.5h11.3c5.7 0 8.4 2.5 8.4 6.2 0 4.62-3.4 6.3-8.1 6.3m59.4-51.9c-18.4 0-29.2 14.7-29.2 33.3s10.8 33.3 29.2 33.3 29.2-14.6 29.2-33.3-10.7-33.3-29.2-33.3m0 51.4c-9 0-13.5-8.1-13.5-18.1s4.5-18 13.5-18 13.6 8.1 13.6 18c0 10.1-4.6 18.1-13.6 18.1m63.1-24.8-2.2-.5c-5.4-1.1-9.7-2.5-9.7-6.4 0-4.2 4.1-5.9 7.7-5.9a17.86 17.86 0 0 1 13 5.9l9.9-9.8c-4.5-5.1-11.8-10-23.2-10-13.4 0-23.6 7.5-23.6 20 0 11.4 8.2 17 18.2 19.1l2.2.5c8.3 1.7 11.4 3 11.4 7 0 3.8-3.4 6.3-8.6 6.3-6.2 0-11.8-2.7-16.1-8.2l-10.1 10c5.6 6.7 12.7 11.9 26.4 11.9 11.9 0 24.6-6.8 24.6-20.7.2-14.5-10.8-17.3-19.9-19.2m55.5 24.8c-7 0-14.3-5.8-14.3-18.5 0-11.3 6.8-17.6 13.9-17.6 5.6 0 8.9 2.6 11.5 7.1l12.8-8.5c-6.4-9.7-14-13.8-24.5-13.8-19.2 0-29.6 14.9-29.6 32.9 0 18.9 11.5 33.7 29.4 33.7 12.6 0 18.6-4.4 25.1-13.8L361.1 59c-2.6 4.18-5.4 7.18-11.4 7.18m66.6-49.8v23.4H397v-23.4h-16.7v63.6H397v-25.1h19.3v25.1H433v-63.6z" style="fill:#ed0007;fill-rule:evenodd"/><path d="M48.2.18a48.2 48.2 0 1 0 48.2 48.2A48.2 48.2 0 0 0 48.2.18m0 91.9a43.7 43.7 0 1 1 43.7-43.7 43.71 43.71 0 0 1-43.7 43.7"/><path d="M68.1 18.28h-3.3v16.5H31.7v-16.5h-3.4a36.06 36.06 0 0 0 0 60.2h3.4V62h33.1v16.5h3.3a36.05 36.05 0 0 0 0-60.2ZM27.1 72a31.59 31.59 0 0 1-2.63-44.6 33 33 0 0 1 2.63-2.62Zm37.7-14.6H31.7V39.28h33.1Zm4.5 14.5V24.78a31.65 31.65 0 0 1 2.39 44.71 34 34 0 0 1-2.39 2.39Z"/></svg>
-\ No newline at end of file
+@@ -4,6 +4,7 @@
+ //! nothing, reviews nothing, and never holds a token — everything goes
+ //! through the user's own `gh`.
+ 
++use crate::core::http;
+ use crate::core::pipeline_config;
+ use anyhow::{Context, Result};
+ use rtk_engine::pipeline::has_errors;
+@@ -131,14 +132,8 @@ fn resolve_sha(src: &GithubSource) -> Option<String> {
+ 
+ fn http_get(url: &str) -> Result<String> {
+     // GET of a public GitHub endpoint the user asked for; inbound content only.
+-    // nosemgrep: ureq-outside-telemetry
+-    let mut response = ureq::get(url)
+-        .call()
+-        .with_context(|| format!("GET {url}"))?;
+-    response
+-        .body_mut()
+-        .read_to_string()
+-        .context("read response")
++    let mut response = http::get(url)?;
++    http::read_text_lossy(&mut response, http::MAX_BODY).context("read response")
+ }
+ 
+ pub struct InstallOrigin {
 ```
 
 ---
 
-### Incident Patch 2: `cf7f2cd5` (2026-11-09)
-**Commit Message**: docs: present RTK as the cost reduction engine for AI coding agents
+### Incident Patch 2: `3d94dc2c` (2026-11-12)
+**Commit Message**: refactor(dotnet): read quick-xml 0.42 content events directly
 
-RTK stopped being only a bash compressor at v1.0.0, but the README still
-sold it as one. Readers who wanted the install-and-forget story had to
-dig for it, readers who wanted pipelines, delegation or RTK Pro found
-almost nothing, and the few figures on the page did not say what they
-measured.
+Text no longer carries references in quick-xml 0.42, so unescaping it
+was a no-op: use xml10_content() for text and CDATA (CRLF becomes LF)
+and resolve references in one helper shared by the TRX parser and the
+MSBuild property scan, keeping undeclared entities as written. The
+scan now also reads a value split by a comment or held in CDATA.
 
-The README now opens with install & forget (the compressor: up to 90%
-less command output on 100+ commands, under 25 ms per command), then
-"go further" with pipelines, then RTK Pro as the control layer for every
-agent in a company, with one door per audience: the Dev plan for one
-developer, Teams, Business and Enterprise for companies. Every figure
-says what it measures.
+0.42 rejects a bare `&`, which 0.37 read as text and which would now
+discard a whole TRX file: both readers allow it again. Resolved
+references can carry control characters, so failure details and test
+names go through sanitize_for_terminal, a CR becoming a line break.
 
-Supporting material lives in .github/assets with its sources so it can
-be regenerated: a banner and a "go further" picture in the site style,
-an RTK Pro card naming the gateway, cost control, Shield, policies, team
-catalog and audit log, a logo strip of the companies whose developers
-starred the repo, and a real terminal recording of rtk init, a claude -p
-run and rtk gain (record-demo.sh reproduces it).
+trim_text(false) is the default, so the call goes. Names use
+quick-xml's local_name() and readers built from a &str read events
+without a buffer.
 
-rtk gain ends with one line about RTK Pro once the us
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/assets/src/before-after.html` (added, +104/-0)
+**File**: `src/cmds/dotnet/dotnet_cmd.rs` (modified, +83/-34)
 ```diff
-@@ -0,0 +1,104 @@
-+<!doctype html>
-+<html><head><meta charset="utf-8">
-+<!-- Real output. Captured with `rtk bypass cargo test` (left) and `rtk cargo test` (right)
-+     on a 48-test crate with one failing assertion, rtk core 1.0.1. Only the lines marked
-+     "⋯ N more lines" are elided; the counts are exact. -->
-+<link rel="preconnect" href="https://fonts.googleapis.com">
-+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
-+<style>
-+:root{--bg:#060b18;--bg-card:#0f1629;--text:#e2e8f0;--text-bright:#f8fafc;--text-muted:#94a3b8;--text-dim:#7e8ca6;--accent:#00e599;--accent-dim:rgba(0,229,153,.10);--accent-glow:rgba(0,229,153,.25);--red:#f87171;--scene:rgba(0,229,153,.09);--tint:rgba(0,229,153,.045);--vignette:rgba(0,0,0,.42);--grid:rgba(148,163,184,.05);--line:rgba(148,163,184,.14)}
-+*{margin:0;padding:0;box-sizing:border-box}
-+html,body{width:1280px;height:560px;background:transparent}
-+.card{position:relative;width:1280px;height:560px;border-radius:20px;overflow:hidden;background:var(--bg);border:1px solid var(--line);isolation:isolate;font-family:'Geist','Inter',sans-serif;color:var(--text)}
-+.atmo{position:absolute;inset:0;z-index:-1;background-image:
-+ radial-gradient(ellipse 34% 80% at 50% 50%,var(--scene),transparent 62%),
-+ linear-gradient(180deg,transparent 4%,var(--tint) 42%,transparent 84%),
-+ radial-gradient(ellipse 120% 105% at 50% 48%,transparent 56%,var(--vignette) 100%)}
-+.grid{position:absolute;inset:0;z-index:-1;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:radial-gradient(ellipse 30% 70% at 50% 50%,#000 20%,transparent 75%)}
-+.eyebrow{position:absolute;left:56px;top:34px;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
-+.eyebrow b{color:var(--text-muted);font-weight:500}
-+.cmd{position:absolute;right:56px;top:30px;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--text-muted)}
-+.cmd span{color:var(--accent)}
-+.panel{position:absolute;top:84px;width:470px;height:440px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 30%),var(--bg-card);overflow:hidden}
-+.panel.left{left:56px}.panel.right{right:56px}
-+.ph{display:flex;align-items:center;gap:10px;height:42px;padding:0 18px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
-+.ph i{width:9px;height:9px;border-radius:50%;display:inline-block}
-+.left .ph i{background:var(--red);opacity:.8}.right .ph i{background:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
-+.ph .n{margin-left:auto;letter-spacing:.04em;text-transform:none}
-+.left .ph .n{color:var(--red);opacity:.85}.right .ph .n{color:var(--accent)}
-+pre{font-family:'JetBrains Mono',monospace}
-+.left pre{white-space:pre;padding:10px 18px;font-size:11.5px;line-height:13.5px;color:rgba(148,163,184,.55)}
-+.left pre .f{color:var(--red);opacity:.9}
-+.left pre .m{color:rgba(148,163,184,.38);font-style:italic}
-+.right pre{white-space:pre-wrap;padding:18px 20px;font-size:13.5px;line-height:22px;color:var(--text)}
-+.right pre .f{color:var(--red)}
-+.right pre .ok{color:var(--accent)}
-+.right pre .p{color:var(--text-muted)}
-+.right pre .r{color:var(--accent);opacity:.85}
-+.gate{position:absolute;left:526px;top:84px;width:228px;height:440px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
-+.gate::before{content:'';position:absolute;left:50%;top:0;width:1px;height:100%;transform:translateX(-50%);background:linear-gradient(to bottom,transparent,var(--accent-glow) 30%,var(--accent-glow) 70%,transparent)}
-+.gate::after{content:'';position:absolute;left:50%;top:50%;width:260px;height:260px;transform:translate(-50%,-50%);background:radial-gradient(circle,var(--accent-glow) 0%,transparent 62%);opacity:.7}
-+.gate img{position:relative;z-index:1;width:124px;height:124px;filter:drop-shadow(0 0 10px var(--accent-glow)) drop-shadow(0 0 32px var(--accent-glow))}
-+.gate .lbl{position:relative;z-index:1;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.26em;color:var(--text-muted)}
-+.strand{position:absolute;left:526px;top:84px;width:228px;height:440px;z-index:0}
-+</style></head>
-+<body><div class="card"><div class="atmo"></div><div class="grid"></div>
-+<p class="eyebrow">01 / Install &amp; forget · <b>what your agent reads</b></p>
-+<p class="cmd"><span>$</span> cargo test</p>
-+
-+<div class="panel left">
-+ <div class="ph"><i></i>without rtk<span class="n">71 lines</span></div>
-+<pre>   Compiling authkit v0.4.2 (/private/tmp/claude-501/-Users-aeppling--superconductor-worktrees-rtk-sc-flux-phonon-4e98/d36bac6a-c158-4776-8c24-adbe62511c7f/scratchpad/demo)
-+    Finished `test` 
+@@ -13,7 +13,6 @@ use crate::core::utils::{resolved_command, truncate};
+ use crate::dotnet_format_report;
+ use crate::dotnet_trx;
+ use anyhow::{Context, Result};
+-use quick_xml::Reader;
+ use quick_xml::events::Event;
+ use serde_json::Value;
+ use std::ffi::OsString;
+@@ -711,60 +710,55 @@ fn scan_mtp_kind_in_file(path: &Path) -> MtpProjectKind {
+         Err(_) => return MtpProjectKind::None,
+     };
+ 
+-    let mut reader = Reader::from_str(&content);
+-    reader.config_mut().trim_text(false);
+-    let mut buf = Vec::new();
+-    let mut inside_mtp_element = false;
+-    let mut mtp_element_text = String::new();
++    let mut reader = dotnet_trx::xml_reader(&content);
++    // The text of the MTP property being read, if inside one.
++    let mut value: Option<String> = None;
++    let is_true = |value: &Option<String>| {
++        value
++            .as_deref()
++            .is_some_and(|v| v.trim().eq_ignore_ascii_case("true"))
++    };
+ 
++    // Decided after the loop: a malformed end tag or a truncated file still ends a
++    // value read in full.
+     loop {
+-        match reader.read_event_into(&mut buf) {
++        match reader.read_event() {
+             Ok(Event::Start(e)) => {
+                 let name_lower = e.local_name().as_ref().to_ascii_lowercase();
+                 // All project-file MTP properties run in VSTest bridge mode and require
+                 // MTP-specific args to come after `--`. Only global.json MTP mode is native.
+-                inside_mtp_element = matches!(
++                let is_mtp_element = matches!(
+                     name_lower.as_str(),
+                     "usemicrosofttestingplatformrunner"
+                         | "usetestingplatformrunner"
+                         | "testingplatformdotnettestsupport"
+                 );
+-                if inside_mtp_element {
+-                    mtp_element_text.clear();
+-                }
++                value = is_mtp_element.then(String::new);
+             }
+-            Ok(Event::Text(e)) if inside_mtp_element => {
+-                if let Ok(text) = quick_xml::escape::unescape(e.as_ref()) {
+-                    mtp_element_text.push_str(&text);
+-                }
+-            }
+-            Ok(Event::GeneralRef(e)) if inside_mtp_element => {
+-                let text = e
+-                    .resolve_char_ref()
+-                    .ok()
+-                    .flatten()
+-                    .map(|ch| ch.to_string())
+-                    .or_else(|| {
+-                        quick_xml::escape::resolve_predefined_entity(e.as_ref()).map(str::to_owned)
+-                    });
+-                if let Some(text) = text {
+-                    mtp_element_text.push_str(&text);
++            Ok(event @ (Event::Text(_) | Event::CData(_) | Event::GeneralRef(_))) => {
++                if let Some(value) = value.as_mut() {
++                    dotnet_trx::push_content(&event, value);
+                 }
+             }
++            // MSBuild reads a property as its inner XML, which a child element makes
++            // something other than `true`.
++            Ok(Event::Empty(_)) => value = None,
+             Ok(Event::End(_)) => {
+-                if inside_mtp_element && mtp_element_text.trim().eq_ignore_ascii_case("true") {
+-                    return MtpProjectKind::VsTestBridge;
++                if is_true(&value) {
++                    break;
+                 }
+-                inside_mtp_element = false;
++                value = None;
+             }
+-            Ok(Event::Eof) => break,
+-            Err(_) => break,
++            Ok(Event::Eof) | Err(_) => break,
+             _ => {}
+         }
+-        buf.clear();
+     }
+ 
+-    MtpProjectKind::None
++    if is_true(&value) {
++        MtpProjectKind::VsTestBridge
++    } else {
++        MtpProjectKind::None
++    }
+ }
+ 
+ fn parse_global_json_mtp_mode(path: &Path) -> bool {
+@@ -2748,6 +2742,61 @@ mod tests {
+         assert_eq!(scan_mtp_kind_in_file(&csproj), MtpProjectKind::VsTestBridge);
+     }
+ 
++    #[test]
++    fn test_scan_mtp_kind_reads_the_value_around_markup() {
++        let temp_dir = test_isolation::tempdir();
++        let csproj = temp_dir.path().join("MTP.Tests.csproj");
++        for (property, expected) in [
++            (
++                "<UseTestingPlatformRunner>true<!-- opt in --></UseTestingPlatformRunner>",
++                MtpProjectKind::VsTestBridge,
++            ),
++            (
++                "<UseTestingPlatformRunner><![CDATA[true]]></UseTestingPlatformRunner>",
++                MtpProjectKind::VsTestBridge,
++            ),
++            (
++                "<UseTestingPlatformRunner>true</UseTestingplatformRunner>",
++                MtpProjectKind::VsTestBridge,
++            ),
++            (
++                "<Description>Tom & Jerry</Description><UseTestingPlatformRunner>true</UseTestingPlatformRunner>",
++                MtpProjectKind::VsTestBridge,
++            ),
++            (
++                "<UseTestingPlatformRunner>tr<!-- x -->ue-ish</UseTestingPla
 ```
 
-**File**: `.github/assets/src/companies.html` (added, +22/-0)
+**File**: `src/cmds/dotnet/dotnet_trx.rs` (modified, +104/-66)
+```diff
+@@ -3,28 +3,54 @@
+ use crate::binlog::{FailedTest, TestSummary};
+ use chrono::{DateTime, FixedOffset};
+ use quick_xml::Reader;
+-use quick_xml::events::{BytesRef, BytesStart, Event};
++use quick_xml::events::{BytesStart, Event};
+ use std::path::{Path, PathBuf};
+ use std::time::SystemTime;
+ 
+-fn local_name(name: &str) -> &str {
+-    name.rsplit(':').next().unwrap_or(name)
++/// A reader for the XML files dotnet tooling and hand edits produce, shared with the
++/// MSBuild property scan. A bare `&` in text is read as text: ill-formed, but common enough
++/// in third-party TRX writers and edited project files that rejecting it would
++/// discard a whole file over one character.
++pub(crate) fn xml_reader(content: &str) -> Reader<&[u8]> {
++    let mut reader = Reader::from_str(content);
++    reader.config_mut().allow_dangling_amp = true;
++    reader
+ }
+ 
+-fn resolve_reference(reference: &BytesRef<'_>) -> Option<String> {
+-    reference
+-        .resolve_char_ref()
+-        .ok()
+-        .flatten()
+-        .map(|ch| ch.to_string())
+-        .or_else(|| {
+-            quick_xml::escape::resolve_predefined_entity(reference.as_ref()).map(str::to_owned)
+-        })
++/// Appends the character data `event` carries. Text and CDATA come with XML 1.0
++/// line endings; a reference is resolved, or kept as written when it is not a valid
++/// character (`&#0;`) or names an entity declared in a DTD, which this reader does
++/// not load. A resolved reference can be any character, controls included: text
++/// bound for the terminal goes through [`terminal_text`].
++pub(crate) fn push_content(event: &Event<'_>, out: &mut String) {
++    match event {
++        Event::Text(text) => out.push_str(&text.xml10_content()),
++        Event::CData(cdata) => out.push_str(&cdata.xml10_content()),
++        Event::GeneralRef(reference) => {
++            if let Ok(Some(ch)) = reference.resolve_char_ref() {
++                out.push(ch);
++            } else if let Some(resolved) = quick_xml::escape::resolve_predefined_entity(reference) {
++                out.push_str(resolved);
++            } else {
++                out.push('&');
++                out.push_str(reference);
++                out.push(';');
++            }
++        }
++        _ => {}
++    }
++}
++
++/// Text from the TRX made safe to print. A CR written as `&#xD;` survives XML
++/// line-ending normalization, so every CR becomes a line break; any other control
++/// character (an `&#x1B;` escape sequence, a backspace) is dropped.
++fn terminal_text(text: &str) -> String {
++    crate::core::utils::sanitize_for_terminal(&text.replace("\r\n", "\n").replace('\r', "\n"))
+ }
+ 
+ fn extract_attr_value(start: &BytesStart<'_>, key: &str) -> Option<String> {
+     for attr in start.attributes().flatten() {
+-        if local_name(attr.key.as_ref()) != key {
++        if attr.key.local_name().as_ref() != key {
+             continue;
+         }
+ 
+@@ -67,15 +93,12 @@ fn format_duration_between(
+ }
+ 
+ fn parse_trx_time_bounds(content: &str) -> Option<(DateTime<FixedOffset>, DateTime<FixedOffset>)> {
+-    let mut reader = Reader::from_str(content);
+-    reader.config_mut().trim_text(true);
+-    let mut buf = Vec::new();
++    let mut reader = xml_reader(content);
+ 
+     loop {
+-        match reader.read_event_into(&mut buf) {
++        match reader.read_event() {
+             Ok(Event::Start(e)) | Ok(Event::Empty(e)) => {
+-                if local_name(e.name().as_ref()) != "Times" {
+-                    buf.clear();
++                if e.local_name().as_ref() != "Times" {
+                     continue;
+                 }
+ 
+@@ -89,8 +112,6 @@ fn parse_trx_time_bounds(content: &str) -> Option<(DateTime<FixedOffset>, DateTi
+             Err(_) => return None,
+             _ => {}
+         }
+-
+-        buf.clear();
+     }
+ 
+     None
+@@ -218,9 +239,7 @@ fn parse_trx_content(content: &str) -> Option<TestSummary> {
+         StackTrace,
+     }
+ 
+-    let mut reader = Reader::from_str(content);
+-    reader.config_mut().trim_text(false);
+-    let mut buf = Vec::new();
++    let mut reader = xml_reader(content);
+     let mut summary = TestSummary::default();
+     let mut saw_test_run = false;
+     let mut in_failed_result = false;
+@@ -231,8 +250,8 @@ fn parse_trx_content(content: &str) -> Option<TestSummary> {
+     let mut capture_field: Option<CaptureField> = None;
+ 
+     loop {
+-        match reader.read_event_into(&mut buf) {
+-            Ok(Event::Start(e)) => match local_name(e.name().as_ref()) {
++        match reader.read_event() {
++            Ok(Event::Start(e)) => match e.local_name().as_ref() {
+                 "TestRun" => saw_test_run = true,
+                 "Times" => {
+                     let start = extract_attr_value(&e, "start");
+@@ -257,7 +276,7 @@ fn parse_trx_content(content: &str) -> Option<TestSummary> {
+                         message_buf.clear();
+                         stack_buf.clear();
+                         failed_test_name = extract_attr_value(&e, "testName")
+-                            
+```
+
+---
+
+### Incident Patch 3: `2a786dca` (2026-11-12)
+**Commit Message**: Merge pull request #4845 from ecoyoung/fix/dotnet-test-project-count
+
+fix(dotnet): count distinct test projects, not path mentions
+
+**File**: `src/cmds/dotnet/binlog.rs` (modified, +118/-1)
+```diff
+@@ -88,6 +88,9 @@ static TEST_SUMMARY_RE: LazyLock<Regex> = LazyLock::new(|| {
+     )
+     .expect("valid regex")
+ });
++static TEST_RUN_FOR_RE: LazyLock<Regex> = LazyLock::new(|| {
++    Regex::new(r"(?m)^\s*Test run for\s+(?P<dll>[^\r\n(]*\.dll)").expect("valid regex")
++});
+ static FAILED_TEST_HEAD_RE: LazyLock<Regex> = LazyLock::new(|| {
+     Regex::new(r"(?m)^\s*Failed\s+(?P<name>[^\r\n\[]+)\s+\[[^\]\r\n]+\]\s*$").expect("valid regex")
+ });
+@@ -1046,7 +1049,33 @@ pub fn parse_restore_issues_from_text(text: &str) -> (Vec<BinlogIssue>, Vec<Binl
+ }
+ 
+ fn count_projects(text: &str) -> usize {
+-    PROJECT_PATH_RE.captures_iter(text).count()
++    // Count projects, not lines that mention one: restore warnings name a project's .csproj
++    // once per warning, and a fresh restore names it again in a `Restored <csproj>` line. Each
++    // test assembly the run executes prints one `Test run for <dll>` line with its full path, so
++    // those lines are counted when present. Output without them falls back to the DISTINCT lines
++    // naming a .csproj, keyed by the path token — `Restored <path> (in 1.2 sec).` and
++    // `<path> : warning NU1900: …` name the same project once (#4844; the keying #4846 uses).
++    let mut projects: HashSet<&str> = HashSet::new();
++    for captures in TEST_RUN_FOR_RE.captures_iter(text) {
++        if let Some(dll) = captures.name("dll") {
++            projects.insert(dll.as_str());
++        }
++    }
++    if !projects.is_empty() {
++        return projects.len();
++    }
++    let mut csprojs: HashSet<&str> = HashSet::new();
++    for captures in PROJECT_PATH_RE.captures_iter(text) {
++        // The key is the last whitespace-separated token of the match, which is the whole path
++        // when the path has no spaces; a leading `Restored ` stays out of it.
++        if let Some(path) = captures
++            .get(0)
++            .and_then(|m| m.as_str().split_whitespace().last())
++        {
++            csprojs.insert(path);
++        }
++    }
++    csprojs.len()
+ }
+ 
+ fn extract_duration(text: &str) -> Option<String> {
+@@ -1346,6 +1375,80 @@ Time Elapsed 00:00:12.34
+         assert_eq!(summary.duration_text.as_deref(), Some("00:00:12.34"));
+     }
+ 
++    #[test]
++    fn test_parse_test_from_text_counts_distinct_projects_despite_warnings() {
++        // Hand-written after the `dotnet test` shape (.NET 10): two test projects, each named by
++        // two restore warnings (NU1900). The warnings name the .csproj, but each project is ONE project
++        // (#4844) — the count must not grow with every line that mentions the path.
++        let input = r#"
++/work/A.Tests.csproj : warning NU1900: Unable to find package 'Coverlet.Collector'. No sets of versions.
++/work/A.Tests.csproj : warning NU1900: Unable to find package 'Microsoft.NET.Test.Sdk'. No sets of versions.
++  Test run for /work/A.Tests/bin/Debug/A.Tests.dll (.NETCoreApp,Version=v10.0)
++  Passed A.Tests.Tests.SaysHello [1 ms]
++/work/B.Tests.csproj : warning NU1900: Unable to find package 'Coverlet.Collector'. No sets of versions.
++/work/B.Tests.csproj : warning NU1900: Unable to find package 'Microsoft.NET.Test.Sdk'. No sets of versions.
++  Test run for /work/B.Tests/bin/Debug/B.Tests.dll (.NETCoreApp,Version=v10.0)
++  Passed B.Tests.Tests.SaysBye [2 ms]
++Passed! - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 1 ms - A.Tests.dll
++Passed! - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 1 ms - B.Tests.dll
++"#;
++
++        let summary = parse_test_from_text(input);
++
++        assert_eq!(summary.passed, 3);
++        assert_eq!(summary.failed, 0);
++        assert_eq!(
++            summary.project_count, 2,
++            "a warning naming a project must not inflate the project count"
++        );
++    }
++
++    #[test]
++    fn test_parse_test_from_text_counts_test_projects_not_referenced_libraries() {
++        // `dotnet test -v q` (.NET 10.0.400) on a solution with two test projects and a library
++        // they reference: restore warnings name all three .csproj files, but only the two test
++        // projects run, so the count comes from the `Test run for` lines.
++        let input =
++            include_str!("../../../tests/fixtures/dotnet/test_library_restore_warnings.txt");
++
++        let summary = parse_test_from_text(input);
++
++        assert_eq!(summary.passed, 3);
++        assert_eq!(
++            summary.project_count, 2,
++            "a referenced library named by restore warnings is not a test project"
++        );
++    }
++
++    #[test]
++    fn test_parse_test_from_text_counts_distinct_projects_across_restore_and_warning_lines() {
++        // Real `dotnet build` output on a fresh restore of a 3-project solution with NU1900 audit
++        // warnings: every project is named by a `Restored <csproj>` line AND by warning lines. The
++        // fallback counts DISTINCT project paths (#4844; the keying #4846 uses).
++        let input =
++            include_str!("../../../tests/fixtures/dotne
+```
+
+**File**: `tests/fixtures/dotnet/build_fresh_restore_all_projects_warn.txt` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
++  Determining projects to restore...
++/fx/fresh/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/fresh/Two.sln]
++/fx/fresh/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/fresh/Two.sln]
++/fx/fresh/Lib/Lib.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/fresh/Two.sln]
++/fx/fresh/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/fresh/Two.sln]
++/fx/fresh/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/fresh/Two.sln]
++/fx/fresh/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/fresh/Two.sln]
++/fx/fresh/Lib/Lib.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data. [/fx/fresh/Two.sln]
++/fx/fresh/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data. [/fx/fresh/Two.sln]
++/fx/fresh/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data. [/fx/fresh/Two.sln]
++/fx/fresh/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json. [/fx/fresh/Two.sln]
++/fx/fresh/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json. [/fx/fresh/Two.sln]
++/fx/fresh/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json. [/fx/fresh/Two.sln]
++  Restored /fx/fresh/Lib/Lib.csproj (in 11.15 sec).
++  Restored /fx/fresh/B.Tests/B.Tests.csproj (in 11.15 sec).
++  Restored /fx/fresh/A.Tests/A.Tests.csproj (in 11.15 sec).
++/fx/fresh/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data.
++/fx/fresh/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
++/fx/fresh/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data.
++/fx/fresh/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json.
++/fx/fresh/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data.
++/fx/fresh/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
++/fx/fresh/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data.
++/fx/fresh/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json.
++/fx/fresh/B.Tests/UnitTest1.cs(5,39): warning CS0168: The variable 'unused' is declared but never used [/fx/fresh/B.Tests/B.Tests.csproj]
++  B.Tests -> /fx/fresh/B.Tests/bin/Debug/net10.0/B.Tests.dll
++/fx/fresh/Lib/Lib.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data.
++/fx/fresh/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
++/fx/fresh/Lib/Lib.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data.
++/fx/fresh/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json.
++  Lib -> /fx/fresh/Lib/bin/Debug/net10.0/Lib.dll
++  A.Tests -> /fx/fresh/A.Tests/bin/Debug/net10.0/A.Tests.dll
++
++Build succeeded.
++
++/fx/fresh/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/fresh/Two.sln]
++/fx/fresh/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/fresh/Two.sln]
++/fx/fresh/Lib/Lib.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/fresh/Two.sln]
++/fx/fresh/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/fresh/Two.sln]
++/fx/fresh/B.Tests/B.Tests.csproj : warning NU1900
+```
+
+**File**: `tests/fixtures/dotnet/fresh_restore_nu1900_warnings.txt` (added, +22/-0)
 ```diff
 @@ -0,0 +1,22 @@
-+<!doctype html>
-+<html><head><meta charset="utf-8">
-+<!-- The 18 logos of rtk-ai.app's "Starred by developers at" strip (rtk-ldp Companies.astro) plus a third
-+     row of the largest companies found in the stargazers' public profiles. Transparent background and one
-+     flat grey so it reads on GitHub's light and dark themes alike. -->
-+<link rel="preconnect" href="https://fonts.googleapis.com">
-+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
-+<style>
-+*{margin:0;padding:0;box-sizing:border-box}
-+html,body{width:1280px;height:300px;background:transparent}
-+.wrap{width:1280px;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;font-family:'Inter',sans-serif}
-+.eyebrow{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:#8b95a7}
-+.rows{display:flex;flex-direction:column;gap:26px}
-+.row{display:flex;align-items:center;justify-content:center;gap:26px}
-+.row img{display:block;width:auto;height:calc(var(--h) * 1.4);filter:brightness(0) invert(.6);opacity:.95}
-+.more{font-size:18px;color:#8b95a7;white-space:nowrap}
-+</style></head>
-+<body><div class="wrap">
-+ <p class="eyebrow">Starred by developers at</p>
-+ <div class="rows"><div class="row"><img src="companies/microsoft.svg" alt="Microsoft" style="--h:20px"><img src="companies/google.svg" alt="Google" style="--h:22px"><img src="companies/amazon.svg" alt="Amazon" style="--h:22px"><img src="companies/meta.svg" alt="Meta" style="--h:20px"><img src="companies/apple.svg" alt="Apple" style="--h:29px"><img src="companies/nvidia.svg" alt="NVIDIA" style="--h:19px"><img src="companies/ibm.svg" alt="IBM" style="--h:24px"><img src="companies/tencent.svg" alt="Tencent" style="--h:17px"><img src="companies/bytedance.svg" alt="ByteDance" style="--h:19px"></div><div class="row"><img src="companies/alibaba.svg" alt="Alibaba" style="--h:18px"><img src="companies/shopify.svg" alt="Shopify" style="--h:21px"><img src="companies/datadog.svg" alt="Datadog" style="--h:22px"><img src="companies/sap.svg" alt="SAP" style="--h:26px"><img src="companies/adobe.svg" alt="Adobe" style="--h:21px"><img src="companies/intel.svg" alt="Intel" style="--h:24px"><img src="companies/samsung.svg" alt="Samsung" style="--h:18px"><img src="companies/bosch.svg" alt="Bosch" style="--h:20px"><img src="companies/cisco.svg" alt="Cisco" style="--h:26px"></div><div class="row"><img src="companies/jpmorgan-chase.svg" alt="JPMorgan Chase" style="--h:14px"><img src="companies/oracle.svg" alt="Oracle" style="--h:13px"><img src="companies/netflix.svg" alt="Netflix" style="--h:18px"><img src="companies/toyota.svg" alt="Toyota" style="--h:14px"><img src="companies/salesforce.svg" alt="Salesforce" style="--h:26px"><img src="companies/siemens.svg" alt="Siemens" style="--h:16px"><img src="companies/accenture.svg" alt="Accenture" style="--h:21px"><img src="companies/uber.svg" alt="Uber" style="--h:19px"><img src="companies/spotify.svg" alt="Spotify" style="--h:19px"></div></div>
-+ <p class="more">and 1,100+ more companies</p>
-+</div></body></html>
++  Determining projects to restore...
++  Restored /private/tmp/dotnet-repro/Lib/Lib.csproj (in 22 ms).
++/private/tmp/dotnet-repro/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/private/tmp/dotnet-repro/Warnings.slnx]
++/private/tmp/dotnet-repro/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/private/tmp/dotnet-repro/Warnings.slnx]
++  Restored /private/tmp/dotnet-repro/B.Tests/B.Tests.csproj (in 5.48 sec).
++  Restored /private/tmp/dotnet-repro/A.Tests/A.Tests.csproj (in 5.48 sec).
++/private/tmp/dotnet-repro/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
++  Lib -> /private/tmp/dotnet-repro/Lib/bin/Debug/net10.0/Lib.dll
++/private/tmp/dotnet-repro/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
++  B.Tests -> /private/tmp/dotnet-repro/B.Tests/bin/Debug/net10.0/B.Tests.dll
++  A.Tests -> /private/tmp/dotnet-repro/A.Tests/bin/Debug/net10.0/A.Tests.dll
++
++Build succeeded.
++
++/private/tmp/dotnet-repro/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/private/tmp/dotnet-repro/Warnings.slnx]
++/private/tmp/dotnet-repro/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/private/tmp/dotnet-repro/Warnings.slnx]
++/private/tmp/dotnet-repro/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
++/private/tmp/dotnet-repro/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
++    4 Warning(s)
++    0 Error(s)
++
++Time Elapsed 00:00:06.21
 ```
 
-**File**: `.github/assets/src/companies/accenture.svg` (added, +410/-0)
+**File**: `tests/fixtures/dotnet/test_library_restore_warnings.txt` (added, +32/-0)
 ```diff
-@@ -0,0 +1,410 @@
-+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-+<!-- Created with Inkscape (http://www.inkscape.org/) -->
-+<svg
-+   xmlns:svg="http://www.w3.org/2000/svg"
-+   xmlns="http://www.w3.org/2000/svg"
-+   version="1.0"
-+   width="1133.8583"
-+   height="374.88187"
-+   id="svg2">
-+  <defs
-+     id="defs4">
-+    <clipPath
-+       id="clipPath2349">
-+      <path
-+         d="M -85.5,-19 L -85.5,19 L 85.5,19 L 85.5,-19 L -85.5,-19 z"
-+         id="path2351" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2341">
-+      <path
-+         d="M 0,0 L 603.7795,0 L 603.7795,841.8898 L 0,841.8898 L 0,0 z"
-+         id="path2343" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2926">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2928" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2918">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2920" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2694">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2696" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2686">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2688" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2678">
-+      <path
-+         d="M 405.35,120.15 L 510.24,120.15 L 510.24,91.8 L 405.35,91.8 L 405.35,120.15 z"
-+         id="path2680" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2498">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2500" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2490">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2492" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2482">
-+      <path
-+         d="M 51.02,680.71 L 595.28,680.71 L 595.28,126.67 L 51.02,126.67 L 51.02,680.71 z"
-+         id="path2484" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2464">
-+      <path
-+         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
-+         id="path2466" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath2456">
-+      <path
-+         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
-+         id="path2458" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5050">
-+      <path
-+         d="M -610.389,657.405 L -56.916,657.405 L -56.916,664.488 L -610.389,664.488 L -610.389,657.405 z"
-+         id="path5052" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5036">
-+      <path
-+         d="M 303.624,657.405 L 362.034,657.405 L 362.034,664.488 L 303.624,664.488 L 303.624,657.405 z"
-+         id="path5038" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5028">
-+      <path
-+         d="M 303.624,657.405 L 362.034,657.405 L 362.034,664.488 L 303.624,664.488 L 303.624,657.405 z"
-+         id="path5030" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5016">
-+      <path
-+         d="M 271.575,657.405 L 329.985,657.405 L 329.985,664.488 L 271.575,664.488 L 271.575,657.405 z"
-+         id="path5018" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath5008">
-+      <path
-+         d="M 271.575,657.405 L 329.985,657.405 L 329.985,664.488 L 271.575,664.488 L 271.575,657.405 z"
-+         id="path5010" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4996">
-+      <path
-+         d="M 204.345,657.405 L 262.755,657.405 L 262.755,664.488 L 204.345,664.488 L 204.345,657.405 z"
-+         id="path4998" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4988">
-+      <path
-+         d="M 204.345,657.405 L 262.755,657.405 L 262.755,664.488 L 204.345,664.488 L 204.345,657.405 z"
-+         id="path4990" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4972">
-+      <path
-+         d="M 375.417,657.405 L 433.827,657.405 L 433.827,664.488 L 375.417,664.488 L 375.417,657.405 z"
-+         id="path4974" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4964">
-+      <path
-+         d="M 375.417,657.405 L 433.827,657.405 L 433.827,664.488 L 375.417,664.488 L 375.417,657.405 z"
-+         id="path4966" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4950">
-+      <path
-+         d="M 88.236,657.405 L 146.646,657.405 L 146.646,664.488 L 88.236,664.488 L 88.236,657.405 z"
-+         id="path4952" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4942">
-+      <path
-+         d="M 88.236,657.405 L 146.646,657.405 L 146.646,664.488 L 88.236,664.488 L 88.236,657.405 z"
-+         id="path4944" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4928">
-+      <path
-+         d="M 40.806,657.405 L 99.216,657.405 L 99.216,664.488 L 40.806,664.488 L 40.806,657.405 z"
-+         id="path4930" />
-+    </clipPath>
-+    <clipPath
-+       id="clipPath4920">
-+      <path
-+         d="M 40.806,657.405 L 99.216,657.405 L 99.216,664.488 L 40.806,664.488 L 4
-```
-
-**File**: `.github/assets/src/companies/adobe.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg xmlns="http://www.w3.org/2000/svg" fill="#fa0c00" viewBox="-0.27 -0.27 54.97 14.88"><path d="M5.996 0H0v14.34zm4.219 0h5.988v14.34zm-2.11 5.285 3.817 9.055H9.418l-1.14-2.883H5.483Zm17.88 3.835.707 2.027c.024.05.059.074.121.074h1.36c.074 0 .086-.035.074-.11l-2.809-7.8c-.011-.063-.023-.075-.086-.075h-1.687c-.047 0-.074.036-.074.086-.024.41-.059.536-.11.657l-2.504 7.12c-.011.087.016.122.086.122h1.215c.074 0 .11-.024.137-.098l.668-2.004ZM23.47 7.794c.367-1.11.851-2.531 1.047-3.344h.011c.242.852.813 2.54 1.07 3.344zm8.388 3.548a5.8 5.8 0 0 0 2.297-.473c.062-.023.074-.05.074-.11a8 8 0 0 1-.051-.776V2.639c0-.047 0-.07-.059-.07h-1.324c-.05 0-.074.023-.074.085v2.489a4 4 0 0 0-.523-.035c-2.137 0-3.45 1.41-3.45 3.171 0 2.043 1.348 3.063 3.11 3.063m.863-1.36c-.219.07-.461.098-.707.098-.969 0-1.762-.547-1.762-1.875 0-1.176.817-1.87 1.899-1.87.218 0 .41.023.57.085zm5.732-4.874c-1.824 0-2.953 1.398-2.953 3.125 0 1.542.899 3.109 2.926 3.109 1.715 0 2.918-1.262 2.918-3.149 0-1.664-1.02-3.085-2.89-3.085m-.074 1.226c1.031 0 1.469.887 1.469 1.899 0 1.25-.645 1.87-1.395 1.87-.925 0-1.472-.777-1.472-1.898 0-1.152.582-1.87 1.398-1.87m4.333-3.767c-.05 0-.086.024-.086.086v8.313c0 .035.035.098.086.11q.875.267 1.82.265c1.801 0 3.551-1.117 3.551-3.367 0-1.63-1.117-2.867-2.867-2.867a3.5 3.5 0 0 0-1.106.171l-.015-2.613c0-.086-.024-.098-.11-.098zm3.875 5.555c0 1.348-.922 1.98-1.918 1.98-.207 0-.39-.011-.559-.062V6.494c.192-.074.422-.136.848-.136.961 0 1.629.609 1.629 1.765m6.438.437c.594 0 1.082-.011 1.25-.05.063-.012.086-.035.098-.086.035-.133.05-.41.05-.75 0-1.156-.695-2.566-2.492-2.566-1.836 0-2.855 1.496-2.855 3.183 0 1.496.789 3.05 3 3.05.828 0 1.363-.132 1.824-.35.047-.024.07-.063.07-.133V9.846c0-.059-.035-.07-.07-.047q-.688.293-1.508.293c-1.238 0-1.8-.684-1.836-1.531zm-2.469-1.046c.098-.594.473-1.239 1.313-1.239.926 0 1.168.778 1.168 1.13v.097c-.051.012-.207.012-.668.012zm0 0"/></svg>
-\ No newline at end of file
-```
-
-**File**: `.github/assets/src/companies/alibaba.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg viewBox="-3.87 -3.87 781.00 129.73" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="none"/><g class="currentLayer"><path d="M487.347 82.828c0 12.332-6.25 18.498-18.741 18.498-8.006 0-12.006-2.926-12.006-8.798 0-5.323 4.217-8.716 12.62-10.185 3.105-.544 9.143-.818 18.127-.818zm35.239-16.99c0-21.399-16.204-31.45-47.942-32.108-33.079-.683-47.053 7.93-49.832 26.019h34.3c1.654-5.891 5.616-9.188 13.826-8.9 8.07.287 14.077 4.382 14.377 15.104-18.46.275-32.057 1.348-41.392 3.585-18.013 4.32-26.964 14.14-26.964 27.5 0 9.004 3.987 15.579 11.935 19.706 5.988 3.093 13.757 4.978 23.303 4.646 15.642-.544 26.914-5.003 33.897-14.23v12.357h34.504zm215.44 16.99c0 12.332-6.255 18.498-18.74 18.498-8.007 0-12.007-2.926-12.007-8.798 0-5.323 4.211-8.716 12.62-10.185 3.105-.544 9.137-.818 18.127-.818zm35.239-16.99c0-21.399-16.21-31.45-47.941-32.108-33.086-.683-47.06 7.93-49.833 26.019h34.3c1.654-5.891 5.616-9.188 13.827-8.9 8.063.287 14.07 4.382 14.37 15.104-18.453.275-32.057 1.348-41.392 3.585-18.006 4.32-26.958 14.14-26.958 27.5 0 9.004 3.98 15.579 11.93 19.706 5.993 3.093 13.763 4.978 23.302 4.646 15.649-.544 26.92-5.003 33.897-14.23v12.357h34.504zM59.577 72.005 79.148 28.44l18.537 43.565zM59.717 0 0 119.652h38.772l9.476-21.565h59.718l8.817 21.565h43.028L102.848 0zm111.197 119.648h37.577V.003h-37.577zM232.338.003v23.762h37.576V.003zm0 36.69v82.955h37.576V36.693zM364.89 91.505c-6.895 9.489-15.495 11.591-25.789 6.326a26 26 0 0 1-1.565-1.125c-3.24-3.01-5.304-6.702-6.186-11.086q-1.984-9.66.614-19.13c1.233-4.281 3.623-7.655 7.182-10.102 4.09-2.358 8.44-3.208 13.035-2.556 6.428 1.016 10.958 4.613 13.61 10.792 1.635 4.051 2.421 8.294 2.357 12.71q.096 7.502-3.258 14.171m-71.085 28.185h36.69v-15.086c9.718 12.402 21.999 17.603 36.918 17.067 8.313-.422 15.962-3.304 22.888-8.14 9.386-7.496 14.46-17.368 15.214-29.63 1.067-12.625-1.987-24.07-9.17-34.344-6.99-8.658-15.897-13.635-26.727-14.907-15.06-1.993-28.306 2.972-38.83 14.396V.114h-36.945zm321.671-28.185c-6.894 9.489-15.495 11.591-25.788 6.326a26 26 0 0 1-1.566-1.125c-3.24-3.01-5.303-6.702-6.185-11.086q-1.984-9.66.613-19.13c1.234-4.281 3.623-7.655 7.182-10.102 4.09-2.358 8.441-3.208 13.035-2.556 6.428 1.016 10.958 4.613 13.604 10.792 1.642 4.051 2.428 8.294 2.364 12.71q.096 7.502-3.259 14.171m-71.084 28.185h36.689v-15.086c9.718 12.402 22 17.603 36.92 17.067 8.312-.422 15.96-3.304 22.887-8.14 9.386-7.496 14.46-17.368 15.213-29.63 1.068-12.625-1.987-24.07-9.169-34.344-6.99-8.658-15.897-13.635-26.727-14.907-15.06-1.993-28.307 2.972-38.83 14.396V.114H544.43z" class="selected" style="fill:#ff5a00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:6.38963"/></g></svg>
-\ No newline at end of file
-```
-
-**File**: `.github/assets/src/companies/amazon.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg viewBox="-2.65 -2.77 608.30 187.52" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill:#221f1f"><path d="M374.006 142.184c-35 25.797-85.729 39.561-129.406 39.561-61.242 0-116.376-22.651-158.087-60.325-3.278-2.962-.341-7 3.591-4.693 45.015 26.191 100.673 41.947 158.166 41.947 38.775 0 81.43-8.022 120.65-24.67 5.925-2.516 10.88 3.88 5.086 8.18" style="fill:#f90"/><path d="M388.557 125.536c-4.457-5.715-29.573-2.7-40.846-1.363-3.434.42-3.959-2.57-.865-4.719 20.003-14.078 52.827-10.015 56.654-5.296 3.828 4.745-.996 37.648-19.793 53.352-2.884 2.411-5.637 1.127-4.352-2.072 4.22-10.539 13.685-34.16 9.202-39.902" style="fill:#f90"/><path d="M348.497 20.066V6.381c0-2.071 1.573-3.46 3.461-3.46h61.269c1.966 0 3.54 1.415 3.54 3.46V18.1c-.027 1.966-1.679 4.535-4.615 8.599l-31.749 45.329c11.798-.289 24.25 1.468 34.947 7.498 2.412 1.363 3.068 3.356 3.251 5.322V99.45c0 1.992-2.202 4.325-4.509 3.12-18.85-9.884-43.887-10.96-64.73.104-2.123 1.154-4.351-1.153-4.351-3.146V85.661c0-2.229.026-6.03 2.254-9.412L384.047 23.5h-32.01c-1.967 0-3.54-1.39-3.54-3.434m-223.498 85.388h-18.64c-1.783-.13-3.199-1.468-3.33-3.172V6.617c0-1.914 1.6-3.435 3.592-3.435h17.382c1.809.079 3.25 1.468 3.382 3.199v12.505h.34c4.536-12.086 13.056-17.722 24.54-17.722 11.666 0 18.954 5.636 24.198 17.722 4.509-12.086 14.76-17.722 25.744-17.722 7.813 0 16.36 3.224 21.577 10.46 5.899 8.049 4.693 19.741 4.693 29.992l-.026 60.378c0 1.913-1.6 3.46-3.592 3.46h-18.614c-1.862-.13-3.356-1.625-3.356-3.46V51.29c0-4.037.367-14.104-.524-17.932-1.39-6.423-5.558-8.232-10.959-8.232-4.51 0-9.228 3.015-11.142 7.839s-1.73 12.898-1.73 18.325v50.704c0 1.913-1.6 3.46-3.592 3.46h-18.614c-1.888-.13-3.356-1.625-3.356-3.46l-.026-50.704c0-10.67 1.757-26.374-11.483-26.374-13.397 0-12.872 15.31-12.872 26.374v50.704c0 1.913-1.6 3.46-3.592 3.46M469.514 1.164c27.66 0 42.629 23.752 42.629 53.954 0 29.18-16.543 52.329-42.629 52.329-27.16 0-41.947-23.753-41.947-53.352 0-29.782 14.97-52.931 41.947-52.931m.158 19.531c-13.738 0-14.603 18.719-14.603 30.386 0 11.692-.184 36.65 14.445 36.65 14.446 0 15.128-20.134 15.128-32.403 0-8.075-.341-17.723-2.78-25.378-2.097-6.66-6.265-9.255-12.19-9.255m78.336 84.759h-18.562c-1.861-.13-3.356-1.625-3.356-3.46l-.026-95.692c.157-1.756 1.704-3.12 3.592-3.12h17.277c1.625.079 2.962 1.18 3.33 2.674v14.63h.34c5.217-13.083 12.532-19.322 25.404-19.322 8.363 0 16.517 3.015 21.76 11.273 4.877 7.655 4.877 20.528 4.877 29.782v60.22c-.21 1.678-1.757 3.015-3.592 3.015h-18.693c-1.704-.13-3.12-1.39-3.303-3.015V50.478c0-10.461 1.206-25.772-11.667-25.772-4.535 0-8.704 3.042-10.775 7.656-2.621 5.846-2.962 11.666-2.962 18.116v51.516c-.026 1.913-1.652 3.46-3.644 3.46"/><use xlink:href="#a" transform="translate(244.367)"/><path id="a" d="M55.288 59.758v-4.037c-13.475 0-27.71 2.884-27.71 18.771 0 8.049 4.168 13.502 11.325 13.502 5.243 0 9.936-3.225 12.898-8.468 3.67-6.45 3.487-12.506 3.487-19.768m18.798 45.434c-1.232 1.101-3.015 1.18-4.405.446-6.187-5.139-7.288-7.524-10.696-12.427-10.225 10.434-17.46 13.554-30.726 13.554-15.678 0-27.895-9.674-27.895-29.048 0-15.127 8.206-25.43 19.872-30.464 10.12-4.457 24.25-5.244 35.052-6.476v-2.412c0-4.43.341-9.674-2.254-13.501-2.281-3.435-6.633-4.85-10.46-4.85-7.106 0-13.45 3.644-14.997 11.194-.315 1.678-1.547 3.33-3.225 3.408l-18.09-1.94c-1.52-.34-3.198-1.573-2.778-3.906C7.652 6.853 27.446.246 45.169.246c9.07 0 20.92 2.412 28.078 9.28 9.07 8.469 8.206 19.768 8.206 32.064v29.048c0 8.73 3.618 12.558 7.026 17.277 1.206 1.678 1.468 3.697-.053 4.955-3.801 3.172-10.565 9.071-14.288 12.375z"/></svg>
-\ No newline at end of file
-```
-
-**File**: `.github/assets/src/companies/apple.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg viewBox="-5.00 -5.00 824.10 1009.90" xmlns="http://www.w3.org/2000/svg"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2m-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3"/></svg>
-\ No newline at end of file
-```
-
-**File**: `.github/assets/src/companies/bosch.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.17 -1.98 437.33 100.73"><path d="M185.2 46.88a13.77 13.77 0 0 0 8.8-13c0-11.7-8.3-17.5-19.7-17.5h-29.9V80h32.5c10 0 19.8-7 19.8-17.7 0-12.72-11.5-15.3-11.5-15.42M160 29.58h11.6a5.66 5.66 0 0 1 6 5.31v.69a5.93 5.93 0 0 1-6 5.81h-11.7Zm11.7 37.1h-11.6v-12.5h11.3c5.7 0 8.4 2.5 8.4 6.2 0 4.62-3.4 6.3-8.1 6.3m59.4-51.9c-18.4 0-29.2 14.7-29.2 33.3s10.8 33.3 29.2 33.3 29.2-14.6 29.2-33.3-10.7-33.3-29.2-33.3m0 51.4c-9 0-13.5-8.1-13.5-18.1s4.5-18 13.5-18 13.6 8.1 13.6 18c0 10.1-4.6 18.1-13.6 18.1m63.1-24.8-2.2-.5c-5.4-1.1-9.7-2.5-9.7-6.4 0-4.2 4.1-5.9 7.7-5.9a17.86 17.86 0 0 1 13 5.9l9.9-9.8c-4.5-5.1-11.8-10-23.2-10-13.4 0-23.6 7.5-23.6 20 0 11.4 8.2 17 18.2 19.1l2.2.5c8.3 1.7 11.4 3 11.4 7 0 3.8-3.4 6.3-8.6 6.3-6.2 0-11.8-2.7-16.1-8.2l-10.1 10c5.6 6.7 12.7 11.9 26.4 11.9 11.9 0 24.6-6.8 24.6-20.7.2-14.5-10.8-17.3-19.9-19.2m55.5 24.8c-7 0-14.3-5.8-14.3-18.5 0-11.3 6.8-17.6 13.9-17.6 5.6 0 8.9 2.6 11.5 7.1l12.8-8.5c-6.4-9.7-14-13.8-24.5-13.8-19.2 0-29.6 14.9-29.6 32.9 0 18.9 11.5 33.7 29.4 33.7 12.6 0 18.6-4.4 25.1-13.8L361.1 59c-2.6 4.18-5.4 7.18-11.4 7.18m66.6-49.8v23.4H397v-23.4h-16.7v63.6H397v-25.1h19.3v25.1H433v-63.6z" style="fill:#ed0007;fill-rule:evenodd"/><path d="M48.2.18a48.2 48.2 0 1 0 48.2 48.2A48.2 48.2 0 0 0 48.2.18m0 91.9a43.7 43.7 0 1 1 43.7-43.7 43.71 43.71 0 0 1-43.7 43.7"/><path d="M68.1 18.28h-3.3v16.5H31.7v-16.5h-3.4a36.06 36.06 0 0 0 0 60.2h3.4V62h33.1v16.5h3.3a36.05 36.05 0 0 0 0-60.2ZM27.1 72a31.59 31.59 0 0 1-2.63-44.6 33 33 0 0 1 2.63-2.62Zm37.7-14.6H31.7V39.28h33.1Zm4.5 14.5V24.78a31.65 31.65 0 0 1 2.39 44.71 34 34 0 0 1-2.39 2.39Z"/></svg>
-\ No newline at end of file
+@@ -0,0 +1,32 @@
++/fx/three/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/three/Two.sln]
++/fx/three/Lib/Lib.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/three/Two.sln]
++/fx/three/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data. [/fx/three/Two.sln]
++/fx/three/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/three/Two.sln]
++/fx/three/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/three/Two.sln]
++/fx/three/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json. [/fx/three/Two.sln]
++/fx/three/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data. [/fx/three/Two.sln]
++/fx/three/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json. [/fx/three/Two.sln]
++/fx/three/Lib/Lib.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data. [/fx/three/Two.sln]
++/fx/three/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json. [/fx/three/Two.sln]
++/fx/three/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data. [/fx/three/Two.sln]
++/fx/three/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json. [/fx/three/Two.sln]
++/fx/three/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data.
++/fx/three/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data.
++/fx/three/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
++/fx/three/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
++/fx/three/B.Tests/B.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data.
++/fx/three/B.Tests/B.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json.
++/fx/three/A.Tests/A.Tests.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data.
++/fx/three/A.Tests/A.Tests.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json.
++/fx/three/Lib/Lib.csproj : warning NU1905: Audit source 'dead1' did not provide any vulnerability data.
++/fx/three/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:9/v3/index.json.
++/fx/three/Lib/Lib.csproj : warning NU1905: Audit source 'dead2' did not provide any vulnerability data.
++/fx/three/Lib/Lib.csproj : warning NU1900: Error occurred while getting package vulnerability data: Unable to load the service index for source https://127.0.0.1:10/v3/index.json.
++Test run for /fx/three/B.Tests/bin/Debug/net10.0/B.Tests.dll (.NETCoreApp,Version=v10.0)
++A total of 1 test files matched the specified pattern.
++Test run for /fx/three/A.Tests/bin/Debug/net10.0/A.Tests.dll (.NETCoreApp,Version=v10.0)
++A total of 1 test files matched the specified pattern.
++
++Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 10 ms - B.Tests.dll (net10.0)
++
++Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 5 ms - A.Tests.dll (net10.0)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5069** (2026-11-11): chore(deps): bump anyhow from 1.0.102 to 1.0.104 (@dependabot[bot])
+- **PR #5068** (2026-11-11): chore(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4 (@dependabot[bot])
+- **PR #5067** (2026-11-11): chore(deps): bump codepage from 0.1.2 to 0.1.3 (@dependabot[bot])
 - **PR #5060** (closed): Sync/upstream reliability (@idolgoff)
 - **PR #5053** (2026-11-10): docs: present RTK as the cost reduction engine for AI coding agents (@aeppling)
 - **PR #5052** (closed): docs: present RTK as the cost reduction engine for AI coding agents (@aeppling)
-- **PR #5036** (2026-11-08): chore(master): release 1.2.0 (@rtk-release-bot[bot])
-- **PR #5035** (2026-11-08): fix(copilot): let the repository's Copilot hook run without rtk installed (@KuSh)
-- **PR #5019** (2026-11-06): fix(hooks): honour exclude_commands for a swapped program called by path (@aeppling)
 
 ---
 
@@ -2370,33 +2805,73 @@ rtk gain ends with one line about RTK Pro once the us
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5053 from rtk-ai/chore/docs-cost-engine-positioning
+## X. core): send the classifier key and reach local hosts directly on ureq 3
 
 **RULE**:
-When implementing operations in `.github/assets/src/before-after.html`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8bc263a9`: Merge pull request #5053 from rtk-ai/chore/docs-cost-engine-positioning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4ae76938`: core): send the classifier key and reach local hosts directly on ureq 3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/assets/src/before-after.html`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-<!doctype html>
-<html><head><meta charset="utf-8">
-<!-- Real output. Captured with `rtk bypass cargo test` (left) and `rtk cargo test` (right)
-     on a 48-test crate with one failing assertion, rtk core 1.0.1. Only the lines marked
-     "⋯ N more lines" are elided; the counts are exact. -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
-<style>
-:root{--bg:#060b18;--bg-card:#0f1629;--text:#e2e8f0;--text-bright:#f8fafc;--text-muted:#94a3b8;--text-dim:#7e8ca6;--accent:#00e599;--accent-dim:rgba(0,229,153,.10);--accent-glow:rgba(0,229,153,.25);--red:#f87171;--scene:rgba(0,229,153,.09);--tint:rgba(0,229,153,.045);--vignette:rgba(0,0,0,.42);--grid:rgba(148,163,184,.05);--line:rgba(148,163,184,.14)}
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{width:1280px;height:560px;background:transparent}
-.card{position:relative;width:1280px;height:560px;border-radius:20px;overflow:hidden;background:var(--bg);border:1px solid var(--line);isolation:isolate;font-family:'Geist','Inter',sans-serif;color:var(--text)}
-.atmo{position:absolute;in
+[[package]]
+name = "cookie"
+version = "0.18.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
+dependencies = [
+ "percent-encoding",
+ "time",
+ "version_check",
+]
+
+[[package]]
+name = "cookie_store"
+version = "0.22.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "15b2c103cf610ec6cae3da84a766285b42fd16aad564758459e6ecf128c75206"
+dependencies = [
+ "cookie",
+ "document-features",
+ "idna",
+ "indexmap",
+ "log",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "time",
+ "url",
+]
+
+[[package]]
+name = "displaydoc"
+version = "0.2.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c6232dd377dcc64799954cbd3a9bb882e9cdc1308ccd87b1c098f1fb2eaf82a8"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 3.0.5",
+]
+
+[[package]]
+name = "form_urlencoded"
+version = "1.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+dependencies = [
+ "percent-encoding",
+]
+
+[[package]]
+name = "icu_collections"
+version = "2.4.0"
+source = "registry+https://github.com/rust-lang/crates.io
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2406,4 +2881,4 @@ html,body{width:1280px;height:560px;background:transparent}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8bc263a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4ae76938` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T05:08:22.674Z",
-  "total_records": 94,
+  "last_updated": "2026-11-13T05:16:25.322Z",
+  "total_records": 95,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 53,
+      "total": 54,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -78,7 +78,8 @@
         "DOM-D-527E8201",
         "DOM-D-FE25E160",
         "DOM-D-90E0590C",
-        "DOM-D-F419AB78"
+        "DOM-D-F419AB78",
+        "DOM-D-5A5516B9"
       ]
     },
     "E": {
@@ -3871,6 +3872,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T05:08:22.672Z"
+    },
+    "DOM-D-5A5516B9": {
+      "record_id": "DOM-D-5A5516B9",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Qwen/Qwen3-14B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Qwen/Qwen3-14B](https://huggingface.co/Qwen/Qwen3-14B))  \n> **Source Version**: `hf-qwen-qwen`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clone-",
+      "content_hash": "b6e91a8ec80714ce1a1c0f930794e92267f95cde8489be637a3244df8b2f6166",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co",
+      "provenance": {
+        "source_uri": "project://hf-qwen-qwen3-14b/hf-qwen-qwen3-14b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T05:16:10.621Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-qwen-qwen3-14b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-qwen-qwen3-14b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T05:16:25.320Z"
     }
   }
 }

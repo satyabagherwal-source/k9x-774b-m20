@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T05:08:22.810Z",
+  "last_updated": "2026-11-13T05:16:25.352Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8156,6 +8156,24 @@
       "source_repo": "nolabs-ai-nono",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-63AC39-cli-allow-mise-to-read-tool-versions-230.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-AD1F97",
+      "directive_title": "core): send the classifier key and reach local hosts directly on ureq 3",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rtk-ai-rtk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AD1F97-core-send-the-classifier-key-and-reach-l.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-F753B4",
+      "directive_title": "[FIXED] Require a separator before inline header status (#2237)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nats-io-nats.go",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F753B4--fixed-require-a-separator-before-inline.md",
       "staged_date": "2026-11-13"
     }
   ]
