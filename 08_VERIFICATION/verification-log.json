@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-T3UQ",
-    "timestamp": "2026-11-09T23:17:46.562Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "5d4326814472d60debf7b25295bc11dc8001ff31ccc47adf15f14f665e242f6a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-T4BV",
     "timestamp": "2026-11-09T23:17:47.179Z",
     "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
@@ -7492,6 +7477,21 @@
     "contentHash": "fe63c50f1962d6b6a21be4c84c66a3913f469d60b79943934756c16da89d6efd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-X2BI",
+    "timestamp": "2026-11-13T05:43:46.686Z",
+    "repository": "unsloth/flint-GGUF",
+    "learningId": "learn-huggingface-unsloth-flint-gguf",
+    "contentHash": "db2e3a5ac711b87b256d7d21ef335acb754b70695d0578089b5cb09d4fc027a5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

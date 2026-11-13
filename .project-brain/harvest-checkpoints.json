@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T05:23:42.748Z",
+  "last_updated": "2026-11-13T05:43:46.698Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15861,14 +15861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-flint-gguf",
-      "content_hash": "9fd5ffa124c45d08443613b14843f6258f3033dba832b5cc351d63c55f998f82",
-      "verified_at": "2026-11-08T04:54:55.779Z",
+      "content_hash": "db2e3a5ac711b87b256d7d21ef335acb754b70695d0578089b5cb09d4fc027a5",
+      "verified_at": "2026-11-13T05:43:46.698Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T04:54:55.779Z"
+      "last_updated": "2026-11-13T05:43:46.698Z"
     },
     "gauthierpiarrette/highball": {
       "repository": "gauthierpiarrette/highball",

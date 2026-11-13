@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T05:23:46.690Z",
+  "updated_at": "2026-11-13T05:44:08.118Z",
   "stats": {
-    "total_discovered": 2204,
-    "approved_pending_harvest": 2046,
+    "total_discovered": 2205,
+    "approved_pending_harvest": 2047,
     "harvested_count": 0,
     "rejected_count": 158,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2036,
+      "COMMUNITY_AND_EXPERT": 2037,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -47400,6 +47400,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
         "fileName": "sxyazi-yazi-learnings.md"
+      }
+    },
+    "SRC-FDAAA5A06528": {
+      "id": "SRC-FDAAA5A06528",
+      "url": "https://huggingface.co/unsloth/flint-GGUF",
+      "title": "https://huggingface.co/unsloth/flint-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:44:08.118Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md",
+        "fileName": "hf-unsloth-flint-gguf-learnings.md"
       }
     }
   }

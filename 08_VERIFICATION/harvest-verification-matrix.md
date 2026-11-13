@@ -9352,3 +9352,5 @@
 | `CYCLE-20261113-70K0` | `2026-11-13T05:23:31.344Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md` | Yes (`3187fcd1...`) |
 | `CYCLE-20261113-79C4` | `2026-11-13T05:23:42.724Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fe63c50f...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T05:23:59.453Z` | `hf-comfy-org-z-image-turbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F4EF37A7` [Domain D] | Yes (`0606c817...`) |
+| `CYCLE-20261113-X2BI` | `2026-11-13T05:43:46.686Z` | `unsloth/flint-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md` | Yes (`db2e3a5a...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T05:44:08.110Z` | `hf-unsloth-flint-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6C43F0F5` [Domain D] | Yes (`c0a6b548...`) |

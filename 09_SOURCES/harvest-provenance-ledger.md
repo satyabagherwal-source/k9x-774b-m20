@@ -9361,3 +9361,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-13T05:23:31.348Z |
 | `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `d5e4beb6` | Multi-dimensional audit evidence | 2026-11-13T05:23:42.728Z |
 | `learn-dom-d-f4ef37a7` | `project://hf-comfy-org-z-image-turbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md` | 2026-11-13T05:23:59.453Z |
+| `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-13T05:43:46.689Z |
+| `learn-dom-d-6c43f0f5` | `project://hf-unsloth-flint-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md` | 2026-11-13T05:44:08.110Z |

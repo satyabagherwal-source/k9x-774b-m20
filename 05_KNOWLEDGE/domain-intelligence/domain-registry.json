@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T05:23:59.451Z",
-  "total_records": 96,
+  "last_updated": "2026-11-13T05:44:08.107Z",
+  "total_records": 97,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 55,
+      "total": 56,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -80,7 +80,8 @@
         "DOM-D-90E0590C",
         "DOM-D-F419AB78",
         "DOM-D-5A5516B9",
-        "DOM-D-F4EF37A7"
+        "DOM-D-F4EF37A7",
+        "DOM-D-6C43F0F5"
       ]
     },
     "E": {
@@ -3957,6 +3958,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T05:23:59.448Z"
+    },
+    "DOM-D-6C43F0F5": {
+      "record_id": "DOM-D-6C43F0F5",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): unsloth/flint-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF))  \n> **Source Version**: `hf-unsloth-f`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "c0a6b5487cfe7e729912f5528c1b08ecb53d9438be33835b3aa3529c138b3c41",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-unsloth-flint-gguf/hf-unsloth-flint-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T05:43:58.803Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-flint-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-unsloth-flint-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T05:44:08.105Z"
     }
   }
 }
