@@ -9436,3 +9436,6 @@ Every entry in this ledger must capture:
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `4c3c4935` | Multi-dimensional audit evidence | 2026-11-13T09:57:03.563Z |
 | `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `af5fb956` | Multi-dimensional audit evidence | 2026-11-13T09:57:08.332Z |
 | `learn-dom-d-f81ec195` | `project://hf-edge0-audio8-asr-infinite` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | 2026-11-13T09:57:29.719Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-13T10:26:24.709Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `8ce4b111` | Multi-dimensional audit evidence | 2026-11-13T10:26:49.176Z |
+| `learn-dom-d-f667641f` | `project://hf-abenzerps-qwen-image-2.1-uncensored-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | 2026-11-13T10:27:09.443Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T09:57:29.759Z",
+  "last_updated": "2026-11-13T10:27:09.537Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8543,6 +8543,24 @@
       "source_repo": "wzh4869-appports",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-CC18AD-merge-pull-request-108-from-aurorax-neo-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-06ADFA",
+      "directive_title": "property name in Salesforce config error message",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trinodb-trino",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-06ADFA-property-name-in-salesforce-config-error.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-7B85F6",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7B85F6-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-13"
     }
   ]

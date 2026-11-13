@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T09:57:13.965Z",
-    "lastVerified": "2026-11-13T09:57:13.965Z",
+    "lastChecked": "2026-11-13T10:26:54.242Z",
+    "lastVerified": "2026-11-13T10:26:54.242Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -230,9 +230,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-13T04:13:16.615Z",
+    "lastChecked": "2026-11-13T10:26:31.413Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-13T04:13:16.615Z"
+    "lastVerified": "2026-11-13T10:26:31.413Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -256,8 +256,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T08:55:47.469Z",
-    "lastVerified": "2026-11-13T08:55:47.469Z",
+    "lastChecked": "2026-11-13T10:26:36.522Z",
+    "lastVerified": "2026-11-13T10:26:36.522Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -292,13 +292,13 @@
     "officialUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T07:30:45.154Z",
-    "lastVerified": "2026-11-08T07:30:45.154Z",
+    "lastChecked": "2026-11-13T10:26:24.221Z",
+    "lastVerified": "2026-11-13T10:26:24.221Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "5f22feefa27c815c0430da9106efa274088461aee7eebcbd14eb7c3e53fa261f",
-    "promotedRulesCount": 3,
+    "contentHash": "1836a3ed9e1eeebf0a07005335511cc511bf76bc5b77b52d09b5307334913129",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -2157,12 +2157,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "unhappychoice-gitlogue": {
-    "name": "unhappychoice/gitlogue",
+    "name": "gitlogue",
     "officialUrl": "https://github.com/unhappychoice/gitlogue",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T17:12:59.454Z",
-    "lastVerified": "2026-11-11T17:12:59.454Z",
+    "lastChecked": "2026-11-13T10:26:21.432Z",
+    "lastVerified": "2026-11-13T10:26:21.432Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-unhappychoice-gitlogue",
@@ -2171,7 +2171,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b993537c"
   },
   "hf-fastino-gliner2.5-decide": {
     "name": "fastino/GLiNER2.5-Decide",
@@ -4181,9 +4182,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-12T05:13:10.155Z",
+    "lastChecked": "2026-11-13T10:26:28.953Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-12T05:13:10.155Z"
+    "lastVerified": "2026-11-13T10:26:28.953Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -6299,14 +6300,14 @@
     "officialUrl": "https://github.com/trinodb/trino",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-12T03:30:46.368Z",
-    "lastVerified": "2026-11-12T03:30:46.368Z",
+    "lastChecked": "2026-11-13T10:26:38.235Z",
+    "lastVerified": "2026-11-13T10:26:38.235Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trinodb-trino",
-    "contentHash": "9f910c029e50e15a847bbcbb99ab96f10643384e78c2bd7331f8af7222b643e0",
+    "contentHash": "690743a6f4d6aa8c3b8d3898b0a950ec9feaa3ce4861442c27501326e23bafbb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12151,12 +12152,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "mikelikesdesign-swiftui-experiments": {
-    "name": "mikelikesdesign/SwiftUI-experiments",
+    "name": "SwiftUI-experiments",
     "officialUrl": "https://github.com/mikelikesdesign/SwiftUI-experiments",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-09T01:12:39.129Z",
-    "lastVerified": "2026-11-09T01:12:39.129Z",
+    "lastChecked": "2026-11-13T10:26:26.536Z",
+    "lastVerified": "2026-11-13T10:26:26.536Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mikelikesdesign-swiftui-experiments",
@@ -12165,7 +12166,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8deaa990"
   },
   "sveltejs-svelte": {
     "name": "sveltejs/svelte",

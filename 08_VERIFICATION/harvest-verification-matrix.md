@@ -9427,3 +9427,6 @@
 | `CYCLE-20261113-YSAV` | `2026-11-13T09:57:03.559Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`efc7c5ea...`) |
 | `CYCLE-20261113-YVZB` | `2026-11-13T09:57:08.327Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d59f1a07...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T09:57:29.719Z` | `hf-edge0-audio8-asr-infinite` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F81EC195` [Domain D] | Yes (`f13615df...`) |
+| `CYCLE-20261113-0J7L` | `2026-11-13T10:26:24.705Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`1836a3ed...`) |
+| `CYCLE-20261113-1238` | `2026-11-13T10:26:49.172Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`690743a6...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T10:27:09.443Z` | `hf-abenzerps-qwen-image-2.1-uncensored-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F667641F` [Domain D] | Yes (`cf6ba494...`) |

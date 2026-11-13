@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T09:57:08.215Z",
+  "last_updated": "2026-11-13T10:26:49.064Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19853,7 +19853,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "5f22feefa27c815c0430da9106efa274088461aee7eebcbd14eb7c3e53fa261f",
+      "content_hash": "1836a3ed9e1eeebf0a07005335511cc511bf76bc5b77b52d09b5307334913129",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -20263,7 +20263,7 @@
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv42kq8l",
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho"
       ],
-      "verified_at": "2026-11-08T07:30:58.723Z",
+      "verified_at": "2026-11-13T10:26:24.571Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -64866,8 +64866,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "d1c0035f",
-      "content_hash": "9f910c029e50e15a847bbcbb99ab96f10643384e78c2bd7331f8af7222b643e0",
+      "source_version": "8ce4b111",
+      "content_hash": "690743a6f4d6aa8c3b8d3898b0a950ec9feaa3ce4861442c27501326e23bafbb",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -64889,6 +64889,11 @@
         {
           "number": null,
           "title": "short decimal cast overflow when increasing scale",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "property name in Salesforce config error message",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -64967,7 +64972,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T03:30:53.848Z",
+      "verified_at": "2026-11-13T10:26:49.038Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

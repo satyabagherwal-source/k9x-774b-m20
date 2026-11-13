@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T09:57:08.357Z",
+  "last_updated": "2026-11-13T10:26:49.201Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "9f910c029e50e15a847bbcbb99ab96f10643384e78c2bd7331f8af7222b643e0",
-      "verified_at": "2026-11-12T03:30:53.977Z",
+      "content_hash": "690743a6f4d6aa8c3b8d3898b0a950ec9feaa3ce4861442c27501326e23bafbb",
+      "verified_at": "2026-11-13T10:26:49.200Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T03:30:53.977Z"
+      "last_updated": "2026-11-13T10:26:49.200Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -17810,15 +17810,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
-      "content_hash": "08974c3bd711aa2d89357c8af8edac40a97a280c59a786bc8d5c46204e47cd63",
-      "verified_at": "2026-11-12T05:47:34.823Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "content_hash": "1836a3ed9e1eeebf0a07005335511cc511bf76bc5b77b52d09b5307334913129",
+      "verified_at": "2026-11-13T10:26:24.719Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T05:47:34.823Z"
+      "last_updated": "2026-11-13T10:26:24.719Z"
     },
     "agentlas-ai/Agentlas-OS": {
       "repository": "agentlas-ai/Agentlas-OS",

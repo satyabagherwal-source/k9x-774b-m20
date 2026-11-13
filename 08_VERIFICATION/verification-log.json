@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-JKGQ",
-    "timestamp": "2026-11-10T05:14:16.538Z",
-    "repository": "bahdotsh/wrkflw",
-    "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "4bcc131da93ccae4640244361e05ce2bb7c390e2a3f72a41ca15fb5e49733974",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-JO2I",
-    "timestamp": "2026-11-10T05:14:21.210Z",
-    "repository": "lingodotdev/lingo.dev",
-    "learningId": "learn-github-lingodotdev-lingo-dev",
-    "contentHash": "c4b3a7614263b8bf4e20a5048c0a6757426cc36f6359576fb25323601baddd17",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-JR2Y",
     "timestamp": "2026-11-10T05:14:25.114Z",
     "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "wzh4869/AppPorts",
     "learningId": "learn-github-wzh4869-appports",
     "contentHash": "d59f1a07892e9e204509dfe2619fc0001368972a9e7695e28f574d952ca7d6e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-0J7L",
+    "timestamp": "2026-11-13T10:26:24.705Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "1836a3ed9e1eeebf0a07005335511cc511bf76bc5b77b52d09b5307334913129",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-1238",
+    "timestamp": "2026-11-13T10:26:49.172Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "690743a6f4d6aa8c3b8d3898b0a950ec9feaa3ce4861442c27501326e23bafbb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

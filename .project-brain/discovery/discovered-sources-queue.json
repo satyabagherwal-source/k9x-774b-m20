@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T09:57:29.807Z",
+  "updated_at": "2026-11-13T10:27:09.453Z",
   "stats": {
-    "total_discovered": 2322,
-    "approved_pending_harvest": 2159,
+    "total_discovered": 2323,
+    "approved_pending_harvest": 2160,
     "harvested_count": 0,
     "rejected_count": 163,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2149,
+      "COMMUNITY_AND_EXPERT": 2150,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 73,
       "ENGINEERING_BLOGS": 1,
@@ -49962,6 +49962,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
         "fileName": "wzh4869-appports-learnings.md"
+      }
+    },
+    "SRC-209A41BAF296": {
+      "id": "SRC-209A41BAF296",
+      "url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "title": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T10:27:09.453Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
+        "fileName": "hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md"
       }
     }
   }

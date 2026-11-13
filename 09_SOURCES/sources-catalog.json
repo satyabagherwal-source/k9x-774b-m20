@@ -135,8 +135,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "5f22feefa27c815c0430da9106efa274088461aee7eebcbd14eb7c3e53fa261f",
-    "lastHarvestedAt": "2026-11-08T07:30:58.844Z",
+    "contentHash": "1836a3ed9e1eeebf0a07005335511cc511bf76bc5b77b52d09b5307334913129",
+    "lastHarvestedAt": "2026-11-13T10:26:24.709Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "d1c0035f",
+    "sourceVersion": "8ce4b111",
     "license": "Apache-2.0",
-    "contentHash": "9f910c029e50e15a847bbcbb99ab96f10643384e78c2bd7331f8af7222b643e0",
-    "lastHarvestedAt": "2026-11-12T03:30:53.960Z",
+    "contentHash": "690743a6f4d6aa8c3b8d3898b0a950ec9feaa3ce4861442c27501326e23bafbb",
+    "lastHarvestedAt": "2026-11-13T10:26:49.176Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
