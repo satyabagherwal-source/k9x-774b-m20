@@ -9293,3 +9293,7 @@ Every entry in this ledger must capture:
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `c3adc8df` | Multi-dimensional audit evidence | 2026-11-13T01:57:48.744Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `9066683f` | Multi-dimensional audit evidence | 2026-11-13T01:57:51.245Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `aeea883b` | Multi-dimensional audit evidence | 2026-11-13T01:57:53.030Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `8a6e0c14` | Multi-dimensional audit evidence | 2026-11-13T02:05:49.681Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `437c6484` | Multi-dimensional audit evidence | 2026-11-13T02:06:03.968Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-13T02:10:35.845Z |
+| `learn-dom-h-8c53c2bf` | `project://oxc-project-oxc` | `8a6e0c14` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md` | 2026-11-13T02:10:54.155Z |

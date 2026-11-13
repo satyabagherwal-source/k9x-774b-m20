@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `90e547c6`  
+> **Source Version**: `437c6484`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T14:56:34.330Z  
+> **Timestamp**: 2026-11-13T02:05:50.359Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T14:56:34.317Z  
+> **Harvest Timestamp**: 2026-11-13T02:05:50.348Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native HTAP database with Git-for-Data and built-in vector search, serving as the data and memory backbone for intelligent agents and applications.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2064 stars
+- **Stars / Engagement**: 2065 stars
 
 ---
 
@@ -2349,14 +2349,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32564** (2026-11-11): **ci: run pinned coverage comparison on MNL2**
-  *Symptoms*: ## Purpose Run the same PR #32523 commit b0641dbf3cb1ed67f90f9e4226f0585ba451abc0 and package concurrency 8 on the MNL2 CS runner, matching the MTY comparison. The pinned reusable workflow checks this historical commit is in PR #32523, and retains its trust and secret checks. Only a manual test-branch entry changes; production CI and other tests are not changed.  ## Status Requires test branch review/merge before dispatch. No validation run has been triggered.
-  **Post-Mortem & Fix Analysis**:
-  > ### Qodo reviews are paused for this user.  Troubleshooting steps vary by plan [Learn more →](https://docs.qodo.ai/subscription-plans#what-you%E2%80%99ll-see-when-reviews-are-paused)   **On a Teams plan?** Reviews resume once this user has a paid seat *and* their Git account is linked in Qodo. [Link Git account →](https://docs.qodo.ai/subscription-plans#linking-a-git-account)  **Using GitHub Enterprise Server, GitLab Self-Managed, or Bitbucket Data Center?** These require an Enterprise plan - Contact us [Contact us →](https://docs.qodo.ai/qodo-support#support) 
-  > This pull request is merged. <!-- mergify:queue-control-withdrawn:queue -->
+- **Issue #32649** (2026-11-13): **fix(sql): reject column privileges and render granted object scopes**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #32443 Fixes #32446   ## What this PR does / why we need it:  - Reject column-qualified GRANT/REVOKE with error 20105 before role lookup/persistence, while keeping whole-object grants unchanged. - Render SHOW GRANTS from the current account’s real catalog object/logical relation and database IDs, preserving role/user membership, global/unresolved-token fallback, and stable ordering. - Keep the column-privilege admission and SHOW GRANTS paths separate; this PR does not introduce direct per-user object grants or column-level authorization semantics.  Verification: - `CGO_ENABLED=1 GOWORK=off STATIC_CHECK_PACKAGES=./... make static-check-selected`: 0 issues with pinned molint + golangci 2.14.0, covering the full graph and reverse consumers. - `make build` on the patched tree succeeded; ELF and native artifacts are byte-identical to the accepted baseline. - Six canonical native BVT scripts: 1010 total, 992 successful, 18 existing-issue SKIP, 0 failed/abnormal; no SKIP was counted as success. - Directed SHOW GRANTS: seven expected/actual groups match; invalid quoted database names still return 20101/HY000. - Historical B phase-1/overall-5 remains unchanged; the captured-B checker yields old=1, new=0, with four negative controls rejected and the legal no-`at-line` form accepted. - Reused fronten
 
-- **Issue #32554** (2026-11-11): **docs(defect-hunt): record vector index cache eventual-consistency ruling**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [ ] Improvement - [x] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #32553  ## What this PR does / why we need it:  This adds a row to the `defect-hunt` MatrixOne adapter's "Prior evidence and decisions" table, so agents stop reporting the vector / fulltext index cache's eventual consistency as a bug (see #32501).  The row records: - **Ruling:** a cached HNSW / IVF-PQ / CAGRA / fulltext2 model that answers from an older snapshot is intentional while the periodic `IsStale` sweep has not yet evicted it (default window about 10–12.5 min). The search path never checks freshness. - **Deterministic probing:** `mo_ctl('cn', 'SetVectorIndexFreshnessInterval', '1s')` (restore `'0'`), or `GetVectorIndexCacheKeys` + `EvictVectorIndexCache`. - **What is still a defect:** staleness that persists after the shortened sweep or after eviction. - **Sources:** the `StaleChecker` design-decision comment in `pkg/vectorindex/cache/cache.go`, `docs/design/vector_index_cache_ctl.md` §1–§3 (#28985 / #29024), and the #32501 explanation.  Checked: the relative link resolves, the four `mo_ctl` command names match `pkg/sql/plan/function/ctl/`, and every cached index search in the list implements `IsStale` (IVF-PQ / CAGRA cached search exists only in GPU builds). Docs-only, one line.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #32647** (2026-11-13): **fix: reset int hashmap scratch before encoding**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #32568  ## What this PR does / why we need it:  `IntHashMap` reuses `keys` and `keyOffs`. In `HashBuild`'s `Insert -> Find -> Insert` path, `Find` left the offset advanced for a BIGINT; the next `Insert` wrote beyond its key slot and corrupted runtime-filter cleanup state. The surviving CN then retained a runtime-filter allocation and suspended account admission.  Reset both scratch slices inside `encodeHashKeys`, at the unsafe encoder's ownership boundary, before every encoding. This removes call-order dependence by centralizing the existing per-operation clears at encoder entry; `Insert` moves its reset from the defer. It adds no clearing pass. Add a deterministic regression test for the sequence with distinct keys.  Validation: - `go test ./pkg/common/hashmap -count=1` with Go 1.26.4. - Full `cmd/mo-service` build with Go 1.26.4 and CGO enabled. - Three-CN SQL reproduction with 100 prepared UPDATE clients over 1M rows; after pausing CN2 for 2 minutes, 85,373 updates succeeded with 0 errors. The table retained 1M rows and 1M distinct `b` values; no allocation-admission or panic signals appeared. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2373,392 +2370,8 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `56ad29d8` (2026-11-10)
-**Commit Message**: fix(disttae): budget transaction workspace batch copies (#32458)
-
-## What type of PR is this?
-
-- [x] BUG
-
-## Which issue(s) this PR fixes:
-
-issue #32008 (partial workspace-admission hardening, not closure of the historical OOM investigation)
-
-## What this PR does / why we need it:
-
-Transaction INSERT/DELETE copies could allocate outside execution-memory admission while staying live alongside accounted operators. Give workspace copies independent lifetime accounts on the existing CN budget, including physical-headroom checks and physical-Free refund ownership. Snapshot workspaces sharing a Process do not close each other's generations. Generic CopyBatch remains unchanged; raw WriteBatch destinations retain their own provenance.
-
-Integrate ownership across INSERT and commit-time merge, rather than charging obsolete copies:
-- Ordinary INSERT adopts its generated rowid vector when destination provenance matches. Different destination provenance retains the necessary independent copy.
-- INSERT merge stages only surviving payload columns, omitting old rowids from both copy and append, then adopts the regenerated rowid vector. All fallible staging completes before entries, indexes or owne
-
-**File**: `docs/design/txn-workspace-memory.md` (added, +74/-0)
-```diff
-@@ -0,0 +1,74 @@
-+# Transaction workspace allocation admission, revision 1
-+
-+Owner: issue #32008; implementation PR pending. Base: 745d25375de6.
-+Design-first review: PASS, reviewed before implementation in this task.
-+
-+Invariant: a workspace-owned physical vector allocation is admitted against its
-+own lifetime account and the existing CN ledger before backing is allocated.
-+Free is the sole refund owner. Source and destination copies coexist and are
-+both charged. A workspace never closes the Process generation it borrowed.
-+
-+Each workspace lazily opens an independent generation on the Process generation's
-+CN ledger, including snapshot workspaces sharing a Process. A separate mutex
-+serializes creation and terminal closure without reentering the workspace mutex.
-+States: absent -> open -> terminal. Terminal cannot reopen. Partial construction
-+closes its private generation. Final cleanup seals/publishes the account only
-+after workspace batches are cleaned; nonzero snapshots retain the existing
-+release-capable tombstone semantics. Statement rollback retains earlier writes.
-+
-+Use the existing allocator-backed off-heap vector APIs, destination-selected
-+CopyBatch, and append-only owner catalog. Preserve generic CopyBatch semantics.
-+Account rowids before filling; append/merge/ALTER copies preserve provenance.
-+Keep existing approximate workspace/spill counters: they are not refund owners.
-+Capacity errors propagate; no unaccounted fallback or automatic retry is added.
-+No new configuration, protocol, storage format, worker or controller.
-+
-+Alternatives rejected: source operator accounts have the wrong lifetime;
-+estimated reservation tokens duplicate physical lease refunds; a new RSS
-+controller duplicates main's existing dynamic CN headroom guard. Cost is one
-+lazy account per writing workspace, allocation metadata and existing admission
-+locking, with no per-row global lookup. Read-only workspaces allocate no account.
-+
-+Tests: deterministic low-budget copy/growth failures and source independence;
-+independent generation close and CN competition; workspace terminal/rollback;
-+SQL low-budget rejection with unchanged rows and subsequent connection reuse.
-+Native build, UT, race, BVT and fresh-capacity isolated QA are separate evidence.
-+4.2 lacks these main mechanisms: assess dependencies separately, no blind cherry
-+pick. Original incident SQL/concurrency remain unknown; this closes a proven
-+admission gap and does not claim incident reproduction. Old source resources and
-+receiver are out of scope. Rollback is code rollback, with no data migration.
-+
-+## Implementation review and validation
-+
-+Closures reviewed: explicit downstream copy ownership (R2), independent generation
-+and close/concurrent lazy initialization (R3), workspace rowid/copy/merge cleanup
-+(R3), append-only owner compatibility (R1), inert database-keyed test limit (R1).
-+The raw WriteBatch transfer interface retains caller-owned batch provenance;
-+normal table INSERT/DELETE select the workspace owner at the copy boundary.
-+Generic CopyBatch remains unchanged. Existing spill staging and ownership
-+rollback remain authoritative; no release is inferred from approximate sizes.
-+
-+Normal tests passed for mpool, util and process; disttae final full package
-+passed after multi-block fixtures explicitly selected an appropriate query
-+limit and the mirror-memory oracle included off-heap backing. Selected race
-+checks passed, including independent close and concurrent lazy initialization.
-+Incremental lint reported zero issues; vet-all passed for the changed packages.
-+The new BVT SQL passed direct MySQL execution on the built local service:
-+three capacity errors, unchanged rows after each refusal, and successful writes
-+on the same connection after removing the limit. It passed twice on the same
-+instance; cn_spill_byte_bound also passed exact structured output checks. The
-+mo-tester result-file comparison remains for CI. Initial service build attempts
-+hit toolchain switching and disk pressure; the explicit toolchain and completed
-+cache allowed the final build to pass. All local SQL services were stopped and
-+only their owned data was removed; logs and checksum manifests are retained.
-+Isolated 16 GiB/cgroup acceptance is NOT_RUN.
-+Microbenchmark (32 varlen rows, 1000 copies): generic 1163 ns/op, 3196 B/op,
-+6 allocations; workspace 3725 ns/op, 616 B/op, 4 allocations. This diagnostic is
-+not a transaction throughput acceptance result; QA must assess the hot-path cost.
-+
-+4.2 assessment: the incident version lacks main's unified execution generation,
-+physical-growth headroom and destination-account lifecycle closure. This patch
-+must not be mechanically cherry-picked without a separate dependency and
-+release-specific failure-path review. No 4.2 code is changed here.
-+
-+Local SQL evidence: /private/var/folders/_7/28p3df355x96blk88tp_0w4r0000gn/T/txn-workspace-bvt-7o0zgimb (evidence-manifest.json, sql-oracle.json, repeat-oracles.json, c
-```
-
-**File**: `pkg/common/mpool/allocation_owner.go` (modified, +4/-1)
-```diff
-@@ -35,12 +35,13 @@ const (
- 	AllocationOwnerExternal
- 	AllocationOwnerDependent
- 	AllocationOwnerWindow
-+	AllocationOwnerTxnWorkspace
- )
- 
- const (
- 	// AllocationOwnerCatalogMax is the largest owner implemented by this
- 	// binary. Append new catalog entries immediately before it.
--	AllocationOwnerCatalogMax = AllocationOwnerWindow
-+	AllocationOwnerCatalogMax = AllocationOwnerTxnWorkspace
- 	// AllocationOwnerMax preserves the existing public bound and reserves IDs
- 	// for rolling-version terminal summaries. Unknown owners remain observable
- 	// on the wire but cannot allocate locally until catalogued by this binary.
-@@ -51,6 +52,8 @@ const (
- // non-zero IDs remain renderable during rolling upgrades.
- func (o AllocationOwner) String() string {
- 	switch o {
-+	case AllocationOwnerTxnWorkspace:
-+		return "txn_workspace"
- 	case AllocationOwnerHashBuild:
- 		return "hash_build"
- 	case AllocationOwnerIndexBuild:
-```
-
-**File**: `pkg/common/mpool/allocation_owner_test.go` (modified, +3/-2)
-```diff
-@@ -37,6 +37,7 @@ func TestAllocationOwnerCatalog(t *testing.T) {
- 		{AllocationOwnerExternal, 13, "external"},
- 		{AllocationOwnerDependent, 14, "dependent"},
- 		{AllocationOwnerWindow, 15, "window"},
-+		{AllocationOwnerTxnWorkspace, 16, "txn_workspace"},
- 	}
- 	seen := make(map[AllocationOwner]struct{}, len(owners))
- 	seenNames := make(map[string]struct{}, len(owners))
-@@ -59,8 +60,8 @@ func TestAllocationOwnerCatalog(t *testing.T) {
- 		}
- 		seenNames[entry.name] = struct{}{}
- 	}
--	if AllocationOwnerCatalogMax != AllocationOwnerWindow {
--		t.Fatalf("catalog max = %d, want %d", AllocationOwnerCatalogMax, AllocationOwnerWindow)
-+	if AllocationOwnerCatalogMax != AllocationOwnerTxnWorkspace {
-+		t.Fatalf("catalog max = %d, want %d", AllocationOwnerCatalogMax, AllocationOwnerTxnWorkspace)
- 	}
- 	if AllocationOwnerCatalogMax > AllocationOwnerMax {
- 		t.Fatalf("catalog max %d exceeds reserved max %d", AllocationOwnerCatalogMax, AllocationOwnerMax)
-```
-
-**File**: `pkg/objectio/injects.go` (modified, +10/-0)
-```diff
-@@ -1016,3 +1016,13 @@ func UpstreamSQLHelperInjected() (string, bool) {
- 	_, sarg, injected := fault.TriggerFault(FJ_UpstreamSQLHelper)
- 	return sarg, injected
- }
-+
-+// CNWorkspaceAllocationLimit returns a test-only limit for one explicitly named
-+// database. An empty selector is deliberately inert to protect unrelated work.
-+func CNWorkspaceAllocationLimit(database string) uint64 {
-+	limit, target, injected := fault.TriggerFault("fj/cn/workspace_allocation_limit")
-+	if !injected || target == "" || target != database || limit <= 0 {
-+		return 0
-+	}
-+	return uint64(limit)
-+}
-```
-
-**File**: `pkg/objectio/injects_test.go` (modified, +18/-0)
-```diff
-@@ -93,3 +93,21 @@ func TestCommitWaitInjectedTargetsTransaction(t *testing.T) {
- 	_, injected = CommitWaitInjected(7, "accepted")
- 	require.False(t, injected)
- }
-+
-+func TestWorkspaceAllocationLimitIsDatabaseScoped(t *testing.T) {
-+	enabled := fault.Enable()
-+	const point = "fj/cn/workspace_allocation_limit"
-+	t.Cleanup(func() {
-+		_, _ = fault.RemoveFaultPoint(t.Context(), point)
-+		if enabled {
-+			fault.Disable()
-+		}
-+	})
-+	require.NoError(t, fault.AddFaultPoint(t.Context(), point, ":::", "ECHO", 32, "workspace_test", false))
-+	require.Equal(t, uint64(32), CNWorkspaceAllocationLimit("workspace_test"))
-+	require.Zero(t, CNWorkspaceAllocationLimit("other_database"))
-+	_, err := fault.RemoveFaultPoint(t.Context(), point)
-+	require.NoError(t, err)
-+	require.NoError(t, fault.AddFaultPoint(t.Context(), point, ":::", "ECHO", 32, "", false))
-+	require.Zero(t, CNWorkspaceAllocationLimit("workspace_test"))
-+}
-```
-
-**File**: `pkg/sql/util/copy_batch_test.go` (modified, +125/-0)
-```diff
-@@ -236,3 +236,128 @@ func copyBatchWithUnionAll(src *batch.Batch, mp *mpool.MPool) (*batch.Batch, err
- 	dst.SetRowCount(src.RowCount())
- 	return dst, nil
- }
-+
-+func TestCopyBatchDestinationAdmission(t *testing.T) {
-+	proc := testutil.NewProcess(t)
-+	src := batch.NewWithSize(2)
-+	src.Attrs = []string{"id", "payload"}
-+	src.SetVector(0, vector.NewVec(types.T_int64.ToType()))
-+	src.SetVector(1, vector.NewVec(types.T_varchar.ToType()))
-+	require.NoError(t, vector.AppendFixedList(src.Vecs[0], []int64{1, 2}, []bool{false, true}, proc.Mp()))
-+	require.NoError(t, vector.AppendBytes(src.Vecs[1], []byte("a sufficiently long variable payload"), false, proc.Mp()))
-+	require.NoError(t, vector.AppendBytes(src.Vecs[1], nil, true, proc.Mp()))
-+	src.SetRowCount(2)
-+	defer src.Clean(proc.Mp())
-+	for _, limit := range []uint64{1, 32, 1 << 20} {
-+		t.Run(fmt.Sprint(limit), func(t *testing.T) {
-+			registry, err := mpool.NewAllocationAccountRegistry(2, 1024)
-+			require.NoError(t, err)
-+			account, err := registry.Open(limit)
-+			require.NoError(t, err)
-+			selection, err := vector.NewAllocationAccountSelection(account, mpool.AllocationOwnerTxnWorkspace, 1, 2, 3, 4)
-+			require.NoError(t, err)
-+			dst, err := CopyBatchWithAllocation(src, proc, selection)
-+			if limit == 1<<20 {
-+				require.NoError(t, err)
-+				require.Positive(t, account.Snapshot().Used)
-+				require.NotNil(t, dst.AllocationAccountSelection())
-+				require.Equal(t, src.RowCount(), dst.RowCount())
-+				require.Equal(t, src.Vecs[1].GetBytesAt(0), dst.Vecs[1].GetBytesAt(0))
-+				dst.Clean(proc.Mp())
-+			} else {
-+				require.ErrorIs(t, err, mpool.ErrAllocationAccountCapacity)
-+				require.Nil(t, dst)
-+			}
-+			require.Zero(t, account.Snapshot().Used)
-+			require.Equal(t, int64(1), vector.MustFixedColNoTypeCheck[int64](src.Vecs[0])[0])
-+			_, _, err = registry.CompleteTerminal(account)
-+			require.NoError(t, err)
-+		})
-+	}
-+}
-+
-+func BenchmarkCopyBatchDestinationAdmission(b *testing.B) {
-+	proc := testutil.NewProcess(b)
-+	src := batch.NewWithSize(1)
-+	src.Attrs = []string{"payload"}
-+	src.Vecs[0] = vector.NewVec(types.T_varchar.ToType())
-+	for range 32 {
-+		require.NoError(b, vector.AppendBytes(src.Vecs[0], []byte("a moderately wide variable payload for a workspace batch"), false, proc.Mp()))
-+	}
-+	src.SetRowCount(32)
-+	defer src.Clean(proc.Mp())
-+	registry, err := mpool.NewAllocationAccountRegistry(2, 1024)
-+	require.NoError(b, err)
-+	account, err := registry.Open(64 << 20)
-+	require.NoError(b, err)
-+	selection, err := vector.NewAllocationAccountSelection(account, mpool.AllocationOwnerTxnWorkspace, 1, 2, 3, 4)
-+	require.NoError(b, err)
-+	generation, err := proc.GetExecutionResourceBudget()
-+	require.NoError(b, err)
-+	cnRegistry, err := generation.AllocationAccountRegistry()
-+	require.NoError(b, err)
-+	cnAccount, err := cnRegistry.OpenWithController(generation.Cap(), generation)
-+	require.NoError(b, err)
-+	b.Cleanup(func() {
-+		require.Zero(b, cnAccount.Snapshot().Used)
-+		_, _, err := cnRegistry.CompleteTerminal(cnAccount)
-+		require.NoError(b, err)
-+		generation.Close()
-+	})
-+	cnSelection, err := vector.NewAllocationAccountSelection(cnAccount, mpool.AllocationOwnerTxnWorkspace, 1, 2, 3, 4)
-+	require.NoError(b, err)
-+	for _, tc := range []struct {
-+		name      string
-+		selection *vector.AllocationAccountSelection
-+	}{{"generic", nil}, {"workspace", selection}, {"workspace_cn", cnSelection}} {
-+		b.Run(tc.name, func(b *testing.B) {
-+			b.ReportAllocs()
-+			for range b.N {
-+				dst, err := CopyBatchWithAllocation(src, proc, tc.selection)
-+				if err != nil {
-+					b.Fatal(err)
-+				}
-+				dst.Clean(proc.Mp())
-+			}
-+		})
-+	}
-+	require.Zero(b, account.Snapshot().Used)
-+	_, _, err = registry.CompleteTerminal(account)
-+	require.NoError(b, err)
-+}
-+
-+func TestCopyBatchKeepsSourceAndDestinationChargesIndependent(t *testing.T) {
-+	proc := testutil.NewProcess(t)
-+	registry, err := mpool.NewAllocationAccountRegistry(2, 1024)
-+	require.NoError(t, err)
-+	source, err := registry.Open(1 << 20)
-+	require.NoError(t, err)
-+	target, err := registry.Open(1 << 20)
-+	require.NoError(t, err)
-+	srcSelection, err := vector.NewAllocationAccountSelection(source, mpool.AllocationOwnerDML, 1, 2, 3, 4)
-+	require.NoError(t, err)
-+	dstSelection, err := vector.NewAllocationAccountSelection(target, mpool.AllocationOwnerTxnWorkspace, 1, 2, 3, 4)
-+	require.NoError(t, err)
-+	src := batch.NewOffHeapWithSize(1)
-+	require.NoError(t, src.SetAllocationAccount(srcSelection))
-+	src.SetVector(0, vector.NewOffHeapVecWithType(types.T_int64.ToType()))
-+	defer src.Clean(proc.Mp())
-+	require.NoError(t, vector.AppendFixed(src.Vecs[0], int64(42), false, proc.Mp()))
-+	src.SetRowCount(1)
-+	used := source.Snapshot().Used
-+	dst, err := CopyBatchWithAllocation(src, proc, dstSelection)
-+	require.NoError(t, err)
-+	defer dst.Clean(proc.Mp())
-+	require.Equal(t, used, source.Snapshot().Used)
-+	require.Positive(t, target.Snapshot().Used)
-+	src.Clean(proc.Mp())
-+	require.Zero(t, source.Snapshot().Used)
-+	require.Positive(t
-```
-
-**File**: `pkg/sql/util/util.go` (modified, +22/-0)
-```diff
-@@ -67,6 +67,28 @@ func CopyBatch(bat *batch.Batch, proc *process.Process) (*batch.Batch, error) {
- 	return rbat, nil
- }
- 
-+// CopyBatchWithAllocation creates an independent copy under the destination owner.
-+func CopyBatchWithAllocation(bat *batch.Batch, proc *process.Process, selection *vector.AllocationAccountSelection) (*batch.Batch, error) {
-+	if selection == nil {
-+		return CopyBatch(bat, proc)
-+	}
-+	dst := batch.NewOffHeapWithSize(len(bat.Vecs))
-+	if err := dst.SetAllocationAccount(selection); err != nil {
-+		return nil, err
-+	}
-+	dst.Attrs = append(dst.Attrs, bat.Attrs...)
-+	for i, src := range bat.Vecs {
-+		v, err := src.CloneToFlatCompactWithAllocation(proc.Mp(), selection)
-+		if err != nil {
-+			dst.Clean(proc.Mp())
-+			return nil, err
-+		}
-+		dst.SetVector(int32(i), v)
-+	}
-+	dst.SetRowCount(bat.RowCount())
-+	return dst, nil
-+}
-+
- func TableIsLoggingTable(dbName string, tableName string) bool {
- 	if tableName == "statement_info" && dbName == "system" {
- 		return true
-```
-
-**File**: `pkg/vm/engine/disttae/local_disttae_datasource_test.go` (modified, +4/-2)
-```diff
-@@ -297,6 +297,7 @@ func TestBigS3WorkspaceIterMissingData(t *testing.T) {
- 	s3Bat.SetRowCount(8193)
- 	s3Bat.SetAttributes([]string{catalog.BlockMeta_BlockInfo, catalog.ObjectMeta_ObjectStats})
- 	txn := &Transaction{
-+		proc: testutil.NewProc(t),
- 		cn_flushed_s3_tombstone_object_stats_list: new(sync.Map),
- 		op:            txnOp,
- 		deletedBlocks: &deletedBlocks{},
-@@ -317,7 +318,8 @@ func TestBigS3WorkspaceIterMissingData(t *testing.T) {
- 	m := mpool.MustNewZero()
- 	normalBat.SetRowCount(1)
- 	vector.AppendFixed(normalBat.Vecs[0], int32(1), false, m)
--	txn.WriteBatch(INSERT, "", 0, 11, 23, "db", "t2", normalBat, DNStore{})
-+	_, err := txn.WriteBatch(INSERT, "", 0, 11, 23, "db", "t2", normalBat, DNStore{})
-+	require.NoError(t, err)
- 
- 	txnOp.AddWorkspace(txn)
- 
-@@ -337,7 +339,7 @@ func TestBigS3WorkspaceIterMissingData(t *testing.T) {
- 
- 	outBatch := batch.NewWithSize(1)
- 	outBatch.Vecs[0] = vector.NewVec(types.T_int32.ToType())
--	err := ls.filterInMemUnCommittedInserts(ctx, []uint16{0}, -1, m, outBatch)
-+	err = ls.filterInMemUnCommittedInserts(ctx, []uint16{0}, -1, m, outBatch)
- 	require.NoError(t, err)
- 	require.Equal(t, 1, outBatch.RowCount())
- 	require.Equal(t, 1, outBatch.Vecs[0].Length())
-```
-
----
-
-### Incident Patch 2: `2e175e97` (2026-11-11)
-**Commit Message**: fix(sql): isolate binary capacity and assignment semantics (#29057)
+### Incident Patch 1: `4760bcaa` (2026-11-12)
+**Commit Message**: Fix native preparation and stabilize CI tests (#32574)
 
 ## What type of PR is this?
 
@@ -2767,143 +2380,940 @@ Integrate ownership across INSERT and commit-time merge, rather than charging ob
 
 ## Which issue(s) this PR fixes:
 
-Related to #28164 — isolated binary byte-capacity, assignment and
-COPY/replay stage only; not the complete ODKU/collation issue and not a
-closing reference. Native0900 remains disabled.
+Fixes #32392
+Fixes #32420
+Fixes #32424
+Fixes #32561
+Fixes #32562
+Fixes #32563
+
+Refs #32324
+Refs #32544
+Refs #32570
+Refs #32185
 
 ## What this PR does / why we need it:
 
-### Current scope and predecessor-data observations (2026-11-09)
+Native build preparation was skipped when GNU Make put a command-line
+variable assignment first in `MAKEFLAGS`, causing the final provenance
+record to fail. The preparation recipe now lets Make decide whether it
+runs in dry-run, touch and question modes, instead of parsing Make flags
+and assignments. Its cleanup sub-makes can fall back to serial execution
+and emit a jobserver warning with pipe-based GNU Make jobservers; the
+subsequent native build retains its existing recursion and parallelism.
 
-Current head: `d6400a6ed84e9312847f80f2e6d5708241405b86`. The dated
-descriptions and binary-133 statements below refer to superseded PR
-heads. Against merge base `52cbba793b9a36b9d5d442bbded32d88f296e761`,
-this head does not change `pkg/defines`, `proto/plan.proto`,
-`proto/pipeline.proto`, or generated protobuf files; see the
-[current-scope review
-reply](https://github.com/matrixorigin/matrixone/pull/29057#discussion_r4510861344).
+The real gossip bind-collision test now uses the same wildcard TCP
+address-family selection as memberlist and asserts that the collision is
+from the expected gossip TCP host and port. On macOS, the former
+IPv4-only injection could coexist with memberlist’s IPv6 listener, so
+the intended retry was never tested. The new native Make target
+regression also runs on the existing macOS n
 
-An isolated predecessor-data comparison ran the official v4.2.6 binary
-and a candidate built from snapshot
-`777a203f1434921da55e31ca871d556a32d547d5` (the same source tree as the
-current head) against the same stopped old store. All 24 compared SQL
-outcomes, rows, and warnings matched: 15 statements succeeded
-
-**File**: `pkg/lockservice/publication_test.go` (modified, +4/-0)
+**File**: `.github/ci/native-provenance-makeflags.test.cjs` (added, +106/-0)
 ```diff
-@@ -114,8 +114,12 @@ func TestPublicationSurvivesAllocatorRestart(t *testing.T) {
- 		case <-ctx.Done():
- 			t.Fatal(ctx.Err())
- 		}
-+		// Incarnation fields are immutable while allocator RPCs are running.
-+		// The restart helper closes the owner and drains stale backends before
-+		// creating its replacement, rather than mutating a live epoch.
- 		alloc, err = restart()
- 		require.NoError(t, err)
-+		require.NotEqual(t, oldBind.AllocatorID, alloc.allocatorID)
- 		_, err = b.Lock(ctx, table, newTestRows(1), newTestTxnID(2), newTestRowExclusiveOptions())
- 		require.NoError(t, err)
- 		require.NoError(t, fileservice.WriteExclusive(ctx, fs, fileservice.IOVector{
-```
-
-**File**: `pkg/sql/plan/alter_copy_binary_assignment_test.go` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ func TestAlterCopyBinaryAssignmentBoundary(t *testing.T) {
- 			physicalType := types.New(oid, 4, 0)
- 			target := makePlan2Type(&physicalType)
- 			source := MakePlan2StringConstExprWithType("🧪")
--			require.Equal(t, "cast", assignmentCastFunctionNameForSource(ordinary, source, target, false, nil))
-+			require.Equal(t, "cast_assign", assignmentCastFunctionNameForSource(ordinary, source, target, false, nil))
- 			expression, err := forceAssignmentCastExprWithProcess(copyContext, source, target, false, nil)
- 			require.NoError(t, err)
- 			require.Equal(t, "cast_strict", expression.GetF().Func.ObjName)
-```
-
-**File**: `pkg/sql/plan/base_binder.go` (modified, +37/-11)
-```diff
-@@ -9337,10 +9337,25 @@ func bindFuncExprImplByPlanExpr(
- 		refineRepeatLiteralReturnType(args, &returnType)
- 
- 	case "substring", "substr", "mid":
--		refineSubstringLiteralReturnType(args, &returnType)
-+		if argsType[0].Oid != types.T_blob {
-+			refineSubstringLiteralReturnType(args, &returnType)
-+		}
- 
- 	case "left", "right":
--		refineLeftRightLiteralReturnType(args, &returnType)
-+		if argsType[0].Oid != types.T_blob {
-+			refineLeftRightLiteralReturnType(args, &returnType)
-+		}
+@@ -0,0 +1,106 @@
++const assert = require('node:assert/strict');
++const { spawnSync } = require('node:child_process');
++const fs = require('node:fs');
++const os = require('node:os');
++const path = require('node:path');
++const test = require('node:test');
 +
-+	case "hex":
-+		// Keep the slice's BLOB type for its other consumers. HEX needs only
-+		// its proven payload bound to choose the result's metadata.
-+		if len(args) == 1 && argsType[0].Oid == types.T_blob {
-+			if bounded, ok := boundedBinaryBlobSliceType(args[0]); ok {
-+				if resolved, ok := function.GetFunctionByNameWithoutError(name, []types.Type{bounded}); ok {
-+					returnType = resolved.GetReturnType()
-+				}
-+			}
-+		}
- 
- 	case "lpad", "rpad":
- 		refinePadLiteralReturnType(args, &returnType)
-@@ -9967,11 +9982,6 @@ func refineSubstringLiteralReturnType(args []*plan.Expr, returnType *types.Type)
- 		return
- 	}
- 
--	sourceType := makeTypeByPlan2Expr(args[0])
--	if sourceType.Oid == types.T_blob {
--		return
--	}
--
- 	if possibleStringDomainsForExpr(args[0]) != possibleStringDomainBinary {
- 		if len(args) == 3 {
- 			refineCharacterSliceLiteralWidth(args[0], args[2], returnType)
-@@ -10018,6 +10028,26 @@ func refineSubstringLiteralReturnType(args []*plan.Expr, returnType *types.Type)
- 	refineKnownStringResultType(returnType, bound, binary)
- }
- 
-+// boundedBinaryBlobSliceType obtains a byte bound without changing the slice
-+// expression's declared BLOB type, or its overload and execution arguments.
-+func boundedBinaryBlobSliceType(expr *plan.Expr) (types.Type, bool) {
-+	fn := expr.GetF()
-+	if fn == nil || fn.Func == nil || len(fn.Args) == 0 ||
-+		possibleStringDomainsForExpr(fn.Args[0]) != possibleStringDomainBinary {
-+		return types.Type{}, false
-+	}
-+	bounded := types.T_blob.ToType()
-+	switch strings.ToLower(fn.Func.GetObjName()) {
-+	case "substring", "substr", "mid":
-+		refineSubstringLiteralReturnType(fn.Args, &bounded)
-+	case "left", "right":
-+		refineLeftRightLiteralReturnType(fn.Args, &bounded)
-+	default:
-+		return types.Type{}, false
-+	}
-+	return bounded, bounded.Oid == types.T_varbinary
++// Run the real target with only the external provenance program replaced.
++function withFixture(t, run) {
++  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'mo-native-makeflags-'));
++  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
++  fs.mkdirSync(path.join(dir, 'cgo'));
++  fs.mkdirSync(path.join(dir, 'pkg'));
++  fs.copyFileSync(path.join(__dirname, '..', '..', 'Makefile'), path.join(dir, 'Makefile'));
++  const log = path.join(dir, 'events');
++  const stub = path.join(dir, 'cgo', 'mo-native-provenance');
++  fs.writeFileSync(stub, '#!/bin/sh\nprintf "%s\\n" "$1" >> "$MO_NATIVE_TEST_LOG"\n' +
++    'case "$1" in prepare) echo "$MO_NATIVE_TEST_ACTION" ;; begin) ;; *) exit 1 ;; esac\n', { mode: 0o755 });
++  fs.mkdirSync(path.join(dir, 'thirdparties'));
++  for (const name of ['cgo', 'thirdparties']) {
++    fs.writeFileSync(path.join(dir, name, 'Makefile'),
++      `.PHONY: clean\nclean:\n\t@echo clean-${name} >> "$$MO_NATIVE_TEST_LOG"\n` +
++      `\t@test "$$MO_NATIVE_TEST_FAIL" != ${name}\n`);
++  }
++  fs.writeFileSync(path.join(dir, 'parent.mk'),
++    '.PHONY: parent\nparent:\n\t@$(MAKE) -f Makefile cgo-native-prepare-internal\n');
++  const env = { ...process.env, MO_NATIVE_TEST_LOG: log };
++  for (const name of ['MAKEFLAGS', 'MFLAGS', 'GNUMAKEFLAGS', 'MAKELEVEL',
++    'GOOS', 'GOARCH', 'TARGET_OS', 'TARGET_ARCH', 'MO_CL_CUDA', 'MO_SIRIUS']) delete env[name];
++
++  run((args = [], { simulatedFlags = null, recursive = false, action = 'local', fail = '', status = 0 } = {}) => {
++    fs.rmSync(log, { force: true });
++    const makefiles = ['-f', recursive ? 'parent.mk' : 'Makefile'];
++    if (simulatedFlags !== null) {
++      fs.writeFileSync(path.join(dir, 'flags.mk'), `override MAKEFLAGS := ${simulatedFlags}\n`);
++      makefiles.push('-f', 'flags.mk');
++    }
++    const target = recursive ? 'parent' : 'cgo-native-prepare-internal';
++    const result = spawnSync('make', [...makefiles, ...args, target], {
++      cwd: dir, env: { ...env, MO_NATIVE_TEST_ACTION: action, MO_NATIVE_TEST_FAIL: fail },
++      encoding: 'utf8', timeout: 15000,
++    });
++    assert.equal(result.status, status, `${args} ${simulatedFlags}: ${result.stderr}`);
++    return fs.existsSync(log) ? fs.readFileSync(log, 'utf8').trim().split('\n') : [];
++  }, dir);
 +}
 +
- // refineLeftRightLiteralReturnType narrows LEFT/RIGHT when the requested
- // length is a constant.  The result cannot exceed either that length or the
- // source's proven bound; an unknown length keeps the overload's conservative
-@@ -10026,10 +10056,6 @@ func refineLeftRightLiteralReturnType(args []*plan.Expr, returnType *types.Type)
- 	if len(args) != 2 {
- 		return
- 	}
--	sourceType := makeTypeByPlan2Expr(args[0])
--	if sourceType.Oid == types.T_blob {
--		return
--	}
- 	if possibleStringDomainsForExpr(args[0]) != possibleStringDomainBinary {
- 		refineCharacterSliceLiteralWidth(args[0], args[1], returnType)
- 		return
++test('native prepare runs for actual and assignment-only MAKEFLAGS', t => {
++  withFixture(t, make => {
++    for (const flags of [null, 'ONNX_PREBUILT_DIR=/tmp/onnx', 'QUESTION=none',
++      'NATIVE_PROVENANCE_SIMSIMD=system', '-- ONNX_PREBUILT_DIR=/tmp/onnx']) {
++      assert.deepEqual(make([], { simulatedFlags: flags }), ['prepare', 'begin'], String(flags));
++    }
++    for (const args of [['ONNX_PREBUILT_DIR=/tmp/onnx'], ['SOME=foo --touch'],
++      ['SOME=foo --dry-run'], ['SOME=foo -n'], ['SOME=foo "bar'],
++      ['-k'], ['-j2'], ['-I', '/tmp/name'], ['-I', '--touch'],
++      ['--no-print-directory', 'MFLAGS=-n']]) {
++      assert.deepEqual(make(args), ['prepare', 'begin'], String(args));
++    }
++    assert.deepEqual(make(['ONNX_PREBUILT_DIR=/tmp/onnx'], { recursive: true }), ['prepare', 'begin']);
++  });
++});
++
++test('native prepare does not run in dry-run, touch or question mode', t => {
++  withFixture(t, make => {
++    for (const args of [['-n'], ['--just-print'], ['-t'], ['--touch'],
++      ['-kn', 'ONNX_PREBUILT_DIR=/tmp/onnx'], ['MAKEFLAGS=-n'],
++      ['MAKEFLAGS=-t'], ['MAKEFLAGS=--dry-run'],
++      ['MAKEFLAGS=--just-print'], ['MAKEFLAGS=--recon'], ['MAKEFLAGS=--touch'],
++      ['MAKEFLAGS=-k --touch'], ['MAKEFLAGS=-kn'], ['-n', 'MAKEFLAGS='],
++      ['--warn-undefined-variables', '-n'], ['--no-print-directory', '-n'],
++      ['-I', '/tmp/name', '-n']]) {
++      assert.deepEqual(make(args), [], String(args));
++    }
++    for (const args of [['-q'], ['--question'], ['MAKEFLAGS=-q'], ['MAKEFLAGS=--question']]) {
++      assert.deepEqual(make(args, { status: 1 }), [], String(args));
++    }
++    assert.deepEqual(make(['-n', 'ONNX_PREBUILT_DIR=/tmp/onnx'], { recursive: true }), []);
++  });
++});
++
++test('native prepare preserves clean order and stops if a clean fails', t => {
++  withFixture(t, (make, dir) => {
++    const fatbin = path.join(dir, 'mocl_kernel64.fatbin');
++    fs.writeFileSync(fatbin, 'fixture');
++    assert.deepEqual(make([], { action: 'reuse' }), ['prepare', 'begin']);
++    assert.ok(fs.existsSync(fatbin));
++    assert.deepEqual(make([], { action: 'rebuild-cgo' }), ['prepare', 'clean-cgo', 'begin']);
++    assert.equal(fs.existsSync(fatbin), false);
++    fs.writeFileSync(fatbin, 'fixture');
++    assert.deepEqual(make(['-j2'], { action: 'rebuild-all' }),
++      ['prepare', 'clean-cgo', 'clean-thirdparties', 'begin']);
++    assert.equal(fs.existsSync(fatbin), false);
++    fs.writeFileSync(fa
 ```
 
-**File**: `pkg/sql/plan/base_binder_blob_slice_width_test.go` (added, +168/-0)
+**File**: `.github/workflows/native-dependency-check.yml` (modified, +5/-0)
 ```diff
-@@ -0,0 +1,168 @@
+@@ -46,6 +46,11 @@ jobs:
+           python3 -m unittest discover -s cgo -p 'test_gpu_toolchain.py' -v
+           python3 -m unittest discover -s optools/images -p 'test_go_toolchain.py' -v
+           python3 -m unittest discover -s optools/gpu -p 'test_sync_sirius_mo.py' -v
++          if [ "$RUNNER_OS" = macOS ]; then
++            node --version
++            /usr/bin/make --version
++            PATH="/usr/bin:/bin:$PATH" node --test .github/ci/native-provenance-makeflags.test.cjs
++          fi
+           if [ "$RUNNER_OS" = Linux ]; then
+             python3 -m unittest discover -s optools/images/gpu -p 'test_stage_runtime_libs.py' -v
+           fi
+```
+
+**File**: `Makefile` (modified, +6/-10)
+```diff
+@@ -384,29 +384,25 @@ endif
+ cgo-native-thirdparties-internal: cgo-native-prepare-internal
+ 	$(BUILD_THIRDPARTIES)
+ 
++# Keep preparation nonrecursive so Make itself skips it under -n, -t, and -q.
++# Clean sub-makes use this alias; pipe-based jobservers run those cleans serially.
++NATIVE_PREPARE_CLEAN_MAKE = $(MAKE)
+ cgo-native-prepare-internal:
+ 	@set -eu; \
+-		case "$(firstword $(MAKEFLAGS))" in \
+-			-*) ;; \
+-			*n*|*t*|*q*) exit 0 ;; \
+-			esac; \
+-		case " $(MAKEFLAGS) " in \
+-			*" -n "*|*" -t "*|*" -q "*|*" --just-print "*|*" --dry-run "*|*" --recon "*|*" --touch "*|*" --question "*) exit 0 ;; \
+-		esac; \
+ 		action=$$(GO="$(GO)" ./cgo/mo-native-provenance prepare \
+ 			"$(ROOT_DIR)" "$(NATIVE_PROVENANCE_ACCELERATOR)" \
+ 			"$(NATIVE_PROVENANCE_OPTIMIZATION)" "$(NATIVE_PROVENANCE_SIMSIMD)"); \
+ 		case "$$action" in \
+ 			local|reuse) ;; \
+ 			rebuild-cgo) \
+ 				echo "native provenance: cleaning CGo outputs before rebuilding $(NATIVE_PROVENANCE_ACCELERATOR)/$(NATIVE_PROVENANCE_OPTIMIZATION)"; \
+-				$(MAKE) -C cgo clean; \
++				$(NATIVE_PREPARE_CLEAN_MAKE) -C cgo clean; \
+ 				rm -f "$(ROOT_DIR)/mocl_kernel64.fatbin" ;; \
+ 			rebuild-all) \
+ 				echo "native provenance: cleaning thirdparty and CGo outputs before rebuilding $(NATIVE_PROVENANCE_ACCELERATOR)/$(NATIVE_PROVENANCE_OPTIMIZATION), simsimd=$(NATIVE_PROVENANCE_SIMSIMD)"; \
+-				$(MAKE) -C cgo clean; \
++				$(NATIVE_PREPARE_CLEAN_MAKE) -C cgo clean; \
+ 				rm -f "$(ROOT_DIR)/mocl_kernel64.fatbin"; \
+-				$(MAKE) -C thirdparties clean ;; \
++				$(NATIVE_PREPARE_CLEAN_MAKE) -C thirdparties clean ;; \
+ 			*) echo "invalid native rebuild action: $$action" >&2; exit 1 ;; \
+ 		esac; \
+ 		GO="$(GO)" ./cgo/mo-native-provenance begin \
+```
+
+**File**: `pkg/embed/async_datalink_admission_test.go` (modified, +13/-5)
+```diff
+@@ -54,7 +54,7 @@ func (c *classicAdmissionContext) CreateIndexCdcTask(_, _ string, _ uint64, _ st
+ 	return nil
+ }
+ 
+-func testClassicAsyncAdmissionResults(t *testing.T, conn *sql.Conn, service cnservice.Service, database, local, remote string) {
++func testClassicAsyncAdmissionResults(t *testing.T, conn *sql.Conn, admin *sql.DB, service cnservice.Service, database, local, remote string) {
+ 	// generate_series emits serial batches of at most 8192 rows. One extra row
+ 	// proves full consumption without a large stored table or another cluster.
+ 	const rows = 8193
+@@ -73,17 +73,23 @@ func testClassicAsyncAdmissionResults(t *testing.T, conn *sql.Conn, service cnse
+ 		{name: "bad second column in later batch", rows: rows, value: local, badLast: true},
+ 		{name: "canceled", rows: 1, canceled: true},
+ 	} {
+-		t.Run(tc.name, func(t *testing.T) {
++		if !t.Run(tc.name, func(t *testing.T) {
+ 			value := "NULL"
+ 			if tc.value != "" {
+ 				value = sqlquote.String(tc.value)
+ 				if tc.badLast {
+ 					value = fmt.Sprintf("case when result=%d then %s else NULL end", rows, value)
+ 				}
+ 			}
+-			_, err := conn.ExecContext(t.Context(), fmt.Sprintf("create view %s as select result as id, cast(NULL as datalink) as p1, cast(%s as datalink) as p2 from generate_series(1,%d) g where result<=%d", source, value, rows, tc.rows))
++			_, err := conn.ExecContext(t.Context(), fmt.Sprintf("create view %s as select result as id, cast(NULL as datalink) as p1, cast(%s as datalink) as p2 from generate_series(1,%d) g where result<=%d", source, value, max(1, tc.rows), tc.rows))
+ 			require.NoError(t, err)
+-			defer conn.ExecContext(t.Context(), "drop view "+source)
++			defer func() {
++				cleanupCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
++				defer cancel()
++				if _, err := admin.ExecContext(cleanupCtx, "drop view "+sqlquote.QualifiedIdent(database, source)); err != nil {
++					t.Errorf("drop admission source: %v", err)
++				}
++			}()
+ 
+ 			run := func(ctx context.Context, query string, inspect func(executor.Result)) error {
+ 				return sqlexec.RunTxnWithSqlContext(ctx, service.GetEngine(), service.GetTxnClient(), service.ID(), 0, time.Minute, nil, nil, func(sp *sqlexec.SqlProcess, _ any) error {
+@@ -163,6 +169,8 @@ func testClassicAsyncAdmissionResults(t *testing.T, conn *sql.Conn, service cnse
+ 				require.LessOrEqual(t, allocated, 512, "two fixed-width result vectors must not grow with source rows")
+ 			}
+ 			t.Logf("source rows=%d retained rows=%d batches=%d allocated vector bytes=%d", tc.rows, resultRows, batches, allocated)
+-		})
++		}) {
++			return
++		}
+ 	}
+ }
+```
+
+**File**: `pkg/embed/async_datalink_auth_test.go` (modified, +42/-8)
+```diff
+@@ -72,10 +72,11 @@ func testAsyncDatalinkSourceAdmission(t *testing.T, c Cluster, admin *sql.DB, en
+ 	for _, q := range denied {
+ 		_, err = conn.ExecContext(t.Context(), q)
+ 		require.ErrorContains(t, err, "asynchronous indexes require remote Datalink sources", q)
+-		require.NoError(t, conn.QueryRowContext(t.Context(), "select count(*) from docs where id=1 and path is null").Scan(&count))
+-		require.Equal(t, 1, count)
+-		require.NoError(t, conn.QueryRowContext(t.Context(), "select count(*) from docs").Scan(&count))
++		var unchanged int
++		require.NoError(t, conn.QueryRowContext(t.Context(),
++			"select count(*), count(case when id=1 and path is null then 1 end) from docs").Scan(&count, &unchanged))
+ 		require.Equal(t, 1, count)
++		require.Equal(t, 1, unchanged)
+ 	}
+ 	prepared, err := conn.PrepareContext(t.Context(), "insert into docs values(?,?)")
+ 	require.NoError(t, err)
+@@ -108,9 +109,11 @@ func testAsyncDatalinkSourceAdmission(t *testing.T, c Cluster, admin *sql.DB, en
+ 	cn, err := c.GetCNService(0)
+ 	require.NoError(t, err)
+ 	service := cn.RawService().(cnservice.Service)
+-	t.Run("bounded classic async admission", func(t *testing.T) {
+-		testClassicAsyncAdmissionResults(t, conn, service, database, local, remote)
+-	})
++	if !t.Run("bounded classic async admission", func(t *testing.T) {
++		testClassicAsyncAdmissionResults(t, conn, admin, service, database, local, remote)
++	}) {
++		return
++	}
+ 	exec("create user async_source_public identified by 'owned-async-source' default role public")
+ 	defer admin.Exec("drop user if exists async_source_public")
+ 	exec("grant insert on table " + database + ".docs to public")
+@@ -138,8 +141,9 @@ func testAsyncDatalinkSourceAdmission(t *testing.T, c Cluster, admin *sql.DB, en
+ 		})
+ 	}
+ 	require.ErrorContains(t, backgroundRead(local), "only the sys account moadmin role")
+-	// Deterministically change the provider between admission and the same
+-	// background acquisition boundary; restoring the source permits normal retry.
++	// Change the provider between admission and the background acquisition
++	// boundary below. The live CDC job must not consume the temporarily invalid
++	// source: exceeding max_bad_records makes that job permanently fail.
+ 	var admitted bool
+ 	require.NoError(t, conn.QueryRowContext(t.Context(), "select _check_async_datalink_source(cast("+sqlquote.String(remote)+" as datalink),true)").Scan(&admitted))
+ 	require.True(t, admitted)
+@@ -162,6 +166,28 @@ func testAsyncDatalinkSourceAdmission(t *testing.T, c Cluster, admin *sql.DB, en
+ 	require.NoError(t, conn.QueryRowContext(t.Context(), "select coalesce(min(job_id),0),count(*) from mo_catalog.mo_iscp_log where account_id=0 and table_id=? and job_name='index_changed_ft' and drop_at is null", changedTableID).Scan(&changedJobID, &activeJobs))
+ 	require.Equal(t, 1, activeJobs, "the fixture must pin exactly one live index job")
+ 	require.NotZero(t, changedJobID)
++	indexExecutor, ready := iscp.GetExecutorRuntime(service.ID())
++	require.True(t, ready, "the single CN must own the index executor")
++	paused := true
++	defer func() {
++		if !paused {
++			return
++		}
++		cleanupCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
++		defer cancel()
++		if _, err := admin.ExecContext(cleanupCtx, "alter stage async_source_remote set url='s3://bucket/'"); err != nil {
++			t.Errorf("restore async source before resuming index executor: %v", err)
++			return
++		}
++		if err := indexExecutor.Resume(); err != nil {
++			t.Errorf("resume index executor: %v", err)
++		}
++	}()
++	require.NoError(t, indexExecutor.Pause())
++	_, ready = iscp.GetExecutorRuntime(service.ID())
++	require.False(t, ready, "Pause must drain and unpublish the index executor")
++	var pausedTail int64
++	require.NoError(t, conn.QueryRowContext(t.Context(), changedTailSQL).Scan(&pausedTail))
+ 	exec("alter stage async_source_remote set url=" + sqlquote.String("file://"+dir+"/"))
+ 	// Keeping an OLD source does not introduce a source or authorize a read.
+ 	exec("update changed_sources set status=1")
+@@ -184,9 +210,17 @@ func testAsyncDatalinkSourceAdmission(t *testing.T, c Cluster, admin *sql.DB, en
+ 	require.Equal(t, remote, storedP2)
+ 	require.Equal(t, 2, status)
+ 	require.ErrorContains(t, backgroundRead(remote), "only the sys account moadmin role")
++	var tailWhilePaused int64
++	require.NoError(t, conn.QueryRowContext(t.Context(), changedTailSQL).Scan(&tailWhilePaused))
++	require.Equal(t, pausedTail, tailWhilePaused, "the CDC job must not consume the invalidated source")
+ 	exec("alter stage async_source_remote set url='s3://bucket/'")
+ 	require.NoError(t, backgroundRead(remote))
+ 	require.Equal(t, "matrixone stage content", resolvedText)
++	require.NoError(t, indexExecutor.Resume())
++	paused = false
++	restoredExecutor, ready := iscp.GetExecutorRuntime(service.ID())
++	require.True(t, ready, "Resume must publish the index executor")
++	require.Same(t, indexExecutor, restoredExecutor)
+ 	exec("update changed_sources set p1='stage://async_source_stable/f
+```
+
+**File**: `pkg/embed/sql_file_access_auth_test.go` (modified, +5/-1)
+```diff
+@@ -285,7 +285,11 @@ func TestSQLFileAccessTenantStageCDC(t *testing.T) {
+ 		defer server.Close()
+ 		mustExec(t, tenant, fmt.Sprintf("create stage sql_file_access_stage URL='s3://bucket/' CREDENTIALS={'AWS_KEY_ID'='id','AWS_SECRET_KEY'='secret','AWS_REGION'='us-east-1','PROVIDER'='amazon','ENDPOINT'='%s'}", server.URL))
+ 		defer func() { _, _ = tenant.Exec("drop stage if exists sql_file_access_stage") }()
+-		t.Run("async source admission and local TEXT CDC", func(t *testing.T) { testAsyncDatalinkSourceAdmission(t, c, admin, server.URL, dir) })
++		if !t.Run("async source admission and local TEXT CDC", func(t *testing.T) {
++			testAsyncDatalinkSourceAdmission(t, c, admin, server.URL, dir)
++		}) {
++			return
++		}
+ 
+ 		t.Run("file TVF and Hive planning admission", func(t *testing.T) {
+ 			remote := fileservice.JoinPath("s3-opts,endpoint="+server.URL+",bucket=bucket,region=us-east-1,key=id,secret=secret", "content.txt")
+```
+
+**File**: `pkg/iscp/watermark_contention_test.go` (modified, +9/-3)
+```diff
+@@ -78,8 +78,16 @@ func TestWatermarkBatchYieldsToRetirement(t *testing.T) {
+ 	db, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", peer.GetServiceConfig().CN.Frontend.Port))
+ 	require.NoError(t, err)
+ 	defer db.Close()
++	_, err = db.ExecContext(ctx, "create database watermark_contention")
++	require.NoError(t, err)
++	defer func() {
++		cleanupCtx, cleanupCancel := context.WithTimeout(context.WithoutCancel(ctx), 30*time.Second)
++		defer cleanupCancel()
++		if _, err := db.ExecContext(cleanupCtx, "drop database watermark_contention"); err != nil {
++			t.Errorf("drop watermark contention database: %v", err)
++		}
++	}()
+ 	for _, statement := range []string{
+-		"create database watermark_contention",
+ 		"create table watermark_contention.jobs(account_id int unsigned,table_id bigint unsigned,job_name varchar(100),job_id bigint unsigned,job_state int,watermark varchar(100),job_status json,drop_at timestamp null,primary key(account_id,table_id,job_name,job_id))",
+ 		`insert into watermark_contention.jobs values(1,3,'first',1,3,'1-0','{"LSN":5,"Stage":1}',null),(1,4,'second',1,3,'1-0','{"LSN":5,"Stage":1}',null)`,
+ 	} {
+@@ -147,6 +155,4 @@ func TestWatermarkBatchYieldsToRetirement(t *testing.T) {
+ 	syncCommit(peerService, service)
+ 	require.NoError(t, db.QueryRowContext(ctx, "select count(*) from watermark_contention.jobs where watermark='2-0' and cast(json_extract(job_status,'$.LSN') as unsigned)=6").Scan(&rows))
+ 	require.Equal(t, 2, rows)
+-	_, err = db.ExecContext(ctx, "drop database watermark_contention")
+-	require.NoError(t, err)
+ }
+```
+
+**File**: `pkg/logservice/gossip_fixture_test.go` (modified, +5/-1)
+```diff
+@@ -560,7 +560,8 @@ func TestGossipFixtureStartupRealBindCollision(t *testing.T) {
+ 				// this node. Inject once in the first generation that gets here.
+ 				if injectedAttempt == 0 && cfg.UUID == currentConfigs[1].UUID {
+ 					var err error
+-					occupied, err = net.Listen("tcp4", cfg.GossipListenAddr())
++					// Match memberlist's address-family selection for wildcard listeners.
++					occupied, err = net.Listen("tcp", cfg.GossipListenAddr())
+ 					if err != nil {
+ 						return nil, fmt.Errorf("collision injection failed: %w", err)
+ 					}
+@@ -611,6 +612,9 @@ func TestGossipFixtureStartupRealBindCollision(t *testing.T) {
+ 		require.LessOrEqual(t, attempts, maxGossipFixtureStartupAttempts)
+ 		require.Error(t, collisionErr)
+ 		require.True(t, isGossipFixtureBindCollision(collisionErr), "%v", collisionErr)
++		host, port, err := net.SplitHostPort(injectedConfigs[1].GossipListenAddr())
++		require.NoError(t, err)
++		require.Contains(t, collisionErr.Error(), fmt.Sprintf("Failed to start TCP listener on %q port %s", host, port))
+ 		require.True(t, reopenedNode)
+ 		t.Logf("real memberlist collision on attempt %d, recovered on attempt %d: %v", injectedAttempt, attempts, collisionErr)
+ 		require.Len(t, services, 2)
+```
+
+---
+
+### Incident Patch 2: `75b1ad8a` (2026-11-11)
+**Commit Message**: fix(plan): reuse scalar CTEs under non-truncating limits (#32522)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Related to https://github.com/matrixorigin/matrixflow/issues/21333.
+
+## What this PR does / why we need it:
+
+The four-row metrics query in the linked incident repeats an expensive
+common aggregation across `UNION ALL` branches. On main, an outer `LIMIT
+4` prevents CTE reuse even though the four scalar branches cannot
+produce more than four rows. The existing full-consumption proof
+conservatively treats this limit as potentially truncating the input.
+
+Extend that proof with a narrow structural row bound:
+
+- A scalar aggregate contributes at most one row; projection, filter,
+ordinary window and sort preserve the bound; `UNION ALL` adds child
+bounds with overflow checks.
+- A positive literal limit covering the complete bound is
+non-truncating. Estimates, filters and limits themselves never tighten
+the structural bound, and OFFSET is not used to compensate for a smaller
+limit.
+- Unknown shapes retain the inline plan. Existing
+inner/zero/dy
+
+**File**: `pkg/sql/plan/cte_lazy_binding_test.go` (modified, +143/-0)
+```diff
+@@ -15,6 +15,7 @@
+ package plan
+ 
+ import (
++	"fmt"
+ 	"math"
+ 	"strings"
+ 	"testing"
+@@ -741,6 +742,39 @@ func TestCTEMultiReferenceReusesBelowBlockingAggregateLimit(t *testing.T) {
+ 	require.Equal(t, 1, countReachableNodeType(query, planpb.Node_SINK))
+ }
+ 
++func TestCTEMultiReferenceReusesBoundedScalarUnionLimit(t *testing.T) {
++	for _, branches := range []int{2, 4, 8} {
++		for _, limit := range []int{branches - 1, branches, branches + 1} {
++			t.Run(fmt.Sprintf("branches_%d_limit_%d", branches, limit), func(t *testing.T) {
++				consumers := make([]string, branches)
++				for i := range consumers {
++					consumers[i] = fmt.Sprintf("select %d as metric, mx, mn from totals", i)
++				}
++				mock := NewMockOptimizer(false, newPlanTestProcess(t))
++				logicPlan, err := runOneStmt(mock, t, fmt.Sprintf(`
++					with grouped as (
++						select l_suppkey, sum(l_extendedprice) as total
++						from lineitem group by l_suppkey
++					), totals as (select max(total) as mx, min(total) as mn from grouped)
++					select row_number() over () as rn, u.* from (%s) u limit %d`,
++					strings.Join(consumers, " union all "), limit))
++				require.NoError(t, err)
++				query := logicPlan.GetQuery()
++				wantScans := branches
++				if limit >= branches {
++					wantScans = 1
++					require.Positive(t, countReachableNodeType(query, planpb.Node_SINK_SCAN))
++				} else {
++					require.Zero(t, countReachableNodeType(query, planpb.Node_SINK_SCAN),
++						"a truncating LIMIT must retain the conservative inline plan")
++				}
++				require.Equal(t, wantScans, countReachableNodeType(query, planpb.Node_TABLE_SCAN),
++					"a non-truncating LIMIT must not duplicate the common base scan")
++			})
++		}
++	}
++}
++
+ func TestCTEMultiReferencePrunesUnusedVariableWidthPayload(t *testing.T) {
+ 	for _, tc := range []struct {
+ 		name, payload, consumer string
+@@ -1498,6 +1532,115 @@ func TestCTEDrainProofRejectsZeroAndStreamingLimits(t *testing.T) {
+ 	}
+ }
+ 
++func TestCTEScalarUnionRowBound(t *testing.T) {
++	for _, test := range []struct {
++		name   string
++		root   int32
++		change func([]*planpb.Node)
++		want   uint64
++	}{
++		{name: "scalar aggregate", root: 1, want: 1},
++		{name: "transparent filter and window", root: 4, want: 1},
++		{name: "union below sort", root: 6, want: 2},
++		{name: "limit is not a tighter bound", root: 6, want: 2, change: func(nodes []*planpb.Node) {
++			nodes[5].Limit = MakePlan2Uint64ConstExprWithType(1)
++		}},
++		{name: "zero limit is not an empty bound", root: 6, want: 2, change: func(nodes []*planpb.Node) {
++			nodes[1].Limit = MakePlan2Uint64ConstExprWithType(0)
++		}},
++		{name: "scan estimate is not a proof", root: 0},
++		{name: "scan limit is not a proof", root: 0, change: func(nodes []*planpb.Node) {
++			nodes[0].Limit = MakePlan2Uint64ConstExprWithType(1)
++		}},
++		{name: "grouped aggregate", root: 6, change: func(nodes []*planpb.Node) {
++			nodes[1].GroupBy = []*planpb.Expr{MakePlan2Int64ConstExprWithType(1)}
++		}},
++		{name: "grouping extension", root: 6, change: func(nodes []*planpb.Node) {
++			nodes[1].GroupingFlag = []bool{true}
++		}},
++		{name: "unknown union sibling", root: 6, change: func(nodes []*planpb.Node) {
++			nodes[5].Children[1] = 0
++		}},
++		{name: "union distinct", root: 6, change: func(nodes []*planpb.Node) {
++			nodes[5].NodeType = planpb.Node_UNION
++		}},
++		{name: "join", root: 6, change: func(nodes []*planpb.Node) {
++			nodes[5].NodeType = planpb.Node_JOIN
++		}},
++		{name: "aggregate arity", root: 1, change: func(nodes []*planpb.Node) {
++			nodes[1].Children = nil
++		}},
++		{name: "transparent arity", root: 4, change: func(nodes []*planpb.Node) {
++			nodes[4].Children = []int32{1, 1}
++		}},
++		{name: "union arity", root: 5, change: func(nodes []*planpb.Node) {
++			nodes[5].Children = nil
++		}},
++		{name: "cycle", root: 4, change: func(nodes []*planpb.Node) {
++			nodes[4].Children = []int32{4}
++		}},
++		{name: "nil node", root: 4, change: func(nodes []*planpb.Node) { nodes[4] = nil }},
++		{name: "negative id", root: -1},
++		{name: "out of range id", root: 7},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			nodes := []*planpb.Node{
++				{NodeType: planpb.Node_TABLE_SCAN, Stats: &planpb.Stats{Outcnt: 1}},
++				{NodeType: planpb.Node_AGG, Children: []int32{0}},
++				{NodeType: planpb.Node_PROJECT, Children: []int32{1}},
++				{NodeType: planpb.Node_FILTER, Children: []int32{2}},
++				{NodeType: planpb.Node_WINDOW, Children: []int32{3}},
++				{NodeType: planpb.Node_UNION_ALL, Children: []int32{4, 1}},
++				{NodeType: planpb.Node_SORT, Children: []int32{5}},
++			}
++			if test.change != nil {
++				test.change(nodes)
++			}
++			builder := &QueryBuilder{qry: &planpb.Query{Nodes: nodes}}
++			memo := make(map[int32]uint64)
++			require.Equal(t, test.want, builder.cteScalarUnionRowBound(test.root, memo))
++			require.Equal(t, test.want, builder.cteScalarUnionRowBound(test.root, memo))
++		})
++	}
++
++	// A compact DAG crosses the overflow boundary without an exponential tree.
++	builder := &QueryBuilder{qry: &planpb.Query
+```
+
+**File**: `pkg/sql/plan/cte_reuse.go` (modified, +56/-7)
+```diff
+@@ -1143,6 +1143,7 @@ func (builder *QueryBuilder) proveCTEConsumerDrainRequirements(
+ 	drainedOccurrences := make(map[int32]bool)
+ 	requiredBuildChildByJoin := make(map[int32]int32)
+ 	hasDrainWitness := false
++	var scalarRowBounds map[int32]uint64
+ 
+ 	for _, occurrence := range occurrences {
+ 		// replaceCTEOccurrences rewrites only the tree below rootID. An
+@@ -1188,13 +1189,23 @@ func (builder *QueryBuilder) proveCTEConsumerDrainRequirements(
+ 			if path.inputDrained && len(node.Children) > 1 && node.NodeType != planpb.Node_JOIN {
+ 				path.inputDrained = false
+ 			}
+-			// LIMIT can stop the subtree before it completes. Only a positive
+-			// literal limit on a proven blocking operator is a witness: LIMIT 0 is
+-			// compiled without its input steps, and a dynamic limit may be zero at
+-			// execution time. OFFSET alone does not shorten a fully consumed stream.
+-			if node.Limit != nil &&
+-				(!cteLimitIsPositive(node.Limit) || !path.inputDrained && !cteLimitPreservesFullInput(node)) {
+-				continue
++			// LIMIT 0 is compiled without its input steps, and a dynamic limit
++			// may be zero at execution time. A positive literal cannot truncate
++			// a blocking input or a structurally bounded scalar UNION ALL whose
++			// entire output fits. OFFSET is not used to relax the latter bound.
++			if node.Limit != nil {
++				if !cteLimitIsPositive(node.Limit) {
++					continue
++				}
++				if !path.inputDrained && !cteLimitPreservesFullInput(node) {
++					if scalarRowBounds == nil {
++						scalarRowBounds = make(map[int32]uint64)
++					}
++					bound := builder.cteScalarUnionRowBound(path.nodeID, scalarRowBounds)
++					if bound == 0 || bound > node.Limit.GetLit().GetU64Val() {
++						continue
++					}
++				}
+ 			}
+ 			// APPLY may skip its right input when the left side is empty. Block
+ 			// sampling can terminate successfully after a subset of its input.
+@@ -1370,6 +1381,44 @@ func (builder *QueryBuilder) cteInnerJoinGetsEquiCondition(
+ 	return false
+ }
+ 
++// cteScalarUnionRowBound proves a positive output bound rooted in blocking
++// scalar aggregates. Zero means unknown, never an empty input. Do not tighten
++// this bound with LIMIT, predicates or estimates: doing so could let an early
++// consumer skip another branch's work/errors while appearing to fit the bound.
++// Unsupported operators remain barriers, and the caller still proves every
++// occurrence's path (including inner limits and conditional joins) separately.
++func (builder *QueryBuilder) cteScalarUnionRowBound(nodeID int32, memo map[int32]uint64) uint64 {
++	if bound, ok := memo[nodeID]; ok {
++		return bound
++	}
++	memo[nodeID] = 0
++	if nodeID < 0 || int(nodeID) >= len(builder.qry.Nodes) || builder.qry.Nodes[nodeID] == nil {
++		return 0
++	}
++	node := builder.qry.Nodes[nodeID]
++	var bound uint64
++	switch node.NodeType {
++	case planpb.Node_AGG:
++		if len(node.Children) == 1 && len(node.GroupBy) == 0 && len(node.GroupingFlag) == 0 {
++			bound = 1
++		}
++	case planpb.Node_PROJECT, planpb.Node_FILTER, planpb.Node_WINDOW, planpb.Node_SORT:
++		if len(node.Children) == 1 {
++			bound = builder.cteScalarUnionRowBound(node.Children[0], memo)
++		}
++	case planpb.Node_UNION_ALL:
++		if len(node.Children) == 2 {
++			left := builder.cteScalarUnionRowBound(node.Children[0], memo)
++			right := builder.cteScalarUnionRowBound(node.Children[1], memo)
++			if left > 0 && right > 0 && left <= math.MaxUint64-right {
++				bound = left + right
++			}
++		}
++	}
++	memo[nodeID] = bound
++	return bound
++}
++
+ func cteLimitPreservesFullInput(node *planpb.Node) bool {
+ 	if node == nil || node.Limit == nil {
+ 		return true
+```
+
+**File**: `test/distributed/cases/cte/scalar_union_limit.result` (added, +95/-0)
+```diff
+@@ -0,0 +1,95 @@
++drop database if exists cte_scalar_union_limit;
++create database cte_scalar_union_limit;
++use cte_scalar_union_limit;
++create table measurements(period int, amount decimal(10,2), guard_value bigint);
++insert into measurements values
++(1,10,-9223372036854775808),(1,20,-9223372036854775808),
++(2,60,-9223372036854775808),(2,null,-9223372036854775808);
++create table metrics as
++select row_number() over () as rn, u.* from (
++with grouped as (
++select period, sum(amount) as total from measurements group by period
++), totals as (
++select max(total) as mx, min(total) as mn from grouped
++)
++select 'max' as metric, mx as amount from totals
++union all select 'min', mn from totals
++union all select 'sum', mx+mn from totals
++union all select 'zero', mx/nullif(mn-mn,0) from totals
++) u limit 4;
++select metric, amount from metrics order by metric;
++➤ metric[12,4,0]  ¦  amount[3,38,6]  𝄀
++max  ¦  60.000000  𝄀
++min  ¦  30.000000  𝄀
++sum  ¦  90.000000  𝄀
++zero  ¦  null
++select count(*) as n, count(distinct rn) as distinct_rn, min(rn) as first_rn, max(rn) as last_rn from metrics;
++➤ n[-5,64,0]  ¦  distinct_rn[-5,64,0]  ¦  first_rn[-5,64,0]  ¦  last_rn[-5,64,0]  𝄀
++4  ¦  4  ¦  1  ¦  4
++select column_name, data_type, numeric_precision, numeric_scale, is_nullable
++from information_schema.columns
++where table_schema='cte_scalar_union_limit' and table_name='metrics'
++order by ordinal_position;
++➤ column_name[12,256,0]  ¦  data_type[12,65535,0]  ¦  numeric_precision[-5,64,0]  ¦  numeric_scale[-5,64,0]  ¦  is_nullable[12,3,0]  𝄀
++rn  ¦  bigint  ¦  20  ¦  0  ¦  NO  𝄀
++metric  ¦  varchar  ¦  null  ¦  null  ¦  NO  𝄀
++amount  ¦  decimal  ¦  38  ¦  6  ¦  YES
++with totals as (select sum(amount) as total from measurements)
++select total from totals union all select total from totals limit 2;
++➤ total[3,32,2]  𝄀
++90.00  𝄀
++90.00
++with totals as (select sum(amount) as total from measurements)
++select total from totals union all select total from totals limit 2 offset 1;
++➤ total[3,32,2]  𝄀
++90.00
++with totals as (select sum(amount) as total from measurements)
++select total from totals union all select total from totals limit 1;
++➤ total[3,32,2]  𝄀
++90.00
++with totals as (select sum(amount) as total from measurements)
++select total from totals where total<0
++union all select total from totals limit 2;
++➤ total[3,32,2]  𝄀
++90.00
++prepare page from 'with totals as (select sum(amount) as total from measurements) select total from totals union all select total from totals limit ?';
++set @page_limit=0;
++execute page using @page_limit;
++➤ total[3,32,2]
++set @page_limit=2;
++execute page using @page_limit;
++➤ total[3,32,2]  𝄀
++90.00  𝄀
++90.00
++deallocate prepare page;
++with risky as (select abs(max(guard_value)) as v from measurements)
++select v from risky union all select v from risky limit 0;
++➤ v[-5,64,0]
++with risky as (select abs(max(guard_value)) as v from measurements)
++select v from risky union all select v from risky limit 2;
++-- @regex("out of range", true)
++Data truncation: data out of range: data type int, '-9223372036854775808'
++update measurements set amount=null;
++with totals as (select sum(amount) as total, count(amount) as n from measurements)
++select total,n from totals union all select total,n from totals limit 2;
++➤ total[3,32,2]  ¦  n[-5,64,0]  𝄀
++null  ¦  0  𝄀
++null  ¦  0
++delete from measurements;
++with grouped as (select period,sum(amount) as total from measurements group by period),
++totals as (select max(total) as mx,min(total) as mn from grouped)
++select mx,mn from totals union all select mx,mn from totals limit 2;
++➤ mx[3,32,2]  ¦  mn[3,32,2]  𝄀
++null  ¦  null  𝄀
++null  ¦  null
++create table empty_metrics as
++with totals as (select sum(amount) as total,count(*) as n from measurements)
++select total,n from totals union all select total,n from totals limit 2;
++select * from empty_metrics;
++➤ total[3,32,2]  ¦  n[-5,64,0]  𝄀
++null  ¦  0  𝄀
++null  ¦  0
++with totals as (select count(*) as n from measurements having count(*)>0)
++select n from totals union all select n from totals limit 2;
++➤ n[-5,64,0]
++drop database cte_scalar_union_limit;
+```
+
+**File**: `test/distributed/cases/cte/scalar_union_limit.sql` (added, +74/-0)
+```diff
+@@ -0,0 +1,74 @@
++--- @metacmp(true)
++drop database if exists cte_scalar_union_limit;
++create database cte_scalar_union_limit;
++use cte_scalar_union_limit;
++create table measurements(period int, amount decimal(10,2), guard_value bigint);
++insert into measurements values
++(1,10,-9223372036854775808),(1,20,-9223372036854775808),
++(2,60,-9223372036854775808),(2,null,-9223372036854775808);
++
++-- 无排序窗口与恰好覆盖四个标量分支的 LIMIT，不应重复执行公共聚合。
++create table metrics as
++select row_number() over () as rn, u.* from (
++    with grouped as (
++        select period, sum(amount) as total from measurements group by period
++    ), totals as (
++        select max(total) as mx, min(total) as mn from grouped
++    )
++    select 'max' as metric, mx as amount from totals
++    union all select 'min', mn from totals
++    union all select 'sum', mx+mn from totals
++    union all select 'zero', mx/nullif(mn-mn,0) from totals
++) u limit 4;
++select metric, amount from metrics order by metric;
++-- 无序 ROW_NUMBER 不约束指标与行号的对应关系，但必须完整且唯一。
++select count(*) as n, count(distinct rn) as distinct_rn, min(rn) as first_rn, max(rn) as last_rn from metrics;
++select column_name, data_type, numeric_precision, numeric_scale, is_nullable
++from information_schema.columns
++where table_schema='cte_scalar_union_limit' and table_name='metrics'
++order by ordinal_position;
++
++-- 重复标量结果不得被去重；OFFSET 保留重复结果的正确重数。
++with totals as (select sum(amount) as total from measurements)
++select total from totals union all select total from totals limit 2;
++with totals as (select sum(amount) as total from measurements)
++select total from totals union all select total from totals limit 2 offset 1;
++with totals as (select sum(amount) as total from measurements)
++select total from totals union all select total from totals limit 1;
++
++-- 过滤只会降低保守上界；空的一个消费者不能制造额外行。
++with totals as (select sum(amount) as total from measurements)
++select total from totals where total<0
++union all select total from totals limit 2;
++
++-- 动态 LIMIT 可能是零，prepare/execute 不得沿用不安全的消费证明。
++prepare page from 'with totals as (select sum(amount) as total from measurements) select total from totals union all select total from totals limit ?';
++set @page_limit=0;
++execute page using @page_limit;
++set @page_limit=2;
++execute page using @page_limit;
++deallocate prepare page;
++
++-- LIMIT 0 不得触发标量聚合中的错误表达式；真正消费时错误仍可见。
++with risky as (select abs(max(guard_value)) as v from measurements)
++select v from risky union all select v from risky limit 0;
++-- @regex("out of range",true)
++with risky as (select abs(max(guard_value)) as v from measurements)
++select v from risky union all select v from risky limit 2;
++
++-- 全 NULL 的输入与空输入都保留标量聚合行，COUNT 与 SUM 的值不同。
++update measurements set amount=null;
++with totals as (select sum(amount) as total, count(amount) as n from measurements)
++select total,n from totals union all select total,n from totals limit 2;
++delete from measurements;
++with grouped as (select period,sum(amount) as total from measurements group by period),
++     totals as (select max(total) as mx,min(total) as mn from grouped)
++select mx,mn from totals union all select mx,mn from totals limit 2;
++create table empty_metrics as
++with totals as (select sum(amount) as total,count(*) as n from measurements)
++select total,n from totals union all select total,n from totals limit 2;
++select * from empty_metrics;
++with totals as (select count(*) as n from measurements having count(*)>0)
++select n from totals union all select n from totals limit 2;
++
++drop database cte_scalar_union_limit;
+```
+
+---
+
+### Incident Patch 3: `c2f82ede` (2026-11-12)
+**Commit Message**: fix(lockservice): report all waiters in mo_locks (#32631)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #32617
+
+## What this PR does / why we need it:
+
+`Lock.IterWaiters` negates the callback result even though its queue iterator
+and callers use `true` to continue. `handleGetLockInfo` therefore records one
+waiter and silently stops, making `mo_locks()` and `mo_catalog.mo_locks`
+incomplete when multiple transactions wait on the same lock.
+
+Pass the callback result through unchanged and document early termination.
+This restores the existing contract without changing queue ownership,
+locking, notification, deadlock detection, RPC formats, or persisted data.
+Repository callers have been checked; actual deadlock detection traverses
+the underlying queue directly and is not affected by this wrapper defect.
+
+Regression coverage:
+
+- Seven iterator cases cover empty/single/multiple waiters, early stop, and
+  the committed-prefix boundary without consuming queue entries.
+- A real MySQL integration test uses one holder and two waiters on one row.
+  An
+
+**File**: `pkg/lockservice/lock.go` (modified, +2/-2)
+```diff
+@@ -323,10 +323,10 @@ func (l Lock) IterHolders(fn func(holder pb.WaitTxn) bool) {
+ 	}
+ }
+ 
+-// IterHolders iter which txn is waiting for this lock
++// IterWaiters visits transactions waiting for this lock until fn returns false.
+ func (l Lock) IterWaiters(fn func(waiter pb.WaitTxn) bool) {
+ 	l.waiters.iter(func(w *waiter) bool {
+-		return !fn(w.txn)
++		return fn(w.txn)
+ 	})
+ }
+ 
+```
+
+**File**: `pkg/lockservice/lock_test.go` (modified, +34/-0)
+```diff
+@@ -25,6 +25,40 @@ import (
+ 	"github.com/stretchr/testify/require"
+ )
+ 
++func TestLockIterWaiters(t *testing.T) {
++	for _, tc := range []struct {
++		name      string
++		count     int
++		committed int
++		stopAfter int
++		want      []string
++	}{
++		{name: "empty", committed: -1},
++		{name: "one", count: 1, committed: -1, want: []string{"w1"}},
++		{name: "all", count: 3, committed: -1, want: []string{"w1", "w2", "w3"}},
++		{name: "stop-first", count: 3, committed: -1, stopAfter: 1, want: []string{"w1"}},
++		{name: "stop-second", count: 3, committed: -1, stopAfter: 2, want: []string{"w1", "w2"}},
++		{name: "uncommitted", count: 3, committed: 0},
++		{name: "committed-prefix", count: 3, committed: 2, want: []string{"w1", "w2"}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			// Only iteration is under test: these values own no pooled references
++			// or notification channels. Match the queue's committed-prefix boundary.
++			q := &sliceBasedWaiterQueue{beginChangeIdx: tc.committed}
++			for _, id := range []string{"w1", "w2", "w3"}[:tc.count] {
++				q.waiters = append(q.waiters, &waiter{txn: pb.WaitTxn{TxnID: []byte(id)}})
++			}
++			var got []string
++			Lock{waiters: q}.IterWaiters(func(w pb.WaitTxn) bool {
++				got = append(got, string(w.TxnID))
++				return tc.stopAfter == 0 || len(got) < tc.stopAfter
++			})
++			require.Equal(t, tc.want, got)
++			require.Len(t, q.waiters, tc.count, "observation must not consume waiters")
++		})
++	}
++}
++
+ func TestTryHoldEmptyLockReturnsError(t *testing.T) {
+ 	l := Lock{
+ 		holders: newHolders(),
+```
+
+**File**: `pkg/tests/sqlintegration/lock_waiters_test.go` (added, +172/-0)
+```diff
+@@ -0,0 +1,172 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2918,573 +3328,133 @@ outcomes, rows, and warnings matched: 15 statements succeeded
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package plan
++package sqlintegration
 +
 +import (
 +	"context"
++	"database/sql"
++	"encoding/hex"
++	"fmt"
++	"sync"
 +	"testing"
++	"time"
 +
-+	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	planpb "github.com/matrixorigin/matrixone/pkg/pb/plan"
++	"github.com/matrixorigin/matrixone/pkg/embed"
++	"github.com/matrixorigin/matrixone/pkg/lockservice"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestBoundedBinarySliceRefinesBlobResultWidth(t *testing.T) {
-+	blobType := types.NewWithCharset(types.T_blob, 0, 0, types.CharsetBinary)
-+	source := &planpb.Expr{
-+		Typ: blobType.PlanType(),
-+		Expr: &planpb.Expr_Lit{Lit: &planpb.Literal{
-+			IsBin:       true,
-+			LiteralForm: planpb.StringLiteralForm_STRING_LITERAL_HEX,
-+			Value:       &planpb.Literal_Sval{Sval: "61"},
-+		}},
-+	}
-+	count := makePlan2Int64ConstExprWithType(1)
-+	start := makePlan2Int64ConstExprWithType(1)
++func TestMoLocksListsAllWaiters(t *testing.T) {
++	runSQLIntegration(t, func(c embed.Cluster) {
++		cn, err := c.GetCNService(0)
++		require.NoError(t, err)
++		db, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", cn.GetServiceConfig().CN.Frontend.Port))
++		require.NoError(t, err)
++		defer db.Close()
++		ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
++		defer cancel()
++		execSQLRequire(t, ctx, db, "create database lock_waiter_view")
++		defer cleanupSQLIntegration(t, cn, "drop database lock_waiter_view")
++		execSQLRequire(t, ctx, db, "create table lock_waiter_view.t(id int primary key, v int)")
++		execSQLRequire(t, ctx, db, "insert into lock_waiter_view.t values (1,10)")
++		var tableID uint64
++		require.NoError(t, db.QueryRowContext(ctx, "select rel_id from mo_catalog.mo_tables where reldatabase='lock_waiter_view' and relname='t'").Scan(&tableID))
++		tableFilter := fmt.Sprintf(" where table_id='%d'", tableID)
 +
-+	t.Run("left-right", func(t *testing.T) {
-+		got := blobType
-+		refineLeftRightLiteralReturnType([]*planpb.Expr{source, count}, &got)
-+		require.Equal(t, types.T_varbinary, got.Oid)
-+		require.Equal(t, int32(1), got.Width)
-+		require.Equal(t, types.CharsetBinary, got.Charset)
-+	})
-+
-+	t.Run("substring", func(t *testing.T) {
-+		got := blobType
-+		refineSubstringLiteralReturnType([]*planpb.Expr{source, start, count}, &got)
-+		require.Equal(t, types.T_varbinary, got.Oid)
-+		require.Equal(t, int32(1), got.Width)
-+		require.Equal(t, types.CharsetBinary, got.Charset)
-+	})
-+
-+	t.Run("unknown-blob-domain-stays-unbounded", func(t *testing.T) {
-+		unknown := &planpb.Expr{
-+			Typ:  blobType.PlanType(),
-+			Expr: &planpb.Expr_V{V: &planpb.VarRef{Name: "v"}},
-+		}
-+		left := blobType
-+		refineLeftRightLiteralReturnType([]*planpb.Expr{unknown, count}, &left)
-+		require.Equal(t, blobType, left)
-+
-+		substring := blobType
-+		refineSubstringLiteralReturnType([]*planpb.Expr{unknown, start, count}, &substring)
-+		require.Equal(t, blobType, substring)
-+	})
-+}
-+
-+func TestHexBoundedBlobSlicePreservesSliceType(t *testing.T) {
-+	ctx := context.Background()
-+	blobType := types.T_blob.ToType()
-+	source := &planpb.Expr{Typ: blobType.PlanType(), Expr: &planpb.Expr_Col{Col: &planpb.ColRef{}}}
-+	for _, name := range []string{"left", "right", "substring", "substr", "mid"} {
-+		for _, tc := range []struct {
-+			name      string
-+			length    *planpb.Expr
-+			wantOID   types.T
-+			wantWidth int32
-+		}{
-+			{"bounded", makePlan2Int64ConstExprWithType(1), types.T_varchar, 2},
-+			{"aggregate limit", makePlan2Int64ConstExprWithType(511), types.T_varchar, 1022},
-+			{"above aggregate limit", makePlan2Int64ConstExprWithType(512), types.T_varchar, 1024},
-+			{"hex result exceeds varchar", makePlan2Int64ConstExprWithType(32768), types.T_text, 0},
-+			{"unknown", &planpb.Expr{Typ: planpb.Type{Id: int32(types.T_int64)}, Expr: &planpb.Expr_P{P: &planpb.ParamRef{Pos: 0}}}, types.T_text, 0},
-+		} {
-+			t.Run(name+"/"+tc.name, func(t *testing.T) {
-+				args := []*planpb.Expr{source, tc.length}
-+				if name == "substring" || name == "substr" || name == "mid" {
-+					args = []*planpb.Expr{source, makePlan2Int64ConstExprWithType(1), tc.length}
-+				}
-+				slice, err := BindFuncExprImplByPlanExpr(ctx, name, args)
++		// Reuse the canonical single-CN fixture: omission happens while the owner
++		// builds its diagnostic RPC response, independent of the waiters' CNs.
++		// Repeat on the same table to prove the observation does not consume or
++		// retain queue entries and that normal lock handoff still completes.
++		for round := 0; round < 2; round++ {
++			func() {
++				holder, err := db.BeginTx(ctx, nil)
 +				require.NoError(t, err)
-+				require.Equal(t, int32(types.T_blob), slice.Typ.Id)
-+				for _, aggregate := range []string{"bit_and", "bit_or", "bit_xor"} {
-+					bound, err := BindFuncExprImplByPlanExpr(ctx, aggregate, []*planpb.Expr{slice})
++				defer holder.Rollback()
++				const query = "select v from lock_waiter_view.t where id=1 for update"
++				var value int
++				require.NoError(t, holder.QueryRowContext(ctx, query).Scan(&value))
++				require.Equal(t, 10, value)
++
++				waitCtx, stop := context.WithCancel(ctx)
++				var workers sync.WaitGroup
++				defer func() {
++					stop()
++					_ = holder.Rollback()
++					workers.Wait()
++				}()
++				type result struct {
++					value       int
++					queryErr    error
++					rollbackErr error
++				}
++				done := make(chan result, 2)
++				for i := 0; i < 2; i++ {
++					waiter, err := db.BeginTx(waitCtx, nil)
 +					require.NoError(t, err)
-+					require.Equal(t, slice.Typ.Id, bound.Typ.Id)
++					workers.Go(func() {
++						var r result
++						r.queryErr = waiter.QueryRowContext(waitCtx, query).Scan(&r.value)
++						r.rollbackErr = waiter.Rollback()
++						done <- r
++					})
 +				}
-+				result, err := BindFuncExprImplByPlanExpr(ctx, "hex", []*planpb.Expr{slice})
++
++				// Use the independent transaction view as the arrival barrier, not
++				// the lock view being tested. Match the exact table and encoded key.
++				waiting := func() map[string]string {
++					arrivalCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
++					defer cancel()
++					ticker := time.NewTicker(10 * time.Millisecond)
++					defer ticker.Stop()
++					for {
++						waiting := func() map[string]string {
++							rows, err := db.QueryContext(arrivalCtx, "select txn_id, lock_content from mo_transactions() as t"+tableFilter+" and lock_mode='Exclusive'")
++							require.NoError(t, err)
++							defer rows.Close()
++							waiting := make(map[string]string)
++							for rows.Next() {
++								var id, key string
++								require.NoError(t, rows.Scan(&id, &key))
++								waiting[id] = key
++							}
++							require.NoError(t, rows.Err())
++							return waiting
++						}()
++						if len(waiting) == 2 {
++							return waiting
++						}
++						select {
++						case <-ticker.C:
++						case <-arrivalCtx.Done():
++							t.Fatalf("both SQL transactions must be waiting: %v", arrivalCtx.Err())
++						}
++					}
++				}()
++				var key string
++				for _, current := range waiting {
++					require.NotEmpty(t, current)
++					if key == "" {
++						key = current
++					}
++					require.Equal(t, key, current, "both transactions must contend on the same key")
++				}
++				encoded, err := hex.DecodeString(key)
 +				require.NoError(t, err)
-+				require.Equal(t, int32(tc.wantOID), result.Typ.Id)
-+				require.Equal(t, tc.wantWidth, result.Typ.Width)
-+			})
-+		}
-+	}
-+
-+	variable := &planpb.Expr{Typ: blobType.PlanType(), Expr: &planpb.Expr_V{V: &planpb.VarRef{Name: "v"}}}
-+	slice, err := BindFuncExprImplByPlanExpr(ctx, "left", []*planpb.Expr{variable, makePlan2Int64ConstExprWithType(1)})
-+	require.NoError(t, err)
-+	result, err := BindFuncExprImplByPlanExpr(ctx, "hex", []*planpb.Expr{slice})
-+	require.NoError(t, err)
-+	require.Equal(t, int32(types.T_text), result.Typ.Id)
-+}
-+
-+func TestHexSliceOfConditionalBlobMetadata(t *testing.T) {
-+	ctx := context.Background()
-+	column := func(typ types.Type, pos int32) *planpb.Expr {
-+		return &planpb.Expr{Typ: typ.PlanType(), Expr: &planpb.Expr_Col{Col: &planpb.ColRef{ColPos: pos}}}
-+	}
-+	condition := column(types.T_bool.ToType(), 0)
-+	text := column(types.NewWithCharset(types.T_varchar, 16, 0, types.CharsetUTF8)
-```
-
-**File**: `pkg/sql/plan/base_binder_test.go` (modified, +16/-1)
-```diff
-@@ -24,8 +24,10 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
- 	"github.com/matrixorigin/matrixone/pkg/container/batch"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/container/vector"
- 	"github.com/matrixorigin/matrixone/pkg/defines"
- 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/sql/colexec"
- 	"github.com/matrixorigin/matrixone/pkg/sql/parsers"
- 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
- 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
-@@ -63,7 +65,20 @@ func TestSerialExtractBinaryAssignment(t *testing.T) {
- 	require.Equal(t, target, bound.Typ)
- 	assigned, err := forceAssignmentCastExpr(t.Context(), bound, target)
- 	require.NoError(t, err)
--	require.Same(t, bound, assigned)
-+	require.NotNil(t, assigned.GetF(), "same binary type must retain the capacity assignment")
-+	proc := testutil.NewProcess(t)
-+	proc.SetResolveVariableFunc(func(string, bool, bool) (any, error) { return "STRICT_TRANS_TABLES", nil })
-+	t.Cleanup(proc.Free)
-+	exec, err := colexec.NewExpressionExecutor(proc, assigned)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { exec.Free() })
-+	value, err := exec.Eval(proc, []*batch.Batch{batch.EmptyForConstFoldBatch}, nil)
-+	require.NoError(t, err)
-+	// Typed physical replay validates the declared capacity without padding.
-+	want := []byte{0x41, 0x42}
-+	got, isNull := vector.GenerateFunctionStrParameter(value).GetStrValue(0)
-+	require.False(t, isNull)
-+	require.Equal(t, want, got)
- }
- 
- func TestStoredProcedureVariablesUseDeclaredDecimalType(t *testing.T) {
-```
-
-**File**: `pkg/sql/plan/bind_insert_filled_default_test.go` (modified, +15/-2)
-```diff
-@@ -18,6 +18,7 @@ import (
- 	"context"
- 	"testing"
- 
-+	"github.com/matrixorigin/matrixone/pkg/container/batch"
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
- 	"github.com/stretchr/testify/require"
-@@ -112,8 +113,8 @@ func TestImplicitFilledChildDefaultExprMirrorsRuntimeFill(t *testing.T) {
- 	require.EqualValues(t, 2, binExpr.Typ.Width, "the BINARY mirror keeps the declared width")
- 	binCast := binExpr.GetF()
- 	require.NotNil(t, binCast, "BINARY(n) mirrors its fill as an assignment cast")
--	require.Equal(t, "cast", binCast.Func.ObjName,
--		"the BINARY mirror is the plain assignment cast - its zero-fill rule applies in every cast mode")
-+	require.Equal(t, "cast_strict", binCast.Func.ObjName,
-+		"the BINARY mirror retains the width-constrained assignment boundary")
- 	require.Len(t, binCast.Args, 2)
- 	require.Equal(t, "", binCast.Args[0].GetLit().GetSval(),
- 		"the cast source is the empty payload")
-@@ -124,6 +125,18 @@ func TestImplicitFilledChildDefaultExprMirrorsRuntimeFill(t *testing.T) {
- 	require.Equal(t, int32(types.T_binary), dstTyp.GetId(),
- 		"the cast lands on the column type")
- 
-+	// Exercise the conversion, not only the selected function name: a
-+	// width-constrained assignment must still mirror the runtime zero fill.
-+	proc := newPlanTestProcess(t)
-+	foldedBinary, err := ConstantFold(batch.EmptyForConstFoldBatch, DeepCopyExpr(binExpr), proc, false, true)
-+	require.NoError(t, err)
-+	require.NotNil(t, foldedBinary.GetLit())
-+	require.Equal(t, "\x00\x00", foldedBinary.GetLit().GetSval(), "BINARY(2) fills with exactly two zero bytes")
-+	foldedVarbinary, err := ConstantFold(batch.EmptyForConstFoldBatch, DeepCopyExpr(varbinExpr), proc, false, true)
-+	require.NoError(t, err)
-+	require.NotNil(t, foldedVarbinary.GetLit())
-+	require.Equal(t, "", foldedVarbinary.GetLit().GetSval(), "VARBINARY remains empty without fixed-width padding")
-+
- 	// The write side stores a filled value for these families (zero uuid,
- 	// json null payload) but the plan has no constant for it: the caller must
- 	// drop the MATCH-SIMPLE exemption while checking the raw column.
-```
-
-**File**: `pkg/sql/plan/build_alter_table.go` (modified, +9/-0)
-```diff
-@@ -274,6 +274,15 @@ func buildAlterTableCopy(stmt *tree.AlterTable, cctx CompilerContext, bindings a
- 	}
- 
- 	// 2. split alter_option list
-+	// A binary conversion must validate the source identity before MODIFY or
-+	// CONVERT can erase unsupported persisted collation metadata.
-+	for _, option := range stmt.Options {
-+		if charset, ok := option.(*tree.TableOptionCharset); ok && charset.Convert && strings.EqualFold(charset.Charset, "binary") {
-+			if err := plan.RequireLegacyCollations(tableDef); err != nil {
-+				return nil, err
-+			}
-+		}
-+	}
- 	copyTableDef, err := buildCopyTableDef(ctx, tableDef)
- 	if err != nil {
- 		return nil, err
-```
-
-**File**: `pkg/sql/plan/build_alter_table_test.go` (modified, +105/-0)
-```diff
-@@ -2719,3 +2719,108 @@ func TestCheckChangeTypeCompatibleVectorDimension(t *testing.T) {
- 	require.NoError(t, checkChangeTypeCompatible(ctx, vec(types.T_varchar, 10), vec(types.T_varchar, 20)),
- 		"a non-vector same-type width change is unaffected")
- }
-+
-+func TestAlterBinaryConversionPreservesDeclaredCapacity(t *testing.T) {
-+	databaseDefaultsProtocol(t, defines.MORPCVersion129)
-+	for _, tc := range []struct {
-+		source string
-+		target types.T
-+	}{
-+		{"char(2)", types.T_binary},
-+		{"varchar(2)", types.T_varbinary},
-+		{"text", types.T_blob},
-+	} {
-+		t.Run(tc.source, func(t *testing.T) {
-+			mock := newAutoIncrementAlterOptimizer(t)
-+			definition, err := buildTestCreateTableStmt(mock, "create table capacity_source(v "+tc.source+")")
-+			require.NoError(t, err)
-+			original := mock.ctxt.tables["auto_incr_t"]
-+			original.Cols[1].Typ = definition.Cols[0].Typ
-+			original.DefaultCharset = definition.DefaultCharset
-+			before, err := original.Marshal()
-+			require.NoError(t, err)
-+			p, err := buildSingleStmt(mock, t, "ALTER TABLE constraint_test.auto_incr_t CONVERT TO CHARACTER SET binary")
-+			require.NoError(t, err)
-+			copy := p.GetDdl().GetAlterTable().CopyTableDef
-+			require.Equal(t, int32(tc.target), copy.Cols[1].Typ.Id)
-+			require.Equal(t, original.Cols[1].Typ.Width, copy.Cols[1].Typ.Width)
-+			require.Zero(t, copy.Cols[1].Typ.CollationVersion)
-+			require.Equal(t, uint32(types.CharsetBinary), copy.DefaultCharset)
-+			after, err := original.Marshal()
-+			require.NoError(t, err)
-+			require.Equal(t, before, after)
-+		})
-+	}
-+	for _, corrupt := range []func(*TableDef){
-+		func(td *TableDef) { td.Cols[1].Typ.Charset = 4; td.Cols[1].Typ.CollationVersion = 1 },
-+		func(td *TableDef) { td.KeyFormat = 1 },
-+		func(td *TableDef) { td.Cols[1].Typ.Charset = 256 },
-+	} {
-+		mock := newAutoIncrementAlterOptimizer(t)
-+		original := mock.ctxt.tables["auto_incr_t"]
-+		original.Cols[1].Typ = Type{Id: int32(types.T_varchar), Width: 2}
-+		corrupt(original)
-+		before, err := original.Marshal()
-+		require.NoError(t, err)
-+		_, err = buildSingleStmt(mock, t, "ALTER TABLE constraint_test.auto_incr_t CONVERT TO CHARACTER SET binary")
-+		require.Error(t, err)
-+		after, err := original.Marshal()
-+		require.NoError(t, err)
-+		require.Equal(t, before, after, "rejected source metadata must remain unchanged")
-+	}
-+}
-+
-+func TestAlterBinaryConvertAlgorithm(t *testing.T) {
-+	for _, tc := range []struct {
-+		sql  string
-+		want plan.AlterTable_AlgorithmType
-+	}{
-+		{"ALTER TABLE t CONVERT TO CHARACTER SET binary", plan.AlterTable_COPY},
-+		{"ALTER TABLE t DEFAULT CHARACTER SET binary", plan.AlterTable_INPLACE},
-+		{"ALTER TABLE t CONVERT TO CHARACTER SET utf8mb4", plan.AlterTable_COPY},
-+	} {
-+		t.Run(tc.sql, func(t *testing.T) {
-+			stmt, err := mysql.ParseOne(context.Background(), tc.sql, 1)
-+			require.NoError(t, err)
-+			defer stmt.Free()
-+			got, err := ResolveAlterTableAlgorithm(context.Background(), stmt.(*tree.AlterTable).Options, &TableDef{})
-+			require.NoError(t, err)
-+			require.Equal(t, tc.want, got)
-+		})
-+	}
-+}
-+
-+func TestAlterBinaryConversionUsesFinalCombinedSchema(t *testing.T) {
-+	databaseDefaultsProtocol(t, defines.MORPCVersion129)
-+	for _, clauses := range []string{
-+		"ADD COLUMN extra VARCHAR(2) CHARACTER SET utf8mb4, CONVERT TO CHARACTER SET binary",
-+		"ADD COLUMN (extra VARCHAR(2), extra2 VARCHAR(2)), CONVERT TO CHARACTER SET binary",
-+		"CONVERT TO CHARACTER SET binary, ADD COLUMN (extra VARCHAR(2), extra2 VARCHAR(2))",
-+		"CONVERT TO CHARACTER SET binary, ADD COLUMN extra VARCHAR(2) CHARACTER SET utf8mb4",
-+		"MODIFY COLUMN v VARCHAR(2) CHARACTER SET utf8mb4, CONVERT TO CHARACTER SET binary",
-+		"CONVERT TO CHARACTER SET binary, MODIFY COLUMN v VARCHAR(2) CHARACTER SET utf8mb4",
-+		"CHANGE COLUMN v value_col VARCHAR(2) CHARACTER SET utf8mb4, CONVERT TO CHARACTER SET binary",
-+		"CONVERT TO CHARACTER SET binary, CHANGE COLUMN v value_col VARCHAR(2) CHARACTER SET utf8mb4",
-+	} {
-+		t.Run(clauses, func(t *testing.T) {
-+			mock := newAutoIncrementAlterOptimizer(t)
-+			old := mock.ctxt.tables["auto_incr_t"]
-+			old.Cols[1].Typ = Type{Id: int32(types.T_varchar), Width: 2, Charset: uint32(types.CharsetUTF8)}
-+			before, err := old.Marshal()
-+			require.NoError(t, err)
-+			p, err := buildSingleStmt(mock, t, "ALTER TABLE constraint_test.auto_incr_t "+clauses)
-+			require.NoError(t, err)
-+			copy := p.GetDdl().GetAlterTable().CopyTableDef
-+			for _, col := range copy.Cols {
-+				if col.Name == "v" || col.Name == "extra" || col.Name == "extra2" || col.Name == "value_col" {
-+					require.Equal(t, int32(types.T_varbinary), col.Typ.Id)
-+					require.Equal(t, int32(2), col.Typ.Width)
-+				}
-+			}
-+			require.Equal(t, uint32(types.CharsetBinary), copy.DefaultCharset)
-+			after, err := old.Marshal()
-+			require.NoError(t, err)
-+			require.Equal(t, before, after)
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `4df268ea` (2026-11-11)
-**Commit Message**: fix(task): preserve SQL task execution ownership (#32331)
-
-## What type of PR is this?
-
-- [x] API-change
-- [x] BUG
-- [x] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [x] Test and CI
-- [x] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #32279
-Fixes #32280
-Fixes #32281
-
-Part of #32278.
-
-## What this PR does / why we need it:
-
-A SQL task that was still executing could lose exclusion after 24 hours.
-Delayed repair could then change a later run, while separate commits for
-an async firing and its run result could leave inconsistent metadata.
-
-- Bind admission, retries and completion to the exact firing, run,
-runner and epoch. Preserve exclusion across DROP/recreation, atomically
-publish run/firing outcomes, and reconcile uncertain commits before an
-executor retries SQL.
-- Keep known outcomes in bounded, service-owned metadata receipts;
-recovery publishes metadata without replaying business SQL. A runner
-stopped before an executor wrapper claims a firing leaves that firing
-available for recovery instead of marking it failed.
-- Keep the parent admission guard, but group same-parent firings within
-a fetched batch and reconsider held work through bounded hints and fair
-scans. R
-
-**File**: `docs/design/20261025-decimal-unsigned-zerofill.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- # DECIMAL UNSIGNED and ZEROFILL attributes
- 
--Catalog-upgrade routing follows [the current 4.0.7 design](20261028-catalog-upgrade-407.md); draft version-chain references below do not define additional supported upgrade sources or handlers.
-+Catalog-upgrade routing follows [the current 4.0.7 design](20261028-catalog-upgrade-407.md); draft version-chain and offset references below reflect review history and do not define additional supported upgrade sources or handlers.
- 
- Issue: [#30940](https://github.com/matrixorigin/matrixone/issues/30940)
- (consolidated tracker, includes the independent report
-```
-
-**File**: `docs/design/20261026-declared-catalog-metadata-publication-and-repair.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- # Declared catalog metadata: publication admission and account repair
- 
--The maintained upgrade target is [4.0.7/41](20261028-catalog-upgrade-407.md). This supersedes earlier draft references below to 4.0.18/19 successor routes; those handlers are retired. Stored-view history recognition remains supported independently.
-+The maintained upgrade target is [4.0.7](20261028-catalog-upgrade-407.md), with an offset determined by its registered entries. This supersedes earlier draft references below to 4.0.18/19 successor routes; those handlers are retired. Stored-view history recognition remains supported independently.
- 
- Status: revision 16 (2026-10-30) - documentation-only evidence
- linkage on top of revision 15; the delivered design content remains
-```
-
-**File**: `docs/design/20261028-catalog-upgrade-407.md` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ Status: design reviewed; validation is required for the final change before deli
- 
- The original #31490 design considered stopped, intact 4.1 and 4.2 deployments. For the #32278 follow-up, the supported source is a stopped 4.2 release upgraded directly to current main; intermediate main versions, mixed-version operation and downgrade are out of scope. References to a 4.1 source below describe the earlier design, not an additional acceptance target for this follow-up. This boundary does not erase older data: a 4.2 source can contain snapshots created before that release. The migration must preserve data, existing snapshot records and retention. Ambiguous historical snapshot ownership must follow the user's explicit decision: pause and obtain administrator confirmation by snapshot UUID; do not guess from the snapshot name alone.
- 
--The target catalog version is `4.0.7`, above published 4.2's `4.0.6/5`; its offset follows the existing handler metadata contract and is fixed when the final entry set is frozen. Freeze the released 4.0.6 effects; place necessary subsequent effects in 4.0.7, using the version/tenant task and startup reconciliation owners described below. Do not register unpublished 4.0.8–4.0.19 identities as new upgrade steps. Before release, fold the later COLUMNS and prefix-aware STATISTICS refreshes into the existing 4.0.7 entries: 27 tenant entries and 14 cluster entries, offset 41. COLUMNS uses the current declared-type definition; STATISTICS uses the current numeric prefix-length projection, with SQL NULL for whole-column indexes. This explicitly supersedes the previous assumption that main's unreleased 4.0.7 was already frozen. Its identity becomes immutable when released, not merely when merged into main. Preserve unrelated current-main behavior.
-+The target catalog version is `4.0.7`, above published 4.2's `4.0.6/5`; its offset follows the existing handler metadata contract and is fixed when the final entry set is frozen. Freeze the released 4.0.6 effects; place necessary subsequent effects in 4.0.7, using the version/tenant task and startup reconciliation owners described below. Do not register unpublished 4.0.8–4.0.19 identities as new upgrade steps. Before release, fold the later COLUMNS and prefix-aware STATISTICS refreshes into the existing 4.0.7 entries: 27 tenant entries and 17 cluster entries, offset 44 after the three SQL-task ownership entries. COLUMNS uses the current declared-type definition; STATISTICS uses the current numeric prefix-length projection, with SQL NULL for whole-column indexes. This explicitly supersedes the previous assumption that main's unreleased 4.0.7 was already frozen. Its identity becomes immutable when released, not merely when merged into main. Preserve unrelated current-main behavior.
- 
- On a v4.2.6 source, unmodified main reached 4.0.17 and retained the sampled user rows, but lacked foreign-key metadata columns and UDF `arg_types`: main had appended them to the already-consumed 4.0.6 handler. On a freshly initialized v4.1.0 source, first startup on PR head timed out waiting for query-ready CN inventory while the older upgrade route had not yet created `mo_view_refresh`. On one unmodified restart, the route created that table and the CN appeared in query-ready inventory about two seconds later. The source fixture had working indexed/FK tables, a function, a procedure and account snapshots. After the resumed upgrade, table/tenant rows and FK enforcement remained, but the function, procedure and restoring the 4.1 account snapshot all failed because `sql_mode` was missing; historical table reads still worked.
- 
-```
-
-**File**: `docs/design/20261106-sql-task-completion-ownership.md` (added, +412/-0)
-```diff
-@@ -0,0 +1,412 @@
-+# SQL task execution ownership and recovery
-+
-+Implementation: [PR #32331](https://github.com/matrixorigin/matrixone/pull/32331).
-+Issues: [#32279](https://github.com/matrixorigin/matrixone/issues/32279),
-+[#32280](https://github.com/matrixorigin/matrixone/issues/32280), and
-+[#32281](https://github.com/matrixorigin/matrixone/issues/32281).
-+
-+## Problem and scope
-+
-+A SQL task with no timeout may run indefinitely, including across several
-+statements. Age, CN membership, and a heartbeat timeout do not prove that its
-+SQL has stopped. The existing age reaper can therefore admit a second run
-+while the first is still executing. The async failure repair also guesses a run
-+from task/account/CN, and can corrupt a later run; async completion and run
-+repair can be committed separately, leaving a permanent RUNNING record.
-+
-+Fix #32279, #32280 and #32281 together at the task-storage boundary. Ordinary
-+SQL statements receive no additional query, RPC or per-statement check.
-+
-+## Design decision
-+
-+| Approach | Correctness and recovery | Cost and limitation |
-+| --- | --- | --- |
-+| Existing age-based reaper and guessed repair | Can admit overlapping SQL and modify the wrong run; split commits can strand RUNNING metadata. | Small, but does not satisfy the ownership contract. |
-+| Lease and fence every business effect | A lease cannot itself stop SQL; fencing is safe only where every effect, including external effects, accepts the fence. | Broad execution and integration changes, with a new availability dependency. |
-+| Durable replicated result journal | Could recover known results after the executor process is lost. | Adds persistent infrastructure, upgrade, bounded admission and crash-recovery obligations. |
-+| Atomic run/async identity and bounded live receipts (selected) | Prevents guessed ownership changes and lets the live service publish a known outcome without rerunning SQL. | A process loss may retain RUNNING and need operator reconciliation; receipts are not durable. |
-+
-+The selected boundary addresses all three failures without adding a check to
-+ordinary SQL. It deliberately does not claim exactly-once business effects or
-+automatic recovery when the owner and its in-memory receipts are lost.
-+
-+## Ownership and normal execution
-+
-+* Under the definition row lock, an existing RUNNING run for the same
-+  `(account_id, task_name)` blocks admission, even if the definition was
-+  dropped and recreated. Duration and timeout alone never release it.
-+* A scheduled async row has one internal `sql_task_run_id` pointer. In one
-+  transaction, validate its runner/epoch, definition, schedule generation and
-+  exact firing ID; insert RUNNING and set the pointer. Manual execution uses
-+  the same RUNNING barrier without an async row. An executor starts the gate or
-+  body only after successful admission.
-+* The existing `TaskStorage` contract exposes the atomic ownership operations
-+  and bounded ID scan with value-only requests, so storage decorators can
-+  forward the same transaction boundary. `TaskService.SQLTaskService` identifies
-+  the single owner of SQL task recovery. A service wrapper must return that
-+  owner and the same authoritative storage object; otherwise admission fails
-+  before SQL. Neither a second recovery service nor a second completion path
-+  is created.
-+* Persist the known run result and complete its exact async pointer in one
-+  transaction. Retry attempts atomically finish attempt A, insert RUNNING B,
-+  and, for scheduled tasks, move the pointer before B starts; manual retries
-+  use the same transition without an async row. The already admitted executor,
-+  not a new-request admission guard, owns the retry. It can retry a failed
-+  metadata transition for at most five seconds while its execution and service
-+  remain live. An uncertain COMMIT is reconciled against the frozen result,
-+  both exact run IDs and, for a scheduled run, its runner, epoch and pointer.
-+  Only that same live executor may start B after reconciliation proves its
-+  ownership. No business SQL is run by the metadata receipt worker. Ordinary
-+  SUSPEND and SET SCHEDULE do not cancel retries of an already claimed firing.
-+  A late owner or scheduler completion
-+  must never update another run. A typed/wrapped/joined `ErrTxnUnknown` keeps
-+  the RUNNING barrier, preserves the original error, and does not rerun SQL.
-+  Once that unknown reason is durably recorded, release the receipt credit but
-+  retain RUNNING. This differs from an unknown metadata COMMIT/ACK, which
-+  retains the already known business result for reconciliation.
-+* Deleting a definition does not delete its run history. A suspended or
-+  modified schedule invalidates previously queued, unclaimed scheduled
-+  firings; ordinary business errors do not permanently disable later firings.
-+
-+Admission binds identity and reserves capacity from the locked definition,
-+not caller-supplied names; a mismatched run identity is rejected. Comp
-```
-
-**File**: `pkg/bootstrap/service_upgrade_cdc_test.go` (modified, +3/-5)
-```diff
-@@ -115,9 +115,7 @@ func TestLegacyCDCAdmissionBeforeUpgradeMutation(t *testing.T) {
- }
- 
- // TestLegacyCDCAdmissionEmptyCatalogAdmitsSourceOnward pins that a source
--// below the frozen stage with no legacy CDC tasks admits past the gate and
--// proceeds to create the consolidated route - the successor keeps upstream's
--// admission/passage contract at the 4.0.7 final.
-+// with no legacy CDC tasks admits past the gate to the pending 4.0.7 target.
- func TestLegacyCDCAdmissionEmptyCatalogAdmitsSourceOnward(t *testing.T) {
- 	runtime.RunTest("", func(runtime.Runtime) {
- 		source := v4_0_6.Handler.Metadata()
-@@ -142,8 +140,8 @@ func TestLegacyCDCAdmissionEmptyCatalogAdmitsSourceOnward(t *testing.T) {
- 		s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
- 		t.Cleanup(s.stopper.Stop)
- 		require.NoError(t, s.doCheckUpgrade(t.Context()))
--		require.Len(t, routes, 1, "a released 4.0.6 source crosses only the consolidated 4.0.7 step")
--		require.Contains(t, fmt.Sprint(routes), fmt.Sprintf("'%s', '%s', '4.0.7',", source.Version, v4_0_7.Handler.Metadata().Version))
-+		require.Len(t, routes, 1)
-+		require.Contains(t, routes[0], fmt.Sprintf("'%s', '%s', '4.0.7',", source.Version, v4_0_7.Handler.Metadata().Version))
- 	})
- }
- 
-```
-
-**File**: `pkg/bootstrap/service_upgrade_crossing_test.go` (modified, +3/-3)
-```diff
-@@ -102,7 +102,7 @@ func (db *crossingFakeDB) exec(sql string) (executor.Result, error) {
- 	case sql == versions.LatestVersionSQL:
- 		v := db.latest
- 		if db.finalExists {
--			v = versions.Version{Version: "4.0.7", VersionOffset: 41, State: db.finalState}
-+			v = versions.Version{Version: "4.0.7", VersionOffset: v4_0_7.Handler.Metadata().VersionOffset, State: db.finalState}
- 		}
- 		return recoveryVersionResult(db.t, v), nil
- 	case strings.HasPrefix(sql, "select state from mo_version"):
-@@ -263,7 +263,7 @@ func (db *crossingFakeDB) mutations() []string {
- func newCrossingService(t *testing.T, db *crossingFakeDB) *service {
- 	t.Helper()
- 	s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, db,
--		func(s *service) { s.initUpgrade() })
-+		(*service).initUpgrade)
- 	t.Cleanup(s.stopper.Stop)
- 	return s
- }
-@@ -377,7 +377,7 @@ func TestCrossingRestartMidCrossingRejectsLegacyTask(t *testing.T) {
- 		db.finalExists = true
- 		db.finalSteps = crossingFinalSteps()
- 		db.cdcTasks = [][]string{{"10001", "task-uuid", "old-task", "paused"}}
--		db.latest = versions.Version{Version: "4.0.7", VersionOffset: 41, State: versions.StateCreated}
-+		db.latest = versions.Version{Version: "4.0.7", VersionOffset: v4_0_7.Handler.Metadata().VersionOffset, State: versions.StateCreated}
- 		s := newCrossingService(t, db)
- 		err := s.doCheckUpgrade(t.Context())
- 		requireCrossingTerminalLegacyTask(t, err, "10001", "task-uuid", "paused")
-```
-
-**File**: `pkg/bootstrap/service_upgrade_recovery_test.go` (modified, +1/-1)
-```diff
-@@ -817,7 +817,7 @@ func TestV407ReadySourceDoesNotCreateAnotherRoute(t *testing.T) {
- 				return executor.Result{}, nil
- 			}
- 		}, &testTxnOperator{})
--		s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
-+		s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, (*service).initUpgrade)
- 		t.Cleanup(s.stopper.Stop)
- 		require.NoError(t, s.doCheckUpgrade(t.Context()))
- 		require.Empty(t, routes, "a completed current catalog must not create another route")
-```
-
-**File**: `pkg/bootstrap/service_upgrade_tenant_v407_test.go` (modified, +1/-1)
-```diff
-@@ -102,7 +102,7 @@ func TestManualFinalReadyAccountDoesNotReplay(t *testing.T) {
- 						return executor.Result{}, nil
- 					}
- 				}, &testTxnOperator{})
--				s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
-+				s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, (*service).initUpgrade)
- 				t.Cleanup(s.stopper.Stop)
- 				err := s.UpgradeOneTenant(t.Context(), 7)
- 				if mismatch {
++				// A transaction records its intent before enqueueing. Wait on the
++				// underlying queue, not IterWaiters, to close that observation race.
++				require.NoError(t, lockservice.WaitWaiters(lockservice.GetLockServiceByServiceID(cn.ServiceID()), 0, tableID, encoded, 2))
++				for _, view := range []string{"mo_locks()", "mo_catalog.mo_locks"} {
++					func() {
++						rows, err := db.QueryContext(ctx, "select txn_id, lock_wait, lock_content from "+vi
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32564** (2026-11-11): ci: run pinned coverage comparison on MNL2 (@Ariznawlll)
-- **PR #32554** (2026-11-11): docs(defect-hunt): record vector index cache eventual-consistency ruling (@cpegeric)
-- **PR #32535** (2026-11-11): fix: reject overflowing datetime generate_series steps (@XuPeng-SH)
-- **PR #32524** (2026-11-11): ci: add isolated CS coverage canary for PR 32523 (@Ariznawlll)
-- **PR #32517** (2026-11-11): fix(python): trim export query whitespace before terminators (@MatrixAdventurer)
-- **PR #32510** (2026-11-11): feat(plan): widen functional index expression eligibility and diagnostics (@gouhongshen)
+- **PR #32649** (2026-11-13): fix(sql): reject column privileges and render granted object scopes (@aptend)
+- **PR #32647** (2026-11-13): fix: reset int hashmap scratch before encoding (@XuPeng-SH)
+- **PR #32646** (2026-11-13): [4.2-dev] perf: backport COUNT(DISTINCT) optimizations (#27693, #28431) (@XuPeng-SH)
+- **PR #32643** (2026-11-12): test: stabilize CI fixtures and reduce test I/O (@XuPeng-SH)
+- **PR #32631** (2026-11-12): fix(lockservice): report all waiters in mo_locks (@LeftHandCold)
+- **PR #32629** (2026-11-12): Fix 4.1.6 fixture cleanup, test endpoints and WAL replay ordering (@XuPeng-SH)
 
 ---
 
@@ -3504,40 +3474,43 @@ scans. R
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. disttae): budget transaction workspace batch copies (#32458)
+## X. native preparation and stabilize CI tests (#32574)
 
 **RULE**:
-When implementing operations in `docs/design/txn-workspace-memory.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/ci/native-provenance-makeflags.test.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `56ad29d8`: disttae): budget transaction workspace batch copies (#32458). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4760bcaa`: native preparation and stabilize CI tests (#32574). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/txn-workspace-memory.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ci/native-provenance-makeflags.test.cjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# Transaction workspace allocation admission, revision 1
+const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const test = require('node:test');
 
-Owner: issue #32008; implementation PR pending. Base: 745d25375de6.
-Design-first review: PASS, reviewed before implementation in this task.
-
-Invariant: a workspace-owned physical vector allocation is admitted against its
-own lifetime account and the existing CN ledger before backing is allocated.
-Free is the sole refund owner. Source and destination copies coexist and are
-both charged. A workspace never closes the Process generation it borrowed.
-
-Each workspace lazily opens an independent generation on the Process generation's
-CN ledger, including snapshot workspaces sharing a Process. A separate mutex
-serializes creation and terminal closure without reentering the workspace mutex.
-States: absent -> open -> terminal. Terminal cannot reopen. Partial construction
-closes its private generation. Final cleanup seals/publishes the account only
-after workspace batches are cleaned; nonzero snapshots retain the existing
-release-capable tombstone semantics. Statement rollback retains earlier writes.
-
-Use the existing allocator-backed off-heap vector APIs, destination-selected
-CopyBatch, and append-only owner catalog. Preserve generic 
+// Run the real target with only the external provenance program replaced.
+function withFixture(t, run) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'mo-native-makeflags-'));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  fs.mkdirSync(path.join(dir, 'cgo'));
+  fs.mkdirSync(path.join(dir, 'pkg'));
+  fs.copyFileSync(path.join(__dirname, '..', '..', 'Makefile'), path.join(dir, 'Makefile'));
+  const log = path.join(dir, 'events');
+  const stub = path.join(dir, 'cgo', 'mo-native-provenance');
+  fs.writeFileSync(stub, '#!/bin/sh\nprintf "%s\\n" "$1" >> "$MO_NATIVE_TEST_LOG"\n' +
+    'case "$1" in prepare) echo "$MO_NATIVE_TEST_ACTION" ;; begin) ;; *) exit 1 ;; esac\n', { mode: 0o755 });
+  fs.mkdirSync(path.join(dir, 'thirdparties'));
+  for (const name of ['cgo', 'thirdparties']) {
+    fs.writeFileSync(path.join(dir, name, 'Makefile'),
+      `.PHONY: clean\nclean:\n\t@echo clean-${name} >> "$$MO_NATIVE_TEST_LOG"\n` +
+      `\t@tes
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3547,4 +3520,4 @@ CopyBatch, and append-only owner catalog. Preserve generic
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `56ad29d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4760bcaa` are properly handled with clean fallback behavior.

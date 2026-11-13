@@ -9284,3 +9284,7 @@
 | `CYCLE-20261113-UGXU` | `2026-11-13T01:57:48.738Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b36b0e67...`) |
 | `CYCLE-20261113-UIVB` | `2026-11-13T01:57:51.239Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e28f8670...`) |
 | `CYCLE-20261113-UK8W` | `2026-11-13T01:57:53.024Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c1661565...`) |
+| `CYCLE-20261113-4S18` | `2026-11-13T02:05:49.676Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5cc3fa55...`) |
+| `CYCLE-20261113-5324` | `2026-11-13T02:06:03.964Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9ca583dc...`) |
+| `CYCLE-20261113-AWU9` | `2026-11-13T02:10:35.841Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md` | Yes (`b9b4d6c9...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T02:10:54.155Z` | `oxc-project-oxc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-8C53C2BF` [Domain H] | Yes (`0ae62b34...`) |

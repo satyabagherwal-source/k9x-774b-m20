@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T01:57:52.830Z",
+  "last_updated": "2026-11-13T02:10:35.734Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43291,8 +43291,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "90e547c6",
-      "content_hash": "a9ac9d274114f5ef9b23efd9134260c478398bd7cc579b412c77313add87a74d",
+      "source_version": "437c6484",
+      "content_hash": "9ca583dce4c1e12ecf0f9a7f17abba6cd21a9e0c669ad428250ac2c2541d0478",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -43324,6 +43324,11 @@
         {
           "number": null,
           "title": "disttae): budget transaction workspace batch copies (#32458)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "native preparation and stabilize CI tests (#32574)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -43387,7 +43392,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T14:56:51.443Z",
+      "verified_at": "2026-11-13T02:06:03.822Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51793,8 +51798,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "523a0639",
-      "content_hash": "322415d5952821ad29b02a72d89a332f93eed589da857c69c4549070be9b4282",
+      "source_version": "8a6e0c14",
+      "content_hash": "5cc3fa55a4eee08d0f3a368e6e1240cfd5eb1b6b215d73cdc50d8b570daf9e20",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -51827,6 +51832,11 @@
           "number": null,
           "title": "Worker Pool Signed 32-bit Integer Overflow & Singleton Invariant",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "react-compiler): resolve computed dependencies in merged memo scopes (#29376)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 2494,
@@ -51894,7 +51904,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T07:58:39.902Z",
+      "verified_at": "2026-11-13T02:05:49.528Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -118091,7 +118101,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
       "source_version": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
-      "content_hash": "c984ece87c9ac652ce2342308f052d9c7aabd7cd1073de547575841a72ba7dd9",
+      "content_hash": "b9b4d6c977ca81cbbf4519c90d29323cda8077af673cc84fc1526f7879371be5",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -118131,7 +118141,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T02:40:33.043Z",
+      "verified_at": "2026-11-13T02:10:35.702Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

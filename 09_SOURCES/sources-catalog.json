@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "90e547c6",
+    "sourceVersion": "437c6484",
     "license": "Apache-2.0",
-    "contentHash": "a9ac9d274114f5ef9b23efd9134260c478398bd7cc579b412c77313add87a74d",
-    "lastHarvestedAt": "2026-11-11T14:56:51.597Z",
+    "contentHash": "9ca583dce4c1e12ecf0f9a7f17abba6cd21a9e0c669ad428250ac2c2541d0478",
+    "lastHarvestedAt": "2026-11-13T02:06:03.968Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "523a0639",
+    "sourceVersion": "8a6e0c14",
     "license": "MIT",
-    "contentHash": "322415d5952821ad29b02a72d89a332f93eed589da857c69c4549070be9b4282",
-    "lastHarvestedAt": "2026-11-11T07:58:40.050Z",
+    "contentHash": "5cc3fa55a4eee08d0f3a368e6e1240cfd5eb1b6b215d73cdc50d8b570daf9e20",
+    "lastHarvestedAt": "2026-11-13T02:05:49.681Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
@@ -8275,8 +8275,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "c984ece87c9ac652ce2342308f052d9c7aabd7cd1073de547575841a72ba7dd9",
-    "lastHarvestedAt": "2026-11-08T02:40:33.186Z",
+    "contentHash": "b9b4d6c977ca81cbbf4519c90d29323cda8077af673cc84fc1526f7879371be5",
+    "lastHarvestedAt": "2026-11-13T02:10:35.845Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4"
   },
   "sventiigi-whatsnewkit": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T01:39:34.250Z",
-  "total_records": 80,
+  "last_updated": "2026-11-13T02:10:54.152Z",
+  "total_records": 81,
   "domains": {
     "A": {
       "total": 1,
@@ -89,7 +89,7 @@
       ]
     },
     "H": {
-      "total": 19,
+      "total": 20,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -109,7 +109,8 @@
         "DOM-H-7D775901",
         "DOM-H-EE08D822",
         "DOM-H-B173C8F8",
-        "DOM-H-B77A0FED"
+        "DOM-H-B77A0FED",
+        "DOM-H-8C53C2BF"
       ]
     },
     "I": {
@@ -3263,6 +3264,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T01:39:34.248Z"
+    },
+    "DOM-H-8C53C2BF": {
+      "record_id": "DOM-H-8C53C2BF",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "react-compiler): resolve computed dependencies in merged memo scopes (#29376)",
+      "content": "When implementing operations in `crates/oxc_react_compiler/fixtures/use-memo-static-sibling-computed-dependency.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "0ae62b342a7b65bc96448433f8e4a14a1efe35870025952369c26e1e0c52f612",
+      "summary": "Prevents defects observed in production commit `f37f271c`: react-compiler): resolve computed dependencies in merged memo scopes (#29376). Un -> When implementing operations in `crates/oxc_react_compiler/fixtures/use-memo-static-sibling-computed-dependency.js`, engineers MUST enforce ",
+      "provenance": {
+        "source_uri": "project://oxc-project-oxc/oxc-project-oxc-learnings.md",
+        "source_version": "8a6e0c14",
+        "observed_at": "2026-11-13T02:05:37.960Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (oxc-project-oxc)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of oxc-project-oxc"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T02:10:54.150Z"
     }
   }
 }

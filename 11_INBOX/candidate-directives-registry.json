@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T01:58:00.542Z",
+  "last_updated": "2026-11-13T02:10:54.350Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7859,6 +7859,24 @@
       "source_repo": "pingcap-tidb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8D2C0A-statistics-domain-keep-stats-workers-run.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-92AA69",
+      "directive_title": "Forensic Learning Record (Deep Inspection): nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-92AA69-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-CCF34A",
+      "directive_title": "native preparation and stabilize CI tests (#32574)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "matrixorigin-matrixone",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CCF34A-native-preparation-and-stabilize-ci-test.md",
       "staged_date": "2026-11-13"
     }
   ]

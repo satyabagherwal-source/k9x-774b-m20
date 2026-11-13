@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T01:58:00.695Z",
+  "last_updated": "2026-11-13T02:10:54.391Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T01:31:37.311Z",
@@ -58,8 +58,8 @@
       "staged_for_review": 0
     },
     "oxc-project-oxc-learnings.md": {
-      "processed_at": "2026-11-11T07:59:25.573Z",
-      "promoted_canonical": 2,
+      "processed_at": "2026-11-13T02:10:54.155Z",
+      "promoted_canonical": 1,
       "staged_for_review": 0
     },
     "zed-industries-zed-learnings.md": {
@@ -363,7 +363,7 @@
       "staged_for_review": 1
     },
     "matrixorigin-matrixone-learnings.md": {
-      "processed_at": "2026-11-11T14:56:57.873Z",
+      "processed_at": "2026-11-13T02:10:54.351Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1431,9 +1431,14 @@
       "processed_at": "2026-11-13T01:58:00.516Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
+    },
+    "hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md": {
+      "processed_at": "2026-11-13T02:10:54.321Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 417,
-  "total_canonical_promoted": 47,
-  "total_staged_for_review": 368
+  "total_dossiers_evaluated": 420,
+  "total_canonical_promoted": 48,
+  "total_staged_for_review": 370
 }
