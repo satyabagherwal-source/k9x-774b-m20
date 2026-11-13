@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T17:37:39.555Z",
-  "total_cycles_completed": 9315,
-  "total_learnings_persisted": 9315,
-  "total_rules_promoted": 9062,
+  "last_updated": "2026-11-13T17:55:12.213Z",
+  "total_cycles_completed": 9317,
+  "total_learnings_persisted": 9317,
+  "total_rules_promoted": 9063,
   "history": [
-    {
-      "timestamp": "2026-11-13T03:10:52.452Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T03:18:36.971Z",
-      "repository": "agentes-chat/agentes-chat",
-      "learningId": "learn-github-agentes-chat-agentes-chat",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T03:18:41.327Z",
       "repository": "reflection/Beam-1.0-501B-A23B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T17:37:39.555Z",
       "repository": "react/react-native",
       "learningId": "learn-github-react-react-native",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T17:54:56.155Z",
+      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T17:55:12.213Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

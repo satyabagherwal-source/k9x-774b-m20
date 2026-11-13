@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T17:38:17.341Z",
+  "last_updated": "2026-11-13T17:55:48.157Z",
   "total_verified_learnings": 1265,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45942,8 +45942,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "0ff3d233",
-      "content_hash": "b900481f95d6bd141c1cd4f7adcceb165b3e01cddef2c4142d3303520a5451c2",
+      "source_version": "03d63d65",
+      "content_hash": "6c781b4bb58ccda7a5e3002f1333bce8edfcb10eb430927f92f83a8388b1cf28",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -45970,6 +45970,11 @@
         {
           "number": null,
           "title": "test: add PyUDF search, lifecycle and runtime regression coverage (#55386)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "resolve Azure Germany regions and explicit storage authorities (#55484)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -46053,7 +46058,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T12:33:05.423Z",
+      "verified_at": "2026-11-13T17:55:12.092Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -174525,7 +174530,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
       "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
-      "content_hash": "24d96531408462ac2475d39491b9bb9cd46d9d9d80aff5200713c711e18aca8f",
+      "content_hash": "47e6732abc0f83f5dac087ae583a12777c70d6972c97f175fa41ccc7fa536812",
       "dossier_path": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
       "promoted_rules": [
@@ -174550,7 +174555,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T16:58:38.330Z",
+      "verified_at": "2026-11-13T17:54:56.049Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -194748,13 +194753,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-2E8B-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-2G83-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "736e493f9adbfd660894c90c23ef8a286dfab24410353bb27d6bcc835df0914f",
+      "content_hash": "8cb0c12084f61e683cc0c2f7c14300b451b1daaabecd3f7607c233402244c728",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:59:46.195Z"
+      "persisted_at": "2026-11-13T17:55:48.008Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -194764,9 +194769,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7304d3414eb1cc9d7188295b6e26a4f9f0839f756663a6853e5a15ebe0298163",
+      "content_hash": "768641de8dd783525ec1f240afb17f8ae5e14d1b7b77785fd8a6a93d71c90556",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:59:46.308Z"
+      "persisted_at": "2026-11-13T17:55:48.083Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -194776,9 +194781,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "690a1838a91b6ee3867c58ae48d908cb4582ad5b898b47c9a6ecce06f9ffeca6",
+      "content_hash": "aacbd3d6fb26a1ba32b33b8045ca1bc5c35141225d1b92500d7738ed8aae9c5a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:59:46.434Z"
+      "persisted_at": "2026-11-13T17:55:48.157Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -195220,6 +195225,90 @@
       "content_hash": "cece8b4465c5e34a8631247b78897aa5f28587a5f4a6656090dcc3e6dc993370",
       "domain_letter": "D",
       "persisted_at": "2026-11-13T17:38:17.341Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-efficient-large-model-open-h3-regenerate-2k-research-knowledge-intelligence-e.md",
+      "title": "Research & Knowledge Intelligence: Efficient-Large-Model/Open-H3-Regenerate-2K Core Invariants",
+      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
+      "content_hash": "a828375ac87cfea0acd3516b08d6d121388992bba710c4fb87607e04d2eb9c07",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T17:54:56.287Z"
+    },
+    "candidate_directive-resolve-azure-germany-regions-and-explicit-storage-authorities-55484": {
+      "item_id": "candidate_directive-resolve-azure-germany-regions-and-explicit-storage-authorities-55484",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2FVN-resolve-azure-germany-regions-and-explicit-storage-authorities-55484.md",
+      "title": "resolve Azure Germany regions and explicit storage authorities (#55484)",
+      "repository": "milvus-io-milvus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "70b92959b099a5496abf3fc5d98961eb63dd22d95598b33b7161ada0893875ba",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T17:55:47.560Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
+      "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
+      "repository": "milvus-io/milvus",
+      "source_version": "03d63d65",
+      "content_hash": "85cfec64de8ef817e80f92047383d256981b94ef0b766d436436c99c859c0ba6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T17:55:12.440Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/milvus-io-milvus-verification-protocol-empirical-defect-shield-for-milvus-io-mil.md",
+      "title": "Verification Protocol: Empirical Defect Shield for milvus-io/milvus",
+      "repository": "milvus-io/milvus",
+      "source_version": "03d63d65",
+      "content_hash": "9296c965bec7a90d6902cde8253a889f73403a86b734b38054b4a839e260592e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T17:55:12.514Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-efficient-large-model-open-h3-regenerate-2k-learnings-research-knowledge-inte.md",
+      "title": "Research & Knowledge Intelligence: hf-efficient-large-model-open-h3-regenerate-2k-learnings Core Invariants",
+      "repository": "hf-efficient-large-model-open-h3-regenerate-2k-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f44da53b35f7cdc5ebf8b117b9278368f3b9ef9b36b21d58884115b7b09864b9",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T17:55:47.280Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-learnings-technical-construction-intelligence-milvus-io-milvus-.md",
+      "title": "Technical Construction Intelligence: milvus-io-milvus-learnings Core Invariants",
+      "repository": "milvus-io-milvus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e740148e150ba066ef713fe1b266ad61a9543fdf252b282581be565a68af75d7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T17:55:47.633Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/milvus-io-milvus-learnings-verification-protocol-empirical-defect-shield-for-mil.md",
+      "title": "Verification Protocol: Empirical Defect Shield for milvus-io-milvus-learnings",
+      "repository": "milvus-io-milvus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1ac390dc5aac5263729b4665a0fa1be0ae046a46b53436f24f01b93e9cdd452f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T17:55:47.710Z"
     }
   },
   "aliases": {
@@ -201218,5 +201307,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9216
+  "total_items": 9223
 }

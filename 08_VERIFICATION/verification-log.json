@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-PIF6",
-    "timestamp": "2026-11-12T21:42:00.834Z",
-    "repository": "zilliztech/claude-context",
-    "learningId": "learn-github-zilliztech-claude-context",
-    "contentHash": "86dd3d53128b760e038f78dc6ca592c61b619f6fa6cbd942df0272a20ee74962",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-PJ4L",
-    "timestamp": "2026-11-12T21:42:01.749Z",
-    "repository": "SynaLinks/synalinks-skills",
-    "learningId": "learn-github-synalinks-synalinks-skills",
-    "contentHash": "e720feffecbb62d8bdd5a4db0adb44cbb863d7dc6f61722e588f15a55d9c8477",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-YUCF",
     "timestamp": "2026-11-12T21:49:16.191Z",
     "repository": "medialab/xan",
@@ -7490,6 +7460,36 @@
     "repository": "react/react-native",
     "learningId": "learn-github-react-react-native",
     "contentHash": "f7f53d4a92194273686ce08c4d1407d74c26e4d4a9941befb60d4574765b2ae5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-1C7N",
+    "timestamp": "2026-11-13T17:54:56.147Z",
+    "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+    "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+    "contentHash": "47e6732abc0f83f5dac087ae583a12777c70d6972c97f175fa41ccc7fa536812",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-1OLE",
+    "timestamp": "2026-11-13T17:55:12.194Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "6c781b4bb58ccda7a5e3002f1333bce8edfcb10eb430927f92f83a8388b1cf28",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:41:41.249Z",
+  "timestamp": "2026-11-13T17:55:47.471Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-milvus-io-milvus-learnings",
+  "learning_id": "LEARN-EVO-milvus-io-milvus-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [milvus-io-milvus-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:41:41.249Z`  
-> **Learning ID**: `LEARN-REEXTRACT-milvus-io-milvus-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T17:55:47.471Z`  
+> **Learning ID**: `LEARN-EVO-milvus-io-milvus-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `0ff3d233`  
+> **Source Version**: `03d63d65`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T12:32:49.353Z  
+> **Timestamp**: 2026-11-13T17:55:11.766Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T12:32:49.342Z  
+> **Harvest Timestamp**: 2026-11-13T17:55:11.761Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46649 stars
+- **Stars / Engagement**: 46654 stars
 
 ---
 
@@ -1374,11 +1374,14 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55464** (2026-11-12): **test: [cp 3.0] harden REST import correctness and completion polling**
-  *Symptoms*: ## Summary  Backport REST import testcase repairs to 3.0 for the release nightly. Use AutoID so repeated input files produce distinct rows, poll all distinct job IDs under one deadline, and verify exact query-visible row counts and source-value multiplicity.  Keep the 1,000-job / 20,000-row correctness case at L2 and the 4.8-million-row load scenario at L3. Add pytest timeouts and the REST query helpers needed by the repaired case. Missing rows remain hard failures.  Fix the ordinary import case's deadline handling without increasing its 360-second budget. A job finished at 356.5 seconds, but the old loop returned a stale pre-sleep state and failed. Observe the final state at a monotonic deadline and report terminal failures directly.  Align NumPy Struct Array import coverage with master: job admission succeeds, then asynchronous schema validation reports Failed. Verify the specific rejection reason and unchanged existing rows. Backup/snapshot rejection assertions remain unchanged.  Related to #55454; this changes regression coverage, not server behavior.  ## Validation  - Ruff 0.15.11 lint and formatting passed for all modified Python files; dependency and diff checks passed. - Three deterministic polling regressions passed; NumPy/backup/snapshot collection selects three cases. - Full regular-suite collection selected 960 instances using PyMilvus 3.0.4rc1. - The 1,000-job case passed in the unified six-worker full-suite run on server commit `10de5d3069`, including exactly 20
+- **Issue #55508** (2026-11-13): **fix: [2.6] restore AND early exit at null-rejecting filters**
+  *Symptoms*: issue: #51181 pr: #51182  AND conjunctions keep UNKNOWN rows active even when the filter consumer excludes them together with FALSE. Backport #51182 to restore early exit for these rows at FilterBitsNode and IterativeFilterNode, while keeping strict three-valued semantics below NOT. Native iterative filtering now explicitly folds validity before selecting rows.  Preserves the inherited candidate-mask handling from #55058. The master batch-LIKE reserved-slot fix does not apply to 2.6. Includes the five applicable upstream regression tests and retains existing conjunction and mask coverage.  Validation: clang-format 15 and git diff --check pass. Compilation and runtime validation are pending CI; local-source remote test attempts were blocked before compilation by test dependency image startup failures. 
 
-- **Issue #55463** (2026-11-12): **test: harden REST import correctness and completion polling**
-  *Symptoms*: ## Summary  Concurrent REST import tests reused fixed primary keys across jobs, making their visible-row expectation unreliable. Generate primary keys with AutoID, verify distinct job IDs, poll all jobs on one deadline, and assert the exact query-visible row count and source-value multiplicity.  Keep the 1,000-job / 20,000-row correctness regression at L2 and classify the 48-job / 4.8-million-row load test as L3. Add bounded pytest timeouts. Missing rows remain hard failures.  Fix import polling at the deadline: a job that completed during the final sleep previously caused a false timeout. Use a monotonic deadline, read the final state, and retain the original 360-second budget in the ordinary import E2E case. Return immediately on a terminal failure and include the last response in assertion failures.  Related to #55454. This changes tests, not the server implementation.  ## Validation  - Ruff 0.15.11 lint and format checks passed for all modified Python files; dependency consistency and diff checks passed. - Three deterministic polling regressions passed: completion during the final interval, unfinished work at the deadline, and terminal failure. - Collection confirms the 1,000-job case is selected at L2 and the large-data case only at L3. - The repaired 1,000-job case passed with exactly 20,000 query-visible rows in the unified six-worker full-suite run on server commit `584004ae14` (642.57 seconds). - Full L0-L2 selection completed on the standard standalone profile: 1,14
+- **Issue #55493** (2026-11-13): **enhance: reduce broadcast task logger memory**
+  *Symptoms*: issue: #40451  - Broadcaster: reuse the component logger across broadcast tasks to avoid retaining a logger and encoded message per task. - Task logging: attach the task message at persistence, broadcast execution, and legacy ACK log sites to preserve message correlation.
+  **Post-Mortem & Fix Analysis**:
+  > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
+  > <!-- team2-arev:debate-D7b128574ec --> > **Must-fix issues introduced by this PR: 0** > **Merge recommendation:** Mergeable as-is — this review found no must-fix issue introduced by this PR.  Adversarial review found no issues requiring changes.  **Verified:** - `internal/streamingcoord/server/broadcaster/broadcast_task.go:132`: `SetLogger` now stores the shared component logger. Tasks no longer keep the cloned encoder buffer and message reference that `logger.With(mlog.FieldMessage(b.msg))` created for each task. - `internal/streamingcoord/server/broadcaster/broadcast_task.go:664`: `saveTaskIfDirty` reads `b.msg` directly, and all three callers hold `b.mu` at that point. The callers are `InitializeRecovery`, `ack` (through `Ack`/`FastAck`) and `MarkAckCallbackDone`. There is no unlocked read and no recursive locking. - `internal/streamingcoord/server/broadcaster/pending_broadcast_task.go:54`: the five `Execute` log sites call `BroadcastMessage()` without already holding the non-reentr
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1395,1018 +1398,484 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34e03edc` (2026-11-12)
-**Commit Message**: test: add PyUDF search, lifecycle and runtime regression coverage (#55386)
+### Incident Patch 1: `5ce39ad7` (2026-11-13)
+**Commit Message**: fix: resolve Azure Germany regions and explicit storage authorities (#55484)
 
-Add Python SDK and REST regression coverage for PyUDF search,
-resource/snapshot lifecycles, index combinations, admission,
-cancellation and worker pools. Preserve strict score and lifecycle
-assertions while sharing resource fixtures and independent workload
-oracles.
+issue: #55483
 
-System workloads run through pytest in
-`tests/python_client/system_tests/pyudf/`, with combined `L3` and
-`pyudf` tags. Fixtures retain live clients and prepared inputs through
-each scenario and own cleanup, including partial setup failures. STOP
-guards cover preparation, baseline queries, audits and load. Probe
-cleanup attempts every owned resource and preserves the original failure
-alongside cleanup errors. Tests and custom environment definitions
-belong in Milvus; test-jobs owns orchestration.
+External collections on Azure cannot be read when the storage account is
+in `germanywestcentral` or `germanynorth`. Spec producers write
+`azure://core.windows.net/<container>/<blob>` with the account's region.
+`DeriveEndpoint` maps every `germany*` region to `core.cloudapi.de`
+(Microsoft Cloud Germany, closed in October 2021), so native injection
+set the address to `core.cloudapi.de` and the container to
+`core.windows.net`.
 
-ABBA and batch measurements are independently selectable for
-HNSW/DISKANN, so rerunning the six-minute batch matrix no longer
-requires the preceding fifty-minute instrumentation/ABBA phase. Worker
-counters use an explicit UDF subclass and atomic PID-bound snapshots,
-without source-text rewriting or unused mmap files. SDK cases use
-standard index types 
+- Drop the `germany*` rule in the Go and C++ `DeriveEndpoint`; those
+regions are public Azure on `core.windows.net`.
+- In native injection, a bare Azure Storage authority in the source host
+wins over the region-derived authority, as endpoint hosts of the other
+clouds already do. An Azure container name cannot contain a dot, so such
+a host is never a container. This also covers other region/authority
+mismatches, for example `chinaeast2` with `core.windows.net`.
 
-**File**: `tests/python_client/base/client_v2_pyudf_base.py` (added, +344/-0)
+### Validation
+- `pkg/util/externalspec` tests, `go vet` and golangci-lint pass.
+- C++ `InjectExtfsAllowlist.*` and the related external-table suites (92
+tests) pass on a local build with this patch applied; the 
+
+**File**: `internal/core/src/storage/loon_ffi/util.cpp` (modified, +25/-4)
 ```diff
-@@ -0,0 +1,344 @@
-+"""Owned wheel, collection and permission lifecycles for PyUDF SDK cases."""
-+
-+import io
-+import time
-+from contextlib import ExitStack, contextmanager
-+
-+import grpc
-+import pytest
-+from base.client_v2_base import TestMilvusClientV2Base
-+from common import common_func as cf
-+from common.common_type import CheckTasks
-+from common.pyudf_helpers import build_wheel
-+from pymilvus import DataType, FunctionChain, FunctionChainStage, MilvusClient
-+from pymilvus.function_chain import col
-+from pymilvus.function_chain.chain import FunctionChainExpr
-+
-+
-+class PyUDFClientBase(TestMilvusClientV2Base):
-+    """Share fixture ownership without importing or inheriting collected tests."""
-+
-+    dim = 2
-+    vector_field = "vector"
-+    scalar_field = "ts"
-+
-+    @staticmethod
-+    def _pyudf_management_config(request, key):
-+        import requests
-+
-+        endpoint = request.config.getoption("--pyudf-management-endpoint")
-+        assert endpoint, "requires --pyudf-management-endpoint pointing to the coordinator management service"
-+        response = requests.get(
-+            endpoint.rstrip("/") + "/management/config/get",
-+            params={"keys": key},
-+            timeout=10,
-+        )
-+        response.raise_for_status()
-+        entry = response.json()["configs"][0]
-+        assert entry["key"] == key and "value" in entry, entry
-+        return entry["value"]
-+
-+    @staticmethod
-+    def _build_wheel(tmp_path, package_name, module=None, entry_points=None):
-+        wheel_path = tmp_path / f"{package_name}-0.0.1-py3-none-any.whl"
-+        if module is None:
-+            module = """import pyarrow as pa
-+
-+
-+class UDF:
-+    def __init__(self, context):
-+        self.context = context
-+
-+    def transform_query(self, params, columns):
-+        factor = float(params.get("factor", 1.0))
-+        values = [float(value.as_py()) * factor for value in columns[1]]
-+        return [pa.array(values, type=pa.float32())]
-+
-+
-+def create_udf(context):
-+    return UDF(context)
-+"""
-+        wheel_path.write_bytes(build_wheel(package_name, module, entry_points=entry_points))
-+        return wheel_path
-+
-+    @staticmethod
-+    def _hit_field(hit, field):
-+        if field in hit:
-+            return hit[field]
-+        return hit.get("entity", {}).get(field)
-+
-+    @staticmethod
-+    def _remove_file_resource(client, resource_name, timeout=30):
-+        deadline = time.time() + timeout
-+        while time.time() < deadline:
-+            try:
-+                client.remove_file_resource(name=resource_name)
-+                return
-+            except Exception as exc:
-+                if "not found" in str(exc):
-+                    return
-+                time.sleep(1)
-+        client.remove_file_resource(name=resource_name)
-+
-+    def _search_with_synced_resource(
-+        self, client, collection_name, chain, timeout=30, data=None, limit=3, search_params=None, **kwargs
-+    ):
-+        deadline = time.time() + timeout
-+        queries = [[0.0, 0.0]] if data is None else data
-+        while True:
-+            try:
-+                return client.search(
-+                    collection_name=collection_name,
-+                    data=queries,
-+                    anns_field=self.vector_field,
-+                    search_params={"metric_type": "L2"} if search_params is None else search_params,
-+                    limit=limit,
-+                    output_fields=[self.scalar_field],
-+                    function_chains=chain,
-+                    **kwargs,
-+                )
-+            except Exception as exc:
-+                message = str(exc)
-+                transient = (
-+                    "file resource snapshot is not ready" in message
-+                    or "file resource" in message
-+                    and "not found" in message
-+                )
-+                if not transient or time.time() >= deadline:
-+                    raise
-+                time.sleep(1)
-+
-+    def _wait_for_removed_pyudf(self, client, collection_name, chain, resource_name, timeout=30):
-+        deadline = time.time() + timeout
-+        while True:
-+            try:
-+                client.search(
-+                    collection_name=collection_name,
-+                    data=[[0.0, 0.0]],
-+                    anns_field=self.vector_field,
-+                    search_params={"metric_type": "L2"},
-+                    limit=3,
-+                    output_fields=[self.scalar_field],
-+                    function_chains=chain,
-+                )
-+            except Exception as exc:
-+                message = str(exc)
-+                if "py_udf: file resource" in message and resource_name in message and "not found" in message:
-+                    return
-+                raise
-+            if time.time() >= deadline:
-+                raise AssertionError(f"removed PyUDF resource {resource_name!r} remains executable")
-+            time.sleep(1)
-+
-+    @contextmanager
-+    def _pyudf_test_environment(
-+        self,
-+ 
-```
-
-**File**: `tests/python_client/common/pyudf_helpers.py` (modified, +15/-20)
-```diff
-@@ -1,17 +1,17 @@
- """Small PyUDF fixtures shared by CI tests."""
- 
--import errno
- import io
--import socket
- import zipfile
- 
- 
--def build_wheel(package, module):
-+def build_wheel(package, module, *, entry_points=None):
-     """Build a wheel containing only the supplied UDF module and entry point."""
-     output = io.BytesIO()
-     files = {
-         f"{package}/__init__.py": module,
--        f"{package}-0.0.1.dist-info/entry_points.txt": f"[milvus.pyudf]\nmain = {package}:create_udf\n",
-+        f"{package}-0.0.1.dist-info/entry_points.txt": (
-+            f"[milvus.pyudf]\nmain = {package}:create_udf\n" if entry_points is None else entry_points
-+        ),
-         f"{package}-0.0.1.dist-info/METADATA": f"Metadata-Version: 2.1\nName: {package}\nVersion: 0.0.1\n",
+@@ -544,9 +544,8 @@ DeriveEndpoint(const std::string& cloud_provider, const std::string& region) {
+         if (r.rfind("usgov", 0) == 0 || r.rfind("usdod", 0) == 0) {
+             return "core.usgovcloudapi.net";
+         }
+-        if (r.rfind("germany", 0) == 0) {
+-            return "core.cloudapi.de";
+-        }
++        // Microsoft Cloud Germany (core.cloudapi.de) closed in October 2021;
++        // germanywestcentral and germanynorth are public Azure regions.
+         return "core.windows.net";
      }
-     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_STORED) as wheel:
-@@ -20,19 +20,14 @@ def build_wheel(package, module):
-     return output.getvalue()
- 
- 
--def probe_endpoint(host, public_port=19530, worker_port=19090):
--    """Check only the supplied address; a Service address does not prove Pod isolation."""
--    observed = {}
--    for label, port in (("public_api", public_port), ("worker_rpc", worker_port)):
--        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as connection:
--            connection.settimeout(2)
--            observed[label] = {"port": port, "tcp_connect_code": connection.connect_ex((host, port))}
--    assert observed["public_api"]["tcp_connect_code"] == 0, observed
--    assert observed["worker_rpc"]["tcp_connect_code"] in {
--        errno.ECONNREFUSED,
--        errno.ETIMEDOUT,
--        errno.EHOSTUNREACH,
--        errno.ENETUNREACH,
--        errno.EAGAIN,
--    }, observed
--    return {"observation": observed}
-+def assert_pyudf_deadline(call):
-+    import grpc
-+    import pytest
-+    from pymilvus import MilvusException
+     return "";
+@@ -565,6 +564,19 @@ StripURIScheme(const std::string& addr) {
+ // family, the URI is Milvus-form regardless of whether DeriveEndpoint(cp,
+ // region) equals the host string. Keep list in sync with Go
+ // externalspec.IsCloudEndpointHost.
++// IsAzureStorageAuthority returns true for the bare Azure Storage
++// authorities that azure://<authority>/<container>/<blob> names. An Azure
++// container name cannot contain a dot, so such a host is never a container.
++static bool
++IsAzureStorageAuthority(const std::string& host) {
++    std::string h = host;
++    std::transform(h.begin(), h.end(), h.begin(), [](unsigned char c) {
++        return std::tolower(c);
++    });
++    return h == "core.windows.net" || h == "core.chinacloudapi.cn" ||
++           h == "core.usgovcloudapi.net" || h == "core.cloudapi.de";
++}
 +
-+    with pytest.raises((MilvusException, grpc.RpcError)) as caught:
-+        call()
-+    if isinstance(caught.value, grpc.RpcError):
-+        assert caught.value.code() == grpc.StatusCode.DEADLINE_EXCEEDED, caught.value
-+    else:
-+        assert caught.value.code == 10001, caught.value
+ static bool
+ IsCloudEndpointHost(const std::string& host) {
+     std::string h = host;
+@@ -949,7 +961,16 @@ InjectExternalSpecProperties(
+         // regardless of whether DeriveEndpoint string-matches. This prevents
+         // misclassifying `s3://s3.amazonaws.com/bucket/key` as AWS-form when
+         // spec.region is a regional value.
+-        bool uri_host_is_cloud_endpoint = IsCloudEndpointHost(host);
++        // A bare Azure Storage authority is the endpoint the source names, so
++        // it also wins over the region-derived authority.
++        std::string spec_cp = spec_cloud_provider;
++        std::transform(spec_cp.begin(),
++                       spec_cp.end(),
++                       spec_cp.begin(),
++                       [](unsigned char c) { return std::tolower(c); });
++        bool uri_host_is_cloud_endpoint =
++            IsCloudEndpointHost(host) ||
++            (spec_cp == "azure" && IsAzureStorageAuthority(host));
+         if (!uri_host_is_cloud_endpoint && !derived.empty() &&
+             StripURIScheme(derived) != host) {
+             milvus_storage::api::SetValue(
 ```
 
-**File**: `tests/python_client/conftest.py` (modified, +5/-0)
+**File**: `internal/core/unittest/test_external_take.cpp` (modified, +75/-1)
 ```diff
-@@ -43,6 +43,11 @@
- 
- 
- def pytest_addoption(parser):
-+    parser.addoption(
-+        "--pyudf-expected-commit",
-+        default=None,
-+        help="Optional deployed Git commit prefix for dedicated PyUDF profiles.",
-+    )
-     parser.addoption(
-         "--struct-max-array-capacity",
-         type=int,
-```
-
-**File**: `tests/python_client/milvus_client/test_milvus_client_pyudf.py` (modified, +37/-350)
-```diff
-@@ -3,11 +3,11 @@
- import time
- import zipfile
- from concurrent.futures import ThreadPoolExecutor
--from contextlib import ExitStack, contextmanager
-+from contextlib import ExitStack
- 
- import grpc
- import pytest
--from base.client_v2_base import TestMilvusClientV2Base
-+from base.client_v2_pyudf_base import PyUDFClientBase
- from common import common_func as cf
- from common.common_type import CaseLabel, CheckTasks
- from google.protobuf.message import DecodeError
-@@ -30,115 +30,19 @@
- prefix = "pyudf"
- 
- 
--class TestMilvusClientPyUDF(TestMilvusClientV2Base):
-+class TestMilvusClientPyUDF(PyUDFClientBase):
-     """End-to-end tests for PyUDF-backed FunctionChain reranking."""
- 
-     dim = 2
-     vector_field = "vector"
-     scalar_field = "ts"
- 
--    @staticmethod
--    def _pyudf_management_config(request, key):
--        import requests
--
--        endpoint = request.config.getoption("--pyudf-management-endpoint")
--        assert endpoint, "requires --pyudf-management-endpoint pointing to the coordinator management service"
--        response = requests.get(
--            endpoint.rstrip("/") + "/management/config/get",
--            params={"keys": key},
--            timeout=10,
--        )
--        response.raise_for_status()
--        entry = response.json()["configs"][0]
--        assert entry["key"] == key and "value" in entry, entry
--        return entry["value"]
--
--    @staticmethod
--    def _build_wheel(tmp_path, package_name, module=None, entry_points=None):
--        wheel_path = tmp_path / f"{package_name}-0.0.1-py3-none-any.whl"
--        if module is None:
--            module = """import pyarrow as pa
--
--
--class UDF:
--    def __init__(self, context):
--        self.context = context
--
--    def transform_query(self, params, columns):
--        factor = float(params.get("factor", 1.0))
--        values = [float(value.as_py()) * factor for value in columns[1]]
--        return [pa.array(values, type=pa.float32())]
--
--
--def create_udf(context):
--    return UDF(context)
--"""
--        dist_info = f"{package_name}-0.0.1.dist-info"
--        with zipfile.ZipFile(wheel_path, "w", compression=zipfile.ZIP_STORED) as wheel:
--            wheel.writestr(f"{package_name}/__init__.py", module)
--            wheel.writestr(
--                f"{dist_info}/entry_points.txt",
--                f"[milvus.pyudf]\nmain = {package_name}:create_udf\n" if entry_points is None else entry_points,
--            )
--            wheel.writestr(
--                f"{dist_info}/METADATA",
--                f"Metadata-Version: 2.1\nName: {package_name}\nVersion: 0.0.1\n",
--            )
--        return wheel_path
--
--    @staticmethod
--    def _hit_field(hit, field):
--        if field in hit:
--            return hit[field]
--        return hit.get("entity", {}).get(field)
--
-     @staticmethod
-     def _assert_intermediate_field_absent(hits, field):
-         for hit in hits:
-             assert field not in hit, hit
-             assert field not in hit.get("entity", {}), hit
- 
--    @staticmethod
--    def _remove_file_resource(client, resource_name, timeout=30):
--        deadline = time.time() + timeout
--        while time.time() < deadline:
--            try:
--                client.remove_file_resource(name=resource_name)
--                return
--            except Exception as exc:
--                if "not found" in str(exc):
--                    return
--                time.sleep(1)
--        client.remove_file_resource(name=resource_name)
--
--    def _search_with_synced_resource(
--        self, client, collection_name, chain, timeout=30, data=None, limit=3, search_params=None, **kwargs
--    ):
--        deadline = time.time() + timeout
--        queries = [[0.0, 0.0]] if data is None else data
--        while True:
--            try:
--                return client.search(
--                    collection_name=collection_name,
--                    data=queries,
--                    anns_field=self.vector_field,
--                    search_params={"metric_type": "L2"} if search_params is None else search_params,
--                    limit=limit,
--                    output_fields=[self.scalar_field],
--                    function_chains=chain,
--                    **kwargs,
--                )
--            except Exception as exc:
--                message = str(exc)
--                transient = (
--                    "file resource snapshot is not ready" in message
--                    or "file resource" in message
--                    and "not found" in message
--                )
--                if not transient or time.time() >= deadline:
--                    raise
--                time.sleep(1)
--
-     def _wait_for_file_resource_absent(self, client, resource_name, timeout=30):
-         deadline = time.time() + timeout
-         while True:
-@@ -150,192 +54,6 @@ def _wait_for_file_resource_absent(self, client, resource_name, timeout=30):
-                 raise AssertionError(f"file resource {resource_name!r} was not removed")
-             time.sleep(1)
- 
--    def
-```
-
-**File**: `tests/python_client/milvus_client/test_milvus_client_pyudf_concurrency.py` (added, +655/-0)
-```diff
-@@ -0,0 +1,655 @@
-+"""Search admission, cancellation and worker-pool concurrency on dedicated profiles."""
-+
-+import io
-+import json
-+import statistics
-+import sys
-+import threading
-+import time
-+import uuid
-+from concurrent.futures import ThreadPoolExecutor, as_completed
-+from functools import partial
-+
-+import pyarrow as pa
-+import pytest
-+import requests
-+from common import common_func as cf
-+from common.pyudf_helpers import assert_pyudf_deadline, build_wheel
-+from minio import Minio
-+from pymilvus import FunctionChain, FunctionChainStage, MilvusClient, MilvusException
-+from pymilvus.function_chain import col
-+from pymilvus.function_chain.chain import FunctionChainExpr
-+from workloads.pyudf.probe import pyudf_probe
-+
-+
-+@pytest.fixture
-+def runtime_connection(minio_host, minio_bucket):
-+    uri = cf.param_info.param_uri or f"http://{cf.param_info.param_host}:{cf.param_info.param_port}"
-+    token = cf.param_info.param_token or f"{cf.param_info.param_user}:{cf.param_info.param_password}"
-+    client = MilvusClient(uri, token=token)
-+    storage = Minio(f"{minio_host}:9000", access_key="minioadmin", secret_key="minioadmin", secure=False)
-+    try:
-+        yield client, storage, minio_bucket
-+    finally:
-+        client.close()
-+
-+
-+def require_config(request, expected):
-+    endpoint = request.config.getoption("--pyudf-management-endpoint")
-+    assert endpoint, "This L3 selection requires its isolated runtime management endpoint"
-+    for key, value in expected.items():
-+        response = requests.get(endpoint.rstrip("/") + "/management/config/get", params={"keys": key}, timeout=10)
-+        response.raise_for_status()
-+        assert response.json()["configs"][0]["value"] == str(value), response.json()
-+
-+
-+def cleanup_runtime_resources(runtime_connection, registered, uploaded, observer_cleanup=None):
-+    """Attempt every owned cleanup and retain any failure active in the caller's finally block."""
-+    failure = sys.exception()
-+    client, storage, bucket = runtime_connection
-+    operations = []
-+    if observer_cleanup is not None:
-+        operations.append(("remove cancellation marker", observer_cleanup))
-+    operations.extend(
-+        (f"remove resource {name}", partial(client.remove_file_resource, name, timeout=30)) for name in registered
-+    )
-+    operations.extend(
-+        (f"remove wheel object {path}", partial(storage.remove_object, bucket, path)) for path in uploaded
-+    )
-+    errors = []
-+    for operation, remove in operations:
-+        try:
-+            remove()
-+        except Exception as error:
-+            error.add_note(operation)
-+            errors.append(error)
-+    if errors:
-+        raise BaseExceptionGroup("PyUDF runtime cleanup failed", ([failure] if failure is not None else []) + errors)
-+
-+
-+def wait_for_full_admission(futures):
-+    """Observe a real capacity rejection without assuming which caller arrived first."""
-+    rejected = next(as_completed(futures, timeout=3))
-+    with pytest.raises(MilvusException) as error:
-+        rejected.result()
-+    assert error.value.code == 12, f"No full admission window observed: {error.value}"
-+    assert "Concurrent RPC limit exceeded" in str(error.value), error.value
-+    return [future for future in futures if future is not rejected]
-+
-+
-+@pytest.mark.tags("L3", "pyudf")
-+def test_pyudf_expired_active_call_retains_capacity_until_actual_completion(
-+    request, runtime_connection, record_property
-+):
-+    """target: late admission; method: wait past deadline; expected: executing Python retains capacity."""
-+    require_config(
-+        request,
-+        {
-+            "function.pyUDF.server.workerCount": 1,
-+            "function.pyUDF.server.grpcConcurrency": 1,
-+            "function.pyUDF.server.maxConcurrentRPCs": 2,
-+            "function.pyUDF.rpcTimeout": "5s",
-+        },
-+    )
-+    with pyudf_probe(*runtime_connection) as probe:
-+
-+        def invoke(mode, timeout):
-+            return probe.client.search(
-+                probe.name,
-+                data=[[0.0, 0.0]],
-+                anns_field="vector",
-+                limit=3,
-+                search_params={"metric_type": "L2"},
-+                function_chains=probe.chain(mode),
-+                timeout=timeout,
-+                retry_on_rate_limit=False,
-+            )
-+
-+        begin = time.monotonic()
-+        try:
-+            with ThreadPoolExecutor(max_workers=2) as pool:
-+                active = pool.submit(invoke, "server_timeout", 12)
-+                assert_pyudf_deadline(lambda: active.result(timeout=7))
-+                assert 4.5 < time.monotonic() - begin < 7, "Service deadline did not occur before Python completion"
-+                # Either contender may take the remaining slot. Its peer's
-+                # capacity rejection is the observable full-admission barrier.
-+                contenders = [pool.submit(invoke, "normal", 1) for _ in range(2)]
-+                pending = wait_for_full_admission(contenders)
-+                with p
-```
-
-**File**: `tests/python_client/milvus_client/test_milvus_client_pyudf_disabled.py` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ def require_disabled_profile(self, request):
-         if not request.config.getoption("--run-pyudf-disabled"):
-             pytest.skip("requires --run-pyudf-disabled and a dedicated PyUDF-disabled deployment")
- 
--    @pytest.mark.tags(CaseLabel.L3)
-+    @pytest.mark.tags(CaseLabel.L3, "pyudf")
-     @pytest.mark.parametrize("nq", [1, 2])
-     def test_pyudf_disabled_rejects_nonempty_search_without_affecting_search(self, nq):
-         """
-```
-
-**File**: `tests/python_client/milvus_client/test_milvus_client_pyudf_embedding_list.py` (modified, +1/-1)
-```diff
-@@ -261,7 +261,7 @@ def test_pyudf_embedding_list_preserves_scores_and_fields(self, minio_host, mini
-             control = self._synced_search(client, self._request(name, nq, chain=self._chain(resource)))
-             self._assert_results(control, nq, [1, 2, 3], reranked=True)
- 
--    @pytest.mark.tags(CaseLabel.L3)
-+    @pytest.mark.tags(CaseLabel.L3, "pyudf")
-     @pytest.mark.parametrize("element_level", [False, True], ids=["embedding_list", "element"])
-     def test_pyudf_indexed_array_search_preserves_scores_and_fields(
-         self, minio_host, minio_bucket, request, record_property, element_level
-```
-
-**File**: `tests/python_client/milvus_client/test_milvus_client_pyudf_runtime.py` (added, +203/-0)
-```diff
-@@ -0,0 +1,203 @@
-+"""Search-level runtime contracts on a single enabled PyUDF worker."""
-+
-+import time
-+
-+import grpc
-+import pytest
-+from common import common_func as cf
-+from minio import Minio
-+from pymilvus import DataType, FunctionChain, FunctionChainStage, MilvusClient, MilvusException
-+from pymilvus.function_chain import col, fn
-+from pymilvus.function_chain.chain import FunctionChainExpr
-+from workloads.pyudf.probe import pyudf_probe
-+
-+
-+@pytest.fixture
-+def probe_connection(minio_host, minio_bucket):
-+    uri = cf.param_info.param_uri or f"http://{cf.param_info.param_host}:{cf.param_info.param_port}"
-+    token = cf.param_info.param_token or f"{cf.param_info.param_user}:{cf.param_info.param_password}"
-+    client = MilvusClient(uri, token=token)
-+    storage = Minio(f"{minio_host}:9000", access_key="minioadmin", secret_key="minioadmin", secure=False)
-+    try:
-+        yield client, storage, minio_bucket
-+    finally:
-+        client.close()
-+
-+
-+@pytest.fixture
-+def owned_probe(probe_connection, request):
-+    with pyudf_probe(*probe_connection, string_pk=True, metric=getattr(request, "param", "L2")) as probe:
-+        yield probe
-+
-+
-+@pytest.mark.tags("L1")
-+def test_pyudf_unicode_primary_key_multiple_queries(owned_probe):
-+    """Unicode primary keys and scalar payloads stay aligned for every query."""
-+    owned_probe.check(with_udf=False, nq=4)
-+    owned_probe.check(nq=4)
-+
-+
-+@pytest.mark.tags("L1")
-+def test_pyudf_map_preserves_candidate_order_without_sort(owned_probe):
-+    chain = FunctionChain(FunctionChainStage.L2_RERANK).map(
-+        "$score", FunctionChainExpr("py_udf", args=(col("ts"),), params={"resource_name": owned_probe.resource})
-+    )
-+    results = owned_probe.client.search(
-+        owned_probe.name,
-+        data=[[0.0, 0.0]],
-+        anns_field="vector",
-+        limit=3,
-+        search_params={"metric_type": "L2"},
-+        function_chains=chain,
-+    )
-+    assert [hit["id"] for hit in results[0]] == owned_probe.ids
-+    assert [hit["distance"] for hit in results[0]] == [20, 40, 60]
-+    owned_probe.check()
-+
-+
-+@pytest.mark.tags("L2")
-+@pytest.mark.parametrize("owned_probe", ["L2", "IP"], indirect=True)
-+@pytest.mark.parametrize("order", [(0, 1, 2), (2, 0, 1), (1, 2, 0)])
-+def test_pyudf_composes_with_builtin_l0_l1_in_stage_order(owned_probe, order):
-+    l0 = FunctionChain(FunctionChainStage.L0_RERANK).map("$score", fn.num_combine(col("ts"), col("ts"), mode="sum"))
-+    l1 = FunctionChain(FunctionChainStage.L1_RERANK).map("$score", fn.num_combine(col("$score"), col("ts"), mode="sum"))
-+    l2 = (
-+        FunctionChain(FunctionChainStage.L2_RERANK)
-+        .map(
-+            "$score", FunctionChainExpr("py_udf", args=(col("$score"),), params={"resource_name": owned_probe.resource})
-+        )
-+        .sort(col("$score"), desc=True, tie_break_col=col("$id"))
-+    )
-+    stages = [l0, l1, l2]
-+    results = owned_probe.client.search(
-+        owned_probe.name,
-+        data=[[0.0, 0.0]] * 2,
-+        anns_field="vector",
-+        limit=3,
-+        search_params={"metric_type": owned_probe.metric},
-+        output_fields=["ts"],
-+        function_chains=[stages[index] for index in order],
-+    )
-+    assert len(results) == 2, results
-+    for hits in results:
-+        assert [hit["id"] for hit in hits] == list(reversed(owned_probe.ids))
-+        assert [hit["distance"] for hit in hits] == [180, 120, 60]
-+        assert [hit["entity"]["ts"] for hit in hits] == [30, 20, 10]
-+    owned_probe.check()
-+
-+
-+@pytest.mark.tags("L1")
-+@pytest.mark.parametrize("mode,code", [("system_exit", 5), ("os_error", 2400), ("memory_error", 3)])
-+def test_pyudf_exception_origin_and_recovery(owned_probe, mode, code):
-+    """User exception origins survive the entire worker-to-Search error path."""
-+    with pytest.raises(MilvusException) as caught:
-+        owned_probe.search(mode)
-+    assert caught.value.code == code, caught.value
-+    assert "qa_synthetic_" + mode in str(caught.value), caught.value
-+    owned_probe.check(with_udf=False)
-+    owned_probe.check()
-+
-+
-+@pytest.mark.tags("L2")
-+@pytest.mark.parametrize(
-+    "kind,metric",
-+    [
-+        *[
-+            (kind, metric)
-+            for kind in (DataType.FLOAT_VECTOR, DataType.FLOAT16_VECTOR, DataType.BFLOAT16_VECTOR, DataType.INT8_VECTOR)
-+            for metric in ("L2", "IP", "COSINE")
-+        ],
-+        (DataType.BINARY_VECTOR, "HAMMING"),
-+        (DataType.BINARY_VECTOR, "JACCARD"),
-+        (DataType.SPARSE_FLOAT_VECTOR, "IP"),
-+    ],
-+)
-+def test_pyudf_vector_recall_types_preserve_scalar_rerank(probe_connection, kind, metric, record_property):
-+    """All candidates are retained; vector encoding must not alter scalar/ID alignment."""
-+    with pyudf_probe(*probe_connection, vector_kind=kind, metric=metric) as probe:
-+        probe.check(with_udf=False, nq=2)
-+        probe.check(nq=2)
-+        probe.client.release_collection(probe.name)
-+        probe.client.load_collection(probe.name)
-+        probe.check(wi
-```
-
----
-
-### Incident Patch 2: `6666a559` (2026-11-12)
-**Commit Message**: test: fix snapshot checker drain and query pagination assumptions (#55270)
-
-Two independent test assumptions caused nightly failures: snapshot
-restore may poll for 300 seconds while checker teardown waits only 180
-seconds, and pagination over repeated price values assumes a
-deterministic order among equal keys.
-
-Allow a shared, bounded 600-second checker drain deadline for in-flight
-restore and cleanup. Use the unique primary key for the pagination case
-and verify the exact complete ordered ID sequence across all 3,200 rows.
-Keep operation success thresholds and the stuck-thread failure intact.
-
-Validation:
-- Python SDK E2E: pagination, ascending order, and descending order all
-pass (3/3).
-- Controlled clock validation reproduces the old 180-second failure for
-a 253-second operation, verifies successful draining, and verifies that
-hung threads still fail under one shared deadline.
-- Ruff 0.15.11 lint and format checks, Python compilation/collection,
-and git diff checks pass.
-- The repository license configuration covers internal Go files; no
-matching files are changed.
-
-The full chaos scenario has not been rerun. The drain check verifies
-harness behavior, not snapshot correctness u
-
-**File**: `tests/python_client/chaos/chaos_commons.py` (modified, +3/-1)
-```diff
-@@ -9,7 +9,9 @@
- from utils.util_log import test_log as log
- from yaml import full_load
- 
--DEFAULT_MONITOR_JOIN_TIMEOUT_SECONDS = 180
-+# Snapshot restore can poll for 300 seconds before verification and cleanup.
-+# Keep a bounded shared drain deadline that covers an in-flight restore.
-+DEFAULT_MONITOR_JOIN_TIMEOUT_SECONDS = 600
- 
- 
- def check_config(chaos_config):
-```
-
-**File**: `tests/python_client/milvus_client/test_milvus_client_query_order.py` (modified, +9/-13)
-```diff
-@@ -464,9 +464,10 @@ def test_query_order_by_bool_field(self):
- 
-     @pytest.mark.tags(CaseLabel.L2)
-     def test_query_order_by_pagination(self):
--        """OB-020~023: Pagination with a single ORDER BY field."""
-+        """OB-020~023: Pagination with a unique ORDER BY field."""
-         client = self._client()
--        order_by = [{"field": "price", "order": "asc"}]
-+        # Equal prices have no stable order across independent page requests.
-+        order_by = [{"field": "id", "order": "asc"}]
- 
-         # --- OB-020: Page 1 and Page 2 consistency ---
-         page1 = self.query(
-@@ -494,14 +495,14 @@ def test_query_order_by_pagination(self):
-         ids1 = {r["id"] for r in page1}
-         ids2 = {r["id"] for r in page2}
-         assert ids1.isdisjoint(ids2), f"Overlap between pages: {ids1 & ids2}"
--        assert page1[-1]["price"] <= page2[0]["price"], (
--            f"Pages not contiguous: page1 last {page1[-1]['price']} > page2 first {page2[0]['price']}"
-+        assert page1[-1]["id"] <= page2[0]["id"], (
-+            f"Pages not contiguous: page1 last {page1[-1]['id']} > page2 first {page2[0]['id']}"
-         )
- 
-         # --- OB-021: Multi-page full traversal ---
-         page_size = 100
-         all_ids = set()
--        all_prices = []
-+        ordered_ids = []
-         offset = 0
-         while True:
-             page = self.query(
-@@ -519,15 +520,12 @@ def test_query_order_by_pagination(self):
-             page_ids = {r["id"] for r in page}
-             assert page_ids.isdisjoint(all_ids), f"Duplicate ids at offset {offset}"
-             all_ids.update(page_ids)
--            all_prices.extend([r["price"] for r in page])
-+            ordered_ids.extend([r["id"] for r in page])
-             offset += page_size
-             if offset > default_nb + 1000:
-                 break
-         assert len(all_ids) == default_nb, f"Expected {default_nb} total rows, got {len(all_ids)}"
--        for i in range(len(all_prices) - 1):
--            assert all_prices[i] <= all_prices[i + 1], (
--                f"Global sort broken at index {i}: {all_prices[i]} > {all_prices[i + 1]}"
--            )
-+        assert ordered_ids == list(range(default_nb)), "Pagination must return every ID exactly once in order"
- 
-         # --- OB-022: Offset exceeds total rows (but within topK cap 16384) ---
-         # Data has 3200 rows, offset=4000 is beyond data but offset+limit=4010 < 16384
-@@ -555,9 +553,7 @@ def test_query_order_by_pagination(self):
-             consistency_level="Strong",
-         )[0]
-         assert len(res) == default_nb
--        prices = [r["price"] for r in res]
--        for i in range(len(prices) - 1):
--            assert prices[i] <= prices[i + 1]
-+        assert [r["id"] for r in res] == list(range(default_nb))
-         log.info(f"OB-023: limit=16000, returned {len(res)} rows (total={default_nb})")
- 
-     # ==================== 5.5 L1: Nullable Field Handling ====================
-```
-
----
-
-### Incident Patch 3: `584004ae` (2026-11-12)
-**Commit Message**: fix: restore TSan compatibility and enforce native GCC checks (#55129)
-
-## What changed
-
-Fix LLVM 20 TSan build and runtime compatibility after #53895.
-
-- Keep libomp and libarcher interceptor exclusions consistent to prevent
-false double-lock reports, while retaining Archer synchronization
-annotations.
-- Add distinct-lock and memcpy race controls to guard against missed
-application races.
-- Fix Clang list-initialization narrowing errors in bitmap and BSON
-index resource accounting.
-- Skip the shared precompiled header for VectorMemBuilder.cpp, whose
-source-specific definitions and SSE4.2 options differ from the PCH.
-
-- Treat narrowing conversions and invalid precompiled headers as errors
-for first-party Linux/GCC C++ targets, including unit tests and
-benchmarks. Exclude third-party targets and generated protobuf targets;
-keep TSan disabled in ordinary PR builds.
-- Run lightweight compiler regression fixtures through the existing
-cppcheck target, covering valid PCH use, both rejected error cases,
-nested targets, and C/generated/vendor exclusions.
-
-issue: #53763
-
-## Verification
-
-- GCC 12.3 compiler regression fixtures passed: six positive controls
-and two expected compilation failu
-
-**File**: `Makefile` (modified, +1/-0)
-```diff
-@@ -229,6 +229,7 @@ tools/bin/revive: tools/check/go.mod
- cppcheck:
- 	@#(env bash ${PWD}/scripts/core_build.sh -l)
- 	@(env bash ${PWD}/scripts/check_cpp_fmt.sh)
-+	@cmake -DWORK_DIR=$(PWD)/cmake_build/compile-checks -P $(PWD)/internal/core/unittest/check_compile_options.cmake
- 
- rustfmt:
- 	@echo  "Running cargo format"
-```
-
-**File**: `docs/design-docs/design_docs/20260928-native-thread-sanitizer.md` (modified, +9/-4)
-```diff
-@@ -124,10 +124,15 @@ CMake also installs `libomp.so.5`, `libarcher.so`, the shared compiler-rt and a
- `milvus-archer` marker. Launchers activate OMPT through `OMP_TOOL=enabled` and
- an absolute `OMP_TOOL_LIBRARIES` path.
- 
--The installed `tsan.supp` suppresses reports originating in uninstrumented
--`libomp` internals by library name. Interceptor reports from Milvus and other
--libraries remain enabled. A memcpy race probe checks this along with the
--existing ordinary load/store and OpenMP probes.
-+The installed `tsan.supp` ignores interceptor calls originating in uninstrumented
-+`libomp` and `libarcher` internals by library name. Both libraries must be listed:
-+Archer's mutex unlock can be tail-called, leaving a return address in `libomp`,
-+while its matching lock has a return address in `libarcher`. Ignoring only one
-+side leaves TSan with an incomplete lock history. Archer's explicit
-+happens-before annotations remain active. Interceptor reports from Milvus and
-+other libraries remain enabled. The probes check ordinary load/store and memcpy
-+races, OpenMP synchronization, races under distinct OpenMP locks, and memcpy
-+races inside OpenMP regions.
- 
- External image builders must set `MILVUS_JEMALLOC_LIB` to an empty build
- argument, `MILVUS_ARCHER_LIB=/milvus/lib/libarcher.so`, and `MILVUS_TSAN_OPTIONS`
-```
-
-**File**: `internal/core/CMakeLists.txt` (modified, +9/-0)
-```diff
-@@ -425,6 +425,15 @@ if ( BUILD_UNIT_TEST STREQUAL "ON" )
-     add_subdirectory(benchmark)
- endif ()
- 
-+# Use the same checks in normal, verifier and coverage builds. These operate
-+# on first-party targets only; no additional compiler or sanitizer build runs.
-+include(CompileChecks)
-+milvus_enable_cpp_compile_checks("${CMAKE_CURRENT_SOURCE_DIR}/src")
-+if ( BUILD_UNIT_TEST STREQUAL "ON" )
-+    milvus_enable_cpp_compile_checks("${CMAKE_CURRENT_SOURCE_DIR}/unittest")
-+    milvus_enable_cpp_compile_checks("${CMAKE_CURRENT_SOURCE_DIR}/benchmark")
-+endif ()
-+
- add_custom_target( Clean-All COMMAND ${CMAKE_BUILD_TOOL} clean )
- 
- # **************************** Install ****************************
-```
-
-**File**: `internal/core/cmake/CompileChecks.cmake` (added, +43/-0)
-```diff
-@@ -0,0 +1,43 @@
-+# Licensed to the LF AI & Data foundation under one
-+# or more contributor license agreements. See the NOTICE file
-+# distributed with this work for additional information
-+# regarding copyright ownership. The ASF licenses this file
-+# to you under the Apache License, Version 2.0 (the
-+# "License"); you may not use this file except in compliance
-+# with the License. You may obtain a copy of the License at
-+#
-+# http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+include_guard(GLOBAL)
-+
-+# Apply after target creation so new first-party targets inherit the checks
-+# without changing third-party build flags or generated protobuf sources.
-+function(milvus_enable_cpp_compile_checks directory)
-+    if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux" OR
-+       NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-+        return()
-+    endif()
-+    if(directory STREQUAL "${MILVUS_SOURCE_DIR}/src/pb")
-+        return()
-+    endif()
-+
-+    get_property(targets DIRECTORY "${directory}" PROPERTY BUILDSYSTEM_TARGETS)
-+    foreach(target IN LISTS targets)
-+        get_target_property(type "${target}" TYPE)
-+        if(type MATCHES "^(OBJECT_LIBRARY|STATIC_LIBRARY|SHARED_LIBRARY|MODULE_LIBRARY|EXECUTABLE)$")
-+            target_compile_options("${target}" PRIVATE
-+                "$<$<COMPILE_LANGUAGE:CXX>:-Werror=narrowing>"
-+                "$<$<COMPILE_LANGUAGE:CXX>:-Werror=invalid-pch>")
-+        endif()
-+    endforeach()
-+    get_property(children DIRECTORY "${directory}" PROPERTY SUBDIRECTORIES)
-+    foreach(child IN LISTS children)
-+        milvus_enable_cpp_compile_checks("${child}")
-+    endforeach()
-+endfunction()
-```
-
-**File**: `internal/core/src/index/CMakeLists.txt` (modified, +4/-1)
-```diff
-@@ -15,8 +15,11 @@ list(FILTER SOURCE_FILES EXCLUDE REGEX "^test_utils/")
- 
- # Match Knowhere's layout for the inline reservation release used by empty
- # embedding lists, without changing unrelated consumers' header definitions.
-+# Its source-specific definitions and target features differ from the target's
-+# PCH, so compile this translation unit without the shared precompiled header.
- set_source_files_properties(vector/VectorMemBuilder.cpp
--    PROPERTIES COMPILE_DEFINITIONS NOT_COMPILE_FOR_SWIG)
-+    PROPERTIES COMPILE_DEFINITIONS NOT_COMPILE_FOR_SWIG
-+               SKIP_PRECOMPILE_HEADERS ON)
- if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-     set_property(SOURCE vector/VectorMemBuilder.cpp APPEND
-         PROPERTY COMPILE_OPTIONS -msse4.2)
-```
-
-**File**: `internal/core/src/index/LoadResource.cpp` (modified, +3/-2)
-```diff
-@@ -619,8 +619,9 @@ LegacyScalarIndexLoadResourceAsync(
-                 .value_or(false)) {
-             resident = SaturatingAdd(
-                 resident,
--                SaturatingMultiply(uint64_t{std::max<int64_t>(0, rows)},
--                                   sizeof(void*)));
-+                SaturatingMultiply(
-+                    static_cast<uint64_t>(std::max<int64_t>(0, rows)),
-+                    sizeof(void*)));
-         }
-         request.final_memory_cost =
-             std::max(request.final_memory_cost,
-```
-
-**File**: `internal/core/src/index/LoadResourceTest.cpp` (modified, +4/-4)
-```diff
-@@ -500,13 +500,13 @@ TEST(LegacyLoadResourceTest, SegmentMetadataPreservesFileAwareEstimates) {
-                 translator.EstimatedResources();
-             const auto transient = private_overhead + shared_overhead;
-             EXPECT_EQ(resident,
--                      (cachinglayer::ResourceUsage{expected.final_memory_cost,
--                                                   expected.final_disk_cost}));
-+                      (cachinglayer::ResourceUsage(expected.final_memory_cost,
-+                                                   expected.final_disk_cost)));
-             EXPECT_EQ(
-                 transient,
--                (cachinglayer::ResourceUsage{
-+                (cachinglayer::ResourceUsage(
-                     expected.max_memory_cost - expected.final_memory_cost,
--                    2 * expected.max_disk_cost - expected.final_disk_cost}));
-+                    2 * expected.max_disk_cost - expected.final_disk_cost)));
-         }
+@@ -3982,7 +3982,9 @@ TEST(InjectExtfsAllowlist, AzureSovereignCloudEndpoints) {
+         {"chinaeast", "core.chinacloudapi.cn"},
+         {"usgovvirginia", "core.usgovcloudapi.net"},
+         {"usdodcentral", "core.usgovcloudapi.net"},
+-        {"germanynortheast", "core.cloudapi.de"},
++        // Microsoft Cloud Germany closed; these are public Azure regions.
++        {"germanywestcentral", "core.windows.net"},
++        {"germanynorth", "core.windows.net"},
+         {"eastus", "core.windows.net"},
+     };
+     for (const auto& c : cases) {
+@@ -4001,6 +4003,78 @@ TEST(InjectExtfsAllowlist, AzureSovereignCloudEndpoints) {
      }
  }
+ 
++// Spec producers write azure://core.windows.net/<container>/<blob> together
++// with the storage account's region. The authority in the source wins over the
++// region-derived one, so a region never turns the authority into a container.
++TEST(InjectExtfsAllowlist, AzureAuthorityHostWinsOverRegion) {
++    // The native policy is process-wide and immutable: reuse the allowlist
++    // that the other Broker tests in this binary install.
++    const std::string endpoint =
++        "https://broker.example.com/v1/credentials/assume-role";
++    ASSERT_TRUE(
++        InitCredentialBrokerPolicy(
++            std::string(
++                R"(["https://broker.example.com/v1/credentials/assume-role","https://broker.example.com/v1/credentials/assume-role?api-version=1&scope=a%2Fb+x"])"))
++            .ok());
++    struct Case {
++        std::string source;
++        std::string region;
++        std::string address;
++    };
++    const std::vector<Case> cases = {
++        {"azure://core.windows.net/ctr/dir/file.parquet",
++         "westeurope",
++         "core.windows.net"},
++        {"azure://core.windows.net/ctr/dir/file.parquet",
++         "germanywestcentral",
++         "core.windows.net"},
++        {"azure://core.windows.net/ctr/dir/file.parquet",
++         "germanynorth",
++         "core.windows.net"},
++        {"azure://core.windows.net/ctr/dir/file.parquet",
++         "chinaeast2",
++         "core.windows.net"},
++        {"azure://core.windows.net/ctr/dir/file.parquet",
++         "usgovvirginia",
++         "core.windows.net"},
++        {"azure://core.chinacloudapi.cn/ctr/dir/file.parquet",
++         "eastus",
++         "core.chinacloudapi.cn"},
++        {"azure://CORE.WINDOWS.NET/ctr/dir/file.parquet",
++         "eastus",
++         "CORE.WINDOWS.NET"},
++    };
++    for (const auto& c : cases) {
++        SCOPED_TRACE(c.source + " region=" + c.region);
++        // The target-mode spec the Zilliz Cloud control plane builds.
++        nlohmann::json spec = {{"format", "parquet"},
++                               {"extfs",
++                                {{"cloud_provider", "azure"},
++                                 {"region", c.region},
++                                 {"access_key_id", "account"},
++                                 {"azure_client_id", "client"},
++                                 {"azure_tenant_id", "tenant"},
++                                 {"azure_credential_endpoint", endpoint},
++                                 {"load_frequency", "3600"}}}};
++        milvus_storage::api::Properties props;
++        ::InjectExternalSpecProperties(props, 42, c.source, spec.dump());
++        EXPECT_EQ(std::get<std::string>(props.at("extfs.42.address")),
++                  c.address);
++        EXPECT_EQ(std::get<std::string>(props.at("extfs.42.bucket_name")),
++                  "ctr");
++    }
++    // A container host still takes its authority from the region.
++    milvus_storage::api::Properties props;
++    ::InjectExternalSpecProperties(
++        props,
++        42,
++        "azure://ctr/dir/file.parquet",
++        R"({"format":"parquet","extfs":{"cloud_provider":"azure","region":"germanywestcentral","access_key_id":"account","access_key_value":"KEY"}})");
++    EXPECT_EQ(std::get<std::string>(props.at("extfs.42.address")),
++              "core.windows.net");
++    EXPECT_EQ(std::get<std::string>(props.at("extfs.42.bucket_name")), "ctr");
++}
++
+ TEST(InjectExtfsAllowlist, AzuriteMilvusFormURIUsesHostAsEndpoint) {
+     // Azurite / Azure Stack Hub: custom endpoint expressed via Milvus-form URI
+     // (path has ≥2 segments). URI.host is authoritative; cp+region are
 ```
 
-**File**: `internal/core/src/index/scalar/json/JsonProjectedHybridIndexBuilderTest.cpp` (modified, +12/-12)
+**File**: `pkg/util/externalspec/external_spec.go` (modified, +2/-3)
 ```diff
-@@ -119,10 +119,10 @@ TEST(JsonProjectedHybridIndexBuilderTest, LowCardinalityStringsSelectBitmap) {
-     ASSERT_NO_FATAL_FAILURE(ExpectSelector(persisted, ScalarIndexType::BITMAP));
-     const auto& backend = ScalarReaderBackends().Get<std::string_view>(
-         "JsonProjectedHybridVarchar");
--    auto reader = OpenV3(backend,
--                         persisted,
--                         {.row_count = static_cast<int64_t>(raw.size()),
--                          .values = {{JSON_PATH, "/x"}}});
-+    auto reader =
-+        OpenV3(backend,
-+               persisted,
-+               {.row_count = raw.size(), .values = {{JSON_PATH, "/x"}}});
-     ASSERT_NE(reader, nullptr);
-     const auto* json = dynamic_cast<const IJsonIndexReader*>(reader.get());
-     ASSERT_NE(json, nullptr);
-@@ -151,10 +151,10 @@ TEST(JsonProjectedHybridIndexBuilderTest, HighCardinalityNumbersSelectSorted) {
-         ExpectSelector(persisted, ScalarIndexType::STLSORT));
-     const auto& backend =
-         ScalarReaderBackends().Get<double>("JsonProjectedHybridDouble");
--    auto reader = OpenV3(backend,
--                         persisted,
--                         {.row_count = static_cast<int64_t>(raw.size()),
--                          .values = {{JSON_PATH, "/n"}}});
-+    auto reader =
-+        OpenV3(backend,
-+               persisted,
-+               {.row_count = raw.size(), .values = {{JSON_PATH, "/n"}}});
-     ASSERT_NE(reader, nullptr);
-     const auto* json = dynamic_cast<const IJsonIndexReader*>(reader.get());
-     ASSERT_NE(json, nullptr);
-@@ -181,10 +181,10 @@ TEST(JsonProjectedHybridIndexBuilderTest,
-     ASSERT_NO_FATAL_FAILURE(ExpectSelector(persisted, ScalarIndexType::BITMAP));
-     const auto& backend =
-         ScalarReaderBackends().Get<double>("JsonProjectedHybridDouble");
--    auto reader = OpenV3(backend,
--                         persisted,
--                         {.row_count = static_cast<int64_t>(raw.size()),
--                          .values = {{JSON_PATH, "/v"}}});
-+    auto reader =
-+        OpenV3(backend,
-+               persisted,
-+               {.row_count = raw.size(), .values = {{JSON_PATH, "/v"}}});
-     ASSERT_NE(reader, nullptr);
-     const auto* json = dynamic_cast<const IJsonIndexReader*>(reader.get());
-     ASSERT_NE(json, nullptr);
+@@ -630,9 +630,8 @@ func DeriveEndpoint(cloudProvider, region string) string {
+ 		if strings.HasPrefix(r, "usgov") || strings.HasPrefix(r, "usdod") {
+ 			return "core.usgovcloudapi.net"
+ 		}
+-		if strings.HasPrefix(r, "germany") {
+-			return "core.cloudapi.de"
+-		}
++		// Microsoft Cloud Germany (core.cloudapi.de) closed in October 2021;
++		// germanywestcentral and germanynorth are public Azure regions.
+ 		return "core.windows.net"
+ 	}
+ 	return ""
+```
+
+**File**: `pkg/util/externalspec/external_spec_test.go` (modified, +2/-1)
+```diff
+@@ -797,7 +797,8 @@ func TestDeriveEndpoint(t *testing.T) {
+ 		{"azure_china", CloudProviderAzure, "china", "core.chinacloudapi.cn"},
+ 		{"azure_usgov", CloudProviderAzure, "usgov", "core.usgovcloudapi.net"},
+ 		{"azure_usdod", CloudProviderAzure, "usdod", "core.usgovcloudapi.net"},
+-		{"azure_germany", CloudProviderAzure, "germany", "core.cloudapi.de"},
++		{"azure_germany_west_central", CloudProviderAzure, "germanywestcentral", "core.windows.net"},
++		{"azure_germany_north", CloudProviderAzure, "germanynorth", "core.windows.net"},
+ 		{"azure_public", CloudProviderAzure, "public", "core.windows.net"},
+ 		{"case_insensitive_provider", "AWS", "us-east-1", "https://s3.us-east-1.amazonaws.com"},
+ 		{"unknown_provider", "minio", "us-east-1", ""},
+```
+
+---
+
+### Incident Patch 2: `b66a69d2` (2026-11-13)
+**Commit Message**: enhance: raise default bounded staleness (common.gracefulTime) to 60s (#55480)
+
+## What
+
+Raise the default of `common.gracefulTime` (the staleness bound of
+Bounded consistency) from 5000ms to 60000ms, in
+`pkg/util/paramtable/component_param.go` and `configs/milvus.yaml`. The
+value stays configurable and refreshable; the proxy reads it per
+request.
+
+Strong, Session, Customized and Eventually reads are not affected: only
+the Bounded branch of `parseGuaranteeTs` /
+`parseGuaranteeTsFromConsistency` uses it.
+
+## Why
+
+For a Bounded read the proxy sets the guarantee timestamp to `now -
+gracefulTime`, and the delegator waits in `waitTSafe` until the
+channel's tSafe reaches it. tSafe is driven by the time ticks of the
+channel's WAL. When the WAL stops advancing (StreamingNode power loss,
+object storage stall), the delegators of **all** replicas of that
+channel stop at the same tSafe. With 5s, every Bounded read on the
+channel starts failing about 5s into the outage, so a second replica
+does not help.
+
+With 60s the guarantee timestamp stays below the stalled tSafe for the
+first minute of a WAL outage, and the delegators on healthy nodes keep
+answering Bounded reads.
+
+Outside of an outage res
+
+**File**: `configs/milvus.yaml` (modified, +1/-1)
+```diff
+@@ -1316,7 +1316,7 @@ common:
+     SearchCacheBudgetGBRatio: 0.1
+     LoadNumThreadRatio: 8
+     BeamWidthRatio: 4
+-  gracefulTime: 5000 # milliseconds. it represents the interval (in ms) by which the request arrival time needs to be subtracted in the case of Bounded Consistency.
++  gracefulTime: 60000 # milliseconds. it represents the interval (in ms) by which the request arrival time needs to be subtracted in the case of Bounded Consistency.
+   gracefulStopTimeout: 1800 # seconds. it will force quit the server if the graceful stop process is not completed during this time.
+   parquetStatsSkipIndex:
+     enabled: true # whether to force one row group per cache cell and build the sealed-segment chunk skip index from parquet footer statistics. When enabled, packing is 1:1 even without usable statistics; disabling allows target-size packing. Takes effect only at startup (not refreshable): the flag decides the segment cache cell layout, which must not change while queries are running. Storage v2 segments only; manifest-based (v3) segments do not build this index yet.
+```
+
+**File**: `pkg/util/paramtable/component_param.go` (modified, +4/-4)
+```diff
+@@ -61,10 +61,10 @@ const (
+ 	// DefaultStorageV2AsyncLoadReadWindowSizeBytes is the historical-key
+ 	// default for the Storage V3 async read-window threshold.
+ 	DefaultStorageV2AsyncLoadReadWindowSizeBytes = 16 * 1024 * 1024
+-	DefaultGracefulTime                          = 5000 // ms
+-	DefaultGracefulStopTimeout                   = 1800 // s, for node
+-	DefaultProxyGracefulStopTimeout              = 30   // s，for proxy
+-	DefaultCoordGracefulStopTimeout              = 5    // s，for coord
++	DefaultGracefulTime                          = 60000 // ms
++	DefaultGracefulStopTimeout                   = 1800  // s, for node
++	DefaultProxyGracefulStopTimeout              = 30    // s，for proxy
++	DefaultCoordGracefulStopTimeout              = 5     // s，for coord
+ 	DefaultHighPriorityThreadCoreCoefficient     = 10
+ 	DefaultMiddlePriorityThreadCoreCoefficient   = 5
+ 	DefaultLowPriorityThreadCoreCoefficient      = 1
+```
+
+---
+
+### Incident Patch 3: `09c12608` (2026-11-13)
+**Commit Message**: fix: forward the resolved consistency level from Query to QueryView (#55474)
+
+issue: #55473
+
+### What
+
+`QueryTask.PreExecute` now forwards the resolved consistency level, not
+the raw request level, in `RetrieveRequest.ConsistencyLevel`. This
+matches what `SearchTask.PreExecute` already does (`t.ConsistencyLevel =
+consistencyLevel`).
+
+### Why
+
+The proxy computes the guarantee timestamp from the resolved level (the
+collection level when `use_default_consistency` is true), but QueryView
+plans the read by the forwarded level (`executeGetQueryPlan` in
+`internal/views/queryclient/shard_client.go` → `resolveQueryPlanMVCC` in
+`internal/streamingnode/server/wal/adaptor/query_plan.go`). Strong and
+Session also wait for pending WAL writes (`QueryMVCCManager.Minimum`);
+Bounded and Eventually do not.
+
+SDKs that defer to the collection default put a placeholder level in the
+request:
+
+- pymilvus sends `consistency_level=0` (Strong) with
+`use_default_consistency=true`. Its default query on a Bounded or
+Eventually collection was planned as Strong.
+- The Go SDK and RESTful v2 send `Bounded` with
+`use_default_consistency=true` and no guarantee timestamp. Their default
+query on a Strong or Session col
+
+**File**: `internal/proxy/dql/task_query.go` (modified, +3/-1)
+```diff
+@@ -1009,7 +1009,6 @@ func (t *QueryTask) PreExecute(ctx context.Context) error {
+ 	guaranteeTs := t.request.GetGuaranteeTimestamp()
+ 	var consistencyLevel commonpb.ConsistencyLevel
+ 	useDefaultConsistency := t.request.GetUseDefaultConsistency()
+-	t.ConsistencyLevel = t.request.GetConsistencyLevel()
+ 	if useDefaultConsistency {
+ 		consistencyLevel = collectionInfo.ConsistencyLevel
+ 		guaranteeTs = ParseGuaranteeTsFromConsistency(guaranteeTs, t.BeginTs(), consistencyLevel)
+@@ -1023,6 +1022,9 @@ func (t *QueryTask) PreExecute(ctx context.Context) error {
+ 			guaranteeTs = ParseGuaranteeTsFromConsistency(guaranteeTs, t.BeginTs(), consistencyLevel)
+ 		}
+ 	}
++	// Forward the resolved level: QueryView and the delegator plan the read by
++	// it, so it must match the level the guarantee timestamp was computed from.
++	t.ConsistencyLevel = consistencyLevel
+ 
+ 	// update actual consistency level
+ 	accesslog.SetActualConsistencyLevel(ctx, consistencyLevel)
+```
+
+**File**: `internal/proxy/dql/task_query_test.go` (modified, +132/-0)
+```diff
+@@ -38,6 +38,7 @@ import (
+ 	"github.com/milvus-io/milvus/internal/proxy/shardclient"
+ 	"github.com/milvus-io/milvus/internal/types"
+ 	"github.com/milvus-io/milvus/internal/util/reduce"
++	"github.com/milvus-io/milvus/internal/views/queryclient"
+ 	"github.com/milvus-io/milvus/pkg/v3/common"
+ 	"github.com/milvus-io/milvus/pkg/v3/mlog"
+ 	"github.com/milvus-io/milvus/pkg/v3/proto/internalpb"
+@@ -341,6 +342,137 @@ func TestQueryTaskPreExecuteUsesStrongVisibility(t *testing.T) {
+ 	}
+ }
+ 
++// The level forwarded to QueryView decides how the read is planned (Strong
++// and Session wait for pending WAL writes; Bounded and Eventually do not), so
++// it must be the level the guarantee timestamp was computed from, not the raw
++// request field. SDKs that defer to the collection default send a placeholder
++// level with use_default_consistency=true: pymilvus sends 0 (Strong), the Go
++// SDK sends Bounded.
++func TestQueryTaskPreExecuteForwardsResolvedConsistencyLevel(t *testing.T) {
++	const collectionID = int64(100)
++	schedulerTime := time.Unix(1_700_000_000, 0)
++	schedulerTS := tsoutil.ComposeTSByTime(schedulerTime)
++	graceful := paramtable.Get().CommonCfg.GracefulTime.GetAsDuration(time.Millisecond)
++	boundedTS := tsoutil.ComposeTSByTime(schedulerTime.Add(-graceful))
++
++	schema := mustNewSchemaInfo(&schemapb.CollectionSchema{
++		Name: "test_collection",
++		Fields: []*schemapb.FieldSchema{{
++			FieldID:      100,
++			Name:         "id",
++			IsPrimaryKey: true,
++			DataType:     schemapb.DataType_Int64,
++		}},
++	})
++	info := &collectionInfo{CollID: collectionID, Schema: schema}
++	for _, m := range []*mockey.Mocker{
++		mockTest(t, (*metacache.MetaCache).GetCollectionID, collectionID, nil),
++		mockTest(t, (*metacache.MetaCache).GetCollectionInfo, info, nil),
++		mockTest(t, (*metacache.MetaCache).GetCollectionSchema, schema, nil),
++		mockey.Mock((*metacache.MetaCache).GetPartitions).Return(map[string]UniqueID{
++			paramtable.Get().CommonCfg.DefaultPartitionName.GetValue(): 200,
++		}, nil).Build(),
++	} {
++		defer m.UnPatch()
++	}
++
++	for _, tc := range []struct {
++		name             string
++		collectionLevel  commonpb.ConsistencyLevel
++		requestLevel     commonpb.ConsistencyLevel
++		useDefault       bool
++		requestGuarantee uint64
++		wantLevel        commonpb.ConsistencyLevel
++		wantGuarantee    uint64
++	}{
++		{
++			name:            "pymilvus default on bounded collection",
++			collectionLevel: commonpb.ConsistencyLevel_Bounded,
++			requestLevel:    commonpb.ConsistencyLevel_Strong,
++			useDefault:      true,
++			wantLevel:       commonpb.ConsistencyLevel_Bounded,
++			wantGuarantee:   boundedTS,
++		},
++		{
++			name:            "pymilvus default on eventually collection",
++			collectionLevel: commonpb.ConsistencyLevel_Eventually,
++			requestLevel:    commonpb.ConsistencyLevel_Strong,
++			useDefault:      true,
++			wantLevel:       commonpb.ConsistencyLevel_Eventually,
++			wantGuarantee:   1,
++		},
++		{
++			name:            "go sdk default on strong collection",
++			collectionLevel: commonpb.ConsistencyLevel_Strong,
++			requestLevel:    commonpb.ConsistencyLevel_Bounded,
++			useDefault:      true,
++			wantLevel:       commonpb.ConsistencyLevel_Strong,
++			wantGuarantee:   schedulerTS,
++		},
++		{
++			// No session timestamp is sent, so the guarantee is 0; QueryView
++			// must still plan it as Session (Strong) to keep read-your-writes.
++			name:            "go sdk default on session collection",
++			collectionLevel: commonpb.ConsistencyLevel_Session,
++			requestLevel:    commonpb.ConsistencyLevel_Bounded,
++			useDefault:      true,
++			wantLevel:       commonpb.ConsistencyLevel_Session,
++			wantGuarantee:   0,
++		},
++		{
++			name:            "explicit level overrides collection",
++			collectionLevel: commonpb.ConsistencyLevel_Bounded,
++			requestLevel:    commonpb.ConsistencyLevel_Eventually,
++			wantLevel:       commonpb.ConsistencyLevel_Eventually,
++			wantGuarantee:   1,
++		},
++		{
++			// Compatibility: the legacy marker (level 0 with a placeholder
++			// guarantee timestamp) only selects the guarantee; the level
++			// stays 0, so QueryView keeps planning it as Strong.
++			name:             "legacy bounded marker stays strong",
++			collectionLevel:  commonpb.ConsistencyLevel_Bounded,
++			requestLevel:     commonpb.ConsistencyLevel_Strong,
++			requestGuarantee: 2,
++			wantLevel:        commonpb.ConsistencyLevel_Strong,
++			wantGuarantee:    boundedTS,
++		},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			info.ConsistencyLevel = tc.collectionLevel
++			ctx := context.Background()
++			legacy := &fakeLegacyQueryClient{queryResult: &queryclient.LegacyQueryResult{}}
++			task := &QueryTask{
++				baseTask:        baseTask{MetaCache: newTestCache()},
++				Condition:       NewTaskCondition(ctx),
++				RetrieveRequest: &internalpb.RetrieveRequest{Base: &commonpb.MsgBase{}},
++				ctx:             ctx,
++				request: &milvuspb.QueryRequest{
++					Base:                  &commonpb.MsgBase{},
++					DbName:                "default",
++					Coll
+```
+
+**File**: `internal/proxy/dql/task_query_view_legacy_test.go` (modified, +2/-0)
+```diff
+@@ -49,6 +49,7 @@ type fakeLegacyQueryClient struct {
+ 	queryCalled  int
+ 	searchResult *queryclient.LegacySearchResult
+ 	queryResult  *queryclient.LegacyQueryResult
++	lastQuery    *queryclient.LegacyQueryRequest
+ 	err          error
+ }
+ 
+@@ -59,6 +60,7 @@ func (c *fakeLegacyQueryClient) Search(ctx context.Context, req *queryclient.Leg
+ 
+ func (c *fakeLegacyQueryClient) Query(ctx context.Context, req *queryclient.LegacyQueryRequest) (*queryclient.LegacyQueryResult, error) {
+ 	c.queryCalled++
++	c.lastQuery = req
+ 	return c.queryResult, c.err
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55464** (2026-11-12): test: [cp 3.0] harden REST import correctness and completion polling (@zhuwenxing)
-- **PR #55463** (2026-11-12): test: harden REST import correctness and completion polling (@zhuwenxing)
-- **PR #55453** (2026-11-12): fix: align 3.0 mixed E2E test label gates with CI routing (@zhikunyao)
-- **PR #55444** (2026-11-12): enhance: [3.0] Avoid redundant sealed worker PK candidates (@weiliu1031)
-- **PR #55442** (2026-11-12): enhance: Enable Storage V3 by default (@jiaqizho)
-- **PR #55440** (2026-11-12): enhance: [cp3.0] decode struct string sub-field into one buffer per row (@xaxys)
+- **PR #55508** (2026-11-13): fix: [2.6] restore AND early exit at null-rejecting filters (@zhengbuqian)
+- **PR #55493** (2026-11-13): enhance: reduce broadcast task logger memory (@chyezh)
+- **PR #55485** (2026-11-13): fix: [cp3.0] resolve Azure Germany regions and explicit storage authorities (@xiaofan-luan)
+- **PR #55484** (2026-11-13): fix: resolve Azure Germany regions and explicit storage authorities (@xiaofan-luan)
+- **PR #55482** (2026-11-13): enhance: [2.6] raise default bounded staleness (common.gracefulTime) to 60s (@xiaofan-luan)
+- **PR #55481** (2026-11-13): enhance: [3.0] raise default bounded staleness (common.gracefulTime) to 60s (@xiaofan-luan)
 
 ---
 
@@ -2426,66 +1895,58 @@ and two expected compilation failu
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: add PyUDF search, lifecycle and runtime regression coverage (#55386)
+## X. resolve Azure Germany regions and explicit storage authorities (#55484)
 
 **RULE**:
-When implementing operations in `tests/python_client/base/client_v2_pyudf_base.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/core/src/storage/loon_ffi/util.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34e03edc`: test: add PyUDF search, lifecycle and runtime regression coverage (#55386). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ce39ad7`: resolve Azure Germany regions and explicit storage authorities (#55484). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/python_client/base/client_v2_pyudf_base.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/src/storage/loon_ffi/util.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-"""Owned wheel, collection and permission lifecycles for PyUDF SDK cases."""
+        // Microsoft Cloud Germany (core.cloudapi.de) closed in October 2021;
+        // germanywestcentral and germanynorth are public Azure regions.
+// IsAzureStorageAuthority returns true for the bare Azure Storage
+// authorities that azure://<authority>/<container>/<blob> names. An Azure
+// container name cannot contain a dot, so such a host is never a container.
+static bool
+IsAzureStorageAuthority(const std::string& host) {
+    std::string h = host;
+    std::transform(h.begin(), h.end(), h.begin(), [](unsigned char c) {
+        return std::tolower(c);
+    });
+    return h == "core.windows.net" || h == "core.chinacloudapi.cn" ||
+           h == "core.usgovcloudapi.net" || h == "core.cloudapi.de";
+}
 
-import io
-import time
-from contextlib import ExitStack, contextmanager
-
-import grpc
-import pytest
-from base.client_v2_base import TestMilvusClientV2Base
-from common import common_func as cf
-from common.common_type import CheckTasks
-from common.pyudf_helpers import build_wheel
-from pymilvus import DataType, FunctionChain, FunctionChainStage, MilvusClient
-from pymilvus.function_chain import col
-from pymilvus.function_chain.chain import FunctionChainExpr
-
-
-class PyUDFClientBase(TestMilvusClientV2Base):
-    """Share fixture ownership without importing or inheriting collected tests."""
-
-    dim = 2
-    vector_field = "vector"
-    scalar_field = "ts"
-
-    @staticmethod
-    def _pyudf_management_config(request, key):
-        import requests
-
-        endpoint = request.config.getoption("--pyudf-management-endpoint")
-        assert endpoint, "requires --pyudf-management-endpoint pointing to the coordinator management service"
-        response = requests.get(
-            endpoint.rstrip("/") + "/management/config/get",
-            params={"keys": key},
-            timeout=10,
-        )
-        response.raise_for_st
+        // A bare Azure Storage authority is the endpoint the source names, so
+        // it also wins over the region-derived authority.
+        std::string spec_cp = spec_cloud_provider;
+        std::transform(spec_cp.begin(),
+                       spec_cp.end(),
+                       spec_cp.begin(),
+                       [](unsigned char c) { return std::tolower(c); });
+        bool uri_host_is_cloud_endpoint =
+            IsCloudEndpointHost(host) ||
+            (spec_cp == 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        if (r.rfind("germany", 0) == 0) {
+            return "core.cloudapi.de";
+        }
+        bool uri_host_is_cloud_endpoint = IsCloudEndpointHost(host);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34e03edc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ce39ad7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

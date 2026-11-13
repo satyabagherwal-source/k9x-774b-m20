@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T17:37:42.607Z",
-    "lastVerified": "2026-11-13T17:37:42.607Z",
+    "lastChecked": "2026-11-13T17:55:15.108Z",
+    "lastVerified": "2026-11-13T17:55:15.108Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -205,9 +205,9 @@
   "justjavac-free-programming-books-zh_cn": {
     "name": "free-programming-books-zh_CN",
     "officialUrl": "https://github.com/justjavac/free-programming-books-zh_CN",
-    "lastChecked": "2026-11-09T07:13:18.903Z",
+    "lastChecked": "2026-11-13T17:54:57.888Z",
     "revisionIdentifier": "cc1108ac",
-    "lastVerified": "2026-11-09T07:13:18.903Z"
+    "lastVerified": "2026-11-13T17:54:57.888Z"
   },
   "bitnami-sealed-secrets": {
     "name": "sealed-secrets",
@@ -470,8 +470,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T16:58:52.191Z",
-    "lastVerified": "2026-11-13T16:58:52.191Z",
+    "lastChecked": "2026-11-13T17:55:07.876Z",
+    "lastVerified": "2026-11-13T17:55:07.876Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -564,14 +564,14 @@
     "officialUrl": "https://github.com/milvus-io/milvus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T12:32:49.342Z",
-    "lastVerified": "2026-11-12T12:32:49.342Z",
+    "lastChecked": "2026-11-13T17:55:11.761Z",
+    "lastVerified": "2026-11-13T17:55:11.761Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "b900481f95d6bd141c1cd4f7adcceb165b3e01cddef2c4142d3303520a5451c2",
+    "contentHash": "6c781b4bb58ccda7a5e3002f1333bce8edfcb10eb430927f92f83a8388b1cf28",
     "promotedRulesCount": 1,
-    "recentFixesCount": 13,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -938,9 +938,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-13T12:16:09.208Z",
+    "lastChecked": "2026-11-13T17:55:02.827Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-13T12:16:09.208Z"
+    "lastVerified": "2026-11-13T17:55:02.827Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -4532,12 +4532,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "wasm-bindgen-wasm-pack": {
-    "name": "wasm-bindgen/wasm-pack",
+    "name": "wasm-pack",
     "officialUrl": "https://github.com/wasm-bindgen/wasm-pack",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T05:26:51.649Z",
-    "lastVerified": "2026-11-12T05:26:51.649Z",
+    "lastChecked": "2026-11-13T17:54:53.161Z",
+    "lastVerified": "2026-11-13T17:54:53.161Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wasm-bindgen-wasm-pack",
@@ -4546,7 +4546,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c262c330"
   },
   "hf-hexgrad-kokoro-82m": {
     "name": "hexgrad/Kokoro-82M",
@@ -6525,8 +6526,8 @@
     "officialUrl": "https://github.com/Checkmarx/kics",
     "sourceType": "github",
     "technology": "Open Policy Agent",
-    "lastChecked": "2026-11-12T14:08:22.513Z",
-    "lastVerified": "2026-11-12T14:08:22.513Z",
+    "lastChecked": "2026-11-13T17:55:00.449Z",
+    "lastVerified": "2026-11-13T17:55:00.449Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-checkmarx-kics",
@@ -13774,12 +13775,12 @@
     "officialUrl": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T16:58:36.941Z",
-    "lastVerified": "2026-11-08T16:58:36.941Z",
+    "lastChecked": "2026-11-13T17:54:55.680Z",
+    "lastVerified": "2026-11-13T17:54:55.680Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-    "contentHash": "24d96531408462ac2475d39491b9bb9cd46d9d9d80aff5200713c711e18aca8f",
+    "contentHash": "47e6732abc0f83f5dac087ae583a12777c70d6972c97f175fa41ccc7fa536812",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

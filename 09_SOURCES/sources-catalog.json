@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "0ff3d233",
+    "sourceVersion": "03d63d65",
     "license": "Apache-2.0",
-    "contentHash": "b900481f95d6bd141c1cd4f7adcceb165b3e01cddef2c4142d3303520a5451c2",
-    "lastHarvestedAt": "2026-11-12T12:33:05.573Z",
+    "contentHash": "6c781b4bb58ccda7a5e3002f1333bce8edfcb10eb430927f92f83a8388b1cf28",
+    "lastHarvestedAt": "2026-11-13T17:55:12.204Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -11645,8 +11645,8 @@
     "sourceUrl": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
     "sourceVersion": "hf-efficient-large-model-open-h3-regenerate-2k",
     "license": "Open-Source",
-    "contentHash": "24d96531408462ac2475d39491b9bb9cd46d9d9d80aff5200713c711e18aca8f",
-    "lastHarvestedAt": "2026-11-08T16:58:38.472Z",
+    "contentHash": "47e6732abc0f83f5dac087ae583a12777c70d6972c97f175fa41ccc7fa536812",
+    "lastHarvestedAt": "2026-11-13T17:54:56.150Z",
     "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k"
   },
   "hf-atomicchat-lfm3-1.7b-uncensored-gguf": {

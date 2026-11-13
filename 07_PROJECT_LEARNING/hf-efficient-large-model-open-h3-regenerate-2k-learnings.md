@@ -3,7 +3,7 @@
 > **Source Version**: `hf-efficient`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T16:58:38.124Z  
+> **Timestamp**: 2026-11-13T17:54:55.901Z  
 > **Learning ID**: `learn-huggingface-efficient-large-model-open-h3-regenerate-2k`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K](https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T16:58:36.941Z  
+> **Harvest Timestamp**: 2026-11-13T17:54:55.680Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: video-to-video
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 744422 downloads | 235 likes
+- **Stars / Engagement**: 972807 downloads | 248 likes
 
 ---
 

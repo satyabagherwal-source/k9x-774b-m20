@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T17:38:17.206Z",
+  "updated_at": "2026-11-13T17:55:47.423Z",
   "stats": {
-    "total_discovered": 2761,
-    "approved_pending_harvest": 2582,
+    "total_discovered": 2765,
+    "approved_pending_harvest": 2586,
     "harvested_count": 0,
     "rejected_count": 179,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2575,
+      "COMMUNITY_AND_EXPERT": 2579,
       "OFFICIAL_DOCUMENTATION": 96,
       "STANDARDS_AND_SPECIFICATIONS": 78,
       "ENGINEERING_BLOGS": 1,
@@ -59509,6 +59509,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
         "fileName": "hf-deepseek-ai-deepseek-v4.1-flash-learnings.md"
+      }
+    },
+    "SRC-0E2691C4B190": {
+      "id": "SRC-0E2691C4B190",
+      "url": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "title": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:55:47.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
+        "fileName": "hf-efficient-large-model-open-h3-regenerate-2k-learnings.md"
+      }
+    },
+    "SRC-210DD2119E82": {
+      "id": "SRC-210DD2119E82",
+      "url": "https://broker.example.com/v1/credentials/assume-role",
+      "title": "https://broker.example.com/v1/credentials/assume-role",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:55:47.390Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
+        "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-1190420573A2": {
+      "id": "SRC-1190420573A2",
+      "url": "https://broker.example.com/v1/credentials/assume-role?api-version=1&scope=a%2Fb+x",
+      "title": "https://broker.example.com/v1/credentials/assume-role?api-version=1&scope=a%2Fb+x",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:55:47.407Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
+        "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-8E161AB320A5": {
+      "id": "SRC-8E161AB320A5",
+      "url": "https://s3.us-east-1.amazonaws.com/",
+      "title": "https://s3.us-east-1.amazonaws.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:55:47.423Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
+        "fileName": "milvus-io-milvus-learnings.md"
       }
     }
   }

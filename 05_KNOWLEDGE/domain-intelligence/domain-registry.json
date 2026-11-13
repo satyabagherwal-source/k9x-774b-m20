@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T17:38:17.341Z",
-  "total_records": 238,
+  "last_updated": "2026-11-13T17:55:48.083Z",
+  "total_records": 243,
   "domains": {
     "A": {
       "total": 1,
@@ -28,7 +28,7 @@
       ]
     },
     "D": {
-      "total": 136,
+      "total": 139,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -165,7 +165,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c",
         "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-core-invariants",
         "DOM-D-933E8A17",
-        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-learnings-cor"
+        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-learnings-cor",
+        "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core",
+        "DOM-D-E7346FF5",
+        "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l"
       ]
     },
     "E": {
@@ -209,7 +212,7 @@
       ]
     },
     "H": {
-      "total": 45,
+      "total": 47,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -255,7 +258,9 @@
         "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
         "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
         "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle",
-        "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants"
       ]
     },
     "I": {
@@ -6971,8 +6976,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "7304d3414eb1cc9d7188295b6e26a4f9f0839f756663a6853e5a15ebe0298163",
-      "created_at": "2026-11-13T16:59:46.308Z"
+      "content_hash": "768641de8dd783525ec1f240afb17f8ae5e14d1b7b77785fd8a6a93d71c90556",
+      "created_at": "2026-11-13T17:55:48.083Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -7249,6 +7254,84 @@
       "repository": "hf-deepseek-ai-deepseek-v4.1-flash-learnings",
       "content_hash": "cece8b4465c5e34a8631247b78897aa5f28587a5f4a6656090dcc3e6dc993370",
       "created_at": "2026-11-13T17:38:17.341Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Efficient-Large-Model/Open-H3-Regenerate-2K Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-efficient-large-model-open-h3-regenerate-2k-research-knowledge-intelligence-e.md",
+      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "content_hash": "a828375ac87cfea0acd3516b08d6d121388992bba710c4fb87607e04d2eb9c07",
+      "created_at": "2026-11-13T17:54:56.287Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
+      "repository": "milvus-io/milvus",
+      "content_hash": "85cfec64de8ef817e80f92047383d256981b94ef0b766d436436c99c859c0ba6",
+      "created_at": "2026-11-13T17:55:12.440Z"
+    },
+    "DOM-D-E7346FF5": {
+      "record_id": "DOM-D-E7346FF5",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K](https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K))  \n> **Source Ver",
+      "content_hash": "b09fdc89b6566604258433efdb24a7e4c1befc95543c3d53f53e8de909a1dcc8",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md`  \n> **Source**: hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md`  \n> **Source**: hugging",
+      "provenance": {
+        "source_uri": "project://hf-efficient-large-model-open-h3-regenerate-2k/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T17:55:15.199Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-efficient-large-model-open-h3-regenerate-2k)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-efficient-large-model-open-h3-regenerate-2k"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T17:55:47.124Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-efficient-large-model-open-h3-regenerate-2k-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-efficient-large-model-open-h3-regenerate-2k-learnings-research-knowledge-inte.md",
+      "repository": "hf-efficient-large-model-open-h3-regenerate-2k-learnings",
+      "content_hash": "f44da53b35f7cdc5ebf8b117b9278368f3b9ef9b36b21d58884115b7b09864b9",
+      "created_at": "2026-11-13T17:55:47.280Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: milvus-io-milvus-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-learnings-technical-construction-intelligence-milvus-io-milvus-.md",
+      "repository": "milvus-io-milvus-learnings",
+      "content_hash": "e740148e150ba066ef713fe1b266ad61a9543fdf252b282581be565a68af75d7",
+      "created_at": "2026-11-13T17:55:47.633Z"
     }
   }
 }

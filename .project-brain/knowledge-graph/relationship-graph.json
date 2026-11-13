@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T17:38:17.197Z",
+  "updated_at": "2026-11-13T17:55:47.129Z",
   "statistics": {
-    "total_nodes": 108,
+    "total_nodes": 109,
     "total_edges": 61,
     "domain_distribution": {
-      "D": 88,
+      "D": 89,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -2412,6 +2412,28 @@
       ],
       "created_at": "2026-11-13T17:38:17.197Z",
       "updated_at": "2026-11-13T17:38:17.197Z"
+    },
+    "DOM-D-E7346FF5": {
+      "id": "DOM-D-E7346FF5",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md`  \n> **Source**: hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md`  \n> **Source**: hugging",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-efficient-large-model-open-h3-regenerate-2k/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T17:55:15.199Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-efficient-large-model-open-h3-regenerate-2k)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T17:55:47.129Z",
+      "updated_at": "2026-11-13T17:55:47.129Z"
     }
   },
   "edges": [

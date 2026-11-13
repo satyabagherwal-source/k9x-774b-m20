@@ -9582,3 +9582,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-13T17:37:30.467Z |
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `649c1054` | Multi-dimensional audit evidence | 2026-11-13T17:37:39.546Z |
 | `learn-dom-d-933e8a17` | `project://hf-deepseek-ai-deepseek-v4.1-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | 2026-11-13T17:38:17.198Z |
+| `learn-huggingface-efficient-large-model-open-h3-regenerate-2k` | `https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K` | `hf-efficie` | Multi-dimensional audit evidence | 2026-11-13T17:54:56.150Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `03d63d65` | Multi-dimensional audit evidence | 2026-11-13T17:55:12.204Z |
+| `learn-dom-d-e7346ff5` | `project://hf-efficient-large-model-open-h3-regenerate-2k` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md` | 2026-11-13T17:55:47.130Z |

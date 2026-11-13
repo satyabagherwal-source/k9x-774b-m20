@@ -9549,3 +9549,6 @@
 | `CYCLE-20261113-EXCW` | `2026-11-13T17:37:30.464Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`a4ce1a5c...`) |
 | `CYCLE-20261113-F4CV` | `2026-11-13T17:37:39.535Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f7f53d4a...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T17:38:17.198Z` | `hf-deepseek-ai-deepseek-v4.1-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-933E8A17` [Domain D] | Yes (`13b345f1...`) |
+| `CYCLE-20261113-1C7N` | `2026-11-13T17:54:56.147Z` | `Efficient-Large-Model/Open-H3-Regenerate-2K` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md` | Yes (`47e6732a...`) |
+| `CYCLE-20261113-1OLE` | `2026-11-13T17:55:12.194Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6c781b4b...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T17:55:47.130Z` | `hf-efficient-large-model-open-h3-regenerate-2k` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E7346FF5` [Domain D] | Yes (`b09fdc89...`) |
