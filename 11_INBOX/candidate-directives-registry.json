@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T15:47:56.708Z",
+  "last_updated": "2026-11-13T16:05:42.048Z",
   "directives": [
     {
       "id": "CD-001",
@@ -9299,6 +9299,46 @@
       "source_repo": "bridgecrewio-checkov",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2D586F-general-harden-request-error-logging-779.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-4UH1",
+      "directive_title": "swift/core): drop theme from a v1.0 createSurface in relaxed mode (#4099)",
+      "source_repo": "a2ui-project-a2ui-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4UH1-swift-core-drop-theme-from-a-v1-0-createsurface-in-relaxed-mode-4099.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-4V11",
+      "directive_title": "mcp): preserve distinct block search results by relationship ID (#2414)",
+      "source_repo": "open-source-legal-opencontracts-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4V11-mcp-preserve-distinct-block-search-results-by-relationship-id-2414.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-REV-75A99F",
+      "directive_title": "swift/core): drop theme from a v1.0 createSurface in relaxed mode (#4099)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "a2ui-project-a2ui",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-75A99F-swift-core-drop-theme-from-a-v1-0-create.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-12A371",
+      "directive_title": "mcp): preserve distinct block search results by relationship ID (#2414)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "open-source-legal-opencontracts",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-12A371-mcp-preserve-distinct-block-search-resul.md",
       "staged_date": "2026-11-13"
     }
   ]

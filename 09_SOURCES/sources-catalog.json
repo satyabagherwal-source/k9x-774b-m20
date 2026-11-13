@@ -435,8 +435,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "6b45ba98a790f2051190763a6f53b1bf3c458fc078508f81eefad9f129fc6031",
-    "lastHarvestedAt": "2026-11-08T15:42:23.508Z",
+    "contentHash": "acd0a09f2f76db7b0fd77ac2e6d6fb79a9b1e65262ea4f64e28485d4e14b460e",
+    "lastHarvestedAt": "2026-11-13T16:04:48.417Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-orcarouter-orcasaq-2-27b": {
@@ -6323,10 +6323,10 @@
     "repository": "Open-Source-Legal/OpenContracts",
     "platform": "github",
     "sourceUrl": "https://github.com/Open-Source-Legal/OpenContracts",
-    "sourceVersion": "01dd8500",
+    "sourceVersion": "2263a19d",
     "license": "MIT",
-    "contentHash": "1404444574df573324d42d48c3f3091b7f4b7d2af00f40b9f111fb15e85617ed",
-    "lastHarvestedAt": "2026-11-10T01:58:38.080Z",
+    "contentHash": "83b23511df7183c657b2795031db38d643944619a570547ed94037f29b6280d5",
+    "lastHarvestedAt": "2026-11-13T16:05:05.724Z",
     "learningId": "learn-github-open-source-legal-opencontracts"
   },
   "fastapi-fastapi": {
@@ -12033,10 +12033,10 @@
     "repository": "a2ui-project/a2ui",
     "platform": "github",
     "sourceUrl": "https://github.com/a2ui-project/a2ui",
-    "sourceVersion": "2783d6be",
+    "sourceVersion": "f2c410ae",
     "license": "Apache-2.0",
-    "contentHash": "acb3ad870b0605881cfa42d5238fcc8ae3404754debb5f92581b05fe9a776338",
-    "lastHarvestedAt": "2026-11-09T05:26:05.705Z",
+    "contentHash": "aa731da3ebc6d0163e8599ab1b44d23f8bc49bc3e68b3708d0b5ebfed34b547f",
+    "lastHarvestedAt": "2026-11-13T16:04:57.116Z",
     "learningId": "learn-github-a2ui-project-a2ui"
   },
   "milind-soni-openmausbot": {

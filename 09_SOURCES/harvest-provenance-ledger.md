@@ -9552,3 +9552,7 @@ Every entry in this ledger must capture:
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `e55b089e` | Multi-dimensional audit evidence | 2026-11-13T15:47:14.420Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `072456f5` | Multi-dimensional audit evidence | 2026-11-13T15:47:20.953Z |
 | `learn-dom-d-991f9c3c` | `project://hf-altworld-hemmingway-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md` | 2026-11-13T15:47:55.868Z |
+| `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-13T16:04:48.417Z |
+| `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `f2c410ae` | Multi-dimensional audit evidence | 2026-11-13T16:04:57.116Z |
+| `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `2263a19d` | Multi-dimensional audit evidence | 2026-11-13T16:05:05.724Z |
+| `learn-dom-d-f7590a97` | `project://hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | 2026-11-13T16:05:40.822Z |

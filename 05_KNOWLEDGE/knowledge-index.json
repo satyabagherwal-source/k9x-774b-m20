@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T15:47:56.925Z",
+  "last_updated": "2026-11-13T16:05:42.185Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28306,7 +28306,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "6b45ba98a790f2051190763a6f53b1bf3c458fc078508f81eefad9f129fc6031",
+      "content_hash": "acd0a09f2f76db7b0fd77ac2e6d6fb79a9b1e65262ea4f64e28485d4e14b460e",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -28424,7 +28424,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv45sbad",
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v"
       ],
-      "verified_at": "2026-11-08T15:42:23.361Z",
+      "verified_at": "2026-11-13T16:04:48.322Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51067,14 +51067,19 @@
       "slug": "open-source-legal-opencontracts",
       "platform": "github",
       "source_url": "https://github.com/Open-Source-Legal/OpenContracts",
-      "source_version": "01dd8500",
-      "content_hash": "1404444574df573324d42d48c3f3091b7f4b7d2af00f40b9f111fb15e85617ed",
+      "source_version": "2263a19d",
+      "content_hash": "83b23511df7183c657b2795031db38d643944619a570547ed94037f29b6280d5",
       "dossier_path": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deps): bump react-window from 2.2.3 to 2.5.3 in /frontend (#2527)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "mcp): preserve distinct block search results by relationship ID (#2414)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -51105,7 +51110,7 @@
       "historical_learning_ids": [
         "learn-github-open-source-legal-opencontracts-mv0ds8j9"
       ],
-      "verified_at": "2026-11-10T01:58:37.969Z",
+      "verified_at": "2026-11-13T16:05:05.621Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -191461,8 +191466,8 @@
       "slug": "a2ui-project-a2ui",
       "platform": "github",
       "source_url": "https://github.com/a2ui-project/a2ui",
-      "source_version": "2783d6be",
-      "content_hash": "acb3ad870b0605881cfa42d5238fcc8ae3404754debb5f92581b05fe9a776338",
+      "source_version": "f2c410ae",
+      "content_hash": "aa731da3ebc6d0163e8599ab1b44d23f8bc49bc3e68b3708d0b5ebfed34b547f",
       "dossier_path": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
       "promoted_rules": [
@@ -191475,6 +191480,11 @@
           "number": null,
           "title": "dart): agent functions and RendererToAgentMessageProcessor (#3861)",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "swift/core): drop theme from a v1.0 createSurface in relaxed mode (#4099)",
+          "status": "WITHHELD_REJECT"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -191482,7 +191492,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T05:26:05.590Z",
+      "verified_at": "2026-11-13T16:04:57.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -194078,6 +194088,138 @@
       "content_hash": "227b5049623dd6590bed0dd2e1375978c4b5c9cd5c314ea0987df9abefef8f06",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T15:47:56.925Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-research-knowledge-intelligence-ista-das.md",
+      "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "content_hash": "c756213d8786c51e510a864f012bf5f47a715428b11cee23ec6959bc1679c3b1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T16:04:48.542Z"
+    },
+    "candidate_directive-swift-core-drop-theme-from-a-v1-0-createsurface-in-relaxed-mode-4099": {
+      "item_id": "candidate_directive-swift-core-drop-theme-from-a-v1-0-createsurface-in-relaxed-mode-4099",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4UH1-swift-core-drop-theme-from-a-v1-0-createsurface-in-relaxed-mode-4099.md",
+      "title": "swift/core): drop theme from a v1.0 createSurface in relaxed mode (#4099)",
+      "repository": "a2ui-project-a2ui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c88578050dac1cacc08c9c8cea54a066c124fc49854cad8990120140dc7cb2da",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-13T16:05:41.328Z"
+    },
+    "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-a2ui-project-a2ui-architecture-intelligence-a2ui-project-a2ui-core-invariants.md",
+      "title": "Architecture Intelligence: a2ui-project/a2ui Core Invariants",
+      "repository": "a2ui-project/a2ui",
+      "source_version": "f2c410ae",
+      "content_hash": "c7dc5f308aaf4e04c151ce7844bcff59a0030e10545240ef04bab086d93bd03e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T16:04:57.326Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-a2ui-project-a2ui": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-a2ui-project-a2ui",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/a2ui-project-a2ui-verification-protocol-empirical-defect-shield-for-a2ui-project.md",
+      "title": "Verification Protocol: Empirical Defect Shield for a2ui-project/a2ui",
+      "repository": "a2ui-project/a2ui",
+      "source_version": "f2c410ae",
+      "content_hash": "fabc3d275481f822a47d6723ae9d2d164dfb0bfc660ad16c7851d53491b81b42",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:04:57.386Z"
+    },
+    "candidate_directive-mcp-preserve-distinct-block-search-results-by-relationship-id-2414": {
+      "item_id": "candidate_directive-mcp-preserve-distinct-block-search-results-by-relationship-id-2414",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4V11-mcp-preserve-distinct-block-search-results-by-relationship-id-2414.md",
+      "title": "mcp): preserve distinct block search results by relationship ID (#2414)",
+      "repository": "open-source-legal-opencontracts-learnings",
+      "source_version": "HEAD",
+      "content_hash": "14906285fd6942d044fedd5dd42aa93ff6b12e78aa40a83626bf1b609aaf98fd",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-13T16:05:42.048Z"
+    },
+    "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-open-source-legal-opencontracts-architecture-intelligence-open-source-legal-open.md",
+      "title": "Architecture Intelligence: Open-Source-Legal/OpenContracts Core Invariants",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "source_version": "2263a19d",
+      "content_hash": "8b0ad6cc7548f3c460b9286e4d87c87e29df8bd603f68c8879b09bae8b8d25e6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T16:05:05.930Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-open-source-legal-opencontract": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-source-legal-opencontract",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/open-source-legal-opencontracts-learnings-verification-protocol-empirical-defect.md",
+      "title": "Verification Protocol: Empirical Defect Shield for open-source-legal-opencontracts-learnings",
+      "repository": "open-source-legal-opencontracts-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b39c0702a03697b4f9e27d37435d7bf3c924c469bed5f5274990ebb70df5043b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:05:42.185Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learning": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learning",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learnings-research-knowledge-intelligenc.md",
+      "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
+      "repository": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b7dbb73e7031729beebe7a90297fb48de6a4a74e895245665c2b9af0bf17c456",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T16:05:40.976Z"
+    },
+    "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-a2ui-project-a2ui-learnings-architecture-intelligence-a2ui-project-a2ui-learning.md",
+      "title": "Architecture Intelligence: a2ui-project-a2ui-learnings Core Invariants",
+      "repository": "a2ui-project-a2ui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a1008e8ea2aa507ff9e7ef3279960d9f25fa98b334885b537be1c8d22b7de7d2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T16:05:41.394Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-a2ui-project-a2ui-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-a2ui-project-a2ui-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/a2ui-project-a2ui-learnings-verification-protocol-empirical-defect-shield-for-a2.md",
+      "title": "Verification Protocol: Empirical Defect Shield for a2ui-project-a2ui-learnings",
+      "repository": "a2ui-project-a2ui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6c78a93c59417ff8af94df5a95aa73241ea37480ecd24e2022a21b1ff1a604f9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:05:41.467Z"
+    },
+    "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria": {
+      "item_id": "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-open-source-legal-opencontracts-learnings-architecture-intelligence-open-source-.md",
+      "title": "Architecture Intelligence: open-source-legal-opencontracts-learnings Core Invariants",
+      "repository": "open-source-legal-opencontracts-learnings",
+      "source_version": "HEAD",
+      "content_hash": "23fe798cba151daa94c88278c178ace489984b6c52fe649e3632ec9833134dae",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T16:05:42.112Z"
     }
   },
   "aliases": {
@@ -200076,5 +200218,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9128
+  "total_items": 9139
 }

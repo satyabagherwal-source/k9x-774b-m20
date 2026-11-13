@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T15:47:20.969Z",
-  "total_cycles_completed": 9293,
-  "total_learnings_persisted": 9293,
-  "total_rules_promoted": 9048,
+  "last_updated": "2026-11-13T16:05:05.740Z",
+  "total_cycles_completed": 9296,
+  "total_learnings_persisted": 9296,
+  "total_rules_promoted": 9050,
   "history": [
-    {
-      "timestamp": "2026-11-13T01:57:18.023Z",
-      "repository": "Comfy-Org/Z-Image-Turbo",
-      "learningId": "learn-huggingface-comfy-org-z_image_turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T01:57:37.809Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T01:57:48.754Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T01:57:51.272Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-13T15:47:20.969Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T16:04:48.421Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T16:04:57.133Z",
+      "repository": "a2ui-project/a2ui",
+      "learningId": "learn-github-a2ui-project-a2ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T16:05:05.740Z",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "learningId": "learn-github-open-source-legal-opencontracts",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

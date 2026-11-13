@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for a2ui/project/a2ui
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for a2ui-project/a2ui
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "a2ui/project/a2ui",
-  "source_url": "https://github.com/a2ui/project/a2ui",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "a2ui-project/a2ui",
+  "source_url": "https://github.com/a2ui-project/a2ui",
+  "source_version": "f2c410ae",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T16:04:57.268Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-a2ui-project-a2ui",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [a2ui/project/a2ui](https://github.com/a2ui/project/a2ui) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [a2ui-project/a2ui](https://github.com/a2ui-project/a2ui) (Revision: `f2c410ae`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T16:04:57.268Z`  
+> **Learning ID**: `learn-github-a2ui-project-a2ui`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `a2ui/project/a2ui` (Commit: `historical`)
+- **Target Repository**: `a2ui-project/a2ui` (Commit: `f2c410ae`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md`  
-> **Source**: github ([https://github.com/a2ui-project/a2ui](https://github.com/a2ui-project/a2ui))  
-> **Source Version**: `2783d6be`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T05:26:04.477Z  
-> **Learning ID**: `learn-github-a2ui-project-a2ui`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): a2ui-project/a2ui
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/a2ui-project/a2ui](https://github.com/a2ui-project/a2ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T05:26:03.945Z  
+> **Harvest Timestamp**: 2026-11-13T16:04:56.717Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Open-source generative UI framework: agents stream layout data, and apps render it with native components in React, Angular, Lit, Flutter, SwiftUI and Jetpack Compose.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 17017 stars
+- **Stars / Engagement**: 17289 stars
 
 ---
 
@@ -411,7 +397,7 @@ def to_pascal_case(name: str) -> str:
     """Converts a camelCase or snake_case string to PascalCase preserving camelCase segments."""
     if not name:
         return name
-    if "_" not in name and "-" not in name and " " not in name:
+    if name.isalnum():
         return name[0].upper() + name[1:]
     clean = re.sub(r"[^a-zA-Z0-9_]", "_", name)
     parts = clean.split("_")
@@ -561,7 +547,9 @@ def topological_sort_defs(defs: dict[str, Any]) -> list[str]:
         if name in visited:
             return
         visited.add(name)
-        for dep in sorted(graph.get(name, set()), key=spec_index.__ge
+        for dep in sorted(graph.get(name, set()), key=spec_index.__getitem__):
+            visit(dep)
+        
 ```
 
 ### Core Architecture Module: `eval/a2ui_eval/scorers.py`
@@ -1885,7 +1873,7 @@ def get_git_diff(workspace_root: str) -> str:
 
 ```
 
-### Core Architecture Module: `hooks.py`
+### Core Architecture Module: `python/a2ui_adk/src/a2ui/adk/renderer_calls_store.py`
 ```
 # Copyright 2024 Google LLC
 #
@@ -1893,7 +1881,7 @@ def get_git_diff(workspace_root: str) -> str:
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     https://www.apache.org/licenses/LICENSE-2.0
+#      https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -1901,135 +1889,123 @@ def get_git_diff(workspace_root: str) -> str:
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re
-import os
+"""Module for the A2uiRendererCallsStore.
+
+A `RendererFunctionCalls` holds the agent's pending `callRendererFunction`
+calls of one conversation, as asyncio futures, so like an
+`A2uiRequestProcessor` it can't be kept in ADK session state.
+`A2uiRendererCallsStore` keeps one per session in memory. A tool gets the
+session's instance to call a renderer function, and the callback from
+`a2ui_rpc_callback` gets the same instance to settle the call when the
+renderer's `rendererFunctionResponse` arrives.
+
+Usage Example:
+
+  ```python
+  renderer_calls = A2uiRendererCallsStore()
+
+  # In the agent
+  agent = LlmAgent(
+      ...,
+      before_agent_callback=a2ui_rpc_callback(
+          catalogs=catalogs, renderer_calls=renderer_calls.get
+      ),
+  )
+
+  # In a tool
+  message, result = renderer_calls.get(tool_context).call(
+      catalog_id=CATALOG_ID, name="getLocation"
+  )
+
+  # When the session ends
+  renderer_calls.remove(session.id)
+  ```
+"""
+
+from __future__ import annotations
+
+from google.adk.agents.readonly_context import ReadonlyContext
+from google.adk.utils.feature_decorator import experimental
+
+from a2ui.rpc import DEFAULT_RENDERER_CALL_TIMEOUT, RendererFunctionCalls
 
 
-def map_spec_filename(filename, version_str):
-    mapping = {
-        'a2ui_protocol.md': f'{version_str}-a2ui.md',
-        'evolution_guide.md': f'{version_str}-evolution-guide.md',
-        'a2ui_extension_specification.md': (
-            f'{version_str}-a2ui-extension-specification.md'
-        ),
-        'basic_catalog_implementation_guide.md': (
-            f'{version_str}-basic-catalog-implementation-guide.md'
-        ),
-    }
-    return mapping.get(filename)
+@experimental
+class A2uiRendererCallsStore:
+    """Keeps a `RendererFunctionCalls` for each session, outside session state.
 
+    `get` creates the session's instance the first time it is asked for, with
+    the store's `default_timeout` and `max_pending`. Call `remove` when a
+    session ends: it disposes the session's instance, which fails its pending
+    calls. Nothing is evicted on its own.
+    """
 
-def on_page_markdown(markdown, page, config, files):
-    github_base_url = 'https://github.com/a2ui-project/a2ui/blob/main'
+    def __init__(
+        self,
+        *,
+        default_timeout: float | None = DEFAULT_RENDERER_CALL_TIMEOUT,
+        max_pending: int | None = None,
+    ) -> None:
+        """Initializes the store.
 
-    # 1. Pre-expand snippet includes (--8<--)
-    for _ in range(5):
-        expanded = False
+        Args:
+            default_timeout: The `default_timeout` of each session's
+                `RendererFunctionCalls`.
+            max_pending: The `max_pending` of each session's
+                `RendererFunctionCalls`.
 
-        def snippet_replacer(match):
-            nonlocal expanded
-            snippet_path = match.group('snippet_path')
-            if os.path.exists(snippet_path):
-                with open(snippet_path, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                expanded = True
-                return content
-            return match.group(0)
+        Raises:
+            ValueError: If `default_timeout` is not a finite positive number
+                or None, or `max_pending` is less than 1, as for
+                `RendererFunctionCalls`.
+        """
+        # Checks the settings the way each session's instance will.
+        RendererFunctionCalls(default_timeout=default_timeout, max_pending=max_pending)
+        self._default_timeout = default_timeout
+        self._max_pending = max_pending
+        self._calls: dict[str, RendererFunctionCalls] = {}
 
-        regex = r'^\s*--8<--\s+["\'](?P<snippet_path>[^"\']+)["\']\s*$'
-        new_markdown = re.sub(regex, snippet_replacer, markdown, flags=re.MULTILINE)
-        if not expanded:
-            break
-        markdown = new_markdown
+    def get(self, ctx: ReadonlyContext) -> RendererFunctionCalls:
+        """Returns the `RendererFunctionCalls` of the context's session.
 
-    # 2. Extract version prefix from wrapper page filename (e.g. "v0.9.1-")
-    version_match = re.match(r'^(v\d+(?:\.\d+)*)-', page.file.name)
-    version_str = None
-    version_folder = None
-    if version_match:
-        version_str = version_match.group(1)
-        version_folder = version_str.replace('.', '_')
+        It has the signature of a `RendererFunctionCallsProvider`, so it can be
+        passed as the `renderer_calls` of `a2ui_rpc_callback`.
+        """
+        return self.get_for_session(ctx.session.id)
 
-    # Calculate file depth relative to docs dir
-    file_depth = len(page.file.src_path.split('/')) - 1
+    def get_for_session(self, session_id: str) -> RendererFunctionCalls:
+        """Returns the session's `RendererFunctionCalls`, creating it if needed.
 
-    def replace_path(path):
-        if path.startswith(('http://', 'https://', 'mailto:', 'tel:')):
-            return path
+        An instance that was disposed outside the store is replaced.
+        """
+        calls = self._calls.get(session_id)
+        if calls is None or calls.disposed:
+            calls = RendererFunctionCalls(
+                default_timeout=self._default_timeout, max_pending=self._max_pending
+            )
+            self._calls[session_id] = calls
+        return calls
 
-        parts = path.split('#')
-        base_path = parts[0]
-        anchor = f'#{parts[1]}' if len(parts) > 1 else ''
+    def remove(self, session_id: str, reason: str = "The session was removed.") -> None:
+        """Removes and disposes the session's instance, if it has one.
 
-        if base_path.startswith('./'):
-            base_path = base_path[2:]
+        Its pending calls fail with `A2uiRpcError(reason)`.
+        """
+        calls = self._calls.pop(session_id, None)
+        if calls is not None:
+            calls.dispose(reason)
 
-        if version_str:
-            mapped_name = map_spec_filename(base_path, version_str)
-            if mapped_name:
-                return mapped_name + anchor
+    def dispose(self, reason: str = "The store was disposed.") -> None:
+        """Removes and disposes every session's instance, as on shutdown."""
+        calls, self._calls = self._calls, {}
+        for instance in calls.values():
+            instance.dispose(reason)
 
-            # Rewrite relative paths to json schemas regardless of depth (e.g. "../json/..." or "../../../json/...")
-            if '/json/' in path:
-                rel_prefix = '../' * file_depth
-                return rel_prefix + version_folder + path[path.index('/json/') :]
+    def __contains__(self, session_id: object) -> bool:
+        return session_id in self._calls
 
-        # Check if the link points outside the docs folder
-        up_count = 0
-        temp_path = path
-        while temp_path.startswith('../'):
-            up_count += 1
-            temp_path = temp_path[3:]
-
-        if up_count > file_depth:
-            strip_count = up_count
-
-            # Remove the leading '../' sequences
-            path_parts = path.split('/')
-            while strip_count > 0 and path_parts and path_parts[0] == '..':
-                path_parts.pop(0)
-                strip_count -= 1
-            clean_path = '/'.join(path_parts)
-
-            # If the link points to another public documentation file, make it an internal link
-            if clean_path.startswith('docs/public/'):
-                rel_prefix = '../' * file_depth
-                return rel_prefix + clean_path[len('docs/public/') :]
-
-            # Return the newly formatted absolute GitHub link
-            return f'{github_base_url}/{clean_path}'
-
-        return path
-
-    def replace_standard_links(text_content):
-        def link_replacer(match):
-            if match.group('code'):
-                return match.group(0)
-            path = match.group('path')
-            new_path = replace_path(path)
-            matched_str = match.group(0)
-            start = match.start('path') - match.start(0)
-            end = match.end('path') - match.start(0)
-            return matched_str[:start] + new_path + matched_str[end:]
-
-        regex = r'(?P<code>`[^`]+`|```[\s\S]*?```)|\[(?P<text>[^\]]+)\]\((?P<path>[^\s)]+)(?:\s+(?P<title>".*?"|\'.*?\'))?\)'
-        return re.sub(regex, link_replacer, text_content)
-
-    def replace_reference_links(text_content):
-        def ref_replacer(match):
-            path = match.group('path')
-            new_path = replace_path(path)
-            matched_str = match.group(0)
-            start = match.start('path') - match.start(0)
-            end = match.end('path') - match.start(0)
-            return matched_str[:start] + new_path + matched_str[end:]
-
-        regex = r'^\s*\[(?P<ref>[^\]]+)\]:\s*(?P<path>[^\s]+)(?:\s+(?P<title>".*?"|\'.*?\'))?\s*$'
-        return re.sub(regex, ref_replacer, text_content, flags=re.MULTILINE)
-
-    markdown = replace_standard_links(markdown)
-    markdown = replace_reference_links(markdown)
-    return markdown
+    def __len__(self) -> int:
+        return len(self._calls)
 
 ```
 
@@ -2039,11 +2015,13 @@ def on_page_markdown(markdown, page, config, files):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4068** (2026-11-09): **docs(site): add global Google Analytics integration**
-  *Symptoms*: # Description  Adds global Google Analytics (`G-YX9TPV8DCC`, matching [`mkdocs.yaml`](https://github.com/a2ui-project/a2ui/blob/17c35b91947eee11ffc321bdcfeb555778a716e6/mkdocs.yaml#L22-L25)) to the Astro and Starlight documentation site in `docs/site/` so that every rendered page includes the `gtag.js` loader and configuration snippet inside `<head>` without per-page imports, while skipping local development and pull-request preview builds.  ## Changes  1. Added [`google-analytics.mjs`](https://github.com/abdallahshaban557/a2ui/blob/0a07acbece500875ade85facd0d7cad686650719/docs/site/src/plugins/google-analytics.mjs#L17-L137), an Astro integration and `post` response middleware that injects the Google Analytics `gtag.js` script and `G-YX9TPV8DCC` configuration before `</head>` across all `text/html` pages rendered during production `astro build` runs (covering both Starlight documentation routes and standalone `.astro` pages while skipping `astro dev`, `/pr-preview/` builds, `<meta http-equiv="refresh">` redirect stubs, `3xx` redirects, and empty `204`/`205`/`304` responses). 2. Registered `googleAnalytics('G-YX9TPV8DCC')` in [`astro.config.mjs`](https://github.com/abdallahshaban557/a2ui/blob/0a07acbece500875ade85facd0d7cad686650719/docs/site/astro.config.mjs#L76-L78). 3. Added unit and build-output tests in [`google-analytics.test.mjs`](https://github.com/abdallahshaban557/a2ui/blob/0a07acbece500875ade85facd0d7cad686650719/docs/site/tests/google-analytics.test.mjs#L49-L223) a
+- **Issue #4231** (2026-11-13): **Support zod >= 4.6.6 in @a2ui/web_core and @a2ui/react**
+  *Symptoms*: `@a2ui/web_core` (latest 0.15.0) depends on `zod ^3.25.76`, and `@a2ui/react` pulls it in. Zod versions below 4.6.6 have two open security advisories (reported as Dependabot alerts in consuming projects), and there is no patched zod 3 release, so consumers cannot resolve them without upstream moving to zod 4.  Request: support zod >= 4.6.6 (ideally as the supported major, or via a peer range that allows both) in `@a2ui/web_core` and `@a2ui/react`.  Consumers currently can only mitigate by bounding input size before validation.
+  **Post-Mortem & Fix Analysis**:
+  > Closing as a duplicate of #4192 (and related #2160).
 
-- **Issue #4067** (2026-11-09): **docs(site): reorganize Macros, Inference Formats, and Ecosystem sections**
-  *Symptoms*: ### Summary & Rationale  Refines the navigation structure and conceptual boundaries of `docs/site/` (`a2ui.org`):  1. Moves **Macros** out of *Concepts* and places it under *Guides* directly below *How to Define a Catalog* (`/guides/macros/`, with a redirect from `/concepts/macros`), matching its step-by-step integration structure. 2. Moves **Inference Formats** (renamed from *Swappable Inference Formats*) above *SDKs* under *Concepts* and refocuses the page on the conceptual model of decoupled generation formats rather than a step-by-step configuration or custom-format authoring guide, keeping a concise multi-SDK snippet to illustrate `InferenceFormatFactory` pluggability. 3. Reorders the *Ecosystem* sidebar to **Roadmap**, **Community Projects** (renamed from *Ecosystem Renderers & Tools*), and **Get Help**, updating cross-page links and `llms.txt` accordingly.  ### Live PR Preview  - **PR Preview Site**: [https://a2ui.org/pr-preview/pr-4067/](https://a2ui.org/pr-preview/pr-4067/) - **Inference Formats (Concepts)**: [https://a2ui.org/pr-preview/pr-4067/concepts/inference-formats/](https://a2ui.org/pr-preview/pr-4067/concepts/inference-formats/) - **Macros (Guides)**: [https://a2ui.org/pr-preview/pr-4067/guides/macros/](https://a2ui.org/pr-preview/pr-4067/guides/macros/) - **Community Projects (Ecosystem)**: [https://a2ui.org/pr-preview/pr-4067/ecosystem/renderers/](https://a2ui.org/pr-preview/pr-4067/ecosystem/renderers/) - **Roadmap (Ecosystem)**: [https://a2ui.org/pr-prev
+- **Issue #4218** (2026-11-13): **docs(site): update L+R Alder copy and walkthrough video on Get Help page**
+  *Symptoms*: Updates the L+R (Alder) entry on the Get Help page (`docs/site/src/pages/get-help.astro`) and replaces `docs/public/assets/consultants/lr-walkthrough.mp4` per email feedback from Alex Levin:  - Updated `appTagline` to `Conversational stylist for fashion retail` - Updated `summary` to: "Pairs a guided style chat with a live outfit-building 'dressing room' cart across foldable phones and web ecommerce. Host code validates catalog and bag state locally, and an in-app inspector displays raw A2UI message batches." - Updated `videoLabel` to `Walkthrough` and `videoCaption` to `L+R · Alder walkthrough` - Replaced `docs/public/assets/consultants/lr-walkthrough.mp4` with the provided `ALDER-walkthrough.mp4` video - Verified `agencyUrl` (`https://www.levinriegner.com/integrated-offerings/a2ui-consulting-development/`) is already up to date  ### Verification - `npm --prefix docs/site test`: 21 passed, 1 skipped (pre-build dist check) - `npm --prefix docs/site run build`: 36 pages built, 2402 internal links and 2226 fragment anchors verified with 0 errors
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2060,171 +2038,514 @@ def on_page_markdown(markdown, page, config, files):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1d040854` (2026-11-06)
-**Commit Message**: feat(dart): agent functions and RendererToAgentMessageProcessor (#3861)
+### Incident Patch 1: `0d2fcf37` (2026-11-12)
+**Commit Message**: fix(swift/core): drop theme from a v1.0 createSurface in relaxed mode (#4099)
 
-* feat(dart): implement Agent Function RPC helpers and conformance tests
+* fix(swift/core): drop theme from a v1.0 createSurface in relaxed mode
 
-Signed-off-by: Nan Yu <[REDACTED_EMAIL]>
+The v1.0 spec says a createSurface carrying theme fails strict validation
+and relaxed renderers drop it. web_core drops it when unknown elements are
+allowed, but the Swift V10VersionAdapter rejected it in every mode.
 
-* fix(dart-core): tighten how agent functions join a catalog
+Add an allowUnknownElements overload of VersionAdapter.extractOperations,
+mirroring web_core's options argument. V10VersionAdapter removes theme from
+each createSurface when it is set, and MessageProcessor passes its
+validation config's allowUnknownElements. Strict mode still rejects theme,
+and other unknown createSurface keys are still rejected, as in web_core.
 
-- AgentFunction.fromApi of a declaration the catalog doesn't have is a
-  catalog error instead of being appended.
-- Agent functions are added with copyWith(agentFunctions:) only; the
-  Catalog constructor no longer takes them (listing them in functions
-  still works).
-- An AgentFunction built with the constructor is always rendererOnly;
-  fromApi keeps rendererOnly or rendererOrAgent and rejects agentOnly.
-- Separate errors for a name given twice in agentFunctions and for a
-  name another catalog function already has.
-- Add Catalog.rendererFunctions.
-- Document that a handler may ignore its context.
+Un-skip v10_theme_dropped_in_permissive_mode_renders_like_none in the
+SwiftUI adapter harness and add core tests for both modes.
 
-Signed-off-by: Nan Yu <[REDACTED_EMAIL]>
+* fix(swift/core): strip v1.0 createSurface theme without recursion
 
-* refactor(dart-agent): replace the router with RendererToAgentMessageProcessor
+The relaxed-mode theme stripper now only visits the one-level shapes
+extractOperations accepts (single message, array, messages wrapper),
+so deeply nested untrusted payloads can't drive unbounded recursion.
 
-- RendererToAgentMessageProcessor takes the catalogs directly, answers
-  callAgentFunction with exactly one reply, and passes action, error and
-  rendererFunctionResponse to optional callbacks, returning a
-  ProcessRes
+* refactor(swift/core): drop v1.0 theme through a per-mes
 
-**File**: `dart/a2ui_agent/CHANGELOG.md` (modified, +8/-0)
+**File**: `swift/core/Sources/A2UICore/Processing/Adapters/BaseVersionAdapter.swift` (modified, +49/-10)
 ```diff
-@@ -23,6 +23,14 @@
-   catalog, then the examples under `### Examples:` followed by a blank line.
-   Add your own heading around the snippet if you want one.
-   [#3567](https://github.com/a2ui-project/a2ui/pull/3567)
-+- (v1_0) Added `RendererToAgentMessageProcessor`, whose `processMessage` takes
-+  one v1.0 message a renderer sent and returns a `ProcessResult` (`handled`,
-+  `replies`). It answers `callAgentFunction` with the catalogs' agent
-+  functions, and passes `action`, `error` and `rendererFunctionResponse` to the
-+  `onAction`, `onError` and `onRendererFunctionResponse` callbacks, which may
-+  return `false` to decline a message. The library re-exports the agent
-+  function and renderer-to-agent message types from `a2ui_core`
-+  ([#3536](https://github.com/a2ui-project/a2ui/issues/3536), [#3861](https://github.com/a2ui-project/a2ui/pull/3861)).
+@@ -48,23 +48,49 @@ open class BaseVersionAdapter: VersionAdapter, @unchecked Sendable {
+   }
  
- ## 0.1.0
- 
-```
-
-**File**: `dart/a2ui_agent/README.md` (modified, +60/-0)
-```diff
-@@ -59,6 +59,9 @@ What v1.0 adds to both formats:
-   as [multi_catalog_formats.yaml](../../conformance/agent/multi_catalog_formats.yaml)
-   describes. In Express, a name that several catalogs declare takes a
-   `catalogId` argument.
-+- `RendererToAgentMessageProcessor` processes the messages a renderer sends
-+  the agent, as described in
-+  [Messages from the renderer](#messages-from-the-renderer).
- - A `callRendererFunction` asks the renderer to run a function.
-   A parser and `processor.parseResponse` accept a call only to a function
-   whose `allowedCallers` lets the agent call it and that needs no user
-@@ -198,6 +201,63 @@ final List<ResponsePart> parts = processor.parseResponse(
- );
- ```
- 
-+### Messages from the renderer
-+
-+From v1.0, a catalog may declare functions that the agent runs: the renderer
-+sends a `callAgentFunction` and waits for the `agentFunctionResponse`. Attach
-+a handler to such a declaration with `AgentFunction.fromApi`, or define a new
-+function with `AgentFunction`, and add it to the catalog with `copyWith`:
-+
-+```dart
-+final CatalogApi withHandlers = catalog.copyWith(
-+  agentFunctions: [
-+    AgentFunction.fromApi(
-+      catalog.functions['verifyProvider']!,
-+      (args, _) => providers.isLicensed(args['providerId']! as String),
-+    ),
-+  ],
-+);
-+```
-+
-+`RendererToAgentMessageProcessor` answers each `callAgentFunction` with
-+exactly one reply: the handler's value, `INVALID_FUNCTION_CALL` for arguments
-+that break the function's schema, the code of an `A2uiRpcError` the handler
-+throws, or `EXECUTION_ERROR` for anything else it throws, an
-+`A2uiValidationError` included. It passes the other messages a renderer
-+sends, `action`, `error` and `rendererFunctionResponse`, to the callbacks you
-+give it. A message without a callback, or whose callback returns `false`, is
-+left unhandled, so the agent can pass it on, for example to the model's next
-+turn:
-+
-+```dart
-+bool onAction(ActionMessage message) {
-+  if (message.action.name != 'refresh') return false; // for the model
-+  refresh(message.action.surfaceId);
-+  return true;
-+}
-+
-+final processor = RendererToAgentMessageProcessor(
-+  catalogs: [withHandlers],
-+  onAction: onAction,
-+  onError: (message) => log(message.error.message), // void: handled
-+);
-+for (final Object? message in request.messages) {
-+  final ProcessResult result = await processor.processMessage(message);
-+  sendToRenderer(result.replies);
-+  if (!result.handled) {
-+    // Start a model turn with it.
+   open func extractOperations(from payload: JSONValue) throws -> [InternalOperation] {
++    try extractOperations(from: payload, allowUnknownElements: false)
 +  }
++
++  /// Validates the payload as ``extractOperations(from:)`` does, passing `allowUnknownElements`
++  /// to ``preparePayloadForValidation(_:action:allowUnknownElements:)`` for each message.
++  open func extractOperations(
++    from payload: JSONValue,
++    allowUnknownElements: Bool
++  ) throws -> [InternalOperation] {
+     switch payload {
+     case .null:
+       return []
+     case .array(let items):
+-      return try extractOperationsFromArray(items)
+-    case .object(let dict):
+-      if let messages = dict["messages"]?.arrayValue {
+-        return try extractOperationsFromArray(messages)
++      return try extractOperationsFromArray(items, allowUnknownElements: allowUnknownElements)
++    case .object(let messageObject):
++      if let messages = messageObject["messages"]?.arrayValue {
++        return try extractOperationsFromArray(
++          messages,
++          allowUnknownElements: allowUnknownElements
++        )
+       }
+-      return try extractOperationsFromSingleMessageObject(dict)
++      return try extractOperationsFromSingleMessageObject(
++        messageObject,
++        allowUnknownElements: allowUnknownElements
++      )
+     default:
+       return []
+     }
+   }
+ 
++  /// Lets subclasses normalize a single message before validation, such as dropping properties
++  /// that relaxed renderers ignore. The default returns `message` unchanged.
++  open func preparePayloadForValidation(
++    _ message: OrderedDictionary<String, JSONValue>,
++    action: String,
++    allowUnknownElements: Bool
++  ) -> OrderedDictionary<String, JSONValue> {
++    message
++  }
++
+   private func extractOperationsFromArray(
+-    _ items: [JSONValue]
++    _ items: [JSONValue],
++    allowUnknownElements: Bool
+   ) throws -> [InternalOperation] {
+     guard !items.isEmpty else { return [] }
+     for (index, item) in items.enumerated() {
+@@ -88,17 +114,23 @@ open class BaseVersionAdapter: VersionAdapter, @unchecked Sendable {
+     }
+     return try items.enumerated().flatMap { index, item -> [InternalOperation] in
+       do {
+-        return try extractOperations(from: item)
++        return try extractOperations(from: item, allowUnknownElements: allowUnknownElements)
+       } catch let error as A2UIValidationError {
+         throw rewriteMessageIndex(in: error, to: index)
+       }
+     }
+   }
+ 
+   private func extractOperationsFromSingleMessageObject(
+-    _ dict: OrderedDictionary<String, JSONValue>
++    _ rawMessage: OrderedDictionary<String, JSONValue>,
++    allowUnknownElements: Bool
+   ) throws -> [InternalOperation] {
+-    let action = try extractSingleAction(from: dict)
++    let action = try extractSingleAction(from: rawMessage)
++    let dict = preparePayloadForValidation(
++      rawMessage,
++      action: action,
++      allowUnknownElements: allowUnknownElements
++    )
+     guard let actionObj = dict[action]?.objectValue else {
+       throw A2UIValidationError(
+         "Payload for action '\(action)' must be an object",
+@@ -118,11 +150,18 @@ open class BaseVersionAdapter: VersionAdapter, @unchecked Sendable {
+   }
+ 
+   open func adaptMessage(_ message: AgentToRendererMessage) throws -> [InternalOperation] {
++    try adaptMessage(message, allowUnknownElements: false)
++  }
++
++  open func adaptMessage(
++    _ message: AgentToRendererMessage,
++    allowUnknownElements: Bool
++  ) throws -> [InternalOperation] {
+     let encoder = JSONEncoder()
+     encoder.userInfo[.a2uiProtocolVersion] = message.version
+     let data = try encoder.encode(message)
+     let jsonValue = try JSONValue.parse(data)
+-    let ops = try extractOperations(from: jsonValue)
++    let ops = try extractOperations(from: jsonValue, allowUnknownElements: allowUnknownElements)
+     if case .updateDataModel(let msg) = message, msg.value == nil {
+       return ops.map { op in
+         if case .updateDataModel(let updateOp) = op {
+```
+
+**File**: `swift/core/Sources/A2UICore/Processing/Adapters/V10VersionAdapter.swift` (modified, +21/-1)
+```diff
+@@ -19,7 +19,8 @@ import OrderedJSON
+ ///
+ /// Supports `createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface`,
+ /// `callRendererFunction`, and `agentFunctionResponse`. Per the v1.0 specification and
+-/// core blueprint rule 6, `theme` is not extracted on `createSurface`.
++/// core blueprint rule 6, `theme` is not extracted on `createSurface`: a `createSurface` that
++/// carries it is rejected, unless unknown elements are allowed, in which case `theme` is dropped.
+ public final class V10VersionAdapter: BaseVersionAdapter, @unchecked Sendable {
+   private static let supportedActions: Set<String> = Set(InternalOperation.allOperationTypes)
+   private static let supportedCatalogVersions: Set<String> = ["1.0"]
+@@ -36,6 +37,25 @@ public final class V10VersionAdapter: BaseVersionAdapter, @unchecked Sendable {
+     Self.supportedCatalogVersions
+   }
+ 
++  /// Drops `theme` from a `createSurface` before validation when `allowUnknownElements` is set,
++  /// as relaxed renderers do; otherwise `theme` is rejected as an unrecognized property.
++  public override func preparePayloadForValidation(
++    _ message: OrderedDictionary<String, JSONValue>,
++    action: String,
++    allowUnknownElements: Bool
++  ) -> OrderedDictionary<String, JSONValue> {
++    guard allowUnknownElements,
++      action == "createSurface",
++      var createSurface = message["createSurface"]?.objectValue,
++      createSurface.removeValue(forKey: "theme") != nil
++    else {
++      return message
++    }
++    var updatedMessage = message
++    updatedMessage["createSurface"] = .object(createSurface)
++    return updatedMessage
++  }
++
+   public override func extractOperationsFromObject(
+     _ message: OrderedDictionary<String, JSONValue>,
+     action: String,
+```
+
+**File**: `swift/core/Sources/A2UICore/Processing/Adapters/VersionAdapter.swift` (modified, +38/-0)
+```diff
+@@ -35,8 +35,46 @@ public protocol VersionAdapter: Sendable {
+   /// Validates a raw JSON payload and normalizes it into version-neutral operations.
+   func extractOperations(from payload: JSONValue) throws -> [InternalOperation]
+ 
++  /// Validates a raw JSON payload and normalizes it into version-neutral operations, applying
++  /// the processor's unknown-element policy where the protocol version defines one.
++  ///
++  /// - Parameters:
++  ///   - payload: The raw JSON message payload or message array.
++  ///   - allowUnknownElements: Whether the caller's validation config permits unknown elements
++  ///     (see ``ValidationConfig/allowUnknownElements``).
++  func extractOperations(
++    from payload: JSONValue,
++    allowUnknownElements: Bool
++  ) throws -> [InternalOperation]
++
+   /// Normalizes a decoded ``AgentToRendererMessage`` into version-neutral operations.
+   func adaptMessage(_ message: AgentToRendererMessage) throws -> [InternalOperation]
++
++  /// Normalizes a decoded ``AgentToRendererMessage`` into version-neutral operations, applying
++  /// the same unknown-element policy as ``extractOperations(from:allowUnknownElements:)``.
++  func adaptMessage(
++    _ message: AgentToRendererMessage,
++    allowUnknownElements: Bool
++  ) throws -> [InternalOperation]
 +}
-+```
 +
-+The processor keeps no state between messages, so one processor can serve
-+every conversation, or one can be built per request from the active catalogs.
-+It takes one message at a time, which leaves the caller to decide whether
-+several run one after another or together, and what to do when one fails. A
-+message that isn't a v1.0 renderer-to-agent message (its `version` must be
-+`'1.0'`), or a `callAgentFunction` without a `functionCallId`, throws
-+`A2uiValidationError`.
++extension VersionAdapter {
++  /// Ignores `allowUnknownElements` and validates the payload as
++  /// ``extractOperations(from:)`` does.
++  public func extractOperations(
++    from payload: JSONValue,
++    allowUnknownElements: Bool
++  ) throws -> [InternalOperation] {
++    try extractOperations(from: payload)
++  }
 +
- ## Tests
++  /// Ignores `allowUnknownElements` and adapts the message as ``adaptMessage(_:)`` does.
++  public func adaptMessage(
++    _ message: AgentToRendererMessage,
++    allowUnknownElements: Bool
++  ) throws -> [InternalOperation] {
++    try adaptMessage(message)
++  }
+ }
  
- [test/conformance](test/conformance) runs every shared agent suite this API
+ /// Evaluates whether a catalog's declared protocol version is compatible with an expected
 ```
 
-**File**: `dart/a2ui_agent/lib/a2ui_agent.dart` (modified, +17/-0)
+**File**: `swift/core/Sources/A2UICore/Processing/MessageProcessor.swift` (modified, +8/-2)
 ```diff
-@@ -21,6 +21,22 @@
- /// renderer.
- library;
+@@ -640,7 +640,10 @@ public final class MessageProcessor: ObservableObject {
+     do {
+       let adapter = try adapterFactory.resolveFromPayload(payload)
+       envelopeVersion = adapter.version
+-      operations = try adapter.extractOperations(from: payload)
++      operations = try adapter.extractOperations(
++        from: payload,
++        allowUnknownElements: validationConfig.allowUnknownElements
++      )
+     } catch {
+       let rawContext = extractRawEnvelopeContext(from: payload, error: error)
+       let surfaceID = extractSurfaceID(from: error, fallback: rawContext.surfaceID ?? "")
+@@ -822,7 +825,10 @@ public final class MessageProcessor: ObservableObject {
  
-+export 'package:a2ui_core/a2ui_core.dart'
-+    show
-+        A2uiFunctionResponse,
-+        A2uiFunctionResponseError,
-+        A2uiRpcError,
-+        ActionMessage,
-+        AgentFunction,
-+        AgentFunctionContext,
-+        AgentFunctionHandler,
-+        AgentFunctionResponseMessage,
-+        CallAgentFunctionMessage,
-+        ErrorMessage,
-+        RendererFunctionResponseMessage,
-+        RendererToAgentMessage,
-+        RpcErrorCode;
-+
- export 'src/catalog_transformers/base.dart';
- export 'src/catalog_transformers/pruning.dart';
- export 'src/inference_format.dart';
-@@ -46,6 +62,7 @@ export 'src/processor/generator.dart';
- export 'src/processor/processor.dart';
- export 'src/processor/streamed_answer.dart';
- export 'src/prompt/generator.dart';
-+export 'src/rpc/renderer_to_agent_message_processor.dart';
- export 'src/utils/catalog_resolver.dart';
- export 'src/utils/renderer_state.dart' show RendererState;
- export 'src/utils/validation.dart';
+   private func adaptToOperations(_ message: AgentToRendererMessage) throws -> [InternalOperation] {
+     let adapter = adapterFactory.getAdapter(for: message.version)
+-    return try adapter.adaptMessage(message)
++    return try adapter.adaptMessage(
++      message,
++      allowUnknownElements: validationConfig.allowUnknownElements
++    )
+   }
+ 
+   private func extractSurfaceID(from error: Error, fallback: String) -> String {
 ```
 
-**File**: `dart/a2ui_agent/lib/src/rpc/agent_function_registry.dart` (added, +647/-0)
+**File**: `swift/core/Tests/A2UICoreTests/MessageProcessorTests.swift` (modified, +72/-0)
 ```diff
-@@ -0,0 +1,647 @@
+@@ -218,6 +218,78 @@ struct MessageProcessorTests {
+     #expect(try processor.getRendererDataModel() == nil)
+   }
+ 
++  // MARK: - v1.0 createSurface theme
++
++  private static let v10CreateSurfaceWithTheme = """
++    {
++      "version": "1.0",
++      "createSurface": {
++        "surfaceId": "s1",
++        "catalogId": "cat-v10",
++        "theme": { "primaryColor": "#FF00AA" }
++      }
++    }
++    """
++
++  private func makeV10Catalog() throws -> Catalog<AnyComponentAPI> {
++    Catalog(
++      id: "cat-v10",
++      protocolVersion: .v10,
++      components: [
++        AnyComponentAPI(name: "Text", schema: try Schema(instance: "{\"type\": \"object\"}"))
++      ]
++    )
++  }
++
++  @Test func relaxedProcessorDropsV10CreateSurfaceTheme() throws {
++    let processor = MessageProcessor(catalogs: [try makeV10Catalog()])
++    try processor.processMessages(try JSONValue.parse(Self.v10CreateSurfaceWithTheme))
++    let surface = try #require(processor.surfaceGroupModel["s1"])
++    #expect(surface.theme == nil)
++  }
++
++  @Test func strictProcessorRejectsV10CreateSurfaceTheme() throws {
++    let processor = MessageProcessor(
++      catalogs: [try makeV10Catalog()],
++      validationConfig: .strict
++    )
++    let error = try #require(throws: A2UIValidationError.self) {
++      try processor.processMessages(try JSONValue.parse(Self.v10CreateSurfaceWithTheme))
++    }
++    #expect(error.message.contains("unrecognized property 'theme'"))
++    #expect(processor.surfaceGroupModel["s1"] == nil)
++  }
++
++  @Test(arguments: [true, false])
++  func processMessageAppliesUnknownElementPolicyToV10CreateSurfaceTheme(
++    allowUnknownElements: Bool
++  ) throws {
++    let handler = TestProcessorActionHandler()
++    let processor = MessageProcessor(
++      catalogs: [try makeV10Catalog()],
++      actionHandler: handler,
++      validationConfig: allowUnknownElements ? .relaxed : .strict
++    )
++    processor.process(
++      message: .createSurface(
++        CreateSurfaceMessage(
++          surfaceID: "s1",
++          catalogID: "cat-v10",
++          theme: ["primaryColor": .string("#FF00AA")],
++          version: .v10
++        )
++      )
++    )
++    if allowUnknownElements {
++      let surface = try #require(processor.surfaceGroupModel["s1"])
++      #expect(surface.theme == nil)
++      #expect(handler.capturedErrors.isEmpty)
++    } else {
++      #expect(processor.surfaceGroupModel["s1"] == nil)
++      #expect(handler.capturedErrors.count == 1)
++    }
++  }
++
+   @Test func getRendererDataModelMultiVersionRequiresExplicitVersion() throws {
+     let v091Catalog = Catalog(
+       id: "cat-v091",
+```
+
+**File**: `swift/core/Tests/A2UICoreTests/VersionAdapterTests.swift` (modified, +56/-0)
+```diff
+@@ -172,6 +172,62 @@ struct VersionAdapterTests {
+     }
+   }
+ 
++  private static let v10CreateSurfaceWithThemeMessage = """
++    {
++      "version": "1.0",
++      "createSurface": {
++        "surfaceId": "s1",
++        "catalogId": "basic",
++        "theme": { "primaryColor": "#FF0000" }
++      }
++    }
++    """
++
++  @Test(
++    arguments: [
++      v10CreateSurfaceWithThemeMessage,
++      "[\(v10CreateSurfaceWithThemeMessage)]",
++      "{ \"messages\": [\(v10CreateSurfaceWithThemeMessage)] }",
++    ]
++  )
++  func v10AdapterDropsCreateSurfaceThemeOnlyWhenUnknownElementsAllowed(
++    rawPayload: String
++  ) throws {
++    let adapter = V10VersionAdapter()
++    let payload = try JSONValue.parse(rawPayload)
++
++    #expect(throws: A2UIValidationError.self) {
++      _ = try adapter.extractOperations(from: payload, allowUnknownElements: false)
++    }
++    let operations = try adapter.extractOperations(from: payload, allowUnknownElements: true)
++    #expect(operations.count == 1)
++    guard case .createSurface(let createOperation) = try #require(operations.first) else {
++      Issue.record("Expected .createSurface operation")
++      return
++    }
++    #expect(createOperation.surfaceID == "s1")
++    #expect(createOperation.catalogID == "basic")
++    #expect(createOperation.theme == nil)
++  }
++
++  @Test func v10AdapterStillRejectsOtherUnknownCreateSurfaceKeysWhenUnknownElementsAllowed()
++    throws
++  {
++    let adapter = V10VersionAdapter()
++    let payload: JSONValue = try .parse(
++      """
++      {
++        "version": "1.0",
++        "createSurface": { "surfaceId": "s1", "catalogId": "basic", "styles": {} }
++      }
++      """
++    )
++    let error = try #require(throws: A2UIValidationError.self) {
++      _ = try adapter.extractOperations(from: payload, allowUnknownElements: true)
++    }
++    #expect(error.message.contains("unrecognized property 'styles'"))
++  }
++
+   // MARK: - Action Validation & Cross-Version Action Errors
+ 
+   @Test func crossVersionActionRejectedWithSpecificErrorMessage() throws {
+```
+
+**File**: `swift/swiftui/Tests/A2UISwiftUITests/AdapterHarness.swift` (modified, +1/-4)
+```diff
+@@ -306,10 +306,7 @@ enum AdapterHarness {
+ 
+   /// Reasoned skip entries keyed by `"<case>"` or `"<case>/<op|expectKey>"`.
+   @MainActor
+-  static let unsupported: [String: String] = [
+-    "v10_theme_dropped_in_permissive_mode_renders_like_none":
+-      "Theme dropping in permissive mode not yet implemented in A2UICore Swift V10VersionAdapter"
+-  ]
++  static let unsupported: [String: String] = [:]
+ 
+   @MainActor private static var matchedUnsupportedKeys: Set<String> = []
+   @MainActor private static var completedCasesBySuite: [String: Set<String>] = [:]
+```
+
+---
+
+### Incident Patch 2: `b4365c1d` (2026-11-12)
+**Commit Message**: a11y(swiftui): announce visible text changes in live regions (#4021)
+
+* a11y(swiftui): announce visible text changes in live regions
+
+A live component announced only its explicit accessibility label, so a
+live Text or a live Column/Card banner without a label stayed silent when
+its text changed.
+
+Components now report their visible text through A2UIAccessibleTextKey
+(.a2uiAccessibleText(_:)). A2UIText reports its text without Markdown
+syntax. A live, non-hidden node announces its explicit label if set,
+otherwise the joined subtree text, whenever it changes. Hidden subtrees
+report no text, and a live region doesn't pass its text to ancestors, so
+nested live regions announce once.
+
+Part 1 of #3147.
+
+* a11y(swiftui): report text only inside live regions and keep list numbers
+
+Components now build and report their visible text only inside a live
+region, so surfaces without one don't parse Markdown a second time.
+Ordered list items keep their numbers in the announced text.
+
+* a11y(swiftui): read an ordered list item's number once
+
+A list item with several paragraphs repeated its number before each one.
+Number only the item's first block, as the screen shows it.
+
+* fix(swiftui): make att
+
+**File**: `swift/CHANGELOG.md` (modified, +5/-0)
+```diff
+@@ -11,6 +11,11 @@
+   `A2UIChoicePicker` Dynamic Type scaling, multi-line `TextField(axis: .vertical)` for `longText`
+   `A2UITextField`, and SVG path parsing improvements in `SVGPathParser` / `SVGPathShape`).
+   [#4023](https://github.com/a2ui-project/a2ui/pull/4023)
++- Announce visible text changes in `live` regions: a live component or container now announces its
++  explicit `label` followed by the text its subtree reports with the new `.a2uiAccessibleText(_:)`
++  modifier (collected through `A2UIAccessibleTextKey`). `A2UIText` reports its text without
++  Markdown syntax, and custom components that render text can call the modifier too.
++  [#4021](https://github.com/a2ui-project/a2ui/pull/4021)
+ 
+ ## 0.10.0
+ 
+```
+
+**File**: `swift/swiftui/README.md` (modified, +12/-5)
+```diff
+@@ -80,11 +80,17 @@ extra work:
+ - `label`: `accessibilityLabel`
+ - `description`: `accessibilityHint`
+ - `hidden`: `accessibilityHidden` for the whole subtree
+-- `live` (`polite` / `assertive`) announces the explicit `label` whenever it changes, for
+-  example when it is bound to the data model
++- `live` (`polite` / `assertive`) announces the explicit `label` followed by the visible text
++  inside the component whenever either changes, for example when it is bound to the data model
+ 
+ Only values the agent sets are applied, so SwiftUI keeps inferring labels from visible text.
+ 
++A live region reads the text that components inside it report. If your component renders text,
++call `.a2uiAccessibleText(text)` with the text as it reads on screen (for example without Markdown
++syntax), before any `.a2uiAccessibilityElement(for:children:)`, so an explicit label on a
++`.combine` element replaces it. The basic catalog's `Text` does this. Outside a live region the
++text is not built.
++
+ SwiftUI applies a label set on a stack to every element inside it. If your component's root is a
+ stack:
+ 
+@@ -104,9 +110,10 @@ the selected trait. On iOS 17 and macOS 14 and later, the row of tab headers als
+ bar trait.
+ 
+ Limitations: SwiftUI drops an accessibility hint on a group, so `description` has no effect on
+-layout containers or other `.contain` groups (for example `ChoicePicker`). Announcing changes to
+-a live component's visible text, rather than its label, is tracked in
+-[#3147](https://github.com/a2ui-project/a2ui/issues/3147).
++layout containers or other `.contain` groups (for example `ChoicePicker`), tracked in
++[#3147](https://github.com/a2ui-project/a2ui/issues/3147). Of the basic catalog components, only
++`Text` reports its visible text to live regions so far. On iOS 17 and macOS 14, changing a bound
++`hidden` value rebuilds the component's subtree, which resets its state.
+ 
+ ---
+ 
+```
+
+**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIAccessibilityHiddenKey.swift` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
 +// Copyright 2024 Google LLC
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2239,123 +2560,124 @@ Signed-off-by: Nan Yu <[REDACTED_EMAIL]>
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+import 'dart:async';
-+import 'dart:developer' as developer;
++import SwiftUI
 +
-+import 'package:a2ui_core/a2ui_core.dart';
++/// Environment key that is `true` inside a subtree hidden from assistive technologies, where a
++/// live region announces nothing.
++struct A2UIAccessibilityHiddenKey: EnvironmentKey {
++  static let defaultValue = false
++}
 +
-+/// Indexes the [AgentFunction]s of a set of catalogs and answers incoming
-+/// `callAgentFunction` messages with them.
-+///
-+/// Internal to this package: `RendererToAgentMessageProcessor` is the public
-+/// entry point.
-+final class AgentFunctionRegistry {
-+  /// How long a handler may run before the call is answered with a timeout
-+  /// error, or null for no limit.
-+  final Duration? timeout;
-+
-+  final Map<String, CatalogApi> _catalogs = <String, CatalogApi>{};
-+  final Map<(String, String), AgentFunction> _functions =
-+      <(String, String), AgentFunction>{};
-+  final Map<String, PayloadValidator<ComponentApi, FunctionApi>> _validators =
-+      <String, PayloadValidator<ComponentApi, FunctionApi>>{};
-+  final Map<(String, String), Map<String, Object?>> _resolvedArgSchemas =
-+      <(String, String), Map<String, Object?>>{};
-+
-+  /// Indexes every [Catalog.agentFunctions] entry of [catalogs].
-+  ///
-+  /// Throws [ArgumentError] if [timeout] is not positive, and
-+  /// [A2uiCatalogError] if two of [catalogs] have the same id.
-+  AgentFunctionRegistry(Iterable<CatalogApi> catalogs, {this.timeout}) {
-+    if (timeout != null && timeout! <= Duration.zero) {
-+      throw ArgumentError.value(
-+        timeout,
-+        'agentFunctionTimeout',
-+        'Must be > Duration.zero or null.',
-+      );
-+    }
-+    for (final catalog in catalogs) {
-+      if (_catalogs.containsKey(catalog.id)) {
-+        throw A2uiCatalogError(
-+          "Two catalogs have the id '${catalog.id}'; give the processor each "
-+          'catalog once.',
-+          catalogId: catalog.id,
-+        );
-+      }
-+      _catalogs[catalog.id] = catalog;
-+      for (final MapEntry<String, AgentFunction> entry
-+          in catalog.agentFunctions.entries) {
-+        _functions[(catalog.id, entry.key)] = entry.value;
-+      }
-+    }
++extension EnvironmentValues {
++  /// Whether an ancestor hides this view from assistive technologies with `hidden`.
++  var a2uiAccessibilityHidden: Bool {
++    get { self[A2UIAccessibilityHiddenKey.self] }
++    set { self[A2UIAccessibilityHiddenKey.self] = newValue }
 +  }
-+
-+  /// Validates and runs a v1.0 `callAgentFunction` [message] and returns the
-+  /// [AgentFunctionResponseMessage] that answers it.
-+  ///
-+  /// [message] may be a [CallAgentFunctionMessage] or a raw JSON `Map`
-+  /// envelope. The processor has already checked its version and that it
-+  /// carries no other message.
-+  ///
-+  /// Throws [A2uiValidationError] if [message] is not a `callAgentFunction`
-+  /// message or lacks a non-empty string `functionCallId`, since there is
-+  /// nothing to reply to. Every other failure is reported in the returned
-+  /// response's `error`.
-+  Future<AgentFunctionResponseMessage> handle(Object message) async {
-+    final _ParsedCallResult parsed = _parseCall(message);
-+    if (parsed.errorResponse != null) {
-+      return parsed.errorResponse!;
-+    }
-+    final _ParsedCall call = parsed.call!;
-+
-+    String? catalogId = call.catalogId;
-+    if (catalogId == null) {
-+      final matches = <String>[
-+        for (final (String cid, String fnName) in _functions.keys)
-+          if (fnName == call.name) cid,
-+      ];
-+      if (matches.length > 1) {
-+        return _errorResponse(
-+          call.functionCallId,
-+          RpcErrorCode.invalidFunctionCall.wireValue,
-+          "The call to '${call.name}' has no catalogId, and several catalogs "
-+          'have an agent function of that name: $matches.',
-+        );
-+      }
-+      if (matches.isEmpty) {
-+        return _errorResponse(
-+          call.functionCallId,
-+          RpcErrorCode.unknownFunction.wireValue,
-+          "No catalog of the agent has an agent function '${call.name}'.",
-+        );
-+      }
-+      catalogId = matches.first;
-+    }
-+
-+    final CatalogApi? catalog = _catalogs[catalogId];
-+    final AgentFunction? fn = _functions[(catalogId, call.name)];
-+    if (catalog == null || fn == null) {
-+      final detail = catalog == null
-+          ? "Unknown catalog '$catalogId' for agent function "
-+                "'${call.name}'."
-+          : "Unknown agent function '${call.name}' in catalog "
-+                "'$catalogId'.";
-+      return _errorResponse(
-+        call.functionCallId,
-+        RpcErrorCode.unknownFunction.wireValue,
-+        detail,
-+      );
-+    }
-+
-+    // Neither the AgentFunction constructor nor AgentFunction.fromApi builds
-+    // an agentOnly function; this guards against a subclass that claims it.
-+    if (fn.allowedCallers == AllowedCallers.agentOnly) {
-+  
++}
 ```
 
-**File**: `dart/a2ui_agent/lib/src/rpc/renderer_to_agent_message_processor.dart` (added, +253/-0)
+**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIAccessibilityModifier.swift` (modified, +73/-14)
 ```diff
-@@ -0,0 +1,253 @@
+@@ -25,9 +25,12 @@ import SwiftUI
+ /// - `description` becomes `accessibilityHint`. SwiftUI only keeps a hint on a single
+ ///   accessibility element, so it is dropped on layout containers and other groups.
+ /// - `hidden` becomes `accessibilityHidden` for the whole subtree.
+-/// - `live` (`polite` or `assertive`) posts an announcement of the explicit label whenever it
+-///   changes, for example when it is bound to the data model. Announcing changes to a component's
+-///   visible text is tracked in https://github.com/a2ui-project/a2ui/issues/3147.
++/// - `live` (`polite` or `assertive`) posts an announcement whenever the region's text changes:
++///   the explicit label if set, followed by the visible text that components in the subtree
++///   report with ``SwiftUI/View/a2uiAccessibleText(_:)``. This works for a live `Text` and for a
++///   live container such as a `Column` or `Card`. A label on a `Text` replaces its visible text,
++///   so it is read once. Nothing is announced while the region or an ancestor is hidden. See
++///   ``A2UIAccessibleTextKey``.
+ ///
+ /// SwiftUI applies a label set on a stack to every element inside it. A component whose root is
+ /// a stack should call ``SwiftUI/View/a2uiAccessibilityControl(for:)`` on its focusable control,
+@@ -88,32 +91,88 @@ public struct A2UIAccessibilityModifier: ViewModifier {
+     attributes?.live == "assertive"
+   }
+ 
+-  /// The text announced when it changes: the explicit label of a live component. `nil` when
+-  /// nothing is announced.
++  /// The text announced when it changes, for a component whose subtree reports no visible
++  /// text. Same as ``announcementText(subtreeText:)`` with no text.
+   public var announcementText: String? {
++    announcementText(subtreeText: [])
++  }
++
++  /// The text announced when it changes: the explicit label of a live component followed by
++  /// the visible text its subtree reports through ``A2UIAccessibleTextKey``, one entry per line.
++  /// `nil` when nothing is announced.
++  public func announcementText(subtreeText: [String]) -> String? {
+     guard isLiveRegion, !isHidden else { return nil }
+-    return label
++    let parts = ([label].compactMap { $0 } + subtreeText).filter { !$0.isEmpty }
++    return parts.isEmpty ? nil : parts.joined(separator: "\n")
+   }
+ 
+   public func body(content: Content) -> some View {
+-    hidden(
+-      content
+-        .a2uiOptionalAccessibilityIdentifier(appliesAccessibilityIdentifier ? identifier : nil)
+-        .a2uiOptionalAccessibilityLabel(appliesLabelAndHint ? label : nil)
+-        .a2uiOptionalAccessibilityHint(appliesLabelAndHint ? hint : nil)
++    liveRegion(
++      hidden(
++        labelText(
++          content
++            .a2uiOptionalAccessibilityIdentifier(appliesAccessibilityIdentifier ? identifier : nil)
++            .a2uiOptionalAccessibilityLabel(appliesLabelAndHint ? label : nil)
++            .a2uiOptionalAccessibilityHint(appliesLabelAndHint ? hint : nil)
++        )
++      )
+     )
+-    .modifier(AnnouncementTrigger(text: announcementText, assertive: isAssertive))
+   }
+ 
+-  @ViewBuilder
++  /// Reports the explicit label of a component inside a live region, ahead of its subtree text,
++  /// so the region reads it too. A live component announces its own label instead.
++  private func labelText<V: View>(_ view: V) -> some View {
++    view.a2uiAccessibleText(isLiveRegion ? nil : label)
++  }
++
++  /// Hides the view and its subtree from assistive technologies when `hidden` is set.
++  ///
++  /// `hidden` can be bound to the data model. On iOS 18 and macOS 15 and later the view tree is
++  /// the same either way, so changing it keeps the component's state. The live region trigger
++  /// sits outside this modifier, so it stays mounted on every version.
+   private func hidden<V: View>(_ view: V) -> some View {
+-    if isHidden {
++    let isHidden = isHidden
++    return
++      accessibilityHiddenIfNeeded(view, isHidden: isHidden)
++      // Text that assistive technologies can't reach is not announced by a live ancestor.
++      .transformPreference(A2UIAccessibleTextKey.self) { text in
++        if isHidden { text = [] }
++      }
++      .transformEnvironment(\.a2uiInLiveRegion) { isInLiveRegion in
++        if isHidden { isInLiveRegion = false }
++      }
++      .transformEnvironment(\.a2uiAccessibilityHidden) { isAncestorHidden in
++        if isHidden { isAncestorHidden = true }
++      }
++  }
++
++  /// Applies `accessibilityHidden(true)` only when the component is hidden. An outer
++  /// `accessibilityHidden(false)` would expose descendants that hide themselves, such as a
++  /// `hidden` child of a `Column` or the title `Text` of a `TextField`.
++  @ViewBuilder
++  private func accessibilityHiddenIfNeeded<V: View>(_ view: V, isHidden: Bool) -> some View {
++    if #available(iOS 18, macOS 15, tvOS 18, watchOS 11, visionOS 2, *) {
++      // With `isEnabled: false` the modifier does nothing, and the view tree doesn't change.
++      view.accessibilityHidden(true, isEnabled: isHidd
+```
+
+**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIAccessibleTextKey.swift` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
 +// Copyright 2024 Google LLC
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -2370,1595 +2692,592 @@ Signed-off-by: Nan Yu <[REDACTED_EMAIL]>
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+import 'dart:async';
++import SwiftUI
 +
-+import 'package:a2ui_core/a2ui_core.dart';
-+
-+import 'agent_function_registry.dart';
-+
-+/// A callback that receives one kind of message a renderer sent, such as an
-+/// [ActionMessage]. It may return a [Future], which is awaited.
++/// Collects the visible text that components report with
++/// ``SwiftUI/View/a2uiAccessibleText(_:)``, in tree order.
 +///
-+/// Return `false` (or a [Future] that completes with `false`) to decline the
-+/// message: the processor then reports it as not handled, so the caller
-+/// passes it on, for example to the model's turn. Any other result, including
-+/// none, means the callback handled it, so a `void` function works as is.
-+typedef RendererMessageCallback<T extends RendererToAgentMessage> =
-+    FutureOr<void> Function(T message);
++/// ``A2UIAccessibilityModifier`` reads this key on a live region (`live` is `polite` or
++/// `assertive`) and announces the joined text when it changes, so a live `Text` and a live
++/// container such as a `Column` or `Card` both announce their updates without the adapter
++/// knowing any catalog property names. A hidden subtree reports no text, and a live region
++/// reports none to its ancestors, so an update is announced once, by the nearest live region.
++/// Components report text only inside a live region, so the rest of a surface does no extra work.
++public struct A2UIAccessibleTextKey: PreferenceKey {
++  public static let defaultValue: [String] = []
 +
-+/// What [RendererToAgentMessageProcessor.processMessage] did with a message.
-+final class ProcessResult {
-+  /// Whether the processor handled the message: it answered a
-+  /// `callAgentFunction`, or passed the message to a callback that didn't
-+  /// decline it.
-+  ///
-+  /// False for an `action`, `error` or `rendererFunctionResponse` that has no
-+  /// callback, or whose callback returned `false`, which the caller passes
-+  /// on, for example to the model's turn.
-+  final bool handled;
++  public static func reduce(value: inout [String], nextValue: () -> [String]) {
++    value.append(contentsOf: nextValue())
++  }
++}
+```
+
+**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIAccessibleTextReporter.swift` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++// Copyright 2024 Google LLC
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+  /// The messages to send back to the renderer: one
-+  /// [AgentFunctionResponseMessage] for a `callAgentFunction`, and none for
-+  /// any other message.
-+  final List<AgentToRendererMessage> replies;
++import SwiftUI
 +
-+  /// Creates a result. [replies] is copied into an unmodifiable list.
-+  ProcessResult({
-+    required this.handled,
-+    Iterable<AgentToRendererMessage> replies = const [],
-+  }) : replies = List<AgentToRendererMessage>.unmodifiable(replies);
++/// Reports a view's text through ``A2UIAccessibleTextKey`` when the view is inside a live
++/// region, ahead of any text its subtree reports. Outside one, the text is never evaluated.
++struct A2UIAccessibleTextReporter: ViewModifier {
++  @Environment(\.a2uiInLiveRegion) private var isInLiveRegion
 +
-+  @override
-+  String toString() =>
-+      'ProcessResult(handled: $handled, replies: ${replies.length})';
++  let text: () -> String?
++
++  func body(content: Content) -> some View {
++    let reportedText = reportedText
++    return content.transformPreference(A2UIAccessibleTextKey.self) { subtreeText in
++      subtreeText.insert(contentsOf: reportedText, at: 0)
++    }
++  }
++
++  private var reportedText: [String] {
++    guard isInLiveRegion, let text = text(), !text.isEmpty else { return [] }
++    return [text]
++  }
++}
+```
+
+**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIAnnouncer.swift` (added, +36/-0)
+```diff
+@@ -0,0 +1,36 @@
++// Copyright 2024 Google LLC
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++import SwiftUI
++
++/// Posts the announcements of live regions (`live` is `polite` or `assertive`).
++///
++/// The default posts an `AccessibilityNotification.Announcement`. Tests replace it through the
++/// `a2uiAnnouncer` environment value to observe what a live region announces.
++@_spi(Testing)
++public struct A2UIAnnouncer: Sendable {
++  /// Posts `text`. `isAssertive` is `true` when the announcement interrupts current speech.
++  public let announce: @MainActor @Sendable (_ text: String, _ isAssertive: Bool) -> Void
++
++  public init(
++    announce: @escaping @MainActor @Sendable (_ text: String, _ isAssertive: Bool) -> Void
++  ) {
++    self.announce = announce
++  }
++
++  /// Posts an `AccessibilityNotification.Announcement`, with high priority when assertive.
++  public static let accessibilityNotification = A2UIAnnouncer { text, isAssertive in
++    A2UIAccessibilityModifier.announce(text, assertive: isAssertive)
++  }
++}
+```
+
+**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIAnnouncerKey.swift` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++// Copyright 2024 Google LLC
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++import SwiftUI
++
++/// Environment key for the ``A2UIAnnouncer`` that live regions post their announcements with.
++struct A2UIAnnouncerKey: EnvironmentKey {
++  static let defaultValue = A2UIAnnouncer.accessibilityNotification
 +}
 +
-+/// Processes the v1.0 messages a renderer sends an agent.
-+///
-+/// The agent-side counterpart of `a2ui_core`'s `MessageProcessor`:
-+///
-+/// - A `callAgentFunction` is always handled. The processor runs the matching
-+///   [AgentFunction] of its catalogs and replies with exactly one
-+///   `agentFunctionResponse`, carrying the value or an error.
-+/// - An `action`, `error` or `rendererFunctionResponse` goes to its callback,
-+///   [onAction], [onError] or [onRendererFunctionResponse], once validated
-+///   against the v1.0 schema. A callback may return `false` to decline the
-+///   message. With no callback set, the message is left unhandled, so the
-+///   caller can pass it on.
-+///
-+/// The processor keeps no state between messages, so one instance can serve
-+/// every conversation of an agent, or one can be built per request from the
-+/// catalogs that are active. It processes one message at a time; a caller
-+/// with several runs [processMessage] on each, and so decides how they run
-+/// together and what to do when one fails.
-+///
-+/// ```dart
-+/// final processor = RendererToAgentMessageProcessor(
-+///   catalogs: [catalog.copyWith(agentFunctions: [fetchQuote])],
-+///   // Handles refresh actions and declines the rest, which go to the model.
-+///   onAction: (action) => action.action.name == 'refresh',
-+/// );
-+/// final ProcessResult result = await processor.processMessage(message);
-+/// if (!result.handled) {
-+///   // Pass the message on to the model.
-+/// }
-+/// sendToRenderer(result.replies);
-+/// ```
-+class RendererToAgentMessageProcessor {
-+  /// Called with each validated `action` message.
-+  final RendererMessageCallback<ActionMessage>? onAction;
-+
-+  /// Called with each validated `error` message.
-+  final RendererMessageCallback<ErrorMessage>? onError;
-+
-+  /// Called with each validated `rendererFunctionResponse` message.
-+  final RendererMessageCallback<RendererFunctionResponseMessage>?
-+  onRendererFunctionResponse;
-+
-+  final AgentFunctionRegistry _agentFunctions;
-+
-+  /// Creates a processor that answers calls to the agent functions of
-+  /// [catalogs] (see [Catalog.agentFunctions]).
-+  ///
-+  /// A handler that runs longer than [agentFunctionTimeout] is answered with
-+  /// an `EXECUTION_ERROR`, and its result is ignored. By default there is no
-+  /// limit.
-+  ///
-+  /// Throws [ArgumentError] if [agentFunctionTimeout] is not positive, and
-+  /// [A2uiCatalogError] if two of [catalogs] have the same id.
-+  RendererToAgentMessageProcessor({
-+    required Iterable<CatalogApi> catalogs,
-+    Duration? agentFunctionTimeout,
-+    this.onAction,
-+    this.onEr
++extension EnvironmentValues {
++  /// Posts the announcements of live regions. Set it to observe them in tests.
++  @_spi(Testing)
++  public var a2uiAnnouncer: A2UIAnnouncer {
++    get { self[A2UIAnnouncerKey.self] }
++    set { self[A2UIAnnouncerKey.self] = newValue }
++  }
++}
 ```
 
-**File**: `dart/a2ui_agent/pubspec.yaml` (modified, +1/-0)
+---
+
+### Incident Patch 3: `dada9a12` (2026-11-11)
+**Commit Message**: refactor(swift): adopt iOS 17+ SwiftUI idioms, split multi-type files, and cache SVG paths (#4023)
+
+* refactor(swift): adopt iOS 17+ SwiftUI idioms, split multi-type files, and cache SVG paths
+
+- Replace EnvironmentKey boilerplate with @Entry in A2UIThemeKey, A2UICatalogsKey, and A2UISurfaceMetadataKey
+- Replace multiline TextEditor + manual placeholder inset hack in A2UITextField with native TextField(..., axis: .vertical) and .lineLimit(3...8)
+- Split MarkdownBlockView out of A2UIText and use positional enumeration so identical Markdown blocks do not collide in ForEach
+- Split SVGPathShape and SVGPathParser out of A2UIIcon, cache parsed Path in SVGPathShape.init, and use @ScaledMetric for Dynamic Type icon scaling
+- Split FlowLayout out of A2UIChoicePicker, remove dead type cast, and add 44pt minimum tap height + .contentShape(.rect) on checkbox rows
+- Remove redundant iOS 17 availability check in A2UITabs, adopt .scrollIndicators(_:) in A2UITabs and A2UIList, and replace deprecated .cornerRadius(_:) with .clipShape(.rect(cornerRadius:)) in InspectorPanes
+
+Signed-off-by: Peter Friese <[REDACTED_EMAIL]>
+
+* fix(swift): address review feedback on environment keys, layout, Markdown, 
+
+**File**: `swift/CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -30,5 +30,6 @@ dependencies:
+@@ -5,6 +5,12 @@
+ - Report the component definition ID rather than the synthesized `:index` instance ID as
+   `sourceComponentID` on actions dispatched from template-expanded components.
+   [#4043](https://github.com/a2ui-project/a2ui/pull/4043)
++- Deprecate `A2UICatalogsKey`, `A2UIDefaultCatalogIDKey`, and `A2UIThemeKey` in `A2UISwiftUI` in
++  favor of `EnvironmentValues.a2uiCatalogs`, `EnvironmentValues.a2uiDefaultCatalogID`, and
++  `EnvironmentValues.a2uiTheme`, and update `BasicCatalogSwiftUI` components (`A2UIIcon` and
++  `A2UIChoicePicker` Dynamic Type scaling, multi-line `TextField(axis: .vertical)` for `longText`
++  `A2UITextField`, and SVG path parsing improvements in `SVGPathParser` / `SVGPathShape`).
++  [#4023](https://github.com/a2ui-project/a2ui/pull/4023)
  
- dev_dependencies:
-   crypto: ^3.0.6
-+  json_schema_builder: ^0.1.4
-   test: ^1.26.2
-   yaml: ^3.1.2
+ ## 0.10.0
+ 
 ```
 
-**File**: `dart/a2ui_agent/test/conformance/agent_functions_conformance_test.dart` (modified, +460/-26)
+**File**: `swift/sample/Sources/A2UISampleClient/Views/InspectorPanes.swift` (modified, +2/-2)
 ```diff
-@@ -12,42 +12,476 @@
+@@ -61,7 +61,7 @@ public struct MessageStreamPane: View {
+                 index == currentStepIndex
+                   ? Color.blue.opacity(0.1) : Color(.secondarySystemBackground)
+               )
+-              .cornerRadius(6)
++              .clipShape(.rect(cornerRadius: 6))
+               .overlay(
+                 RoundedRectangle(cornerRadius: 6)
+                   .stroke(index == currentStepIndex ? Color.blue : Color.clear, lineWidth: 1.5)
+@@ -108,7 +108,7 @@ public struct DataModelPane: View {
+           .frame(maxWidth: .infinity, alignment: .leading)
+           .padding(12)
+           .background(Color(.secondarySystemBackground))
+-          .cornerRadius(8)
++          .clipShape(.rect(cornerRadius: 8))
+           .padding(.horizontal, 16)
+ 
+         Spacer()
+```
+
+**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UICatalogsKey.swift` (modified, +6/-12)
+```diff
+@@ -15,28 +15,22 @@
+ import A2UICore
+ import SwiftUI
+ 
+-/// Environment key for propagating the active component catalogs through
+-/// the SwiftUI view hierarchy.
++/// Environment key storing the active A2UI component catalogs for SwiftUI rendering.
++@available(*, deprecated, message: "Use EnvironmentValues.a2uiCatalogs instead.")
+ public struct A2UICatalogsKey: EnvironmentKey {
+   public static let defaultValue: [String: Catalog<ComponentImplementation>] = [:]
+ }
+ 
+-/// Environment key for propagating the default catalog ID through
+-/// the SwiftUI view hierarchy.
++/// Environment key storing the default catalog ID used for unqualified component lookups.
++@available(*, deprecated, message: "Use EnvironmentValues.a2uiDefaultCatalogID instead.")
+ public struct A2UIDefaultCatalogIDKey: EnvironmentKey {
+   public static let defaultValue: String? = nil
+ }
+ 
+ extension EnvironmentValues {
+   /// The active A2UI component catalogs for SwiftUI rendering.
+-  public var a2uiCatalogs: [String: Catalog<ComponentImplementation>] {
+-    get { self[A2UICatalogsKey.self] }
+-    set { self[A2UICatalogsKey.self] = newValue }
+-  }
++  @Entry public var a2uiCatalogs: [String: Catalog<ComponentImplementation>] = [:]
+ 
+   /// The default catalog ID used for unqualified component lookups.
+-  public var a2uiDefaultCatalogID: String? {
+-    get { self[A2UIDefaultCatalogIDKey.self] }
+-    set { self[A2UIDefaultCatalogIDKey.self] = newValue }
+-  }
++  @Entry public var a2uiDefaultCatalogID: String? = nil
+ }
+```
+
+**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UISurfaceMetadataKey.swift` (modified, +1/-8)
+```diff
+@@ -15,14 +15,7 @@
+ import OrderedJSON
+ import SwiftUI
+ 
+-struct A2UISurfaceMetadataKey: EnvironmentKey {
+-  static let defaultValue: [String: JSONValue]? = nil
+-}
+-
+ extension EnvironmentValues {
+   /// The A2UI surface metadata dictionary injected by ``Surface``.
+-  public var a2uiSurfaceMetadata: [String: JSONValue]? {
+-    get { self[A2UISurfaceMetadataKey.self] }
+-    set { self[A2UISurfaceMetadataKey.self] = newValue }
+-  }
++  @Entry public var a2uiSurfaceMetadata: [String: JSONValue]? = nil
+ }
+```
+
+**File**: `swift/swiftui/Sources/A2UISwiftUI/A2UIThemeKey.swift` (modified, +3/-7)
+```diff
+@@ -12,20 +12,16 @@
  // See the License for the specific language governing permissions and
  // limitations under the License.
  
-+import 'dart:async';
-+
-+import 'package:a2ui_agent/a2ui_agent.dart';
-+import 'package:a2ui_core/a2ui_core.dart';
-+import 'package:json_schema_builder/json_schema_builder.dart';
- import 'package:test/test.dart';
+-import A2UICore
+ import OrderedJSON
+ import SwiftUI
  
- import 'suites.dart';
- 
--/// Registers the shared `conformance/agent/agent_functions.yaml` suite.
--///
--/// The suite covers agent functions and the routing of renderer messages,
--/// which this SDK does not implement yet, so every case is
--/// skipped with the reason [_unimplementedActions] gives, and recorded so in
--/// the executed-case manifest. A case whose action has no reason fails
--/// instead of passing without running.
- void main() {
--  const path = 'agent/agent_functions.yaml';
--  group('conformance $path', () {
--    final List<Map<String, Object?>> cases = loadSuite(path);
-+  group('conformance agent/agent_functions.yaml', () {
-+    final List<Map<String, Object?>> cases = loadSuite(
-+      'agent/agent_functions.yaml',
-+    );
-     test('suite is not empty', () => expect(cases, isNotEmpty));
-     for (final testCase in cases) {
--      final action = testCase['action']! as String;
--      test(testCase['name']! as String, () {
--        if (_unimplementedActions[action] case final String reason) {
--          markTestSkipped(reason);
--          return;
--        }
--        fail('Unhandled conformance action: $action');
--      });
-+      test(testCase['name']! as String, () => _runCase(testCase));
-     }
-   });
+-/// Environment key for propagating the active surface theme through
+-/// the SwiftUI view hierarchy.
++/// Environment key storing the active A2UI surface theme.
++@available(*, deprecated, message: "Use EnvironmentValues.a2uiTheme instead.")
+ public struct A2UIThemeKey: EnvironmentKey {
+   public static let defaultValue: [String: JSONValue]? = nil
  }
  
--/// The suite's actions this SDK has no implementation for, with the reason.
--const Map<String, String> _unimplementedActions = {
--  'declare_agent_functions': _notImplemented,
--  'handle_agent_function': _notImplemented,
--  'validate_payload': _notImplemented,
--  'process_renderer_message': _notImplemented,
-+/// How many times a handler built by [_handler] ran in the current case.
-+int _handlerCalls = 0;
-+
-+/// The reply error codes for a call the processor refuses before the
-+/// handler runs.
-+const Set<String> _rejectedCallCodes = {
-+  'INVALID_FUNCTION_CALL',
-+  'UNKNOWN_FUNCTION',
- };
- 
--const String _notImplemented =
--    'this SDK does not implement agent functions yet';
-+/// Whether [testCase] expects the processor to refuse the call, or to
-+/// throw, so that no handler may run.
-+bool _expectsRejection(Map<String, Object?> testCase) {
-+  if (testCase.containsKey('expect_error')) return true;
-+  final Object? expected = testCase['expect'];
-+  if (expected is! Map) return false;
-+  final Object? replies = expected['replies'];
-+  final List<Object?> errors = [
-+    if (expected['error'] case {'code': final Object? code}) code,
-+    if (replies is List)
-+      for (final Object? reply in replies)
-+        if (reply case {
-+          'agentFunctionResponse': {'error': {'code': final Object? code}},
-+        })
-+          code,
-+  ];
-+  return errors.any(_rejectedCallCodes.contains);
-+}
-+
-+Future<void> _runCase(Map<String, Object?> testCase) async {
-+  _handlerCalls = 0;
-+  await _runAction(testCase);
-+  if (_expectsRejection(testCase)) {
-+    expect(
-+      _handlerCalls,
-+      0,
-+      reason: 'No handler runs for a call that is refused or fails',
-+    );
-+  }
-+}
-+
-+Future<void> _runAction(Map<String, Object?> testCase) async {
-+  final action = testCase['action']! as String;
-+  switch (action) {
-+    case 'declare_agent_functions':
-+      _runDeclare(testCase);
-+    case 'handle_agent_function':
-+      await _runHandle(testCase);
-+    case 'validate_payload':
-+      _runValidate(testCase);
-+    case 'process_renderer_message':
-+      await _runProcess(testCase);
-+    default:
-+      fail('Unhandled conformance action: $action');
-+  }
-+}
-+
-+/// A handler for [behavior] that counts its runs in [_handlerCalls].
-+AgentFunctionHandler _handler(Map<String, Object?> behavior) {
-+  final AgentFunctionHandler handler = _behaviorHandler(behavior);
-+  return (Map<String, dynamic> args, AgentFunctionContext context) {
-+    _handlerCalls++;
-+    return handler(args, context);
-+  };
-+}
-+
-+AgentFunctionHandler _behaviorHandler(Map<String, Object?> behavior) {
-+  if (behavior.containsKey('returns')) {
-+    final Object? value = behavior['returns'];
-+    return (Map<String, dynamic> args, AgentFunctionContext context) async =>
-+        value;
-+  }
-+  if (behavior['returns_args'] == true) {
-+    return (Map<String, dynamic> args, AgentFunctionContext context) async =>
-+        args;
-+  }
-+  if (behavior['returns_context'] == true) {
-+    return (Map<String, dynamic> args, AgentFunctionContext context) async =>
-+        <String, Object?>{
-+          'catalogId': context.catalogId,
-+          'surfaceId': context.surfaceId,
-+          'functionCallId': context.functionCallId,
-+        };
-+  }
-+  if (behavior['raises'] case final Map<String, Object?> failure) {
-+    return (Map<String, dynamic> args, AgentFunctionContext context) async {
-+      final message = 
+ extension EnvironmentValues {
+   /// The active A2UI surface theme, if any.
+-  public var a2uiTheme: [String: JSONValue]? {
+-    get { self[A2UIThemeKey.self] }
+-    set { self[A2UIThemeKey.self] = newValue }
+-  }
++  @Entry public var a2uiTheme: [String: JSONValue]? = nil
+ }
 ```
 
-**File**: `dart/a2ui_agent/test/rpc/agent_function_validation_end_to_end_test.dart` (added, +127/-0)
+**File**: `swift/swiftui/Sources/BasicCatalog/A2UIChoicePicker.swift` (modified, +4/-67)
 ```diff
-@@ -0,0 +1,127 @@
-+// Copyright 2024 Google LLC
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+import 'dart:async';
-+
-+import 'package:a2ui_agent/a2ui_agent.dart';
-+import 'package:a2ui_core/a2ui_core.dart';
-+import 'package:json_schema_builder/json_schema_builder.dart';
-+import 'package:test/test.dart';
-+
-+const String _catId = 'https://example.com/finance.json';
-+
-+void main() {
-+  group('End-to-end agent functions', () {
-+    test('round-trips callAgentFunction between MessageProcessor and '
-+        'RendererToAgentMessageProcessor', () async {
-+      final quote = AgentFunction(
-+        name: 'fetchQuote',
-+        returnType: A2uiReturnType.string,
-+        argumentSchema: Schema.fromMap({
-+          'type': 'object',
-+          'properties': {
-+            'symbol': {'type': 'string'},
-+          },
-+          'required': ['symbol'],
-+        }),
-+        handler: (args, ctx) => '${args['symbol']}: \$175.00',
-+      );
-+      // The agent catalog holds the AgentFunction.
-+      final CatalogApi agentCatalog = Catalog(
-+        id: _catId,
-+        protocolVersion: A2uiProtocolVersion.v1_0,
-+        components: [
-+          ComponentApi(
-+            name: 'Text',
-+            schema: Schema.fromMap({
-+              'type': 'object',
-+              'properties': {
-+                'text': {r'$ref': r'common_types.json#/$defs/DynamicString'},
-+              },
-+              'required': ['text'],
-+            }),
-+          ),
-+        ],
-+        functions: [quote],
-+      );
-+
-+      // The renderer catalog doesn't implement fetchQuote, so the renderer
-+      // forwards it via callAgentFunction.
-+      final rendererCatalog = Catalog<ComponentApi, FunctionImplementation>(
-+        id: _catId,
-+        protocolVersion: A2uiProtocolVersion.v1_0,
-+        components: agentCatalog.components.values.toList(),
-+      );
-+
-+      final agentProcessor = RendererToAgentMessageProcessor(
-+        catalogs: [agentCatalog],
-+      );
-+
-+      late MessageProcessor rendererProcessor;
-+      rendererProcessor = MessageProcessor(
-+        catalogs: [rendererCatalog],
-+        outboundListener: (RendererToAgentMessage outbound) async {
-+          final ProcessResult result = await agentProcessor.processMessage(
-+            outbound,
-+          );
-+          if (result.replies.isNotEmpty) {
-+            rendererProcessor.processMessages(result.replies);
-+          }
-+        },
-+      );
-+
-+      final outboundPayload = <Map<String, Object?>>[
-+        {
-+          'version': A2uiProtocolVersion.v1_0.jsonValue,
-+          'createSurface': {'surfaceId': 'main', 'catalogId': _catId},
-+        },
-+        {
-+          'version': A2uiProtocolVersion.v1_0.jsonValue,
-+          'updateComponents': {
-+            'surfaceId': 'main',
-+            'components': [
-+              {
-+                'id': 'root',
-+                'component': 'Text',
-+                'text': {
-+                  '@call': 'fetchQuote',
-+                  'args': {'symbol': 'GOOG'},
-+                },
-+              },
-+            ],
-+          },
-+        },
-+      ];
-+
-+      // 1. Agent-side strict payload validation succeeds.
-+      MessageProcessor.forAgent(
-+        catalogs: [agentCatalog],
-+        validationConfig: ValidationConfig.strict,
-+      ).processMessages(outboundPayload);
-+
-+      // 2. Renderer processes payload, triggers callAgentFunction on the
-+      // binding, receives agentFunctionResponse, and updates the resolved node.
-+      rendererProcessor.processMessages(outboundPayload);
-+      final SurfaceModel<ComponentApi> surface = rendererProcessor.model
-+          .getSurface('main')!;
-+      final NodeResolver<ComponentApi> resolver = NodeResolver(surface);
-+      final ComponentNode rootNode = resolver.rootNode.value!;
-+      await Future<void>.delayed(const Duration(milliseconds: 20));
-+      final textBinding =
-+          rootNode.props.value['text']! as ResolvedBinding<Object?>;
-+      expect(textBinding.value, 'GOOG: \$175.00');
-+      resolver.dispose();
-+    });
-+  });
-+}
+@@ -29,58 +29,7 @@ extension BasicCatalogImplementation {
+   }
+ }
+ 
+-// MARK: - Layout
+-
+-/// A custom SwiftUI layout arranging child views in wrapping horizontal rows.
+-struct FlowLayout: Layout {
+-  var spacing: CGFloat = 8
+-  var lineSpacing: CGFloat = 8
+-
+-  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+-    guard !subviews.isEmpty else { return .zero }
+-    let maxWidth = proposal.width ?? .infinity
+-    var currentX: CGFloat = 0
+-    var currentY: CGFloat = 0
+-    var lineHeight: CGFloat = 0
+-    var maxLineWidth: CGFloat = 0
+-
+-    for subview in subviews {
+-      let size = subview.sizeThatFits(.unspecified)
+-      if currentX + size.width > maxWidth && currentX > 0 {
+-        maxLineWidth = max(maxLineWidth, currentX - spacing)
+-        currentX = 0
+-        currentY += lineHeight + lineSpacing
+-        lineHeight = 0
+-      }
+-      currentX += size.width + spacing
+-      lineHeight = max(lineHeight, size.height)
+-    }
+-    maxLineWidth = max(maxLineWidth, currentX > 0 ? currentX - spacing : 0)
+-
+-    return CGSize(width: maxLineWidth, height: currentY + lineHeight)
+-  }
+-
+-  func placeSubviews(
+-    in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+-  ) {
+-    guard !subviews.isEmpty else { return }
+-    var currentX: CGFloat = bounds.minX
+-    var currentY: CGFloat = bounds.minY
+-    var lineHeight: CGFloat = 0
+-
+-    for subview in subviews {
+-      let size = subview.sizeThatFits(.unspecified)
+-      if currentX + size.width > bounds.maxX && currentX > bounds.minX {
+-        currentX = bounds.minX
+-        currentY += lineHeight + lineSpacing
+-        lineHeight = 0
+-      }
+-      subview.place(at: CGPoint(x: currentX, y: currentY), proposal: ProposedViewSize(size))
+-      currentX += size.width + spacing
+-      lineHeight = max(lineHeight, size.height)
+-    }
+-  }
+-}
++// MARK: - View
+ 
+ /// SwiftUI component view for the A2UI Basic Catalog `ChoicePicker` selection component.
+ public struct A2UIChoicePicker: View {
+@@ -137,20 +86,6 @@ public struct A2UIChoicePicker: View {
+       }
+     }
+ 
+-    if let rawArray = node.properties["options"] as? [Any] {
+-      return rawArray.enumerated().compactMap { index, element in
+-        if let str = element as? String {
+-          return OptionItem(id: str, label: str, value: str)
+-        }
+-        if let dict = element as? [String: Any] {
+-          let label = (dict["label"] as? String) ?? "Option \(index + 1)"
+-          let value = (dict["value"] as? String) ?? "\(index)"
+-          return OptionItem(id: value, label: label, value: value)
+-        }
+-        return nil
+-      }
+-    }
+-
+     if let json = node.jsonValue(for: "options"), let array = json.arrayValue {
+       return array.enumerated().map { index, item in
+         if let str = item.stringValue {
+@@ -247,7 +182,7 @@ public struct A2UIChoicePicker: View {
+         }
+         .padding(8)
+         .background(Color.gray.opacity(0.12))
+-        .cornerRadius(8)
++        .clipShape(.rect(cornerRadius: 8))
+         .accessibilityIdentifier("A2UIChoicePicker_Search_\(node.id)")
+       }
+ 
+@@ -314,6 +249,8 @@ public struct A2UIChoicePicker: View {
+             Spacer()
+           }
+           .padding(.vertical, 4)
++          .frame(minHeight: 44)
++          .contentShape(.rect)
+         }
+         .buttonStyle(.plain)
+         .a2uiOptionAccessibility(
 ```
 
----
-
-### Incident Patch 2: `744276b9` (2026-11-06)
-**Commit Message**: feat(python-agent): call renderer functions from the agent (#3939)
-
-* feat(python-agent): call renderer functions from the agent (#3535)
-
-Restore the agent's calls to renderer functions, split out of #3793-#3795
-during review, on top of RendererToAgentMessageProcessor:
-
-- a2ui.rpc.RendererFunctionCalls (with DEFAULT_RENDERER_CALL_TIMEOUT and
-  RendererFunctionResponseInput) builds callRendererFunction messages and
-  settles their futures. Its resolve method is the processor's
-  on_renderer_function_response callback.
-- Review fixes from #3793: an empty function name is rejected with
-  INVALID_FUNCTION_CALL; an empty surface_id counts as omitted; a malformed
-  rendererFunctionResponse whose functionCallId names a pending call fails
-  that call at once (UNKNOWN_ERROR) instead of leaving it to time out; the
-  timer test asserts timer.cancelled().
-- New is_pending(function_call_id), so a framework settles only responses to
-  its own calls and passes others (such as responses to calls a model wrote
-  through an inference format) to the model's turn, as the review asked.
-- a2ui-adk: a2ui_rpc_callback takes renderer_calls (catalogs becomes
-  optional), settles responses to pending calls t
-
-**File**: `conformance/README.md` (modified, +28/-1)
+**File**: `swift/swiftui/Sources/BasicCatalog/A2UIIcon.swift` (modified, +9/-243)
 ```diff
-@@ -37,6 +37,7 @@ The suites that do not depend on an inference format sit directly under `agent/`
- - `agent/skill.yaml`: Generating skill documents and skill sets from a format and its catalogs, and checking that a monolithic skill's body equals the prompt snippet for the same catalogs (`monolithic_skill_equals_prompt_snippet`).
- - `agent/multi_catalog_formats.yaml`: Resolving components and function calls across active catalogs (omitting `createSurface.catalogId` when multiple catalogs are active, resolving un-annotated components and function calls by name when unique across active catalogs, and requiring an explicit `catalogId` override when ambiguous), across `direct_json` (and later `express`): compiling, decompiling (including omitting `catalogId` when name lookup is unambiguous), parsing a response, rendering a prompt snippet, and building a format. Component order inside a message carries no meaning, so a harness may compare the `components` of a compiled message by `id`.
- - `agent/agent_functions.yaml`: Agent functions (v1.0) and the agent's side of the messages a renderer sends. It covers declaring agent functions on the agent's copy of a catalog (including building one from the catalog's own declaration), answering `callAgentFunction` (the response values and error codes, schema defaults, the handler's context, and which catalog a call runs in), validating model output that calls agent functions, and how `RendererToAgentMessageProcessor` routes `action`, `error` and `rendererFunctionResponse` messages to its callbacks. See [Writing cases for the agent function suite](#writing-cases-for-the-agent-function-suite).
-+- `agent/renderer_function_calls.yaml`: The agent calling renderer functions with `callRendererFunction` (v1.0): the message it builds, settling calls with responses, ignoring unknown, late and duplicate responses, timeouts, disposal and the limit on pending calls. See [Writing cases for the agent function suite](#writing-cases-for-the-agent-function-suite).
- - `agent/streamed_answer.yaml`: Reading a streamed answer into a renderer's message processor, for an app that is both the agent and the renderer, and keeping the answer's text, surfaces and rejected blocks in the order the model wrote them. It runs on `direct_json`, the format that streams. The suite belongs to the optional `agent_renderer_app` feature, and only an SDK that implements it runs the suite.
+@@ -15,6 +15,7 @@
+ import A2UICore
+ import A2UISwiftUI
+ import BasicCatalog
++import Foundation
+ import OrderedJSON
+ import SwiftUI
  
- A case names its format with `args.format`, an `InferenceFormatName`: `direct_json` (or `express`).
-@@ -177,7 +178,33 @@ The suite has four actions:
+@@ -29,232 +30,13 @@ extension BasicCatalogImplementation {
  
- In all four actions, `expect_error` is an `AgentFunctionExpectError`: a required `category`, `CatalogError` or `ValidationError`, and an optional `message`. The harness checks the error's category, and matches `message` as a literal substring of the error's text, not as a regular expression. A harness fails a case whose `expect_error` has any other key, so that an unrelated exception can't pass it.
+ // MARK: - View
  
--The TypeScript and Dart agent SDKs do not implement agent functions yet, so their harnesses skip every case of this suite with that reason.
-+`agent/renderer_function_calls.yaml` has one action:
-+
-+- `call_renderer_function` makes calls to renderer functions and settles them, in `steps`. Each step does one thing: `call` makes a call named by its `label` (with `catalogId`, `name`, and optionally `args`, `surfaceId`, `functionCallId` and `timeout_ms`; `args` may be any JSON value, so a case can check that a non-object is refused), `respond` hands over a `rendererFunctionResponse` for a labelled `call` or a literal `functionCallId`, `advance_ms` moves the clock, and `dispose` disposes the calls with an optional `reason`. `args` may set `default_timeout_ms` (otherwise the SDK's default of 30 seconds applies), `max_pending`, and `catalogs`, the agent's catalogs that each `call` is checked against. A case may have `expect_error` (`RendererCallsBuildError`: a required `category`, which is `CatalogError`, and an optional literal-substring `message`) instead of `steps`, when building the calls helper must fail. A harness that hands responses over through a `RendererToAgentMessageProcessor`, with `resolve` as `on_renderer_function_response`, also checks that a response is handled exactly when its call is pending: `resolve` declines unknown, late and duplicate responses.
-+
-+A `call_renderer_function` harness runs the calls on a fake clock that only `advance_ms` moves, so the cases never wait on real time and a timer fires exactly when the clock reaches it. After each step it lets pending asynchronous work run, then checks:
-+
-+- `expect_message`, on a `call` step: the `callRendererFunction` message without its `functionCallId`. Separately, the harness checks that every call in a case got a different, non-empty `functionCallId`.
-+- `expect_error`, on a `call` step (`RendererCallError`): the call is refused with that RPC error `code`, and, when `message` is set, a message containing it as a litera
+-/// A SwiftUI shape rendering an SVG path `d` attribute data string.
+-public struct SVGPathShape: Shape {
+-  public let pathData: String
+-
+-  public init(pathData: String) {
+-    self.pathData = pathData
+-  }
+-
+-  public func path(in rect: CGRect) -> Path {
+-    let rawPath = SVGPathParser.parse(pathData)
+-    let boundingBox = rawPath.boundingRect
+-    guard boundingBox.width > 0, boundingBox.height > 0 else {
+-      return rawPath
+-    }
+-
+-    let contentWidth = max(boundingBox.width, boundingBox.maxX)
+-    let contentHeight = max(boundingBox.height, boundingBox.maxY)
+-    let refSize = max(max(contentWidth, contentHeight), 24.0)
+-
+-    let scale = min(rect.width / refSize, rect.height / refSize)
+-
+-    var transform = CGAffineTransform.identity
+-    let scaledWidth = boundingBox.width * scale
+-    let scaledHeight = boundingBox.height * scale
+-    let offsetX = rect.minX + (rect.width - scaledWidth) / 2.0 - (boundingBox.minX * scale)
+-    let offsetY = rect.minY + (rect.height - scaledHeight) / 2.0 - (boundingBox.minY * scale)
+-
+-    transform = transform.translatedBy(x: offsetX, y: offsetY)
+-    transform = transform.scaledBy(x: scale, y: scale)
+-
+-    return rawPath.applying(transform)
+-  }
+-}
+-
+-/// Lightweight parser converting SVG path data strings into SwiftUI `Path` instances.
+-public enum SVGPathParser {
+-  public static func parse(_ d: String) -> Path {
+-    var path = Path()
+-    var currentPoint: CGPoint = .zero
+-    var startPoint: CGPoint = .zero
+-    var lastControlPoint: CGPoint? = nil
+-
+-    let tokens = tokenize(d)
+-    var index = 0
+-
+-    func nextNumber() -> CGFloat? {
+-      guard index < tokens.count else { return nil }
+-      if case .number(let val) = tokens[index] {
+-        index += 1
+-        return CGFloat(val)
+-      }
+-      return nil
+-    }
+-
+-    func nextPoint(relative: Bool) -> CGPoint? {
+-      guard let x = nextNumber(), let y = nextNumber() else { return nil }
+-      return relative ? CGPoint(x: currentPoint.x + x, y: currentPoint.y + y) : CGPoint(x: x, y: y)
+-    }
+-
+-    while index < tokens.count {
+-      guard case .command(let cmd) = tokens[index] else {
+-        index += 1
+-        continue
+-      }
+-      index += 1
+-
+-      switch cmd {
+-      case "M", "m":
+-        let isRel = (cmd == "m")
+-        if let pt = nextPoint(relative: isRel) {
+-          currentPoint = pt
+-          startPoint = pt
+-          path.move(to: pt)
+-          lastControlPoint = nil
+-          while let nextPt = nextPoint(relative: isRel) {
+-            currentPoint = nextPt
+-            path.addLine(to: nextPt)
+-          }
+-        }
+-
+-      case "L", "l":
+-        let isRel = (cmd == "l")
+-        while let pt = nextPoint(relative: isRel) {
+-          currentPoint = pt
+-          path.addLine(to: pt)
+-          lastControlPoint = nil
+-        }
+-
+-      case "H", "h":
+-        let isRel = (cmd == "h")
+-        while let x = nextNumber() {
+-          let targetX = isRel ? currentPoint.x + x : x
+-          currentPoint = CGPoint(x: targetX, y: currentPoint.y)
+-          path.addLine(to: currentPoint)
+-          lastControlPoint = nil
+-        }
+-
+-      case "V", "v":
+-        let isRel = (cmd == "v")
+-        while let y = nextNumber() {
+-          let targetY = isRel ? currentPoint.y + y : y
+-          currentPoint = CGPoint(x: currentPoint.x, y: targetY)
+-          path.addLine(to: currentPoint)
+-          lastControlPoint = nil
+-        }
+-
+-      case "C", "c":
+-        let isRel = (cmd == "c")
+-        while let cp1 = nextPoint(relative: isRel),
+-          let cp2 = nextPoint(relative: isRel),
+-          let endPt = nextPoint(relative: isRel)
+-        {
+-          path.addCurve(to: endPt, control1: cp1, control2: cp2)
+-          lastControlPoint = cp2
+-          currentPoint = endPt
+-        }
+-
+-      case "S", "s":
+-        let isRel = (cmd == "s")
+-        while let cp2 = nextPoint(relative: isRel),
+-          let endPt = nextPoint(relative: isRel)
+-        {
+-          let cp1: CGPoint
+-          if let last = lastControlPoint {
+-            cp1 = CGPoint(x: 2 * currentPoint.x - last.x, y: 2 * currentPoint.y - last.y)
+-          } else {
+-            cp1 = currentPoint
+-          }
+-          path.addCurve(to: endPt, control1: cp1, control2: cp2)
+-          lastControlPoint = cp2
+-          currentPoint = endPt
+-        }
+-
+-      case "Q", "q":
+-        let isRel = (cmd == "q")
+-        while let cp = nextPoint(relative: isRel),
+-          let endPt = nextPoint(relative: isRel)
+-        {
+-          path.addQuadCurve(to: endPt, control: cp)
+-          lastControlPoint = cp
+-          currentPoint = endPt
+-        }
+-
+-      case "T", "t":
+-        let isRel = (cmd == "t")
+-        while let endPt = nextPoint(relative: isRel) {
+-          let cp: CGPoint
+-     
 ```
 
-**File**: `conformance/agent/renderer_function_calls.yaml` (added, +452/-0)
+**File**: `swift/swiftui/Sources/BasicCatalog/A2UIList.swift` (modified, +4/-2)
 ```diff
-@@ -0,0 +1,452 @@
-+# Copyright 2024 Google LLC
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     https://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+# The agent's calls to renderer functions with `callRendererFunction` (v1.0):
-+# building the message, settling calls with the renderer's responses,
-+# timeouts, disposal and the limit on pending calls. Renderer calls run on a
-+# fake clock that only an `advance_ms` step moves, so no case waits on real
-+# time.
-+
-+# --- Calling renderer functions ---
-+
-+- name: test_call_renderer_function_builds_the_message_without_waiting
-+  description: >-
-+    A call returns its callRendererFunction message at once, with a generated functionCallId and the catalogId the message requires, and stays pending until the renderer answers.
-+  action: call_renderer_function
-+  steps:
-+    - call:
-+        label: a
-+        catalogId: conformance/agent_functions
-+        name: notify
-+        args: {message: Saved}
-+        surfaceId: s1
-+      expect_message:
-+        version: "1.0"
-+        callRendererFunction:
-+          surfaceId: s1
-+          callFunction:
-+            "@call": notify
-+            catalogId: conformance/agent_functions
-+            args: {message: Saved}
-+      expect_calls:
-+        a: pending
-+      expect_pending_count: 1
-+
-+- name: test_call_renderer_function_without_surface_or_args
-+  description: >-
-+    A call made without a surface leaves surfaceId out of the message, and one made without arguments sends empty args.
-+  action: call_renderer_function
-+  steps:
-+    - call:
-+        label: a
-+        catalogId: conformance/agent_functions
-+        name: now
-+      expect_message:
-+        version: "1.0"
-+        callRendererFunction:
-+          callFunction:
-+            "@call": now
-+            catalogId: conformance/agent_functions
-+            args: {}
-+      expect_calls:
-+        a: pending
-+
-+- name: test_call_renderer_function_with_an_empty_surface_id
-+  description: >-
-+    An empty surfaceId counts as no surface: it is left out of the message, which a renderer would otherwise reject.
-+  action: call_renderer_function
-+  steps:
-+    - call:
-+        label: a
-+        catalogId: conformance/agent_functions
-+        name: now
-+        surfaceId: ""
-+      expect_message:
-+        version: "1.0"
-+        callRendererFunction:
-+          callFunction:
-+            "@call": now
-+            catalogId: conformance/agent_functions
-+            args: {}
-+      expect_calls:
-+        a: pending
-+
-+- name: test_call_renderer_function_with_an_empty_name
-+  description: >-
-+    A call needs a function name: an empty one fails with INVALID_FUNCTION_CALL before anything is registered.
-+  action: call_renderer_function
-+  steps:
-+    - call: {label: a, catalogId: conformance/agent_functions, name: ""}
-+      expect_error: {code: INVALID_FUNCTION_CALL}
-+      expect_pending_count: 0
-+
-+- name: test_call_renderer_function_settled_by_its_response
-+  description: >-
-+    A rendererFunctionResponse settles the call whose functionCallId it copies with its value, and leaves the other calls pending.
-+  action: call_renderer_function
-+  steps:
-+    - call: {label: a, catalogId: conformance/agent_functions, name: getLocale}
-+    - call: {label: b, catalogId: conformance/agent_functions, name: getTimezone}
-+      expect_pending_count: 2
-+    - respond: {call: b, value: Europe/Paris}
-+      expect_calls:
-+        a: pending
-+        b: {value: Europe/Paris}
-+      expect_pending_count: 1
-+    - respond: {call: a, value: {language: fr, region: FR}}
-+      expect_calls:
-+        a: {value: {language: fr, region: FR}}
-+        b: {value: Europe/Paris}
-+      expect_pending_count: 0
-+
-+- name: test_call_renderer_function_settled_with_a_null_value
-+  description: A response whose value is null settles the call with null.
-+  action: call_renderer_function
-+  steps:
-+    - call: {label: a, catalogId: conformance/agent_functions, name: getSelection}
-+    - respond: {call: a, value: null}
-+      expect_calls:
-+        a: {value: null}
-+
-+- name: test_call_renderer_function_failed_by_an_error_response
-+  description: A response that carries an error fails the call with the renderer's code.
-+  action: call_renderer_function
-+  steps:
-+    - call: {label: a, catalogId: conformance/agent_functions, name: getLocation}
-+    - respond:
-+        call: a
-+        error: {code: PERMISSION_DENIED, message: "The user declined."}
-+      expect_calls:
-+        a: {error: {code: PERMISSION_DENIED, message: "The user declined."}}
-+      expect_pe
-```
-
-**File**: `conformance/conformance_harness_implementation_guide.md` (modified, +3/-1)
-```diff
-@@ -159,7 +159,7 @@ Implement the suites in stages so each layer is tested before higher-level compo
- | A4. Multi-catalog and session pipeline    | `agent/multi_catalog_formats.yaml`, `agent/request_processor.yaml`, `agent/streamed_answer.yaml`                                                                                       | Cross-catalog lookup, `InferenceFormatFactory`, `A2uiGenerator`, `A2uiRequestProcessor`, and `StreamedAnswer`                                |
- | A5. Specification round-trips             | `catalogs/basic/v1/examples/*.json` (and v0.9 examples if supported)                                                                                                                   | End-to-end `decompile` followed by `compile` across every published basic catalog example                                                    |
- | A6. Skills, macros, and scaling           | `agent/skill.yaml`, `agent/builder/builder.yaml`, `agent/macros/macros.yaml`, `agent/*/scaling.yaml`                                                                                   | Skill generation, typesafe fluent builders, macros, and linear-time parsing                                                                  |
--| A7. Agent functions                       | `agent/agent_functions.yaml`                                                                                                                                                           | Agent functions on a catalog, answering `callAgentFunction`, and routing renderer messages through `RendererToAgentMessageProcessor`         |
-+| A7. Agent functions                       | `agent/agent_functions.yaml`, `agent/renderer_function_calls.yaml`                                                                                                                     | Agent functions on a catalog, answering `callAgentFunction`, routing renderer messages, and calling renderer functions on a fake clock       |
- | F1. Framework adapter                     | `core/adapter_conformance.yaml`, `core/accessibility.yaml`                                                                                                                             | Rendered view trees, repeaters, two-way bindings, action and user-activation gating, validation state, accessibility, and unmount cleanup    |
+@@ -51,7 +51,7 @@ public struct A2UIList: View {
  
- Notice that `agent/express/` has no `response_streaming.yaml` file. Express parses whole buffered blocks and does not implement `openStream`.
-@@ -294,6 +294,8 @@ All four actions in `response_parser.yaml` run against `format.createParser()`:
- 
- `agent/agent_functions.yaml` (`declare_agent_functions`, `handle_agent_function`, `validate_payload` and `process_renderer_message`) is described in [Writing cases for the agent function suite](README.md#writing-cases-for-the-agent-function-suite). Turn each declared `behavior` into a handler in the harness (for `raises`, throw the SDK's RPC error with `code`, its validation error with `validation: true`, or an ordinary error otherwise), build a declaration with `from_api: true` from the loaded catalog's own entry for it (or, when the catalog has none, from the declaration's `returnType`, `args` and `description`), pass `requiresUserActivation` to an agent function built from `args`, and run every `callAgentFunction` through `RendererToAgentMessageProcessor`. Count each case's handler runs, and assert none ran when the case expects an `expect_error` or a reply with `error.code` `INVALID_FUNCTION_CALL` or `UNKNOWN_FUNCTION`. For `handle_agent_function`, `validate_payload` and `process_renderer_message`, build the catalogs (and the processor) inside the error check when the case has `expect_error` (building can fail). For `process_renderer_message`, register a recording callback for each entry in `args.callbacks`: a plain kind returns nothing (handled), and `{kind, declines: true}` returns false (declined). An SDK that does not implement agent functions yet registers every case as skipped with that reason.
- 
-+`agent/renderer_function_calls.yaml` (`call_renderer_function`) is described in the same section. Build each `args.catalogs` entry in code as a v1.0 catalog of schema-only functions (arguments `{type: object}`, return type `any`, `allowedCallers` and `requiresUserActivation` only when the entry sets them), and pass the list to the calls helper; a case with a top-level `expect_error` expects building the helper to fail. Pass a `call` step's `functionCallId` to `call` when the step sets it. In a statically typed SDK whose `call` can't take a non-object `args` (Dart), `test_call_renderer_function_with_args_that_are_not_an_object` passes by showing that such a value can't be passed (a type error), with nothing sent or pending. Run its cases on a fake clock: in Python, an event loop whose `time()` returns a counter that `advance_ms` steps add to; in JavaScript, fake timers. Only the Python agent harness runs the suite so far; the TypeScript and Dart agent harne
-```
-
-**File**: `conformance/conformance_schema.json` (modified, +212/-1)
-```diff
-@@ -38,7 +38,8 @@
-       {"$ref": "#/$defs/DeclareAgentFunctionsTest"},
-       {"$ref": "#/$defs/HandleAgentFunctionTest"},
-       {"$ref": "#/$defs/ValidatePayloadTest"},
--      {"$ref": "#/$defs/ProcessRendererMessageTest"}
-+      {"$ref": "#/$defs/ProcessRendererMessageTest"},
-+      {"$ref": "#/$defs/CallRendererFunctionTest"}
-     ]
-   },
-   "$defs": {
-@@ -2596,6 +2597,216 @@
-       "required": ["category"],
-       "additionalProperties": false
-     },
-+    "CallRendererFunctionTest": {
-+      "type": "object",
-+      "description": "Calling renderer functions from the agent with callRendererFunction, and settling the calls with the renderer's responses, on a fake clock that only `advance_ms` steps move.",
-+      "properties": {
-+        "name": {"type": "string"},
-+        "description": {"type": "string"},
-+        "action": {"const": "call_renderer_function"},
-+        "args": {
-+          "type": "object",
-+          "properties": {
-+            "default_timeout_ms": {
-+              "type": ["integer", "null"],
-+              "exclusiveMinimum": 0,
-+              "description": "How long a call waits for its response unless it sets its own timeout. Without it, the SDK's default, 30000. Null waits without a limit."
-+            },
-+            "max_pending": {
-+              "type": "integer",
-+              "minimum": 1,
-+              "description": "The most calls that may wait for a response at once."
-+            },
-+            "catalogs": {
-+              "type": "array",
-+              "description": "The agent's catalogs, which `call` checks each target against. Without them, calls aren't checked.",
-+              "items": {"$ref": "#/$defs/RendererCallCatalog"}
-+            }
-+          },
-+          "additionalProperties": false
-+        },
-+        "steps": {
-+          "type": "array",
-+          "items": {"$ref": "#/$defs/RendererCallStep"},
-+          "minItems": 1
-+        },
-+        "expect_error": {
-+          "$ref": "#/$defs/RendererCallsBuildError",
-+          "description": "Building the calls helper fails with this error, such as a CatalogError for two catalogs with one id. The case then has no `steps`."
-+        }
-+      },
-+      "required": ["name", "action"],
-+      "oneOf": [{"required": ["steps"]}, {"required": ["expect_error"]}],
-+      "additionalProperties": false
-+    },
-+    "RendererCallCatalog": {
-+      "type": "object",
-+      "description": "A v1.0 catalog the harness builds in code (not from a catalog document, so it isn't checked against the catalog schema): its id and its functions, by name. Each function takes any object as `args` and returns `any`.",
-+      "properties": {
-+        "catalogId": {"type": "string"},
-+        "functions": {
-+          "type": "object",
-+          "additionalProperties": {
-+            "type": "object",
-+            "properties": {
-+              "allowedCallers": {
-+                "enum": ["rendererOnly", "agentOnly", "rendererOrAgent"],
-+                "description": "Omitted means rendererOnly."
-+              },
-+              "requiresUserActivation": {"type": "boolean"}
-+            },
-+            "additionalProperties": false
-+          }
-+        }
-+      },
-+      "required": ["catalogId", "functions"],
-+      "additionalProperties": false
-+    },
-+    "RendererCallState": {
-+      "description": "The state of a call: still pending, settled with a value, or failed with an RPC error code. `error.message` is a substring of the failure's message.",
-+      "oneOf": [
-+        {"const": "pending"},
-+        {
-+          "type": "object",
-+          "properties": {"value": {}},
-+          "required": ["value"],
-+          "additionalProperties": false
-+        },
-+        {
-+          "type": "object",
-+          "properties": {
-+            "error": {
-+              "type": "object",
-+              "properties": {
-+                "code": {"type": "string"},
-+                "message": {"type": "string"}
-+              },
-+              "required": ["code"],
-+              "additionalProperties": false
-+            }
-+          },
-+          "required": ["error"],
-+          "additionalProperties": false
-+        }
-+      ]
-+    },
-+    "RendererCallsBuildError": {
-+      "type": "object",
-+      "description": "The error building the calls helper fails with: its category and, optionally, a literal substring of its message.",
-+      "properties": {
-+        "category": {"enum": ["CatalogError"]},
-+        "message": {
-+          "type": "string",
-+          "description": "A literal substring of the error's message, not a regular expression."
-+        }
-+      },
-+      "required": ["category"],
-+      "additionalProperties": false
-+    },
-+    "RendererCallError": {
-+      "type": "object",
-+      "description": "The RPC error a `call` step is refused with: its code and, optionally, a literal substring of its message.",
-+      "properties": {
-+        "code": {"type": "string"},
-+        "message": {
-+          "type
-```
-
-**File**: `dart/a2ui_agent/test/conformance/unsupported_suites_test.dart` (modified, +3/-0)
-```diff
-@@ -66,6 +66,9 @@ const Map<String, String> unsupportedAgentSuites = {
-   'agent/macros/macros.yaml':
-       'The composite macro suite targets the Python macro API, which '
-       'a2ui_agent for Dart does not implement.',
-+  'agent/renderer_function_calls.yaml':
-+      'a2ui_agent for Dart does not implement calling renderer functions '
-+      'yet.',
-   'agent/skill.yaml':
-       'a2ui_agent for Dart does not implement the skill generation API.',
- };
-```
-
-**File**: `python/a2ui_adk/CHANGELOG.md` (modified, +22/-0)
-```diff
-@@ -1,5 +1,27 @@
- ## Unreleased
- 
-+- `a2ui_rpc_callback` takes `renderer_calls`, a provider of the session's
-+  `RendererFunctionCalls` such as `A2uiRendererCallsStore.get`, and `catalogs`
-+  becomes optional (pass one or both). The callback processes each message
-+  with a `RendererToAgentMessageProcessor` whose
-+  `on_renderer_function_response` is `RendererFunctionCalls.resolve`, and
-+  answers the request without running the agent only when every message is
-+  handled. A response to a call the session didn't make, such as one the
-+  model wrote, is declined and goes to the agent. Responses that answer
-+  pending calls always settle them, even in a request that goes to the agent,
-+  and a malformed one fails the call it names. It needs the `a2a`
-+  extra. [#3535](https://github.com/a2ui-project/a2ui/issues/3535)
-+- Add `a2ui_rpc_interceptor`, an `A2aAgentExecutor` interceptor that ends a
-+  task `completed` when its request held only `callAgentFunction` and
-+  `rendererFunctionResponse` messages and ADK would end it `working` because
-+  there was nothing to send back. Other final states are left as they are. It
-+  needs the `a2a` extra.
-+  [#3535](https://github.com/a2ui-project/a2ui/issues/3535)
-+- Add `A2uiRendererCallsStore`, which keeps a `RendererFunctionCalls` for each
-+  session. `get` returns the session's instance, creating it on first use, and
-+  is the `renderer_calls` provider of `a2ui_rpc_callback`. `remove` disposes a
-+  session's instance, which fails its pending calls.
-+  [#3535](https://github.com/a2ui-project/a2ui/issues/3535)
- - Add `a2ui_rpc_callback`, which returns a `before_agent_callback` that
-   answers the renderer's A2UI v1.0 `callAgentFunction` messages without
-   running the agent. When the user content holds only such calls, it builds a
-```
-
-**File**: `python/a2ui_adk/README.md` (modified, +45/-1)
-```diff
-@@ -44,6 +44,10 @@ Available with the base install:
-   since ADK's session services save state as JSON and can't hold one. Its
-   `is_enabled` and `get` methods are the callbacks for the toolset,
-   `A2uiInstruction` and `A2uiEventConverter`.
-+- `A2uiRendererCallsStore` keeps each session's `RendererFunctionCalls` (from
-+  `a2ui.rpc`), which holds the agent's pending `callRendererFunction` calls.
-+  Its `get` method returns the session's instance, creating it on first use,
-+  and `remove` disposes it when the session ends.
- 
- Available with the `a2a` extra:
- 
-@@ -60,7 +64,18 @@ Available with the `a2a` extra:
-   catalogs, and returns the `agentFunctionResponse` replies as the agent's
-   response. For any other request, including the renderer's `action`, `error`
-   and `rendererFunctionResponse` messages, it returns None, so the agent runs.
--  With `A2aAgentExecutor`, the replies reach the client as A2UI parts.
-+  With `A2aAgentExecutor`, the replies reach the client as A2UI parts. With
-+  `renderer_calls`, its processor's `on_renderer_function_response` is the
-+  session's `RendererFunctionCalls.resolve`, which settles a response to a
-+  pending call and declines any other, such as one to a call the model wrote.
-+  The request is answered without the agent only when every message is
-+  handled. A request that goes to the agent still settles the pending calls
-+  its responses answer.
-+- `a2ui_rpc_interceptor` (also in `a2ui.adk.a2a`) returns an
-+  `A2aAgentExecutor` interceptor that ends a task `completed` when its request
-+  held only `callAgentFunction` and `rendererFunctionResponse` messages. ADK's
-+  executor would otherwise end a task with nothing to send back, such as one
-+  holding only `rendererFunctionResponse`, in the `working` state.
- - `exclude_a2ui_rpc_from_prompt` (also in `a2ui.adk.a2a`) is a
-   `before_model_callback` that removes the `callAgentFunction` and
-   `agentFunctionResponse` messages from the contents sent to the model. The
-@@ -110,6 +125,35 @@ can't answer, such as one without a `functionCallId` or with a `version` other
- than `"1.0"`, is logged and dropped. A request whose calls are all dropped gets a
- response with no parts, which `A2aAgentExecutor` ends in the `working` state.
- 
-+To settle the agent's calls to renderer functions, also pass the session's
-+`RendererFunctionCalls`, and add the interceptor to the executor so a task that
-+held only responses ends `completed`:
-+
-+```python
-+from a2ui.adk import A2uiEventConverter, A2uiRendererCallsStore, a2ui_rpc_interceptor
-+
-+renderer_calls = A2uiRendererCallsStore()
-+agent = LlmAgent(
-+    ...,
-+    before_agent_callback=a2ui_rpc_callback(
-+        catalogs=active_catalogs, renderer_calls=renderer_calls.get
-+    ),
-+)
-+config = A2aAgentExecutorConfig(
-+    event_converter=A2uiEventConverter(a2ui_processor=processors.get),
-+    execute_interceptors=[a2ui_rpc_interceptor()],
-+)
-+
-+# In a tool
-+message, result = renderer_calls.get(tool_context).call(
-+    catalog_id=CATALOG_ID, name="getLocation"
-+)
-+```
-+
-+The pending calls live in this process's memory, so a deployment whose
-+requests for one session may reach different replicas can't settle them this
-+way.
-+
- ADK stores the calls and their replies in the session's events like any other
- turn. `SendA2uiToClientToolset` removes them from the model's prompt; an agent
- without the toolset passes `before_model_callback=exclude_a2ui_rpc_from_prompt`.
-```
-
-**File**: `python/a2ui_adk/src/a2ui/adk/__init__.py` (modified, +13/-4)
-```diff
-@@ -14,10 +14,11 @@
- 
- """A2UI extension for the Agent Development Kit (ADK).
- 
--`SendA2uiToClientToolset`, `A2uiInstruction` and `A2uiProcessorStore` only
--need ADK. The ADK-to-A2A converters (`A2uiPartConverter`,
--`A2uiEventConverter`), the A2UI RPC helpers (`a2ui_rpc_callback`,
--`exclude_a2ui_rpc_from_prompt`), the `a2a` subpackage they live in, and the A2A subagent orchestration helpers
-+`SendA2uiToClientToolset`, `A2uiInstruction`, `A2uiProcessorStore` and
-+`A2uiRendererCallsStore` only need ADK. The ADK-to-A2A converters
-+(`A2uiPartConverter`, `A2uiEventConverter`), the A2UI RPC helpers
-+(`a2ui_rpc_callback`, `a2ui_rpc_interceptor`, `exclude_a2ui_rpc_from_prompt`),
-+the `a2a` subpackage they live in, and the A2A subagent orchestration helpers
- (`A2uiSubagentMap`, `SurfaceIdAlreadyExistsError`, the `orchestration`
- subpackage) need the `a2a` extra:
- 
-@@ -33,6 +34,7 @@
- 
- from .instruction import A2uiInstruction
- from .processor_store import A2uiProcessorStore
-+from .renderer_calls_store import A2uiRendererCallsStore
- from .send_a2ui_to_client_toolset import (
-     A2uiEnabledProvider,
-     A2uiProcessorProvider,
-@@ -47,7 +49,9 @@
-         A2uiPartConverter,
-         A2uiRpcCallback,
-         CatalogsProvider,
-+        RendererFunctionCallsProvider,
-         a2ui_rpc_callback,
-+        a2ui_rpc_interceptor,
-         exclude_a2ui_rpc_from_prompt,
-     )
-     from .orchestration import A2uiSubagentMap, SurfaceIdAlreadyExistsError
-@@ -62,7 +66,9 @@
-     "A2uiPartConverter": (".a2a", "A2uiPartConverter"),
-     "A2uiRpcCallback": (".a2a", "A2uiRpcCallback"),
-     "CatalogsProvider": (".a2a", "CatalogsProvider"),
-+    "RendererFunctionCallsProvider": (".a2a", "RendererFunctionCallsProvider"),
-     "a2ui_rpc_callback": (".a2a", "a2ui_rpc_callback"),
-+    "a2ui_rpc_interceptor": (".a2a", "a2ui_rpc_interceptor"),
-     "exclude_a2ui_rpc_from_prompt": (".a2a", "exclude_a2ui_rpc_from_prompt"),
-     "A2uiSubagentMap": (".orchestration", "A2uiSubagentMap"),
-     "SurfaceIdAlreadyExistsError": (
-@@ -114,13 +120,16 @@ def __getattr__(name: str) -> Any:
-     "A2uiPartConverter",
-     "A2uiProcessorProvider",
-     "A2uiProcessorStore",
-+    "A2uiRendererCallsStore",
-     "A2uiRpcCallback",
-     "A2uiSubagentMap",
-     "CatalogsProvider",
-+    "RendererFunctionCallsProvider",
-     "SendA2uiToClientToolset",
-     "SurfaceIdAlreadyExistsError",
-     "a2a",
-     "a2ui_rpc_callback",
-+    "a2ui_rpc_interceptor",
-     "exclude_a2ui_rpc_from_prompt",
-     "orchestration",
- ]
-```
-
----
-
-### Incident Patch 3: `bebabcf2` (2026-11-06)
-**Commit Message**: feat(typescript): agent functions and RendererToAgentMessageProcessor (#3862)
-
-* feat(typescript): implement Agent Function RPC helpers and conformance tests
-
-Signed-off-by: Nan Yu <[REDACTED_EMAIL]>
-
-* fix(typescript): tighten how agent functions join a catalog
-
-- AgentFunction.fromApi only binds a function the catalog declares;
-  copyWith rejects one wrapping a foreign declaration.
-- Agent functions are added with copyWith (or in functions), not
-  CatalogOptions.agentFunctions.
-- An AgentFunction built directly is always rendererOnly; fromApi keeps
-  rendererOnly or rendererOrAgent and rejects agentOnly.
-- Separate errors for a name repeated in agentFunctions and a name taken
-  by a catalog function.
-- Add Catalog.rendererFunctions.
-- Document that a handler may take (args) or (args, context).
-- Use a schema-only declaration in the fromApi tests.
-- CHANGELOG entry after the breaking changes, with the PR link.
-
-Signed-off-by: Nan Yu <[REDACTED_EMAIL]>
-
-* refactor(typescript): replace the agent RPC helpers with RendererToAgentMessageProcessor
-
-- Add RendererToAgentMessageProcessor and ProcessResult. It answers
-  callAgentFunction itself and passes action, error and
-  rendererFuncti
-
-**File**: `typescript/agents/a2ui_agent/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -3,6 +3,7 @@
- - **BREAKING CHANGE**: Prompt snippets (`PromptGenerator.generate()` and `promptSnippet`) follow one layout across formats and SDKs: the base rules, then the catalog instructions, then the examples under `### Examples:` followed by a blank line. `DirectJsonPromptGenerator` no longer overrides `generate()`, so its snippet loses the `## Workflow Description:` heading; add your own heading around the snippet if you want one. `DirectJsonPromptGenerator.generateBaseRules()` now returns the rules followed by a schema block with the protocol schemas (the agent-to-renderer schema and the common types schema), and `generateCatalogInstructions()` returns one schema block per catalog with only the catalog schema, so output that combines several catalogs' instructions holds the protocol schemas once ([#3562](https://github.com/a2ui-project/a2ui/issues/3562)). [#3567](https://github.com/a2ui-project/a2ui/pull/3567)
- - **BREAKING CHANGE**: (v1_0) `validatePayload` and `RendererState.apply` check each `callRendererFunction` against the catalogs instead of running it, and reject one the renderer would refuse: a surface that doesn't exist when the call arrives, a catalog that isn't active, a function the catalog doesn't declare, a `rendererOnly` function (the default) or one that requires user activation, arguments that don't match the function's schema, a nested call to an `agentOnly` function or one that requires user activation, a nested `@index` call (the arguments are resolved outside any list template), and a data binding whose `@path` isn't a string or that holds another field. They also reject an `agentOnly` function bound into a component. A state made by `RendererState.of` still hands an accepted call to the renderer's processor. Recommended migration: declare the functions an agent calls with `allowedCallers` set to `agentOnly` or `rendererOrAgent` in the catalog the call names ([#3534](https://github.com/a2ui-project/a2ui/issues/3534), [#4008](https://github.com/a2ui-project/a2ui/pull/4008)).
- - `ExpressPromptGenerator` teaches `Event(name, context?, userMessage=...)` in rule 8 for v1.0+ catalogs, while keeping the two-argument `Event(name, context)` rule for pre-v1.0 catalogs ([#3690](https://github.com/a2ui-project/a2ui/issues/3690), [#3867](https://github.com/a2ui-project/a2ui/pull/3867)).
-+- (v1_0) Add `RendererToAgentMessageProcessor`, which processes the messages a renderer sends an agent. `processMessage(message)` returns a `ProcessResult` of whether it handled the message and the `replies` to send: it answers `callAgentFunction` with the agent functions of its `catalogs`, and passes `action`, `error` and `rendererFunctionResponse` to `onAction`, `onError` and `onRendererFunctionResponse`, which may decline a message by returning `false`. Also re-exports the agent function API and the v1.0 renderer-to-agent message types from `@a2ui/web_core`. [#3536](https://github.com/a2ui-project/a2ui/issues/3536), [#3862](https://github.com/a2ui-project/a2ui/pull/3862)
- 
- ## 0.1.0
- 
-```
-
-**File**: `typescript/agents/a2ui_agent/README.md` (modified, +44/-0)
-```diff
-@@ -121,6 +121,50 @@ const v09Catalog = CatalogConfig.fromPath(
- );
- ```
- 
-+## Agent functions
-+
-+From v1.0, a catalog can declare functions that run on the agent: a renderer that doesn't implement a function sends `callAgentFunction` and waits for the agent's `agentFunctionResponse`. Add agent functions to your copy of a catalog with `copyWith`. `AgentFunction.fromApi` binds a handler to a function the catalog already declares, and `new AgentFunction(...)` adds a new one, with its arguments as a Zod schema (which types the handler) or a JSON Schema object. A v1.0 catalog checks that the parameter names are UAX #31 identifiers when it gets the function. A handler takes `(args)` or `(args, context)`, where `context` has the catalog, surface and call IDs. `withHandler` returns a copy bound to another handler, such as a test double.
-+
-+```ts
-+import {AgentFunction} from '@a2ui/agent';
-+import {z} from 'zod';
-+
-+const catalog = loaded.copyWith({
-+  agentFunctions: [
-+    AgentFunction.fromApi<{id: string}>(loaded.functions.get('lookupAccount')!, args =>
-+      findAccount(args.id),
-+    ),
-+    new AgentFunction({
-+      name: 'fetchFxRate',
-+      returnType: 'number',
-+      schema: z.object({base: z.string()}),
-+      // `base` is a string, and the handler must return a number.
-+      handler: async ({base}) => fetchRate(base),
-+    }),
-+  ],
-+});
-+```
-+
-+`RendererToAgentMessageProcessor` takes each message the renderer sends and returns whether it handled it and the messages to send back. It answers `callAgentFunction` itself, and passes `action`, `error` and `rendererFunctionResponse` messages to their callback, after checking them against the v1.0 schema. A message whose callback isn't set, or whose callback returns `false` to decline it, comes back with `handled: false`, so the app can pass it on to the model.
-+
-+```ts
-+const messages = new RendererToAgentMessageProcessor({
-+  catalogs: [catalog],
-+  agentFunctionTimeoutMs: 10_000,
-+  onError: message => log.warn(message.error),
-+  // Handle the button that saves locally; let the model answer the others.
-+  onAction: message => (message.action.name === 'save' ? save(message) : false),
-+});
-+
-+for (const fromRenderer of request.messages) {
-+  const {handled, replies} = await messages.processMessage(fromRenderer);
-+  for (const reply of replies) send(reply);
-+  if (!handled) runModelTurn(fromRenderer);
-+}
-+```
-+
-+The processor handles one message per call, so the app decides whether to process a request's messages one after another or concurrently, and what to do when one of them fails. A message whose `version` isn't `'1.0'` is an `A2uiValidationError`. The processor keeps no state between messages, so build one per agent, or one per request from the catalogs the request uses. Two catalogs with the same id are an `A2uiCatalogError`.
-+
- ## Development
- 
- ```sh
-```
-
-**File**: `typescript/agents/a2ui_agent/src/errors.ts` (modified, +2/-0)
-```diff
-@@ -26,6 +26,8 @@ export {
-   A2uiStateError,
-   A2uiIntegrityError,
-   A2uiRecursionError,
-+  A2uiRpcError,
-+  RpcErrorCode,
- } from './internal/web-core.js';
- 
- /**
-```
-
-**File**: `typescript/agents/a2ui_agent/src/index.ts` (modified, +34/-4)
-```diff
-@@ -17,15 +17,35 @@
- // Phase 0: Foundations
- export {type ProtocolVersion} from './types.js';
- 
--// The v1.0 agent-to-renderer protocol message. Re-exported because it appears in public
--// signatures -- notably the `examples` parameter of `A2uiGenerator` -- so callers must be
--// able to name it.
--export type {AgentToRendererMessage} from './internal/web-core.js';
-+// The v1.0 agent-to-renderer and renderer-to-agent protocol messages. Re-exported because
-+// they appear in public signatures -- notably `A2uiGenerator` and
-+// `RendererToAgentMessageProcessor`.
-+export type {
-+  ActionMessage,
-+  AgentFunctionResponseMessage,
-+  AgentToRendererMessage,
-+  CallAgentFunctionMessage,
-+  ErrorMessage,
-+  RendererFunctionResponseMessage,
-+  RendererToAgentMessage,
-+} from './internal/web-core.js';
- 
- // The renderer capabilities a request is negotiated against. Re-exported because
- // `A2uiGenerator.createProcessor` and `resolveCatalogs` take it.
- export type {RendererCapabilities} from './internal/web-core.js';
- 
-+export {
-+  AgentFunction,
-+  type AgentFunctionContext,
-+  type AgentFunctionHandler,
-+  type AgentFunctionInit,
-+  Catalog,
-+  type CatalogApi,
-+  type CatalogInterface,
-+  type CopyWithCatalogOptions,
-+  isAgentFunction,
-+} from './internal/web-core.js';
-+
- export {
-   A2uiError,
-   A2uiValidationError,
-@@ -34,6 +54,8 @@ export {
-   A2uiStateError,
-   A2uiIntegrityError,
-   A2uiRecursionError,
-+  A2uiRpcError,
-+  RpcErrorCode,
-   ParseError,
-   A2uiCompilationError,
-   A2uiCompilationParseError,
-@@ -161,3 +183,11 @@ export {
-   SkillGenerator,
-   SkillSet,
- } from './skill/index.js';
-+
-+// Renderer-to-agent messages
-+export {
-+  type ProcessResult,
-+  type RendererMessageCallback,
-+  RendererToAgentMessageProcessor,
-+  type RendererToAgentMessageProcessorOptions,
-+} from './rpc/renderer-to-agent-message-processor.js';
-```
-
-**File**: `typescript/agents/a2ui_agent/src/internal/web-core.ts` (modified, +25/-2)
-```diff
-@@ -23,11 +23,15 @@
-  */
- 
- // ./catalog
--export {Catalog} from '@a2ui/web_core/catalog';
-+export {AgentFunction, Catalog, isAgentFunction} from '@a2ui/web_core/catalog';
- export type {
-+  AgentFunctionContext,
-+  AgentFunctionHandler,
-+  AgentFunctionInit,
-   CatalogApi,
-   CatalogInterface,
-   ComponentApi,
-+  CopyWithCatalogOptions,
-   FunctionApi,
-   FunctionImplementation,
- } from '@a2ui/web_core/catalog';
-@@ -53,18 +57,35 @@ export {
-   DeleteSurfaceMessageSchema as V10DeleteSurfaceMessageSchema,
-   CallRendererFunctionMessageSchema as V10CallRendererFunctionMessageSchema,
-   AgentFunctionResponseMessageSchema as V10AgentFunctionResponseMessageSchema,
-+  RendererFunctionResponseMessageSchema as V10RendererFunctionResponseMessageSchema,
-+  ActionMessageSchema as V10ActionMessageSchema,
-+  ErrorMessageSchema as V10ErrorMessageSchema,
-   AgentToRendererMessageSchema,
-   RendererToAgentMessageSchema,
-   Schemas as V10Schemas,
-   V10RendererCapabilitiesSchema,
-   V10_STANDARD_DEFS,
- } from '@a2ui/web_core/v1_0';
- import type {
-+  ActionMessage,
-+  AgentFunctionResponseMessage,
-   AgentToRendererMessage,
-+  CallAgentFunctionMessage,
-+  ErrorMessage,
-+  RendererFunctionResponseMessage,
-   RendererToAgentMessage,
-   V10RendererCapabilities,
- } from '@a2ui/web_core/v1_0';
--export type {AgentToRendererMessage, RendererToAgentMessage, V10RendererCapabilities};
-+export type {
-+  ActionMessage,
-+  AgentFunctionResponseMessage,
-+  AgentToRendererMessage,
-+  CallAgentFunctionMessage,
-+  ErrorMessage,
-+  RendererFunctionResponseMessage,
-+  RendererToAgentMessage,
-+  V10RendererCapabilities,
-+};
- 
- /**
-  * Version-neutral alias for renderer capabilities across protocol versions.
-@@ -109,6 +130,8 @@ export {
-   A2uiStateError,
-   A2uiIntegrityError,
-   A2uiRecursionError,
-+  A2uiRpcError,
-+  RpcErrorCode,
- } from '@a2ui/web_core/errors';
- 
- // ./adapters
-```
-
-**File**: `typescript/agents/a2ui_agent/src/rpc/agent-function-registry.ts` (added, +380/-0)
-```diff
-@@ -0,0 +1,380 @@
-+/*
-+ * Copyright 2024 Google LLC
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *      https://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+import {
-+  A2uiCatalogError,
-+  A2uiRpcError,
-+  A2uiValidationError,
-+  AgentFunction,
-+  type AgentFunctionContext,
-+  type AgentFunctionResponseMessage,
-+  type CatalogInterface,
-+  type ComponentApi,
-+  type FunctionApi,
-+  PayloadValidator,
-+  RpcErrorCode,
-+  STRICT_VALIDATION,
-+} from '../internal/web-core.js';
-+
-+const ALLOWED_TOP_LEVEL_KEYS = new Set(['version', 'callAgentFunction']);
-+const ALLOWED_BODY_KEYS = new Set(['surfaceId', 'functionCallId', 'callFunction']);
-+const ALLOWED_CALL_FUNCTION_KEYS = new Set(['@call', 'catalogId', 'args']);
-+/**
-+ * Options for an {@link AgentFunctionRegistry}.
-+ */
-+export interface AgentFunctionRegistryOptions {
-+  /**
-+   * How long a handler may run, in milliseconds, before the call is answered
-+   * with an `EXECUTION_ERROR`. Must be greater than 0. No timeout when
-+   * omitted.
-+   */
-+  readonly timeoutMs?: number;
-+}
-+
-+interface ParsedCallEnvelope {
-+  readonly surfaceId: string;
-+  readonly functionCallId: string;
-+  readonly name: string;
-+  readonly catalogId?: string;
-+  readonly args?: Record<string, unknown>;
-+}
-+
-+/**
-+ * Indexes the agent functions of catalogs and answers `callAgentFunction`
-+ * messages with them. Internal to `RendererToAgentMessageProcessor`.
-+ *
-+ * A call that fails after its `functionCallId` is known produces an
-+ * `agentFunctionResponse` with `error` rather than throwing, so the renderer's
-+ * pending `callAgentFunction` promise settles cleanly instead of hanging until
-+ * its timeout. A message without a usable `functionCallId` cannot be answered
-+ * and throws {@link A2uiValidationError}.
-+ */
-+export class AgentFunctionRegistry {
-+  private readonly _catalogs = new Map<string, CatalogInterface<ComponentApi, FunctionApi>>();
-+  private readonly _functions = new Map<string, Map<string, AgentFunction>>();
-+  private readonly _timeoutMs?: number;
-+
-+  /**
-+   * Indexes the `agentFunctions` of each catalog by `(catalog.id, name)`.
-+   *
-+   * @param catalogs Catalogs whose `agentFunctions` should be registered.
-+   * @param options Optional handler timeout.
-+   * @throws {RangeError} If `timeoutMs <= 0`.
-+   * @throws {A2uiCatalogError} If two catalogs have the same id.
-+   */
-+  constructor(
-+    catalogs: Iterable<CatalogInterface<ComponentApi, FunctionApi>>,
-+    options?: AgentFunctionRegistryOptions,
-+  ) {
-+    if (options?.timeoutMs !== undefined) {
-+      if (
-+        typeof options.timeoutMs !== 'number' ||
-+        !Number.isFinite(options.timeoutMs) ||
-+        options.timeoutMs <= 0
-+      ) {
-+        throw new RangeError('The agent function timeout must be greater than 0.');
-+      }
-+      this._timeoutMs = options.timeoutMs;
-+    }
-+
-+    for (const catalog of catalogs) {
-+      if (this._catalogs.has(catalog.id)) {
-+        throw new A2uiCatalogError(`Two catalogs have the id '${catalog.id}'.`);
-+      }
-+      this._catalogs.set(catalog.id, catalog);
-+      if (catalog.agentFunctions.size > 0) {
-+        const byName = new Map<string, AgentFunction>();
-+        for (const [name, fn] of catalog.agentFunctions.entries()) {
-+          byName.set(name, fn);
-+        }
-+        this._functions.set(catalog.id, byName);
-+      }
-+    }
-+  }
-+
-+  /**
-+   * Validates, routes, and executes a `callAgentFunction` message, returning
-+   * its `agentFunctionResponse` envelope.
-+   *
-+   * @param message Inbound `callAgentFunction` message.
-+   * @returns The outbound `agentFunctionResponse` message.
-+   * @throws {A2uiValidationError} If the message lacks a usable `functionCallId`.
-+   */
-+  async handle(message: unknown): Promise<AgentFunctionResponseMessage> {
-+    const parsed = parseCallEnvelope(message);
-+    if (parsed.errorResponse !== undefined) {
-+      return parsed.errorResponse;
-+    }
-+
-+    const {surfaceId, functionCallId, name, catalogId, args: rawArgs} = parsed.envelope;
-+
-+    let resolvedCatalogId: string;
-+    if (catalogId === undefined) {
-+      const matchingCatalogIds: string[] = [];
-+      for (const [cid, fnMap] of this._functions.entries()) {
-+        if (fnMap.has(name)) {
-+          matchingCatalogIds.push(cid);
-+        }
-+      }
-+      if (matchingCatalogIds.length > 1) {
-+        return createErrorResponse(
-+          functionCallId,
-+          RpcErrorCode.INVALID_FUNCTION_CALL,
-+          `The call to '${name}' has no catalogId, and several catalogs have an agent
-```
-
-**File**: `typescript/agents/a2ui_agent/src/rpc/renderer-to-agent-message-processor.ts` (added, +211/-0)
-```diff
-@@ -0,0 +1,211 @@
-+/*
-+ * Copyright 2024 Google LLC
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *      https://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+import type {z} from 'zod';
-+
-+import {
-+  A2uiValidationError,
-+  type ActionMessage,
-+  type AgentToRendererMessage,
-+  type CatalogInterface,
-+  type ComponentApi,
-+  type ErrorMessage,
-+  type FunctionApi,
-+  type RendererFunctionResponseMessage,
-+  V10ActionMessageSchema,
-+  V10ErrorMessageSchema,
-+  V10RendererFunctionResponseMessageSchema,
-+} from '../internal/web-core.js';
-+import {AgentFunctionRegistry} from './agent-function-registry.js';
-+
-+const MESSAGE_KEYS = ['action', 'callAgentFunction', 'error', 'rendererFunctionResponse'] as const;
-+
-+/**
-+ * What {@link RendererToAgentMessageProcessor.processMessage} did with a
-+ * message.
-+ */
-+export interface ProcessResult {
-+  /**
-+   * Whether the processor handled the message: always for `callAgentFunction`,
-+   * and for `action`, `error` and `rendererFunctionResponse` when their
-+   * callback is set. An unhandled message is left for the caller, such as a
-+   * framework that passes it on to the model's turn.
-+   */
-+  readonly handled: boolean;
-+  /**
-+   * The messages to send back to the renderer: exactly one
-+   * `agentFunctionResponse` for a `callAgentFunction`, otherwise none.
-+   */
-+  readonly replies: AgentToRendererMessage[];
-+}
-+
-+/**
-+ * Options for a {@link RendererToAgentMessageProcessor}.
-+ */
-+export interface RendererToAgentMessageProcessorOptions {
-+  /** The catalogs whose `agentFunctions` answer `callAgentFunction` messages. */
-+  readonly catalogs: Iterable<CatalogInterface<ComponentApi, FunctionApi>>;
-+  /**
-+   * How long an agent function may run, in milliseconds, before its call is
-+   * answered with an `EXECUTION_ERROR`. No timeout when omitted.
-+   */
-+  readonly agentFunctionTimeoutMs?: number;
-+  /**
-+   * Receives each `action` message, validated against the v1.0 schema.
-+   * See {@link RendererMessageCallback} for declining one.
-+   */
-+  readonly onAction?: RendererMessageCallback<ActionMessage>;
-+  /**
-+   * Receives each `error` message, validated against the v1.0 schema.
-+   * See {@link RendererMessageCallback} for declining one.
-+   */
-+  readonly onError?: RendererMessageCallback<ErrorMessage>;
-+  /**
-+   * Receives each `rendererFunctionResponse` message, validated against the
-+   * v1.0 schema. See {@link RendererMessageCallback} for declining one.
-+   */
-+  readonly onRendererFunctionResponse?: RendererMessageCallback<RendererFunctionResponseMessage>;
-+}
-+
-+/**
-+ * A callback for one kind of renderer message. It handles the message by
-+ * returning nothing or `true`, or declines it by returning `false` (directly
-+ * or through a `Promise`), so the message comes back with `handled: false`,
-+ * as if the callback weren't set: for example, to let a conversational action
-+ * reach the model while handling the others locally.
-+ */
-+export type RendererMessageCallback<T> = (message: T) => boolean | void | Promise<boolean | void>;
-+
-+/**
-+ * Processes the messages a renderer sends an agent (`RendererToAgentMessage`),
-+ * the agent-side counterpart of web_core's `MessageProcessor`.
-+ *
-+ * - `callAgentFunction` runs the agent function of the catalogs and replies
-+ *   with its `agentFunctionResponse`. A call that fails after its
-+ *   `functionCallId` is known (an empty `surfaceId`, an unknown function, bad
-+ *   arguments, a handler error, the timeout) is answered with an `error`
-+ *   rather than thrown, so the renderer's pending call settles.
-+ * - `action`, `error` and `rendererFunctionResponse` go to their callback,
-+ *   when it is set, which may decline the message. Without one the message is
-+ *   not handled, and nothing is validated beyond its `version`.
-+ *
-+ * The processor keeps no state across messages, so build one per agent, or
-+ * per request from the active catalogs. It processes one message at a time:
-+ * the caller decides whether to process several concurrently, and how to
-+ * handle one that fails.
-+ */
-+export class RendererToAgentMessageProcessor {
-+  private readonly _registry: AgentFunctionRegistry;
-+  private readonly _onAction?: RendererMessageCallback<ActionMessage>;
-+  private readonly _onError?: RendererMessageCallback<ErrorMessage>;
-+  private readonly _onRendererFunctionResponse?: RendererMessageCallback<RendererFunctionResponseMessage>;
-+
-+  /**
-+   * Initializes a new `RendererToAgentMessageProcessor`.
-+   *
-+   * @param options The catalogs, the agent func
-```
-
-**File**: `typescript/agents/a2ui_agent/tests/conformance/agent-functions.test.ts` (modified, +428/-9)
-```diff
-@@ -14,18 +14,421 @@
-  * limitations under the License.
-  */
- 
-+import fs from 'node:fs';
-+
-+import {type FunctionApi} from '@a2ui/web_core';
- import {expect, test} from 'vitest';
- 
--import {classify, loadCases} from './loader.js';
--import {conformancePath, describeSuite} from './suite-helpers.js';
-+import {
-+  A2uiRpcError,
-+  A2uiValidationError,
-+  AgentFunction,
-+  type AgentFunctionContext,
-+  type AgentFunctionHandler,
-+  type AgentFunctionResponseMessage,
-+  Catalog,
-+  type CatalogApi,
-+  RendererToAgentMessageProcessor,
-+  type RendererToAgentMessageProcessorOptions,
-+  validatePayload,
-+} from '../../src/index.js';
-+import {classify, loadCases, type LoadedCase} from './loader.js';
-+import {conformancePath, describeSuite, errorClassFor} from './suite-helpers.js';
-+
-+const KNOWN_FAILURES = new Map<string, string>();
-+
-+interface BehaviorSpec {
-+  returns?: unknown;
-+  returns_args?: boolean;
-+  returns_context?: boolean;
-+  raises?: {
-+    code?: string;
-+    validation?: true;
-+    message: string;
-+  };
-+}
-+
-+interface AgentFunctionSpec {
-+  name?: string;
-+  from_api?: boolean;
-+  returnType?: string;
-+  args?: Record<string, unknown>;
-+  description?: string;
-+  requiresUserActivation?: boolean;
-+  behavior?: BehaviorSpec;
-+}
-+
-+interface CatalogWithAgentFunctionsSpec {
-+  catalog: string | Record<string, unknown>;
-+  agent_functions?: Record<string, AgentFunctionSpec>;
-+}
-+
-+type CallbackKind = 'action' | 'error' | 'rendererFunctionResponse';
-+
-+/** Counts the calls to the handlers of a case's agent functions. */
-+interface HandlerCalls {
-+  count: number;
-+}
-+
-+/** Builds the handler `behavior` describes, counting its calls in `calls`. */
-+function buildCountingHandler(calls: HandlerCalls, behavior?: BehaviorSpec): AgentFunctionHandler {
-+  const handler = buildHandler(behavior);
-+  return (args, context) => {
-+    calls.count++;
-+    return handler(args, context);
-+  };
-+}
-+
-+function buildHandler(behavior?: BehaviorSpec): AgentFunctionHandler {
-+  if (!behavior) {
-+    return () => null;
-+  }
-+  if (behavior.raises) {
-+    const {code, validation, message} = behavior.raises;
-+    return () => {
-+      if (code) {
-+        throw new A2uiRpcError(message, code);
-+      }
-+      if (validation) {
-+        throw new A2uiValidationError(message);
-+      }
-+      throw new Error(message);
-+    };
-+  }
-+  if (behavior.returns_args) {
-+    return (args: Record<string, unknown>) => args;
-+  }
-+  if (behavior.returns_context) {
-+    return (_args: Record<string, unknown>, context: AgentFunctionContext) => ({
-+      catalogId: context.catalogId,
-+      surfaceId: context.surfaceId,
-+      functionCallId: context.functionCallId,
-+    });
-+  }
-+  if (Object.hasOwn(behavior, 'returns')) {
-+    const retVal = behavior.returns;
-+    return () => structuredClone(retVal);
-+  }
-+  return () => null;
-+}
-+
-+function buildCatalogWithAgentFunctions(
-+  spec: CatalogWithAgentFunctionsSpec,
-+  calls: HandlerCalls,
-+): CatalogApi {
-+  const base =
-+    typeof spec.catalog === 'string'
-+      ? Catalog.fromJson(
-+          JSON.parse(fs.readFileSync(conformancePath(spec.catalog), 'utf-8')) as Record<
-+            string,
-+            unknown
-+          >,
-+        )
-+      : Catalog.fromJson(spec.catalog);
-+
-+  const agentFunctions: AgentFunction[] = [];
-+  for (const [key, fnSpec] of Object.entries(spec.agent_functions ?? {})) {
-+    const name = fnSpec.name ?? key;
-+    const handler = buildCountingHandler(calls, fnSpec.behavior);
-+    if (fnSpec.from_api) {
-+      // The catalog's own declaration, or else a foreign one built from the
-+      // case's signature, which the catalog must refuse.
-+      let declaration: FunctionApi | undefined = base.functions.get(name);
-+      if (declaration === undefined) {
-+        const signature = new AgentFunction<Record<string, unknown>, string>({
-+          name,
-+          returnType: fnSpec.returnType ?? 'any',
-+          schema: fnSpec.args,
-+          description: fnSpec.description,
-+          requiresUserActivation: fnSpec.requiresUserActivation,
-+          handler,
-+        });
-+        declaration = {
-+          name,
-+          returnType: signature.returnType,
-+          schema: signature.schema,
-+          description: signature.description,
-+          requiresUserActivation: signature.requiresUserActivation,
-+        };
-+      }
-+      agentFunctions.push(AgentFunction.fromApi(declaration, handler));
-+    } else {
-+      if (fnSpec.returnType === undefined || fnSpec.args === undefined) {
-+        throw new Error(
-+          `Direct AgentFunctionDeclaration '${name}' must specify args and returnType.`,
-+        );
-+      }
-+      agentFunctions.push(
-+        new AgentFunction<Record<string, unknown>, string>({
-+          name,
-+          returnType: fnSpec.returnType,
-+          schema: fnSpec.args,
-+          description: fnSpec.description,
-+          requiresUserActivation: fnSpec.requiresUserActivation,
-+          handler,
-+        }),
-+      );
-+    }
-+  }
-+  r
+   public var body: some View {
+     if direction == "horizontal" {
+-      ScrollView(.horizontal, showsIndicators: false) {
++      ScrollView(.horizontal) {
+         LazyHStack(alignment: verticalAlignment, spacing: 12) {
+           ForEach(children) { childNode in
+             ComponentNodeView(node: childNode)
+@@ -62,9 +62,10 @@ public struct A2UIList: View {
+         }
+         .padding(.horizontal, 4)
+       }
++      .scrollIndicators(.hidden, axes: .horizontal)
+       .a2uiAccessibilityElement(for: node, children: .contain)
+     } else {
+-      ScrollView(.vertical, showsIndicators: true) {
++      ScrollView(.vertical) {
+         LazyVStack(alignment: horizontalAlignment, spacing: 8) {
+           ForEach(children) { childNode in
+             ComponentNodeView(node: childNode)
+@@ -74,6 +75,7 @@ public struct A2UIList: View {
+         }
+         .padding(.vertical, 4)
+       }
++      .scrollIndicators(.automatic, axes: .vertical)
+       .frame(maxWidth: align == "stretch" ? .infinity : nil)
+       .a2uiAccessibilityElement(for: node, children: .contain)
+     }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4068** (2026-11-09): docs(site): add global Google Analytics integration (@abdallahshaban557)
-- **PR #4067** (2026-11-09): docs(site): reorganize Macros, Inference Formats, and Ecosystem sections (@jacobsimionato)
-- **PR #4066** (2026-11-09): docs(site): add Jetpack Compose and Kotlin SDK samples across a2ui.org (#4002) (@jacobsimionato)
-- **PR #4062** (2026-11-09): docs(skills): update public-documentation authoring skill (@jacobsimionato)
-- **PR #4061** (2026-11-09): Rename migration skill to follow convention. (@polina-c)
-- **PR #4060** (2026-11-08): docs(site): interactive Gen UI spectrum, brand showcase, and Showcase/Get Help pages (@abdallahshaban557)
+- **PR #4218** (2026-11-13): docs(site): update L+R Alder copy and walkthrough video on Get Help page (@abdallahshaban557)
+- **PR #4213** (2026-11-13): docs: remove docs/public and MkDocs scaffolding (#4209) (@ditman)
+- **PR #4212** (2026-11-13): docs: retarget workflows, context7, and repo links away from docs/public (#4209) (@ditman)
+- **PR #4211** (2026-11-13): docs: move active assets and CNAME out of docs/public (#4209) (@ditman)
+- **PR #4198** (2026-11-12): fix(samples): combine VegaChart and basic components into single v0.9 catalog (@josemontespg)
+- **PR #4182** (2026-11-12): Fix/renderers decouple v09 and universal imports (@ditman)
 
 ---
 
@@ -3978,38 +3297,66 @@ Signed-off-by: Nan Yu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dart): agent functions and RendererToAgentMessageProcessor (#3861)
+## X. swift/core): drop theme from a v1.0 createSurface in relaxed mode (#4099)
 
 **RULE**:
-When implementing operations in `dart/a2ui_agent/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `swift/core/Sources/A2UICore/Processing/Adapters/BaseVersionAdapter.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1d040854`: dart): agent functions and RendererToAgentMessageProcessor (#3861). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d2fcf37`: swift/core): drop theme from a v1.0 createSurface in relaxed mode (#4099). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `dart/a2ui_agent/CHANGELOG.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `swift/core/Sources/A2UICore/Processing/Adapters/BaseVersionAdapter.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- (v1_0) Added `RendererToAgentMessageProcessor`, whose `processMessage` takes
-  one v1.0 message a renderer sent and returns a `ProcessResult` (`handled`,
-  `replies`). It answers `callAgentFunction` with the catalogs' agent
-  functions, and passes `action`, `error` and `rendererFunctionResponse` to the
-  `onAction`, `onError` and `onRendererFunctionResponse` callbacks, which may
-  return `false` to decline a message. The library re-exports the agent
-  function and renderer-to-agent message types from `a2ui_core`
-  ([#3536](https://github.com/a2ui-project/a2ui/issues/3536), [#3861](https://github.com/a2ui-project/a2ui/pull/3861)).
+    try extractOperations(from: payload, allowUnknownElements: false)
+  }
+
+  /// Validates the payload as ``extractOperations(from:)`` does, passing `allowUnknownElements`
+  /// to ``preparePayloadForValidation(_:action:allowUnknownElements:)`` for each message.
+  open func extractOperations(
+    from payload: JSONValue,
+    allowUnknownElements: Bool
+  ) throws -> [InternalOperation] {
+      return try extractOperationsFromArray(items, allowUnknownElements: allowUnknownElements)
+    case .object(let messageObject):
+      if let messages = messageObject["messages"]?.arrayValue {
+        return try extractOperationsFromArray(
+          messages,
+          allowUnknownElements: allowUnknownElements
+        )
+      return try extractOperationsFromSingleMessageObject(
+        messageObject,
+        allowUnknownElements: allowUnknownElements
+      )
+  /// Lets subclasses normalize a single message before validation, such as dropping properties
+  /// that relaxed renderers ignore. The default returns `message` unchanged.
+  open func preparePayloadForValidation(
+    _ message: OrderedDictionary<String, JSONValue>,
+    action: String,
+    allowUnknownElements: Bool
+  ) -> OrderedDictionary
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      return try extractOperationsFromArray(items)
+    case .object(let dict):
+      if let messages = dict["messages"]?.arrayValue {
+        return try extractOperationsFromArray(messages)
+      return try extractOperationsFromSingleMessageObject(dict)
+    _ items: [JSONValue]
+        return try extractOperations(from: item)
+    _ dict: OrderedDictionary<String, JSONValue>
+    let action = try extractSingleAction(from: dict)
+    let ops = try extractOperations(from: jsonValue)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1d040854` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d2fcf37` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

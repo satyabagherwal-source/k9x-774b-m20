@@ -9519,3 +9519,7 @@
 | `CYCLE-20261113-H4DT` | `2026-11-13T15:47:14.417Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`900727d6...`) |
 | `CYCLE-20261113-H9FA` | `2026-11-13T15:47:20.950Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7e6d7049...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T15:47:55.868Z` | `hf-altworld-hemmingway-1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-991F9C3C` [Domain D] | Yes (`5a409976...`) |
+| `CYCLE-20261113-3PNI` | `2026-11-13T16:04:48.414Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`acd0a09f...`) |
+| `CYCLE-20261113-3WD5` | `2026-11-13T16:04:57.113Z` | `a2ui-project/a2ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aa731da3...`) |
+| `CYCLE-20261113-4309` | `2026-11-13T16:05:05.721Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`83b23511...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T16:05:40.822Z` | `hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F7590A97` [Domain D] | Yes (`4e4e86da...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source**: github ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
-> **Source Version**: `01dd8500`  
+> **Source Version**: `2263a19d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T01:58:36.418Z  
+> **Timestamp**: 2026-11-13T16:05:05.312Z  
 > **Learning ID**: `learn-github-open-source-legal-opencontracts`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T01:58:36.412Z  
+> **Harvest Timestamp**: 2026-11-13T16:05:05.308Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open document intelligence platform for builders and hackers - DMS for the agentic world
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1535 stars
+- **Stars / Engagement**: 1544 stars
 
 ---
 
@@ -1530,19 +1530,575 @@ def filterset_factory(model: type, fields: dict) -> type:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01dd8500` (2026-11-09)
-**Commit Message**: fix(deps): bump react-window from 2.2.3 to 2.5.3 in /frontend (#2527)
+### Incident Patch 1: `fb260c3e` (2026-11-12)
+**Commit Message**: fix(mcp): preserve distinct block search results by relationship ID (#2414)
 
-Bumps [react-window](https://github.com/bvaughn/react-window) from 2.2.3 to 2.5.3.
-- [Release notes](https://github.com/bvaughn/react-window/releases)
-- [Changelog](https://github.com/bvaughn/react-window/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/bvaughn/react-window/compare/2.2.3...2.5.3)
+Co-authored-by: JSIV <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/mcp-block-search-identity.fixed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++- Preserve distinct MCP block search results with identical previews by exposing and deduplicating on the relationship ID in `opencontractserver/mcp/formatters.py`. Repeated hits for the same relationship still collapse to the first ranked result; blocks without an ID remain distinct.
+```
+
+**File**: `opencontractserver/mcp/formatters.py` (modified, +36/-1)
+```diff
+@@ -22,6 +22,36 @@ def _truncate(text: str, max_chars: int) -> str:
+     return text[:max_chars] + " …[truncated]"
+ 
+ 
++def _dedupe_search_hits(hits: list[dict]) -> list[dict]:
++    """Collapse search hits that resolve to the same annotation or block.
++
++    Passages are keyed by ``annotation_id`` — the annotation->embedding join
++    can return one row per stored vector, so the same annotation otherwise
++    appears multiple times with an identical score, wasting the caller's
++    ``limit`` budget. Blocks are keyed by ``relationship_id`` rather than
++    their truncated previews, which can be identical for distinct blocks.
++    The first occurrence wins, so callers should de-duplicate *after*
++    sorting by score to keep the highest-scoring
++    instance. Hits missing an identity fall back to a per-position key so a
++    ``None`` id never collapses distinct hits into one.
++    """
++    seen: set = set()
++    deduped: list[dict] = []
++    for index, hit in enumerate(hits):
++        key: tuple
++        if hit.get("type") == "passage":
++            annotation_id = hit.get("annotation_id")
++            key = ("passage", annotation_id) if annotation_id else ("passage", index)
++        else:
++            relationship_id = hit.get("relationship_id")
++            key = ("block", relationship_id) if relationship_id else ("block", index)
++        if key in seen:
++            continue
++        seen.add(key)
++        deduped.append(hit)
++    return deduped
++
++
+ def format_corpus_summary(corpus: Corpus) -> dict:
+     """Format a corpus for list display."""
+     return {
+@@ -128,20 +158,22 @@ def format_search_block(
+ 
+     ``result`` already carries ``block_text``, ``label_text``, ``document_id``
+     and member ids, so only a light document slug/title lookup is needed.
++    Expose the relationship id for stable deduplication of truncated previews.
+ 
+     Callers formatting many blocks (e.g. ``search_corpus``) should pass a
+     pre-fetched ``doc_lookup`` mapping ``document_id -> (slug, title)`` to avoid
+     a per-block ``Document`` query (N+1). When omitted, the slug/title is looked
+     up lazily so single-block callers stay correct.
+     """
+     from opencontractserver.constants.mcp import MCP_BLOCK_SNIPPET_MAX_CHARS
+-    from opencontractserver.documents.models import Document
+ 
+     doc_slug, doc_title = None, ""
+     if result.document_id:
+         if doc_lookup is not None:
+             doc_slug, doc_title = doc_lookup.get(result.document_id, (None, ""))
+         else:
++            from opencontractserver.documents.models import Document
++
+             doc = (
+                 Document.objects.filter(pk=result.document_id)
+                 .only("slug", "title")
+@@ -155,6 +187,9 @@ def format_search_block(
+     )
+     return {
+         "type": "block",
++        "relationship_id": (
++            str(result.relationship.pk) if result.relationship is not None else None
++        ),
+         "document_slug": doc_slug,
+         "document_title": doc_title,
+         "page": None,
+```
+
+**File**: `opencontractserver/mcp/tests/test_mcp.py` (modified, +2/-2)
+```diff
+@@ -1073,8 +1073,8 @@ def test_dedupe_search_hits_collapses_passages_keeps_blocks(self):
+             {"type": "passage", "annotation_id": "7", "similarity_score": 0.91},
+             {"type": "passage", "annotation_id": "7", "similarity_score": 0.88},
+             {"type": "passage", "annotation_id": "9", "similarity_score": 0.80},
+-            {"type": "block", "document_slug": "d", "label": "G", "text": "t"},
+-            {"type": "block", "document_slug": "d", "label": "G", "text": "t"},
++            {"type": "block", "relationship_id": "11", "text": "t"},
++            {"type": "block", "relationship_id": "11", "text": "t"},
+         ]
+         out = _dedupe_search_hits(hits)
+         self.assertEqual(
+```
+
+**File**: `opencontractserver/mcp/tests/test_search_results.py` (added, +77/-0)
+```diff
+@@ -0,0 +1,77 @@
++"""Database-free regression tests for MCP block search result identity."""
++
++from types import SimpleNamespace
++from unittest import TestCase
++
++from opencontractserver.constants.mcp import MCP_BLOCK_SNIPPET_MAX_CHARS
++from opencontractserver.mcp.formatters import (
++    _dedupe_search_hits,
++    format_search_block,
++)
++
++
++class MCPBlockSearchIdentityTest(TestCase):
++    def block(self, relationship_id, text, score=0.9):
++        return SimpleNamespace(
++            relationship=(
++                SimpleNamespace(pk=relationship_id)
++                if relationship_id is not None
++                else None
++            ),
++            similarity_score=score,
++            source_annotation_id=1,
++            target_annotation_ids=[2],
++            block_text=text,
++            label_text="OC_SUBTREE_GROUP",
++            document_id=1,
++        )
++
++    def format_blocks(self, *blocks):
++        return [
++            format_search_block(block, {1: ("contract", "Contract")})
++            for block in blocks
++        ]
++
++    def test_distinct_blocks_with_identical_truncated_previews_survive(self):
++        prefix = "x" * MCP_BLOCK_SNIPPET_MAX_CHARS
++        hits = self.format_blocks(
++            self.block(101, prefix + "Payment is due in thirty days."),
++            self.block(102, prefix + "Payment is due in ninety days.", 0.8),
++        )
++        self.assertEqual(hits[0]["text"], hits[1]["text"])
++        self.assertEqual(
++            [hit["relationship_id"] for hit in _dedupe_search_hits(hits)],
++            ["101", "102"],
++        )
++
++    def test_distinct_blocks_with_identical_full_text_survive(self):
++        hits = self.format_blocks(
++            self.block(101, "Repeated boilerplate"),
++            self.block(102, "Repeated boilerplate", 0.8),
++        )
++        self.assertEqual(len(_dedupe_search_hits(hits)), 2)
++
++    def test_repeated_relationship_keeps_first_ranked_hit(self):
++        hits = self.format_blocks(
++            self.block(101, "Same block", 0.9),
++            self.block(101, "Same block", 0.8),
++        )
++        self.assertEqual(_dedupe_search_hits(hits), [hits[0]])
++
++    def test_missing_relationship_ids_do_not_collapse_distinct_hits(self):
++        hits = self.format_blocks(
++            self.block(None, "Same preview"),
++            self.block(None, "Same preview", 0.8),
++        )
++        self.assertIsNone(hits[0]["relationship_id"])
++        self.assertEqual(len(_dedupe_search_hits(hits)), 2)
++
++    def test_passage_identity_and_order_are_preserved(self):
++        hits = [
++            {"type": "passage", "annotation_id": "101", "similarity_score": 0.95},
++            *self.format_blocks(self.block(101, "Block", 0.9)),
++            {"type": "passage", "annotation_id": "101", "similarity_score": 0.8},
++            {"type": "passage", "annotation_id": None, "text": "Same text"},
++            {"type": "passage", "annotation_id": None, "text": "Same text"},
++        ]
++        self.assertEqual(_dedupe_search_hits(hits), [hits[i] for i in [0, 1, 3, 4]])
+```
+
+**File**: `opencontractserver/mcp/tools.py` (modified, +1/-33)
+```diff
+@@ -18,6 +18,7 @@
+ from opencontractserver.utils.files import read_field_file_text
+ 
+ from .formatters import (
++    _dedupe_search_hits,
+     format_annotation,
+     format_corpus_summary,
+     format_document_summary,
+@@ -49,39 +50,6 @@ def _candidate_fetch_size(limit: int) -> int:
+     )
+ 
+ 
+-def _dedupe_search_hits(hits: list[dict]) -> list[dict]:
+-    """Collapse search hits that resolve to the same annotation or block.
+-
+-    Passages are keyed by ``annotation_id`` — the annotation->embedding join
+-    can return one row per stored vector, so the same annotation otherwise
+-    appears multiple times with an identical score, wasting the caller's
+-    ``limit`` budget. Blocks (which carry no stable id in the formatted shape)
+-    are keyed by their content tuple. The first occurrence wins, so callers
+-    should de-duplicate *after* sorting by score to keep the highest-scoring
+-    instance. Hits missing an identity fall back to a per-position key so a
+-    ``None`` id never collapses distinct passages into one.
+-    """
+-    seen: set = set()
+-    deduped: list[dict] = []
+-    for index, hit in enumerate(hits):
+-        key: tuple
+-        if hit.get("type") == "passage":
+-            annotation_id = hit.get("annotation_id")
+-            key = ("passage", annotation_id) if annotation_id else ("passage", index)
+-        else:
+-            key = (
+-                "block",
+-                hit.get("document_slug"),
+-                hit.get("label"),
+-                hit.get("text"),
+-            )
+-        if key in seen:
+-            continue
+-        seen.add(key)
+-        deduped.append(hit)
+-    return deduped
+-
+-
+ def list_public_corpuses(
+     limit: int = 20,
+     offset: int = 0,
+```
+
+---
+
+### Incident Patch 2: `adb5f90e` (2026-11-12)
+**Commit Message**: Fix stock local.yml embedder auth, worker restarts, and Windows checkouts (#2518)
+
+* Fix stock local.yml embedder auth, worker restarts, and Windows checkouts
+
+Four defects that a fresh local install hits:
+
+- django and celeryworker never received the embedder API keys, so
+  migrate_pipeline_settings seeded nothing and every embedding request
+  401'd against the services' abc123 default.
+- The worker's watchfiles ignore for "media" only matched /app/media, while
+  LOCAL storage writes to /app/opencontractserver/media, so the worker's own
+  parse output restarted it and killed the task in flight.
+- yarn build needs more than the 2 GB heap V8 defaults to on smaller hosts.
+- core.autocrlf=true wrote CRLF into container scripts, which broke the
+  bind-mounted worker start script.
+
+Closes #2514
+
+* Correct stock setup docs and make its test script safe to run
+
+Review found that a seeded embedder key doesn't follow later host variable
+changes, so the claim that an override stays in sync was wrong; the compose
+comment, changelog and embedder docs now say how to change a stored key.
+
+The manual test script overwrote .envs/.local and its later steps didn't work
+in sequence. It now runs from 
+
+**File**: `.gitattributes` (modified, +7/-0)
+```diff
+@@ -1,6 +1,13 @@
+ frontend/public/** linguist-vendored
+ frontend/src/assets/** linguist-vendored
+ 
++# Container scripts must stay LF on every checkout. A Windows clone with
++# core.autocrlf=true otherwise writes CRLF, and a bind-mounted script such as
++# compose/local/django/celery/worker/start then fails on its "#!/bin/bash\r"
++# shebang. text=auto (not bare text) leaves any future binary in compose/ alone.
++*.sh text eol=lf
++compose/** text=auto eol=lf
++
+ # Auto-generated screenshots are regenerated by CI on every PR.
+ # merge=ours: auto-resolve conflicts by keeping current branch version;
+ #   CI will overwrite with fresh screenshots on the next run.
+```
+
+**File**: `changelog.d/2514-stock-local-setup.fixed.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++- **Stock `local.yml` installs embed and ingest again** (issue #2514).
++  - **Embeddings no longer 401 out of the box.** `local.yml` gave the embedder services a default key of `abc123` but passed nothing to `django` or `celeryworker`, so `migrate_pipeline_settings` seeded no key and `MicroserviceEmbedder` sent no `X-API-Key`. Both services now forward `VECTOR_EMBEDDER_API_KEY` and `MULTIMODAL_EMBEDDER_API_KEY` from the same host vars as the embedders, matching `WARP_INGEST_API_KEY`. Existing installs recover on their next boot, because an empty secret is never persisted; a key set through the admin UI is preserved. Compose `environment:` overrides `env_file`, so a key set only in `.envs/.local/.django` is no longer used for a first-time seed; set it as a host variable before first boot. The variable only seeds the database: once a key is stored, changing it needs the admin UI or `migrate_pipeline_settings --force --component <class>`.
++  - **The Celery worker no longer restarts on its own parse output.** With `STORAGE_BACKEND=LOCAL`, `MEDIA_ROOT` is `/app/opencontractserver/media`, but the `media` entry in `compose/local/django/celery/worker/start` only matched `/app/media`, so every file written during ingest made `watchfiles` SIGINT the worker and SIGKILL it 5 seconds later. It now watches only `opencontractserver` and `config`, with `--filter python` and `opencontractserver/media` ignored. Impact: non-Python edits, and Python edits outside those two directories such as `.authority_packs/` provider modules, no longer restart the worker. `test.yml` runs the same script through `/start-celeryworker`, so this applies there too.
++  - **`frontend/Dockerfile` builds on smaller machines.** `yarn build` needs more than 2 GB of heap, so `RUN yarn build` now sets `--max-old-space-size` from the `NODE_MAX_OLD_SPACE_SIZE` build arg (default 4096), scoped to that command.
++  - **Windows clones keep container scripts on LF.** `.gitattributes` now pins `*.sh` and `compose/**` to `eol=lf`. `core.autocrlf=true` previously wrote CRLF, which broke the bind-mounted worker start script that `local.yml` runs, as it bypasses the Dockerfile's `sed` cleanup.
+```
+
+**File**: `compose/local/django/celery/worker/start` (modified, +5/-1)
+```diff
+@@ -4,4 +4,8 @@ set -o errexit
+ set -o nounset
+ 
+ 
+-watchfiles --ignore-paths frontend,node_modules,.git,__pycache__,.mypy_cache,.pytest_cache,media,staticfiles,docs,.claude,.playwright-mcp,playwright-report-e2e,test-results,.pilot_data --target-type command "celery -A config.celery_app worker -l INFO --concurrency=1 -Q celery,worker_uploads,doc_parse"
++# Reload only on Python source changes. A reload SIGINTs the worker and SIGKILLs
++# it 5s later, killing any task in flight, and with LOCAL storage the worker's own
++# parse output lands under opencontractserver/media, inside the watched tree.
++# The media ignore keeps an uploaded .py file from counting as a source change.
++watchfiles --filter python --ignore-paths opencontractserver/media --target-type command "celery -A config.celery_app worker -l INFO --concurrency=1 -Q celery,worker_uploads,doc_parse" opencontractserver config
+```
+
+**File**: `docs/pipelines/multimodal_embedder.md` (modified, +2/-0)
+```diff
+@@ -46,6 +46,8 @@ MULTIMODAL_EMBEDDER_VECTOR_SIZE=1536  # OpenAI-compatible models
+ MULTIMODAL_EMBEDDER_API_KEY=your-api-key
+ ```
+ 
++With `local.yml`, set this as a host variable rather than in `.envs/.local/.django`: compose forwards it to `django`, `celeryworker` and the embedder, and overrides the env file. It only seeds `PipelineSettings` on first boot, so to change a stored key use System Settings in the admin UI or `migrate_pipeline_settings --force --component <class>`. Without `--component`, `--force` overwrites every stored setting.
++
+ ### Embedding Weights
+ 
+ When combining text and image embeddings for multimodal annotations:
+```
+
+**File**: `docs/test_scripts/stock-local-setup.md` (added, +74/-0)
+```diff
+@@ -0,0 +1,74 @@
++# Test: Stock local setup (embedder auth, worker reloads, Windows checkouts)
++
++## Purpose
++Verifies the issue #2514 fixes that the automated suite can't reach: a stock
++`local.yml` resolves matching embedder keys, the Celery worker survives its own
++parse output, the frontend image builds within its heap limit, and a
++`core.autocrlf=true` clone keeps container scripts on LF.
++
++`opencontractserver/tests/test_local_compose_wiring.py` pins the first two.
++
++## Prerequisites
++- Docker with Compose v2
++- `pip install watchfiles==1.3.0` in a virtualenv on your `PATH`
++- Run from the repository root, with these set:
++  ```bash
++  REPO=$(git rev-parse --show-toplevel)
++  TMP=$(mktemp -d)
++  ```
++
++## Steps
++1. Resolve the stock compose environment from the sample env files. This uses a
++   scratch copy because `.envs/.local` is gitignored and may hold your real
++   credentials:
++   ```bash
++   mkdir "$TMP/stock"
++   git -C "$REPO" archive HEAD | tar -x -C "$TMP/stock"
++   mkdir -p "$TMP/stock/.envs/.local"
++   cp "$REPO"/docs/sample_env_files/backend/local/.django \
++      "$REPO"/docs/sample_env_files/backend/local/.postgres "$TMP/stock/.envs/.local/"
++   touch "$TMP/stock/.envs/.local/.frontend"
++   (cd "$TMP/stock" && env -u VECTOR_EMBEDDER_API_KEY -u MULTIMODAL_EMBEDDER_API_KEY \
++     docker compose -f local.yml config --format json) | python3 -c "
++   import json, sys
++   services = json.load(sys.stdin)['services']
++   for name in ('django', 'celeryworker', 'vector-embedder', 'multimodal-embedder'):
++       env = services[name]['environment']
++       print(name, {k: v for k, v in env.items() if k.endswith('EMBEDDER_API_KEY')})
++   "
++   ```
++2. Run the real worker start script against a fake tree, with a `celery` shim on
++   `PATH` that logs one line on start and ignores SIGINT (a task that won't finish):
++   ```bash
++   mkdir -p "$TMP/app/opencontractserver/media/pawls" "$TMP/app/config"
++   echo 'x = 1' > "$TMP/app/opencontractserver/models.py"
++   (cd "$TMP/app" && bash "$REPO/compose/local/django/celery/worker/start") &
++   echo '{}' > "$TMP/app/opencontractserver/media/pawls/doc.json"   # expect no restart
++   echo 'x = 2' >> "$TMP/app/opencontractserver/models.py"          # expect a restart
++   ```
++   Stop `watchfiles` and the shim afterwards; killing the `bash` job alone leaves
++   them running.
++3. Build the frontend stage at both heap limits:
++   ```bash
++   docker build --target builder --build-arg NODE_MAX_OLD_SPACE_SIZE=2048 "$REPO/frontend"
++   docker build --target builder "$REPO/frontend"
++   ```
++4. Clone with Windows line-ending defaults and inspect the checkout:
++   ```bash
++   git -c core.autocrlf=true clone --branch <branch> "file://$REPO/.git" "$TMP/crlf"
++   git -C "$TMP/crlf" ls-files --eol compose | awk '{print $1, $2}' | sort | uniq -c
++   git -C "$TMP/crlf" -c core.autocrlf=true add --renormalize .
++   git -C "$TMP/crlf" status --short -- compose '*.sh'
++   ```
++
++## Expected Results
++1. All four services resolve `abc123`; `django` and `celeryworker` list both keys.
++2. The media write leaves the worker alone. The `.py` edit restarts it: one SIGINT,
++   then a second start line about 5 seconds later.
++3. The 2048 build fails with `JavaScript heap out of memory`; the default passes.
++4. Every `compose/` file reports `i/lf w/lf`, and the status output is empty.
++
++## Cleanup
++```bash
++rm -rf "$TMP"
++```
+```
+
+**File**: `frontend/Dockerfile` (modified, +4/-1)
+```diff
+@@ -6,7 +6,10 @@ COPY package.json .
+ COPY yarn.lock .
+ RUN npm install --global yarn@1.22.22 && yarn install --frozen-lockfile
+ COPY . .
+-RUN yarn build
++# The build peaks above 2 GB of heap, which is V8's default limit on a machine or
++# Docker VM with less RAM. Scoped to this one command, so it never reaches runtime.
++ARG NODE_MAX_OLD_SPACE_SIZE=4096
++RUN NODE_OPTIONS=--max-old-space-size=${NODE_MAX_OLD_SPACE_SIZE} yarn build
+ 
+ # => Run container
+ FROM nginx:1.31.8-alpine
+```
+
+**File**: `local.yml` (modified, +19/-7)
+```diff
+@@ -68,6 +68,12 @@ services:
+       # `--profile warp-ingest` stack sends an empty X-API-Key and warp-ingest
+       # 401s every PDF parse. Verified against the running service.
+       WARP_INGEST_API_KEY: ${WARP_INGEST_API_KEY:-abc123}
++      # Same contract for the embedders: migrate_pipeline_settings seeds the keys
++      # from these variables on boot, and with neither set it seeds nothing, so
++      # Django sends no X-API-Key and every embedding request 401s. Sourced from
++      # the same host vars and defaults as the embedder services below.
++      VECTOR_EMBEDDER_API_KEY: ${VECTOR_EMBEDDER_API_KEY:-abc123}
++      MULTIMODAL_EMBEDDER_API_KEY: ${MULTIMODAL_EMBEDDER_API_KEY:-abc123}
+     ports:
+       - "8000:8000"
+     command: /start
+@@ -212,13 +218,17 @@ services:
+     restart: unless-stopped
+ 
+   # The embedder images read VECTOR_EMBEDDER_API_KEY (compose/accelerated/
+-  # embedder/main.py), NOT API_KEY — the old ``API_KEY`` key was silently ignored
+-  # (the image fell back to its built-in "abc123" default, which happened to
+-  # match the abc123 in .envs/.local/.django, so overrides never took effect).
+-  # Source each service's key from the SAME host var Django uses to call it
+-  # (VECTOR_/MULTIMODAL_EMBEDDER_API_KEY in .envs/.local/.django) so an override
+-  # stays in sync on both sides. The abc123 fallback is a LOCAL DEVELOPMENT ONLY
+-  # placeholder — override before exposing these services off the docker bridge.
++  # embedder/main.py), NOT API_KEY. Each service's key comes from the SAME host
++  # var that the django and celeryworker services forward above. Set it in the
++  # host shell or a root .env: a value in .envs/.local/.django reaches neither
++  # side, because these containers don't load that file and django's
++  # ``environment:`` entry takes precedence over it.
++  # Django only uses that var to seed PipelineSettings on first boot, so changing
++  # it later updates the embedder but not the stored key, and requests 401 until
++  # you also change it in the admin UI (System Settings) or run
++  # ``migrate_pipeline_settings --force --component <class>``.
++  # The abc123 fallback is a LOCAL DEVELOPMENT ONLY placeholder — override before
++  # exposing these services off the docker bridge.
+   vector-embedder:
+     extends:
+       file: compose/compose.images.yml
+@@ -330,6 +340,8 @@ services:
+       # See the django service: parsing runs here, so the worker is the side
+       # that actually calls warp-ingest. Same variable, same default.
+       WARP_INGEST_API_KEY: ${WARP_INGEST_API_KEY:-abc123}
++      VECTOR_EMBEDDER_API_KEY: ${VECTOR_EMBEDDER_API_KEY:-abc123}
++      MULTIMODAL_EMBEDDER_API_KEY: ${MULTIMODAL_EMBEDDER_API_KEY:-abc123}
+     command: /app/compose/local/django/celery/worker/start
+ 
+ 
+```
+
+**File**: `opencontractserver/tests/test_local_compose_wiring.py` (added, +83/-0)
+```diff
+@@ -0,0 +1,83 @@
++"""
++Pins the stock ``local.yml`` wiring that issue #2514 found broken.
++
++The backend suite doesn't run these files: it uses ``test.yml`` and no real
++worker, so a regression here would otherwise only surface on a fresh install.
++"""
++
++import shlex
++from pathlib import Path
++from typing import Any
++
++import yaml
++from django.test import SimpleTestCase
++
++ROOT_DIR = Path(__file__).resolve().parents[2]
++WORKER_START = ROOT_DIR / "compose" / "local" / "django" / "celery" / "worker" / "start"
++
++
++class TestEmbedderKeyWiring(SimpleTestCase):
++    """Django and the embedders must resolve the same API key on a stock install."""
++
++    services: dict[str, Any]
++
++    @classmethod
++    def setUpClass(cls):
++        super().setUpClass()
++        with (ROOT_DIR / "local.yml").open(encoding="utf-8") as stream:
++            cls.services = yaml.safe_load(stream)["services"]
++
++    def test_clients_forward_the_key_each_embedder_expects(self):
++        # Both images read VECTOR_EMBEDDER_API_KEY; the multimodal one sources it
++        # from a different host var, so each client key pairs with its own service.
++        expected = {
++            "VECTOR_EMBEDDER_API_KEY": "vector-embedder",
++            "MULTIMODAL_EMBEDDER_API_KEY": "multimodal-embedder",
++        }
++        for client in ("django", "celeryworker"):
++            for client_key, service in expected.items():
++                with self.subTest(client=client, key=client_key):
++                    self.assertEqual(
++                        self.services[client]["environment"][client_key],
++                        self.services[service]["environment"][
++                            "VECTOR_EMBEDDER_API_KEY"
++                        ],
++                    )
++
++
++class TestWorkerAutoreload(SimpleTestCase):
++    """The worker must reload on source edits, and never on its own output."""
++
++    argv: list[str]
++
++    @classmethod
++    def setUpClass(cls):
++        super().setUpClass()
++        command = next(
++            line
++            for line in WORKER_START.read_text(encoding="utf-8").splitlines()
++            if line.startswith("watchfiles ")
++        )
++        cls.argv = shlex.split(command)
++
++    def _option(self, name):
++        return self.argv[self.argv.index(name) + 1]
++
++    def test_only_python_changes_trigger_a_reload(self):
++        self.assertEqual(self._option("--filter"), "python")
++
++    def test_local_media_root_is_ignored(self):
++        # watchfiles resolves ignore paths against the cwd, so this must be the
++        # full path to MEDIA_ROOT: a bare ``media`` matches only /app/media.
++        self.assertIn(
++            "opencontractserver/media", self._option("--ignore-paths").split(",")
++        )
++
++    def test_watched_paths_follow_the_target_command(self):
++        # The first positional is the target, so a path placed ahead of it would
++        # be run as the command and the worker would never start.
++        target_index = self.argv.index("--target-type") + 2
++        self.assertTrue(self.argv[target_index].startswith("celery "))
++        self.assertEqual(
++            self.argv[target_index + 1 :], ["opencontractserver", "config"]
++        )
+```
+
+---
+
+### Incident Patch 3: `56110d0f` (2026-11-12)
+**Commit Message**: fix(deps-dev): bump @vitest/coverage-istanbul in /frontend (#2543)
+
+Bumps [@vitest/coverage-istanbul](https://github.com/vitest-dev/vitest/tree/HEAD/packages/coverage-istanbul) from 5.0.5 to 5.1.0.
+- [Release notes](https://github.com/vitest-dev/vitest/releases)
+- [Changelog](https://github.com/vitest-dev/vitest/blob/main/docs/releases.md)
+- [Commits](https://github.com/vitest-dev/vitest/commits/v5.1.0/packages/coverage-istanbul)
 
 ---
 updated-dependencies:
-- dependency-name: react-window
-  dependency-version: 2.5.2
-  dependency-type: direct:production
+- dependency-name: "@vitest/coverage-istanbul"
+  dependency-version: 5.1.0
+  dependency-type: direct:development
   update-type: version-update:semver-minor
 ...
 
@@ -1551,285 +2107,138 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `frontend/package.json` (modified, +1/-1)
 ```diff
-@@ -78,7 +78,7 @@
-     "react-syntax-highlighter": "^16.1.0",
-     "react-toastify": "^11.0.5",
-     "react-virtualized-auto-sizer": "^1.0.26",
--    "react-window": "^2.2.0",
-+    "react-window": "^2.5.3",
-     "recharts": "^3.10.1",
-     "rehype-react": "^8.0.0",
-     "rehype-sanitize": "^6.0.0",
+@@ -164,7 +164,7 @@
+     "@types/lodash.uniqueid": "^4.0.9",
+     "@types/react-helmet-async": "^1.0.3",
+     "@types/uuid": "^8.3.4",
+-    "@vitest/coverage-istanbul": "^5.0.5",
++    "@vitest/coverage-istanbul": "^5.1.0",
+     "dotenv": "^18.0.9",
+     "fake-indexeddb": "^6.2.2",
+     "husky": "^8.0.1",
 ```
 
-**File**: `frontend/yarn.lock` (modified, +4/-4)
+**File**: `frontend/yarn.lock` (modified, +196/-208)
 ```diff
-@@ -5817,10 +5817,10 @@ react-virtualized-auto-sizer@^1.0.26:
-   resolved "https://registry.yarnpkg.com/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.26.tgz#e9470ef6a778dc4f1d5fd76305fa2d8b610c357a"
-   integrity sha512-CblNyiNVw2o+hsa5/49NH2ogGxZ+t+3aweRvNSq7TVjDIlwk7ir4lencEg5HxHeSzwNarSkNkiu0qJSOXtxm5A==
+@@ -97,24 +97,11 @@
+     js-tokens "^4.0.0"
+     picocolors "^1.1.1"
  
--react-window@*, react-window@^2.2.0:
--  version "2.2.3"
--  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.3.tgz#f8ffdddbb612ccd3e1314b59fce79af85d3f15e3"
--  integrity sha512-gTRqQYC8ojbiXyd9duYFiSn2TJw0ROXCgYjenOvNKITWzK0m0eCvkUsEUM08xvydkMh7ncp+LE0uS3DeNGZxnQ==
-+react-window@*, react-window@^2.5.3:
-+  version "2.5.3"
-+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.5.3.tgz#75a7d9e21f8faa1928b191f670f8a975406c541f"
-+  integrity sha512-zN/mX+4cLgwp8xDqQYKmgbzj/oZ2LrF4V8KbAbgkpA9zAt3+q4nWPe0MhvIDIh9c4kHPySSchNcd8DjyR6jItQ==
+-"@babel/code-frame@^8.0.0", "@babel/code-frame@^8.0.6":
+-  version "8.0.6"
+-  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-8.0.6.tgz#5247d36cef9fd187dd4d84a0ba659fa29341616c"
+-  integrity sha512-uMHhvmDmwFiLuiozaoRYTZHqMFuu3fem/X9JY78lohAuLoh8LSGGC8JqUzo2cVuBsBxkjMZNk56CE7ock8Xxkw==
+-  dependencies:
+-    "@babel/helper-validator-identifier" "^8.0.6"
+-    js-tokens "^10.0.0"
+-
+ "@babel/compat-data@^7.29.7":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.29.7.tgz#6f0237f0f36d2e51c0570a636faed9d2d0efe629"
+   integrity sha512-locTkQyKvwIEgBzVrn8693ebc97F2U8ZHjbXwDXJ5Fn2TCpNwTlKcaKLkdHop5c/icOFE7qt7Q9JC5hnKNa6Gg==
  
- react@18:
-   version "18.3.1"
-```
-
----
-
-### Incident Patch 2: `eca5412a` (2026-11-09)
-**Commit Message**: fix(deps): bump recharts from 3.4.1 to 3.10.1 in /frontend (#2530)
-
-Bumps [recharts](https://github.com/recharts/recharts) from 3.4.1 to 3.10.1.
-- [Release notes](https://github.com/recharts/recharts/releases)
-- [Changelog](https://github.com/recharts/recharts/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/recharts/recharts/compare/v3.4.1...v3.10.1)
-
----
-updated-dependencies:
-- dependency-name: recharts
-  dependency-version: 3.10.1
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `frontend/package.json` (modified, +1/-1)
-```diff
-@@ -79,7 +79,7 @@
-     "react-toastify": "^11.0.5",
-     "react-virtualized-auto-sizer": "^1.0.26",
-     "react-window": "^2.2.0",
--    "recharts": "^3.4.1",
-+    "recharts": "^3.10.1",
-     "rehype-react": "^8.0.0",
-     "rehype-sanitize": "^6.0.0",
-     "remark-gfm": "^4.0.1",
-```
-
-**File**: `frontend/yarn.lock` (modified, +20/-20)
-```diff
-@@ -1048,14 +1048,14 @@
-   resolved "https://registry.yarnpkg.com/@react-leaflet/core/-/core-2.1.0.tgz#383acd31259d7c9ae8fb1b02d5e18fe613c2a13d"
-   integrity sha512-Qk7Pfu8BSarKGqILj4x7bCSZ1pjuAPZ+qmRwH5S7mDS91VSbVVsJSrW4qA+GPrro8t69gFYVMWb1Zc4yFmPiVg==
+-"@babel/compat-data@^8.0.5":
+-  version "8.0.5"
+-  resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-8.0.5.tgz#b5e933559f0830bd4d71f167a7b24cbb4b0f3fd7"
+-  integrity sha512-YLsYoQMvL8l8WrGpN3Zj7O1wK5LEBN+cQtux7BcuHyxIXve724XG+zuJ1n3U1cUweRtTzQOA4IHbuQw3N34SZw==
+-
+ "@babel/core@^7.21.3", "@babel/core@^7.23.9", "@babel/core@^7.28.0":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.29.7.tgz#80c10b17248082968b57a857b91640971f2070f7"
+@@ -136,28 +123,6 @@
+     json5 "^2.2.3"
+     semver "^6.3.1"
  
--"@reduxjs/toolkit@1.x.x || 2.x.x":
--  version "2.10.1"
--  resolved "https://registry.yarnpkg.com/@reduxjs/toolkit/-/toolkit-2.10.1.tgz#b3b9da21335eea409d3498544bcaf83b481a0195"
--  integrity sha512-/U17EXQ9Do9Yx4DlNGU6eVNfZvFJfYpUtRRdLf19PbPjdWBxNlxGZXywQZ1p1Nz8nMkWplTI7iD/23m07nolDA==
-+"@reduxjs/toolkit@^1.9.0 || 2.x.x":
-+  version "2.14.0"
-+  resolved "https://registry.yarnpkg.com/@reduxjs/toolkit/-/toolkit-2.14.0.tgz#4977d4f7f889e634eeb7381becc5b5648fecf051"
-+  integrity sha512-m/PxMwRe0xLL6XUsAgy0YjInklHcfi9uMwFhJk+QINqjxqPvyc89T5cMjszA5bDmTE0gwGc7zr9LRO4gL+mhaw==
-   dependencies:
-     "@standard-schema/spec" "^1.0.0"
-     "@standard-schema/utils" "^0.3.0"
--    immer "^10.2.0"
-+    immer "^11.2.9"
-     redux "^5.0.1"
-     redux-thunk "^3.1.0"
-     reselect "^5.1.0"
-@@ -4043,10 +4043,10 @@ iconv-lite@0.6, iconv-lite@0.6.3:
-   dependencies:
-     safer-buffer ">= 2.1.2 < 3.0.0"
+-"@babel/core@^8.0.1":
+-  version "8.0.9"
+-  resolved "https://registry.yarnpkg.com/@babel/core/-/core-8.0.9.tgz#4d597c512a119d16ffab53a71b967b3a48088cbf"
+-  integrity sha512-wXtyKlpR/pXf/u0vmib+OBakQaIzLglLcRoKpWxCHW/whqq7YfQYPD0IAAl9H/evi40MyLIjYYdvb6N+9DI2yA==
+-  dependencies:
+-    "@babel/code-frame" "^8.0.6"
+-    "@babel/generator" "^8.0.6"
+-    "@babel/helper-compilation-targets" "^8.0.7"
+-    "@babel/helpers" "^8.0.8"
+-    "@babel/parser" "^8.0.8"
+-    "@babel/template" "^8.0.0"
+-    "@babel/traverse" "^8.0.7"
+-    "@babel/types" "^8.0.8"
+-    "@types/gensync" "^1.0.5"
+-    convert-source-map "^2.0.0"
+-    empathic "^2.0.1"
+-    gensync "^1.0.0-beta.2"
+-    import-meta-resolve "^4.2.0"
+-    json5 "^2.2.3"
+-    obug "^3.0.0"
+-    verkit "^0.5.0"
+-
+ "@babel/generator@^7.28.5", "@babel/generator@^7.29.7":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.29.7.tgz#cca0b8827e6bcf3ba176788e7f3b180ad6db2fa3"
+@@ -169,18 +134,6 @@
+     "@jridgewell/trace-mapping" "^0.3.28"
+     jsesc "^3.0.2"
  
--immer@^10.1.1, immer@^10.2.0:
--  version "10.2.0"
--  resolved "https://registry.yarnpkg.com/immer/-/immer-10.2.0.tgz#88a4ce06a1af64172d254b70f7cb04df51c871b1"
--  integrity sha512-d/+XTN3zfODyjr89gM3mPq1WNX2B8pYsu7eORitdwyA2sBubnTl3laYlBk4sXY5FUa5qTZGBDPJICVbvqzjlbw==
-+immer@^11.1.8, immer@^11.2.9:
-+  version "11.2.9"
-+  resolved "https://registry.yarnpkg.com/immer/-/immer-11.2.9.tgz#025deddab07b73a87aaf99b6ecf2b53267da5ee2"
-+  integrity sha512-IQ4UEtXjZjyefyWjtLEDXUSrF6T2hwjKPi6BIJl3bY/2XXW24d6cNGdXJSBOA/+KNnuiXkZY6DR0C3efolhitA==
+-"@babel/generator@^8.0.6":
+-  version "8.0.6"
+-  resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-8.0.6.tgz#a2027d70276bd721aa5b85fc2424852976d5d474"
+-  integrity sha512-/pcanjdRsonCexCuxgGD8fKnBLLzk2i9uM4kmcmGyyev2R5YDs+rafMYZ89RvaGY1mW8T7C5au0TyYaEeHBGng==
+-  dependencies:
+-    "@babel/parser" "^8.0.6"
+-    "@babel/types" "^8.0.6"
+-    "@jridgewell/gen-mapping" "0.4.0-beta.0"
+-    "@jridgewell/trace-mapping" "^0.3.31"
+-    "@types/jsesc" "^2.5.0"
+-    jsesc "^3.0.2"
+-
+ "@babel/helper-compilation-targets@^7.29.7":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/helper-compilation-targets/-/helper-compilation-targets-7.29.7.tgz#7a1def704302401c47f64fa85589e974ae217042"
+@@ -192,17 +145,6 @@
+     lru-cache "^5.1.1"
+     semver "^6.3.1"
  
- immutable@>=5.1.8:
-   version "5.1.9"
-@@ -5829,19 +5829,19 @@ react@18:
-   dependencies:
-     loose-envify "^1.1.0"
+-"@babel/helper-compilation-targets@^8.0.7":
+-  version "8.0.7"
+-  resolved "https://registry.yarnpkg.com/@babel/helper-compilation-targets/-/helper-compilation-targets-8.0.7.tgz#7ece9e53952af8f769e15ecabc8b899cb017f745"
+-  integrity sha512-ilAZCdOOlOVA7dQbaFNw2f/59p6GW33NxTopc3DvEE3efp3ZXTrGX/yZScaKw8/vd9bq31Ag0EcXiLw32bAgJg==
+-  dependencies:
+-    "@babel/compat-data" "^8.0.5"
+-    "@babel/helper-validator-option" "^8.0.0"
+-    browserslist "^4.24.0"
+-    flru "1.0.2"
+-    verkit "^0.5.0"
+-
+ "@babel/helper-globals@^7.28.0":
+   version "7.28.0"
+   resolved "https://registry.yarnpkg.com/@babel/helper-globals/-/helper-globals-7.28.0.tgz#b9430df2aa4e17bc28665eadeae8aa1d985e6674"
+@@ -213,11 +155,6 @@
+   resolved "https://registry.yarnpkg.com/@babel/helper-globals/-/helper-globals-7.29.7.tgz#f04a96fbd8473241b1079243f5b3f03a3010ab7b"
+   integrity sha512-3nQVUAtvkKH9zahfWgw96Jc/uFOmjACE1kQz82E2lqWmHBgjzbNlsC22nuQTfahmWeQtTq5nQ/4Nnd2A1wj4zA==
  
--recharts@^3.4.1:
--  version "3.4.1"
--  resolved "https://registry.yarnpkg.com/recharts/-/recharts-3.4.1.tgz#f8c7b7ad40c9794eb0113f79c17fb1c1f15e2728"
--  integrity sha512-35kYg6JoOgwq8sE4rhYkVWwa6aAIgOtT+Ob0gitnShjwUwZmhrmy7Jco/5kJNF4PnLXgt9Hwq+geEMS+WrjU1g==
-+recharts@^3.10.1:
-+  version "3.10.1"
-+  resolved "https://registry.yarnpkg.com/recharts/-/recharts-3.10.1.tgz#e6f52c2604a38f728b6d47f95881595fa6604c6c"
-+  integrity sha512-QXFrvt6IVcw7eeZCoyXTwkIJAX3Dv1nyVhMicXJ47GsGDDpcN8z6o644DibE9XjpBTThtsomLKnTV6lc+cVFUA==
-   dependencies:
--    "@reduxjs/toolkit" "1.x.x || 2.x.x"
-+    "@reduxjs/toolkit" "^1.9.0 || 2.x.x"
-     clsx "^2.1.1"
-     decimal.js-light "^2.5.1"
-     es-toolkit "^1.39.3"
-     eventemitter3 "^5.0.1"
--    immer "^10.1.1"
-+    immer "^11.1.8"
-     react-redux "8.x.x || 9.x.x"
--    reselect "5.1.1"
-+    reselect "5.2.0"
-     tiny-invariant "^1.3.3"
-     use-sync-external-store "^1.2.2"
-     victory-vendor "^37.0.2"
-@@ -5960,10 +5960,10 @@ require-main-filename@^2.0.0:
-   resolved "https://registry.yarnpkg.com/require-main-filename/-/require-main-filename-2.0.0.tgz#d0b329ecc7cc0f61649f62215be69af54aa8989b"
-   integrity sha512-NKN5kMDylKuldxYLSUfrbo5Tuzh4hd+2E8NPPX02mZtn1VuREQToYe/ZdlJy+J3uCpfaiGF05e7B8W0iXbQHmg==
+-"@babel/helper-globals@^8.0.6":
+-  version "8.0.6"
+-  resolved "https://registry.yarnpkg.com/@babel/helper-globals/-/helper-globals-8.0.6.tgz#198c218ccff8a99093d620abf66328ec80d234cd"
+-  integrity sha512-OdnA/N52LhzFpeUuVz5YGuSWjc7TPHiFmVYZbPlSgExocO2GwbxVpSni9MVs5wwW+wZ4kPuwBEBN9pIPDYz1mA==
+-
+ "@babel/helper-module-imports@^7.16.7":
+   version "7.27.1"
+   resolved "https://registry.yarnpkg.com/@babel/helper-module-imports/-/helper-module-imports-7.27.1.tgz#7ef769a323e2655e126673bb6d2d6913bbead204"
+@@ -258,11 +195,6 @@
+   resolved "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-7.29.7.tgz#7f0871d99824d23137d60f86fcf6130fd5a1b51f"
+   integrity sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw==
  
--reselect@5.1.1, reselect@^5.1.0:
--  version "5.1.1"
--  resolved "https://registry.yarnpkg.com/reselect/-/reselect-5.1.1.tgz#c766b1eb5d558291e5e550298adb0becc24bb72e"
--  integrity sha512-K/BG6eIky/SBpzfHZv/dd+9JBFiS4SWV7FIujVyJRux6e45+73RaUHXLmIR1f7WOMaQ0U1km6qwklRQxpJJY0w==
-+reselect@5.2.0, reselect@^5.1.0:
-+  version "5.2.0"
-+  resolved "https://registry.yarnpkg.com/reselect/-/reselect-5.2.0.tgz#f380ef7664332d26ea06c1cba04bdbbdcaa955f1"
-+  integrity sha512-AgZ3UOZm3YndfrJ4OYjgrT7bmCm/1iqkjvEfH/oYjzh6PD2qw4QuT3jjnXIrpdt4MTpMXclMT3lXbmRY+XRakw==
- 
- resolve-from@^4.0.0:
-   version "4.0.0"
-```
-
----
-
-### Incident Patch 3: `b55daef6` (2026-11-09)
-**Commit Message**: fix(deps): bump vite from 7.3.7 to 8.3.5 in /frontend (#2531)
-
-Bumps [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite) from 7.3.7 to 8.3.5.
-- [Release notes](https://github.com/vitejs/vite/releases)
-- [Changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md)
-- [Commits](https://github.com/vitejs/vite/commits/v8.3.5/packages/vite)
-
----
-updated-dependencies:
-- dependency-name: vite
-  dependency-version: 8.3.5
-  dependency-type: direct:production
-  update-type: version-update:semver-major
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `frontend/package.json` (modified, +2/-2)
-```diff
-@@ -92,7 +92,7 @@
-     "unified": "^11.0.5",
-     "use-debounce": "^10.1.1",
-     "uuid": "^14.0.0",
--    "vite": "^7.3.7",
-+    "vite": "^8.3.5",
-     "vite-plugin-svgr": "^4.3.0",
-     "vite-tsconfig-paths": "^5.1.4",
-     "web-vitals": "^2.1.2"
-@@ -150,7 +150,7 @@
-     "react-router": "^7.18.2",
-     "rollup": "^4.59.0",
-     "immutable": ">=5.1.8",
--    "vite": "^7.3.7",
-+    "vite": "^8.3.5",
-     "uuid": "^11.1.1"
-   },
-   "devDependencies": {
-```
-
-**File**: `frontend/yarn.lock` (modified, +201/-27)
-```diff
-@@ -1002,6 +1002,11 @@
-   resolved "https://registry.yarnpkg.com/@os-legal/ui/-/ui-0.1.19.tgz#d3511090cc41a8b8e0f499bcab23bd010e99e237"
-   integrity sha512-+bu/s0hJc5pS92Rd/iKggb7Luutwc6Gs76+ErT4uMTnzoIwxI6PA0HQS2FJFbcnvuNBNy+qRxy32AKhFuAzkAA==
- 
-+"@oxc-project/types@=0.156.0":
-+  version "0.156.0"
-+  resolved "https://registry.yarnpkg.com/@oxc-project/types/-/types-0.156.0.tgz#00e35b1ead490d81b4c7fe1dbfe35fc55e89c5e6"
-+  integrity sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==
-+
- "@pkgjs/parseargs@^0.11.0":
-   version "0.11.0"
-   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
-@@ -1086,11 +1091,91 @@
-     lodash "^4.17.21"
-     lodash-es "^4.17.21"
- 
-+"@rolldown/binding-android-arm-eabi@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz#abc3e1d5aacd1983d32a490c3a8793770da3bd1a"
-+  integrity sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==
-+
-+"@rolldown/binding-android-arm64@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.16.tgz#85c4d52aeb79c69e8abd52e3ba3174bb946bcd49"
-+  integrity sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg==
-+
-+"@rolldown/binding-darwin-arm64@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.16.tgz#d188fd77cdb2b6dc140011a573203e374fdba2d8"
-+  integrity sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2yCjygCFo2f83msQ==
-+
-+"@rolldown/binding-darwin-x64@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.16.tgz#eb84cc00765ce2f6c48d85624ebecaa2c88470ba"
-+  integrity sha512-FdF+y48ND13eAyM2mQn+85kvAqNlvRWROy2rhgA463X/0Gv4vGtazZtfaF1mRBLscYvtOlh4QnLjOWiFzX69OQ==
-+
-+"@rolldown/binding-freebsd-x64@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.16.tgz#d3c51e8a2cd2977eac7fff0e6655e2715a39328c"
-+  integrity sha512-ddjqFM5e95AgLbUPtKIS7V1KTVlA0RUgCVr5mn+/IEhsdy3pr+Vuj/HZ7nlMN2FyxIwUktOH1LEPIQXO1v9y1Q==
-+
-+"@rolldown/binding-linux-arm-gnueabihf@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.16.tgz#216c99c72c005c375d63d31060209b78a8983fec"
-+  integrity sha512-tHdKWbFkFBI687iim3LIyIvyL7j66VvQYkDPss5Stn/qyE2tWkR1YD0dXmXPFKKqT/o5ZEJVsaRsWS2meQwGOA==
-+
-+"@rolldown/binding-linux-arm64-gnu@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-arm64-gnu/-/binding-linux-arm64-gnu-1.2.16.tgz#4e03383b29c5ba30bbfdd06ec746c13e7dee12dd"
-+  integrity sha512-FJiLGAblPBMlBEdbOqw6kW6QcXDWAf/oJu7gYs9ZJZwmg+K+/zjFLxPTIY9izJUzxzc24FHvmseyA0IvJSl17w==
-+
-+"@rolldown/binding-linux-arm64-musl@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-arm64-musl/-/binding-linux-arm64-musl-1.2.16.tgz#d159c4c87ecda02962be95a1dccde1ef6934ccf2"
-+  integrity sha512-hrJpblMsrQ58U9veWpbXzkhV5zStunds6HWLprqq1qauvgBr1E6P+24kLj6lSLI9vjRn/RYpjprhkHQPKGWpNg==
-+
-+"@rolldown/binding-linux-ppc64-gnu@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-ppc64-gnu/-/binding-linux-ppc64-gnu-1.2.16.tgz#6e4be205f9d2188b2a996c0f82242beac7d573f6"
-+  integrity sha512-qJd/dC6j6CwLG9/s/RP2nb1RZ0GIgj7Ioj7x/SYa3RzjVrlzrmH0fhIOpfvqQDeIsdP0loi+kHaMhJzY1PBIaA==
-+
-+"@rolldown/binding-linux-s390x-gnu@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-s390x-gnu/-/binding-linux-s390x-gnu-1.2.16.tgz#7e68a24dbc387fdba75d95992974eddf39c9ddaf"
-+  integrity sha512-Vx7Xg5uUJuNcujJjI70OICaH0EYj80BtOLZTSN7uOYg8QOLlyKnaG0IW7Fn/J0IpJsaKzmDKMhOQv1JBM9m9vg==
-+
-+"@rolldown/binding-linux-x64-gnu@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-x64-gnu/-/binding-linux-x64-gnu-1.2.16.tgz#591cdec3e65bd701ba2e7b671ca9d694142dec2c"
-+  integrity sha512-TNKhgE3uJTsTzatUSSYt0Kgo+Oa2uSlSjz4r1aEIea7HX6ULBym4fAlYUhG1i6pjNf2njfCUAfKwr6C3E9Xg1w==
-+
-+"@rolldown/binding-linux-x64-musl@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-linux-x64-musl/-/binding-linux-x64-musl-1.2.16.tgz#833ac527e031f51c2ac23a615a19ed111092088c"
-+  integrity sha512-7chXdpjXZ8qG0+mIxECN3cT9kvhZ3/oZhMX6Pp876P7CDrIy8nJswva6Mq357JR7eYXfuskwZxMeV1SzoZdHrA==
-+
-+"@rolldown/binding-openharmony-arm64@1.2.16":
-+  version "1.2.16"
-+  resolved "https://registry.yarnpkg.com/@rolldown/binding-openharmony-arm64/-/binding-openharmony-arm64-1.2.16.tgz#2991fbf22995469b1404afbf3850713fd917b525"
-+  integrity sha512-Kwjt+7uNTJK5/MDkGWGVO2KQPnj8yAV75
+-"@babel/helper-string-parser@^8.0.8":
+-  version "8.0.8"
+-  resolved "https://registry.yarnpkg.com/@babel
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2531** (2026-11-09): fix(deps): bump vite from 7.3.7 to 8.3.5 in /frontend (@dependabot[bot])
-- **PR #2530** (2026-11-09): fix(deps): bump recharts from 3.4.1 to 3.10.1 in /frontend (@dependabot[bot])
-- **PR #2529** (2026-11-09): fix(deps): bump react-intersection-observer from 9.16.0 to 11.0.1 in /frontend (@dependabot[bot])
-- **PR #2528** (2026-11-09): fix(deps): bump @tiptap/extension-placeholder from 3.10.4 to 3.32.2 in /frontend (@dependabot[bot])
-- **PR #2527** (2026-11-09): fix(deps): bump react-window from 2.2.3 to 2.5.3 in /frontend (@dependabot[bot])
-- **PR #2526** (2026-11-09): fix(deps): bump pytest from 9.1.1 to 9.2.0 (@dependabot[bot])
+- **PR #2546** (2026-11-12): fix(deps): update graphql-core requirement from <3.4,>=3.3 to >=3.3.2,<3.4 (@dependabot[bot])
+- **PR #2545** (2026-11-12): Pin kombu to 5.6.2 so Celery workers keep starting (@JSv4)
+- **PR #2544** (2026-11-12): fix(deps): align all @tiptap packages on 3.33.1 in /frontend (@dependabot[bot])
+- **PR #2543** (2026-11-12): fix(deps-dev): bump @vitest/coverage-istanbul from 5.0.5 to 5.1.0 in /frontend (@dependabot[bot])
+- **PR #2542** (2026-11-12): fix(deps): bump styled-components from 6.1.19 to 6.6.0 in /frontend (@dependabot[bot])
+- **PR #2541** (2026-11-12): fix(deps): bump date-fns from 4.1.0 to 4.4.0 in /frontend (@dependabot[bot])
 
 ---
 
@@ -1849,28 +2258,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump react-window from 2.2.3 to 2.5.3 in /frontend (#2527)
+## X. mcp): preserve distinct block search results by relationship ID (#2414)
 
 **RULE**:
-When implementing operations in `frontend/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Open-Source-Legal/OpenContracts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/mcp-block-search-identity.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Open-Source-Legal/OpenContracts. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01dd8500`: deps): bump react-window from 2.2.3 to 2.5.3 in /frontend (#2527). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fb260c3e`: mcp): preserve distinct block search results by relationship ID (#2414). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/package.json`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/mcp-block-search-identity.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    "react-window": "^2.5.3",
+- Preserve distinct MCP block search results with identical previews by exposing and deduplicating on the relationship ID in `opencontractserver/mcp/formatters.py`. Repeated hits for the same relationship still collapse to the first ranked result; blocks without an ID remain distinct.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    "react-window": "^2.2.0",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01dd8500` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fb260c3e` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T15:47:56.779Z",
-  "total_records": 187,
+  "last_updated": "2026-11-13T16:05:42.112Z",
+  "total_records": 194,
   "domains": {
     "A": {
       "total": 1,
@@ -26,7 +26,7 @@
       ]
     },
     "D": {
-      "total": 113,
+      "total": 116,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -140,7 +140,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
         "DOM-D-991F9C3C",
-        "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian"
+        "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari",
+        "DOM-D-F7590A97",
+        "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learning"
       ]
     },
     "E": {
@@ -157,7 +160,7 @@
       ]
     },
     "G": {
-      "total": 9,
+      "total": 13,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -167,7 +170,11 @@
         "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants",
         "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants"
+        "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
+        "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-core-invariants",
+        "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-core-invariants",
+        "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria"
       ]
     },
     "H": {
@@ -6469,6 +6476,102 @@
       "repository": "bridgecrewio-checkov-learnings",
       "content_hash": "db33ac444145dbf3e2dcc4502e4017f43074c888340b49e435cf055317c6463e",
       "created_at": "2026-11-13T15:47:56.779Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-research-knowledge-intelligence-ista-das.md",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "content_hash": "c756213d8786c51e510a864f012bf5f47a715428b11cee23ec6959bc1679c3b1",
+      "created_at": "2026-11-13T16:04:48.542Z"
+    },
+    "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: a2ui-project/a2ui Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-a2ui-project-a2ui-architecture-intelligence-a2ui-project-a2ui-core-invariants.md",
+      "repository": "a2ui-project/a2ui",
+      "content_hash": "c7dc5f308aaf4e04c151ce7844bcff59a0030e10545240ef04bab086d93bd03e",
+      "created_at": "2026-11-13T16:04:57.326Z"
+    },
+    "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: Open-Source-Legal/OpenContracts Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-open-source-legal-opencontracts-architecture-intelligence-open-source-legal-open.md",
+      "repository": "Open-Source-Legal/OpenContracts",
+      "content_hash": "8b0ad6cc7548f3c460b9286e4d87c87e29df8bd603f68c8879b09bae8b8d25e6",
+      "created_at": "2026-11-13T16:05:05.930Z"
+    },
+    "DOM-D-F7590A97": {
+      "record_id": "DOM-D-F7590A97",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF))  \n> **Source Version**: `hf-ista-dasl",
+      "content_hash": "4e4e86daa2311b09d9747584edf74c0bdbcd148f99a94dee34b05f88c88a7c2e",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md`  \n> **Source**: huggingface ([ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md`  \n> **Source**: huggingface ([",
+      "provenance": {
+        "source_uri": "project://hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T16:05:08.664Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T16:05:40.817Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learning": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learning",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learnings-research-knowledge-intelligenc.md",
+      "repository": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings",
+      "content_hash": "b7dbb73e7031729beebe7a90297fb48de6a4a74e895245665c2b9af0bf17c456",
+      "created_at": "2026-11-13T16:05:40.976Z"
+    },
+    "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: a2ui-project-a2ui-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-a2ui-project-a2ui-learnings-architecture-intelligence-a2ui-project-a2ui-learning.md",
+      "repository": "a2ui-project-a2ui-learnings",
+      "content_hash": "a1008e8ea2aa507ff9e7ef3279960d9f25fa98b334885b537be1c8d22b7de7d2",
+      "created_at": "2026-11-13T16:05:41.394Z"
+    },
+    "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria": {
+      "record_id": "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: open-source-legal-opencontracts-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-open-source-legal-opencontracts-learnings-architecture-intelligence-open-source-.md",
+      "repository": "open-source-legal-opencontracts-learnings",
+      "content_hash": "23fe798cba151daa94c88278c178ace489984b6c52fe649e3632ec9833134dae",
+      "created_at": "2026-11-13T16:05:42.112Z"
     }
   }
 }
