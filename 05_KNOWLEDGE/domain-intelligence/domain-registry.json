@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T02:25:20.383Z",
-  "total_records": 82,
+  "last_updated": "2026-11-13T02:33:32.399Z",
+  "total_records": 83,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 42,
+      "total": 43,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -67,7 +67,8 @@
         "DOM-D-CDB84B7D",
         "DOM-D-3EB7AC49",
         "DOM-D-E9BE8727",
-        "DOM-D-DABEAFCE"
+        "DOM-D-DABEAFCE",
+        "DOM-D-FC7E335F"
       ]
     },
     "E": {
@@ -3349,6 +3350,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T02:25:20.381Z"
+    },
+    "DOM-D-FC7E335F": {
+      "record_id": "DOM-D-FC7E335F",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): moonshotai/Kimi-K3.1-Pro",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/moonshotai/Kimi-K3.1-Pro](https://huggingface.co/moonshotai/Kimi-K3.1-Pro))  \n> **Source Version**: `hf-moonshota`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "6fdf49725b850f4fad5639691168b574833650bb2a853a66052b6ac5af8c2fd2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-moonshotai-kimi-k3.1-pro/hf-moonshotai-kimi-k3.1-pro-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T02:33:22.221Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-moonshotai-kimi-k3.1-pro)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-moonshotai-kimi-k3.1-pro"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T02:33:32.398Z"
     }
   }
 }

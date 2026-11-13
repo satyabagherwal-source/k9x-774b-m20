@@ -2,18 +2,19 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T02:25:20.447Z",
+  "updated_at": "2026-11-13T02:33:33.346Z",
   "stats": {
-    "total_discovered": 2008,
-    "approved_pending_harvest": 1852,
+    "total_discovered": 2072,
+    "approved_pending_harvest": 1916,
     "harvested_count": 0,
     "rejected_count": 156,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1849,
-      "OFFICIAL_DOCUMENTATION": 82,
+      "COMMUNITY_AND_EXPERT": 1910,
+      "OFFICIAL_DOCUMENTATION": 84,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
-      "SECURITY_ADVISORIES": 7
+      "SECURITY_ADVISORIES": 7,
+      "LEGAL_AND_REGULATORY": 1
     }
   },
   "sources": {
@@ -43101,6 +43102,1414 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
         "fileName": "duongductrong-snapzy-learnings.md"
+      }
+    },
+    "SRC-40C2C54A4C64": {
+      "id": "SRC-40C2C54A4C64",
+      "url": "https://github.com/astral-sh/ruff",
+      "title": "https://github.com/astral-sh/ruff",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.081Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-E536A87400ED": {
+      "id": "SRC-E536A87400ED",
+      "url": "https://docs.rs/anstream/latest/anstream",
+      "title": "https://docs.rs/anstream/latest/anstream",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.092Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-5F06B9EF0C26": {
+      "id": "SRC-5F06B9EF0C26",
+      "url": "https://github.com/rust-lang/rust/blob/160905b6253f42967ed4aef4b98002944c7df24c/compiler/rustc_errors/src/emitter.rs",
+      "title": "https://github.com/rust-lang/rust/blob/160905b6253f42967ed4aef4b98002944c7df24c/compiler/rustc_errors/src/emitter.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.102Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-98C1966C293C": {
+      "id": "SRC-98C1966C293C",
+      "url": "https://github.com/rust-lang/rust/blob/894f7a4ba6554d3797404bbf550d9919df060b97/compiler/rustc_errors/src/styled_buffer.rs",
+      "title": "https://github.com/rust-lang/rust/blob/894f7a4ba6554d3797404bbf550d9919df060b97/compiler/rustc_errors/src/styled_buffer.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.111Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-4D47394B82F4": {
+      "id": "SRC-4D47394B82F4",
+      "url": "https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash",
+      "title": "https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.121Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-149E3CCF8B3D": {
+      "id": "SRC-149E3CCF8B3D",
+      "url": "https://github.com/astral-sh/ruff/commit/28a3e5901958260777e605b2ce2",
+      "title": "https://github.com/astral-sh/ruff/commit/28a3e5901958260777e605b2ce2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.130Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-8ACE0A4434A5": {
+      "id": "SRC-8ACE0A4434A5",
+      "url": "https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance",
+      "title": "https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-385C0C1DE4F8": {
+      "id": "SRC-385C0C1DE4F8",
+      "url": "https://github.com/astral-sh/ruff/commit/a75f4437e8f671fffbc83c05eed25c5089ecba5f",
+      "title": "https://github.com/astral-sh/ruff/commit/a75f4437e8f671fffbc83c05eed25c5089ecba5f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.149Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-BD507CA64B4D": {
+      "id": "SRC-BD507CA64B4D",
+      "url": "https://github.com/astral-sh/ruff/actions/runs/42891821318/attempts/1",
+      "title": "https://github.com/astral-sh/ruff/actions/runs/42891821318/attempts/1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.158Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-CEADA38A2333": {
+      "id": "SRC-CEADA38A2333",
+      "url": "https://github.com/python/cpython/blob/v3.12.0/Lib/subprocess.py",
+      "title": "https://github.com/python/cpython/blob/v3.12.0/Lib/subprocess.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.167Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-EA89B2CC3CC2": {
+      "id": "SRC-EA89B2CC3CC2",
+      "url": "https://docs.pytest.org/en/stable/how-to/fixtures.html",
+      "title": "https://docs.pytest.org/en/stable/how-to/fixtures.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.177Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-91396504FD3A": {
+      "id": "SRC-91396504FD3A",
+      "url": "https://github.com/astral-sh/ty/issues",
+      "title": "https://github.com/astral-sh/ty/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.186Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-2287549F9C57": {
+      "id": "SRC-2287549F9C57",
+      "url": "https://github.com/pytest-dev/pytest/blob/9.1.1/src/_pytest/fixtures.py",
+      "title": "https://github.com/pytest-dev/pytest/blob/9.1.1/src/_pytest/fixtures.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.196Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-CDF73017CC8B": {
+      "id": "SRC-CDF73017CC8B",
+      "url": "https://github.com/jax-ml/jax/tree/55029b8f7e65adb79764103871ec0357fa440227/docs",
+      "title": "https://github.com/jax-ml/jax/tree/55029b8f7e65adb79764103871ec0357fa440227/docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.205Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-5B58E603DB35": {
+      "id": "SRC-5B58E603DB35",
+      "url": "https://github.com/psf/black/blob/69ca0a4c7a365c5f5eea519a90980bab72cab764/src/black/__init__.py",
+      "title": "https://github.com/psf/black/blob/69ca0a4c7a365c5f5eea519a90980bab72cab764/src/black/__init__.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:22.215Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-F4A904D03D80": {
+      "id": "SRC-F4A904D03D80",
+      "url": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+      "title": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.406Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md",
+        "fileName": "hf-moonshotai-kimi-k3.1-pro-learnings.md"
+      }
+    },
+    "SRC-AC786B9FEA91": {
+      "id": "SRC-AC786B9FEA91",
+      "url": "https://github.com/signerlabs/ShipSwift",
+      "title": "https://github.com/signerlabs/ShipSwift",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.422Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-DF3DEB2200F8": {
+      "id": "SRC-DF3DEB2200F8",
+      "url": "https://withmarble.com/curriculum",
+      "title": "https://withmarble.com/curriculum",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.445Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-B2867F910DBC": {
+      "id": "SRC-B2867F910DBC",
+      "url": "https://github.com/withmarbleapp/os-taxonomy",
+      "title": "https://github.com/withmarbleapp/os-taxonomy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.456Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-D159C886EA48": {
+      "id": "SRC-D159C886EA48",
+      "url": "https://img.shields.io/badge/Website-shipswift.app-blue.svg",
+      "title": "https://img.shields.io/badge/Website-shipswift.app-blue.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-9498EFA82645": {
+      "id": "SRC-9498EFA82645",
+      "url": "https://www.shipswift.app/",
+      "title": "https://www.shipswift.app/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.475Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-39F5A3F03E1D": {
+      "id": "SRC-39F5A3F03E1D",
+      "url": "https://shipswift.app/",
+      "title": "https://shipswift.app/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.484Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-283434A01D56": {
+      "id": "SRC-283434A01D56",
+      "url": "https://img.shields.io/badge/App_Store-Demo_App-black.svg",
+      "title": "https://img.shields.io/badge/App_Store-Demo_App-black.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.494Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-2DEF8091FCA3": {
+      "id": "SRC-2DEF8091FCA3",
+      "url": "https://apps.apple.com/us/app/shipswift-mcp-codebase/id6759209764",
+      "title": "https://apps.apple.com/us/app/shipswift-mcp-codebase/id6759209764",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.506Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-123FD6D4F11A": {
+      "id": "SRC-123FD6D4F11A",
+      "url": "https://img.shields.io/badge/License-MIT-yellow.svg",
+      "title": "https://img.shields.io/badge/License-MIT-yellow.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.519Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-4B2046CF6B71": {
+      "id": "SRC-4B2046CF6B71",
+      "url": "https://opensource.org/licenses/MIT",
+      "title": "https://opensource.org/licenses/MIT",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "LEGAL_AND_REGULATORY",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.95,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.535Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-6401CF1E9058": {
+      "id": "SRC-6401CF1E9058",
+      "url": "https://img.shields.io/badge/Swift-5.0+-F05138.svg",
+      "title": "https://img.shields.io/badge/Swift-5.0+-F05138.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.545Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-1389F6C6CE81": {
+      "id": "SRC-1389F6C6CE81",
+      "url": "https://swift.org/",
+      "title": "https://swift.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.554Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-287A6D09B302": {
+      "id": "SRC-287A6D09B302",
+      "url": "https://shipswift.app/skills",
+      "title": "https://shipswift.app/skills",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.563Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-FE1AE12D12A7": {
+      "id": "SRC-FE1AE12D12A7",
+      "url": "https://shipswift.app/skills/animation-shimmer",
+      "title": "https://shipswift.app/skills/animation-shimmer",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.573Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-F5400C90E177": {
+      "id": "SRC-F5400C90E177",
+      "url": "https://shipswift.app/skills/animation-typewriter-text",
+      "title": "https://shipswift.app/skills/animation-typewriter-text",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.582Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-796CCC2AEAE0": {
+      "id": "SRC-796CCC2AEAE0",
+      "url": "https://shipswift.app/skills/animation-shaking-icon",
+      "title": "https://shipswift.app/skills/animation-shaking-icon",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.591Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-21D45F73E6E1": {
+      "id": "SRC-21D45F73E6E1",
+      "url": "https://shipswift.app/skills/animation-glow-sweep",
+      "title": "https://shipswift.app/skills/animation-glow-sweep",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.608Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-D483A61DFCF6": {
+      "id": "SRC-D483A61DFCF6",
+      "url": "https://shipswift.app/skills/animation-light-sweep",
+      "title": "https://shipswift.app/skills/animation-light-sweep",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.617Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-5D14437CD8C6": {
+      "id": "SRC-5D14437CD8C6",
+      "url": "https://shipswift.app/skills/animation-scanning-overlay",
+      "title": "https://shipswift.app/skills/animation-scanning-overlay",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.626Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-1945DFE37898": {
+      "id": "SRC-1945DFE37898",
+      "url": "https://shipswift.app/skills/animation-animated-mesh-gradient",
+      "title": "https://shipswift.app/skills/animation-animated-mesh-gradient",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.635Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-41FEABE81BCB": {
+      "id": "SRC-41FEABE81BCB",
+      "url": "https://shipswift.app/skills/animation-before-after-slider",
+      "title": "https://shipswift.app/skills/animation-before-after-slider",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.645Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-717F05953736": {
+      "id": "SRC-717F05953736",
+      "url": "https://shipswift.app/skills/animation-orbiting-logos",
+      "title": "https://shipswift.app/skills/animation-orbiting-logos",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.654Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-019B85BD00A2": {
+      "id": "SRC-019B85BD00A2",
+      "url": "https://shipswift.app/skills/animation-full-screen-button",
+      "title": "https://shipswift.app/skills/animation-full-screen-button",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.663Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-763903413697": {
+      "id": "SRC-763903413697",
+      "url": "https://shipswift.app/skills/animation-change-effect",
+      "title": "https://shipswift.app/skills/animation-change-effect",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.680Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-9542B271446E": {
+      "id": "SRC-9542B271446E",
+      "url": "https://shipswift.app/skills/animation-confetti",
+      "title": "https://shipswift.app/skills/animation-confetti",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.689Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-62D6033FBC52": {
+      "id": "SRC-62D6033FBC52",
+      "url": "https://shipswift.app/skills/animation-transition",
+      "title": "https://shipswift.app/skills/animation-transition",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.698Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-0B3C6516E3CF": {
+      "id": "SRC-0B3C6516E3CF",
+      "url": "https://shipswift.app/skills/animation-particle-transition",
+      "title": "https://shipswift.app/skills/animation-particle-transition",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.707Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-467C229A8BBF": {
+      "id": "SRC-467C229A8BBF",
+      "url": "https://shipswift.app/skills/dot-sphere",
+      "title": "https://shipswift.app/skills/dot-sphere",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.716Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-1F4400573DA5": {
+      "id": "SRC-1F4400573DA5",
+      "url": "https://shipswift.app/skills/animation-char-sphere",
+      "title": "https://shipswift.app/skills/animation-char-sphere",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.726Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-5D48B819C360": {
+      "id": "SRC-5D48B819C360",
+      "url": "https://shipswift.app/skills/dots",
+      "title": "https://shipswift.app/skills/dots",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-C8B1F1B10104": {
+      "id": "SRC-C8B1F1B10104",
+      "url": "https://shipswift.app/skills/animation-starfield",
+      "title": "https://shipswift.app/skills/animation-starfield",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:32.752Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-233DF83FB756": {
+      "id": "SRC-233DF83FB756",
+      "url": "https://shipswift.app/skills/animation-fractal-clouds",
+      "title": "https://shipswift.app/skills/animation-fractal-clouds",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.182Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-A068F6DCC6B8": {
+      "id": "SRC-A068F6DCC6B8",
+      "url": "https://shipswift.app/skills/animation-ink-smoke",
+      "title": "https://shipswift.app/skills/animation-ink-smoke",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.194Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-19F1BA29AE86": {
+      "id": "SRC-19F1BA29AE86",
+      "url": "https://shipswift.app/skills/animation-liquid-chrome",
+      "title": "https://shipswift.app/skills/animation-liquid-chrome",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.203Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-54E452080E20": {
+      "id": "SRC-54E452080E20",
+      "url": "https://shipswift.app/skills/animation-plasma",
+      "title": "https://shipswift.app/skills/animation-plasma",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.212Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-6C873B6A3F21": {
+      "id": "SRC-6C873B6A3F21",
+      "url": "https://shipswift.app/skills/animation-animated-loop",
+      "title": "https://shipswift.app/skills/animation-animated-loop",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.221Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-F6EA9A0D8918": {
+      "id": "SRC-F6EA9A0D8918",
+      "url": "https://shipswift.app/skills/metaballs",
+      "title": "https://shipswift.app/skills/metaballs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.230Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-6406DE74C07E": {
+      "id": "SRC-6406DE74C07E",
+      "url": "https://shipswift.app/skills/animation-halftone",
+      "title": "https://shipswift.app/skills/animation-halftone",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.247Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-13EA5420A15A": {
+      "id": "SRC-13EA5420A15A",
+      "url": "https://shipswift.app/skills/animation-water",
+      "title": "https://shipswift.app/skills/animation-water",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.256Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-9BDEE97ED404": {
+      "id": "SRC-9BDEE97ED404",
+      "url": "https://shipswift.app/skills/animation-liquid-metal",
+      "title": "https://shipswift.app/skills/animation-liquid-metal",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.265Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-AF7CE3929BC7": {
+      "id": "SRC-AF7CE3929BC7",
+      "url": "https://shipswift.app/skills/neuro-noise-simplex-noise",
+      "title": "https://shipswift.app/skills/neuro-noise-simplex-noise",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.274Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-42FC1644BE6D": {
+      "id": "SRC-42FC1644BE6D",
+      "url": "https://shipswift.app/skills/dot-orbit-wallet",
+      "title": "https://shipswift.app/skills/dot-orbit-wallet",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.284Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-250D2713CB05": {
+      "id": "SRC-250D2713CB05",
+      "url": "https://shipswift.app/skills/voronoi-swirl",
+      "title": "https://shipswift.app/skills/voronoi-swirl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.293Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-B5EDD94D2BC8": {
+      "id": "SRC-B5EDD94D2BC8",
+      "url": "https://shipswift.app/skills/color-panels",
+      "title": "https://shipswift.app/skills/color-panels",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.302Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-6A35EFA46DCF": {
+      "id": "SRC-6A35EFA46DCF",
+      "url": "https://shipswift.app/skills/animation-smoke-ring",
+      "title": "https://shipswift.app/skills/animation-smoke-ring",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.319Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-0B039656D1E7": {
+      "id": "SRC-0B039656D1E7",
+      "url": "https://shipswift.app/skills/star-nest",
+      "title": "https://shipswift.app/skills/star-nest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.328Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-05C8D5B2448A": {
+      "id": "SRC-05C8D5B2448A",
+      "url": "https://shipswift.app/skills/animation-grain-gradient",
+      "title": "https://shipswift.app/skills/animation-grain-gradient",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.337Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
+      }
+    },
+    "SRC-CC347F5ADC5E": {
+      "id": "SRC-CC347F5ADC5E",
+      "url": "https://ships/",
+      "title": "https://ships/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T02:33:33.346Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-shipswift-learnings.md",
+        "fileName": "signerlabs-shipswift-learnings.md"
       }
     }
   }

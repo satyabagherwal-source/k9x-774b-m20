@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "35668fa1",
+    "sourceVersion": "f305bb22",
     "license": "Apache-2.0",
-    "contentHash": "619c84baa891f9454fa2f2e2348d22cb1f4b792074243450c4d868a716f45365",
-    "lastHarvestedAt": "2026-11-11T15:27:24.491Z",
+    "contentHash": "227954ccc3c5be538f20e1077382ba25dea4e2282266674988dfd31bf0b66a96",
+    "lastHarvestedAt": "2026-11-13T02:32:14.021Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "52257b30",
+    "sourceVersion": "e1ce434f",
     "license": "MIT",
-    "contentHash": "66faf61b70cb4f494614f6cc74badf315ae712adefc5c087be987358f759fdd8",
-    "lastHarvestedAt": "2026-11-11T09:14:30.398Z",
+    "contentHash": "33e4087819fac83be25a115be35104ee16bef05fcc50cb2493de3698b035b268",
+    "lastHarvestedAt": "2026-11-13T02:32:02.099Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {
@@ -9173,10 +9173,10 @@
     "repository": "signerlabs/ShipSwift",
     "platform": "github",
     "sourceUrl": "https://github.com/signerlabs/ShipSwift",
-    "sourceVersion": "08f31165",
+    "sourceVersion": "d05d75e7",
     "license": "MIT",
-    "contentHash": "8d0e04041733aa33237b56efa7716fa0b404d49a7dd608273a2c6342fd062d1b",
-    "lastHarvestedAt": "2026-11-08T20:02:51.196Z",
+    "contentHash": "6c24125c0f4ee0f4c991f2e776ee010d1d377e11dbb421da4d95e43a89eaea80",
+    "lastHarvestedAt": "2026-11-13T02:32:07.025Z",
     "learningId": "learn-github-signerlabs-shipswift"
   },
   "scrapy-plugins-scrapy-zyte-api": {
@@ -11895,8 +11895,8 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
     "sourceVersion": "hf-moonshotai-kimi-k3.1-pro",
     "license": "Open-Source",
-    "contentHash": "5c7b5bac5d87cd3284382d6cac7f607c82e42df594918c378b4380ed3547c604",
-    "lastHarvestedAt": "2026-11-08T02:57:03.672Z",
+    "contentHash": "b7ae7462dfdbafb623c00c47f1389b8b64aaae5d2f5b373b2c5261365b5dd59d",
+    "lastHarvestedAt": "2026-11-13T02:33:19.446Z",
     "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro"
   },
   "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf": {

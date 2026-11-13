@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T02:25:20.422Z",
+  "last_updated": "2026-11-13T02:33:32.416Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7895,6 +7895,24 @@
       "source_repo": "duongductrong-snapzy",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6530D7-snapzy-no-longer-crashes-at-launch-on-ma.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-6A84A1",
+      "directive_title": "[ty] Show failure kinds and timeout timings in py-fuzzer reports (#30367)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "astral-sh-ruff",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6A84A1--ty-show-failure-kinds-and-timeout-timin.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-DEAC4F",
+      "directive_title": "docs: link every component to its page on shipswift.app",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "signerlabs-shipswift",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DEAC4F-docs-link-every-component-to-its-page-on.md",
       "staged_date": "2026-11-13"
     }
   ]

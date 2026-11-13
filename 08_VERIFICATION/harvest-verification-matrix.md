@@ -9293,3 +9293,8 @@
 | `CYCLE-20261113-TBHO` | `2026-11-13T02:24:54.636Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`4c557d23...`) |
 | `CYCLE-20261113-TF2Y` | `2026-11-13T02:24:59.290Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1df137b7...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T02:25:20.386Z` | `hf-mistralai-timestral-209m` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DABEAFCE` [Domain D] | Yes (`f16a1581...`) |
+| `CYCLE-20261113-2HBK` | `2026-11-13T02:32:02.096Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`33e40878...`) |
+| `CYCLE-20261113-2L4D` | `2026-11-13T02:32:07.021Z` | `signerlabs/ShipSwift` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6c24125c...`) |
+| `CYCLE-20261113-2QIQ` | `2026-11-13T02:32:14.018Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`227954cc...`) |
+| `CYCLE-20261113-4503` | `2026-11-13T02:33:19.443Z` | `moonshotai/Kimi-K3.1-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md` | Yes (`b7ae7462...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T02:33:32.401Z` | `hf-moonshotai-kimi-k3.1-pro` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FC7E335F` [Domain D] | Yes (`6fdf4972...`) |

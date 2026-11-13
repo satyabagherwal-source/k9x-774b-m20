@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `35668fa1`  
+> **Source Version**: `f305bb22`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T15:27:13.569Z  
+> **Timestamp**: 2026-11-13T02:32:04.976Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T15:27:13.358Z  
+> **Harvest Timestamp**: 2026-11-13T02:32:04.969Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2113 stars
+- **Stars / Engagement**: 2118 stars
 
 ---
 
@@ -2932,839 +2932,714 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5bddbfc9` (2026-11-11)
-**Commit Message**: refactor(logging): lazy %-style logger calls in utils/debug.py (#1146) (#1952)
+### Incident Patch 1: `d0152275` (2026-11-12)
+**Commit Message**: fix(milvus): keep the store and confine get, update and delete by hash to it (#1879) (#1962)
 
-exact_match_retrieve(), behind the exact_match_retrieve MCP tool, logged the
-backend's exception through an f-string. Pass it through
-_sanitize_log_value instead, and the backend class name as a %s argument.
-Ordinary messages are unchanged; a backend error carrying a newline no
-longer forges a second log line.
+* fix(milvus): keep the store and confine get, update and delete by hash to it (#1879)
 
-Add the module to GUARDED_MODULES next to utils/health_check.py. `e` is
-already in EXTERNAL_NAMES, so dropping the wrapper fails the lazy scan.
+New collections get a VARCHAR store field defaulting to "default"; store()
+and store_batch() write it, and every upsert writes the row's own store back
+so an update never moves a memory. get_by_hash, update_memory_metadata and
+delete are confined to a named store; on a collection without the field a
+named store is refused with one warning per instance.
 
-Co-authored-by: samyferhat <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+get_by_hash_is_store_scoped stays False: search and listing still ignore
+store here (follow-up under #1683).
 
-**File**: `changelog.d/1146-utils-debug.internal.md` (added, +6/-0)
+* fix(milvus): a confined delete that removed nothing is not a success (#1879)
+
+Between the read and the delete another client can remove the row, or
+remove it and store the same content in a different store. The confined
+filter then matches nothing, and delete() still removed the access record
+and the graph edges and reported success. It now reads delete_count from
+the MilvusClient.delete result (or the length of a primary-key list from
+older servers) and returns (False, 'not found in store ...') without any
+cleanup when nothing went. A result w
+
+**File**: `changelog.d/1879-milvus.fixed.md` (added, +19/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+- **`utils/debug.py` logs with lazy `%`-style arguments (#1146).**
-+  `exact_match_retrieve()`, which backs the `exact_match_retrieve` MCP tool,
-+  logged the backend's exception through an f-string. A backend error that
-+  echoed the caller's content could forge a second log line. The error now
-+  goes through `_sanitize_log_value`, and the backend class name is a `%s`
-+  argument. The module is added to `GUARDED_MODULES`.
+@@ -0,0 +1,19 @@
++- **Milvus dropped the store a memory was written to and served it from any store (#1879, massimiliano1991).**
++  The collection had no `store` field, so `store()` and `store_batch()` discarded the
++  value, and `get_by_hash`, `update_memory_metadata` and `delete` found a memory whatever
++  store the caller named. New collections get a `store` field (default `"default"`), the
++  three hash-addressed calls are confined to it, and every upsert writes the row's own
++  store back, so an update or a versioned update never moves a memory to `"default"`.
++  A collection created before this has no field to confine on: there a named store is
++  refused with one warning per instance (`None`, `"all"` and `"default"` are served as
++  before), and the collection has to be recreated to pick up confinement, as for
++  `content_lower`. `get_by_hash_is_store_scoped` stays `False`: search and listing still
++  ignore `store` on this backend.
++  A confined `delete` whose filter removes nothing (the row was deleted, or re-stored
++  elsewhere, between the read and the delete) now reports "not found" and leaves the
++  access record and graph edges alone, instead of removing them and reporting success.
++  A scoped update is confined within one client only: it is not race-safe across clients
++  sharing a collection, since a row re-stored elsewhere while the update is in flight is
++  written back by the unconditional upsert (the cross-client guard is a separate issue).
++  `update_memories_batch` and `mark_superseded_batch` now skip soft-deleted rows, as
++  `get_by_hash` does, instead of writing them back and counting them as updated.
 ```
 
-**File**: `src/mcp_memory_service/utils/debug.py` (modified, +4/-2)
+**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +215/-45)
 ```diff
-@@ -15,6 +15,8 @@
- """Debug utilities for memory service."""
- from typing import Dict, Any, List
- import logging
+@@ -154,6 +154,22 @@ def __init__(
+ # -- Storage implementation --------------------------------------------------
+ 
+ 
++def _deleted_rows(result: Any) -> Optional[int]:
++    """How many rows a ``MilvusClient.delete`` call removed, if it says.
 +
-+from ..compat import _sanitize_log_value
- from ..models.memory import Memory, MemoryQueryResult
- 
- logger = logging.getLogger(__name__)
-@@ -135,9 +137,9 @@ async def exact_match_retrieve(storage, content: str) -> List[Memory]:
-             return memories
- 
-         # No suitable method available
--        logger.warning(f"Storage backend {type(storage).__name__} does not support exact content match")
-+        logger.warning("Storage backend %s does not support exact content match", type(storage).__name__)
-         return []
- 
-     except Exception as e:
--        logger.error(f"Error in exact_match_retrieve: {str(e)}")
-+        logger.error("Error in exact_match_retrieve: %s", _sanitize_log_value(e))
-         return []
-\ No newline at end of file
-```
-
-**File**: `tests/unit/test_log_injection_guard.py` (modified, +1/-0)
-```diff
-@@ -71,6 +71,7 @@
-     "mcp_memory_service/storage/mixins/store.py",
-     "mcp_memory_service/utils/db_utils.py",
-     "mcp_memory_service/utils/health_check.py",
-+    "mcp_memory_service/utils/debug.py",
-     "mcp_memory_service/server/handlers/utility.py",
-     "mcp_memory_service/server/handlers/documents.py",
-     "mcp_memory_service/web/api/server.py",
-```
-
----
-
-### Incident Patch 2: `799fd323` (2026-11-10)
-**Commit Message**: feat(ontology): store retention periods per type in the memory DB (#1897, phase 4) (#1939)
-
-* feat(ontology): store retention periods per type in the memory DB (#1897, phase 4)
-
-A base type added through the ontology overlay has no key in
-retention_periods, so its memories decayed on the 30-day fallback.
-
-set_retention()/clear_retention() on SqliteVecMemoryStorage write a
-'retention' row to ontology_entries and bump ontology_version. The
-overlay source reads those rows next to the memory types, and the decay
-calculator merges them under the consolidation config: built-in periods
-and MCP_RETENTION_* still win, and set_retention() refuses those types
-so a row never sits there without effect. Subtypes without their own
-entry inherit their parent's period. Malformed rows are skipped on read.
-
-Also moves two f-string logger calls in decay.py to %-style so the
-log-injection guard passes for the touched file.
-
-* fix(ontology): keep a removed subtype's stored parent for retention (#1897, phase 4)
-
-Greptile on #1939: after remove_memory_type("legal"), get_parent_type
-("contract") returns None, so stored contract memories decayed on the
-30-day fallback although legal still had a 400-day peri
-
-**File**: `changelog.d/1897-retention.added.md` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+- **Retention periods for custom memory types, stored in the memory database (#1897, phase 4).**
-+  A base type added through the ontology overlay had no key in `retention_periods`, so its
-+  memories decayed on the 30-day fallback. `SqliteVecMemoryStorage.set_retention()` and
-+  `clear_retention()` store a period (1..3650 days) as a `retention` row in `ontology_entries`,
-+  and the decay calculator uses it for any type the consolidation config does not name.
-+  Subtypes without their own entry inherit their parent's period. The overlay only fills gaps:
-+  built-in periods and `MCP_RETENTION_*` overrides still win, and `set_retention()` refuses
-+  those types. Like the rest of the overlay, the rows are local to sqlite_vec for now.
-```
-
-**File**: `docs/memory-ontology.md` (modified, +11/-0)
-```diff
-@@ -132,6 +132,17 @@ await storage.remove_memory_type("contract")                # tombstone
-   it moved.
- - Removing a type does not touch stored memories. They keep the type; only
-   new writes with it fall back to `observation`.
-+- A new base type has no retention period in the consolidation config, so
-+  its memories decay on the 30-day fallback. Store one next to the type:
-+
-+  ```python
-+  await storage.set_retention("legal", 400)     # days, 1..3650
-+  await storage.clear_retention("legal")        # back to the fallback
-+  ```
-+
-+  Subtypes without their own entry use their parent's period. The overlay
-+  only fills gaps: a type that has a built-in period or an
-+  `MCP_RETENTION_*` override keeps it, and `set_retention` refuses it.
- - **Limit:** the table exists only in the local SQLite database. Cloudflare
-   (D1) does not carry it, and it is not yet synced through the hub. On the
-   `cloudflare` backend, and to keep several `hybrid` or hub nodes in
-```
-
-**File**: `src/mcp_memory_service/consolidation/decay.py` (modified, +15/-7)
-```diff
-@@ -19,9 +19,10 @@
- from datetime import datetime, timezone
- from dataclasses import dataclass
- 
-+from ..compat import _sanitize_log_value
- from .base import ConsolidationBase, ConsolidationConfig
- from ..models.memory import Memory
--from ..models.ontology import get_parent_type
-+from ..models.ontology import get_parent_type, get_retention_overlay, get_stored_parent
- 
- @dataclass
- class RelevanceScore:
-@@ -65,7 +66,7 @@ async def process(self, memories: List[Memory], **kwargs) -> List[RelevanceScore
-             )
-             scores.append(score)
-         
--        self.logger.info(f"Calculated relevance scores for {len(scores)} memories")
-+        self.logger.info("Calculated relevance scores for %d memories", len(scores))
-         return scores
-     
-     async def _calculate_memory_relevance(
-@@ -98,12 +99,17 @@ async def _calculate_memory_relevance(
-         # so they inherit the base retention period instead of the 30-day
-         # fallback. Legacy names stay in retention_periods and skip resolution.
-         # The parent only selects the period; memory_type keeps the stored
--        # subtype for the score metadata.
-+        # subtype for the score metadata. Periods stored in the DB overlay
-+        # (#1897) cover types the config has no key for; the config wins. A
-+        # removed overlay subtype keeps the parent it was stored with.
-         memory_type = self._extract_memory_type(memory)
-+        retention_periods = {**get_retention_overlay(), **self.retention_periods}
-         retention_type = memory_type
--        if retention_type not in self.retention_periods:
--            retention_type = get_parent_type(memory_type) or memory_type
--        retention_period = self.retention_periods.get(retention_type, 30)
-+        if retention_type not in retention_periods:
-+            retention_type = (
-+                get_parent_type(memory_type) or get_stored_parent(memory_type) or memory_type
-+            )
-+        retention_period = retention_periods.get(retention_type, 30)
- 
-         # Calculate exponential decay factor
-         decay_factor = math.exp(-age_days / retention_period)
-@@ -197,7 +203,9 @@ def _get_base_importance(self, memory: Memory) -> float:
-                 score = float(memory.metadata['importance_score'])
-                 return max(0.0, min(2.0, score))  # Clamp between 0 and 2
-             except (ValueError, TypeError):
--                self.logger.warning(f"Invalid importance_score in memory {memory.content_hash}")
-+                self.logger.warning(
-+                    "Invalid importance_score in memory %s", _sanitize_log_value(memory.content_hash)
-+                )
-         
-         # Derive importance from tags
-         tag_importance = {
-```
-
-**File**: `src/mcp_memory_service/models/ontology.py` (modified, +37/-6)
-```diff
-@@ -52,12 +52,16 @@ def clear_ontology_caches():
-     _ALLOWED_PAIRS_CACHE = None
- 
- 
--# DB overlay (#1897). The sqlite_vec storage registers a source with two
--# methods, read_ontology_version() and read_memory_type_overlay(). Readers poll
-+# DB overlay (#1897). The sqlite_vec storage registers a source with three
-+# methods, read_ontology_version(), read_memory_type_overlay() and
-+# read_retention_overlay(). Readers poll
- # the version and reload the overlay when it moved, so a write by the HTTP
- # server reaches the MCP server sharing the same database file.
- _OVERLAY_SOURCE = None
- _OVERLAY_ENTRIES: List[Tuple[str, Optional[str]]] = []
-+_OVERLAY_RETENTION: Dict[str, int] = {}
-+# Parent of every overlay subtype ever stored, removed ones included (retention only).
-+_OVERLAY_STORED_PARENTS: Dict[str, str] = {}
- _OVERLAY_VERSION: Optional[int] = None
- _OVERLAY_CHECKED_AT = float("-inf")
- # ponytail: polled at most once per second, so a write in another process can
-@@ -67,9 +71,12 @@ def clear_ontology_caches():
- 
- def set_overlay_source(source) -> None:
-     """Register the DB overlay source. The last storage to register wins."""
--    global _OVERLAY_SOURCE, _OVERLAY_ENTRIES, _OVERLAY_VERSION
-+    global _OVERLAY_SOURCE, _OVERLAY_ENTRIES, _OVERLAY_RETENTION, _OVERLAY_VERSION
-+    global _OVERLAY_STORED_PARENTS
-     _OVERLAY_SOURCE = source
-     _OVERLAY_ENTRIES = []
-+    _OVERLAY_RETENTION = {}
-+    _OVERLAY_STORED_PARENTS = {}
-     _OVERLAY_VERSION = None
-     invalidate_overlay()
- 
-@@ -89,7 +96,8 @@ def invalidate_overlay() -> None:
- 
- def _refresh_overlay() -> None:
-     """Reload the overlay when the stored ontology_version has moved."""
--    global _OVERLAY_ENTRIES, _OVERLAY_VERSION, _OVERLAY_CHECKED_AT
-+    global _OVERLAY_ENTRIES, _OVERLAY_RETENTION, _OVERLAY_VERSION, _OVERLAY_CHECKED_AT
-+    global _OVERLAY_STORED_PARENTS
-     source = _OVERLAY_SOURCE
-     now = time.monotonic()
-     if source is None or now - _OVERLAY_CHECKED_AT < _OVERLAY_POLL_SECONDS:
-@@ -99,13 +107,16 @@ def _refresh_overlay() -> None:
-         version = source.read_ontology_version()
-         if version == _OVERLAY_VERSION:
-             return
--        entries = list(source.read_memory_type_overlay())
-+        rows = list(source.read_memory_type_overlay())
-+        retention = dict(source.read_retention_overlay())
-     except Exception as e:  # keep the last overlay we had; retry on the next poll
-         logging.getLogger(__name__).warning(
-             "Could not read the ontology overlay: %s", _sanitize_log_value(e)
-         )
-         return
--    _OVERLAY_ENTRIES = entries
-+    _OVERLAY_ENTRIES = [(key, parent) for key, parent, live in rows if live]
-+    _OVERLAY_STORED_PARENTS = {key: parent for key, parent, _ in rows if parent}
-+    _OVERLAY_RETENTION = retention
-     _OVERLAY_VERSION = version
-     clear_ontology_caches()
- 
-@@ -131,6 +142,26 @@ def _merge_overlay(merged: Dict[str, List[str]]) -> None:
-         known.add(key)
- 
- 
-+def get_retention_overlay() -> Dict[str, int]:
-+    """Retention days per memory type from the DB overlay (#1897, phase 4).
-+
-+    These only fill gaps: the consolidation config (built-in defaults and
-+    ``MCP_RETENTION_*``) wins for any type it names.
++    pymilvus returns ``{"delete_count": n, "cost": c}`` (an ``OmitZeroDict``,
++    whose zeros are still readable), or a list of primary keys from servers
++    before 2.3.2. Anything else is ``None``: unknown, treated as a delete that
++    went through, which is what every caller assumed before this check.
 +    """
-+    _refresh_overlay()
-+    return dict(_OVERLAY_RETENTION)
++    if isinstance(result, dict):
++        count = result.get("delete_count")
++        return int(count) if isinstance(count, int) else None
++    if isinstance(result, (list, tuple)):
++        return len(result)
++    return None
 +
 +
-+def get_stored_parent(memory_type: str) -> Optional[str]:
-+    """The parent an overlay subtype was stored with, even after it or its parent was removed.
-+
-+    For retention only: stored memories keep a removed type, and should keep
-+    decaying on their base type's period instead of the 30-day fallback.
-+    """
-+    _refresh_overlay()
-+    return _OVERLAY_STORED_PARENTS.get(memory_type)
-+
-+
- class BaseMemoryType(str, Enum):
+ class MilvusMemoryStorage(MemoryStorage):
+     """Milvus-backed storage implementation.
+ 
+@@ -174,6 +190,14 @@ class MilvusMemoryStorage(MemoryStorage):
+         default — matches the rest of the project.
      """
-     Base memory types forming the top-level ontology.
-```
-
-**File**: `src/mcp_memory_service/storage/ontology_overlay.py` (modified, +113/-15)
-```diff
-@@ -1,7 +1,8 @@
--"""Ontology overlay stored in the memory DB (#1897, phase 1).
-+"""Ontology overlay stored in the memory DB (#1897, phases 1 and 4).
  
- The overlay adds memory types on top of the built-in ontology and
--``MCP_CUSTOM_MEMORY_TYPES``. It lives in the ``ontology_entries`` table, and
-+``MCP_CUSTOM_MEMORY_TYPES``, and retention periods for types that have none
-+in ``CONSOLIDATION_CONFIG``. It lives in the ``ontology_entries`` table, and
- every write bumps ``metadata.ontology_version``. ``models.ontology`` polls that
- counter and reloads the overlay when it moved.
- 
-@@ -10,29 +11,72 @@
- is still the way to share custom types.
- """
- 
-+import json
- import sqlite3
- import time
- from pathlib import Path
--from typing import List, Optional, Tuple
-+from typing import Dict, List, Optional, Tuple
- 
-+from ..config.consolidation import CONSOLIDATION_CONFIG
- from ..models import ontology
- 
-+# Same bounds as the MCP_RETENTION_* variables.
-+RETENTION_MIN_DAYS = 1
-+RETENTION_MAX_DAYS = 3650
++    # Whether the live collection has a ``store`` field (#1879). Class-level
++    # defaults so instances built without ``__init__`` read as a legacy
++    # collection; ``_ensure_collection`` sets the instance value.
++    _has_store = False
++    # A named-store call against a legacy collection is refused with one
++    # warning per instance, not one per call.
++    _legacy_store_warned = False
 +
+     @property
+     def max_content_length(self) -> Optional[int]:
+         return _CONTENT_MAX_LEN
+@@ -227,6 +251,11 @@ def __init__(
+         # when this is False. Set in ``_ensure_collection``.
+         self._has_content_lower = False
  
- def read_ontology_version(conn: sqlite3.Connection) -> int:
-     row = conn.execute("SELECT value FROM metadata WHERE key = 'ontology_version'").fetchone()
-     return int(row[0]) if row else 0
- 
- 
--def read_memory_type_overlay(conn: sqlite3.Connection) -> List[Tuple[str, Optional[str]]]:
-+def read_memory_type_overlay(conn: sqlite3.Connection) -> List[Tuple[str, Optional[str], bool]]:
-+    """All memory type rows as (key, parent, live), tombstoned ones included.
++        # Whether the live collection has a ``store`` field. New collections
++        # do; older ones have no column to confine on, so a named-store
++        # hash-addressed call fails closed there (#1879).
++        self._has_store = False
 +
-+    Only live rows extend the ontology. Tombstoned rows still say which base
-+    type a removed subtype belonged to, which retention needs for the stored
-+    memories that keep that type.
-+    """
-     try:
--        return conn.execute(
--            "SELECT key, parent FROM ontology_entries "
--            "WHERE kind = 'memory_type' AND deleted_at IS NULL"
--        ).fetchall()
-+        return [
-+            (key, parent, bool(live))
-+            for key, parent, live in conn.execute(
-+                "SELECT key, parent, deleted_at IS NULL FROM ontology_entries "
-+                "WHERE kind = 'memory_type'"
-+            )
-+        ]
-     except sqlite3.OperationalError:  # migration 022 not applied (yet)
-         return []
- 
- 
-+def _valid_retention_days(days) -> bool:
-+    return (
-+        isinstance(days, int)
-+        and not isinstance(days, bool)
-+        and RETENTION_MIN_DAYS <= days <= RETENTION_MAX_DAYS
-+    )
-+
-+
-+def read_retention_overlay(conn: sqlite3.Connection) -> Dict[str, int]:
-+    """Retention days per memory type. Rows with a malformed payload are skipped."""
-+    try:
-+        rows = conn.execute(
-+            "SELECT key, payload_json FROM ontology_entries "
-+            "WHERE kind = 'retention' AND deleted_at IS NULL"
-+        ).fetchall()
-+    except sqlite3.OperationalError:  # migration 022 not applied (yet)
-+        return {}
-+    periods = {}
-+    for key, payload in rows:
-+        try:
-+            days = json.loads(payload)["days"]
-+        except (TypeError, ValueError, KeyError):
-+            continue
-+        if _valid_retention_days(days):
-+            periods[key] = days
-+    return periods
-+
-+
- def _bump_version(conn: sqlite3.Connection) -> None:
-     conn.execute(
-         "INSERT INTO metadata (key, value) VALUES ('ontology_version', '1') "
-@@ -83,20 +127,67 @@ def upsert_memory_type(conn: sqlite3.Connection, name: str, parent: Optional[str
-         _bump_version(conn)
- 
- 
--def tombstone_memory_type(conn: sqlite3.Connection, name: str) -> bool:
--    """Tombstone an overlay memory type. Built-in and env types are not in the table."""
-+def _tombstone(conn: sqlite3.Connection, kind: str, key: str) -> bool:
-     now = time.time()
-     with conn:
-         cursor = conn.execute(
-             "UPDATE ontology_entries SET deleted_at = ?, updated_at = ? "
--            "WHERE kind = 'memory_type' AND key = ? AND deleted_at IS NULL",
--            (now, now, name),
-+            "WHERE kind = ? AND key = ? AND deleted_at IS NULL",
-+            (now, now, kind, key),
+         # Whether the collection has a BM25 function index on ``content``.
+         # New collections get one automatically; pre-existing collections
+         # without the ``sparse_vector`` field fall back to vector-only search.
+@@ -352,6 +381,14 @@ def _ensure_collection(self) -> None:
+             datatype=DataType.VARCHAR,
+             max_length=_MILVUS_VARCHAR_MAX,
          )
-         if cursor.rowcount:
-             _bump_version(conn)
-     return bool(cursor.rowcount)
++        # The store a memory belongs to (#1879). A row written without the
++        # key lands in "default", like an unnamed store on the other backends.
++        schema.add_field(
++            field_name="store",
++            datatype=DataType.VARCHAR,
++            max_length=_ID_MAX_LEN,
++            default_value="default",
++        )
+         schema.add_field(
+             field_name="tags",
+             datatype=DataType.VARCHAR,
+@@ -423,6 +460,7 @@ def _ensure_collection(self) -> None:
+             index_params=index_params,
+         )
+         self._has_content_lower = True
++        self._has_store = True
+         logger.info(
+             "Created Milvus collection '%s' (dim=%s)",
+             self.collection_name, self.embedding_dimension,
+@@ -496,6 +534,15 @@ def _validate_existing_collection(self) -> None:
+                 self.collection_name,
+             )
  
++        self._has_store = "store" in field_names
++        if not self._has_store:
++            logger.warning(
++                "Collection '%s' lacks the 'store' field — a get, update or "
++                "delete by hash confined to a named store is refused. Recreate "
++                "the collection to pick up store confinement.",
++                self.collection_name,
++            )
++
+         # Detect BM25 capability by checking for sparse_vector field
+         self._has_bm25 = "sparse_vector" in field_names
+         if not self._has_bm25:
+@@ -783,7 +830,9 @@ def _resolve_timestamps(
+         updated_iso = memory.updated_at_iso or self._iso_from_epoch(updated_at)
+         return created_at, created_iso, updated_at, updated_iso
  
-+def tombstone_memory_type(conn: sqlite3.Connection, name: str) -> bool:
-+    """Tombstone an overlay memory type. Built-in and env types are not in the table."""
-+    return _tombstone(conn, "memory_type", name)
+-    def _memory_to_entity(self, memory: Memory, embedding: List[float]) -> Dict[str, Any]:
++    def _memory_to_entity(
++        self, memory: Memory, embedding: List[float], store: Optional[str] = "default"
++    ) -> Dict[str, Any]:
+         created_at, created_iso, updated_at, updated_iso = self._resolve_timestamps(memory)
+         content = memory.content or ""
+         entity: Dict[str, Any] = {
+@@ -800,8 +849,95 @@ def _memory_to_entity(self, memory: Memory, embedding: List[float]) -> Dict[str,
+         }
+         if self._has_content_lower:
+             entity["content_lower"] = content.lower()
++        if self._has_store:
++            entity["store"] = store or "default"
+         return entity
+ 
++    # -- Store confinement (#1879) --------------------------------------------
 +
++    def _store_scope(self, store: Optional[str]) -> Tuple[bool, Optional[str]]:
++        """Resolve ``store`` for a hash-addressed call to ``(refused, confine_to)``.
 +
-+def validate_retention_entry(memory_type: str, days) -> Tuple[str, int]:
-+    """Canonicalize a retention entry and check it against the ontology and config.
-+
-+    Raises ValueError for an unknown type, for days outside 1..3650, or for a
-+    type that already has a period in ``CONSOLIDATION_CONFIG`` (built-in
-+    default or ``MCP_RETENTION_*``): the overlay only fills gaps, so such a
-+    row would never take effect.
-+    """
-+    memory_type = ontology.canonicalize_memory_type(memory_type)
-+    if not ontology.validate_memory_type(memory_type):
-+        raise ValueError(f"'{memory_type}' is not a memory type")
-+    if memory_type in CONSOLIDAT
++        ``None`` and ``"all"`` are unscoped. On a collection with the ``store``
++        field every other value confin
 ```
 
-**File**: `src/mcp_memory_service/storage/sqlite_vec.py` (modified, +20/-0)
+**File**: `tests/storage/test_milvus_store_scope.py` (added, +444/-0)
 ```diff
-@@ -26,8 +26,11 @@
- from .ontology_overlay import (
-     OverlaySource,
-     tombstone_memory_type,
-+    tombstone_retention,
-     upsert_memory_type,
-+    upsert_retention,
-     validate_memory_type_entry,
-+    validate_retention_entry,
- )
- from .mixins import (
-     BaseMixin,
-@@ -141,3 +144,20 @@ async def remove_memory_type(self, name: str) -> bool:
-         """
-         name = ontology.canonicalize_memory_type(name)
-         return await self._write_ontology(lambda conn: tombstone_memory_type(conn, name))
+@@ -0,0 +1,444 @@
++# Copyright 2024 Heinrich Krupp
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
 +
-+    async def set_retention(self, memory_type: str, days: int) -> str:
-+        """Store the retention period (days) of a memory type and return its canonical name.
++"""Milvus keeps the store a memory was written to and confines the
++hash-addressed calls to it (#1879).
 +
-+        For types the consolidation config has no period for, such as an
-+        overlay base type that would otherwise decay on the 30-day fallback.
-+        Raises ValueError for an unknown type, a type the config already
-+        covers, or days outside 1..3650.
-+        """
-+        memory_type, days = validate_retention_entry(memory_type, days)
-+        await self._write_ontology(lambda conn: upsert_retention(conn, memory_type, days))
-+        return memory_type
++Before this, the collection had no ``store`` field: ``store()`` dropped the
++value, and ``get_by_hash`` / ``update_memory_metadata`` / ``delete`` served a
++memory from any store. A collection created before the field existed has
++nothing to confine on, so a named store is refused there instead of being
++served unscoped.
 +
-+    async def clear_retention(self, memory_type: str) -> bool:
-+        """Tombstone a stored retention period; the type falls back to its parent's."""
-+        memory_type = ontology.canonicalize_memory_type(memory_type)
-+        return await self._write_ontology(lambda conn: tombstone_retention(conn, memory_type))
-```
-
-**File**: `tests/storage/test_1897_ontology_retention.py` (added, +141/-0)
-```diff
-@@ -0,0 +1,141 @@
-+"""Retention per type in the ontology overlay (#1897, phase 4).
-+
-+A base type added through the overlay has no key in ``retention_periods``, so
-+its memories decayed on the 30-day fallback. ``set_retention`` stores a period
-+next to the type; the decay calculator reads it for types the consolidation
-+config does not name.
++Mocked-client style of test_milvus_parity_methods.py, so these run on CI
++runners without pymilvus. test_milvus_store_scope_e2e.py runs the same
++contract against Milvus Lite.
 +"""
 +
-+import sqlite3
-+from datetime import datetime, timedelta
++from __future__ import annotations
++
++import logging
++import time
++from typing import Any
++from unittest.mock import AsyncMock, MagicMock
 +
 +import pytest
 +
-+from mcp_memory_service.consolidation.base import ConsolidationConfig
-+from mcp_memory_service.consolidation.decay import ExponentialDecayCalculator
-+from mcp_memory_service.models import ontology
 +from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.ontology_overlay import upsert_retention
-+from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
++from mcp_memory_service.storage.milvus import MilvusMemoryStorage
++
++_HASH = "a" * 64
 +
 +
-+@pytest.fixture
-+async def storage(temp_db_path, monkeypatch):
-+    monkeypatch.delenv("MCP_CUSTOM_MEMORY_TYPES", raising=False)
-+    monkeypatch.setattr(ontology, "_OVERLAY_POLL_SECONDS", 0)
-+    s = SqliteVecMemoryStorage(f"{temp_db_path}/test_1897_retention.db")
-+    await s.initialize()
-+    await s.add_memory_type("legal")
-+    await s.add_memory_type("contract", parent="legal")
-+    yield s
-+    await s.close()
-+    ontology.clear_ontology_caches()
++def _make_storage(has_store: bool) -> MilvusMemoryStorage:
++    """A MilvusMemoryStorage with __init__ skipped and the client mocked."""
++    storage = MilvusMemoryStorage.__new__(MilvusMemoryStorage)
++    storage.uri = "./milvus.db"
++    storage.collection_name = "unit_test_collection"
++    storage.embedding_dimension = 4
++    storage.embedding_model_name = "test-model"
++    storage.embedding_model = MagicMock()
++    storage._initialized = True
++    storage.client = MagicMock()
++    storage._has_content_lower = True
++    storage._has_bm25 = False
++    storage._has_access_collection = False
++    storage._has_store = has_store
++    storage.semantic_dedup_enabled = False
++    storage._generate_embedding = MagicMock(return_value=[0.1, 0.2, 0.3, 0.4])
++    storage._detect_conflicts = AsyncMock(return_value=[])
++    storage._delete_graph_edges = AsyncMock()
++    return storage
 +
 +
-+async def _retention_period(memory_type):
-+    now = datetime.now()
-+    created = now - timedelta(days=100)
-+    memory = Memory(
-+        content=f"{memory_type} memory",
-+        content_hash=f"hash-{memory_type}",
-+        tags=[],
-+        memory_type=memory_type,
-+        created_at=created.timestamp(),
-+        created_at_iso=created.isoformat() + "Z",
-+    )
-+    calc = ExponentialDecayCalculator(ConsolidationConfig())
-+    score = await calc._calculate_memory_relevance(memory, now, {}, {})
-+    return score.metadata["retention_period"]
++def _row(store: str | None = "team", content_hash: str = _HASH, **extra) -> dict[str, Any]:
++    now = time.time()
++    row: dict[str, Any] = {
++        "id": content_hash,
++        "content": "body",
++        "tags": "t",
++        "memory_type": "note",
++        "metadata": "{}",
++        "created_at": now,
++        "updated_at": now,
++        "created_at_iso": "2026-11-11T00:00:00Z",
++        "updated_at_iso": "2026-11-11T00:00:00Z",
++    }
++    if store is not None:
++        row["store"] = store
++    row.update(extra)
++    return row
 +
 +
-+async def test_overlay_base_type_and_its_subtypes_use_the_stored_period(storage):
-+    assert await _retention_period("legal") == 30  # the fallback this fixes
++def _client(rows: list[dict[str, Any]]) -> AsyncMock:
++    """``_call_client`` that answers ``get`` with ``rows`` and records writes."""
 +
-+    assert await storage.set_retention("Legal", 400) == "legal"
++    async def call(method: str, **kwargs):
++        if method == "get":
++            wanted = set(kwargs.get("ids") or [])
++            return [r for r in rows if r["id"] in wanted]
++        return None
 +
-+    assert await _retention_period("legal") == 400
-+    assert await _retention_period("contract") == 400  # inherited from the parent
-+
-+
-+async def test_a_subtype_entry_overrides_its_parent_and_clear_falls_back(storage):
-+    await storage.set_retention("legal", 400)
-+    await storage.set_retention("contract", 60)
-+    await storage.set_retention("insight", 90)  # built-in subtype, no config key
-+
-+    assert await _retention_period("contract") == 60
-+    assert await _retention_period("insight") == 90
-+
-+    assert await storage.clear_retention("contract")
-+    assert not await storage.clear_retention("contract")
-+    assert await _retention_period("contract") == 400
++    return AsyncMock(side_effect=call)
 +
 +
-+async def test_removed_types_keep_decaying_on_their_stored_parent(storage):
-+    """Greptile on #1939: removing 'legal' left 'contract' memories without a
-+    parent, so they fell back to 30 days although 'legal' still has 400."""
-+    await storage.set_retention("legal", 400)
-+    await storage.add_memory_type("postmortem", parent="learning")
-+
-+    assert await storage.remove_memory_type("legal")
-+    assert await storage.remove_memory_type("postmortem")
-+    assert ontology.get_parent_type("contract") is None  # no new writes with it
-+
-+    assert await _retention_period("contract") == 400
-+    assert await _retention_period("postmortem") == 180  # built-in parent's period
++def _calls(mock: AsyncMock, method: str) -> list[dict[str, Any]]:
++    return [c.kwargs for c in mock.call_args_list if c.args and c.args[0] == method]
 +
 +
-+@pytest.mark.parametrize(
-+    "memory_type, days",
-+    [
-+        ("nope", 90),        # not a memory type
-+        ("decision", 90),    # the config already has a period for it
-+        ("temporary", 90),   # legacy config key
-+        ("legal", 0),
-+        ("legal", 3651),
-+        ("legal", True),
-+        ("legal", "90"),
-+    ],
-+)
-+async def test_rejects_entries_that_would_not_apply(storage, memory_type, days):
-+    with pytest.raises(ValueError):
-+        await storage.set_retention(memory_type, days)
++def _memory(content: str = "new body") -> Memory:
++    return Memory(content=content, content_hash="b" * 64, tags=["t"], memory_type="note")
 +
 +
-+async def test_write_by_another_process_is_picked_up(storage):
-+    other = sqlite3.connect(storage.db_path)
-+    try:
-+        upsert_retention(other, "legal", 250)
-+    finally:
-+        other.close()
-+
-+    assert await _retention_period("legal") == 250
++# -- Writes keep the store ----------------------------------------------------
 +
 +
-+async def test_malformed_rows_are_skipped(storage):
-+    other = sqlite3.connect(storage.db_path)
-+    try:
-+        with other:
-+            other.executemany(
-+                "INSERT INTO ontology_entries (kind, key, payload_json, updated_at) "
-+                "VALUES ('retention', ?, ?, 0)",
-+                [("legal", "not json"), ("contract", '{"days": -5}'), ("insight", '{"days": 45}')],
-+            )
-+            other.execute("UPDATE metadata SET value = value + 1 WHERE key = 'ontology_version'")
-+    finally:
-+        other.close()
++@pytest.mark.asyncio
++async def test_store_writes_the_store_field():
++    storage = _make_storage(has_store=True)
++    storage._call_client = _client([])
 +
-+    assert ontology.get_retention_overlay() == {"insight": 45}
++    ok, msg = await storage.store(_memory(), store="team")
++
++    assert ok, msg
++    (insert,) = _calls(storage._call_client, "insert")
++    assert insert["data"][0]["store"] == "team"
 +
 +
-+async def test_in_memory_database_retention_loads(monkeypatch):
-+    monkeypatch.delenv("MCP_CUSTOM_MEMORY_TYPES", raising=False)
-+    mo
++@pytest.mark.asyncio
++async def test_store_batch_writes_the_store_field():
++    storage = _make_storage(has_store=True)
++    storage._call_client = _client([])
++
++    results = await storage.store_batch([_memory("one"), _memory("two")], store="team")
++
++    assert [ok for ok, _ in results] == [True, True]
++    (insert,) = _calls(storage._call_client, "insert")
++    assert [e["store"] for e in insert["data"]] == ["team", "team"]
++
++
++@pytest.mark.asyncio
++async def test_update_writes_back_the_rows_own_store():
++    # upsert replaces the whole row: without the store the row moves to "default".
++    storage = _make_storage(has_store=True)
++    storage._call_client = _client([_row(store="team")])
++
++    ok, msg = await storage.update_memory_metadata(_HASH, {"tags": ["x"]})
++
++    assert ok, msg
++    (upsert,) = _calls(storage._call_client, "upsert")
++    assert upsert["data"][0]["store"] == "team"
 ```
 
----
-
-### Incident Patch 3: `a14f19d4` (2026-11-10)
-**Commit Message**: fix(cloudflare): match % and _ in a tag literally in the tag deletes (#1948)
-
-* fix(cloudflare): match % and _ in a tag literally in the tag deletes
-
-delete_by_tags, delete_by_timeframe and delete_before_date built D1 tags LIKE patterns from the raw tag, so % and _ acted as wildcards. Escape them and add ESCAPE '\', as the sqlite-vec deletes do.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* chore: name changelog fragment after PR #1948
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(cloudflare): cover multi-tag matches for %, _ and backslash tags
-
-Single-tag rows only reach the tags = ? arm. Add rows with the tag in the first, middle and last position, plus lookalikes, so the escaped LIKE arms must still delete valid matches.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: goranai <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/1948.fixed.md` (added, +6/-0)
+**File**: `tests/storage/test_milvus_store_scope_e2e.py` (added, +140/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+- **Cloudflare tag deletes treated `%` and `_` in a tag as wildcards and deleted memories that did not have the tag (#1948).**
-+  `delete_by_tags`, `delete_by_timeframe` and `delete_before_date` built their D1
-+  `tags LIKE ?` patterns from the raw tag, so deleting the tag `%` deleted every memory
-+  with two or more tags, and `snake_case` also deleted a memory tagged `snakeXcase`. The
-+  patterns are escaped now and carry `ESCAPE '\'`, as the sqlite-vec deletes and the
-+  Cloudflare exact-content search already do.
-```
-
-**File**: `src/mcp_memory_service/storage/cloudflare.py` (modified, +25/-8)
-```diff
-@@ -179,6 +179,23 @@ def _store_clause(store: Optional[str], column: str = "store") -> Tuple[str, Lis
-     return f" AND {column} = ?", [store]
- 
- 
-+def _escape_like(value: str) -> str:
-+    """Escape LIKE wildcards so ``value`` matches literally under ``ESCAPE '\\'``."""
-+    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+@@ -0,0 +1,140 @@
++"""End-to-end store confinement (#1879) against a REAL Milvus Lite backend.
 +
++test_milvus_store_scope.py pins the calls the storage makes; this file checks
++that Milvus itself does what those calls assume: a row inserted without the
++``store`` key lands in ``"default"``, an upsert that carries the row's store
++keeps it there, and a ``delete`` whose filter names another store removes
++nothing. Only the embedding is stubbed.
 +
-+# Matches one tag in a comma-separated ``tags`` column: first, middle, last or only.
-+_TAG_MATCH_SQL = (
-+    "(tags LIKE ? ESCAPE '\\' OR tags LIKE ? ESCAPE '\\' "
-+    "OR tags LIKE ? ESCAPE '\\' OR tags = ?)"
-+)
-+
-+
-+def _tag_match_params(tag: str) -> List[str]:
-+    escaped = _escape_like(tag)
-+    return [f"{escaped},%", f"%,{escaped},%", f"%,{escaped}", tag]
-+
-+
- class CloudflareStorage(MemoryStorage):
-     """Cloudflare-based storage backend using Vectorize, D1, and R2."""
- 
-@@ -1671,8 +1688,8 @@ async def delete_by_tags(self, tags: List[str], store: Optional[str] = None) ->
-             params = []
-             for tag in tags:
-                 stripped_tag = tag.strip()
--                conditions.append("(tags LIKE ? OR tags LIKE ? OR tags LIKE ? OR tags = ?)")
--                params.extend([f"{stripped_tag},%", f"%,{stripped_tag},%", f"%,{stripped_tag}", stripped_tag])
-+                conditions.append(_TAG_MATCH_SQL)
-+                params.extend(_tag_match_params(stripped_tag))
- 
-             where_clause = " OR ".join(conditions)
-             store_sql, store_params = _store_clause(store)
-@@ -1719,13 +1736,13 @@ async def delete_by_timeframe(self, start_date: date, end_date: date, tag: Optio
- 
-             if tag:
-                 # Delete with tag filter
--                sql = '''
-+                sql = f'''
-                     SELECT content_hash FROM memories
-                     WHERE created_at >= ? AND created_at <= ?
--                    AND (tags LIKE ? OR tags LIKE ? OR tags LIKE ? OR tags = ?)
-+                    AND {_TAG_MATCH_SQL}
-                     AND deleted_at IS NULL
-                 '''
--                params = (start_ts, end_ts, f"{tag},%", f"%,{tag},%", f"%,{tag}", tag)
-+                params = (start_ts, end_ts, *_tag_match_params(tag))
-             else:
-                 # Delete all in timeframe
-                 sql = '''
-@@ -1766,13 +1783,13 @@ async def delete_before_date(self, before_date: date, tag: Optional[str] = None)
- 
-             if tag:
-                 # Delete with tag filter
--                sql = '''
-+                sql = f'''
-                     SELECT content_hash FROM memories
-                     WHERE created_at < ?
--                    AND (tags LIKE ? OR tags LIKE ? OR tags LIKE ? OR tags = ?)
-+                    AND {_TAG_MATCH_SQL}
-                     AND deleted_at IS NULL
-                 '''
--                params = (before_ts, f"{tag},%", f"%,{tag},%", f"%,{tag}", tag)
-+                params = (before_ts, *_tag_match_params(tag))
-             else:
-                 # Delete all before date
-                 sql = '''
-```
-
-**File**: `tests/unit/test_cloudflare_tag_delete_like_wildcards.py` (added, +127/-0)
-```diff
-@@ -0,0 +1,127 @@
-+"""Cloudflare tag deletes match ``%``, ``_`` and a backslash in a tag literally.
-+
-+delete_by_tags, delete_by_timeframe and delete_before_date put the tag into
-+LIKE patterns, where ``%`` and ``_`` are wildcards, so deleting the tag ``%``
-+also deleted every memory with two or more tags. The tests run the real SQL
-+against the in-memory SQLite database that stands in for D1.
++Run: pytest tests/storage/test_milvus_store_scope_e2e.py -v
 +"""
 +
-+from datetime import date
++import uuid
++
++import numpy as np
 +from unittest.mock import AsyncMock
 +
 +import pytest
++import pytest_asyncio
++
++pymilvus = pytest.importorskip("pymilvus")
++milvus_lite = pytest.importorskip("milvus_lite")
 +
 +from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.cloudflare import CloudflareStorage
++from mcp_memory_service.storage.milvus import MilvusMemoryStorage
 +from mcp_memory_service.utils.hashing import generate_content_hash
-+from tests.unit.test_cloudflare_store_scope import _FakeD1
 +
-+BACKSLASH_TAG = "dir" + chr(92) + "new"
-+MULTI_BACKSLASH_TAG = "lib" + chr(92) + "x"
-+
-+# A wildcard match would also delete the *_lookalike memories.
-+TAGS = {
-+    "underscore": ["snake_case"],
-+    "underscore_lookalike": ["snakexcase", "x"],
-+    "percent": ["100%"],
-+    "percent_lookalike": ["1000", "x"],
-+    "backslash": [BACKSLASH_TAG],
-+    "backslash_lookalike": ["dirxnew", "x"],
-+    "pair": ["keep", "other"],
-+    "single": ["solo"],
-+    "three": ["a", "b", "c"],
-+    # Multi-tag rows go through the LIKE arms, so a valid match must still be
-+    # deleted with the tag in the first, middle and last position.
-+    "us_first": ["multi_tag", "p1"],
-+    "us_mid": ["p2", "multi_tag", "p3"],
-+    "us_last": ["p4", "multi_tag"],
-+    "us_lookalike": ["multixtag", "p5"],
-+    "pct_first": ["50%", "q1"],
-+    "pct_mid": ["q2", "50%", "q3"],
-+    "pct_last": ["q4", "50%"],
-+    "pct_lookalike": ["500", "q5"],
-+    "bs_first": [MULTI_BACKSLASH_TAG, "r1"],
-+    "bs_mid": ["r2", MULTI_BACKSLASH_TAG, "r3"],
-+    "bs_last": ["r4", MULTI_BACKSLASH_TAG],
-+    "bs_lookalike": ["libyx", "r5"],
-+}
-+
-+CASES = [
-+    ("snake_case", ["underscore"]),
-+    ("100%", ["percent"]),
-+    ("%", []),
-+    ("_", []),
-+    (BACKSLASH_TAG, ["backslash"]),
-+    ("solo", ["single"]),
-+    ("other", ["pair"]),
-+    ("b", ["three"]),
-+    ("multi_tag", ["us_first", "us_last", "us_mid"]),
-+    ("50%", ["pct_first", "pct_last", "pct_mid"]),
-+    (MULTI_BACKSLASH_TAG, ["bs_first", "bs_last", "bs_mid"]),
-+]
++_DIM = 8
 +
 +
-+@pytest.fixture
-+async def cloudflare(monkeypatch):
-+    """Cloudflare storage on a fake D1, holding one memory per entry in TAGS."""
-+    storage = CloudflareStorage(
-+        api_token="test-token",
-+        account_id="test-account",
-+        vectorize_index="test-index",
-+        d1_database_id="test-db",
++class _StubEncoder:
++    """Deterministic per-text vectors — no model download, no network."""
++
++    def encode(self, texts, convert_to_numpy=True, **kwargs):
++        out = []
++        for text in texts:
++            seed = abs(hash(text)) % (10 ** 6)
++            out.append(np.random.default_rng(seed).random(_DIM, dtype=np.float32))
++        return np.array(out)
++
++
++@pytest.fixture(scope="module")
++def milvus_db_path(tmp_path_factory):
++    return tmp_path_factory.mktemp("milvus_store_scope_e2e") / "milvus.db"
++
++
++@pytest_asyncio.fixture
++async def storage(milvus_db_path, monkeypatch):
++    async def _stub_init_embedding(self):
++        self.embedding_model = _StubEncoder()
++        self.embedding_dimension = _DIM
++
++    monkeypatch.setattr(
++        MilvusMemoryStorage, "_initialize_embedding_model", _stub_init_embedding
 +    )
-+    fake_d1 = _FakeD1(storage)
-+    monkeypatch.setattr(storage, "_retry_request", fake_d1)
-+    for name in (
-+        "_store_vectorize_vector",
-+        "_delete_vectorize_vector",
-+        "_store_r2_content",
-+        "_delete_r2_content",
-+    ):
-+        monkeypatch.setattr(storage, name, AsyncMock())
-+    monkeypatch.setattr(storage, "_generate_embedding", AsyncMock(return_value=[0.1]))
-+    await storage._initialize_d1_schema()
-+
-+    hashes = {}
-+    for name, tags in TAGS.items():
-+        content = f"Memory {name} for the tag delete tests."
-+        memory = Memory(
-+            content=content, content_hash=generate_content_hash(content), tags=tags
-+        )
-+        ok, msg = await storage.store(memory)
-+        assert ok, msg
-+        hashes[name] = memory.content_hash
-+
-+    def deleted():
-+        return sorted(
-+            name
-+            for name, content_hash in hashes.items()
-+            if fake_d1.row(content_hash)["deleted_at"] is not None
-+        )
-+
-+    yield storage, deleted
-+    fake_d1.db.close()
++    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
++    instance = MilvusMemoryStorage(
++        uri=str(milvus_db_path),
++        collection_name=f"mcp_store_{uuid.uuid4().hex[:12]}",
++        embedding_model="stub",
++    )
++    await instance.initialize()
++    try:
++        yield instance
++    finally:
++        await instance.close()
 +
 +
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("tag, expected", CASES)
-+async def test_delete_by_tags_matches_the_tag_literally(cloudflare, tag, expected):
-+    storage, deleted = cloudflare
-+    await storage.delete_by_tags([tag])
-+    assert deleted() == expected
++async def _store(storage, content: str, **kwargs) -> str:
++    content_hash = generate_content_hash(content)
++    ok, msg = await storage.store(
++        Memory(content=content, content_hash=content_hash, tags=["t"], memory_type="note"),
++        **kwargs,
++    )
++    assert ok, msg
++    return content_hash
++
++
++async def _stored_in(storage, content_hash: str):
++    rows = await storage._call_client(
++        "get",
++        collection_name=storage.collection_name,
++        ids=[content_hash],
++        output_fields=["store"],
++    )
++    return rows[0]["store"] if rows else None
 +
 +
 +@pytest.mark.asyncio
-+@pytest.mark.parametrize("tag, expected", CASES)
-+async def test_delete_by_timeframe_matches_the_tag_literally(cloudflare, tag, expected):
-+    storage, deleted = cloudflare
-+    await storage.delete_by_timeframe(date(2000, 1, 1), date(2100, 1, 1), tag=tag)
-+    assert deleted() == expected
++async def test_store_is_kept_and_confines_the_hash_addressed_calls(storage):
++    unnamed = await _store(storage, "written without a store")
++    team = await _store(storage, "written to the team store", store="team")
++    assert await _stored_in(storage, unnamed) == "default"
++    assert await _stored_in(storage, team) == "team"
++
++    # Reads
++    assert await storage.get_by_hash(team, store="team") is not None
++    assert await storage.get_by_hash(team) is not None
++    assert await storage.get_by_hash(team, store="ops") is None
++    assert await storage.get_by_hash(team, store="default") is None
++
++    # An update elsewhere is refused; an unscoped one keeps the row where it is.
++    ok, _ = await storage.update_memory_metadata(team, {"tags": ["x"]}, store="ops")
++    assert ok is False
++    ok, msg = await storage.update_memory_metadata(team, {"tags": ["x"]})
++    assert ok, msg
++    assert await _stored_in(storage, team) == "team"
++    assert (await storage.get_by_hash(team, store="team")).tags == ["x"]
++
++    # A delete elsewhere removes nothing; in its own store it goes.
++    ok, _ = await storage.delete(team, store="ops")
++    assert ok is False
++    assert await _stored_in(storage, team) == "team"
++    ok, msg = await storage.delete(team, store="team")
++    assert ok, msg
++    assert await _stored_in(storage, team) is None
 +
 +
 +@pytest.mark.asyncio
-+@pytest.mark.parametrize("tag, expected", CASES)
-+async def test_delete_before_date_matches_the_tag_literally(cloudflare, tag, expected):
-+    storage, deleted = cloudflare
-+    await storage.delete_before_date(date(2100, 1, 1), tag=tag)
-+    assert deleted() == expected
++async def test_a_delete_that_removes_nothing_says_so_and_keeps_the_links(storage, monkeypatch):
++    """The read saw the row in "team"; by the time of the delete another
++    client had stored the same content in "ops". The confined filter deletes
++    nothing on Milvus Lite too, and the call must not report success or
++    remove the graph edges of the row that is there now."""
++    moved = await _store(storage, "stored again in ops meanwhile", store="ops")
++    memory = await storage.get_by_hash(moved)
++    assert memory is not None
++
++    async def _stale_read(content_hash, store):
++        return memory, "team"
++
++    monkeypatch.setattr(storage, "_get_for_write", _stale_read)
++    edges = AsyncMock()
++    monkeypatch.setattr(storage, "_delete_graph_edges", edges)
++
++    ok, msg = await storage.delete(moved, store="team")
++
++    assert ok is False
++    ass
+```
+
+---
+
+### Incident Patch 2: `5f9cdcdb` (2026-11-12)
+**Commit Message**: fix(dashboard): remove the System Maintenance placeholders (#1974) (#1976)
+
+* fix(dashboard): remove the System Maintenance placeholders (#1974)
+
+* test(dashboard): assert a successful cleanup_duplicates run in the system-operation test
+
+**File**: `changelog.d/1974.removed.md` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++- **Dashboard: removed the System Maintenance placeholders (#1974).** The Manage tab
++  showed "Optimize DB" and "Rebuild Index" buttons that were disabled and, behind them,
++  only answered "not yet implemented". The section, its handlers, its strings in all
++  eleven catalogs and the `optimize_db` / `rebuild_index` branches of
++  `POST /api/manage/system/{operation}` are gone; the route now answers both with the
++  400 for an unknown operation. `cleanup_duplicates` is unchanged.
+```
+
+**File**: `src/mcp_memory_service/web/api/manage.py` (modified, +2/-10)
+```diff
+@@ -79,7 +79,7 @@ class TagStatsListResponse(BaseModel):
+ 
+ class SystemOperationRequest(BaseModel):
+     """Request model for system operations."""
+-    operation: str = Field(..., description="Operation: 'cleanup_duplicates', 'optimize_db', 'rebuild_index'")
++    operation: str = Field(..., description="Operation: 'cleanup_duplicates'")
+ 
+ 
+ @router.post("/bulk-delete", response_model=BulkOperationResponse, tags=["management"])
+@@ -399,20 +399,12 @@ async def perform_system_operation(
+     """
+     Perform system maintenance operations.
+ 
+-    Supported operations: cleanup_duplicates, optimize_db, rebuild_index
++    Supported operations: cleanup_duplicates. Any other operation answers 400.
+     """
+     try:
+         if operation == "cleanup_duplicates":
+             return await cleanup_duplicates(storage, user)
+ 
+-        elif operation == "optimize_db":
+-            # Database optimization (would need storage-specific implementation)
+-            raise HTTPException(status_code=501, detail="Database optimization not yet implemented")
+-
+-        elif operation == "rebuild_index":
+-            # Rebuild search indexes (would need storage-specific implementation)
+-            raise HTTPException(status_code=501, detail="Index rebuilding not yet implemented")
+-
+         else:
+             raise HTTPException(status_code=400, detail=f"Unknown operation: {operation}")
+ 
+```
+
+**File**: `src/mcp_memory_service/web/static/app.js` (modified, +0/-16)
+```diff
+@@ -837,8 +837,6 @@ class MemoryDashboard {
+         document.getElementById('deleteUntaggedBtn')?.addEventListener('click', this.handleDeleteUntagged.bind(this));
+         document.getElementById('ontologyAddTypeBtn')?.addEventListener('click', this.handleAddMemoryType.bind(this));
+         document.getElementById('ontologySetRetentionBtn')?.addEventListener('click', this.handleSetRetention.bind(this));
+-        document.getElementById('optimizeDbBtn')?.addEventListener('click', this.handleOptimizeDatabase.bind(this));
+-        document.getElementById('rebuildIndexBtn')?.addEventListener('click', this.handleRebuildIndex.bind(this));
+ 
+         // Analytics tab event listeners
+         document.getElementById('growthPeriodSelect')?.addEventListener('change', this.handleGrowthPeriodChange.bind(this));
+@@ -5935,20 +5933,6 @@ class MemoryDashboard {
+         }
+     }
+ 
+-    /**
+-     * Handle database optimization
+-     */
+-    async handleOptimizeDatabase() {
+-        this.showToast(this.t('toast.dbOptimizeTodo', 'Database optimization not yet implemented'), 'warning');
+-    }
+-
+-    /**
+-     * Handle index rebuild
+-     */
+-    async handleRebuildIndex() {
+-        this.showToast(this.t('toast.indexRebuildTodo', 'Index rebuild not yet implemented'), 'warning');
+-    }
+-
+     /**
+      * Rename a tag
+      */
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/de.json` (modified, +0/-9)
+```diff
+@@ -302,13 +302,6 @@
+   "manage.bulk.deleteTag.placeholder": "Tag auswählen...",
+   "manage.bulk.deleteTag.title": "Nach Tag löschen",
+   "manage.bulk.title": "Massenoperationen",
+-  "manage.system.dbOpt.btn": "DB optimieren",
+-  "manage.system.dbOpt.desc": "Datenbankleistung optimieren",
+-  "manage.system.dbOpt.title": "Datenbank-Optimierung",
+-  "manage.system.rebuild.btn": "Index neuaufbauen",
+-  "manage.system.rebuild.desc": "Suchindizes für bessere Leistung neuaufbauen",
+-  "manage.system.rebuild.title": "Suchindex neuaufbauen",
+-  "manage.system.title": "Systemwartung",
+   "manage.tags.column.actions": "Aktionen",
+   "manage.tags.column.count": "Anzahl",
+   "manage.tags.column.tag": "Tag",
+@@ -675,7 +668,6 @@
+   "toast.cleanupSuccess": "{message}",
+   "toast.copyFailed": "Kopieren in Zwischenablage fehlgeschlagen",
+   "toast.copySuccess": "Erinnerung in Zwischenablage kopiert",
+-  "toast.dbOptimizeTodo": "Datenbank-Optimierung noch nicht implementiert",
+   "toast.documentChunksPartial": "{count} Chunks gefunden (Teilergebnisse)",
+   "toast.documentRemoved": "\"{name}\" entfernt ({count} Erinnerungen gelöscht)",
+   "toast.duplicateMemoryWarning": "Erinnerung aktualisiert, aber Originalversion existiert noch. Möglicherweise muss das Duplikat manuell gelöscht werden.",
+@@ -691,7 +683,6 @@
+   "toast.filterSearchFailed": "Filtersuche fehlgeschlagen",
+   "toast.filtersCleared": "Alle Filter gelöscht",
+   "toast.genericSuccess": "{message}",
+-  "toast.indexRebuildTodo": "Index-Neuaufbau noch nicht implementiert",
+   "toast.languageSwitched": "Sprache gewechselt",
+   "toast.loadAnalyticsFail": "Analysedaten konnten nicht geladen werden",
+   "error.authRequired": "Authentifizierung erforderlich",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/en.json` (modified, +0/-9)
+```diff
+@@ -118,8 +118,6 @@
+   "toast.selectDate": "Please select a date",
+   "toast.bulkDeleteByDateSuccess": "{message}",
+   "toast.bulkDeleteByDateFailedWithReason": "{message}",
+-  "toast.dbOptimizeTodo": "Database optimization not yet implemented",
+-  "toast.indexRebuildTodo": "Index rebuild not yet implemented",
+   "toast.tagRenameTodo": "Tag renaming not yet implemented",
+   "toast.tagDeleteTodo": "Tag deletion not yet implemented",
+   "toast.loadAnalyticsFail": "Failed to load analytics data",
+@@ -461,13 +459,6 @@
+   "manage.tags.column.actions": "Actions",
+   "manage.tags.rename": "Rename",
+   "manage.tags.delete": "Delete",
+-  "manage.system.title": "System Maintenance",
+-  "manage.system.dbOpt.title": "Database Optimization",
+-  "manage.system.dbOpt.desc": "Optimize database performance",
+-  "manage.system.dbOpt.btn": "Optimize DB",
+-  "manage.system.rebuild.title": "Rebuild Search Index",
+-  "manage.system.rebuild.desc": "Rebuild search indexes for better performance",
+-  "manage.system.rebuild.btn": "Rebuild Index",
+   "search.results.title": "Search Results",
+   "search.results.count": "{count} results",
+   "search.results.count.one": "{count} result",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/es.json` (modified, +0/-9)
+```diff
+@@ -302,13 +302,6 @@
+   "manage.bulk.deleteTag.placeholder": "Seleccionar etiqueta...",
+   "manage.bulk.deleteTag.title": "Eliminar por Etiqueta",
+   "manage.bulk.title": "Operaciones Masivas",
+-  "manage.system.dbOpt.btn": "Optimizar BD",
+-  "manage.system.dbOpt.desc": "Optimizar el rendimiento de la base de datos",
+-  "manage.system.dbOpt.title": "Optimización de Base de Datos",
+-  "manage.system.rebuild.btn": "Reconstruir Índice",
+-  "manage.system.rebuild.desc": "Reconstruir índices de búsqueda para mejor rendimiento",
+-  "manage.system.rebuild.title": "Reconstruir Índice de Búsqueda",
+-  "manage.system.title": "Mantenimiento del Sistema",
+   "manage.tags.column.actions": "Acciones",
+   "manage.tags.column.count": "Cantidad",
+   "manage.tags.column.tag": "Etiqueta",
+@@ -675,7 +668,6 @@
+   "toast.cleanupSuccess": "{message}",
+   "toast.copyFailed": "Error al copiar al portapapeles",
+   "toast.copySuccess": "Memoria copiada al portapapeles",
+-  "toast.dbOptimizeTodo": "Optimización de base de datos aún no implementada",
+   "toast.documentChunksPartial": "Se encontraron {count} fragmentos (resultados parciales)",
+   "toast.documentRemoved": "\"{name}\" eliminado ({count} memorias eliminadas)",
+   "toast.duplicateMemoryWarning": "Memoria actualizada, pero la versión original aún existe. Es posible que necesite eliminar manualmente el duplicado.",
+@@ -691,7 +683,6 @@
+   "toast.filterSearchFailed": "Búsqueda con filtros fallida",
+   "toast.filtersCleared": "Todos los filtros eliminados",
+   "toast.genericSuccess": "{message}",
+-  "toast.indexRebuildTodo": "Reconstrucción de índice aún no implementada",
+   "toast.languageSwitched": "Idioma cambiado",
+   "toast.loadAnalyticsFail": "Error al cargar datos de analíticas",
+   "error.authRequired": "Autenticación requerida",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/fr.json` (modified, +0/-9)
+```diff
+@@ -302,13 +302,6 @@
+   "manage.bulk.deleteTag.placeholder": "Sélectionner un tag...",
+   "manage.bulk.deleteTag.title": "Supprimer par Tag",
+   "manage.bulk.title": "Opérations en Masse",
+-  "manage.system.dbOpt.btn": "Optimiser DB",
+-  "manage.system.dbOpt.desc": "Optimiser les performances de la base de données",
+-  "manage.system.dbOpt.title": "Optimisation de la Base de Données",
+-  "manage.system.rebuild.btn": "Reconstruire l'Index",
+-  "manage.system.rebuild.desc": "Reconstruire les index de recherche pour de meilleures performances",
+-  "manage.system.rebuild.title": "Reconstruire l'Index de Recherche",
+-  "manage.system.title": "Maintenance Système",
+   "manage.tags.column.actions": "Actions",
+   "manage.tags.column.count": "Nombre",
+   "manage.tags.column.tag": "Tag",
+@@ -675,7 +668,6 @@
+   "toast.cleanupSuccess": "{message}",
+   "toast.copyFailed": "Échec de la copie dans le presse-papiers",
+   "toast.copySuccess": "Mémoire copiée dans le presse-papiers",
+-  "toast.dbOptimizeTodo": "Optimisation de la base de données pas encore implémentée",
+   "toast.documentChunksPartial": "{count} fragments trouvés (résultats partiels)",
+   "toast.documentRemoved": "\"{name}\" supprimé ({count} mémoires supprimées)",
+   "toast.duplicateMemoryWarning": "Mémoire mise à jour, mais la version originale existe toujours. Vous devrez peut-être supprimer manuellement le doublon.",
+@@ -691,7 +683,6 @@
+   "toast.filterSearchFailed": "Échec de la recherche avec filtres",
+   "toast.filtersCleared": "Tous les filtres effacés",
+   "toast.genericSuccess": "{message}",
+-  "toast.indexRebuildTodo": "Reconstruction de l'index pas encore implémentée",
+   "toast.languageSwitched": "Langue changée",
+   "toast.loadAnalyticsFail": "Échec du chargement des données d'analyse",
+   "error.authRequired": "Authentification requise",
+```
+
+**File**: `src/mcp_memory_service/web/static/i18n/hi.json` (modified, +0/-9)
+```diff
+@@ -118,8 +118,6 @@
+   "toast.selectDate": "कृपया एक तारीख चुनें",
+   "toast.bulkDeleteByDateSuccess": "{message}",
+   "toast.bulkDeleteByDateFailedWithReason": "{message}",
+-  "toast.dbOptimizeTodo": "डेटाबेस अनुकूलन अभी लागू नहीं किया गया है",
+-  "toast.indexRebuildTodo": "इंडेक्स का पुनर्निर्माण अभी लागू नहीं किया गया है",
+   "toast.tagRenameTodo": "टैग का नाम बदलने की सुविधा अभी लागू नहीं की गई है",
+   "toast.tagDeleteTodo": "टैग हटाने की सुविधा अभी लागू नहीं की गई है",
+   "toast.loadAnalyticsFail": "विश्लेषण डेटा लोड करने में विफल",
+@@ -461,13 +459,6 @@
+   "manage.tags.column.actions": "कार्रवाइयाँ",
+   "manage.tags.rename": "नाम बदलें",
+   "manage.tags.delete": "हटाएँ",
+-  "manage.system.title": "सिस्टम रखरखाव",
+-  "manage.system.dbOpt.title": "डेटाबेस अनुकूलन",
+-  "manage.system.dbOpt.desc": "डेटाबेस के प्रदर्शन को बेहतर बनाएँ",
+-  "manage.system.dbOpt.btn": "डेटाबेस अनुकूलित करें",
+-  "manage.system.rebuild.title": "सर्च इंडेक्स दोबारा बनाएँ",
+-  "manage.system.rebuild.desc": "बेहतर प्रदर्शन के लिए सर्च इंडेक्स दोबारा बनाएँ",
+-  "manage.system.rebuild.btn": "इंडेक्स दोबारा बनाएँ",
+   "search.results.title": "खोज परिणाम",
+   "search.results.count": "{count} परिणाम",
+   "search.results.count.one": "{count} परिणाम",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1961** (2026-11-11): fix(web): resolve the installer before git pull so update works without pip (part of #1943) (@munjikesh)
-- **PR #1960** (2026-11-11): chore(deps): bump the uv group with 9 updates (@dependabot[bot])
-- **PR #1959** (2026-11-11): chore(deps): bump the actions group with 2 updates (@dependabot[bot])
-- **PR #1957** (2026-11-11): fix(sync): restore winning recreation before later metadata edits (@dailyun)
-- **PR #1956** (2026-11-11): feat(ontology): sync the ontology overlay between nodes (#1897, phase 2) (@Dhruv-Sharma29)
-- **PR #1955** (2026-11-11): fix(nli): explicit backend and unlabeled-row support in the labeling harness score (@Yoel-qin)
+- **PR #1977** (2026-11-12): feat(dashboard): filter tag management by minimum use count (@OnlineBunker)
+- **PR #1976** (2026-11-12): fix(dashboard): remove the System Maintenance placeholders (#1974) (@shu-chen-dot-ca)
+- **PR #1970** (2026-11-12): refactor(logging): lazy %-style logger calls in server_impl.py (#1146) (@massimiliano1991)
+- **PR #1968** (2026-11-12): refactor(logging): sanitise lazy %-style logger calls in utils/system_detection.py (#1146) (@SalyyS1)
+- **PR #1967** (2026-11-12): feat(nli): 4-way judgment in the labeling harness (@Yoel-qin)
+- **PR #1965** (2026-11-12): refactor(logging): lazy %-style logger calls in utils/content_splitter.py (#1146) (@SalyyS1)
 
 ---
 
@@ -3784,26 +3659,35 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. logging): lazy %-style logger calls in utils/debug.py (#1146) (#1952)
+## X. milvus): keep the store and confine get, update and delete by hash to it (#1879)
 
 **RULE**:
-When implementing operations in `changelog.d/1146-utils-debug.internal.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1879-milvus.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5bddbfc9`: logging): lazy %-style logger calls in utils/debug.py (#1146) (#1952). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0152275`: milvus): keep the store and confine get, update and delete by hash to it (#1879) (#1962). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1146-utils-debug.internal.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1879-milvus.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **`utils/debug.py` logs with lazy `%`-style arguments (#1146).**
-  `exact_match_retrieve()`, which backs the `exact_match_retrieve` MCP tool,
-  logged the backend's exception through an f-string. A backend error that
-  echoed the caller's content could forge a second log line. The error now
-  goes through `_sanitize_log_value`, and the backend class name is a `%s`
-  argument. The module is added to `GUARDED_MODULES`.
+- **Milvus dropped the store a memory was written to and served it from any store (#1879, massimiliano1991).**
+  The collection had no `store` field, so `store()` and `store_batch()` discarded the
+  value, and `get_by_hash`, `update_memory_metadata` and `delete` found a memory whatever
+  store the caller named. New collections get a `store` field (default `"default"`), the
+  three hash-addressed calls are confined to it, and every upsert writes the row's own
+  store back, so an update or a versioned update never moves a memory to `"default"`.
+  A collection created before this has no field to confine on: there a named store is
+  refused with one warning per instance (`None`, `"all"` and `"default"` are served as
+  before), and the collection has to be recreated to pick up confinement, as for
+  `content_lower`. `get_by_hash_is_store_scoped` stays `False`: search and listing still
+  ignore `store` on this backend.
+  A confined `delete` whose filter removes nothing (the row was deleted, or re-stored
+  elsewhere, between the read and the delete) now reports "not found" and leaves the
+  access record and graph edges alone, instead of removing them and reporting success.
+  A scoped updat
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3813,4 +3697,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5bddbfc9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0152275` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T02:24:59.310Z",
+  "last_updated": "2026-11-13T02:33:19.453Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "619c84baa891f9454fa2f2e2348d22cb1f4b792074243450c4d868a716f45365",
-      "verified_at": "2026-11-11T15:27:24.515Z",
+      "content_hash": "227954ccc3c5be538f20e1077382ba25dea4e2282266674988dfd31bf0b66a96",
+      "verified_at": "2026-11-13T02:32:14.028Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T15:27:24.515Z"
+      "last_updated": "2026-11-13T02:32:14.028Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "66faf61b70cb4f494614f6cc74badf315ae712adefc5c087be987358f759fdd8",
-      "verified_at": "2026-11-11T09:14:30.420Z",
+      "content_hash": "33e4087819fac83be25a115be35104ee16bef05fcc50cb2493de3698b035b268",
+      "verified_at": "2026-11-13T02:32:02.120Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T09:14:30.420Z"
+      "last_updated": "2026-11-13T02:32:02.120Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",
@@ -13806,14 +13806,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-signerlabs-shipswift",
-      "content_hash": "8d0e04041733aa33237b56efa7716fa0b404d49a7dd608273a2c6342fd062d1b",
-      "verified_at": "2026-11-08T20:02:51.206Z",
+      "content_hash": "6c24125c0f4ee0f4c991f2e776ee010d1d377e11dbb421da4d95e43a89eaea80",
+      "verified_at": "2026-11-13T02:32:07.033Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T20:02:51.206Z"
+      "last_updated": "2026-11-13T02:32:07.033Z"
     },
     "scrapy-plugins/scrapy-zyte-api": {
       "repository": "scrapy-plugins/scrapy-zyte-api",
@@ -17901,14 +17901,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-moonshotai-kimi-k3-1-pro",
-      "content_hash": "5c7b5bac5d87cd3284382d6cac7f607c82e42df594918c378b4380ed3547c604",
-      "verified_at": "2026-11-08T02:57:03.705Z",
+      "content_hash": "b7ae7462dfdbafb623c00c47f1389b8b64aaae5d2f5b373b2c5261365b5dd59d",
+      "verified_at": "2026-11-13T02:33:19.453Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T02:57:03.705Z"
+      "last_updated": "2026-11-13T02:33:19.453Z"
     },
     "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF": {
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",

@@ -9302,3 +9302,8 @@ Every entry in this ledger must capture:
 | `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `849a356c` | Multi-dimensional audit evidence | 2026-11-13T02:24:54.641Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `28fc5a3a` | Multi-dimensional audit evidence | 2026-11-13T02:24:59.295Z |
 | `learn-dom-d-dabeafce` | `project://hf-mistralai-timestral-209m` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md` | 2026-11-13T02:25:20.386Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `e1ce434f` | Multi-dimensional audit evidence | 2026-11-13T02:32:02.099Z |
+| `learn-github-signerlabs-shipswift` | `https://github.com/signerlabs/ShipSwift` | `d05d75e7` | Multi-dimensional audit evidence | 2026-11-13T02:32:07.025Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `f305bb22` | Multi-dimensional audit evidence | 2026-11-13T02:32:14.021Z |
+| `learn-huggingface-moonshotai-kimi-k3-1-pro` | `https://huggingface.co/moonshotai/Kimi-K3.1-Pro` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-13T02:33:19.446Z |
+| `learn-dom-d-fc7e335f` | `project://hf-moonshotai-kimi-k3.1-pro` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md` | 2026-11-13T02:33:32.401Z |

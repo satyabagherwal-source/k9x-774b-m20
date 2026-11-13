@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T02:24:59.304Z",
-  "total_cycles_completed": 9105,
-  "total_learnings_persisted": 9105,
-  "total_rules_promoted": 8936,
+  "last_updated": "2026-11-13T02:33:19.450Z",
+  "total_cycles_completed": 9109,
+  "total_learnings_persisted": 9109,
+  "total_rules_promoted": 8939,
   "history": [
-    {
-      "timestamp": "2026-11-12T04:24:38.664Z",
-      "repository": "fabio-rovai/open-ontologies",
-      "learningId": "learn-github-fabio-rovai-open-ontologies",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T04:32:18.392Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T04:50:27.865Z",
-      "repository": "pimalaya/himalaya",
-      "learningId": "learn-github-pimalaya-himalaya",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T04:50:34.383Z",
-      "repository": "jacklandrin/OnlySwitch",
-      "learningId": "learn-github-jacklandrin-onlyswitch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T04:50:41.515Z",
       "repository": "apache/pinot",
@@ -1403,6 +1375,34 @@
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T02:32:02.117Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T02:32:07.030Z",
+      "repository": "signerlabs/ShipSwift",
+      "learningId": "learn-github-signerlabs-shipswift",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T02:32:14.026Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T02:33:19.450Z",
+      "repository": "moonshotai/Kimi-K3.1-Pro",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
