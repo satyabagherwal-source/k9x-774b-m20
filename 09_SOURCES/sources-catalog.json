@@ -815,8 +815,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "ddb2d18d5a306ac872f6d365e76eb7a4d3f9666355a9542974531c03be6e362e",
-    "lastHarvestedAt": "2026-11-08T21:24:41.180Z",
+    "contentHash": "2c0581890988ec430560f974d589d768499c77245a6f032789167457430e1809",
+    "lastHarvestedAt": "2026-11-13T23:28:37.416Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b"
   },
   "hf-microsoft-frognano-4b-2609": {
@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "668cec06",
+    "sourceVersion": "f3874c83",
     "license": "Apache-2.0",
-    "contentHash": "77aa75b39115f05e21b9826b197b608cd2c56264e854ddf27ea1e05e184ea7a7",
-    "lastHarvestedAt": "2026-11-12T23:29:00.812Z",
+    "contentHash": "fcb34bc0efbd06692340ffc7bdb8532882805213e01a8822f817364d03898b41",
+    "lastHarvestedAt": "2026-11-13T23:28:52.133Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {

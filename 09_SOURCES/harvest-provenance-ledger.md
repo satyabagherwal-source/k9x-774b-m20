@@ -9699,3 +9699,6 @@ Every entry in this ledger must capture:
 | `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `25119d9b` | Multi-dimensional audit evidence | 2026-11-13T23:01:39.537Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `53ace8b4` | Multi-dimensional audit evidence | 2026-11-13T23:01:45.840Z |
 | `learn-dom-d-ab4cccbb` | `project://hf-hexgrad-kokoro-82m` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | 2026-11-13T23:02:23.210Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-13T23:28:37.416Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `f3874c83` | Multi-dimensional audit evidence | 2026-11-13T23:28:52.133Z |
+| `learn-dom-j-44a35728` | `project://hf-meta-llama-meta-llama-3-8b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | 2026-11-13T23:29:24.538Z |

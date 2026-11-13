@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T23:01:45.846Z",
-  "total_cycles_completed": 9406,
-  "total_learnings_persisted": 9406,
-  "total_rules_promoted": 9123,
+  "last_updated": "2026-11-13T23:28:52.138Z",
+  "total_cycles_completed": 9408,
+  "total_learnings_persisted": 9408,
+  "total_rules_promoted": 9124,
   "history": [
-    {
-      "timestamp": "2026-11-13T10:55:17.926Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T10:55:33.921Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T11:13:49.113Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T23:01:45.846Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T23:28:37.420Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T23:28:52.138Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

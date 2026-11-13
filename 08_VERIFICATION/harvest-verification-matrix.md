@@ -9666,3 +9666,6 @@
 | `CYCLE-20261113-ZSCT` | `2026-11-13T23:01:39.533Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8402` | Yes (`07c1e4b8...`) |
 | `CYCLE-20261113-ZX7W` | `2026-11-13T23:01:45.836Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8403` | Yes (`f309f508...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T23:02:23.210Z` | `hf-hexgrad-kokoro-82m` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AB4CCCBB` [Domain D] | Yes (`954b6cf2...`) |
+| `CYCLE-20261113-YGPW` | `2026-11-13T23:28:37.412Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`2c058189...`) |
+| `CYCLE-20261113-YS2P` | `2026-11-13T23:28:52.129Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8404` | Yes (`fcb34bc0...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T23:29:24.538Z` | `hf-meta-llama-meta-llama-3-8b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-44A35728` [Domain J] | Yes (`08e4d9bf...`) |

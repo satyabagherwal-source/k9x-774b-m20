@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-2SO9",
-    "timestamp": "2026-11-13T03:56:15.657Z",
-    "repository": "apache/arrow",
-    "learningId": "learn-github-apache-arrow",
-    "contentHash": "e093b4e45072efd989690fc7197e3cb5c567570c0eb9254b8b5dfbd01e88e810",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-2X1P",
-    "timestamp": "2026-11-13T03:56:21.325Z",
-    "repository": "Louis-CFM/coucou",
-    "learningId": "learn-github-louis-cfm-coucou",
-    "contentHash": "9d9e473dd3face7170f75ea177272885af79fd6246946b57a4417645075cf420",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-OJ3Z",
     "timestamp": "2026-11-13T04:13:09.695Z",
     "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
@@ -7490,6 +7460,36 @@
     "repository": "crate/crate",
     "learningId": "learn-github-crate-crate",
     "contentHash": "f309f50897935dd860fd4ef0fb6603ca348e6d47b257da0409765ffdb56edecb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-YGPW",
+    "timestamp": "2026-11-13T23:28:37.412Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "2c0581890988ec430560f974d589d768499c77245a6f032789167457430e1809",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-YS2P",
+    "timestamp": "2026-11-13T23:28:52.129Z",
+    "repository": "Ontos-AI/knowhere",
+    "learningId": "learn-github-ontos-ai-knowhere",
+    "contentHash": "fcb34bc0efbd06692340ffc7bdb8532882805213e01a8822f817364d03898b41",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

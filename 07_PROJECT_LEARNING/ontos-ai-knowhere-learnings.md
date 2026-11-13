@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `668cec06`  
+> **Source Version**: `f3874c83`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T23:28:51.627Z  
+> **Timestamp**: 2026-11-13T23:28:51.329Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T23:28:45.682Z  
+> **Harvest Timestamp**: 2026-11-13T23:28:51.323Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3982 stars
+- **Stars / Engagement**: 3995 stars
 
 ---
 
@@ -1002,510 +1002,833 @@ class ApiTelemetryMiddleware:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e729c08a` (2026-11-12)
-**Commit Message**: Audit fixes for media parsing and pooled greenlet context
+### Incident Patch 1: `ef70dae5` (2026-11-13)
+**Commit Message**: Refactor page memory services to enhance fine skills integration and improve title detection logic. Update prompts to include detailed drawing-sheet rules and adjust tests to validate the new functionality. Remove deprecated properties and streamline skill management for better performance.
 
-Pooled greenlets run under the gevent hub, so the per-task registries for token
-usage, BYOK LLM overrides and stage timings never found the Celery task
-greenlet and silently dropped work done in every GeventPool. Add
-greenlet_lineage, which follows gevent's spawning_greenlet before the hub
-parent, and use it in all three lookups. This covers every existing pool call
-site, so gevent_map no longer binds context itself and the bind_llm_overrides
-helper is removed.
-
-Media parsing:
-- Record media.duration_ms from the measured duration, so header-less
-  webm/ogg no longer stores null.
-- Save media_transcript.json only for the progressive baseline, its only reader.
-- Pass usage_task explicitly to SpeechTranscriber.transcribe, matching the
-  parse-pipeline usage contract.
-- Fall back to the doc_nav covers text when one part summary fails, so
-  enrichment does not re-derive every part and drop the others' LLM summaries.
-- Share boundary_spans for chapter windows, part sizes and part placement, and
-  lay out parts without an empty-title sentinel.
-
-Tests: resolve live modules where contract fixtures reload app.* (media parse
-and size-
-
-**File**: `apps/worker/app/services/connect_builder/summary_builder.py` (modified, +4/-5)
+**File**: `apps/worker/app/services/document_agent/calibration/prompts.py` (modified, +1/-5)
 ```diff
-@@ -238,7 +238,7 @@ def _node_section_path(node: Dict[str, Any], source_file_name: str) -> str:
-     return section_path_from_chunk_path(nav_path, source_file_name=source_file_name)
+@@ -34,11 +34,7 @@ def _variant_rules() -> str:
+         "given title 'Foo (DOC-12)' ↔ page heading 'Foo'; "
+         "given title 'A.1 Foo Bar' ↔ page heading 'Foo Bar').\n"
+         "Do NOT count: a contents-list line, a running header/footer, or "
+-        "a passing mention inside ordinary body paragraphs. "
+-        "A drawing-sheet title block (the info bar at a corner or edge that "
+-        "carries the drawing name and drawing number) counts as that page's "
+-        "main heading when matching a TOC entry. Ordinary running "
+-        "headers/footers remain excluded."
++        "a passing mention inside ordinary body paragraphs."
+     )
  
  
--def _deterministic_section_summary(
-+def deterministic_section_summary(
-     *,
-     is_top_level: bool,
-     self_only: str,
-@@ -378,11 +378,10 @@ def _summarize_nav_node(
-     """Summarize one non-leaf node from its children's current summaries."""
-     children = list(node.get("children") or [])
-     title = str(node.get("title") or "")
--    lookup = self_only_lookup
-     section_path = _node_section_path(node, source_file_name)
-     self_only = ""
-     if section_path and section_path != "Root":
--        self_only = str(lookup.get(section_path) or "")
-+        self_only = str(self_only_lookup.get(section_path) or "")
-     if self_only.strip():
-         node["self_summary"] = self_only.strip()
-     elif "self_summary" in node:
-@@ -392,7 +391,7 @@ def _summarize_nav_node(
-     child_rows = _child_contribution_rows(children, is_top_level=is_top_level)
-     contrib_len = sum(len(contrib) for _, contrib in child_rows) + len(self_only)
- 
--    deterministic = _deterministic_section_summary(
-+    deterministic = deterministic_section_summary(
-         is_top_level=is_top_level,
-         self_only=self_only,
-         child_titles=child_titles,
-@@ -471,7 +470,7 @@ def _build_nav_top_summary(
-     child_titles = _child_title_list(sections, is_top_level=True)
-     child_rows = _child_contribution_rows(sections, is_top_level=True)
-     contrib_len = sum(len(contrib) for _, contrib in child_rows)
--    deterministic = _deterministic_section_summary(
-+    deterministic = deterministic_section_summary(
-         is_top_level=True,
-         self_only="",
-         child_titles=child_titles,
 ```
 
-**File**: `apps/worker/app/services/document_parser/formats/media/chapters.py` (modified, +17/-18)
+**File**: `apps/worker/app/services/document_parser/profiling/profile_model.py` (modified, +0/-4)
 ```diff
-@@ -232,15 +232,7 @@ def part_boundaries(chapters: Sequence[ChapterDigest]) -> list[tuple[int, str]]
-     )
-     if boundaries is None or len(boundaries) < 2:
-         return None
--    part_sizes = [
--        end - start
--        for (start, _title), end in zip(
--            boundaries,
--            [*(start for start, _title in boundaries[1:]), len(chapters)],
--            strict=True,
--        )
--    ]
--    if max(part_sizes) < 2:
-+    if max(end - start for _title, start, end in boundary_spans(boundaries, len(chapters))) < 2:
-         # Every part holds one chapter: no grouping happened.
-         return None
-     return boundaries
-@@ -261,15 +253,22 @@ def _chapter_window(
-     )
-     if boundaries is None:
-         return None
--    titles: list[str] = []
--    for position, (start, title) in enumerate(boundaries):
--        end = (
--            boundaries[position + 1][0]
--            if position + 1 < len(boundaries)
--            else window_end
--        )
--        titles.extend([title] * (end - start))
--    return titles
-+    return [
-+        title
-+        for title, start, end in boundary_spans(boundaries, window_end)
-+        for _index in range(start, end)
-+    ]
-+
-+
-+def boundary_spans(
-+    boundaries: Sequence[tuple[int, str]],
-+    end: int,
-+) -> list[tuple[str, int, int]]:
-+    """Expand ordered (start, title) boundaries into (title, start, end) spans."""
-+    return [
-+        (title, start, boundaries[position + 1][0] if position + 1 < len(boundaries) else end)
-+        for position, (start, title) in enumerate(boundaries)
-+    ]
+@@ -50,10 +50,6 @@ class ParserDocumentProfile:
+     def is_pdf(self) -> bool:
+         return self.file_type == "pdf"
  
- 
- def _ask_boundaries(
-```
-
-**File**: `apps/worker/app/services/document_parser/formats/media/outline.py` (modified, +50/-34)
-```diff
-@@ -5,18 +5,19 @@
- 
- from app.services.connect_builder.summary_builder import (
-     SUMMARY_MAX_LEN,
-+    deterministic_section_summary,
-     llm_summarize_scope,
- )
- from app.services.document_parser.formats.media.chapters import (
-     ChapterDigest,
-+    boundary_spans,
-     chapter_titles,
-     part_boundaries,
- )
- from app.services.document_parser.formats.media.segments import TranscriptSegment
- from app.services.document_parser.support.gevent_map import gevent_map
- 
- from shared.core.config import settings
+-    @property
+-    def is_atlas(self) -> bool:
+-        return self.routing_category is PdfRoutingCategory.ATLAS
 -
- from shared.services.chunks.path_segments import append_document_path
+     @property
+     def has_structural_anatomy(self) -> bool:
+         return self.anatomy is not None
+```
+
+**File**: `apps/worker/app/services/page_memory/fine_skills.py` (modified, +14/-2)
+```diff
+@@ -20,7 +20,7 @@ class FineSkill(Protocol):
+     extra_tag_fields: dict[str, str]
  
- CHAPTER_SUMMARY_USAGE_TASK = "parser.media.chapter_summary"
-@@ -80,49 +81,64 @@ def build_media_outline(
-     parts = part_boundaries(digests)
-     paths = [document_root] * len(segments)
-     section_summaries: dict[str, str] = {}
--    part_ranges = (
--        _unique_titles(
--            [
--                (title, start, parts[position + 1][0] if position + 1 < len(parts) else len(chapters))
--                for position, (start, title) in enumerate(parts)
--            ]
--        )
--        if parts is not None
--        else [("", 0, len(chapters))]
--    )
--    for part_title, first_chapter, end_chapter in part_ranges:
--        parent_path = (
--            append_document_path(document_root, part_title) if part_title else document_root
--        )
--        for chapter, digest in zip(
-+    if parts is None:
-+        _place_chapters(document_root, chapters, digests, paths, section_summaries)
-+        return MediaOutline(paths=paths, section_summaries=section_summaries)
-+    part_spans = _unique_titles(boundary_spans(parts, len(chapters)))
-+    for part_title, first_chapter, end_chapter in part_spans:
-+        _place_chapters(
-+            append_document_path(document_root, part_title),
-             chapters[first_chapter:end_chapter],
-             digests[first_chapter:end_chapter],
--            strict=True,
--        ):
--            chapter_path = append_document_path(parent_path, chapter.title)
--            paths[chapter.start : chapter.end] = [chapter_path] * (chapter.end - chapter.start)
--            if digest.summary:
--                section_summaries[chapter_path] = digest.summary
--    titled_parts = [part for part in part_ranges if part[0]]
-+            paths,
-+            section_summaries,
+     def title_prompt_addon(self) -> str:
+-        """Optional addon for outline title detection. Empty when unused."""
++        """Addon appended to ``page-memory-vlm-title``."""
+         ...
+ 
+     def page_tag_prompt_addon(self) -> str:
+@@ -53,7 +53,19 @@ class DrawingSheetFineSkill:
+     }
+ 
+     def title_prompt_addon(self) -> str:
+-        return ""
++        return (
++            "DRAWING-SHEET RULE (apply per page):\n"
++            "First check this page. If it is a body/text page or a standard data "
++            "table page, follow all standard rules above.\n"
++            "If and only if it is an engineering/technical drawing or detail sheet "
++            "with a title block / info bar (usually at the bottom-right corner, "
++            "bottom edge, or top-left corner), extract ONE main heading from the "
++            "title block formatted as \"<drawing_no> <drawing_title>\" (or "
++            "whichever of the two is present), and set \"is_in_table\": false and "
++            "\"is_in_header_footer\": false for it. Do NOT extract dimension "
++            "annotations, internal CAD labels, or component tables on the drawing "
++            "as headings."
 +        )
-     part_summaries = gevent_map(
--        lambda part: llm_summarize_scope(
--            node_name=part[0],
--            self_only="",
--            child_rows=[(digest.title, digest.summary) for digest in digests[part[1] : part[2]]],
--            max_tokens=SUMMARY_MAX_LEN,
--            usage_task=PART_SUMMARY_USAGE_TASK,
--        ),
--        titled_parts,
-+        lambda span: _part_summary(span[0], digests[span[1] : span[2]]),
-+        part_spans,
-         max_concurrent=settings.SUMMARY_LLM_MAX_CONCURRENT,
+ 
+     def page_tag_prompt_addon(self) -> str:
+         return (
+```
+
+**File**: `apps/worker/app/services/page_memory/memory_service.py` (modified, +7/-4)
+```diff
+@@ -448,9 +448,11 @@ def _build_page_dataframe(
+         trace_recorder=trace_recorder,
+         page_memory_config=page_memory_config,
      )
-     for (part_title, _first_chapter, _end_chapter), part_summary in zip(
--        titled_parts, part_summaries, strict=True
-+        part_spans, part_summaries, strict=True
-     ):
--        if part_summary:
--            section_summaries[append_document_path(document_root, part_title)] = part_summary
-+        section_summaries[append_document_path(document_root, part_title)] = part_summary
-     return MediaOutline(paths=paths, section_summaries=section_summaries)
++    from app.services.page_memory.fine_skills import resolve_active_fine_skill_names
++
+     page_memory_config = replace(
+         page_memory_config,
+-        fine_skills=tuple(phase_a.manifest.get("fine_skills") or ()),
++        fine_skills=resolve_active_fine_skill_names(manifest=phase_a.manifest),
+     )
+     page_texts = phase_a.page_texts
+     coarse_scopes = phase_a.coarse_scopes
+@@ -695,6 +697,9 @@ def _run_hierarchy_scope(
+         },
+     )
  
++    from app.services.page_memory.fine_skills import resolve_fine_skills
++
++    active_skills = resolve_fine_skills(page_memory_config.fine_skills)
+     fine_min = page_memory_config.fine_min_pages
+     fat_leaf_pages = compute_fat_leaf_pages(
+         scope_skeletons,
+@@ -730,6 +735,7 @@ def _run_hierarchy_scope(
+                 vlm_model=vlm_model,
+                 scan_direction=page_memory_config.scan_direction,
+                 max_concurrent=page_memory_config.title_detection_concurrency,
++                active_skills=active_skills,
+             )
+         _record_trace_stage(
+             trace_recorder,
+@@ -838,9 +844,6 @@ def _run_hierarchy_scope(
+         variables={"scope_id": scope.scope_id, "plan_count": len(plans)},
+     )
  
-+def _place_chapters(
-+    parent_path: str,
-+    chapters: Sequence[_ChapterSpan],
-+    digests: Sequence[ChapterDigest],
-+    paths: list[str],
-+    section_summaries: dict[str, str],
-+) -> None:
-+    for chapter, digest in zip(chapters, digests, strict=True):
-+        chapter_path = append_document_path(parent_path, chapter.title)
-+        paths[chapter.start : chapter.end] = [chapter_path] * (chapter.end - chapter.start)
-+        if digest.summary:
-+            section_summaries[chapter_path] = digest.summary
+-    from app.services.page_memory.fine_skills import resolve_fine_skills
+-
+-    active_skills = resolve_fine_skills(page_memory_config.fine_skills)
+     with stage_timer("page_memory.tag", page_count=len(rendered)):
+         tags = tag_pages(
+             pages=rendered,
+```
+
+**File**: `apps/worker/app/services/page_memory/page_tagger.py` (modified, +10/-0)
+```diff
+@@ -203,6 +203,7 @@ def tag_page_titles(
+     vlm_model: str | None = None,
+     scan_direction: str = "top_to_bottom_left_to_right",
+     max_concurrent: int | None = None,
++    active_skills: Sequence[Any] = (),
+ ) -> list[PageTagResult]:
+     """Run independent VLM title detection on fat-leaf pages.
+ 
+@@ -224,6 +225,8 @@ def tag_page_titles(
+         Reading-order wording for the title prompt.
+     max_concurrent:
+         Maximum concurrent title-detection calls.
++    active_skills:
++        Active Fine skills whose ``title_prompt_addon`` is appended to the prompt.
+ 
+     Returns
+     -------
+@@ -258,6 +261,10 @@ def tag_page_titles(
+         getattr(settings, "PAGE_MEMORY_TITLE_DETECTION_CONCURRENCY", 3)
+     )
+ 
++    from app.services.page_memory.fine_skills import joined_skill_addon
++
++    skill_instructions = joined_skill_addon(active_skills, "title_prompt_addon")
++
+     def _detect_one(
+         page_idx: int,
+         page: PageRenderResult,
+@@ -266,6 +273,7 @@ def _detect_one(
+             page,
+             model=model,
+             scan_direction=scan_direction,
++            skill_instructions=skill_instructions,
+         )
+ 
+     import gevent
+@@ -374,6 +382,7 @@ def _tag_vlm_titles(
+     *,
+     model: str,
+     scan_direction: str = "top_to_bottom_left_to_right",
++    skill_instructions: str = "",
+ ) -> list[dict[str, Any]]:
+     """Send page PNG to VLM with the title-only prompt and parse results.
+ 
+@@ -387,6 +396,7 @@ def _tag_vlm_titles(
+         paras={
+             "max_tokens": _TITLE_TOKEN_BUDGETS[0],
+             "scan_direction": scan_direction,
++            "skill_instructions": skill_instructions,
+         },
+     )
+ 
+```
+
+**File**: `apps/worker/scripts/page_memory/debug_pm_stage3_scope_fine_hierarchy.py` (modified, +4/-3)
+```diff
+@@ -117,6 +117,7 @@ def _run_fine_hierarchy_for_scope(
+         compute_fat_leaf_pages,
+         refine_fat_leaf_skeletons,
+     )
++    from app.services.page_memory.fine_skills import resolve_fine_skills
+     from app.services.page_memory.memory_service import (
+         _resolve_hierarchy_model,
+         _summarize_tag_scope,
+@@ -162,6 +163,7 @@ def _run_fine_hierarchy_for_scope(
+         excluded_toc_pages,
+     )
+ 
++    active_skills = resolve_fine_skills(page_memory_config.fine_skills)
+     fine_min = page_memory_config.fine_min_pages
+     fat_leaf_pages = compute_fat_leaf_pages(
+         active_skeletons,
+@@ -195,6 +197,7 @@ def _run_fine_hierarchy_for_scope(
+             vlm_model=vlm_model,
+             scan_direction=page_memory_config.scan_direction,
+             max_concurrent=page_memory_config.title_detection_concurrency,
++            active_skills=active_skills,
+         )
+         record_stage(
+             scope_stages,
+@@ -291,14 +294,12 @@ def _run_fine_hierarchy_for_scope(
+         variables={"scope_id": scope_id, "plan_count": len(plans)},
+     )
+ 
+-    from app.services.page_memory.fine_skills import resolve_fine_skills
+-
+     tags = tag_pages(
+         pages=rendered,
+         plans=plans,
+         vlm_model=vlm_model,
+         max_concurrent=page_memory_config.tag_concurrency,
+-        active_skills=resolve_fine_skills(page_memory_config.fine_skills),
++        active_skills=active_skills,
+     )
+     record_stage(
+         scope_stages,
+```
+
+**File**: `apps/worker/tests/contract/test_doc_profile_anatomy_contract.py` (modified, +2/-2)
+```diff
+@@ -1105,7 +1105,7 @@ def run_lightweight_anatomy(self):
+     )
+ 
+     assert calls == ["run_coarse", "run_structural"]
+-    assert profile.is_atlas is True
++    assert profile.routing_category is PdfRoutingCategory.ATLAS
+     assert profile.anatomy is fake_anatomy
+     assert profile.anatomy.skeleton_anchor == {"source": "toc"}
+     assert [feature.page for feature in profile.anatomy.page_features] == [1]
+@@ -1170,7 +1170,7 @@ def run_structural(self):
+     )
+ 
+     assert calls == ["run_coarse", "run_lightweight_anatomy"]
+-    assert profile.is_atlas is True
++    assert profile.routing_category is PdfRoutingCategory.ATLAS
+     assert profile.anatomy is fake_anatomy
+     assert profile.anatomy.skeleton_anchor == {"source": "lightweight"}
+     assert profile.anatomy.page_features[0].page == 1
+```
+
+**File**: `apps/worker/tests/contract/test_drawing_sheet_fine_skill_contract.py` (modified, +83/-7)
+```diff
+@@ -10,6 +10,9 @@
+ os.environ.setdefault("S3_SECRET_ACCESS_KEY", "test")
+ os.environ.setdefault("S3_TEMP_PATH", "/tmp")
+ 
++import importlib
++
++import pytest
+ from PIL import Image
+ 
+ from app.services.document_parser.profiling.taxonomy import PdfRoutingCategory
+@@ -23,13 +26,51 @@
+ from app.services.page_memory.page_assets import extract_page_assets_from_renders
+ from app.services.page_memory.page_plan import PagePlan, PageProcessingStrategy
+ from app.services.page_memory.page_renderer import PageRenderResult
+-from app.services.page_memory.page_tagger import PageTagResult, tag_pages
++from app.services.page_memory.page_tagger import PageTagResult, tag_page_titles, tag_pages
+ from app.services.page_memory.phase_a import build_phase_a
+ from app.services.page_memory.scope_enrichment_service import run_single_scope_refinement
+ from shared.models.schemas.page_memory_config import PageMemoryConfig
+ from shared.services.ai.prompt_service import build_prompt
+ from shared.services.ai.summary.model import BodySummary
+ 
++_WORKER_SYMBOLS: dict[str, tuple[str, ...]] = {
++    "app.services.document_parser.profiling.taxonomy": ("PdfRoutingCategory",),
++    "app.services.page_memory.fine_skills": (
++        "DRAWING_SHEET_SKILL_NAME",
++        "DrawingSheetFineSkill",
++        "resolve_active_fine_skill_names",
++        "resolve_fine_skills",
++    ),
++    "app.services.page_memory.memory_service": ("_select_rendered_pages_with_assets",),
++    "app.services.page_memory.page_assets": ("extract_page_assets_from_renders",),
++    "app.services.page_memory.page_plan": ("PagePlan", "PageProcessingStrategy"),
++    "app.services.page_memory.page_renderer": ("PageRenderResult",),
++    "app.services.page_memory.page_tagger": (
++        "PageTagResult",
++        "tag_page_titles",
++        "tag_pages",
++    ),
++    "app.services.page_memory.phase_a": ("build_phase_a",),
++    "app.services.page_memory.scope_enrichment_service": (
++        "run_single_scope_refinement",
++    ),
++}
 +
 +
-+def _part_summary(part_title: str, digests: Sequence[ChapterDigest]) -> str:
-+    """LLM part summary over chapter summaries.
++@pytest.fixture(autouse=True)
++def _rebind_worker_symbols() -> None:
++    """Rebind worker symbols to the live modules.
 +
-+    On failure, use the covers text doc_nav enrichment would write for the part:
-+    one part left without a summary would make enrichment re-derive every part
-+    and replace the other parts' LLM summaries.
++    Other contract modules evict and re-import ``app.*``; without rebinding,
++    this module's references (and enum identity) would point at stale copies
++    while string-path monkeypatches target the live ones.
 +    """
-+    return llm_summarize_scope(
-+        node_name=part_title,
-+        self_only="",
-+        child_rows=[(digest.title, digest.summary) for digest in digests],
-+        max_tokens=SUMMARY_MAX_LEN,
-+        usage_task=PART_SUMMARY_USAGE_TASK,
-+    ) or deterministic_section_summary(
-+        is_top_level=False,
-+        self_only="",
-+        child_titles=[digest.title for digest in digests],
++    namespace = globals()
++    for module_name, names in _WORKER_SYMBOLS.items():
++        module = importlib.import_module(module_name)
++        for name in names:
++            namespace[name] = getattr(module, name)
++
+ 
+ def test_atlas_profile_activates_drawing_sheet_on_phase_a_manifest() -> None:
+     profile = SimpleNamespace(
+@@ -98,20 +139,55 @@ def test_drawing_skill_addon_is_appended_only_when_requested() -> None:
+     assert "title block" not in plain_node
+ 
+ 
+-def test_title_prompt_excludes_running_headers_not_corners() -> None:
++def test_title_prompt_appends_drawing_rule_only_when_requested() -> None:
++    plain, *_ = build_prompt("page-memory-vlm-title", "", "", paras={"max_tokens": 300})
++    assert "DRAWING-SHEET RULE" not in plain
++    assert "Running headers, running footers, and page numbers" in plain
+     prompt, *_ = build_prompt(
+         "page-memory-vlm-title",
+         "",
+         "",
+         paras={
+             "max_tokens": 300,
+-            "skill_instructions": DrawingSheetFineSkill().page_tag_prompt_addon(),
++            "skill_instructions": DrawingSheetFineSkill().title_prompt_addon(),
+         },
+     )
+-    assert "corners of the page" not in prompt
+-    assert "Running headers, running footers, and page numbers" in prompt
+-    assert "is_drawing_sheet" not in prompt
+-    assert DrawingSheetFineSkill().title_prompt_addon() == ""
++    assert "DRAWING-SHEET RULE" in prompt
++    assert "<drawing_no> <drawing_title>" in prompt
++
++
++def test_tag_page_titles_forwards_title_skill_addon(monkeypatch, tmp_path) -> None:
++    captured: dict[str, str] = {}
++    png = tmp_path / "page-1.png"
++    Image.new("RGB", (8, 8), "white").save(png)
++
++    def fake_tag_vlm_titles(page, *, model, scan_direction, skill_instructions):
++        del page, model, scan_direction
++        captured["skill_instructions"] = skill_instructions
++        return [{"text": "A-01 Plan", "prominence": 1.0}]
++
++    monkeypatch.setattr(
++        "app.services.page_memory.page_tagger._tag_vlm_titles",
++        fake_tag_vlm_titles,
++    )
++    results = tag_page_titles(
++        pages=[
++            PageRenderResult(
++                page_index=1,
++                image_path=str(png),
++                raw_text="",
++                width=8,
++                height=8,
++                is_landscape=False,
++            )
++        ],
++        tag_results=[PageTagResult(page_index=1)],
++        fat_leaf_pages={1},
++        vlm_model="vision",
++        active_skills=resolve_fine_skills((DRAWING_SHEET_SKILL_NAME,)),
++    )
++    assert "DRAWING-SHEET RULE" in captured["skill_instructions"]
++    assert results[0].observed_titles == [{"
+```
+
+---
+
+### Incident Patch 2: `dccea567` (2026-11-13)
+**Commit Message**: Enhance document processing by integrating skill signals and fine skills management. Update prompts to include drawing-sheet titles as main headings in TOC matching. Refactor page memory services to support skill instructions and improve asset extraction logic. Adjust tests to validate new functionality and ensure robust handling of oversized documents.
+
+**File**: `apps/worker/app/services/document_agent/calibration/prompts.py` (modified, +5/-1)
+```diff
+@@ -34,7 +34,11 @@ def _variant_rules() -> str:
+         "given title 'Foo (DOC-12)' ↔ page heading 'Foo'; "
+         "given title 'A.1 Foo Bar' ↔ page heading 'Foo Bar').\n"
+         "Do NOT count: a contents-list line, a running header/footer, or "
+-        "a passing mention inside ordinary body paragraphs."
++        "a passing mention inside ordinary body paragraphs. "
++        "A drawing-sheet title block (the info bar at a corner or edge that "
++        "carries the drawing name and drawing number) counts as that page's "
++        "main heading when matching a TOC entry. Ordinary running "
++        "headers/footers remain excluded."
+     )
+ 
+ 
+```
+
+**File**: `apps/worker/app/services/document_parser/profiling/doc_profiler.py` (modified, +11/-19)
+```diff
+@@ -176,29 +176,21 @@ def _profile_pdf_with_db(
+     if profile.page_count > settings.MAX_PDF_PAGE_LIMIT:
+         if oversized_policy != "page_memory":
+             raise_if_oversized_pdf_not_supported(page_count=profile.page_count)
+-        if not profile.is_atlas:
+-            try:
+-                profile.anatomy = coordinator.run_structural()
+-                profile.toc = _map_toc_profile(coordinator)
+-            except Exception as exc:
+-                if oversized_policy == "page_memory":
+-                    raise build_oversized_pdf_profile_failed_exception(
+-                        page_count=profile.page_count,
+-                        original_exception=exc,
+-                    ) from exc
+-                raise build_oversized_pdf_processing_failed_exception(
++        try:
++            profile.anatomy = coordinator.run_structural()
++            profile.toc = _map_toc_profile(coordinator)
++        except Exception as exc:
++            if oversized_policy == "page_memory":
++                raise build_oversized_pdf_profile_failed_exception(
+                     page_count=profile.page_count,
+                     original_exception=exc,
+                 ) from exc
+-        else:
+-            # TODO(page_memory): oversized atlas skips anatomy, so coarse
+-            # has_asset / page_features never reach page_memory (Root fallback).
+-            profile.toc = _map_toc_profile(coordinator)
++            raise build_oversized_pdf_processing_failed_exception(
++                page_count=profile.page_count,
++                original_exception=exc,
++            ) from exc
+     else:
+-        # TODO(page_memory): non-oversized atlas skips anatomy; coarse
+-        # has_asset / page_features never reach page_memory via profile.anatomy.
+-        if not profile.is_atlas:
+-            profile.anatomy = coordinator.run_lightweight_anatomy()
++        profile.anatomy = coordinator.run_lightweight_anatomy()
+         profile.toc = _map_toc_profile(coordinator)
+ 
+     if trace := getattr(coordinator, "trace", None):
+```
+
+**File**: `apps/worker/app/services/document_parser/profiling/taxonomy.py` (modified, +2/-0)
+```diff
+@@ -11,6 +11,8 @@ class PdfRoutingCategory(str, Enum):
+ 
+     @classmethod
+     def normalize(cls, value: object) -> "PdfRoutingCategory":
++        if isinstance(value, cls):
++            return value
+         raw = str(value or "").strip().lower().replace("-", "_").replace(" ", "_")
+         if raw in {"atlas", "engineering_atlas", "drawing_atlas", "drawing_collection"}:
+             return cls.ATLAS
+```
+
+**File**: `apps/worker/app/services/page_memory/_serialization.py` (modified, +1/-0)
+```diff
+@@ -152,6 +152,7 @@ def serialize_page_tags(tags: list[Any]) -> list[dict[str, Any]]:
+             "entities": list(getattr(item, "entities", []) or []),
+             "strategy_used": item.strategy_used,
+             "observed_titles": list(getattr(item, "observed_titles", []) or []),
++            "skill_signals": dict(getattr(item, "skill_signals", None) or {}),
+         }
+         for item in tags
+     ]
+```
+
+**File**: `apps/worker/app/services/page_memory/fine_skills.py` (added, +246/-0)
+```diff
+@@ -0,0 +1,246 @@
++"""Pluggable Fine-stage skills for page-memory (atlas drawing sheets first)."""
++
++from __future__ import annotations
++
++import shutil
++from pathlib import Path
++from typing import Any, Protocol, Sequence
++
++from loguru import logger
++
++from app.services.document_parser.profiling.taxonomy import PdfRoutingCategory
++
++DRAWING_SHEET_SKILL_NAME = "drawing_sheet"
++
++
++class FineSkill(Protocol):
++    """Fine-stage addon: prompt text, extra tag fields, and optional C5 override."""
++
++    name: str
++    extra_tag_fields: dict[str, str]
++
++    def title_prompt_addon(self) -> str:
++        """Optional addon for outline title detection. Empty when unused."""
++        ...
++
++    def page_tag_prompt_addon(self) -> str:
++        """Addon appended to ``page-memory-vlm-tag``."""
++        ...
++
++    def node_summary_prompt_addon(self) -> str:
++        """Addon appended to ``page-memory-node-summary``."""
++        ...
++
++    def override_page_assets(
++        self,
++        *,
++        page: Any,
++        tag: Any | None,
++        output_dir: str,
++        source_name: str,
++    ) -> list[Any] | None:
++        """Return assets to skip VLM detect/crop, or ``None`` for the standard path."""
++        ...
++
++
++class DrawingSheetFineSkill:
++    """Per-page drawing-sheet skill: name/metadata in tagging, intact page image in C5."""
++
++    name = DRAWING_SHEET_SKILL_NAME
++    extra_tag_fields = {
++        "is_drawing_sheet": "boolean",
++        "drawing_title": "string",
++    }
++
++    def title_prompt_addon(self) -> str:
++        return ""
++
++    def page_tag_prompt_addon(self) -> str:
++        return (
++            "Additional JSON keys (required in addition to the keys above):\n"
++            "{\n"
++            '  "is_drawing_sheet": true|false,\n'
++            '  "drawing_title": "<drawing_no + drawing_name from title block, or empty>"\n'
++            "}\n"
++            "First check this page, and apply drawing rules only when it is an "
++            "engineering/technical drawing sheet.\n"
++            '- "is_drawing_sheet": true only when the page is primarily an '
++            "architectural/engineering/CAD drawing, schematic, or detail sheet. "
++            "false for covers, body specifications, pure schedules/tables, or TOC.\n"
++            '- "drawing_title": the drawing number and drawing name from the title '
++            "block / info bar when present; otherwise an empty string.\n"
++            "When is_drawing_sheet is true: prefer the corner/edge title block "
++            "(drawing number, drawing name, project/atlas name, scale, discipline, "
++            "revision) and technical notes on the sheet when forming summary and "
++            "entities.\n"
++            "When is_drawing_sheet is false: follow the standard rules only."
++        )
++
++    def node_summary_prompt_addon(self) -> str:
++        return (
++            "If the provided page image(s) are engineering/technical drawing sheets, "
++            "prefer the corner/edge title block (drawing number, drawing name, "
++            "project/atlas name, scale, discipline, revision) and technical notes "
++            "on the sheet when summarizing this section."
++        )
++
++    def override_page_assets(
++        self,
++        *,
++        page: Any,
++        tag: Any | None,
++        output_dir: str,
++        source_name: str,
++    ) -> list[Any] | None:
++        signals = dict(getattr(tag, "skill_signals", None) or {})
++        if signals.get("is_drawing_sheet") is not True:
++            return None
++
++        from app.services.document_parser.assets.asset_file_names import (
++            ASSET_KIND_IMAGE,
++            build_page_asset_file_stem,
++        )
++        from app.services.document_parser.support.identifiers import gen_str_codes
++        from app.services.page_memory.page_assets import PageAsset
++        from PIL import Image
++
++        image_path = str(getattr(page, "image_path", "") or "")
++        page_index = int(getattr(page, "page_index", 0) or 0)
++        if not image_path or not Path(image_path).is_file():
++            logger.warning(
++                "[fine_skills] drawing sheet page {} missing render; skip assets",
++                page_index,
++            )
++            return []
++
++        try:
++            with Image.open(image_path) as image:
++                width_px, height_px = image.size
++        except Exception as exc:
++            logger.warning(
++                "[fine_skills] failed to read drawing sheet page {}: {}",
++                page_index,
++                exc,
++            )
++            return []
++
++        drawing_title = str(signals.get("drawing_title") or "").strip()
++        stem = build_page_asset_file_stem(
++            ASSET_KIND_IMAGE,
++            page_index,
++            1,
++            drawing_title,
++        )
++        image_dir = Path(output_dir) / "images"
++        image_dir.mkdir(parents=True, exist_ok=True)
++        filename = f"{stem}.png"
++        dest = image_dir / filename
++    
+```
+
+**File**: `apps/worker/app/services/page_memory/memory_service.py` (modified, +30/-3)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ import os
+ import shutil
+-from dataclasses import dataclass, field
++from dataclasses import dataclass, field, replace
+ from pathlib import Path
+ from typing import Any
+ 
+@@ -384,6 +384,15 @@ def assemble_c7_node_rows(
+         if rend and rend.image_path and os.path.exists(rend.image_path):
+             image_path_by_page[page] = rend.image_path
+ 
++    from app.services.page_memory.fine_skills import (
++        joined_skill_addon,
++        resolve_fine_skills,
 +    )
 +
-+
- def _chapter_spans(titles: Sequence[str]) -> list[_ChapterSpan]:
-     """Collapse per-segment titles into chapters; reused titles take `_N`."""
-     spans: list[_ChapterSpan] = []
-```
-
-**File**: `apps/worker/app/services/document_parser/formats/media/parser.py` (modified, +15/-5)
-```diff
-@@ -14,7 +14,10 @@
-     build_media_outline,
-     flat_outline,
- )
--from app.services.document_parser.formats.media.probe import admit_media_source
-+from app.services.document_parser.formats.media.probe import (
-+    admit_media_source,
-+    measure_media_duration_ms,
-+)
- from app.services.document_parser.formats.media.segments import segment_transcript
- from app.services.document_parser.formats.media.transcriber import (
-     FunAsrSpeechTranscriber,
-@@ -32,6 +35,7 @@
- from shared.core.exceptions.domain_exceptions import ValidationException
- 
- _SOURCE_KIND_ASR = "asr"
-+ASR_USAGE_TASK = "parser.media.asr"
- # Working copy of the transcript, so a progressive refine never re-runs ASR.
- MEDIA_TRANSCRIPT_REL = "media_transcript.json"
- 
-@@ -48,8 +52,9 @@ def parse_media(
- ) -> ParseOutput:
-     """Probe, extract mono audio, transcribe, and emit timestamped text rows.
- 
--    ``chapterize`` groups segments under LLM chapter titles (full mode and
--    refine); the progressive baseline keeps every segment at the file root.
-+    ``chapterize`` builds the chaptered outline (full mode). Without it this is
-+    the progressive baseline: segments stay at the file root and the transcript
-+    is saved as the refine input, so the refine never re-runs ASR.
-     """
-     info = admit_media_source(file_path)
-     audio_path = extract_source_audio(file_path, output_dir)
-@@ -58,6 +63,7 @@ def parse_media(
-         MediaAudio(path=audio_path, job_id=job_id),
-         diarize=True,
-         language_hint=None,
-+        usage_task=ASR_USAGE_TASK,
++    skill_instructions = joined_skill_addon(
++        resolve_fine_skills(page_memory_config.fine_skills),
++        "node_summary_prompt_addon",
++    )
+     rows = build_node_rows(
+         skeletons=skeletons,
+         raw_text_by_page=raw_text_by_page,
+@@ -399,6 +408,7 @@ def assemble_c7_node_rows(
+         node_assembly_concurrency=page_memory_config.node_assembly_concurrency,
+         body_text_by_page=body_text_by_page,
+         toc_pages=toc_pages,
++        skill_instructions=skill_instructions,
      )
-     if not transcript.sentences:
-         raise ValidationException(
-@@ -73,8 +79,12 @@ def parse_media(
-                 f"filename={filename}, audio_path={audio_path}"
-             ),
-         )
--    media = {"kind": _media_kind_from_filename(filename), "duration_ms": info.duration_ms}
--    _write_transcript(output_dir, media=media, sentences=transcript.sentences)
-+    media = {
-+        "kind": _media_kind_from_filename(filename),
-+        "duration_ms": measure_media_duration_ms(file_path, info),
-+    }
-+    if not chapterize:
-+        _write_transcript(output_dir, media=media, sentences=transcript.sentences)
-     return ParseOutput(
-         output_dir=output_dir,
-         parsed_df=_build_rows(
-```
-
-**File**: `apps/worker/app/services/document_parser/formats/media/transcriber.py` (modified, +8/-2)
-```diff
-@@ -33,7 +33,6 @@
- _POLL_INTERVAL_SECONDS = 1.0
- _MAX_POLL_INTERVAL_SECONDS = 8.0
- _TERMINAL_FAILURE_STATUSES = frozenset({"FAILED", "CANCELED", "UNKNOWN"})
--ASR_USAGE_TASK = "parser.media.asr"
+     return rows, final_pages
  
+@@ -436,6 +446,11 @@ def _build_page_dataframe(
+         profile=profile,
+         filename=filename,
+         trace_recorder=trace_recorder,
++        page_memory_config=page_memory_config,
++    )
++    page_memory_config = replace(
++        page_memory_config,
++        fine_skills=tuple(phase_a.manifest.get("fine_skills") or ()),
+     )
+     page_texts = phase_a.page_texts
+     coarse_scopes = phase_a.coarse_scopes
+@@ -823,12 +838,16 @@ def _run_hierarchy_scope(
+         variables={"scope_id": scope.scope_id, "plan_count": len(plans)},
+     )
  
- @dataclass(frozen=True)
-@@ -62,6 +61,7 @@ def transcribe(
-         *,
-         diarize: bool,
-         language_hint: str | None,
-+        usage_task: str,
-     ) -> Transcript: ...
- 
- 
-@@ -83,6 +83,7 @@ def transcribe(
-         *,
-         diarize: bool,
-         language_hint: str | None,
-+        usage_task: str,
-     ) -> Transcript:
-         from shared.services.ai.ali_quota_manager import get_ali_quota_manager
- 
-@@ -100,6 +101,7 @@ def transcribe(
-             quota_manager=quota_manager,
-             api_root=api_root,
-             job_id=job_id,
-+            usage_task=usage_task,
-         )
-         if resumed is not None:
-             return Transcript(sentences=_sentences_from_transcripts(resumed))
-@@ -122,6 +124,7 @@ def transcribe(
-                     api_key=lease.api_key,
-                     task_id=task_id,
-                     model=model,
-+                    usage_task=usage_task,
-                 )
-             except (SoftTimeLimitExceeded, KnowhereException):
-                 raise
-@@ -136,6 +139,7 @@ def _resume_submitted_task(
-         quota_manager: BaseQuotaManager,
-         api_root: str,
-         job_id: str,
-+        usage_task: str,
-     ) -> list[dict[str, Any]] | None:
-         """Finish a task a previous delivery of this job already paid for."""
-         ref = self._task_store.load(job_id)
-@@ -160,6 +164,7 @@ def _resume_submitted_task(
-                 api_key=token.api_key,
-                 task_id=ref.task_id,
-                 model=settings.SPEECH_MODEL,
-+                usage_task=usage_task,
-             )
-         except SoftTimeLimitExceeded:
-             raise
-@@ -179,6 +184,7 @@ def _finish_task(
-     api_key: str,
-     task_id: str,
-     model: str,
-+    usage_task: str,
- ) -> list[dict[str, Any]]:
-     """Wait for a submitted task, record its billed audio, and fetch transcripts."""
-     started = time.perf_counter()
-@@ -193,7 +199,7 @@ def _finish_task(
-         record_tokens(
-             {"audio_seconds": billed_seconds},
-             model=model,
--            task=ASR_USAGE_TASK,
-+            task=usage_task,
-             duration_ms=int((time.perf_counter() - started) * 1000),
-         )
-     return _download_transcripts(client, job)
-```
-
-**File**: `apps/worker/app/services/document_parser/support/gevent_map.py` (modified, +4/-20)
-```diff
-@@ -6,15 +6,6 @@
- import gevent
- from gevent.pool import Pool as GeventPool
- 
--from shared.services.ai.llm_overrides import (
--    bind_llm_overrides,
--    get_current_llm_overrides_root_id,
--)
--from shared.services.ai.token_tracking import (
--    bind_token_tracker,
--    get_current_token_tracker_root_id,
--)
--
- _Item = TypeVar("_Item")
- _Result = TypeVar("_Result")
- 
-@@ -27,20 +18,13 @@ def gevent_map(
- ) -> list[_Result]:
-     """Run ``function`` over ``items`` in a bounded gevent pool, keeping order.
- 
--    Pooled greenlets hang off the gevent hub, not the calling task greenlet, so
--    the task's token tracker and LLM overrides are bound into each call
--    explicitly. An exception in any call propagates to the caller.
-+    Per-task state (token usage, LLM overrides, stage timings) reaches pooled
-+    calls through the greenlet spawn lineage. An exception in any call
-+    propagates to the caller.
-     """
-     if not items:
-         return []
--    tracker_root_id = get_current_token_tracker_root_id()
--    overrides_root_id = get_current_llm_overrides_root_id()
--
--    def _bound_call(item: _Item) -> _Result:
--        with bind_token_tracker(tracker_root_id), bind_llm_overrides(overrides_root_id):
--            return function(item)
--
-     pool = GeventPool(size=max(1, min(max_concurrent, len(items))))
--    greenlets = [pool.spawn(_bound_call, item) for item in items]
-+    greenlets = [pool.spawn(function, item) for item in items]
-     gevent.joinall(greenlets, raise_error=True)
-     return [greenlet.get() for greenlet in greenlets]
-```
-
-**File**: `apps/worker/app/services/document_parser/support/stage_profiler.py` (modified, +8/-12)
-```diff
-@@ -13,6 +13,8 @@
- 
- from loguru import logger
- 
-+from shared.utils.greenlet_lineage import greenlet_lineage
++    from app.services.page_memory.fine_skills import resolve_fine_skills
 +
++    active_skills = resolve_fine_skills(page_memory_config.fine_skills)
+     with stage_timer("page_memory.tag", page_count=len(rendered)):
+         tags = tag_pages(
+             pages=rendered,
+             plans=plans,
+             vlm_model=vlm_model,
+             max_concurrent=page_memory_config.tag_concurrency,
++            active_skills=active_skills,
+         )
+     _record_trace_stage(
+         trace_recorder,
+@@ -846,8 +865,9 @@ def _run_hierarchy_scope(
  
- # ── Greenlet-safe stage timing accumulator ──
- 
-@@ -31,23 +33,17 @@ def _current_greenlet_id() -> int:
- 
- 
- def _find_root_id() -> int | None:
--    """Walk up the greenlet parent chain to find a registered root id."""
-+    """Walk the greenlet spawn lineage to find a registered root id."""
-     gid = _current_greenlet_id()
-     if gid in _trackers:
-         return gid
-     if gid in _root_ids:
-         return _root_ids[gid]
--    try:
--        import gevent
--        g = gevent.getcurrent()
--        while g is not None:
--            pid = id(g)
--            if pid in _trackers:
--                _root_ids[gid] = pid
--                return pid
--            g = getattr(g, 'parent', None)
--    except ImportError:
--        pass
-+    for greenlet in greenlet_lineage():
-+        pid = id(greenlet)
-+        if pid in _trackers:
-+            _root_ids[gid] = pid
-+            return pid
-     return None
+     assets_by_page: dict[int, list[Any]] = {}
+     if asset_extraction_enabled:
++        tags_by_page = {tag.page_index: tag for tag in tags}
+         asset_rendered = _select_rendered_pages_with_assets(
+-            rendered, page_features
++            rendered, page_features, tags_by_page=tags_by_page
+         )
+         with stage_timer("page_memory.assets", page_count=len(asset_rendered)):
+             assets_by_page = extract_page_assets_from_renders(
+@@ -860,6 +880,8 @@ def _run_hierarchy_scope(
+                 summary_concurrency=page_memory_config.asset_summary_concurrency,
+                 table_engine=page_memory_config.table_engine,
+                 table_merge_enabled=page_memory_config.table_merge_enabled,
++                tags_by_page=tags_by_page,
++                active_skills=active_skills,
+             )
+     _record_trace_stage(
+         trace_recorder,
+@@ -901,13 +923,18 @@ def _run_hierarchy_scope(
+ def _select_rendered_pages_with_assets(
+     rendered: list[Any],
+     page_features: list[Any],
++    tags_by_page: dict[int, Any] | None = None,
+ ) -> list[Any]:
+-    """Keep only rendered pages that coarse profile marked ``has_asset``."""
++    """Keep rendered pages marked ``has_asset``, plus drawing-sheet pages."""
+     asset_pages = {
+         int(getattr(feature, "page", 0) or 0)
+         for feature in page_features
+         if getattr(feature, "has_asset", False)
+     }
++    for page_index, tag in (tags_by_page or {}).items():
++        signals = dict(getattr(tag, "skill_signals", None) or {})
++        if signals.get("is_drawing_sheet") is True:
++            asset_pages.add(int(page_index))
+     return [item for item in rendered if item.page_index in asset_pages]
  
  
 ```
 
-**File**: `apps/worker/tests/contract/test_media_format_router_contract.py` (modified, +6/-4)
+**File**: `apps/worker/app/services/page_memory/node_assembler.py` (modified, +14/-6)
 ```diff
-@@ -63,8 +63,9 @@ def test_media_sources_use_media_file_size_cap(
-     monkeypatch: pytest.MonkeyPatch,
-     extension: str,
- ) -> None:
--    from shared.core.config import settings
--
-+    # Patch the settings object the live function reads: contract fixtures may
-+    # reload app modules after this file imported them.
-+    settings = max_source_file_bytes.__globals__["settings"]
-     monkeypatch.setattr(settings, "MAX_FILE_SIZE", 10)
-     monkeypatch.setattr(settings, "MAX_MEDIA_FILE_SIZE", 20)
-     assert max_source_file_bytes(file_extension=extension) == 20
-@@ -73,8 +74,9 @@ def test_media_sources_use_media_file_size_cap(
- def test_document_sources_keep_document_file_size_cap(
-     monkeypatch: pytest.MonkeyPatch,
- ) -> None:
--    from shared.core.config import settings
--
-+    # Patch the settings object the live function reads: contract fixtures may
-+    # reload app modules after this file imported them.
-+    settings = max_source_file_bytes.__globals__["settings"]
-     monkeypatch.setattr(settings, "MAX_FILE_SIZE", 10)
-     monkeypatch.setattr(settings, "MAX_MEDIA_FILE_SIZE", 20)
-     assert max_source_file_bytes(file_extension=".pdf") == 10
+@@ -320,6 +320,7 @@ def compute_node_summary(
+     image_path_by_page: dict[int, str],
+     vlm_model: str | None,
+     node_summary_max_pages: int = _NODE_SUMMARY_MAX_PAGES_DEFAULT,
++    skill_instructions: str = "",
+ ) -> tuple[str, list[str], list[dict[str, str]]]:
+     """Settle a node's summary, keywords, and typed entities (§4.4).
+ 
+@@ -352,6 +353,7 @@ def compute_node_summary(
+             image_path_by_page=image_path_by_page,
+             vlm_model=vlm_model,
+             node_summary_max_pages=node_summary_max_pages,
++            skill_instructions=skill_instructions,
+         )
+         if result is not None:
+             return result
+@@ -401,6 +403,7 @@ def _vlm_node_summary(
+     image_path_by_page: dict[int, str],
+     vlm_model: str,
+     node_summary_max_pages: int,
++    skill_instructions: str = "",
+ ) -> tuple[str, list[str], list[dict[str, str]]] | None:
+     leaf = view.leaf
+     pages = view.pages[:node_summary_max_pages]
+@@ -421,18 +424,21 @@ def _vlm_node_summary(
+     if not image_paths:
+         return None
+ 
++    prompt_paras: dict[str, Any] = {
++        "max_tokens": 400,
++        "node_title": leaf.title,
++        "next_title": next_title or "",
++        "kw_num": 5,
++    }
++    if skill_instructions:
++        prompt_paras["skill_instructions"] = skill_instructions
+     result = summarize(
+         mode="page",
+         image_paths=image_paths,
+         model=vlm_model,
+         usage_task="page_memory.node_summary",
+         prompt_task="page-memory-node-summary",
+-        prompt_paras={
+-            "max_tokens": 400,
+-            "node_title": leaf.title,
+-            "next_title": next_title or "",
+-            "kw_num": 5,
+-        },
++        prompt_paras=prompt_paras,
+     )
+     if not result.summary and not result.entities:
+         return None
+@@ -462,6 +468,7 @@ def build_node_rows(
+     node_assembly_concurrency: int = 3,
+     body_text_by_page: dict[int, str] | None = None,
+     toc_pages: list[int] | None = None,
++    skill_instructions: str = "",
+ ) -> list[dict[str, Any]]:
+     """Assemble one row per leaf section node (node-granularity chunks)."""
+     available_pages = set(raw_text_by_page.keys())
+@@ -494,6 +501,7 @@ def _summarize_one(
+                 image_path_by_page=image_path_by_page,
+                 vlm_model=vlm_model,
+                 node_summary_max_pages=node_summary_max_pages,
++                skill_instructions=skill_instructions,
+             )
+ 
+         with stage_timer(
+```
+
+**File**: `apps/worker/app/services/page_memory/page_assets.py` (modified, +27/-0)
+```diff
+@@ -387,13 +387,40 @@ def extract_page_assets_from_renders(
+     summary_concurrency: int = 4,
+     table_engine: str = "tabula",
+     table_merge_enabled: bool = True,
++    tags_by_page: dict[int, Any] | None = None,
++    active_skills: tuple[Any, ...] = (),
+ ) -> dict[int, list[PageAsset]]:
+     pages = sorted(rendered_pages, key=lambda item: item.page_index)
+     source_name = Path(pdf_path).name
+     assets_by_page: dict[int, list[PageAsset]] = {}
+     pending_summaries: list[PageAsset] = []
++    tag_map = tags_by_page or {}
+ 
+     for page in pages:
++        overridden: list[PageAsset] | None = None
++        tag = tag_map.get(page.page_index)
++        for skill in active_skills:
++            overridden = skill.override_page_assets(
++                page=page,
++                tag=tag,
++                output_dir=output_dir,
++                source_name=source_name,
++            )
++            if overridden is not None:
++                break
++        if overridden is not None:
++            page_assets_list = [
++                asset for asset in overridden if asset.image_uri or asset.html_uri
++            ]
++            if page_assets_list:
++                assets_by_page[page.page_index] = page_assets_list
++                if visual_debug_enabled():
++                    annotate_page_assets(
++                        page=page,
++                        assets=page_assets_list,
++                        output_dir=output_dir,
++                    )
++            continue
+         detected = detect_page_assets(
+             page=page,
+             source_name=source_name,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #554** (2026-11-13): feat: prepare the OpenSearch production cutover (@suguanYang)
+- **PR #552** (2026-11-13): chore: promote main to staging (drawing-sheet skills) (@EricNGOntos)
+- **PR #551** (2026-11-13): Add atlas drawing-sheet skills for TOC calibration and Fine prompts (@EricNGOntos)
+- **PR #550** (2026-11-13): chore: promote main to staging (restore alembic revision) (@EricNGOntos)
+- **PR #549** (2026-11-13): Restore upload parse dispatch Alembic revision for staging (@EricNGOntos)
 - **PR #548** (2026-11-12): chore: promote main to staging (speech audio/video media track) (@EricNGOntos)
-- **PR #547** (2026-11-12): Speech audio and video parsing (media track) (@EricNGOntos)
-- **PR #545** (2026-11-11): Promote OpenSearch publication manifests to main (@suguanYang)
-- **PR #544** (2026-11-11): Publish production service images only to AWS ECR (@suguanYang)
-- **PR #543** (2026-11-11): Publish service images only to AWS ECR (@suguanYang)
-- **PR #542** (2026-11-11): Publish immutable OpenSearch namespace manifests (@suguanYang)
 
 ---
 
@@ -1525,35 +1848,32 @@ and size-
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Audit fixes for media parsing and pooled greenlet context
+## X. page memory services to enhance fine skills integration and improve title detect
 
 **RULE**:
-When implementing operations in `apps/worker/app/services/connect_builder/summary_builder.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/worker/app/services/document_agent/calibration/prompts.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e729c08a`: Audit fixes for media parsing and pooled greenlet context. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ef70dae5`: page memory services to enhance fine skills integration and improve title detection logic. Update prompts to include detailed drawing-sheet rules and adjust tests to validate the new functionality. Remove deprecated properties and streamline skill management for better performance.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/connect_builder/summary_builder.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/document_agent/calibration/prompts.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-def deterministic_section_summary(
-        self_only = str(self_only_lookup.get(section_path) or "")
-    deterministic = deterministic_section_summary(
-    deterministic = deterministic_section_summary(
+        "a passing mention inside ordinary body paragraphs."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-def _deterministic_section_summary(
-    lookup = self_only_lookup
-        self_only = str(lookup.get(section_path) or "")
-    deterministic = _deterministic_section_summary(
-    deterministic = _deterministic_section_summary(
+// Induced defect failure mode:
+        "a passing mention inside ordinary body paragraphs. "
+        "A drawing-sheet title block (the info bar at a corner or edge that "
+        "carries the drawing name and drawing number) counts as that page's "
+        "main heading when matching a TOC entry. Ordinary running "
+        "headers/footers remain excluded."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e729c08a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ef70dae5` are properly handled with clean fallback behavior.

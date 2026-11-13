@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T23:02:23.666Z",
+  "updated_at": "2026-11-13T23:29:24.549Z",
   "stats": {
-    "total_discovered": 2990,
-    "approved_pending_harvest": 2791,
+    "total_discovered": 2991,
+    "approved_pending_harvest": 2792,
     "harvested_count": 0,
     "rejected_count": 199,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2790,
+      "COMMUNITY_AND_EXPERT": 2791,
       "OFFICIAL_DOCUMENTATION": 106,
       "STANDARDS_AND_SPECIFICATIONS": 80,
       "ENGINEERING_BLOGS": 1,
@@ -64407,6 +64407,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
         "fileName": "openreplay-openreplay-learnings.md"
+      }
+    },
+    "SRC-19EE6AF6E3D1": {
+      "id": "SRC-19EE6AF6E3D1",
+      "url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+      "title": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:29:24.549Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
+        "fileName": "hf-meta-llama-meta-llama-3-8b-learnings.md"
       }
     }
   }

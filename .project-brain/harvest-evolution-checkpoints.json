@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T23:02:24.252Z",
+  "last_updated": "2026-11-13T23:29:25.952Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T21:28:54.085Z",
@@ -218,7 +218,7 @@
       "staged_for_review": 1
     },
     "ontos-ai-knowhere-learnings.md": {
-      "processed_at": "2026-11-12T23:29:06.396Z",
+      "processed_at": "2026-11-13T23:29:24.833Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-13T22:45:46.515Z",
+      "processed_at": "2026-11-13T23:29:25.332Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2256,9 +2256,14 @@
       "processed_at": "2026-11-13T23:02:23.577Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-meta-llama-meta-llama-3-8b-learnings.md": {
+      "processed_at": "2026-11-13T23:29:24.538Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 711,
-  "total_canonical_promoted": 142,
-  "total_staged_for_review": 562
+  "total_dossiers_evaluated": 714,
+  "total_canonical_promoted": 143,
+  "total_staged_for_review": 564
 }

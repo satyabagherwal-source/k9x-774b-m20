@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T23:02:23.995Z",
-  "total_records": 419,
+  "last_updated": "2026-11-13T23:29:25.740Z",
+  "total_records": 424,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 217,
+      "total": 219,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -250,7 +250,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-timm-mobilenetv3_small_100-lamb_in1k-learning",
         "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
         "DOM-D-AB4CCCBB",
-        "domain_intelligence-research-knowledge-intelligence-hf-hexgrad-kokoro-82m-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-hexgrad-kokoro-82m-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv"
       ]
     },
     "E": {
@@ -270,7 +272,7 @@
       ]
     },
     "G": {
-      "total": 55,
+      "total": 57,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -326,7 +328,9 @@
         "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-infiniflow-infinity-core-invariants",
         "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-crate-crate-core-invariants"
+        "domain_intelligence-architecture-intelligence-crate-crate-core-invariants",
+        "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-core-invariants",
+        "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants"
       ]
     },
     "H": {
@@ -449,13 +453,14 @@
       ]
     },
     "J": {
-      "total": 5,
+      "total": 6,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
         "DOM-J-5650848D",
         "DOM-J-F84C9E58",
-        "DOM-J-782C1A9D"
+        "DOM-J-782C1A9D",
+        "DOM-J-44A35728"
       ]
     },
     "K": {
@@ -7152,8 +7157,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "ee490f36b0311c1c492475661a2e9f0a2aab7d4e78adf911abbfb03713ede1e3",
-      "created_at": "2026-11-13T22:45:46.772Z"
+      "content_hash": "fdb13e2e9d1659d5967802c69f73f1840c82cbbb40bde4270919b3fcd4edfa71",
+      "created_at": "2026-11-13T23:29:25.740Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9917,6 +9922,90 @@
       "repository": "openreplay-openreplay-learnings",
       "content_hash": "23a842166bd7979a1593c2221c502894ddcaad539e718f01bd0fae8e7a717d03",
       "created_at": "2026-11-13T23:02:23.995Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: meta-llama/Meta-Llama-3-8B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-research-knowledge-intelligence-meta-llama-meta-ll.md",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "content_hash": "0f9d3d354a53794f9944134772cb46be42f43fdd6dac7c27368dbe321e8ea29d",
+      "created_at": "2026-11-13T23:28:37.570Z"
+    },
+    "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: Ontos-AI/knowhere Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-architecture-intelligence-ontos-ai-knowhere-core-invariants.md",
+      "repository": "Ontos-AI/knowhere",
+      "content_hash": "c2f9aaca0e75ca2f2280d7794b13077d51dffa803e3237cb524719451ee13a33",
+      "created_at": "2026-11-13T23:28:52.389Z"
+    },
+    "DOM-J-44A35728": {
+      "record_id": "DOM-J-44A35728",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        },
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): meta-llama/Meta-Llama-3-8B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/meta-llama/Meta-Llama-3-8B](https://huggingface.co/meta-llama/Meta-Llama-3-8B))  \n> **Source Version**: `hf-meta-llam`  \n> **License**: Open-Source",
+      "content_hash": "08e4d9bf8e9d5832e34723aa8ce8abc97622b048e8a70a91f7f41a51d712c0c1",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "provenance": {
+        "source_uri": "project://hf-meta-llama-meta-llama-3-8b/hf-meta-llama-meta-llama-3-8b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T23:28:55.187Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-meta-llama-meta-llama-3-8b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-meta-llama-meta-llama-3-8b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D",
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T23:29:24.529Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-meta-llama-meta-llama-3-8b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-learnings-research-knowledge-intelligence-hf-meta-.md",
+      "repository": "hf-meta-llama-meta-llama-3-8b-learnings",
+      "content_hash": "8124c7a270dc8e6fdf47a4458bd1c53f00a246545d40d1c726f027d0638015c7",
+      "created_at": "2026-11-13T23:29:24.719Z"
+    },
+    "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ontos-ai-knowhere-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-learnings-architecture-intelligence-ontos-ai-knowhere-learning.md",
+      "repository": "ontos-ai-knowhere-learnings",
+      "content_hash": "b178ead341794932f7f59642d02445a86ee86f8133f2850bdfd257b3eb70c4cc",
+      "created_at": "2026-11-13T23:29:25.115Z"
     }
   }
 }

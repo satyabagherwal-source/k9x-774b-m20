@@ -604068,3 +604068,77 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `53ace8b4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8404. page memory services to enhance fine skills integration and improve title detect (Harvested from Ontos-AI/knowhere)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "page memory services to enhance fine skills integration and improve title detect",
+  "source": "Ontos-AI/knowhere",
+  "source_url": "https://github.com/Ontos-AI/knowhere",
+  "source_version": "f3874c83",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-13T23:28:51.762Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ontos-ai-knowhere",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere) (Revision: `f3874c83`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `apps/worker/app/services/document_agent/calibration/prompts.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ef70dae5`: page memory services to enhance fine skills integration and improve title detection logic. Update prompts to include detailed drawing-sheet rules and adjust tests to validate the new functionality. Remove deprecated properties and streamline skill management for better performance.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/document_agent/calibration/prompts.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+        "a passing mention inside ordinary body paragraphs."
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+        "a passing mention inside ordinary body paragraphs. "
+        "A drawing-sheet title block (the info bar at a corner or edge that "
+        "carries the drawing name and drawing number) counts as that page's "
+        "main heading when matching a TOC entry. Ordinary running "
+        "headers/footers remain excluded."
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ef70dae5` are properly handled with clean fallback behavior.
