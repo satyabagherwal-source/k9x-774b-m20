@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:40:10.804Z",
+  "timestamp": "2026-11-13T17:25:38.009Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-kirillzyusko-react-native-keyboard-controller-learnings",
+  "learning_id": "LEARN-EVO-kirillzyusko-react-native-keyboard-controller-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kirillzyusko-react-native-keyboard-controller-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:40:10.804Z`  
-> **Learning ID**: `LEARN-REEXTRACT-kirillzyusko-react-native-keyboard-controller-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T17:25:38.009Z`  
+> **Learning ID**: `LEARN-EVO-kirillzyusko-react-native-keyboard-controller-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md`  
 > **Source**: github ([https://github.com/kirillzyusko/react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller))  
-> **Source Version**: `1cf8d3e7`  
+> **Source Version**: `a8700949`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T06:45:54.215Z  
+> **Timestamp**: 2026-11-13T17:24:46.631Z  
 > **Learning ID**: `learn-github-kirillzyusko-react-native-keyboard-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kirillzyusko/react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T06:45:53.742Z  
+> **Harvest Timestamp**: 2026-11-13T17:24:46.625Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: ⌨️ Keyboard manager which works in identical way on both iOS and Android
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3762 stars
+- **Stars / Engagement**: 3764 stars
 
 ---
 
@@ -158,6 +158,44 @@ export const useTelegramTransitions = () => {
 ```
 export function randomColor() {
   return "#" + Math.random().toString(16).slice(-6);
+}
+
+```
+
+### Core Architecture Module: `android/src/fabric/java/com/reactnativekeyboardcontroller/extensions/ScrollViewState.kt`
+```
+package com.reactnativekeyboardcontroller.extensions
+
+import android.view.ViewGroup
+import com.facebook.react.views.scroll.ReactScrollViewHelper
+import com.facebook.react.views.scroll.ReactScrollViewHelper.HasScrollState
+import com.facebook.react.views.scroll.ReactScrollViewHelper.HasStateWrapper
+
+internal fun ViewGroup.syncContentInsetState(topInsetPx: Int) {
+  if (this is HasScrollState && this is HasStateWrapper) {
+    // Fabric applies this content-only offset after the ScrollView transform.
+    // Match the native translation in screen axes, including inverted lists,
+    // without shifting the measured viewport or changing virtualizer layout.
+    val scrollState = reactScrollViewScrollState
+    val contentOffset = (topInsetPx * scaleY).toInt()
+    if (scrollState.scrollAwayPaddingTop != contentOffset) {
+      scrollState.scrollAwayPaddingTop = contentOffset
+      ReactScrollViewHelper.forceUpdateState(this)
+    }
+  }
+}
+
+```
+
+### Core Architecture Module: `android/src/paper/java/com/reactnativekeyboardcontroller/extensions/ScrollViewState.kt`
+```
+package com.reactnativekeyboardcontroller.extensions
+
+import android.view.ViewGroup
+
+@Suppress("UNUSED_PARAMETER")
+internal fun ViewGroup.syncContentInsetState(topInsetPx: Int) {
+  // Paper has no Fabric measurement state; keep support for React Native 0.65.
 }
 
 ```
@@ -313,71 +351,17 @@ class KeyboardBackgroundViewComponentDescriptor final
 
 ```
 
-### Core Architecture Module: `common/cpp/react/renderer/components/RNKC/RNKCKeyboardBackgroundViewShadowNode.cpp`
-```
-//
-//  RNKCKeyboardBackgroundViewShadowNode.cpp
-//  Pods
-//
-//  Created by Kiryl Ziusko on 18/05/2025.
-//
-
-#include "RNKCKeyboardBackgroundViewShadowNode.h"
-
-namespace facebook::react {
-
-extern const char KeyboardBackgroundViewComponentName[] = "KeyboardBackgroundView";
-
-} // namespace facebook::react
-
-```
-
-### Core Architecture Module: `common/cpp/react/renderer/components/RNKC/RNKCKeyboardBackgroundViewShadowNode.h`
-```
-//
-//  RNKCKeyboardBackgroundViewShadowNode.h
-//  Pods
-//
-//  Created by Kiryl Ziusko on 18/05/2025.
-//
-
-#pragma once
-
-#include "RNKCKeyboardBackgroundViewState.h"
-
-#include <react/renderer/components/RNKC/EventEmitters.h>
-#include <react/renderer/components/RNKC/Props.h>
-#include <react/renderer/components/view/ConcreteViewShadowNode.h>
-#include <jsi/jsi.h>
-
-namespace facebook::react {
-
-JSI_EXPORT extern const char KeyboardBackgroundViewComponentName[];
-
-/*
- * `ShadowNode` for <KeyboardBackgroundView> component.
- */
-using KeyboardBackgroundViewShadowNode = ConcreteViewShadowNode<
-    KeyboardBackgroundViewComponentName,
-    KeyboardBackgroundViewProps,
-    KeyboardBackgroundViewEventEmitter,
-    KeyboardBackgroundViewState>;
-
-} // namespace facebook::react
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1750** (2026-11-06): **fix: preserve KVO subclasses when remounting scroll decorators**
-  *Symptoms*: ## 📜 Description  Avoid applying the scroll-view decorators twice when KVO or another runtime subclass sits above them. Returning to a `KeyboardAwareScrollView` hosted by a SwiftUI pager no longer crashes.  ## 💡 Motivation and Context  Fixes #1749.  Reproduced in FabricExample (RN 0.87.1, iPhone 17 Pro simulator, iOS 26.2) with `@sdcx/nested-scroll` 1.0.8, `react-native-pager-view` 8.0.2 and `react-native-tab-view` 4.3.2: place `KeyboardAwareScrollView` in the pager inside `NestedScrollView`, scroll the first page, select **Other tab**, then return to **Reproduction** with `freezeOnBlur` enabled. In this reproduction the first return already crashes with `EXC_BAD_ACCESS` at `0x0`, through `tryCastToObjectiveCClass`, `swift_dynamicCast` and `UIKitPlatformViewHost.isPlatformFocusContainerHost`.  LLDB confirmed the affected scroll view has this class chain:  ```text KC_NoScrollRect_NSKVONotifying_KC_NoScrollRect_RCTEnhancedScrollView NSKVONotifying_KC_NoScrollRect_RCTEnhancedScrollView KC_NoScrollRect_RCTEnhancedScrollView RCTEnhancedScrollView ```  Both decoration helpers now walk the superclass chain before adding a subclass. After repeated returns the original KVO class stays on top and there is only one decorator class. Recycling still restores only a decorator at the top: resetting the object to a class below KVO would discard the observer's subclass.  <details> <summary>Runnable UI reproduction used for the recordings</summary>  Temporarily add the dependency versions li
+- **Issue #1761** (2026-11-12): **KeyboardStickyView jumps to the final position for one frame on iOS (Fabric) inside a formSheet**
+  *Symptoms*: ## Describe the bug On iOS with the new architecture, a `KeyboardStickyView` inside a react-native-screens `formSheet` jumps to its final (keyboard-open) position for one frame when an input is focused. Then it drops behind the keyboard and rises with it. Visually: up, down, up again.  ## Analysis - `KeyboardProvider` writes `height`/`progress` shared values on iOS only in `onKeyboardMoveStart` (with the target height), so `KeyboardStickyView` relies on that prop update being applied inside the keyboard's UIKit animation block. - In `KeyboardControllerView.mm`, `onRequestAnimation` / `onCancelAnimation` are `// no-op for fabric`. - Frame-by-frame recording shows the first frame after `keyboardWillShow` already at the target translateY, and the animation then starting from 0 a frame later. - The per-frame `onMove` values from `useKeyboardHandler` are smooth in the same setup (0 → 308 over ~400 ms). Driving the translateY from `onMove` instead avoids the jump.  ## Code snippet ```tsx // inside a screen presented with presentation: 'formSheet' <KeyboardStickyView style={{ position: 'absolute', left: 16, right: 16, bottom: 12 }}>   <TextInput placeholder="Search" /> </KeyboardStickyView> ```  ## Expected behavior The view follows the keyboard smoothly, as on Android.  ## Smartphone - iPhone 17 Pro simulator, iOS 26.5 - react-native-keyboard-controller 1.22.9 (also checked 1.23.0 changelog, no related fix) - React Native 0.88 (Fabric), Expo SDK 58, Reanimated 4.7.1, react-native-s
 
-- **Issue #1749** (2026-11-06): **iOS: KC_NoScrollRect_ subclass is applied twice when KVO is on top, crashing SwiftUI hosts**
-  *Symptoms*: **Describe the bug**  `KCApplyNoopScrollRectToVisible` (in `ios/views/ClippingScrollViewDecoratorViewManager.mm`) decides whether a scroll view is already patched by checking only the **top** class name:  ```objc if ([originalClassName hasPrefix:@"KC_NoScrollRect_"]) {   return; } ```  If anything else isa-swizzles the same scroll view after the library did, the check misses the existing `KC_NoScrollRect_` class and subclasses again on top of it. The common case is KVO: once another library observes the scroll view (for example `contentOffset`), its class becomes `NSKVONotifying_KC_NoScrollRect_RCTEnhancedScrollView`. When the decorator is applied again (e.g. after Fabric recycles and remounts the scroll view), it creates:  ``` KC_NoScrollRect_NSKVONotifying_KC_NoScrollRect_RCTEnhancedScrollView ```  Subclassing a KVO-generated class is unsafe, and in our app it leads to a hard crash (`EXC_BAD_ACCESS`, address `0x0`) inside SwiftUI when the scroll view is hosted in a SwiftUI view (here via `react-native-pager-view` 8, which renders pages through SwiftUI):  ``` libswiftCore  tryCastToObjectiveCClass libswiftCore  swift_dynamicCast SwiftUI       closure #1 in UIKitPlatformViewHost.isPlatformFocusContainerHost.getter libswiftCore  Sequence.first(where:) SwiftUI       UIKitPlatformViewHost.isPlatformFocusContainerHost.getter SwiftUI       PlatformViewRepresentableFeature.update(forHost:environment:isInitialUpdate:) SwiftUICore   PlatformViewChild.updateValue() ... ```  We confirm
+- **Issue #1759** (2026-11-11): **fix: preserve Android chat presses with content insets**
+  *Symptoms*: ## 📜 Description  Synchronize Android Fabric ScrollView state with the native content inset so presses inside `KeyboardChatScrollView` survive small pointer movements.  ## 💡 Motivation and Context  Fixes #1758.  With an inverted list, the keyboard open, and `extraContentPadding` applied, the content is translated natively while Fabric still measures its previous position. A few-pixel horizontal MOVE then puts the pointer outside Pressability's measured bounds and cancels long presses, row presses, and nested Text links. A stationary hold still works.  The verified reproduction is preserved in [issue1758.repro.js](https://github.com/kirillzyusko/react-native-keyboard-controller/blob/9ae9bb223249e9d442cca4b05691939665f39793/FabricExample/issue1758.repro.js). Tap **Open keyboard**, then press **Message 1** or **Read more** and move horizontally by 2+ physical pixels before releasing. For a long press, hold for at least 350 ms. The status should report the corresponding callback; without the fix it stays unchanged after the MOVE  > The reproduction also changes the list's opacity from JS every 40 ms to exercise concurrent React commits.  To fix it we use RN's `scrollAwayPaddingTop` state to describe the content translation, including the inverted direction, without moving the measured viewport. This follows the native/Fabric synchronization approach from [react-native-teleport#150](https://github.com/kirillzyusko/react-native-teleport/pull/150).  > [!IMPORTANT] > Changing the d
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -394,81 +378,268 @@ using KeyboardBackgroundViewShadowNode = ConcreteViewShadowNode<
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1cf8d3e7` (2026-11-06)
-**Commit Message**: fix: preserve KVO subclasses when remounting scroll decorators (#1750)
+### Incident Patch 1: `a8700949` (2026-11-12)
+**Commit Message**: fix: report zero progress for zero-height Android keyboards (#1731)
 
 ## 📜 Description
 
-Avoid applying the scroll-view decorators twice when KVO or another
-runtime subclass sits above them. Returning to a
-`KeyboardAwareScrollView` hosted by a SwiftUI pager no longer crashes.
+Report `progress: 0` for Android keyboards with zero bottom height. This
+keeps `KeyboardStickyView` above the navigation bar when Gboard is
+floating and clears `KeyboardAvoidingView` padding when Gboard switches
+to its vertical hardware-keyboard toolbar.
 
 ## 💡 Motivation and Context
 
-Fixes #1749.
+Fixes #1725.
+Fixes #1109.
 
-Reproduced in FabricExample (RN 0.87.1, iPhone 17 Pro simulator, iOS
-26.2) with `@sdcx/nested-scroll` 1.0.8, `react-native-pager-view` 8.0.2
-and `react-native-tab-view` 4.3.2: place `KeyboardAwareScrollView` in
-the pager inside `NestedScrollView`, scroll the first page, select
-**Other tab**, then return to **Reproduction** with `freezeOnBlur`
-enabled. In this reproduction the first return already crashes with
-`EXC_BAD_ACCESS` at `0x0`, through `tryCastToObjectiveCClass`,
-`swift_dynamicCast` and
-`UIKitPlatformViewHost.isPlatformFocusContainerHost`.
+Open Gboard, switch to Floating, then change input focus or dismiss and
+reopen it. Before this change the keyboard has `height: 0` but
+endpoint/synthetic events carry `progress: 1`, so `offset.opened` moves
+the footer down under the navigation bar. After the change these events
+carry `progress: 0` and the footer stays in place.
 
-LLDB confirmed the affected scroll view has this class chain:
+`Double.progress` maps a destination keyboard height to closed (`0`) or
+open (`1`) progress. `KeyboardAnimationCallback.kt` uses it for start,
+end, focus-change events, position synchronization and resize events.
+The per-frame height/progress calculation, cached full height, raw IME
+visibility, event order and durations are unchanged. Dividing a resized
+height by the previous height would produce fractional or
+greater-than-one progress when switching text/emoji, s
 
-```text
-KC_NoScrollRect_NSKVONotifying_KC_NoScrollRect_RCTEnhancedScrollView
-NSKVONotifying_KC_NoScrollRect_RCTEnhancedScrollView
-KC_NoScrollRect_RCTEnhancedScrollView
-RCTEnhancedScrollView
+**File**: `android/src/main/java/com/reactnativekeyboardcontroller/extensions/Double.kt` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++package com.reactnativekeyboardcontroller.extensions
++
++/** Maps a destination keyboard height to closed (0) or open (1) progress. */
++val Double.progress: Double
++  get() = if (this > 0.0) 1.0 else 0.0
 ```
 
-Both decoration helpers now walk the superclass chain before ad
-
-**File**: `ios/views/ClippingScrollViewDecoratorViewManager.mm` (modified, +10/-6)
+**File**: `android/src/main/java/com/reactnativekeyboardcontroller/listeners/KeyboardAnimationCallback.kt` (modified, +7/-6)
 ```diff
-@@ -53,9 +53,11 @@ static void KCApplyNoopScrollRectToVisible(UIScrollView *scrollView)
-   Class originalClass = object_getClass(scrollView);
-   NSString *originalClassName = NSStringFromClass(originalClass);
- 
--  // Already patched — nothing to do
--  if ([originalClassName hasPrefix:KCNoScrollRectClassPrefix]) {
--    return;
-+  // KVO and other runtime subclasses can sit above our patch.
-+  for (Class cls = originalClass; cls; cls = class_getSuperclass(cls)) {
-+    if ([NSStringFromClass(cls) hasPrefix:KCNoScrollRectClassPrefix]) {
-+      return;
+@@ -23,6 +23,7 @@ import com.reactnativekeyboardcontroller.extensions.emitEvent
+ import com.reactnativekeyboardcontroller.extensions.isKeyboardAnimation
+ import com.reactnativekeyboardcontroller.extensions.keepShadowNodesInSync
+ import com.reactnativekeyboardcontroller.extensions.keyboardType
++import com.reactnativekeyboardcontroller.extensions.progress
+ import com.reactnativekeyboardcontroller.interactive.InteractiveKeyboardProvider
+ import com.reactnativekeyboardcontroller.log.Logger
+ import com.reactnativekeyboardcontroller.traversal.FocusedInputHolder
+@@ -96,7 +97,7 @@ class KeyboardAnimationCallback(
+               eventPropagationView.id,
+               KeyboardTransitionEvent.Start,
+               this.persistentKeyboardHeight,
+-              1.0,
++              this.persistentKeyboardHeight.progress,
+               0,
+               viewTagFocused,
+             ),
+@@ -108,7 +109,7 @@ class KeyboardAnimationCallback(
+               eventPropagationView.id,
+               KeyboardTransitionEvent.End,
+               this.persistentKeyboardHeight,
+-              1.0,
++              this.persistentKeyboardHeight.progress,
+               0,
+               viewTagFocused,
+             ),
+@@ -239,7 +240,7 @@ class KeyboardAnimationCallback(
+     pendingStartEvent =
+       PendingKeyboardStartEvent(
+         keyboardHeight,
+-        if (!isKeyboardVisible) 0.0 else 1.0,
++        keyboardHeight.progress,
+         duration,
+         viewTagFocused,
+       )
+@@ -353,7 +354,7 @@ class KeyboardAnimationCallback(
+             eventPropagationView.id,
+             KeyboardTransitionEvent.End,
+             keyboardHeight,
+-            if (!isKeyboardVisible) 0.0 else 1.0,
++            keyboardHeight.progress,
+             duration,
+             viewTagFocused,
+           ),
+@@ -404,7 +405,7 @@ class KeyboardAnimationCallback(
+           eventPropagationView.id,
+           eventName,
+           keyboardHeight,
+-          if (!isKeyboardVisible) 0.0 else 1.0,
++          keyboardHeight.progress,
+           duration,
+           viewTagFocused,
+         ),
+@@ -439,7 +440,7 @@ class KeyboardAnimationCallback(
+           eventPropagationView.id,
+           eventName,
+           keyboardHeight,
+-          1.0,
++          keyboardHeight.progress,
+           0,
+           viewTagFocused,
+         ),
+```
+
+---
+
+### Incident Patch 2: `bbc2203f` (2026-11-11)
+**Commit Message**: fix: preserve Android chat presses with content insets (#1759)
+
+## 📜 Description
+
+Synchronize Android Fabric ScrollView state with the native content
+inset so presses inside `KeyboardChatScrollView` survive small pointer
+movements.
+
+## 💡 Motivation and Context
+
+Fixes #1758.
+
+With an inverted list, the keyboard open, and `extraContentPadding`
+applied, the content is translated natively while Fabric still measures
+its previous position. A few-pixel horizontal MOVE then puts the pointer
+outside Pressability's measured bounds and cancels long presses, row
+presses, and nested Text links. A stationary hold still works.
+
+The verified reproduction is preserved in
+[issue1758.repro.js](https://github.com/kirillzyusko/react-native-keyboard-controller/blob/9ae9bb223249e9d442cca4b05691939665f39793/FabricExample/issue1758.repro.js).
+Tap **Open keyboard**, then press **Message 1** or **Read more** and
+move horizontally by 2+ physical pixels before releasing. For a long
+press, hold for at least 350 ms. The status should report the
+corresponding callback; without the fix it stays unchanged after the
+MOVE
+
+> The reproduction also changes the list's opacity from JS every 40 ms
+to exercise concurren
+
+**File**: `android/src/fabric/java/com/reactnativekeyboardcontroller/extensions/ScrollViewState.kt` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++package com.reactnativekeyboardcontroller.extensions
++
++import android.view.ViewGroup
++import com.facebook.react.views.scroll.ReactScrollViewHelper
++import com.facebook.react.views.scroll.ReactScrollViewHelper.HasScrollState
++import com.facebook.react.views.scroll.ReactScrollViewHelper.HasStateWrapper
++
++internal fun ViewGroup.syncContentInsetState(topInsetPx: Int) {
++  if (this is HasScrollState && this is HasStateWrapper) {
++    // Fabric applies this content-only offset after the ScrollView transform.
++    // Match the native translation in screen axes, including inverted lists,
++    // without shifting the measured viewport or changing virtualizer layout.
++    val scrollState = reactScrollViewScrollState
++    val contentOffset = (topInsetPx * scaleY).toInt()
++    if (scrollState.scrollAwayPaddingTop != contentOffset) {
++      scrollState.scrollAwayPaddingTop = contentOffset
++      ReactScrollViewHelper.forceUpdateState(this)
 +    }
++  }
++}
+```
+
+**File**: `android/src/main/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorView.kt` (modified, +3/-0)
+```diff
+@@ -9,6 +9,7 @@ import androidx.core.widget.NestedScrollView
+ import com.facebook.react.uimanager.ThemedReactContext
+ import com.facebook.react.views.view.ReactViewGroup
+ import com.reactnativekeyboardcontroller.extensions.px
++import com.reactnativekeyboardcontroller.extensions.syncContentInsetState
+ import kotlin.math.max
+ 
+ @SuppressLint("ViewConstructor")
+@@ -127,6 +128,8 @@ class ClippingScrollViewDecoratorView(
+     }
+ 
+     appliedTopInsetPx = newTopInsetPx
++
++    scrollView.syncContentInsetState(newTopInsetPx)
    }
  
-   NSString *subclassName = [KCNoScrollRectClassPrefix stringByAppendingString:originalClassName];
-@@ -100,9 +102,11 @@ static void KCApplyFixedHitTest(UIScrollView *scrollView)
-   Class originalClass = object_getClass(container);
-   NSString *originalClassName = NSStringFromClass(originalClass);
+   private fun shouldUsePaddingScrollWorkaround(
+```
+
+**File**: `android/src/paper/java/com/reactnativekeyboardcontroller/extensions/ScrollViewState.kt` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++package com.reactnativekeyboardcontroller.extensions
++
++import android.view.ViewGroup
++
++@Suppress("UNUSED_PARAMETER")
++internal fun ViewGroup.syncContentInsetState(topInsetPx: Int) {
++  // Paper has no Fabric measurement state; keep support for React Native 0.65.
++}
+```
+
+---
+
+### Incident Patch 3: `342891b5` (2026-11-09)
+**Commit Message**: fix: synchronize focused input layout inside Android modals (#1755)
+
+## 📜 Description
+
+Read the focused input from the shared holder when synchronizing layout
+on Android. This prevents an extra scroll when `bottomOffset` changes
+after an app-driven `scrollTo` inside a Modal.
+
+## 💡 Motivation and Context
+
+Fixes #1753.
+
+The `bottomOffset` effect calls `update()`, but the native command
+reaches the provider's **main-window** observer. That observer's
+`lastFocusedInput` does not track the Modal's window, so the completion
+event can arrive without refreshing the Modal input layout. The next
+calculation uses the old input position and adds another 40 points while
+the Modal remains open.
+
+Read `FocusedInputHolder` directly in `syncUpLayout()` and set it before
+the first measurement on focus. Keep the per-observer input reference
+for its text/selection/layout subscriptions. The holder also remembers
+an unfocused input for focus restoration, so measurement still requires
+`isFocused`. This keeps it closer to iOS, where we read
+`UIResponder.current` (i. e. currently focused input).
+
+The [standalone
+reproduction](https://github.com/kirillzyusko/react-native-keyboard-controller/commit/4307b7c
+
+**File**: `android/src/main/java/com/reactnativekeyboardcontroller/listeners/FocusedInputObserver.kt` (modified, +2/-2)
+```diff
+@@ -107,12 +107,12 @@ class FocusedInputObserver(
+         stopObservingFocusedInput()
+       }
+       if (newFocus is EditText) {
++        FocusedInputHolder.set(newFocus)
+         lastFocusedInput = newFocus
+         newFocus.addOnLayoutChangeListener(layoutListener)
+         this.syncUpLayout()
+         textWatcher = newFocus.addOnTextChangedListener(textListener)
+         selectionSubscription = newFocus.addOnSelectionChangedListener(selectionListener)
+-        FocusedInputHolder.set(newFocus)
  
--  // Already patched — nothing to do
--  if ([originalClassName hasPrefix:KCFixedHitTestClassPrefix]) {
--    return;
-+  // KVO and other runtime subclasses can sit above our patch.
-+  for (Class cls = originalClass; cls; cls = class_getSuperclass(cls)) {
-+    if ([NSStringFromClass(cls) hasPrefix:KCFixedHitTestClassPrefix]) {
-+      return;
-+    }
+         val groupAncestor = ViewHierarchyNavigator.findGroupAncestor(newFocus)
+         val allInputFields = ViewHierarchyNavigator.getAllInputFields(groupAncestor ?: context?.rootView)
+@@ -137,7 +137,7 @@ class FocusedInputObserver(
    }
  
-   NSString *subclassName = [KCFixedHitTestClassPrefix stringByAppendingString:originalClassName];
+   fun syncUpLayout() {
+-    val input = lastFocusedInput ?: return
++    val input = FocusedInputHolder.get()?.takeIf { it.isFocused } ?: return
+ 
+     val (x, y) = input.screenLocation
+     val parentScrollView = input.parentScrollView
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1759** (2026-11-11): fix: preserve Android chat presses with content insets (@kirillzyusko)
+- **PR #1755** (2026-11-09): fix: synchronize focused input layout inside Android modals (@kirillzyusko)
 - **PR #1750** (2026-11-06): fix: preserve KVO subclasses when remounting scroll decorators (@kirillzyusko)
+- **PR #1748** (2026-11-09): ci: cancel superseded PR workflow runs (@JaydeepAgravat)
 - **PR #1747** (2026-11-05): docs: checkout `1.23.0` version (@kirillzyusko)
 - **PR #1746** (2026-11-05): docs: blogpost 1.23.0 (@kirillzyusko)
-- **PR #1745** (2026-11-05): chore: release 1.23.0 (@kirillzyusko)
-- **PR #1742** (2026-11-03): fix: keyboard flash after a launch from Spotlight with preload (@kirillzyusko)
-- **PR #1739** (2026-11-03): refactor: always decorate KeyboardAwareScrollView (@kirillzyusko)
 
 ---
 
@@ -488,45 +659,35 @@ Both decoration helpers now walk the superclass chain before ad
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. preserve KVO subclasses when remounting scroll decorators (#1750)
+## X. report zero progress for zero-height Android keyboards (#1731)
 
 **RULE**:
-When implementing operations in `ios/views/ClippingScrollViewDecoratorViewManager.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kirillzyusko/react-native-keyboard-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `android/src/main/java/com/reactnativekeyboardcontroller/extensions/Double.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kirillzyusko/react-native-keyboard-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1cf8d3e7`: preserve KVO subclasses when remounting scroll decorators (#1750). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a8700949`: report zero progress for zero-height Android keyboards (#1731). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ios/views/ClippingScrollViewDecoratorViewManager.mm`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/reactnativekeyboardcontroller/extensions/Double.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  // KVO and other runtime subclasses can sit above our patch.
-  for (Class cls = originalClass; cls; cls = class_getSuperclass(cls)) {
-    if ([NSStringFromClass(cls) hasPrefix:KCNoScrollRectClassPrefix]) {
-      return;
-    }
-  // KVO and other runtime subclasses can sit above our patch.
-  for (Class cls = originalClass; cls; cls = class_getSuperclass(cls)) {
-    if ([NSStringFromClass(cls) hasPrefix:KCFixedHitTestClassPrefix]) {
-      return;
-    }
+package com.reactnativekeyboardcontroller.extensions
+
+/** Maps a destination keyboard height to closed (0) or open (1) progress. */
+val Double.progress: Double
+  get() = if (this > 0.0) 1.0 else 0.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  // Already patched — nothing to do
-  if ([originalClassName hasPrefix:KCNoScrollRectClassPrefix]) {
-    return;
-  // Already patched — nothing to do
-  if ([originalClassName hasPrefix:KCFixedHitTestClassPrefix]) {
-    return;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1cf8d3e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a8700949` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

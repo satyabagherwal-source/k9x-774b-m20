@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T17:11:58.801Z",
+  "updated_at": "2026-11-13T17:25:37.930Z",
   "stats": {
-    "total_discovered": 2732,
-    "approved_pending_harvest": 2553,
+    "total_discovered": 2759,
+    "approved_pending_harvest": 2580,
     "harvested_count": 0,
     "rejected_count": 179,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2549,
+      "COMMUNITY_AND_EXPERT": 2573,
       "OFFICIAL_DOCUMENTATION": 96,
-      "STANDARDS_AND_SPECIFICATIONS": 75,
+      "STANDARDS_AND_SPECIFICATIONS": 78,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 9,
       "LEGAL_AND_REGULATORY": 1,
@@ -58871,6 +58871,600 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
         "fileName": "meilisearch-meilisearch-learnings.md"
+      }
+    },
+    "SRC-FBEBF89105C0": {
+      "id": "SRC-FBEBF89105C0",
+      "url": "https://github.com/pimalaya/io-maildir?rev=ab6c2829ea7c05b5dbca0eec5f327faaba7ddc31",
+      "title": "https://github.com/pimalaya/io-maildir?rev=ab6c2829ea7c05b5dbca0eec5f327faaba7ddc31",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.394Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-8FA1CB6ABE88": {
+      "id": "SRC-8FA1CB6ABE88",
+      "url": "https://github.com/pimalaya/io-maildir?rev=01552733c853784514578338f0059e28d4277656",
+      "title": "https://github.com/pimalaya/io-maildir?rev=01552733c853784514578338f0059e28d4277656",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.420Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-7788E5869ACF": {
+      "id": "SRC-7788E5869ACF",
+      "url": "https://github.com/pimalaya/io-mbox?rev=161d84fb691d6954d15d7e3739793251f499d05f",
+      "title": "https://github.com/pimalaya/io-mbox?rev=161d84fb691d6954d15d7e3739793251f499d05f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.456Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-0B28C3C724C6": {
+      "id": "SRC-0B28C3C724C6",
+      "url": "https://github.com/pimalaya/io-gmail",
+      "title": "https://github.com/pimalaya/io-gmail",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.489Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-D64CF8CCE959": {
+      "id": "SRC-D64CF8CCE959",
+      "url": "https://github.com/pimalaya/io-imap",
+      "title": "https://github.com/pimalaya/io-imap",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.512Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-DE25C584583A": {
+      "id": "SRC-DE25C584583A",
+      "url": "https://github.com/pimalaya/io-jmap",
+      "title": "https://github.com/pimalaya/io-jmap",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.534Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-84949E448C15": {
+      "id": "SRC-84949E448C15",
+      "url": "https://github.com/pimalaya/io-msgraph",
+      "title": "https://github.com/pimalaya/io-msgraph",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.567Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-04BD442EE4BE": {
+      "id": "SRC-04BD442EE4BE",
+      "url": "https://github.com/pimalaya/mime",
+      "title": "https://github.com/pimalaya/mime",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.601Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-6D4E8DF44C87": {
+      "id": "SRC-6D4E8DF44C87",
+      "url": "https://github.com/pimalaya/io-gmail?rev=458f882874fb02f18d4ad54666a4f75587f43fdd",
+      "title": "https://github.com/pimalaya/io-gmail?rev=458f882874fb02f18d4ad54666a4f75587f43fdd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.633Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-7337CCDD750E": {
+      "id": "SRC-7337CCDD750E",
+      "url": "https://github.com/pimalaya/io-imap?rev=dfe456f49e830ffd3742fd48328f1d5d4117ed3d",
+      "title": "https://github.com/pimalaya/io-imap?rev=dfe456f49e830ffd3742fd48328f1d5d4117ed3d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.657Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-699BA973C9B2": {
+      "id": "SRC-699BA973C9B2",
+      "url": "https://github.com/pimalaya/io-jmap?rev=359069519fcc750ad7ead0ea5bd727592a978dae",
+      "title": "https://github.com/pimalaya/io-jmap?rev=359069519fcc750ad7ead0ea5bd727592a978dae",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.682Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-484749397B02": {
+      "id": "SRC-484749397B02",
+      "url": "https://github.com/pimalaya/io-msgraph?rev=7480799b808958d6ba289e02ec3d6da25b98f635",
+      "title": "https://github.com/pimalaya/io-msgraph?rev=7480799b808958d6ba289e02ec3d6da25b98f635",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.703Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-3D27BDF29503": {
+      "id": "SRC-3D27BDF29503",
+      "url": "https://github.com/pimalaya/mime?rev=2591e7fec9e3dd8b995d47323c6fa8868c558857",
+      "title": "https://github.com/pimalaya/mime?rev=2591e7fec9e3dd8b995d47323c6fa8868c558857",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.727Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-0EAADDAC31ED": {
+      "id": "SRC-0EAADDAC31ED",
+      "url": "https://github.com/pimalaya/cli?rev=0fbe5dd597ec48419eac87a9372c0c0d1f40f6f3",
+      "title": "https://github.com/pimalaya/cli?rev=0fbe5dd597ec48419eac87a9372c0c0d1f40f6f3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.752Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-BB15633F5D7F": {
+      "id": "SRC-BB15633F5D7F",
+      "url": "https://github.com/pimalaya/cli?rev=8cd41db5db8608bc6f76006c6564fa69edbe2e32",
+      "title": "https://github.com/pimalaya/cli?rev=8cd41db5db8608bc6f76006c6564fa69edbe2e32",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.774Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-223A2CB1FB8D": {
+      "id": "SRC-223A2CB1FB8D",
+      "url": "https://github.com/pimalaya/io-pimdir?rev=cd33f0e51c93a6276d3b2089e409780bcfbda006",
+      "title": "https://github.com/pimalaya/io-pimdir?rev=cd33f0e51c93a6276d3b2089e409780bcfbda006",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.808Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-587B7C475853": {
+      "id": "SRC-587B7C475853",
+      "url": "https://github.com/pimalaya/io-pimdir",
+      "title": "https://github.com/pimalaya/io-pimdir",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.833Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-30AE3D02BEF5": {
+      "id": "SRC-30AE3D02BEF5",
+      "url": "https://www.rfc-editor.org/rfc/rfc3501",
+      "title": "IETF RFC 3501",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.888Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-B206A6FA588D": {
+      "id": "SRC-B206A6FA588D",
+      "url": "https://www.rfc-editor.org/rfc/rfc5256",
+      "title": "IETF RFC 5256",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.915Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-DDD0BF10A7D6": {
+      "id": "SRC-DDD0BF10A7D6",
+      "url": "https://www.rfc-editor.org/rfc/rfc4315",
+      "title": "IETF RFC 4315",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:24:51.940Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
+        "fileName": "pimalaya-himalaya-learnings.md"
+      }
+    },
+    "SRC-AA1B635F3B72": {
+      "id": "SRC-AA1B635F3B72",
+      "url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+      "title": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:25:37.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
+        "fileName": "hf-inclusionai-ming-image-0.1-design-learnings.md"
+      }
+    },
+    "SRC-72484B1518B5": {
+      "id": "SRC-72484B1518B5",
+      "url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+      "title": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:25:37.807Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-7D5C14E63C5E": {
+      "id": "SRC-7D5C14E63C5E",
+      "url": "https://github.com/DrKLO/Telegram/blob/e9a35cea54c06277c69d41b8e25d94b5d7ede065/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AdjustPanLayoutHelper.java",
+      "title": "https://github.com/DrKLO/Telegram/blob/e9a35cea54c06277c69d41b8e25d94b5d7ede065/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AdjustPanLayoutHelper.java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:25:37.838Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-1585129C97F3": {
+      "id": "SRC-1585129C97F3",
+      "url": "https://github.com/DrKLO/Telegram/blob/e9a35cea54c06277c69d41b8e25d94b5d7ede065/TMessagesProj/src/main/java/androidx/recyclerview/widget/ChatListItemAnimator.java",
+      "title": "https://github.com/DrKLO/Telegram/blob/e9a35cea54c06277c69d41b8e25d94b5d7ede065/TMessagesProj/src/main/java/androidx/recyclerview/widget/ChatListItemAnimator.java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:25:37.861Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-5EA4A3EC377D": {
+      "id": "SRC-5EA4A3EC377D",
+      "url": "https://github.com/kirillzyusko/react-native-keyboard-controller/blob/9ae9bb223249e9d442cca4b05691939665f39793/FabricExample/issue1758.repro.js",
+      "title": "https://github.com/kirillzyusko/react-native-keyboard-controller/blob/9ae9bb223249e9d442cca4b05691939665f39793/FabricExample/issue1758.repro.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:25:37.884Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-74FCE79FB699": {
+      "id": "SRC-74FCE79FB699",
+      "url": "https://github.com/kirillzyusko/react-native-teleport/pull/150",
+      "title": "https://github.com/kirillzyusko/react-native-teleport/pull/150",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:25:37.907Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-DE9908E2CCF9": {
+      "id": "SRC-DE9908E2CCF9",
+      "url": "https://github.com/kirillzyusko/react-native-keyboard-controller/commit/4307b7c",
+      "title": "https://github.com/kirillzyusko/react-native-keyboard-controller/commit/4307b7c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T17:25:37.930Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
       }
     }
   }

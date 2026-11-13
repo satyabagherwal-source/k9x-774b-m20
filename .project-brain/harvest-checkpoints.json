@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T17:11:08.527Z",
+  "last_updated": "2026-11-13T17:24:47.209Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -620,14 +620,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "content_hash": "94edaebb487012752b2f27cee126ec7e7f0341cbcad4568e192a004ef5f9daaa",
-      "verified_at": "2026-11-08T16:33:30.007Z",
+      "content_hash": "145ab63e180ee23782214241017097cdd63a9535ae8ab79374dc5fcea2c48a24",
+      "verified_at": "2026-11-13T17:24:39.307Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:33:30.007Z"
+      "last_updated": "2026-11-13T17:24:39.307Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -7236,14 +7236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pimalaya-himalaya",
-      "content_hash": "00802509ab3b862ab6ff456d7a0fce89f1aaff9069d217f963f2cda0f9e49511",
-      "verified_at": "2026-11-12T04:50:27.869Z",
+      "content_hash": "eb3b2de305b0a70f1b393984ce6763435d16805f502404d0597881bc3e25549f",
+      "verified_at": "2026-11-13T17:24:41.979Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T04:50:27.869Z"
+      "last_updated": "2026-11-13T17:24:41.979Z"
     },
     "wcandillon/react-native-skia": {
       "repository": "wcandillon/react-native-skia",
@@ -17046,14 +17046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kirillzyusko-react-native-keyboard-controller",
-      "content_hash": "13182f3468c9a9810a879fce3e3f7219267d262c0dbe1ecdf1a00d01af421743",
-      "verified_at": "2026-11-09T06:45:55.449Z",
+      "content_hash": "776cf5dd132dbf4558d65c393030412c344a4b05b3d54684dfa74eab2b1675bd",
+      "verified_at": "2026-11-13T17:24:47.209Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T06:45:55.449Z"
+      "last_updated": "2026-11-13T17:24:47.209Z"
     },
     "margelo/react-native-blur": {
       "repository": "margelo/react-native-blur",

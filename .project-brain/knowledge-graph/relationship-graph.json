@@ -2,10 +2,10 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T17:11:56.808Z",
+  "updated_at": "2026-11-13T17:25:37.478Z",
   "statistics": {
-    "total_nodes": 106,
-    "total_edges": 59,
+    "total_nodes": 107,
+    "total_edges": 61,
     "domain_distribution": {
       "D": 87,
       "M": 1,
@@ -13,10 +13,11 @@
       "J": 3,
       "K": 3,
       "L": 2,
-      "G": 1
+      "G": 1,
+      "F": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 59
+      "CONSTRAINED_BY_ARCHITECTURE": 61
     }
   },
   "nodes": {
@@ -2365,6 +2366,30 @@
       ],
       "created_at": "2026-11-13T17:11:56.808Z",
       "updated_at": "2026-11-13T17:11:56.808Z"
+    },
+    "DOM-F-456EB881": {
+      "id": "DOM-F-456EB881",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): inclusionAI/Ming-Image-0.1-Design",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md`  \n> **Source**: huggingface ([htt -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md`  \n> **Source**: huggingface ([htt",
+      "confidence": 0.71,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-inclusionai-ming-image-0.1-design/hf-inclusionai-ming-image-0.1-design-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T17:24:52.437Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-inclusionai-ming-image-0.1-design)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence",
+        "M",
+        "D"
+      ],
+      "created_at": "2026-11-13T17:25:37.478Z",
+      "updated_at": "2026-11-13T17:25:37.478Z"
     }
   },
   "edges": [
@@ -2957,6 +2982,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-AFA4F352 [D] with Domain M",
       "created_at": "2026-11-13T16:59:44.499Z"
+    },
+    {
+      "id": "EDGE-665B2D7AF054",
+      "sourceId": "DOM-F-456EB881",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-F-456EB881 [F] with Domain M",
+      "created_at": "2026-11-13T17:25:37.478Z"
+    },
+    {
+      "id": "EDGE-1F4CCAFDEC4D",
+      "sourceId": "DOM-F-456EB881",
+      "targetId": "NODE-D-domain-bridge-d",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-F-456EB881 [F] with Domain D",
+      "created_at": "2026-11-13T17:25:37.478Z"
     }
   ]
 }

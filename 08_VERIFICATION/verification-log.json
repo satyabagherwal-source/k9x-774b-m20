@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-BNQB",
-    "timestamp": "2026-11-12T21:31:14.531Z",
-    "repository": "langchain4j/langchain4j",
-    "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "03ba868832fef014f146c8fa140d6b5753cc1a1cb76fdcb4a52aafbbf227321b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-BNZ3",
-    "timestamp": "2026-11-12T21:31:14.847Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "3e8b982f011d5e5c04908daa9862539f628938603069f901c3b3ac793f59417d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-P0UZ",
-    "timestamp": "2026-11-12T21:41:38.075Z",
-    "repository": "topgrade-rs/topgrade",
-    "learningId": "learn-github-topgrade-rs-topgrade",
-    "contentHash": "451ad5b05e5704584492e895a5bf9e5368ef8e45704270758403b1293a2b359f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-PAE2",
     "timestamp": "2026-11-12T21:41:50.426Z",
     "repository": "prof18/feed-flow",
@@ -7490,6 +7445,51 @@
     "repository": "meilisearch/meilisearch",
     "learningId": "learn-github-meilisearch-meilisearch",
     "contentHash": "c1d21ea36fed0b9251a67101ca075a2ea5e123a6095e4b150e8d200685b63cf9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-YEBF",
+    "timestamp": "2026-11-13T17:24:39.291Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "145ab63e180ee23782214241017097cdd63a9535ae8ab79374dc5fcea2c48a24",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-YGD7",
+    "timestamp": "2026-11-13T17:24:41.947Z",
+    "repository": "pimalaya/himalaya",
+    "learningId": "learn-github-pimalaya-himalaya",
+    "contentHash": "eb3b2de305b0a70f1b393984ce6763435d16805f502404d0597881bc3e25549f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-YKEK",
+    "timestamp": "2026-11-13T17:24:47.180Z",
+    "repository": "kirillzyusko/react-native-keyboard-controller",
+    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+    "contentHash": "776cf5dd132dbf4558d65c393030412c344a4b05b3d54684dfa74eab2b1675bd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

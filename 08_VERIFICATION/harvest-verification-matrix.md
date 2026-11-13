@@ -9541,3 +9541,7 @@
 | `CYCLE-20261113-GXRO` | `2026-11-13T17:11:04.692Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e3d6ec28...`) |
 | `CYCLE-20261113-H0PC` | `2026-11-13T17:11:08.496Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c1d21ea3...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T17:11:56.809Z` | `hf-xiaomimimo-mimo-v2.6-distill-qwen-9b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F5004225` [Domain D] | Yes (`d12f60bb...`) |
+| `CYCLE-20261113-YEBF` | `2026-11-13T17:24:39.291Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`145ab63e...`) |
+| `CYCLE-20261113-YGD7` | `2026-11-13T17:24:41.947Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`eb3b2de3...`) |
+| `CYCLE-20261113-YKEK` | `2026-11-13T17:24:47.180Z` | `kirillzyusko/react-native-keyboard-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`776cf5dd...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T17:25:37.479Z` | `hf-inclusionai-ming-image-0.1-design` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-456EB881` [Domain F] | Yes (`41dbb76e...`) |

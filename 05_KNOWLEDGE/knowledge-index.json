@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T17:11:59.224Z",
+  "last_updated": "2026-11-13T17:25:38.326Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -28028,7 +28028,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "94edaebb487012752b2f27cee126ec7e7f0341cbcad4568e192a004ef5f9daaa",
+      "content_hash": "145ab63e180ee23782214241017097cdd63a9535ae8ab79374dc5fcea2c48a24",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "promoted_rules": [
@@ -28139,7 +28139,7 @@
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws"
       ],
-      "verified_at": "2026-11-08T16:33:29.866Z",
+      "verified_at": "2026-11-13T17:24:39.155Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52980,8 +52980,8 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "927950e2",
-      "content_hash": "00802509ab3b862ab6ff456d7a0fce89f1aaff9069d217f963f2cda0f9e49511",
+      "source_version": "7518aee3",
+      "content_hash": "eb3b2de305b0a70f1b393984ce6763435d16805f502404d0597881bc3e25549f",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
@@ -52998,6 +52998,11 @@
         {
           "number": null,
           "title": "config)!: fix the flag glyphs, ignore the envelope.list.table block",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "fix!: fix what the local stores campaign found in Maildir and mbox",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -53026,7 +53031,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T04:50:27.676Z",
+      "verified_at": "2026-11-13T17:24:41.818Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156781,8 +156786,8 @@
       "slug": "kirillzyusko-react-native-keyboard-controller",
       "platform": "github",
       "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-      "source_version": "1cf8d3e7",
-      "content_hash": "13182f3468c9a9810a879fce3e3f7219267d262c0dbe1ecdf1a00d01af421743",
+      "source_version": "a8700949",
+      "content_hash": "776cf5dd132dbf4558d65c393030412c344a4b05b3d54684dfa74eab2b1675bd",
       "dossier_path": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "promoted_rules": [
@@ -156794,6 +156799,11 @@
         {
           "number": null,
           "title": "preserve KVO subclasses when remounting scroll decorators (#1750)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "report zero progress for zero-height Android keyboards (#1731)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -156817,7 +156827,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T06:45:55.333Z",
+      "verified_at": "2026-11-13T17:24:47.049Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -194932,6 +194942,126 @@
       "content_hash": "1ca6e319597910b1e0704b9fc00a5a6339d0fd95a05f25c4f9e160498624d4a4",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T17:11:59.224Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ming-image-0-1-design-research-knowledge-intelligence-inclusionai.md",
+      "title": "Research & Knowledge Intelligence: inclusionAI/Ming-Image-0.1-Design Core Invariants",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "source_version": "hf-inclusionai-ming-image-0.1-design",
+      "content_hash": "8e53a7fac471a7c64e7fb7e83ae5b3fcb59cfd4b7107d15ac3831e9abda07bdc",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T17:24:39.483Z"
+    },
+    "candidate_directive-fix-fix-what-the-local-stores-campaign-found-in-maildir-and-mbox": {
+      "item_id": "candidate_directive-fix-fix-what-the-local-stores-campaign-found-in-maildir-and-mbox",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YO8D-fix-fix-what-the-local-stores-campaign-found-in-maildir-and-mbox.md",
+      "title": "fix!: fix what the local stores campaign found in Maildir and mbox",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "80f5eb3a1e708d1ea64fbc6eb3e4982146b136ab5693c1e3c3d5caaf3b171183",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-13T17:24:52.147Z"
+    },
+    "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants": {
+      "item_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-product-intelligence-pimalaya-himalaya-core-invariants.md",
+      "title": "Product Intelligence: pimalaya/himalaya Core Invariants",
+      "repository": "pimalaya/himalaya",
+      "source_version": "7518aee3",
+      "content_hash": "ddf85dd4f58819f5bc6481d967c1e21d31fefd4f3e33804ff830bb6764711310",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-13T17:24:42.273Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/pimalaya-himalaya-verification-protocol-empirical-defect-shield-for-pimalaya-him.md",
+      "title": "Verification Protocol: Empirical Defect Shield for pimalaya/himalaya",
+      "repository": "pimalaya/himalaya",
+      "source_version": "7518aee3",
+      "content_hash": "92898f3f097c128c6045ffed412c96695b5651fd61bd6216ab89f0d5b2e6b10f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T17:24:42.371Z"
+    },
+    "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731": {
+      "item_id": "candidate_directive-report-zero-progress-for-zero-height-android-keyboards-1731",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZNP9-report-zero-progress-for-zero-height-android-keyboards-1731.md",
+      "title": "report zero progress for zero-height Android keyboards (#1731)",
+      "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2db79ef670de1bc25181fb3e2804cbf7c9de0c16e1dea6b856f1c1cd05d43654",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T17:25:38.110Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kirillzyusko-react-native-keyboard-controller-learnings-technical-construction-i.md",
+      "title": "Technical Construction Intelligence: kirillzyusko-react-native-keyboard-controller-learnings Core Invariants",
+      "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6af0771e0ec409687822f1a6618ac87a7a996e179918a9d9b03fc483811ba9bd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T17:25:38.219Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kirillzyusko-react-native-keyb": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kirillzyusko-react-native-keyb",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kirillzyusko-react-native-keyboard-controller-learnings-verification-protocol-em.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kirillzyusko-react-native-keyboard-controller-learnings",
+      "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "42a8b1c490bee7b77b546b70e4cd1a00abc2e4521b8919ad9dbb3362e12d7e9f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T17:25:38.326Z"
+    },
+    "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants": {
+      "item_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-learnings-product-intelligence-pimalaya-himalaya-learnings-cor.md",
+      "title": "Product Intelligence: pimalaya-himalaya-learnings Core Invariants",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f59745061176fb4a6b8bfb38f05ff0e985c80ce83dc19826db949988adafeb63",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-13T17:24:52.244Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pimalaya-himalaya-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/pimalaya-himalaya-learnings-verification-protocol-empirical-defect-shield-for-pi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for pimalaya-himalaya-learnings",
+      "repository": "pimalaya-himalaya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4c1d0173f01d1cff9211fcd5c4afd6eb7e22d90be0fb2887a40b42ae101b8de6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T17:24:52.341Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ming-image-0-1-design-learnings-research-knowledge-intelligence-h.md",
+      "title": "Research & Knowledge Intelligence: hf-inclusionai-ming-image-0.1-design-learnings Core Invariants",
+      "repository": "hf-inclusionai-ming-image-0.1-design-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9e5ec42b7ca8eba6507dca5e02f68a428454caf8ee38e0be2d7b3bd6b7323146",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T17:25:37.679Z"
     }
   },
   "aliases": {
@@ -200930,5 +201060,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9195
+  "total_items": 9205
 }

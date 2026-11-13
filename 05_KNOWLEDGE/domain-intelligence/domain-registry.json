@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T17:11:59.115Z",
-  "total_records": 226,
+  "last_updated": "2026-11-13T17:25:38.219Z",
+  "total_records": 232,
   "domains": {
     "A": {
       "total": 1,
@@ -11,12 +11,14 @@
       ]
     },
     "B": {
-      "total": 4,
+      "total": 6,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
         "domain_intelligence-product-intelligence-cilium-cilium-core-invariants",
-        "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants"
+        "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants",
+        "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants",
+        "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants"
       ]
     },
     "C": {
@@ -26,7 +28,7 @@
       ]
     },
     "D": {
-      "total": 131,
+      "total": 133,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -158,7 +160,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
         "DOM-D-F5004225",
-        "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning"
+        "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning",
+        "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant",
+        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c"
       ]
     },
     "E": {
@@ -168,10 +172,11 @@
       ]
     },
     "F": {
-      "total": 2,
+      "total": 3,
       "record_ids": [
         "DOM-F-C060CCE1",
-        "DOM-F-83D565C2"
+        "DOM-F-83D565C2",
+        "DOM-F-456EB881"
       ]
     },
     "G": {
@@ -199,7 +204,7 @@
       ]
     },
     "H": {
-      "total": 43,
+      "total": 44,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -243,7 +248,8 @@
         "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in",
         "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar"
+        "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
+        "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle"
       ]
     },
     "I": {
@@ -7057,6 +7063,99 @@
       "repository": "meilisearch-meilisearch-learnings",
       "content_hash": "0c685c3ec70687ffbf705284b77bb2bd1726441f70915375089cd9d969b663d9",
       "created_at": "2026-11-13T17:11:59.115Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-1-design-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: inclusionAI/Ming-Image-0.1-Design Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ming-image-0-1-design-research-knowledge-intelligence-inclusionai.md",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "content_hash": "8e53a7fac471a7c64e7fb7e83ae5b3fcb59cfd4b7107d15ac3831e9abda07bdc",
+      "created_at": "2026-11-13T17:24:39.483Z"
+    },
+    "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: pimalaya/himalaya Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-product-intelligence-pimalaya-himalaya-core-invariants.md",
+      "repository": "pimalaya/himalaya",
+      "content_hash": "ddf85dd4f58819f5bc6481d967c1e21d31fefd4f3e33804ff830bb6764711310",
+      "created_at": "2026-11-13T17:24:42.273Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: kirillzyusko-react-native-keyboard-controller-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kirillzyusko-react-native-keyboard-controller-learnings-technical-construction-i.md",
+      "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
+      "content_hash": "6af0771e0ec409687822f1a6618ac87a7a996e179918a9d9b03fc483811ba9bd",
+      "created_at": "2026-11-13T17:25:38.219Z"
+    },
+    "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: pimalaya-himalaya-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-learnings-product-intelligence-pimalaya-himalaya-learnings-cor.md",
+      "repository": "pimalaya-himalaya-learnings",
+      "content_hash": "f59745061176fb4a6b8bfb38f05ff0e985c80ce83dc19826db949988adafeb63",
+      "created_at": "2026-11-13T17:24:52.244Z"
+    },
+    "DOM-F-456EB881": {
+      "record_id": "DOM-F-456EB881",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        },
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): inclusionAI/Ming-Image-0.1-Design",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/inclusionAI/Ming-Image-0.1-Design](https://huggingface.co/inclusionAI/Ming-Image-0.1-Design))  \n> **Source Version**: `hf-inclusion`  \n> **L",
+      "content_hash": "41dbb76e5a1e44febd9b562bcb2ee4dce77f1b5c420e17b61dc69d56c4129537",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md`  \n> **Source**: huggingface ([htt -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md`  \n> **Source**: huggingface ([htt",
+      "provenance": {
+        "source_uri": "project://hf-inclusionai-ming-image-0.1-design/hf-inclusionai-ming-image-0.1-design-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T17:24:52.437Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-inclusionai-ming-image-0.1-design)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-inclusionai-ming-image-0.1-design"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M",
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.71,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T17:25:37.471Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-1-design-learnings-c",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-inclusionai-ming-image-0.1-design-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ming-image-0-1-design-learnings-research-knowledge-intelligence-h.md",
+      "repository": "hf-inclusionai-ming-image-0.1-design-learnings",
+      "content_hash": "9e5ec42b7ca8eba6507dca5e02f68a428454caf8ee38e0be2d7b3bd6b7323146",
+      "created_at": "2026-11-13T17:25:37.679Z"
     }
   }
 }

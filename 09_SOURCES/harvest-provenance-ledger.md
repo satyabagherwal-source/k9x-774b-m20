@@ -9574,3 +9574,7 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `f1e0a7ac` | Multi-dimensional audit evidence | 2026-11-13T17:11:04.696Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `1b782653` | Multi-dimensional audit evidence | 2026-11-13T17:11:08.509Z |
 | `learn-dom-d-f5004225` | `project://hf-xiaomimimo-mimo-v2.6-distill-qwen-9b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md` | 2026-11-13T17:11:56.809Z |
+| `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-13T17:24:39.296Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `7518aee3` | Multi-dimensional audit evidence | 2026-11-13T17:24:41.951Z |
+| `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `a8700949` | Multi-dimensional audit evidence | 2026-11-13T17:24:47.192Z |
+| `learn-dom-f-456eb881` | `project://hf-inclusionai-ming-image-0.1-design` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | 2026-11-13T17:25:37.479Z |
