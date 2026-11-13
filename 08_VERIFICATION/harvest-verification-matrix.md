@@ -9656,3 +9656,7 @@
 | `CYCLE-20261113-F1O2` | `2026-11-13T22:17:32.210Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8394` | Yes (`93d404a5...`) |
 | `CYCLE-20261113-F7JK` | `2026-11-13T22:17:39.824Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8395` | Yes (`d455c120...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T22:18:20.347Z` | `hf-comfy-org-minimax-h3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9A51060D` [Domain D] | Yes (`71acc84c...`) |
+| `CYCLE-20261113-W2CU` | `2026-11-13T22:30:46.254Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`9dc822c3...`) |
+| `CYCLE-20261113-WB0Q` | `2026-11-13T22:30:57.482Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8396` | Yes (`905631e7...`) |
+| `CYCLE-20261113-WD62` | `2026-11-13T22:31:00.266Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8397` | Yes (`77a68b55...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T22:31:29.965Z` | `hf-timm-mobilenetv3_small_100.lamb_in1k` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-62BFCC58` [Domain D] | Yes (`366f91ac...`) |

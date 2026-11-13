@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-0S7U",
-    "timestamp": "2026-11-13T03:26:42.138Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "805988603f563738c987fcda77f21322d65cbf66e878e4ccb5dd2de09ff7cd07",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-6RNQ",
-    "timestamp": "2026-11-13T03:31:21.350Z",
-    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-    "contentHash": "79e075ec3f54f66f117b872ec257ec6c96c3c01ced088d6ae98652564946f088",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-S8N2",
-    "timestamp": "2026-11-13T03:48:03.134Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-    "contentHash": "3b9e2483700c2cec118487e9c149537e33d3941ec0d9a057a83cf7ea97b9b1aa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-SJPG",
     "timestamp": "2026-11-13T03:48:17.476Z",
     "repository": "pola-rs/polars",
@@ -7490,6 +7445,51 @@
     "repository": "nginx/kubernetes-ingress",
     "learningId": "learn-github-nginx-kubernetes-ingress",
     "contentHash": "d455c12097f66dce150159bccd316a5ef9e63fa2633a01f703ef5f485d0440a4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-W2CU",
+    "timestamp": "2026-11-13T22:30:46.254Z",
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+    "contentHash": "9dc822c30f1783edd6626b8ee7dc8fafc9ec0223bcb857bd7e8d50af3cb92903",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-WB0Q",
+    "timestamp": "2026-11-13T22:30:57.482Z",
+    "repository": "infiniflow/infinity",
+    "learningId": "learn-github-infiniflow-infinity",
+    "contentHash": "905631e7e0c2b1a81bd2d3deec89b159c3bb72ca3bef33c96120a56620934f2a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-WD62",
+    "timestamp": "2026-11-13T22:31:00.266Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "77a68b55cb4fe7ef91359e8357a933e0bc3db7ecca6592eee6606884996060e5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

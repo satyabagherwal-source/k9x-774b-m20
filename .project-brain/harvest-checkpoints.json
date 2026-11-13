@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T22:17:39.840Z",
+  "last_updated": "2026-11-13T22:31:00.277Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1010,14 +1010,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-      "content_hash": "1a6f8383d6897161c233165b802e7e9516263f84c31e610741ff63e840eebdc3",
-      "verified_at": "2026-11-08T20:59:49.735Z",
+      "content_hash": "9dc822c30f1783edd6626b8ee7dc8fafc9ec0223bcb857bd7e8d50af3cb92903",
+      "verified_at": "2026-11-13T22:30:46.278Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T20:59:49.735Z"
+      "last_updated": "2026-11-13T22:30:46.278Z"
     },
     "amazon/chronos-2": {
       "repository": "amazon/chronos-2",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "bf2566942a5d6c0891a9c9f6b8e6172a4a33ea9311790322b42ac359a51ddc8a",
-      "verified_at": "2026-11-08T17:06:13.075Z",
+      "content_hash": "77a68b55cb4fe7ef91359e8357a933e0bc3db7ecca6592eee6606884996060e5",
+      "verified_at": "2026-11-13T22:31:00.276Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T17:06:13.075Z"
+      "last_updated": "2026-11-13T22:31:00.276Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "00d9c6304f1d0fef825fc7e525f5decbd3893b1249dfa67fd9b58b0ab283b028",
-      "verified_at": "2026-11-12T22:48:49.976Z",
+      "content_hash": "905631e7e0c2b1a81bd2d3deec89b159c3bb72ca3bef33c96120a56620934f2a",
+      "verified_at": "2026-11-13T22:30:57.492Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T22:48:49.976Z"
+      "last_updated": "2026-11-13T22:30:57.492Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",

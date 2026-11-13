@@ -9689,3 +9689,7 @@ Every entry in this ledger must capture:
 | `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `b0b7277b` | Multi-dimensional audit evidence | 2026-11-13T22:17:32.214Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `8c5b0b9d` | Multi-dimensional audit evidence | 2026-11-13T22:17:39.829Z |
 | `learn-dom-d-9a51060d` | `project://hf-comfy-org-minimax-h3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | 2026-11-13T22:18:20.347Z |
+| `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-11-13T22:30:46.271Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `7eb3b476` | Multi-dimensional audit evidence | 2026-11-13T22:30:57.485Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `c62b5245` | Multi-dimensional audit evidence | 2026-11-13T22:31:00.270Z |
+| `learn-dom-d-62bfcc58` | `project://hf-timm-mobilenetv3_small_100.lamb_in1k` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | 2026-11-13T22:31:29.965Z |

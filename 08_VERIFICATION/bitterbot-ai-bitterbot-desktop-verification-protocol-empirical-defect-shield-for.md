@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for bitterbot/ai/bitterbot/desktop
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for Bitterbot-AI/bitterbot-desktop
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "bitterbot/ai/bitterbot/desktop",
-  "source_url": "https://github.com/bitterbot/ai/bitterbot/desktop",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "Bitterbot-AI/bitterbot-desktop",
+  "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+  "source_version": "c62b5245",
+  "license": "MIT",
+  "timestamp": "2026-11-13T22:31:00.428Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [bitterbot/ai/bitterbot/desktop](https://github.com/bitterbot/ai/bitterbot/desktop) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `c62b5245`).  
+> **License**: MIT | **Timestamp**: `2026-11-13T22:31:00.428Z`  
+> **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `bitterbot/ai/bitterbot/desktop` (Commit: `historical`)
+- **Target Repository**: `Bitterbot-AI/bitterbot-desktop` (Commit: `c62b5245`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
-> **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `3fd42218`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T17:06:11.265Z  
-> **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): Bitterbot-AI/bitterbot-desktop
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T17:06:11.255Z  
+> **Harvest Timestamp**: 2026-11-13T22:30:59.515Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2483 stars
+- **Stars / Engagement**: 2486 stars
 
 ---
 
@@ -1723,162 +1709,371 @@ function ControlApp() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3fd42218` (2026-11-08)
-**Commit Message**: fix(memory): trim the embedding cache on every write; the agent explains its memory from its guide (#371)
+### Incident Patch 1: `3ff93025` (2026-11-08)
+**Commit Message**: fix(wallet): stop @coinbase/agentkit sending analytics to Coinbase
 
-Asked how its memory works, the live agent answered from memory_status
-numbers alone and got four mechanisms wrong: hormones change tone only
-(they also re-rank recall), lifecycle counts are lifetime totals (they are
-current states), consolidation happens in dreams (own 30-minute timer), and
-the cache was an overflowing query cache that thrashes (it is the embedding
-cache, and it ran past its cap).
+agentkit posts usage analytics to cca-lite.coinbase.com on its own: the
+wallet address, network and chain whenever a wallet provider is created, and
+the name of every wallet action invoked. It has no opt-out and it was not in
+docs/network/egress.md. On the live node it fired every 30 minutes and was
+rejected with HTTP 400 (the "Non-fatal unhandled rejection ... status: 400"
+log lines).
 
-- The embedding cache was trimmed to cache.maxEntries only at the end of a
-  full sync, so embeddings written in between pushed it past the cap (15,574
-  rows against 10,000 on the live node). The trim now runs on every cache
-  write.
-- memory-architecture SKILL.md: how hormones bear on ranking (recency tilt,
-  up to 15% for matching memories at 0.4 or above); a "Reading
-  memory_status" section (lifecycle counts are current states, cache is the
-  embedding cache); consolidation is separate from dreams; read this file
-  before explaining how you work, and say you are not sure rather than fill
-  a gap.
-- System prompt: read memory-architecture before explaining how you work,
-  since
+- patches/@[REDACTED_EMAIL] makes sendAnalyticsEvent return
+  without sending; wired through pnpm-workspace.yaml patchedDependencies.
+- Dockerfile and the release-tarball production install copy patches/ so
+  --frozen-lockfile applies it there too.
+- egress.md: new section saying what agentkit sent, that it is switched off,
+  and that 1.13.0 and earlier did not carry the patch.
 
-**File**: `docs/memory/architecture-overview.md` (modified, +1/-1)
+Lockfile: only the patch hash; an unrelated @noble/curves re-resolution
+(1.9.7 -> 1.9.1 under @zerodev/webauthn-key) was reverted.
+
+Test: the installed agentkit's sendAnalyticsEvent makes no fetch call
+(fails without the patch: fetch called once).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `Dockerfile` (modified, +2/-0)
 ```diff
-@@ -457,7 +457,7 @@ The P2P orchestrator bridge is wired later at gateway startup via `wireOrchestra
- | `peer_activity_log`         | Peer activity timestamps for anomaly detection                                     |
- | `mutation_queue`            | Dropped in v58 (PLAN-40); the mutation flow itself was retired in PLAN-45 Phase 1  |
- | `skill_edges`               | Discovered skill relationships (prerequisite, enables, etc.)                       |
--| `embedding_cache`           | Cached embedding vectors                                                           |
-+| `embedding_cache`           | Cached embedding vectors by text hash; every write trims it to `cache.maxEntries`  |
- | `memory_audit_log`          | Governance audit trail                                                             |
- | `entities`                  | Knowledge graph entities (person, project, concept, etc.)                          |
- | `relationships`             | Temporal entity relationships + SAGE per-edge gate (`gate_value`, `gate_features`) |
+@@ -21,6 +21,8 @@ RUN if [ -n "$BITTERBOT_DOCKER_APT_PACKAGES" ]; then \
+ # desktop/ and extensions/* are pnpm workspace members: without their
+ # package.json files, `--frozen-lockfile` fails against the workspace lockfile.
+ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
++# pnpm-workspace.yaml's patchedDependencies point here.
++COPY patches ./patches
+ COPY desktop/package.json ./desktop/
+ # One line per extension, deliberately: `COPY --parents` needs a newer BuildKit
+ # than CI's classic builder (and many self-hosters' Docker) provides. If a new
 ```
 
-**File**: `skills/memory-architecture/SKILL.md` (modified, +13/-2)
+**File**: `docs/network/egress.md` (modified, +13/-0)
 ```diff
-@@ -13,7 +13,7 @@ This is how your parts work when they run. It never says what is switched on: th
- - **Knowledge Crystals**: every retained piece of knowledge is a chunk of text with a semantic type (fact, preference, task_pattern, skill, episode, insight, relationship, goal, general), an importance score and a lifecycle (`generated -> activated -> consolidated -> archived -> expired`), plus an embedding once one is made (until then keyword search still finds it). Skills are frozen and do not decay.
- - **Sources**: workspace memory files (`MEMORY.md`, `memory/*.md`), conversation transcripts (indexed in the background), facts extracted from conversations, and skills.
- - **Forgetting**: importance follows an Ebbinghaus curve. What is used often, or carried strong feeling, resists decay.
--- **Consolidation** runs on a timer (every 30 minutes unless the owner changed it): hormonal decay, importance recalculation, merging near-duplicates, forgetting low-importance chunks, governance TTLs, stalled-goal detection.
-+- **Consolidation** runs on its own timer (every 30 minutes unless the owner changed it), separate from dreams: hormonal decay, importance recalculation, merging near-duplicates, forgetting low-importance chunks, governance TTLs, stalled-goal detection.
- - **Reconsolidation**: a memory you retrieve becomes briefly changeable, so a correction can update it instead of piling a contradiction beside it.
- - **Settled facts** live in a canonical ledger. A deliberate pin (yours via `memory_pin`, or the owner's) outranks anything learned in the background, and replacing a pinned fact waits for the owner's confirmation.
- - **Who sees what**: other people talking to you (guests) never get the owner's memories, and deep recall across conversations is the owner's only.
-@@ -30,6 +30,8 @@ This is how your parts work when they run. It never says what is switched on: th
+@@ -201,5 +201,18 @@ only a Bitterbot User-Agent), Skill Seekers ingestion
+ off) all require you to configure or enable them explicitly, and each has
+ a matching flag in Settings.
  
- Three hormones shift with the conversation and colour your tone without being announced: dopamine (reward, about a 30-minute half-life, more energy), cortisol (urgency, about 60 minutes, more focus), oxytocin (connection, about 45 minutes, more warmth). Your resting temperament is set in `GENOME.md`. `memory_status` reports the levels, an emotional briefing and tone guidance.
- 
-+They also change what recall ranks first, not only how you sound. They tilt how much recency counts, and once a hormone is at 0.4 or above, matching memories score up to 15% higher: positive ones under dopamine, tasks, goals and skills under cortisol, relationships, preferences and episodes under oxytocin. That can reorder close results; it does not bury a clearly better match.
++## Third-party SDK analytics: switched off
 +
- ## Dreams
- 
- When you have been idle and there is something new, the dream engine runs a cycle. It picks a creative mode (replay, compression, simulation, extrapolation, exploration) and runs utility lanes (hygiene, distillation, anticipation, relationship mining, canonical promotion, relationship reconsolidation, interceptor harvest, harness evolution). Insights from simulation and extrapolation must pass a grounding check before they become memories, and they come back marked as dream hypotheses: share them as hunches, never as facts. Each cycle rewrites `MEMORY.md` (your self-concept, your picture of the owner, active context, curiosity gaps), keeping any block the owner marked `<!-- owner -->` verbatim. A cycle with nothing new is skipped. `dream_status` and `dream_search` show what happened.
-@@ -47,14 +49,23 @@ The curiosity engine groups what you know into regions and scores each new memor
- - **Curator**: agent-made skills are archived, patched or merged based on use and errors; `skill_manage` lets you drive that through the same staging and gate.
- - **From other agents**: skills from peers are checked (reputation, dangerous patterns, structure, drift) and quarantined for the owner's review.
- 
-+## Reading `memory_status`
++`@coinbase/agentkit` (the wallet layer) sends usage analytics to
++`cca-lite.coinbase.com` on its own: the wallet address, network and chain
++each time a wallet provider starts, and the name of every wallet action
++invoked. It has no setting to stop this, so Bitterbot ships a patch
++(`patches/@coinbase__agentkit@0.10.4.patch`, applied by pnpm in every
++install, image and release tarball) that makes it send nothing. Releases up
++to 1.13.0 did not carry the patch; those requests were rejected by Coinbase
++(HTTP 400) on the node we checked and appeared in its gateway log as
++non-fatal unhandled rejections.
++Calls you make to the Coinbase CDP APIs for your own wallet are unaffected.
 +
-+It gives counts and health, not how the parts work; explain the workings from this file.
-+
-+- **Lifecycle counts** are how many memories are in each state now, not lifetime totals. `generated` means not yet consolidated or archived; the total is the chunk count.
-+- **`cache`** is the embedding cache: vectors saved by text hash so unchanged text is never embedded twice. It is not a cache of searches or answers. Every write trims it back to `maxEntries`, dropping the oldest first.
-+- **Hormone levels** are the ones described under Feelings, so they bear on ranking as well as tone.
-+
- ## The owner's controls
- 
- The owner can forget or edit a memory after previewing exactly what would change, pin facts, mark text in `MEMORY.md` as theirs, pause curiosity, and switch parts on or off in config. `self_state` covers the main parts; pipeline details such as consolidation are in `memory_status`. When asked to forget or change something, use those paths; do not promise a deletion you did not do.
- 
- ## Talking about yourself
- 
- - Before saying a part is running, call `self_state`. If
+ To verify this page against the code, grep the repo for the hostnames
+ above — every dial is in source, none are obfuscated.
 ```
 
-**File**: `src/agents/system-prompt.ts` (modified, +1/-1)
+**File**: `patches/@coinbase__agentkit@0.10.4.patch` (added, +14/-0)
 ```diff
-@@ -62,7 +62,7 @@ function buildMemorySection(params: {
+@@ -0,0 +1,14 @@
++diff --git a/dist/analytics/sendAnalyticsEvent.js b/dist/analytics/sendAnalyticsEvent.js
++index 3b04638..b6f0b66 100755
++--- a/dist/analytics/sendAnalyticsEvent.js
+++++ b/dist/analytics/sendAnalyticsEvent.js
++@@ -12,6 +12,9 @@ const md5_1 = __importDefault(require("md5"));
++  * @returns Promise that resolves when the event is sent
++  */
++ async function sendAnalyticsEvent(event) {
+++    // Bitterbot: never send usage analytics (wallet address, network, action
+++    // names) to Coinbase. Not disclosed in docs/network/egress.md; no opt-out upstream.
+++    return;
++     const timestamp = event.timestamp || Date.now();
++     // Prepare the event with required fields
++     const enhancedEvent = {
+```
+
+**File**: `pnpm-lock.yaml` (modified, +7/-2)
+```diff
+@@ -12,6 +12,11 @@ overrides:
+   tar: 7.5.9
+   tough-cookie: 4.1.3
+ 
++patchedDependencies:
++  '@coinbase/agentkit@0.10.4':
++    hash: c2065573a1d4ce99862b91ed2339b68727df65feba247439f36bec9dacc431c7
++    path: patches/@coinbase__agentkit@0.10.4.patch
++
+ importers:
+ 
+   .:
+@@ -36,7 +41,7 @@ importers:
+         version: 1.8.1
+       '@coinbase/agentkit':
+         specifier: ^0.10.4
+-        version: 0.10.4(@tanstack/query-core@5.100.1)(@tanstack/react-query@5.100.1(react@18.3.1))(@types/node@26.6.5)(@types/react@18.3.28)(@zerodev/webauthn-key@5.5.0(viem@2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(abitype@1.3.0(typescript@5.9.3)(zod@4.6.7))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(graphql@16.13.2)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
++        version: 0.10.4(patch_hash=c2065573a1d4ce99862b91ed2339b68727df65feba247439f36bec9dacc431c7)(@tanstack/query-core@5.100.1)(@tanstack/react-query@5.100.1(react@18.3.1))(@types/node@26.6.5)(@types/react@18.3.28)(@zerodev/webauthn-key@5.5.0(viem@2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(abitype@1.3.0(typescript@5.9.3)(zod@4.6.7))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(graphql@16.13.2)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+       '@coinbase/cdp-sdk':
+         specifier: ^1.57.1
+         version: 1.60.0(@x402/evm@2.10.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10))(@x402/svm@2.10.0(@solana/kit@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))))(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@5.0.10)
+@@ -10754,7 +10759,7 @@ snapshots:
+       fast-wrap-ansi: 0.2.2
+       sisteransi: 1.0.5
+ 
+-  '@coinbase/agentkit@0.10.4(@tanstack/query-core@5.100.1)(@tanstack/react-query@5.100.1(react@18.3.1))(@types/node@26.6.5)(@types/react@18.3.28)(@zerodev/webauthn-key@5.5.0(viem@2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(abitype@1.3.0(typescript@5.9.3)(zod@4.6.7))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(graphql@16.13.2)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
++  '@coinbase/agentkit@0.10.4(patch_hash=c2065573a1d4ce99862b91ed2339b68727df65feba247439f36bec9dacc431c7)(@tanstack/query-core@5.100.1)(@tanstack/react-query@5.100.1(react@18.3.1))(@types/node@26.6.5)(@types/react@18.3.28)(@zerodev/webauthn-key@5.5.0(viem@2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(abitype@1.3.0(typescript@5.9.3)(zod@4.6.7))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(graphql@16.13.2)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
+     dependencies:
+       '@across-protocol/app-sdk': 0.2.3(viem@2.38.3(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+       '@alloralabs/allora-sdk': 0.1.1
+```
+
+**File**: `pnpm-workspace.yaml` (modified, +6/-0)
+```diff
+@@ -17,6 +17,12 @@ overrides:
+   tar: 7.5.9
+   tough-cookie: 4.1.3
+ 
++# @coinbase/agentkit posts the wallet address, network and every wallet action
++# name to cca-lite.coinbase.com, with no opt-out. The patch makes that a no-op
++# (see docs/network/egress.md). Re-check it when bumping agentkit.
++patchedDependencies:
++  "@coinbase/agentkit@0.10.4": patches/@coinbase__agentkit@0.10.4.patch
++
+ onlyBuiltDependencies:
+   - "@lydell/node-pty"
+   - "@matrix-org/matrix-sdk-crypto-nodejs"
+```
+
+**File**: `scripts/build-release-tarball.mjs` (modified, +3/-1)
+```diff
+@@ -227,6 +227,8 @@ function installProductionDeps(stage) {
+   ]) {
+     copyFilePreservingMode(path.join(ROOT, file), path.join(stage, file));
    }
-   const lines = [
-     "## Memory System",
--    "Local, self-evolving memory (decaying Knowledge Crystals, hormones that modulate recall and tone, a dream engine that rewrites MEMORY.md). Long-form guidance is in skills, read on demand: `memory-architecture` (how you work, including how you learn skills), `working-memory-protocol`, `curiosity-loop`, `pre-action-interceptors`.",
-+    "Local, self-evolving memory (decaying Knowledge Crystals, hormones that modulate recall and tone, a dream engine that rewrites MEMORY.md). Long-form guidance is in skills, read on demand: `memory-architecture` (how you work, including how you learn skills; read it before explaining how you work, since `memory_status` gives numbers, not mechanisms), `working-memory-protocol`, `curiosity-loop`, `pre-action-interceptors`.",
-     "### Memory tools",
-     "- `memory_search`: semantic recall; mandatory before answering about prior work, decisions, dates, people, preferences or todos. Then `memory_get` for exact lines.",
-     '- `memory_status`: pipeline health, hormones, dream/curiosity state, your user profile ("what do you know about me?"), interceptor firings.',
-```
-
-**File**: `src/memory/manager-embedding-ops.ts` (modified, +3/-0)
-```diff
-@@ -167,6 +167,9 @@ class MemoryManagerEmbeddingOps {
-         now,
-       );
-     }
-+    // Embeddings reach the cache between full syncs too (session and crystal
-+    // writes), so the cap is kept here, not only at the end of a sync.
-+    this.pruneEmbeddingCacheIfNeeded();
++  // pnpm-workspace.yaml's patchedDependencies point here.
++  fs.cpSync(path.join(ROOT, "patches"), path.join(stage, "patches"), { recursive: true });
+   run(
+     "pnpm",
+     [
+@@ -247,7 +249,7 @@ function installProductionDeps(stage) {
+       },
+     },
+   );
+-  for (const extra of ["desktop", "scripts", "pnpm-workspace.yaml", ".npmrc"]) {
++  for (const extra of ["desktop", "scripts", "patches", "pnpm-workspace.yaml", ".npmrc"]) {
+     fs.rmSync(path.join(stage, extra), { recursive: true, force: true });
    }
- 
-   private pruneEmbeddingCacheIfNeeded(): void {
+   // pnpm bookkeeping with absolute CI paths and timestamps; Node never reads it.
 ```
 
-**File**: `src/memory/manager.embedding-cache-cap.test.ts` (added, +40/-0)
+**File**: `src/services/agentkit-analytics-off.test.ts` (added, +30/-0)
 ```diff
-@@ -0,0 +1,40 @@
-+import { describe, expect, it } from "vitest";
-+import { installEmbeddingManagerFixture } from "./embedding-manager.test-harness.js";
+@@ -0,0 +1,30 @@
++import { createRequire } from "node:module";
++import path from "node:path";
++import { afterEach, describe, expect, it, vi } from "vitest";
 +
-+const fx = installEmbeddingManagerFixture({
-+  fixturePrefix: "bitterbot-mem-cache-",
-+  largeTokens: 1250,
-+  smallTokens: 200,
-+  createCfg: ({ workspaceDir, indexPath, tokens }) => ({
-+    agents: {
-+      defaults: {
-+        workspace: workspaceDir,
-+        memorySearch: {
-+          provider: "openai",
-+          model: "mock-embed",
-+          store: { path: indexPath, vector: { enabled: false } },
-+          chunking: { tokens, overlap: 0 },
-+          cache: { enabled: true, maxEntries: 2 },
-+          sync: { watch: false, onSessionStart: false, onSearch: false },
-+          query: { minScore: 0, hybrid: { enabled: false } },
-+        },
-+      },
-+      list: [{ id: "main", default: true }],
-+    },
-+  }),
++// patches/@coinbase__agentkit@0.10.4.patch: agentkit posts the wallet address,
++// network and each wallet action name to cca-lite.coinbase.com, with no
++// opt-out. The patch turns that into a no-op; this fails if a bump drops it.
++const require = createRequire(import.meta.url);
++const agentkitDist = path.dirname(require.resolve("@coinbase/agentkit"));
++
++afterEach(() => {
++  vi.unstubAllGlobals();
 +});
 +
-+describe("memory embedding cache cap", () => {
-+  it("keeps the cap on every cache write, not only at the end of a full sync", () => {
-+    const manager = fx.getManagerSmall();
-+    const write = (
-+      manager as unknown as {
-+        upsertEmbeddingCache: (entries: Array<{ hash: string; embedding: number[] }>) => void;
-+      }
-+    ).upsertEmbeddingCache.bind(manager);
-+    write(Array.from({ length: 5 }, (_, i) => ({ hash: `h${i}`, embedding: [i, 1] })));
-+    const cache = manager.status().cache as { entries?: number; maxEntries?: number };
-+    expect(cache.maxEntries).toBe(2);
-+    expect(cache.entries).toBe(2);
++describe("@coinbase/agentkit analytics", () => {
++  it("sends nothing to Coinbase", async () => {
++    const fetchMock = vi.fn(async () => new Response(null, { status: 200 }));
++    vi.stubGlobal("fetch", fetchMock);
++    const { sendAnalyticsEvent } = require(
++      path.join(agentkitDist, "analytics", "sendAnalyticsEvent.js"),
++    ) as { sendAnalyticsEvent: (event: Record<string, unknown>) => Promise<void> };
++    await sendAnalyticsEvent({
++      name: "agent_initialization",
++      action: "initialize_wallet_provider",
++      component: "wallet_provider",
++      wallet_address: "0x0000000000000000000000000000000000000001",
++    });
++    expect(fetchMock).not.toHaveBeenCalled();
++  });
++});
+```
+
+---
+
+### Incident Patch 2: `c62b5245` (2026-11-13)
+**Commit Message**: Merge pull request #373 from Bitterbot-AI/fix/no-coinbase-analytics
+
+fix(wallet): stop @coinbase/agentkit sending analytics to Coinbase
+
+**File**: `Dockerfile` (modified, +2/-0)
+```diff
+@@ -21,6 +21,8 @@ RUN if [ -n "$BITTERBOT_DOCKER_APT_PACKAGES" ]; then \
+ # desktop/ and extensions/* are pnpm workspace members: without their
+ # package.json files, `--frozen-lockfile` fails against the workspace lockfile.
+ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
++# pnpm-workspace.yaml's patchedDependencies point here.
++COPY patches ./patches
+ COPY desktop/package.json ./desktop/
+ # One line per extension, deliberately: `COPY --parents` needs a newer BuildKit
+ # than CI's classic builder (and many self-hosters' Docker) provides. If a new
+```
+
+**File**: `docs/network/egress.md` (modified, +13/-0)
+```diff
+@@ -201,5 +201,18 @@ only a Bitterbot User-Agent), Skill Seekers ingestion
+ off) all require you to configure or enable them explicitly, and each has
+ a matching flag in Settings.
+ 
++## Third-party SDK analytics: switched off
++
++`@coinbase/agentkit` (the wallet layer) sends usage analytics to
++`cca-lite.coinbase.com` on its own: the wallet address, network and chain
++each time a wallet provider starts, and the name of every wallet action
++invoked. It has no setting to stop this, so Bitterbot ships a patch
++(`patches/@coinbase__agentkit@0.10.4.patch`, applied by pnpm in every
++install, image and release tarball) that makes it send nothing. Releases up
++to 1.13.0 did not carry the patch; those requests were rejected by Coinbase
++(HTTP 400) on the node we checked and appeared in its gateway log as
++non-fatal unhandled rejections.
++Calls you make to the Coinbase CDP APIs for your own wallet are unaffected.
++
+ To verify this page against the code, grep the repo for the hostnames
+ above — every dial is in source, none are obfuscated.
+```
+
+**File**: `patches/@coinbase__agentkit@0.10.4.patch` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++diff --git a/dist/analytics/sendAnalyticsEvent.js b/dist/analytics/sendAnalyticsEvent.js
++index 3b04638..b6f0b66 100755
++--- a/dist/analytics/sendAnalyticsEvent.js
+++++ b/dist/analytics/sendAnalyticsEvent.js
++@@ -12,6 +12,9 @@ const md5_1 = __importDefault(require("md5"));
++  * @returns Promise that resolves when the event is sent
++  */
++ async function sendAnalyticsEvent(event) {
+++    // Bitterbot: never send usage analytics (wallet address, network, action
+++    // names) to Coinbase. Not disclosed in docs/network/egress.md; no opt-out upstream.
+++    return;
++     const timestamp = event.timestamp || Date.now();
++     // Prepare the event with required fields
++     const enhancedEvent = {
+```
+
+**File**: `pnpm-lock.yaml` (modified, +7/-2)
+```diff
+@@ -12,6 +12,11 @@ overrides:
+   tar: 7.5.9
+   tough-cookie: 4.1.3
+ 
++patchedDependencies:
++  '@coinbase/agentkit@0.10.4':
++    hash: c2065573a1d4ce99862b91ed2339b68727df65feba247439f36bec9dacc431c7
++    path: patches/@coinbase__agentkit@0.10.4.patch
++
+ importers:
+ 
+   .:
+@@ -36,7 +41,7 @@ importers:
+         version: 1.8.1
+       '@coinbase/agentkit':
+         specifier: ^0.10.4
+-        version: 0.10.4(@tanstack/query-core@5.100.1)(@tanstack/react-query@5.100.1(react@18.3.1))(@types/node@26.6.5)(@types/react@18.3.28)(@zerodev/webauthn-key@5.5.0(viem@2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(abitype@1.3.0(typescript@5.9.3)(zod@4.6.7))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(graphql@16.13.2)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
++        version: 0.10.4(patch_hash=c2065573a1d4ce99862b91ed2339b68727df65feba247439f36bec9dacc431c7)(@tanstack/query-core@5.100.1)(@tanstack/react-query@5.100.1(react@18.3.1))(@types/node@26.6.5)(@types/react@18.3.28)(@zerodev/webauthn-key@5.5.0(viem@2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(abitype@1.3.0(typescript@5.9.3)(zod@4.6.7))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(graphql@16.13.2)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))
+       '@coinbase/cdp-sdk':
+         specifier: ^1.57.1
+         version: 1.60.0(@x402/evm@2.10.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10))(@x402/svm@2.10.0(@solana/kit@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))))(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@5.0.10)
+@@ -10754,7 +10759,7 @@ snapshots:
+       fast-wrap-ansi: 0.2.2
+       sisteransi: 1.0.5
+ 
+-  '@coinbase/agentkit@0.10.4(@tanstack/query-core@5.100.1)(@tanstack/react-query@5.100.1(react@18.3.1))(@types/node@26.6.5)(@types/react@18.3.28)(@zerodev/webauthn-key@5.5.0(viem@2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(abitype@1.3.0(typescript@5.9.3)(zod@4.6.7))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(graphql@16.13.2)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
++  '@coinbase/agentkit@0.10.4(patch_hash=c2065573a1d4ce99862b91ed2339b68727df65feba247439f36bec9dacc431c7)(@tanstack/query-core@5.100.1)(@tanstack/react-query@5.100.1(react@18.3.1))(@types/node@26.6.5)(@types/react@18.3.28)(@zerodev/webauthn-key@5.5.0(viem@2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)))(abitype@1.3.0(typescript@5.9.3)(zod@4.6.7))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(graphql@16.13.2)(react@18.3.1)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@18.3.1))(utf-8-validate@5.0.10)(ws@8.22.0(bufferutil@4.1.0)(utf-8-validate@5.0.10))':
+     dependencies:
+       '@across-protocol/app-sdk': 0.2.3(viem@2.38.3(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+       '@alloralabs/allora-sdk': 0.1.1
+```
+
+**File**: `pnpm-workspace.yaml` (modified, +6/-0)
+```diff
+@@ -17,6 +17,12 @@ overrides:
+   tar: 7.5.9
+   tough-cookie: 4.1.3
+ 
++# @coinbase/agentkit posts the wallet address, network and every wallet action
++# name to cca-lite.coinbase.com, with no opt-out. The patch makes that a no-op
++# (see docs/network/egress.md). Re-check it when bumping agentkit.
++patchedDependencies:
++  "@coinbase/agentkit@0.10.4": patches/@coinbase__agentkit@0.10.4.patch
++
+ onlyBuiltDependencies:
+   - "@lydell/node-pty"
+   - "@matrix-org/matrix-sdk-crypto-nodejs"
+```
+
+**File**: `scripts/build-release-tarball.mjs` (modified, +3/-1)
+```diff
+@@ -227,6 +227,8 @@ function installProductionDeps(stage) {
+   ]) {
+     copyFilePreservingMode(path.join(ROOT, file), path.join(stage, file));
+   }
++  // pnpm-workspace.yaml's patchedDependencies point here.
++  fs.cpSync(path.join(ROOT, "patches"), path.join(stage, "patches"), { recursive: true });
+   run(
+     "pnpm",
+     [
+@@ -247,7 +249,7 @@ function installProductionDeps(stage) {
+       },
+     },
+   );
+-  for (const extra of ["desktop", "scripts", "pnpm-workspace.yaml", ".npmrc"]) {
++  for (const extra of ["desktop", "scripts", "patches", "pnpm-workspace.yaml", ".npmrc"]) {
+     fs.rmSync(path.join(stage, extra), { recursive: true, force: true });
+   }
+   // pnpm bookkeeping with absolute CI paths and timestamps; Node never reads it.
+```
+
+**File**: `src/services/agentkit-analytics-off.test.ts` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++import { createRequire } from "node:module";
++import path from "node:path";
++import { afterEach, describe, expect, it, vi } from "vitest";
++
++// patches/@coinbase__agentkit@0.10.4.patch: agentkit posts the wallet address,
++// network and each wallet action name to cca-lite.coinbase.com, with no
++// opt-out. The patch turns that into a no-op; this fails if a bump drops it.
++const require = createRequire(import.meta.url);
++const agentkitDist = path.dirname(require.resolve("@coinbase/agentkit"));
++
++afterEach(() => {
++  vi.unstubAllGlobals();
++});
++
++describe("@coinbase/agentkit analytics", () => {
++  it("sends nothing to Coinbase", async () => {
++    const fetchMock = vi.fn(async () => new Response(null, { status: 200 }));
++    vi.stubGlobal("fetch", fetchMock);
++    const { sendAnalyticsEvent } = require(
++      path.join(agentkitDist, "analytics", "sendAnalyticsEvent.js"),
++    ) as { sendAnalyticsEvent: (event: Record<string, unknown>) => Promise<void> };
++    await sendAnalyticsEvent({
++      name: "agent_initialization",
++      action: "initialize_wallet_provider",
++      component: "wallet_provider",
++      wallet_address: "0x0000000000000000000000000000000000000001",
++    });
++    expect(fetchMock).not.toHaveBeenCalled();
 +  });
 +});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #373** (2026-11-13): fix(wallet): stop @coinbase/agentkit sending analytics to Coinbase (@VGIL77)
 - **PR #371** (2026-11-08): fix(memory): trim the embedding cache on every write; the agent explains its memory from its guide (@VGIL77)
 - **PR #370** (2026-11-08): feat(agents): the agent knows which of its parts are on, from the live config (@VGIL77)
 - **PR #369** (2026-11-07): feat(skills): add verified live outcome writer in shadow mode (@VGIL77)
 - **PR #368** (2026-11-06): feat(skills): annotate verified skill outcomes in words (@VGIL77)
 - **PR #367** (2026-11-06): fix(gateway): correct WSL logon task XML schema (@VGIL77)
-- **PR #365** (2026-11-05): Run gated failure-learning experiments from idle dream ticks (@VGIL77)
 
 ---
 
@@ -1898,31 +2093,32 @@ cache, and it ran past its cap).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): trim the embedding cache on every write; the agent explains its memory 
+## X. wallet): stop @coinbase/agentkit sending analytics to Coinbase
 
 **RULE**:
-When implementing operations in `docs/memory/architecture-overview.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3fd42218`: memory): trim the embedding cache on every write; the agent explains its memory from its guide (#371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3ff93025`: wallet): stop @coinbase/agentkit sending analytics to Coinbase. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/architecture-overview.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-| `embedding_cache`           | Cached embedding vectors by text hash; every write trims it to `cache.maxEntries`  |
+# pnpm-workspace.yaml's patchedDependencies point here.
+COPY patches ./patches
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-| `embedding_cache`           | Cached embedding vectors                                                           |
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3fd42218` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3ff93025` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

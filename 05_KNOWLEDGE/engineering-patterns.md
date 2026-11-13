@@ -603272,3 +603272,177 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `afb4fa83` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8396. Rust engine: match the reference on the pysdk suites (Harvested from infiniflow/infinity)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Rust engine: match the reference on the pysdk suites",
+  "source": "infiniflow/infinity",
+  "source_url": "https://github.com/infiniflow/infinity",
+  "source_version": "7eb3b476",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-13T22:30:57.142Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-infiniflow-infinity",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [infiniflow/infinity](https://github.com/infiniflow/infinity) (Revision: `7eb3b476`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `rust_engine/crates/catalog/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `beb2b691`: Rust engine: match the reference on the pysdk suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust_engine/crates/catalog/src/lib.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+        // `f` wrote nothing in the native key space, so it changed no table,
+        // column or index: the C++ layout it would produce is the one already
+        // there. `DROP TABLE IF EXISTS <missing>` is exactly this case, and a
+        // test that drops a thousand absent tables spent a full layout rewrite
+        // (list everything, sweep every key, then compare every key against the
+        // store to decide the statement was a no-op) on each of them.
+        let wrote_nothing = self
+            .capture
+            .lock()
+            .unwrap()
+            .as_ref()
+            .is_some_and(|capture| capture.batch.is_empty());
+        if out.is_ok() && !self.catalog_only && !wrote_nothing {
+    ) -> Result<TableMeta> {
+        let existing = self.get_table_by_name(name)?;
+        self.create_table_typed_resolved(
+            name,
+            existing.as_ref(),
+            false,
+            columns,
+            defaults,
+            not_nulls,
+            types,
+            comments,
+            sparse_stores,
+        )
+    }
+
+    /// [`Self::create_table_typed_with_sparse_stores`] with the name already
+    /// resolved.
+    ///
+    /// Inside a capture `get_table_by_
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+        if out.is_ok() && !self.catalog_only {
+        if self.get_table_by_name(name)?.is_some() {
+            return Ok(self.tables()?.into_iter().find(|t| t.name == name));
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `beb2b691` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8397. stop @coinbase/agentkit sending analytics to Coinbase (Harvested from Bitterbot-AI/bitterbot-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "stop @coinbase/agentkit sending analytics to Coinbase",
+  "source": "Bitterbot-AI/bitterbot-desktop",
+  "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+  "source_version": "c62b5245",
+  "license": "MIT",
+  "extracted_at": "2026-11-13T22:30:59.929Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `c62b5245`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3ff93025`: wallet): stop @coinbase/agentkit sending analytics to Coinbase. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+# pnpm-workspace.yaml's patchedDependencies point here.
+COPY patches ./patches
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3ff93025` are properly handled with clean fallback behavior.

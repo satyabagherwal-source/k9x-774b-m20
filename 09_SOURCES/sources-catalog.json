@@ -785,8 +785,8 @@
     "sourceUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceVersion": "hf-timm-mobilenetv3_small_100.lamb_in1k",
     "license": "Open-Source",
-    "contentHash": "1a6f8383d6897161c233165b802e7e9516263f84c31e610741ff63e840eebdc3",
-    "lastHarvestedAt": "2026-11-08T20:59:49.726Z",
+    "contentHash": "9dc822c30f1783edd6626b8ee7dc8fafc9ec0223bcb857bd7e8d50af3cb92903",
+    "lastHarvestedAt": "2026-11-13T22:30:46.271Z",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k"
   },
   "hf-amazon-chronos-2": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "3fd42218",
+    "sourceVersion": "c62b5245",
     "license": "MIT",
-    "contentHash": "bf2566942a5d6c0891a9c9f6b8e6172a4a33ea9311790322b42ac359a51ddc8a",
-    "lastHarvestedAt": "2026-11-08T17:06:13.066Z",
+    "contentHash": "77a68b55cb4fe7ef91359e8357a933e0bc3db7ecca6592eee6606884996060e5",
+    "lastHarvestedAt": "2026-11-13T22:31:00.270Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "e02e0d7e",
+    "sourceVersion": "7eb3b476",
     "license": "Apache-2.0",
-    "contentHash": "00d9c6304f1d0fef825fc7e525f5decbd3893b1249dfa67fd9b58b0ab283b028",
-    "lastHarvestedAt": "2026-11-12T22:48:49.947Z",
+    "contentHash": "905631e7e0c2b1a81bd2d3deec89b159c3bb72ca3bef33c96120a56620934f2a",
+    "lastHarvestedAt": "2026-11-13T22:30:57.485Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {

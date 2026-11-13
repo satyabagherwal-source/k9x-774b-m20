@@ -2,20 +2,20 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T22:18:20.921Z",
+  "updated_at": "2026-11-13T22:31:29.984Z",
   "stats": {
-    "total_discovered": 2971,
-    "approved_pending_harvest": 2773,
+    "total_discovered": 2985,
+    "approved_pending_harvest": 2787,
     "harvested_count": 0,
     "rejected_count": 198,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2773,
+      "COMMUNITY_AND_EXPERT": 2786,
       "OFFICIAL_DOCUMENTATION": 106,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
       "LEGAL_AND_REGULATORY": 1,
-      "RESEARCH_AND_ACADEMIA": 1
+      "RESEARCH_AND_ACADEMIA": 2
     }
   },
   "sources": {
@@ -63996,6 +63996,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
         "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-97C7D47A01B7": {
+      "id": "SRC-97C7D47A01B7",
+      "url": "https://github.com/infiniflow/infinity",
+      "title": "https://github.com/infiniflow/infinity",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.287Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
+        "fileName": "infiniflow-infinity-learnings.md"
+      }
+    },
+    "SRC-61D0ABFF295F": {
+      "id": "SRC-61D0ABFF295F",
+      "url": "https://arxiv.org/abs/2010.14189",
+      "title": "https://arxiv.org/abs/2010.14189",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "RESEARCH_AND_ACADEMIA",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.95,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.305Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
+        "fileName": "infiniflow-infinity-learnings.md"
+      }
+    },
+    "SRC-D8477E3293F6": {
+      "id": "SRC-D8477E3293F6",
+      "url": "https://www.ubuntu.com/",
+      "title": "https://www.ubuntu.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.332Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
+        "fileName": "infiniflow-infinity-learnings.md"
+      }
+    },
+    "SRC-1E0811178991": {
+      "id": "SRC-1E0811178991",
+      "url": "https://help.ubuntu.com/",
+      "title": "https://help.ubuntu.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.352Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
+        "fileName": "infiniflow-infinity-learnings.md"
+      }
+    },
+    "SRC-5CB938A6D0A5": {
+      "id": "SRC-5CB938A6D0A5",
+      "url": "https://bugs.launchpad.net/ubuntu",
+      "title": "https://bugs.launchpad.net/ubuntu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.368Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
+        "fileName": "infiniflow-infinity-learnings.md"
+      }
+    },
+    "SRC-AFBC3317229B": {
+      "id": "SRC-AFBC3317229B",
+      "url": "https://www.ubuntu.com/legal/terms-and-policies/privacy-policy",
+      "title": "https://www.ubuntu.com/legal/terms-and-policies/privacy-policy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.385Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
+        "fileName": "infiniflow-infinity-learnings.md"
+      }
+    },
+    "SRC-B5021C9045BC": {
+      "id": "SRC-B5021C9045BC",
+      "url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "title": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.802Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-20396522745F": {
+      "id": "SRC-20396522745F",
+      "url": "https://three.arcprize.org/",
+      "title": "https://three.arcprize.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-70FB41DAA5C2": {
+      "id": "SRC-70FB41DAA5C2",
+      "url": "https://benchmark.invalid/v1/embeddings",
+      "title": "https://benchmark.invalid/v1/embeddings",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-061C205B33F5": {
+      "id": "SRC-061C205B33F5",
+      "url": "https://benchmark.invalid/v1",
+      "title": "https://benchmark.invalid/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.860Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-8209BCB1A44C": {
+      "id": "SRC-8209BCB1A44C",
+      "url": "https://agentsvc.io/api/v1/proxy/exchange-rates%60",
+      "title": "https://agentsvc.io/api/v1/proxy/exchange-rates%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.878Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-4DBF29B461EB": {
+      "id": "SRC-4DBF29B461EB",
+      "url": "https://onramp.bitterbot.ai`/",
+      "title": "https://onramp.bitterbot.ai`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.895Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-0170C5412270": {
+      "id": "SRC-0170C5412270",
+      "url": "https://github.com/Bitterbot-AI/bitterbot-funding-onramp",
+      "title": "https://github.com/Bitterbot-AI/bitterbot-funding-onramp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:03.915Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-A52A16903BEB": {
+      "id": "SRC-A52A16903BEB",
+      "url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+      "title": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:31:29.984Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
+        "fileName": "hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md"
       }
     }
   }

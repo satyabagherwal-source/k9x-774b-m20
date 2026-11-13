@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T22:18:21.260Z",
-  "total_records": 401,
+  "last_updated": "2026-11-13T22:31:30.150Z",
+  "total_records": 408,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 211,
+      "total": 214,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -244,7 +244,10 @@
         "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria",
         "DOM-D-9A51060D",
-        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-learnings-core-invariant"
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-learnings-core-invariant",
+        "domain_intelligence-research-knowledge-intelligence-timm-mobilenetv3_small_100-lamb_in1k-core-invari",
+        "DOM-D-62BFCC58",
+        "domain_intelligence-research-knowledge-intelligence-hf-timm-mobilenetv3_small_100-lamb_in1k-learning"
       ]
     },
     "E": {
@@ -264,7 +267,7 @@
       ]
     },
     "G": {
-      "total": 52,
+      "total": 54,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -317,11 +320,13 @@
         "domain_intelligence-architecture-intelligence-ntex-rs-ntex-core-invariants",
         "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants",
-        "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-infiniflow-infinity-core-invariants",
+        "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 84,
+      "total": 86,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -406,7 +411,9 @@
         "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants",
         "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-core-inva",
         "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings"
+        "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings",
+        "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-core-invarian",
+        "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-learnings-cor"
       ]
     },
     "I": {
@@ -9671,6 +9678,102 @@
       "repository": "nginx-kubernetes-ingress-learnings",
       "content_hash": "0fae685d35dee345802f796af60672fb76405d81f526064485aee2e19380707e",
       "created_at": "2026-11-13T22:18:21.260Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-timm-mobilenetv3_small_100-lamb_in1k-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-timm-mobilenetv3_small_100-lamb_in1k-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: timm/mobilenetv3_small_100.lamb_in1k Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-timm-mobilenetv3_small_100-lamb_in1k-research-knowledge-intelligence-timm-mob.md",
+      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+      "content_hash": "4d0d0a7179e44992f04601482a1b6f733fda5ccd1e65dc020909ab3e81b0ba63",
+      "created_at": "2026-11-13T22:30:46.414Z"
+    },
+    "domain_intelligence-architecture-intelligence-infiniflow-infinity-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: infiniflow/infinity Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-architecture-intelligence-infiniflow-infinity-core-invariant.md",
+      "repository": "infiniflow/infinity",
+      "content_hash": "d729dfc205ec88646c1d2e1c92ecbf32f72f292a5a3c398fc5c4ce15cdd0e552",
+      "created_at": "2026-11-13T22:30:57.717Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-core-invarian": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-core-invarian",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bitterbot-ai-bitterbot-desktop-technical-construction-intelligence-bitterbot-ai-.md",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "content_hash": "b8ef5f8aaa3e843dfa45ee3f0c3b99f1170ffa61e7e03a71f2233abbe6c6b4ab",
+      "created_at": "2026-11-13T22:31:00.510Z"
+    },
+    "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: infiniflow-infinity-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-learnings-architecture-intelligence-infiniflow-infinity-lear.md",
+      "repository": "infiniflow-infinity-learnings",
+      "content_hash": "80b461bf4f55f9369923c9093a02ab566bc41c896dd3c39ebc4bdc5419e3a029",
+      "created_at": "2026-11-13T22:31:03.626Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-learnings-cor": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-learnings-cor",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bitterbot-ai-bitterbot-desktop-learnings-technical-construction-intelligence-bit.md",
+      "repository": "bitterbot-ai-bitterbot-desktop-learnings",
+      "content_hash": "3364020a0b7066eed7d37e02272b7a50581ef7388757d63ae020265fbcd1b5cb",
+      "created_at": "2026-11-13T22:31:04.143Z"
+    },
+    "DOM-D-62BFCC58": {
+      "record_id": "DOM-D-62BFCC58",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): timm/mobilenetv3_small_100.lamb_in1k",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k](https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k))  \n> **Source Version**: `hf-timm-mobi",
+      "content_hash": "366f91ac1b7556de0400b967981906906a9ea9740a4819195c4d981691bcc6f1",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md`  \n> **Source**: huggingface ([ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md`  \n> **Source**: huggingface ([",
+      "provenance": {
+        "source_uri": "project://hf-timm-mobilenetv3_small_100.lamb_in1k/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T22:31:04.305Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-timm-mobilenetv3_small_100.lamb_in1k)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-timm-mobilenetv3_small_100.lamb_in1k"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T22:31:29.957Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-timm-mobilenetv3_small_100-lamb_in1k-learning": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-timm-mobilenetv3_small_100-lamb_in1k-learning",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-timm-mobilenetv3_small_100.lamb_in1k-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-timm-mobilenetv3_small_100-lamb_in1k-learnings-research-knowledge-intelligenc.md",
+      "repository": "hf-timm-mobilenetv3_small_100.lamb_in1k-learnings",
+      "content_hash": "8955cd8fc2844a1228cbb42fad71cec47532c1d520b6b8f63ae558011c67f62e",
+      "created_at": "2026-11-13T22:31:30.150Z"
     }
   }
 }

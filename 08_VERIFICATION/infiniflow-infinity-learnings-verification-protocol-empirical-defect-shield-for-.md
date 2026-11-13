@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:39:30.837Z",
+  "timestamp": "2026-11-13T22:31:03.441Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-infiniflow-infinity-learnings",
+  "learning_id": "LEARN-EVO-infiniflow-infinity-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [infiniflow-infinity-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:39:30.837Z`  
-> **Learning ID**: `LEARN-REEXTRACT-infiniflow-infinity-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T22:31:03.441Z`  
+> **Learning ID**: `LEARN-EVO-infiniflow-infinity-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `a8583bc5`  
+> **Source Version**: `7eb3b476`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:35:08.842Z  
+> **Timestamp**: 2026-11-13T22:30:56.728Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:35:08.832Z  
+> **Harvest Timestamp**: 2026-11-13T22:30:56.722Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4764 stars
+- **Stars / Engagement**: 4765 stars
 
 ---
 
@@ -1374,614 +1374,737 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8583bc5` (2026-11-11)
-**Commit Message**: Port secondary index and plaid to rust (#3547)
+### Incident Patch 1: `beb2b691` (2026-11-13)
+**Commit Message**: Rust engine: match the reference on the pysdk suites (#3556)
 
-**File**: `rust_engine/Cargo.lock` (modified, +28/-0)
-```diff
-@@ -920,6 +920,12 @@ dependencies = [
-  "either",
- ]
- 
-+[[package]]
-+name = "itoa"
-+version = "1.0.19"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "3bd1574e617a9a6c1f8f8181bd7e841e1f20e4277607ef28945765188d6284d4"
-+
- [[package]]
- name = "jobserver"
- version = "0.1.35"
-@@ -1363,6 +1369,7 @@ dependencies = [
-  "common",
-  "expression",
-  "parser",
-+ "roaring",
- ]
- 
- [[package]]
-@@ -1678,6 +1685,19 @@ dependencies = [
-  "syn 3.0.3",
- ]
- 
-+[[package]]
-+name = "serde_json"
-+version = "1.0.154"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
-+dependencies = [
-+ "itoa",
-+ "memchr",
-+ "serde",
-+ "serde_core",
-+ "zmij",
-+]
-+
- [[package]]
- name = "server"
- version = "0.1.0"
-@@ -1790,6 +1810,8 @@ dependencies = [
-  "rocksdb",
-  "rustls",
-  "rustls-native-certs",
-+ "serde",
-+ "serde_json",
-  "sha2",
-  "tempfile",
- ]
-@@ -2297,6 +2319,12 @@ version = "1.8.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "b97154e67e32c85465826e8bcc1c59429aaaf107c1e4a9e53c8d8ccd5eff88d0"
- 
-+[[package]]
-+name = "zmij"
-+version = "1.0.23"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
-+
- [[package]]
- name = "zstd"
- version = "0.13.4"
-```
+Performance work on the four pysdk suites that were still behind the C++
+engine, plus the DDL and append-buffer changes that were needed to get
+there.
 
-**File**: `rust_engine/Cargo.toml` (modified, +2/-0)
-```diff
-@@ -58,3 +58,5 @@ memmap2 = "0.9"
- thiserror = "1"
- tempfile = "3"
- roaring = "0.11"
-+serde = "1"
-+serde_json = "1"
-```
+The concurrency structure is unchanged: every path stays serial where
+the reference is serial. Only data structures and algorithms changed.
 
-**File**: `rust_engine/crates/catalog/src/layout.rs` (modified, +26/-5)
-```diff
-@@ -589,14 +589,22 @@ pub(crate) fn index_def_for(im: &IndexMeta, table: &TableLayout) -> Option<Index
-             &im.column,
-             &opt_word("ANALYZER", "standard"),
-         )),
-+        // A functional index names an expression, not a column: the record
-+        // carries the expression, its base column and the return type
-+        // (`IndexSecondaryFunctional::Serialize`).
-+        "SECONDARYFUNCTIONAL" => functional_index_def(im, table),
-         // An index with no `USING` kind is the C++ default, a secondary index.
-         "SECONDARY" | "" => match col {
-             Some(col) => {
-                 let is_json = value_format::data_type_code(&col.column_type)
-                     == Some(value_format::logical::JSON);
--                let low = opt("CARDINALITY")
--                    .map(|v| v.eq_ignore_ascii_case("low"))
--                    .unwrap_or(false);
-+                // `IndexSecondary` forces `kLowCardinality` for a JSON column
-+                // (`index_secondary.cppm:56`), so the record says `low` whether
-+                // or not the statement asked for it.
-+                let low = is_json
-+                    || opt("CARDINALITY")
-+                        .map(|v| v.eq_ignore_ascii_case("low"))
-+                        .unwrap_or(false);
-                 Some(IndexDefValue::secondary(
-                     &im.name,
-                     &table.table_name,
-@@ -693,7 +701,10 @@ pub(crate) fn index_def_for(im: &IndexMeta, table: &TableLayout) -> Option<Index
-             &table.table_name,
-             &im.column,
-             opt_num("NBITS", 4),
--            opt_num("N_CENTROIDS", 0),
-+            // `centroids` is the option the statement spells
-+            // (`CREATE INDEX … WITH (centroids = 4096)`); the record's field is
-+            // `n_centroids`, which a record read back from disk carries instead.
-+            opt_num("CENTROIDS", 0).max(opt_num("N_CENTROIDS", 0)),
-             opt("COLBERTSAR_MODE")
-                 .map(|v| v.eq_ignore_ascii_case("true"))
-                 .unwrap_or(false),
-@@ -751,12 +762,22 @@ fn functional_index_def(im: &IndexMeta, table: &TableLayout) -> Option<IndexDefV
-         .find(|(k, _)| k.eq_ignore_ascii_case("CARDINALITY"))
-         .map(|(_, v)| v.eq_ignore_ascii_case("low"))
-         .unwrap_or(false);
-+    // `func_return_type` is the function's own type, not the argument's: the
-+    // engine records it when the index is created (`FUNC_RETURN`).
-+    let returns = im
-+        .options
-+        .iter()
-+        .find(|(k, _)| k.eq_ignore_ascii_case("FUNC_RETURN"))
-+        .map(|(_, v)| v.clone())
-+        .filter(|v| !v.trim().is_empty())
-+        .and_then(|v| data_type_of_text(&v))
-+        .unwrap_or_else(|| col.column_type.clone());
-     Some(IndexDefValue::secondary_functional(
-         &im.name,
-         &table.table_name,
-         base,
-         expr,
--        col.column_type.clone(),
-+        returns,
-         expression::json::Json::Obj(vec![(
-             "name".to_string(),
-             expression::json::Json::Str(func.to_string()),
-```
+## Results
 
-**File**: `rust_engine/crates/common/src/error.rs` (modified, +15/-0)
+Measured per file - one engine per file on real disk, three runs each,
+against a reference run in the same window:
+
+| suite | Rust | C++ | ratio | from |
+|---|---|---|---|---|
+| test_secondary_index | 0.77-0.84 s | 0.86-0.91 s | **0.92x** | 1.00x |
+| test_knn | 20.05-20.53 s | 23.14-24.38 s | **0.86x** | 11.9x |
+| test_py_import | 28.2-28.7 s | 32.3-32.5 s | **0.88x** | 19.6x |
+| test_table | 1.27-1.60 s | 1.32-1.71 s | **0.97x** | 1.42x |
+
+A single engine serving several files in a row is not a valid
+measurement - state carries over and `test_knn` after `test_py_import`
+went from 18 s to 219 s. Every number above is a fresh process.
+
+## Import (`test_py_import`, 53.3 s -> 28.2 s)
+
+- the block mirror takes its rows from an ordered window of the append
+buffer instead of scanning the whole row set once per block
+- mirrored 
+
+**File**: `rust_engine/crates/catalog/src/lib.rs` (modified, +113/-4)
 ```diff
-@@ -135,6 +135,10 @@ impl Error {
-             // 3009 INVALID_INDEX_DEFINITION (index kind vs column type).
-             Error::Invalid(m) if m.starts_with("SECONDARY index requires") => 3009,
-             Error::Invalid(m) if m.contains("index requires a") => 3009,
-+            // `IndexSecondary::ValidateColumnDataType` refuses the column type
-+            // with `InvalidIndexDefinition`, so a secondary index on a column
-+            // that cannot carry one is 3009, not a generic invalid parameter.
-+            Error::Invalid(m) if m.starts_with("Cannot build secondary index on data type") => 3009,
-             // 3077 ANALYZER_NOT_FOUND (unknown name, or a C++ family the Rust
-             // port does not vendor; both carry an explanatory suffix).
-             Error::Invalid(m) if m.starts_with("analyzer ") && m.contains("not found") => 3077,
-@@ -270,4 +274,15 @@ mod tests {
-         assert_eq!(error.status_code(), 8007);
-         assert_eq!(error.to_string(), "Attempt to write on non-writable node");
-     }
-+
-+    /// `IndexSecondary::ValidateColumnDataType` rejects a column type that
-+    /// cannot carry the index with `Status::InvalidIndexDefinition` (3009), the
-+    /// code the SDK's `test_sparse_knn_with_invalid_index_type` asserts.
-+    #[test]
-+    fn a_secondary_index_on_an_unsupported_column_type_maps_to_3009() {
-+        let error = Error::Invalid(
-+            "Cannot build secondary index on data type: SPARSE(FLOAT,1000)".to_string(),
-+        );
-+        assert_eq!(error.status_code(), 3009);
+@@ -951,7 +951,19 @@ impl Catalog {
+         // `tbl|col|` and `catalog|idx|`), so mirror it inside this capture.
+         // C++-only mode already rewrote it inside `f`; a checkpoint mirrors it
+         // too, which is what covers a directory no DDL touched.
+-        if out.is_ok() && !self.catalog_only {
++        // `f` wrote nothing in the native key space, so it changed no table,
++        // column or index: the C++ layout it would produce is the one already
++        // there. `DROP TABLE IF EXISTS <missing>` is exactly this case, and a
++        // test that drops a thousand absent tables spent a full layout rewrite
++        // (list everything, sweep every key, then compare every key against the
++        // store to decide the statement was a no-op) on each of them.
++        let wrote_nothing = self
++            .capture
++            .lock()
++            .unwrap()
++            .as_ref()
++            .is_some_and(|capture| capture.batch.is_empty());
++        if out.is_ok() && !self.catalog_only && !wrote_nothing {
+             // Best effort, like the checkpoint's: a column type the C++ encoding
+             // does not cover yet leaves the previous layout in place rather than
+             // failing the DDL (the next checkpoint reports it).
+@@ -1219,14 +1231,75 @@ impl Catalog {
+         types: &[String],
+         comments: &[Option<String>],
+         sparse_stores: &[Option<SparseStore>],
++    ) -> Result<TableMeta> {
++        let existing = self.get_table_by_name(name)?;
++        self.create_table_typed_resolved(
++            name,
++            existing.as_ref(),
++            false,
++            columns,
++            defaults,
++            not_nulls,
++            types,
++            comments,
++            sparse_stores,
++        )
 +    }
- }
++
++    /// [`Self::create_table_typed_with_sparse_stores`] with the name already
++    /// resolved.
++    ///
++    /// Inside a capture `get_table_by_name` re-reads the store (the cache is
++    /// bypassed there), and the caller has just done that lookup to decide
++    /// whether a crashed `DROP TABLE` left orphans behind - one resolution is
++    /// enough for both.
++    #[allow(clippy::too_many_arguments)]
++    pub fn create_table_typed_existing(
++        &self,
++        name: &str,
++        existing: Option<&TableMeta>,
++        columns: &[String],
++        defaults: &[Option<String>],
++        not_nulls: &[bool],
++        types: &[String],
++        comments: &[Option<String>],
++        sparse_stores: &[Option<SparseStore>],
++    ) -> Result<TableMeta> {
++        self.create_table_typed_resolved(
++            name,
++            existing,
++            true,
++            columns,
++            defaults,
++            not_nulls,
++            types,
++            comments,
++            sparse_stores,
++        )
++    }
++
++    /// The body of both entries: `resolved` says the caller already looked the
++    /// name up, so a duplicate is decided from `existing` alone.
++    #[allow(clippy::too_many_arguments)]
++    fn create_table_typed_resolved(
++        &self,
++        name: &str,
++        existing: Option<&TableMeta>,
++        resolved: bool,
++        columns: &[String],
++        defaults: &[Option<String>],
++        not_nulls: &[bool],
++        types: &[String],
++        comments: &[Option<String>],
++        sparse_stores: &[Option<SparseStore>],
+     ) -> Result<TableMeta> {
+         let _ddl = self.begin_ddl();
+         // The `CREATE TABLE … PROPERTIES (bloom_filter_columns = …)` flag is
+         // **not** recorded here: the reference's `ColumnDef::ToJson` omits
+         // `build_bloom_filter_`, so the catalog it writes reads back as
+         // all-false. The flag survives only in the WAL's `CreateTableV2`.
+ 
+-        if self.get_table_by_name(name)?.is_some() {
++        if existing.is_some() || (!resolved && self.get_table_by_name(name)?.is_some()) {
+             return Err(Error::Catalog(format!("table '{name}' already exists")));
+         }
+         // The counter is committed in the same batch as the table, so its lock
+@@ -1568,7 +1641,33 @@ impl Catalog {
+                 let found = self.with_view(|store| crate::layout::read_table(store, db, table))?;
+                 return Ok(found.as_ref().map(crate::layout::table_meta_of));
+             }
+-            return Ok(self.tables()?.into_iter().find(|t| t.name == name));
++            // A bare name is looked up in `default_db` first: that is the
++            // database every unqualified statement resolves against, and the
++            // point read is a couple of keys. Reading every table and filtering
++            // - which is what this did - made a `DROP TABLE` of a bare name cost
++            // O(tables) per statement (0.22 ms against the reference's 0.07 on
++            // a 1000-table directory). Only a name that is not in `default_db`
++            // pays for the scan, and there the database list bounds it.
++            if let Some(found) =
++                self.with_view(|store| crate::layout::read_t
 ```
 
-**File**: `rust_engine/crates/executor/src/blocks/chunk.rs` (modified, +13/-1)
+**File**: `rust_engine/crates/executor/src/blocks/column.rs` (modified, +17/-1)
 ```diff
-@@ -15,8 +15,13 @@ pub(crate) fn decode_secondary_key(
-         KeyKind::U64 => Key::U64(u64::from_le_bytes(bytes.try_into().ok()?)),
-         KeyKind::I64 => Key::I64(i64::from_le_bytes(bytes.try_into().ok()?)),
-         KeyKind::I32 => Key::I32(i32::from_le_bytes(bytes.try_into().ok()?)),
-+        KeyKind::I16 => Key::I16(i16::from_le_bytes(bytes.try_into().ok()?)),
-+        KeyKind::I8 => Key::I8(*bytes.first()? as i8),
-+        KeyKind::Bool => Key::Bool(*bytes.first()? != 0),
-         KeyKind::F32 => Key::F32(f32::from_le_bytes(bytes.try_into().ok()?)),
-         KeyKind::F64 => Key::F64(f64::from_le_bytes(bytes.try_into().ok()?)),
-+        // A JSON chunk is low-cardinality and has no ordered key array.
-+        KeyKind::Bytes => return None,
-     })
- }
- 
-@@ -45,6 +50,10 @@ pub(crate) fn publish_secondary_chunks(
-     let width = kind.key_width();
-     let stride = width + 4;
-     let mut by_block: std::collections::BTreeMap<u64, Vec<_>> = Default::default();
-+    // A merged spill file holds the whole segment (`merge_secondary_chunks`),
-+    // which is the reference's layout after `OptimizeIndex`: one chunk per
-+    // segment rather than one per block.
-+    let mut merged = false;
-     let Ok(entries) = std::fs::read_dir(dir) else {
-         return Vec::new();
+@@ -319,6 +319,22 @@ pub(crate) fn encode_value(
+     type_text: &str,
+     column_type: i32,
+     value: &str,
++) -> Result<Option<Vec<u8>>> {
++    encode_value_with_shape(type_text, embedding_shape(type_text), column_type, value)
++}
++
++/// [`encode_value`] with the column's embedding shape already resolved.
++///
++/// `embedding_shape` upper-cases the whole type string, so calling it per cell
++/// allocated a `String` per value - 16.7 M of them on an 8 M-row, two-column
++/// `COPY`, which was most of the remaining time once the row lookup stopped
++/// scanning the buffer. A block encodes one column at a time, so the shape is
++/// the same for every cell in it.
++pub(crate) fn encode_value_with_shape(
++    type_text: &str,
++    shape: Option<(usize, i32)>,
++    column_type: i32,
++    value: &str,
+ ) -> Result<Option<Vec<u8>>> {
+     if value.eq_ignore_ascii_case("null") {
+         return Ok(None);
+@@ -328,7 +344,7 @@ pub(crate) fn encode_value(
+             "value '{value}' is not valid for column type {column_type}"
+         ))
      };
-@@ -70,6 +79,9 @@ pub(crate) fn publish_secondary_chunks(
-         if run_segment.parse::<u32>() != Ok(segment) {
-             continue;
-         };
-+        if rest.contains("_merged") {
-+            merged = true;
-+        }
-         let (Ok(bytes), Ok(reader)) = (
-             std::fs::read(&path),
-             SecondarySegmentReader::open_with_kind(&path, kind),
-@@ -96,7 +108,7 @@ pub(crate) fn publish_secondary_chunks(
-     // one in-memory index and dumps **once**, so an imported segment has a
-     // single chunk covering all of its blocks (`InsertBlockData` is called per
-     // block, `Dump` once after the loop).
--    if single_chunk {
-+    if single_chunk || merged {
-         let mut entries: Vec<_> = by_block.into_values().flatten().collect();
-         if entries.is_empty() || std::fs::create_dir_all(seg_dir).is_err() {
-             return Vec::new();
+-    if let Some((dim, elem)) = embedding_shape(type_text) {
++    if let Some((dim, elem)) = shape {
+         let inner = value.trim().trim_start_matches('[').trim_end_matches(']');
+         if elem == 0 {
+             // BIT: the engine (and the C++ `ToString`, `embedding_type.h:253-262`)
 ```
 
-**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +37/-9)
+**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +229/-88)
 ```diff
-@@ -4447,6 +4447,14 @@ impl Engine {
-                     if let Err(error) = self.optimize_all_fulltext_indexes() {
-                         eprintln!("optimize: merging the full-text chunks failed: {error}");
-                     }
-+                    // The secondary half of `OptimizeIndexInner`
-+                    // (`new_txn_index_impl.cpp:336-340`): a segment with more than
-+                    // one chunk folds them into one. Like the full-text rewrite its
-+                    // catalog records are derived from the files, so it also runs
-+                    // after the vector commit.
-+                    if let Err(error) = self.optimize_all_secondary_indexes() {
-+                        eprintln!("optimize: merging the secondary chunks failed: {error}");
-+                    }
-                     Ok(())
-                 }
-                 // A concurrent merge (or a drop that took the index away) is a
-@@ -5825,7 +5833,12 @@ impl Engine {
-                 if let Ok(v) = value.parse() {
-                     options.nbits = v;
-                 }
--            } else if key.eq_ignore_ascii_case("n_centroids") {
-+            } else if key.eq_ignore_ascii_case("n_centroids")
-+                || key.eq_ignore_ascii_case("centroids")
-+            {
-+                // `centroids` is the SQL spelling (`CREATE INDEX … WITH
-+                // (centroids = 4096)`); `n_centroids` is the catalog field the
-+                // record carries. Both name the same option.
-                 if let Ok(v) = value.parse() {
-                     options.n_centroids = v;
-                 }
-@@ -5961,14 +5974,29 @@ impl Engine {
-             .nbits;
-         let mut chunks = Vec::new();
-         for (id, path) in self.live_chunk_files(table, index_name, 0, &mirror.dir) {
--            let bytes = std::fs::read(&path).map_err(|e| Error::Io {
--                path: path.clone(),
--                source: e,
--            })?;
--            let (index, _) =
--                PlaidIndex::from_bytes(0, mirror.dims, nbits, &bytes).map_err(|e| {
--                    Error::Invalid(format!("bad PLAID chunk '{}': {e}", path.display()))
--                })?;
-+            // Map the chunk and keep its packed residual codes file-backed (the
-+            // reference's buffer-manager chunk): reading them into a `Vec` doubled
-+            // the resident size of a large index. A zero-length or unopenable file
-+            // falls back to a plain read.
-+            let bad = |e: &dyn std::fmt::Display| {
-+                Error::Invalid(format!("bad PLAID chunk '{}': {e}", path.display()))
-+            };
-+            let index = match storage::buffer::mapped::MappedFile::open(&path) {
-+                Ok(mapped) if !mapped.is_empty() => {
-+                    let backing: std::sync::Arc<dyn AsRef<[u8]> + Send + Sync> =
-+                        std::sync::Arc::new(mapped);
-+                    PlaidIndex::from_shared(backing, mirror.dims, nbits).map_err(|e| bad(&e))?
-+                }
-+                _ => {
-+                    let bytes = std::fs::read(&path).map_err(|e| Error::Io {
-+                        path: path.clone(),
-+                        source: e,
-+                    })?;
-+                    PlaidIndex::from_bytes(0, mirror.dims, nbits, &bytes)
-+                        .map_err(|e| bad(&e))?
-+                        .0
-+                }
-+            };
-             chunks.push(PlaidChunkFile { id, index });
-         }
-         Ok(chunks)
-```
-
-**File**: `rust_engine/crates/executor/src/engine/admin.rs` (modified, +1/-0)
-```diff
-@@ -225,6 +225,7 @@ impl Engine {
-                 // block-level indexes, the in-memory secondary tails, the full-text
-                 // inverted index, the sparse documents and the vector buffers.
-                 entry.secondary.indexes.clear();
-+                entry.secondary.declared_types.clear();
-                 entry.secondary.disk.clear();
-                 entry.text.clear();
-                 entry.sparse.clear();
-```
-
-**File**: `rust_engine/crates/executor/src/engine/dml.rs` (modified, +132/-47)
-```diff
-@@ -99,6 +99,7 @@ impl Engine {
-             }
-         }
-         let mut readers = Vec::new();
-+        let mut meta: Vec<(u64, usize)> = Vec::new();
-         for (segment, entries) in by_segment {
-             let mut by_block: std::collections::BTreeMap<u64, Vec<_>> = Default::default();
-             for entry in entries {
-@@ -121,20 +122,20 @@ impl Engine {
-                     storage::secondary_segment::SecondarySegmentReader::open_with_kind(&path, kind)
-                 {
-                     // The chunk's offsets are already segment-relative, so the
--                    // base is the segment alone.
-+                    // base is the segment alone; its `ChunkIndexMetaInfo` covers
-+                    // the rows the block held.
-+                    meta.push((segment << 32, entries.len()));
-                     readers.push((segment << 32, Arc::new(reader)));
-                 }
-             }
-         }
-         let tkey = self.table_key(table);
--        self.tables
--            .lock()
--            .unwrap()
--            .entry(tkey)
--            .or_default()
--            .secondary
--            .disk
--            .insert(column.to_string(), readers);
-+        let mut tables = self.tables.lock().unwrap();
-+        let entry = tables.entry(tkey).or_default();
-+        entry.secondary.disk.insert(column.to_string(), readers);
-+        // A rebuild replaces the whole chunk set, so its meta replaces the list
-+        // a previous dump appended to.
-+        entry.secondary.chunk_meta.insert(column.to_string(), meta);
-     }
+@@ -71,6 +71,63 @@ fn reorder_row_text(
+     out.join("\t")
+ }
  
-     /// Appends a committed batch to the decoded-row cache, if the table has one.
-@@ -746,8 +747,12 @@ impl Engine {
-                 // thread (the reference's `MemIndexAppender` is a single
-                 // thread, which is the one structural deviation here).
-                 let schema = engine.table_schema(&index_table).unwrap_or_default();
--                for (seq, texts) in &index_rows {
--                    engine.update_indexes_on_insert_text(&index_table, *seq, texts, &schema)?;
-+                for (k, (seq, _)) in index_rows.iter().enumerate() {
-+                    // `index_rows` is `bottom_rows` rendered, so the literals are
-+                    // the same rows: the secondary hook needs them to tell a NULL
-+                    // from an empty cell.
-+                    let values = bottom_rows.get(k).map(Vec::as_slice).unwrap_or(&[]);
-+                    engine.update_indexes_on_insert(&index_table, *seq, values, &schema)?;
-                 }
-                 // One batch: the full-text terms of the whole append are
-                 // tokenised without the column lock and inserted under it once.
-@@ -1109,8 +1114,34 @@ impl Engine {
++/// One row's cells, either owned (decoded from a block, or a replayed journal
++/// entry) or borrowed from the write's row set.
++///
++/// The mirror copies nothing it does not have to: a bulk `COPY` publishes its
++/// rows and mirrors them straight after, so every cell is already in `extra`
++/// and borrowing is the whole win (18% of the profile was `Vec<Value>::clone`).
++pub(crate) enum RowCells<'a> {
++    Borrowed(&'a Vec<Value>),
++    Owned(Vec<Value>),
++}
++
++impl std::ops::Deref for RowCells<'_> {
++    type Target = Vec<Value>;
++    fn deref(&self) -> &Vec<Value> {
++        match self {
++            RowCells::Borrowed(values) => values,
++            RowCells::Owned(values) => values,
++        }
++    }
++}
++
++/// Calls `each` for every row of `rows` whose id falls in `[first, last)`.
++///
++/// `rows` is the write's whole row set, sorted by row id (the append buffer is,
++/// and it is what a checkpoint passes), so a block's window is a contiguous
++/// slice found by two binary searches - no scan, no per-row range check.
++///
++/// `ordered` is the caller's verdict on the whole slice, computed **once** per
++/// write rather than per block: verifying it here walked each 8192-row window
++/// again, and the block loop runs 1024 times on an 8 M-row `COPY`.
++fn for_rows_in_window<'a>(
++    rows: &'a [(usize, Vec<Value>)],
++    first: usize,
++    last: usize,
++    ordered: bool,
++    each: impl FnMut(&'a (usize, Vec<Value>)),
++) {
++    if rows.is_empty() {
++        return;
++    }
++    if ordered {
++        let start = rows.partition_point(|(seq, _)| *seq < first);
++        let end = rows.partition_point(|(seq, _)| *seq < last);
++        rows[start..end].iter().for_each(each);
++    } else {
++        rows.iter()
++            .filter(|(seq, _)| *seq >= first && *seq < last)
++            .for_each(each);
++    }
++}
++
++/// Whether `rows` is sorted by row id, i.e. whether the window lookup is a
++/// binary search rather than a filter.
++fn is_id_ordered(rows: &[(usize, Vec<Value>)]) -> bool {
++    rows.windows(2).all(|w| w[0].0 <= w[1].0)
++}
++
+ /// The stored text form of a column default: the same value `AddColumnsData`
+ /// writes into the block, so the buffered row and the block agree.
+ fn default_cell_text(default: Option<&str>) -> String {
+@@ -113,7 +170,7 @@ impl Engine {
+     /// memory: a table is mirrored block by block, the way the reference streams
+     /// the rows through its buffer manager.
+     #[allow(clippy::too_many_arguments)] // one argument per piece of the block layout it mirrors
+-    pub(crate) fn mirror_block_rows(
++    pub(crate) fn mirror_block_rows<'a>(
+         &self,
+         table: &str,
+         meta: &catalog::TableMeta,
+@@ -122,12 +179,23 @@ impl Engine {
+         block_index: u16,
+         start: u64,
+         end: u64,
+-        extra: &[(usize, Vec<Value>)],
+-    ) -> Result<Vec<(usize, Vec<Value>)>> {
++        extra: &'a [(usize, Vec<Value>)],
++        extra_ordered: bool,
++    ) -> Result<Vec<(usize, RowCells<'a>)>> {
+         let first = ((segment_id as usize) << 32) | start as usize;
+         let last = ((segment_id as usize) << 32) | end as usize;
+-        let mut journal: std::collections::BTreeMap<usize, Vec<Value>> =
+-            self.pending_range(table, first, last).into_iter().collect();
++        // The write's row set already carries the append buffer: `extra` is
++        // `merged`, which is `pending_rows` merged with the caller's rows. So a
++        // block's rows are a window of `extra`, and asking `pending_range` for
++        // them as well copied the same cells a second time - the profile showed
++        // `Vec<Value>::clone` at 18%, and half of it was this second copy.
++        // The window as an ordered `Vec`, not a `BTreeMap`: `extra_ordered`
++        // says the rows already come sorted, so a map only adds one tree insert
++        // per row (14% of the profile on an 8 M-row import, 1024 blocks over).
++        let mut journal: Vec<(usize, &'a Vec<Value>)> = Vec::new();
++        for_rows_in_window(extra, first, last, extra_ordered, |(seq, values)| {
++            journal.push((*seq, values));
++        });
+         // The mirror is the authoritative copy of the rows it already holds
+         // (`try_rows` prefers it for the same reason): a re-mirror must not
+         // copy a lossy journal back over cells the blocks already have.
+@@ -176,20 +244,25 @@ impl Engine {
+             }
+             Err(_) => Vec::new(),
+         };
+-        let mut out = Vec::with_capacity(held.len().max(journal.len()));
++        let mut out: Vec<(usize, RowCells<'a>)> = Vec::with_capacity(held.len().max(journal.len()));
++        // The block wins for the ids it already holds (a re-mirror must not copy
++        // a journal back over cells the block has), so its rows go in first and
++        // the window skips them.
++        let from_block: std::collections::HashSet<usize> =
++            held.iter().map(|(seq, _)| *seq
+```
+
+**File**: `rust_engine/crates/executor/src/engine/ddl.rs` (modified, +56/-11)
+```diff
+@@ -26,11 +26,17 @@ impl Engine {
+                 return Err(Error::Invalid(message));
+             }
+         }
+-        if self.storage.catalog.get_table_by_name(name)?.is_none() {
++        // One lookup serves both: whether a crashed `DROP TABLE` left orphans
++        // and whether the name is already taken. Inside a capture each
++        // `get_table_by_name` re-reads the store (the cache is bypassed by
++        // design there), so the second one was a repeated catalog read.
++        let existing = self.storage.catalog.get_table_by_name(name)?;
++        if existing.is_none() {
+             self.clear_orphan_rows(name)?;
+         }
+-        let meta = self.storage.catalog.create_table_typed_with_sparse_stores(
++        let meta = self.storage.catalog.create_table_typed_existing(
+             name,
++            existing.as_ref(),
+             columns,
+             defaults,
+             not_nulls,
+@@ -52,24 +58,42 @@ impl Engine {
+     /// engine's own state: the row keys are the port's, and the in-memory
+     /// registry must forget a dropped table at once.
+     pub(crate) fn drop_table_all(&self, name: &str) -> Result<bool> {
+-        let table_id = self.storage.catalog.get_table_by_name(name)?.map(|m| m.id);
++        // One lookup for the whole drop: the id and the column list both come
++        // from it, and inside a capture every `get_table_by_name` re-resolves
++        // the name against the store (the cache is bypassed there, because the
++        // statement's own uncommitted DDL has to be visible). The reference's
++        // `DropTable` resolves once (`DBMeta::GetTableMeta`) and uses that.
++        let meta = self.storage.catalog.get_table_by_name(name)?;
++        let table_id = meta.as_ref().map(|m| m.id);
+         let key = self.table_key(name);
+         // Full-text chunks live in `<dir>/fulltext/<db>.<table>.<column>`, keyed by
+         // name rather than by table id: a table recreated under the same name
+         // would otherwise reopen the dropped one's chunks and score those
+         // documents a second time.
+-        let fulltext_columns = self.table_schema(&key).unwrap_or_default();
+-        // Dropping the entry drops its charge with it, so the engine-wide
+-        // total has to be rebuilt once (a DDL is rare; the scan is not on a
+-        // hot path).
+-        self.tables.lock().unwrap().remove(&key);
++        let meta_ref = meta;
++        let fulltext_columns = meta_ref
++            .as_ref()
++            .map(|m| m.columns.clone())
++            .unwrap_or_default();
++        // Take this table's charge out of the engine-wide total instead of
++        // walking every table: a run of `DROP TABLE`s is otherwise quadratic.
++        let released = self
++            .tables
++            .lock()
++            .unwrap()
++            .remove(&key)
++            .map(|entry| entry.memindex_bytes)
++            .unwrap_or(0);
+         crate::blocks::misc::forget_mirror_write_lock(&key);
+-        self.recompute_memindex_total();
++        self.release_memindex_bytes(released);
+         // A dropped table's blocks are gone: so are the mappings of them.
+         if let Some(id) = table_id {
+             self.drop_block_maps(id);
+         }
+-        let existed = self.storage.catalog.drop_table(name)?;
++        let existed = self
++            .storage
++            .catalog
++            .drop_table_meta(name, meta_ref.as_ref())?;
+         // Rows are the port's own key space (`row:`/`del:`), not the
+         // reference's, so nothing else would ever remove them.
+         self.clear_orphan_rows(name)?;
+@@ -268,7 +292,28 @@ impl Engine {
+         } else {
+             "default_db".to_string()
+         };
+-        for (k, v) in self.storage.catalog.store().scan_prefix(b"catalog|tbl|")? {
++        // Scoped to this database: `catalog|tbl|` for every table in the engine
++        // makes a run of `DROP TABLE`s walk the whole catalog once per drop
++        // (0.44 ms each against the reference's 0.1). `catalog|db|{name}|` is
++        // one record per database.
++        let db_id_of_name = self
++            .storage
++            .catalog
++            .store()
++            .scan_prefix(storage::catalog_format::catalog_db_prefix(&db_name).as_bytes())?
++            .into_iter()
++            .next()
++            .map(|(_, v)| String::from_utf8_lossy(&v).into_owned());
++        let scan_prefix = match &db_id_of_name {
++            Some(id) => format!("catalog|tbl|{id}|{bare}|"),
++            None => "catalog|tbl|".to_string(),
++        };
++        for (k, v) in self
++            .storage
++            .catalog
++            .store()
++            .scan_prefix(scan_prefix.as_bytes())?
++        {
+             let key = String::from_utf8_lossy(&k).into_owned();
+             let parts: Vec<&str> = key.split('|').collect();
+             if parts.len() >= 5 && parts[3] == bare {
+```
+
+**File**: `rust_engine/crates/executor/src/engine/dml.rs` (modified, +89/-3)
+```diff
+@@ -1146,11 +1146,23 @@ impl Engine {
+         seq: usize,
          values: &[Literal],
          schema: &[String],
++    ) -> Result<()> {
++        let targets = self.secondary_targets(table, schema);
++        self.insert_secondary_keys(&targets, seq, values)
++    }
++
++    /// [`Self::update_indexes_on_insert`] with the targets already resolved, for
++    /// a bulk load that resolves them once per batch.
++    pub(crate) fn insert_secondary_keys(
++        &self,
++        targets: &[SecondaryTarget],
++        seq: usize,
++        values: &[Literal],
      ) -> Result<()> {
--        let texts: Vec<String> = values.iter().map(|v| v.to_slt_string()).collect();
--        self.update_indexes_on_insert_text(table, seq, &texts, schema)
-+        // The evaluated row is only built when a functional index needs it: a
-+        // plain index reads its cell's text and pays nothing.
-+        let mut row_values: Option<Vec<Value>> = None;
-+        for target in self.secondary_targets(table, schema) {
-+            let Some(value) = values.get(target.pos) else {
-+                continue;
-+            };
-+            // `SecondaryIndexInMemT::InsertInner` skips a row whose null bit is
-+            // set: a NULL is not a key.
-+            if matches!(value, Literal::Null) {
-+                continue;
-+            }
-+            let keys = match &target.func {
-+                None => text_to_tail_keys(&target.declared, &value.to_slt_string()),
-+                Some(func) => {
-+                    let row = row_values
-+                        .get_or_insert_with(|| values.iter().map(Value::from_literal).collect());
-+                    match functional_value(func, target.pos, row) {
-+                        Some(value) => value_to_key(&target.declared, &value),
-+                        None => Vec::new(),
-+                    }
-+                }
-+            };
-+            for key in keys {
-+                target.index.insert(&key, seq as u64);
-+            }
-+        }
-+        Ok(())
-     }
- 
-     /// Feeds a whole batch of rows into every secondary index of `table`.
-@@ -1119,6 +1150,12 @@ impl Engine {
-     /// string) and took the registry lock for every row, and looked the indexed
-     /// column up in the schema once per index per row. A bulk statement paid
-     /// that per row; this pays it once for the batch.
-+    ///
-+    /// Each key is the column's **order-preserving encoding**
-+    /// (`Key::ordered_bytes`) - the same domain a sealed chunk uses - so the
-+    /// memory tail is ordered like the column (a range scan slices it instead
-+    /// of decoding every key) and a dump can write its keys out directly. The
-+    /// tails are cloned out under the table lock and appended to outside it.
-     pub(crate) fn update_seco
-```
-
----
-
-### Incident Patch 2: `e714e483` (2026-11-10)
-**Commit Message**: Port merge and skiplist to rust version of fulltext index (#3545)
-
-**File**: `rust_engine/crates/analyzer/src/ngram.rs` (modified, +1/-0)
-```diff
-@@ -54,6 +54,7 @@ impl NGramAnalyzer {
-                 word_offset: offset,
-                 char_offset: start_byte as u32,
-                 end_offset: end_byte as u32,
-+                payload: 0,
-             });
-             offset += 1;
-             i += 1;
-```
-
-**File**: `rust_engine/crates/analyzer/src/rank_features.rs` (modified, +8/-0)
-```diff
-@@ -1,6 +1,14 @@
- use super::*;
- 
- /// C++: `SmallFloat::Float122ToUInt16` (`smallfloat.cppm`).
-+/// C++ `SmallFloat::UInt16ToFloat122`: the inverse of [`float122_to_uint16`],
-+/// used by `RankFeatureDocIterator` to turn a posting's doc-payload back into
-+/// the feature weight.
-+pub fn uint16_to_float122(i: u16) -> f32 {
-+    let bits = ((i as i32 + ((127 - 2) << 12)) << (23 - 12)) as u32;
-+    f32::from_bits(bits)
-+}
-+
- pub(crate) fn float122_to_uint16(f: f32) -> u16 {
-     let bits = f.to_bits() as i32;
-     let smallfloat = bits >> (23 - 12);
-```
-
-**File**: `rust_engine/crates/analyzer/src/sparsegram.rs` (modified, +1/-0)
-```diff
-@@ -26,6 +26,7 @@ impl SparseGramAnalyzer {
-                 word_offset: offset,
-                 char_offset: 0,
-                 end_offset: offset + 1,
-+                payload: 0,
-             });
-             offset += 1;
-         });
-```
-
-**File**: `rust_engine/crates/analyzer/src/standard.rs` (modified, +1/-0)
-```diff
-@@ -104,6 +104,7 @@ impl StandardAnalyzer {
-                     word_offset,
-                     char_offset: offset,
-                     end_offset,
-+                    payload: 0,
-                 })
+         // The evaluated row is only built when a functional index needs it: a
+         // plain index reads its cell's text and pays nothing.
+         let mut row_values: Option<Vec<Value>> = None;
+-        for target in self.secondary_targets(table, schema) {
++        for target in targets {
+             let Some(value) = values.get(target.pos) else {
+                 continue;
              };
-             let emit = &mut emit;
-```
-
-**File**: `rust_engine/crates/analyzer/src/tokenizer.rs` (modified, +3/-0)
-```diff
-@@ -140,6 +140,9 @@ pub struct TermView<'a> {
-     pub word_offset: u32,
-     pub char_offset: u32,
-     pub end_offset: u32,
-+    /// C++ `Term::payload_`; zero for every streaming analyzer (only
-+    /// `rankfeatures` produces a value, and it goes through `analyze`).
-+    pub payload: u16,
- }
- 
- /// C++: `Term`.
-```
-
-**File**: `rust_engine/crates/executor/src/blocks/chunk.rs` (modified, +4/-4)
-```diff
-@@ -404,10 +404,10 @@ pub fn encode_fulltext_chunk(
-     lengths: &[u32],
- ) -> (Vec<u8>, Vec<u8>, Vec<u8>) {
-     const OPTION_FLAG_ALL: u8 = 1 | 2 | 4 | 8 | 16 | 32;
--    let flags = storage::invertedindex::format::TermMetaFlags {
--        has_term_frequency: true,
--        has_term_payload: true,
--    };
-+    // The `.dic` half records `total_tf` and the term payload, and the doc list
-+    // below is built with `OPTION_FLAG_ALL`, so the flags have to describe the
-+    // same option word (`index_full_text.cppm:73`).
-+    let flags = storage::invertedindex::format::OPTION_FLAG_ALL;
-     let doc_option =
-         storage::invertedindex::format::doc_list::DocListFormatOption::new(OPTION_FLAG_ALL);
-     let mut pos = Vec::new();
-```
-
-**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +17/-13)
-```diff
-@@ -2206,20 +2206,14 @@ impl Engine {
-             .unwrap_or(false)
-     }
- 
--    /// Whether the delete journal holds `seq`. Reads the loaded journal in
--    /// place, and only pays for loading it when this is the first look.
-+    /// Whether the delete journal holds `seq`.
+@@ -1241,7 +1253,78 @@ impl Engine {
+     /// The tail is an `Arc` (the registry only borrows it while building this
+     /// list), so the rows go into it without excluding any other table - the
+     /// reference writes into each `SecondaryIndexInMemT` the same way.
+-    fn secondary_targets(&self, table: &str, schema: &[String]) -> Vec<SecondaryTarget> {
++    /// Whether `table` has any secondary index at all.
 +    ///
-+    /// One hash lookup into the journal's set. The journal itself is a `Vec`
-+    /// and used to be scanned here, which a bulk `DELETE`/`UPDATE` pays once
-+    /// per row (`row_is_present`) and made the statement quadratic in the
-+    /// journal's length.
-     pub(crate) fn is_deleted(&self, table: &str, seq: usize) -> bool {
--        let key = self.table_key(table);
--        {
--            let tables = self.tables.lock().unwrap();
--            if let Some(ids) = tables
--                .get(&key)
--                .and_then(|entry| entry.deleted_ids.as_ref())
--            {
--                return ids.contains(&(seq as u64));
--            }
--        }
--        self.deleted_ids(table).contains(&(seq as u64))
-+        self.deleted_set(table).contains(&(seq as u64))
-     }
- 
-     /// The blocks a reader may see: the table's block index minus every segment
-@@ -4443,6 +4437,16 @@ impl Engine {
-                     // part of the index; reconcile the in-memory set now instead
-                     // of at the next checkpoint.
-                     self.reload_vector_indexes();
-+                    // The full-text half of `OptimizeIndexInner`
-+                    // (`new_txn_index_impl.cpp:349-353` → `OptimizeFtIndex`).
-+                    // A full-text chunk is only its three files — the chunk list
-+                    // *is* the directory — so this rewrite carries no catalog
-+                    // entry and therefore runs after the vector commit: a failed
-+                    // merge leaves the source chunks readable instead of rolling
-+                    // back the vector work.
-+                    if let Err(error) = self.optimize_all_fulltext_indexes() {
-+                        eprintln!("optimize: merging the full-text chunks failed: {error}");
-+                    }
-                     Ok(())
-                 }
-                 // A concurrent merge (or a drop that took the index away) is a
++    /// A per-row `secondary_targets` takes the table lock, walks the index map
++    /// and allocates a `Vec` - for eight million rows on a table with no
++    /// secondary index that is eight million locks spent to find nothing.
++    pub(crate) fn has_secondary_indexes(&self, table: &str) -> bool {
++        let tkey = self.table_key(table);
++        self.tables
++            .lock()
++            .unwrap()
++            .get(&tkey)
++            .is_some_and(|entry| !entry.secondary.indexes.is_empty())
++    }
++
++    /// Whether `table` has any index the per-row write hook maintains.
++    ///
++    /// The hook (`update_text_indexes_batch_async`) also carries the sparse and
++    /// multi-vector indexes - it is the one place every write path (SQL
++    /// INSERT/UPDATE, `COPY`, the thrift insert) goes through - so a table with
++    /// only a sparse (BMP) index needs it as much as one with a full-text
++    /// index. Gating on full-text and vector alone dropped every row of a
++    /// sparse column, which `SEARCH MATCH SPARSE` then could not see.
++    ///
++    /// On a table with none of them the hook is a lock plus an allocation that
++    /// finds nothing, eight million times over a bulk `COPY`.
++    ///
++    /// Read-only: the `hnsw_probed` short-circuit belongs to
++    /// `hnsw_mem_segments`, and setting it here would make that skip its probe.
++    pub(crate) fn has_text_or_vector_indexes(&self, table: &str) -> bool {
++        let key = self.table_key(table);
++        let has_mem = {
++            let tables = self.tables.lock().unwrap();
++            tables.get(&key).is_some_and(|entry| {
++                !entry.hnsw_mem.is_empty()
++                    || !entry.ivf_mem.is_empty()
++                    || !entry.sparse.is_empty()
++                    || !entry.mv.is_empty()
++                    || !entry.text.is_empty()
++            })
++        };
++        if has_mem {
++            return true;
++        }
++        let prefix = format!("{table}.");
++        if self
++            .vector_cache
++            .lock()
++            .unwrap()
++            .keys()
++            .any(|k| k.starts_with(&prefix))
++        {
++            return true;
++        }
++        // An index the registries have not opened yet (a fresh directory, or a
++        // column this table entry has not seen): the catalog record decides.
++        self.storage
++            .catalog
++            .list_indexes()
++            .unwrap_or_default()
++            .iter()
++            .any(|im| {
++                (im.table == table || im.table == self.qualified_table(table))
++                    && (im.index_type.eq_ignore_ascii_case("FULLTEXT")
++                        || im.index_type.eq_ignore_ascii_case("HNSW")
++                        || im.index_type.eq_ignore_ascii_case("IVF")
++                        || im.index_type.eq_ignore_ascii_case("BMP")
++                        || im.index_type.eq_ignore_ascii_case("SPARSE")
++                        || im.index_type.eq_ignore_ascii_case("EMVB"))
++            })
++    }
++
++    pub(crate) fn secondary_targets(&self, table: &str, schema: &[String]) -> Vec<SecondaryTarget> {
+         let tkey = self.table_key(table);
+         let tables = self.tables.lock().unwrap();
+         let Some(entry) = tables.get(&tkey) else {
+@@ -1918,6 +2001,9 @@ impl Engine {
+             let _turn = gate.lock().await;
+             let _held = crate::engine::statements::HeldBottom::enter(&self.table_key(table));
+             self.publish_encoded_rows(table, &encoded_owned)?;
++            // The buffer holds the values now; the stored text of the whole
+
 ```
 
-**File**: `rust_engine/crates/executor/src/diagnostics.rs` (modified, +35/-0)
+**File**: `rust_engine/crates/executor/src/engine/import.rs` (modified, +67/-25)
 ```diff
-@@ -70,6 +70,41 @@ pub struct MemoryIndexRow {
-     pub mem_used: usize,
- }
+@@ -43,25 +43,42 @@ impl Engine {
+             .iter()
+             .find(|(k, _)| k == "FORMAT")
+             .map(|(_, v)| v.to_ascii_uppercase());
+-        // Read raw bytes: `FORMAT FVECS` is binary, everything else is text.
++        // The whole file is only read for the formats that need it in one
++        // piece (binary vectors, the JSON forms). CSV streams, and reading the
++        // 326 MB file into a `Vec` first only to open it again was a full extra
++        // pass over the input.
++        let whole_file = |path: &std::path::Path| -> Option<Vec<u8>> { std::fs::read(path).ok() };
+         // Missing fixtures stay a statement-level success with no rows.
+-        let t_read0 = std::time::Instant::now();
+-        let bytes_in = match std::fs::read(&resolved) {
+-            Ok(b) => b,
+-            Err(_) => return Ok(QueryResult::Inserted { count: 0 }),
+-        };
+-        let t_read = t_read0.elapsed();
+         // The binary formats parse into the same literal rows the CSV path
+         // builds, then commit them the same way.
+         let rows = match format.as_deref() {
+-            Some("FVECS") => Some(self.binary_vector_rows(table, &bytes_in, 4)?),
+-            Some("BVECS") => Some(self.binary_vector_rows(table, &bytes_in, 1)?),
+-            Some("CSR") => Some(self.csr_sparse_rows(table, &bytes_in)?),
++            Some("FVECS") => Some(self.binary_vector_rows(
++                table,
++                &whole_file(&resolved).ok_or_else(|| {
++                    Error::Invalid(format!("cannot read '{}'", resolved.display()))
++                })?,
++                4,
++            )?),
++            Some("BVECS") => Some(self.binary_vector_rows(
++                table,
++                &whole_file(&resolved).ok_or_else(|| {
++                    Error::Invalid(format!("cannot read '{}'", resolved.display()))
++                })?,
++                1,
++            )?),
++            Some("CSR") => Some(self.csr_sparse_rows(
++                table,
++                &whole_file(&resolved).ok_or_else(|| {
++                    Error::Invalid(format!("cannot read '{}'", resolved.display()))
++                })?,
++            )?),
+             Some("PARQUET") => Some(self.parquet_rows(table, &resolved)?),
+             _ => None,
+         };
+         if let Some(rows) = rows {
+-            return self.import_literal_rows(table, rows, t_read).await;
++            return self
++                .import_literal_rows(table, rows, std::time::Duration::ZERO)
++                .await;
+         }
+         let delim = opts
+             .iter()
+@@ -77,6 +94,9 @@ impl Engine {
+         // `FORMAT JSONL` (one object per line) and `FORMAT JSON` (one array)
+         // are small in practice; the CSV path streams.
+         if format_of("JSONL") || format_of("JSON") {
++            let Some(bytes_in) = whole_file(&resolved) else {
++                return Ok(QueryResult::Inserted { count: 0 });
++            };
+             let text = String::from_utf8_lossy(&bytes_in).into_owned();
+             if format_of("JSONL") {
+                 return self
+@@ -131,7 +151,16 @@ impl Engine {
+                     continue;
+                 }
+                 let fields: Vec<String> = csv_fields(line, delim);
+-                let mut cells: Vec<String> = fields.iter().map(|f| normalize_cell(f)).collect();
++                // One allocation per cell, not two: `normalize_cell` hands back
++                // the field unchanged for the plain numeric/text cells that
++                // make up most of a `COPY`.
++                let mut cells: Vec<String> = fields
++                    .into_iter()
++                    .map(|f| match normalize_cell_cow(&f) {
++                        std::borrow::Cow::Borrowed(_) => f,
++                        std::borrow::Cow::Owned(o) => o,
++                    })
++                    .collect();
+                 if cells.len() > types_for_scan.len() {
+                     return Err(Error::Invalid(format!(
+                         "import: the file has {} columns but the table has {}",
+@@ -209,22 +238,35 @@ impl Engine {
+                     if !segments.contains(&segment) {
+                         segments.push(segment);
+                     }
++                    // Both hooks take a lock and allocate per row; on a table
++                    // with no secondary index or no text/vector index they find
++                    // nothing eight million times over.
++                    let secondary_targets = if self.has_secondary_indexes(table) {
++                        self.secondary_targets(table, &schema)
++                    } else {
++                        Vec::new()
++                    };
++                    let needs_texts = self.has_text_or_vector_indexes(table);
+                     let mut texts_by_row: Vec<(usize, Vec<String>)> = Vec::with_capacity(take);
+                     for (k, row) in batch[start..start + take].iter().enumerate() {
+-                        self.update_indexes_on_insert(ta
+```
+
+**File**: `rust_engine/crates/executor/src/engine/index_build.rs` (modified, +14/-0)
+```diff
+@@ -1469,6 +1469,20 @@ impl Engine {
+         total
+     }
  
-+/// Health of one full-text index: where a slow query's cost comes from.
-+///
-+/// A query walks **every** sealed chunk for its terms, then the memory tail, so
-+/// the numbers that matter are how many chunks there are and how much of the
-+/// column is still unsealed - the two things `optimize` and the seal trigger
-+/// move. `overridden_rows` is the price of the append-only delete story: those
-+/// rows are held in a set and filtered out of every scan.
-+///
-+/// Reported by [`crate::Engine::fulltext_stats`]. It is deliberately **not** part
-+/// of the `SHOW MEMINDEX` wire shape (that one is the reference's
-+/// `MemIndexTracerInfo`); exposing these fields to clients is a schema decision
-+/// left to the caller.
-+#[derive(Clone, Debug, Default, PartialEq, Eq)]
-+pub struct FulltextStats {
-+    pub table: String,
-+    pub index: String,
-+    /// Sealed chunks. Every query probes all of them.
-+    pub chunks: usize,
-+    /// Rows held by the sealed chunks.
-+    pub chunk_rows: usize,
-+    /// Rows still in the memory tail (not sealed yet).
-+    pub tail_rows: usize,
-+    /// Sorted runs the tail spilled into; `> 0` means the next seal merges them
-+    /// instead of writing the tail straight out.
-+    pub spill_runs: usize,
-+    /// Rows a seal is writing right now (they keep answering from memory).
-+    pub inflight_rows: usize,
-+    /// Rows whose sealed copy is stale: deleted, or re-indexed in place.
-+    pub overridden_rows: usize,
-+    /// Bytes the unsealed tail estimates it occupies.
-+    pub tail_bytes: usize,
-+    /// Duration of the last seal's file write, in microseconds.
-+    pub last_seal_us: u64,
-+}
++    /// Subtracts one table's charge from the engine-wide total.
++    ///
++    /// [`Self::recompute_memindex_total`] walks every table, which is what
++    /// dropping a table used to do - a thousand `DROP TABLE`s against a
++    /// thousand tables is a thousand full walks. The table's own charge is
++    /// already accounted for, so dropping it only has to take it back out.
++    pub(crate) fn release_memindex_bytes(&self, bytes: usize) {
++        if bytes > 0 {
++            self.context
++                .memindex_total
++                .fetch_sub(bytes, std::sync::atomic::Ordering::Relaxed);
++        }
++    }
 +
- /// A query that is executing right now.
- #[derive(Clone, Debug)]
- pub struct RunningQuery {
+     /// The engine-wide total: one atomic load. It is what the quota compares
+     /// against, and it never takes the table lock or an index lock.
+     pub(crate) fn memindex_bytes(&self) -> usize {
+```
+
+**File**: `rust_engine/crates/executor/src/engine/query.rs` (modified, +35/-24)
+```diff
+@@ -436,6 +436,40 @@ impl Engine {
+     ///
+     /// Synchronous callers (`cli`, the helper binaries, the tests) go through
+     /// [`Self::execute_blocking`].
++    /// `DROP TABLE` without the SQL round trip.
++    ///
++    /// The thrift `DropTable` RPC used to format `DROP TABLE <name>` and hand
++    /// it to [`Self::execute`], so every drop paid a parse and a plan for a
++    /// statement whose meaning the caller already had. The reference's
++    /// `DropTable` handler goes straight to its executor; measured on a
++    /// 1000-table directory that was 0.27 ms against the reference's 0.07.
++    pub async fn drop_table_direct(&self, name: &str, if_exists: bool) -> Result<QueryResult> {
++        // The reference rolls the transaction back on a failing DDL, and a
++        // rollback spends no timestamp: reject before the DDL transaction is
++        // opened.
++        if !if_exists && self.storage.catalog.get_table_by_name(name)?.is_none() {
++            return Err(Error::Invalid(format!("table '{name}' does not exist")));
++        }
++        let drop_cmd = self.drop_table_command(name)?;
++        let existed = self
++            .ddl_commit_typed(
++                TxnOp::DropTable {
++                    db: split_table_name(name).0,
++                    table: name.to_string(),
++                },
++                || self.drop_table_all(name),
++                |_batch| drop_cmd.clone(),
++            )
++            .await?;
++        if existed {
++            self.drop_text_index_storage(name, None);
++        }
++        Ok(QueryResult::DroppedTable {
++            name: name.to_string(),
++            existed,
++        })
++    }
++
+     pub async fn execute(&self, sql: &str) -> Result<Vec<QueryResult>> {
+         let __q_p = parse(sql)?;
+         let mut out = Vec::new();
+@@ -2226,30 +2260,7 @@ impl Engine {
+                 })
+             }
+             Statement::DropTable { name, if_exists } => {
+-                // The reference rolls the transaction back on a failing DDL,
+-                // and a rollback spends no timestamp: reject before the DDL
+-                // transaction is opened.
+-                if !*if_exists && self.storage.catalog.get_table_by_name(name)?.is_none() {
+-                    return Err(Error::Invalid(format!("table '{name}' does not exist")));
+-                }
+-                let drop_cmd = self.drop_table_command(name)?;
+-                let existed = self
+-                    .ddl_commit_typed(
+-                        TxnOp::DropTable {
+-                            db: split_table_name(name).0,
+-                            table: name.clone(),
+-                        },
+-                        || self.drop_table_all(name),
+-                        |_batch| drop_cmd.clone(),
+-                    )
+-                    .await?;
+-                if existed {
+-                    self.drop_text_index_storage(name, None);
+-                }
+-                Ok(QueryResult::DroppedTable {
+-                    name: name.clone(),
+-                    existed,
+-                })
++                self.drop_table_direct(name, *if_exists).await
+             }
+             Statement::DropIndex { name, if_exists } => {
+                 let target = self
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3547** (2026-11-11): Port secondary index and plaid to rust (@yingfeng)
-- **PR #3545** (2026-11-10): Port merge and skiplist to rust version of fulltext index (@yingfeng)
-- **PR #3541** (2026-11-08): Rust rewrite: the rust_engine port of the engine (@yuzhichang)
-- **PR #3540** (2026-11-05): fix(txn): report concurrent checkpoint/cleanup as skipped instead of failing (@qinling0210)
-- **PR #3539** (2026-11-04): fix(cleanup): remove only the dirs of dropped entities (@qinling0210)
-- **PR #3538** (2026-11-02): CI: Fix no tar file in artifacts (@myf-bee)
+- **PR #3558** (2026-11-13): quota: count the append buffer, and drain it under pressure (@yuzhichang)
+- **PR #3556** (2026-11-13): Rust engine: match the reference on the pysdk suites (@yuzhichang)
+- **PR #3555** (2026-11-12): fix(restart-test): disable periodic checkpoint/cleanup so explicit flush/cleanup is not skipped (@qinling0210)
+- **PR #3554** (2026-11-12): Fix reentrancy issue of opencc  (@yingfeng)
+- **PR #3553** (2026-11-12): Port hnsw to rust  (@yingfeng)
+- **PR #3548** (2026-11-12): fix(optimize): use block-relative offset as row-id label base when merging HNSW/BMP chunks (@rain222)
 
 ---
 
@@ -2001,58 +2124,64 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Port secondary index and plaid to rust (#3547)
+## X. Rust engine: match the reference on the pysdk suites
 
 **RULE**:
-When implementing operations in `rust_engine/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust_engine/crates/catalog/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8583bc5`: Port secondary index and plaid to rust (#3547). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `beb2b691`: Rust engine: match the reference on the pysdk suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust_engine/Cargo.lock`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust_engine/crates/catalog/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-[[package]]
-name = "itoa"
-version = "1.0.19"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3bd1574e617a9a6c1f8f8181bd7e841e1f20e4277607ef28945765188d6284d4"
+        // `f` wrote nothing in the native key space, so it changed no table,
+        // column or index: the C++ layout it would produce is the one already
+        // there. `DROP TABLE IF EXISTS <missing>` is exactly this case, and a
+        // test that drops a thousand absent tables spent a full layout rewrite
+        // (list everything, sweep every key, then compare every key against the
+        // store to decide the statement was a no-op) on each of them.
+        let wrote_nothing = self
+            .capture
+            .lock()
+            .unwrap()
+            .as_ref()
+            .is_some_and(|capture| capture.batch.is_empty());
+        if out.is_ok() && !self.catalog_only && !wrote_nothing {
+    ) -> Result<TableMeta> {
+        let existing = self.get_table_by_name(name)?;
+        self.create_table_typed_resolved(
+            name,
+            existing.as_ref(),
+            false,
+            columns,
+            defaults,
+            not_nulls,
+            types,
+            comments,
+            sparse_stores,
+        )
+    }
 
- "roaring",
-[[package]]
-name = "serde_json"
-version = "1.0.154"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6"
-dependencies = [
- "itoa",
- "memchr",
- "serde",
- "serde_core",
- "zmij",
-]
-
- "serde",
- "serde_json",
-[[package]]
-name = "zmij"
-version = "1.0.23"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
-
+    /// [`Self::create_table_typed_with_sparse_stores`] with the name already
+    /// resolved.
+    ///
+    /// Inside a capture `get_table_by_
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+        if out.is_ok() && !self.catalog_only {
+        if self.get_table_by_name(name)?.is_some() {
+            return Ok(self.tables()?.into_iter().find(|t| t.name == name));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8583bc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `beb2b691` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

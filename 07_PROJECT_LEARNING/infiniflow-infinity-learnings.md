@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `e02e0d7e`  
+> **Source Version**: `7eb3b476`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T22:48:33.142Z  
+> **Timestamp**: 2026-11-13T22:30:56.728Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T22:48:33.130Z  
+> **Harvest Timestamp**: 2026-11-13T22:30:56.722Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4764 stars
+- **Stars / Engagement**: 4765 stars
 
 ---
 
@@ -1349,645 +1349,737 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ea59ff9` (2026-11-12)
-**Commit Message**: fix(optimize): use block-relative offset as row-id label base when merging HNSW/BMP chunks (#3548)
+### Incident Patch 1: `beb2b691` (2026-11-13)
+**Commit Message**: Rust engine: match the reference on the pysdk suites (#3556)
 
-As discussed in #3542.
+Performance work on the four pysdk suites that were still behind the C++
+engine, plus the DDL and append-buffer changes that were needed to get
+there.
 
-**Problem:** in `NewTxn::OptimizeVecIndex`, the HNSW and BMP branches
-passed `base_rowid.segment_offset_` (always 0 for a merge starting at
-the segment base) as the row-id label base for every block, so every
-block after the first was relabeled 0..8191. Merged chunks silently lost
-row 8192+ from search results (normal file size, no log output).
+The concurrency structure is unchanged: every path stays serial where
+the reference is serial. Only data structures and algorithms changed.
 
-**File**: `src/storage/new_txn/new_txn_index_impl.cpp` (modified, +9/-2)
+## Results
+
+Measured per file - one engine per file on real disk, three runs each,
+against a reference run in the same window:
+
+| suite | Rust | C++ | ratio | from |
+|---|---|---|---|---|
+| test_secondary_index | 0.77-0.84 s | 0.86-0.91 s | **0.92x** | 1.00x |
+| test_knn | 20.05-20.53 s | 23.14-24.38 s | **0.86x** | 11.9x |
+| test_py_import | 28.2-28.7 s | 32.3-32.5 s | **0.88x** | 19.6x |
+| test_table | 1.27-1.60 s | 1.32-1.71 s | **0.97x** | 1.42x |
+
+A single engine serving several files in a row is not a valid
+measurement - state carries over and `test_knn` after `test_py_import`
+went from 18 s to 219 s. Every number above is a fresh process.
+
+## Import (`test_py_import`, 53.3 s -> 28.2 s)
+
+- the block mirror takes its rows from an ordered window of the append
+buffer instead of scanning the whole row set once per block
+- mirrored 
+
+**File**: `rust_engine/crates/catalog/src/lib.rs` (modified, +113/-4)
 ```diff
-@@ -2300,7 +2300,12 @@ Status NewTxn::OptimizeVecIndex(std::shared_ptr<IndexBase> index_base,
-                 return status;
-             }
-             u32 offset = 0;
--            memory_hnsw_index->InsertVecs(base_rowid.segment_offset_, col, offset, row_cnt);
-+            // Row-id labels must use the block's absolute offset within the segment (the pattern
-+            // used by the SMVE branch below). base_rowid.segment_offset_ is always 0 when the
-+            // merge range starts from the segment base, which would relabel every block after
-+            // the first one as 0..8191 and silently drop those rows from search results.
-+            SegmentOffset block_offset = block_id * DEFAULT_BLOCK_CAPACITY;
-+            memory_hnsw_index->InsertVecs(block_offset, col, offset, row_cnt);
+@@ -951,7 +951,19 @@ impl Catalog {
+         // `tbl|col|` and `catalog|idx|`), so mirror it inside this capture.
+         // C++-only mode already rewrote it inside `f`; a checkpoint mirrors it
+         // too, which is what covers a directory no DDL touched.
+-        if out.is_ok() && !self.catalog_only {
++        // `f` wrote nothing in the native key space, so it changed no table,
++        // column or index: the C++ layout it would produce is the one already
++        // there. `DROP TABLE IF EXISTS <missing>` is exactly this case, and a
++        // test that drops a thousand absent tables spent a full layout rewrite
++        // (list everything, sweep every key, then compare every key against the
++        // store to decide the statement was a no-op) on each of them.
++        let wrote_nothing = self
++            .capture
++            .lock()
++            .unwrap()
++            .as_ref()
++            .is_some_and(|capture| capture.batch.is_empty());
++        if out.is_ok() && !self.catalog_only && !wrote_nothing {
+             // Best effort, like the checkpoint's: a column type the C++ encoding
+             // does not cover yet leaves the previous layout in place rather than
+             // failing the DDL (the next checkpoint reports it).
+@@ -1219,14 +1231,75 @@ impl Catalog {
+         types: &[String],
+         comments: &[Option<String>],
+         sparse_stores: &[Option<SparseStore>],
++    ) -> Result<TableMeta> {
++        let existing = self.get_table_by_name(name)?;
++        self.create_table_typed_resolved(
++            name,
++            existing.as_ref(),
++            false,
++            columns,
++            defaults,
++            not_nulls,
++            types,
++            comments,
++            sparse_stores,
++        )
++    }
++
++    /// [`Self::create_table_typed_with_sparse_stores`] with the name already
++    /// resolved.
++    ///
++    /// Inside a capture `get_table_by_name` re-reads the store (the cache is
++    /// bypassed there), and the caller has just done that lookup to decide
++    /// whether a crashed `DROP TABLE` left orphans behind - one resolution is
++    /// enough for both.
++    #[allow(clippy::too_many_arguments)]
++    pub fn create_table_typed_existing(
++        &self,
++        name: &str,
++        existing: Option<&TableMeta>,
++        columns: &[String],
++        defaults: &[Option<String>],
++        not_nulls: &[bool],
++        types: &[String],
++        comments: &[Option<String>],
++        sparse_stores: &[Option<SparseStore>],
++    ) -> Result<TableMeta> {
++        self.create_table_typed_resolved(
++            name,
++            existing,
++            true,
++            columns,
++            defaults,
++            not_nulls,
++            types,
++            comments,
++            sparse_stores,
++        )
++    }
++
++    /// The body of both entries: `resolved` says the caller already looked the
++    /// name up, so a duplicate is decided from `existing` alone.
++    #[allow(clippy::too_many_arguments)]
++    fn create_table_typed_resolved(
++        &self,
++        name: &str,
++        existing: Option<&TableMeta>,
++        resolved: bool,
++        columns: &[String],
++        defaults: &[Option<String>],
++        not_nulls: &[bool],
++        types: &[String],
++        comments: &[Option<String>],
++        sparse_stores: &[Option<SparseStore>],
+     ) -> Result<TableMeta> {
+         let _ddl = self.begin_ddl();
+         // The `CREATE TABLE … PROPERTIES (bloom_filter_columns = …)` flag is
+         // **not** recorded here: the reference's `ColumnDef::ToJson` omits
+         // `build_bloom_filter_`, so the catalog it writes reads back as
+         // all-false. The flag survives only in the WAL's `CreateTableV2`.
+ 
+-        if self.get_table_by_name(name)?.is_some() {
++        if existing.is_some() || (!resolved && self.get_table_by_name(name)?.is_some()) {
+             return Err(Error::Catalog(format!("table '{name}' already exists")));
          }
- 
-         memory_hnsw_index->Dump(buffer_obj);
-@@ -2323,7 +2328,9 @@ Status NewTxn::OptimizeVecIndex(std::shared_ptr<IndexBase> index_base,
-                 return status;
+         // The counter is committed in the same batch as the table, so its lock
+@@ -1568,7 +1641,33 @@ impl Catalog {
+                 let found = self.with_view(|store| crate::layout::read_table(store, db, table))?;
+                 return Ok(found.as_ref().map(crate::layout::table_meta_of));
              }
-             u32 offset = 0;
--            memory_bmp_index->AddDocs(base_rowid.segment_offset_, col, offset, row_cnt);
-+            // Same as the HNSW branch above: label rows with the block's absolute offset.
-+            SegmentOffset block_offset = block_id * DEFAULT_BLOCK_CAPACITY;
-+            memory_bmp_index->AddDocs(block_offset, col, offset, row_cnt);
-         }
-         memory_bmp_index->Dump(buffer_obj);
-     } else if (index_base->index_type_ == IndexType::kSMVE) {
+-            return Ok(self.tables()?.into_iter().find(|t| t.name == name));
++            // A bare name is looked up in `default_db` first: that is the
++            // database every unqualified statement resolves against, and the
++            // point read is a couple of keys. Reading every table and filtering
++            // - which is what this did - made a `DROP TABLE` of a bare name cost
++            // O(tables) per statement (0.22 ms against the reference's 0.07 on
++            // a 1000-table directory). Only a name that is not in `default_db`
++            // pays for the scan, and there the database list bounds it.
++            if let Some(found) =
++                self.with_view(|store| crate::layout::read_t
 ```
 
----
-
-### Incident Patch 2: `2aa4f942` (2026-11-12)
-**Commit Message**: fix(restart-test): disable periodic checkpoint/cleanup so explicit flush/cleanup is not skipped (#3555)
-
-### Summary
-
-Disable periodic checkpoint/cleanup in restart test so explicit
-flush/cleanup is not skipped
-
-**File**: `test/data/config/restart_test/test_alter/1.toml` (modified, +1/-1)
+**File**: `rust_engine/crates/executor/src/blocks/column.rs` (modified, +17/-1)
 ```diff
-@@ -16,6 +16,6 @@ persistence_dir = ""
- 
- [buffer]
- [wal]
--checkpoint_interval = "1s"
-+checkpoint_interval = "0s"
- 
- [resource]
-```
-
-**File**: `test/data/config/restart_test/test_alter/3.toml` (modified, +5/-2)
-```diff
-@@ -10,12 +10,15 @@ log_level = "trace"
- [storage]
- data_dir = "/var/infinity/data"
- optimize_interval = "0s"
--cleanup_interval = "1s"
-+cleanup_interval = "0s"
- compact_interval = "0s"
- persistence_dir = ""
- 
- [buffer]
- [wal]
--checkpoint_interval = "1s"
-+# The periodic checkpoint must stay disabled: an explicit FLUSH DATA that lands
-+# while a periodic checkpoint txn is in flight is skipped (query_context_impl.cpp),
-+# and test_alter_cleanup_simple asserts on the .col files the flush produces.
-+checkpoint_interval = "0s"
- 
- [resource]
-```
-
-**File**: `test/data/config/restart_test/test_cleanup/2.toml` (modified, +2/-2)
-```diff
-@@ -11,11 +11,11 @@ log_level = "trace"
- persistence_dir = ""
- data_dir = "/var/infinity/data"
- optimize_interval = "0s"
--cleanup_interval = "1s"
-+cleanup_interval = "0s"
- compact_interval = "1s"
- 
- [buffer]
- [wal]
--checkpoint_interval = "1s"
-+checkpoint_interval = "0s"
- 
- [resource]
-```
-
-**File**: `test/data/config/restart_test/test_fulltext/1.toml` (modified, +2/-1)
-```diff
-@@ -9,10 +9,11 @@ log_to_stdout = true
- 
- [storage]
- persistence_dir = ""
-+cleanup_interval = "0s"
- mem_index_capacity = 1048576
- 
- [buffer]
- [wal]
--checkpoint_interval = "30s"
-+checkpoint_interval = "0s"
- 
- [resource]
-```
-
----
-
-### Incident Patch 3: `b53d40ce` (2026-11-12)
-**Commit Message**: Fix reentrantcy issue of opencc  (#3554)
-
-#3552
-
-**File**: `src/common/analyzer/analyzer_pool.cppm` (modified, +8/-0)
-```diff
-@@ -48,6 +48,14 @@ public:
-     static constexpr std::string_view SPARSEGRAM = "sparsegram";
- 
- private:
-+    // Guards cache_. GetAnalyzer() is called from every fulltext indexing worker
-+    // and from concurrent queries: without the lock two threads could both load
-+    // a prototype and the second store would destroy the first one, leaving the
-+    // analyzers already handed out with dangling borrowed members (trie_,
-+    // pos_table_, wordnet_lemma_, opencc_). Entries are never erased, so the
-+    // borrowed members stay valid for the lifetime of the process.
-+    std::mutex cache_mtx_;
-+
-     CacheType cache_{};
- };
- 
-```
-
-**File**: `src/common/analyzer/analyzer_pool_impl.cpp` (modified, +3/-0)
-```diff
-@@ -71,6 +71,9 @@ constexpr std::string_view SWEDISH = "-swedish";
- constexpr std::string_view TURKISH = "-turkish";
- 
- std::tuple<std::unique_ptr<Analyzer>, Status> AnalyzerPool::GetAnalyzer(const std::string_view &name) {
-+    // The prototype cache is filled lazily and shared by all caller threads.
-+    std::unique_lock<std::mutex> lock(cache_mtx_);
-+
-     switch (Str2Int(name.data())) {
-         case Str2Int(CHINESE.data()): {
-             // chinese-{coarse|fine}
-```
-
-**File**: `src/common/analyzer/rag_analyzer_impl.cpp` (modified, +15/-2)
-```diff
-@@ -672,6 +672,12 @@ RAGAnalyzer::RAGAnalyzer(const std::string &path)
- RAGAnalyzer::RAGAnalyzer(const RAGAnalyzer &other)
-     : own_dict_(false), trie_(other.trie_), pos_table_(other.pos_table_), wordnet_lemma_(other.wordnet_lemma_), stemmer_(std::make_unique<Stemmer>()),
-       opencc_(other.opencc_), lowercase_string_buffer_(term_string_buffer_limit_), fine_grained_(other.fine_grained_) {
-+    // The dictionary, POS table, lemmatizer and OpenCC converter are borrowed from
-+    // the prototype held by AnalyzerPool and are read-only after loading, so the
-+    // copies share them instead of reloading. OpenCC conversion itself is
-+    // re-entrant (its scratch and error state are per call / per thread), which is
-+    // what makes it safe for several indexing workers to convert through the same
-+    // converter. Only per-instance state (stemmer, buffers, flags) is duplicated.
-     InitStemmer(STEM_LANG_ENGLISH);
- }
- 
-@@ -1831,7 +1837,11 @@ std::string RAGAnalyzer::Tokenize(const std::string &line) {
-     std::string processed_line = PCRE2GlobalReplace(*input, R"#(\W+)#", " ");
-     std::string str1 = StrQ2B(processed_line);
-     std::string strline;
--    opencc_->convert(str1, strline);
-+    if (opencc_ == nullptr || opencc_->convert(str1, strline) < 0) {
-+        // Never tokenize an empty string because of a failed conversion: it would
-+        // silently drop the whole field from the index. Use the unconverted text.
-+        strline = str1;
-+    }
- 
-     std::vector<std::string> res;
- 
-@@ -1915,7 +1925,10 @@ std::pair<std::vector<std::string>, std::vector<std::pair<unsigned, unsigned>>>
- 
-     std::string str1 = StrQ2B(processed_line);
-     std::string strline;
--    opencc_->convert(str1, strline);
-+    if (opencc_ == nullptr || opencc_->convert(str1, strline) < 0) {
-+        // See Tokenize(): a failed conversion must not erase the field.
-+        strline = str1;
-+    }
-     std::vector<std::string> tokens;
-     std::vector<std::pair<unsigned, unsigned>> positions;
- 
-```
-
-**File**: `src/common/analyzer/traditional_chinese_analyzer_impl.cpp` (modified, +5/-1)
-```diff
-@@ -61,7 +61,11 @@ Status TraditionalChineseAnalyzer::Load() {
- 
- void TraditionalChineseAnalyzer::Parse(const std::string &input) {
-     std::string out;
--    opencc_->convert(input, out);
-+    // The converter may be shared with other analyzer copies, so a failed
-+    // conversion is possible; fall back to the input instead of indexing nothing.
-+    if (opencc_ == nullptr || opencc_->convert(input, out) < 0) {
-+        out = input;
-+    }
-     ChineseAnalyzer::Parse(out);
- }
- 
-```
-
-**File**: `src/unit_test/third_party/opencc_thread_safety_ut.cpp` (added, +168/-0)
-```diff
-@@ -0,0 +1,168 @@
-+// Copyright(C) 2024 InfiniFlow, Inc. All rights reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+module;
-+
-+#include "unit_test/gtest_expand.h"
-+
-+#include "opencc.h"
-+
-+#include <errno.h>
-+#include <pthread.h>
-+#include <stdlib.h>
-+#include <string.h>
-+
-+module infinity_core:ut.opencc_thread_safety;
-+
-+import :ut.base_test;
-+
-+using namespace infinity;
-+
-+namespace fs = std::filesystem;
-+
-+// One ::OpenCC is shared by every copy of a RAGAnalyzer, i.e. by every fulltext
-+// indexing worker that tokenizes a column value, and several workers convert at
-+// the same time. The conversion used to keep its shortest-path segmentation
-+// scratch inside the converter and its lookup key inside the dictionary, so
-+// concurrent conversions overwrote each other's min_len/parent/path arrays.
-+// Reported symptom: SIGSEGV in sp_seg() (converter.c, path reconstruction) from
-+// a MemoryIndexer::AsyncInsertBottom worker.
-+//
-+// The dictionaries below are plain TEXT dictionaries on purpose: unlike the
-+// shipped .ocd ones they answer multi-character phrases from
-+// dictionary_group_match_longest(), which is what makes sp_seg() run with
-+// length > 1 and touch that scratch at all.
-+class OpenCCThreadSafetyTest : public BaseTest {
-+public:
-+    void SetUp() override {
-+        BaseTest::SetUp();
-+        dict_dir_ = fs::temp_directory_path() / ("infinity_ut_opencc_reentrancy_" + std::to_string(getpid()));
-+        std::error_code ec;
-+        fs::remove_all(dict_dir_, ec);
-+        ASSERT_TRUE(fs::create_directories(dict_dir_, ec)) << dict_dir_ << ": " << ec.message();
-+    }
-+
-+    void TearDown() override {
-+        std::error_code ec;
-+        fs::remove_all(dict_dir_, ec);
-+        BaseTest::TearDown();
-+    }
-+
-+    static bool WriteTextFile(const fs::path &path, const char *content) {
-+        FILE *fp = fopen(path.string().c_str(), "wb");
-+        if (fp == nullptr) {
-+            return false;
-+        }
-+        const bool ok = fputs(content, fp) >= 0;
-+        fclose(fp);
-+        return ok;
-+    }
-+
-+    static std::string MakeRepeated(const char *unit, size_t repeat) {
-+        std::string text;
-+        text.reserve(strlen(unit) * repeat);
-+        for (size_t i = 0; i < repeat; ++i) {
-+            text += unit;
-+        }
-+        return text;
-+    }
-+
-+    // Returns the conversion result, or nullptr when the conversion failed.
-+    static char *Convert(opencc_t od, const char *input) {
-+        char *out = opencc_convert_utf8(od, input, (size_t)-1);
-+        return out == (char *)-1 ? nullptr : out;
-+    }
-+
-+    struct WorkerArgs {
-+        opencc_t od;
-+        const char *input;
-+        const char *expected;
-+        size_t iterations;
-+        size_t mismatches;
-+    };
-+
-+    static void *ConvertLoop(void *arg) {
-+        auto *args = static_cast<WorkerArgs *>(arg);
-+        for (size_t i = 0; i < args->iterations; ++i) {
-+            char *out = Convert(args->od, args->input);
-+            if (out == nullptr || strcmp(out, args->expected) != 0) {
-+                ++args->mismatches;
-+            }
-+            free(out);
-+        }
-+        return nullptr;
-+    }
-+
-+protected:
-+    fs::path dict_dir_;
-+
-+    // Every phrase is longer than one character, so the segmentation has to run
-+    // the shortest-path pass over spans of several code points.
-+    static constexpr const char *PHRASES = "中華人民共和國\t中华人民共和国\n"
-+                                           "這個時候\t这个时候\n"
-+                                           "我們發現\t我们发现\n"
-+                                           "另外一個問題\t另外一个问题\n"
-+                                           "臺灣的經濟發展\t台湾的经济发展\n"
-+                                           "後來怎麼樣了呢\t后来怎么样了呢\n";
-+
-+    static constexpr const char *CONFIG = "title = reentrancy\n"
-+                                          "dict0 = TEXT phrases.txt\n";
-+
-+    static constexpr const char *UNIT = "中華人民共和國這個時候我們發現另外一個問題臺灣的經濟發展後來怎麼樣了呢";
-+
-+    static constexpr size_t THREAD_COUNT = 8;
-+    static constexpr size_t ITERATIONS = 200;
-+};
-+
-+TEST_F(OpenCCThreadSafetyTest, shared_converter_is_reentrant) {
-+    const fs::path config_path = dict_dir_ / "zht2zhs.ini";
-+    ASSERT_TRUE(WriteTextFile(config_path, CONFIG));
-+    ASSERT_TRUE(WriteTextFile(dict_dir_ / "phrases.txt", PHRASES));
-+
-+    opencc_t od = opencc_open(config_path.string().c_str(), dict_dir_.string().c_str());
-+    ASSERT_NE(od, (opencc_t)-1) << "cannot open " << config_path;
-+
-+    // Differe
-```
-
-**File**: `third_party/opencc/config_reader.c` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@ struct _config_desc {
- };
- typedef struct _config_desc config_desc;
- 
--static config_error errnum = CONFIG_ERROR_VOID;
-+static OPENCC_THREAD_LOCAL config_error errnum = CONFIG_ERROR_VOID;
- 
- static int qsort_dictionary_buffer_cmp(const void *a, const void *b) {
-     if (((dictionary_buffer *)a)->index < ((dictionary_buffer *)b)->index)
-```
-
-**File**: `third_party/opencc/converter.c` (modified, +209/-172)
-```diff
-@@ -28,185 +28,111 @@
- 
- #if SEGMENT_METHOD == SEGMENT_SHORTEST_PATH
- 
--#define OPENCC_SP_SEG_DEFAULT_BUFFER_SIZE 1024
-+/* Number of UCS-4 units served by the on-stack scratch block of sp_seg(). A
-+   span is one ambiguous run of a single text, so keeping the common case
-+   allocation-free is worth a few KB of stack. Longer spans fall back to one
-+   heap block that is freed before sp_seg() returns. */
-+#define OPENCC_SP_SEG_STACK_LENGTH 128
- 
-+/* Scratch arrays of a single sp_seg() call.
-+ *
-+ * They are deliberately NOT cached in converter_desc. One opencc_t is shared by
-+ * all worker threads of a fulltext indexer (RAGAnalyzer clones share the same
-+ * ::OpenCC), and caching the scratch made concurrent conversions reset and
-+ * reallocate each other's min_len/parent/path. The visible symptom was a wild
-+ * write in the path reconstruction below, where j starts at min_len[length] and
-+ * a buffer reset by another thread left it at INFINITY_INT. */
- typedef struct {
--    int initialized;
--    size_t buffer_size;
-     size_t *match_length;
-     size_t *min_len;
-     size_t *parent;
-     size_t *path;
-+    size_t *heap_block;
- } spseg_buffer_desc;
- 
- #endif
- 
- typedef struct {
--#if SEGMENT_METHOD == SEGMENT_SHORTEST_PATH
--    spseg_buffer_desc spseg_buffer;
--#endif
-     dictionary_set_t dictionary_set;
--    dictionary_group_t current_dictionary_group;
-     opencc_conversion_mode conversion_mode;
- } converter_desc;
--static converter_error errnum = CONVERTER_ERROR_VOID;
--
--#if SEGMENT_METHOD == SEGMENT_SHORTEST_PATH
--static void sp_seg_buffer_free(spseg_buffer_desc *ossb) {
--    free(ossb->match_length);
--    free(ossb->min_len);
--    free(ossb->parent);
--    free(ossb->path);
--}
--
--static void sp_seg_set_buffer_size(spseg_buffer_desc *ossb, size_t buffer_size) {
--    if (ossb->initialized == TRUE)
--        sp_seg_buffer_free(ossb);
- 
--    ossb->buffer_size = buffer_size;
--    ossb->match_length = (size_t *)malloc((buffer_size + 1) * sizeof(size_t));
--    ossb->min_len = (size_t *)malloc(buffer_size * sizeof(size_t));
--    ossb->parent = (size_t *)malloc(buffer_size * sizeof(size_t));
--    ossb->path = (size_t *)malloc(buffer_size * sizeof(size_t));
-+/* Everything mutable during a conversion now lives on the stack or in a per-call
-+ * heap block, and the dictionary set is only read after open, so one opencc_t
-+ * may be converted from several threads at once without external locking.
-+ * The error code is per thread to keep it meaningful under that sharing. */
-+static OPENCC_THREAD_LOCAL converter_error errnum = CONVERTER_ERROR_VOID;
- 
--    ossb->initialized = TRUE;
--}
--
--static size_t sp_seg(converter_desc *converter, ucs4_t **inbuf, size_t *inbuf_left, ucs4_t **outbuf, size_t *outbuf_left, size_t length) {
-+#if SEGMENT_METHOD == SEGMENT_SHORTEST_PATH
-+/* Shortest-path segmentation over one ambiguous span. Takes the scratch
-+ * explicitly so that no per-converter state is touched (see the note above). */
-+static size_t sp_seg_convert(converter_desc *converter,
-+                             dictionary_group_t group,
-+                             spseg_buffer_desc *ossb,
-+                             ucs4_t **inbuf,
-+                             size_t *inbuf_left,
-+                             ucs4_t **outbuf,
-+                             size_t *outbuf_left,
-+                             size_t length) {
-     /* 最短路徑分詞 */
--
--    /* 對長度爲1時特殊優化 */
--    if (length == 1) {
--        const ucs4_t *const *match_rs = dictionary_group_match_longest(converter->current_dictionary_group, *inbuf, 1, NULL);
--
--        size_t match_len = 1;
--        if (converter->conversion_mode == OPENCC_CONVERSION_FAST) {
--            if (match_rs == NULL) {
--                **outbuf = **inbuf;
--                (*outbuf)++, (*outbuf_left)--;
--                (*inbuf)++, (*inbuf_left)--;
--            } else {
--                const ucs4_t *result = match_rs[0];
--
--                /* 輸出緩衝區剩餘空間小於分詞長度 */
--                if (ucs4len(result) > *outbuf_left) {
--                    errnum = CONVERTER_ERROR_OUTBUF;
--                    return (size_t)-1;
--                }
--
--                for (; *result; result++) {
--                    **outbuf = *result;
--                    (*outbuf)++, (*outbuf_left)--;
--                }
--
--                *inbuf += match_len;
--                *inbuf_left -= match_len;
--            }
--        } else if (converter->conversion_mode == OPENCC_CONVERSION_LIST_CANDIDATES) {
--            if (match_rs == NULL) {
--                **outbuf = **inbuf;
--                (*outbuf)++, (*outbuf_left)--;
--                (*inbuf)++, (*inbuf_left)--;
--            } else {
--                size_t i;
--                for (i = 0; match_rs[i] != NULL; i++) {
--                    const ucs4_t *result = match_rs[i];
--                    int show_delimiter = match_rs[i + 1] != NULL ? 1 : 0;
--
--                    /* 輸出緩衝區剩餘空間小於分詞長度 */
--                    if (ucs4len(result) + show_delimiter > *outbuf_left) {
--               
-```
-
-**File**: `third_party/opencc/dictionary/text.c` (modified, +46/-13)
-```diff
-@@ -27,10 +27,34 @@ struct _text_dictionary {
-     size_t entry_count;
-     size_t max_length;
-     entry *lexicon;
--    ucs4_t *word_buff;
- };
- typedef struct _text_dictionary text_dictionary_desc;
- 
-+/* Lookup keys are built in a per-call buffer: the dictionary is shared by every
-+ * thread converting with the same opencc_t, and a cached key buffer made
-+ * concurrent lookups overwrite each other's ucs4ncpy()/bsearch() input. */
-+#define TEXT_DICTIONARY_KEY_STACK_SIZE 64
-+
-+/* Returns the buffer holding `len` code points of `word`, NUL terminated, or
-+ * NULL when the heap fallback cannot be allocated. `stack` must hold at least
-+ * TEXT_DICTIONARY_KEY_STACK_SIZE code points; *heap_block is set when the
-+ * caller has to free the result with free(). */
-+static ucs4_t *text_dictionary_make_key(ucs4_t *stack, ucs4_t **heap_block, size_t key_size, const ucs4_t *word, size_t len) {
-+    ucs4_t *key = stack;
-+    *heap_block = NULL;
-+
-+    if (key_size > TEXT_DICTIONARY_KEY_STACK_SIZE) {
-+        *heap_block = (ucs4_t *)malloc(sizeof(ucs4_t) * key_size);
-+        if (*heap_block == NULL)
-+            return NULL;
-+        key = *heap_block;
-+    }
-+
-+    ucs4ncpy(key, word, len);
-+    key[len] = L'\0';
-+    return key;
+@@ -319,6 +319,22 @@ pub(crate) fn encode_value(
+     type_text: &str,
+     column_type: i32,
+     value: &str,
++) -> Result<Option<Vec<u8>>> {
++    encode_value_with_shape(type_text, embedding_shape(type_text), column_type, value)
 +}
 +
- int qsort_entry_cmp(const void *a, const void *b) { return ucs4cmp(((entry *)a)->key, ((entry *)b)->key); }
- 
- int parse_entry(const char *buff, entry *entry_i) {
-@@ -93,9 +117,9 @@ dictionary_t dictionary_text_open(const char *filename) {
-     text_dictionary->entry_count = INITIAL_DICTIONARY_SIZE;
-     text_dictionary->max_length = 0;
-     text_dictionary->lexicon = (entry *)malloc(sizeof(entry) * text_dictionary->entry_count);
--    text_dictionary->word_buff = NULL;
- 
--    static char buff[ENTRY_BUFF_SIZE];
-+    /* Per-call line buffer: two dictionaries may be opened concurrently. */
-+    char buff[ENTRY_BUFF_SIZE];
- 
-     FILE *fp = fopen(filename, "rb");
-     if (fp == NULL) {
-@@ -127,7 +151,6 @@ dictionary_t dictionary_text_open(const char *filename) {
- 
-     text_dictionary->entry_count = i;
-     text_dictionary->lexicon = (entry *)realloc(text_dictionary->lexicon, sizeof(entry) * text_dictionary->entry_count);
--    text_dictionary->word_buff = (ucs4_t *)malloc(sizeof(ucs4_t) * (text_dictionary->max_length + 1));
- 
-     qsort(text_dictionary->lexicon, text_dictionary->entry_count, sizeof(text_dictionary->lexicon[0]), qsort_entry_cmp);
- 
-@@ -149,7 +172,6 @@ void dictionary_text_close(dictionary_t t_dictionary) {
-     }
- 
-     free(text_dictionary->lexicon);
--    free(text_dictionary->word_buff);
-     free(text_dictionary);
++/// [`encode_value`] with the column's embedding shape already resolved.
++///
++/// `embedding_shape` upper-cases the whole type string, so calling it per cell
++/// allocated a `String` per value - 16.7 M of them on an 8 M-row, two-column
++/// `COPY`, which was most of the remaining time once the row lookup stopped
++/// scanning the buffer. A block encodes one column at a time, so the shape is
++/// the same for every cell in it.
++pub(crate) fn encode_value_with_shape(
++    type_text: &str,
++    shape: Option<(usize, i32)>,
++    column_type: i32,
++    value: &str,
+ ) -> Result<Option<Vec<u8>>> {
+     if value.eq_ignore_ascii_case("null") {
+         return Ok(None);
+@@ -328,7 +344,7 @@ pub(crate) fn encode_value(
+             "value '{value}' is not valid for column type {column_type}"
+         ))
+     };
+-    if let Some((dim, elem)) = embedding_shape(type_text) {
++    if let Some((dim, elem)) = shape {
+         let inner = value.trim().trim_start_matches('[').trim_end_matches(']');
+         if elem == 0 {
+             // BIT: the engine (and the C++ `ToString`, `embedding_type.h:253-262`)
+```
+
+**File**: `rust_engine/crates/executor/src/blocks/engine.rs` (modified, +229/-88)
+```diff
+@@ -71,6 +71,63 @@ fn reorder_row_text(
+     out.join("\t")
  }
  
-@@ -165,24 +187,31 @@ const ucs4_t *const *dictionary_text_match_longest(dictionary_t t_dictionary, co
-     if (maxlen < len)
-         len = maxlen;
- 
--    ucs4ncpy(text_dictionary->word_buff, word, len);
--    text_dictionary->word_buff[len] = L'\0';
-+    ucs4_t stack_key[TEXT_DICTIONARY_KEY_STACK_SIZE];
-+    ucs4_t *heap_key;
-+    ucs4_t *key = text_dictionary_make_key(stack_key, &heap_key, text_dictionary->max_length + 1, word, len);
-+    if (key == NULL)
-+        goto not_found;
- 
-     entry buff;
--    buff.key = text_dictionary->word_buff;
-+    buff.key = key;
- 
-     for (; len > 0; len--) {
--        text_dictionary->word_buff[len] = L'\0';
-+        key[len] = L'\0';
-         entry *brs =
-             (entry *)bsearch(&buff, text_dictionary->lexicon, text_dictionary->entry_count, sizeof(text_dictionary->lexicon[0]), qsort_entry_cmp);
- 
-         if (brs != NULL) {
-             if (match_length != NULL)
-                 *match_length = len;
-+            free(heap_key);
-             return (const ucs4_t *const *)brs->value;
-         }
-     }
- 
-+    free(heap_key);
++/// One row's cells, either owned (decoded from a block, or a replayed journal
++/// entry) or borrowed from the write's row set.
++///
++/// The mirror copies nothing it does not have to: a bulk `COPY` publishes its
++/// rows and mirrors them straight after, so every cell is already in `extra`
++/// and borrowing is the whole win (18% of the profile was `Vec<Value>::clone`).
++pub(crate) enum RowCells<'a> {
++    Borrowed(&'a Vec<Value>),
++    Owned(Vec<Value>),
++}
 +
-+not_found:
-     if (match_length != NULL)
-         *match_length = 0;
-     return NULL;
-@@ -201,21 +230,25 @@ size_t dictionary_text_get_all_match_lengths(dictionary_t t_dictionary, const uc
-     if (length < len)
-         len = length;
- 
--    ucs4ncpy(text_dictionary->word_buff, word, len);
--    text_dictionary->word_buff[len] = L'\0';
-+    ucs4_t stack_key[TEXT_DICTIONARY_KEY_STACK_SIZE];
-+    ucs4_t *heap_key;
-+    ucs4_t *key = text_dictionary_make_key(stack_key, &heap_key, text_dictionary->max_length + 1, word, len);
-+    if (key == NULL)
-+        return rscnt;
- 
-     entry buff;
--    buff.key = text_dictionary->word_buff;
-+    buff.key = key;
- 
-     for (; len > 0; len--) {
--        text_dictionary->word_buff[len] = L'\0';
-+        key[len] = L'\0';
-         entry *brs =
-             (entry *)bsearch(&buff, text_dictionary->lexicon, text_dictionary->entry_count, sizeof(text_dictionary->lexicon[0]), qsort_entry_cmp);
- 
-         if (brs != NULL)
-             match_length[rscnt++] = len;
++impl std::ops::Deref for RowCells<'_> {
++    type Target = Vec<Value>;
++    fn deref(&self) -> &Vec<Value> {
++        match self {
++            RowCells::Borrowed(values) => values,
++            RowCells::Owned(values) => values,
++        }
++    }
++}
++
++/// Calls `each` for every row of `rows` whose id falls in `[first, last)`.
++///
++/// `rows` is the write's whole row set, sorted by row id (the append buffer is,
++/// and it is what a checkpoint passes), so a block's window is a contiguous
++/// slice found by two binary searches - no scan, no per-row range check.
++///
++/// `ordered` is the caller's verdict on the whole slice, computed **once** per
++/// write rather than per block: verifying it here walked each 8192-row window
++/// again, and the block loop runs 1024 times on an 8 M-row `COPY`.
++fn for_rows_in_window<'a>(
++    rows: &'a [(usize, Vec<Value>)],
++    first: usize,
++    last: usize,
++    ordered: bool,
++    each: impl FnMut(&'a (usize, Vec<Value>)),
++) {
++    if rows.is_empty() {
++        return;
++    }
++    if ordered {
++        let start = rows.partition_point(|(seq, _)| *seq < first);
++        let end = rows.partition_point(|(seq, _)| *seq < last);
++        rows[start..end].iter().for_each(each);
++    } else {
++        rows.iter()
++            .filter(|(seq, _)| *seq >= first && *seq < last)
++            .for_each(each);
++    }
++}
++
++/// Whether `rows` is sorted by row id, i.e. whether the window lookup is a
++/// binary search rather than a filter.
++fn is_id_ordered(rows: &[(usize, Vec<Value>)]) -> bool {
++    rows.windows(2).all(|w| w[0].0 <= w[1].0)
++}
++
+ /// The stored text form of a column default: the same value `AddColumnsData`
+ /// writes into the block, so the buffered row and the block agree.
+ fn default_cell_text(default: Option<&str>) -> String {
+@@ -113,7 +170,7 @@ impl Engine {
+     /// memory: a table is mirrored block by block, the way the reference streams
+     /// the rows through its buffer manager.
+     #[allow(clippy::too_many_arguments)] // one argument per piece of the block layout it mirrors
+-    pub(crate) fn mirror_block_rows(
++    pub(crate) fn mirror_block_rows<'a>(
+         &self,
+         table: &str,
+         meta: &catalog::TableMeta,
+@@ -122,12 +179,23 @@ impl Engine {
+         block_index: u16,
+         start: u64,
+         end: u64,
+-        extra: &[(usize, Vec<Value>)],
+-    ) -> Result<Vec<(usize, Vec<Value>)>> {
++        extra: &'a [(usize, Vec<Value>)],
++        extra_ordered: bool,
++    ) -> Result<Vec<(usize, RowCells<'a>)>> {
+         let first = ((segment_id as usize) << 32) | start as usize;
+         let last = ((segment_id as usize) << 32) | end as usize;
+-        let mut journal: std::collections::BTreeMap<usize, Vec<Value>> =
+-            self.pending_range(table, first, last).into_iter().collect();
++        // The write's row set already carries the append buffer: `extra` is
++        // `merged`, which is `pending_rows` merged with the caller's rows. So a
++        // block's rows are a window of `extra`, and asking `pending_range` for
++        // them as well copied the same cells a second time - the profile showed
++        // `Vec<Value>::clone` at 18%, and half of it was this second copy.
++        // The window as an ordered `Vec`, not a `BTreeMap`: `extra_ordered`
++        // says the rows already come sorted, so a map only adds one tree insert
++        // per row (14% of the profile on an 8 M-row import, 1024 blocks over).
++        let mut journal: Vec<(usize, &'a Vec<Value>)> = Vec::new();
++        for_rows_in_window(extra, first, last, extra_ordered, |(seq, values)| {
++            journal.push((*seq, values));
++        });
+         // The mirror is the authoritative copy of the rows it already holds
+         // (`try_rows` prefers it for the same reason): a re-mirror must not
+         // copy a lossy journal back over cells the blocks already have.
+@@ -176,20 +244,25 @@ impl Engine {
+             }
+             Err(_) => Vec::new(),
+         };
+-        let mut out = Vec::with_capacity(held.len().max(journal.len()));
++        let mut out: Vec<(usize, RowCells<'a>)> = Vec::with_capacity(held.len().max(journal.len()));
++        // The block wins for the ids it already holds (a re-mirror must not copy
++        // a journal back over cells the block has), so its rows go in first and
++        // the window skips them.
++        let from_block: std::collections::HashSet<usize> =
++            held.iter().map(|(seq, _)| *seq
+```
+
+**File**: `rust_engine/crates/executor/src/engine/ddl.rs` (modified, +56/-11)
+```diff
+@@ -26,11 +26,17 @@ impl Engine {
+                 return Err(Error::Invalid(message));
+             }
+         }
+-        if self.storage.catalog.get_table_by_name(name)?.is_none() {
++        // One lookup serves both: whether a crashed `DROP TABLE` left orphans
++        // and whether the name is already taken. Inside a capture each
++        // `get_table_by_name` re-reads the store (the cache is bypassed by
++        // design there), so the second one was a repeated catalog read.
++        let existing = self.storage.catalog.get_table_by_name(name)?;
++        if existing.is_none() {
+             self.clear_orphan_rows(name)?;
+         }
+-        let meta = self.storage.catalog.create_table_typed_with_sparse_stores(
++        let meta = self.storage.catalog.create_table_typed_existing(
+             name,
++            existing.as_ref(),
+             columns,
+             defaults,
+             not_nulls,
+@@ -52,24 +58,42 @@ impl Engine {
+     /// engine's own state: the row keys are the port's, and the in-memory
+     /// registry must forget a dropped table at once.
+     pub(crate) fn drop_table_all(&self, name: &str) -> Result<bool> {
+-        let table_id = self.storage.catalog.get_table_by_name(name)?.map(|m| m.id);
++        // One lookup for the whole drop: the id and the column list both come
++        // from it, and inside a capture every `get_table_by_name` re-resolves
++        // the name against the store (the cache is bypassed there, because the
++        // statement's own uncommitted DDL has to be visible). The reference's
++        // `DropTable` resolves once (`DBMeta::GetTableMeta`) and uses that.
++        let meta = self.storage.catalog.get_table_by_name(name)?;
++        let table_id = meta.as_ref().map(|m| m.id);
+         let key = self.table_key(name);
+         // Full-text chunks live in `<dir>/fulltext/<db>.<table>.<column>`, keyed by
+         // name rather than by table id: a table recreated under the same name
+         // would otherwise reopen the dropped one's chunks and score those
+         // documents a second time.
+-        let fulltext_columns = self.table_schema(&key).unwrap_or_default();
+-        // Dropping the entry drops its charge with it, so the engine-wide
+-        // total has to be rebuilt once (a DDL is rare; the scan is not on a
+-        // hot path).
+-        self.tables.lock().unwrap().remove(&key);
++        let meta_ref = meta;
++        let fulltext_columns = meta_ref
++            .as_ref()
++            .map(|m| m.columns.clone())
++            .unwrap_or_default();
++        // Take this table's charge out of the engine-wide total instead of
++        // walking every table: a run of `DROP TABLE`s is otherwise quadratic.
++        let released = self
++            .tables
++            .lock()
++            .unwrap()
++            .remove(&key)
++            .map(|entry| entry.memindex_bytes)
++            .unwrap_or(0);
+         crate::blocks::misc::forget_mirror_write_lock(&key);
+-        self.recompute_memindex_total();
++        self.release_memindex_bytes(released);
+         // A dropped table's blocks are gone: so are the mappings of them.
+         if let Some(id) = table_id {
+             self.drop_block_maps(id);
+         }
+-        let existed = self.storage.catalog.drop_table(name)?;
++        let existed = self
++            .storage
++            .catalog
++            .drop_table_meta(name, meta_ref.as_ref())?;
+         // Rows are the port's own key space (`row:`/`del:`), not the
+         // reference's, so nothing else would ever remove them.
+         self.clear_orphan_rows(name)?;
+@@ -268,7 +292,28 @@ impl Engine {
+         } else {
+             "default_db".to_string()
+         };
+-        for (k, v) in self.storage.catalog.store().scan_prefix(b"catalog|tbl|")? {
++        // Scoped to this database: `catalog|tbl|` for every table in the engine
++        // makes a run of `DROP TABLE`s walk the whole catalog once per drop
++        // (0.44 ms each against the reference's 0.1). `catalog|db|{name}|` is
++        // one record per database.
++        let db_id_of_name = self
++            .storage
++            .catalog
++            .store()
++            .scan_prefix(storage::catalog_format::catalog_db_prefix(&db_name).as_bytes())?
++            .into_iter()
++            .next()
++            .map(|(_, v)| String::from_utf8_lossy(&v).into_owned());
++        let scan_prefix = match &db_id_of_name {
++            Some(id) => format!("catalog|tbl|{id}|{bare}|"),
++            None => "catalog|tbl|".to_string(),
++        };
++        for (k, v) in self
++            .storage
++            .catalog
++            .store()
++            .scan_prefix(scan_prefix.as_bytes())?
++        {
+             let key = String::from_utf8_lossy(&k).into_owned();
+             let parts: Vec<&str> = key.split('|').collect();
+             if parts.len() >= 5 && parts[3] == bare {
+```
+
+**File**: `rust_engine/crates/executor/src/engine/dml.rs` (modified, +89/-3)
+```diff
+@@ -1146,11 +1146,23 @@ impl Engine {
+         seq: usize,
+         values: &[Literal],
+         schema: &[String],
++    ) -> Result<()> {
++        let targets = self.secondary_targets(table, schema);
++        self.insert_secondary_keys(&targets, seq, values)
++    }
++
++    /// [`Self::update_indexes_on_insert`] with the targets already resolved, for
++    /// a bulk load that resolves them once per batch.
++    pub(crate) fn insert_secondary_keys(
++        &self,
++        targets: &[SecondaryTarget],
++        seq: usize,
++        values: &[Literal],
+     ) -> Result<()> {
+         // The evaluated row is only built when a functional index needs it: a
+         // plain index reads its cell's text and pays nothing.
+         let mut row_values: Option<Vec<Value>> = None;
+-        for target in self.secondary_targets(table, schema) {
++        for target in targets {
+             let Some(value) = values.get(target.pos) else {
+                 continue;
+             };
+@@ -1241,7 +1253,78 @@ impl Engine {
+     /// The tail is an `Arc` (the registry only borrows it while building this
+     /// list), so the rows go into it without excluding any other table - the
+     /// reference writes into each `SecondaryIndexInMemT` the same way.
+-    fn secondary_targets(&self, table: &str, schema: &[String]) -> Vec<SecondaryTarget> {
++    /// Whether `table` has any secondary index at all.
++    ///
++    /// A per-row `secondary_targets` takes the table lock, walks the index map
++    /// and allocates a `Vec` - for eight million rows on a table with no
++    /// secondary index that is eight million locks spent to find nothing.
++    pub(crate) fn has_secondary_indexes(&self, table: &str) -> bool {
++        let tkey = self.table_key(table);
++        self.tables
++            .lock()
++            .unwrap()
++            .get(&tkey)
++            .is_some_and(|entry| !entry.secondary.indexes.is_empty())
++    }
++
++    /// Whether `table` has any index the per-row write hook maintains.
++    ///
++    /// The hook (`update_text_indexes_batch_async`) also carries the sparse and
++    /// multi-vector indexes - it is the one place every write path (SQL
++    /// INSERT/UPDATE, `COPY`, the thrift insert) goes through - so a table with
++    /// only a sparse (BMP) index needs it as much as one with a full-text
++    /// index. Gating on full-text and vector alone dropped every row of a
++    /// sparse column, which `SEARCH MATCH SPARSE` then could not see.
++    ///
++    /// On a table with none of them the hook is a lock plus an allocation that
++    /// finds nothing, eight million times over a bulk `COPY`.
++    ///
++    /// Read-only: the `hnsw_probed` short-circuit belongs to
++    /// `hnsw_mem_segments`, and setting it here would make that skip its probe.
++    pub(crate) fn has_text_or_vector_indexes(&self, table: &str) -> bool {
++        let key = self.table_key(table);
++        let has_mem = {
++            let tables = self.tables.lock().unwrap();
++            tables.get(&key).is_some_and(|entry| {
++                !entry.hnsw_mem.is_empty()
++                    || !entry.ivf_mem.is_empty()
++                    || !entry.sparse.is_empty()
++                    || !entry.mv.is_empty()
++                    || !entry.text.is_empty()
++            })
++        };
++        if has_mem {
++            return true;
++        }
++        let prefix = format!("{table}.");
++        if self
++            .vector_cache
++            .lock()
++            .unwrap()
++            .keys()
++            .any(|k| k.starts_with(&prefix))
++        {
++            return true;
++        }
++        // An index the registries have not opened yet (a fresh directory, or a
++        // column this table entry has not seen): the catalog record decides.
++        self.storage
++            .catalog
++            .list_indexes()
++            .unwrap_or_default()
++            .iter()
++            .any(|im| {
++                (im.table == table || im.table == self.qualified_table(table))
++                    && (im.index_type.eq_ignore_ascii_case("FULLTEXT")
++                        || im.index_type.eq_ignore_ascii_case("HNSW")
++                        || im.index_type.eq_ignore_ascii_case("IVF")
++                        || im.index_type.eq_ignore_ascii_case("BMP")
++                        || im.index_type.eq_ignore_ascii_case("SPARSE")
++                        || im.index_type.eq_ignore_ascii_case("EMVB"))
++            })
++    }
++
++    pub(crate) fn secondary_targets(&self, table: &str, schema: &[String]) -> Vec<SecondaryTarget> {
+         let tkey = self.table_key(table);
+         let tables = self.tables.lock().unwrap();
+         let Some(entry) = tables.get(&tkey) else {
+@@ -1918,6 +2001,9 @@ impl Engine {
+             let _turn = gate.lock().await;
+             let _held = crate::engine::statements::HeldBottom::enter(&self.table_key(table));
+             self.publish_encoded_rows(table, &encoded_owned)?;
++            // The buffer holds the values now; the stored text of the whole
+
+```
+
+**File**: `rust_engine/crates/executor/src/engine/import.rs` (modified, +67/-25)
+```diff
+@@ -43,25 +43,42 @@ impl Engine {
+             .iter()
+             .find(|(k, _)| k == "FORMAT")
+             .map(|(_, v)| v.to_ascii_uppercase());
+-        // Read raw bytes: `FORMAT FVECS` is binary, everything else is text.
++        // The whole file is only read for the formats that need it in one
++        // piece (binary vectors, the JSON forms). CSV streams, and reading the
++        // 326 MB file into a `Vec` first only to open it again was a full extra
++        // pass over the input.
++        let whole_file = |path: &std::path::Path| -> Option<Vec<u8>> { std::fs::read(path).ok() };
+         // Missing fixtures stay a statement-level success with no rows.
+-        let t_read0 = std::time::Instant::now();
+-        let bytes_in = match std::fs::read(&resolved) {
+-            Ok(b) => b,
+-            Err(_) => return Ok(QueryResult::Inserted { count: 0 }),
+-        };
+-        let t_read = t_read0.elapsed();
+         // The binary formats parse into the same literal rows the CSV path
+         // builds, then commit them the same way.
+         let rows = match format.as_deref() {
+-            Some("FVECS") => Some(self.binary_vector_rows(table, &bytes_in, 4)?),
+-            Some("BVECS") => Some(self.binary_vector_rows(table, &bytes_in, 1)?),
+-            Some("CSR") => Some(self.csr_sparse_rows(table, &bytes_in)?),
++            Some("FVECS") => Some(self.binary_vector_rows(
++                table,
++                &whole_file(&resolved).ok_or_else(|| {
++                    Error::Invalid(format!("cannot read '{}'", resolved.display()))
++                })?,
++                4,
++            )?),
++            Some("BVECS") => Some(self.binary_vector_rows(
++                table,
++                &whole_file(&resolved).ok_or_else(|| {
++                    Error::Invalid(format!("cannot read '{}'", resolved.display()))
++                })?,
++                1,
++            )?),
++            Some("CSR") => Some(self.csr_sparse_rows(
++                table,
++                &whole_file(&resolved).ok_or_else(|| {
++                    Error::Invalid(format!("cannot read '{}'", resolved.display()))
++                })?,
++            )?),
+             Some("PARQUET") => Some(self.parquet_rows(table, &resolved)?),
+             _ => None,
+         };
+         if let Some(rows) = rows {
+-            return self.import_literal_rows(table, rows, t_read).await;
++            return self
++                .import_literal_rows(table, rows, std::time::Duration::ZERO)
++                .await;
+         }
+         let delim = opts
+             .iter()
+@@ -77,6 +94,9 @@ impl Engine {
+         // `FORMAT JSONL` (one object per line) and `FORMAT JSON` (one array)
+         // are small in practice; the CSV path streams.
+         if format_of("JSONL") || format_of("JSON") {
++            let Some(bytes_in) = whole_file(&resolved) else {
++                return Ok(QueryResult::Inserted { count: 0 });
++            };
+             let text = String::from_utf8_lossy(&bytes_in).into_owned();
+             if format_of("JSONL") {
+                 return self
+@@ -131,7 +151,16 @@ impl Engine {
+                     continue;
+                 }
+                 let fields: Vec<String> = csv_fields(line, delim);
+-                let mut cells: Vec<String> = fields.iter().map(|f| normalize_cell(f)).collect();
++                // One allocation per cell, not two: `normalize_cell` hands back
++                // the field unchanged for the plain numeric/text cells that
++                // make up most of a `COPY`.
++                let mut cells: Vec<String> = fields
++                    .into_iter()
++                    .map(|f| match normalize_cell_cow(&f) {
++                        std::borrow::Cow::Borrowed(_) => f,
++                        std::borrow::Cow::Owned(o) => o,
++                    })
++                    .collect();
+                 if cells.len() > types_for_scan.len() {
+                     return Err(Error::Invalid(format!(
+                         "import: the file has {} columns but the table has {}",
+@@ -209,22 +238,35 @@ impl Engine {
+                     if !segments.contains(&segment) {
+                         segments.push(segment);
+                     }
++                    // Both hooks take a lock and allocate per row; on a table
++                    // with no secondary index or no text/vector index they find
++                    // nothing eight million times over.
++                    let secondary_targets = if self.has_secondary_indexes(table) {
++                        self.secondary_targets(table, &schema)
++                    } else {
++                        Vec::new()
++                    };
++                    let needs_texts = self.has_text_or_vector_indexes(table);
+                     let mut texts_by_row: Vec<(usize, Vec<String>)> = Vec::with_capacity(take);
+                     for (k, row) in batch[start..start + take].iter().enumerate() {
+-                        self.update_indexes_on_insert(ta
+```
+
+**File**: `rust_engine/crates/executor/src/engine/index_build.rs` (modified, +14/-0)
+```diff
+@@ -1469,6 +1469,20 @@ impl Engine {
+         total
      }
  
-+    free(heap_key);
-     return rscnt;
- }
- 
++    /// Subtracts one table's charge from the engine-wide total.
++    ///
++    /// [`Self::recompute_memindex_total`] walks every table, which is what
++    /// dropping a table used to do - a thousand `DROP TABLE`s against a
++    /// thousand tables is a thousand full walks. The table's own charge is
++    /// already accounted for, so dropping it only has to take it back out.
++    pub(crate) fn release_memindex_bytes(&self, bytes: usize) {
++        if bytes > 0 {
++            self.context
++                .memindex_total
++                .fetch_sub(bytes, std::sync::atomic::Ordering::Relaxed);
++        }
++    }
++
+     /// The engine-wide total: one atomic load. It is what the quota compares
+     /// against, and it never takes the table lock or an index lock.
+     pub(crate) fn memindex_bytes(&self) -> usize {
+```
+
+**File**: `rust_engine/crates/executor/src/engine/query.rs` (modified, +35/-24)
+```diff
+@@ -436,6 +436,40 @@ impl Engine {
+     ///
+     /// Synchronous callers (`cli`, the helper binaries, the tests) go through
+     /// [`Self::execute_blocking`].
++    /// `DROP TABLE` without the SQL round trip.
++    ///
++    /// The thrift `DropTable` RPC used to format `DROP TABLE <name>` and hand
++    /// it to [`Self::execute`], so every drop paid a parse and a plan for a
++    /// statement whose meaning the caller already had. The reference's
++    /// `DropTable` handler goes straight to its executor; measured on a
++    /// 1000-table directory that was 0.27 ms against the reference's 0.07.
++    pub async fn drop_table_direct(&self, name: &str, if_exists: bool) -> Result<QueryResult> {
++        // The reference rolls the transaction back on a failing DDL, and a
++        // rollback spends no timestamp: reject before the DDL transaction is
++        // opened.
++        if !if_exists && self.storage.catalog.get_table_by_name(name)?.is_none() {
++            return Err(Error::Invalid(format!("table '{name}' does not exist")));
++        }
++        let drop_cmd = self.drop_table_command(name)?;
++        let existed = self
++            .ddl_commit_typed(
++                TxnOp::DropTable {
++                    db: split_table_name(name).0,
++                    table: name.to_string(),
++                },
++                || self.drop_table_all(name),
++                |_batch| drop_cmd.clone(),
++            )
++            .await?;
++        if existed {
++            self.drop_text_index_storage(name, None);
++        }
++        Ok(QueryResult::DroppedTable {
++            name: name.to_string(),
++            existed,
++        })
++    }
++
+     pub async fn execute(&self, sql: &str) -> Result<Vec<QueryResult>> {
+         let __q_p = parse(sql)?;
+         let mut out = Vec::new();
+@@ -2226,30 +2260,7 @@ impl Engine {
+                 })
+             }
+             Statement::DropTable { name, if_exists } => {
+-                // The reference rolls the transaction back on a failing DDL,
+-                // and a rollback spends no timestamp: reject before the DDL
+-                // transaction is opened.
+-                if !*if_exists && self.storage.catalog.get_table_by_name(name)?.is_none() {
+-                    return Err(Error::Invalid(format!("table '{name}' does not exist")));
+-                }
+-                let drop_cmd = self.drop_table_command(name)?;
+-                let existed = self
+-                    .ddl_commit_typed(
+-                        TxnOp::DropTable {
+-                            db: split_table_name(name).0,
+-                            table: name.clone(),
+-                        },
+-                        || self.drop_table_all(name),
+-                        |_batch| drop_cmd.clone(),
+-                    )
+-                    .await?;
+-                if existed {
+-                    self.drop_text_index_storage(name, None);
+-                }
+-                Ok(QueryResult::DroppedTable {
+-                    name: name.clone(),
+-                    existed,
+-                })
++                self.drop_table_direct(name, *if_exists).await
+             }
+             Statement::DropIndex { name, if_exists } => {
+                 let target = self
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3558** (2026-11-13): quota: count the append buffer, and drain it under pressure (@yuzhichang)
+- **PR #3556** (2026-11-13): Rust engine: match the reference on the pysdk suites (@yuzhichang)
 - **PR #3555** (2026-11-12): fix(restart-test): disable periodic checkpoint/cleanup so explicit flush/cleanup is not skipped (@qinling0210)
 - **PR #3554** (2026-11-12): Fix reentrancy issue of opencc  (@yingfeng)
 - **PR #3553** (2026-11-12): Port hnsw to rust  (@yingfeng)
 - **PR #3548** (2026-11-12): fix(optimize): use block-relative offset as row-id label base when merging HNSW/BMP chunks (@rain222)
-- **PR #3547** (2026-11-11): Port secondary index and plaid to rust (@yingfeng)
-- **PR #3546** (2026-11-12): Port the Rust engine to an async, parallel server (@yuzhichang)
 
 ---
 
@@ -2007,37 +2099,61 @@ flush/cleanup is not skipped
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. optimize): use block-relative offset as row-id label base when merging HNSW/BMP 
+## X. Rust engine: match the reference on the pysdk suites
 
 **RULE**:
-When implementing operations in `src/storage/new_txn/new_txn_index_impl.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust_engine/crates/catalog/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ea59ff9`: optimize): use block-relative offset as row-id label base when merging HNSW/BMP chunks (#3548). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `beb2b691`: Rust engine: match the reference on the pysdk suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage/new_txn/new_txn_index_impl.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust_engine/crates/catalog/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            // Row-id labels must use the block's absolute offset within the segment (the pattern
-            // used by the SMVE branch below). base_rowid.segment_offset_ is always 0 when the
-            // merge range starts from the segment base, which would relabel every block after
-            // the first one as 0..8191 and silently drop those rows from search results.
-            SegmentOffset block_offset = block_id * DEFAULT_BLOCK_CAPACITY;
-            memory_hnsw_index->InsertVecs(block_offset, col, offset, row_cnt);
-            // Same as the HNSW branch above: label rows with the block's absolute offset.
-            SegmentOffset block_offset = block_id * DEFAULT_BLOCK_CAPACITY;
-            memory_bmp_index->AddDocs(block_offset, col, offset, row_cnt);
+        // `f` wrote nothing in the native key space, so it changed no table,
+        // column or index: the C++ layout it would produce is the one already
+        // there. `DROP TABLE IF EXISTS <missing>` is exactly this case, and a
+        // test that drops a thousand absent tables spent a full layout rewrite
+        // (list everything, sweep every key, then compare every key against the
+        // store to decide the statement was a no-op) on each of them.
+        let wrote_nothing = self
+            .capture
+            .lock()
+            .unwrap()
+            .as_ref()
+            .is_some_and(|capture| capture.batch.is_empty());
+        if out.is_ok() && !self.catalog_only && !wrote_nothing {
+    ) -> Result<TableMeta> {
+        let existing = self.get_table_by_name(name)?;
+        self.create_table_typed_resolved(
+            name,
+            existing.as_ref(),
+            false,
+            columns,
+            defaults,
+            not_nulls,
+            types,
+            comments,
+            sparse_stores,
+        )
+    }
+
+    /// [`Self::create_table_typed_with_sparse_stores`] with the name already
+    /// resolved.
+    ///
+    /// Inside a capture `get_table_by_
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-            memory_hnsw_index->InsertVecs(base_rowid.segment_offset_, col, offset, row_cnt);
-            memory_bmp_index->AddDocs(base_rowid.segment_offset_, col, offset, row_cnt);
+// Induced defect failure mode:
+        if out.is_ok() && !self.catalog_only {
+        if self.get_table_by_name(name)?.is_some() {
+            return Ok(self.tables()?.into_iter().find(|t| t.name == name));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ea59ff9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `beb2b691` are properly handled with clean fallback behavior.
