@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T16:49:13.656Z",
-    "lastVerified": "2026-11-13T16:49:13.656Z",
+    "lastChecked": "2026-11-13T16:58:58.183Z",
+    "lastVerified": "2026-11-13T16:58:58.183Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -138,14 +138,14 @@
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-12T11:18:32.642Z",
-    "lastVerified": "2026-11-12T11:18:32.642Z",
+    "lastChecked": "2026-11-13T16:58:54.424Z",
+    "lastVerified": "2026-11-13T16:58:54.424Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "024dc9aed457d25bcd6eb839f20cf6ecac30ba4e0750172fe97f7c5bc457defc",
+    "contentHash": "54a796474e163fcaeb38358e17a4464791107648823afc32189b40aac40ea900",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -468,8 +468,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T16:05:00.429Z",
-    "lastVerified": "2026-11-13T16:05:00.429Z",
+    "lastChecked": "2026-11-13T16:58:52.191Z",
+    "lastVerified": "2026-11-13T16:58:52.191Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -544,8 +544,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T11:24:22.396Z",
-    "lastVerified": "2026-11-13T11:24:22.396Z",
+    "lastChecked": "2026-11-13T16:58:47.195Z",
+    "lastVerified": "2026-11-13T16:58:47.195Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -2702,12 +2702,12 @@
     "officialUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T16:14:15.083Z",
-    "lastVerified": "2026-11-08T16:14:15.083Z",
+    "lastChecked": "2026-11-13T16:58:39.746Z",
+    "lastVerified": "2026-11-13T16:58:39.746Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-    "contentHash": "cb75faebb61131e87d1ad66ccf7b599b5c82ad7c611014aa8e8cde67c6e9a019",
+    "contentHash": "376a15119d310f93ae2856af5ae1267429e6bdd85201865c7fd38f5257c69cf9",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4317,9 +4317,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-11-12T04:23:43.812Z",
+    "lastChecked": "2026-11-13T16:58:37.175Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-11-12T04:23:43.812Z"
+    "lastVerified": "2026-11-13T16:58:37.175Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -6214,9 +6214,9 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-11-12T12:57:55.928Z",
+    "lastChecked": "2026-11-13T16:58:44.704Z",
     "revisionIdentifier": "7c237c09",
-    "lastVerified": "2026-11-12T12:57:55.928Z"
+    "lastVerified": "2026-11-13T16:58:44.704Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -13008,9 +13008,9 @@
   "margelo-react-native-blur": {
     "name": "react-native-blur",
     "officialUrl": "https://github.com/margelo/react-native-blur",
-    "lastChecked": "2026-11-09T06:32:17.411Z",
+    "lastChecked": "2026-11-13T16:58:42.277Z",
     "revisionIdentifier": "7edfaa0f",
-    "lastVerified": "2026-11-09T06:32:17.411Z"
+    "lastVerified": "2026-11-13T16:58:42.277Z"
   },
   "pallets-flask": {
     "name": "flask",

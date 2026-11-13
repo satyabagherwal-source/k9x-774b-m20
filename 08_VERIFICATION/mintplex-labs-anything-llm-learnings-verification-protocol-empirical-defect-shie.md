@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:41:43.101Z",
+  "timestamp": "2026-11-13T16:59:45.321Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-mintplex-labs-anything-llm-learnings",
+  "learning_id": "LEARN-EVO-mintplex-labs-anything-llm-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mintplex-labs-anything-llm-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:41:43.101Z`  
-> **Learning ID**: `LEARN-REEXTRACT-mintplex-labs-anything-llm-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T16:59:45.321Z`  
+> **Learning ID**: `LEARN-EVO-mintplex-labs-anything-llm-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source**: github ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
-> **Source Version**: `c4e4e677`  
+> **Source Version**: `1626d971`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T11:18:32.651Z  
+> **Timestamp**: 2026-11-13T16:58:54.431Z  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T11:18:32.642Z  
+> **Harvest Timestamp**: 2026-11-13T16:58:54.424Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 68207 stars
+- **Stars / Engagement**: 68244 stars
 
 ---
 
@@ -1334,241 +1334,1064 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c4e4e677` (2026-11-12)
-**Commit Message**: fix: keep generic types like Promise<Response> in chat exports (#7124)
+### Incident Patch 1: `a145523c` (2026-11-12)
+**Commit Message**: fix: batch Qdrant upserts under the 32MB request limit (#7140)
 
-* fix: keep generic types like Promise<Response> in chat exports
+* fix: upgrade Qdrant client to 1.20.0 and batch upserts under 32MB
 
-stripThoughtChain removed any tag whose name started with a thought or wrapper tag name, in any letter case, so exports dropped text such as <Response> from assistant replies. It now matches the exact lowercase tag names.
+Bump @qdrant/js-client-rest 1.18.0 -> 1.20.0. Docker and CI now run
+Node 24, so the Node 22 floor that blocked 1.19+ is gone; raise the
+server engines field and .nvmrc to match.
 
-* chat export: match thought blocks by exact, case-sensitive tag name too, so JSX like <Thought> stays in exports
+1.19 removed client.search(), so similarity search now uses query()
+(Qdrant Query API, server >= 1.10).
 
-* chat export: drop export test
+Upserts sent 500 points per request. At 4096 dims (e.g. qwen3-embedding)
+that is ~42MB of JSON, over Qdrant's default 32MB request limit, which
+Qdrant rejects with a 400. Send 100 points per request from both the
+fresh and cached embed paths, and include Qdrant's error reason in the
+logged message instead of a bare "Bad Request".
 
-* chat export: reword tag-matching comment
+Disable the client's version check: it only warns, fires on every
+request, and reads like the cause of unrelated failures.
+
+Closes #7139
+
+* Keep Qdrant client at 1.18.0; scope fix to upsert batch size
+
+The 1.18 client works against a 1.20 server (the version check only
+warns), so the 400 in #7139 is the oversized upsert alone. Revert the
+client bump, query() migration, Node pin changes and disabled version
+check.
+
+**File**: `server/utils/vectorDbProviders/qdrant/index.js` (modified, +32/-44)
+```diff
+@@ -186,13 +186,8 @@ class QDrant extends VectorDatabase {
+               namespace,
+             });
+ 
++          const records = [];
+           for (const chunk of chunks) {
+-            const submission = {
+-              ids: [],
+-              vectors: [],
+-              payloads: [],
+-            };
+-
+             // Before sending to Qdrant and saving the records to our db
+             // we need to assign the id of each chunk that is stored in the cached file.
+             // The id property must be defined or else it will be unable to be managed by ALLM.
+@@ -201,24 +196,16 @@ class QDrant extends VectorDatabase {
+               if (chunk?.payload?.hasOwnProperty("id")) {
+                 const { id: _id, ...payload } = chunk.payload;
+                 documentVectors.push({ docId, vectorId: id });
+-                submission.ids.push(id);
+-                submission.vectors.push(chunk.vector);
+-                submission.payloads.push(payload);
++                records.push({ id, vector: chunk.vector, payload });
+               } else {
+                 console.error(
+                   "The 'id' property is not defined in chunk.payload - it will be omitted from being inserted in QDrant collection."
+                 );
+               }
+             });
+-
+-            const additionResult = await client.upsert(namespace, {
+-              wait: true,
+-              batch: { ...submission },
+-            });
+-            if (additionResult?.status !== "completed")
+-              throw new Error("Error embedding into QDrant", additionResult);
+           }
+ 
++          await this.#upsertRecords(client, namespace, records);
+           await DocumentVectors.bulkInsert(documentVectors);
+           return { vectorized: true, error: null };
+         }
+@@ -292,40 +279,41 @@ class QDrant extends VectorDatabase {
+         });
+ 
+       if (vectors.length > 0) {
+-        const chunks = [];
+-
+         this.logger("Inserting vectorized chunks into QDrant collection.");
+-        for (const chunk of toChunks(vectors, 500)) {
+-          const batchIds = [],
+-            batchVectors = [],
+-            batchPayloads = [];
+-          chunks.push(chunk);
+-          chunk.forEach((v) => {
+-            batchIds.push(v.id);
+-            batchVectors.push(v.vector);
+-            batchPayloads.push(v.payload);
+-          });
+-
+-          const additionResult = await client.upsert(namespace, {
+-            wait: true,
+-            batch: {
+-              ids: batchIds,
+-              vectors: batchVectors,
+-              payloads: batchPayloads,
+-            },
+-          });
+-          if (additionResult?.status !== "completed")
+-            throw new Error("Error embedding into QDrant", additionResult);
+-        }
+-
+-        await storeVectorResult(chunks, fullFilePath);
++        await this.#upsertRecords(client, namespace, vectors);
++        await storeVectorResult(toChunks(vectors, 500), fullFilePath);
+       }
+ 
+       await DocumentVectors.bulkInsert(documentVectors);
+       return { vectorized: true, error: null };
+     } catch (e) {
+-      this.logger("addDocumentToNamespace", e.message);
+-      return { vectorized: false, error: e.message };
++      // Qdrant's reason for a rejected request is in the response body, not the message.
++      const reason = e?.data?.status?.error;
++      const message = reason ? `${e.message}: ${reason}` : e.message;
++      this.logger("addDocumentToNamespace", message);
++      return { vectorized: false, error: message };
++    }
++  }
++
++  /**
++   * Upsert points in batches small enough to stay under Qdrant's default 32MB
++   * request limit. A 500-point batch of 4096-dim vectors is ~42MB of JSON.
++   * @param {QdrantClient} client
++   * @param {string} namespace
++   * @param {{id: string, vector: number[], payload: object}[]} records
++   */
++  async #upsertRecords(client, namespace, records) {
++    for (const batch of toChunks(records, 100)) {
++      const result = await client.upsert(namespace, {
++        wait: true,
++        batch: {
++          ids: batch.map((r) => r.id),
++          vectors: batch.map((r) => r.vector),
++          payloads: batch.map((r) => r.payload),
++        },
++      });
++      if (result?.status !== "completed")
++        throw new Error("Error embedding into QDrant", result);
+     }
+   }
+ 
+```
+
+---
+
+### Incident Patch 2: `1626d971` (2026-11-12)
+**Commit Message**: fix: guard image downloads in the PDF, DOCX and PPTX file tools (#7143)
+
+* Guard image downloads in the PDF, DOCX and PPTX file tools
+
+Image sources in generated documents come from model output, so the file
+tools must not fetch from this host or private networks. The PDF tool
+handed markdown straight to mdpdf, which downloads images itself, and the
+DOCX tool used plain fetch; only PPTX checked addresses.
+
+create-files/images.js now holds the public-address guard (moved from
+pptx/images.js) plus loadImage, which takes a data URL or a public URL and
+checks the format by magic bytes, and embedMarkdownImages, which rewrites
+markdown and HTML images to data URLs and drops the ones that cannot be
+loaded. DOCX loads every <img> through loadImage, PDF embeds images before
+calling mdpdf, and PPTX downloads through the shared guard.
+
+* Note that bypasses of the file tools' image guard are not accepted as vulnerabilities
+
+**File**: `server/__tests__/utils/agents/aibitat/plugins/create-files/images.test.js` (added, +359/-0)
+```diff
+@@ -0,0 +1,359 @@
++/* eslint-env jest */
++const http = require("http");
++const {
++  isPublicIp,
++  assertPublicUrl,
++  downloadImage,
++  imageType,
++  loadImage,
++  embedMarkdownImages,
++} = require("../../../../../../utils/agents/aibitat/plugins/create-files/images.js");
++
++const PNG = Buffer.from(
++  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
++  "base64"
++);
++const pad = (head) =>
++  Buffer.concat([Buffer.from(head, "latin1"), Buffer.alloc(16)]);
++const GIF = pad("GIF89a");
++const BMP = pad("BM");
++const WEBP = Buffer.concat([
++  Buffer.from("RIFF\0\0\0\0WEBP", "latin1"),
++  Buffer.alloc(8),
++]);
++const dataUrl = (buffer, mime = "image/png") =>
++  `data:${mime};base64,${buffer.toString("base64")}`;
++
++// The server listens on loopback, so tests that need to reach it allow
++// exactly that address.
++const loopbackOnly = (ip) => ip === "127.0.0.1";
++let server;
++let base;
++let port;
++const hits = [];
++const routes = {
++  "/ok.png": (res) => {
++    res.writeHead(200, { "content-type": "image/png" });
++    res.write(PNG.subarray(0, 10));
++    res.end(PNG.subarray(10));
++  },
++  "/untyped.gif": (res) => {
++    res.writeHead(200, { "content-type": "application/octet-stream" });
++    res.end(GIF);
++  },
++  "/lying.png": (res) => {
++    res.writeHead(200, { "content-type": "image/png" });
++    res.end("<html>not an image</html>");
++  },
++  "/page.html": (res) => {
++    res.writeHead(200, { "content-type": "text/html" });
++    res.end("<html>");
++  },
++  "/vector.svg": (res) => {
++    res.writeHead(200, { "content-type": "image/svg+xml" });
++    res.end("<svg/>");
++  },
++  "/missing.png": (res) => {
++    res.writeHead(404, { "content-type": "image/png" });
++    res.end();
++  },
++  "/huge.jpg": (res) => {
++    res.writeHead(200, { "content-type": "image/jpeg" });
++    const chunk = Buffer.alloc(1024 * 1024);
++    for (let i = 0; i < 11; i++) res.write(chunk);
++    res.end();
++  },
++  "/slow.png": () => {},
++  "/hop": (res) => {
++    res.writeHead(302, { location: "/ok.png" });
++    res.end();
++  },
++  "/loop": (res) => {
++    res.writeHead(302, { location: "/loop" });
++    res.end();
++  },
++  "/to-v6-loopback": (res) => {
++    res.writeHead(302, { location: "http://[::ffff:7f00:1]/secret" });
++    res.end();
++  },
++};
++
++beforeAll(
++  () =>
++    new Promise((resolve) => {
++      server = http.createServer((req, res) => {
++        hits.push(req.url);
++        (routes[req.url] || routes["/missing.png"])(res);
++      });
++      server.listen(0, "127.0.0.1", () => {
++        port = server.address().port;
++        base = `http://127.0.0.1:${port}`;
++        resolve();
++      });
++    })
++);
++afterAll(() => {
++  server.closeAllConnections();
++  return new Promise((resolve) => server.close(resolve));
++});
++beforeEach(() => hits.splice(0));
++
++describe("isPublicIp and assertPublicUrl", () => {
++  test("only public addresses pass", () => {
++    for (const ip of [
++      "127.0.0.1",
++      "10.1.2.3",
++      "172.16.0.1",
++      "172.31.255.255",
++      "192.168.1.1",
++      "169.254.169.254",
++      "100.64.0.1",
++      "0.0.0.0",
++      "224.0.0.1",
++      "::1",
++      "::",
++      "fc00::1",
++      "fe80::1",
++      "::ffff:127.0.0.1",
++      // The same addresses as Node writes them after parsing a URL.
++      "::ffff:7f00:1",
++      "::ffff:a9fe:a9fe",
++      "::7f00:1",
++      "64:ff9b::7f00:1",
++      "2002:7f00:1::1",
++      "2001:0:7f00:1::1",
++      "not an ip",
++      "",
++    ])
++      expect([ip, isPublicIp(ip)]).toEqual([ip, false]);
++    for (const ip of ["8.8.8.8", "172.32.0.1", "93.184.216.34", "2606:4700::1"])
++      expect([ip, isPublicIp(ip)]).toEqual([ip, true]);
++  });
++
++  test("rejects other schemes and hosts on the server's own network, however they are written", async () => {
++    for (const url of [
++      "file:///etc/passwd",
++      "ftp://8.8.8.8/a.png",
++      "http://127.0.0.1/a.png",
++      "http://127.1/a.png",
++      "http://2130706433/a.png",
++      "http://0x7f000001/a.png",
++      "http://localhost:3001/a.png",
++      "http://[::1]/a.png",
++      "http://[::ffff:127.0.0.1]/a.png",
++      "http://[::ffff:a9fe:a9fe]/latest/meta-data",
++      "http://169.254.169.254/latest/meta-data",
++    ])
++      await expect(assertPublicUrl(url)).rejects.toThrow();
++    await expect(assertPublicUrl("not a url")).rejects.toThrow();
++    await expect(
++      assertPublicUrl("https://93.184.216.34/a.png")
++    ).resolves.toBeUndefined();
++  });
++});
++
++describe("downloadImage", () => {
++  test("refuses this host by default, by name or by address, without connecting", async () => {
++    for (const url of [
++      `${base}/ok.png`,
++      `http://localhost:${port}/ok.png`,
++      `http://[::ffff:127.0.0.1]:${port}/ok.png`,
++    ])
++      await expect(downloadImage(url)).rejects.toThrow(/not a public address/);
++    expect(hits).toEqual([]);
++  });
++
++  test("checks every redirect before following it, and stops after a few", async () => {
++    expect(
+```
+
+**File**: `server/__tests__/utils/agents/aibitat/plugins/create-files/pptx/images.test.js` (modified, +0/-148)
+```diff
+@@ -4,9 +4,6 @@ process.env.STORAGE_DIR = __dirname;
+ const sharp = require("sharp");
+ const {
+   preparePicture,
+-  isPublicIp,
+-  assertPublicUrl,
+-  downloadImage,
+   imagesInMarkdown,
+   downloadUrls,
+   attachedPictures,
+@@ -29,151 +26,6 @@ const png = (width, height, alpha = false) =>
+ 
+ const picture = (name) => ({ data: `data:${name}`, width: 1600, height: 900 });
+ 
+-describe("isPublicIp and assertPublicUrl", () => {
+-  test("only public addresses pass", () => {
+-    for (const ip of [
+-      "127.0.0.1",
+-      "10.1.2.3",
+-      "172.16.0.1",
+-      "172.31.255.255",
+-      "192.168.1.1",
+-      "169.254.169.254",
+-      "100.64.0.1",
+-      "0.0.0.0",
+-      "224.0.0.1",
+-      "::1",
+-      "::",
+-      "fc00::1",
+-      "fe80::1",
+-      "::ffff:127.0.0.1",
+-      // The same addresses as Node writes them after parsing a URL.
+-      "::ffff:7f00:1",
+-      "::ffff:a9fe:a9fe",
+-      "::7f00:1",
+-      "64:ff9b::7f00:1",
+-      "2002:7f00:1::1",
+-      "2001:0:7f00:1::1",
+-      "not an ip",
+-    ])
+-      expect([ip, isPublicIp(ip)]).toEqual([ip, false]);
+-    for (const ip of ["8.8.8.8", "172.32.0.1", "93.184.216.34", "2606:4700::1"])
+-      expect([ip, isPublicIp(ip)]).toEqual([ip, true]);
+-  });
+-
+-  test("rejects other schemes and hosts on the server's own network, however they are written", async () => {
+-    for (const url of [
+-      "file:///etc/passwd",
+-      "ftp://8.8.8.8/a.png",
+-      "http://127.0.0.1/a.png",
+-      "http://127.1/a.png",
+-      "http://2130706433/a.png",
+-      "http://localhost:3001/a.png",
+-      "http://[::1]/a.png",
+-      "http://[::ffff:127.0.0.1]/a.png",
+-      "http://[::ffff:a9fe:a9fe]/latest/meta-data",
+-      "http://169.254.169.254/latest/meta-data",
+-    ])
+-      await expect(assertPublicUrl(url)).rejects.toThrow();
+-    await expect(
+-      assertPublicUrl("https://93.184.216.34/a.png")
+-    ).resolves.toBeUndefined();
+-  });
+-});
+-
+-describe("downloadImage", () => {
+-  const http = require("http");
+-  let server;
+-  let base;
+-  const hits = [];
+-  const routes = {
+-    "/ok.png": (res) => {
+-      res.writeHead(200, { "content-type": "image/png" });
+-      res.write("ab");
+-      res.end("cd");
+-    },
+-    "/page.html": (res) => {
+-      res.writeHead(200, { "content-type": "text/html" });
+-      res.end("<html>");
+-    },
+-    "/vector.svg": (res) => {
+-      res.writeHead(200, { "content-type": "image/svg+xml" });
+-      res.end("<svg/>");
+-    },
+-    "/missing.png": (res) => {
+-      res.writeHead(404, { "content-type": "image/png" });
+-      res.end();
+-    },
+-    "/huge.jpg": (res) => {
+-      res.writeHead(200, { "content-type": "image/jpeg" });
+-      const chunk = Buffer.alloc(1024 * 1024);
+-      for (let i = 0; i < 9; i++) res.write(chunk);
+-      res.end();
+-    },
+-    "/hop": (res) => {
+-      res.writeHead(302, { location: "/ok.png" });
+-      res.end();
+-    },
+-    "/to-v6-loopback": (res) => {
+-      res.writeHead(302, { location: "http://[::ffff:7f00:1]/secret" });
+-      res.end();
+-    },
+-  };
+-  // The server listens on loopback, so tests that need to reach it allow
+-  // exactly that address.
+-  const loopbackOnly = (ip) => ip === "127.0.0.1";
+-
+-  beforeAll(
+-    () =>
+-      new Promise((resolve) => {
+-        server = http.createServer((req, res) => {
+-          hits.push(req.url);
+-          (routes[req.url] || routes["/missing.png"])(res);
+-        });
+-        server.listen(0, "127.0.0.1", () => {
+-          base = `http://127.0.0.1:${server.address().port}`;
+-          resolve();
+-        });
+-      })
+-  );
+-  afterAll(() => new Promise((resolve) => server.close(resolve)));
+-  beforeEach(() => hits.splice(0));
+-
+-  test("refuses this host by default, by name or by address, without connecting", async () => {
+-    const port = server.address().port;
+-    for (const url of [
+-      `${base}/ok.png`,
+-      `http://localhost:${port}/ok.png`,
+-      `http://[::ffff:127.0.0.1]:${port}/ok.png`,
+-    ])
+-      await expect(downloadImage(url)).rejects.toThrow(/not a public address/);
+-    expect(hits).toEqual([]);
+-  });
+-
+-  test("checks every redirect before following it", async () => {
+-    expect(
+-      (
+-        await downloadImage(`${base}/hop`, { isAllowed: loopbackOnly })
+-      ).toString()
+-    ).toBe("abcd");
+-    await expect(
+-      downloadImage(`${base}/to-v6-loopback`, { isAllowed: loopbackOnly })
+-    ).rejects.toThrow(/not a public address/);
+-    expect(hits).toEqual(["/hop", "/ok.png", "/to-v6-loopback"]);
+-  });
+-
+-  test("returns only raster images that load and fit under the size cap", async () => {
+-    for (const [path, error] of [
+-      ["/page.html", /not a raster image/],
+-      ["/vector.svg", /not a raster image/],
+-      ["/missing.png", /HTTP 404/],
+-      ["/huge.jpg", /too large/],
+-    ])
+-      await expect(
+-        downloadImage(`${base}${path}`, { isAllowed: loopbackOnly })
+-      ).rejects.toThrow(error);
+-  });
+-});
+-
+ describe("imagesInMarkdown", () => {
+   test("keeps describe
+```
+
+**File**: `server/utils/agents/aibitat/plugins/create-files/docx/utils.js` (modified, +42/-188)
+```diff
+@@ -3,6 +3,8 @@
+  * Uses marked for parsing, jsdom for HTML traversal, and docx for document generation.
+  */
+ 
++const { loadImage } = require("../images.js");
++
+ /**
+  * Document style presets for professional-looking documents.
+  */
+@@ -90,209 +92,61 @@ async function loadLibraries() {
+   };
+ }
+ 
+-const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+ const IMAGE_FETCH_TIMEOUT_MS = 2000;
++// The formats docx ImageRun can embed.
++const DOCX_IMAGE_FORMATS = ["png", "jpg", "gif", "bmp"];
+ 
+ /**
+- * Image magic bytes and their corresponding types.
+- * This is hardcoded and there might be a better way to do this but this is for simple image validation.
+- * @type {Object}
+- */
+-const IMAGE_MAGIC_BYTES = {
+-  png: { bytes: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], type: "png" },
+-  jpg: { bytes: [0xff, 0xd8, 0xff], type: "jpg" },
+-  gif87a: { bytes: [0x47, 0x49, 0x46, 0x38, 0x37, 0x61], type: "gif" },
+-  gif89a: { bytes: [0x47, 0x49, 0x46, 0x38, 0x39, 0x61], type: "gif" },
+-  bmp: { bytes: [0x42, 0x4d], type: "bmp" },
+-  webp: {
+-    bytes: [0x52, 0x49, 0x46, 0x46],
+-    type: "webp",
+-    offset4: [0x57, 0x45, 0x42, 0x50],
+-  },
+-};
+-
+-/**
+- * Validates image buffer by checking magic bytes to determine actual image type.
+- * @param {Buffer} buffer - The image buffer to validate
+- * @returns {{valid: boolean, type: string|null}} Validation result with detected type
+- */
+-function validateImageMagicBytes(buffer) {
+-  if (!buffer || buffer.length < 12) {
+-    return { valid: false, type: null };
+-  }
+-
+-  for (const [, signature] of Object.entries(IMAGE_MAGIC_BYTES)) {
+-    const matches = signature.bytes.every((byte, i) => buffer[i] === byte);
+-    if (matches) {
+-      if (signature.offset4) {
+-        const offset4Matches = signature.offset4.every(
+-          (byte, i) => buffer[8 + i] === byte
+-        );
+-        if (!offset4Matches) continue;
+-      }
+-      return { valid: true, type: signature.type };
+-    }
+-  }
+-
+-  return { valid: false, type: null };
+-}
+-
+-/**
+- * Fetches an image from a URL or processes a base64 data string.
++ * Loads an image from a base64 data URL or a public URL and sizes it for the page.
+  * @param {string} src - Image source (URL or base64)
+  * @param {Function} log - Logging function
+  * @returns {Promise<{buffer: Buffer, type: string, width: number, height: number} | null>}
+  */
+ async function fetchImage(src, log) {
++  let image;
+   try {
+-    let imageBuffer;
+-    let imageType = "png";
+-
+-    if (src.startsWith("data:")) {
+-      const match = src.match(/^data:image\/(\w+);base64,(.+)$/);
+-      if (match) {
+-        imageBuffer = Buffer.from(match[2], "base64");
+-
+-        if (imageBuffer.length > MAX_IMAGE_SIZE) {
+-          log(
+-            `create-docx-file: Base64 image too large (${(imageBuffer.length / 1024 / 1024).toFixed(2)}MB), max ${MAX_IMAGE_SIZE / 1024 / 1024}MB`
+-          );
+-          return null;
+-        }
+-
+-        const validation = validateImageMagicBytes(imageBuffer);
+-        if (!validation.valid) {
+-          log(
+-            `create-docx-file: Base64 data is not a valid image (magic bytes check failed)`
+-          );
+-          return null;
+-        }
+-        imageType = validation.type;
+-
+-        log(
+-          `create-docx-file: Processed base64 image, type: ${imageType}, size: ${imageBuffer.length} bytes`
+-        );
+-      } else {
+-        log(`create-docx-file: Invalid base64 image format, skipping`);
+-        return null;
+-      }
+-    } else if (src.startsWith("http://") || src.startsWith("https://")) {
+-      let parsedUrl;
+-      try {
+-        parsedUrl = new URL(src);
+-      } catch {
+-        log(`create-docx-file: Invalid URL: ${src}`);
+-        return null;
+-      }
+-
+-      if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+-        log(`create-docx-file: Invalid URL protocol: ${parsedUrl.protocol}`);
+-        return null;
+-      }
+-
+-      const controller = new AbortController();
+-      const timeoutId = setTimeout(
+-        () => controller.abort(),
+-        IMAGE_FETCH_TIMEOUT_MS
+-      );
+-
+-      try {
+-        const response = await fetch(src, {
+-          signal: controller.signal,
+-        });
+-        clearTimeout(timeoutId);
+-
+-        if (!response.ok) {
+-          log(
+-            `create-docx-file: Failed to fetch image from ${src}: ${response.status}`
+-          );
+-          return null;
+-        }
+-
+-        const contentLength = response.headers.get("content-length");
+-        if (contentLength && parseInt(contentLength, 10) > MAX_IMAGE_SIZE) {
+-          log(
+-            `create-docx-file: Image too large (${(parseInt(contentLength, 10) / 1024 / 1024).toFixed(2)}MB), max ${MAX_IMAGE_SIZE / 1024 / 1024}MB`
+-          );
+-          return null;
+-        }
+-
+-        const arrayBuffer = await response.arrayBuffer();
+-        imageBuffer = Buffer.from(arrayBuffer);
+-
+-        if (imageBuffer.length > MAX_IMAGE_SIZE) {
+-          log(
+-            `create-docx-file: Downloaded image too large (${(imageB
+```
+
+**File**: `server/utils/agents/aibitat/plugins/create-files/images.js` (added, +345/-0)
+```diff
+@@ -0,0 +1,345 @@
++const net = require("net");
++const dns = require("dns");
++const http = require("http");
++const https = require("https");
++
++/**  ATTN: SECURITY RESEARCHERS - WE ARE NOT ACCEPTING CVEs OR GHSAs FOR BYPASSES OF THIS GUARD.
++ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
++ * The public-address check below is a best-effort guard so a model cannot casually point a generated
++ * document at this host or the local network. It is NOT a security boundary. We know there are any
++ * number of ways to bypass or dupe it (DNS tricks, tunneling, hosts editing, open redirectors, proxies,
++ * address encodings we did not think of, etc.), and we are not going to chase them.
++ *
++ * Securing an instance is the job of whoever deploys it: network isolation, firewalls and egress
++ * rules. If your deployment can reach something it should not, fix that at the network layer.
++ *
++ * Any GHSA or CVE report about bypassing this guard will be closed without review, same as the
++ * isValidIP check in collector/utils/url. Please do not submit one.
++ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
++ */
++
++/**
++ * Image loading shared by the file tools. Image sources come from model
++ * output, so every remote download is limited to public addresses (for the
++ * first URL and every redirect) and every image is identified by its magic
++ * bytes, not by what its URL or server claims.
++ */
++
++const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
++const DOWNLOAD_TIMEOUT_MS = 10_000;
++const MAX_REDIRECTS = 3;
++const DOWNLOAD_CONCURRENCY = 4;
++const MIME_TYPES = {
++  png: "image/png",
++  jpg: "image/jpeg",
++  gif: "image/gif",
++  bmp: "image/bmp",
++  webp: "image/webp",
++  avif: "image/avif",
++};
++
++// Addresses a document must not be able to reach through the server: this
++// host, private networks, link-local (cloud metadata), carrier-grade NAT,
++// benchmarking, multicast and reserved ranges. BlockList also checks
++// IPv4-mapped IPv6 addresses ("::ffff:7f00:1") against these.
++const PRIVATE_V4 = new net.BlockList();
++for (const [address, prefix] of [
++  ["0.0.0.0", 8],
++  ["10.0.0.0", 8],
++  ["100.64.0.0", 10],
++  ["127.0.0.0", 8],
++  ["169.254.0.0", 16],
++  ["172.16.0.0", 12],
++  ["192.0.0.0", 24],
++  ["192.168.0.0", 16],
++  ["198.18.0.0", 15],
++  ["224.0.0.0", 3],
++])
++  PRIVATE_V4.addSubnet(address, prefix, "ipv4");
++// Public IPv6 is global unicast (2000::/3), minus the ranges that carry an
++// IPv4 address inside them (6to4, Teredo) and documentation addresses.
++const GLOBAL_V6 = new net.BlockList();
++GLOBAL_V6.addSubnet("2000::", 3, "ipv6");
++const TUNNELED_V6 = new net.BlockList();
++TUNNELED_V6.addSubnet("2002::", 16, "ipv6");
++TUNNELED_V6.addSubnet("2001::", 32, "ipv6");
++TUNNELED_V6.addSubnet("2001:db8::", 32, "ipv6");
++
++/**
++ * True only for an address on the public internet.
++ * @param {string} ip
++ */
++function isPublicIp(ip) {
++  if (net.isIPv4(ip)) return !PRIVATE_V4.check(ip, "ipv4");
++  if (!net.isIPv6(ip)) return false;
++  return (
++    !PRIVATE_V4.check(ip, "ipv6") &&
++    GLOBAL_V6.check(ip, "ipv6") &&
++    !TUNNELED_V6.check(ip, "ipv6")
++  );
++}
++
++/**
++ * Throws unless a URL is http(s) and its host is, or resolves only to,
++ * allowed addresses.
++ * @param {string} url
++ * @param {(ip: string) => boolean} [isAllowed]
++ */
++async function assertPublicUrl(url, isAllowed = isPublicIp) {
++  const { protocol, hostname } = new URL(url);
++  if (protocol !== "http:" && protocol !== "https:")
++    throw new Error(`${protocol} URLs are not allowed`);
++  const host = hostname.replace(/^\[|\]$/g, "");
++  const addresses = net.isIP(host)
++    ? [{ address: host }]
++    : await dns.promises.lookup(host, { all: true });
++  if (!addresses.length || !addresses.every((a) => isAllowed(a.address)))
++    throw new Error(`${host} is not a public address`);
++}
++
++/**
++ * A DNS lookup for http.get that refuses to connect anywhere but allowed
++ * addresses. Checking at connect time, rather than before the request,
++ * means a host cannot pass the check and then resolve somewhere else.
++ */
++const guardedLookup = (isAllowed) => (hostname, options, callback) => {
++  dns.lookup(hostname, { ...options, all: true }, (error, addresses) => {
++    if (error) return callback(error);
++    if (!addresses.length || !addresses.every((a) => isAllowed(a.address)))
++      return callback(new Error(`${hostname} is not a public address`));
++    if (options.all) return callback(null, addresses);
++    callback(null, addresses[0].address, addresses[0].family);
++  });
++};
++
++/** One GET request, resolving with the response once headers arrive. */
++function get(url, { signal, isAllowed, accept }) {
++  const client = new URL(url).protocol === "https:" ? https : http;
++  return new Promise((resolve, reject) => {
++    const req = client.get(
++      url,
++      {
++        signal,
++        lookup: guardedLookup(isAllowed),
++        headers: {
++          A
+```
+
+**File**: `server/utils/agents/aibitat/plugins/create-files/pdf/create-pdf-file.js` (modified, +12/-1)
+```diff
+@@ -1,5 +1,9 @@
+ const createFilesLib = require("../lib.js");
+ const { applyBranding } = require("./utils.js");
++const { embedMarkdownImages } = require("../images.js");
++
++// The image formats Typst can embed.
++const PDF_IMAGE_FORMATS = ["png", "jpg", "gif", "webp"];
+ 
+ module.exports.CreatePdfFile = {
+   name: "create-pdf-file",
+@@ -91,7 +95,14 @@ module.exports.CreatePdfFile = {
+                 "pdf-lib"
+               );
+ 
+-              const rawBuffer = await markdownToPdf(content);
++              // mdpdf downloads remote images itself, without an address
++              // check, so it only ever receives embedded ones.
++              const markdown = await embedMarkdownImages(content, {
++                formats: PDF_IMAGE_FORMATS,
++                log: (msg) =>
++                  this.super.handlerProps.log(`create-pdf-file: ${msg}`),
++              });
++              const rawBuffer = await markdownToPdf(markdown);
+               const pdfDoc = await PDFDocument.load(rawBuffer);
+               await applyBranding(pdfDoc, { rgb, StandardFonts });
+ 
+```
+
+**File**: `server/utils/agents/aibitat/plugins/create-files/pptx/images.js` (modified, +8/-174)
+```diff
+@@ -1,9 +1,6 @@
+ const fs = require("fs");
+ const path = require("path");
+-const net = require("net");
+-const dns = require("dns");
+-const http = require("http");
+-const https = require("https");
++const { downloadImage, mapLimit } = require("../images.js");
+ 
+ /**
+  * Pictures for a deck, from three sources: images the user attached to the
+@@ -35,13 +32,12 @@ const MIN_WEB_W = 800;
+ const MIN_WEB_H = 400;
+ const MAX_ASPECT = 2.6;
+ const MAX_DOWNLOAD_BYTES = 8 * 1024 * 1024;
+-const DOWNLOAD_TIMEOUT_MS = 10_000;
+ const SCRAPE_TIMEOUT_MS = 45_000;
+-const MAX_REDIRECTS = 3;
+ const SCRAPE_PAGES = 3;
+ const CANDIDATES_PER_PAGE = 8;
+ const DOWNLOAD_CONCURRENCY = 4;
+-const WEB_TYPES = /^image\/(jpeg|png|webp|avif)\b/i;
++// Formats sharp reads, in the order slides prefer them.
++const WEB_FORMATS = ["avif", "webp", "png", "jpg"];
+ const STOP_WORDS = new Set(
+   "about also been from have here into just more most only other over some such than that their them there these they this those very were what when where which will with your".split(
+     " "
+@@ -75,155 +71,6 @@ async function preparePicture(buffer) {
+   };
+ }
+ 
+-// Addresses a page must not be able to reach through the server: this
+-// host, private networks, link-local (cloud metadata), carrier-grade NAT,
+-// benchmarking, multicast and reserved ranges. BlockList also checks
+-// IPv4-mapped IPv6 addresses ("::ffff:7f00:1") against these.
+-const PRIVATE_V4 = new net.BlockList();
+-for (const [address, prefix] of [
+-  ["0.0.0.0", 8],
+-  ["10.0.0.0", 8],
+-  ["100.64.0.0", 10],
+-  ["127.0.0.0", 8],
+-  ["169.254.0.0", 16],
+-  ["172.16.0.0", 12],
+-  ["192.0.0.0", 24],
+-  ["192.168.0.0", 16],
+-  ["198.18.0.0", 15],
+-  ["224.0.0.0", 3],
+-])
+-  PRIVATE_V4.addSubnet(address, prefix, "ipv4");
+-// Public IPv6 is global unicast (2000::/3), minus the ranges that carry an
+-// IPv4 address inside them (6to4, Teredo) and documentation addresses.
+-const GLOBAL_V6 = new net.BlockList();
+-GLOBAL_V6.addSubnet("2000::", 3, "ipv6");
+-const TUNNELED_V6 = new net.BlockList();
+-TUNNELED_V6.addSubnet("2002::", 16, "ipv6");
+-TUNNELED_V6.addSubnet("2001::", 32, "ipv6");
+-TUNNELED_V6.addSubnet("2001:db8::", 32, "ipv6");
+-
+-/**
+- * True only for an address on the public internet.
+- * @param {string} ip
+- */
+-function isPublicIp(ip) {
+-  if (net.isIPv4(ip)) return !PRIVATE_V4.check(ip, "ipv4");
+-  if (!net.isIPv6(ip)) return false;
+-  return (
+-    !PRIVATE_V4.check(ip, "ipv6") &&
+-    GLOBAL_V6.check(ip, "ipv6") &&
+-    !TUNNELED_V6.check(ip, "ipv6")
+-  );
+-}
+-
+-/**
+- * Throws unless a URL is http(s) and its host is, or resolves only to,
+- * allowed addresses.
+- * @param {string} url
+- * @param {(ip: string) => boolean} [isAllowed]
+- */
+-async function assertPublicUrl(url, isAllowed = isPublicIp) {
+-  const { protocol, hostname } = new URL(url);
+-  if (protocol !== "http:" && protocol !== "https:")
+-    throw new Error(`${protocol} URLs are not allowed`);
+-  const host = hostname.replace(/^\[|\]$/g, "");
+-  const addresses = net.isIP(host)
+-    ? [{ address: host }]
+-    : await dns.promises.lookup(host, { all: true });
+-  if (!addresses.length || !addresses.every((a) => isAllowed(a.address)))
+-    throw new Error(`${host} is not a public address`);
+-}
+-
+-/**
+- * A DNS lookup for http.get that refuses to connect anywhere but allowed
+- * addresses. Checking at connect time, rather than before the request,
+- * means a host cannot pass the check and then resolve somewhere else.
+- */
+-const guardedLookup = (isAllowed) => (hostname, options, callback) => {
+-  dns.lookup(hostname, { ...options, all: true }, (error, addresses) => {
+-    if (error) return callback(error);
+-    if (!addresses.length || !addresses.every((a) => isAllowed(a.address)))
+-      return callback(new Error(`${hostname} is not a public address`));
+-    if (options.all) return callback(null, addresses);
+-    callback(null, addresses[0].address, addresses[0].family);
+-  });
+-};
+-
+-/** One GET request, resolving with the response once headers arrive. */
+-function get(url, { signal, isAllowed }) {
+-  const client = new URL(url).protocol === "https:" ? https : http;
+-  return new Promise((resolve, reject) => {
+-    const req = client.get(
+-      url,
+-      {
+-        signal,
+-        lookup: guardedLookup(isAllowed),
+-        headers: {
+-          Accept: "image/avif,image/webp,image/png,image/jpeg",
+-          // Some image hosts (Wikimedia among them) refuse clients that do
+-          // not name themselves.
+-          "User-Agent": "AnythingLLM-DeckBuilder/1.0",
+-        },
+-      },
+-      resolve
+-    );
+-    req.on("error", reject);
+-  });
+-}
+-
+-/**
+- * Downloads an image from the public web: the first URL and every redirect
+- * may only connect to allowed addresses, and the response must be a raster
+- * image under MAX_DOWNLOAD_BYTES that arrives within DOWNLOAD_TIMEOUT_MS.
+- * @param {string} url
+- * @param {{signal?: AbortSignal, isAllowed?: (ip: string) => boolean}} [options] - isAllowed defaults to isPublicIp
+- * @retu
+```
+
+---
+
+### Incident Patch 3: `c3ba00cd` (2026-11-12)
+**Commit Message**: fix: keep tool parameters named definitions or $defs in dereferenceSchema (#7130)
+
+* fix: keep tool parameters named definitions or $defs in dereferenceSchema
+
+walk skipped the $defs and definitions keys in every object, including properties and patternProperties maps where keys are parameter names. It now skips them only on schema nodes.
+
+* Walk properties/patternProperties maps in a dedicated helper
 
 ---------
 
 Co-authored-by: Israel Kliger <[REDACTED_EMAIL]>
 Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-**File**: `server/utils/chats/exportChatToFile.js` (modified, +8/-9)
+**File**: `server/__tests__/utils/agents/aibitat/providers/helpers/dereferenceSchema.test.js` (modified, +33/-0)
 ```diff
-@@ -5,6 +5,11 @@ const {
- const { convertToChatHistory } = require("../helpers/chat/responses.js");
- 
- const THOUGHT_TAGS = "thinking|think|thought|thought_chain";
-+// A thought or wrapper tag is the exact lowercase name, optionally followed by
-+// whitespace and attributes, the same rule the chat window uses. Anything else
-+// in angle brackets, like Promise<Response> or a JSX <Thought>, is reply text.
-+const TAG_ATTRS = "(?:\\s[^>]*)?";
-+const THOUGHT_BLOCK = `<(${THOUGHT_TAGS})${TAG_ATTRS}>([\\s\\S]*?)</(${THOUGHT_TAGS})\\s*>`;
- const THUMB_EDGE = 96;
- const THUMB_GAP = 8;
- const THUMB_COLUMNS = 4;
-@@ -23,10 +28,7 @@ const validExportTypes = ["pdf", "markdown", "plaintext", "json", "html"];
- // Extract thought chain content from assistant messages.
- function extractThoughtChain(text = "") {
-   const matches = [];
--  const regex = new RegExp(
--    `<(${THOUGHT_TAGS})[^>]*>([\\s\\S]*?)</(${THOUGHT_TAGS})\\s*>`,
--    "gi"
--  );
-+  const regex = new RegExp(THOUGHT_BLOCK, "g");
-   let m;
-   while ((m = regex.exec(text)) !== null) matches.push(m[2].trim());
-   return matches.join("\n\n") || null;
-@@ -35,14 +37,11 @@ function extractThoughtChain(text = "") {
- // Strip the assistant's thought chain so the export only contains the response.
- function stripThoughtChain(text = "") {
-   return text
-+    .replace(new RegExp(THOUGHT_BLOCK, "g"), "")
-     .replace(
--      new RegExp(
--        `<(${THOUGHT_TAGS})[^>]*>[\\s\\S]*?</(${THOUGHT_TAGS})\\s*>`,
--        "gi"
--      ),
-+      new RegExp(`</?(${THOUGHT_TAGS}|response|answer)${TAG_ATTRS}>`, "g"),
-       ""
-     )
--    .replace(new RegExp(`</?(${THOUGHT_TAGS}|response|answer)[^>]*>`, "gi"), "")
-     .trim();
- }
- 
-```
-
----
-
-### Incident Patch 2: `728586d7` (2026-11-10)
-**Commit Message**: fix: keep the Content-Type header set in an agent flow API Call block (#7108)
-
-The JSON and form body types always set Content-Type, replacing one set on the block. A lower-case content-type header got the default joined onto it by fetch instead.
-
-Co-authored-by: Israel Kliger <[REDACTED_EMAIL]>
-
-**File**: `server/__tests__/utils/agentFlows/executors/api-call.test.js` (modified, +61/-0)
-```diff
-@@ -259,6 +259,67 @@ describe("executeApiCall", () => {
-       expect(requestConfig.headers["Content-Type"]).toBe("application/json");
-     });
- 
-+    it("keeps a Content-Type header set on the block for json bodies", async () => {
-+      const fetchMock = mockResponse("{}");
-+      await executeApiCall(
-+        {
-+          url: "https://example.com/items",
-+          method: "POST",
-+          headers: [{ key: "Content-Type", value: "application/vnd.api+json" }],
-+          bodyType: "json",
-+          body: '{"data": {"type": "items"}}',
-+        },
-+        context
-+      );
-+      const [, requestConfig] = fetchMock.mock.calls[0];
-+      expect(requestConfig.headers).toEqual({
-+        "Content-Type": "application/vnd.api+json",
-+      });
-+    });
-+
-+    it("does not add a second content type next to a lower-case header", async () => {
-+      const fetchMock = mockResponse("{}");
-+      await executeApiCall(
-+        {
-+          url: "https://example.com/items/42",
-+          method: "PATCH",
-+          headers: [
-+            { key: "content-type", value: "application/merge-patch+json" },
-+          ],
-+          bodyType: "json",
-+          body: '{"name": "widget"}',
-+        },
-+        context
-+      );
-+      const [, requestConfig] = fetchMock.mock.calls[0];
-+      expect(new Headers(requestConfig.headers).get("content-type")).toBe(
-+        "application/merge-patch+json"
-+      );
-+    });
-+
-+    it("keeps a Content-Type header set on the block for form bodies", async () => {
-+      const fetchMock = mockResponse("{}");
-+      await executeApiCall(
-+        {
-+          url: "https://example.com/items",
-+          method: "POST",
-+          headers: [
-+            {
-+              key: "Content-Type",
-+              value: "application/x-www-form-urlencoded; charset=UTF-8",
-+            },
-+          ],
-+          bodyType: "form",
-+          formData: [{ key: "name", value: "widget" }],
-+        },
-+        context
-+      );
-+      const [, requestConfig] = fetchMock.mock.calls[0];
-+      expect(requestConfig.headers).toEqual({
-+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-+      });
-+    });
-+
-     it("sends text bodies as strings", async () => {
-       const fetchMock = mockResponse("{}");
-       await executeApiCall(
-```
-
-**File**: `server/utils/agentFlows/executors/api-call.js` (modified, +8/-3)
-```diff
-@@ -22,12 +22,16 @@ async function executeApiCall(config, context) {
-   };
- 
-   if (["POST", "PUT", "PATCH"].includes(method)) {
-+    const hasContentType = Object.keys(requestConfig.headers).some(
-+      (name) => name.toLowerCase() === "content-type"
-+    );
-     if (bodyType === "form") {
-       const formDataObj = new URLSearchParams();
-       formData.forEach(({ key, value }) => formDataObj.append(key, value));
-       requestConfig.body = formDataObj.toString();
--      requestConfig.headers["Content-Type"] =
--        "application/x-www-form-urlencoded";
-+      if (!hasContentType)
-+        requestConfig.headers["Content-Type"] =
-+          "application/x-www-form-urlencoded";
-     } else if (bodyType === "json") {
-       const parsedBody = safeJsonParse(body, null);
-       if (parsedBody !== null) {
-@@ -37,7 +41,8 @@ async function executeApiCall(config, context) {
-           "The request body of this API Call block is not valid JSON. Open the flow in the Agent Builder and check the body for syntax errors such as missing commas, brackets, or quotes."
-         );
-       }
--      requestConfig.headers["Content-Type"] = "application/json";
-+      if (!hasContentType)
-+        requestConfig.headers["Content-Type"] = "application/json";
-     } else if (bodyType === "text") {
-       requestConfig.body = String(body);
-     } else {
-```
-
----
-
-### Incident Patch 3: `bc003cbb` (2026-11-11)
-**Commit Message**: fix: surface the real error when a PGVector similarity search fails (#7113)
-
-performSimilaritySearch caught every error and returned { error, success: false }, which callers read as a search result, so chats failed with "vectorSearchResults.sources is not iterable". Let the error throw as the other providers do; the finally still closes the connection.
-
-Co-authored-by: Israel Kliger <[REDACTED_EMAIL]>
-
-**File**: `server/__tests__/utils/vectorDbProviders/pgvector/index.test.js` (modified, +21/-0)
-```diff
-@@ -76,3 +76,24 @@ describe("PGVector.sanitizeForJsonb", () => {
-     expect(resultArr).toEqual(["", { c: "bad" }]);
+@@ -187,6 +187,39 @@ describe("dereferenceSchema", () => {
+     expect(properties.inherited).toEqual({});
    });
- });
-+
-+describe("PGVector.performSimilaritySearch", () => {
-+  it("rejects with the original error and still closes the connection", async () => {
-+    const pgvector = new PGVectorClass();
-+    const client = { end: jest.fn() };
-+    jest.spyOn(pgvector, "connect").mockResolvedValue(client);
-+    jest.spyOn(pgvector, "namespaceExists").mockResolvedValue(true);
-+    const LLMConnector = {
-+      embedTextInput: jest.fn().mockRejectedValue(new Error("embedder down")),
+ 
++  it("keeps parameters named `definitions` or `$defs`", () => {
++    const schema = {
++      type: "object",
++      properties: {
++        term: { type: "string" },
++        definitions: { type: "array", items: { type: "string" } },
++        $defs: { type: "string" },
++      },
++      patternProperties: {
++        definitions: { type: "string" },
++        $defs: { type: "number" },
++      },
++      required: ["term", "definitions"],
 +    };
 +
-+    await expect(
-+      pgvector.performSimilaritySearch({
-+        namespace: "workspace",
-+        input: "hello",
-+        LLMConnector,
-+      })
-+    ).rejects.toThrow("embedder down");
-+    expect(client.end).toHaveBeenCalledTimes(1);
++    expect(dereferenceSchema(schema)).toEqual(schema);
 +  });
-+});
++
++  it("inlines references in a parameter named `definitions`", () => {
++    const schema = {
++      type: "object",
++      properties: { definitions: { $ref: "#/$defs/Glossary" } },
++      $defs: { Glossary: { type: "array", items: { type: "string" } } },
++    };
++
++    expect(dereferenceSchema(schema)).toEqual({
++      type: "object",
++      properties: {
++        definitions: { type: "array", items: { type: "string" } },
++      },
++    });
++  });
++
+   it("handles non-object inputs defensively", () => {
+     expect(dereferenceSchema(null)).toBeNull();
+     expect(dereferenceSchema(undefined)).toEqual({});
 ```
 
-**File**: `server/utils/vectorDbProviders/pgvector/index.js` (modified, +0/-2)
+**File**: `server/utils/agents/aibitat/providers/helpers/dereferenceSchema.js` (modified, +16/-1)
 ```diff
-@@ -767,8 +767,6 @@ class PGVector extends VectorDatabase {
-         sources: this.curateSources(sources),
-         message: false,
-       };
--    } catch (err) {
--      return { error: err.message, success: false };
-     } finally {
-       if (connection) await connection.end();
+@@ -41,6 +41,19 @@ function dereferenceSchema(schema = {}) {
+     return node && typeof node === "object" ? node : null;
+   };
+ 
++  // Keys of these maps are parameter names (which may be "definitions" or "$defs"),
++  // not schema keywords, so every key is kept and only the values are walked.
++  const NAME_MAPS = new Set(["properties", "patternProperties"]);
++  const walkNameMap = (map, seenRefs) =>
++    map && typeof map === "object" && !Array.isArray(map)
++      ? Object.fromEntries(
++          Object.entries(map).map(([name, value]) => [
++            name,
++            walk(value, seenRefs),
++          ])
++        )
++      : walk(map, seenRefs);
++
+   const walk = (node, seenRefs) => {
+     if (Array.isArray(node)) return node.map((item) => walk(item, seenRefs));
+     if (!node || typeof node !== "object") return node;
+@@ -63,7 +76,9 @@ function dereferenceSchema(schema = {}) {
+     const output = {};
+     for (const [key, value] of Object.entries(node)) {
+       if (key === "$defs" || key === "definitions") continue;
+-      output[key] = walk(value, seenRefs);
++      output[key] = NAME_MAPS.has(key)
++        ? walkNameMap(value, seenRefs)
++        : walk(value, seenRefs);
      }
+     return output;
+   };
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7124** (2026-11-12): fix: keep generic types like Promise<Response> in chat exports (@Israel-Kli)
-- **PR #7122** (2026-11-11): fix: cap pending agent invocation caches (@timothycarambat)
-- **PR #7119** (closed): fix: expire stale agent invocation caches (@Bensonbenyi)
-- **PR #7117** (2026-11-11): fix: retain in-flight document uploads when adding files (@Max-Reisinger)
-- **PR #7113** (2026-11-11): fix: surface the real error when a PGVector similarity search fails (@Israel-Kli)
-- **PR #7111** (2026-11-11): fix: log collected error details in Gemini #logAPIError (@Bensonbenyi)
+- **PR #7143** (2026-11-12): fix: guard image downloads in the PDF, DOCX and PPTX file tools (@timothycarambat)
+- **PR #7142** (closed): fix: fetch DOCX tool images through the public-address guard (@alexchenyu)
+- **PR #7140** (2026-11-12): fix: batch Qdrant upserts under the 32MB request limit (@timothycarambat)
+- **PR #7137** (2026-11-12): Limit owner fields returned with browser extension API keys (@timothycarambat)
+- **PR #7136** (2026-11-12): Block password recovery for suspended users (@timothycarambat)
+- **PR #7135** (2026-11-12): Fix typo in SQL Connector skill description (@lakshya-dhariwal)
 
 ---
 
@@ -1588,46 +2411,94 @@ Co-authored-by: Israel Kliger <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep generic types like Promise<Response> in chat exports (#7124)
+## X. batch Qdrant upserts under the 32MB request limit (#7140)
 
 **RULE**:
-When implementing operations in `server/utils/chats/exportChatToFile.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/utils/vectorDbProviders/qdrant/index.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c4e4e677`: keep generic types like Promise<Response> in chat exports (#7124). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a145523c`: batch Qdrant upserts under the 32MB request limit (#7140). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/chats/exportChatToFile.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/vectorDbProviders/qdrant/index.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-// A thought or wrapper tag is the exact lowercase name, optionally followed by
-// whitespace and attributes, the same rule the chat window uses. Anything else
-// in angle brackets, like Promise<Response> or a JSX <Thought>, is reply text.
-const TAG_ATTRS = "(?:\\s[^>]*)?";
-const THOUGHT_BLOCK = `<(${THOUGHT_TAGS})${TAG_ATTRS}>([\\s\\S]*?)</(${THOUGHT_TAGS})\\s*>`;
-  const regex = new RegExp(THOUGHT_BLOCK, "g");
-    .replace(new RegExp(THOUGHT_BLOCK, "g"), "")
-      new RegExp(`</?(${THOUGHT_TAGS}|response|answer)${TAG_ATTRS}>`, "g"),
+          const records = [];
+                records.push({ id, vector: chunk.vector, payload });
+          await this.#upsertRecords(client, namespace, records);
+        await this.#upsertRecords(client, namespace, vectors);
+        await storeVectorResult(toChunks(vectors, 500), fullFilePath);
+      // Qdrant's reason for a rejected request is in the response body, not the message.
+      const reason = e?.data?.status?.error;
+      const message = reason ? `${e.message}: ${reason}` : e.message;
+      this.logger("addDocumentToNamespace", message);
+      return { vectorized: false, error: message };
+    }
+  }
+
+  /**
+   * Upsert points in batches small enough to stay under Qdrant's default 32MB
+   * request limit. A 500-point batch of 4096-dim vectors is ~42MB of JSON.
+   * @param {QdrantClient} client
+   * @param {string} namespace
+   * @param {{id: string, vector: number[], payload: object}[]} records
+   */
+  async #upsertRecords(client, namespace, records) {
+    for (const batch of toChunks(records, 100)) {
+      const result = await client.upsert(namespace, {
+        wait: true,
+        batch: {
+          ids: batch.map((r) => r.id),
+          vectors: batch.map((r) => r.vecto
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-  const regex = new RegExp(
-    `<(${THOUGHT_TAGS})[^>]*>([\\s\\S]*?)</(${THOUGHT_TAGS})\\s*>`,
-    "gi"
-  );
-      new RegExp(
-        `<(${THOUGHT_TAGS})[^>]*>[\\s\\S]*?</(${THOUGHT_TAGS})\\s*>`,
-        "gi"
-      ),
-    .replace(new RegExp(`</?(${THOUGHT_TAGS}|response|answer)[^>]*>`, "gi"), "")
+            const submission = {
+              ids: [],
+              vectors: [],
+              payloads: [],
+            };
+
+                submission.ids.push(id);
+                submission.vectors.push(chunk.vector);
+                submission.payloads.push(payload);
+
+            const additionResult = await client.upsert(namespace, {
+              wait: true,
+              batch: { ...submission },
+            });
+            if (additionResult?.status !== "completed")
+              throw new Error("Error embedding into QDrant", additionResult);
+        const chunks = [];
+
+        for (const chunk of toChunks(vectors, 500)) {
+          const batchIds = [],
+            batchVectors = [],
+            batchPayloads = [];
+          chunks.push(chunk);
+          chunk.forEach((v) => {
+            batchIds.push(v.id);
+            batchVectors.push(v.vector);
+            batchPayloads.push(v.payload);
+          });
+
+          const additionResult = await client.upsert(namespace, {
+            wait: true,
+            batch: {
+              ids: batchIds,
+              vectors: batchVectors,
+              payloads: batchPayloads,
+            },
+          });
+          if (additionRes
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c4e4e677` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a145523c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

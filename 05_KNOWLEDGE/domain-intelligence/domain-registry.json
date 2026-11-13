@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T16:49:53.991Z",
-  "total_records": 213,
+  "last_updated": "2026-11-13T16:59:46.308Z",
+  "total_records": 219,
   "domains": {
     "A": {
       "total": 1,
@@ -26,7 +26,7 @@
       ]
     },
     "D": {
-      "total": 125,
+      "total": 128,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -152,7 +152,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants",
         "DOM-D-E243BB51",
-        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
+        "DOM-D-AFA4F352",
+        "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants"
       ]
     },
     "E": {
@@ -191,7 +194,7 @@
       ]
     },
     "H": {
-      "total": 38,
+      "total": 41,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -230,7 +233,10 @@
         "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants",
         "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants",
         "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in",
+        "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant"
       ]
     },
     "I": {
@@ -6861,6 +6867,93 @@
       "repository": "volcengine-openviking-learnings",
       "content_hash": "4119b20b86c941b8b9027d27f9101a3cc80b3128541cc67cfb8c130f45f43b38",
       "created_at": "2026-11-13T16:49:53.991Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: akhilaaa3/Jev-Omni Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akhilaaa3-jev-omni-research-knowledge-intelligence-akhilaaa3-jev-omni-core-in.md",
+      "repository": "akhilaaa3/Jev-Omni",
+      "content_hash": "1ff77c1ad314e88203e1f084d84b3e9fa0f413ffe7188c6b6b1006e1a6644efb",
+      "created_at": "2026-11-13T16:58:40.542Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Mintplex-Labs/anything-llm Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-technical-construction-intelligence-mintplex-labs-any.md",
+      "repository": "Mintplex-Labs/anything-llm",
+      "content_hash": "ae793be0c8abe47228be3b10b8579e47d9adb07344c02d6e394243db19bc9ffa",
+      "created_at": "2026-11-13T16:58:55.415Z"
+    },
+    "DOM-D-AFA4F352": {
+      "record_id": "DOM-D-AFA4F352",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): akhilaaa3/Jev-Omni",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/akhilaaa3/Jev-Omni](https://huggingface.co/akhilaaa3/Jev-Omni))  \n> **Source Version**: `hf-akhilaaa3`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "e495e90cd94bd802255916daee34240fee2352f75eb43b9c9b98ff40e28796ee",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-akhilaaa3-jev-omni/hf-akhilaaa3-jev-omni-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T16:58:58.317Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-akhilaaa3-jev-omni)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-akhilaaa3-jev-omni"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T16:59:44.491Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-akhilaaa3-jev-omni-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akhilaaa3-jev-omni-learnings-research-knowledge-intelligence-hf-akhilaaa3-jev.md",
+      "repository": "hf-akhilaaa3-jev-omni-learnings",
+      "content_hash": "f8061de3fb5c2050b6f60bd85749d8ed049a8feb952bf706c5fe72aa6ef95277",
+      "created_at": "2026-11-13T16:59:44.723Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: mintplex-labs-anything-llm-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-learnings-technical-construction-intelligence-mintple.md",
+      "repository": "mintplex-labs-anything-llm-learnings",
+      "content_hash": "eee2188b9cdd9acbd9a383de6094cb50654d19e0000c52a3ca96c5893c157841",
+      "created_at": "2026-11-13T16:59:45.588Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
+      "repository": "zseven-w-openpencil-learnings",
+      "content_hash": "7304d3414eb1cc9d7188295b6e26a4f9f0839f756663a6853e5a15ebe0298163",
+      "created_at": "2026-11-13T16:59:46.308Z"
     }
   }
 }

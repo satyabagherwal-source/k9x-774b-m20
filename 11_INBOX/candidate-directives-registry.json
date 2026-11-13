@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T16:49:53.905Z",
+  "last_updated": "2026-11-13T16:59:46.195Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4833,13 +4833,15 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-REV-8E0D9F",
+      "id": "CD-2E8B",
       "directive_title": "editor): add scoped ios account deletion",
-      "status": "STAGED_FOR_HUMAN_REVIEW",
-      "source_repo": "zseven-w-openpencil",
-      "domain_letter": "G",
-      "staged_file": "11_INBOX/candidate-directives/CD-REV-8E0D9F-editor-add-scoped-ios-account-deletion.md",
-      "staged_date": "2026-11-11"
+      "source_repo": "zseven-w-openpencil-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-2E8B-editor-add-scoped-ios-account-deletion.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "H"
     },
     {
       "id": "CD-REV-DCEE59",
@@ -9448,6 +9450,35 @@
       "source_repo": "volcengine-openviking",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E1A65F-react-align-the-file-browser-search-dial.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-2DOD",
+      "directive_title": "batch Qdrant upserts under the 32MB request limit (#7140)",
+      "source_repo": "mintplex-labs-anything-llm-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-2DOD-batch-qdrant-upserts-under-the-32mb-request-limit-7140.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-D10130",
+      "directive_title": "batch Qdrant upserts under the 32MB request limit (#7140)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mintplex-labs-anything-llm",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D10130-batch-qdrant-upserts-under-the-32mb-requ.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-71243F",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-71243F-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-13"
     }
   ]

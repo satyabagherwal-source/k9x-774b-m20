@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T16:49:10.639Z",
+  "last_updated": "2026-11-13T16:58:55.114Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -590,14 +590,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akhilaaa3-jev-omni",
-      "content_hash": "cb75faebb61131e87d1ad66ccf7b599b5c82ad7c611014aa8e8cde67c6e9a019",
-      "verified_at": "2026-11-08T16:19:16.728Z",
+      "content_hash": "376a15119d310f93ae2856af5ae1267429e6bdd85201865c7fd38f5257c69cf9",
+      "verified_at": "2026-11-13T16:58:40.356Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:19:16.728Z"
+      "last_updated": "2026-11-13T16:58:40.356Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "024dc9aed457d25bcd6eb839f20cf6ecac30ba4e0750172fe97f7c5bc457defc",
-      "verified_at": "2026-11-12T11:18:47.837Z",
+      "content_hash": "54a796474e163fcaeb38358e17a4464791107648823afc32189b40aac40ea900",
+      "verified_at": "2026-11-13T16:58:55.113Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T11:18:47.837Z"
+      "last_updated": "2026-11-13T16:58:55.113Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",

@@ -485,8 +485,8 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "cb75faebb61131e87d1ad66ccf7b599b5c82ad7c611014aa8e8cde67c6e9a019",
-    "lastHarvestedAt": "2026-11-08T16:19:16.722Z",
+    "contentHash": "376a15119d310f93ae2856af5ae1267429e6bdd85201865c7fd38f5257c69cf9",
+    "lastHarvestedAt": "2026-11-13T16:58:40.345Z",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "c4e4e677",
+    "sourceVersion": "1626d971",
     "license": "MIT",
-    "contentHash": "024dc9aed457d25bcd6eb839f20cf6ecac30ba4e0750172fe97f7c5bc457defc",
-    "lastHarvestedAt": "2026-11-12T11:18:47.823Z",
+    "contentHash": "54a796474e163fcaeb38358e17a4464791107648823afc32189b40aac40ea900",
+    "lastHarvestedAt": "2026-11-13T16:58:55.095Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T16:49:54.085Z",
+  "last_updated": "2026-11-13T16:59:46.434Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -20502,7 +20502,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
       "source_version": "hf-akhilaaa3-jev-omni",
-      "content_hash": "cb75faebb61131e87d1ad66ccf7b599b5c82ad7c611014aa8e8cde67c6e9a019",
+      "content_hash": "376a15119d310f93ae2856af5ae1267429e6bdd85201865c7fd38f5257c69cf9",
       "dossier_path": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "promoted_rules": [
@@ -20579,7 +20579,7 @@
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv46br3m",
         "learn-huggingface-hf-akhilaaa3-jev-omni-mv4jlvuj"
       ],
-      "verified_at": "2026-11-08T16:19:16.630Z",
+      "verified_at": "2026-11-13T16:58:40.185Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46145,8 +46145,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "c4e4e677",
-      "content_hash": "024dc9aed457d25bcd6eb839f20cf6ecac30ba4e0750172fe97f7c5bc457defc",
+      "source_version": "1626d971",
+      "content_hash": "54a796474e163fcaeb38358e17a4464791107648823afc32189b40aac40ea900",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -46163,6 +46163,11 @@
         {
           "number": null,
           "title": "keep generic types like Promise<Response> in chat exports (#7124)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "batch Qdrant upserts under the 32MB request limit (#7140)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -46246,7 +46251,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T11:18:47.629Z",
+      "verified_at": "2026-11-13T16:58:54.910Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -194629,6 +194634,126 @@
       "content_hash": "1b19511e2adee878fb5db7871eb4cc0c2db5b4eb4b4037be6c75478513241042",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T16:49:54.085Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akhilaaa3-jev-omni-research-knowledge-intelligence-akhilaaa3-jev-omni-core-in.md",
+      "title": "Research & Knowledge Intelligence: akhilaaa3/Jev-Omni Core Invariants",
+      "repository": "akhilaaa3/Jev-Omni",
+      "source_version": "hf-akhilaaa3-jev-omni",
+      "content_hash": "1ff77c1ad314e88203e1f084d84b3e9fa0f413ffe7188c6b6b1006e1a6644efb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T16:58:40.542Z"
+    },
+    "candidate_directive-batch-qdrant-upserts-under-the-32mb-request-limit-7140": {
+      "item_id": "candidate_directive-batch-qdrant-upserts-under-the-32mb-request-limit-7140",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2DOD-batch-qdrant-upserts-under-the-32mb-request-limit-7140.md",
+      "title": "batch Qdrant upserts under the 32MB request limit (#7140)",
+      "repository": "mintplex-labs-anything-llm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "51f2f277cc6ecfba5d8b05d72aa29060d465777e53fa0cf5999fbe4af746acd6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T16:59:45.478Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-technical-construction-intelligence-mintplex-labs-any.md",
+      "title": "Technical Construction Intelligence: Mintplex-Labs/anything-llm Core Invariants",
+      "repository": "Mintplex-Labs/anything-llm",
+      "source_version": "1626d971",
+      "content_hash": "ae793be0c8abe47228be3b10b8579e47d9adb07344c02d6e394243db19bc9ffa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T16:58:55.415Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mintplex-labs-anything-llm-verification-protocol-empirical-defect-shield-for-min.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Mintplex-Labs/anything-llm",
+      "repository": "Mintplex-Labs/anything-llm",
+      "source_version": "1626d971",
+      "content_hash": "ee862a7c520ab59409e26a2be2405408ca4b5f7f4c6d4e1d454bccd3c2d40467",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:58:55.534Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akhilaaa3-jev-omni-learnings-research-knowledge-intelligence-hf-akhilaaa3-jev.md",
+      "title": "Research & Knowledge Intelligence: hf-akhilaaa3-jev-omni-learnings Core Invariants",
+      "repository": "hf-akhilaaa3-jev-omni-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f8061de3fb5c2050b6f60bd85749d8ed049a8feb952bf706c5fe72aa6ef95277",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T16:59:44.723Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-learnings-technical-construction-intelligence-mintple.md",
+      "title": "Technical Construction Intelligence: mintplex-labs-anything-llm-learnings Core Invariants",
+      "repository": "mintplex-labs-anything-llm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eee2188b9cdd9acbd9a383de6094cb50654d19e0000c52a3ca96c5893c157841",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T16:59:45.588Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm-lea": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm-lea",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mintplex-labs-anything-llm-learnings-verification-protocol-empirical-defect-shie.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mintplex-labs-anything-llm-learnings",
+      "repository": "mintplex-labs-anything-llm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "afd8b08ca6deb0f9a66bb97444bac8aa6a36a5efdccdc74f3aa8d64021b17651",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:59:45.710Z"
+    },
+    "candidate_directive-editor-add-scoped-ios-account-deletion": {
+      "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2E8B-editor-add-scoped-ios-account-deletion.md",
+      "title": "editor): add scoped ios account deletion",
+      "repository": "zseven-w-openpencil-learnings",
+      "source_version": "HEAD",
+      "content_hash": "736e493f9adbfd660894c90c23ef8a286dfab24410353bb27d6bcc835df0914f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T16:59:46.195Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
+      "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
+      "repository": "zseven-w-openpencil-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7304d3414eb1cc9d7188295b6e26a4f9f0839f756663a6853e5a15ebe0298163",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T16:59:46.308Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/zseven-w-openpencil-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
+      "repository": "zseven-w-openpencil-learnings",
+      "source_version": "HEAD",
+      "content_hash": "690a1838a91b6ee3867c58ae48d908cb4582ad5b898b47c9a6ecce06f9ffeca6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:59:46.434Z"
     }
   },
   "aliases": {
@@ -200627,5 +200752,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9171
+  "total_items": 9181
 }

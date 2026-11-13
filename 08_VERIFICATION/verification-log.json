@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-WSWM",
-    "timestamp": "2026-11-12T21:19:41.398Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "a7293b29d11a05c1eddee77793828c2daca5186626b2bf8769366c1ed74771b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-WWW2",
-    "timestamp": "2026-11-12T21:19:46.562Z",
-    "repository": "alibaba/zvec",
-    "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "17e1b96c428aced8ced69f8a78f2a2ebc10bff5cf4b9c1128effe6935d5d97d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-B64L",
     "timestamp": "2026-11-12T21:30:51.717Z",
     "repository": "domcyrus/rustnet",
@@ -7490,6 +7460,36 @@
     "repository": "volcengine/OpenViking",
     "learningId": "learn-github-volcengine-openviking",
     "contentHash": "42251535feba979e0dafdd04df3b3834b5e024562758ffffa76d54a914ce68d7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-0ZF8",
+    "timestamp": "2026-11-13T16:58:40.340Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+    "contentHash": "376a15119d310f93ae2856af5ae1267429e6bdd85201865c7fd38f5257c69cf9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-1ASR",
+    "timestamp": "2026-11-13T16:58:55.083Z",
+    "repository": "Mintplex-Labs/anything-llm",
+    "learningId": "learn-github-mintplex-labs-anything-llm",
+    "contentHash": "54a796474e163fcaeb38358e17a4464791107648823afc32189b40aac40ea900",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
