@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T09:38:28.865Z",
+  "updated_at": "2026-11-13T09:57:29.718Z",
   "statistics": {
-    "total_nodes": 72,
-    "total_edges": 38,
+    "total_nodes": 73,
+    "total_edges": 39,
     "domain_distribution": {
-      "D": 54,
+      "D": 55,
       "M": 1,
       "H": 9,
       "J": 2,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 38
+      "CONSTRAINED_BY_ARCHITECTURE": 39
     }
   },
   "nodes": {
@@ -1596,6 +1596,29 @@
       "tags": [],
       "created_at": "2026-11-13T09:38:28.865Z",
       "updated_at": "2026-11-13T09:38:28.865Z"
+    },
+    "DOM-D-F81EC195": {
+      "id": "DOM-D-F81EC195",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Edge0/Audio8-ASR-Infinite",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md`  \n> **Source**: huggingface ([https://hug -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md`  \n> **Source**: huggingface ([https://hug",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-edge0-audio8-asr-infinite/hf-edge0-audio8-asr-infinite-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T09:57:14.213Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-edge0-audio8-asr-infinite)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T09:57:29.718Z",
+      "updated_at": "2026-11-13T09:57:29.718Z"
     }
   },
   "edges": [
@@ -1978,6 +2001,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-L-2A739777 [L] with Domain K",
       "created_at": "2026-11-13T09:38:28.865Z"
+    },
+    {
+      "id": "EDGE-597EAB19CBF3",
+      "sourceId": "DOM-D-F81EC195",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-F81EC195 [D] with Domain M",
+      "created_at": "2026-11-13T09:57:29.718Z"
     }
   ]
 }

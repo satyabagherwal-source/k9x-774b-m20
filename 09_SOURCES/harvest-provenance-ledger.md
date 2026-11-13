@@ -9431,3 +9431,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-11-13T09:37:45.397Z |
 | `learn-dom-d-0d23526b` | `project://hf-convaiinnovations-laya` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | 2026-11-13T09:38:04.486Z |
 | `learn-dom-l-2a739777` | `project://apple-foundationdb` | `66c65979` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apple-foundationdb-learnings.md` | 2026-11-13T09:38:28.866Z |
+| `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-13T09:56:48.450Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `5f9867e0` | Multi-dimensional audit evidence | 2026-11-13T09:57:01.726Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `4c3c4935` | Multi-dimensional audit evidence | 2026-11-13T09:57:03.563Z |
+| `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `af5fb956` | Multi-dimensional audit evidence | 2026-11-13T09:57:08.332Z |
+| `learn-dom-d-f81ec195` | `project://hf-edge0-audio8-asr-infinite` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | 2026-11-13T09:57:29.719Z |

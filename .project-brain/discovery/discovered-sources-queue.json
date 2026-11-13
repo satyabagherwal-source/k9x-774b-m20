@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T09:38:28.990Z",
+  "updated_at": "2026-11-13T09:57:29.807Z",
   "stats": {
-    "total_discovered": 2316,
-    "approved_pending_harvest": 2154,
+    "total_discovered": 2322,
+    "approved_pending_harvest": 2159,
     "harvested_count": 0,
-    "rejected_count": 162,
+    "rejected_count": 163,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2143,
+      "COMMUNITY_AND_EXPERT": 2149,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 73,
       "ENGINEERING_BLOGS": 1,
@@ -49836,6 +49836,132 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
         "fileName": "apple-foundationdb-learnings.md"
+      }
+    },
+    "SRC-8A93AC20AEA8": {
+      "id": "SRC-8A93AC20AEA8",
+      "url": "http://{/",
+      "title": "http://{/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS",
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T09:57:14.182Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-5E5E4302CF7F": {
+      "id": "SRC-5E5E4302CF7F",
+      "url": "https://sm.example.com/sm",
+      "title": "https://sm.example.com/sm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:57:14.201Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-833035880C08": {
+      "id": "SRC-833035880C08",
+      "url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "title": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:57:29.728Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
+        "fileName": "hf-edge0-audio8-asr-infinite-learnings.md"
+      }
+    },
+    "SRC-ACCAF9B2B39C": {
+      "id": "SRC-ACCAF9B2B39C",
+      "url": "https://github.com/wzh4869/AppPorts",
+      "title": "https://github.com/wzh4869/AppPorts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:57:29.770Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
+        "fileName": "wzh4869-appports-learnings.md"
+      }
+    },
+    "SRC-10AE9877A207": {
+      "id": "SRC-10AE9877A207",
+      "url": "https://github.com/user-attachments/assets/f1cddb34-9d31-4bad-8303-b25949c5efbe",
+      "title": "https://github.com/user-attachments/assets/f1cddb34-9d31-4bad-8303-b25949c5efbe",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:57:29.788Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
+        "fileName": "wzh4869-appports-learnings.md"
+      }
+    },
+    "SRC-C09EE48A7619": {
+      "id": "SRC-C09EE48A7619",
+      "url": "https://github.com/user-attachments/files/34616550/AppPorts-Diagnostic-20261110-152123.zip",
+      "title": "https://github.com/user-attachments/files/34616550/AppPorts-Diagnostic-20261110-152123.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:57:29.807Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
+        "fileName": "wzh4869-appports-learnings.md"
       }
     }
   }

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-QWD6",
-    "timestamp": "2026-11-10T04:51:58.938Z",
-    "repository": "Diffuspace/Clover-35B-A3B-Preview",
-    "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-    "contentHash": "82d8dad52a736f54717c6345338421a26180a1b2145ff91682a06edfda116acb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-0CAG",
-    "timestamp": "2026-11-10T04:59:19.480Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "e3df3a0aea1a1c27e6dd3362df1b446416cb2f3b7b9e0393d8600665131ffe0d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-0HS8",
-    "timestamp": "2026-11-10T04:59:26.600Z",
-    "repository": "pyannote/speaker-diarization-3.1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
-    "contentHash": "10fe6053571c03bc41d31bfbff823b73985029bb6e267ea34df852e9fde4f4a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-9OZL",
-    "timestamp": "2026-11-10T05:06:35.841Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "97d03cef09c292aa60580ecae2579a72ab7ed8f7b0525bca8e5977b810922c65",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-JKGQ",
     "timestamp": "2026-11-10T05:14:16.538Z",
     "repository": "bahdotsh/wrkflw",
@@ -7492,6 +7432,66 @@
     "contentHash": "b8a23452731f5861f341ce8a724a76e1a7f7afe2547b1b69763e06ac4bc79c38",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-YGN2",
+    "timestamp": "2026-11-13T09:56:48.446Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+    "contentHash": "9c71f232f031bd8abef7a91f189c040557d80e73564de39fe5c81920d0b6e348",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-YQVS",
+    "timestamp": "2026-11-13T09:57:01.720Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "6c38576178fdd57393478856960fafa779562c2fae2379cd04fc54c2f45c9fc6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-YSAV",
+    "timestamp": "2026-11-13T09:57:03.559Z",
+    "repository": "metalbear-co/mirrord",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "efc7c5ea4b1de353ed42ec95064e0ef01ee69cc24d36a9a1e042569fce9157aa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-YVZB",
+    "timestamp": "2026-11-13T09:57:08.327Z",
+    "repository": "wzh4869/AppPorts",
+    "learningId": "learn-github-wzh4869-appports",
+    "contentHash": "d59f1a07892e9e204509dfe2619fc0001368972a9e7695e28f574d952ca7d6e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

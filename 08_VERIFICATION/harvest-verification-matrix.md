@@ -9422,3 +9422,8 @@
 | `CYCLE-20261113-9YNK` | `2026-11-13T09:37:45.392Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | Yes (`b8a23452...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T09:38:04.486Z` | `hf-convaiinnovations-laya` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0D23526B` [Domain D] | Yes (`31e92c27...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T09:38:28.866Z` | `apple-foundationdb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-2A739777` [Domain L] | Yes (`737b57d3...`) |
+| `CYCLE-20261113-YGN2` | `2026-11-13T09:56:48.446Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | Yes (`9c71f232...`) |
+| `CYCLE-20261113-YQVS` | `2026-11-13T09:57:01.720Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md` | Yes (`6c385761...`) |
+| `CYCLE-20261113-YSAV` | `2026-11-13T09:57:03.559Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`efc7c5ea...`) |
+| `CYCLE-20261113-YVZB` | `2026-11-13T09:57:08.327Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d59f1a07...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T09:57:29.719Z` | `hf-edge0-audio8-asr-infinite` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F81EC195` [Domain D] | Yes (`f13615df...`) |

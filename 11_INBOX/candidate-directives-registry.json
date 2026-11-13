@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T09:37:48.068Z",
+  "last_updated": "2026-11-13T09:57:29.759Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8525,6 +8525,24 @@
       "source_repo": "michael-a-kuykendall-shimmy",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-ED1578-docs-post-release-update-current-2-6-7-d.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-23AB02",
+      "directive_title": "serverless exec progress (#5229)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "metalbear-co-mirrord",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-23AB02-serverless-exec-progress-5229-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-CC18AD",
+      "directive_title": "Merge pull request #108 from aurorax-neo/fix/storage-limitation-confirm-loop",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "wzh4869-appports",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CC18AD-merge-pull-request-108-from-aurorax-neo-.md",
       "staged_date": "2026-11-13"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `75fd3e94`  
+> **Source Version**: `5f9867e0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:23:48.368Z  
+> **Timestamp**: 2026-11-13T09:57:01.183Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:23:48.360Z  
+> **Harvest Timestamp**: 2026-11-13T09:57:01.171Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1641,11 +1641,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23636** (2026-11-11): **[COR-367] Update libunwind to 1.8.3**
-  *Symptoms*: ### Scope & Purpose  And switch to FetchContent instead off adding the complete source. 
+- **Issue #23660** (2026-11-13): **Remove unused security-governance job from the lint workflow of testing pipeline**
+  *Symptoms*: ### Scope & Purpose  Remove the `security-governance` job from the `lint` workflow of the testing pipeline. It ran the Trivy disposition check and checked `.circleci/required-checks.txt` against the live branch protection.  - `.circleci/base_config.yml`: drop the job, its `lint` workflow entry and the `trivy-scan` orb import, which only this job used. - `.circleci/required-checks.txt`: deleted, nothing else reads it.  Unaffected: the nightly-packages pipeline keeps its own `trivy-scan` orb and Trivy gates, and merge gating doesn't change (`lint` is not a required check).  - [x] :hammer: Refactoring/simplification  ### Checklist  - [x] Backports   - [x] Backport for 3.12: https://github.com/arangodb/arangodb/pull/23659
 
-- **Issue #23635** (2026-11-11): **Fix ann-bencmark load_run**
-  *Symptoms*: ### Scope & Purpose  *(Please describe the changes in this PR for reviewers, motivation, rationale - **mandatory**)*  - [ ] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilience tests** - [ ] :book: CHANGELOG entry made - [ ] :books: documentation written (release notes, API changes, ...) - [ ] Backports   - [ ] Backport for 3.12.0: *(Please link PR)*   - [ ] Backport for 3.11: *(Please link PR)*   - [ ] Backport for 3.10: *(Please link PR)*  #### Related Information  *(Please reference tickets / specification / other PRs etc)*  - [ ] Docs PR:  - [ ] Enterprise PR: - [ ] GitHub issue / Jira ticket: - [ ] Design document:  
+- **Issue #23659** (2026-11-13): **[3.12] Remove unused security-governance job from the lint workflow of testing pipeline**
+  *Symptoms*: ### Scope & Purpose  Remove the `security-governance` job from the `lint` workflow of the testing pipeline. It ran the Trivy disposition check and checked `.circleci/required-checks.txt` against the live branch protection.  - `.circleci/base_config.yml`: drop the job, its `lint` workflow entry and the `trivy-scan` orb import, which only this job used. - `.circleci/required-checks.txt`: deleted, nothing else reads it.  Unaffected: the nightly-packages pipeline keeps its own `trivy-scan` orb and Trivy gates, and merge gating doesn't change (`lint` is not a required check).  - [x] :hammer: Refactoring/simplification
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1662,92 +1662,306 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `071b1c0d` (2026-11-11)
-**Commit Message**: Merge pull request #23635 from arangodb/bug-fix/fix-ann-benchmark
+### Incident Patch 1: `204e1692` (2026-11-13)
+**Commit Message**: Remove unused security-governance job from the lint workflow of testing pipeline (#23660)
 
-Fix ann-bencmark load_run
-
-**File**: `scripts/benchmark/ann/load_run.py` (modified, +2/-1)
+**File**: `.circleci/base_config.yml` (modified, +0/-166)
 ```diff
-@@ -70,7 +70,8 @@ def _request(self, method, path, body=None):
-                                      headers=self.headers)
-         if self.trx_id:
-             req.add_header("x-arango-trx-id", self.trx_id)
--        try: with urllib.request.urlopen(req, context=self.ssl_context) as resp:
-+        try:
-+            with urllib.request.urlopen(req, context=self.ssl_context) as resp:
-                 return json.loads(resp.read() or b"{}")
-         except urllib.error.HTTPError as e:
-             try:
+@@ -3,9 +3,6 @@ version: 2.1
+ orbs:
+   aws-cli: circleci/aws-cli@4.1.1
+   aws-ecr: circleci/aws-ecr@9.0.1
+-  # Exact pin: a floating orb range silently changes what runs. Keep in
+-  # sync with base_nightly_packages.yml.
+-  trivy-scan: arangodb/trivy-scan@1
+ 
+ parameters:
+   enterprise-commit:
+@@ -747,164 +744,6 @@ jobs:
+               echo "Nothing to cancel"
+             fi
+ 
+-  # PR-time lint of what governs the nightly security gates: disposition
+-  # hygiene and the required-status-check inventory.
+-  security-governance:
+-    docker:
+-      - image: cimg/base:current
+-    resource_class: small
+-    steps:
+-      - attach_workspace:
+-          at: .
+-      # No suppression files exist here today; this keeps any future one
+-      # dated and in-window. poam-windows matches the trivy-gate-waivers
+-      # table; nosem-exclude skips vendored trees.
+-      - trivy-scan/disposition-check:
+-          poam-windows: "critical=30,high=30,medium=90,low=180"
+-          nosem-exclude: ":!:.circleci/* :!:3rdParty/* :!:*/node_modules/*"
+-      - run:
+-          name: Compare required checks against the live configuration
+-          environment:
+-            # "true" anywhere in here marks a variant pipeline, which renames
+-            # the build workflows by design (generate_config.py appends the
+-            # variant to the workflow name).
+-            PIPELINE_VARIANTS: "<< pipeline.parameters.with-tsan >>,<< pipeline.parameters.with-alubsan >>,<< pipeline.parameters.full >>,<< pipeline.parameters.replication-two >>"
+-          command: |
+-            set -eu
+-            set -o pipefail
+-            LIST=.circleci/required-checks.txt
+-            # PR pipelines run on the head branch, so the protected branch
+-            # cannot be derived from CIRCLE_BRANCH.
+-            PROTECTED=devel
+-            DRIFT=0
+-            if [ ! -s "${LIST}" ]; then
+-              echo "ERROR: ${LIST} is missing or empty. Commit the required-check inventory." >&2
+-              exit 1
+-            fi
+-            # || true: grep exits 1 on a comments-only list; that is reported
+-            # as an error on the next line, not as a pipefail abort here.
+-            grep -vE '^[[:space:]]*(#|$)' "${LIST}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | sort -u > /tmp/required-expected.txt || true
+-            if [ ! -s /tmp/required-expected.txt ]; then
+-              echo "ERROR: ${LIST} lists no contexts." >&2
+-              exit 1
+-            fi
+-            echo "Committed required contexts (${LIST}):"
+-            sed -e 's/^/  /' /tmp/required-expected.txt
+-            # Live GitHub side. Branch protection needs an administration:read
+-            # token, rulesets only a repo token, so both are consulted. No
+-            # token means UNVERIFIED, never "no drift".
+-            : > /tmp/required-live.txt
+-            LIVE_SOURCE=""
+-            PROT_OK=0
+-            if [ -n "${GITHUB_TOKEN:-}" ]; then
+-              GH_API="https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
+-              for ENDPOINT in "branches/${PROTECTED}/protection" "rules/branches/${PROTECTED}"; do
+-                if curl -sSfL --retry 3 --retry-delay 2 --max-time 60 \
+-                     -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+-                     -H "Accept: application/vnd.github+json" \
+-                     -H "X-GitHub-Api-Version: 2022-11-28" \
+-                     -o /tmp/gh-rules.json "${GH_API}/${ENDPOINT}"; then
+-                  # grep/sed: heredocs collide with CircleCI parameter
+-                  # syntax; "context" only appears in required checks.
+-                  grep -oE '"context":[[:space:]]*"[^"]*"' /tmp/gh-rules.json \
+-                    | sed -e 's/.*"\([^"]*\)"$/\1/' | sort -u >> /tmp/required-live.txt || true
+-                  LIVE_SOURCE="${LIVE_SOURCE}${LIVE_SOURCE:+, }${ENDPOINT}"
+-                  if [ "${ENDPOINT}" = "branches/${PROTECTED}/protection" ]; then
+-                    PROT_OK=1
+-                  fi
+-                else
+-                  echo "NOTICE: could not read ${ENDPOINT} (token scope?), that surface is unverified on this run." >&2
+-                fi
+-              done
+-            elif [ -n "${CIRCLE_PR_REPONAME:-}" ]; then
+-              echo "NOTICE: forked PR, no GITHUB_TOKEN; the live GitHub configuration is unverified on this run." >&2
+-            else
+-              echo "NOTICE: GITHUB_TOKEN is not set; the live GitHub configuration stays UNVERIFIED until a context with a read-only administration:read token is attached." >&2
+-            fi
+-            # Compare only when a surface that can carry required contexts
+-            # answered: an empty read off the rulesets endpoint alone is a
+-            # token-scope gap, not proof that nothing is required.
+-            if [ -n "${LIVE_SOURCE}" ] && { [ "${PROT_OK}" = "1" ] || [ -s /tmp/required-live.txt ]; }; then
+-              sort -u /tmp/required-live.txt -o /tmp/required-live.tx
+```
+
+**File**: `.circleci/required-checks.txt` (removed, +0/-10)
+```diff
+@@ -1,10 +0,0 @@
+-# Required status checks for merging into devel, one context per line.
+-# security-governance compares this list against live branch protection and
+-# against the workflows a real pipeline emits; drift in either direction is
+-# a broken merge gate. Read off the live configuration, never hand-derived;
+-# GitHub sees one check per CircleCI workflow, so these are workflow names.
+-# The Trivy gates live in the nightly-packages pipeline. They fail that
+-# workflow but block neither the merge nor the nightly publish.
+-
+-aarch64-pr
+-x64-pr
 ```
 
 ---
 
-### Incident Patch 2: `47627c56` (2026-11-11)
-**Commit Message**: [BTS-2530] Test IN index lookups with non-array values in loops (#23633)
+### Incident Patch 2: `fbbdcbfe` (2026-11-12)
+**Commit Message**: Merge pull request #23638 from arangodb/bug-fix/re-enable-tests-for-arm
 
-An IN lookup on a persistent index that is rearmed for each row of an outer
-loop matches nothing for non-array and empty-array values, whatever the
-previous row matched.
+BTS-2363: re-enable test
 
-**File**: `tests/js/client/aql/aql-index-rearming.js` (modified, +21/-0)
+
+
+---
+
+### Incident Patch 3: `5f4fcc20` (2026-11-10)
+**Commit Message**: COR-1263: NGRAM_MATCH fix for extra counting issue
+
+**File**: `arangod/Aql/Function/NGramFunctions.cpp` (modified, +7/-1)
 ```diff
-@@ -768,6 +768,27 @@ function VPackIndexInRearmingSuite (unique) {
-         }
-       }
-     },
+@@ -220,9 +220,15 @@ AqlValue functions::NgramMatch(ExpressionContext* ctx, AstNode const&,
+   if (!targetNgrams.empty() && !attrNgrams.empty()) {
+     size_t thresholdMatches =
+         (size_t)std::ceil((float_t)targetNgrams.size() * threshold);
+-    size_t d = 0;  // will store upper-left cell value for current cache row
++    // cache[j] is the longest match using the first j attribute n-grams.
++    // cache[0] stays 0: a match cannot start before the first attribute n-gram.
+     std::vector<size_t> cache(attrNgrams.size() + 1, 0);
+     for (auto const& targetNgram : targetNgrams) {
++      // Diagonal of column 1 is cache[0] from the previous row. Reusing the
++      // value left in `d` would apply the previous row's last cell (saved
++      // before that cell was overwritten, so two rows back) and over-count
++      // a repeated token, e.g. ["quick"] vs ["quick","quick","quick"].
++      size_t d = 0;
+       size_t s_ngram_idx = 1;
+       for (; s_ngram_idx <= attrNgrams.size(); ++s_ngram_idx) {
+         size_t curMatches =
+```
+
+**File**: `lib/iresearch/core/utils/ngram_match_utils.hpp` (modified, +4/-1)
+```diff
+@@ -86,12 +86,15 @@ float_t ngram_similarity(const T* target, size_t target_size, const T* src,
+   const T* t_ngram_start_end = target + target_size - ngram_size +
+                                1;  // end() analog for target ngram start
+ 
+-  float_t d = 0;  // will store upper-left cell value for current cache row
+   std::vector<float_t> cache(s_ngram_count + 1, 0);
+ 
+   // here could be constructed source string with start characters affixing
+ 
+   for (; t_ngram_start != t_ngram_start_end; ++t_ngram_start) {
++    // Upper-left cell of this row. Column 0 is always 0, so each target
++    // n-gram starts from a zero diagonal. Carrying `d` across rows leaks the
++    // previous row's last cell (the value from two rows earlier).
++    float_t d = 0;
+     const T* t_ngram_end = t_ngram_start + ngram_size;
+     const T* s_ngram_start = src;
+     size_t s_ngram_idx = 1;
+```
+
+**File**: `lib/iresearch/tests/utils/ngram_match_utils_tests.cpp` (modified, +27/-0)
+```diff
+@@ -431,6 +431,33 @@ TEST(ngram_match_utils_test, test_similarity_shorter) {
+   }
+ }
+ 
++TEST(ngram_match_utils_test, test_similarity_repeated_ngram) {
++  // A single source n-gram must not be counted once per repeated target
++  // n-gram. The longest common sequence is 1.
++  const std::string_view one = "a";
++  const std::string_view three = "aaa";
++  ASSERT_DOUBLE_EQ(
++    1.f / 3.f, (irs::ngram_similarity<char, true>(three.data(), three.size(),
++                                                  one.data(), one.size(), 1)));
++  ASSERT_DOUBLE_EQ(1, (irs::ngram_similarity<char, true>(
++                        one.data(), one.size(), three.data(), three.size(),
++                        1)));
 +
-+    testVPackLookupBySingleAttributeUsingInNonArrayValuesRearm : function () {
-+      const q = `FOR v IN [["001"], "nope", null, [], {}, "002", 2, ["002", "003"], true] FOR doc IN ${cn} FILTER doc.value1 IN v RETURN [v, doc.value1]`;
++  const std::string_view abc = "abc";
++  ASSERT_DOUBLE_EQ(
++    1.f / 3.f,
++    (irs::ngram_similarity<char, false>(three.data(), three.size(), abc.data(),
++                                        abc.size(), 1)));
++  ASSERT_DOUBLE_EQ(
++    1.f / 3.f,
++    (irs::ngram_similarity<char, false>(abc.data(), abc.size(), three.data(),
++                                        three.size(), 1)));
++  ASSERT_DOUBLE_EQ(
++    1.f / 3.f,
++    (irs::ngram_similarity<char, true>(three.data(), three.size(), abc.data(),
++                                       abc.size(), 1)));
++}
 +
-+      const opts = { optimizer: { rules: ["-interchange-adjacent-enumerations"] } };
+ TEST(ngram_match_utils_test, test_similarity_all_empty) {
+   // strings are shorter than ngram length.
+   const std::string_view lhs = "";
+```
+
+**File**: `tests/Aql/Function/NgramMatchFunctionTest.cpp` (modified, +32/-0)
+```diff
+@@ -317,5 +317,37 @@ TEST_F(NgramMatchFunctionTest, test) {
+       assertNgramMatch(__LINE__, false, &Attribute, &Target2,
+                        &ValidAnalyzerName);
+     }
++    // One attribute bigram against the same bigram repeated on the target.
++    // Longest common sequence is 1 of 3, so similarity is 1/3.
++    {
++      AqlValue const Attribute{"aa"};
++      AqlValue const Target{"aaaa"};
++      assertNgramMatch(__LINE__, false, &Attribute, &Target, &ValidAnalyzerName,
++                       &Threshold05);
++      assertNgramMatch(__LINE__, true, &Attribute, &Target, &ValidAnalyzerName,
++                       &Threshold02);
++      assertNgramMatch(__LINE__, true, &Target, &Attribute, &ValidAnalyzerName,
++                       &Threshold05);
++    }
++  }
++  // text_en tokens: ["quick"] vs ["quick", "quick", "quick"] is 1/3.
++  // A stale diagonal from the previous row used to report a match at 0.5.
++  {
++    AqlValue const TextEn{"text_en"};
++    AqlValue const Attribute{"quick"};
++    AqlValue Repeated{"quick quick quick"};
++    AqlValueGuard RepeatedGuard(Repeated, true);
 +
-+      let nodes = db._createStatement({query: q, bindVars:  null, options:  opts}).explain().plan.nodes;
-+      let indexNodes = nodes.filter((node) => node.type === 'IndexNode');
-+      assertEqual(1, indexNodes.length);
-+      assertEqual(1, indexNodes[0].indexes.length);
-+      assertEqual("UnitTestsIndex", indexNodes[0].indexes[0].name);
-+
-+      // an IN value that is not an array, or is an empty array, matches
-+      // nothing, whatever the previous lookup matched
-+      let results = db._query(q, null, opts).toArray();
-+      assertEqual([
-+        [["001"], "001"],
-+        [["002", "003"], "002"],
-+        [["002", "003"], "003"],
-+      ], results);
-+    },
-     
-   };
++    AqlValue const Pair{"quick quick"};
++    AqlValue const Threshold05{AqlValueHintDouble{0.5}};
++    AqlValue const Threshold03{AqlValueHintDouble{0.3}};
++    assertNgramMatch(__LINE__, false, &Attribute, &Repeated, &TextEn,
++                     &Threshold05);
++    assertNgramMatch(__LINE__, true, &Attribute, &Repeated, &TextEn,
++                     &Threshold03);
++    assertNgramMatch(__LINE__, true, &Repeated, &Attribute, &TextEn,
++                     &Threshold05);
++    // Two attribute tokens still form a sequence of length 2 (2/3 >= 0.5).
++    assertNgramMatch(__LINE__, true, &Pair, &Repeated, &TextEn, &Threshold05);
+   }
  }
 ```
 
----
-
-### Incident Patch 3: `e44bc6e2` (2026-11-11)
-**Commit Message**: Fix ann-bencmark load_run
-
-**File**: `scripts/benchmark/ann/load_run.py` (modified, +2/-1)
+**File**: `tests/Aql/Function/NgramPosSimilarityFunctionTest.cpp` (modified, +11/-0)
 ```diff
-@@ -70,7 +70,8 @@ def _request(self, method, path, body=None):
-                                      headers=self.headers)
-         if self.trx_id:
-             req.add_header("x-arango-trx-id", self.trx_id)
--        try: with urllib.request.urlopen(req, context=self.ssl_context) as resp:
-+        try:
-+            with urllib.request.urlopen(req, context=self.ssl_context) as resp:
-                 return json.loads(resp.read() or b"{}")
-         except urllib.error.HTTPError as e:
-             try:
+@@ -245,6 +245,17 @@ TEST_F(NgramPosSimilarityFunctionTest, test) {
+         assertNgramSimilarity(__LINE__, 0, &Target, &ValidString, &ValidInt);
+       }
+     }
++    // repeated character against a different string of the same length.
++    // Only the shared "a" counts, so positional similarity is 1/3.
++    {
++      AqlValue const Attribute{"abc"};
++      AqlValue const Target{"aaa"};
++      AqlValue const ValidInt{AqlValueHintInt{1}};
++      assertNgramSimilarity(__LINE__, 1.f / 3.f, &Attribute, &Target,
++                            &ValidInt);
++      assertNgramSimilarity(__LINE__, 1.f / 3.f, &Target, &Attribute,
++                            &ValidInt);
++    }
+     // less than ngram size
+     {
+       AqlValue const Attribute{"a"};
+```
+
+**File**: `tests/Aql/Function/NgramSimilarityFunctionTest.cpp` (modified, +9/-0)
+```diff
+@@ -232,6 +232,15 @@ TEST_F(NgramSimilarityFunctionTest, test) {
+         assertNgramSimilarity(__LINE__, 0, &Target, &ValidString, &ValidInt);
+       }
+     }
++    // repeated target character: one source char matches once, so 1/3
++    {
++      AqlValue const Attribute{"a"};
++      AqlValue const Target{"aaa"};
++      AqlValue const ValidInt{AqlValueHintInt{1}};
++      assertNgramSimilarity(__LINE__, 1.f / 3.f, &Attribute, &Target,
++                            &ValidInt);
++      assertNgramSimilarity(__LINE__, 1, &Target, &Attribute, &ValidInt);
++    }
+     // less than ngram size
+     {
+       AqlValue const Attribute{"a"};
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23636** (2026-11-11): [COR-367] Update libunwind to 1.8.3 (@mpoeter)
-- **PR #23635** (2026-11-11): Fix ann-bencmark load_run (@jbajic)
-- **PR #23633** (2026-11-11): [BTS-2530] Test IN index lookups with non-array values in loops (@maierlars)
-- **PR #23629** (2026-11-11): Fix ann-benchmark artifacts upload (@jbajic)
-- **PR #23627** (2026-11-10): [3.12] Use more reliable infrastructural flow (@KVS85)
-- **PR #23626** (2026-11-11): [COR-1179] Fix SUBSTRING_BYTES AQL function (@jbajic)
+- **PR #23660** (2026-11-13): Remove unused security-governance job from the lint workflow of testing pipeline (@KVS85)
+- **PR #23659** (2026-11-13): [3.12] Remove unused security-governance job from the lint workflow of testing pipeline (@KVS85)
+- **PR #23649** (2026-11-12): Feature 3.12/makedata more useable (@dothebart)
+- **PR #23648** (2026-11-12): let makedata be more appealing to developers (@dothebart)
+- **PR #23646** (2026-11-12): add waitdata to make sure the vector index is seeded (#23643) (@dothebart)
+- **PR #23643** (2026-11-12): BTS-2424: add waitdata to make sure the vector index is seeded (@dothebart)
 
 ---
 
@@ -1761,35 +1975,3 @@ previous row matched.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Merge pull request #23635 from arangodb/bug-fix/fix-ann-benchmark
-
-**RULE**:
-When implementing operations in `scripts/benchmark/ann/load_run.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `071b1c0d`: Merge pull request #23635 from arangodb/bug-fix/fix-ann-benchmark. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/benchmark/ann/load_run.py`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```c++
-// Verified production-grade fix pattern:
-        try:
-            with urllib.request.urlopen(req, context=self.ssl_context) as resp:
-```
-
-**NEGATIVE CONSTRAINT**:
-```c++
-// Anti-pattern to NEVER write (induced failure mode):
-        try: with urllib.request.urlopen(req, context=self.ssl_context) as resp:
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `071b1c0d` are properly handled with clean fallback behavior.

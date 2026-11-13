@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T09:38:29.009Z",
+  "last_updated": "2026-11-13T09:57:29.817Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T07:39:41.956Z",
@@ -428,7 +428,7 @@
       "staged_for_review": 1
     },
     "metalbear-co-mirrord-learnings.md": {
-      "processed_at": "2026-11-11T16:56:05.342Z",
+      "processed_at": "2026-11-13T09:57:14.102Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1711,9 +1711,19 @@
       "processed_at": "2026-11-13T09:38:28.866Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-edge0-audio8-asr-infinite-learnings.md": {
+      "processed_at": "2026-11-13T09:57:29.719Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "wzh4869-appports-learnings.md": {
+      "processed_at": "2026-11-13T09:57:29.760Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 522,
-  "total_canonical_promoted": 83,
-  "total_staged_for_review": 436
+  "total_dossiers_evaluated": 525,
+  "total_canonical_promoted": 84,
+  "total_staged_for_review": 438
 }

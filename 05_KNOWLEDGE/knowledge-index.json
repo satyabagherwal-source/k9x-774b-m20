@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T09:37:45.255Z",
+  "last_updated": "2026-11-13T09:57:08.215Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3359,8 +3359,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "75fd3e94",
-      "content_hash": "a969464ff12cfdca9d298a10fe24aa3222965e443c74fd5454592907225012ee",
+      "source_version": "5f9867e0",
+      "content_hash": "6c38576178fdd57393478856960fafa779562c2fae2379cd04fc54c2f45c9fc6",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -3440,7 +3440,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T03:24:02.221Z",
+      "verified_at": "2026-11-13T09:57:01.509Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26280,7 +26280,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "750771b7420b9d19ddf0b4322d97efed18da68fd8d449e52eaf18151398fd011",
+      "content_hash": "9c71f232f031bd8abef7a91f189c040557d80e73564de39fe5c81920d0b6e348",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "promoted_rules": [
@@ -26705,7 +26705,7 @@
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv41u2xc",
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i"
       ],
-      "verified_at": "2026-11-08T07:23:37.844Z",
+      "verified_at": "2026-11-13T09:56:48.312Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44630,8 +44630,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "f28032b1",
-      "content_hash": "526830c2fd8321a1c8b9fef5e3faff3943b65b1ed41527e5a1637b448f293106",
+      "source_version": "4c3c4935",
+      "content_hash": "efc7c5ea4b1de353ed42ec95064e0ef01ee69cc24d36a9a1e042569fce9157aa",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -44653,6 +44653,11 @@
         {
           "number": null,
           "title": "Enable linux fs fixes for all users (#5214)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "serverless exec progress (#5229)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -44721,7 +44726,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T16:56:00.156Z",
+      "verified_at": "2026-11-13T09:57:03.401Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67907,11 +67912,16 @@
       "slug": "wzh4869-appports",
       "platform": "github",
       "source_url": "https://github.com/wzh4869/AppPorts",
-      "source_version": "c5d2026b",
-      "content_hash": "b44969adcb488959f349f3817f6f16491c895d93c49818b38870768dbda71747",
+      "source_version": "af5fb956",
+      "content_hash": "d59f1a07892e9e204509dfe2619fc0001368972a9e7695e28f574d952ca7d6e0",
       "dossier_path": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #108 from aurorax-neo/fix/storage-limitation-confirm-loop",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2959,
           "title": "clear update protection locks on any app location change",
@@ -67938,7 +67948,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T01:01:25.200Z",
+      "verified_at": "2026-11-13T09:57:08.188Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
