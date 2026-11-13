@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T21:37:17.529Z",
+  "updated_at": "2026-11-13T21:50:53.278Z",
   "statistics": {
-    "total_nodes": 129,
-    "total_edges": 69,
+    "total_nodes": 130,
+    "total_edges": 70,
     "domain_distribution": {
-      "D": 106,
+      "D": 107,
       "M": 1,
       "H": 10,
       "J": 3,
@@ -17,7 +17,7 @@
       "F": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 69
+      "CONSTRAINED_BY_ARCHITECTURE": 70
     }
   },
   "nodes": {
@@ -2882,6 +2882,29 @@
       ],
       "created_at": "2026-11-13T21:37:17.529Z",
       "updated_at": "2026-11-13T21:37:17.529Z"
+    },
+    "DOM-D-B528111D": {
+      "id": "DOM-D-B528111D",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): google-t5/t5-small",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-google-t5-t5-small/hf-google-t5-t5-small-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T21:50:24.689Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-t5-t5-small)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T21:50:53.277Z",
+      "updated_at": "2026-11-13T21:50:53.277Z"
     }
   },
   "edges": [
@@ -3574,6 +3597,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-7BD861BF [D] with Domain M",
       "created_at": "2026-11-13T21:28:52.901Z"
+    },
+    {
+      "id": "EDGE-C9AD122877D6",
+      "sourceId": "DOM-D-B528111D",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-B528111D [D] with Domain M",
+      "created_at": "2026-11-13T21:50:53.278Z"
     }
   ]
 }

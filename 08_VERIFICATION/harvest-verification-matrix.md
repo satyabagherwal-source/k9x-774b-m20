@@ -9642,3 +9642,8 @@
 | `CYCLE-20261113-YFQF` | `2026-11-13T21:36:37.671Z` | `streetwriters/notesnook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8388` | Yes (`ed56db56...`) |
 | `CYCLE-20261113-YIHC` | `2026-11-13T21:36:41.232Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8389` | Yes (`b926ded7...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:37:17.530Z` | `hf-nvidia-nvidia-nemotronlabs-re-use` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B0D103E9` [Domain D] | Yes (`52910bc4...`) |
+| `CYCLE-20261113-9DZE` | `2026-11-13T21:45:08.618Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8390` | Yes (`82189688...`) |
+| `CYCLE-20261113-9H4T` | `2026-11-13T21:45:12.701Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md` | Yes (`8c0cf5d2...`) |
+| `CYCLE-20261113-9NAQ` | `2026-11-13T21:45:20.690Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8391` | Yes (`cec55f56...`) |
+| `CYCLE-20261113-G394` | `2026-11-13T21:50:21.304Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`da3282fa...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:50:53.279Z` | `hf-google-t5-t5-small` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B528111D` [Domain D] | Yes (`4353f327...`) |

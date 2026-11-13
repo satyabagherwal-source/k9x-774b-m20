@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T21:37:18.054Z",
+  "updated_at": "2026-11-13T21:50:53.667Z",
   "stats": {
-    "total_discovered": 2937,
-    "approved_pending_harvest": 2739,
+    "total_discovered": 2943,
+    "approved_pending_harvest": 2745,
     "harvested_count": 0,
     "rejected_count": 198,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2740,
+      "COMMUNITY_AND_EXPERT": 2746,
       "OFFICIAL_DOCUMENTATION": 105,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -63248,6 +63248,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
         "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-85FB4583A491": {
+      "id": "SRC-85FB4583A491",
+      "url": "https://huggingface.co/google-t5/t5-small",
+      "title": "https://huggingface.co/google-t5/t5-small",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:50:53.299Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
+        "fileName": "hf-google-t5-t5-small-learnings.md"
+      }
+    },
+    "SRC-BCE684000BA9": {
+      "id": "SRC-BCE684000BA9",
+      "url": "https://github.com/callstack/react-native-paper",
+      "title": "https://github.com/callstack/react-native-paper",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:50:53.577Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
+        "fileName": "callstack-react-native-paper-learnings.md"
+      }
+    },
+    "SRC-591E7CF15765": {
+      "id": "SRC-591E7CF15765",
+      "url": "https://m3.material.io/components/checkbox/specs",
+      "title": "https://m3.material.io/components/checkbox/specs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:50:53.610Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
+        "fileName": "callstack-react-native-paper-learnings.md"
+      }
+    },
+    "SRC-63F736032A3C": {
+      "id": "SRC-63F736032A3C",
+      "url": "https://github.com/user-attachments/assets/ed27b7b9-6baa-4228-91ae-2269907b6cb0",
+      "title": "https://github.com/user-attachments/assets/ed27b7b9-6baa-4228-91ae-2269907b6cb0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:50:53.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
+        "fileName": "callstack-react-native-paper-learnings.md"
+      }
+    },
+    "SRC-2A2F05584C83": {
+      "id": "SRC-2A2F05584C83",
+      "url": "https://m3.material.io/components/chips/specs",
+      "title": "https://m3.material.io/components/chips/specs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:50:53.648Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
+        "fileName": "callstack-react-native-paper-learnings.md"
+      }
+    },
+    "SRC-81B9424BB21D": {
+      "id": "SRC-81B9424BB21D",
+      "url": "https://picsum.photos/700",
+      "title": "https://picsum.photos/700",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:50:53.667Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
+        "fileName": "callstack-react-native-paper-learnings.md"
       }
     }
   }

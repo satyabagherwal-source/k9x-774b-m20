@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T21:36:41.243Z",
-  "total_cycles_completed": 9387,
-  "total_learnings_persisted": 9387,
-  "total_rules_promoted": 9109,
+  "last_updated": "2026-11-13T21:50:21.313Z",
+  "total_cycles_completed": 9391,
+  "total_learnings_persisted": 9391,
+  "total_rules_promoted": 9111,
   "history": [
-    {
-      "timestamp": "2026-11-13T08:35:53.798Z",
-      "repository": "ccore/Qwen3.5-4B-3D-Coder",
-      "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T08:40:40.153Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T08:55:38.383Z",
-      "repository": "LiquidAI/LFM3-1.7B",
-      "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T08:55:49.420Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T08:55:59.892Z",
       "repository": "koderover/zadig",
@@ -1403,6 +1375,34 @@
       "repository": "microsoft/agent-governance-toolkit",
       "learningId": "learn-github-microsoft-agent-governance-toolkit",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T21:45:08.626Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T21:45:12.715Z",
+      "repository": "callstack/react-native-paper",
+      "learningId": "learn-github-callstack-react-native-paper",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T21:45:20.698Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T21:50:21.313Z",
+      "repository": "google-t5/t5-small",
+      "learningId": "learn-huggingface-google-t5-t5-small",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

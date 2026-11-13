@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T21:37:18.851Z",
+  "last_updated": "2026-11-13T21:50:53.852Z",
   "directives": [
     {
       "id": "CD-001",
@@ -10521,6 +10521,57 @@
       "source_repo": "microsoft-agent-governance-toolkit",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FF42E8-docs-changelog-record-the-conversation-g.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-G5MM",
+      "directive_title": "Add support for SO_REUSEPORT on linux",
+      "source_repo": "ntex-rs-ntex-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-G5MM-add-support-for-so_reuseport-on-linux.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-GSCW",
+      "directive_title": "fix!: expand interactive targets to the 48dp minimum",
+      "source_repo": "callstack-react-native-paper-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GSCW-fix-expand-interactive-targets-to-the-48dp-minimum.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-9NF4",
+      "directive_title": "scope fault injection rules to the installing fixture's prefix",
+      "source_repo": "databendlabs/databend",
+      "source_commit": "328efad7",
+      "staged_file": "11_INBOX/candidate-directives/CD-9NF4-scope-fault-injection-rules-to-the-installing-fixture-s-prefix.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-13",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-892431",
+      "directive_title": "Add support for SO_REUSEPORT on linux",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ntex-rs-ntex",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-892431-add-support-for-so-reuseport-on-linux.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-A7AEEA",
+      "directive_title": "fix!: expand interactive targets to the 48dp minimum",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "callstack-react-native-paper",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A7AEEA-fix-expand-interactive-targets-to-the-48.md",
       "staged_date": "2026-11-13"
     }
   ]

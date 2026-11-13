@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-4503",
-    "timestamp": "2026-11-13T02:33:19.443Z",
-    "repository": "moonshotai/Kimi-K3.1-Pro",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
-    "contentHash": "b7ae7462dfdbafb623c00c47f1389b8b64aaae5d2f5b373b2c5261365b5dd59d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-ZXS3",
-    "timestamp": "2026-11-13T02:58:03.075Z",
-    "repository": "SeekStorm/SeekStorm",
-    "learningId": "learn-github-seekstorm-seekstorm",
-    "contentHash": "b74e262b681734b1b799336f91e158c7933d2fbd59f2c393139d273dc15aa0e7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-5TOW",
-    "timestamp": "2026-11-13T03:02:37.712Z",
-    "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
-    "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-    "contentHash": "6f3652a72e8285ee8e78d7cc6a58bd4c191c39d06ed63265113f94f49a430120",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-6CM7",
-    "timestamp": "2026-11-13T03:03:02.239Z",
-    "repository": "nats-io/nats-server",
-    "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "e750dd4a621335b1dc2bb2375cb68620000a8e0507225107c8d8b2b91cbe8455",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-FXZ0",
     "timestamp": "2026-11-13T03:10:29.820Z",
     "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
@@ -7492,6 +7432,66 @@
     "contentHash": "b926ded77a84b3341b3bc66fcb56019d724b45fb81c5932c8220221c385c0794",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-9DZE",
+    "timestamp": "2026-11-13T21:45:08.618Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "821896881ab592ed9e767f7726eeff8f522f704a749a6f6829c4b38c8eaae7b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-9H4T",
+    "timestamp": "2026-11-13T21:45:12.701Z",
+    "repository": "callstack/react-native-paper",
+    "learningId": "learn-github-callstack-react-native-paper",
+    "contentHash": "8c0cf5d2b275281f76878baff9756d81081b16124b26bd00ad739197ace5bace",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-9NAQ",
+    "timestamp": "2026-11-13T21:45:20.690Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "cec55f565d9e78a3edda52cd89ad1e25e6ba6c1f8332c7c6bef48f8ddf91bb13",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-G394",
+    "timestamp": "2026-11-13T21:50:21.304Z",
+    "repository": "google-t5/t5-small",
+    "learningId": "learn-huggingface-google-t5-t5-small",
+    "contentHash": "da3282fae4b163e86cce4ffecee66fb870984d625505162de2c0bc37ff9dcbe5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T21:37:18.965Z",
-  "total_records": 378,
+  "last_updated": "2026-11-13T21:50:53.947Z",
+  "total_records": 386,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 200,
+      "total": 203,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -233,7 +233,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotronlabs-re-use-core-invariant",
         "DOM-D-B0D103E9",
-        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotronlabs-re-use-learnings-c"
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotronlabs-re-use-learnings-c",
+        "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants",
+        "DOM-D-B528111D",
+        "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants"
       ]
     },
     "E": {
@@ -243,15 +246,17 @@
       ]
     },
     "F": {
-      "total": 3,
+      "total": 5,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
-        "DOM-F-456EB881"
+        "DOM-F-456EB881",
+        "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants",
+        "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants"
       ]
     },
     "G": {
-      "total": 48,
+      "total": 50,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -300,11 +305,13 @@
         "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
         "domain_intelligence-architecture-intelligence-infinitered-reactotron-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-streetwriters-notesnook-core-invariants",
-        "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-ntex-rs-ntex-core-invariants",
+        "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 80,
+      "total": 81,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -385,7 +392,8 @@
         "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-core-invariants",
         "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants"
       ]
     },
     "I": {
@@ -9342,6 +9350,111 @@
       "repository": "streetwriters-notesnook-learnings",
       "content_hash": "144ada95f57b1e2f8d18aeda28dae4f7b171a992a80e0bef640d8739fdfc28a0",
       "created_at": "2026-11-13T21:37:18.387Z"
+    },
+    "domain_intelligence-architecture-intelligence-ntex-rs-ntex-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-ntex-rs-ntex-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
+      "repository": "ntex-rs/ntex",
+      "content_hash": "b93f34efca96c9ed1c28ab85dbe28f3464124fb0ddf68a104cc87a9fa7003e03",
+      "created_at": "2026-11-13T21:45:08.875Z"
+    },
+    "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: callstack/react-native-paper Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-design-intelligence-callstack-react-native-paper-co.md",
+      "repository": "callstack/react-native-paper",
+      "content_hash": "7f22090742776649dabfd127ea3c3f5c16eb1e6a343e0016d91abd1720320ad7",
+      "created_at": "2026-11-13T21:45:12.976Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: databendlabs/databend Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-technical-construction-intelligence-databendlabs-databend-.md",
+      "repository": "databendlabs/databend",
+      "content_hash": "8f2cf57046074f8109388c4c9a8b5071e9cdc40b01ef9687e6da3105bc11a345",
+      "created_at": "2026-11-13T21:45:20.937Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: google-t5/t5-small Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-t5-t5-small-research-knowledge-intelligence-google-t5-t5-small-core-in.md",
+      "repository": "google-t5/t5-small",
+      "content_hash": "c528048422371446d167a13ac831c92bd370f122461c95a3f76da20ca2106012",
+      "created_at": "2026-11-13T21:50:21.463Z"
+    },
+    "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-learnings-architecture-intelligence-ntex-rs-ntex-learnings-core-inv.md",
+      "repository": "ntex-rs-ntex-learnings",
+      "content_hash": "d8c8ef653c0e5818d11b920d09fa752eaffd6e92b9e342d7559ca7f729e5c713",
+      "created_at": "2026-11-13T21:50:24.494Z"
+    },
+    "DOM-D-B528111D": {
+      "record_id": "DOM-D-B528111D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): google-t5/t5-small",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/google-t5/t5-small](https://huggingface.co/google-t5/t5-small))  \n> **Source Version**: `hf-google-t5`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "4353f3270ce6427c75299385459d6c95b90a71da2cd16b855e6b26a97a683078",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-google-t5-t5-small/hf-google-t5-t5-small-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T21:50:24.689Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-t5-t5-small)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-google-t5-t5-small"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T21:50:53.271Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-google-t5-t5-small-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-t5-t5-small-learnings-research-knowledge-intelligence-hf-google-t5-t5-.md",
+      "repository": "hf-google-t5-t5-small-learnings",
+      "content_hash": "f5c198b520bbbba6b94ec0df453d55baedccdb676f27ffa9a1600dd8e1366fb6",
+      "created_at": "2026-11-13T21:50:53.466Z"
+    },
+    "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: callstack-react-native-paper-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-learnings-design-intelligence-callstack-react-nativ.md",
+      "repository": "callstack-react-native-paper-learnings",
+      "content_hash": "96b3c53608cd2a82c0a566edf0bf9691401054184c48fe1595d05d5a18b8caeb",
+      "created_at": "2026-11-13T21:50:53.947Z"
     }
   }
 }

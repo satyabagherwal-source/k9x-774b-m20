@@ -9675,3 +9675,8 @@ Every entry in this ledger must capture:
 | `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `a2ac794b` | Multi-dimensional audit evidence | 2026-11-13T21:36:37.676Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `c8939518` | Multi-dimensional audit evidence | 2026-11-13T21:36:41.237Z |
 | `learn-dom-d-b0d103e9` | `project://hf-nvidia-nvidia-nemotronlabs-re-use` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md` | 2026-11-13T21:37:17.530Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `1a38c4b1` | Multi-dimensional audit evidence | 2026-11-13T21:45:08.622Z |
+| `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `ead3e550` | Multi-dimensional audit evidence | 2026-11-13T21:45:12.705Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `328efad7` | Multi-dimensional audit evidence | 2026-11-13T21:45:20.694Z |
+| `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-13T21:50:21.308Z |
+| `learn-dom-d-b528111d` | `project://hf-google-t5-t5-small` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | 2026-11-13T21:50:53.279Z |

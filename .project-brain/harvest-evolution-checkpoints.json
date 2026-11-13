@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T21:37:19.335Z",
+  "last_updated": "2026-11-13T21:50:54.156Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T21:28:54.085Z",
@@ -1028,7 +1028,7 @@
       "staged_for_review": 1
     },
     "ntex-rs-ntex-learnings.md": {
-      "processed_at": "2026-11-12T10:53:03.203Z",
+      "processed_at": "2026-11-13T21:50:24.183Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2201,9 +2201,19 @@
       "processed_at": "2026-11-13T21:37:17.899Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-google-t5-t5-small-learnings.md": {
+      "processed_at": "2026-11-13T21:50:53.279Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "callstack-react-native-paper-learnings.md": {
+      "processed_at": "2026-11-13T21:50:53.567Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 693,
-  "total_canonical_promoted": 137,
-  "total_staged_for_review": 550
+  "total_dossiers_evaluated": 696,
+  "total_canonical_promoted": 138,
+  "total_staged_for_review": 552
 }

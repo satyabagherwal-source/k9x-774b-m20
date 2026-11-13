@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `c930abe2`  
+> **Source Version**: `328efad7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T22:21:03.332Z  
+> **Timestamp**: 2026-11-13T21:45:19.896Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T22:21:03.304Z  
+> **Harvest Timestamp**: 2026-11-13T21:45:19.890Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9493 stars
+- **Stars / Engagement**: 9494 stars
 
 ---
 
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21074** (2026-11-12): **fix(sqllogictest): stop the runner from panicking on a multi-byte comment**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The sqllogictest runner panicked while scanning a test file, before running anything, when a comment had a multi-byte character at byte 18. `parse_settings_directives` compared the first 18 bytes of every comment against the `run-with-settings:` directive with `comment[..18]`, which is not a char boundary for text like a commented-out `explain` result containing box-drawing characters. The abort took every later file in the suite with it.  The prefix is now taken through `str::get`, which returns `None` for a non-boundary index, so a comment like `#── ── ── ── ── ──` is simply not a directive.  Proof: a unit test with that exact comment fails with the old slice (`end byte index 18 is not a char boundary`) and passes now. I also ran the issue's repro through the built binary:  ``` $ printf 'statement ok\nselect 1\n\n#── ── ── ── ── ──\n' > /tmp/slt_repro/x/repro.test $ ./target/debug/databend-sqllogictests --handlers http --suites /tmp/slt_repro --run_dir x Summary: ✅ Passed, 2 test(s) across 1 file(s) completed in 214 ms. ```  fixes: #20725  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as exp
+- **Issue #21092** (2026-11-13): **fix(query): truncate REPLACE statements in query logs**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Long `REPLACE INTO ... VALUES ...` statements bypass `short_sql_max_length` because `short_sql` only recognizes `INSERT`. Add `REPLACE` to the existing keyword list so its query log text is truncated in the same way, including in `system_history.query_history`. - Keep truncation behavior unchanged for all other statement types. For example, an oversized `REPLACE INTO t ON (id) VALUES (1, '...')` now retains the configured prefix followed by `...[X more characters]`; execution SQL is unaffected. - Add `test_short_sql_replace` covering keyword case, leading whitespace, Unicode, and lengths below, at, and above the limit. Confirmed the regression fails before the fix and passes afterward alongside the existing `INSERT` tests. - Validation: `cargo test --offline -p databend-common-base --test it test_short_sql`, `cargo clippy --offline -p databend-common-base --tests -- -D warnings`, formatting, and `git diff --check` passed. Full-service end-to-end validation was not run. No migrations or new settings are required.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [ ] Documentation 
 
-- **Issue #21071** (2026-11-12): **fix(query): remove vector bundle component size cap**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Vector bundle components were capped at 1 GiB (`MAX_COMPONENT_SIZE`), so a 768-dim refined block failed at write time above ~699k rows (~350k at 1536-dim), well below the legal `ROW_PER_BLOCK = 1000000`, and only after the whole block had been built. - Remove the component size cap on both the write and read paths. Component sizes are bounded by the table's block size. The decoded size used for the decompression buffer comes from the footer, which is CRC32-verified when read from object storage and from the disk cache, and the decoded length and checksum are still verified after decoding. - `VectorBundleFooter::validate` now rejects plain components whose `raw_length` differs from `length`. - Tests: the existing `test_footer_validation` gains a case for the plain length mismatch  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [ ] Documentation Update - [ ] Refactoring - [ ] Performance Improvement - [ ] Other (please describe):  ## AI assistance  - AI usage: An AI coding agent analyzed the vector bundle size checks, implemented the codec-scoped bound
+- **Issue #21090** (2026-11-13): **refactor(query): scan only the rows matched by the inverted index**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  When `match()` / `query()` is the only filter, the scan output every row of each kept block and left the `Filter` operator to drop the unmatched ones. Now the scan outputs only the matched rows.  MS MARCO passage, 8,841,823 rows in 22 blocks, `WHERE match(...) ORDER BY score() DESC LIMIT 100`, one 16-core node, CPU saturated:  | per query | before | after | |---|---|---| | rows output by the scan | up to 8,841,823 (every row of 22 blocks) | up to 2,200 (top 100 of each block) | | CPU in scan + filter | 23.1 ms | 5.8 ms | | CPU total | 78 ms | 60 ms | | QPS | 190-193 | 246-250 (+29%) |  Results are identical for all 6,980 queries (same score lists, Recall@100 0.6188). The row counts follow from the table layout; the timings are from a prototype of the same change. This revision has not been re-measured or tested locally, hence the draft.  - `BlockMetaIndex` holds the result of each index as one `IndexMatches { rows, scores, rows_only }`: `inverted_index_matches` replaces `matched_rows` / `matched_scores`, and `vector_index_matches` replaces the `VectorScores` enum. - `rows_only` tells the scan to output only `rows`. The inverted index pruner sets it when the filter is the index match alone; vector TopN pruning sets it as before. `BlockMetaIndex::selected_rows` derives the row selection from both, so the read path has one row selection instead of a vector-specific one. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,887 +1217,1069 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `652b12b4` (2026-11-11)
-**Commit Message**: fix(query): keep the shared executor alive on processor panics (#21065)
+### Incident Patch 1: `7cac7adf` (2026-11-13)
+**Commit Message**: fix(storage): scope fault injection rules to the installing fixture's prefix (#21075)
 
-* fix(query): keep the shared executor alive on a foreign worker id
+* fix(storage): scope fault injection rules to the installing fixture's prefix
 
-A fuse source passes its index among the sources as the worker id of its waker. With max_storage_io_requests above the worker count of the shared executor, completed_async_task indexed out of bounds, the panic finished the executor, and every later query hung in 'Executing pipeline'.
+`FaultInjectionLayer` keeps its rules in a process-wide registry, so a rule
+that only named a path fragment could fire for any other test in the same
+binary. The reported failure was a `_ss/` rule hitting another test's snapshot
+write.
 
-The worker id is now taken modulo the worker count, as the per-query executor already does.
+Match rules as a prefix instead of a substring: current rules are all built
+from the fixture's table prefix, and a bare `_ss/` now matches nothing rather
+than every table. Also reject an empty pattern (it matches everything) and
+remove a rule when its handle is dropped, so a panicking test cannot leave a
+live global rule behind for the rest of the process.
 
-* fix(query): contain an event panic to its query on the shared executor
+* fix(storage): bind fault rules to the installing fixture's storage root
 
-- Processor::event runs in schedule_queue, outside of the per-task catch_unwind: its panic finished the executor of all the queries. It now fails its own query only, as a panic of process does.
-- A graph sent to a finished executor was queued with no worker left to run it, so the query hung. send_graph now returns the error of the executor.
+Fixtures use separate storage roots and embedded metastores, so their
+root-relative table prefixes can repeat; a prefix-only rule could still
+fail another fixture's IO. FaultRule::in_root restricts a rule to one
+operator root (normalized, since Fs and Memory report it differently),
+and the query fault-injection tests use it.
 
-* fix(query): contain the panics of the first event and of async tasks
+Also drop the unsynchronized Faul
 
-- The first Processor::event of a graph runs in send_graph, on the thread of the query: a panic unwound that thread instead of failing the query. send_graph now returns it as an error.
-- sc
-
-**File**: `src/query/service/src/pipelines/executor/queries_executor_tasks.rs` (modified, +4/-1)
+**File**: `src/common/storage/src/fault_injection_layer.rs` (modified, +171/-15)
 ```diff
-@@ -208,7 +208,10 @@ impl QueriesExecutorTasksQueue {
+@@ -27,8 +27,19 @@
+ //! optionally expires after a number of hits; the [`FaultHandle`] returned on install
+ //! reports how often the rule fired, so a test can assert the fault was actually exercised.
+ //!
++//! A rule is process-global, so it must be scoped to the fixture that installed it: other
++//! tests in the same binary keep doing storage IO while it is installed, and they must not see
++//! it. The path is matched as a prefix, and [`FaultRule::in_root`] binds the rule to one
++//! storage root, since fixtures with separate roots and metastores can share a relative table
++//! prefix. The rule is removed when its [`FaultHandle`] is dropped, so a failing test cannot
++//! leave it behind for the rest of the process.
++//!
+ //! ```ignore
+-//! let fault = FaultInjection::install(FaultRule::new(FaultOp::Write, "_ss/", FaultKind::Permanent));
++//! let prefix = table_prefix(&fixture);
++//! let fault = FaultInjection::install(
++//!     FaultRule::new(FaultOp::Write, format!("{prefix}/_ss/"), FaultKind::Permanent)
++//!         .in_root(fixture.storage_root()),
++//! );
+ //! assert!(insert(...).await.is_err());
+ //! assert_eq!(fault.hits(), 1);
+ //! fault.remove();
+@@ -59,6 +70,7 @@ use opendal::raw::RpList;
+ use opendal::raw::RpRead;
+ use opendal::raw::RpStat;
+ use opendal::raw::RpWrite;
++use opendal::raw::normalize_root;
+ use opendal::raw::oio;
  
-     pub fn completed_async_task(&self, condvar: Arc<WorkersCondvar>, task: CompletedAsyncTask) {
-         let mut workers_tasks = self.workers_tasks.lock();
--        let mut worker_id = task.worker_id;
-+        // The worker id of a waker is not always the id of a worker of this
-+        // executor, e.g. a fuse source passes its index among the sources.
-+        let workers = workers_tasks.workers_waiting_status.total_size();
-+        let mut worker_id = task.worker_id % workers;
-         workers_tasks.current_tasks.tasks_size += 1;
-         workers_tasks.current_tasks.workers_completed_async_tasks[worker_id].push_back(task);
- 
-```
-
-**File**: `src/query/service/src/pipelines/executor/queries_pipeline_executor.rs` (modified, +33/-20)
-```diff
-@@ -94,11 +94,22 @@ impl QueriesPipelineExecutor {
+ /// The storage operation a rule applies to.
+@@ -93,14 +105,24 @@ impl FaultKind {
      }
- 
-     pub fn send_graph(self: &Arc<Self>, graph: Arc<RunningGraph>) -> Result<()> {
-+        // No worker is left to run the graph: fail the query instead of
-+        // leaving it in the queue forever.
-+        if self.is_finished() {
-+            let cause = self.finished_error.lock().clone();
-+            return Err(cause
-+                .unwrap_or_else(|| ErrorCode::Internal("The queries executor has been finished")));
-+        }
-+
-         // Bind waker
-         self.bind_waker_for_graph(&graph);
- 
-         unsafe {
--            let mut init_schedule_queue = graph.init_schedule_queue(self.threads_num)?;
-+            // It runs `Processor::event` on the thread of the query: a panic must
-+            // fail the query, not unwind a thread that nobody waits for.
-+            let mut init_schedule_queue =
-+                catch_unwind(|| graph.clone().init_schedule_queue(self.threads_num)).flatten()?;
- 
-             let async_queue = std::mem::take(&mut init_schedule_queue.async_queue);
-             self.global_tasks_queue
-@@ -221,25 +232,27 @@ impl QueriesPipelineExecutor {
-                                         && !graph.is_should_finish()
-                                     {
-                                         // We immediately schedule the processor again.
--                                        let schedule_queue_res =
--                                            graph.clone().schedule_queue(executed_pid);
--                                        match schedule_queue_res {
--                                            Ok(schedule_queue) => {
--                                                schedule_queue.schedule_with_condition(
--                                                    &self.global_tasks_queue,
--                                                    &mut context,
--                                                    self,
--                                                );
--                                            }
--                                            Err(cause) => {
--                                                graph.record_node_error(
--                                                    executed_pid,
--                                                    NodeErrorType::ScheduleEventError(
--                                                        cause.clone(),
--                                                    ),
--                                                );
--                                                graph.should_finish(Err(cause))?;
--                                            }
-+                                        // It runs `Processor::event` and creates the
-+                                        // async tasks: a panic of them must only fail
-+                                        // its query, as one of `process` does, not
-+                                        // finish the executor.
-+                                        let schedule_res = catch_unwind(|| {
-+                                            let schedule_queue =
-+                                                graph.clone().schedule_queue(executed_pid)?;
-+                                            schedule_queue.schedule_with_condition(
-+                                                &self.global_tasks_queue,
-+                                                &mut context,
-+                                                self,
-+                                            );
-+                                            Ok(())
-+                                        })
-+                                        .flatten();
-+                                        if let Err(cause) = schedule_res {
-+                                            graph.record_node_error(
-+                                                executed_pid,
-+                                                NodeErrorType::ScheduleEventError(cause.clone()),
-+                                            );
-+                                            graph.should_finish(Err(cause))?;
-                                         }
-                                     }
-                                     if graph.is_all_nodes_finished() {
-```
-
-**File**: `src/query/service/tests/it/pipelines/executor/executor_graph.rs` (modified, +140/-0)
-```diff
-@@ -35,9 +35,12 @@ use databend_common_pipeline::core::check_interrupt;
- use databend_common_pipeline::sinks::SyncSenderSink;
- use databend_common_pipeline::sources::BlocksSource;
- use databend_common_pipeline_transforms::processors::TransformDummy;
-+use databend_query::pipelines::executor::CompletedAsyncTask;
- use databend_query::pipelines::executor::ExecutorSettings;
- use databend_query::pipelines::executor::ExecutorTask;
- use databend_query::pipelines::executor::ExecutorWorkerContext;
-+use databend_query::pipelines::executor::QueriesExecutorTasksQueue;
-+use databend_query::pipelines::executor::QueriesPipelineExecutor;
- use databend_query::pipelines::executor::QueryPipelineExecutor;
- use databend_query::pipelines::executor::RunningGraph;
- use databend_query::pipelines::executor::WorkersCondvar;
-@@ -189,6 +192,111 @@ async fn test_resize_pipeline_init_queue() -> anyhow::Result<()> {
-     Ok(())
  }
  
-+/// A waker may carry a worker id that is not one of the shared executor's, as
-+/// the fuse sources do with `max_storage_io_requests` above the worker count.
-+/// It must not panic: a panic finishes the executor of all the queries.
-+#[tokio::test(flavor = "multi_thread", worker_threads = 1)]
-+async fn test_queries_executor_completed_async_task_of_foreign_worker() -> anyhow::Result<()> {
-+    let fixture = TestFixture::setup().await?;
-+    let ctx = fixture.new_query_ctx().await?;
-+    let graph = create_simple_pipeline(ctx)?;
+-/// A fault to inject: `kind` for every `op` whose path contains `path_contains`, at most
++/// A fault to inject: `kind` for every `op` on a path under `path_contains`, at most
+ /// `remaining` times (unlimited when `None`).
++///
++/// `path_contains` is matched as a prefix, so a rule is anchored to the storage prefix of the
++/// fixture that installed it. A pattern like `_ss/` does not match another fixture's
++/// `1/11/_ss/…`, which a substring match would.
++///
++/// The path an operator reports is relative to its root, and fixtures with separate roots and
++/// separate metastores can hand out the same relative table prefix. `root`, when set,
++/// restricts the rule to operators with that storage root; see [`FaultRule::in_root`].
+ #[derive(Debug, Clone)]
+ pub struct FaultRule {
+     pub op: FaultOp,
+     pub path_contains: String,
+     pub kind: FaultKind,
+     pub remaining: Option<usize>,
++    /// Normalized as opendal does (`/a/b/`), compared with the operator's reported root.
++    pub root: Option<String>,
+ }
+ 
+ impl FaultRule {
+@@ -110,6 +132,7 @@ impl FaultRule {
+             path_contains: path_contains.into(),
+             kind,
+             remaining: None,
++            root: None,
+         }
+     }
+ 
+@@ -118,6 +141,13 @@ impl FaultRule {
+         self.remaining = Some(times);
+         self
+     }
 +
-+    let workers = 2;
-+    let condvar = WorkersCondvar::create(workers);
-+    let queue = QueriesExecutorTasksQueue::create(workers);
-+    for worker_id in [workers, 2 * workers + 1] {
-+        condvar.inc_active_async_worker();
-+        queue.completed_async_task(
-+            condvar.clone(),
-+            CompletedAsyncTask::create(NodeIndex::new(0), worker_id, Ok(()), graph.clone()),
++    /// Fire only for operators whose storage root is `root` (a fixture's `storage_root()`).
++    /// Without it, a rule reaches every operator in the process whose relative paths match.
++    pub fn in_root(mut self, root: impl AsRef<str>) -> Self {
++        self.root = Some(normalize_root(root.as_ref()));
++        self
++    }
+ }
+ 
+ struct RuleState {
+@@ -128,8 +158,11 @@ struct RuleState {
+ 
+ impl RuleState {
+     /// Returns the error to inject if this rule matches and has budget left.
+-    fn fire(&self, op: FaultOp, path: &str) -> Option<Error> {
+-        if self.rule.op != op || !path.contains(&self.rule.path_contains) {
++    fn fire(&self, op: FaultOp, root: &str, path: &str) -> Option<Error> {
++        if self.rule.op != op || !path.starts_with(&self.rule.path_contains) {
++            return None;
++        }
++        if self.rule.root.as_deref().is_some_and(|r| r != root) {
+             return None;
+         }
+         if let Some(remaining) = &self.remaining {
+@@ -162,8 +195,15 @@ static RULES: LazyLock<Mutex<Vec<Arc<RuleState>>>> = LazyLock::new(|| Mutex::new
+ pub struct FaultInjection;
+ 
+ impl FaultInjection {
+-    /// Install a rule; it applies to every operator until removed.
++    /// Install a rule; it applies to every operator that touches a matching path until the
++    /// returned handle is dropped (or [`FaultHandle::remove`] is called).
+     pub fn install(rule: FaultRule) -> FaultHandle {
++        // An empty pattern matches every path, which would also fail unrelated tests that run
++        // storage IO in the same process. Rules are only useful when scoped.
++        assert!(
++            !rule.path_contains.is_empty(),
++            "a fault rule must be scoped to a path such as the fixture's table prefix"
 +        );
-+    }
-+    assert!(!condvar.has_waiting_async_task());
-+
-+    // Both tasks are still handed to the workers of the executor.
-+    let executor = QueriesPipelineExecutor::create(workers)?;
-+    let mut received = vec![];
-+    for _ in 0..16 {
-+        let mut context = ExecutorWorkerContext::create(0, condvar.clone());
-+        queue.steal_task_to_context(&mut context, &executor);
-+        if let ExecutorTask::AsyncCompleted(task) = context.take_task() {
-+            received.push(task.worker_id);
-+        }
-+        if received.len() == 2 {
-+            break;
-+        }
-+    }
-+    received.sort();
-+    assert_eq!(received, vec![workers, 2 * workers + 1]);
-+
-+    Ok(())
-+}
-+
-+/// A processor whose `event` panics fails its own query only: the shared
-+/// executor keeps its workers, and runs the next query.
-+#[tokio::test(flavor = "multi_thread", worker_threads = 1)]
-+async fn test_queries_executor_survives_event_panic() -> anyhow::Result<()> {
-+    let _fixture = TestFixture::setup().await?;
-+
-+    type Finished = Arc<(parking_lot::Mutex<bool>, parking_lot::Condvar)>;
-+    let create_graph = |panic_event: Option<usize>| -> Result<(Arc<RunningGraph>, Finished)> {
-+        let mut pipeline = Pipeline::create();
-+        pipeline.add_pipe(Pipe::create(0, 1, vec![PipeItem::create(
-+            ProcessorPtr::create(Box::new(SecondEventSource {
-+                events: 0,
-+                panic_event,
-+            })),
-+            vec![],
-+            vec![OutputPort::create()],
-+        )]));
-+        let finished = Finished::default();
-+        let query_id = Arc::new(format!("test-event-panic-{panic_event:?}"));
-+        let graph = RunningGraph::create(pipeline, 1, query_id, Some(finished.clone()), vec![])?;
-+        Ok((graph, finished))
-+    };
-+    let wait = |finished: &Finished| {
-+        let (lock, cvar) = &**finished;
-+        let mut finished = lock.lock();
-+        if !*finished {
-+            cvar.wait_for(&mut finished, std::time::Duration::from_secs(10));
-+        }
-+        *finished
-+    };
-+
-+    let executor = QueriesPipelineExecutor::create(1)?;
-+    let workers = databend_common_base::runtime::Thread::spawn({
-+        let executor = executor.clone();
-+        move || executor.execute()
-+    });
-+
-+    // The first event runs when the graph is sent, the next ones on a worker.
-+    let (graph, _finished) = create_graph(Some(1))?;
-+    let error = executor.send_graph(graph).unwrap_err();
-+    assert_eq!(error.code(), ErrorCode::UNWIND_ERROR);
-+    assert!(!executor.is_finished());
-+
-+    let (graph, finished) = create_graph(Some(2))?;
-+    executor.send_graph(graph.clone())?;
-+    assert!(wait(&finished), "the query of the panic must finish");
-+    let error = graph.get_error().expect("the query of the panic must fail");
-+    assert_eq!(error.code(), ErrorCode::UNWIND_ERROR);
-+    assert!(!executor.is_finished());
-+
-+    let (graph, finished) = create_graph(None)?;
-+    executor.send_graph(graph.clone())?;
-+    assert!(wait(&finished), "the next query must still be executed");
-+    assert!(graph.get_error().is_none());
-+
-+    // Once the executor is finished, a query fails i
-```
-
----
-
-### Incident Patch 2: `0b01116e` (2026-11-11)
-**Commit Message**: fix(query): preserve known query kinds before planning failures (#21061)
-
-* fix(query): preserve known query kinds before planning failures
-
-Separate query kind registration from query text attachment and keep the first known kind on shared contexts. Register kinds after parsing and at AST planning entry points without moving SQL text attachment or changing logging paths.
-
-Cover early SETTINGS, parameter, rewrite and transaction failures, including COPY INTO table and location, and shared-context kind precedence.
-
-* test(query): avoid spelling errors in malformed SQL fixtures
-
-* refactor(query): simplify first-known query kind registration
-
-**File**: `src/query/catalog/src/table_context/query.rs` (modified, +6/-0)
-```diff
-@@ -41,6 +41,12 @@ pub trait TableContextQueryIdentity: Send + Sync {
- 
-     fn attach_query_str(&self, kind: QueryKind, query: String);
- 
-+    /// Records the kind of the query as soon as it is known, before its text
-+    /// is attached, so that failures in between keep it. The first known kind
-+    /// wins: statements planned later on a shared context, such as
-+    /// subqueries, do not replace it.
-+    fn attach_query_kind(&self, _kind: QueryKind) {}
-+
-     /// Records credential values hidden from the query text, so that error
-     /// messages of this query can be scrubbed instead of discarded.
-     fn add_query_secrets(&self, _secrets: SqlSecrets) {}
-```
-
-**File**: `src/query/service/src/sessions/query_ctx/state.rs` (modified, +4/-0)
-```diff
-@@ -89,6 +89,10 @@ impl TableContextQueryIdentity for QueryContext {
-         self.shared.attach_query_str(kind, query);
+         let state = Arc::new(RuleState {
+             remaining: rule.remaining.map(AtomicUsize::new),
+             hits: AtomicUsize::new(0),
+@@ -182,13 +222,13 @@ impl FaultInjection {
+         ENABLED.store(false, Ordering::Release);
      }
  
-+    fn attach_query_kind(&self, kind: QueryKind) {
-+        self.shared.attach_query_kind(kind);
-+    }
-+
-     fn add_query_secrets(&self, secrets: SqlSecrets) {
-         self.shared.query_secrets.write().extend(secrets);
-     }
+-    fn check(op: FaultOp, path: &str) -> Result<()> {
++    fn check(op: FaultOp, root: &str, path: &str) -> Result<()> {
+         if !ENABLED.load(Ordering::Relaxed) {
+             return Ok(()
 ```
 
-**File**: `src/query/service/src/sessions/query_ctx_shared.rs` (modified, +16/-14)
+**File**: `src/query/service/tests/it/storages/fuse/operations/fault_injection.rs` (modified, +34/-23)
 ```diff
-@@ -701,24 +701,26 @@ impl QueryContextShared {
-     }
+@@ -16,8 +16,9 @@
+ //! `databend_common_storage::FaultInjection`.
+ //!
+ //! The rule registry is process-global: rules are scoped to the test table's storage prefix
+-//! so that other tests running in the same process are not affected, and these tests still
+-//! run one at a time to keep the hit counters unambiguous.
++//! and to the fixture's storage root (another fixture's table can have the same relative
++//! prefix) so that other tests running in the same process are not affected, and these tests
++//! still run one at a time to keep the hit counters unambiguous.
  
-     pub fn attach_query_str(&self, kind: QueryKind, query: String) {
-+        self.attach_query_kind(kind);
-+
-         // `create view as view_query` the view_query should not cover create view
-         if !self.get_query_str().is_empty() {
-             return;
-         }
--        {
--            let mut running_query = self.running_query.write();
--            // Callers attach masked SQL, see `Statement::to_mask_sql`.
--            *running_query = Some(short_sql(
--                query,
--                self.get_settings()
--                    .get_short_sql_max_length()
--                    .unwrap_or(1000),
--            ));
--        }
--
--        {
--            let mut running_query_kind = self.running_query_kind.write();
--            *running_query_kind = Some(kind);
-+        let mut running_query = self.running_query.write();
-+        // Callers attach masked SQL, see `Statement::to_mask_sql`.
-+        *running_query = Some(short_sql(
-+            query,
-+            self.get_settings()
-+                .get_short_sql_max_length()
-+                .unwrap_or(1000),
-+        ));
-+    }
-+
-+    /// The first known kind wins, see `TableContextQueryIdentity::attach_query_kind`.
-+    pub fn attach_query_kind(&self, kind: QueryKind) {
-+        if kind != QueryKind::Unknown {
-+            self.running_query_kind.write().get_or_insert(kind);
-         }
-     }
+ use databend_common_exception::ErrorCode;
+ use databend_common_exception::Result;
+@@ -86,11 +87,14 @@ async fn test_failed_snapshot_write_fails_the_statement_and_leaves_the_table_int
  
-```
-
-**File**: `src/query/service/tests/it/sessions/query_ctx.rs` (modified, +31/-0)
-```diff
-@@ -16,6 +16,7 @@ use std::time::Duration;
+     // Every snapshot write fails: the commit cannot succeed, the statement must report it,
+     // and the table must still be exactly what it was before.
+-    let fault = FaultInjection::install(FaultRule::new(
+-        FaultOp::Write,
+-        format!("{prefix}/_ss/"),
+-        FaultKind::Permanent,
+-    ));
++    let fault = FaultInjection::install(
++        FaultRule::new(
++            FaultOp::Write,
++            format!("{prefix}/_ss/"),
++            FaultKind::Permanent,
++        )
++        .in_root(fixture.storage_root()),
++    );
+     let insert = format!(
+         "INSERT INTO {}.{} VALUES (3, (3, 3))",
+         fixture.default_db_name(),
+@@ -122,11 +126,10 @@ async fn test_missing_block_is_reported_as_an_error() -> Result<()> {
+     let _serial = SERIAL.lock().await;
+     let (fixture, prefix) = setup().await?;
  
- use anyhow::Context;
- use databend_common_catalog::lock::LockTableOption;
-+use databend_common_catalog::query_kind::QueryKind;
- use databend_common_meta_app::schema::DeleteLockRevReq;
- use databend_common_meta_app::schema::ListLockRevReq;
- use databend_common_meta_app::schema::LockKey;
-@@ -28,7 +29,9 @@ use databend_meta_client::kvapi::KvApiExt;
- use databend_meta_client::kvapi::StructKey;
- use databend_meta_runtime::DatabendRuntime;
- use databend_query::interpreters::interpreter_plan_sql;
-+use databend_query::sessions::QueryContext;
- use databend_query::sessions::TableContextQueryIdentity;
-+use databend_query::sessions::TableContextQueryInfo;
- use databend_query::sessions::TableContextTableAccess;
- use databend_query::test_kits::ConfigBuilder;
- use databend_query::test_kits::TestFixture;
-@@ -183,6 +186,34 @@ async fn test_execute_immediate_planner_history() -> anyhow::Result<()> {
-     Ok(())
- }
- 
-+#[tokio::test(flavor = "multi_thread", worker_threads = 1)]
-+async fn test_attach_query_kind_keeps_first_known_kind() -> anyhow::Result<()> {
-+    let fixture = TestFixture::setup().await?;
-+
-+    // A statement planned later on a shared context, such as a subquery of
-+    // COPY, attaches its own kind; the kind of the query is kept.
-+    let ctx = fixture.new_query_ctx().await?;
-+    ctx.attach_query_kind(QueryKind::CopyIntoTable);
-+    let shared = QueryContext::create_from(ctx.as_ref());
-+    shared.attach_query_kind(QueryKind::Query);
-+    shared.attach_query_str(QueryKind::Query, "SELECT 1".to_string());
-+    assert_eq!(ctx.get_query_kind(), QueryKind::CopyIntoTable);
-+    // The first text is still attached as before.
-+    assert_eq!(ctx.get_query_str(), "SELECT 1");
-+
-+    // An unknown kind does not replace a known one, and is replaced by one.
-+    let ctx = fixture.new_query_ctx().await?;
-+    ctx.attach_query_kind(QueryKind::Unknown);
-+    assert_eq!(ctx.get_query_kind(), QueryKind::Unknown);
-+    ctx.attach_query_str(QueryKind::Unknown, "SELECT (".to_string());
-+    ctx.attach_query_kind(QueryKind::Insert);
-+    assert_eq!(ctx.get_query_kind(), QueryKind::Insert);
-+    ctx.attach_query_str(QueryKind::Unknown, "other text".to_string());
-+    assert_eq!(ctx.get_query_kind(), QueryKind::Insert);
-+    assert_eq!(ctx.get_query_str(), "SELECT (");
-+    Ok(())
-+}
-+
- #[tokio::test(flavor = "multi_thread", worker_threads = 1)]
- async fn test_get_storage_accessor_s3() -> anyhow::Result<()> {
-     let mock_server = MockServer::start().await;
-```
-
-**File**: `src/query/service/tests/it/sql/planner/builders/binder.rs` (modified, +102/-0)
-```diff
-@@ -17,7 +17,10 @@ use databend_common_catalog::session_type::SessionType;
- use databend_common_sql::FormatOptions;
- use databend_common_sql::Planner;
- use databend_common_sql::optimizer::ir::StatContext;
-+use databend_query::interpreters::interpreter_plan_sql;
-+use databend_query::sessions::TableContextQueryIdentity;
- use databend_query::sessions::TableContextQueryInfo;
-+use databend_query::sessions::TableContextSession;
- use databend_query::sessions::TableContextSettings;
- use databend_query::test_kits::TestFixture;
- 
-@@ -119,3 +122,102 @@ async fn test_execute_immediate_uses_inner_timezone_for_statistics() -> anyhow::
+-    let fault = FaultInjection::install(FaultRule::new(
+-        FaultOp::Read,
+-        format!("{prefix}/_b/"),
+-        FaultKind::NotFound,
+-    ));
++    let fault = FaultInjection::install(
++        FaultRule::new(FaultOp::Read, format!("{prefix}/_b/"), FaultKind::NotFound)
++            .in_root(fixture.storage_root()),
++    );
+     let err = count(&fixture).await.unwrap_err();
+     assert_ne!(
+         err.code(),
+@@ -148,7 +151,9 @@ async fn test_temporary_read_failure_is_retried() -> Result<()> {
+     // One transient failure on a block read: the retry layer must absorb it and the query
+     // must succeed with the right result.
+     let fault = FaultInjection::install(
+-        FaultRule::new(FaultOp::Read, format!("{prefix}/_b/"), FaultKind::Temporary).times(1),
++        FaultRule::new(FaultOp::Read, format!("{prefix}/_b/"), FaultKind::Temporary)
++            .times(1)
++            .in_root(fixture.storage_root()),
      );
-     Ok(())
- }
-+
-+/// Planning can fail after the statement is parsed but before its text is
-+/// attached. Such failures keep the kind of the statement, not `Unknown`.
-+#[tokio::test(flavor = "multi_thread")]
-+async fn test_query_kind_of_early_planning_failures() -> anyhow::Result<()> {
-+    let fixture = TestFixture::setup().await?;
-+    fixture
-+        .execute_command("CREATE TABLE default.query_kind_t(a INT)")
-+        .await?;
-+
-+    #[derive(Clone, Copy)]
-+    enum Setup {
-+        None,
-+        MaxSetOperators,
-+        AbortedTransaction,
-+    }
-+    let params = serde_json::json!({ "y": 1 });
-+    // (SQL, HTTP parameters, failure set up on the session, expected kind)
-+    let cases = [
-+        // `SETTINGS` clauses are applied before binding.
-+        (
-+            "SETTINGS (max_threads = 'abc') INSERT INTO default.query_kind_t VALUES (1)",
-+            None,
-+            Setup::None,
-+            QueryKind::Insert,
-+        ),
-+        (
-+            "SETTINGS (max_threads = 'abc') COPY INTO default.query_kind_t FROM @~/ \
-+             FILE_FORMAT = (TYPE = 'csv')",
-+            None,
-+            Setup::None,
-+            QueryKind::CopyIntoTable,
-+        ),
-+        (
-+            "SETTINGS (max_threads = 'abc') COPY INTO @~/query_kind/ FROM default.query_kind_t",
-+            None,
-+            Setup::None,
-+            QueryKind::CopyIntoLocation,
-+        ),
-+        // Parameters are substituted after parsing.
-+        (
-+            "INSERT INTO default.query_kind_t SELECT :x",
-+            Some(&params),
-+            Setup::None,
-+            QueryKind::Insert,
-+        ),
-+        (
-+            "COPY INTO @~/query_kind/ FROM (SELECT :x)",
-+            Some(&params),
-+            Setup::None,
-+            QueryKind::CopyIntoLocation,
-+        ),
-+        // The AST is rewritten and checked right after parsing.
-+        (
-+            "DELETE FROM default.query_kind_t \
-+             WHERE a IN (SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3)",
-+            None,
-+            Setup::MaxSetOperators,
-+            QueryKind::Update,
-+        ),
-+        // The transaction state is checked before planning.
-+        (
-+            "MERGE INTO default.query_kind_t USING (SELECT 1 AS a) AS s ON query_kind_t.a = s.a \
-+             WHEN MATCHED THEN DELETE",
-+            None,
-+            Setup::AbortedTransaction,
-+            QueryKind::Update,
-+        ),
-+        // Without a statement the kind stays unknown.
-+        ("SELECT (", None, Setup::None, QueryKind::Unknown),
-+    ];
-+    for (sql, params, setup, expected) in cases {
-+        let session = fixture
-+            .new_session_with_type(SessionType::HTTPQuery)
-+            .await?;
-+        let ctx = session
-+            .create_query_context(&databend_common_version::BUILD_INFO)
-+            .await?;
-+        match setup {
-+            Setup::None => {}
-+            Setup::MaxSetOperators => ctx
-+                .get_settings()
-+                .set_setting("max_set_operator_count".to_string(), "1".to_string())?,
-+            Setup::AbortedTransaction => {
-+                let txn_mgr = ctx.txn_mgr();
-+                let mut txn_mgr = txn_mgr.lock();
-+                txn_mgr.begin();
-+                txn_mgr.set_fail();
-+            }
-+        }
-+
-+        let result = interpreter_plan_sql(ctx.clone(), sql, false, params).await;
-+        assert!(result.is_err(), "{sql}");
-+        assert_eq!(ctx.get_query_kind(), expected, "{sql}");
-+        // The failure handler still attaches the text.
-+        assert!(!ctx.get_query_str().is_empty(), "{sql}");
-+    }
-+    Ok(())
-+}
-```
-
-**File**: `src/query/sql/src/planner/planner.rs` (modified, +6/-0)
-```diff
-@@ -238,6 +238,9 @@ impl Planner {
-                     return Err(ErrorCode::SyntaxException("PRQL to SQL conversion failed"));
-                 }
+     assert_eq!(count(&fixture).await?, 2);
+     assert_eq!(fault.hits(), 1, "the fault was never exercised");
+@@ -206,11 +211,14 @@ async fn test_compact_segment_write_failure_cleans_concurrent_output() -> Result
+     // Both outputs start together. Fail either PUT and check the successful
+     // sibling cannot survive as an unreferenced file.
+     for output in ["_sg", "_hs"] {
+-        let fault = FaultInjection::install(FaultRule::new(
+-            FaultOp::Write,
+-            format!("{prefix}/{output}/"),
+-            FaultKind::Permanent,
+-        ));
++        let fault = FaultInjection::install(
++            FaultRule::new(
++                FaultOp::Write,
++                format!("{prefix}/{output}/"),
++                FaultKind::Permanent,
++            )
++            .in_root(fixture.storage_root()),
++        );
+         let err = fixture
+             .execute_command("OPTIMIZE TABLE default.t_compact_fault COMPACT SEGMENT")
+             .await
+@@ -240,11 +248,14 @@ async fn test_failed_segment_write_fails_the_statement_and_leaves_the_table_inta
+     let _serial = SERIAL.lock().await;
+     let (fixture, prefix) = setup().await?;
  
-+                // Before the rewrites below and the rest of planning can fail.
-+                // The text is attached later, once it is final.
-+                self.ctx.attach_query_kind(get_query_kind(&stmt));
-                 self.replace_stmt(&mut stmt)?;
- 
-                 PlanExtras {
-@@ -295,6 +298,8 @@ impl Planner {
-         stmt: &Statement,
-         force_disable_distributed_optimization: bool,
-     ) -> Result<Plan> {
-+        // Callers may pass a statement that was not parsed by this planner.
-+        self.ctx.attach_query_kind(get_query_kind(stmt));
-         self.plan_stmt_with_materialized_view_rewrite(
-             stmt,
-             force_disable_distributed_optimization,
-@@ -310,6 +315,7 @@ impl Planner {
-         stmt: &Statement,
-         force_disable_distributed_optimization: bool,
-     ) -> Result<Plan> {
-+        self.ctx.attach_query_kind(get_query_kind(stmt));
-         self.plan_stmt_with_materialized_view_rewrite(
-             stmt,
-             force_disable_distributed_optimization,
+-    let fault = FaultInjection::install(FaultRule::new(
+-        FaultOp::Write,
+-        format!("{prefix}/_sg/"),
+-        FaultKind::Permanent,
+-    ));
++    let fault = FaultInjection::install(
++        FaultRule::new(
++            FaultOp::Write,
++            format!("{prefix}/_sg/"),
++            FaultKind::Permanent,
++        )
++        .in_root(fixture.storage_root()),
++    );
+     let insert = format!(
+         "INSERT INTO {}.{} VALUES (3, (3, 3))",
+         fixture.default_db_name(),
 ```
 
 ---
 
-### Incident Patch 3: `13106f77` (2026-11-11)
-**Commit Message**: fix: meta: validate final gRPC status before completing reads (#21064)
+### Incident Patch 2: `fec8fc42` (2026-11-13)
+**Commit Message**: fix(query): keep multi-table insert distributed when the source needs reorder (#21083)
 
-* test: meta: control gRPC trailers and observe stream resets
+`build_source_physical_plan` wraps the SELECT plan in a reorder EvalScalar
+when the physical column order differs from the select list. The wrapper
+sat above the Merge exchange, so `build_physical_plan` no longer saw an
+Exchange at the root and fell back to writing every target on the
+coordinator, including bloom/inverted index building.
 
-# Summary
+Place the reorder below the Merge exchange instead. The reorder is
+positional and the exchange output follows its input, so the plan is
+equivalent and the write stays distributed.
 
-Add an HTTP/2 peer that separates response data from final gRPC status
-and reports cancellation received from the client.
-
-# Details
-
-Keep the channel alive after dropping a response so stream cancellation
-is distinguishable from connection teardown. Explicit release signals
-make delayed completion deterministic without timing sleeps.
-
-* fix: meta: finish protobuf response streams before success
-
-# Summary
-
-Validate the backend stream's final status before yielding the last
-requested protobuf value, instead of dropping it after enough data.
-
-# Details
-
-Table enumeration and GC zip responses with keys. Replacing the final
-item with a terminal error keeps trailers failures and excess items
-visible to those consumers, rather than appending an error they ignore.
-
-Preserve recoverable per-item decoding failures and short-stream count
-checks. Empty reads do not open an RPC. No wire or stored-data format
-changes are required.
-
-* test: meta: compare repeated reads on one h2 connection
-
-# Summary
-
-Exercise truncated and fully consumed responses be
-
-**File**: `Cargo.lock` (modified, +3/-0)
+**File**: `src/query/service/src/interpreters/interpreter_insert_multi_table.rs` (modified, +20/-2)
 ```diff
-@@ -3682,6 +3682,7 @@ dependencies = [
-  "anyhow",
-  "async-backtrace",
-  "async-trait",
-+ "bytes",
-  "chrono",
-  "databend-common-base",
-  "databend-common-exception",
-@@ -3694,6 +3695,8 @@ dependencies = [
-  "display-more 0.2.6",
-  "fastrace",
-  "futures",
-+ "h2",
-+ "http 1.3.1",
-  "itertools 0.13.0",
-  "log",
-  "logcall",
-```
-
-**File**: `Cargo.toml` (modified, +1/-0)
-```diff
-@@ -285,6 +285,7 @@ gimli = "0.31.0"
- glob = "0.3.0"
- globiter = "0.1"
- goldenfile = "1.4"
-+h2 = "0.4"
- h3o = "0.9.4"
- half = "2.7.1"
- hashbrown = { version = "0.15.2", default-features = false }
-```
-
-**File**: `src/meta/api/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -36,8 +36,11 @@ uuid = { workspace = true }
- zstd = { workspace = true }
+@@ -382,8 +382,26 @@ impl InsertMultiTableInterpreter {
+                 let projections: BTreeSet<usize> =
+                     (input_col_num..input_col_num + exprs.len()).collect();
  
- [dev-dependencies]
-+bytes = { workspace = true }
- databend-common-meta-store = { workspace = true }
- databend-meta-runtime = { workspace = true }
-+h2 = { workspace = true }
-+http = { workspace = true }
- 
- [lints]
- workspace = true
+-                let reordered =
+-                    PhysicalPlan::new(EvalScalar::create(input_source, exprs, projections, None));
++                // `build_physical_plan` distributes the write only when the source root is a Merge
++                // exchange. The reorder is positional and the exchange output follows its input, so
++                // put the reorder below the exchange rather than wrapping (and hiding) it.
++                let reordered = match Exchange::from_physical_plan(&input_source) {
++                    Some(exchange) if exchange.kind == FragmentKind::Merge => {
++                        let input = exchange.input.clone();
++                        exchange.derive(vec![PhysicalPlan::new(EvalScalar::create(
++                            input,
++                            exprs,
++                            projections,
++                            None,
++                        ))])
++                    }
++                    _ => PhysicalPlan::new(EvalScalar::create(
++                        input_source,
++                        exprs,
++                        projections,
++                        None,
++                    )),
++                };
+                 Ok((reordered, metadata.clone()))
+             }
+             _ => unreachable!(),
 ```
 
-**File**: `src/meta/api/src/kv/pb_api/errors/read_error.rs` (modified, +5/-1)
+**File**: `tests/sqllogictests/suites/mode/cluster/multi_table_insert_distributed.test` (modified, +58/-0)
 ```diff
-@@ -34,8 +34,12 @@ impl NoneValue {
+@@ -125,6 +125,64 @@ Fragment 2:
+         └── source fragment: [0]
+ (empty)
+ 
++# A select list whose order differs from the physical column order needs a reorder
++# EvalScalar. It must stay below the Merge exchange, otherwise the write runs only
++# on the coordinator.
++statement ok
++create table mti_reorder(b int, s int, a int, tag string)
++
++query T
++EXPLAIN INSERT ALL
++  WHEN true THEN INTO mti_reorder
++  WHEN b = 0 THEN INTO mti_even(a, tag) VALUES(a, 'mod0')
++SELECT b, a + b AS s, a, 'x' AS tag FROM mti_src
++----
++Commit
++└── Exchange
++    ├── output columns: []
++    ├── exchange type: Merge
++    └── CommitMeta
++        └── WriteData
++            └── EvalScalar
++                ├── branch 0: mti_src.a (#0), 'mod0'
++                ├── branch 1: None
++                └── Filter
++                    ├── branch 0: is_true(mti_src.b (#1) = CAST(0 AS Int32 NULL))
++                    ├── branch 1: true
++                    └── Duplicate
++                        ├── Duplicate data to 2 branch
++                        └── EvalScalar
++                            ├── output columns: [mti_src.b (#1), s (#2), mti_src.a (#0), tag (#3)]
++                            ├── expressions: [1, 2, 0, 3]
++                            └── EvalScalar
++                                ├── output columns: [mti_src.a (#0), mti_src.b (#1), s (#2), tag (#3)]
++                                ├── expressions: [mti_src.a (#0) + mti_src.b (#1), 'x']
++                                ├── estimated rows: 100.00
++                                └── TableScan
++                                    ├── table: default.mti_distributed.mti_src
++                                    ├── scan id: 0
++                                    ├── output columns: [a (#0), b (#1)]
++                                    ├── read rows: 100
++                                    ├── read size: < 1 KiB
++                                    ├── partitions total: <slt:ignore>
++                                    ├── partitions scanned: <slt:ignore>
++                                    ├── pruning stats: [segments: <read cost: <slt:ignore>, range pruning: <slt:ignore> to <slt:ignore> cost: <slt:ignore>>, blocks: <range pruning: <slt:ignore> to <slt:ignore> cost: <slt:ignore>>]
++                                    ├── push downs: [filters: [], limit: NONE]
++                                    └── estimated rows: 100.00
++
++query II
++INSERT ALL
++  WHEN true THEN INTO mti_reorder
++  WHEN b = 0 THEN INTO mti_even(a, tag) VALUES(a, 'mod0')
++SELECT b, a + b AS s, a, 'x' AS tag FROM mti_src
++----
++34 100
++
++query IIIIT
++select count(*), sum(b), sum(s), sum(a), min(tag) from mti_reorder
++----
++100 99 5049 4950 x
++
+ # Each target keeps the original source-once and multi-table commit pipeline,
+ # but uses its own partition key for distributed hash routing.
+ statement ok
+```
+
+---
+
+### Incident Patch 3: `e8974097` (2026-11-13)
+**Commit Message**: fix(storage): stop vector RECLUSTER FINAL from rewriting clustered blocks every round (#21054)
+
+* fix(storage): stop vector RECLUSTER FINAL from rewriting clustered blocks every round
+
+* fix
+
+* fix
+
+* fix
+
+**File**: `src/query/service/src/interpreters/interpreter_table_recluster.rs` (modified, +54/-1)
+```diff
+@@ -44,7 +44,10 @@ use databend_common_storages_fuse::FUSE_OPT_KEY_AGGRESSIVE_RECLUSTER;
+ use databend_common_storages_fuse::FuseTable;
+ use databend_common_storages_fuse::operations::ReclusterFinalCarry;
+ use databend_common_storages_fuse::operations::ReclusterMode;
++use databend_common_storages_fuse::operations::VectorFinalPlan;
++use databend_common_storages_fuse::operations::VectorReclusterBlock;
+ use databend_common_storages_fuse::operations::is_auto_vacuum_enabled;
++use databend_common_storages_fuse::operations::vector_final_plan;
+ use databend_common_storages_fuse::segment_zone_map::RefreshOutcome;
+ use databend_enterprise_vacuum_handler::get_vacuum_handler;
+ use databend_storages_common_table_meta::meta::TableSnapshot;
+@@ -149,6 +152,35 @@ impl Interpreter for ReclusterTableInterpreter {
+             let start = SystemTime::now();
+             let timeout = Duration::from_secs(recluster_timeout_secs);
+             let is_final = self.plan.is_final;
++            // Vector FINAL: what it does is decided from the blocks when it starts (see
++            // `vector_final_plan`); the full pass starts at once. This scans every block
++            // meta, so it is skipped when FINAL rewrites part of the table at most:
++            // `LIMIT 0` does no work, and a `WHERE` selection only rewrites the selected
++            // segments, which the scan would not tell apart. These recluster the level-0
++            // blocks by rounds, as a recluster without FINAL does.
++            let vector_plan =
++                if is_final && self.plan.limit != Some(0) && self.plan.selection.is_none() {
++                    match self.vector_recluster_blocks().await {
++                        Ok(Some(blocks)) => {
++                            let plan = vector_final_plan(&blocks);
++                            if plan == VectorFinalPlan::FullPass {
++                                let blocks: HashSet<String> =
++                                    blocks.into_iter().map(|block| block.location).collect();
++                                info!(
++                                    event = "recluster.vector_full_pass",
++                                    blocks = blocks.len();
++                                    "Recluster starts the vector full pass"
++                                );
++                                linear_final_carry.start_vector_full_pass(blocks);
++                            }
++                            plan
++                        }
++                        Ok(None) => VectorFinalPlan::Rounds,
++                        Err(e) => return Err(e.with_context("failed to execute")),
++                    }
++                } else {
++                    VectorFinalPlan::Rounds
++                };
+             let mut committed_rounds = 0;
+             let mut zone_map_rounds = 0;
+             let (result, stop_reason) = loop {
+@@ -160,6 +192,11 @@ impl Interpreter for ReclusterTableInterpreter {
+                     );
+                     break (Err(err.with_context("failed to execute")), "aborted");
+                 }
++                if vector_plan == VectorFinalPlan::Skip {
++                    // Rows not mixed yet are below the full pass threshold, or none:
++                    // they keep their level to add up.
++                    break (Ok(()), "vector rows not mixed below full pass threshold");
++                }
+ 
+                 rounds += 1;
+                 let res = self
+@@ -168,6 +205,7 @@ impl Interpreter for ReclusterTableInterpreter {
+ 
+                 match res {
+                     Ok(outcome) => {
++                        // The full pass ends when only blocks it wrote remain.
+                         if let Some(reason) = outcome.stop_reason() {
+                             break (Ok(()), reason);
+                         }
+@@ -262,6 +300,21 @@ impl Interpreter for ReclusterTableInterpreter {
+ }
+ 
+ impl ReclusterTableInterpreter {
++    async fn vector_recluster_blocks(&self) -> Result<Option<Vec<VectorReclusterBlock>>> {
++        let ReclusterPlan {
++            catalog,
++            database,
++            table,
++            ..
++        } = &self.plan;
++        self.ctx.evict_table_from_cache(catalog, database, table)?;
++        let tbl = self.ctx.get_table(catalog, database, table).await?;
++        let Ok(fuse_table) = FuseTable::try_from_table(tbl.as_ref()) else {
++            return Ok(None);
++        };
++        fuse_table.vector_recluster_blocks(self.ctx.clone()).await
++    }
++
+     /// Refresh the segment zone map on the snapshot the last round committed,
+     /// subject to its start decision. Recluster is the only writer that builds
+     /// it; every other commit carries the pointer along. Failures never fail
+@@ -430,7 +483,7 @@ impl ReclusterTableInterpreter {
+             claim_retries += 1;
+ 
+             // Let concurrent losers spread out before selecting another candidate set.
+-            *linear_final_carry = ReclusterFinalCarry::default();
++            linear_final
+```
+
+**File**: `src/query/service/tests/it/storages/fuse/operations/mutation/recluster_mutator.rs` (modified, +110/-63)
+```diff
+@@ -365,6 +365,7 @@ async fn gen_recluster_segments_by_vector_stats(
+     file_size: u64,
+     thresholds: BlockThresholds,
+     cluster_key_id: u32,
++    level: i32,
+ ) -> anyhow::Result<Vec<meta::Location>> {
+     if let Some(partitions) = partitions {
+         assert_eq!(partitions.len(), blocks_by_segment.len());
+@@ -411,7 +412,7 @@ async fn gen_recluster_segments_by_vector_stats(
+                     } else {
+                         vec![]
+                     },
+-                    0,
++                    level,
+                 )),
+                 location,
+                 None,
+@@ -1586,6 +1587,7 @@ async fn test_recluster_mutator_vector_mixed_key_overlap_selection() -> anyhow::
+         100,
+         thresholds,
+         cluster_key_id,
++        0,
+     )
+     .await?;
+ 
+@@ -1661,71 +1663,115 @@ async fn test_recluster_mutator_vector_only_overlap_selection() -> anyhow::Resul
+     let cluster_key_id = 0;
+     let thresholds = BlockThresholds::new(1000, 100, 100, 1);
+ 
+-    let segment_locations = gen_recluster_segments_by_vector_stats(
+-        &data_accessor,
+-        &location_generator,
+-        &[
+-            vec![(1, 1, [0.0, 0.0], 1.0)],
+-            vec![(2, 2, [0.5, 0.0], 1.0)],
+-            vec![(3, 3, [10.0, 0.0], 1.0)],
+-        ],
+-        None,
+-        false,
+-        1000,
+-        100,
+-        100,
+-        thresholds,
+-        cluster_key_id,
+-    )
+-    .await?;
++    // (level, full pass of RECLUSTER FINAL)
++    for (level, full_pass) in [(0, false), (1, false), (2, false), (1, true), (2, true)] {
++        let segment_locations = gen_recluster_segments_by_vector_stats(
++            &data_accessor,
++            &location_generator,
++            &[
++                vec![(1, 1, [0.0, 0.0], 1.0)],
++                vec![(2, 2, [0.5, 0.0], 1.0)],
++                vec![(3, 3, [10.0, 0.0], 1.0)],
++            ],
++            None,
++            false,
++            1000,
++            100,
++            100,
++            thresholds,
++            cluster_key_id,
++            level,
++        )
++        .await?;
+ 
+-    let schema = vector_recluster_schema();
+-    let ctx: Arc<dyn TableContext> = ctx.clone();
+-    let compact_segments = segment_pruning(
+-        &ctx,
+-        schema.clone(),
+-        data_accessor.clone(),
+-        create_segment_location_vector(segment_locations, None),
+-    )
+-    .await?;
++        let schema = vector_recluster_schema();
++        let query_ctx: Arc<dyn TableContext> = ctx.clone();
++        let compact_segments = segment_pruning(
++            &query_ctx,
++            schema.clone(),
++            data_accessor.clone(),
++            create_segment_location_vector(segment_locations, None),
++        )
++        .await?;
+ 
+-    let vector_cluster_info = VectorClusterInfo {
+-        key_index: 0,
+-        column_id: 1,
+-        column_name: "embedding".to_string(),
+-        dimension: 2,
+-        distance_type: VectorDistanceType::L2,
+-    };
+-    let mutator = ReclusterMutator::new(
+-        ctx,
+-        data_accessor,
+-        schema,
+-        vec![test_vector_cluster_key_expr()],
+-        1.0,
+-        thresholds,
+-        ClusterKeyInfo::new((cluster_key_id, "(c0)".to_string()), ClusterType::Linear),
+-        0,
+-        1,
+-        ReclusterMode::Conservative,
+-        Some(vector_cluster_info),
+-    );
++        // Selected by overlap, and with larger thresholds by the shared small-block
++        // compaction: vector recluster output may stay below them, so level >= 1
++        // blocks must not be compacted either. FINAL runs in the aggressive mode on
++        // tables with the `aggressive_recluster` option, whose groups differ.
++        let large = BlockThresholds::new(10000, 10000, 10000, 1);
++        for (mutator_thresholds, mode) in [
++            (thresholds, ReclusterMode::Conservative),
++            (large, ReclusterMode::Conservative),
++            (thresholds, ReclusterMode::Aggressive),
++            (large, ReclusterMode::Aggressive),
++        ] {
++            let vector_cluster_info = VectorClusterInfo {
++                key_index: 0,
++                column_id: 1,
++                column_name: "embedding".to_string(),
++                dimension: 2,
++                distance_type: VectorDistanceType::L2,
++            };
++            let mutator = ReclusterMutator::new(
++                query_ctx.clone(),
++                data_accessor.clone(),
++                schema.clone(),
++                vec![test_vector_cluster_key_expr()],
++                1.0,
++                mutator_thresholds,
++                ClusterKeyInfo::new((cluster_key_id, "(c0)".to_string()), ClusterType::Linear),
++                0,
++                1,
++                mode,
++                Some(vector_cluster_info),
++            );
++            let mutator = if full_pass {
++                let mut blocks = HashSet::new();
++                for (_, segment) in &compact_segments {
++                    for block in segment.block_metas()? {
++                        blocks.inse
+```
+
+**File**: `src/query/storages/fuse/src/io/write/vector_index_writer.rs` (modified, +54/-36)
+```diff
+@@ -55,12 +55,53 @@ use crate::io::write::block_index::PendingVectorIndex;
+ const DEFAULT_M: usize = 16;
+ const DEFAULT_EF_CONSTRUCT: usize = 100;
+ 
+-/// Whether the index stores FP16 vectors for refinement (`refine = true`).
+-fn vector_index_refine(options: &BTreeMap<String, String>) -> Result<bool> {
+-    match options.get(VECTOR_INDEX_OPT_REFINE) {
+-        None => Ok(false),
+-        Some(value) => parse_vector_index_refine(value)
+-            .ok_or_else(|| ErrorCode::IndexOptionInvalid("`refine` must be `true` or `false`")),
++/// The options of a vector index (`TableIndex::options`), as vector index writes,
++/// searches and the block size limit use them.
++#[derive(Clone, Debug, PartialEq, Eq)]
++pub(crate) struct VectorIndexOptions {
++    pub m: usize,
++    pub ef_construct: usize,
++    /// The known distance types, in their configured order. Without any, no index
++    /// is built.
++    pub distances: Vec<DistanceType>,
++    /// Whether the index stores FP16 vectors for refinement (`refine = true`).
++    pub refine: bool,
++}
++
++impl VectorIndexOptions {
++    /// An `m` or `ef_construct` that is not a number takes the default, and unknown
++    /// distance types are skipped. `refine` is validated at bind time too, and an
++    /// invalid persisted value is an error: it must not silently omit FP16 data.
++    pub(crate) fn parse(options: &BTreeMap<String, String>) -> Result<Self> {
++        let number = |key: &str, default: usize| {
++            options
++                .get(key)
++                .and_then(|value| value.parse::<usize>().ok())
++                .unwrap_or(default)
++        };
++        let distances = options
++            .get(VECTOR_INDEX_OPT_DISTANCE)
++            .into_iter()
++            .flat_map(|value| value.split(','))
++            .filter_map(|distance| match distance {
++                "cosine" => Some(DistanceType::Dot),
++                "l1" => Some(DistanceType::L1),
++                "l2" => Some(DistanceType::L2),
++                _ => None,
++            })
++            .collect();
++        let refine = match options.get(VECTOR_INDEX_OPT_REFINE) {
++            None => false,
++            Some(value) => parse_vector_index_refine(value).ok_or_else(|| {
++                ErrorCode::IndexOptionInvalid("`refine` must be `true` or `false`")
++            })?,
++        };
++        Ok(Self {
++            m: number(VECTOR_INDEX_OPT_M, DEFAULT_M),
++            ef_construct: number(VECTOR_INDEX_OPT_EF_CONSTRUCT, DEFAULT_EF_CONSTRUCT),
++            distances,
++            refine,
++        })
      }
  }
  
-+/// A response stream returned fewer or more items than requested.
- #[derive(Clone, Debug, PartialEq, thiserror::Error)]
--#[error("StreamReadEOF: expected {expected} items but only received {received} items")]
-+#[error("{}: expected {expected} items but {}received {received} items",
-+    if .received > .expected { "StreamReadOverflow" } else { "StreamReadEOF" },
-+    if .received < .expected { "only " } else { "" }
-+)]
- pub struct StreamReadEof {
-     expected: u64,
-     received: u64,
-```
-
-**File**: `src/meta/api/src/kv/pb_api/mod.rs` (modified, +46/-27)
-```diff
-@@ -222,8 +222,9 @@ pub trait KVPbApi: KVApi {
+@@ -79,7 +120,7 @@ impl VectorIndexSearchOptions {
+         refine_factor: u64,
+         search_ef: u64,
+     ) -> Result<Self> {
+-        let refine = refine_factor > 0 && vector_index_refine(index_options)?;
++        let refine = refine_factor > 0 && VectorIndexOptions::parse(index_options)?.refine;
+         Ok(Self {
+             refine_factor: refine.then_some(refine_factor as usize),
+             search_ef: (search_ef > 0).then_some(search_ef as usize),
+@@ -180,35 +221,12 @@ impl VectorIndexBuilder {
+                 continue;
+             }
  
-     /// Same as `get_pb_stream` but does not return keys, only values.
-     ///
--    /// It guaranteed to return the same number of results as the input keys.
--    /// If the backend stream closed before all keys are processed, the following items is filled with `StreamReadEof` Error.
-+    /// Returns one result per input key on success. The final result is not
-+    /// yielded until the backend stream ends successfully, including gRPC trailers.
-+    /// Missing or extra items produce a `StreamReadEof` count-mismatch error.
-     fn get_pb_values<K, I>(
-         &self,
-         keys: I,
-@@ -285,8 +286,10 @@ pub trait KVPbApi: KVApi {
-     /// It returns the same error as `KVApi::Error`,
-     /// thus it requires KVApi::Error can describe a decoding error, i.e., `impl From<PbApiReadError>`.
-     ///
--    /// It guaranteed to return the same number of results as the input keys.
--    /// If the backend stream closed before all keys are processed, the following items is filled with `StreamReadEof` Error.
-+    /// Returns one result per input key on success. The final result is not
-+    /// yielded until the backend stream ends successfully, including gRPC trailers.
-+    /// Missing or extra items produce a `StreamReadEof` count-mismatch error.
-+    /// Dropping the stream before completion cancels the remaining read.
-     fn get_pb_stream<K, I>(
-         &self,
-         keys: I,
-@@ -334,11 +337,45 @@ pub trait KVPbApi: KVApi {
- 
-         async move {
-             let sent = keys.len();
-+            let state = if sent == 0 {
-+                None
-+            } else {
-+                Some((self.get_kv_stream(&keys).await?, 0))
-+            };
- 
--            let strm = self.get_kv_stream(&keys).await?;
-+            let strm = stream::unfold(state, move |state| async move {
-+                let (mut strm, received) = state?;
-+                let item = match strm.next().await {
-+                    Some(Ok(item)) => item,
-+                    Some(Err(e)) => return Some((Err(PbApiReadError::KvApiError(e)), None)),
-+                    None => {
-+                        let error = StreamReadEof::new(sent as u64, received as u64);
-+                        return Some((Err(PbApiReadError::StreamReadEof(error)), None));
-+                    }
-+                };
-+
-+                let received = received + 1;
-+                if received == sent {
-+                    // A final data item is not proof that the RPC succeeded.
-+                    // Wait for the real EOF so trailers are checked before
-+                    // yielding the last item. Keep terminal errors within the
-+                    // requested item count: callers may zip results with keys.
-+                    let error = match strm.next().await {
-+                        None => return Some((Ok(item), None)),
-+                        Some(Err(e)) => PbApiReadError::KvApiError(e),
-+                        Some(Ok(_)) => PbApiReadError::StreamReadEof(StreamReadEof::new(
-+                            sent as u64,
-+                            (received + 1) as u64,
-+                        )),
-+                    };
-+                    return Some((Err(error), None));
-+                }
-+
-+                Some((Ok(item), Some((strm, received))))
-+            });
- 
--            let strm = strm.map(|r: Result<StreamItem, Self::Error>| {
--                let item = r.map_err(PbApiReadError::KvApiError)?;
-+            let strm = strm.map(|r: Result<StreamItem, PbApiReadError<Self::Error>>| {
-+                let item = r?;
- 
-                 let k = K::from_str_key(&item.key).map_err(PbApiReadError::KeyError)?;
- 
-@@ -354,26 +391,6 @@ pub trait KVPbApi: KVApi {
-                 Ok((k, v))
-             });
- 
--            // If the backend stream is closed, fill it with `StreamReadEof` error.
+-            // Validated at bind time too; invalid persisted metadata must return an
+-            // error, not silently omit the index.
+-            let refine = vector_index_refine(&index.options)?;
+-            let m = match index.options.get(VECTOR_INDEX_OPT_M) {
+-                Some(value) => value.parse::<usize>().unwrap_or(DEFAULT_M),
+-                None => DEFAULT_M,
+-            };
 -
--            let strm = strm
--                // chain with a stream of `StreamReadEof` error but without received count set.
--                .chain(stream::once(async move {
--                    Err(PbApiReadError::StreamReadEof(StreamReadEof::new(
--                        sent as u64,
--                        0,
--                    )))
--                }))
--                .take(sent)
--                // set received count for `StreamReadEof` error after `sent`
--                .enumerate()
--                .map(move |(i, mut r)| {
--                    if let Err(PbApiReadError::StreamReadEof(e)) = &mut r {
--                        e.set_received(i as u64)
+-            let ef_construct = match index.options.get(VECTOR_INDEX_OPT_EF_CONSTRUCT) {
+-                Some(value) => value.parse::<usize>().unwrap_or(DEFAULT_EF_CONSTRUCT),
+-                None => DEFAULT_EF_CONSTRUCT,
+-            };
+-
+-            let mut distances = Vec::new();
+-            match index.options.get(VECTOR_INDEX_OPT_DISTANCE) {
+-                Some(value) => {
+-                    let distance_types: Vec<&str> = value.split(',').collect();
+-                    for distance_type in distance_types {
+-                        let distance = match distance_type {
+-                            "cosine" => DistanceType::Dot,
+-                            "l1" => DistanceType::L1,
+-                            "l2" => DistanceType::L2,
+-                            _ => continue,
+-                        };
+-                        distances.push(distance);
 -                    }
--                    r
--                });
--
-             Ok(strm.boxed())
-         }
-     }
-@@ -492,6 +509,8 @@ impl<T> KVPbApi for T where T: KVApi + ?Sized {}
- 
- #[cfg(test)]
- mod tests {
-+    mod grpc;
-+
-     use std::collections::BTreeMap;
- 
-     use async_trait::async_trait;
+-                }
+-                None => continue,
+-            };
++            let VectorIndexOptions {
++                m,
++                ef_construct,
++                distances,
++                refine,
++            } = VectorIndexOptions::parse(&index.options)?;
+             if distances.is_empty() {
+                 debug!(
+                     "Ignoring vector index: {}, no valid distance types",
 ```
 
-**File**: `src/meta/api/src/kv/pb_api/tests/grpc.rs` (added, +485/-0)
+**File**: `src/query/storages/fuse/src/operations/mod.rs` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,485 @@
-+// Copyright 2021 Datafuse Labs
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use std::collections::VecDeque;
-+use std::sync::Arc;
-+use std::sync::Mutex;
-+use std::sync::atomic::AtomicUsize;
-+use std::sync::atomic::Ordering;
-+use std::time::Duration;
-+
-+use bytes::BufMut;
-+use bytes::BytesMut;
-+use databend_common_base::runtime::spawn;
-+use databend_common_meta_app::schema::CatalogIdIdent;
-+use databend_common_meta_app::tenant::Tenant;
-+use databend_meta_client::kvapi::KVApi;
-+use databend_meta_client::kvapi::KVStream;
-+use databend_meta_client::kvapi::ListOptions;
-+use databend_meta_client::types::Change;
-+use databend_meta_client::types::MetaError;
-+use databend_meta_client::types::SeqV;
-+use databend_meta_client::types::TxnReply;
-+use databend_meta_client::types::TxnRequest;
-+use databend_meta_client::types::UpsertKV;
-+use databend_meta_client::types::protobuf::RaftRequest;
-+use databend_meta_client::types::protobuf::StreamItem;
-+use databend_meta_client::types::protobuf::meta_service_client::MetaServiceClient;
-+use futures::StreamExt;
-+use futures::TryStreamExt;
-+use futures::future::poll_fn;
-+use futures::stream::BoxStream;
-+use http::HeaderMap;
-+use http::HeaderValue;
-+use prost::Message;
-+use tokio::net::TcpListener;
-+use tokio::sync::Notify;
-+use tokio::sync::mpsc;
-+use tokio::task::JoinHandle;
-+use tokio::time::timeout;
-+use tonic::Code;
-+use tonic::Streaming;
-+
-+use crate::kv_pb_api::KVPbApi;
-+
-+const TEST_TIMEOUT: Duration = Duration::from_secs(10);
-+
-+#[derive(Debug, PartialEq)]
-+enum Event {
-+    Cancelled(h2::Reason),
-+    TrailersSent,
-+}
-+
-+/// A real HTTP/2 peer that withholds grpc-status until the test releases it.
-+/// Observe resets at the peer rather than inferring them from a dropped Body.
-+struct ResponsePeer {
-+    address: String,
-+    finish: mpsc::UnboundedSender<Code>,
-+    events: mpsc::UnboundedReceiver<Event>,
-+    channel: Option<tonic::transport::Channel>,
-+    task: JoinHandle<()>,
-+}
-+
-+impl ResponsePeer {
-+    async fn start(items: Vec<StreamItem>) -> Self {
-+        Self::start_repeated(items, 1).await
+@@ -64,6 +64,9 @@ pub use recluster::ReclusterFinalCarry;
+ pub use recluster::ReclusterMode;
+ pub use recluster::ReclusterMutator;
+ pub use recluster::SelectedReclusterSegment;
++pub use recluster::VectorFinalPlan;
++pub use recluster::VectorReclusterBlock;
++pub use recluster::vector_final_plan;
+ pub use replace_into::*;
+ pub use snapshot_hint::*;
+ pub use table_index::do_refresh_table_index;
+```
+
+**File**: `src/query/storages/fuse/src/operations/recluster/mod.rs` (modified, +5/-0)
+```diff
+@@ -38,4 +38,9 @@ pub(crate) use recluster_strategy::ReclusterTaskCandidate;
+ pub use recluster_strategy::SelectedReclusterSegment;
+ pub(crate) use recluster_strategy::passes_depth_gate;
+ pub(crate) use recluster_strategy::task_candidate;
++pub use recluster_table::VectorFinalPlan;
++pub use recluster_table::VectorReclusterBlock;
++pub use recluster_table::vector_final_plan;
++pub(crate) use vector_recluster::VECTOR_LEVEL_MIXED;
++pub(crate) use vector_recluster::VECTOR_LEVEL_NEW;
+ pub(crate) use vector_recluster::VectorReclusterStrategy;
+```
+
+**File**: `src/query/storages/fuse/src/operations/recluster/recluster_mutator.rs` (modified, +52/-11)
+```diff
+@@ -71,6 +71,7 @@ use crate::operations::recluster::ReclusterProperties;
+ use crate::operations::recluster::ReclusterStrategy;
+ use crate::operations::recluster::ReclusterTaskCandidate;
+ use crate::operations::recluster::SelectedReclusterSegment;
++use crate::operations::recluster::VECTOR_LEVEL_MIXED;
+ use crate::operations::recluster::task_candidate;
+ use crate::statistics::VectorClusterInfo;
+ use crate::statistics::partition_values;
+@@ -145,9 +146,28 @@ pub struct ReclusterFinalCarry {
+     pub(crate) cluster_key_id: u32,
+     // Reuse block-meta decode workers across rounds of one FINAL statement.
+     pub(crate) decode_runtime: Option<Arc<Runtime>>,
++    // The full pass of a vector RECLUSTER FINAL (see `vector_final_plan`): the blocks
++    // present when it starts, rewritten once together regardless of level, so new
++    // data is mixed with older clustered blocks. Blocks written by this pass are not
++    // in the set, which ends it.
++    pub(crate) vector_full_pass: Option<Arc<HashSet<String>>>,
+ }
+ 
+ impl ReclusterFinalCarry {
++    /// Starts the full pass of a vector RECLUSTER FINAL over `blocks`, scanning the
++    /// table again from the start.
++    pub fn start_vector_full_pass(&mut self, blocks: HashSet<String>) {
++        self.reset();
++        self.vector_full_pass = Some(Arc::new(blocks));
 +    }
 +
-+    async fn start_repeated(items: Vec<StreamItem>, requests: usize) -> Self {
-+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let address = format!("http://{}", listener.local_addr().unwrap());
-+        let (finish, mut done) = mpsc::unbounded_channel::<Code>();
-+        let (events_tx, events) = mpsc::unbounded_channel();
-+        let task = spawn(async move {
-+            let (socket, _) = listener.accept().await.unwrap();
-+            socket.set_nodelay(true).unwrap();
-+            // Match Meta's gRPC server rather than h2's smaller default
-+            // pending-reset budget; that is a separate protection mechanism.
-+            let mut connection = h2::server::Builder::new()
-+                .max_pending_accept_reset_streams(4096)
-+                .handshake(socket)
-+                .await
-+                .unwrap();
-+            for _ in 0..requests {
-+                let (request, mut respond) = connection.accept().await.unwrap().unwrap();
-+                let mut body = request.into_body();
-+                let read_request = async {
-+                    while let Some(data) = body.data().await {
-+                        let data = data.unwrap();
-+                        body.flow_control().release_capacity(data.len()).unwrap();
-+                    }
-+                };
-+                tokio::select! {
-+                    _ = read_request => {}
-+                    result = poll_fn(|cx| connection.poll_closed(cx)) => { result.unwrap(); return; }
++    /// Forgets the scan state, keeping a started vector full pass.
++    pub fn reset(&mut self) {
++        let vector_full_pass = self.vector_full_pass.take();
++        *self = Self::default();
++        self.vector_full_pass = vector_full_pass;
++    }
++
+     /// Lazily create or reuse the block-meta decode runtime for FINAL recluster.
+     pub(crate) fn decode_runtime(&mut self, workers: usize) -> Result<Arc<Runtime>> {
+         if self.decode_runtime.is_none() {
+@@ -282,6 +302,13 @@ impl ReclusterMutator {
+         })
+     }
+ 
++    /// Restricts selection to the full pass of a vector RECLUSTER FINAL over
++    /// `blocks`; see `ReclusterFinalCarry`.
++    pub fn with_vector_full_pass(mut self, blocks: Option<Arc<HashSet<String>>>) -> Self {
++        self.properties.vector_full_pass = blocks;
++        self
++    }
++
+     /// Build a recluster mutator directly for tests.
+     #[allow(clippy::too_many_arguments)]
+     pub fn new(
+@@ -448,10 +475,22 @@ impl ReclusterMutator {
+             if level < 0 {
+                 continue;
+             }
+-            if level >= MAX_RECLUSTER_LEVEL {
++            let group = if let Some(full_pass) = &self.properties.vector_full_pass {
++                // The full pass rewrites the blocks present when it started, in one
++                // group whose output (the group level + 1) is `VECTOR_LEVEL_MIXED`, so
++                // levels stay bounded. A level group, in every mode: the aggressive
++                // low-maturity group would take the output level from the levels of
++                // the blocks.
++                if !full_pass.contains(&block.meta.location.0) {
++                    continue;
 +                }
-+                let headers = http::Response::builder()
-+                    .header("content-type", "application/grpc")
-+                    .body(())
-+                    .unwrap();
-+                let mut response = respond.send_response(headers, false).unwrap();
-+                let mut data = BytesMut::new();
-+                for item in &items {
-+                    data.put_u8(0); // Uncompressed gRPC message.
-+                    data.put_u32(item.encoded_len() as u32);
-+                    item.encode(&mut data).unwrap();
-+                }
-+                if !data.is_empty() {
-+                    // Coalesce messages as tonic does: many tiny DATA frames
-+                    // would exercise h2's unrelated framing-overhead protection.
-+                    response.send_data(data.freeze(), false).unwrap();
-+    
++                ReclusterGroup::Level(VECTOR_LEVEL_MIXED - 1)
++            } else if level >= MAX_RECLUSTER_LEVEL {
+                 // Terminal-level blocks are excluded from further rewrite tasks.
+                 continue;
+-            }
++            } else {
++                ReclusterGroup::assign(level, self.properties.mode)
++            };
+             let partition = if self.properties.partition_key_count == 0 {
+                 Vec::new()
+             } else if let Some(partition) = partition_values(
+@@ -465,13 +504,7 @@ impl ReclusterMutator {
+                 // together with another partition.
+                 continue;
+             };
+-            blocks_map
+-                .entry((
+-                    ReclusterGroup::assign(level, self.properties.mode),
+-                    partition,
+-                ))
+-                .or_default()
+-                .push(idx);
++            blocks_map.entry((group, partition)).or_default().push(idx);
+         }
+ 
+         let mut tasks: Vec<ReclusterTaskCandidate> = Vec::new();
+@@ -711,11 +744,19 @@ impl ReclusterMutator {
+         task_budget: usize,
+     ) -> Result<Vec<ReclusterTaskCandidate>> {
+         debug_assert!(task_budget > 0);
++        let indices = self
++            .strategy
++            .eligible_blocks(&self.properties, indices, blocks);
+         let block_count = indices.len();
+-        if block_count < 2 && !self.properties.split_sort_tasks {
++        // The full pass of a vector RECLUSTER FINAL rewrites every block it holds
++        // once, whatever their level and also alone, so that new data mixes with all
++        // of them and none stays unmixed (see `VectorReclusterStrategy`).
++        let full_pass = self.properties.vector_full_pass.is_some();
++        if block_count < 2 && !self.properties.split_sort_tasks && !full_pass {
+             return Ok(Vec::new());
+         }
+         if block_count == 2
++            && !full_pass
+             && indices
+                 .
+```
+
+**File**: `src/query/storages/fuse/src/operations/recluster/recluster_strategy.rs` (modified, +17/-0)
+```diff
+@@ -14,6 +14,7 @@
+ 
+ use std::cmp;
+ use std::collections::BTreeMap;
++use std::collections::HashSet;
+ use std::fmt;
+ use std::sync::Arc;
+ 
+@@ -71,6 +72,9 @@ pub(crate) struct ReclusterProperties {
+     pub(crate) split_sort_tasks: bool,
+     pub(crate) prepared_cluster_key_exprs: Vec<PreparedClusterKeyExpr>,
+     pub(crate) scalar_cluster_key_types: Vec<DataType>,
++    /// Blocks of the final full pass of a vector RECLUSTER FINAL, which are
++    /// rewritten once regardless of level; see `ReclusterFinalCarry`.
++    pub(crate) vector_full_pass: Option<Arc<HashSet<String>>>,
+ }
+ 
+ impl ReclusterProperties {
+@@ -129,6 +133,7 @@ impl ReclusterProperties {
+             memory_threshold,
+             prepared_cluster_key_exprs,
+             scalar_cluster_key_types,
++            vector_full_pass: None,
+         };
+         Ok((properties, strategy))
+     }
+@@ -176,6 +181,7 @@ impl ReclusterProperties {
+             memory_threshold,
+             prepared_cluster_key_exprs,
+             scalar_cluster_key_types,
++            vector_full_pass: None,
+         };
+         (properties, strategy)
+     }
+@@ -199,6 +205,17 @@ pub(crate) trait ReclusterStrategy: Send + Sync {
+         window_len: usize,
+     ) -> Result<Vec<Vec<SelectedReclusterSegment>>>;
+ 
++    /// The blocks of a group that may be rewritten, before any selection, including
++    /// small-block compaction. All by default.
++    fn eligible_blocks(
++        &self,
++        _properties: &ReclusterProperties,
++        indices: Vec<usize>,
++        _blocks: &[&ReclusterBlock],
++    ) -> Vec<usize> {
++        indices
++    }
++
+     fn fetch_task_candidates(
+         &self,
+         properties: &ReclusterProperties,
+```
+
+**File**: `src/query/storages/fuse/src/operations/recluster/recluster_table.rs` (modified, +150/-7)
+```diff
+@@ -30,7 +30,11 @@ use databend_common_meta_app::schema::MAX_SEGMENT_LOCATIONS_PER_CLAIM;
+ use databend_common_metrics::storage::metrics_inc_recluster_build_task_milliseconds;
+ use databend_common_metrics::storage::metrics_inc_recluster_segment_nums_scheduled;
+ use databend_common_sql::BloomIndexColumns;
++use databend_common_sql::ClusterKeys;
++use databend_common_sql::parse_cluster_keys;
++use databend_storages_common_cache::CachePolicy;
+ use databend_storages_common_table_meta::meta::CompactSegmentInfo;
++use databend_storages_common_table_meta::meta::SegmentInfo;
+ use databend_storages_common_table_meta::meta::TableSnapshot;
+ use log::debug;
+ use log::info;
+@@ -40,11 +44,14 @@ use tokio::sync::Semaphore;
+ 
+ use crate::FuseTable;
+ use crate::SegmentLocation;
++use crate::io::SegmentsIO;
+ use crate::operations::recluster::CandidateScore;
+ use crate::operations::recluster::ReclusterCandidateWindow;
+ use crate::operations::recluster::ReclusterFinalCarry;
+ use crate::operations::recluster::ReclusterMode;
+ use crate::operations::recluster::ReclusterMutator;
++use crate::operations::recluster::VECTOR_LEVEL_MIXED;
++use crate::operations::recluster::VECTOR_LEVEL_NEW;
+ use crate::pruning::PruningContext;
+ use crate::pruning::SegmentPruner;
+ 
+@@ -109,7 +116,109 @@ fn select_task_candidates(
+     selected_task_indices
+ }
+ 
++/// Rows not mixed yet (below `VECTOR_LEVEL_MIXED`), in percent of all rows, from
++/// which a vector RECLUSTER FINAL rewrites the whole table once to mix them in.
++const VECTOR_FULL_PASS_NEW_DATA_PERCENT: u64 = 10;
++
++/// A block of a table with a vector cluster key, as a vector RECLUSTER FINAL sees it
++/// when it starts.
++#[derive(Clone, Debug, PartialEq, Eq)]
++pub struct VectorReclusterBlock {
++    pub location: String,
++    /// Recluster level (see `VECTOR_LEVEL_NEW`). Blocks whose cluster statistics are
++    /// missing or belong to another cluster key have level 0: recluster normalizes
++    /// their statistics to level 0 and rewrites them as new data.
++    pub level: i32,
++    pub rows: u64,
++}
++
++/// What a vector RECLUSTER FINAL does, decided from its blocks when it starts.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub enum VectorFinalPlan {
++    /// Recluster the level-0 blocks round by round, as a recluster without FINAL
++    /// does: for a FINAL that may only rewrite part of the table (`WHERE`, `LIMIT`).
++    Rounds,
++    /// Rewrite every block once, together, so that the rows not mixed yet mix with
++    /// the others. This is also the first clustering of a table.
++    FullPass,
++    /// Rewrite nothing: the rows not mixed yet are fewer than
++    /// `VECTOR_FULL_PASS_NEW_DATA_PERCENT` of all rows. They keep their level, so they
++    /// add up across statements until they reach the threshold.
++    Skip,
++}
++
++/// The plan of a vector RECLUSTER FINAL over `blocks`. Rows below
++/// `VECTOR_LEVEL_MIXED` are not mixed yet: new data, and data that the recluster after
++/// writes clustered on its own. Only the full pass mixes them in; it runs when they
++/// are all the data, or at least `VECTOR_FULL_PASS_NEW_DATA_PERCENT` of it. Blocks
++/// excluded from recluster (level < 0) count as neither.
++pub fn vector_final_plan(blocks: &[VectorReclusterBlock]) -> VectorFinalPlan {
++    let rows = |mixed: bool| -> u64 {
++        blocks
++            .iter()
++            .filter(|block| block.level >= VECTOR_LEVEL_NEW)
++            .filter(|block| (block.level >= VECTOR_LEVEL_MIXED) == mixed)
++            .map(|block| block.rows)
++            .sum()
++    };
++    let (unmixed_rows, mixed_rows) = (rows(false), rows(true));
++    if unmixed_rows > 0
++        && unmixed_rows.saturating_mul(100)
++            >= unmixed_rows
++                .saturating_add(mixed_rows)
++                .saturating_mul(VECTOR_FULL_PASS_NEW_DATA_PERCENT)
++    {
++        VectorFinalPlan::FullPass
++    } else {
++        VectorFinalPlan::Skip
++    }
++}
++
+ impl FuseTable {
++    /// The blocks in the latest snapshot of a table with a vector cluster key, or
++    /// `None` for other tables.
++    #[async_backtrace::framed]
++    pub async fn vector_recluster_blocks(
++        &self,
++        ctx: Arc<dyn TableContext>,
++    ) -> Result<Option<Vec<VectorReclusterBlock>>> {
++        let (Some(cluster_key_id), Some(cluster_keys)) =
++            (self.cluster_key_id(), self.resolve_cluster_keys())
++        else {
++            return Ok(None);
++        };
++        let parsed = parse_cluster_keys(ctx.clone(), Arc::new(self.clone()), cluster_keys)?;
++        if !matches!(parsed, ClusterKeys::Vector { .. }) {
++            return Ok(None);
++        }
++        let Some(snapshot) = self.read_table_snapshot().await? else {
++            return Ok(Some(Vec::new()));
++        };
++        let chunk_size = ctx.get_settings().get_max_threads()? as usize * 4;
++        let segments_io = SegmentsIO::create(ctx, self.get_operator(), self.schema());
++        let mut blocks = Vec::new();
++        for chunk in snapshot.segments.chunks(chunk_size.max(1)) {
+
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #21074** (2026-11-12): fix(sqllogictest): stop the runner from panicking on a multi-byte comment (@sundy-li)
-- **PR #21071** (2026-11-12): fix(query): remove vector bundle component size cap (@bohutang)
-- **PR #21067** (2026-11-12): fix(http): verify query owner on kill/final/state endpoints (@youngsofun)
-- **PR #21066** (closed): ci: [DO NOT MERGE] enable queries executor by default for CI trial (@dqhl76)
-- **PR #21065** (2026-11-11): fix(query): keep the shared executor alive on processor panics (@bohutang)
-- **PR #21064** (2026-11-11): fix: meta: validate final gRPC status before completing reads (@drmingdrmer)
+- **PR #21092** (2026-11-13): fix(query): truncate REPLACE statements in query logs (@TCeason)
+- **PR #21090** (2026-11-13): refactor(query): scan only the rows matched by the inverted index (@bohutang)
+- **PR #21087** (2026-11-13): feat(query): support native charset conversion for binary strings (@sundy-li)
+- **PR #21083** (2026-11-13): fix(query): keep multi-table insert distributed when the source needs reorder (@zhang2014)
+- **PR #21082** (closed): feat(query): enable meta-service ownership cache by default (@TCeason)
+- **PR #21079** (2026-11-13): fix(query): fix virtual column binding (@b41sh)
 
 ---
 
@@ -2117,31 +2299,53 @@ Exercise truncated and fully consumed responses be
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): keep the shared executor alive on processor panics (#21065)
+## X. storage): scope fault injection rules to the installing fixture's prefix
 
 **RULE**:
-When implementing operations in `src/query/service/src/pipelines/executor/queries_executor_tasks.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/common/storage/src/fault_injection_layer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `652b12b4`: query): keep the shared executor alive on processor panics (#21065). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7cac7adf`: storage): scope fault injection rules to the installing fixture's prefix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/pipelines/executor/queries_executor_tasks.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/storage/src/fault_injection_layer.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // The worker id of a waker is not always the id of a worker of this
-        // executor, e.g. a fuse source passes its index among the sources.
-        let workers = workers_tasks.workers_waiting_status.total_size();
-        let mut worker_id = task.worker_id % workers;
+//! A rule is process-global, so it must be scoped to the fixture that installed it: other
+//! tests in the same binary keep doing storage IO while it is installed, and they must not see
+//! it. The path is matched as a prefix, and [`FaultRule::in_root`] binds the rule to one
+//! storage root, since fixtures with separate roots and metastores can share a relative table
+//! prefix. The rule is removed when its [`FaultHandle`] is dropped, so a failing test cannot
+//! leave it behind for the rest of the process.
+//!
+//! let prefix = table_prefix(&fixture);
+//! let fault = FaultInjection::install(
+//!     FaultRule::new(FaultOp::Write, format!("{prefix}/_ss/"), FaultKind::Permanent)
+//!         .in_root(fixture.storage_root()),
+//! );
+use opendal::raw::normalize_root;
+/// A fault to inject: `kind` for every `op` on a path under `path_contains`, at most
+///
+/// `path_contains` is matched as a prefix, so a rule is anchored to the storage prefix of the
+/// fixture that installed it. A pattern like `_ss/` does not match another fixture's
+/// `1/11/_ss/…`, which a substring match would.
+///
+/// The path an operator reports is relative to its root, and fixtures with separate roots and
+/// se
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        let mut worker_id = task.worker_id;
+// Induced defect failure mode:
+//! let fault = FaultInjection::install(FaultRule::new(FaultOp::Write, "_ss/", FaultKind::Permanent));
+/// A fault to inject: `kind` for every `op` whose path contains `path_contains`, at most
+    fn fire(&self, op: FaultOp, path: &str) -> Option<Error> {
+        if self.rule.op != op || !path.contains(&self.rule.path_contains) {
+    /// Install a rule; it applies to every operator until removed.
+    fn check(op: FaultOp, path: &str) -> Result<()> {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `652b12b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7cac7adf` are properly handled with clean fallback behavior.

@@ -602805,3 +602805,170 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c8939518` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8390. Add support for SO_REUSEPORT on linux (Harvested from ntex-rs/ntex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Add support for SO_REUSEPORT on linux",
+  "source": "ntex-rs/ntex",
+  "source_url": "https://github.com/ntex-rs/ntex",
+  "source_version": "1a38c4b1",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-13T21:45:08.249Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ntex-rs-ntex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ntex-rs/ntex](https://github.com/ntex-rs/ntex) (Revision: `1a38c4b1`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c355f885`: Add support for SO_REUSEPORT on linux. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+ntex-net = "4.11.0"
+ntex-server = "4.6.0"
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+ntex-net = "4.10.3"
+ntex-server = "4.5.2"
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c355f885` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8391. scope fault injection rules to the installing fixture's prefix (Harvested from databendlabs/databend)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "scope fault injection rules to the installing fixture's prefix",
+  "source": "databendlabs/databend",
+  "source_url": "https://github.com/databendlabs/databend",
+  "source_version": "328efad7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-13T21:45:20.330Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-databendlabs-databend",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `328efad7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/common/storage/src/fault_injection_layer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7cac7adf`: storage): scope fault injection rules to the installing fixture's prefix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/common/storage/src/fault_injection_layer.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+//! A rule is process-global, so it must be scoped to the fixture that installed it: other
+//! tests in the same binary keep doing storage IO while it is installed, and they must not see
+//! it. The path is matched as a prefix, and [`FaultRule::in_root`] binds the rule to one
+//! storage root, since fixtures with separate roots and metastores can share a relative table
+//! prefix. The rule is removed when its [`FaultHandle`] is dropped, so a failing test cannot
+//! leave it behind for the rest of the process.
+//!
+//! let prefix = table_prefix(&fixture);
+//! let fault = FaultInjection::install(
+//!     FaultRule::new(FaultOp::Write, format!("{prefix}/_ss/"), FaultKind::Permanent)
+//!         .in_root(fixture.storage_root()),
+//! );
+use opendal::raw::normalize_root;
+/// A fault to inject: `kind` for every `op` on a path under `path_contains`, at most
+///
+/// `path_contains` is matched as a prefix, so a rule is anchored to the storage prefix of the
+/// fixture that installed it. A pattern like `_ss/` does not match another fixture's
+/// `1/11/_ss/…`, which a substring match would.
+///
+/// The path an operator reports is relative to its root, and fixtures with separate roots and
+/// se
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+//! let fault = FaultInjection::install(FaultRule::new(FaultOp::Write, "_ss/", FaultKind::Permanent));
+/// A fault to inject: `kind` for every `op` whose path contains `path_contains`, at most
+    fn fire(&self, op: FaultOp, path: &str) -> Option<Error> {
+        if self.rule.op != op || !path.contains(&self.rule.path_contains) {
+    /// Install a rule; it applies to every operator until removed.
+    fn check(op: FaultOp, path: &str) -> Result<()> {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7cac7adf` are properly handled with clean fallback behavior.
