@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T15:30:25.468Z",
+  "last_updated": "2026-11-13T15:39:04.185Z",
   "directives": [
     {
       "id": "CD-001",
@@ -9197,6 +9197,57 @@
       "source_repo": "mitmproxy-mitmproxy",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6066EA-handle-stop-sending-in-raw-quic-mode-859.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-6LIS",
+      "directive_title": "Mac Sai website, in 13 languages, on GitHub Pages (#275)",
+      "source_repo": "iliyami-macsai-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6LIS-mac-sai-website-in-13-languages-on-github-pages-275.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-6M48",
+      "directive_title": "Merge pull request #23479 from Asheesh7298/bug/asheesh7298/23478",
+      "source_repo": "meshery-meshery-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6M48-merge-pull-request-23479-from-asheesh7298-bug-asheesh7298-23478.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-5MP7",
+      "directive_title": "Merge pull request #4603 from aleo-labs-protocol/fix/propose-drain-skip",
+      "source_repo": "aleo-labs-protocol/snarkOS",
+      "source_commit": "e3b97728",
+      "staged_file": "11_INBOX/candidate-directives/CD-5MP7-merge-pull-request-4603-from-aleo-labs-protocol-fix-propose-drain-skip.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-E179F7",
+      "directive_title": "Mac Sai website, in 13 languages, on GitHub Pages (#275)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "iliyami-macsai",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E179F7-mac-sai-website-in-13-languages-on-githu.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-E159BC",
+      "directive_title": "Merge pull request #23479 from Asheesh7298/bug/asheesh7298/23478",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "meshery-meshery",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E159BC-merge-pull-request-23479-from-asheesh729.md",
       "staged_date": "2026-11-13"
     }
   ]

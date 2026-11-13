@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T15:30:25.875Z",
+  "last_updated": "2026-11-13T15:39:04.499Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T15:11:07.403Z",
@@ -1058,7 +1058,7 @@
       "staged_for_review": 0
     },
     "meshery-meshery-learnings.md": {
-      "processed_at": "2026-11-12T11:19:08.452Z",
+      "processed_at": "2026-11-13T15:39:03.738Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1931,9 +1931,19 @@
       "processed_at": "2026-11-13T15:30:25.120Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-fastino-gliner2.5-decide-learnings.md": {
+      "processed_at": "2026-11-13T15:39:02.277Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "iliyami-macsai-learnings.md": {
+      "processed_at": "2026-11-13T15:39:02.592Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 606,
-  "total_canonical_promoted": 109,
-  "total_staged_for_review": 491
+  "total_dossiers_evaluated": 609,
+  "total_canonical_promoted": 110,
+  "total_staged_for_review": 493
 }

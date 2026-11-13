@@ -9542,3 +9542,8 @@ Every entry in this ledger must capture:
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `d05d6645` | Multi-dimensional audit evidence | 2026-11-13T15:29:36.919Z |
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `c08eec9b` | Multi-dimensional audit evidence | 2026-11-13T15:29:40.215Z |
 | `learn-dom-d-303e5ce5` | `project://hf-apple-lensvlm-9b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md` | 2026-11-13T15:30:24.171Z |
+| `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-11-13T15:38:05.530Z |
+| `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `91b262f3` | Multi-dimensional audit evidence | 2026-11-13T15:38:13.664Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `20743f10` | Multi-dimensional audit evidence | 2026-11-13T15:38:17.470Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `e3b97728` | Multi-dimensional audit evidence | 2026-11-13T15:38:18.070Z |
+| `learn-dom-d-7123d3b0` | `project://hf-fastino-gliner2.5-decide` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | 2026-11-13T15:39:02.277Z |

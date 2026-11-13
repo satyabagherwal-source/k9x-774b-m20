@@ -9509,3 +9509,8 @@
 | `CYCLE-20261113-UGER` | `2026-11-13T15:29:36.915Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`526b4b42...`) |
 | `CYCLE-20261113-UIYB` | `2026-11-13T15:29:40.211Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`2932f1d4...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T15:30:24.171Z` | `hf-apple-lensvlm-9b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-303E5CE5` [Domain D] | Yes (`ef2496d9...`) |
+| `CYCLE-20261113-5CUU` | `2026-11-13T15:38:05.526Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`e73e53ca...`) |
+| `CYCLE-20261113-5J4R` | `2026-11-13T15:38:13.659Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`357c96f7...`) |
+| `CYCLE-20261113-5M2I` | `2026-11-13T15:38:17.466Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d10f14e5...`) |
+| `CYCLE-20261113-5MJ6` | `2026-11-13T15:38:18.066Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`253ac503...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T15:39:02.277Z` | `hf-fastino-gliner2.5-decide` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7123D3B0` [Domain D] | Yes (`82f8833a...`) |

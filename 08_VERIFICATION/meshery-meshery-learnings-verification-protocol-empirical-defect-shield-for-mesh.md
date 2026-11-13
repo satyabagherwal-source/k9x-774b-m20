@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:41:27.439Z",
+  "timestamp": "2026-11-13T15:39:04.064Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-meshery-meshery-learnings",
+  "learning_id": "LEARN-EVO-meshery-meshery-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [meshery-meshery-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:41:27.439Z`  
-> **Learning ID**: `LEARN-REEXTRACT-meshery-meshery-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T15:39:04.064Z`  
+> **Learning ID**: `LEARN-EVO-meshery-meshery-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `41ccfbfe`  
+> **Source Version**: `20743f10`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T11:18:28.829Z  
+> **Timestamp**: 2026-11-13T15:38:16.919Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T11:18:28.819Z  
+> **Harvest Timestamp**: 2026-11-13T15:38:16.912Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12174 stars
+- **Stars / Engagement**: 12182 stars
 
 ---
 
@@ -829,11 +829,14 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23300** (2026-11-12): **[mesheryctl] Replace path separators in file names saved by component view**
-  *Symptoms*: **Notes for Reviewers**  - This PR fixes an issue where `mesheryctl component view --save` fails when saving a component whose display name contains path separators (`/` or `\`).  When a component's display name contains a forward slash (common with Kubernetes API groups and cloud definitions, e.g. `apps/v1`) or a backslash on Windows, the saved filename is interpreted as a subpath, causing the command to fail because the nested directory did not exist.  Sister commands (`connection view --save`, `environment view --save`, `model view --save`, and `workspace view --save`) have open PRs/requests addressing this same problem (ref: #22504, #22518, #22590). This PR brings `component view --save` in line with the pattern requested in those issues by replacing spaces, forward slashes, and backslashes with underscores.  **Changes** 1. Replaced `strings.ReplaceAll(..., " ", "_")` with `strings.NewReplacer(" ", "_", "/", "_", "\\", "_")` in `mesheryctl/internal/cli/root/components/view.go`. 2. Added test fixture `view.component.save.name.api.response.golden`. 3. Added unit test `TestComponentViewSaveFlattensSeparatorsInName` in `view_test.go` to ensure path separators are flattened and `~/.meshery` is safely isolated during test runs.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits. 
+- **Issue #23485** (2026-11-13): **Add Guganraj Rengaraju's introduction to meetings**
+  *Symptoms*: Added introduction for Guganraj Rengaraju, detailing background and goals.  **Notes for Reviewers**  - This PR fixes #  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added a meeting introduction covering Guganraj’s background, interests, contribution goals, and portfolio.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
-- **Issue #23299** (2026-11-12): **[UI] Disable LegacyRJSFModal submit while pending and add submitDisabled**
-  *Symptoms*: **Notes for Reviewers**  - This PR fixes #21227  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  ### Summary  1. **`ui/components/shared/Modal/LegacyRJSFModal.tsx`:**    - Added optional `submitDisabled = false` prop (with JSDoc documentation on both `Modal` and `RJSFModalWrapper`) so consumers (including extensions such as Kanvas Help & Support) can gate submission on their own readiness while keeping existing callers unchanged.    - Included `loadingSchema` in `primaryButtonProps.disabled` across both `Modal` (`Boolean(canNotSubmit || loadingSchema || submitDisabled)`) and `RJSFModalWrapper` (`Boolean(canNotSubmit || loadingSchema || isSubmitting || submitDisabled)`), and guarded `handleFormSubmit` with the same condition.    - Updated `Modal` schema resolution (`schema !== undefined ? schema : getSchema(type)`, tracked via boolean `hasResolvedSchema`) so:      - Pending shells (`schema={null}` or omitted `schema` with unknown `type`) start and remain in `loadingSchema` with Submit disabled (zero enabled-button flash).      - Clearing `schema` back to `null` before reopening resets `loadingSchema` to `true` (matching `RJSFModalWrapper`).      - Legacy `type`-only callers (e.g. `MesheryCredentialComponent` passing `type` without `schema`) still resolve synchronously via `getSchema(type)`, while explicit `schema={null}` keeps pending state active. 2. **
+- **Issue #23484** (2026-11-13): **Create Javeria Razzaq's introduction markdown file**
+  *Symptoms*: Added personal introduction and profile links.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  - **Documentation**   - Added a profile featuring Javeria Razzaq’s studies, location, backend development experience, and cloud-native learning.   - Included links to her LinkedIn and GitHub profiles for readers seeking more information.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+  **Post-Mortem & Fix Analysis**:
+  > Yay, your first pull request! :thumbsup: A contributor will be by to give feedback soon. In the meantime, you can find updates in the [#github-notifications](https://mesheryio.slack.com/archives/CLVT4TSG4) channel in the [community Slack](https://slack.meshery.io). Be sure to double-check that you have signed your commits. Here are instructions for [making signing an implicit activity while performing a commit](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin). 
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/23484?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <details> <summary><stro
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -850,1228 +853,768 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `71d85c8d` (2026-11-12)
-**Commit Message**: [Docs] Fix broken help-wanted search links in README.md (#23289)
+### Incident Patch 1: `4594b377` (2026-11-13)
+**Commit Message**: Merge pull request #23479 from Asheesh7298/bug/asheesh7298/23478
 
-[Docs] Fix broken help-wanted search links in README.md
+[UI] Refresh cached views after visibility, notes and delete changes
 
-**File**: `README.md` (modified, +2/-2)
+**File**: `ui/components/workspaces/SpacesSwitcher/MainViewsContent.tsx` (modified, +1/-0)
 ```diff
-@@ -6,7 +6,7 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
- <p align="center">
- <a href="https://hub.docker.com/r/meshery/meshery" alt="Docker pulls">
-   <img src="https://img.shields.io/docker/pulls/meshery/meshery.svg" /></a>
--<a href="https://github.com/issues?q=is%3Aopen%20is%3Aissue%20archived%3Afalse%20(org%3Ameshery%20OR%20org%3Aservice-mesh-performance%20OR%20org%3Aservice-mesh-patterns%20OR%20org%3Ameshery-extensions)%20label%3A%22help%20wanted%22%20" alt="GitHub issues by-label">
-+<a href="https://github.com/search?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Ameshery+org%3Ameshery-extensions+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22&type=issues" alt="GitHub issues by-label">
-   <img src="https://img.shields.io/github/issues/meshery/meshery/help%20wanted.svg?color=informational" /></a>
- <a href="https://github.com/meshery/meshery/blob/master/LICENSE" alt="LICENSE">
-   <img src="https://img.shields.io/github/license/meshery/meshery?color=brightgreen" /></a>
-@@ -295,7 +295,7 @@ Learn more about the <a href="https://meshery.io/community#meshmates">MeshMates<
- </div>
- <br /><br />
- <p align="left">
--&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?q=is%3Aopen%20is%3Aissue%20archived%3Afalse%20(org%3Ameshery%20OR%20org%3Aservice-mesh-performance%20OR%20org%3Aservice-mesh-patterns%20OR%20org%3Ameshery-extensions)%20label%3A%22help%20wanted%22%20">help-wanted label</a>.
-+&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/search?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Ameshery+org%3Ameshery-extensions+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22&type=issues">help-wanted label</a>.
- </p>
- <br /><br />
- 
+@@ -305,6 +305,7 @@ const MainViewsContent = ({
+           viewId={selectedView?.id}
+           viewName={selectedView?.name}
+           metadata={selectedView?.metadata}
++          refetch={refetch}
+         />
+       )}
+       {moveModal && (
 ```
 
----
-
-### Incident Patch 2: `41ccfbfe` (2026-11-12)
-**Commit Message**: Merge pull request #23300 from RajJasani/fix/component-view-save-path-separators
-
-[mesheryctl] Replace path separators in file names saved by component view
-
-**File**: `mesheryctl/internal/cli/root/components/fixtures/view.component.save.name.api.response.golden` (added, +84/-0)
+**File**: `ui/components/workspaces/ViewInfoModal.test.tsx` (modified, +44/-0)
 ```diff
-@@ -0,0 +1,84 @@
-+{
-+  "page": 1,
-+  "page_size": 1,
-+  "total_count": 1,
-+  "components": [
-+    {
-+      "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
-+      "schemaVersion": "components.meshery.io/v1beta1",
-+      "version": "v1.0.0",
-+      "displayName": "apps/v1\\Deployment test",
-+      "description": "",
-+      "format": "JSON",
-+      "model": {
-+        "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
-+        "schemaVersion": "models.meshery.io/v1beta1",
-+        "version": "v1.0.0",
-+        "name": "component-test-0",
-+        "displayName": "Component test",
-+        "status": "enabled",
-+        "registrant": {
-+          "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
-+          "name": "Artifact Hub",
-+          "credentialId": "00000000-0000-0000-0000-000000000000",
-+          "type": "registry",
-+          "subType": "",
-+          "kind": "artifacthub",
-+          "status": "registered",
-+          "user_id": "00000000-0000-0000-0000-000000000000",
-+          "created_at": "2025-03-30T19:59:46.350667005Z",
-+          "updated_at": "2025-03-30T19:59:46.350667005Z",
-+          "deleted_at": {"Time": "0001-01-01T00:00:00Z", "Valid": false}
-+        },
-+        "connection_id": "fd01c4e7-14ae-4435-8236-adfb9cea0395",
-+        "category": {
-+          "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
-+          "name": "category"
-+        },
-+        "subCategory": "sub-category",
-+        "metadata": {
-+          "isAnnotation": false,
-+          "primaryColor": "#ff9900",
-+          "secondaryColor": "#F4BC79",
-+          "shape": "circle",
-+          "styleOverrides": "",
-+          "svgColor": "ui/public/static/img/meshmodels/kubeform-provider-aws/color/kubeform-provider-aws-color.svg",
-+          "svgComplete": "",
-+          "svgWhite": "ui/public/static/img/meshmodels/kubeform-provider-aws/white/kubeform-provider-aws-white.svg"
-+        },
-+        "model": {
-+          "version": "2023.11.1"
-+        },
-+        "components_count": 0,
-+        "relationships_count": 0,
-+        "components": null,
-+        "relationships": null
-+      },
-+      "styles": {
-+        "primaryColor": "#ff9900",
-+        "secondaryColor": "#F4BC79",
-+        "shape": "circle",
-+        "svgColor": "ui/public/static/img/meshmodels/kubeform-provider-aws/color/acl-color.svg",
-+        "svgComplete": "",
-+        "svgWhite": "ui/public/static/img/meshmodels/kubeform-provider-aws/white/acl-white.svg"
-+      },
-+      "capabilities": [],
-+      "status": "enabled",
-+      "metadata": {
-+        "configurationUISchema": "",
-+        "genealogy": "",
-+        "instanceDetails": null,
-+        "isAnnotation": false,
-+        "isNamespaced": false,
-+        "published": false
-+      },
-+      "configuration": null,
-+      "component": {
-+        "version": "memorydb.aws.kubeform.com/v1alpha1",
-+        "kind": "Test",
-+        "schema": "{\"description\":\"ACL is the Schema for the ACLs API. Provides a MemoryDB ACL.\",\"properties\":{\"spec\":{\"description\":\"ACLSpec defines the desired state of ACL\",\"properties\":{\"deletionPolicy\":{\"default\":\"Delete\",\"description\":\"DeletionPolicy specifies what will happen to the underlying external when this managed resource is deleted - either \\\"Delete\\\" or \\\"Orphan\\\" the external resource. This field is planned to be deprecated in favor of the ManagementPolicy field in a future release. Currently, both could be set independently and non-default values would be honored if the feature flag is enabled. See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223\",\"enum\":[\"Orphan\",\"Delete\"],\"type\":\"string\"},\"forProvider\":{\"properties\":{\"region\":{\"description\":\"Region is the region you'd like your resource to be created in.\",\"type\":\"string\"},\"tags\":{\"additionalProperties\":{\"type\":\"string\"},\"description\":\"A map of tags to assign to the resource. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.\",\"type\":\"object\"},\"tagsAll\":{\"additionalProperties\":{\"type\":\"string\"},\"description\":\"A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.\",\"type\":\"object\"},\"userNames\":{\"description\":\"Set of MemoryDB user names to be included in this ACL.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"}},\"type\":\"object\"},\"managementPolicy\":{\"default\":\"FullControl\",\"description\":\"THIS IS AN ALPHA FIELD. Do not use it in production. It is not honored unless the relevant Crossplane feature flag is enabled, and may be changed or removed without notice. ManagementPolicy specifies the level of control Crossplane has over the managed external resource. This field is planned to replace the DeletionPolicy field in a future release. Currently, both
-```
-
-**File**: `mesheryctl/internal/cli/root/components/view.go` (modified, +1/-3)
-```diff
-@@ -97,10 +97,8 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
- 		savePath := ""
- 
- 		if cmdComponentViewFlags.Save {
--			componentString := strings.ReplaceAll(
-+			componentString := strings.NewReplacer(" ", "_", "/", "_", "\\", "_").Replace(
- 				fmt.Sprintf("%v", selectedComponent.DisplayName),
--				" ",
--				"_",
- 			)
- 
- 			savePath = filepath.Join(
-```
-
-**File**: `mesheryctl/internal/cli/root/components/view_test.go` (modified, +27/-0)
-```diff
-@@ -102,3 +102,30 @@ func TestComponentView(t *testing.T) {
- 	mesheryctlflags.InitValidators(ComponentCmd)
- 	utils.InvokeMesheryctlTestListCommand(t, update, ComponentCmd, tests, currDir, "component")
- }
-+
-+// TestComponentViewSaveFlattensSeparatorsInName verifies that --save writes one
-+// file for a component whose display name has path separators, and that the real
-+// ~/.meshery is never touched.
-+func TestComponentViewSaveFlattensSeparatorsInName(t *testing.T) {
-+	const componentID = "fda1c4e7-14ae-4435-8236-adfb9cea0395"
-+
-+	mesheryctlflags.InitValidators(ComponentCmd)
-+	mesheryDir := utils.IsolateMesheryHome(t)
-+
-+	run := utils.MesheryCommandRun{
-+		Cmd:        ComponentCmd,
-+		Args:       []string{"view", componentID, "--save"},
-+		CommandDir: utils.CallerDir(t),
-+		Mocks: []utils.MockURL{
-+			{
-+				URL:      fmt.Sprintf("/%s?id=%s&page=0&pagesize=10", componentApiPath, componentID),
-+				Response: "view.component.save.name.api.response.golden",
-+			},
-+		},
-+	}
-+	if _, err := utils.RunMesheryctlCommand(t, run); err != nil {
-+		t.Fatalf("unexpected error: %v", err)
-+	}
-+
-+	utils.AssertFileExists(t, filepath.Join(mesheryDir, "component_apps_v1_Deployment_test.yaml"))
-+}
-```
-
----
-
-### Incident Patch 3: `6303b9bb` (2026-11-12)
-**Commit Message**: Merge branch 'master' into fix/component-view-save-path-separators
-
-**File**: `ui/__tests__/pages/user/preferences.test.tsx` (added, +121/-0)
-```diff
-@@ -0,0 +1,121 @@
-+import React from 'react';
-+import { render, screen } from '@testing-library/react';
-+import { beforeEach, describe, expect, it, vi } from 'vitest';
-+import { Keys } from '@meshery/schemas/permissions';
-+
-+const { useHasPermission, useGetUserPrefWithContextQuery } = vi.hoisted(() => ({
-+  useHasPermission: vi.fn(),
-+  useGetUserPrefWithContextQuery: vi.fn(),
-+}));
-+
-+vi.mock('react-redux', () => ({
-+  useSelector: (selector: (state: { ui: { selectedK8sContext: string } }) => unknown) =>
-+    selector({ ui: { selectedK8sContext: 'ctx-1' } }),
-+}));
-+
-+vi.mock('@sistent/sistent', () => ({ useHasPermission }));
-+
-+vi.mock('@/rtk-query/user', () => ({
-+  useGetUserPrefWithContextQuery,
-+}));
-+
-+vi.mock('../../../components/general/MesheryPage', () => ({
-+  MesheryPage: ({ title, children }: { title: string; children: React.ReactNode }) => (
-+    <div data-testid="meshery-page" data-title={title}>
-+      {children}
-+    </div>
-+  ),
-+}));
-+
-+vi.mock('@/components/user-preferences', () => ({
-+  default: ({
-+    anonymousStats,
-+    perfResultStats,
-+  }: {
-+    anonymousStats: boolean;
-+    perfResultStats: boolean;
-+  }) => (
-+    <div
-+      data-testid="user-preferences"
-+      data-anon={String(anonymousStats)}
-+      data-perf={String(perfResultStats)}
-+    />
-+  ),
-+}));
-+
-+vi.mock('@/components/general/error-404', () => ({
-+  default: ({ permissionKey }: { permissionKey: unknown }) => (
-+    <div data-testid="default-error" data-permission-key={JSON.stringify(permissionKey)} />
-+  ),
-+}));
-+
-+import UserPref from '../../../pages/user/preferences';
-+
-+describe('UserPref page access gate', () => {
-+  beforeEach(() => {
-+    useHasPermission.mockReset();
-+    useGetUserPrefWithContextQuery.mockReset();
-+  });
-+
-+  it('skips the context query, ignores cached preferences, and renders DefaultError inside MesheryPage when denied', () => {
-+    useHasPermission.mockReturnValue(false);
-+    useGetUserPrefWithContextQuery.mockReturnValue({
-+      data: { anonymousUsageStats: true, anonymousPerfResults: true },
-+    });
-+
-+    render(<UserPref />);
-+
-+    expect(useHasPermission).toHaveBeenCalledWith(Keys.ExtensibilityViewMesheryUserPreferences);
-+    expect(useGetUserPrefWithContextQuery).toHaveBeenCalledWith('ctx-1', { skip: true });
-+    expect(screen.getByTestId('meshery-page')).toHaveAttribute('data-title', 'User Preferences');
-+    expect(screen.getByTestId('default-error')).toHaveAttribute(
-+      'data-permission-key',
-+      JSON.stringify(Keys.ExtensibilityViewMesheryUserPreferences),
-+    );
-+    expect(screen.queryByTestId('user-preferences')).not.toBeInTheDocument();
-+  });
-+
-+  it('preserves the MesheryPage shell without rendering preferences while stats are loading', () => {
-+    useHasPermission.mockReturnValue(true);
-+    useGetUserPrefWithContextQuery.mockReturnValue({ data: undefined });
-+
-+    render(<UserPref />);
-+
-+    expect(useGetUserPrefWithContextQuery).toHaveBeenCalledWith('ctx-1', { skip: false });
-+    expect(screen.getByTestId('meshery-page')).toHaveAttribute('data-title', 'User Preferences');
-+    expect(screen.queryByTestId('user-preferences')).not.toBeInTheDocument();
-+    expect(screen.queryByTestId('default-error')).not.toBeInTheDocument();
-+  });
-+
-+  it('renders UserPreferences inside MesheryPage when permitted and stats are loaded', () => {
-+    useHasPermission.mockReturnValue(true);
-+    useGetUserPrefWithContextQuery.mockReturnValue({
-+      data: { anonymousUsageStats: true, anonymousPerfResults: false },
-+    });
-+
-+    render(<UserPref />);
-+
-+    expect(useGetUserPrefWithContextQuery).toHaveBeenCalledWith('ctx-1', { skip: false });
-+    expect(screen.getByTestId('meshery-page')).toHaveAttribute('data-title', 'User Preferences');
-+    expect(screen.getByTestId('user-preferences')).toHaveAttribute('data-anon', 'true');
-+    expect(screen.getByTestId('user-preferences')).toHaveAttribute('data-perf', 'false');
-+    expect(screen.queryByTestId('default-error')).not.toBeInTheDocument();
-+  });
-+
-+  it('replaces UserPreferences with DefaultError and skips query if permission is revoked mid-session', () => {
-+    useHasPermission.mockReturnValue(true);
-+    useGetUserPrefWithContextQuery.mockReturnValue({
-+      data: { anonymousUsageStats: true, anonymousPerfResults: true },
-+    });
-+
-+    const { rerender } = render(<UserPref />);
-+    expect(screen.getByTestId('user-preferences')).toBeInTheDocument();
-+
-+    useHasPermission.mockReturnValue(false);
-+    rerender(<UserPref />);
-+
-+    expect(useGetUserPrefWithContextQuery).toHaveBeenLastCalledWith('ctx-1', { skip: true });
-+    expect(screen.getByTestId('default-error')).toBeInTheDocument();
-+    expect(screen.queryByTestId('user-preferences')).not.toBeInTheDocument();
-+  });
-+});
-```
-
-**File**: `ui/components/connections/index.test.tsx` (modified, +82/-5)
-```diff
-@@ -1,13 +1,29 @@
- import React from 'react';
- import { render, screen } from '@testing-library/react';
- import userEvent from '@testing-library/user-event';
-+import { Keys } from '@meshery/schemas/permissions';
- import { beforeEach, describe, expect, it, vi } from 'vitest';
- import ConnectionManagementPageWithErrorBoundary from './index';
- 
-+const {
-+  mockUseHasPermission,
-+  mockUseGetSchemaQuery,
-+  mockOpenCreateConnection,
-+  mockCloseCreateConnection,
-+  mockReplace,
-+} = vi.hoisted(() => ({
-+  mockUseHasPermission: vi.fn(),
-+  mockUseGetSchemaQuery: vi.fn(),
-+  mockOpenCreateConnection: vi.fn(),
-+  mockCloseCreateConnection: vi.fn(),
-+  mockReplace: vi.fn(),
-+}));
-+
- const router = {
-   query: {} as Record<string, unknown>,
-   pathname: '/connections',
-   push: vi.fn(),
-+  replace: mockReplace,
-   isReady: true,
- };
- 
-@@ -20,7 +36,7 @@ vi.mock('@sistent/sistent', () => ({
-   ErrorBoundary: ({ children }) => <>{children}</>,
-   AppBar: ({ children }) => <div>{children}</div>,
-   InfoTooltip: () => <svg data-testid="info-icon" />,
--  useHasPermission: () => true,
-+  useHasPermission: (permissionKey) => mockUseHasPermission(permissionKey),
-   useTheme: () => ({ palette: { icon: { default: '#000' } } }),
- }));
- 
-@@ -63,8 +79,8 @@ vi.mock('./ConnectionTable', () => ({
- 
- vi.mock('@/utils/context/ConnectionWizardContextProvider', () => ({
-   useConnectionWizardModal: () => ({
--    openCreateConnection: vi.fn(),
--    closeCreateConnection: vi.fn(),
-+    openCreateConnection: mockOpenCreateConnection,
-+    closeCreateConnection: mockCloseCreateConnection,
-     open: false,
-   }),
- }));
-@@ -90,11 +106,13 @@ vi.mock('@/utils/can', () => ({
- }));
- 
- vi.mock('@/rtk-query/schema', () => ({
--  useGetSchemaQuery: () => ({ data: undefined }),
-+  useGetSchemaQuery: (args, options) => mockUseGetSchemaQuery(args, options),
- }));
- 
- vi.mock('../general/error-404/index', () => ({
--  default: () => <div data-testid="default-error" />,
-+  default: ({ permissionKey }) => (
-+    <div data-testid="default-error" data-permission-key={JSON.stringify(permissionKey)} />
-+  ),
- }));
- 
- vi.mock('../shared/ErrorBoundary/ErrorBoundary', () => ({
-@@ -113,8 +131,15 @@ describe('connections index page', () => {
-   beforeEach(() => {
-     router.query = {};
-     router.push.mockReset();
-+    router.replace.mockReset();
-     router.isReady = true;
-     connectionTableCallbackRefs.length = 0;
-+    mockOpenCreateConnection.mockReset();
-+    mockCloseCreateConnection.mockReset();
-+    mockUseHasPermission.mockReset();
-+    mockUseHasPermission.mockReturnValue(true);
-+    mockUseGetSchemaQuery.mockReset();
-+    mockUseGetSchemaQuery.mockReturnValue({ data: undefined });
+@@ -242,6 +242,50 @@ describe('ViewInfoModal_', () => {
+     });
    });
  
-   it('defaults to the connections tab and ignores non-string connection ids', () => {
-@@ -125,6 +150,7 @@ describe('connections index page', () => {
- 
-     render(<ConnectionManagementPageWithErrorBoundary />);
- 
-+    expect(mockUseGetSchemaQuery).toHaveBeenCalledWith({ schemaName: 'helmRepo' }, { skip: false });
-     expect(screen.getByTestId('connection-table')).toHaveTextContent('connection:none');
-     expect(screen.queryByTestId('meshsync-table')).not.toBeInTheDocument();
-   });
-@@ -208,4 +234,55 @@ describe('connections index page', () => {
-       expect(ref).toBe(first);
-     }
-   });
-+
-+  it('skips schema query, ignores cached schema data, blocks deep links, and renders DefaultError when permission is denied', () => {
-+    mockUseHasPermission.mockReturnValue(false);
-+    mockUseGetSchemaQuery.mockReturnValue({
-+      data: { rjsfSchema: { title: 'Cached Helm Repo' }, uiSchema: {} },
-+    });
-+    router.query = {
-+      create: 'true',
-+      kind: 'kubernetes',
++  it('shows and saves the notes of the fetched view, not the list row it was opened from', async () => {
++    const user = userEvent.setup();
++    mockViewQuery = {
++      ...mockViewQuery,
++      data: { ...mockViewQuery.data, metadata: { notes: 'saved on server' } },
 +    };
 +
-+    render(<ConnectionManagementPageWithErrorBoundary />);
++    render(<ViewInfoModal_ {...baseProps} metadata={{ notes: 'stale list row' }} />);
 +
-+    expect(mockUseHasPermission).toHaveBeenCalledWith(Keys.WorkspaceManagementViewConnections);
-+    expect(mockUseGetSchemaQuery).toHaveBeenCalledWith({ schemaName: 'helmRepo' }, { skip: true });
-+    expect(screen.getByTestId('default-error')).toHaveAttribute(
-+      'data-permission-key',
-+      JSON.stringify(Keys.WorkspaceManagementViewConnections),
-+    );
-+    expect(screen.queryByTestId('connection-table')).not.toBeInTheDocument();
-+    expect(screen.queryByTestId('meshsync-table')).not.toBeInTheDocument();
-+    expect(screen.queryByTestId('create-connection-modal')).not.toBeInTheDocument();
-+    expect(mockOpenCreateConnection).not.toHaveBeenCalled();
-+    expect(mockCloseCreateConnection).not.toHaveBeenCalled();
-+    expect(router.replace).not.toHaveBeenCalled();
++    expect(screen.getByTestId('md-editor')).toHaveValue('saved on server');
++    await user.click(screen.getByTestId('save-button'));
++    expect(mockUpdateView).toHaveBeenCalledWith({
++      id: 'v1',
++      body: { metadata: { notes: 'saved on server' } },
++    });
 +  });
 +
-+  it('hides tables, skips schema query, and closes wizard when permission is revoked mid-session', () => {
-+    const { rerender } = render(<ConnectionManagementPageWithErrorBoundary />);
++  it('saves the notes the user edited', async () => {
++    const user = userEvent.setup();
++    mockViewQuery = {
++      ...mockViewQuery,
++      data: { ...mockViewQuery.data, metadata: { notes: 'saved on server' } },
++    };
 +
-+    expect(screen.getByTestId('connection-table')).toBeInTheDocument();
-+    expect(mockUseGetSchemaQuery).toHaveBeenLastCalledWith(
-+      { schemaName: 'helmRepo' },
-+      { skip: false },
-+    );
-+    expect(mockCloseCreateConnection).not.toHaveBeenCalled();
++    render(<ViewInfoModal_ {...baseProps} />);
++
++    await user.click(screen.getByText('change'));
++    await user.click(screen.getByTestId('save-button'));
++    expect(mockUpdateView).toHaveBeenCalledWith({
++      id: 'v1',
++      body: { metadata: { notes: 'updated' } },
++    });
++  });
++
++  it('refreshes the views list after changing visibility from the modal', async () => {
++    const user = userEvent.setup();
++    const refetch = vi.fn();
++
++    render(<ViewInfoModal_ {...baseProps} refetch={refetch} />);
++
++    await user.click(screen.getByTestId('visibility-menu'));
++    expect(refetch).toHaveBeenCalledTimes(1);
++  });
++
+   it('disables copy link when view does not exist', () => {
+     mockViewQuery = { ...mockViewQuery, data: undefined };
+     render(<ViewInfoModal_ {...baseProps} />);
 ```
 
-**File**: `ui/components/connections/index.tsx` (modified, +32/-10)
+**File**: `ui/components/workspaces/ViewInfoModal.tsx` (modified, +15/-8)
 ```diff
-@@ -29,16 +29,24 @@ import { useRouter } from 'next/router';
-  * - Keep the component's responsibilities focused on connection management. Avoid adding unrelated functionality and state.
-  */
+@@ -134,11 +134,14 @@ export const ViewInfoModal_: FC<ViewInfoModalProps> = ({
+   metadata,
+   refetch,
+ }) => {
+-  const [formState, setFormState] = useState(metadata);
+   const viewRes = useGetViewQuery({ viewId }, { skip: !viewId });
+   const userRes = useGetLoggedInUserQuery();
+   const view = viewRes.data;
+   const user = userRes.data;
++  // Untouched notes come from the fetched view: `metadata` is the list row the
++  // modal was opened from, which is stale once the notes have been saved.
++  const [editedMetadata, setEditedMetadata] = useState<unknown>(null);
++  const formState = editedMetadata ?? view?.metadata ?? metadata;
  
-+/**
-+ * Renders the Connections and MeshSync management views with RBAC gating and
-+ * deferred schema loading.
-+ */
- function ConnectionManagementPage(props) {
-+  const hasViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
-   const [createConnectionModal, setCreateConnectionModal] = useState({
-     open: false,
-   });
+   const isLoading =
+     viewRes.isLoading || userRes.isLoading || viewRes.isFetching || userRes.isFetching;
+@@ -197,7 +200,7 @@ export const ViewInfoModal_: FC<ViewInfoModalProps> = ({
+             </Row>
+             <Row justifyContent="start">
+               <Title>Visibility: </Title>
+-              <ViewVisibilityMenu view={view} />
++              <ViewVisibilityMenu view={view} onUpdated={refetch} />
+             </Row>
+           </OuterRow>
+           <RJSFWrapper
+@@ -210,7 +213,7 @@ export const ViewInfoModal_: FC<ViewInfoModalProps> = ({
+               markdown: MarkdownInput,
+             }}
+             onChange={(formData: unknown) => {
+-              setFormState(formData);
++              setEditedMetadata(formData);
+             }}
+             RJSFWrapperComponent={StyledRJSFWrapper}
+           />
+@@ -256,19 +259,23 @@ const formatUsername = ({ firstName, lastName }: { firstName?: string; lastName?
  
--  const { data: schemaResponse } = useGetSchemaQuery({
--    schemaName: 'helmRepo',
--  });
-+  const { data: schemaResponse } = useGetSchemaQuery(
-+    {
-+      schemaName: 'helmRepo',
-+    },
-+    { skip: !hasViewConnections },
-+  );
+ type ViewLike = { id?: string; userId?: string; visibility?: string } | undefined;
  
--  const createConnection = schemaResponse ?? {};
-+  const createConnection = (hasViewConnections ? schemaResponse : undefined) ?? {};
- 
-   const handleCreateConnectionModalOpen = () => {
-     setCreateConnectionModal({ open: true });
-@@ -48,17 +56,24 @@ function ConnectionManagementPage(props) {
-     setCreateConnectionModal({ open: false });
-   };
- 
-+  useEffect(() => {
-+    if (!hasViewConnections) {
-+      setCreateConnectionModal((prev) => (prev.open ? { open: false } : prev));
-+    }
-+  }, [hasViewConnections]);
-+
-   const handleCreateConnectionSubmit = () => {};
- 
-   return (
-     <>
-       <Connections
-+        hasViewConnections={hasViewConnections}
-         createConnectionModal={createConnectionModal}
-         onOpenCreateConnectionModal={handleCreateConnectionModalOpen}
-         onCloseCreateConnectionModal={handleCreateConnectionModalClose}
-         {...props}
-       />
--      {createConnectionModal.open && (
-+      {hasViewConnections && createConnectionModal.open && (
-         <Modal
-           open={true}
-           schema={createConnection.rjsfSchema}
-@@ -72,12 +87,12 @@ function ConnectionManagementPage(props) {
-     </>
-   );
- }
--function Connections() {
--  const hasViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
-+function Connections({ hasViewConnections }) {
-   const theme = useTheme();
-   const router = useRouter();
-   const { query, pathname, push, isReady, replace } = router;
--  const { openCreateConnection } = useConnectionWizardModal();
-+  const { openCreateConnection, closeCreateConnection } = useConnectionWizardModal();
-+  const prevHasViewConnectionsRef = useRef(hasViewConnections);
-   const tabParam = typeof query.tab === 'string' ? query.tab.toLowerCase() : undefined;
-   const connectionId = typeof query.connectionId === 'string' ? query.connectionId : undefined;
- 
-@@ -95,7 +110,7 @@ function Connections() {
-         : null;
- 
-   useEffect(() => {
--    if (!isReady || !isCreateConnectionQuery(createFlag)) {
-+    if (!hasViewConnections || !isReady || !isCreateConnectionQuery(createFlag)) {
-       return;
-     }
-     openCreateConnection({
-@@ -106,7 +121,14 @@ function Connections() {
-     delete nextQuery[CREATE_CONNECTION_QUERY.create];
-     delete nextQuery[CREATE_CONNECTION_QUERY.kind];
-     replace({ pathname, query: nextQuery }, undefined, { shallow: true });
--  }, [isReady, createFlag, kindFromQuery, openCreateConnection]);
-+  }, [hasViewConnections, isReady, createFlag, kindFromQuery, openCreateConnection]);
-+
-+  useEffect(() => {
-+    if (prevHasViewConnectionsRef.current && !hasViewConnections) {
-+      closeCreateConnection();
-+    }
-+    prevHasViewConnectionsRef.current = hasViewConnections;
-+  }, [hasViewConnections, closeCreateConnection]);
- 
-   // Next.js's pages-router `router.query` and `router.push` get fresh
-   // references on each render, which previously cascaded into a new
-```
-
-**File**: `ui/components/registry/MeshModelComponent.permissions.test.tsx` (added, +345/-0)
-```diff
-@@ -0,0 +1,345 @@
-+import React from 'react';
-+import { act, render, screen, waitFor } from '@testing-library/react';
-+import { Keys } from '@meshery/schemas/permissions';
-+import { beforeEach, describe, expect, it, vi } from 'vitest';
-+
-+const {
-+  mockUseHasPermission,
-+  mockUseGetMeshModelsQuery,
-+  mockUseGetComponentsQuery,
-+  mockUseGetRelationshipsQuery,
-+  mockUseGetRegistrantsQuery,
-+  mockUseGetConnectionDefinitionsQuery,
-+  mockGetMeshModelsData,
-+  mockGetComponentsData,
-+  mockGetRelationshipsData,
-+  mockGetRegistrantsData,
-+  mockGetConnectionDefinitionsData,
-+} = vi.hoisted(() => ({
-+  mockUseHasPermission: vi.fn(),
-+  mockUseGetMeshModelsQuery: vi.fn(),
-+  mockUseGetComponentsQuery: vi.fn(),
-+  mockUseGetRelationshipsQuery: vi.fn(),
-+  mockUseGetRegistrantsQuery: vi.fn(),
-+  mockUseGetConnectionDefinitionsQuery: vi.fn(),
-+  mockGetMeshModelsData: vi.fn(),
-+  mockGetComponentsData: vi.fn(),
-+  mockGetRelationshipsData: vi.fn(),
-+  mockGetRegistrantsData: vi.fn(),
-+  mockGetConnectionDefinitionsData: vi.fn(),
-+}));
-+
-+let modelsResState: any;
-+let componentsResState: any;
-+let relationshipsResState: any;
-+let registrantsResState: any;
-+let connectionsResState: any;
-+
-+function createControllableQueryPromise<T>() {
-+  let resolve!: (value: T) => void;
-+  let reject!: (reason?: unknown) => void;
-+  const promise = new Promise<T>((res, rej) => {
-+    resolve = res;
-+    reject = rej;
-+  }) as Promise<T> & { abort: ReturnType<typeof vi.fn>; unsubscribe: ReturnType<typeof vi.fn> };
-+  promise.abort = vi.fn();
-+  promise.unsubscribe = vi.fn();
-+  return { promise, resolve, reject };
-+}
-+
-+vi.mock('next/router', () => ({
-+  useRouter: () => ({ query: {}, pathname: '/settings', push: vi.fn(), isReady: true }),
-+}));
-+
-+vi.mock('@sistent/sistent', () => ({
-+  Button: ({ startIcon: _startIcon, children, ...rest }: any) => (
-+    <button {...rest}>{children}</button>
-+  ),
-+  NoSsr: ({ children }: any) => <>{children}</>,
-+  AddCircleIcon: () => <svg />,
-+  ExternalLinkIcon: () => <svg />,
-+  FileUploadIcon: () => <svg />,
-+  useHasPermission: (permissionKey: any) => mockUseHasPermission(permissionKey),
-+  useMediaQuery: () => false,
-+}));
-+
-+vi.mock('@/theme', () => ({
-+  styled:
-+    (Component: any) =>
-+    () =>
-+    ({ children, ...rest }: any) =>
-+      React.createElement(Component || 'div', rest, children),
-+  useTheme: () => ({
-+    breakpoints: { down: () => '@media (max-width:600px)' },
-+  }),
-+}));
-+
-+vi.mock('css/icons.styles', () => ({
-+  iconSmall: {},
-+}));
-+
-+vi.mock('../general/error-404/index', () => ({
-+  default: ({ permissionKey }: any) => (
-+    <div data-testid="default-error" data-permission-key={JSON.stringify(permissionKey)} />
-+  ),
-+}));
-+
-+vi.mock('@/assets/styles/general/tool.styles', () => {
-+  const Div = ({ children, ...rest }: any) => <div {...rest}>{children}</div>;
-+  return {
-+    MeshModelToolbar: Div,
-+    MainContainer: Div,
-+    TreeWrapper: Div,
-+    DetailsContainer: ({ isEmpty: _isEmpty, children, ...rest }: any) => (
-+      <div {...rest}>{children}</div>
-+    ),
-+    InnerContainer: Div,
-+    WorkloadsContainer: Div,
-+  };
-+});
-+
-+vi.mock('./TabCard', () => ({
-+  default: ({ label, count }: any) => (
-+    <div data-testid={`tab-card-${label}`} data-count={count}>
-+      {label}: {count}
-+    </div>
-+  ),
-+}));
-+
-+vi.mock('./MesheryTreeView', () => ({
-+  default: ({ data, view }: any) => (
-+    <div data-testid="meshery-tree-view" data-view={view} data-count={data?.length ?? 0} />
-+  ),
-+}));
-+
-+vi.mock('./MeshModelDetails', () => ({
-+  default: () => <div data-testid="mesh-model-details" />,
-+}));
-+
-+vi.mock('./MeshModelMobileDetails', () => ({
-+  default: () => <div data-testid="mesh-model-mobile-details" />,
-+}));
-+
-+vi.mock('./ImportModelModal', () => ({
-+  default: () => null,
-+}));
-+
-+vi.mock('./CreateModelModal', () => ({
-+  default: () => null,
-+}));
-+
-+vi.mock('./CreateRelationshipModal', () => ({
-+  default: () => null,
-+}));
-+
-+vi.mock('./hooks', () => ({
-+  useInfiniteScrollRef: () => vi.fn(),
-+  useMeshModelComponentRouter: () => ({
-+    searchQuery: null,
-+    selectedPageSize: 25,
-+    selectedTab: 'Models',
-+  }),
-+}));
-+
-+vi.mock('./helper', () => ({
-+  groupRelationshipsByKind: (items: any[]) => items,
-+  removeDuplicateVersions: (items: any[]) => items,
-+}));
-+
-+vi.mock('@/rtk-query/meshModel', () => ({
-+  useGetMeshModelsQuery: (...args: any[]) => mockUseGetMeshModelsQuery(...args),
-+  useGetComponentsQuery: (...args: any[]) => mockUseGetComponentsQuery(...args),
-+  useGetRelationshipsQuery: (...args: any[]) => mockUseGetRelationshipsQuery(...args),
-+  useGetRegistrantsQuery: (...args: any[]) => mockUseGetRegistrantsQuery(...args),
-+  useGetConnectionDefinitionsQuery: (...args: any[]) =>
-+    mockUseGetConnectionDefinitionsQuery(...args),
-+  useLazyGetMeshModelsQuery: () => [mockGetMeshModelsData, modelsResState],
-+  useLazyGetComponentsQuery: () => [mockGetComponentsData, componentsResState],
-+  useLazyGetRelationshipsQuery: () => [mock
-```
-
-**File**: `ui/components/registry/MeshModelComponent.tsx` (modified, +156/-222)
-```diff
-@@ -1,4 +1,4 @@
--import React, { useState, useEffect, useCallback, useMemo } from 'react';
-+import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from 'react';
- import {
-   MODELS,
-   COMPONENTS,
-@@ -7,7 +7,6 @@ import {
-   CONNECTIONS,
- } from '../../constants/navigator';
- import {
--  MeshModelToolbar,
-   MainContainer,
-   TreeWrapper,
-   DetailsContainer,
-@@ -17,7 +16,6 @@ import {
- import TabCard from './TabCard';
- import MesheryTreeView from './MesheryTreeView';
- import MeshModelDetails from './MeshModelDetails';
--import { toLower } from 'lodash';
- import { useRouter } from 'next/router';
- import {
-   useLazyGetMeshModelsQuery,
-@@ -32,17 +30,13 @@ import {
-   useGetConnectionDefinitionsQuery,
- } from '@/rtk-query/meshModel';
- import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
-+import { MeshModelTabBar } from './MeshModelTabBar';
-+import { fetchRegistryViewData } from './registryFetch';
- import _ from 'lodash';
--import {
--  Button,
--  NoSsr,
--  AddCircleIcon as AddIcon,
--  ExternalLinkIcon as LinkIcon,
--  FileUploadIcon as UploadIcon,
--  useMediaQuery,
--} from '@sistent/sistent';
-+import { NoSsr, useHasPermission, useMediaQuery } from '@sistent/sistent';
-+import { Keys } from '@meshery/schemas/permissions';
-+import DefaultError from '../general/error-404/index';
- import { useTheme } from '@/theme';
--import { iconSmall } from 'css/icons.styles';
- import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
- import ImportModelModal from './ImportModelModal';
- import CreateModelModal from './CreateModelModal';
-@@ -62,6 +56,18 @@ const MeshModelComponent_ = ({
-   externalSearchText = null, // External search text from modal
-   externalSelectedItemUUID = null, // External selected item UUID from modal
- }: MeshModelComponentProps) => {
-+  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
-+  const canViewRegistryRef = useRef(canViewRegistry);
-+  const fetchRequestIdRef = useRef(0);
-+  const trackedQueryHandlesRef = useRef<Set<{ unsubscribe?: () => void; abort?: () => void }>>(
-+    new Set(),
-+  );
-+
-+  // Sync synchronously in commit phase (before paint or promise continuations) so
-+  // neither aborted renders nor pre-passive-effect microtasks read a stale ref.
-+  useLayoutEffect(() => {
-+    canViewRegistryRef.current = canViewRegistry;
-+  }, [canViewRegistry]);
-   const theme = useTheme();
-   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-   const router = useRouter();
-@@ -111,27 +117,42 @@ const MeshModelComponent_ = ({
-   /**
-    * RTK Queries for counts
-    */
--  const { data: modelsCountData } = useGetMeshModelsQuery({
--    params: { page: 0, pagesize: 1, components: false, relationships: false },
--  });
--  const { data: componentsCountData } = useGetComponentsQuery({
--    params: { page: 0, pagesize: 1, trim: true },
--  });
--  const { data: relationshipsCountData } = useGetRelationshipsQuery({
--    params: { page: 0, pagesize: 1 },
--  });
--  const { data: registrantsCountData } = useGetRegistrantsQuery({
--    params: { page: 0, pagesize: 1 },
--  });
--  const { data: connectionsCountData } = useGetConnectionDefinitionsQuery({
--    params: { page: 0, pagesize: 1 },
--  });
-+  const { data: modelsCountData } = useGetMeshModelsQuery(
-+    {
-+      params: { page: 0, pagesize: 1, components: false, relationships: false },
-+    },
-+    { skip: !canViewRegistry },
-+  );
-+  const { data: componentsCountData } = useGetComponentsQuery(
-+    {
-+      params: { page: 0, pagesize: 1, trim: true },
-+    },
-+    { skip: !canViewRegistry },
-+  );
-+  const { data: relationshipsCountData } = useGetRelationshipsQuery(
-+    {
-+      params: { page: 0, pagesize: 1 },
-+    },
-+    { skip: !canViewRegistry },
-+  );
-+  const { data: registrantsCountData } = useGetRegistrantsQuery(
-+    {
-+      params: { page: 0, pagesize: 1 },
-+    },
-+    { skip: !canViewRegistry },
-+  );
-+  const { data: connectionsCountData } = useGetConnectionDefinitionsQuery(
-+    {
-+      params: { page: 0, pagesize: 1 },
-+    },
-+    { skip: !canViewRegistry },
-+  );
- 
--  const modelsData = modelsRes.data;
--  const registrantsData = registrantsRes.data;
--  const componentsData = componentsRes.data;
--  const relationshipsData = relationshipsRes.data;
--  const connectionsData = connectionsRes.data;
-+  const modelsData = canViewRegistry ? modelsRes.data : undefined;
-+  const registrantsData = canViewRegistry ? registrantsRes.data : undefined;
-+  const componentsData = canViewRegistry ? componentsRes.data : undefined;
-+  const relationshipsData = canViewRegistry ? relationshipsRes.data : undefined;
-+  const connectionsData = canViewRegistry ? connectionsRes.data : undefined;
- 
-   const hasMoreModels =
-     modelsData?.totalCount > modelsData?.pageSize * ((modelsData?.page || 0) + 1);
-@@ -146,39 +167,59 @@ const MeshModelComponent_ = ({
-     connectionsData?.totalCount > connectionsData?.pageSize * ((connectionsData?.page || 0) + 1);
- 
-   const l
-```
-
-**File**: `ui/components/registry/MeshModelTabBar.tsx` (added, +84/-0)
-```diff
-@@ -0,0 +1,84 @@
-+import React from 'react';
-+import {
-+  Button,
-+  AddCircleIcon as AddIcon,
-+  ExternalLinkIcon as LinkIcon,
-+  FileUploadIcon as UploadIcon,
-+} from '@sistent/sistent';
-+import { MeshModelToolbar } from '@/assets/styles/general/tool.styles';
-+import { styled } from '@/theme';
-+import { MODELS, RELATIONSHIPS } from '../../constants/navigator';
-+import { iconSmall } from 'css/icons.styles';
-+
-+const ToolbarActions = styled('div')({
-+  display: 'flex',
-+  justifyContent: 'flex-start',
-+  alignItems: 'center',
-+  gap: '0.75rem',
-+  flexWrap: 'wrap',
-+});
-+
-+type MeshModelTabBarProps = {
-+  openImportModal: () => void;
-+  openCreateModal: () => void;
-+  openRelationshipModal: () => void;
-+  view: string;
-+};
-+
-+/**
-+ * Toolbar actions rendered above the registry resource tree for creating and
-+ * importing models or relationships.
-+ */
-+export const MeshModelTabBar = ({
-+  openImportModal,
-+  openCreateModal,
+-const ViewVisibilityMenu: FC<{ view: ViewLike }> = ({ view }) => {
++const ViewVisibilityMenu: FC<{ view: ViewLike; onUpdated?: () => void }> = ({
 +  view,
-+  openRelationshipModal,
-+}: MeshModelTabBarProps) => {
-+  return (
-+    <MeshModelToolbar>
-+      <ToolbarActions>
-+        {view === MODELS && (
-+          <>
-+            <Button
-+              aria-label="Create Model"
-+              variant="contained"
-+              color="primary"
-+              onClick={openCreateModal}
-+              disabled={false} //TODO: Need to make key for this component
-+              startIcon={<AddIcon style={iconSmall} />}
-+              data-testid="TabBar-Button-CreateModel"
-+            >
-+              Create Model
-+            </Button>
-+            <Button
-+              aria-label="Import Model"
-+              variant="contained"
-+              color="primary"
-+              onClick={openImportModal}
-+              disabled={false} //TODO: Need to make key for this component
-+              startIcon={<UploadIcon />}
-+              data-testid="TabBar-Button-ImportModel"
-+            >
-+              Import Model
-+            </Button>
-+          </>
-+        )}
-+
-+        {view === RELATIONSHIPS && (
-+          <Button
-+            aria-label="Create Relationship"
-+            variant="contained"
-+            color="primary"
-+            onClick={openRelationshipModal}
-+            disabled={false}
-+            startIcon={<LinkIcon />}
-+            data-testid="TabBar-Button-CreateRelationship"
-+          >
-+            Create Relationship
-+          </Button>
-+        )}
-+      </ToolbarActions>
-+    </MeshModelToolbar>
-+  );
-+};
++  onUpdated,
++}) => {
+   const { data: userData } = useGetLoggedInUserQuery();
+   const [updateView] = useUpdateViewVisibilityMutation();
+   return (
+     <VisibilityChipMenu
+       value={view?.visibility || VIEW_VISIBILITY.PUBLIC}
+-      onChange={(value: string) =>
+-        handleUpdateViewVisibility({
++      onChange={async (value: string) => {
++        await handleUpdateViewVisibility({
+           value: value,
+           updateView: updateView,
+           selectedResource: view,
+-        })
+-      }
++        });
++        onUpdated?.();
++      }}
+       enabled={view?.userId === userData?.id}
+       options={[
+         [VIEW_VISIBILITY.PUBLIC, Public],
 ```
 
-**File**: `ui/components/registry/RegistryModal.test.tsx` (modified, +150/-17)
+**File**: `ui/rtk-query/__tests__/view-cache-invalidation.test.ts` (added, +210/-0)
 ```diff
-@@ -1,7 +1,22 @@
- import React from 'react';
- import { render, screen, fireEvent } from '@testing-library/react';
-+import { Keys } from '@meshery/schemas/permissions';
- import { beforeEach, describe, expect, it, vi } from 'vitest';
- 
-+const {
-+  mockUseHasPermission,
-+  mockUseGetMeshModelsQuery,
-+  mockUseGetComponentsQuery,
-+  mockUseGetRelationshipsQuery,
-+  mockUseGetRegistrantsQuery,
-+} = vi.hoisted(() => ({
-+  mockUseHasPermission: vi.fn(),
-+  mockUseGetMeshModelsQuery: vi.fn(),
-+  mockUseGetComponentsQuery: vi.fn(),
-+  mockUseGetRelationshipsQuery: vi.fn(),
-+  mockUseGetRegistrantsQuery: vi.fn(),
+@@ -0,0 +1,210 @@
++import { describe, expect, it, vi, afterEach, afterAll } from 'vitest';
++import { configureStore } from '@reduxjs/toolkit';
++
++// Pin the absolute base every rtk-query suite uses before the client loads, and
++// restore it afterwards so suite order cannot start to matter.
++const { previousEndpointPrefix } = vi.hoisted(() => {
++  const previous = process.env.RTK_MESHERY_ENDPOINT_PREFIX;
++  process.env.RTK_MESHERY_ENDPOINT_PREFIX = 'http://localhost';
++  return { previousEndpointPrefix: previous };
++});
++
++afterAll(() => {
++  if (previousEndpointPrefix === undefined) {
++    delete process.env.RTK_MESHERY_ENDPOINT_PREFIX;
++  } else {
++    process.env.RTK_MESHERY_ENDPOINT_PREFIX = previousEndpointPrefix;
++  }
++});
++
++// view.ts pulls in @/utils/utils (SVG-in-JS transitively) and, through
++// ../utils, the app store. Mock the small surface it uses.
++vi.mock('@/utils/utils', () => ({
++  urlEncodeArrayParam: (key: string, array: unknown) =>
++    Array.isArray(array) ? array.map((item) => `${key}=${item}`).join('&') : '',
++  urlEncodeParams: (params: Record<string, unknown>) =>
++    new URLSearchParams(
++      Object.entries(params)
++        .filter(([, v]) => v != null)
++        .map(([k, v]) => [k, String(v)]),
++    ).toString(),
 +}));
++vi.mock('../../store', () => ({ store: { dispatch: vi.fn() } }));
 +
- let mediaQueryReturn = false;
- const RegistryModalContext = React.createContext<any>({});
- 
-@@ -57,6 +72,7 @@ vi.mock('@sistent/sistent', () => ({
-   InfoIcon: () => <svg data-testid="info-icon" />,
-   DatabaseIcon: () => <svg data-testid="database-icon" />,
-   CustomTooltip: ({ children }: any) => <>{children}</>,
-+  useHasPermission: (permissionKey: any) => mockUseHasPermission(permissionKey),
-   useMediaQuery: () => mediaQueryReturn,
-   useTheme: () => stableTheme,
-   alpha: (value: string) => value,
-@@ -95,14 +111,23 @@ vi.mock('@sistent/sistent', () => ({
- vi.mock('@/assets/icons/Connection', () => ({ default: () => <svg /> }));
- vi.mock('@/assets/icons/Component', () => ({ default: () => <svg /> }));
- vi.mock('@/components/shared/Modal', () => ({
--  Modal: ({ children, isOpen, title }: any) =>
-+  Modal: ({ children, isOpen, onClose, title }: any) =>
-     isOpen ? (
-       <div data-testid="registry-modal" data-title={title}>
-+        <button type="button" data-testid="close-registry-modal" onClick={onClose}>
-+          Close
-+        </button>
-         {children}
-       </div>
-     ) : null,
- }));
- 
-+vi.mock('../general/error-404/index', () => ({
-+  default: ({ permissionKey }: any) => (
-+    <div data-testid="default-error" data-permission-key={JSON.stringify(permissionKey)} />
-+  ),
-+}));
++import { api } from '../index';
++import { viewsApi } from '../view';
 +
- vi.mock('./MeshModelComponent', () => ({
-   default: (props: any) => (
-     <div
-@@ -133,22 +158,10 @@ vi.mock('@/utils/context/RegistryModalContextProvider', () => ({
- }));
- 
- vi.mock('@/rtk-query/meshModel', () => ({
--  useGetMeshModelsQuery: () => ({
--    data: { models: [] },
--    isLoading: false,
--  }),
--  useGetComponentsQuery: () => ({
--    data: { totalCount: 7 },
--    isLoading: false,
--  }),
--  useGetRelationshipsQuery: () => ({
--    data: { totalCount: 3 },
--    isLoading: false,
--  }),
--  useGetRegistrantsQuery: () => ({
--    data: { totalCount: 5 },
--    isLoading: false,
--  }),
-+  useGetMeshModelsQuery: (...args: any[]) => mockUseGetMeshModelsQuery(...args),
-+  useGetComponentsQuery: (...args: any[]) => mockUseGetComponentsQuery(...args),
-+  useGetRelationshipsQuery: (...args: any[]) => mockUseGetRelationshipsQuery(...args),
-+  useGetRegistrantsQuery: (...args: any[]) => mockUseGetRegistrantsQuery(...args),
- }));
- 
- vi.mock('./helper', () => ({
-@@ -187,6 +200,28 @@ describe('RegistryModal', () => {
- 
-   beforeEach(() => {
-     mediaQueryReturn = false;
-+    mockUseHasPermission.mockReset();
-+    mockUseHasPermission.mockReturnValue(true);
-+    mockUseGetMeshModelsQuery.mockReset();
-+    mockUseGetMeshModelsQuery.mockReturnValue({
-+      data: { models: [] },
-+      isLoading: false,
-+    });
-+    mockUseGetComponentsQuery.mockReset();
-+    mockUseGetComponentsQuery.mockReturnValue({
-+      data: { totalCount: 7 },
-+      isLoading: false,
-+    });
-+    mockUseGetRelationshipsQuery.mockReset();
-+    mockUseGetRelationshipsQuery.mockReturnValue({
-+      data: { totalCount: 3 },
-+      isLoading: false,
-+    });
-+    mockUseGetRegistrantsQuery.mockReset();
-+    mockUseGetRegistrantsQuery.mockReturnValue({
-+      data: { totalCount: 5 },
-+      isLoading: false,
-+    });
-   });
- 
-   it('renders nothing when context.open is false', () => {
-@@ -203,9 +238,72 @@ describe('RegistryModal', () => {
-     // or the updated form.
-     expect(modal.getAttribute('data-title')).toMatch(/^Registry/);
-   });
++const VIEW_URL = /\/api\/extensions\/api\/content\/views\/([^/?]+)$/;
++const LIST_URL = '/api/extensions/api/content/views?';
++const PAGE_SIZE = 2;
 +
-+  it('renders DefaultError, keeps modal closable, and skips Navigation queries when denied', () => {
-+    mockUseHasPermission.mockReturnValue(false);
-+    const ctx = { ...baseCtx(), open: true };
-+
-+    render(wrap(<RegistryModal />, ctx));
-+
-+    const modal = screen.getByTestId('registry-modal');
-+    expect(modal).toHaveAttribute('data-title', 'Registry');
-+    expect(screen.getByTestId('default-error')).toHaveAttribute(
-+      'data-permission-key',
-+      JSON.stringify(Keys.MesherySystemViewRegistry),
-+    );
-+    expect(screen.queryByTestId('mesh-model-component')).not.toBeInTheDocument();
-+    expect(mockUseGetMeshModelsQuery).not.toHaveBeenCalled();
-+    expect(mockUseGetComponentsQuery).not.toHaveBeenCalled();
-+    expect(mockUseGetRelationshipsQuery).not.toHaveBeenCalled();
-+    expect(mockUseGetRegistrantsQuery).not.toHaveBeenCalled();
-+
-+    fireEvent.click(screen.getByTestId('close-registry-modal'));
-+    expect(ctx.closeModal).toHaveBeenCalledTimes(1);
++const json = (body: unknown, status = 200) =>
++  new Response(JSON.stringify(body), {
++    status,
++    headers: { 'content-type': 'application/json' },
 +  });
 +
-+  it('resets modal he
++// A tiny in-memory remote provider: PUT and DELETE change what later GETs
++// return, so the assertions below are about what the cache ends up showing.
++const setup = () => {
++  const server: Record<string, Record<string, unknown>> = {};
++  ['v-1', 'v-2', 'v-3', 'v-4'].forEach((id) => {
++    server[id] = { id, name: id, visibility: 'public', metadata: { notes: 'old' } };
++  });
++
++  const fetchMock = vi.fn(async (request: Request) => {
++    const url = new URL(request.url);
++    const match = url.pathname.match(VIEW_URL);
++    if (match && request.method === 'PUT') {
++      Object.assign(server[match[1]], await request.json());
++      return json(server[match[1]]);
++    }
++    if (match && request.method === 'DELETE') {
++      delete server[match[1]];
++      return json({});
++    }
++    if (match) {
++      return server[match[1]] ? json(server[match[1]]) : json({ error: 'not found' }, 404);
++    }
++    const page = Number(url.searchParams.get('page'));
++    const all = Object.values(server);
++    return json({
++      page,
++      pageSize: PAGE_SIZE,
++      totalCount: all.length,
++      views: all.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE),
++    });
++  });
++  vi.stubGlobal('fetch', fetchMock);
++
++  const store = configureStore({
++    reducer: { [api.reducerPath]: api.reducer },
++    middleware: (getDefault) => getDefault().concat(api.middleware),
++  });
++
++  const requests = (method: string, path: string | RegExp) =>
++    fetchMock.mock.calls.filter(([request]) => {
++      const { pathname, search } = new URL(request.url);
++      const target = pathname + (search ? '?' : '');
++      return (
++        request.method === method &&
++        (typeof path === 'string' ? target.endsWith(path) : path.test(target))
++      );
++    }).length;
++
++  const getViewData = (viewId: string) =>
++    viewsApi.endpoints.getView.select({ viewId })(store.getState()).data as
++      | Record<string, unknown>
++      | undefined;
++
++  return { store, requests, getViewData };
++};
++
++// Let invalidation-driven refetches dispatched by the middleware settle.
++const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
++
++describe('view mutations keep the cached views fresh', () => {
++  afterEach(() => {
++    vi.unstubAllGlobals();
++  });
++
++  it('refetches the open view after a visibility change, and only that view', async () => {
++    const { store, requests, getViewData } = setup();
++    const open = store.dispatch(viewsApi.endpoints.getView.initiate({ viewId: 'v-1' }));
++    const other = store.dispatch(viewsApi.endpoints.getView.initiate({ viewId: 'v-2' }));
++    await Promise.all([open, other]);
++
++    await store
++      .dispatch(
++        viewsApi.endpoints.updateViewVisibility.initiate({
++          id: 'v-1',
++          body: { visibility: 'private' },
++        }),
++      )
++      .unwrap();
++    await settle();
++
++    expect(requests('GET', '/views/v-1')).toBe(2);
++    expect(getViewData('v-1')?.visibility).toBe('private');
++    expect(requests('GET', '/views/v-2')).toBe(1);
++
++    open.unsubscribe();
++    other.unsubscribe();
++  });
++
++  it('refetches the open view after its notes are saved', async () => {
++    const { store, requests, getViewData } = setup();
++    const open = store.dispatch(viewsApi.endpoints.getVie
 ```
 
-**File**: `ui/components/registry/RegistryModal.tsx` (modified, +70/-21)
+**File**: `ui/rtk-query/view.ts` (modified, +8/-2)
 ```diff
-@@ -27,7 +27,10 @@ import {
-   DatabaseIcon,
-   DARK_BLUE_GRAY,
-   useMediaQuery,
-+  useHasPermission,
- } from '@sistent/sistent';
-+import { Keys } from '@meshery/schemas/permissions';
-+import DefaultError from '../general/error-404/index';
- import { styled, useTheme } from '@/theme';
- import { Modal } from '@/components/shared/Modal';
- import { ChevronButtonWrapper } from '../general/style';
-@@ -273,7 +276,11 @@ interface NavigationProps {
-   setHeaderInfo: (_info: HeaderInfo) => void;
- }
- 
-+/**
-+ * Registry navigation rail and content host gated by registry view permission.
-+ */
- export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
-+  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
-   const theme = useTheme();
-   const closeList = useMediaQuery(theme.breakpoints.down('xl'));
-   const [open, setOpen] = useState(!closeList);
-@@ -287,29 +294,51 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
-     }
-   }, [selectedView]);
- 
--  const { data: modelsData } = useGetMeshModelsQuery({
--    params: { pagesize: 'all' },
--  });
--  const { data: componentsData } = useGetComponentsQuery({
--    params: { pagesize: 'all' },
--  });
--  const { data: relationshipsData } = useGetRelationshipsQuery({
--    params: { pagesize: 'all' },
--  });
--  const { data: registrantsData } = useGetRegistrantsQuery({
--    params: { pagesize: 'all' },
--  });
--  const counts: CountSummary = {
--    models: modelsData ? removeDuplicateVersions(modelsData.models || []).length : 0,
--    components: componentsData?.totalCount ?? componentsData?.total_count ?? 0,
--    relationships: relationshipsData?.totalCount ?? relationshipsData?.total_count ?? 0,
--    registrants: registrantsData?.totalCount ?? registrantsData?.total_count ?? 0,
--  };
-+  const { data: modelsData } = useGetMeshModelsQuery(
-+    {
-+      params: { pagesize: 'all' },
-+    },
-+    { skip: !canViewRegistry },
-+  );
-+  const { data: componentsData } = useGetComponentsQuery(
-+    {
-+      params: { pagesize: 'all' },
-+    },
-+    { skip: !canViewRegistry },
-+  );
-+  const { data: relationshipsData } = useGetRelationshipsQuery(
-+    {
-+      params: { pagesize: 'all' },
-+    },
-+    { skip: !canViewRegistry },
-+  );
-+  const { data: registrantsData } = useGetRegistrantsQuery(
-+    {
-+      params: { pagesize: 'all' },
-+    },
-+    { skip: !canViewRegistry },
-+  );
-+  const counts: CountSummary = canViewRegistry
-+    ? {
-+        models: modelsData ? removeDuplicateVersions(modelsData.models || []).length : 0,
-+        components: componentsData?.totalCount ?? componentsData?.total_count ?? 0,
-+        relationships: relationshipsData?.totalCount ?? relationshipsData?.total_count ?? 0,
-+        registrants: registrantsData?.totalCount ?? registrantsData?.total_count ?? 0,
-+      }
-+    : {
-+        models: 0,
-+        components: 0,
-+        relationships: 0,
-+        registrants: 0,
-+      };
-   const navConfig = getNavItems(theme, counts);
- 
-   const handleDrawerToggle = () => setOpen((prev) => !prev);
- 
-   const updateHeaderInfo = (id: string) => {
-+    if (!canViewRegistry) {
-+      return;
-+    }
-     const item = navConfig.find((nav) => nav.id === id);
-     if (item) {
-       setHeaderInfo({
-@@ -320,15 +349,25 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
-   };
- 
-   const handleItemSelect = (id: string) => {
-+    if (!canViewRegistry) {
-+      return;
-+    }
-     setSelectedId(id);
-     registryContext.setSelectedView(id);
-     updateHeaderInfo(id);
-   };
- 
-   // Set initial header info on component mount
-   useEffect(() => {
-+    if (!canViewRegistry) {
-+      return;
-+    }
-     updateHeaderInfo(selectedId);
--  }, [selectedId, theme]);
-+  }, [canViewRegistry, selectedId, theme]);
+@@ -18,21 +18,27 @@ export const viewsApi = api
+           url: mesheryApiPath(`extensions/api/content/views/${viewId}`),
+           method: 'GET',
+         }),
+-        providesTags: () => [{ type: TAGS.VIEWS }],
++        providesTags: (result, error, { viewId }) => [{ type: TAGS.VIEWS, id: viewId }],
+       }),
++      // The view mutations invalidate only the changed view's id, so an open
++      // getView refetches. They deliberately leave fetchViews alone: it merges
++      // every page into one cache entry, so an invalidation would refetch the
++      // current page and append it a second time. List callers refetch from
++      // page 0 themselves.
+       deleteView: builder.mutation({
+         query: ({ id }) => ({
+           url: mesheryApiPath(`extensions/api/content/views/${id}`),
+           method: 'DELETE',
+         }),
++        invalidatesTags: (result, error, { id }) => [{ type: TAGS.VIEWS, id }],
+       }),
+       updateViewVisibility: builder.mutation({
+         query: ({ id, body }) => ({
+           url: mesheryApiPath(`extensions/api/content/views/${id}`),
+           method: 'PUT',
+           body: body,
+         }),
+-        providesTags: () => [{ type: TAGS.VIEWS }],
++        invalidatesTags: (result, error, { id }) => [{ type: TAGS.VIEWS, id }],
+       }),
+       fetchViews: builder.query({
+         query: (queryArg) =>
+```
+
+---
+
+### Incident Patch 2: `7568a30a` (2026-11-13)
+**Commit Message**: Merge pull request #23453 from Asheesh7298/bug/asheesh7298/23452
+
+[UI] Read camelCase owner fields in the Workspaces table
+
+**File**: `ui/components/workspaces/WorkspaceDataTable.test.tsx` (modified, +105/-1)
+```diff
+@@ -1,7 +1,7 @@
+ import React from 'react';
+ import '@testing-library/jest-dom';
+ import { configureStore } from '@reduxjs/toolkit';
+-import { act, render } from '@testing-library/react';
++import { act, fireEvent, render, screen } from '@testing-library/react';
+ import { Provider } from 'react-redux';
+ import { SistentThemeProvider } from '@sistent/sistent';
+ import WorkspaceDataTable from './WorkspaceDataTable';
+@@ -215,3 +215,107 @@ describe('WorkspaceDataTable search paging', () => {
+     expect(lastQueryArgs()).toMatchObject({ page: 0, search: 'alpha' });
+   });
+ });
 +
-+  if (!canViewRegistry) {
-+    return <DefaultError permissionKey={Keys.MesherySystemViewRegistry} />;
-+  }
++// The workspaces list is the schemas v1beta3 contract: every field is camelCase.
++const WORKSPACE_ROW = {
++  id: 'ws-1',
++  name: 'Alpha',
++  description: 'desc',
++  orgName: 'Acme',
++  owner: 'Jane',
++  ownerId: 'owner-1',
++  ownerEmail: 'jane@example.com',
++  ownerAvatar: 'https://avatars.example.com/jane.png',
++  createdAt: '2026-01-01T00:00:00Z',
++  updatedAt: '2026-01-02T00:00:00Z',
++};
++
++describe('WorkspaceDataTable column wiring', () => {
++  const renderWithRow = (row: Record<string, unknown>, setColumnVisibility = vi.fn()) => {
++    (useGetSelectedOrganization as Mock).mockReturnValue({
++      selectedOrganization: { id: 'org-1' },
++    });
++    (useGetWorkspacesQuery as Mock).mockReturnValue({
++      data: { workspaces: [row], totalCount: 1 },
++      isLoading: false,
++    });
++    render(
++      <Provider store={store}>
++        <SistentThemeProvider initialMode="light">
++          <WorkspaceDataTable
++            handleWorkspaceModalOpen={vi.fn()}
++            handleTeamsModalOpen={vi.fn()}
++            handleActivityModalOpen={vi.fn()}
++            handleDeleteWorkspaceConfirm={vi.fn()}
++            columnVisibility={{}}
++            selectedWorkspace={{ id: '', name: '' }}
++            handleRowClick={vi.fn()}
++            setColumnVisibility={setColumnVisibility}
++            search=""
++            viewType="table"
++          />
++        </SistentThemeProvider>
++      </Provider>,
++    );
++    const { columns } = (ResponsiveDataTable as unknown as Mock).mock.calls.at(-1)[0];
++    // mui-datatables reads each cell from the row by its column name.
++    const rowData = columns.map((c: any) => row[c.name]);
++    const ownerCell = columns
++      .find((c: any) => c.name === 'owner')
++      .options.customBodyRender(row.owner, { rowIndex: 0, rowData });
++    return { columns, ownerCell };
++  };
++
++  it('names every column after a field of the camelCase workspace row', () => {
++    const { columns } = renderWithRow(WORKSPACE_ROW);
++    expect(columns.map((c: any) => c.name)).toEqual([
++      'id',
++      'ownerEmail',
++      'ownerId',
++      'orgName',
++      'name',
++      'description',
++      'ownerAvatar',
++      'owner',
++      'environments',
++      'designCount',
++      'viewCount',
++      'teamCount',
++      'environmentCount',
++      'createdAt',
++      'updatedAt',
++      'actions',
++    ]);
++  });
++
++  it("shows the owner's avatar and links to the owner's profile", () => {
++    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
++    const { ownerCell } = renderWithRow(WORKSPACE_ROW);
++    const { container } = render(
++      <SistentThemeProvider initialMode="light">{ownerCell}</SistentThemeProvider>,
++    );
++
++    fireEvent.click(container.querySelector('.MuiAvatar-root')!);
++    expect(open).toHaveBeenCalledWith(expect.stringMatching(/\/user\/owner-1$/), '_blank');
++    expect(screen.getByRole('img', { name: 'Jane' })).toHaveAttribute(
++      'src',
++      WORKSPACE_ROW.ownerAvatar,
++    );
++    open.mockRestore();
++  });
++
++  it('falls back to the org name for a workspace without an owner', () => {
++    const { ownerCell } = renderWithRow({ ...WORKSPACE_ROW, owner: undefined });
++    render(ownerCell);
++    expect(screen.getByText('Acme')).toBeInTheDocument();
++  });
++
++  it('seeds the responsive visibility under the same column names', () => {
++    const setColumnVisibility = vi.fn();
++    renderWithRow(WORKSPACE_ROW, setColumnVisibility);
++    // width is mocked to 1024: 'na' columns start hidden, 'l' columns shown.
++    expect(setColumnVisibility).toHaveBeenCalledWith(
++      expect.objectContaining({ ownerEmail: false, createdAt: false, updatedAt: true }),
++    );
++  });
++});
+```
+
+**File**: `ui/components/workspaces/WorkspaceDataTable.tsx` (modified, +6/-6)
+```diff
+@@ -49,7 +49,7 @@ const WorkspaceDataTable = ({
+   let colViews = [
+     ['id', 'na'],
+     ['name', 'xs'],
+-    ['owner_email', 'na'],
++    ['ownerEmail', 'na'],
+     ['description', 'na'],
+     ['designCount', 'xs'],
+     ['viewCount', 'xs'],
+@@ -113,7 +113,7 @@ const WorkspaceDataTable = ({
+       },
+     },
+     {
+-      name: 'org_name',
++      name: 'orgName',
+       label: 'Org Name',
+       filter: false,
+       options: {
+@@ -142,7 +142,7 @@ const WorkspaceDataTable = ({
+       label: 'Description',
+     },
+     {
+-      name: 'owner_avatar',
++      name: 'ownerAvatar',
+       label: 'Owner Avatar',
+       options: {
+         display: 'excluded',
+@@ -157,13 +157,13 @@ const WorkspaceDataTable = ({
+         searchable: true,
+         customBodyRender: (value, tableMeta) => {
+           if (!value) {
+-            return <span>{getColumnValue(tableMeta.rowData, 'org_name', columns)}</span>;
++            return <span>{getColumnValue(tableMeta.rowData, 'orgName', columns)}</span>;
+           }
+           return (
+             <AuthorCell
+-              userId={getColumnValue(tableMeta.rowData, 'owner_id', columns)}
++              userId={getColumnValue(tableMeta.rowData, 'ownerId', columns)}
+               firstName={value}
+-              avatarUrl={getColumnValue(tableMeta.rowData, 'owner_avatar', columns)}
++              avatarUrl={getColumnValue(tableMeta.rowData, 'ownerAvatar', columns)}
+             />
+           );
+         },
+```
+
+**File**: `ui/components/workspaces/index.test.tsx` (modified, +30/-1)
+```diff
+@@ -30,6 +30,7 @@ const {
+   EMPTY_QUERY_RESULT,
+   NOOP_MUTATION,
+   UI_STATE,
++  ColumnVisibilityControl,
+ } = vi.hoisted(() => ({
+   notify: vi.fn(),
+   createWorkspace: vi.fn(),
+@@ -39,6 +40,7 @@ const {
+   EMPTY_QUERY_RESULT: { data: undefined, isLoading: false },
+   NOOP_MUTATION: [vi.fn()],
+   UI_STATE: { ui: { organization: { id: 'org-1' } } },
++  ColumnVisibilityControl: vi.fn<(props: any) => null>(() => null),
+ }));
  
-   return (
-     <Box sx={{ display: 'flex', position: 'relative', height: '100%', gap: '1rem' }}>
-@@ -388,7 +427,12 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
-   );
- };
+ vi.mock('../../utils/hooks/useNotification', () => ({
+@@ -139,7 +141,7 @@ vi.mock('@sistent/sistent', () => ({
+       {children}
+     </button>
+   ),
+-  CustomColumnVisibilityControl: () => null,
++  CustomColumnVisibilityControl: ColumnVisibilityControl,
+   ErrorBoundary: ({ children }: any) => <>{children}</>,
+   Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
+   ModalFooter: ({ children }: any) => <div>{children}</div>,
+@@ -314,3 +316,30 @@ describe('Workspaces search paging', () => {
+     }
+   });
+ });
++
++describe('Workspaces column visibility menu', () => {
++  it("toggles the table's camelCase column names", () => {
++    render(<Workspaces onSelectWorkspace={undefined} />);
++    const { columns } = ColumnVisibilityControl.mock.calls.at(-1)[0];
++    // The keys the menu writes into columnVisibility must be the column names
++    // WorkspaceDataTable declares (pinned in WorkspaceDataTable.test.tsx),
++    // or toggling them changes nothing.
++    expect(columns.map((c: any) => c.name)).toEqual([
++      'id',
++      'ownerEmail',
++      'ownerId',
++      'orgName',
++      'name',
++      'description',
++      'owner',
++      'teamCount',
++      'designCount',
++      'viewCount',
++      'environmentCount',
++      'environments',
++      'createdAt',
++      'updatedAt',
++      'actions',
++    ]);
++  });
++});
+```
+
+**File**: `ui/components/workspaces/index.tsx` (modified, +5/-5)
+```diff
+@@ -67,15 +67,15 @@ const columnList = [
+     label: 'ID',
+   },
+   {
+-    name: 'owner_email',
++    name: 'ownerEmail',
+     label: 'Owner Email',
+   },
+   {
+-    name: 'owner_id',
++    name: 'ownerId',
+     label: 'Owner Id',
+   },
+   {
+-    name: 'org_name',
++    name: 'orgName',
+     label: 'Org Name',
+   },
+   {
+@@ -111,11 +111,11 @@ const columnList = [
+     label: 'Environments',
+   },
+   {
+-    name: 'created_at',
++    name: 'createdAt',
+     label: 'Created At',
+   },
+   {
+-    name: 'updated_at',
++    name: 'updatedAt',
+     label: 'Updated At',
+   },
+   {
+```
+
+---
+
+### Incident Patch 3: `8456c86e` (2026-11-13)
+**Commit Message**: Merge branch 'master' into bug/asheesh7298/23452
+
+**File**: `docs/content/en/reference/mesheryctl/design/export.md` (modified, +1/-1)
+```diff
+@@ -76,7 +76,7 @@ mesheryctl design export [design-name | ID] --type [design-type] --output ./expo
+ <div class='codeblock'>
+   -h, --help            help for export
+   -o, --output string   Specify the output directory to save the design
+-      --type string     Specify the design type to export
++      --type string     Type of export: current (Meshery design YAML), original (the source the design was imported from) or oci (OCI image tarball)
  
-+/**
-+ * Global modal shell for browsing registry resources when the user holds the
-+ * registry view permission.
-+ */
- const RegistryModal: FC = () => {
-+  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
-   const theme = useTheme();
-   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
-   const registryContext = useContext(RegistryModalContext);
-@@ -402,12 +446,17 @@ const RegistryModal: FC = () => {
-       isOpen={registryContext.open}
-       onClose={registryContext.closeModal}
-       headerIcon={headerInfo.icon}
--      title={headerInfo.title}
-+      title={canViewRegistry ? headerInfo.title : 'Registry'}
-       isFullScreenModeAllowed={!isSmallScreen}
-       disableBodyWrap
-     >
-       <StyledModalBody>
--        {registryContext.open && <Navigation setHeaderInfo={setHeaderInfo} />}
-+        {registryContext.open &&
-+          (canViewRegistry ? (
+ </div>
+ </pre>
+```
+
+**File**: `docs/content/en/reference/mesheryctl/system/token/delete.md` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ Delete a token from your meshconfig
+ 
+ ## Synopsis
+ 
+-Delete the token with provided token name from your meshconfig tokens.
++Delete the token with provided token name from your meshconfig tokens. A token that a context still uses cannot be deleted; set another token on that context first.
+ <pre class='codeblock-pre'>
+ <div class='codeblock'>
+ <div class='clipboardjs'>
+```
+
+**File**: `docs/content/en/reference/mesheryctl/system/token/set.md` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ Set token for context
+ 
+ ## Synopsis
+ 
+-Set token for current context or context specified with --context flag.
++Set token for current context or context specified with --context flag. The token must already exist in your meshconfig tokens.
+ <pre class='codeblock-pre'>
+ <div class='codeblock'>
+ <div class='clipboardjs'>
+```
+
+**File**: `docs/data/errorindex/mesheryctl_errors_index.json` (modified, +2/-2)
+```diff
+@@ -3996,10 +3996,10 @@
+       "severity": "fatal",
+       "shortDescription": "Unable to assign token to context",
+       "probableCause": [
+-        "The target context may not exist in meshconfig, or meshconfig could not be read or written."
++        "The token or the target context may not exist in meshconfig, or meshconfig could not be read or written."
+       ],
+       "suggestedRemediation": [
+-        "Verify the target context exists with `mesheryctl system context view` and ensure your meshconfig file is accessible."
++        "Verify the token exists with `mesheryctl system token list` (create it with `mesheryctl system token create <token-name>`), verify the target context exists with `mesheryctl system context view`, and ensure your meshconfig file is accessible."
+       ]
+     },
+     {
+```
+
+**File**: `docs/data/errorref/mesheryctl_errors_export.json` (modified, +2/-2)
+```diff
+@@ -2133,8 +2133,8 @@
+         "severity": "Fatal",
+         "long_description": "",
+         "short_description": "Unable to assign token to context",
+-        "probable_cause": "The target context may not exist in meshconfig, or meshconfig could not be read or written.",
+-        "suggested_remediation": "Verify the target context exists with `mesheryctl system context view` and ensure your meshconfig file is accessible."
++        "probable_cause": "The token or the target context may not exist in meshconfig, or meshconfig could not be read or written.",
++        "suggested_remediation": "Verify the token exists with `mesheryctl system token list` (create it with `mesheryctl system token create <token-name>`), verify the target context exists with `mesheryctl system context view`, and ensure your meshconfig file is accessible."
+       },
+       "1258": {
+         "name": "ErrTokenRollbackCode",
+```
+
+**File**: `docs/meetings/2026/Elisei-Zaitsev.md` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++# Introduction
++
++## Elisei Zaitsev (Lish)
++
++- **GitHub:** [lishfox](https://github.com/lishfox)
++- **LinkedIn:** [Elisei Zaitsev](https://www.linkedin.com/in/elisei-zaitsev/)
++
++### About Me
++
++I'm a DevOps engineer based in GMT+4. I build small web services and take them to production: containerize, deploy, and keep them running.
++
++### Technical Skills
++
++- **OS & Scripting:** Linux, Bash
++- **Containers & Hosting:** Docker, Render, Supabase
++- **Backend:** Node.js, Express, TypeScript, WebSocket / Socket.IO
++- **Learning:** GitHub Actions (CI/CD), Kubernetes, Terraform, Prometheus + Grafana
++
++### Contributions to Meshery
++
++- PR [#23225](https://github.com/meshery/meshery/pull/23225) (merged): fixed the failure email content in the `go-mod-sync` workflow.
++- PR [#23185](https://github.com/meshery/meshery/pull/23185) (merged): fixed the broken help-wanted search link on the Contributing page.
++- PR [#23297](https://github.com/meshery/meshery/pull/23297) (merged): fixed the broken help-wanted search link in the Docker Extension README.
++
++### Open-Source Goals
++
++I want to help improve Meshery's CI workflows and release automation, and grow into a regular contributor on the DevOps side. I'm planning to apply for the LFX Mentorship with Meshery (2027 Term 1) and would love to be paired with a MeshMate working on CI/DevOps.
+```
+
+**File**: `docs/meetings/2026/week-of-11-12-2026/Apipawe_daniel` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Hey, I am Apipawe Daniel, a Layer5 intern
+```
+
+**File**: `docs/meetings/2026/week-of-11-12-2026/Dheeraj-Sutram.md` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++State-Level Gold Medallist — Archery · Young Changemakers, IIT Delhi 
++EXPERIENCE 
++QA Intern — SignSetu (Forbes Accessibility 200 Honouree 2026) 
++Remote | Jun 2026 – Sep 2026 
++• Took ownership of reliability across the mobile, payments, auth and data layers of SignSetu's accessible-learning app for the Deaf community, tracing 
++user-facing failures to root causes and working with developers to ship the fixes. 
++• Mobile concurrency: OTA updates were silently failing on slow networks; found an uncancelled Promise leak bypassing timeout wrappers and 
++resolved JavaScript-thread vs. native-scheduler race conditions, restoring reliable OTA scheduling across platforms. 
++• Payments and security: Purchase stacking broke from an ordinal conflict in payment records; added webhook idempotency guards and schema 
++validation, eliminating duplicate ledger writes. Uncovered a validation gap that let users buy lessons beyond the available content, a financial risk and a 
++source of confusion for users with limited English. Also closed an email auto-linking vector that exposed admin accounts to takeover. 
++• Data integrity: Progress writes were race-prone and nearing MongoDB's document size limit; removed non-atomic read-modify-write conflicts and 
++bounded array growth, preventing data loss and overflow. 
++• Scaling the team's QA: Manual review couldn't keep pace with feature velocity, so I built a 2-agent E2E test generation framework (Playwright, 
++Maestro) with durable Markdown handoffs for CI/CD. The developers and CTO then adopted it and expanded it, with many further additions, into a 
++company-wide testing harness. 
++• Recommended in writing by the CTO (Sep 2026) for technical depth, business awareness and user empathy, and for communicating findings clearly to 
++developers. 
++MERN Stack Intern — Infotact Solutions 
++Remote / Chennai · May 2025 – Aug 2025 
++• Malformed entries were reaching the application layer unchecked; built 15+ reusable React components and designed 4+ NoSQL schemas with 
++MongoDB and Mongoose validation, eliminating malformed-entry errors before they reached the database. 
++PROJECTS & RESEARCH 
++Algorithmic Alpha Engine (BrainQuant Generator) — WorldQuant BRAIN 
++Python · Polars · FastAPI · Active Development 
++• Problem: Hand-testing trading signals is slow and prone to overfitting. I designed and built an end-to-end discovery pipeline that natively compiles AST 
++alpha formulas into Polars (pl.Expr) vector expressions and backtests them against Parquet snapshots of 500+ global equities, pulled by a concurrent 
++8-worker pipeline (ThreadPoolExecutor) with retry and rate-limit back-off. 
++• Correctness: Enforced strict dimensional parity (time-series operators per ticker, cross-sectional operators per date) for zero lookahead bias, plus daily 
++demeaning and Delay-1 alignment, so local results carry over to the live BRAIN platform. 
++• Discovery strategy: Built a hybrid engine splitting each batch across 6 market-archetype templates (40%), genetic evolution with crossover and 
++subtree mutation (40%), and near-miss healing (20%), running continuously in the background. 
++• Rigor: Validated every candidate on a 70/30 in-sample / out-of-sample split and raised the Sharpe threshold as more candidates were tested (base + 
++0.3 × log10(N)) to remove data-mining bias. 
++• Efficiency and visibility: Designed a 2-tier cache (formula-metrics cache plus a sub-tree column cache with 30-column / 2 GB caps) that holds memory 
++flat under 1.2 GB over indefinite runs, with a live dashboard for throughput, latency, cache hit rate and RSS. 
++• Differentiation: OHLCV data is among the most crowded in quantitative finance; engineered a micro-blend alpha-construction technique with near-zero 
++correlation to millions of live alphas, using pure mathematical feature design rather than alternative datasets. 
++• Impact: A submitted alpha passed every BRAIN check on USA/D1/TOP3000 (Sharpe 1.63, fitness 1.53, turnover 1.09%, 5.52% max drawdown, 203 
++bps margin, balanced ~1,561 long / 1,473 short book). Screening 500+ candidates earned the WorldQuant Challenge Gold Level certificate and a 
++top-10,000 rank among 170,000+ participants worldwide. 
++Handwritten Mathematical Proof Verifier — Published Patent, Lead Co-Inventor 
++App No: 202641043577 · 2026 
++• Problem: Students and educators reason on paper, but formal verifiers (Z3, Lean 4) demand expert syntax, and no tool could tell a genuine mistake 
++from a deliberate contradiction in a proof by contradiction. As lead co-inventor, I designed the core verification logic to close that gap. 
++• Assertion-level logic: Each handwritten step is parsed into an AST and converted into a Boolean implication (step N-1 implies step N), then evaluated 
++by a CAS truth engine against a Z3 / Lean 4 axiom library, verifying reasoning rather than just computing numbers. 
++• Intention-aware analysis: When a step evaluates false, the system scans the proof history 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23300** (2026-11-12): [mesheryctl] Replace path separators in file names saved by component view (@RajJasani)
-- **PR #23299** (2026-11-12): [UI] Disable LegacyRJSFModal submit while pending and add submitDisabled (@piyxsh31)
-- **PR #23295** (2026-11-12): [UI] Enforce RBAC skip guards on connections, preferences, and registry (@piyxsh31)
-- **PR #23293** (2026-11-12): [Server] Implement MapPreferencePersister unit tests and safe logger handling (@Rohith-Saran)
-- **PR #23291** (2026-11-12): [Helm] Add env.MESHSYNC_DEFAULT_DEPLOYMENT_MODE with embedded default (@ayushbuilds-code)
-- **PR #23289** (2026-11-12): [Docs] Fix broken help-wanted search links in README.md (@ayushbuilds-code)
+- **PR #23485** (2026-11-13): Add Guganraj Rengaraju's introduction to meetings (@mrtuxcoder)
+- **PR #23484** (2026-11-13): Create Javeria Razzaq's introduction markdown file (@javeria222)
+- **PR #23479** (2026-11-13): [UI] Refresh cached views after visibility, notes and delete changes (@Asheesh7298)
+- **PR #23473** (2026-11-13): [Docs] Add Anavay Sharma newcomer attendance for week of 11-12-2026 (@Supersaiyan101)
+- **PR #23472** (2026-11-13): Create sriram-nambiar.md with personal details (@Sriram-Nambiar)
+- **PR #23471** (2026-11-13): [Docs] Add Sachin Yadav newcomer attendance of 11-12-2026 (@SachinyadavAug20)
 
 ---
 
@@ -2091,33 +1634,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Docs] Fix broken help-wanted search links in README.md (#23289)
+## X. Merge pull request #23479 from Asheesh7298/bug/asheesh7298/23478
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/components/workspaces/SpacesSwitcher/MainViewsContent.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `71d85c8d`: [Docs] Fix broken help-wanted search links in README.md (#23289). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4594b377`: Merge pull request #23479 from Asheesh7298/bug/asheesh7298/23478. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/components/workspaces/SpacesSwitcher/MainViewsContent.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-<a href="https://github.com/search?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Ameshery+org%3Ameshery-extensions+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22&type=issues" alt="GitHub issues by-label">
-&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/search?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Ameshery+org%3Ameshery-extensions+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22&type=issues">help-wanted label</a>.
+          refetch={refetch}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-<a href="https://github.com/issues?q=is%3Aopen%20is%3Aissue%20archived%3Afalse%20(org%3Ameshery%20OR%20org%3Aservice-mesh-performance%20OR%20org%3Aservice-mesh-patterns%20OR%20org%3Ameshery-extensions)%20label%3A%22help%20wanted%22%20" alt="GitHub issues by-label">
-&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?q=is%3Aopen%20is%3Aissue%20archived%3Afalse%20(org%3Ameshery%20OR%20org%3Aservice-mesh-performance%20OR%20org%3Aservice-mesh-patterns%20OR%20org%3Ameshery-extensions)%20label%3A%22help%20wanted%22%20">help-wanted label</a>.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `71d85c8d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4594b377` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

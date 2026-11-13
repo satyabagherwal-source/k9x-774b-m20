@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T15:30:25.773Z",
+  "last_updated": "2026-11-13T15:39:04.396Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -26992,7 +26992,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "5af40da833f1638dd1d3ebfb8500734997207891c5533f00b5a030f94789fefb",
+      "content_hash": "e73e53caa7c1e562197c9777f671bd00b329604d7f5dee5cc599796b24c1f71a",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "promoted_rules": [
@@ -27065,7 +27065,7 @@
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv45omuu",
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv4iyd2f"
       ],
-      "verified_at": "2026-11-08T15:28:22.563Z",
+      "verified_at": "2026-11-13T15:38:05.388Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44559,8 +44559,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "41ccfbfe",
-      "content_hash": "2048c481b74ec9918eaf4b013438548a3c57a8c31d57b23126708ac36ac6c9a1",
+      "source_version": "20743f10",
+      "content_hash": "d10f14e5db10cd1a087754de2ed93287735096dd7c7631e8f55b61967062c6a9",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -44587,6 +44587,11 @@
         {
           "number": null,
           "title": "[Docs] Fix broken help-wanted search links in README.md (#23289)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #23479 from Asheesh7298/bug/asheesh7298/23478",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -44675,7 +44680,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T11:18:43.426Z",
+      "verified_at": "2026-11-13T15:38:17.332Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -76798,8 +76803,8 @@
       "slug": "iliyami-macsai",
       "platform": "github",
       "source_url": "https://github.com/iliyami/MacSai",
-      "source_version": "d5e2183a",
-      "content_hash": "ffad54f66e3aac389405d93d36be6624c295003db21c930e572f62686d1dd805",
+      "source_version": "91b262f3",
+      "content_hash": "357c96f70299f3fa0802cb9cad493544775edd16bddb2cb1450c3f03affe4dfa",
       "dossier_path": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
       "promoted_rules": [
@@ -76811,6 +76816,11 @@
         {
           "number": null,
           "title": "Find more hidden disk usage: OpenClaw logs, uv cache, pnpm stores, Docker disk i",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Mac Sai website, in 13 languages, on GitHub Pages (#275)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -76844,7 +76854,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T05:07:08.883Z",
+      "verified_at": "2026-11-13T15:38:13.531Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -79394,13 +79404,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "56afe28f",
-      "content_hash": "01a3a26f32ce3b4226c0a4e42e33c5329ad3faf45c3345080ecf67fd8458dea1",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "e3b97728",
+      "content_hash": "253ac5030fd64005a10b7eda7bb4dedba11c31f669357c312670e7450c0a52fa",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -79480,6 +79490,11 @@
         {
           "number": null,
           "title": "Merge pull request #4663 from aleo-labs-protocol/ci/bump-snarkvm",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4603 from aleo-labs-protocol/fix/propose-drain-skip",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -79608,7 +79623,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T00:24:14.136Z",
+      "verified_at": "2026-11-13T15:38:17.933Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -193688,6 +193703,162 @@
       "content_hash": "f7b09972ca9f6117d17b953b97cdc9c0b7fd22c2be38c707fdfe6c8af119794d",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T15:30:25.773Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-fastino-gliner2-5-decide-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-fastino-gliner2-5-decide-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastino-gliner2-5-decide-research-knowledge-intelligence-fastino-gliner2-5-de.md",
+      "title": "Research & Knowledge Intelligence: fastino/GLiNER2.5-Decide Core Invariants",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "source_version": "hf-fastino-gliner2.5-decide",
+      "content_hash": "baabde56fc3fcd69f479e29b43be3cb9962a403da609bf62b6ddb1940e95f64a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T15:38:05.722Z"
+    },
+    "candidate_directive-mac-sai-website-in-13-languages-on-github-pages-275": {
+      "item_id": "candidate_directive-mac-sai-website-in-13-languages-on-github-pages-275",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6LIS-mac-sai-website-in-13-languages-on-github-pages-275.md",
+      "title": "Mac Sai website, in 13 languages, on GitHub Pages (#275)",
+      "repository": "iliyami-macsai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a627f3ee84a66f0388e68b5faef4f064a816daad87dfc6db6ac3860247800b8f",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-13T15:39:03.421Z"
+    },
+    "domain_intelligence-content-information-intelligence-iliyami-macsai-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-iliyami-macsai-content-information-intelligence-iliyami-macsai-core-invariants.md",
+      "title": "Content & Information Intelligence: iliyami/MacSai Core Invariants",
+      "repository": "iliyami/MacSai",
+      "source_version": "91b262f3",
+      "content_hash": "17c4971d3bdbd2145b936028e546db94599bad19e44eaf8f6e57e65a871f8350",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-13T15:38:13.990Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-iliyami-macsai": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-iliyami-macsai",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/iliyami-macsai-verification-protocol-empirical-defect-shield-for-iliyami-macsai.md",
+      "title": "Verification Protocol: Empirical Defect Shield for iliyami/MacSai",
+      "repository": "iliyami/MacSai",
+      "source_version": "91b262f3",
+      "content_hash": "e0f2b05602068a01c96d0cb3dfe550c217904ad15376a3a7831f7b8f77fd845a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:38:14.089Z"
+    },
+    "candidate_directive-merge-pull-request-23479-from-asheesh7298-bug-asheesh7298-23478": {
+      "item_id": "candidate_directive-merge-pull-request-23479-from-asheesh7298-bug-asheesh7298-23478",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6M48-merge-pull-request-23479-from-asheesh7298-bug-asheesh7298-23478.md",
+      "title": "Merge pull request #23479 from Asheesh7298/bug/asheesh7298/23478",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7c698dace1760c01fdd06986859713713f4299e7468ddd8a14d11917b8f0c196",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:39:04.185Z"
+    },
+    "candidate_directive-merge-pull-request-4603-from-aleo-labs-protocol-fix-propose-drain-skip": {
+      "item_id": "candidate_directive-merge-pull-request-4603-from-aleo-labs-protocol-fix-propose-drain-skip",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5MP7-merge-pull-request-4603-from-aleo-labs-protocol-fix-propose-drain-skip.md",
+      "title": "Merge pull request #4603 from aleo-labs-protocol/fix/propose-drain-skip",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "e3b97728",
+      "content_hash": "56cebb564878bdcd60b1c760520843e318bd803e767b7a8cc1d10c0f8e956e50",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T15:38:18.289Z"
+    },
+    "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "e3b97728",
+      "content_hash": "66921aed3552cb8ccccece3be3cdf89751aa9735724cb352d38c05e81c3a6531",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T15:38:18.384Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "e3b97728",
+      "content_hash": "c5b4ad5346787bfa089e1349d9155a49217fc9f4d7bee628c9d658dd9cc838b2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:38:18.483Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastino-gliner2-5-decide-learnings-research-knowledge-intelligence-hf-fastino.md",
+      "title": "Research & Knowledge Intelligence: hf-fastino-gliner2.5-decide-learnings Core Invariants",
+      "repository": "hf-fastino-gliner2.5-decide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7d7d429dd19ffb18985ffe296929bc1e69295ce35eadef9120c0b753a229de60",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T15:39:02.473Z"
+    },
+    "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-iliyami-macsai-learnings-content-information-intelligence-iliyami-macsai-learnin.md",
+      "title": "Content & Information Intelligence: iliyami-macsai-learnings Core Invariants",
+      "repository": "iliyami-macsai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "742fe2cc22ccc1b34dbbefea4950fd8a88368a785c6503e7cd82dc37fc940e2b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-13T15:39:03.521Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-iliyami-macsai-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-iliyami-macsai-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/iliyami-macsai-learnings-verification-protocol-empirical-defect-shield-for-iliya.md",
+      "title": "Verification Protocol: Empirical Defect Shield for iliyami-macsai-learnings",
+      "repository": "iliyami-macsai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "04c30a02bbec189f6856236f37231e5749db058860c106c555d84e1be5f5570f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:39:03.629Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meshery-meshery-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-meshery-meshery-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-learnings-technical-construction-intelligence-meshery-meshery-le.md",
+      "title": "Technical Construction Intelligence: meshery-meshery-learnings Core Invariants",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "43efd8b4bd7732553825d35683af9cd0f8e8183ec1d0be9796fc2ad0f0c32224",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T15:39:04.287Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-meshery-meshery-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meshery-meshery-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/meshery-meshery-learnings-verification-protocol-empirical-defect-shield-for-mesh.md",
+      "title": "Verification Protocol: Empirical Defect Shield for meshery-meshery-learnings",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d5c72b2501b8f86d38c2134fe0ae7bbe7aafde19682a24f490e6dfa6e12e63be",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T15:39:04.396Z"
     }
   },
   "aliases": {
@@ -199686,5 +199857,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9098
+  "total_items": 9111
 }

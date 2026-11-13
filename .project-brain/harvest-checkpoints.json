@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T15:29:40.244Z",
+  "last_updated": "2026-11-13T15:38:18.097Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -515,14 +515,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fastino-gliner2-5-decide",
-      "content_hash": "5af40da833f1638dd1d3ebfb8500734997207891c5533f00b5a030f94789fefb",
-      "verified_at": "2026-11-08T15:28:22.657Z",
+      "content_hash": "e73e53caa7c1e562197c9777f671bd00b329604d7f5dee5cc599796b24c1f71a",
+      "verified_at": "2026-11-13T15:38:05.539Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T15:28:22.657Z"
+      "last_updated": "2026-11-13T15:38:05.539Z"
     },
     "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -2039,14 +2039,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iliyami-macsai",
-      "content_hash": "ffad54f66e3aac389405d93d36be6624c295003db21c930e572f62686d1dd805",
-      "verified_at": "2026-11-09T05:07:09.018Z",
+      "content_hash": "357c96f70299f3fa0802cb9cad493544775edd16bddb2cb1450c3f03affe4dfa",
+      "verified_at": "2026-11-13T15:38:13.692Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T05:07:09.018Z"
+      "last_updated": "2026-11-13T15:38:13.692Z"
     },
     "duty1g/x64dbg-mcp-server": {
       "repository": "duty1g/x64dbg-mcp-server",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "01a3a26f32ce3b4226c0a4e42e33c5329ad3faf45c3345080ecf67fd8458dea1",
-      "verified_at": "2026-11-13T00:24:14.524Z",
+      "content_hash": "253ac5030fd64005a10b7eda7bb4dedba11c31f669357c312670e7450c0a52fa",
+      "verified_at": "2026-11-13T15:38:18.096Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T00:24:14.524Z"
+      "last_updated": "2026-11-13T15:38:18.096Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "2048c481b74ec9918eaf4b013438548a3c57a8c31d57b23126708ac36ac6c9a1",
-      "verified_at": "2026-11-12T11:18:43.614Z",
+      "content_hash": "d10f14e5db10cd1a087754de2ed93287735096dd7c7631e8f55b61967062c6a9",
+      "verified_at": "2026-11-13T15:38:17.496Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T11:18:43.614Z"
+      "last_updated": "2026-11-13T15:38:17.496Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",

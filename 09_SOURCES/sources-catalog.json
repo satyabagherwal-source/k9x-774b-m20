@@ -425,8 +425,8 @@
     "sourceUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
     "sourceVersion": "hf-fastino-gliner2.5-decide",
     "license": "Open-Source",
-    "contentHash": "5af40da833f1638dd1d3ebfb8500734997207891c5533f00b5a030f94789fefb",
-    "lastHarvestedAt": "2026-11-08T15:28:22.644Z",
+    "contentHash": "e73e53caa7c1e562197c9777f671bd00b329604d7f5dee5cc599796b24c1f71a",
+    "lastHarvestedAt": "2026-11-13T15:38:05.530Z",
     "learningId": "learn-huggingface-fastino-gliner2-5-decide"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
@@ -1303,10 +1303,10 @@
     "repository": "iliyami/MacSai",
     "platform": "github",
     "sourceUrl": "https://github.com/iliyami/MacSai",
-    "sourceVersion": "d5e2183a",
+    "sourceVersion": "91b262f3",
     "license": "BSD-3-Clause",
-    "contentHash": "ffad54f66e3aac389405d93d36be6624c295003db21c930e572f62686d1dd805",
-    "lastHarvestedAt": "2026-11-09T05:07:08.998Z",
+    "contentHash": "357c96f70299f3fa0802cb9cad493544775edd16bddb2cb1450c3f03affe4dfa",
+    "lastHarvestedAt": "2026-11-13T15:38:13.664Z",
     "learningId": "learn-github-iliyami-macsai"
   },
   "duty1g-x64dbg-mcp-server": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "56afe28f",
+    "sourceVersion": "e3b97728",
     "license": "Apache-2.0",
-    "contentHash": "a828e68bdd75eb287c250672b9d3dcac96a00ff2c82fd528ad7d211a2cdb9bb1",
-    "lastHarvestedAt": "2026-11-12T21:56:46.111Z",
+    "contentHash": "253ac5030fd64005a10b7eda7bb4dedba11c31f669357c312670e7450c0a52fa",
+    "lastHarvestedAt": "2026-11-13T15:38:18.070Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "41ccfbfe",
+    "sourceVersion": "20743f10",
     "license": "Apache-2.0",
-    "contentHash": "2048c481b74ec9918eaf4b013438548a3c57a8c31d57b23126708ac36ac6c9a1",
-    "lastHarvestedAt": "2026-11-12T11:18:43.589Z",
+    "contentHash": "d10f14e5db10cd1a087754de2ed93287735096dd7c7631e8f55b61967062c6a9",
+    "lastHarvestedAt": "2026-11-13T15:38:17.470Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {

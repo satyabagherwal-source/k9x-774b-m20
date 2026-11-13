@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T15:30:25.565Z",
-  "total_records": 171,
+  "last_updated": "2026-11-13T15:39:04.287Z",
+  "total_records": 179,
   "domains": {
     "A": {
       "total": 1,
@@ -26,7 +26,7 @@
       ]
     },
     "D": {
-      "total": 107,
+      "total": 110,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -134,7 +134,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-apple-lensvlm-9b-core-invariants",
         "DOM-D-303E5CE5",
-        "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-fastino-gliner2-5-decide-core-invariants",
+        "DOM-D-7123D3B0",
+        "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar"
       ]
     },
     "E": {
@@ -151,7 +154,7 @@
       ]
     },
     "G": {
-      "total": 8,
+      "total": 9,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -160,11 +163,12 @@
         "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
         "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants",
-        "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants"
       ]
     },
     "H": {
-      "total": 27,
+      "total": 29,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -192,18 +196,22 @@
         "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-encoredev-encore-core-invariants",
         "domain_intelligence-technical-construction-intelligence-encoredev-encore-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-meshery-meshery-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-meshery-meshery-learnings-core-invariants"
       ]
     },
     "I": {
-      "total": 6,
+      "total": 8,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
         "domain_intelligence-content-information-intelligence-dathere-qsv-core-invariants",
         "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-crossplane-crossplane-core-invariants",
-        "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-iliyami-macsai-core-invariants",
+        "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants"
       ]
     },
     "J": {
@@ -6243,6 +6251,111 @@
       "repository": "mitmproxy-mitmproxy-learnings",
       "content_hash": "57abd6514bc5750107d2500071c93940ae6b288da6800253651c2671c63c6a2c",
       "created_at": "2026-11-13T15:30:25.565Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-fastino-gliner2-5-decide-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-fastino-gliner2-5-decide-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: fastino/GLiNER2.5-Decide Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastino-gliner2-5-decide-research-knowledge-intelligence-fastino-gliner2-5-de.md",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "content_hash": "baabde56fc3fcd69f479e29b43be3cb9962a403da609bf62b6ddb1940e95f64a",
+      "created_at": "2026-11-13T15:38:05.722Z"
+    },
+    "domain_intelligence-content-information-intelligence-iliyami-macsai-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: iliyami/MacSai Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-iliyami-macsai-content-information-intelligence-iliyami-macsai-core-invariants.md",
+      "repository": "iliyami/MacSai",
+      "content_hash": "17c4971d3bdbd2145b936028e546db94599bad19e44eaf8f6e57e65a871f8350",
+      "created_at": "2026-11-13T15:38:13.990Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meshery-meshery-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-meshery-meshery-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: meshery/meshery Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-technical-construction-intelligence-meshery-meshery-core-invaria.md",
+      "repository": "meshery/meshery",
+      "content_hash": "458e5153e86227059868cb6eb507a10c56e8bd207d361e496f40230ec7ff7dcc",
+      "created_at": "2026-11-13T15:38:17.812Z"
+    },
+    "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "content_hash": "66921aed3552cb8ccccece3be3cdf89751aa9735724cb352d38c05e81c3a6531",
+      "created_at": "2026-11-13T15:38:18.384Z"
+    },
+    "DOM-D-7123D3B0": {
+      "record_id": "DOM-D-7123D3B0",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): fastino/GLiNER2.5-Decide",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/fastino/GLiNER2.5-Decide](https://huggingface.co/fastino/GLiNER2.5-Decide))  \n> **Source Version**: `hf-fastino-g`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "82f8833ab9cc3e8be2885bf6d588e78b22b4b05b8cb690cee38a80df99076a42",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-fastino-gliner2.5-decide/hf-fastino-gliner2.5-decide-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T15:38:21.213Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-fastino-gliner2.5-decide)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-fastino-gliner2.5-decide"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T15:39:02.270Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-fastino-gliner2.5-decide-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastino-gliner2-5-decide-learnings-research-knowledge-intelligence-hf-fastino.md",
+      "repository": "hf-fastino-gliner2.5-decide-learnings",
+      "content_hash": "7d7d429dd19ffb18985ffe296929bc1e69295ce35eadef9120c0b753a229de60",
+      "created_at": "2026-11-13T15:39:02.473Z"
+    },
+    "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: iliyami-macsai-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-iliyami-macsai-learnings-content-information-intelligence-iliyami-macsai-learnin.md",
+      "repository": "iliyami-macsai-learnings",
+      "content_hash": "742fe2cc22ccc1b34dbbefea4950fd8a88368a785c6503e7cd82dc37fc940e2b",
+      "created_at": "2026-11-13T15:39:03.521Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meshery-meshery-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-meshery-meshery-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: meshery-meshery-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-learnings-technical-construction-intelligence-meshery-meshery-le.md",
+      "repository": "meshery-meshery-learnings",
+      "content_hash": "43efd8b4bd7732553825d35683af9cd0f8e8183ec1d0be9796fc2ad0f0c32224",
+      "created_at": "2026-11-13T15:39:04.287Z"
     }
   }
 }

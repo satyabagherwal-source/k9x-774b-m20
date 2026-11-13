@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T15:29:40.238Z",
-  "total_cycles_completed": 9285,
-  "total_learnings_persisted": 9285,
-  "total_rules_promoted": 9042,
+  "last_updated": "2026-11-13T15:38:18.093Z",
+  "total_cycles_completed": 9289,
+  "total_learnings_persisted": 9289,
+  "total_rules_promoted": 9045,
   "history": [
-    {
-      "timestamp": "2026-11-13T01:01:18.954Z",
-      "repository": "yyjeqhc/webcodex",
-      "learningId": "learn-github-yyjeqhc-webcodex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T01:01:36.081Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T01:14:25.851Z",
-      "repository": "meta/docusaurus",
-      "learningId": "learn-github-meta-docusaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T01:14:28.114Z",
-      "repository": "Kong/kubernetes-ingress-controller",
-      "learningId": "learn-github-kong-kubernetes-ingress-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T01:31:18.048Z",
       "repository": "autogluon/chronos-2",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-13T15:29:40.238Z",
       "repository": "ClickHouse/ClickHouse",
       "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T15:38:05.536Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T15:38:13.686Z",
+      "repository": "iliyami/MacSai",
+      "learningId": "learn-github-iliyami-macsai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T15:38:17.492Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T15:38:18.093Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T15:30:25.269Z",
+  "updated_at": "2026-11-13T15:39:03.988Z",
   "stats": {
-    "total_discovered": 2583,
-    "approved_pending_harvest": 2412,
+    "total_discovered": 2620,
+    "approved_pending_harvest": 2449,
     "harvested_count": 0,
     "rejected_count": 171,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2402,
+      "COMMUNITY_AND_EXPERT": 2439,
       "OFFICIAL_DOCUMENTATION": 95,
       "STANDARDS_AND_SPECIFICATIONS": 75,
       "ENGINEERING_BLOGS": 1,
@@ -55648,6 +55648,820 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
         "fileName": "mitmproxy-mitmproxy-learnings.md"
+      }
+    },
+    "SRC-D03584551AAD": {
+      "id": "SRC-D03584551AAD",
+      "url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+      "title": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.288Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
+        "fileName": "hf-fastino-gliner2.5-decide-learnings.md"
+      }
+    },
+    "SRC-68618B8DE07A": {
+      "id": "SRC-68618B8DE07A",
+      "url": "https://github.com/iliyami/MacSai",
+      "title": "https://github.com/iliyami/MacSai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.605Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-62FCD0183DD8": {
+      "id": "SRC-62FCD0183DD8",
+      "url": "https://github.com/user-attachments/assets/7320cc33-a882-4500-8054-54da8071e180",
+      "title": "https://github.com/user-attachments/assets/7320cc33-a882-4500-8054-54da8071e180",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.627Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-B39E06ED73E1": {
+      "id": "SRC-B39E06ED73E1",
+      "url": "https://github.com/user-attachments/assets/601fb76f-4adb-47a9-b987-bf1e788c7fb8",
+      "title": "https://github.com/user-attachments/assets/601fb76f-4adb-47a9-b987-bf1e788c7fb8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.657Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-EF368B339C1D": {
+      "id": "SRC-EF368B339C1D",
+      "url": "https://iliyami.github.io/MacSai/de",
+      "title": "https://iliyami.github.io/MacSai/de",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.679Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-C8FC4BA07EED": {
+      "id": "SRC-C8FC4BA07EED",
+      "url": "https://img.shields.io/badge/website-iliyami.github.io%2FMacSai-7c5cff?style=flat-square",
+      "title": "https://img.shields.io/badge/website-iliyami.github.io%2FMacSai-7c5cff?style=flat-square",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.700Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-085A8F07994E": {
+      "id": "SRC-085A8F07994E",
+      "url": "https://github.com/iliyami/MacSai/releases/latest",
+      "title": "https://github.com/iliyami/MacSai/releases/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.721Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-CAFE07F4774F": {
+      "id": "SRC-CAFE07F4774F",
+      "url": "https://img.shields.io/github/downloads/iliyami/MacSai/total?style=flat-square&label=downloads&color=2ea44f",
+      "title": "https://img.shields.io/github/downloads/iliyami/MacSai/total?style=flat-square&label=downloads&color=2ea44f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.742Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-640F3AF5623C": {
+      "id": "SRC-640F3AF5623C",
+      "url": "https://github.com/iliyami/MacSai/stargazers",
+      "title": "https://github.com/iliyami/MacSai/stargazers",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.772Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-08055D842EF6": {
+      "id": "SRC-08055D842EF6",
+      "url": "https://img.shields.io/github/stars/iliyami/MacSai?style=flat-square&color=gold",
+      "title": "https://img.shields.io/github/stars/iliyami/MacSai?style=flat-square&color=gold",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.794Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-C95C399ED5D1": {
+      "id": "SRC-C95C399ED5D1",
+      "url": "https://formulae.brew.sh/cask/mac-sai",
+      "title": "https://formulae.brew.sh/cask/mac-sai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.816Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-F49277A8B96E": {
+      "id": "SRC-F49277A8B96E",
+      "url": "https://img.shields.io/homebrew/cask/installs/dm/mac-sai?style=flat-square&label=homebrew&color=orange",
+      "title": "https://img.shields.io/homebrew/cask/installs/dm/mac-sai?style=flat-square&label=homebrew&color=orange",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.837Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-0F30BAF30EAD": {
+      "id": "SRC-0F30BAF30EAD",
+      "url": "https://iliyami.github.io/MacSai/es",
+      "title": "https://iliyami.github.io/MacSai/es",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.858Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-F1F5C39EA3AA": {
+      "id": "SRC-F1F5C39EA3AA",
+      "url": "https://iliyami.github.io/MacSai/fa",
+      "title": "https://iliyami.github.io/MacSai/fa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.879Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-C07890EF352B": {
+      "id": "SRC-C07890EF352B",
+      "url": "https://iliyami.github.io/MacSai/fr",
+      "title": "https://iliyami.github.io/MacSai/fr",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.910Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-B2AA6BFBC9F2": {
+      "id": "SRC-B2AA6BFBC9F2",
+      "url": "https://iliyami.github.io/MacSai/it",
+      "title": "https://iliyami.github.io/MacSai/it",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.932Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-C48B8CD058AE": {
+      "id": "SRC-C48B8CD058AE",
+      "url": "https://iliyami.github.io/MacSai/ja",
+      "title": "https://iliyami.github.io/MacSai/ja",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.953Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-9B2D51838BCD": {
+      "id": "SRC-9B2D51838BCD",
+      "url": "https://iliyami.github.io/MacSai/ko",
+      "title": "https://iliyami.github.io/MacSai/ko",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.978Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-EB078348075B": {
+      "id": "SRC-EB078348075B",
+      "url": "https://img.shields.io/github/v/release/iliyami/MacSai?style=flat-square&color=blue",
+      "title": "https://img.shields.io/github/v/release/iliyami/MacSai?style=flat-square&color=blue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:02.999Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-CD4121BD5840": {
+      "id": "SRC-CD4121BD5840",
+      "url": "https://github.com/iliyami/MacSai/graphs/commit-activity",
+      "title": "https://github.com/iliyami/MacSai/graphs/commit-activity",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.020Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-B47275EFFCF0": {
+      "id": "SRC-B47275EFFCF0",
+      "url": "https://img.shields.io/github/commit-activity/m/iliyami/MacSai?style=flat-square&label=commits",
+      "title": "https://img.shields.io/github/commit-activity/m/iliyami/MacSai?style=flat-square&label=commits",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.050Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-801FC554A26B": {
+      "id": "SRC-801FC554A26B",
+      "url": "https://img.shields.io/badge/Apple-notarized-black?style=flat-square&logo=apple",
+      "title": "https://img.shields.io/badge/Apple-notarized-black?style=flat-square&logo=apple",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.072Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-C17C911C40A2": {
+      "id": "SRC-C17C911C40A2",
+      "url": "https://img.shields.io/badge/telemetry-none-brightgreen?style=flat-square",
+      "title": "https://img.shields.io/badge/telemetry-none-brightgreen?style=flat-square",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-F20E219B4D95": {
+      "id": "SRC-F20E219B4D95",
+      "url": "https://img.shields.io/badge/platform-macOS%2014%2B-lightgrey?style=flat-square",
+      "title": "https://img.shields.io/badge/platform-macOS%2014%2B-lightgrey?style=flat-square",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.115Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-4D3B24098554": {
+      "id": "SRC-4D3B24098554",
+      "url": "https://img.shields.io/badge/swift-6-orange?style=flat-square",
+      "title": "https://img.shields.io/badge/swift-6-orange?style=flat-square",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-F6230B731A68": {
+      "id": "SRC-F6230B731A68",
+      "url": "https://github.com/iliyami/MacSai/actions/workflows/ci.yml",
+      "title": "https://github.com/iliyami/MacSai/actions/workflows/ci.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.161Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-3D8AB1E0273C": {
+      "id": "SRC-3D8AB1E0273C",
+      "url": "https://img.shields.io/github/actions/workflow/status/iliyami/MacSai/ci.yml?branch=main&style=flat-square&label=tests",
+      "title": "https://img.shields.io/github/actions/workflow/status/iliyami/MacSai/ci.yml?branch=main&style=flat-square&label=tests",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.191Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-5B7A70A4056B": {
+      "id": "SRC-5B7A70A4056B",
+      "url": "https://img.shields.io/badge/license-BSD--3--Clause-green?style=flat-square",
+      "title": "https://img.shields.io/badge/license-BSD--3--Clause-green?style=flat-square",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.213Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+        "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-31D22E568F9E": {
+      "id": "SRC-31D22E568F9E",
+      "url": "https://mesheryio.slack.com/archives/CLVT4TSG4",
+      "title": "https://mesheryio.slack.com/archives/CLVT4TSG4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.767Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-0B760FF99D6B": {
+      "id": "SRC-0B760FF99D6B",
+      "url": "https://slack.meshery.io/",
+      "title": "https://slack.meshery.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.797Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-6D16F5FD2CB0": {
+      "id": "SRC-6D16F5FD2CB0",
+      "url": "https://app.coderabbit.ai/change-stack/meshery/meshery/pull/23484?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/meshery/meshery/pull/23484?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.824Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-2B33CBB4FE33": {
+      "id": "SRC-2B33CBB4FE33",
+      "url": "https://avatars.example.com/jane.png",
+      "title": "https://avatars.example.com/jane.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.871Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-71D57E669FD0": {
+      "id": "SRC-71D57E669FD0",
+      "url": "https://github.com/lishfox",
+      "title": "https://github.com/lishfox",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.901Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-80AD8FE41919": {
+      "id": "SRC-80AD8FE41919",
+      "url": "https://www.linkedin.com/in/elisei-zaitsev",
+      "title": "https://www.linkedin.com/in/elisei-zaitsev",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.923Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-D556C4751A05": {
+      "id": "SRC-D556C4751A05",
+      "url": "https://github.com/meshery/meshery/pull/23225",
+      "title": "https://github.com/meshery/meshery/pull/23225",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.945Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-8B260090B04C": {
+      "id": "SRC-8B260090B04C",
+      "url": "https://github.com/meshery/meshery/pull/23185",
+      "title": "https://github.com/meshery/meshery/pull/23185",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.966Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-9A45A95A7F3C": {
+      "id": "SRC-9A45A95A7F3C",
+      "url": "https://github.com/meshery/meshery/pull/23297",
+      "title": "https://github.com/meshery/meshery/pull/23297",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T15:39:03.988Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
       }
     }
   }
