@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T06:33:35.836Z",
-  "total_cycles_completed": 9163,
-  "total_learnings_persisted": 9163,
-  "total_rules_promoted": 8969,
+  "last_updated": "2026-11-13T06:51:10.961Z",
+  "total_cycles_completed": 9165,
+  "total_learnings_persisted": 9165,
+  "total_rules_promoted": 8970,
   "history": [
-    {
-      "timestamp": "2026-11-12T10:17:33.372Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T10:43:07.213Z",
-      "repository": "infracost/infracost",
-      "learningId": "learn-github-infracost-infracost",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T10:52:37.884Z",
       "repository": "ntex-rs/ntex",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T06:33:35.836Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T06:51:00.370Z",
+      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T06:51:10.961Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T06:33:56.212Z",
+  "updated_at": "2026-11-13T06:51:14.856Z",
   "stats": {
-    "total_discovered": 2229,
-    "approved_pending_harvest": 2071,
+    "total_discovered": 2239,
+    "approved_pending_harvest": 2081,
     "harvested_count": 0,
     "rejected_count": 158,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2058,
+      "COMMUNITY_AND_EXPERT": 2068,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 72,
       "ENGINEERING_BLOGS": 1,
@@ -47950,6 +47950,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
         "fileName": "freenet-freenet-core-learnings.md"
+      }
+    },
+    "SRC-D2A13EB5E04B": {
+      "id": "SRC-D2A13EB5E04B",
+      "url": "https://github.com/max-sixty/worktrunk",
+      "title": "https://github.com/max-sixty/worktrunk",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:51:14.728Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-97A7D02F392B": {
+      "id": "SRC-97A7D02F392B",
+      "url": "https://github.com/max-sixty/worktrunk/blob/5c87bf22ca77ec9846e799e5a45d66d8526619d2/src/commands/picker/mod.rs",
+      "title": "https://github.com/max-sixty/worktrunk/blob/5c87bf22ca77ec9846e799e5a45d66d8526619d2/src/commands/picker/mod.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:51:14.746Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-02556F236E14": {
+      "id": "SRC-02556F236E14",
+      "url": "https://github.com/max-sixty/worktrunk/actions/runs/24653821440/job/72082401646",
+      "title": "https://github.com/max-sixty/worktrunk/actions/runs/24653821440/job/72082401646",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:51:14.760Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-AEFCF04BF7C0": {
+      "id": "SRC-AEFCF04BF7C0",
+      "url": "https://github.com/max-sixty/worktrunk/blob/1043726fd98f6c7accc1da4794cac6c9927fd531/src/commands/picker/mod.rs",
+      "title": "https://github.com/max-sixty/worktrunk/blob/1043726fd98f6c7accc1da4794cac6c9927fd531/src/commands/picker/mod.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:51:14.774Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-BD185A44124D": {
+      "id": "SRC-BD185A44124D",
+      "url": "https://github.com/max-sixty/worktrunk/blob/1043726fd98f6c7accc1da4794cac6c9927fd531/tests/integration_tests/switch_picker.rs",
+      "title": "https://github.com/max-sixty/worktrunk/blob/1043726fd98f6c7accc1da4794cac6c9927fd531/tests/integration_tests/switch_picker.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:51:14.786Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-10B072EBA919": {
+      "id": "SRC-10B072EBA919",
+      "url": "https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/commands/remove.rs",
+      "title": "https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/commands/remove.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:51:14.799Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-9E4B1390776F": {
+      "id": "SRC-9E4B1390776F",
+      "url": "https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/git/remove.rs",
+      "title": "https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/git/remove.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:51:14.812Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-7DAD7BE12DB5": {
+      "id": "SRC-7DAD7BE12DB5",
+      "url": "https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/commands/hook_commands.rs",
+      "title": "https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/commands/hook_commands.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:51:14.825Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-1BF71F76874B": {
+      "id": "SRC-1BF71F76874B",
+      "url": "https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/trace/parse",
+      "title": "https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/trace/parse",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:51:14.837Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
+      }
+    },
+    "SRC-1E16FF946CE1": {
+      "id": "SRC-1E16FF946CE1",
+      "url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "title": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:51:14.856Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md",
+        "fileName": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md"
       }
     }
   }

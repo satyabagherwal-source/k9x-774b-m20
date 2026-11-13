@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T06:33:35.681Z",
+  "last_updated": "2026-11-13T06:51:10.866Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43577,8 +43577,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "a6cbc294",
-      "content_hash": "0e4eec8d8608c79847dd746189a29ee8862cf86e42198c75abe5f5670e21a985",
+      "source_version": "d5b9a7e0",
+      "content_hash": "45036269a1dfbcb997bbbb6b6892ffbf5143a49040dbb306323afa89f44fad81",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -43600,6 +43600,11 @@
         {
           "number": null,
           "title": "test: make three picker/list assertions able to fail, and fix two stale comments",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs: fix stale comments in remove, hook_commands, and trace parsing (#4771)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -43678,7 +43683,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T13:29:01.744Z",
+      "verified_at": "2026-11-13T06:51:10.836Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -185634,7 +185639,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
-      "content_hash": "920610c818cfe67c1cf77622f9f66b4e1ae79bc11ac2821498e193f71cff6e9f",
+      "content_hash": "98bde72443e93ebdde6876d942515a892c928fba83b0b0a5f292318744dbadbb",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md",
       "promoted_rules": [
@@ -185654,7 +185659,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T05:33:14.041Z",
+      "verified_at": "2026-11-13T06:51:00.241Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

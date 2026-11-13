@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `a6cbc294`  
+> **Source Version**: `d5b9a7e0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T13:28:53.277Z  
+> **Timestamp**: 2026-11-13T06:51:01.579Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T13:28:53.272Z  
+> **Harvest Timestamp**: 2026-11-13T06:51:01.574Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12435 stars
+- **Stars / Engagement**: 12485 stars
 
 ---
 
@@ -1316,14 +1316,14 @@ fn build_manual_hook_template_vars(ctx: &CommandContext, hook_type: HookType) ->
     let branch = ctx.branch;
     let worktree_path = ctx.worktree_path;
     match hook_type {
-        // Merge/commit hooks: target = merge target (default branch for commit,
-        // current for merge). Only this arm needs the default branch, and
+        // Commit hooks: target = default branch. Only this arm needs it, and
         // resolving it can cost a `git ls-remote` on a fresh clone — so it is
         // fetched here rather than up front.
         HookType::PreCommit | HookType::PostCommit => ctx
             .repo
             .default_branch()
             .map_or_else(TemplateVars::new, |t| TemplateVars::new().with_target(&t)),
+        // Merge hooks: target = current branch
         HookType::PreMerge | HookType::PostMerge => TemplateVars::new()
             .with_target_opt(branch)
             .with_target_worktree_path(worktree_path),
@@ -1449,7 +1449,8 @@ pub fn run_hook(
     // don't exist is a no-op, so scripts can invoke `wt hook <type>`
     // unconditionally without special-casing empty configuration.
     if user_config.is_none() && proj_config.is_none() {
-
+        eprintln!(
+           
 ```
 
 ### Core Architecture Module: `src/commands/hook_filter.rs`
@@ -2020,426 +2021,379 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c43d4ec` (2026-11-11)
-**Commit Message**: test: make three picker/list assertions able to fail, and fix two stale comments (#4768)
+### Incident Patch 1: `1e4e6dda` (2026-11-12)
+**Commit Message**: docs: fix stale comments in remove, hook_commands, and trace parsing (#4771)
 
-Three test assertions could not fail, and two comments described code
-that has since changed. This PR fixes all five. There are no behavior
-changes. The picker unit tests and clippy pass locally.
+Three code comments described behavior the code doesn't have.
+Comment-only change; no behavior or test changes.
 
-**Assertions that could not fail**
-- `render_preview_tabs_compacts_when_narrow`
-(`src/commands/picker/items.rs`) checked that the compact tab bar drops
-the "HEAD" label. No tab is labeled "HEAD" since tab 3 became
-"committed", so the check always passed. It now checks "committed".
-- `upstream_diff_diverged` accepted either `feat.txt` or `upstream.txt`.
-For a branch that has diverged from its upstream,
-`compute_upstream_diff_preview` diffs merge-base..head only. The test
-now requires `feat.txt` and rejects `upstream.txt`, so a regression that
-shows the upstream side would fail it.
-- `test_list_progressive_vs_buffered_identical_data`
-(`tests/integration_tests/list.rs`) compared `--progressive
---format=json` against `--no-progressive --format=json`.
-`RenderTarget::detect` sends `OutputFormat::Json` down the JSON path
-whatever `--progressive` says (its unit tests in `progressive.rs` pin
-that), so both ru
+-
+[`src/commands/remove.rs`](https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/commands/remove.rs#L373-L374)
+said "locked worktrees" fall back to `git worktree remove` in the
+background. A `git worktree lock` is refused outright
+([`src/git/remove.rs`](https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/git/remove.rs#L26-L28));
+the fallback covers rename failures (cross-filesystem, permissions,
+Windows file locks), as `execute_instant_removal_or_fallback` documents.
+-
+[`src/commands/hook_commands.rs`](https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/commands/hook_commands.rs#L101-L104)
+had the merge/commit target comment on the commit-only arm; it's now
+split per arm. A second copy of the `{{ args }}` encoding comment a few
+lines below the first is trimmed.
+-
+[`src/trace/parse.rs`](https://github.com/max-sixty/worktrunk/blob/9b7ac2c13b47c4cf8454660b621ec5874b10e948/src/trace/parse.
 
-**File**: `benches/prune.rs` (modified, +4/-2)
+**File**: `src/commands/hook_commands.rs` (modified, +3/-5)
 ```diff
-@@ -8,8 +8,10 @@
- //      first scan after new commits is cold and later scans are warm.
- //   2. The removals — each integrated candidate runs the removal chain
- //      (final clean check, fsmonitor stop, rename-to-trash, branch CAS
--//      delete) serially under the write side of the scan lock, reusing the
--//      removal plan its scan check computed.
-+//      delete) on a worker pool sized like rayon's, concurrently with the
-+//      remaining scan, reusing the removal plan its scan check computed.
-+//      Only `--foreground` and current-worktree removals serialize, and the
-+//      live variant passes neither.
- //
- // The generated base gets a prune overlay: squash-merged candidates
- // (integrated by content — the expensive probe path, the post-PR-squash shape
+@@ -98,14 +98,14 @@ fn build_manual_hook_template_vars(ctx: &CommandContext, hook_type: HookType) ->
+     let branch = ctx.branch;
+     let worktree_path = ctx.worktree_path;
+     match hook_type {
+-        // Merge/commit hooks: target = merge target (default branch for commit,
+-        // current for merge). Only this arm needs the default branch, and
++        // Commit hooks: target = default branch. Only this arm needs it, and
+         // resolving it can cost a `git ls-remote` on a fresh clone — so it is
+         // fetched here rather than up front.
+         HookType::PreCommit | HookType::PostCommit => ctx
+             .repo
+             .default_branch()
+             .map_or_else(TemplateVars::new, |t| TemplateVars::new().with_target(&t)),
++        // Merge hooks: target = current branch
+         HookType::PreMerge | HookType::PostMerge => TemplateVars::new()
+             .with_target_opt(branch)
+             .with_target_worktree_path(worktree_path),
+@@ -282,9 +282,7 @@ pub fn run_hook(
+     let template_vars = build_manual_hook_template_vars(&ctx, hook_type);
+     let mut extra_vars = template_vars.as_extra_vars();
+     extra_vars.extend(custom_vars_refs.iter().copied());
+-    // Forward positional CLI args as `{{ args }}` (empty sequence when
+-    // nothing was forwarded). `expand_template` rehydrates this JSON into a
+-    // `ShellArgs` sequence that renders space-joined, per-element escaped.
++    // Empty sequence when nothing was forwarded.
+     extra_vars.push((ALIAS_ARGS_KEY, &args_json));
+ 
+     if dry_run {
 ```
 
-**File**: `src/commands/picker/items.rs` (modified, +16/-12)
+**File**: `src/commands/remove.rs` (modified, +2/-1)
 ```diff
-@@ -394,14 +394,6 @@ enum WorktreeDiffState {
-     Unknown,
- }
- 
--/// Wrapper to implement SkimItem for ListItem.
--///
--/// Progressive updates live inside `rendered` — the picker handler rewrites
--/// the ANSI-colored display string in place as task results arrive. skim 4.x
--/// renders on demand, so the handler pokes an `Event::Render` after each
--/// mutation (see `progressive_handler`); skim then re-reads `display()` and the
--/// new value surfaces — no re-send through the item channel.
--///
- /// Append the PR/MR fields a row filters on — reference (`#123`/`!7`), title,
- /// author — to `text`, space-separated, in the order shared by worktree rows
- /// and listed `--prs` rows. A PR thus filters identically however it's shown,
-@@ -433,6 +425,14 @@ pub(super) fn push_pr_search_tokens(
-     }
- }
- 
-+/// Wrapper to implement SkimItem for ListItem.
-+///
-+/// Progressive updates live inside `rendered` — the picker handler rewrites
-+/// the ANSI-colored display string in place as task results arrive. skim 4.x
-+/// renders on demand, so the handler pokes an `Event::Render` after each
-+/// mutation (see `progressive_handler`); skim then re-reads `display()` and the
-+/// new value surfaces — no re-send through the item channel.
-+///
- /// The matcher text (`text()`) is assembled live from `search_base` + the
- /// `gutter` glyph + the current `pr_status` slot, so a PR's reference, title,
- /// and author become filterable the moment the CI fetch lands them — the same
-@@ -2416,7 +2416,10 @@ mod tests {
-             !plain.contains("comments"),
-             "inactive label dropped: {plain:?}"
-         );
--        assert!(!plain.contains("HEAD"), "inactive label dropped: {plain:?}");
-+        assert!(
-+            !plain.contains("committed"),
-+            "inactive label dropped: {plain:?}"
-+        );
-         // The compact bar fits a narrow pane where the full bar would not.
-         assert!(visual_width(&plain) <= 40, "fits the pane: {plain:?}");
- 
-@@ -3719,10 +3722,11 @@ mod tests {
-         repo.run_command(&["checkout", "feature"]).unwrap();
-         let item = item_at(&repo, "feature");
-         let output = PickerRow::compute_upstream_diff_preview(&repo, &item, 80);
--        // Diverged path runs the diff; symmetric difference includes both files.
-+        // Diverged shows this branch's unique changes (merge-base..head), not
-+        // upstream's.
-         assert!(
--            output.contains("feat.txt") || output.contains("upstream.txt"),
--            "expected diverged diff, got: {output:?}"
-+            output.contains("feat.txt") && !output.contains("upstream.txt"),
-+            "expected the branch's side of the diverged diff, got: {output:?}"
-         );
-     }
- 
+@@ -370,7 +370,8 @@ fn maybe_reap_result(result: &RemovalPlan, reap_enabled: bool) {
+ ///      → synchronous `remove_dir_all` on the staged directory.
+ ///    - **Background** (default): stop fsmonitor → rename + prune +
+ ///      synchronous branch delete → spawn a detached drain of the trash
+-///      directory (`wt _drain-trash`). Cross-filesystem or locked worktrees fall back to
++///      directory (`wt _drain-trash`). When the rename fails (cross-filesystem,
++///      permissions, Windows file locks), removal falls back to
+ ///      `git worktree remove` in the detached process.
+ /// 4. **Post-remove hooks** run in the background after dispatch.
+ /// 5. **Internal sweep** (fire-and-forget, after primary output): entries
 ```
 
-**File**: `tests/integration_tests/list.rs` (modified, +0/-60)
+**File**: `src/trace/parse.rs` (modified, +2/-2)
 ```diff
-@@ -3094,66 +3094,6 @@ fn test_list_task_dag_ordering_stability(mut repo: TestRepo) {
-     });
- }
- 
--#[rstest]
--fn test_list_progressive_vs_buffered_identical_data(mut repo: TestRepo) {
--    // Critical test: Verify that progressive and buffered modes collect identical data
--    // despite using different rendering strategies (real-time UI vs collect-then-print).
--    // This ensures consolidation on task DAG data collection works correctly.
--    //
--    // Note: We compare JSON output, not table output, because:
--    // - Progressive mode renders headers before knowing final column widths (uses estimates)
--    // - Buffered mode renders headers after data collection (uses actual widths)
--    // - The DATA must be identical, but table formatting may differ slightly
--
--    // Create varied worktrees to test multiple data points
--    repo.add_worktree("feature-a");
--    repo.add_worktree("feature-b");
--
--    // Modify a worktree to have uncommitted changes
--    let feature_a_path = repo.worktree_path("feature-a");
--    std::fs::write(feature_a_path.join("changes.txt"), "test").unwrap();
--
--    // Run both modes with JSON output to compare data (not formatting)
--    let progressive_output = {
--        let mut cmd = list_snapshots::command(&repo, repo.root_path());
--        cmd.args(["--progressive", "--format=json"]);
--        cmd.output().unwrap()
--    };
--
--    let buffered_output = {
--        let mut cmd = list_snapshots::command(&repo, repo.root_path());
--        cmd.args(["--no-progressive", "--format=json"]);
--        cmd.output().unwrap()
--    };
--
--    // Both should succeed
--    assert!(
--        progressive_output.status.success(),
--        "Progressive mode failed: {}",
--        String::from_utf8_lossy(&progressive_output.stderr)
--    );
--    assert!(
--        buffered_output.status.success(),
--        "Buffered mode failed: {}",
--        String::from_utf8_lossy(&buffered_output.stderr)
--    );
--
--    // Parse JSON outputs
--    let progressive_json: serde_json::Value =
--        serde_json::from_slice(&progressive_output.stdout).unwrap();
--    let buffered_json: serde_json::Value = serde_json::from_slice(&buffered_output.stdout).unwrap();
--
--    // The JSON data should be identical (ignoring display fields which may have formatting differences)
--    // Compare the structured data to ensure both modes collect the same information
--    assert_eq!(
--        progressive_json,
--        buffered_json,
--        "Progressive and buffered modes produced different data!\n\nProgressive:\n{}\n\nBuffered:\n{}",
--        serde_json::to_string_pretty(&progressive_json).unwrap(),
--        serde_json::to_string_pretty(&buffered_json).unwrap()
--    );
--}
--
- #[rstest]
- fn test_list_with_c_flag(mut repo: TestRepo) {
-     // Create some worktrees
+@@ -108,8 +108,8 @@ impl TraceEntry {
+ /// skipped this way.
+ fn parse_line(line: &str) -> Option<TraceEntry> {
+     let line = line.trim();
+-    // Cheap reject before handing the line to serde — most non-record lines
+-    // (start echoes, blank lines) don't even start with `{`.
++    // Cheap reject before serde for lines that can't be a JSON object: blank
++    // lines, or a non-JSONL file passed to `wt config state logs profile`.
+     if !line.starts_with('{') {
+         return None;
+     }
 ```
 
 ---
 
-### Incident Patch 2: `a6cbc294` (2026-11-11)
-**Commit Message**: fix(config): point system-config deprecation hints at the file, not wt config update (#4767)
+### Incident Patch 2: `736606ba` (2026-11-12)
+**Commit Message**: fix(copy-ignored): reach .worktreeinclude paths inside a wholly ignored directory (#4751)
 
-When the system config (e.g. `/etc/xdg/worktrunk/config.toml`) contains
-a deprecated setting, every command printed the generic hint `To see
-details, run wt config show; to apply updates, run wt config update`.
-Neither command acts on the system config: `wt config update` only
-checks the user and project files and answers "No deprecated settings
-found", and `wt config show` renders no deprecation details for the
-system section. So the hint led nowhere.
+`.worktreeinclude` now selects by git's own gitignore rules, including
+paths inside a wholly ignored directory that an include line names, as
+Claude Code does. `git ls-files --directory` lists such a directory as
+one entry, so `.cache/claude-code-types/` under an ignored `.cache/`
+matched nothing, and `copy-ignored` and `promote` skipped it. Claude
+Code's own `.worktreeinclude` copy reaches it, and a team trialling the
+Claude Code plugin lost that cache in every new worktree
+(Rikmorn/sidekick#287).
 
-The system config now gets its own hint:
+Git now does all the matching. Discovery runs `git ls-files -o -i
+--directory` once with the standard exclude sources and, when
+`.worktreeinclude` exists, again with that file as the only source. An
+entry is selected where the two listings overlap, taking the deeper path
+of each pair where one holds the other. Inside a directory git lists
+whole, only lines that name a path (a slash before the end, past any
+leading `/` or `**/`) select, as found by a third listing of those lines
+plus the negations. A name matched at any depth (`.env`, `types/`)
+selects only outside such directories. Claude Code, wh
 
-```
-▲ System config: [select] is deprecated in favor of [switch.picker]
-↳ wt config update leaves the system config unchanged; to apply updates, edit /etc/xdg/worktrunk/config.toml
-```
-
-The generic hint is shown at most once per process. Previously a
-system-config deprecation could use it up before the user config was
-checked. Now the system hint has its own path, so a user-config
-deprecation in the same run still prints the `wt config update` hint.
-The path reaches users through `UserConfig::load_with_warnings`, which
-runs `check_and_migrate` on the system file with inline warnings on.
-
-The new `te
-
-**File**: `src/config/deprecation.rs` (modified, +20/-9)
+**File**: `docs/src/content/docs/claude-code.md` (modified, +1/-1)
 ```diff
-@@ -529,8 +529,8 @@ fn detect_deprecations_from_doc(doc: &toml_edit::DocumentMut) -> Deprecations {
- /// Run every rule in table order against `doc`, appending each rule's warning
- /// kinds to `kinds` and returning whether the document changed.
- ///
--/// The load pass excludes [`DeprecationRule::UpdateOnly`] rewrites (cosmetic
--/// or still-valid serde fields, so serde doesn't need them applied).
-+/// The load pass excludes [`DeprecationRule::UpdateOnly`] rewrites (still-valid
-+/// serde fields, so serde doesn't need them applied).
- /// Detection and [`compute_migrated_content`] run the update pass.
- fn apply_rules(doc: &mut toml_edit::DocumentMut, pass: RulePass, kinds: &mut Deprecations) -> bool {
-     let mut modified = false;
-@@ -1228,8 +1228,7 @@ fn migrate_negated_bool_doc(
- /// [`DeprecationRule::Silent`] rule — to a parsed document, in table order.
- /// Returns true if any modifications were made.
- ///
--/// [`DeprecationRule::UpdateOnly`] rules are excluded — template variable
--/// renaming is cosmetic (would break `--var` overrides), and approved-commands
-+/// [`DeprecationRule::UpdateOnly`] rules are excluded — `approved-commands`
- /// is still a valid serde field. They apply in [`compute_migrated_content`].
- fn migrate_content_doc(doc: &mut toml_edit::DocumentMut) -> bool {
-     apply_rules(doc, RulePass::Load, &mut Vec::new())
-@@ -1494,8 +1493,10 @@ pub struct CheckAndMigrateResult {
- /// the main worktree" hint when viewing project config from a linked worktree.
- ///
- /// When `emit_inline_warnings` is true, per-kind deprecation warnings are printed to stderr
--/// with a hint pointing at `wt config show`/`wt config update`. When false, nothing is
--/// printed and the caller is expected to render via `format_deprecation_details`. Use this for commands other than `config show`.
-+/// with a hint pointing at `wt config show`/`wt config update`, or at editing the file for
-+/// the system config, which `wt config update` never rewrites. When false, nothing is
-+/// printed and the caller is expected to render via `format_deprecation_details`;
-+/// `wt config show` and `wt config update` pass false.
- ///
- /// Warnings are deduplicated per path per process.
- ///
-@@ -1570,7 +1571,17 @@ pub fn check_and_migrate(
-     if emit_inline_warnings && !warnings_suppressed() {
-         let warnings = format_warning_lines(info.deprecations.iter(), info.label());
-         eprint!("{warnings}");
--        if DEPRECATION_HINT_EMITTED.set(()).is_ok() {
-+        if kind == ConfigFileKind::System {
-+            // `wt config update` never rewrites the system config, and the
-+            // per-path dedup above already limits this to once per process.
-+            eprintln!(
-+                "{}",
-+                hint_message(cformat!(
-+                    "<underline>wt config update</> leaves the system config unchanged; to apply updates, edit <underline>{}</>",
-+                    crate::path::format_path_for_display(path)
-+                ))
-+            );
-+        } else if DEPRECATION_HINT_EMITTED.set(()).is_ok() {
-             eprintln!(
-                 "{}",
-                 hint_message(cformat!(
-@@ -1590,8 +1601,8 @@ pub fn check_and_migrate(
- /// Apply all deprecation fixes to `content` in memory and return the migrated
- /// TOML string.
- ///
--/// Applies variable renames (cosmetic, string-level), structural section and
--/// field migrations, and removes `approved-commands` under `[projects]` (which
-+/// Applies template variable renames, structural section and field
-+/// migrations, and removes `approved-commands` under `[projects]` (which
- /// `wt config update` copies to `approvals.toml` before overwriting).
- ///
- /// Pure function — no filesystem access. Idempotent: feeding its own output
-```
-
-**File**: `tests/integration_tests/config_show.rs` (modified, +51/-0)
-```diff
-@@ -8,6 +8,7 @@ use ansi_str::AnsiStr;
- use insta_cmd::assert_cmd_snapshot;
- use rstest::rstest;
- use std::fs;
-+use std::path::Path;
- use tempfile::TempDir;
+@@ -140,7 +140,7 @@ For other agent CLIs, configure these commands to run on session events:
  
- #[rstest]
-@@ -682,6 +683,56 @@ pager = "delta --paging=never"
+ ## Worktree isolation (Claude Code and OpenCode)
+ 
+-Claude Code agents can run in isolated worktrees (`isolation: "worktree"`). By default, Claude Code creates these with `git worktree add`. The plugin's `WorktreeCreate` and `WorktreeRemove` hooks route this through `wt switch --create` and `wt remove` instead, so worktrees created by agents get worktrunk's naming conventions, hooks, and lifecycle management. If the branch already exists, the hook runs `wt switch` without `--create`, which returns the branch's worktree, creating one if it has none.
++Claude Code agents can run in isolated worktrees (`isolation: "worktree"`). By default, Claude Code creates these with `git worktree add`. The plugin's `WorktreeCreate` and `WorktreeRemove` hooks route this through `wt switch --create` and `wt remove` instead, so worktrees created by agents get worktrunk's naming conventions, hooks, and lifecycle management. If the branch already exists, the hook runs `wt switch` without `--create`, which returns the branch's worktree, creating one if it has none. New branches start from the default branch: Claude Code's hook input names the worktree but no base, so its `worktree.baseRef` setting has no effect.
+ 
+ Under OpenCode 2, the plugin registers a `worktrunk` worktree strategy, so worktrees OpenCode creates and removes go through the same commands. Each gets a branch named after the worktree name OpenCode chooses, at the path from `worktree-path`; OpenCode's `worktree.directory` setting is ignored. New branches start from the default branch (or the starting ref OpenCode passes), not the current checkout's HEAD. A dirty worktree fails removal with worktrunk's message rather than an offer to force.
+ 
+```
+
+**File**: `plugins/worktrunk/skills/worktrunk/reference/claude-code.md` (modified, +1/-1)
+```diff
+@@ -132,7 +132,7 @@ For other agent CLIs, configure these commands to run on session events:
+ 
+ ## Worktree isolation (Claude Code and OpenCode)
+ 
+-Claude Code agents can run in isolated worktrees (`isolation: "worktree"`). By default, Claude Code creates these with `git worktree add`. The plugin's `WorktreeCreate` and `WorktreeRemove` hooks route this through `wt switch --create` and `wt remove` instead, so worktrees created by agents get worktrunk's naming conventions, hooks, and lifecycle management. If the branch already exists, the hook runs `wt switch` without `--create`, which returns the branch's worktree, creating one if it has none.
++Claude Code agents can run in isolated worktrees (`isolation: "worktree"`). By default, Claude Code creates these with `git worktree add`. The plugin's `WorktreeCreate` and `WorktreeRemove` hooks route this through `wt switch --create` and `wt remove` instead, so worktrees created by agents get worktrunk's naming conventions, hooks, and lifecycle management. If the branch already exists, the hook runs `wt switch` without `--create`, which returns the branch's worktree, creating one if it has none. New branches start from the default branch: Claude Code's hook input names the worktree but no base, so its `worktree.baseRef` setting has no effect.
+ 
+ Under OpenCode 2, the plugin registers a `worktrunk` worktree strategy, so worktrees OpenCode creates and removes go through the same commands. Each gets a branch named after the worktree name OpenCode chooses, at the path from `worktree-path`; OpenCode's `worktree.directory` setting is ignored. New branches start from the default branch (or the starting ref OpenCode passes), not the current checkout's HEAD. A dirty worktree fails removal with worktrunk's message rather than an offer to force.
+ 
+```
+
+**File**: `skills/worktrunk/reference/claude-code.md` (modified, +1/-1)
+```diff
+@@ -132,7 +132,7 @@ For other agent CLIs, configure these commands to run on session events:
+ 
+ ## Worktree isolation (Claude Code and OpenCode)
+ 
+-Claude Code agents can run in isolated worktrees (`isolation: "worktree"`). By default, Claude Code creates these with `git worktree add`. The plugin's `WorktreeCreate` and `WorktreeRemove` hooks route this through `wt switch --create` and `wt remove` instead, so worktrees created by agents get worktrunk's naming conventions, hooks, and lifecycle management. If the branch already exists, the hook runs `wt switch` without `--create`, which returns the branch's worktree, creating one if it has none.
++Claude Code agents can run in isolated worktrees (`isolation: "worktree"`). By default, Claude Code creates these with `git worktree add`. The plugin's `WorktreeCreate` and `WorktreeRemove` hooks route this through `wt switch --create` and `wt remove` instead, so worktrees created by agents get worktrunk's naming conventions, hooks, and lifecycle management. If the branch already exists, the hook runs `wt switch` without `--create`, which returns the branch's worktree, creating one if it has none. New branches start from the default branch: Claude Code's hook input names the worktree but no base, so its `worktree.baseRef` setting has no effect.
+ 
+ Under OpenCode 2, the plugin registers a `worktrunk` worktree strategy, so worktrees OpenCode creates and removes go through the same commands. Each gets a branch named after the worktree name OpenCode chooses, at the path from `worktree-path`; OpenCode's `worktree.directory` setting is ignored. New branches start from the default branch (or the starting ref OpenCode passes), not the current checkout's HEAD. A dirty worktree fails removal with worktrunk's message rather than an offer to force.
+ 
+```
+
+**File**: `src/commands/step/copy_ignored.rs` (modified, +4/-1)
+```diff
+@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
+ 
+ use anyhow::Context;
+ use color_print::cformat;
+-use worktrunk::copy::{copy_dir_recursive, copy_leaf};
++use worktrunk::copy::{copy_dir_recursive, copy_leaf, ensure_path_within_root};
+ use worktrunk::git::{Repository, path_dir_name};
+ use worktrunk::path::format_path_for_display;
+ use worktrunk::progress::{Progress, format_bytes, format_reflink_paren};
+@@ -225,6 +225,9 @@ pub fn step_copy_ignored(
+                         })?;
+             } else {
+                 if let Some(parent) = dest_entry.parent() {
++                    // Before creating anything: a symlinked directory in the
++                    // destination must not get directories made beyond it.
++                    ensure_path_within_root(parent, &dest_path)?;
+                     fs::create_dir_all(parent).with_context(|| {
+                         format!(
+                             "creating directory for {}",
+```
+
+**File**: `src/commands/step/promote.rs` (modified, +5/-1)
+```diff
+@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
+ 
+ use anyhow::{Context, bail};
+ use color_print::cformat;
+-use worktrunk::copy::{copy_dir_recursive, copy_leaf};
++use worktrunk::copy::{copy_dir_recursive, copy_leaf, ensure_path_within_root};
+ use worktrunk::git::{Repository, duplicated_branches};
+ use worktrunk::path::format_path_for_display;
+ use worktrunk::progress::Progress;
+@@ -128,6 +128,8 @@ fn stage_ignored(
+ ///
+ /// B's original files (in staging/b) go to worktree A (which now has B's branch).
+ /// A's original files (in staging/a) go to worktree B (which now has A's branch).
++/// An entry whose destination resolves outside its worktree, through a
++/// symlinked directory there, stays in staging and fails the promote.
+ fn distribute_staged(
+     staging_dir: &Path,
+     path_a: &Path,
+@@ -147,6 +149,7 @@ fn distribute_staged(
+         let staging_entry = staging_b.join(relative);
+         let dest_entry = path_a.join(relative);
+         if fs::symlink_metadata(&staging_entry).is_ok() {
++            ensure_path_within_root(dest_entry.parent().unwrap_or(&dest_entry), path_a)?;
+             move_entry(&staging_entry, &dest_entry, *is_dir)
+                 .with_context(|| format!("distributing {}", format_path_for_display(relative)))?;
+             count += 1;
+@@ -161,6 +164,7 @@ fn distribute_staged(
+         let staging_entry = staging_a.join(relative);
+         let dest_entry = path_b.join(relative);
+         if fs::symlink_metadata(&staging_entry).is_ok() {
++            ensure_path_within_root(dest_entry.parent().unwrap_or(&dest_entry), path_b)?;
+             move_entry(&staging_entry, &dest_entry, *is_dir)
+                 .with_context(|| format!("distributing {}", format_path_for_display(relative)))?;
+             count += 1;
+```
+
+**File**: `src/commands/step/shared.rs` (modified, +257/-96)
+```diff
+@@ -4,12 +4,16 @@
+ //! - Copy-ignored discovery (`list_and_filter_ignored_entries` and friends) —
+ //!   used by `copy_ignored` and `promote`.
+ 
++use std::collections::HashSet;
++use std::ffi::OsStr;
++use std::fs;
+ use std::path::{Path, PathBuf};
+ 
+ use anyhow::Context;
+ use ignore::gitignore::GitignoreBuilder;
+ use worktrunk::config::CopyIgnoredConfig;
+ use worktrunk::git::Repository;
++use worktrunk::path::format_path_for_display;
+ use worktrunk::shell_exec::Cmd;
+ use worktrunk::styling::{format_bash_with_gutter, format_heading, format_with_gutter};
+ 
+@@ -93,101 +97,209 @@ pub(super) fn resolve_copy_ignored_config(repo: &Repository) -> anyhow::Result<C
+ }
+ 
+ /// List gitignored entries in a worktree, filtered by `.worktreeinclude` and excluding
+-/// configured patterns, VCS metadata directories, and entries that contain nested worktrees.
++/// configured patterns, VCS metadata directories, and other worktrees.
+ ///
+-/// Combines five steps:
+-/// 1. `list_ignored_entries()` — git ls-files for ignored entries
+-/// 2. `.worktreeinclude` filtering — only matching entries if the file exists
+-/// 3. `[step.copy-ignored].exclude` filtering — skip entries matching configured patterns
+-/// 4. Built-in exclude filtering — always skip VCS metadata and tool-state directories
+-/// 5. Nested worktree filtering — exclude entries containing other worktrees
++/// Git decides both what is ignored and what `.worktreeinclude` selects:
++/// [`list_ignored_entries`] runs once with git's standard exclude sources and,
++/// when the include file exists, once more with that file as the only source,
++/// and [`overlap`] keeps what both listings cover. Git applies gitignore rules,
++/// so a pattern naming a path inside a wholly ignored directory
++/// (`.cache/types/`) finds it, and a negation can't re-include a path inside a
++/// selected directory. Like every git listing, both stop at a nested
++/// repository: a path inside one belongs to that repository.
++///
++/// Inside a directory git lists whole, only a line that names a path
++/// ([`names_path`]) selects anything: a third listing runs with just those
++/// lines and the negations. A name matched at any depth (`.env`, `types/`)
++/// selects only outside such directories, so `.env` copies the root `.env` and
++/// every `.env` git lists on its own, but never a package's `.env` from
++/// `node_modules/`. Claude Code, which defines `.worktreeinclude`, agrees on
++/// path-naming lines; it opens a directory git lists whole from a line's text,
++/// then applies every line inside it. Each include listing walks every
++/// untracked directory, about 0.3 s per 100k ignored files with a warm cache.
++/// [`Boundaries`] then drops configured excludes, built-in VCS and tool-state
++/// directories, and other worktrees.
+ pub(super) fn list_and_filter_ignored_entries(
+     worktree_path: &Path,
+     context: &str,
+     worktree_paths: &[PathBuf],
+     exclude_patterns: &[String],
+ ) -> anyhow::Result<Vec<(PathBuf, bool)>> {
+-    let ignored_entries = list_ignored_entries(worktree_path, context)?;
+-
+-    // Filter to entries that match .worktreeinclude (or all if no file exists)
++    let ignored = list_ignored_entries(worktree_path, context, &["--exclude-standard"])?;
+     let include_path = worktree_path.join(".worktreeinclude");
+-    let filtered: Vec<_> = if include_path.exists() {
+-        let include_matcher = {
+-            let mut builder = GitignoreBuilder::new(worktree_path);
+-            if let Some(err) = builder.add(&include_path) {
+-                // The `ignore` crate formats the path with OS-native separators;
+-                // normalize to forward slashes for consistent display.
+-                return Err(worktrunk::git::GitError::WorktreeIncludeParseError {
+-                    error: err.to_string().replace('\\', "/"),
+-                }
+-                .into());
+-            }
+-            builder.build().context("Failed to build include matcher")?
+-        };
+-        ignored_entries
+-            .into_iter()
+-            .filter(|(path, is_dir)| {
+-                include_matcher
+-                    .matched_path_or_any_parents(relative_entry(path, worktree_path), *is_dir)
+-                    .is_ignore()
+-            })
+-            .collect()
+-    } else {
+-        ignored_entries
++    let entries = match fs::read_to_string(&include_path) {
++        Ok(lines) => {
++            let included =
++                list_ignored_entries(worktree_path, context, &["--exclude-from=.worktreeinclude"])?;
++            // Git skips a leading byte-order mark, so the first line is read without it.
++            let lines = lines.strip_prefix('\u{feff}').unwrap_or(&lines);
++            let named = if lines.lines().any(names_path) {
++                // A file, not `--exclude=` arguments, so git reads these lines
++                // exactly as it reads `.worktreeinclude`.
++                let naming: String = lines
++                    .lines()
++                    .filter(|line| names_path(l
+```
+
+**File**: `src/copy.rs` (modified, +5/-2)
+```diff
+@@ -332,13 +332,16 @@ fn preserve_modified(path: &Path, src_meta: &fs::Metadata) {
+     }
+ }
+ 
+-fn ensure_path_within_root(path: &Path, root: &Path) -> anyhow::Result<()> {
++/// Fails when `path`, with its existing ancestors' symlinks resolved, lies
++/// outside `root`: a symlinked directory in a destination worktree must not
++/// carry a copy or move out of it.
++pub fn ensure_path_within_root(path: &Path, root: &Path) -> anyhow::Result<()> {
+     let canonical_root = canonicalize_with_parents(root);
+     let canonical_path = canonicalize_with_parents(path);
+ 
+     anyhow::ensure!(
+         canonical_path.starts_with(&canonical_root),
+-        "refusing to copy outside destination worktree: {} resolves outside {}",
++        "refusing to write outside destination worktree: {} resolves outside {}",
+         format_path_for_display(path),
+         format_path_for_display(root)
      );
- }
- 
-+/// `wt config update` never rewrites the system config, so a system-config
-+/// deprecation points at editing the file instead. A user-config deprecation
-+/// in the same run still gets the `wt config update` hint.
-+#[rstest]
-+fn test_system_config_deprecation_hint_points_at_the_file(repo: TestRepo) {
-+    let system_config_dir = worktrunk::testing::tempdir().unwrap();
-+    let system_config_path = system_config_dir.path().join("config.toml");
-+    fs::write(&system_config_path, "[select]\npager = \"less\"\n").unwrap();
-+
-+    let run = |user_config: Option<&Path>| {
-+        let mut cmd = repo.wt_command();
-+        cmd.env("WORKTRUNK_SYSTEM_CONFIG_PATH", &system_config_path)
-+            .env("NO_COLOR", "1");
-+        if let Some(path) = user_config {
-+            cmd.env("WORKTRUNK_CONFIG_PATH", path);
-+        }
-+        cmd.args(["hook", "show"]).current_dir(repo.root_path());
-+        let output = cmd.output().unwrap();
-+        assert!(
-+            output.status.success(),
-+            "Command should succeed: {}",
-+            String::from_utf8_lossy(&output.stderr)
-+        );
-+        String::from_utf8_lossy(&output.stderr).into_owned()
-+    };
-+
-+    let stderr = run(None);
-+    assert!(
-+        stderr.contains("System config: [select] is deprecated"),
-+        "system config deprecation should warn, got: {stderr}"
-+    );
-+    assert!(
-+        !stderr.contains("run wt config update"),
-+        "wt config update doesn't rewrite the system config, got: {stderr}"
-+    );
-+    assert!(
-+        stderr.contains("to apply updates, edit"),
-+        "system config hint should point at the file, got: {stderr}"
-+    );
-+
-+    let user_config_dir = worktrunk::testing::tempdir().unwrap();
-+    let user_config_path = user_config_dir.path().join("config.toml");
-+    fs::write(&user_config_path, "[select]\npager = \"less\"\n").unwrap();
-+    let stderr = run(Some(&user_config_path));
-+    assert!(
-+        stderr.contains("to apply updates, edit") && stderr.contains("run wt config update"),
-+        "both hints should appear when both files are deprecated, got: {stderr}"
-+    );
-+}
-+
- #[rstest]
- fn test_config_show_outside_git_repo(mut repo: TestRepo, temp_home: TempDir) {
-     let temp_dir = worktrunk::testing::tempdir().unwrap();
 ```
 
----
-
-### Incident Patch 3: `2271c34b` (2026-11-10)
-**Commit Message**: fix(list): report the tracked remote branch in schema-1 JSON remote.branch (#4756)
-
-`wt list --format=json` (schema 1) and `wt list statusline
---format=json` reported the **local** branch name in `remote.branch`. So
-a local `feature` tracking `origin/other-name` serialized `"branch":
-"feature"`, even though the field is documented as the remote branch
-name. Schema 2's `upstream.branch` already reports `other-name` for the
-same row, so the two schemas disagreed.
-
-
-[`upstream_to_json`](https://github.com/max-sixty/worktrunk/blob/e864cb9ef685701baad487a5a63c3c2c541b490f/src/commands/list/json_output.rs#L436-L448)
-has a comment saying `UpstreamStatus` only stores the remote name. That
-stopped being true once the field began carrying the upstream's short
-name (`upstream_short`, set in `compute_upstream`). The fix reads
-`ActiveUpstream::branch`, which is the same value schema 2 uses. It
-falls back to the local name only when the upstream short name is
-unknown, so output for rows without one doesn't change.
-
-A new unit test (`test_upstream_to_json_reports_tracked_branch_name`)
-fails on `main` with `left: "feature"`, `right: "other-name"` and passes
-with the fix. The existing `list` and `s
-
-**File**: `src/commands/list/json_output.rs` (modified, +22/-9)
+**File**: `src/git/error.rs` (modified, +0/-12)
 ```diff
-@@ -435,15 +435,13 @@ impl JsonItem {
+@@ -647,9 +647,6 @@ pub enum GitError {
+     ParseError {
+         message: String,
+     },
+-    WorktreeIncludeParseError {
+-        error: String,
+-    },
+     LlmCommandFailed {
+         command: String,
+         error: String,
+@@ -1023,10 +1020,6 @@ impl GitError {
  
- /// Convert UpstreamStatus to JsonRemote
- fn upstream_to_json(upstream: &UpstreamStatus, branch: Option<&str>) -> Option<JsonRemote> {
--    upstream.active().map(|active| {
--        // Use local branch name since UpstreamStatus only stores the remote name,
--        // not the full tracking refspec. In most cases these match (e.g., feature -> origin/feature).
--        JsonRemote {
--            name: active.remote.to_string(),
--            branch: branch.unwrap_or_default().to_string(),
--            ahead: active.ahead,
--            behind: active.behind,
--        }
-+    upstream.active().map(|active| JsonRemote {
-+        name: active.remote.to_string(),
-+        // The tracked branch's name on the remote; the local name stands in
-+        // only when the upstream's short name isn't known.
-+        branch: active.branch.or(branch).unwrap_or_default().to_string(),
-+        ahead: active.ahead,
-+        behind: active.behind,
-     })
- }
+             GitError::ParseError { message } => message.clone(),
  
-@@ -733,6 +731,21 @@ mod tests {
-         assert_eq!(json.behind, 2);
-     }
+-            GitError::WorktreeIncludeParseError { .. } => {
+-                cformat!("Error parsing <bold>.worktreeinclude</>")
+-            }
+-
+             GitError::WorktreeNotFound { branch } => {
+                 cformat!("Branch <bold>{branch}</> has no worktree")
+             }
+@@ -1652,11 +1645,6 @@ impl GitError {
+                 write!(f, "{}", error_message(&title))
+             }
  
-+    #[test]
-+    fn test_upstream_to_json_reports_tracked_branch_name() {
-+        // A local `feature` tracking `origin/other-name` reports the remote
-+        // branch, matching schema 2's `upstream.branch`.
-+        let upstream = UpstreamStatus {
-+            remote: Some("origin".to_string()),
-+            upstream_short: Some("origin/other-name".to_string()),
-+            ahead: 1,
-+            behind: 0,
-+        };
-+        let json = upstream_to_json(&upstream, Some("feature")).unwrap();
-+        assert_eq!(json.name, "origin");
-+        assert_eq!(json.branch, "other-name");
-+    }
-+
-     #[test]
-     fn test_upstream_to_json_no_remote() {
-         let upstream = UpstreamStatus {
+-            GitError::WorktreeIncludeParseError { error } => {
+-                let title = self.title();
+-                write!(f, "{}", format_error_block(error_message(&title), error))
+-            }
+-
+             GitError::WorktreeNotFound { branch } => {
+                 let title = self.title();
+                 let switch_cmd = suggest_command("switch", &[branch], &[]);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4775** (2026-11-12): Accept int/float filters on vars and git.branch values in custom-column validation (@worktrunk-bot)
+- **PR #4772** (2026-11-12): refactor: replace expect() with ? when encoding forwarded hook and alias args (@worktrunk-bot)
+- **PR #4771** (2026-11-12): docs: fix stale comments in remove, hook_commands, and trace parsing (@worktrunk-bot)
+- **PR #4770** (2026-11-11): docs(list): explain shortened counts (C, K, ∞) (@worktrunk-bot)
 - **PR #4768** (2026-11-11): test: make three picker/list assertions able to fail, and fix two stale comments (@worktrunk-bot)
 - **PR #4767** (2026-11-11): fix(config): point system-config deprecation hints at the file, not wt config update (@worktrunk-bot)
-- **PR #4765** (2026-11-11): chore: bump taiki-e/install-action from 2.90.2 to 2.90.3 (@dependabot[bot])
-- **PR #4764** (2026-11-10): fix(forge): read Azure DevOps collection, legacy SSH, and default-repo remotes (@worktrunk-bot)
-- **PR #4761** (closed): feat(config): expose pr_number to the worktree-path template (@robsonpeixoto)
-- **PR #4760** (2026-11-10): ci: bump Nushell pin to 0.117.0 (@worktrunk-bot)
 
 ---
 
@@ -2459,32 +2413,34 @@ with the fix. The existing `list` and `s
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: make three picker/list assertions able to fail, and fix two stale comments
+## X. docs: fix stale comments in remove, hook_commands, and trace parsing (#4771)
 
 **RULE**:
-When implementing operations in `benches/prune.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/commands/hook_commands.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c43d4ec`: test: make three picker/list assertions able to fail, and fix two stale comments (#4768). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e4e6dda`: docs: fix stale comments in remove, hook_commands, and trace parsing (#4771). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `benches/prune.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/hook_commands.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//      delete) on a worker pool sized like rayon's, concurrently with the
-//      remaining scan, reusing the removal plan its scan check computed.
-//      Only `--foreground` and current-worktree removals serialize, and the
-//      live variant passes neither.
+        // Commit hooks: target = default branch. Only this arm needs it, and
+        // Merge hooks: target = current branch
+    // Empty sequence when nothing was forwarded.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-//      delete) serially under the write side of the scan lock, reusing the
-//      removal plan its scan check computed.
+        // Merge/commit hooks: target = merge target (default branch for commit,
+        // current for merge). Only this arm needs the default branch, and
+    // Forward positional CLI args as `{{ args }}` (empty sequence when
+    // nothing was forwarded). `expand_template` rehydrates this JSON into a
+    // `ShellArgs` sequence that renders space-joined, per-element escaped.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c43d4ec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e4e6dda` are properly handled with clean fallback behavior.

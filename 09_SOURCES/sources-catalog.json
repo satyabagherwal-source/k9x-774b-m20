@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "a6cbc294",
+    "sourceVersion": "d5b9a7e0",
     "license": "NOASSERTION",
-    "contentHash": "0e4eec8d8608c79847dd746189a29ee8862cf86e42198c75abe5f5670e21a985",
-    "lastHarvestedAt": "2026-11-11T13:29:01.869Z",
+    "contentHash": "45036269a1dfbcb997bbbb6b6892ffbf5143a49040dbb306323afa89f44fad81",
+    "lastHarvestedAt": "2026-11-13T06:51:10.956Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -11905,8 +11905,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "920610c818cfe67c1cf77622f9f66b4e1ae79bc11ac2821498e193f71cff6e9f",
-    "lastHarvestedAt": "2026-11-08T05:33:14.127Z",
+    "contentHash": "98bde72443e93ebdde6876d942515a892c928fba83b0b0a5f292318744dbadbb",
+    "lastHarvestedAt": "2026-11-13T06:51:00.365Z",
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf"
   },
   "matthart1983-netwatch": {

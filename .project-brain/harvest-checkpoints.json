@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T06:33:35.840Z",
+  "last_updated": "2026-11-13T06:51:10.964Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "0e4eec8d8608c79847dd746189a29ee8862cf86e42198c75abe5f5670e21a985",
-      "verified_at": "2026-11-11T13:29:01.905Z",
+      "content_hash": "45036269a1dfbcb997bbbb6b6892ffbf5143a49040dbb306323afa89f44fad81",
+      "verified_at": "2026-11-13T06:51:10.964Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T13:29:01.905Z"
+      "last_updated": "2026-11-13T06:51:10.964Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -17916,14 +17916,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
-      "content_hash": "920610c818cfe67c1cf77622f9f66b4e1ae79bc11ac2821498e193f71cff6e9f",
-      "verified_at": "2026-11-08T05:33:14.141Z",
+      "content_hash": "98bde72443e93ebdde6876d942515a892c928fba83b0b0a5f292318744dbadbb",
+      "verified_at": "2026-11-13T06:51:00.372Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T05:33:14.141Z"
+      "last_updated": "2026-11-13T06:51:00.372Z"
     },
     "matthart1983/netwatch": {
       "repository": "matthart1983/netwatch",

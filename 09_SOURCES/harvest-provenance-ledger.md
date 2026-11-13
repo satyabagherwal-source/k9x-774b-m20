@@ -9379,3 +9379,5 @@ Every entry in this ledger must capture:
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `a498d472` | Multi-dimensional audit evidence | 2026-11-13T06:33:25.296Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `dbdaf790` | Multi-dimensional audit evidence | 2026-11-13T06:33:35.818Z |
 | `learn-dom-d-64949094` | `project://hf-krafton-raon-1-mini-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md` | 2026-11-13T06:33:56.160Z |
+| `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-13T06:51:00.365Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `d5b9a7e0` | Multi-dimensional audit evidence | 2026-11-13T06:51:10.956Z |

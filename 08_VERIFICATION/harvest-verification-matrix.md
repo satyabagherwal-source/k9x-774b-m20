@@ -9370,3 +9370,5 @@
 | `CYCLE-20261113-OWMK` | `2026-11-13T06:33:25.292Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3d5ab151...`) |
 | `CYCLE-20261113-P4QV` | `2026-11-13T06:33:35.815Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`324d77f6...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T06:33:56.160Z` | `hf-krafton-raon-1-mini-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-64949094` [Domain D] | Yes (`474e213f...`) |
+| `CYCLE-20261113-BIQ1` | `2026-11-13T06:51:00.361Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md` | Yes (`98bde724...`) |
+| `CYCLE-20261113-BQW8` | `2026-11-13T06:51:10.952Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`45036269...`) |
