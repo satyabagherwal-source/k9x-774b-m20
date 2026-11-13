@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T00:31:20.932Z",
-    "lastVerified": "2026-11-13T00:31:20.932Z",
+    "lastChecked": "2026-11-13T00:43:32.791Z",
+    "lastVerified": "2026-11-13T00:43:32.791Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -466,8 +466,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T00:01:45.622Z",
-    "lastVerified": "2026-11-13T00:01:45.622Z",
+    "lastChecked": "2026-11-13T00:43:20.572Z",
+    "lastVerified": "2026-11-13T00:43:20.572Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -919,14 +919,14 @@
     "officialUrl": "https://github.com/gardener/gardener",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T14:56:28.984Z",
-    "lastVerified": "2026-11-11T14:56:28.984Z",
+    "lastChecked": "2026-11-13T00:43:18.669Z",
+    "lastVerified": "2026-11-13T00:43:18.669Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gardener-gardener",
-    "contentHash": "1ff3ee95dae27ed4f2a242acda64392089735541df2b842a8b9cd5444e5824de",
+    "contentHash": "f5e8cb4a2e0c04a7f5db3b797cf23ca047c89c0cf20507c9471e478bccc88d88",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1391,8 +1391,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T14:31:42.277Z",
-    "lastVerified": "2026-11-12T14:31:42.277Z",
+    "lastChecked": "2026-11-13T00:43:15.585Z",
+    "lastVerified": "2026-11-13T00:43:15.585Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -3431,9 +3431,9 @@
   "milvus-io-bootcamp": {
     "name": "bootcamp",
     "officialUrl": "https://github.com/milvus-io/bootcamp",
-    "lastChecked": "2026-11-11T13:17:09.129Z",
+    "lastChecked": "2026-11-13T00:43:18.057Z",
     "revisionIdentifier": "b2be8cc8",
-    "lastVerified": "2026-11-11T13:17:09.129Z"
+    "lastVerified": "2026-11-13T00:43:18.057Z"
   },
   "o2sh-onefetch": {
     "name": "onefetch",
@@ -8445,9 +8445,9 @@
   "atanunq-viu": {
     "name": "viu",
     "officialUrl": "https://github.com/atanunq/viu",
-    "lastChecked": "2026-11-11T06:04:31.913Z",
+    "lastChecked": "2026-11-13T00:43:05.595Z",
     "revisionIdentifier": "5733be5f",
-    "lastVerified": "2026-11-11T06:04:31.913Z"
+    "lastVerified": "2026-11-13T00:43:05.595Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -11117,8 +11117,8 @@
     "officialUrl": "https://github.com/yattee/yattee",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T18:27:58.793Z",
-    "lastVerified": "2026-11-08T18:27:58.793Z",
+    "lastChecked": "2026-11-13T00:43:10.609Z",
+    "lastVerified": "2026-11-13T00:43:10.609Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yattee-yattee",
@@ -13081,9 +13081,9 @@
   "unjs-ofetch": {
     "name": "ofetch",
     "officialUrl": "https://github.com/unjs/ofetch",
-    "lastChecked": "2026-11-08T01:46:09.422Z",
+    "lastChecked": "2026-11-13T00:43:08.063Z",
     "revisionIdentifier": "1dbc37fd",
-    "lastVerified": "2026-11-08T01:46:09.422Z"
+    "lastVerified": "2026-11-13T00:43:08.063Z"
   },
   "unjs-ufo": {
     "name": "ufo",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T00:31:21.253Z",
+  "last_updated": "2026-11-13T00:43:32.986Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7724,6 +7724,33 @@
       "source_repo": "freenet-freenet-core",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F31C2D-transport-sum-quic-memory-in-the-node-ag.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-ACBBC2",
+      "directive_title": "Enable kube-api-linter `optionalorrequired` for the remaining small API groups (",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gardener-gardener",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ACBBC2-enable-kube-api-linter-optionalorrequire.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-AA4BEA",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AA4BEA-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-0FD31D",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0FD31D-export-fix-consent-of-former-subscribers.md",
       "staged_date": "2026-11-13"
     }
   ]

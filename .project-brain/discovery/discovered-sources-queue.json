@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T00:31:21.245Z",
+  "updated_at": "2026-11-13T00:43:32.914Z",
   "stats": {
-    "total_discovered": 1911,
-    "approved_pending_harvest": 1762,
+    "total_discovered": 1913,
+    "approved_pending_harvest": 1764,
     "harvested_count": 0,
     "rejected_count": 149,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1758,
+      "COMMUNITY_AND_EXPERT": 1760,
       "OFFICIAL_DOCUMENTATION": 80,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -41016,6 +41016,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
         "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-CC6922AD09C9": {
+      "id": "SRC-CC6922AD09C9",
+      "url": "https://github.com/gardener/gardener",
+      "title": "https://github.com/gardener/gardener",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:43:32.904Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-25E57A6EA7C3": {
+      "id": "SRC-25E57A6EA7C3",
+      "url": "https://github.com/gardener/machine-controller-manager",
+      "title": "https://github.com/gardener/machine-controller-manager",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:43:32.914Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
       }
     }
   }

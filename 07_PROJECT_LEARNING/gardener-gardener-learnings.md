@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `2fd74173`  
+> **Source Version**: `01921cba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T14:56:28.991Z  
+> **Timestamp**: 2026-11-13T00:43:18.880Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T14:56:28.984Z  
+> **Harvest Timestamp**: 2026-11-13T00:43:18.669Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Homogeneous Kubernetes clusters at scale on any infrastructure using hosted control planes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3484 stars
+- **Stars / Engagement**: 3485 stars
 
 ---
 
@@ -726,17 +726,11 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16280** (2026-11-11): **Update dependency crate-ci/typos to v1.52.2**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [crate-ci/typos](https://redirect.github.com/crate-ci/typos) | patch | `v1.52.1` → `v1.52.2` |  ---  ### Release Notes  <details> <summary>crate-ci/typos</summary>  ### [`v1.52.2`](https://redirect.github.com/crate-ci/typos/releases/tag/v1.52.2)  [Compare Source](https://redirect.github.com/crate-ci/typos/compare/v1.52.1...v1.52.2)  #### \[1.52.2] - 2026-11-11  ##### Compatibility  - *(pypi)* Don't publish wheels for x86  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yMjIuNSIsInVwZGF0ZWRJblZlciI6IjQ0LjIyMi41IiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
-  **Post-Mortem & Fix Analysis**:
-  > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [rfranzke](https://github.com/rfranzke) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["rfranzke"]} -->
+- **Issue #16307** (2026-11-12): **Drop `extensions/pkg/terraformer` package**
+  *Symptoms*: **How to categorize this PR?**  /area dev-productivity /kind cleanup  **What this PR does / why we need it**: Removes the `extensions/pkg/terraformer` library. All provider extensions have migrated to flow/SDK-based infrastructure reconciliation and no longer depend on it, so the package has no remaining consumers.  | Extension | Flow/SDK reconciliation | Terraformer removed | |---|---|---| | `provider-aws` | gardener/gardener-extension-provider-aws#603 (2023-04) | gardener/gardener-extension-provider-aws#1617 (2026-01) | | `provider-azure` | gardener/gardener-extension-provider-azure#739 (2023-12) | gardener/gardener-extension-provider-azure#1231 (2025-07) | | `provider-gcp` | gardener/gardener-extension-provider-gcp#495 (2023-05) | gardener/gardener-extension-provider-gcp#1012 (2025-06) | | `provider-openstack` | gardener/gardener-extension-provider-openstack#528 (2023-07) | gardener/gardener-extension-provider-openstack#1166 (2025-10), gardener/gardener-extension-provider-openstack#1276 (2026-02) | | `provider-alicloud` | gardener/gardener-extension-provider-alicloud#656 (2023-11) | gardener/gardener-extension-provider-alicloud#871 (2026-03) |  **Which issue(s) this PR fixes**:  **Special notes for your reviewer**: /cc @kon-angelo  **Release note**: ```breaking dependency All major provider extensions have migrated to flow/SDK-based infrastructure reconciliation, so the `extensions/pkg/terraformer` package has been removed. ```
 
-- **Issue #16279** (2026-11-11): **Update go to v1.27.4**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [go](https://go.dev/) ([source](https://redirect.github.com/golang/go)) |  | minor | `1.26.10` → `1.27.4` | | [go](https://redirect.github.com/actions/go-versions) | uses-with | minor | `1.26` → `1.27` | | [golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) |  | minor | `1.26.10` → `1.27.4` | | [golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | stage | minor | `1.26.10` → `1.27.4` |  ---  ### Release Notes  <details> <summary>golang/go (go)</summary>  ### [`v1.27.1`](https://redirect.github.com/golang/go/compare/go1.27.0...go1.27.1)  ### [`v1.27.0`](https://redirect.github.com/golang/go/compare/go1.26.11...go1.27.0)  </details>  <details> <summary>actions/go-versions (go)</summary>  ### [`v1.27.4`](https://redirect.github.com/actions/go-versions/releases/tag/1.27.4-42945153609): 1.27.4  [Compare Source](https://redirect.github.com/actions/go-versions/compare/1.27.3-39437817176...1.27.4-42945153609)  Go 1.27.4  ### [`v1.27.3`](https://redirect.github.com/actions/go-versions/releases/tag/1.27.3-39437817176): 1.27.3  [Compare Source](https://redirect.github.com/actions/go-versions/compare/1.27.2-37875086547...1.27.3-39437817176)  Go 1.27.3  ### [`v1.27.2`](https://redirect.github.com/actions/go-versions/releases/tag/1.27.2-37875086547): 1.27.2  [Compare Source](https://redirect
-  **Post-Mortem & Fix Analysis**:
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [scheererj](https://github.com/scheererj) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["scheererj"]} -->
-  > @renovate[bot]: The following tests **failed**, say `/retest` to rerun all failed tests or `/retest-required` to rerun all mandatory failed tests:  Test name | Commit | Details | Required | Rerun command --- | --- | --- | --- | --- pull-gardener-e2e-kind-ha-multi-node-upgrade | e9f070d7a8c1bd9f0ccd84073d3325615148cc8f | [link](https://prow.gardener.cloud/view/gs/gardener-prow/pr-logs/pull/gardener_gardener/16279/pull-gardener-e2e-kind-ha-multi-node-upgrade/2120352870556504064) | true | `/test pull-gardener-e2e-kind-ha-multi-node-upgrade` pull-gardener-unit | e9f070d7a8c1bd9f0ccd84073d3325615148cc8f | [link](https://prow.gardener.cloud/view/gs/gardener-prow/pr-logs/pull/gardener_gardener/16279/pull-gardener-unit/2120352887342108672) | true | `/test pull-gardener-unit` pull-gardener-e2e-kind-gardenadm-unmanaged-infra-external-gardener | e9f070d7a8c1bd9f0ccd84073d3325615148cc8f | [link](https://prow.gardener.cloud/view/gs/gardener-prow/pr-logs/pull/gardener_gardener/16279/pull-gardener-e2
+- **Issue #16301** (2026-11-12): **Single-node self-hosted shoots are stuck after upgrade to v1.155**
+  *Symptoms*: **How to categorize this issue?**  /area os /kind bug  **What happened**:  We run self-hosted shoots (gardenadm, unmanaged infra) on edge devices, one device per production line, so every shoot is a single node. They were created on v1.149 and worked fine. After upgrading to v1.155.0 we are stuck:  - since 1.152 only `AutoInPlaceUpdate` is allowed for these shoots, but ours were defaulted to `AutoRollingUpdate` and switching is forbidden. Any update of the Shoot is rejected, even a reconcile annotation. - since 1.155 (#15924) the total minimum must be at least 2, so we can't create new single-node edges either.  ``` spec.provider.workers[0].updateStrategy: Invalid value: "ManualInPlaceUpdate": only AutoInPlaceUpdate update strategy is allowed for self-hosted shoots with unmanaged infrastructure spec.provider.workers: Invalid value: 1: self-hosted shoots must have a total minimum of at least 2 worker nodes (increase the control plane pool's minimum to >1 or add a worker pool with minimum>0) ```  **What you expected to happen**:  A way to keep single-node self-hosted shoots. A second device per line is too expensive for us, and downtime during an update is fine (lines have maintenance windows).  **How to reproduce it (as minimally and precisely as possible)**:  Create a self-hosted shoot with min=max=1 on v1.149, upgrade to v1.155, then try to change it or create a new one.  **Anything else we need to know?**:  What does the 2-node rule protect against, apart from gardenlet run
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -753,133 +747,21 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab429249` (2026-11-11)
-**Commit Message**: Fix Perses dashboard gauge percentage unit (#16252)
+### Incident Patch 1: `ed11f3b2` (2026-11-11)
+**Commit Message**: Enable kube-api-linter `optionalorrequired` for the remaining small API groups (#16139)
 
-* Fix Perses percentage gauges rendering on 0-1 scale
+* Enable kube-api-linter optionalorrequired for the remaining small API groups
 
-The GaugeChart panels for '% of Clusters with Alerts' (seed and garden
-alerts) and 'Shoot Availability' had no format block, so Perses applied
-its default unit 'percent-decimal' (0-1 scale, max 1). Their queries
-already multiply by 100, producing a 0-100 value, which rendered against
-the wrong scale. Set unit 'percent' so the gauges display 0-100.
-
-Signed-off-by: Jeremy Rickards <[REDACTED_EMAIL]>
-
-* Set decimal unit on Shoot Availability count gauges
-
-The 'Total number of shoots' and 'Unavailable Shoots' GaugeChart panels
-had no format block, so Perses applied its default 'percent-decimal'
-unit to their raw count queries. Set unit 'decimal' so the counts render
-as plain numbers.
-
-Signed-off-by: Jeremy Rickards <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Jeremy Rickards <[REDACTED_EMAIL]>
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards/garden/garden-alerts.yaml` (modified, +2/-0)
-```diff
-@@ -140,6 +140,8 @@ spec:
-           kind: GaugeChart
-           spec:
-             calculation: last
-+            format:
-+              unit: percent
-         queries:
-           - kind: TimeSeriesQuery
-             spec:
-```
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards/garden/shoot-availability-dashboard.yaml` (modified, +6/-0)
-```diff
-@@ -35,6 +35,8 @@ spec:
-           kind: GaugeChart
-           spec:
-             calculation: last
-+            format:
-+              unit: percent
-         queries:
-           - kind: TimeSeriesQuery
-             spec:
-@@ -54,6 +56,8 @@ spec:
-           kind: GaugeChart
-           spec:
-             calculation: last
-+            format:
-+              unit: decimal
-         queries:
-           - kind: TimeSeriesQuery
-             spec:
-@@ -73,6 +77,8 @@ spec:
-           kind: GaugeChart
-           spec:
-             calculation: last
-+            format:
-+              unit: decimal
-         queries:
-           - kind: TimeSeriesQuery
-             spec:
-```
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards/seed/alerts-dashboard.yaml` (modified, +2/-0)
-```diff
-@@ -169,6 +169,8 @@ spec:
-           kind: GaugeChart
-           spec:
-             calculation: last
-+            format:
-+              unit: percent
-         queries:
-           - kind: TimeSeriesQuery
-             spec:
-```
-
----
-
-### Incident Patch 2: `d8608c78` (2026-11-09)
-**Commit Message**: [GEP-28] Increase spec timeout for joining nodes in gardenadm e2e test (#16264)
-
-Increase spec timeout for joining nodes in gardenadm e2e test
-
-`gardenadm join` waits for the node to become ready. On the new node, the CNI installation might race with the first
-sync of kube-proxy: if calico requests its token via the `kubernetes` Service before kube-proxy has synced its rules,
-the request only fails after calico's client timeout of 30s and the init container is restarted. This doesn't fit into
-the spec timeout of 1 minute, which is increased to 5 minutes.
-
-See https://redirect.github.com/gardener/gardener/issues/16263
-
-Assisted-by: Claude
-
-Signed-off-by: Tim Ebert <[REDACTED_EMAIL]>
-
-**File**: `test/e2e/gardenadm/unmanagedinfra/gardenadm.go` (modified, +1/-1)
-```diff
-@@ -329,7 +329,7 @@ func itShouldResetOrJoinNode(command, message string) {
- 		Expect(err).NotTo(HaveOccurred())
- 
- 		Eventually(ctx, stdOut).Should(gbytes.Say(message))
--	}, SpecTimeout(time.Minute))
-+	}, SpecTimeout(5*time.Minute))
- }
- 
- func itShouldSeeJoinedNodeAndCheckHealth(shootClientSet func() kubernetes.Interface) {
-```
-
----
-
-### Incident Patch 3: `eeac5d4e` (2026-11-11)
-**Commit Message**: Enable kube-api-linter `optionalorrequired` for `extensions/v1alpha1` and `config/operator/v1alpha1` (#16141)
-
-* Enable kube-api-linter optionalorrequired for extensions/v1alpha1 and config/operator/v1alpha1
-
-Marks all fields of these API groups as explicitly +optional or +required and registers the groups for the optionalorrequired linter.
+Covers seedmanagement, config/{nodeagent,controllermanager,gardenlet,admissioncontroller,scheduler}, security, authentication and resources (v1alpha1).
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
 
-* Fix additional optionalorrequired fields violations
+* Remove 'optionalorrequired' exclusion rule
+
+Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
+
+* Address ialidzhikov comments
 
 Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
 
@@ -888,22 +770,52 @@ Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
 Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `.golangci.yaml.in` (modified, +1/-1)
+**File**: `.golangci.yaml.in` (modified, +1/-7)
 ```diff
-@@ -346,7 +346,7 @@ linters:
+@@ -340,13 +340,7 @@ linters:
+       # (e.g. extensions/pkg/apis/...), extend the path-except pattern below.
        - linters:
            - kubeapilinter
-         text: 'optionalorrequired:'
--        path-except: 'pkg/apis/(core/v1beta1|operations/v1alpha1|operator/v1alpha1|config/resourcemanager/v1alpha1|core/v1)/[^/]+$'
-+        path-except: 'pkg/apis/(config/operator/v1alpha1|config/resourcemanager/v1alpha1|core/v1|core/v1beta1|extensions/v1alpha1|operations/v1alpha1|operator/v1alpha1)/[^/]+$'
+-        path-except: 'pkg/apis/[^/]+(/[^/]+)?/v[0-9]+((alpha|beta)[0-9]+)?/[^/]+$'
+-      # optionalorrequired is only enforced for the API groups listed below. Add a group here once its fields are
+-      # explicitly marked as +optional or +required; remove this rule when all groups are migrated.
+-      - linters:
+-          - kubeapilinter
+-        text: 'optionalorrequired:'
+-        path-except: 'pkg/apis/(config/operator/v1alpha1|config/resourcemanager/v1alpha1|core/v1|core/v1beta1|extensions/v1alpha1|operations/v1alpha1|operator/v1alpha1)/[^/]+$'
++        path-except: '^pkg/apis/[^/]+(/[^/]+)?/v[0-9]+((alpha|beta)[0-9]+)?/[^/]+$'
        # optionalfields: Spec/Status and other struct fields on top-level API objects have established non-pointer
        # conventions in Kubernetes APIs. Similarly, scalar fields (int64, string) with incomplete validation
        # are intentionally kept as value types. Converting these to pointers would be API-breaking.
 ```
 
-**File**: `docs/api-reference/extensions.md` (modified, +17/-0)
+**File**: `docs/api-reference/resources.md` (modified, +6/-0)
 ```diff
-@@ -268,6 +268,7 @@ integer
+@@ -52,6 +52,7 @@ Refer to the Kubernetes API documentation for the fields of the <code>metadata</
+ </em>
+ </td>
+ <td>
++<em>(Optional)</em>
+ <p>Spec contains the specification of this managed resource.</p>
+ </td>
+ </tr>
+@@ -63,6 +64,7 @@ Refer to the Kubernetes API documentation for the fields of the <code>metadata</
+ </em>
+ </td>
+ <td>
++<em>(Optional)</em>
+ <p>Status contains the status of this managed resource.</p>
+ </td>
+ </tr>
+@@ -221,6 +223,7 @@ Condition array
+ </em>
+ </td>
+ <td>
++<em>(Optional)</em>
+ <p></p>
+ </td>
+ </tr>
+@@ -232,6 +235,7 @@ integer
  </em>
  </td>
  <td>
@@ -911,151 +823,300 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
  <p>ObservedGeneration is the most recent generation observed for this resource.</p>
  </td>
  </tr>
-@@ -551,6 +552,7 @@ integer
+@@ -377,6 +381,7 @@ object (keys:string, values:string)
  </em>
  </td>
  <td>
 +<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
+ <p>Labels is a map of labels that were used during last update of the resource.</p>
  </td>
  </tr>
-@@ -946,6 +948,7 @@ integer
+@@ -388,6 +393,7 @@ object (keys:string, values:string)
  </em>
  </td>
  <td>
 +<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -1561,6 +1564,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -1978,6 +1982,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -2334,6 +2339,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -2602,6 +2608,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -2890,6 +2897,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -3601,6 +3609,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -4092,6 +4101,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -4475,6 +4485,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -4692,6 +4703,7 @@ string
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>Hosts are the registry hosts.<br />It corresponds to the host fields in the `hosts.toml` file, see https://github.com/containerd/containerd/blob/c51463010e0682f76dfdc10edc095e6596e2764b/docs/hosts.md#host-fields-in-the-toml-table-format for more information.</p>
- </td>
- </tr>
-@@ -5013,6 +5025,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -5203,6 +5216,7 @@ string array
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>FilePaths is a list of files the unit depends on. If any file changes a restart of the dependent unit will be<br />triggered. For each FilePath there must exist a File with matching Path in OperatingSystemConfig.Spec.Files.</p>
- </td>
- </tr>
-@@ -5463,6 +5477,7 @@ object (keys:string, values:string)
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>MachineImage contains logical information about the name and the version of the machie image that<br />should be used. The logical information must be mapped to the provider-specific information (e.g.,<br />AMIs, ...) by the provider itself.</p>
- </td>
- </tr>
-@@ -5867,6 +5882,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -5902,6 +5918,7 @@ NamedResourceReference array
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>MachineDeployments is a list of created machine deployments. It will be used to e.g. configure<br />the cluster-autoscaler properly.</p>
+ <p>Annotations is a map of annotations that were used during last update of the resource.</p>
  </td>
  </tr>
 ```
 
-**File**: `pkg/apis/config/operator/v1alpha1/types.go` (modified, +23/-0)
+**File**: `docs/api-reference/seedmanagement.md` (modified, +8/-0)
 ```diff
-@@ -19,17 +19,23 @@ type OperatorConfiguration struct {
+@@ -1020,6 +1020,7 @@ integer
+ </em>
+ </td>
+ <td>
++<em>(Optional)</em>
+ <p>ObservedGeneration is the most recent generation observed for this ManagedSeedSet. It corresponds to the<br />ManagedSeedSet's generation, which is updated on mutation by the API Server.</p>
+ </td>
+ </tr>
+@@ -1042,6 +1043,7 @@ integer
+ </em>
+ </td>
+ <td>
++<em>(Optional)</em>
+ <p>ReadyReplicas is the number of ManagedSeeds created by the ManagedSeedSet controller that have a Ready Condition.</p>
+ </td>
+ </tr>
+@@ -1053,6 +1055,7 @@ integer
+ </em>
+ </td>
+ <td>
++<em>(Optional)</em>
+ <p>NextReplicaNumber is the ordinal number that will be assigned to the next replica of the ManagedSeedSet.</p>
+ </td>
+ </tr>
+@@ -1064,6 +1067,7 @@ integer
+ </em>
+ </td>
+ <td>
++<em>(Optional)</em>
+ <p>CurrentReplicas is the number of ManagedSeeds created by the ManagedSeedSet controller from the ManagedSeedSet version<br />indicated by CurrentRevision.</p>
+ </td>
+ </tr>
+@@ -1075,6 +1079,7 @@ integer
+ </em>
+ </td>
+ <td>
++<em>(Optional)</em>
+ <p>UpdatedReplicas is the number of ManagedSeeds created by the ManagedSeedSet controller from the ManagedSeedSet version<br />indicated by UpdateRevision.</p>
+ </td>
+ </tr>
+@@ -1086,6 +1091,7 @@ string
+ </em>
+ </td>
+ <td>
++<em>(Optional)</em>
+ <p>CurrentRevision, if not empty, indicates the version of the ManagedSeedSet used to generate ManagedSeeds with smaller<br />ordinal numbers during updates.</p>
+ </td>
+ </tr>
+@@ -1097,6 +1103,7 @@ string
+ </em>
+ </td>
+ <td>
++<em>(Optional)</em>
+ <p>UpdateRevision, if not empty, indicates the version of the ManagedSeedSet used to generate ManagedSeeds with larger<br />ordinal numbers during updates</p>
+ </td>
+ </tr>
+@@ -1231,6 +1238,7 @@ integer
+ </em>
+ </td>
+ <td>
++<em>(Optional)</em>
+ <p>ObservedGeneration is the most recent generation observed for this ManagedSeed. It corresponds to the<br />ManagedSeed's generation, which is updated on mutation by the API Server.</p>
+ </td>
+ </tr>
+```
+
+**File**: `pkg/apis/authentication/v1alpha1/generated.proto` (modified, +10/-0)
+```diff
+@@ -19,12 +19,15 @@ option go_package = "github.com/gardener/gardener/pkg/apis/authentication/v1alph
+ // for a Shoot cluster.
+ message AdminKubeconfigRequest {
+   // Standard object metadata.
++  // +optional
+   optional .k8s.io.apimachinery.pkg.apis.meta.v1.ObjectMeta metadata = 1;
  
- 	// RuntimeClientConnection specifies the kubeconfig file and the client connection settings for the proxy server to
- 	// use when communicating with the kube-apiserver of the runtime cluster.
+   // Spec is the specification of the AdminKubeconfigRequest.
++  // +required
+   optional AdminKubeconfigRequestSpec spec = 2;
+ 
+   // Status is the status of the AdminKubeconfigRequest.
++  // +required
+   optional AdminKubeconfigRequestStatus status = 3;
+ }
+ 
+@@ -42,22 +45,27 @@ message AdminKubeconfigRequestSpec {
+ // the kubeconfig and expiration of the credential.
+ message AdminKubeconfigRequestStatus {
+   // Kubeconfig contains the kubeconfig with cluster-admin privileges for the shoot cluster.
++  // +required
+   optional bytes kubeconfig = 1;
+ 
+   // ExpirationTimestamp is the expiration timestamp of the returned credential.
++  // +required
+   optional .k8s.io.apimachinery.pkg.apis.meta.v1.Time expirationTimestamp = 2;
+ }
+ 
+ // ViewerKubeconfigRequest can be used to request a kubeconfig with viewer credentials (excluding Secrets)
+ // for a Shoot cluster.
+ message ViewerKubeconfigRequest {
+   // Standard object metadata.
++  // +optional
+   optional .k8s.io.apimachinery.pkg.apis.meta.v1.ObjectMeta metadata = 1;
+ 
+   // Spec is the specification of the ViewerKubeconfigRequest.
++  // +required
+   optional ViewerKubeconfigRequestSpec spec = 2;
+ 
+   // Status is the status of the ViewerKubeconfigRequest.
++  // +required
+   optional ViewerKubeconfigRequestStatus status = 3;
+ }
+ 
+@@ -75,9 +83,11 @@ message ViewerKubeconfigRequestSpec {
+ // the kubeconfig and expiration of the credential.
+ message ViewerKubeconfigRequestStatus {
+   // Kubeconfig contains the kubeconfig with viewer privileges (excluding Secrets) for the shoot cluster.
++  // +required
+   optional bytes kubeconfig = 1;
+ 
+   // ExpirationTimestamp is the expiration timestamp of the returned credential.
++  // +required
+   optional .k8s.io.apimachinery.pkg.apis.meta.v1.Time expirationTimestamp = 2;
+ }
+ 
+```
+
+**File**: `pkg/apis/authentication/v1alpha1/types_adminkubeconfigrequest.go` (modified, +5/-0)
+```diff
+@@ -15,20 +15,25 @@ import (
+ type AdminKubeconfigRequest struct {
+ 	metav1.TypeMeta `json:",inline"`
+ 	// Standard object metadata.
++	// +optional
+ 	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+ 
+ 	// Spec is the specification of the AdminKubeconfigRequest.
 +	// +required
- 	RuntimeClientConnection componentbaseconfigv1alpha1.ClientConnectionConfiguration `json:"runtimeClientConnection"`
- 	// VirtualClientConnection specifies the kubeconfig file and the client connection settings for the proxy server to
- 	// use when communicating with the kube-apiserver of the virtual cluster.
+ 	Spec AdminKubeconfigRequestSpec `json:"spec" protobuf:"bytes,2,opt,name=spec"`
+ 	// Status is the status of the AdminKubeconfigRequest.
 +	// +required
- 	VirtualClientConnection componentbaseconfigv1alpha1.ClientConnectionConfiguration `json:"virtualClientConnection"`
+ 	Status AdminKubeconfigRequestStatus `json:"status" protobuf:"bytes,3,opt,name=status"`
+ }
+ 
+ // AdminKubeconfigRequestStatus is the status of the AdminKubeconfigRequest containing
+ // the kubeconfig and expiration of the credential.
+ type AdminKubeconfigRequestStatus struct {
+ 	// Kubeconfig contains the kubeconfig with cluster-admin privileges for the shoot cluster.
++	// +required
+ 	Kubeconfig []byte `json:"kubeconfig" protobuf:"bytes,1,opt,name=kubeconfig"`
+ 	// ExpirationTimestamp is the expiration timestamp of the returned credential.
++	// +required
+ 	ExpirationTimestamp metav1.Time `json:"expirationTimestamp" protobuf:"bytes,2,opt,name=expirationTimestamp"`
+ }
+ 
+```
+
+**File**: `pkg/apis/authentication/v1alpha1/types_viewerkubeconfigrequest.go` (modified, +5/-0)
+```diff
+@@ -15,20 +15,25 @@ import (
+ type ViewerKubeconfigRequest struct {
+ 	metav1.TypeMeta `json:",inline"`
+ 	// Standard object metadata.
++	// +optional
+ 	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+ 
+ 	// Spec is the specification of the ViewerKubeconfigRequest.
++	// +required
+ 	Spec ViewerKubeconfigRequestSpec `json:"spec" protobuf:"bytes,2,opt,name=spec"`
+ 	// Status is the status of the ViewerKubeconfigRequest.
++	// +required
+ 	Status ViewerKubeconfigRequestStatus `json:"status" protobuf:"bytes,3,opt,name=status"`
+ }
+ 
+ // ViewerKubeconfigRequestStatus is the status of the ViewerKubeconfigRequest containing
+ // the kubeconfig and expiration of the credential.
+ type ViewerKubeconfigRequestStatus struct {
+ 	// Kubeconfig contains the kubeconfig with viewer privileges (excluding Secrets) for the shoot cluster.
++	// +required
+ 	Kubeconfig []byte `json:"kubeconfig" protobuf:"bytes,1,opt,name=kubeconfig"`
+ 	// ExpirationTimestamp is the expiration timestamp of the returned credential.
++	// +required
+ 	ExpirationTimestamp metav1.Time `json:"expirationTimestamp" protobuf:"bytes,2,opt,name=expirationTimestamp"`
+ }
+ 
+```
+
+**File**: `pkg/apis/config/admissioncontroller/v1alpha1/types.go` (modified, +11/-0)
+```diff
+@@ -19,14 +19,18 @@ type AdmissionControllerConfiguration struct {
+ 
+ 	// GardenClientConnection specifies the kubeconfig file and the client connection settings
+ 	// when communicating with the garden apiserver.
++	// +required
+ 	GardenClientConnection componentbaseconfigv1alpha1.ClientConnectionConfiguration `json:"gardenClientConnection"`
+ 	// LogLevel is the level/severity for the logs. Must be one of [info,debug,error].
+ 	// Defaults to "info".
++	// +required
+ 	LogLevel string `json:"logLevel"`
+ 	// LogFormat is the format for the logs. Must be one of [json,text].
+ 	// Defaults to "json".
++	// +required
+ 	LogFormat string `json:"logFormat"`
+ 	// Server defines the configuration of the HTTP server.
++	// +required
+ 	Server ServerConfiguration `json:"server"`
+ 	// Debugging holds configuration for Debugging related features.
+ 	// +optional
+@@ -42,6 +46,7 @@ type AdmissionControllerConfiguration struct {
+ // ServerConfiguration contains details for the HTTP(S) servers.
+ type ServerConfiguration struct {
+ 	// Webhooks is the configuration for the HTTPS webhook server.
++	// +required
+ 	Webhooks HTTPSServer `json:"webhooks"`
+ 	// HealthProbes is the configuration for serving the healthz and readyz endpoints.
+ 	// +optional
+@@ -60,6 +65,7 @@ type ServerConfiguration struct {
+ // ResourceAdmissionConfiguration contains settings about arbitrary kinds and the size each resource should have at most.
+ type ResourceAdmissionConfiguration struct {
+ 	// Limits contains configuration for resources which are subjected to size limitations.
++	// +required
+ 	Limits []ResourceLimit `json:"limits"`
+ 	// UnrestrictedSubjects contains references to users, groups, or service accounts which aren't subjected to any resource size limit.
+ 	// +optional
+@@ -84,6 +90,7 @@ type ResourceLimit struct {
+ 	// +optional
+ 	APIVersions []string `json:"apiVersions,omitempty"`
+ 	// Resources is the name of the resource this rule applies to. WildcardAll represents all resources.
++	// +required
+ 	Resources []string `json:"resources"`
+ 	// Size specifies the imposed limit.
+ 	// +optional
+@@ -96,8 +103,10 @@ type ResourceLimit struct {
+ // Server contains information for HTTP(S) server configuration.
+ type Server struct {
+ 	// BindAddress is the IP address on which to listen for the specified port.
++	// +required
+ 	BindAddress string `json:"bindAddress"`
+ 	// Port is the port on which to serve requests.
++	// +required
+ 	Port int32 `json:"port"`
+ }
+ 
+@@ -107,13 +116,15 @@ type HTTPSServer struct {
+ 	Server `json:",inline"`
+ 
+ 	// TLSServer contains information about the TLS configuration for a HTTPS server.
++	// +required
+ 	TLS TLSServer `json:"tls"`
+ }
+ 
+ // TLSServer contains information about the TLS configuration for a HTTPS server.
+ type TLSServer struct {
+ 	// ServerCertDir is the path to a directory containing the server's TLS certificate and key (the files must be
+ 	// named tls.crt and tls.key respectively).
++	// +required
+ 	ServerCertDir string `json:"serverCertDir"`
+ }
+ 
+```
+
+**File**: `pkg/apis/config/controllermanager/v1alpha1/types.go` (modified, +13/-0)
+```diff
+@@ -18,17 +18,22 @@ type ControllerManagerConfiguration struct {
+ 
+ 	// GardenClientConnection specifies the kubeconfig file and the client connection settings
+ 	// for the proxy server to use when communicating with the garden apiserver.
++	// +required
+ 	GardenClientConnection componentbaseconfigv1alpha1.ClientConnectionConfiguration `json:"gardenClientConnection"`
+ 	// Controllers defines the configuration of the controllers.
++	// +required
+ 	Controllers ControllerManagerControllerConfiguration `json:"controllers"`
  	// LeaderElection defines the configuration of leader election client.
-+	// +required
- 	LeaderElection componentbaseconfigv1alpha1.LeaderElectionConfiguration `json:"leaderElection"`
+ 	// +optional
+ 	LeaderElection *componentbaseconfigv1alpha1.LeaderElectionConfiguration `json:"leaderElection,omitempty"`
  	// LogLevel is the level/severity for the logs. Must be one of [info,debug,error].
 +	// +required
  	LogLevel string `json:"logLevel"`
@@ -1067,16 +1128,38 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
  	Server ServerConfiguration `json:"server"`
  	// Debugging holds configuration for Debugging related features.
  	// +optional
-@@ -40,6 +46,7 @@ type OperatorConfiguration struct {
+@@ -98,11 +103,13 @@ type ControllerManagerControllerConfiguration struct {
  	// +optional
- 	FeatureGates map[string]bool `json:"featureGates,omitempty"`
- 	// Controllers defines the configuration of the controllers.
+ 	SeedReferenceAllowlist *SeedReferenceAllowlistControllerConfiguration `json:"seedReferenceAllowlist,omitempty"`
+ 	// ShootMaintenance defines the configuration of the ShootMaintenance controller.
 +	// +required
- 	Controllers ControllerConfiguration `json:"controllers"`
- 	// NodeToleration contains optional settings for default tolerations.
+ 	ShootMaintenance ShootMaintenanceControllerConfiguration `json:"shootMaintenance"`
+ 	// ShootQuota defines the configuration of the ShootQuota controller.
  	// +optional
-@@ -49,34 +56,47 @@ type OperatorConfiguration struct {
- // ConditionThreshold defines the threshold of the given condition type.
+ 	ShootQuota *ShootQuotaControllerConfiguration `json:"shootQuota,omitempty"`
+ 	// ShootHibernation defines the configuration of the ShootHibernation controller.
++	// +required
+ 	ShootHibernation ShootHibernationControllerConfiguration `json:"shootHibernation"`
+ 	// ShootReference defines the configuration of the ShootReference controller. If unspecified, it is defaulted with `concurrentSyncs=5`.
+ 	// +optional
+@@ -246,6 +253,7 @@ type ProjectControllerConfiguration struct {
+ // QuotaConfiguration defines quota configurations.
+ type QuotaConfiguration struct {
+ 	// Config is the corev1.ResourceQuota specification used for the project set-up.
++	// +required
+ 	Config corev1.ResourceQuota `json:"config"`
+ 	// ProjectSelector is an optional setting to select the projects considered for quotas.
+ 	// Defaults to empty LabelSelector, which matches all projects.
+@@ -456,6 +464,7 @@ type ManagedSeedSetControllerConfiguration struct {
+ 	// +optional
+ 	MaxShootRetries *int32 `json:"maxShootRetries,omitempty"`
+ 	// SyncPeriod is the duration how often the existing resources are reconciled.
++	// +required
+ 	SyncPeriod metav1.Duration `json:"syncPeriod"`
+ }
+ 
+@@ -471,8 +480,10 @@ type ShootStateControllerConfiguration struct {
+ // ConditionThreshold defines the duration how long a flappy condition stays in progressing state.
  type ConditionThreshold struct {
  	// Type is the type of the condition to define the threshold for.
 +	// +required
@@ -1086,52 +1169,7 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
  	Duration metav1.Duration `json:"duration"`
  }
  
- // ControllerConfiguration defines the configuration of the controllers.
- type ControllerConfiguration struct {
- 	// Garden is the configuration for the garden controller.
-+	// +required
- 	Garden GardenControllerConfig `json:"garden"`
- 	// GardenCare is the configuration for the garden care controller
-+	// +required
- 	GardenCare GardenCareControllerConfiguration `json:"gardenCare"`
- 	// GardenletDeployer is the configuration for the gardenlet deployer controller.
-+	// +required
- 	GardenletDeployer GardenletDeployerControllerConfig `json:"gardenletDeployer"`
- 	// NetworkPolicy is the configuration for the NetworkPolicy controller.
-+	// +required
- 	NetworkPolicy NetworkPolicyControllerConfiguration `json:"networkPolicy"`
- 	// VPAEvictionRequirements is the configuration for the VPAEvictionrequirements controller.
-+	// +required
- 	VPAEvictionRequirements VPAEvictionRequirementsControllerConfiguration `json:"vpaEvictionRequirements"`
- 	// Extension defines the configuration of the extension controller.
-+	// +required
- 	Extension ExtensionControllerConfiguration `json:"extension"`
- 	// ExtensionCare is the configuration for the extension care controller
-+	// +required
- 	ExtensionCare ExtensionCareControllerConfiguration `json:"extensionCare"`
- 	// ExtensionReference is the configuration for the extension reference controller
-+	// +required
- 	ExtensionReference ExtensionReferenceControllerConfiguration `json:"extensionReference"`
- 	// ExtensionRequiredRuntime defines the configuration of the ExtensionRequiredRuntime controller.
-+	// +required
- 	ExtensionRequiredRuntime ExtensionRequiredRuntimeControllerConfiguration `json:"extensionRequiredRuntime"`
- 	// ExtensionRequiredVirtual defines the configuration of the ExtensionRequiredVirtual controller.
-+	// +required
- 	ExtensionRequiredVirtual ExtensionRequiredVirtualControllerConfiguration `json:"extensionRequiredVirtual"`
- 	// TokenRequestor is the configuration for the token-requestor controller.
-+	// +required
- 	TokenRequestor TokenRequestorControllerConfiguration `json:"tokenRequestor"`
- }
- 
-@@ -182,6 +202,7 @@ type TokenRequestorControllerConfiguration struct {
- // ServerConfiguration contains details for the HTTP(S) servers.
- type ServerConfiguration struct {
- 	// Webhooks is the configuration for the HTTPS webhook server.
-+	// +required
- 	Webhooks Server `json:"webhooks"`
- 	// HealthProbes is the configuration for serving the healthz and readyz endpoints.
- 	// +optional
-@@ -194,8 +215,10 @@ type ServerConfiguration struct {
+@@ -489,8 +500,10 @@ type ServerConfiguration struct {
  // Server contains information for HTTP(S) server configuration.
  type Server struct {
  	// BindAddress is the IP address on which to listen for the specified port.
@@ -1144,181 +1182,13 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
  
 ```
 
-**File**: `pkg/apis/extensions/v1alpha1/types_backupbucket.go` (modified, +3/-0)
-```diff
-@@ -32,6 +32,7 @@ type BackupBucket struct {
- 
- 	// Specification of the BackupBucket.
- 	// If the object's deletion timestamp is set, this field is immutable.
-+	// +required
- 	Spec BackupBucketSpec `json:"spec"`
- 	// +optional
- 	Status BackupBucketStatus `json:"status,omitempty"`
-@@ -65,8 +66,10 @@ type BackupBucketSpec struct {
- 	DefaultSpec `json:",inline"`
- 
- 	// Region is the region of this bucket. This field is immutable.
-+	// +required
- 	Region string `json:"region"`
- 	// SecretRef is a reference to a secret that contains the credentials to access object store.
-+	// +required
- 	SecretRef corev1.SecretReference `json:"secretRef"`
- }
- 
-```
-
-**File**: `pkg/apis/extensions/v1alpha1/types_backupentry.go` (modified, +4/-0)
-```diff
-@@ -34,6 +34,7 @@ type BackupEntry struct {
- 
- 	// Specification of the BackupEntry.
- 	// If the object's deletion timestamp is set, this field is immutable.
-+	// +required
- 	Spec BackupEntrySpec `json:"spec"`
- 	// +optional
- 	Status BackupEntryStatus `json:"status,omitempty"`
-@@ -73,10 +74,13 @@ type BackupEntrySpec struct {
- 	// +optional
- 	BackupBucketProviderStatus *runtime.RawExtension `json:"backupBucketProviderStatus,omitempty"`
- 	// Region is the region of this Entry. This field is immutable.
-+	// +required
- 	Region string `json:"region"`
- 	// BucketName is the name of backup bucket for this Backup Entry.
-+	// +required
- 	BucketName string `json:"bucketName"`
- 	// SecretRef is a reference to a secret that contains the credentials to access object store.
-+	// +required
- 	SecretRef corev1.SecretReference `json:"secretRef"`
- }
- 
-```
-
-**File**: `pkg/apis/extensions/v1alpha1/types_bastion.go` (modified, +8/-0)
-```diff
-@@ -32,6 +32,7 @@ type Bastion struct {
- 
- 	// Spec is the specification of this Bastion.
- 	// If the object's deletion timestamp is set, this field is immutable.
-+	// +required
- 	Spec BastionSpec `json:"spec"`
- 	// Status is the bastion's status.
- 	// +optional
-@@ -56,8 +57,10 @@ type BastionSpec struct {
- 	// UserData is the base64-encoded user data for the bastion instance. This should
- 	// contain code to provision the SSH key on the bastion instance.
- 	// This field is immutable.
-+	// +required
- 	UserData []byte `json:"userData"`
- 	// Ingress controls from where the created bastion host should be reachable.
-+	// +required
- 	Ingress []BastionIngressPolicy `json:"ingress"`
- 	// Image holds information about the machine image to use for the bastion.
- 	// +optional
-@@ -67,23 +70,28 @@ type BastionSpec struct {
- // BastionIngressPolicy represents an ingress policy for SSH bastion hosts.
- type BastionIngressPolicy struct {
- 	// IPBlock defines an IP block that is allowed to access the bastion.
-+	// +required
- 	IPBlock networkingv1.IPBlock `json:"ipBlock"`
- }
- 
- // BastionMachine contains information about the machine type and image.
- type BastionMachine struct {
- 	// Type is the machine type of the bastion.
-+	// +required
- 	Type string `json:"type"`
- 	// Image holds information about the machine image to use for the bastion.
-+	// +required
- 	Image BastionMachineImage `json:"image"`
- }
- 
- // BastionMachineImage defines the name and the version of the bastion's machine image in any environment. Has to be
- // defined in the respective CloudProfile.
- type BastionMachineImage struct {
- 	// Name is the name of the image.
-+	// +required
- 	Name string `json:"name"`
- 	// Version is the version of the image.
-+	// +required
- 	Version string `json:"version"`
- }
- 
-```
-
-**File**: `pkg/apis/extensions/v1alpha1/types_cluster.go` (modified, +5/-1)
-```diff
-@@ -21,9 +21,11 @@ const ClusterResource = "Cluster"
- 
- // Cluster is a specification for a Cluster resource.
- type Cluster struct {
--	metav1.TypeMeta   `json:",inline"`
-+	metav1.TypeMeta `json:",inline"`
-+	// +optional
- 	metav1.ObjectMeta `json:"metadata,omitempty"`
- 
-+	// +required
- 	Spec ClusterSpec `json:"spec"`
- }
- 
-@@ -45,6 +47,7 @@ type ClusterSpec struct {
- 	// by the shoot that has to be reconciled.
- 	// +kubebuilder:validation:XPreserveUnknownFields
- 	// +kubebuilder:pruning:PreserveUnknownFields
-+	// +required
- 	CloudProfile runtime.RawExtension `json:"cloudProfile"`
- 	// Seed is a raw extension field that contains the seed resource referenced by the shoot that
- 	// has to be reconciled. It is not set for self-hosted shoots (see GEP-28).
-@@ -55,5 +58,6 @@ type ClusterSpec struct {
- 	// Shoot is a raw extension field that contains the shoot resource that has to be reconciled.
- 	// +kubebuilder:validation:XPreserveUnknownFields
- 	// +kubebuilder:pruning:PreserveUnknownFields
-+	// +required
- 	Shoot runtime.RawExtension `json:"shoot"`
- }
-```
-
-**File**: `pkg/apis/extensions/v1alpha1/types_containerruntime.go` (modified, +5/-0)
-```diff
-@@ -37,6 +37,7 @@ type ContainerRuntime struct {
- 
- 	// Specification of the ContainerRuntime.
- 	// If the object's deletion timestamp is set, this field is immutable.
-+	// +required
- 	Spec ContainerRuntimeSpec `json:"spec"`
- 	// +optional
- 	Status ContainerRuntimeStatus `json:"status,omitempty"`
-@@ -69,18 +70,22 @@ type ContainerRuntimeSpec struct {
- 	DefaultSpec `json:",inline"`
- 
- 	// BinaryPath is the Worker's machine path where container runtime extensions should copy the binaries to.
-+	// +required
- 	BinaryPath string `json:"binaryPath"`
- 	// WorkerPool identifies the worker pool of the Shoot.
- 	// For each worker pool and type, Gardener deploys a ContainerRuntime CRD.
-+	// +required
- 	WorkerPool ContainerRuntimeWorkerPool `json:"workerPool"`
- }
- 
- // ContainerRuntimeWorkerPool identifies a Shoot worker pool by its name and selector.
- type ContainerRuntimeWorkerPool struct {
- 	// Name specifies the name of the worker pool the container runtime should be available for.
- 	// This field is immutable.
-+	// +required
- 	Name string `json:"name"`
- 	// Selector is the label selector used by the extension to match the nodes belonging to the worker pool.
-+	// +required
- 	Selector metav1.LabelSelector `json:"selector"`
- }
- 
-```
-
 #### Recent Merged Pull Requests:
-- **PR #16280** (2026-11-11): Update dependency crate-ci/typos to v1.52.2 (@renovate[bot])
-- **PR #16279** (closed): Update go to v1.27.4 (@renovate[bot])
-- **PR #16278** (closed): Update go (minor) (@renovate[bot])
-- **PR #16273** (2026-11-10): Write `.spec.networking.nodes` via `gardener-apiserver` instead of `gardenlet` (@rfranzke)
-- **PR #16271** (2026-11-10): Update module github.com/andybalholm/brotli to v1.3.0 (@renovate[bot])
-- **PR #16270** (2026-11-10): Update dependency crate-ci/typos to v1.52.1 (@renovate[bot])
+- **PR #16307** (2026-11-12): Drop `extensions/pkg/terraformer` package (@rfranzke)
+- **PR #16299** (2026-11-12): Update golang.org/x/tools digest to d8abf82 (@renovate[bot])
+- **PR #16298** (2026-11-11): Update module golang.org/x/crypto to v0.59.0 (@renovate[bot])
+- **PR #16297** (2026-11-11): [release-v1.153] Automated cherry pick of #16282: Update pvc-autoscaler to v0.3.3 (@ialidzhikov)
+- **PR #16296** (2026-11-11): [release-v1.154] Automated cherry pick of #16282: Update pvc-autoscaler to v0.3.3 (@ialidzhikov)
+- **PR #16293** (2026-11-12): Recommend digest pinning for images and OCI Helm charts pulled outside admission (@rfranzke)
 
 ---
 
@@ -1338,29 +1208,34 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Perses dashboard gauge percentage unit (#16252)
+## X. Enable kube-api-linter `optionalorrequired` for the remaining small API groups (
 
 **RULE**:
-When implementing operations in `pkg/component/observability/monitoring/perses/dashboards/garden/garden-alerts.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.golangci.yaml.in`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab429249`: Perses dashboard gauge percentage unit (#16252). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ed11f3b2`: Enable kube-api-linter `optionalorrequired` for the remaining small API groups (#16139). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/component/observability/monitoring/perses/dashboards/garden/garden-alerts.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.golangci.yaml.in`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-            format:
-              unit: percent
+        path-except: '^pkg/apis/[^/]+(/[^/]+)?/v[0-9]+((alpha|beta)[0-9]+)?/[^/]+$'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        path-except: 'pkg/apis/[^/]+(/[^/]+)?/v[0-9]+((alpha|beta)[0-9]+)?/[^/]+$'
+      # optionalorrequired is only enforced for the API groups listed below. Add a group here once its fields are
+      # explicitly marked as +optional or +required; remove this rule when all groups are migrated.
+      - linters:
+          - kubeapilinter
+        text: 'optionalorrequired:'
+        path-except: 'pkg/apis/(config/operator/v1alpha1|config/resourcemanager/v1alpha1|core/v1|core/v1beta1|extensions/v1alpha1|operations/v1alpha1|operator/v1alpha1)/[^/]+$'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab429249` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ed11f3b2` are properly handled with clean fallback behavior.

@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "2fd74173",
+    "sourceVersion": "01921cba",
     "license": "Apache-2.0",
-    "contentHash": "1ff3ee95dae27ed4f2a242acda64392089735541df2b842a8b9cd5444e5824de",
-    "lastHarvestedAt": "2026-11-11T14:56:47.107Z",
+    "contentHash": "f5e8cb4a2e0c04a7f5db3b797cf23ca047c89c0cf20507c9471e478bccc88d88",
+    "lastHarvestedAt": "2026-11-13T00:43:28.304Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
