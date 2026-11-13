@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T11:24:44.337Z",
+  "last_updated": "2026-11-13T11:40:21.074Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -215,14 +215,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
-      "content_hash": "5b1e9ebf9ee3285c1fdd5233c26c76ddd0cda1b9949573043eca2d67526892ac",
-      "verified_at": "2026-11-08T09:31:59.335Z",
+      "content_hash": "e01c71f711f9cd66fc0e62dce525301810eba9ad4b455daab82ebebb309971c7",
+      "verified_at": "2026-11-13T11:39:59.267Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T09:31:59.335Z"
+      "last_updated": "2026-11-13T11:39:59.267Z"
     },
     "black-forest-labs/FLUX.1-dev": {
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -6141,14 +6141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-krakend-krakend-ce",
-      "content_hash": "8b5a6c837d561870a5e95bb0b7f402e7984403555cb7f01e3e7f8a6d61227ff1",
-      "verified_at": "2026-11-03T23:32:19.783Z",
+      "content_hash": "3af1175a98fca7285c72c62af0f2d2aad0ec8ca86a020a8521217df39ef104d3",
+      "verified_at": "2026-11-13T11:40:21.073Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-03T23:32:19.783Z"
+      "last_updated": "2026-11-13T11:40:21.073Z"
     },
     "trailbaseio/trailbase": {
       "repository": "trailbaseio/trailbase",
@@ -14976,14 +14976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pointfreeco-sqlite-data",
-      "content_hash": "f5429f330d60eeba993ab419d6618435a8ab4eefd9795ffbef2ac1a43fbbfb16",
-      "verified_at": "2026-11-09T01:46:42.200Z",
+      "content_hash": "ee80359e8d876225dce2e96e7249419768db1d6b8d88ebecbd27ed3c54ef2ce3",
+      "verified_at": "2026-11-13T11:40:06.102Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:46:42.200Z"
+      "last_updated": "2026-11-13T11:40:06.102Z"
     },
     "sveltejs/svelte": {
       "repository": "sveltejs/svelte",

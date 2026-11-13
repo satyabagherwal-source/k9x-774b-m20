@@ -9449,3 +9449,7 @@ Every entry in this ledger must capture:
 | `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `48cb7266` | Multi-dimensional audit evidence | 2026-11-13T11:24:38.040Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `9a755b9e` | Multi-dimensional audit evidence | 2026-11-13T11:24:44.041Z |
 | `learn-dom-d-785f48fa` | `project://hf-baai-bge-small-en-v1.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | 2026-11-13T11:25:04.725Z |
+| `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-13T11:39:59.257Z |
+| `learn-github-pointfreeco-sqlite-data` | `https://github.com/pointfreeco/sqlite-data` | `e72164ce` | Multi-dimensional audit evidence | 2026-11-13T11:40:06.085Z |
+| `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `fd0eac09` | Multi-dimensional audit evidence | 2026-11-13T11:40:21.062Z |
+| `learn-dom-d-7caaeabc` | `project://hf-qwen-qwen3.8-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | 2026-11-13T11:40:43.239Z |

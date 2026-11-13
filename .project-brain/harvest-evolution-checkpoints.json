@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T11:25:05.513Z",
+  "last_updated": "2026-11-13T11:40:43.599Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T11:14:09.154Z",
@@ -1746,9 +1746,24 @@
       "processed_at": "2026-11-13T11:25:04.762Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-qwen-qwen3.8-27b-learnings.md": {
+      "processed_at": "2026-11-13T11:40:43.239Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "pointfreeco-sqlite-data-learnings.md": {
+      "processed_at": "2026-11-13T11:40:43.287Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "krakend-krakend-ce-learnings.md": {
+      "processed_at": "2026-11-13T11:40:43.468Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 537,
-  "total_canonical_promoted": 88,
-  "total_staged_for_review": 446
+  "total_dossiers_evaluated": 540,
+  "total_canonical_promoted": 89,
+  "total_staged_for_review": 448
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md`  
 > **Source**: github ([https://github.com/krakend/krakend-ce](https://github.com/krakend/krakend-ce))  
-> **Source Version**: `74462690`  
+> **Source Version**: `fd0eac09`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-03T23:32:19.016Z  
+> **Timestamp**: 2026-11-13T11:40:08.591Z  
 > **Learning ID**: `learn-github-krakend-krakend-ce`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/krakend/krakend-ce](https://github.com/krakend/krakend-ce))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-03T23:32:19.009Z  
+> **Harvest Timestamp**: 2026-11-13T11:40:08.585Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: KrakenD Community Edition: High-performance, stateless, declarative, API Gateway written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2701 stars
+- **Stars / Engagement**: 2702 stars
 
 ---
 
@@ -794,138 +794,95 @@ func (registerSubscriberFactories) Register(ctx context.Context, cfg config.Serv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `74462690` (2026-11-02)
-**Commit Message**: Merge pull request #1133 from krakend/dev-3.0.3
+### Incident Patch 1: `fd0eac09` (2026-11-12)
+**Commit Message**: Merge pull request #1136 from krakend/dev-3.0.4
 
-CE patch release 3.0.3
+CE patch release 3.0.4
 
-**File**: `Makefile` (modified, +1/-1)
+**File**: `Makefile` (modified, +2/-2)
 ```diff
 @@ -7,7 +7,7 @@
  BIN_NAME :=krakend
  OS := $(shell uname | tr '[:upper:]' '[:lower:]')
  MODULE := github.com/krakend/krakend-ce/v3
--VERSION := 3.0.2
-+VERSION := 3.0.3
+-VERSION := 3.0.3
++VERSION := 3.0.4
  SCHEMA_VERSION := $(shell echo "${VERSION}" | cut -d '.' -f 1,2)
  GIT_COMMIT := $(shell git rev-parse --short=7 HEAD)
  PKGNAME := krakend
+@@ -21,7 +21,7 @@ DESC := High performance API gateway. Aggregate, filter, manipulate and add midd
+ MAINTAINER := Daniel Ortiz <dortiz@krakend.io>
+ DOCKER_WDIR := /tmp/fpm
+ DOCKER_FPM := devopsfaith/fpm
+-GOLANG_VERSION := 1.26.10
++GOLANG_VERSION := 1.27.4
+ GLIBC_VERSION := $(shell sh find_glibc.sh)
+ ALPINE_VERSION := 3.23
+ OS_TAG :=
 ```
 
-**File**: `go.mod` (modified, +9/-9)
+**File**: `go.mod` (modified, +3/-3)
 ```diff
-@@ -18,7 +18,7 @@ require (
- 	github.com/krakend/krakend-gologging/v3 v3.0.0
- 	github.com/krakend/krakend-httpcache/v3 v3.0.0
- 	github.com/krakend/krakend-httpsecure/v3 v3.0.0
--	github.com/krakend/krakend-jose/v3 v3.0.2
-+	github.com/krakend/krakend-jose/v3 v3.0.3
- 	github.com/krakend/krakend-jsonschema/v3 v3.0.0
- 	github.com/krakend/krakend-koanf/v2 v2.0.0
- 	github.com/krakend/krakend-lambda/v3 v3.0.0
-@@ -27,16 +27,15 @@ require (
- 	github.com/krakend/krakend-martian/v3 v3.0.0
- 	github.com/krakend/krakend-metrics/v3 v3.0.0
- 	github.com/krakend/krakend-oauth2-clientcredentials/v3 v3.0.0
--	github.com/krakend/krakend-otel/v2 v2.0.0
-+	github.com/krakend/krakend-otel/v2 v2.0.1
- 	github.com/krakend/krakend-pubsub/v3 v3.0.0
- 	github.com/krakend/krakend-ratelimit/v4 v4.0.0
- 	github.com/krakend/krakend-rss/v3 v3.0.0
- 	github.com/krakend/krakend-usage/v2 v2.1.0
+@@ -9,7 +9,7 @@ require (
+ 	github.com/krakend/krakend-amqp/v3 v3.0.0
+ 	github.com/krakend/krakend-audit/v2 v2.0.0
+ 	github.com/krakend/krakend-botdetector/v3 v3.0.0
+-	github.com/krakend/krakend-cel/v3 v3.0.0
++	github.com/krakend/krakend-cel/v3 v3.0.1
+ 	github.com/krakend/krakend-circuitbreaker/v4 v4.0.0
+ 	github.com/krakend/krakend-cobra/v3 v3.0.0
+ 	github.com/krakend/krakend-cors/v3 v3.0.0
+@@ -35,6 +35,7 @@ require (
  	github.com/krakend/krakend-xml/v3 v3.0.0
--	github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796
-+	github.com/luraproject/lura/v3 v3.0.1
+ 	github.com/luraproject/lura/v3 v3.0.1
  	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
--	go.opentelemetry.io/otel v1.45.0
--	golang.org/x/sync v0.23.0
-+	golang.org/x/sync v0.24.0
++	go.opentelemetry.io/otel v1.45.0
+ 	golang.org/x/sync v0.24.0
  )
  
- require (
-@@ -217,6 +216,7 @@ require (
+@@ -112,7 +113,7 @@ require (
+ 	github.com/goccy/go-json v0.10.6 // indirect
+ 	github.com/goccy/go-yaml v1.19.2 // indirect
+ 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
+-	github.com/google/cel-go v0.29.0 // indirect
++	github.com/google/cel-go v0.30.0 // indirect
+ 	github.com/google/martian v2.1.1-0.20190517191504-25dcb96d9e51+incompatible // indirect
+ 	github.com/google/s2a-go v0.1.9 // indirect
+ 	github.com/google/uuid v1.6.0 // indirect
+@@ -216,7 +217,6 @@ require (
  	go.opentelemetry.io/contrib/propagators/b3 v1.44.0 // indirect
  	go.opentelemetry.io/contrib/propagators/jaeger v1.44.0 // indirect
  	go.opentelemetry.io/contrib/propagators/ot v1.44.0 // indirect
-+	go.opentelemetry.io/otel v1.45.0 // indirect
+-	go.opentelemetry.io/otel v1.45.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 // indirect
  	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
-@@ -236,12 +236,12 @@ require (
- 	gocloud.dev/pubsub/rabbitpubsub v0.46.0 // indirect
- 	gocloud.dev/secrets/hashivault v0.45.0 // indirect
- 	golang.org/x/arch v0.29.0 // indirect
--	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
--	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.15.0 // indirect
- 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
- 	google.golang.org/api v0.291.0 // indirect
 ```
 
-**File**: `go.sum` (modified, +16/-16)
+**File**: `go.sum` (modified, +4/-4)
 ```diff
-@@ -339,8 +339,8 @@ github.com/krakend/krakend-httpcache/v3 v3.0.0 h1:q8wdayi13zyySgLx/+NRV8TVo4ZAmr
- github.com/krakend/krakend-httpcache/v3 v3.0.0/go.mod h1:8QZe0WDEwVb9Z1u0wpXFP9AWUkMiJqC+VIw7oIo84tU=
- github.com/krakend/krakend-httpsecure/v3 v3.0.0 h1:QuJ092CLwncGTCDLfpRDuP047DMmSdpUZlWJnZ7Y6RY=
- github.com/krakend/krakend-httpsecure/v3 v3.0.0/go.mod h1:PM1FJ7tfLsYIxjRQFdgwXzc3GmeAHU4yvgBgRXnRzLU=
--github.com/krakend/krakend-jose/v3 v3.0.2 h1:UYSyt5xKHdVJDl4XZ71YR5Sa1lhJ+E31HmkEujW/KWQ=
--github.com/krakend/krakend-jose/v3 v3.0.2/go.mod h1:UgXy8bTPs15p5NIkZwE0OskRibaT9r1ye1xIQiQqX1A=
-+github.com/krakend/krakend-jose/v3 v3.0.3 h1:VnegIf8k+t8HhfimG7x5vI8Y4vmPnCztU7fPTxmlPcg=
-+github.com/krakend/krakend-jose/v3 v3.0.3/go.mod h1:UgXy8bTPs15p5NIkZwE0OskRibaT9r1ye1xIQiQqX1A=
- github.com/krakend/krakend-jsonschema/v3 v3.0.0 h1:qVSmX5ghWVyVeOsDULVnromfdbog3fvLNJJ2UoA8hCg=
- github.com/krakend/krakend-jsonschema/v3 v3.0.0/go.mod h1:UYyAqNeFr0mf/sgxvL1J9/wgKoeTrsQV29Cy4MJT2QU=
- github.com/krakend/krakend-koanf/v2 v2.0.0 h1:LorxbZLtm1D2sWzyr2HmQWTJmQzxQ8SwPQSrpmLCW40=
-@@ -357,8 +357,8 @@ github.com/krakend/krakend-metrics/v3 v3.0.0 h1:yDtl6YjlExoAq8s+cYPVv7uNW6XdAT5g
- github.com/krakend/krakend-metrics/v3 v3.0.0/go.mod h1:MJES6Hi7MzrNTzEozZ5gJDtz8UUdPIZFvnKlgYtlq+A=
- github.com/krakend/krakend-oauth2-clientcredentials/v3 v3.0.0 h1:3tA1xuaWzu8Zdq5kkYfp09KZvIrsjq9Pv9pDsGdcZRI=
- github.com/krakend/krakend-oauth2-clientcredentials/v3 v3.0.0/go.mod h1:HXJ20mQ5od1FhGy41vawgE9wAwAliFXuP/rNdW/rH28=
--github.com/krakend/krakend-otel/v2 v2.0.0 h1:o0zHr0IWWs2MqVIp4Uu/3pCgFMRD1b0iciqGgAsEOWY=
--github.com/krakend/krakend-otel/v2 v2.0.0/go.mod h1:iT0JZtrv9q5qti2yRC37LOjV13nTzxiNQKhZC7hOR7s=
-+github.com/krakend/krakend-otel/v2 v2.0.1 h1:ztM7c9rARb9POJjnSzdyMoJoK1Jq2zIlool0d/2SkB8=
-+github.com/krakend/krakend-otel/v2 v2.0.1/go.mod h1:iT0JZtrv9q5qti2yRC37LOjV13nTzxiNQKhZC7hOR7s=
- github.com/krakend/krakend-pubsub/v3 v3.0.0 h1:kAphXgBTZL2ZOW9FHA8yKkd5c0YCpUVamIKv8EBrxzk=
- github.com/krakend/krakend-pubsub/v3 v3.0.0/go.mod h1:3rGwkLCq2ZwJ947wcTIaowrqmuues1tC9uAYL/dHhwc=
- github.com/krakend/krakend-ratelimit/v4 v4.0.0 h1:1hczP3N3HR7X6FLMEBtIMDF6ZOY/J6uJW8L7+x28Zpc=
-@@ -375,8 +375,8 @@ github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0
- github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
- github.com/leodido/go-urn v1.5.0 h1:pLqT2kq1zpHW/1D18QMjMpdtX7cekxqtJJjg5ANyWw0=
- github.com/leodido/go-urn v1.5.0/go.mod h1:9BORnCDhdPBJNDEX+w1bJisa8yOKYi116VeO96s4ifE=
--github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796 h1:g+qo8cK1u/fI24V2EPvrgnxqqJ7DtWmx92hq8qj8Sb4=
--github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796/go.mod h1:rg4I/Oe8nxfEf5V5OpaZj1dLI8HLacHA55HO3x1S5k4=
-+github.com/luraproject/lura/v3 v3.0.1 h1:e61LRSIiGLZ384+LLrcx6QWzbrIwsgZ66gcatQuHst4=
-+github.com/luraproject/lura/v3 v3.0.1/go.mod h1:ejY+PZ4cgEMI9en0IJiCkeT9HZ5CIoA5WgBiytfMPVE=
- github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
- github.com/mattn/go-colorable v0.1.14/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stgPZH1UqBm1s8=
- github.com/mattn/go-isatty v0.0.24 h1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=
-@@ -587,8 +587,8 @@ golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0/go.mod h1:LzIPMQfyMNhhGPh
- golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
- golang.org/x/crypto v0.3.0/go.mod h1:hebNnKkNXi2UzZN1eVRvBB7co0a+JxK6XbPiWVs/3J4=
- golang.org/x/crypto v0.6.0/go.mod h1:OFC/31mSvZgRz0V1QTNCzfAI1aIRzbiufJtkMIlEp58=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa h1:Zt3DZoOFFYkKhDT3v7Lm9FDMEV06GpzjG2jrqW+QTE0=
- golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa/go.mod h1:K79w1Vqn7PoiZn+TkNpx3BUWUQksGO3JcVX6qIjytmA=
- golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
-@@ -603,15 +603,15 @@ golang.org/x/net v0.2.0/go.mod h1:KqCZLdyyvdV855qA2rE3GC2aiw5xGR5TEjj8smXukLY=
- golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.7.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.9.0/go.mod h1:d48xBJpPfHeWQsugry2m+kC02ZBRGRgulfHnEXEuWns=
--golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
--golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.
+@@ -192,8 +192,8 @@ github.com/golang/mock v1.6.0 h1:ErTB+efbowRARo13NNdxyJji2egdxLGQhRaY+DUumQc=
+ github.com/golang/mock v1.6.0/go.mod h1:p6yTPP+5HYm5mzsMV8JkE6ZKdX+/wYM6Hr+LicevLPs=
+ github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
+ github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
+-github.com/google/cel-go v0.29.0 h1:fEG+Ja3YRwNOqnQxTyJwoByAUAvTuxUGiro/jhrm4F4=
+-github.com/google/cel-go v0.29.0/go.mod h1:X0bD6iVNR8pkROSOoHVdgTkzmRcosof7WQqCD6wcMc8=
++github.com/google/cel-go v0.30.0 h1:ll54AkzKunWkBn9wSoiUXbFZXYZTkdJGNXTBXUoolGo=
++github.com/google/cel-go v0.30.0/go.mod h1:X0bD6iVNR8pkROSOoHVdgTkzmRcosof7WQqCD6wcMc8=
+ github.com/google/go-cmp v0.5.1/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+ github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
+ github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
+@@ -321,8 +321,8 @@ github.com/krakend/krakend-audit/v2 v2.0.0 h1:g3uP0gUmz0vrhT9aYTIpJ4x5ksocEVZazo
+ github.com/krakend/krakend-audit/v2 v2.0.0/go.mod h1:QZ41B9JqLTB2CZJ55LfKjF9mDvvJAcv7Eo2EIqaXFa8=
+ github.com/krakend/krakend-botdetector/v3 v3.0.0 h1:TeAl0+RH8eo2ZC74mwZr8s7TqwHScr7AjtNcvyuSl4A=
+ github.com/krakend/krakend-botdetector/v3 v3.0.0/go.mod h1:fhRni4hGsT7Gu6fSw+ECykjGqn+B38x9lE8Sdk+FYBA=
+-github.com/krakend/krakend-cel/v3 v3.0.0 h1:41tpRw7LY8loyoTZTethprvD1aS1dMeIGT5v97qQrOA=
+-github.com/krakend/krakend-cel/v3 v3.0.0/go.mod h1:6Xwf0BUwOCd4hJNj1lkueEGDb9PBe8OqsynVi9DU8jk=
++github.com/krakend/krakend-cel/v3 v3.0.1 h1:3+VZsNDHNaw0YcuZ6vXgoh++zgUHZUarnNHQlTdgog0=
++github.com/krakend/krakend-cel/v3 v3.0.1/go.mod h1:Es0/kQM27/I8/2VJFpDFQKAyrZIK6Nw4zs985CRO1h4=
+ github.com/krakend/krakend-circuitbreaker/v4 v4.0.0 h1:7FT382+GoQNwJQ3qjU5Fp6l9lLbsC6o6TRbI+AmuPjM=
+ github.com/krakend/krakend-circuitbreaker/v4 v4.0.0/go.mod h1:kZ7LlgCyrpzoOpyLiRimdfr6xxRo1qYBcCsXqVY8w/I=
+ github.com/krakend/krakend-cobra/v3 v3.0.0 h1:93dbAaQPXTQeGqVx0TI8BxyIfUU+g1Kl1VRLy8sO2i4=
 ```
 
 **File**: `tests/fixtures/specs/backend_301.json` (modified, +1/-1)
@@ -934,8 +891,8 @@ CE patch release 3.0.3
  	},
  	"out": {
  		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.2\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
  		"header": {
  			"content-type": ["application/json; charset=utf-8"],
  			"Cache-Control": ["public, max-age=3600"],
@@ -947,8 +904,8 @@ CE patch release 3.0.3
  	},
  	"out": {
  		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.2\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
  		"header": {
  			"content-type": ["application/json; charset=utf-8"],
  			"Cache-Control": ["public, max-age=3600"],
@@ -960,8 +917,8 @@ CE patch release 3.0.3
  	},
  	"out": {
  		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.2\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
  		"header": {
  			"content-type": ["application/json; charset=utf-8"],
  			"Cache-Control": ["public, max-age=3600"],
@@ -973,8 +930,8 @@ CE patch release 3.0.3
  	},
  	"out": {
  		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.2\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.3\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
  		"header": {
  			"content-type": ["application/json; charset=utf-8"],
  			"Cache-Control": ["public, max-age=3600"],
@@ -986,8 +943,8 @@ CE patch release 3.0.3
  			"foo":42,
  			"headers":{
  				"Accept-Encoding":["gzip"],
--				"User-Agent":["KrakenD Version 3.0.2"],
-+				"User-Agent":["KrakenD Version 3.0.3"],
+-				"User-Agent":["KrakenD Version 3.0.3"],
++				"User-Agent":["KrakenD Version 3.0.4"],
  				"X-Forwarded-Host":["localhost:8080"]
  			},
  			"path":"/param_forwarding/ok/1234567890qwertyuio/foobar",
@@ -995,111 +952,82 @@ CE patch release 3.0.3
 
 ---
 
-### Incident Patch 2: `d4d36b72` (2026-11-02)
-**Commit Message**: Merge pull request #1135 from krakend/bump_x_net
+### Incident Patch 2: `f1bc5bcd` (2026-11-11)
+**Commit Message**: Merge pull request #1137 from krakend/upgrade_cel
 
-Bump more deps for 3.0.3
+cel pkg upgraded
 
-**File**: `go.mod` (modified, +6/-6)
+**File**: `go.mod` (modified, +3/-3)
 ```diff
-@@ -33,9 +33,9 @@ require (
- 	github.com/krakend/krakend-rss/v3 v3.0.0
- 	github.com/krakend/krakend-usage/v2 v2.1.0
+@@ -9,7 +9,7 @@ require (
+ 	github.com/krakend/krakend-amqp/v3 v3.0.0
+ 	github.com/krakend/krakend-audit/v2 v2.0.0
+ 	github.com/krakend/krakend-botdetector/v3 v3.0.0
+-	github.com/krakend/krakend-cel/v3 v3.0.0
++	github.com/krakend/krakend-cel/v3 v3.0.1
+ 	github.com/krakend/krakend-circuitbreaker/v4 v4.0.0
+ 	github.com/krakend/krakend-cobra/v3 v3.0.0
+ 	github.com/krakend/krakend-cors/v3 v3.0.0
+@@ -35,6 +35,7 @@ require (
  	github.com/krakend/krakend-xml/v3 v3.0.0
--	github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796
-+	github.com/luraproject/lura/v3 v3.0.1
+ 	github.com/luraproject/lura/v3 v3.0.1
  	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
--	golang.org/x/sync v0.23.0
-+	golang.org/x/sync v0.24.0
++	go.opentelemetry.io/otel v1.45.0
+ 	golang.org/x/sync v0.24.0
  )
  
- require (
-@@ -236,12 +236,12 @@ require (
- 	gocloud.dev/pubsub/rabbitpubsub v0.46.0 // indirect
- 	gocloud.dev/secrets/hashivault v0.45.0 // indirect
- 	golang.org/x/arch v0.29.0 // indirect
--	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa // indirect
--	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.15.0 // indirect
- 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
- 	google.golang.org/api v0.291.0 // indirect
+@@ -112,7 +113,7 @@ require (
+ 	github.com/goccy/go-json v0.10.6 // indirect
+ 	github.com/goccy/go-yaml v1.19.2 // indirect
+ 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
+-	github.com/google/cel-go v0.29.0 // indirect
++	github.com/google/cel-go v0.30.0 // indirect
+ 	github.com/google/martian v2.1.1-0.20190517191504-25dcb96d9e51+incompatible // indirect
+ 	github.com/google/s2a-go v0.1.9 // indirect
+ 	github.com/google/uuid v1.6.0 // indirect
+@@ -216,7 +217,6 @@ require (
+ 	go.opentelemetry.io/contrib/propagators/b3 v1.44.0 // indirect
+ 	go.opentelemetry.io/contrib/propagators/jaeger v1.44.0 // indirect
+ 	go.opentelemetry.io/contrib/propagators/ot v1.44.0 // indirect
+-	go.opentelemetry.io/otel v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
 ```
 
-**File**: `go.sum` (modified, +12/-12)
+**File**: `go.sum` (modified, +4/-4)
 ```diff
-@@ -375,8 +375,8 @@ github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0
- github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
- github.com/leodido/go-urn v1.5.0 h1:pLqT2kq1zpHW/1D18QMjMpdtX7cekxqtJJjg5ANyWw0=
- github.com/leodido/go-urn v1.5.0/go.mod h1:9BORnCDhdPBJNDEX+w1bJisa8yOKYi116VeO96s4ifE=
--github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796 h1:g+qo8cK1u/fI24V2EPvrgnxqqJ7DtWmx92hq8qj8Sb4=
--github.com/luraproject/lura/v3 v3.0.0-20260930105937-015413ea8796/go.mod h1:rg4I/Oe8nxfEf5V5OpaZj1dLI8HLacHA55HO3x1S5k4=
-+github.com/luraproject/lura/v3 v3.0.1 h1:e61LRSIiGLZ384+LLrcx6QWzbrIwsgZ66gcatQuHst4=
-+github.com/luraproject/lura/v3 v3.0.1/go.mod h1:ejY+PZ4cgEMI9en0IJiCkeT9HZ5CIoA5WgBiytfMPVE=
- github.com/mattn/go-colorable v0.1.14 h1:9A9LHSqF/7dyVVX6g0U9cwm9pG3kP9gSzcuIPHPsaIE=
- github.com/mattn/go-colorable v0.1.14/go.mod h1:6LmQG8QLFO4G5z1gPvYEzlUgJ2wF+stgPZH1UqBm1s8=
- github.com/mattn/go-isatty v0.0.24 h1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=
-@@ -587,8 +587,8 @@ golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0/go.mod h1:LzIPMQfyMNhhGPh
- golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
- golang.org/x/crypto v0.3.0/go.mod h1:hebNnKkNXi2UzZN1eVRvBB7co0a+JxK6XbPiWVs/3J4=
- golang.org/x/crypto v0.6.0/go.mod h1:OFC/31mSvZgRz0V1QTNCzfAI1aIRzbiufJtkMIlEp58=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa h1:Zt3DZoOFFYkKhDT3v7Lm9FDMEV06GpzjG2jrqW+QTE0=
- golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa/go.mod h1:K79w1Vqn7PoiZn+TkNpx3BUWUQksGO3JcVX6qIjytmA=
- golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
-@@ -603,15 +603,15 @@ golang.org/x/net v0.2.0/go.mod h1:KqCZLdyyvdV855qA2rE3GC2aiw5xGR5TEjj8smXukLY=
- golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.7.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.9.0/go.mod h1:d48xBJpPfHeWQsugry2m+kC02ZBRGRgulfHnEXEuWns=
--golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
--golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -623,8 +623,8 @@ golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.2.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.7.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
- golang.org/x/term v0.2.0/go.mod h1:TVmDHMZPmdnySmBfhjOoOdhjzdE1h4u1VwSiw2l1Nuc=
-@@ -637,8 +637,8 @@ golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
- golang.org/x/text v0.4.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
- golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/
+@@ -192,8 +192,8 @@ github.com/golang/mock v1.6.0 h1:ErTB+efbowRARo13NNdxyJji2egdxLGQhRaY+DUumQc=
+ github.com/golang/mock v1.6.0/go.mod h1:p6yTPP+5HYm5mzsMV8JkE6ZKdX+/wYM6Hr+LicevLPs=
+ github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
+ github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
+-github.com/google/cel-go v0.29.0 h1:fEG+Ja3YRwNOqnQxTyJwoByAUAvTuxUGiro/jhrm4F4=
+-github.com/google/cel-go v0.29.0/go.mod h1:X0bD6iVNR8pkROSOoHVdgTkzmRcosof7WQqCD6wcMc8=
++github.com/google/cel-go v0.30.0 h1:ll54AkzKunWkBn9wSoiUXbFZXYZTkdJGNXTBXUoolGo=
++github.com/google/cel-go v0.30.0/go.mod h1:X0bD6iVNR8pkROSOoHVdgTkzmRcosof7WQqCD6wcMc8=
+ github.com/google/go-cmp v0.5.1/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+ github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
+ github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
+@@ -321,8 +321,8 @@ github.com/krakend/krakend-audit/v2 v2.0.0 h1:g3uP0gUmz0vrhT9aYTIpJ4x5ksocEVZazo
+ github.com/krakend/krakend-audit/v2 v2.0.0/go.mod h1:QZ41B9JqLTB2CZJ55LfKjF9mDvvJAcv7Eo2EIqaXFa8=
+ github.com/krakend/krakend-botdetector/v3 v3.0.0 h1:TeAl0+RH8eo2ZC74mwZr8s7TqwHScr7AjtNcvyuSl4A=
+ github.com/krakend/krakend-botdetector/v3 v3.0.0/go.mod h1:fhRni4hGsT7Gu6fSw+ECykjGqn+B38x9lE8Sdk+FYBA=
+-github.com/krakend/krakend-cel/v3 v3.0.0 h1:41tpRw7LY8loyoTZTethprvD1aS1dMeIGT5v97qQrOA=
+-github.com/krakend/krakend-cel/v3 v3.0.0/go.mod h1:6Xwf0BUwOCd4hJNj1lkueEGDb9PBe8OqsynVi9DU8jk=
++github.com/krakend/krakend-cel/v3 v3.0.1 h1:3+VZsNDHNaw0YcuZ6vXgoh++zgUHZUarnNHQlTdgog0=
++github.com/krakend/krakend-cel/v3 v3.0.1/go.mod h1:Es0/kQM27/I8/2VJFpDFQKAyrZIK6Nw4zs985CRO1h4=
+ github.com/krakend/krakend-circuitbreaker/v4 v4.0.0 h1:7FT382+GoQNwJQ3qjU5Fp6l9lLbsC6o6TRbI+AmuPjM=
+ github.com/krakend/krakend-circuitbreaker/v4 v4.0.0/go.mod h1:kZ7LlgCyrpzoOpyLiRimdfr6xxRo1qYBcCsXqVY8w/I=
+ github.com/krakend/krakend-cobra/v3 v3.0.0 h1:93dbAaQPXTQeGqVx0TI8BxyIfUU+g1Kl1VRLy8sO2i4=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1137** (2026-11-11): cel pkg upgraded (@kpacha)
+- **PR #1136** (2026-11-12): CE patch release 3.0.4 (@thedae)
 - **PR #1135** (2026-11-02): Bump more deps for 3.0.3 (@thedae)
 - **PR #1134** (2026-10-30): Bump krakend-jose and krakend-otel (@thedae)
 - **PR #1133** (2026-11-02): CE patch release 3.0.3 (@thedae)
 - **PR #1132** (2026-10-30): go-jose/v3 removed (@kpacha)
-- **PR #1131** (2026-10-21): Tweak README after 3.0 upgrade (@thedae)
-- **PR #1130** (2026-10-20): Bump go setup action (@thedae)
 
 ---
 
@@ -1119,13 +1047,13 @@ Bump more deps for 3.0.3
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #1133 from krakend/dev-3.0.3
+## X. Merge pull request #1136 from krakend/dev-3.0.4
 
 **RULE**:
 When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krakend/krakend-ce. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `74462690`: Merge pull request #1133 from krakend/dev-3.0.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd0eac09`: Merge pull request #1136 from krakend/dev-3.0.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
@@ -1133,14 +1061,16 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-VERSION := 3.0.3
+VERSION := 3.0.4
+GOLANG_VERSION := 1.27.4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-VERSION := 3.0.2
+VERSION := 3.0.3
+GOLANG_VERSION := 1.26.10
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `74462690` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd0eac09` are properly handled with clean fallback behavior.

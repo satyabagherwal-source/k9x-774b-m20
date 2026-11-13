@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T11:25:05.503Z",
+  "updated_at": "2026-11-13T11:40:43.588Z",
   "stats": {
-    "total_discovered": 2348,
-    "approved_pending_harvest": 2184,
+    "total_discovered": 2363,
+    "approved_pending_harvest": 2195,
     "harvested_count": 0,
-    "rejected_count": 164,
+    "rejected_count": 168,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2171,
+      "COMMUNITY_AND_EXPERT": 2186,
       "OFFICIAL_DOCUMENTATION": 93,
       "STANDARDS_AND_SPECIFICATIONS": 74,
       "ENGINEERING_BLOGS": 1,
@@ -50527,6 +50527,308 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
         "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-CA26BCA182F6": {
+      "id": "SRC-CA26BCA182F6",
+      "url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "title": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:40:43.250Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
+        "fileName": "hf-qwen-qwen3.8-27b-learnings.md"
+      }
+    },
+    "SRC-099237AE805A": {
+      "id": "SRC-099237AE805A",
+      "url": "https://github.com/pointfreeco/sqlite-data",
+      "title": "https://github.com/pointfreeco/sqlite-data",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:40:43.297Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
+        "fileName": "pointfreeco-sqlite-data-learnings.md"
+      }
+    },
+    "SRC-00E703DB7B17": {
+      "id": "SRC-00E703DB7B17",
+      "url": "https://github.com/pointfreeco/sqlite-data/blob/1.12.1/Sources/SQLiteData/CloudKit/SyncEngine.swift",
+      "title": "https://github.com/pointfreeco/sqlite-data/blob/1.12.1/Sources/SQLiteData/CloudKit/SyncEngine.swift",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:40:43.318Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
+        "fileName": "pointfreeco-sqlite-data-learnings.md"
+      }
+    },
+    "SRC-61C33DE3C742": {
+      "id": "SRC-61C33DE3C742",
+      "url": "https://developer.apple.com/documentation/cloudkit/ckerror/requestratelimited?changes=_2",
+      "title": "https://developer.apple.com/documentation/cloudkit/ckerror/requestratelimited?changes=_2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:40:43.337Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
+        "fileName": "pointfreeco-sqlite-data-learnings.md"
+      }
+    },
+    "SRC-6D8FFA38A370": {
+      "id": "SRC-6D8FFA38A370",
+      "url": "https://github.com/pointfreeco/sqlite-data/issues/432",
+      "title": "https://github.com/pointfreeco/sqlite-data/issues/432",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:40:43.357Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
+        "fileName": "pointfreeco-sqlite-data-learnings.md"
+      }
+    },
+    "SRC-5EEEB9EC8C49": {
+      "id": "SRC-5EEEB9EC8C49",
+      "url": "https://github.com/pointfreeco/swift-sharing/pull/216",
+      "title": "https://github.com/pointfreeco/swift-sharing/pull/216",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:40:43.377Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
+        "fileName": "pointfreeco-sqlite-data-learnings.md"
+      }
+    },
+    "SRC-A089F84E2CBF": {
+      "id": "SRC-A089F84E2CBF",
+      "url": "https://github.com/pointfreeco/swift-sharing/releases/tag/2.8.1",
+      "title": "https://github.com/pointfreeco/swift-sharing/releases/tag/2.8.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:40:43.407Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
+        "fileName": "pointfreeco-sqlite-data-learnings.md"
+      }
+    },
+    "SRC-95FC2A84BD61": {
+      "id": "SRC-95FC2A84BD61",
+      "url": "https://github.com/pointfreeco/sqlite-data/blob/1.12.0/Package.swift",
+      "title": "https://github.com/pointfreeco/sqlite-data/blob/1.12.0/Package.swift",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:40:43.427Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
+        "fileName": "pointfreeco-sqlite-data-learnings.md"
+      }
+    },
+    "SRC-12FDED2E34E5": {
+      "id": "SRC-12FDED2E34E5",
+      "url": "https://github.com/pointfreeco/sqlite-data/issues/418",
+      "title": "https://github.com/pointfreeco/sqlite-data/issues/418",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:40:43.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
+        "fileName": "pointfreeco-sqlite-data-learnings.md"
+      }
+    },
+    "SRC-D2878C160946": {
+      "id": "SRC-D2878C160946",
+      "url": "https://github.com/krakend/krakend-ce",
+      "title": "https://github.com/krakend/krakend-ce",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:40:43.478Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
+        "fileName": "krakend-krakend-ce-learnings.md"
+      }
+    },
+    "SRC-EA6651C02B18": {
+      "id": "SRC-EA6651C02B18",
+      "url": "https://hub.docker.com/r/krakend/builder",
+      "title": "https://hub.docker.com/r/krakend/builder",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T11:40:43.498Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
+        "fileName": "krakend-krakend-ce-learnings.md"
+      }
+    },
+    "SRC-F4D6DB9CB59D": {
+      "id": "SRC-F4D6DB9CB59D",
+      "url": "http://127.0.0.1:8081/redirect/?status=301%5C",
+      "title": "http://127.0.0.1:8081/redirect/?status=301%5C",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T11:40:43.518Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
+        "fileName": "krakend-krakend-ce-learnings.md"
+      }
+    },
+    "SRC-351CE5585A93": {
+      "id": "SRC-351CE5585A93",
+      "url": "http://127.0.0.1:8081/redirect/?status=302%5C",
+      "title": "http://127.0.0.1:8081/redirect/?status=302%5C",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T11:40:43.547Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
+        "fileName": "krakend-krakend-ce-learnings.md"
+      }
+    },
+    "SRC-5D915BD4B1FE": {
+      "id": "SRC-5D915BD4B1FE",
+      "url": "http://127.0.0.1:8081/redirect/?status=303%5C",
+      "title": "http://127.0.0.1:8081/redirect/?status=303%5C",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T11:40:43.568Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
+        "fileName": "krakend-krakend-ce-learnings.md"
+      }
+    },
+    "SRC-E2DA45A17DC8": {
+      "id": "SRC-E2DA45A17DC8",
+      "url": "http://127.0.0.1:8081/redirect/?status=307%5C",
+      "title": "http://127.0.0.1:8081/redirect/?status=307%5C",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T11:40:43.588Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
+        "fileName": "krakend-krakend-ce-learnings.md"
       }
     }
   }

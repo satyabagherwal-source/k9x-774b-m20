@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T11:24:43.789Z",
+  "last_updated": "2026-11-13T11:40:20.939Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32618,7 +32618,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
       "source_version": "hf-qwen-qwen3.8-27b",
-      "content_hash": "5b1e9ebf9ee3285c1fdd5233c26c76ddd0cda1b9949573043eca2d67526892ac",
+      "content_hash": "e01c71f711f9cd66fc0e62dce525301810eba9ad4b455daab82ebebb309971c7",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "promoted_rules": [
@@ -32701,7 +32701,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv43c1y3",
         "learn-huggingface-hf-qwen-qwen3-8-27b-mv4gkm75"
       ],
-      "verified_at": "2026-11-08T09:31:59.198Z",
+      "verified_at": "2026-11-13T11:39:59.108Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40146,11 +40146,16 @@
       "slug": "krakend-krakend-ce",
       "platform": "github",
       "source_url": "https://github.com/krakend/krakend-ce",
-      "source_version": "74462690",
-      "content_hash": "8b5a6c837d561870a5e95bb0b7f402e7984403555cb7f01e3e7f8a6d61227ff1",
+      "source_version": "fd0eac09",
+      "content_hash": "3af1175a98fca7285c72c62af0f2d2aad0ec8ca86a020a8521217df39ef104d3",
       "dossier_path": "07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #1136 from krakend/dev-3.0.4",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1913,
           "title": "Bump go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc",
@@ -40177,7 +40182,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-03T23:32:19.652Z",
+      "verified_at": "2026-11-13T11:40:20.902Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53341,8 +53346,8 @@
       "slug": "pointfreeco-sqlite-data",
       "platform": "github",
       "source_url": "https://github.com/pointfreeco/sqlite-data",
-      "source_version": "38b64aa6",
-      "content_hash": "f5429f330d60eeba993ab419d6618435a8ab4eefd9795ffbef2ac1a43fbbfb16",
+      "source_version": "e72164ce",
+      "content_hash": "ee80359e8d876225dce2e96e7249419768db1d6b8d88ebecbd27ed3c54ef2ce3",
       "dossier_path": "07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md",
       "promoted_rules": [
@@ -53372,7 +53377,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T01:46:42.055Z",
+      "verified_at": "2026-11-13T11:40:05.935Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

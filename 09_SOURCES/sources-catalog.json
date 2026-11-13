@@ -205,8 +205,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceVersion": "hf-qwen-qwen3.8-27b",
     "license": "Open-Source",
-    "contentHash": "5b1e9ebf9ee3285c1fdd5233c26c76ddd0cda1b9949573043eca2d67526892ac",
-    "lastHarvestedAt": "2026-11-08T09:31:59.317Z",
+    "contentHash": "e01c71f711f9cd66fc0e62dce525301810eba9ad4b455daab82ebebb309971c7",
+    "lastHarvestedAt": "2026-11-13T11:39:59.257Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b"
   },
   "hf-black-forest-labs-flux.1-dev": {
@@ -4013,10 +4013,10 @@
     "repository": "krakend/krakend-ce",
     "platform": "github",
     "sourceUrl": "https://github.com/krakend/krakend-ce",
-    "sourceVersion": "74462690",
+    "sourceVersion": "fd0eac09",
     "license": "Apache-2.0",
-    "contentHash": "8b5a6c837d561870a5e95bb0b7f402e7984403555cb7f01e3e7f8a6d61227ff1",
-    "lastHarvestedAt": "2026-11-03T23:32:19.769Z",
+    "contentHash": "3af1175a98fca7285c72c62af0f2d2aad0ec8ca86a020a8521217df39ef104d3",
+    "lastHarvestedAt": "2026-11-13T11:40:21.062Z",
     "learningId": "learn-github-krakend-krakend-ce"
   },
   "trailbaseio-trailbase": {
@@ -9953,10 +9953,10 @@
     "repository": "pointfreeco/sqlite-data",
     "platform": "github",
     "sourceUrl": "https://github.com/pointfreeco/sqlite-data",
-    "sourceVersion": "38b64aa6",
+    "sourceVersion": "e72164ce",
     "license": "MIT",
-    "contentHash": "f5429f330d60eeba993ab419d6618435a8ab4eefd9795ffbef2ac1a43fbbfb16",
-    "lastHarvestedAt": "2026-11-09T01:46:42.191Z",
+    "contentHash": "ee80359e8d876225dce2e96e7249419768db1d6b8d88ebecbd27ed3c54ef2ce3",
+    "lastHarvestedAt": "2026-11-13T11:40:06.085Z",
     "learningId": "learn-github-pointfreeco-sqlite-data"
   },
   "sveltejs-svelte": {

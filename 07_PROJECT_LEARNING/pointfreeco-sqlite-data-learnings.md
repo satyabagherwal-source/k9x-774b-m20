@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md`  
 > **Source**: github ([https://github.com/pointfreeco/sqlite-data](https://github.com/pointfreeco/sqlite-data))  
-> **Source Version**: `38b64aa6`  
+> **Source Version**: `e72164ce`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T01:46:40.744Z  
+> **Timestamp**: 2026-11-13T11:40:05.702Z  
 > **Learning ID**: `learn-github-pointfreeco-sqlite-data`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pointfreeco/sqlite-data](https://github.com/pointfreeco/sqlite-data))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T01:46:40.737Z  
+> **Harvest Timestamp**: 2026-11-13T11:40:05.696Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fast, lightweight replacement for SwiftData, powered by SQL and supporting CloudKit synchronization.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1960 stars
+- **Stars / Engagement**: 1962 stars
 
 ---
 
@@ -746,8 +746,10 @@ extension DatabaseWriter where Self == DatabaseQueue {
     package struct State: Sendable {
       package var changeTag = 0
       package var hasPendingUntrackedChanges = false
-      package var pendingDatabaseChanges: OrderedSet<CKSyncEngine.PendingDatabaseChange> = []
-      package var pendingRecordZoneChanges: OrderedSet<CKSyncEngine.PendingRecordZoneChange> = []
+      package var pendingDatabaseChanges:
+        OrderedDictionary<CKRecordZone.ID, CKSyncEngine.PendingDatabaseChange> = [:]
+      package var pendingRecordZoneChanges:
+        OrderedDictionary<CKRecord.ID, CKSyncEngine.PendingRecordZoneChange> = [:]
     }
 
     private let state = LockIsolated(State())
@@ -775,11 +777,11 @@ extension DatabaseWriter where Self == DatabaseQueue {
     }
 
     package var pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange] {
-      withState { Array($0.pendingRecordZoneChanges) }
+      withState { Array($0.pendingRecordZoneChanges.values) }
     }
 
     package var pendingDatabaseChanges: [CKSyncEngine.PendingDatabaseChange] {
-      withState { Array($0.pendingDatabaseChanges) }
+      withState { Array($0.pendingDatabaseChanges.values) }
     }
 
     package var hasPendingUntrackedChanges: Bool {
@@ -796,26 +798,46 @@ extension DatabaseWriter where Self == DatabaseQueue {
     }
 
     package func add(pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange]) {
-      withState {
-        $0.pendingRecordZoneChanges.append(contentsOf: pendingRecordZoneChanges)
+      withState { state in
+        for change in pendingRecordZoneChanges {
+          guard let id = change.id
+          else { fatalError("Unsupported pendingRecordZoneChange: \(change)") }
+          state.pendingRecordZoneChanges[id] = change
+        }
       }
     }
 
     package func remove(pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange]) {
-      withState {
-        $0.pendingRecordZoneChanges.subtract(pendingRecordZoneChanges)
+      withState { state in
+        for change in pendingRecordZoneChanges {
+          guard let id = change.id
+          else { fatalError("Unsupported pendingRecordZoneChange: \(change)") }
+          if state.pendingRecordZoneChanges[id] == change {
+            state.pendingRecordZoneChanges.removeValue(forKey: id)
+          }
+        }
       }
     }
 
     package func add(pendingDatabaseChanges: [CKSyncEngine.PendingDatabaseChange]) {
-      withState {
-        $0.pendingDatabaseChanges.append(contentsOf: pendingDatabaseChanges)
+      withState { state in
+        for change in pendingDatabaseChanges {
+          guard let zoneID = change.zoneID
+          else { fatalError("Unsupported pendingDatabaseChange: \(change)") }
+          state.pendingDatabaseChanges[zoneID] = change
+        }
       }
     }
 
     package func remove(pendingDatabaseChanges: [CKSyncEngine.PendingDatabaseChange]) {
-      withState {
-        $0.pendingDatabaseChanges.subtract(pendingDatabaseChanges)
+      withState { state in
+        for change in pendingDatabaseChanges {
+          guard let zoneID = change.zoneID
+          else { fatalError("Unsupported pendingDatabaseChange: \(change)") }
+          if state.pendingDatabaseChanges[zoneID] == change {
+            state.pendingDatabaseChanges.removeValue(forKey: zoneID)
+          }
+        }
       }
     }
   }
@@ -887,30 +909,7 @@ extension DatabaseWriter where Self == DatabaseQueue {
         batch?.atomicByZone = forceAtomicByZone
       }
       guard let batch
-      else {
-        syncEngine.state.withState { $0.hasPendingUntrackedChanges = false }
-        return SendRecordsCallback {}
-      }
-
-      let (saveResults, deleteResults) = try $_isRateLimitingDisabled.withValue(true) {
-        try syncEngine.database.modifyRecords(
-          saving: batch.recordsToSave,
-          deleting: batch.recordIDsToDelete,
-          savePolicy: .ifServerRecordUnchanged,
-          atomically: batch.atomicByZone
-        )
-      }
-
-      var savedRecords: [CKRecord] = []
-      var failedRecordSaves: [(record: CKRecord, error: CKError)] = []
-      var deletedRecordIDs: [CKRecord.ID] = []
-      var failedRecordDeletes: [CKRecord.ID: CKError] = [:]
-      for (recordID, result) in saveResults {
-        switch result {
-        case .success(let record):
-          savedRecords.append(record)
-        case .failure(let error as CKError):
-          guard let record = batch.recordsToS
+   
 ```
 
 ### Core Architecture Module: `Sources/SQLiteData/CloudKit/Internal/StateSerialization.swift`
@@ -1091,36 +1090,696 @@ extension DatabaseWriter where Self == DatabaseQueue {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `38b64aa6` (2026-11-06)
-**Commit Message**: Fix RateLimitingTests initializer.
+### Incident Patch 1: `e72164ce` (2026-11-09)
+**Commit Message**: Add failing test to demonstrate delete-then-reinsert issue #418 (#575)
 
-**File**: `Tests/SQLiteDataTests/CloudKitTests/RateLimitingTests.swift` (modified, +7/-2)
+* Dedupe by ID in `MockSyncEngineState` `add(pendingRecordZoneChanges:)` and `add(pendingDatabaseChanges:)`
+
+* Add failing test to demonstrate delete-then-reinsert issue #418
+
+* Fixing merge conflicts
+
+* Formatting
+
+* Clean up test
+
+* Fix sync problem with delete+reinserts.
+
+* Save pending record zone changes synchronously from triggers.
+
+* Preserve order when enqueue pending changes.
+
+* Add more tests.
+
+* Fix bug that accidentally enqueued sync engine changes even for rolled back transactions.
+
+* wip
+
+---------
+
+Co-authored-by: Brandon Williams <[REDACTED_EMAIL]>
+Co-authored-by: Stephen Celis <[REDACTED_EMAIL]>
+
+**File**: `Sources/SQLiteData/CloudKit/Internal/MockSyncEngine.swift` (modified, +41/-15)
 ```diff
-@@ -21,8 +21,13 @@
+@@ -136,8 +136,10 @@
+     package struct State: Sendable {
+       package var changeTag = 0
+       package var hasPendingUntrackedChanges = false
+-      package var pendingDatabaseChanges: OrderedSet<CKSyncEngine.PendingDatabaseChange> = []
+-      package var pendingRecordZoneChanges: OrderedSet<CKSyncEngine.PendingRecordZoneChange> = []
++      package var pendingDatabaseChanges:
++        OrderedDictionary<CKRecordZone.ID, CKSyncEngine.PendingDatabaseChange> = [:]
++      package var pendingRecordZoneChanges:
++        OrderedDictionary<CKRecord.ID, CKSyncEngine.PendingRecordZoneChange> = [:]
+     }
+ 
+     private let state = LockIsolated(State())
+@@ -165,11 +167,11 @@
+     }
+ 
+     package var pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange] {
+-      withState { Array($0.pendingRecordZoneChanges) }
++      withState { Array($0.pendingRecordZoneChanges.values) }
+     }
+ 
+     package var pendingDatabaseChanges: [CKSyncEngine.PendingDatabaseChange] {
+-      withState { Array($0.pendingDatabaseChanges) }
++      withState { Array($0.pendingDatabaseChanges.values) }
+     }
+ 
+     package var hasPendingUntrackedChanges: Bool {
+@@ -186,26 +188,46 @@
+     }
+ 
+     package func add(pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange]) {
+-      withState {
+-        $0.pendingRecordZoneChanges.append(contentsOf: pendingRecordZoneChanges)
++      withState { state in
++        for change in pendingRecordZoneChanges {
++          guard let id = change.id
++          else { fatalError("Unsupported pendingRecordZoneChange: \(change)") }
++          state.pendingRecordZoneChanges[id] = change
++        }
+       }
+     }
+ 
+     package func remove(pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange]) {
+-      withState {
+-        $0.pendingRecordZoneChanges.subtract(pendingRecordZoneChanges)
++      withState { state in
++        for change in pendingRecordZoneChanges {
++          guard let id = change.id
++          else { fatalError("Unsupported pendingRecordZoneChange: \(change)") }
++          if state.pendingRecordZoneChanges[id] == change {
++            state.pendingRecordZoneChanges.removeValue(forKey: id)
++          }
++        }
+       }
+     }
+ 
+     package func add(pendingDatabaseChanges: [CKSyncEngine.PendingDatabaseChange]) {
+-      withState {
+-        $0.pendingDatabaseChanges.append(contentsOf: pendingDatabaseChanges)
++      withState { state in
++        for change in pendingDatabaseChanges {
++          guard let zoneID = change.zoneID
++          else { fatalError("Unsupported pendingDatabaseChange: \(change)") }
++          state.pendingDatabaseChanges[zoneID] = change
++        }
+       }
+     }
+ 
+     package func remove(pendingDatabaseChanges: [CKSyncEngine.PendingDatabaseChange]) {
+-      withState {
+-        $0.pendingDatabaseChanges.subtract(pendingDatabaseChanges)
++      withState { state in
++        for change in pendingDatabaseChanges {
++          guard let zoneID = change.zoneID
++          else { fatalError("Unsupported pendingDatabaseChange: \(change)") }
++          if state.pendingDatabaseChanges[zoneID] == change {
++            state.pendingDatabaseChanges.removeValue(forKey: zoneID)
++          }
++        }
+       }
+     }
+   }
+@@ -409,7 +431,7 @@
+           return changes
+         }
+ 
+-        for pendingDatabaseChange in syncEngineState.pendingDatabaseChanges {
++        for (_, pendingDatabaseChange) in syncEngineState.pendingDatabaseChanges {
+           switch pendingDatabaseChange {
+           case .saveZone(let zone):
+             changes.zonesToSave.append(zone)
+@@ -434,7 +456,9 @@
+           case .success(let zone):
+             changes.savedZones.append(zone)
+           case .failure(let error as CKError):
+-            changes.failedZoneSaves.append((changes.zonesToSave.first(where: { $0.zoneID == zoneID })!, error))
++            changes.failedZoneSaves.append(
++              (changes.zonesToSave.first(where: { $0.zoneID == zoneID })!, error)
++            )
+           case .failure(let error):
+             reportIssue("Error thrown not CKError: \(error)")
+           }
+@@ -454,7 +478,9 @@
        }
  
-       @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
--      override init() async throws {
--        try await super.init()
-+      override init(
-+        fileID: StaticString = #fileID,
-+        filePath: StaticString = #filePath,
-+        line: UInt = #line,
-+        column: UInt = #column
-+      ) async throws {
-+        try await super.init(fileID: fileID, filePath: filePath, line: line, column: column)
-         try $_isRateLimitingDisabled.withValue(true) {
-           _ = try database.modifyRecords(
-             saving: [CKRecord(recordType: "A", recordID: recordID)],
+       syncEngine.state.remove(pendingDatabaseChanges: changes.savedZones.map { .saveZone($0) })
+-      syncEngine.state.remove(pendingDatabaseChanges: changes.deletedZoneIDs.map { .deleteZone($0) })
++      syncEngine.state.remove(
++        pendingDatabaseChanges: changes.deletedZoneIDs.map { .deleteZone($0) }
++      )
+       await syncEngine.parentSyncEngine
+         .handleEvent(
+           .sentDatabaseChanges(
+```
+
+**File**: `Sources/SQLiteData/CloudKit/Internal/Triggers.swift` (modified, +10/-5)
+```diff
+@@ -206,7 +206,15 @@
+           parentRecordPrimaryKey,
+           parentRecordType
+         )
+-      } onConflictDoUpdate: { _ in
++      } onConflictDoUpdate: {
++        $0._isDeleted = false
++        $0.userModificationTime = $currentTime()
++        $0.zoneName = zoneName ?? $0.zoneName
++        $0.ownerName = ownerName ?? $0.ownerName
++        $0.parentRecordPrimaryKey = parentRecordPrimaryKey
++        $0.parentRecordType = parentRecordType
++      } where: {
++        $0._isDeleted
+       }
+     }
+ 
+@@ -234,10 +242,7 @@
+         $0.userModificationTime = $currentTime()
+       }
+     }
+-  }
+ 
+-  @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
+-  extension SyncMetadata {
+     static func callbackTriggers(for syncEngine: SyncEngine) -> [TemporaryTrigger<Self>] {
+       [
+         afterInsertTrigger(for: syncEngine),
+@@ -325,7 +330,7 @@
+             )
+           )
+         } when: { old, new in
+-          old._isDeleted.eq(new._isDeleted) && !SyncEngine.$isSynchronizing
++          !new._isDeleted && !SyncEngine.$isSynchronizing
+         }
+       )
+     }
+```
+
+**File**: `Sources/SQLiteData/CloudKit/Internal/UserDatabase.swift` (modified, +8/-0)
+```diff
+@@ -16,6 +16,14 @@
+       database.configuration
+     }
+ 
++    package func unsafeReentrantWrite<T>(_ updates: (Database) throws -> T) rethrows -> T {
++      try database.unsafeReentrantWrite { db in
++        try $_isSynchronizingChanges.withValue(true) {
++          try updates(db)
++        }
++      }
++    }
++
+     package func write<T: Sendable>(
+       _ updates: @Sendable (Database) throws -> T
+     ) async throws -> T {
+```
+
+**File**: `Sources/SQLiteData/CloudKit/SyncEngine.swift` (modified, +119/-60)
+```diff
+@@ -43,6 +43,9 @@
+     let uuid = Dependency(\.uuid)
+     private let observationRegistrar = ObservationRegistrar()
+     private let notificationsObserver = LockIsolated<(any NSObjectProtocol)?>(nil)
++    private let pendingRecordZoneChangesObserver =
++      LockIsolated<PendingRecordZoneChangesObserver?>(nil)
++    private let hasUncommittedPendingRecordZoneChanges = LockIsolated(false)
+     private let activityCounts = LockIsolated(ActivityCounts())
+     private let startTask = LockIsolated<Task<Void, Never>?>(nil)
+     private let quotaExceeded = LockIsolated([CKDatabase.Scope.private: false, .shared: false])
+@@ -368,6 +371,10 @@
+       db.add(function: $currentZoneName)
+       db.add(function: $currentOwnerName)
+ 
++      let pendingRecordZoneChangesObserver = PendingRecordZoneChangesObserver(syncEngine: self)
++      db.add(transactionObserver: pendingRecordZoneChangesObserver, extent: .observerLifetime)
++      self.pendingRecordZoneChangesObserver.withValue { $0 = pendingRecordZoneChangesObserver }
++
+       for trigger in SyncMetadata.callbackTriggers(for: self) {
+         try trigger.execute(db)
+       }
+@@ -651,15 +658,33 @@
+ 
+     private func enqueueLocallyPendingChanges(scope: CKDatabase.Scope? = nil) async throws {
+       let pendingRecordZoneChanges = try await userDatabase.write { db in
+-        try PendingRecordZoneChange
+-          .where {
+-            $0.databaseScope.is(#bind(scope))
+-              .or(#bind(scope, as: CKDatabase.Scope?.RawRepresentation.self).is(nil))
+-          }
+-          .delete()
+-          .returning(\.pendingRecordZoneChange)
+-          .fetchAll(db)
++        try takePendingRecordZoneChanges(scope: scope, db: db)
+       }
++      addToSyncEngines(pendingRecordZoneChanges: pendingRecordZoneChanges)
++    }
++
++    private func takePendingRecordZoneChanges(
++      scope: CKDatabase.Scope?,
++      db: Database
++    ) throws -> [CKSyncEngine.PendingRecordZoneChange] {
++      let scopedPendingRecordZoneChanges = PendingRecordZoneChange.where {
++        $0.databaseScope.is(#bind(scope))
++          .or(#bind(scope, as: CKDatabase.Scope?.RawRepresentation.self).is(nil))
++      }
++      let changes =
++        try scopedPendingRecordZoneChanges
++        .order { _ in #sql("rowid") }
++        .select(\.pendingRecordZoneChange)
++        .fetchAll(db)
++      try scopedPendingRecordZoneChanges.delete().execute(db)
++      return changes
++    }
++
++    private func addToSyncEngines(
++      pendingRecordZoneChanges: [CKSyncEngine.PendingRecordZoneChange]
++    ) {
++      guard !pendingRecordZoneChanges.isEmpty
++      else { return }
+       let changesByScope = [CKDatabase.Scope?: _](grouping: pendingRecordZoneChanges) {
+         switch $0 {
+         case .deleteRecord(let recordID), .saveRecord(let recordID):
+@@ -676,6 +701,48 @@
+       }
+     }
+ 
++    private func savePendingRecordZoneChanges(
++      _ changes: [CKSyncEngine.PendingRecordZoneChange]
++    ) {
++      guard !changes.isEmpty
++      else { return }
++      withErrorReporting(.sqliteDataCloudKitFailure) {
++        try userDatabase.unsafeReentrantWrite { db in
++          try PendingRecordZoneChange
++            .insert {
++              for change in changes {
++                PendingRecordZoneChange(
++                  change,
++                  databaseScope: change.id?.zoneID.databaseScope
++                )
++              }
++            }
++            .execute(db)
++        }
++        hasUncommittedPendingRecordZoneChanges.withValue { $0 = true }
++      }
++    }
++
++    fileprivate func databaseDidCommit(db: Database) {
++      let hasPendingRecordZoneChanges = hasUncommittedPendingRecordZoneChanges.withValue {
++        hasUncommittedPendingRecordZoneChanges in
++        defer { hasUncommittedPendingRecordZoneChanges = false }
++        return hasUncommittedPendingRecordZoneChanges
++      }
++      guard hasPendingRecordZoneChanges, isRunning
++      else { return }
++      withErrorReporting(.sqliteDataCloudKitFailure) {
++        let pendingRecordZoneChanges = try $_isSynchronizingChanges.withValue(true) {
++          try takePendingRecordZoneChanges(scope: nil, db: db)
++        }
++        addToSyncEngines(pendingRecordZoneChanges: pendingRecordZoneChanges)
++      }
++    }
++
++    fileprivate func databaseDidRollback() {
++      hasUncommittedPendingRecordZoneChanges.withValue { $0 = false }
++    }
++
+     private func enqueueUnknownRecordsForCloudKit() async throws {
+       try await userDatabase.write { db in
+         try $_isSynchronizingChanges.withValue(false) {
+@@ -779,6 +846,14 @@
+         for trigger in SyncMetadata.callbackTriggers(for: self).reversed() {
+           try trigger.drop().execute(db)
+         }
++        let pendingRecordZoneChangesObserver = pendingRecordZoneChangesObserver.withValue {
++          pendingRecordZoneChangesObserver in
++          defer { pendingRecordZoneChangesObserver = nil }
++          return pendingRecordZoneChangesObserver
++        }
++        if let pendingRecordZoneChangesObserver {
++          db
+```
+
+**File**: `Tests/SQLiteDataTests/CloudKitTests/AssetsTests.swift` (modified, +87/-0)
+```diff
+@@ -412,6 +412,93 @@
+           """
+         }
+       }
++      
++      // * Delete asset row, then insert a new asset row with the same primary key before sending
++      // => New asset is saved to CloudKit
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test(.bug("https://github.com/pointfreeco/sqlite-data/issues/418"))
++      func deleteThenReinsertAsset() async throws {
++        try await seedRemindersListWithAsset()
++
++        try await userDatabase.userWrite { db in
++          try RemindersListAsset.find(1).delete().execute(db)
++        }
++        try await userDatabase.userWrite { db in
++          try RemindersListAsset.insert {
++            RemindersListAsset(remindersListID: 1, coverImage: Data("new-image".utf8))
++          }
++          .execute(db)
++        }
++        try await syncEngine.processPendingRecordZoneChanges(scope: .private)
++
++        #expect(try cloudKitCoverImage(remindersListID: 1) == Data("new-image".utf8))
++      }
++
++      // * Delete and reinsert asset row in a single transaction before sending
++      // => New asset is saved to CloudKit
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test(.bug("https://github.com/pointfreeco/sqlite-data/issues/418"))
++      func deleteThenReinsertAsset_SameTransaction() async throws {
++        try await seedRemindersListWithAsset()
++
++        try await userDatabase.userWrite { db in
++          try RemindersListAsset.find(1).delete().execute(db)
++          try RemindersListAsset.insert {
++            RemindersListAsset(remindersListID: 1, coverImage: Data("new-image".utf8))
++          }
++          .execute(db)
++        }
++        try await syncEngine.processPendingRecordZoneChanges(scope: .private)
++
++        #expect(try cloudKitCoverImage(remindersListID: 1) == Data("new-image".utf8))
++      }
++
++      // * Delete reminders list (cascading to its asset), then reinsert both before sending
++      // => List and new asset are saved to CloudKit
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test(.bug("https://github.com/pointfreeco/sqlite-data/issues/418"))
++      func deleteThenReinsertParentAndAsset() async throws {
++        try await seedRemindersListWithAsset()
++
++        try await userDatabase.userWrite { db in
++          try RemindersList.find(1).delete().execute(db)
++        }
++        try await userDatabase.userWrite { db in
++          try db.seed {
++            RemindersList(id: 1, title: "Personal")
++            RemindersListAsset(remindersListID: 1, coverImage: Data("new-image".utf8))
++          }
++        }
++        try await syncEngine.processPendingRecordZoneChanges(scope: .private)
++
++        #expect(
++          try container.privateCloudDatabase.record(for: RemindersList.recordID(for: 1))
++            .encryptedValues["title"] as? String == "Personal"
++        )
++        #expect(try cloudKitCoverImage(remindersListID: 1) == Data("new-image".utf8))
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      private func seedRemindersListWithAsset() async throws {
++        try await userDatabase.userWrite { db in
++          try db.seed {
++            RemindersList(id: 1, title: "Personal")
++            RemindersListAsset(remindersListID: 1, coverImage: Data("image".utf8))
++          }
++        }
++        try await syncEngine.processPendingRecordZoneChanges(scope: .private)
++        #expect(try cloudKitCoverImage(remindersListID: 1) == Data("image".utf8))
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      private func cloudKitCoverImage(remindersListID: Int) throws -> Data? {
++        let record = try container.privateCloudDatabase.record(
++          for: RemindersListAsset.recordID(for: remindersListID)
++        )
++        guard let asset = record["coverImage"] as? CKAsset, let fileURL = asset.fileURL
++        else { return nil }
++        return inMemoryDataManager.storage.withValue { $0[fileURL] }
++      }
+     }
+   }
+ #endif
+```
+
+**File**: `Tests/SQLiteDataTests/CloudKitTests/CloudKitTests.swift` (modified, +189/-0)
+```diff
+@@ -580,6 +580,195 @@
+         }
+       }
+ 
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `writes outside of a transaction are sent to CloudKit`() async throws {
++        try await userDatabase.database.writeWithoutTransaction { db in
++          #expect(!db.isInsideTransaction)
++          try RemindersList.insert { RemindersList(id: 1, title: "Personal") }.execute(db)
++        }
++        #expect(
++          syncEngine.private.state.pendingRecordZoneChanges == [
++            .saveRecord(RemindersList.recordID(for: 1))
++          ]
++        )
++        try await syncEngine.processPendingRecordZoneChanges(scope: .private)
++        let record = try container.privateCloudDatabase.record(for: RemindersList.recordID(for: 1))
++        #expect(record.encryptedValues["title"] as? String == "Personal")
++
++        try await userDatabase.database.writeWithoutTransaction { db in
++          #expect(!db.isInsideTransaction)
++          try RemindersList.find(1).delete().execute(db)
++        }
++        #expect(
++          syncEngine.private.state.pendingRecordZoneChanges == [
++            .deleteRecord(RemindersList.recordID(for: 1))
++          ]
++        )
++        try await syncEngine.processPendingRecordZoneChanges(scope: .private)
++        #expect(throws: CKError.self) {
++          try container.privateCloudDatabase.record(for: RemindersList.recordID(for: 1))
++        }
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `delete rolled back to a savepoint is not sent to CloudKit`() async throws {
++        try await userDatabase.userWrite { db in
++          try db.seed {
++            RemindersList(id: 1, title: "Personal")
++            RemindersList(id: 2, title: "Work")
++          }
++        }
++        try await syncEngine.processPendingRecordZoneChanges(scope: .private)
++
++        try await userDatabase.userWrite { db in
++          try db.inSavepoint {
++            try RemindersList.find(1).delete().execute(db)
++            return .rollback
++          }
++          try RemindersList.find(2).update { $0.title = "Business" }.execute(db)
++        }
++        #expect(
++          syncEngine.private.state.pendingRecordZoneChanges == [
++            .saveRecord(RemindersList.recordID(for: 2))
++          ]
++        )
++        try await syncEngine.processPendingRecordZoneChanges(scope: .private)
++
++        let record = try container.privateCloudDatabase.record(for: RemindersList.recordID(for: 1))
++        #expect(record.encryptedValues["title"] as? String == "Personal")
++        let metadata = try await syncEngine.metadatabase.read { db in
++          try SyncMetadata.find(RemindersList.recordID(for: 1)).fetchOne(db)
++        }
++        #expect(metadata != nil)
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `rolled back delete is not sent to CloudKit`() async throws {
++        struct RollBack: Error {}
++
++        try await userDatabase.userWrite { db in
++          try db.seed { RemindersList(id: 1, title: "Personal") }
++        }
++        try await syncEngine.processPendingRecordZoneChanges(scope: .private)
++
++        await #expect(throws: RollBack.self) {
++          try await self.userDatabase.userWrite { db in
++            try RemindersList.find(1).delete().execute(db)
++            throw RollBack()
++          }
++        }
++        #expect(syncEngine.private.state.pendingRecordZoneChanges.isEmpty)
++
++        let remindersList = try await userDatabase.read { db in
++          try RemindersList.find(1).fetchOne(db)
++        }
++        #expect(remindersList?.title == "Personal")
++
++        let metadata = try await syncEngine.metadatabase.read { db in
++          try SyncMetadata.find(RemindersList.recordID(for: 1)).fetchOne(db)
++        }
++        #expect(metadata != nil)
++
++        let record = try container.privateCloudDatabase.record(for: RemindersList.recordID(for: 1))
++        #expect(record.encryptedValues["title"] as? String == "Personal")
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `rolled back reinsert does not cancel a committed delete`() async throws {
++        struct RollBack: Error {}
++
++        try await userDatabase.userWrite { db in
++          try db.seed { RemindersList(id: 1, title: "Personal") }
++        }
++        try await syncEngine.processPendingRecordZoneChanges(scope: .private)
++
++        try await userDatabase.userWrite { db in
++          try RemindersList.find(1).delete().execute(db)
++        }
++        await #expect(throws: RollBack.self) {
++          try await self.userDatabase.userWrite { db in
++            try RemindersList.insert { RemindersList(id: 1, title: "Reinserted") }.execute(db)
++            throw RollBack()
++          }
++        }
++        try await syncEngine.processPendingRecordZoneChanges(scope: .private)
++
++        let remindersList = try await userDatabase.read { db in
++          try RemindersList.find(1).fetchOne(db)
++        }
++        #
+```
+
+**File**: `Tests/SQLiteDataTests/CloudKitTests/ForeignKeyConstraintTests.swift` (modified, +0/-1)
+```diff
+@@ -861,7 +861,6 @@
+             }
+           }
+         }
+-        try await syncEngine.processPendingRecordZoneChanges(scope: .private)
+         assertQuery(SyncMetadata.all, database: syncEngine.metadatabase) {
+           """
+           (No results)
+```
+
+**File**: `Tests/SQLiteDataTests/CloudKitTests/MockSyncEngineStateTests.swift` (added, +117/-0)
+```diff
+@@ -0,0 +1,117 @@
++#if canImport(CloudKit)
++  import CloudKit
++  import SQLiteData
++  import Testing
++
++  @Suite struct MockSyncEngineStateTests {
++    @Suite struct PendingRecordZoneChanges {
++      let idA = CKRecord.ID(recordName: "A")
++      let idB = CKRecord.ID(recordName: "B")
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `same change is deduplicated`() {
++        let state = MockSyncEngineState()
++        state.add(pendingRecordZoneChanges: [.saveRecord(idA)])
++        state.add(pendingRecordZoneChanges: [.saveRecord(idA)])
++        #expect(state.pendingRecordZoneChanges == [.saveRecord(idA)])
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `delete supersedes save`() {
++        let state = MockSyncEngineState()
++        state.add(pendingRecordZoneChanges: [.saveRecord(idA)])
++        state.add(pendingRecordZoneChanges: [.deleteRecord(idA)])
++        #expect(state.pendingRecordZoneChanges == [.deleteRecord(idA)])
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `save supersedes delete`() {
++        let state = MockSyncEngineState()
++        state.add(pendingRecordZoneChanges: [.deleteRecord(idA)])
++        state.add(pendingRecordZoneChanges: [.saveRecord(idA)])
++        #expect(state.pendingRecordZoneChanges == [.saveRecord(idA)])
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `last change wins`() {
++        let state = MockSyncEngineState()
++        state.add(pendingRecordZoneChanges: [.deleteRecord(idA)])
++        state.add(pendingRecordZoneChanges: [.saveRecord(idA)])
++        state.add(pendingRecordZoneChanges: [.deleteRecord(idA)])
++        #expect(state.pendingRecordZoneChanges == [.deleteRecord(idA)])
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `superseding a change does not affect other records`() {
++        let state = MockSyncEngineState()
++        state.add(pendingRecordZoneChanges: [.saveRecord(idA), .saveRecord(idB)])
++        state.add(pendingRecordZoneChanges: [.deleteRecord(idA)])
++        #expect(Set(state.pendingRecordZoneChanges) == [.deleteRecord(idA), .saveRecord(idB)])
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `removing a superseded change keeps the current change`() {
++        let state = MockSyncEngineState()
++        state.add(pendingRecordZoneChanges: [.saveRecord(idA)])
++        state.add(pendingRecordZoneChanges: [.deleteRecord(idA)])
++        state.remove(pendingRecordZoneChanges: [.saveRecord(idA)])
++        #expect(state.pendingRecordZoneChanges == [.deleteRecord(idA)])
++      }
++    }
++
++    @Suite struct PendingDatabaseChanges {
++      let zoneA = CKRecordZone(zoneName: "A")
++      let zoneB = CKRecordZone(zoneName: "B")
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `same change is deduplicated`() {
++        let state = MockSyncEngineState()
++        state.add(pendingDatabaseChanges: [.saveZone(zoneA)])
++        state.add(pendingDatabaseChanges: [.saveZone(zoneA)])
++        #expect(state.pendingDatabaseChanges == [.saveZone(zoneA)])
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `delete supersedes save`() {
++        let state = MockSyncEngineState()
++        state.add(pendingDatabaseChanges: [.saveZone(zoneA)])
++        state.add(pendingDatabaseChanges: [.deleteZone(zoneA.zoneID)])
++        #expect(state.pendingDatabaseChanges == [.deleteZone(zoneA.zoneID)])
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `save supersedes delete`() {
++        let state = MockSyncEngineState()
++        state.add(pendingDatabaseChanges: [.deleteZone(zoneA.zoneID)])
++        state.add(pendingDatabaseChanges: [.saveZone(zoneA)])
++        #expect(state.pendingDatabaseChanges == [.saveZone(zoneA)])
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `last change wins`() {
++        let state = MockSyncEngineState()
++        state.add(pendingDatabaseChanges: [.deleteZone(zoneA.zoneID)])
++        state.add(pendingDatabaseChanges: [.saveZone(zoneA)])
++        state.add(pendingDatabaseChanges: [.deleteZone(zoneA.zoneID)])
++        #expect(state.pendingDatabaseChanges == [.deleteZone(zoneA.zoneID)])
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `superseding a change does not affect other zones`() {
++        let state = MockSyncEngineState()
++        state.add(pendingDatabaseChanges: [.saveZone(zoneA), .saveZone(zoneB)])
++        state.add(pendingDatabaseChanges: [.deleteZone(zoneA.zoneID)])
++        #expect(Set(state.pendingDatabaseChanges) == [.deleteZone(zoneA.zoneID), .saveZone(zoneB)])
++      }
++
++      @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
++      @Test func `removing a superseded change keeps the current change`() {
++        let state = Mo
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #576** (2026-11-05): Always enqueue pending record changes when preparing batches (@mbrandonw)
+- **PR #575** (2026-11-09): Add failing test to demonstrate delete-then-reinsert issue #418 (@jsutula)
 - **PR #574** (2026-11-05): Properly track modificationDate in mock database (@mbrandonw)
+- **PR #573** (closed): Set `CKRecord` system fields in `MockCloudDatabase` (@lukaskubanek)
 - **PR #571** (2026-11-03): Fix sorting of records when processing batches. (@mbrandonw)
 - **PR #569** (2026-11-05): Handle CloudKit rate limiting (@stephencelis)
-- **PR #568** (closed): Don't delete a child whose parent was never uploaded (@mario-luis-dev)
-- **PR #567** (2026-11-05): Cache unsynced records (@stephencelis)
 
 ---
 
@@ -1140,35 +1799,66 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. RateLimitingTests initializer.
+## X. Add failing test to demonstrate delete-then-reinsert issue #418 (#575)
 
 **RULE**:
-When implementing operations in `Tests/SQLiteDataTests/CloudKitTests/RateLimitingTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/sqlite-data. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/SQLiteData/CloudKit/Internal/MockSyncEngine.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pointfreeco/sqlite-data. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `38b64aa6`: RateLimitingTests initializer.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e72164ce`: Add failing test to demonstrate delete-then-reinsert issue #418 (#575). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Tests/SQLiteDataTests/CloudKitTests/RateLimitingTests.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SQLiteData/CloudKit/Internal/MockSyncEngine.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-      override init(
-        fileID: StaticString = #fileID,
-        filePath: StaticString = #filePath,
-        line: UInt = #line,
-        column: UInt = #column
-      ) async throws {
-        try await super.init(fileID: fileID, filePath: filePath, line: line, column: column)
+      package var pendingDatabaseChanges:
+        OrderedDictionary<CKRecordZone.ID, CKSyncEngine.PendingDatabaseChange> = [:]
+      package var pendingRecordZoneChanges:
+        OrderedDictionary<CKRecord.ID, CKSyncEngine.PendingRecordZoneChange> = [:]
+      withState { Array($0.pendingRecordZoneChanges.values) }
+      withState { Array($0.pendingDatabaseChanges.values) }
+      withState { state in
+        for change in pendingRecordZoneChanges {
+          guard let id = change.id
+          else { fatalError("Unsupported pendingRecordZoneChange: \(change)") }
+          state.pendingRecordZoneChanges[id] = change
+        }
+      withState { state in
+        for change in pendingRecordZoneChanges {
+          guard let id = change.id
+          else { fatalError("Unsupported pendingRecordZoneChange: \(change)") }
+          if state.pendingRecordZoneChanges[id] == change {
+            state.pendingRecordZoneChanges.removeValue(forKey: id)
+          }
+        }
+      withState { state in
+        for change in pendingDatabaseChanges {
+          guard let zoneID = change.zoneID
+          else { fatalError("Unsupported pendingDatabaseChange: \(change)") }
+          state.pendingDatabaseCha
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-      override init() async throws {
-        try await super.init()
+      package var pendingDatabaseChanges: OrderedSet<CKSyncEngine.PendingDatabaseChange> = []
+      package var pendingRecordZoneChanges: OrderedSet<CKSyncEngine.PendingRecordZoneChange> = []
+      withState { Array($0.pendingRecordZoneChanges) }
+      withState { Array($0.pendingDatabaseChanges) }
+      withState {
+        $0.pendingRecordZoneChanges.append(contentsOf: pendingRecordZoneChanges)
+      withState {
+        $0.pendingRecordZoneChanges.subtract(pendingRecordZoneChanges)
+      withState {
+        $0.pendingDatabaseChanges.append(contentsOf: pendingDatabaseChanges)
+      withState {
+        $0.pendingDatabaseChanges.subtract(pendingDatabaseChanges)
+        for pendingDatabaseChange in syncEngineState.pendingDatabaseChanges {
+            changes.failedZoneSaves.append((changes.zonesToSave.first(where: { $0.zoneID == zoneID })!, error))
+      syncEngine.state.remove(pendingDatabaseChanges: changes.deletedZoneIDs.map { .deleteZone($0) })
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `38b64aa6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e72164ce` are properly handled with clean fallback behavior.

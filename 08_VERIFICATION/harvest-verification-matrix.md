@@ -9440,3 +9440,7 @@
 | `CYCLE-20261113-3EOL` | `2026-11-13T11:24:38.037Z` | `argoproj/argo-events` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`62eac065...`) |
 | `CYCLE-20261113-3J8Z` | `2026-11-13T11:24:43.955Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e187fa50...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T11:25:04.725Z` | `hf-baai-bge-small-en-v1.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-785F48FA` [Domain D] | Yes (`767c6bb0...`) |
+| `CYCLE-20261113-N5HW` | `2026-11-13T11:39:59.252Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`e01c71f7...`) |
+| `CYCLE-20261113-NARL` | `2026-11-13T11:40:06.081Z` | `pointfreeco/sqlite-data` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pointfreeco-sqlite-data-learnings.md` | Yes (`ee80359e...`) |
+| `CYCLE-20261113-NMBM` | `2026-11-13T11:40:21.058Z` | `krakend/krakend-ce` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3af1175a...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T11:40:43.239Z` | `hf-qwen-qwen3.8-27b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7CAAEABC` [Domain D] | Yes (`561f6a33...`) |
