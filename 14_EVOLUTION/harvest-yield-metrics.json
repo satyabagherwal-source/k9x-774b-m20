@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T22:31:00.274Z",
-  "total_cycles_completed": 9401,
-  "total_learnings_persisted": 9401,
-  "total_rules_promoted": 9117,
+  "last_updated": "2026-11-13T22:45:42.289Z",
+  "total_cycles_completed": 9402,
+  "total_learnings_persisted": 9402,
+  "total_rules_promoted": 9120,
   "history": [
-    {
-      "timestamp": "2026-11-13T09:57:01.736Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T09:57:03.570Z",
       "repository": "metalbear-co/mirrord",
@@ -1403,6 +1396,13 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T22:45:42.289Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

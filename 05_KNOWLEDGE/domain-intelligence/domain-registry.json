@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T22:31:30.150Z",
-  "total_records": 408,
+  "last_updated": "2026-11-13T22:45:46.772Z",
+  "total_records": 411,
   "domains": {
     "A": {
       "total": 5,
@@ -326,7 +326,7 @@
       ]
     },
     "H": {
-      "total": 86,
+      "total": 89,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -413,7 +413,10 @@
         "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-core-invariants",
         "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings",
         "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-core-invarian",
-        "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-learnings-cor"
+        "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-learnings-cor",
+        "domain_intelligence-technical-construction-intelligence-compvis-stable-diffusion-v1-4-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-c",
+        "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c"
       ]
     },
     "I": {
@@ -7141,8 +7144,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "e42ef9117133a48130939aed8822294ad6cbafa60d243eeb31426affc1d1b816",
-      "created_at": "2026-11-13T21:28:53.816Z"
+      "content_hash": "ee490f36b0311c1c492475661a2e9f0a2aab7d4e78adf911abbfb03713ede1e3",
+      "created_at": "2026-11-13T22:45:46.772Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9774,6 +9777,33 @@
       "repository": "hf-timm-mobilenetv3_small_100.lamb_in1k-learnings",
       "content_hash": "8955cd8fc2844a1228cbb42fad71cec47532c1d520b6b8f63ae558011c67f62e",
       "created_at": "2026-11-13T22:31:30.150Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-compvis-stable-diffusion-v1-4-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-compvis-stable-diffusion-v1-4-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: CompVis/stable-diffusion-v1-4 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-compvis-stable-diffusion-v1-4-technical-construction-intelligence-compvis-sta.md",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "content_hash": "bdad29549d67c0bce395892bdd3736979e360ac8e9fd19085af08dfcb7254a7c",
+      "created_at": "2026-11-13T22:45:42.586Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-c": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-c",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-compvis-stable-diffusion-v1-4-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-compvis-stable-diffusion-v1-4-learnings-technical-construction-intelligence-h.md",
+      "repository": "hf-compvis-stable-diffusion-v1-4-learnings",
+      "content_hash": "5cb3cd9bb684fc4dd7aaa4d116f2e9b62bab4529156e5fa3185e6fdbfb49282f",
+      "created_at": "2026-11-13T22:45:45.984Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
+      "repository": "zoontek-react-native-permissions-learnings",
+      "content_hash": "0d8dc1790070c1c4a37e3f6c1292a21143103264c4d245571999e3acd9d0ef72",
+      "created_at": "2026-11-13T22:45:46.375Z"
     }
   }
 }

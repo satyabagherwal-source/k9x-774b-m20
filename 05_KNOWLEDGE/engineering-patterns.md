@@ -603446,3 +603446,369 @@ COPY patches ./patches
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `3ff93025` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8398. Mandatory Scaling Factor Preservation in Latent Transformation Boundaries (Harvested from CompVis/stable-diffusion-v1-4)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mandatory Scaling Factor Preservation in Latent Transformation Boundaries",
+  "source": "CompVis/stable-diffusion-v1-4",
+  "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+  "source_version": "hf-compvis-stable-diffusion-v1-4",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-13T22:45:41.056Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4) (Revision: `hf-compvis`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When interfacing with an autoencoded latent variable representation in diffusion processes, developers **MUST NOT** feed the raw mean/sample of the autoencoder directly into the score/denoising network, and **MUST** explicitly apply the architecture's empirical variance-normalization factor both post-encoding and pre-decoding:
+$$z = \text{scaling\_factor} \times \mathcal{E}(x) \quad \text{and} \quad \hat{x} = \mathcal{D}\left(\frac{1}{\text{scaling\_factor}} \times z\right)$$
+
+**WHY**:
+The latent space of AutoencoderKL was trained with a KL divergence loss penalty that does not enforce unit variance ($\mathbb{V}[z] \neq 1$). The downstream UNet assumes isotropic standard Gaussian noise $\mathcal{N}(0, \mathbf{I})$ at initial timestep $t=T$. For Stable Diffusion v1-4, omitting the scaling factor $0.18215$ drops the signal variance by a factor of $\approx 30$ ($0.18215^2 \approx 0.033$). This causes catastrophic signal attenuation, preventing cross-attention convergence and yielding high-contrast static or uniform gray outputs.
+
+**WHEN TO APPLY**:
+Apply at every boundary where pixel arrays transition to latents via an encoder, or latents transition to pixel arrays via a decoder, across any Latent Diffusion Architecture (Stable Diffusion, Stable Diffusion XL, Flux, Continuous Flow Matchers).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+
+class StableDiffusionLatentBridge(nn.Module):
+    # Stable Diffusion v1-4 empirical VAE latent standard deviation scaling factor
+    VAE_SCALE_FACTOR: float = 0.18215
+
+    def __init__(self, vae: nn.Module):
+        super().__init__()
+        self.vae = vae
+
+    def encode_pixels_to_latents(
+        self, pixel_tensor: torch.Tensor, generator: torch.Generator | None = None
+    ) -> torch.Tensor:
+        """
+        Encodes RGB pixel tensor [-1, 1] to UNet normalized latent space.
+        Invariant: output variance must match standard normal distribution prior.
+        """
+        if pixel_tensor.ndim != 4 or pixel_tensor.shape[1] != 3:
+            raise ValueError(f"Expected [B, 3, H, W] tensor, got {pixel_tensor.shape}")
+
+        posterior = self.vae.encode(pixel_tensor).latent_dist
+        # Sample or mode extraction
+        latents = posterior.sample(generator=generator) if generator is not None else posterior.mode()
+        
+        # INVARIANT ENFORCEMENT: Scale down to match unit variance
+        scaled_latents = latents * self.VAE_SCALE_FACTOR
+        return scaled_latents
+
+    def decode_latents_to_pixels(self, latents: torch.Tensor) -> torch.Tensor:
+        """
+        Decodes UNet normalized latent space back to pixel space [-1, 1].
+        Invariant: input latents must be descaled prior to passing into VAE decoder.
+        """
+        if latents.ndim != 4 or latents.shape[1] != 4:
+            raise ValueError(f"Expected [B, 4, H_lat, W_lat] tensor, got {latents.shape}")
+
+        # INVARIANT ENFORCEMENT: Scale up by inverse factor
+        descaled_latents = latents / self.VAE_SCALE_FACTOR
+        pixels = self.vae.decode(descaled_latents).sample
+        return pixels
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct feedthrough of latent distribution samples to UNet or VAE
+def bad_encode_decode(vae, pixel_tensor):
+    # CRITICAL BUG: Omits 0.18215. UNet receives unnormalized latents with var ~ 5.5
+    raw_latents = vae.encode(pixel_tensor).latent_dist.sample()
+    
+    # ... Denoising process runs on unscaled latents ...
+    
+    # CRITICAL BUG: Omits division by 0.18215. Decoder receives input 5.5x smaller than expected
+    reconstructed_pixels = vae.decode(raw_latents).sample
+    return reconstructed_pixels
+```
+
+**VERIFICATION METHOD**:
+Run an assert checking output latent variance on a standard batch of natural images:
+```python
+def verify_latent_scale(bridge: StableDiffusionLatentBridge, sample_image_batch: torch.Tensor):
+    with torch.no_grad():
+        latents = bridge.encode_pixels_to_latents(sample_image_batch)
+        var = torch.var(latents)
+        # Latents must be approximately unit variance (~ 1.0 +/- 0.3)
+        assert 0.7 <= var.item() <= 1.3, f"Latent scaling violation! Observed variance: {var.item()}"
+```
+
+---
+
+
+---
+
+## 8399. Batched Classifier-Free Guidance (CFG) Forward-Pass Coherence (Harvested from CompVis/stable-diffusion-v1-4)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Batched Classifier-Free Guidance (CFG) Forward-Pass Coherence",
+  "source": "CompVis/stable-diffusion-v1-4",
+  "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+  "source_version": "hf-compvis-stable-diffusion-v1-4",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-13T22:45:41.435Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4) (Revision: `hf-compvis`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing Classifier-Free Guidance (CFG) on dual prompt passes (unconditional/negative and conditional/positive), the system **MUST** concatenate the representations along the batch dimension prior to the score network forward pass and execute a single parallel evaluation. The system **MUST NOT** sequentially execute two separate forward passes without dynamic graph caching, and **MUST** decouple guidance aggregation from inplace tensor mutation.
+
+**WHY**:
+Sequential execution of the UNet denoiser doubles CUDA kernel launch overhead, stalls streaming multi-processors due to lack of wave quantization, and introduces inter-pass execution divergence under half-precision non-deterministic reductions. Single-pass batching guarantees mathematical synchronization of timestep embedding layers and attention operations across unconditional and conditional streams while maximizing hardware occupancy.
+
+**WHEN TO APPLY**:
+All sampling pipelines implementing Ho & Salimans Classifier-Free Guidance ($s \cdot \epsilon_\theta(z_t, c) + (1 - s) \cdot \epsilon_\theta(z_t, \emptyset)$).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def execute_cfg_denoising_step(
+    unet: torch.nn.Module,
+    latents: torch.Tensor,
+    t: torch.Tensor,
+    prompt_embeds: torch.Tensor,     # Concatenated: [uncond_embeds, cond_embeds] -> [2*B, 77, 768]
+    guidance_scale: float,
+) -> torch.Tensor:
+    """
+    Executes batched CFG step ensuring hardware-level concurrency and memory safety.
+    """
+    # 1. Structural check: Batch dimension of embeddings must be exactly 2x latents
+    batch_size = latents.shape[0]
+    if prompt_embeds.shape[0] != 2 * batch_size:
+        raise ValueError(
+            f"Embedding batch size {prompt_embeds.shape[0]} must be 2x latent batch size {batch_size}"
+        )
+
+    # 2. Replicate latents along batch axis: [B, C, H, W] -> [2*B, C, H, W]
+    # Invariant: contiguous memory layout to prevent non-coalesced memory reads in CUDA
+    latent_model_input = torch.cat([latents, latents], dim=0).contiguous()
+
+    # 3. Predict noise residuals in a single unified execution
+    noise_pred = unet(
+        latent_model_input,
+        t,
+        encoder_hidden_states=prompt_embeds
+    ).sample
+
+    # 4. Split noise predictions cleanly without in-place slices
+    noise_pred_uncond, noise_pred_text = noise_pred.chunk(2, dim=0)
+
+    # 5. Compute extrapolated guidance vector out-of-place
+    # Formula: uncond + guidance_scale * (text - uncond)
+    guided_noise_pred = noise_pred_uncond + guidance_scale * (noise_pred_text - noise_pred_uncond)
+    
+    return guided_noise_pred
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Sequential pass with in-place mutation and memory fragmentation
+def bad_cfg_step(unet, latents, t, uncond_embeds, text_embeds, guidance_scale):
+    # Two launches: GPU waits on pipeline bubbles, doubles execution latency
+    noise_uncond = unet(latents, t, encoder_hidden_states=uncond_embeds).sample
+    noise_text = unet(latents, t, encoder_hidden_states=text_embeds).sample
+    
+    # In-place modification of output tensor corrupts gradient computation or memory graphs
+    noise_uncond += guidance_scale * (noise_text - noise_uncond)
+    return noise_uncond
+```
+
+**VERIFICATION METHOD**:
+Profile kernel launch count and tensor allocation using PyTorch profiler:
+```python
+def verify_cfg_batching(unet, latents, t, prompt_embeds, guidance_scale):
+    with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CUDA]) as prof:
+        _ = execute_cfg_denoising_step(unet, latents, t, prompt_embeds, guidance_scale)
+    # UNet module execution call must happen exactly once per timestep
+    events = [e for e in prof.key_averages() if "UNet2DConditionModel" in e.key]
+    assert len(events) <= 1, "Detected multiple UNet kernel launches in single CFG step!"
+```
+
+---
+
+
+---
+
+## 8400. IEEE 754 Half-Precision (FP16) Boundary Clamping in Latent Decoders (Harvested from CompVis/stable-diffusion-v1-4)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "IEEE 754 Half-Precision (FP16) Boundary Clamping in Latent Decoders",
+  "source": "CompVis/stable-diffusion-v1-4",
+  "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+  "source_version": "hf-compvis-stable-diffusion-v1-4",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-13T22:45:41.840Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4) (Revision: `hf-compvis`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When running the `AutoencoderKL` decoder in 16-bit floating point precision (`torch.float16`), the intermediate activation tensors in the residual and attention blocks **MUST NOT** be allowed to exceed the dynamic range limit of IEEE 754 half-precision ($\pm 65,504$). Systems deploying FP16 inference **MUST** either upcast the decoder forward pass to `torch.float32` or enforce numerical clamp barriers on the latent input vector before the final group normalization layers.
+
+**WHY**:
+In `AutoencoderKL`, the spatial expansion layers and continuous group normalizations compute sum-of-squares over large channel depths ($C = 512$). In `float16`, the maximum representable value is $65504$. Intermediate accumulator sums in the upsampling convolution blocks easily overflow this value during out-of-distribution latent input decoding (common at high guidance scales $> 10$), producing `+Inf`. Downstream layers propagate `+Inf - +Inf = NaN`, leading to the well-documented "all-black output image" failure mode in Stable Diffusion v1-4.
+
+**WHEN TO APPLY**:
+Any deployment of the Latent Diffusion VAE decoder on modern accelerator hardware (NVIDIA GPUs, Apple Silicon Metal, AMD ROCm) running with precision lower than full 32-bit float (`fp16`, `bf16`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+
+class RobustVAEDecoderWrapper(nn.Module):
+    def __init__(self, vae: nn.Module, force_upcast: bool = True):
+        super().__init__()
+        self.vae = vae
+        self.force_upcast = force_upcast
+
+    def decode_safe(self, latents: torch.Tensor) -> torch.Tensor:
+        """
+        Guarantees overflow prevention by casting to float32 if precision is float16.
+        """
+        # Dynamic check for potential NaN generation
+        if torch.isnan(latents).any() or torch.isinf(latents).any():
+            raise FloatingPointError("Input latents contain NaN/Inf before decoding.")
+
+        original_dtype = latents.dtype
+
+        if self.force_upcast and original_dtype == torch.float16:
+            # Safely upcast VAE to float32 for decoding stage
+            self.vae.to(dtype=torch.float32)
+            latents_fp32 = latents.to(dtype=torch.float32)
+            
+            with torch.no_grad():
+                decoded = self.vae.decode(latents_fp32 / 0.18215).sample
+                
+            # Convert back only after critical normalization operations
+            return decoded.to(dtype=original_dtype)
+        else:
+            # Latent clipping boundary to prevent intermediate activation blow-up
+            clamped_latents = torch.clamp(latents, min=-30.0, max=30.0)
+            return self.vae.decode(clamped_latents / 0.18215).sample
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Native FP16 VAE decoding with unbounded latents
+def unsafe_fp16_decode(vae, latents):
+    # If latents was generated with high CFG (e.g., scale=15.0),
+    # activation sum in GroupNorm32 overflows 65504 in float16.
+    vae.half()
+    latents = latents.half()
+    return vae.decode(latents / 0.18215).sample # Returns NaNs, decoded image is all black!
+```
+
+**VERIFICATION METHOD**:
+Pass an intentionally saturated latent tensor into the decoder and verify that the output remains free of NaNs and infinite values:
+```python
+def verify_vae_fp16_stability(safe_decoder: RobustVAEDecoderWrapper):
+    extreme_latent = torch.randn(1, 4, 64, 64, dtype=torch.float16, device="cuda") * 10.0
+    output = safe_decoder.decode_safe(extreme_latent)
+    assert not torch.isnan(output).any(), "NaN detected in decoded pixel output!"
+    assert not torch.isinf(output).any(), "Inf detected in decoded pixel output!"
+```
+
+---

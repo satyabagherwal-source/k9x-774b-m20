@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T22:31:29.984Z",
+  "updated_at": "2026-11-13T22:45:45.551Z",
   "stats": {
-    "total_discovered": 2985,
-    "approved_pending_harvest": 2787,
+    "total_discovered": 2986,
+    "approved_pending_harvest": 2788,
     "harvested_count": 0,
     "rejected_count": 198,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2786,
+      "COMMUNITY_AND_EXPERT": 2787,
       "OFFICIAL_DOCUMENTATION": 106,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -64304,6 +64304,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
         "fileName": "hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md"
+      }
+    },
+    "SRC-F3AA7DBDB63C": {
+      "id": "SRC-F3AA7DBDB63C",
+      "url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+      "title": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:45:45.551Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+        "fileName": "hf-compvis-stable-diffusion-v1-4-learnings.md"
       }
     }
   }

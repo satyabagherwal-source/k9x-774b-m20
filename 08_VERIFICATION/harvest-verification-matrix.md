@@ -9660,3 +9660,4 @@
 | `CYCLE-20261113-WB0Q` | `2026-11-13T22:30:57.482Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8396` | Yes (`905631e7...`) |
 | `CYCLE-20261113-WD62` | `2026-11-13T22:31:00.266Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8397` | Yes (`77a68b55...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T22:31:29.965Z` | `hf-timm-mobilenetv3_small_100.lamb_in1k` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-62BFCC58` [Domain D] | Yes (`366f91ac...`) |
+| `CYCLE-20261113-F9QJ` | `2026-11-13T22:45:42.283Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8398, Rule 8399, Rule 8400` | Yes (`a8f964b2...`) |

@@ -9693,3 +9693,4 @@ Every entry in this ledger must capture:
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `7eb3b476` | Multi-dimensional audit evidence | 2026-11-13T22:30:57.485Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `c62b5245` | Multi-dimensional audit evidence | 2026-11-13T22:31:00.270Z |
 | `learn-dom-d-62bfcc58` | `project://hf-timm-mobilenetv3_small_100.lamb_in1k` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | 2026-11-13T22:31:29.965Z |
+| `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-11-13T22:45:42.286Z |

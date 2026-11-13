@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-SJPG",
-    "timestamp": "2026-11-13T03:48:17.476Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "ca1e324c6534d227e1fa5021aa8d15ade23505296908a2f6593f31d3176d583b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-SR1Z",
     "timestamp": "2026-11-13T03:48:26.999Z",
     "repository": "0xCUB3/wBlock",
@@ -7492,6 +7477,21 @@
     "contentHash": "77a68b55cb4fe7ef91359e8357a933e0bc3db7ecca6592eee6606884996060e5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-F9QJ",
+    "timestamp": "2026-11-13T22:45:42.283Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+    "contentHash": "a8f964b2e2d54500fbc985e6abd2ada6b6999bdbf3bddca35fe72aa022e85bf8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
