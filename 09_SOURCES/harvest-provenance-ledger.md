@@ -9337,3 +9337,9 @@ Every entry in this ledger must capture:
 | `learn-github-meta-folly` | `https://github.com/facebook/folly` | `05e29181` | Multi-dimensional audit evidence | 2026-11-13T04:13:24.116Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `506e2f7d` | Multi-dimensional audit evidence | 2026-11-13T04:13:25.714Z |
 | `learn-dom-d-c22a41df` | `project://hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md` | 2026-11-13T04:13:41.898Z |
+| `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-13T04:31:02.600Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `54de7997` | Multi-dimensional audit evidence | 2026-11-13T04:31:15.032Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `386a1e0e` | Multi-dimensional audit evidence | 2026-11-13T04:31:26.792Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `c3596c83` | Multi-dimensional audit evidence | 2026-11-13T04:31:29.613Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `365307c5` | Multi-dimensional audit evidence | 2026-11-13T04:31:32.012Z |
+| `learn-dom-d-527e8201` | `project://hf-orcarouter-orcacyber-nano-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md` | 2026-11-13T04:31:52.288Z |

@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "b9a7b08e",
+    "sourceVersion": "c3596c83",
     "license": "MIT",
-    "contentHash": "2e35bc62e1de7e050f450a5e6fdfefba79f14961af7ebe34015707c99b9f4071",
-    "lastHarvestedAt": "2026-11-12T04:32:18.372Z",
+    "contentHash": "7cea22288f14180c8ca1e5e4f6cef03f6fc6bd482358e41204305f190df22dca",
+    "lastHarvestedAt": "2026-11-13T04:31:29.613Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "35a006bd",
+    "sourceVersion": "386a1e0e",
     "license": "Apache-2.0",
-    "contentHash": "305cbe11fbe8908eeea71e796aa4ff4412aa0b9e280c4276d2f393f30b7210bb",
-    "lastHarvestedAt": "2026-11-11T19:28:42.115Z",
+    "contentHash": "f402f5f7cea915d8a26e28aac3c53aaa289eb3bed4ac5ad4d5505d6f278c2904",
+    "lastHarvestedAt": "2026-11-13T04:31:26.792Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "26236216",
+    "sourceVersion": "365307c5",
     "license": "Apache-2.0",
-    "contentHash": "7a726fbaaa46751e19ba50de611d879e4fe6e70819bbf96ecb168b7fc6a85d01",
-    "lastHarvestedAt": "2026-11-11T18:04:00.053Z",
+    "contentHash": "b7b6bfaa783e7d7c8017dd1ba8f4e1a7909f61e49533ac91aa6d3011a0110ed7",
+    "lastHarvestedAt": "2026-11-13T04:31:32.012Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "065aed87",
+    "sourceVersion": "54de7997",
     "license": "Apache-2.0",
-    "contentHash": "d8beb555bd540ff702793e29f845cc24c334fbcb60dbcf78dcd747de4cc11027",
-    "lastHarvestedAt": "2026-11-11T10:27:16.903Z",
+    "contentHash": "784ca6a9311391c11fc6faf4a47b8f2d0165a2d423e59ad221e4527496e3f689",
+    "lastHarvestedAt": "2026-11-13T04:31:15.032Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {
@@ -10435,8 +10435,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
     "sourceVersion": "hf-orcarouter-orcacyber-nano-1.0",
     "license": "Open-Source",
-    "contentHash": "e893f517507b56d07579012730a4aa509af81c3b30ed926e942774bfedfd4bdb",
-    "lastHarvestedAt": "2026-11-08T04:02:56.579Z",
+    "contentHash": "ceee6b1d81d9f822bc97f014f582ce36857c34e110dbe3bddca47f86c4874b59",
+    "lastHarvestedAt": "2026-11-13T04:31:02.600Z",
     "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0"
   },
   "ryder-sun-meldwork": {

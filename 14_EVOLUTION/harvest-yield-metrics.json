@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T04:13:25.719Z",
-  "total_cycles_completed": 9132,
-  "total_learnings_persisted": 9132,
-  "total_rules_promoted": 8950,
+  "last_updated": "2026-11-13T04:31:32.124Z",
+  "total_cycles_completed": 9137,
+  "total_learnings_persisted": 9137,
+  "total_rules_promoted": 8954,
   "history": [
-    {
-      "timestamp": "2026-11-12T07:38:00.631Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T07:38:13.672Z",
-      "repository": "zarf-dev/zarf",
-      "learningId": "learn-github-zarf-dev-zarf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T07:38:17.641Z",
-      "repository": "MariaDB/server",
-      "learningId": "learn-github-mariadb-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T07:46:13.025Z",
-      "repository": "telemt/telemt",
-      "learningId": "learn-github-telemt-telemt",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T07:46:25.616Z",
-      "repository": "rdfjs/N3.js",
-      "learningId": "learn-github-rdfjs-n3-js",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T07:46:38.036Z",
       "repository": "vespa-engine/vespa",
@@ -1403,6 +1368,41 @@
       "repository": "pixeltable/pixeltable",
       "learningId": "learn-github-pixeltable-pixeltable",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T04:31:02.607Z",
+      "repository": "orcarouter/OrcaCyber-Nano-1.0",
+      "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T04:31:15.040Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T04:31:26.800Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T04:31:29.620Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T04:31:32.124Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

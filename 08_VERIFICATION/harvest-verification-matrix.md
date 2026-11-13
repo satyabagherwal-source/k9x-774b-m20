@@ -9328,3 +9328,9 @@
 | `CYCLE-20261113-OU85` | `2026-11-13T04:13:24.101Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b077b63f...`) |
 | `CYCLE-20261113-OVGU` | `2026-11-13T04:13:25.710Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md` | Yes (`ebd571bb...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T04:13:41.898Z` | `hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C22A41DF` [Domain D] | Yes (`8c9b143e...`) |
+| `CYCLE-20261113-BIYR` | `2026-11-13T04:31:02.595Z` | `orcarouter/OrcaCyber-Nano-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md` | Yes (`ceee6b1d...`) |
+| `CYCLE-20261113-BSJZ` | `2026-11-13T04:31:15.023Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`784ca6a9...`) |
+| `CYCLE-20261113-C1MR` | `2026-11-13T04:31:26.787Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f402f5f7...`) |
+| `CYCLE-20261113-C3T5` | `2026-11-13T04:31:29.609Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7cea2228...`) |
+| `CYCLE-20261113-C5LM` | `2026-11-13T04:31:31.930Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7b6bfaa...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T04:31:52.288Z` | `hf-orcarouter-orcacyber-nano-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-527E8201` [Domain D] | Yes (`c5d1d10e...`) |

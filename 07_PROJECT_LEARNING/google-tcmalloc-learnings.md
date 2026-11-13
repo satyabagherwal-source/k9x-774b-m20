@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `065aed87`  
+> **Source Version**: `54de7997`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:27:03.674Z  
+> **Timestamp**: 2026-11-13T04:31:04.601Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:26:29.927Z  
+> **Harvest Timestamp**: 2026-11-13T04:31:04.596Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5398 stars
+- **Stars / Engagement**: 5400 stars
 
 ---
 
@@ -854,6 +854,7 @@ GOOGLE_MALLOC_SECTION_END
 #include <sys/types.h>
 #include <time.h>
 
+#include "absl/base/nullability.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
 #include "absl/types/span.h"
@@ -914,6 +915,20 @@ ssize_t signal_safe_write(int fd, const char* buf, size_t count,
 // read before any error.
 [[nodiscard]] ssize_t signal_safe_read(int fd, char* buf, size_t count,
                                        size_t* bytes_read);
+
+// signal_safe_pread() - a wrapper for pread(2) which ignores signals
+// Semantics equivalent to pread(2):
+//   returns number of bytes read, -1 on failure, error in errno
+//   additionally, (if not nullptr) total bytes read in *bytes_read
+//
+// In the interrupted (EINTR) or partial-read case, signal_safe_pread will
+// continue attempting to read into buf from offset + total_bytes without
+// modifying fd's file offset.  If an error occurs after a partial read,
+// signal_safe_pread returns -1 and (when bytes_read is non-null) stores the
+// total bytes read before the error in *bytes_read.
+[[nodiscard]] ssize_t signal_safe_pread(int fd, char* absl_nonnull buf,
+                                        size_t count, off_t offset,
+                                        size_t* absl_nullable bytes_read);
 
 // signal_safe_poll() - a wrapper for poll(2) which ignores signals
 // Semantics equivalent to poll(2):
@@ -1232,13 +1247,15 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1897** (2026-11-10): **Include fallback stats in HugetlbRegionFactory::GetStats.**
-  *Symptoms*: Include fallback stats in HugetlbRegionFactory::GetStats.  It previously skipped fallback_->GetStats when the output buffer was already exhausted, omitting fallback bytes from the returned size.  This allows zero-length buffers in Printer and forwards the remaining subspan to fallback_->GetStats.  Co-authored-by: Chris Kennelly <ckennelly@google.com> 
+- **Issue #1918** (2026-11-12): **No public description**
+  *Symptoms*: No public description 
   **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1897/checks?check_run_id=130138440171) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1918/checks?check_run_id=131074588720) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
-- **Issue #1896** (2026-11-11): **Add NoopResidency for test fakes and remove unused FakeResidency.**
-  *Symptoms*: Add NoopResidency for test fakes and remove unused FakeResidency.  This provides a common base class for Residency test stubs and removes the unused FakePageFlags and FakeResidency definitions. 
+- **Issue #1917** (2026-11-12): **No public description**
+  *Symptoms*: No public description 
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1917/checks?check_run_id=131056780267) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1255,62 +1272,505 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ecaf3d4` (2026-11-10)
-**Commit Message**: Avoid 32-bit shift overflow when computing alignment in ReportCorruptedFree.
+### Incident Patch 1: `83ee14af` (2026-11-11)
+**Commit Message**: Check for page-rounding overflow in pvalloc.
 
-`ReportCorruptedFree` computed pointer alignment as `1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))`. When a corrupted pointer is `>= 4 GiB`-aligned (`countr_zero >= 32`) on 64-bit platforms, shifting a 32-bit `1u` literal invokes undefined behavior and reports `got alignment 1`. Use `addr & -addr` on the `uintptr_t` address in both `ReportCorruptedFree` overloads.
+Overflows fail with ENOMEM.
 
-PiperOrigin-RevId: 1018619289
+Co-authored-by: Chris Kennelly <[REDACTED_EMAIL]>
+PiperOrigin-RevId: 1019379450
 
-**File**: `tcmalloc/error_reporting.cc` (modified, +6/-9)
+**File**: `tcmalloc/tcmalloc.cc` (modified, +6/-0)
 ```diff
-@@ -22,7 +22,6 @@
- #include "absl/base/attributes.h"
- #include "absl/base/casts.h"
- #include "absl/debugging/stacktrace.h"
--#include "absl/numeric/bits.h"
- #include "absl/types/span.h"
- #include "tcmalloc/internal/config.h"
- #include "tcmalloc/internal/logging.h"
-@@ -172,11 +171,10 @@ ABSL_ATTRIBUTE_NOINLINE void ReportCorruptedFree(
-   const size_t depth = absl::GetStackTrace(stack, kMaxStackDepth, 1);
+@@ -2014,6 +2014,9 @@ extern "C" TCMALLOC_INTERNAL_CACHELINE_ALIGNED void* TCMallocInternalPvalloc(
+     size = page_size;  // http://man.free4web.biz/man3/libmpatrol.3.html
+   }
+   size = (size + page_size - 1) & ~(page_size - 1);
++  if (ABSL_PREDICT_FALSE(size == 0)) {
++    return MallocPolicy::handle_oom(std::numeric_limits<size_t>::max());
++  }
+   return fast_alloc(size, MallocPolicy().AlignAs(page_size));
+ }
  
-   RecordCrash("GWP-ASan", "invalid-free");
-+  const uintptr_t addr = absl::bit_cast<uintptr_t>(ptr);
-   state.gwp_asan_state().RecordInvalidFree(
--      ptr,
--      static_cast<std::align_val_t>(
--          1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))),
--      expected_alignment, std::nullopt, absl::MakeSpan(stack, depth));
-+      ptr, static_cast<std::align_val_t>(addr & -addr), expected_alignment,
-+      std::nullopt, absl::MakeSpan(stack, depth));
+@@ -2372,6 +2375,9 @@ TCMALLOC_INTERNAL_CACHELINE_ALIGNED void* operator new[](
+       size = page_size;                                                        \
+     }                                                                          \
+     size = (size + page_size - 1) & ~(page_size - 1);                          \
++    if (ABSL_PREDICT_FALSE(size == 0)) {                                       \
++      return MallocPolicy::handle_oom(std::numeric_limits<size_t>::max());     \
++    }                                                                          \
+     return fast_alloc(                                                         \
+         size,                                                                  \
+         MallocPolicy().WithSecurityToken<TokenId{id}>().AlignAs(page_size));   \
+```
+
+**File**: `tcmalloc/testing/tcmalloc_fuzzer.cc` (modified, +25/-5)
+```diff
+@@ -433,19 +433,39 @@ FUZZ_TEST(TCMalloc, VallocFree)
  
-   TC_BUG("Attempted to free corrupted pointer %p.  Expected alignment %v", ptr,
-          expected_alignment);
-@@ -190,11 +188,10 @@ ABSL_ATTRIBUTE_NOINLINE void ReportCorruptedFree(
-   const size_t depth = absl::GetStackTrace(stack, kMaxStackDepth, 1);
+ void PvallocFree(size_t size) {
+   const size_t page_size = GetSystemPageSize();
+-  void* ptr = TCMallocInternalPvalloc(size);
+-  ASSERT_TRUE(ptr != nullptr);
+-  ASSERT_TRUE(IsAligned(ptr, page_size));
+   // pvalloc rounds the request up to a whole page, and pvalloc(0) is one page.
+   const size_t rounded =
+       std::max(size + page_size - 1, page_size) & ~(page_size - 1);
+-  ASSERT_GE(TCMallocInternalMallocSize(ptr), rounded);
+-  TCMallocInternalFree(ptr);
++  for (auto fn :
++       {TCMallocInternalPvalloc, TCMallocInternal_alloc_token_0_pvalloc,
++        TCMallocInternal_alloc_token_1_pvalloc}) {
++    void* ptr = fn(size);
++    ASSERT_TRUE(ptr != nullptr);
++    ASSERT_TRUE(IsAligned(ptr, page_size));
++    ASSERT_GE(TCMallocInternalMallocSize(ptr), rounded);
++    TCMallocInternalFree(ptr);
++  }
+ }
  
-   RecordCrash("GWP-ASan", "invalid-free");
-+  const uintptr_t addr = absl::bit_cast<uintptr_t>(ptr);
-   state.gwp_asan_state().RecordInvalidFree(
--      ptr,
--      static_cast<std::align_val_t>(
--          1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))),
--      expected_alignment, allocation_stack, absl::MakeSpan(stack, depth));
-+      ptr, static_cast<std::align_val_t>(addr & -addr), expected_alignment,
-+      allocation_stack, absl::MakeSpan(stack, depth));
+ FUZZ_TEST(TCMalloc, PvallocFree)
+     .WithDomains(fuzztest::InRange(size_t{0}, kFuzzingMaxSize));
  
-   TC_BUG("Attempted to free corrupted pointer %p.  Expected alignment %v", ptr,
-          expected_alignment);
++void EnormousAllocationsFail(size_t size) {
++  for (auto fn :
++       {TCMallocInternalPvalloc, TCMallocInternal_alloc_token_0_pvalloc,
++        TCMallocInternal_alloc_token_1_pvalloc}) {
++    errno = 0;
++    void* ptr = fn(size);
++    EXPECT_EQ(ptr, nullptr);
++    EXPECT_EQ(errno, ENOMEM);
++    TCMallocInternalFree(ptr);
++  }
++}
++
++FUZZ_TEST(TCMalloc, EnormousAllocationsFail)
++    .WithDomains(fuzztest::InRange<size_t>(std::numeric_limits<ssize_t>::max(),
++                                           std::numeric_limits<size_t>::max()));
++
+ void CallocCfree(size_t n, size_t elem_size) {
+   void* ptr = TCMallocInternalCalloc(n, elem_size);
+   ASSERT_TRUE(ptr != nullptr);
+```
+
+**File**: `tcmalloc/testing/tcmalloc_test.cc` (modified, +32/-0)
+```diff
+@@ -94,6 +94,8 @@
+ const int kLogMaxMemalign = 18;
+ 
+ extern "C" void* reallocarray(void* ptr, size_t nmemb, size_t size);
++extern "C" void* __alloc_token_0_pvalloc(size_t size) noexcept;
++extern "C" void* __alloc_token_1_pvalloc(size_t size) noexcept;
+ 
+ #if !defined(__GLIBC__)
+ extern "C" int malloc_trim(size_t pad);
+@@ -398,6 +400,24 @@ TEST(TCMallocTest, EnormousAllocations) {
+     ASSERT_EQ(nullptr, p);
+     EXPECT_EQ(ENOMEM, errno);
+ 
++    errno = 0;
++    p = pvalloc(size);
++    EXPECT_EQ(nullptr, p);
++    EXPECT_EQ(ENOMEM, errno);
++    free(p);
++
++    errno = 0;
++    p = __alloc_token_0_pvalloc(size);
++    EXPECT_EQ(nullptr, p);
++    EXPECT_EQ(ENOMEM, errno);
++    free(p);
++
++    errno = 0;
++    p = __alloc_token_1_pvalloc(size);
++    EXPECT_EQ(nullptr, p);
++    EXPECT_EQ(ENOMEM, errno);
++    free(p);
++
+     p = ::operator new(size, std::nothrow);
+     ASSERT_EQ(nullptr, p);
+     p = ::operator new(size, static_cast<std::align_val_t>(16), std::nothrow);
+@@ -419,6 +439,18 @@ TEST(TCMallocTest, EnormousAllocations) {
+     free(p);
+     p = malloc(kMaxSignedSize - i);
+     free(p);
++    p = pvalloc(kMaxSignedSize + i);
++    free(p);
++    p = pvalloc(kMaxSignedSize - i);
++    free(p);
++    p = __alloc_token_0_pvalloc(kMaxSignedSize + i);
++    free(p);
++    p = __alloc_token_0_pvalloc(kMaxSignedSize - i);
++    free(p);
++    p = __alloc_token_1_pvalloc(kMaxSignedSize + i);
++    free(p);
++    p = __alloc_token_1_pvalloc(kMaxSignedSize - i);
++    free(p);
+   }
+ 
+   for (size_t i = 0; i < 100; i++) {
+```
+
+---
+
+### Incident Patch 2: `e9acca27` (2026-11-11)
+**Commit Message**: Separate `Span::first_page_` from the inline second-level bitmap to fix a data race.
+
+When returning objects to the central freelist, `CentralFreeList::InsertRange` converts object pointers to span indices outside the central freelist lock by reading the span's starting page number. Concurrently under that lock, pushing or popping objects in 65-to-256-object inline bitmap mode performs a 64-bit non-atomic read-modify-write on `level2_bitmap_word_`, which shares the same 64-bit word as the starting page number.
+
+Store `first_page_` as a standalone member instead of a bitfield. Union the 1-byte second-level bitmap with `cache_size_`, which is only used when bitmaps are disabled, so the 64-byte span size is unchanged.
+
+Co-authored-by: Chris Kennelly <[REDACTED_EMAIL]>
+PiperOrigin-RevId: 1019078117
+
+**File**: `tcmalloc/central_freelist_test.cc` (modified, +48/-0)
+```diff
+@@ -943,6 +943,54 @@ TEST_P(CentralFreeListTest, PassSpanDensityToPageheap) {
+   test_function(1, AccessDensityPrediction::kDense);
+   test_function(e.objects_per_span(), AccessDensityPrediction::kDense);
+ }
++
++// Concurrently removes and inserts objects from several threads so that spans
++// are shared between threads. InsertRange maps objects to indices outside of
++// the CentralFreeList lock, which reads Span metadata (first_page_) while other
++// threads mutate the span's freelist under the lock. Under TSan this checks
++// that the unlocked reads never share a memory location with locked writes
++// (b/582305627).
++TEST_P(CentralFreeListTest, ConcurrentRemoveAndInsert) {
++#if ABSL_HAVE_HWADDRESS_SANITIZER
++  GTEST_SKIP()
++      << "Skipping under HWASan, which uses the top bits of the pointer.";
++#endif
++
++  TypeParam e(std::get<0>(GetParam()).size, std::get<0>(GetParam()).bytes,
++              std::get<0>(GetParam()).num_to_move, std::get<1>(GetParam()));
++  constexpr int kThreads = 4;
++  constexpr int kIterations = 200;
++
++  std::atomic<int> failed_removes{0};
++  std::vector<std::thread> threads;
++  threads.reserve(kThreads);
++  for (int t = 0; t < kThreads; ++t) {
++    threads.emplace_back([&e, &failed_removes]() {
++      void* batch[kMaxObjectsToMove];
++      for (int i = 0; i < kIterations; ++i) {
++        const int got = e.central_freelist().RemoveRange(
++            absl::MakeSpan(batch, e.batch_size()));
++        if (got <= 0) {
++          failed_removes.fetch_add(1, std::memory_order_relaxed);
++          continue;
++        }
++        e.central_freelist().InsertRange(
++            absl::MakeSpan(batch, static_cast<size_t>(got)));
++      }
++    });
++  }
++  for (std::thread& t : threads) {
++    t.join();
++  }
++
++  EXPECT_EQ(failed_removes.load(std::memory_order_relaxed), 0);
++  // Single-object spans skip most of the central freelist's logic.
++  if (e.objects_per_span() != 1) {
++    const SpanStats stats = e.central_freelist().GetSpanStats();
++    EXPECT_EQ(stats.num_spans_requested, stats.num_spans_returned);
++    EXPECT_EQ(stats.obj_capacity, 0);
++  }
++}
+ INSTANTIATE_TEST_SUITE_P(
+     CentralFreeList, CentralFreeListTest,
+     testing::Combine(
+```
+
+**File**: `tcmalloc/span.cc` (modified, +4/-1)
+```diff
+@@ -251,7 +251,10 @@ int Span::DynamicBitmapBuild(size_t size, size_t count, absl::Span<void*> batch,
+       break;
+     case BitmapMode::kInline256:
+       TC_ASSERT_LE(l1_words, kRawBitmapSize);
+-      level2_bitmap_ = result == count ? 0 : BitmapWordInit(l1_start, l1_words);
++      level2_bitmap_ =
++          result == count
++              ? 0
++              : static_cast<uint8_t>(BitmapWordInit(l1_start, l1_words));
+       break;
+     case BitmapMode::kOutlineL2_1:
+       TC_ASSERT_LE(l1_words, kBitsPerWord);
+```
+
+**File**: `tcmalloc/span.h` (modified, +35/-32)
+```diff
+@@ -97,8 +97,7 @@ class ABSL_CACHELINE_ALIGNED Span final : public SpanList::Elem {
+         allocated_(0),
+         cache_size_(0),
+         nonempty_index_(0),
+-        level2_bitmap_(0),
+-        first_page_(first_page.index()),
++        first_page_(first_page),
+         raw_bitmap_{} {
+     TC_ASSERT_GT(first_page, PageId{0});
+     TC_CHECK_LT(first_page.index(), static_cast<uint64_t>(1) << kMaxPageIdBits);
+@@ -235,24 +234,25 @@ class ABSL_CACHELINE_ALIGNED Span final : public SpanList::Elem {
+     uint16_t freelist_;
+   };
+   uint16_t allocated_;  // Number of non-free objects
+-  uint8_t cache_size_;
++  union {
++    // Used only in BitmapMode::kDisabled (linked-list freelist).
++    uint8_t cache_size_;
++    // L2 summary bitmap, used only in BitmapMode::kInline256.
++    uint8_t level2_bitmap_;
++  };
++  static_assert(kRawBitmapSize <= CHAR_BIT * sizeof(level2_bitmap_));
+   uint8_t nonempty_index_;  // The nonempty_ list index for this span.
+ 
+   // The number of bits of the cache space that may be used for bitmap.
+   static constexpr size_t kBitmapSize = 8 * sizeof(ObjIdx) * kCacheSize;
+ 
+-  union {
+-    struct {
+-      uint64_t level2_bitmap_ : kRawBitmapSize;
+-      uint64_t first_page_ : kMaxPageIdBits;  // Starting page number.
+-      static_assert(kRawBitmapSize + kMaxPageIdBits <= 64);
+-    };
+-    // Used to pass level2_bitmap_ to DynamicBitmapPushImpl/DynamicBitmapPopWord
+-    // as a BitmapElem* in kInline256 mode. Only the low kRawBitmapSize bits are
+-    // ever set or cleared (since popped objects are capped at available),
+-    // leaving first_page_ in the upper bits intact.
+-    BitmapElem level2_bitmap_word_;
+-  };
++  // Starting page number. Immutable after construction.
++  //
++  // first_page_ is read without CentralFreeList::lock_ (e.g. by
++  // CentralFreeList::InsertRange via ObjectsToIdx), so it must not share a
++  // memory location (e.g. a bitfield word) with any field that is mutated
++  // under the lock (b/582305627).
++  PageId first_page_;
+ 
+   struct ListSpanState {
+     // Embed cache of free objects.
+@@ -294,16 +294,18 @@ class ABSL_CACHELINE_ALIGNED Span final : public SpanList::Elem {
+   [[nodiscard]] BitmapElem* DynamicBitmap(BitmapMode mode);
+   void DynamicBitmapPush(absl::Span<ObjIdx> batch,
+                          BitmapMode mode) __restrict__;
+-  template <BitmapMode kMode>
++  template <BitmapMode kMode, typename L2Elem = BitmapElem>
+   GOOGLE_MALLOC_SECTION static void DynamicBitmapPushImpl(
+-      absl::Span<const ObjIdx> batch, BitmapElem* bm, BitmapElem* bm2);
++      absl::Span<const ObjIdx> batch, BitmapElem* bm, L2Elem* bm2);
+   [[nodiscard]] size_t DynamicBitmapPop(absl::Span<void* absl_nonnull> batch,
+                                         size_t size, size_t objects_per_span,
+                                         BitmapMode mode) __restrict__;
+-  template <BitmapMode kMode>
+-  GOOGLE_MALLOC_SECTION void DynamicBitmapPopWord(
+-      char* span_start, void**& batch_pos, void** batch_end, size_t size,
+-      size_t objects_per_span, BitmapElem* bm, BitmapElem* bm2);
++  template <BitmapMode kMode, typename L2Elem = BitmapElem>
++  GOOGLE_MALLOC_SECTION void DynamicBitmapPopWord(char* span_start,
++                                                  void**& batch_pos,
++                                                  void** batch_end, size_t size,
++                                                  size_t objects_per_span,
++                                                  BitmapElem* bm, L2Elem* bm2);
+   template <BitmapMode kMode>
+   [[nodiscard]] GOOGLE_MALLOC_SECTION BitmapElem DynamicBitmapPopBitmap(
+       char* word_start, void**& batch_pos, void** batch_end, size_t size,
+@@ -490,7 +492,7 @@ inline void Span::BitmapPushBatch(absl::Span<ObjIdx> batch,
+   TC_ASSERT_EQ(before + batch.size(), bitmap_.CountBits());
+ }
+ 
+-inline PageId Span::first_page() const { return PageId(first_page_); }
++inline PageId Span::first_page() const { return first_page_; }
+ 
+ inline void* Span::start_address() const {
+   TC_ASSERT_GT(first_page(), PageId{0});
+@@ -681,12 +683,12 @@ ABSL_ATTRIBUTE_ALWAYS_INLINE inline void Span::DynamicBitmapPush(
+   TC_ASSERT(!batch.empty());
+   switch (mode) {
+     case BitmapMode::kInline64:
+-      DynamicBitmapPushImpl<BitmapMode::kInline64>(batch, DynamicBitmap(mode),
+-                                                   nullptr);
++      DynamicBitmapPushImpl<BitmapMode::kInline64, BitmapElem>(
++          batch, DynamicBitmap(mode), nullptr);
+       break;
+     case BitmapMode::kInline256:
+       DynamicBitmapPushImpl<BitmapMode::kOutlineL2_1>(
+-          batch, DynamicBitmap(mode), &level2_bitmap_word_);
++          batch, DynamicBitmap(mode), &level2_bitmap_);
+       break;
+     case BitmapMode::kOutlineL2_1:
+       DynamicBitmapPushImpl<BitmapMode::kOutlineL2_1>(
+@@ -705,9 +707,9 @@ ABSL_ATTRIBUTE_ALWAYS_INLINE inline void Span::DynamicBitmapPush(
+   }
+ }
+ 
+-template <Span::BitmapMode kMode>
++template <Span::BitmapMode kMode, typename L2Elem
+```
+
+---
+
+### Incident Patch 3: `b53ab954` (2026-11-12)
+**Commit Message**: tcmalloc: fix tcmalloc_benchmark under sanitizers and test runs
+
+- Skip stats/profile benchmarks when linked without TCMalloc (such as under
+  sanitizers).
+- Scale BM_random_malloc_pages and BM_malloc_pages allocation counts by
+  kPageSize so 256K-page variants do not allocate 80 GiB of live heap.
+- Reduce stats/profile and random-page allocation volume when running as a
+  unit test (TEST_TMPDIR set) to avoid test OOMs and timeouts.
+
+PiperOrigin-RevId: 1020239978
+
+**File**: `tcmalloc/testing/tcmalloc_benchmark.cc` (modified, +44/-11)
+```diff
+@@ -14,6 +14,7 @@
+ 
+ #include <malloc.h>
+ 
++#include <algorithm>
+ #include <atomic>
+ #include <cstddef>
+ #include <cstdint>
+@@ -258,11 +259,19 @@ BENCHMARK(BM_malloc_pages)
+     ->Arg(511)
+     ->Arg(513)
+     ->Arg(1023)
+-    ->Arg(1 + 20 * 1024 * 1024 / (8 * 1024))
++    ->Arg(1 + 20 * 1024 * 1024 / tcmalloc::tcmalloc_internal::kPageSize)
+     ->Arg(256);
+ 
++// Returns true when running as a unit test (under blaze/bazel test, where
++// TEST_TMPDIR is set). Benchmarks use this to scale down working set sizes
++// so dry-run unit tests do not OOM or time out under sanitizers and debug
++// builds.
++static bool IsRunningInTestMode() { return getenv("TEST_TMPDIR") != nullptr; }
++
+ static void BM_random_malloc_pages(benchmark::State& state) {
+-  const int kMaxOnHeap = 5000;
++  const int kMaxOnHeap =
++      std::max<int>(16, (IsRunningInTestMode() ? 256 : 5000) * 8192 /
++                            tcmalloc::tcmalloc_internal::kPageSize);
+   const int kMaxRequestSizePages = 127;
+ 
+   // We don't want random number generation to be a large part of
+@@ -276,8 +285,7 @@ static void BM_random_malloc_pages(benchmark::State& state) {
+     random_request_size[i] =
+         absl::Uniform<int32_t>(rand, 0, kMaxRequestSizePages) + 1;
+   }
+-  void* v[kMaxOnHeap];
+-  memset(v, 0, sizeof(v));
++  std::vector<void*> v(kMaxOnHeap, nullptr);
+   size_t r = 0;
+   for (int i = 0; i < kMaxOnHeap; ++i) {
+     v[i] = malloc_pages(random_request_size[r]);
+@@ -335,7 +343,19 @@ static void BM_random_new_delete(benchmark::State& state) {
+ }
+ BENCHMARK(BM_random_new_delete);
+ 
++static int MaxStatsAllocations() {
++  return IsRunningInTestMode() ? 1 << 10 : 1 << 20;
++}
++
++static int MaxProfileAllocations() {
++  return IsRunningInTestMode() ? 1 << 10 : 1 << 18;
++}
++
+ static void BM_get_stats(benchmark::State& state) {
++  if (&MallocExtension_Internal_GetStats == nullptr) {
++    // Sanitizer builds don't provide this function.
++    return;
++  }
+   std::vector<std::unique_ptr<char[]>> allocations;
+   const int num_allocations = state.range(0);
+   allocations.reserve(num_allocations);
+@@ -355,7 +375,7 @@ static void BM_get_stats(benchmark::State& state) {
+     benchmark::DoNotOptimize(stats);
+   }
+ }
+-BENCHMARK(BM_get_stats)->Range(1, 1 << 20);
++BENCHMARK(BM_get_stats)->Range(1, MaxStatsAllocations());
+ 
+ static void BM_get_stats_internal(benchmark::State& state) {
+   if (&MallocExtension_Internal_GetStats == nullptr) {
+@@ -383,10 +403,14 @@ static void BM_get_stats_internal(benchmark::State& state) {
+   }
+ }
+ BENCHMARK(BM_get_stats_internal)
+-    ->Range(1, 1 << 20)
++    ->Range(1, MaxStatsAllocations())
+     ->Unit(benchmark::kMillisecond);
+ 
+ static void BM_get_stats_pageheap_lock(benchmark::State& state) {
++  if (&MallocExtension_Internal_GetStats == nullptr) {
++    // Sanitizer builds don't provide this function.
++    return;
++  }
+   std::vector<std::unique_ptr<char[]>> allocations;
+   const int num_allocations = state.range(0);
+   allocations.reserve(num_allocations);
+@@ -438,7 +462,7 @@ static void BM_get_stats_pageheap_lock(benchmark::State& state) {
+   stats_thread.join();
+ }
+ BENCHMARK(BM_get_stats_pageheap_lock)
+-    ->Range(1, 1 << 20)
++    ->Range(1, MaxStatsAllocations())
+     ->UseRealTime()
+     ->Unit(benchmark::kMillisecond);
+ 
+@@ -469,7 +493,7 @@ static void BM_get_stats_pbtxt_internal(benchmark::State& state) {
+   }
+ }
+ BENCHMARK(BM_get_stats_pbtxt_internal)
+-    ->Range(1, 1 << 20)
++    ->Range(1, MaxStatsAllocations())
+     ->Unit(benchmark::kMillisecond);
+ 
+ static void BM_get_stats_pbtxt_pageheap_lock(benchmark::State& state) {
+@@ -530,11 +554,15 @@ static void BM_get_stats_pbtxt_pageheap_lock(benchmark::State& state) {
+   stats_thread.join();
+ }
+ BENCHMARK(BM_get_stats_pbtxt_pageheap_lock)
+-    ->Range(1, 1 << 20)
++    ->Range(1, MaxStatsAllocations())
+     ->UseRealTime()
+     ->Unit(benchmark::kMillisecond);
+ 
+ static void BM_get_heap_profile(benchmark::State& state) {
++  if (&MallocExtension_Internal_GetStats == nullptr) {
++    // Sanitizer builds don't provide this function.
++    return;
++  }
+   std::vector<std::unique_ptr<char[]>> allocations;
+   const int num_allocations = state.range(0);
+   allocations.reserve(num_allocations);
+@@ -552,9 +580,13 @@ static void BM_get_heap_profile(benchmark::State& state) {
+         MallocExtension::SnapshotCurrent(ProfileType::kHeap));
+   }
+ }
+-BENCHMARK(BM_get_heap_profile)->Range(1, 1 << 20);
++BENCHMARK(BM_get_heap_profile)->Range(1, MaxStatsAllocations());
+ 
+ static void BM_get_heap_profile_while_allocating(benchmark::State& state) {
++  if (&MallocExtension_Internal_GetStats == nullptr) {
++    // Sanitizer builds don't provide this function.
++    return;
++  }
+   std::vector<std::unique_ptr<char[]>> allocations;
+   const int num_allocations = state.range(0);
+   allocations.reserve(num_allocations);
+@@ -592,7 +624,8 @@ static void BM_get_heap_profile_while_allocating(benchmark::State& state) {
+   done.Notify();
+   profile_thread.join();
+ }
+-BENCHMARK(BM_get_heap_profile_while_alloca
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1897** (2026-11-10): Include fallback stats in HugetlbRegionFactory::GetStats. (@copybara-service[bot])
-- **PR #1896** (2026-11-11): Add NoopResidency for test fakes and remove unused FakeResidency. (@copybara-service[bot])
-- **PR #1894** (2026-11-11): Unify UpdateMaxCapacities() and ResizeSlabs(). (@copybara-service[bot])
-- **PR #1893** (2026-11-10): Remove PerSizeClassMaxCapacity. (@copybara-service[bot])
-- **PR #1892** (closed): No public description (@copybara-service[bot])
-- **PR #1891** (2026-11-11): Replace the candidate selection heap with a buffered nth_element selector. (@copybara-service[bot])
+- **PR #1918** (closed): No public description (@copybara-service[bot])
+- **PR #1917** (closed): No public description (@copybara-service[bot])
+- **PR #1916** (2026-11-12): Revert: percpu helper change (@copybara-service[bot])
+- **PR #1914** (2026-11-12): Use pread in PageFlags. (@copybara-service[bot])
+- **PR #1910** (closed): Record remote NUMA residency on heap profile samples. (@copybara-service[bot])
+- **PR #1909** (2026-11-12): Record the caller's stack in RecordCrash. (@copybara-service[bot])
 
 ---
 
@@ -1330,41 +1790,33 @@ PiperOrigin-RevId: 1018619289
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Avoid 32-bit shift overflow when computing alignment in ReportCorruptedFree.
+## X. Check for page-rounding overflow in pvalloc.
 
 **RULE**:
-When implementing operations in `tcmalloc/error_reporting.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/tcmalloc.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ecaf3d4`: Avoid 32-bit shift overflow when computing alignment in ReportCorruptedFree.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `83ee14af`: Check for page-rounding overflow in pvalloc.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/error_reporting.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/tcmalloc.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  const uintptr_t addr = absl::bit_cast<uintptr_t>(ptr);
-      ptr, static_cast<std::align_val_t>(addr & -addr), expected_alignment,
-      std::nullopt, absl::MakeSpan(stack, depth));
-  const uintptr_t addr = absl::bit_cast<uintptr_t>(ptr);
-      ptr, static_cast<std::align_val_t>(addr & -addr), expected_alignment,
-      allocation_stack, absl::MakeSpan(stack, depth));
+  if (ABSL_PREDICT_FALSE(size == 0)) {
+    return MallocPolicy::handle_oom(std::numeric_limits<size_t>::max());
+  }
+    if (ABSL_PREDICT_FALSE(size == 0)) {                                       \
+      return MallocPolicy::handle_oom(std::numeric_limits<size_t>::max());     \
+    }                                                                          \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-#include "absl/numeric/bits.h"
-      ptr,
-      static_cast<std::align_val_t>(
-          1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))),
-      expected_alignment, std::nullopt, absl::MakeSpan(stack, depth));
-      ptr,
-      static_cast<std::align_val_t>(
-          1u << absl::countr_zero(absl::bit_cast<uintptr_t>(ptr))),
-      expected_alignment, allocation_stack, absl::MakeSpan(stack, depth));
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ecaf3d4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `83ee14af` are properly handled with clean fallback behavior.

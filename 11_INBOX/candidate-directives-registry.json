@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T04:13:28.698Z",
+  "last_updated": "2026-11-13T04:31:52.320Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8084,6 +8084,24 @@
       "source_repo": "facebook-folly",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-087E87-sigfpe-and-11x-slowdown-in-folly-random-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-E0D3E5",
+      "directive_title": "Check for page-rounding overflow in pvalloc.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "google-tcmalloc",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E0D3E5-check-for-page-rounding-overflow-in-pval.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-74F813",
+      "directive_title": "dashboard): split event pagination into a dedicated endpoint (#5229)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "chaos-mesh-chaos-mesh",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-74F813-dashboard-split-event-pagination-into-a-.md",
       "staged_date": "2026-11-13"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T04:13:41.996Z",
+  "last_updated": "2026-11-13T04:31:52.444Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T01:31:37.311Z",
@@ -153,7 +153,7 @@
       "staged_for_review": 1
     },
     "google-tcmalloc-learnings.md": {
-      "processed_at": "2026-11-11T10:27:23.207Z",
+      "processed_at": "2026-11-13T04:31:39.215Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -538,7 +538,7 @@
       "staged_for_review": 1
     },
     "chaos-mesh-chaos-mesh-learnings.md": {
-      "processed_at": "2026-11-11T19:28:51.251Z",
+      "processed_at": "2026-11-13T04:31:52.322Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1526,9 +1526,14 @@
       "processed_at": "2026-11-13T04:13:41.916Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
+    },
+    "hf-orcarouter-orcacyber-nano-1.0-learnings.md": {
+      "processed_at": "2026-11-13T04:31:52.288Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 447,
-  "total_canonical_promoted": 57,
-  "total_staged_for_review": 387
+  "total_dossiers_evaluated": 450,
+  "total_canonical_promoted": 58,
+  "total_staged_for_review": 389
 }

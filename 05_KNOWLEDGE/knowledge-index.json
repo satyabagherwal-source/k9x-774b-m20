@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T04:13:25.609Z",
+  "last_updated": "2026-11-13T04:31:31.720Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7366,8 +7366,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "35a006bd",
-      "content_hash": "305cbe11fbe8908eeea71e796aa4ff4412aa0b9e280c4276d2f393f30b7210bb",
+      "source_version": "386a1e0e",
+      "content_hash": "f402f5f7cea915d8a26e28aac3c53aaa289eb3bed4ac5ad4d5505d6f278c2904",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -7389,6 +7389,11 @@
         {
           "number": null,
           "title": "dashboard): add server-side pagination for events (#5222)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "dashboard): split event pagination into a dedicated endpoint (#5229)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -7457,7 +7462,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T19:28:41.905Z",
+      "verified_at": "2026-11-13T04:31:26.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -18133,8 +18138,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "065aed87",
-      "content_hash": "d8beb555bd540ff702793e29f845cc24c334fbcb60dbcf78dcd747de4cc11027",
+      "source_version": "54de7997",
+      "content_hash": "784ca6a9311391c11fc6faf4a47b8f2d0165a2d423e59ad221e4527496e3f689",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -18146,6 +18151,11 @@
         {
           "number": null,
           "title": "Avoid 32-bit shift overflow when computing alignment in ReportCorruptedFree.",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Check for page-rounding overflow in pvalloc.",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -18219,7 +18229,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:27:16.742Z",
+      "verified_at": "2026-11-13T04:31:14.802Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44847,8 +44857,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "b9a7b08e",
-      "content_hash": "2e35bc62e1de7e050f450a5e6fdfefba79f14961af7ebe34015707c99b9f4071",
+      "source_version": "c3596c83",
+      "content_hash": "7cea22288f14180c8ca1e5e4f6cef03f6fc6bd482358e41204305f190df22dca",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -44880,6 +44890,11 @@
         {
           "number": null,
           "title": "agent-os): refuse run_tool before executing when post_tool_call is unbound (#442",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "deps): Bump @hono/node-server (#4566)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -45013,7 +45028,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T04:32:18.199Z",
+      "verified_at": "2026-11-13T04:31:29.428Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56219,8 +56234,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "26236216",
-      "content_hash": "7a726fbaaa46751e19ba50de611d879e4fe6e70819bbf96ecb168b7fc6a85d01",
+      "source_version": "365307c5",
+      "content_hash": "b7b6bfaa783e7d7c8017dd1ba8f4e1a7909f61e49533ac91aa6d3011a0110ed7",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -56242,6 +56257,11 @@
         {
           "number": null,
           "title": "frontend): reject invalid rate limit in WITH options instead of panicking (#2790",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "storage): don't panic on a write limit notification before the snapshot (#27853)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -56325,7 +56345,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T18:03:59.742Z",
+      "verified_at": "2026-11-13T04:31:31.685Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -131658,7 +131678,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
       "source_version": "hf-orcarouter-orcacyber-nano-1.0",
-      "content_hash": "e893f517507b56d07579012730a4aa509af81c3b30ed926e942774bfedfd4bdb",
+      "content_hash": "ceee6b1d81d9f822bc97f014f582ce36857c34e110dbe3bddca47f86c4874b59",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
       "promoted_rules": [
@@ -131703,7 +131723,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T04:02:56.428Z",
+      "verified_at": "2026-11-13T04:31:02.435Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

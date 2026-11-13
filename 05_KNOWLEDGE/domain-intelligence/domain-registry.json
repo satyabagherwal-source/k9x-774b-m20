@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T04:13:41.896Z",
-  "total_records": 90,
+  "last_updated": "2026-11-13T04:31:52.285Z",
+  "total_records": 91,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 49,
+      "total": 50,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -74,7 +74,8 @@
         "DOM-D-B0538309",
         "DOM-D-27F43F41",
         "DOM-D-FE04D8FE",
-        "DOM-D-C22A41DF"
+        "DOM-D-C22A41DF",
+        "DOM-D-527E8201"
       ]
     },
     "E": {
@@ -3699,6 +3700,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T04:13:41.894Z"
+    },
+    "DOM-D-527E8201": {
+      "record_id": "DOM-D-527E8201",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): orcarouter/OrcaCyber-Nano-1.0",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0](https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0))  \n> **Source Version**: `hf-orcaroute`  \n> **License**: Op",
+      "content_hash": "c5d1d10ed196bf548c277206ee8199acf6fcfb90dc1b89f15d9e64ffcec9f6e4",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-orcarouter-orcacyber-nano-1.0/hf-orcarouter-orcacyber-nano-1.0-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T04:31:39.281Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-orcarouter-orcacyber-nano-1.0)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-orcarouter-orcacyber-nano-1.0"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T04:31:52.283Z"
     }
   }
 }

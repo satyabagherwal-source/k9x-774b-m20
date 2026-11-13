@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T04:13:25.723Z",
+  "last_updated": "2026-11-13T04:31:32.237Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "2e35bc62e1de7e050f450a5e6fdfefba79f14961af7ebe34015707c99b9f4071",
-      "verified_at": "2026-11-12T04:32:18.396Z",
+      "content_hash": "7cea22288f14180c8ca1e5e4f6cef03f6fc6bd482358e41204305f190df22dca",
+      "verified_at": "2026-11-13T04:31:29.624Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T04:32:18.396Z"
+      "last_updated": "2026-11-13T04:31:29.624Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "305cbe11fbe8908eeea71e796aa4ff4412aa0b9e280c4276d2f393f30b7210bb",
-      "verified_at": "2026-11-11T19:28:42.130Z",
+      "content_hash": "f402f5f7cea915d8a26e28aac3c53aaa289eb3bed4ac5ad4d5505d6f278c2904",
+      "verified_at": "2026-11-13T04:31:26.804Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T19:28:42.130Z"
+      "last_updated": "2026-11-13T04:31:26.804Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "7a726fbaaa46751e19ba50de611d879e4fe6e70819bbf96ecb168b7fc6a85d01",
-      "verified_at": "2026-11-11T18:04:00.062Z",
+      "content_hash": "b7b6bfaa783e7d7c8017dd1ba8f4e1a7909f61e49533ac91aa6d3011a0110ed7",
+      "verified_at": "2026-11-13T04:31:32.236Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T18:04:00.062Z"
+      "last_updated": "2026-11-13T04:31:32.236Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "d8beb555bd540ff702793e29f845cc24c334fbcb60dbcf78dcd747de4cc11027",
-      "verified_at": "2026-11-11T10:27:16.910Z",
+      "content_hash": "784ca6a9311391c11fc6faf4a47b8f2d0165a2d423e59ad221e4527496e3f689",
+      "verified_at": "2026-11-13T04:31:15.045Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:27:16.910Z"
+      "last_updated": "2026-11-13T04:31:15.045Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",
@@ -15681,14 +15681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-      "content_hash": "e893f517507b56d07579012730a4aa509af81c3b30ed926e942774bfedfd4bdb",
-      "verified_at": "2026-11-08T04:02:56.588Z",
+      "content_hash": "ceee6b1d81d9f822bc97f014f582ce36857c34e110dbe3bddca47f86c4874b59",
+      "verified_at": "2026-11-13T04:31:02.611Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T04:02:56.588Z"
+      "last_updated": "2026-11-13T04:31:02.611Z"
     },
     "Ryder-Sun/Meldwork": {
       "repository": "Ryder-Sun/Meldwork",

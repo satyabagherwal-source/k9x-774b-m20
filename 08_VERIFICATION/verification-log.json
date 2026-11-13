@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-02SC",
-    "timestamp": "2026-11-09T21:31:13.308Z",
-    "repository": "sceneview/sceneview",
-    "learningId": "learn-github-sceneview-sceneview",
-    "contentHash": "f705756cc6b179cb6c9186ecfc808a8cd3b26239833cd466074f2c5db5136c99",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-0TIZ",
-    "timestamp": "2026-11-09T21:31:47.963Z",
-    "repository": "fabio-rovai/open-ontologies",
-    "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "c774db36f8d43d802517f2b77424f46c34e4a1e05d2cd9aea46ecb34d0bc520e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-XYUK",
-    "timestamp": "2026-11-09T21:57:34.508Z",
-    "repository": "FusionCow/Sulphur-3",
-    "learningId": "learn-huggingface-fusioncow-sulphur-3",
-    "contentHash": "98783c2040d07ee2ab23a6a6666eb8fa4e132e86dbb2dc346648d7ac6a014f9a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-0HAV",
-    "timestamp": "2026-11-09T21:59:31.735Z",
-    "repository": "smallstep/cli",
-    "learningId": "learn-github-smallstep-cli",
-    "contentHash": "3afb8375131063f51e7ad28e152e2df6a80bede05772e254df18099fce9f11c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-0KG3",
-    "timestamp": "2026-11-09T21:59:35.811Z",
-    "repository": "tencent/Qwen3.8-27B-DSpine-b16",
-    "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
-    "contentHash": "c796e23219ff0340379b29b3121cf4a98c4c874fdedfce01cd3b13b2cd4ee1f0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-K4WP",
     "timestamp": "2026-11-09T22:14:48.793Z",
     "repository": "yvgude/lean-ctx",
@@ -7492,6 +7417,81 @@
     "contentHash": "ebd571bb4392b7b18f62e14fdfe0e68e30c698ca5cd2bc2f9569b98016a240fa",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-BIYR",
+    "timestamp": "2026-11-13T04:31:02.595Z",
+    "repository": "orcarouter/OrcaCyber-Nano-1.0",
+    "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+    "contentHash": "ceee6b1d81d9f822bc97f014f582ce36857c34e110dbe3bddca47f86c4874b59",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-BSJZ",
+    "timestamp": "2026-11-13T04:31:15.023Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "784ca6a9311391c11fc6faf4a47b8f2d0165a2d423e59ad221e4527496e3f689",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-C1MR",
+    "timestamp": "2026-11-13T04:31:26.787Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "f402f5f7cea915d8a26e28aac3c53aaa289eb3bed4ac5ad4d5505d6f278c2904",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-C3T5",
+    "timestamp": "2026-11-13T04:31:29.609Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "7cea22288f14180c8ca1e5e4f6cef03f6fc6bd482358e41204305f190df22dca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-C5LM",
+    "timestamp": "2026-11-13T04:31:31.930Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "b7b6bfaa783e7d7c8017dd1ba8f4e1a7909f61e49533ac91aa6d3011a0110ed7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
