@@ -579390,3 +579390,76 @@ function onPacket(p: Packet) { applyState(p.data); }
 ```
 
 **VERIFICATION METHOD**: Automated fuzzing harness asserting strictly increasing monotonic sequences.
+
+
+---
+
+## 8098. Single-Point-of-Truth Rule Invariant for Continuous Harvester (Harvested from proof-system/canonical-rule-sentinel)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Single-Point-of-Truth Rule Invariant for Continuous Harvester",
+  "source": "proof-system/canonical-rule-sentinel",
+  "source_url": "https://github.com/proof-system/canonical-rule-sentinel",
+  "source_version": "commit-proof-1234",
+  "license": "MIT",
+  "extracted_at": "2026-11-13T14:54:39.148Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-proof-system-canonical-rule-sentinel",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [proof-system/canonical-rule-sentinel](https://github.com/proof-system/canonical-rule-sentinel) (Revision: `commit-pro`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Every harvested intelligence invariant extracted from software repositories MUST be automatically appended to 05_KNOWLEDGE/engineering-patterns.md without diversion.
+
+**WHY**:
+Diverting rules away from engineering-patterns.md starves the primary knowledge base and causes retrieval engines to fail when seeking verified engineering patterns.
+
+**WHEN TO APPLY**:
+Apply to all automated harvesting, classification, and distribution gateways across the AI-Builder-Brain fleet.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export function persistEngineeringRule(rule: EngineeringRule, patternsPath: string): void {
+  fs.appendFileSync(patternsPath, formatRule(rule), 'utf-8');
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// BAD: Diverting rules into staging inbox or secondary folders only
+if (rule.topic === 'feedback') {
+  stageInInboxOnly(rule);
+}
+```
+
+**VERIFICATION METHOD**:
+Automated read-back verification asserting rule number and title existence in engineering-patterns.md.

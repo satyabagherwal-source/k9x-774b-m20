@@ -36,8 +36,8 @@ export function validateRuleCandidate(ruleTitle, ruleBody) {
     return { valid: false, reason: 'Invalid or missing rule title' };
   }
 
-  // Reject generic headers or document structural titles
-  if (/^(net-new|universal|forensic|executive|actionable|project|empirical|rule|checklist)/i.test(ruleTitle.trim())) {
+  // Reject generic headers or document structural titles (exact section titles, not specific rules)
+  if (/^(?:net-new\s+universal(?:\s+engineering)?(?:\s+rules)?|universal\s+engineering\s+rules|executive\s+forensic|forensic\s+architecture|actionable\s+checklist|project\s+learning\s+record|rule\s*[:#]?\s*\d*)$/i.test(ruleTitle.trim())) {
     return { valid: false, reason: 'Generic header title rejected' };
   }
 

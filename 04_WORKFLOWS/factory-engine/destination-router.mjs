@@ -196,12 +196,16 @@ const TYPE_ROUTING_MAP = {
  * Determines whether an item requires Human Approval Gate
  */
 export function requiresHumanApproval(knowledgeType, primaryDomainLetter) {
+  // Engineering patterns, skills, agent contracts, and dossiers never require human approval
+  if (['engineering_pattern', 'skill_playbook', 'agent_contract', 'raw_dossier', 'commit_forensic', 'verification_contract'].includes(knowledgeType)) {
+    return false;
+  }
   // Changes to Core, Governance, or sensitive evolutionary policies mandate human approval
   if (['core_law', 'system_invariant', 'governance_policy', 'approval_gate'].includes(knowledgeType)) {
     return true;
   }
-  // Tier-1 feedback and system self-modification (Domain M) require human signature
-  if (primaryDomainLetter === 'M') {
+  // Tier-1 feedback and system self-modification (Domain M) require human signature ONLY for core laws or governance
+  if (primaryDomainLetter === 'M' && ['core_law', 'system_invariant', 'governance_policy'].includes(knowledgeType)) {
     return true;
   }
   return false;
@@ -233,14 +237,17 @@ export function resolveDestination(item) {
   }
 
   // 3. Resolve primary folder based on knowledgeType
-  const kType = String(item.knowledgeType || firstRule.knowledgeType || item.metadata?.knowledgeType || '').toLowerCase().trim();
+  const isRuleCandidate = Boolean(item.is_rule || (item.body && /\*\*RULE\*\*:?/i.test(item.body)) || (firstRule.body && /\*\*RULE\*\*:?/i.test(firstRule.body)));
+  const kType = String(item.knowledgeType || firstRule.knowledgeType || (isRuleCandidate ? 'engineering_pattern' : '') || item.metadata?.knowledgeType || '').toLowerCase().trim();
   let targetFolder = TYPE_ROUTING_MAP[kType] || null;
 
   const effectiveTitle = item.title || firstRule.title || item.metadata?.title || item.repository || 'unnamed-item';
 
   // If knowledgeType is missing or unknown, infer based on domain and role
   if (!targetFolder) {
-    if (primaryLetter === 'G' && (effectiveTitle.toLowerCase().includes('decision') || effectiveTitle.toLowerCase().includes('adr'))) {
+    if (isRuleCandidate) {
+      targetFolder = '05_KNOWLEDGE';
+    } else if (primaryLetter === 'G' && (effectiveTitle.toLowerCase().includes('decision') || effectiveTitle.toLowerCase().includes('adr'))) {
       targetFolder = '12_DECISIONS';
     } else if (primaryLetter === 'K' && effectiveTitle.toLowerCase().includes('gap')) {
       targetFolder = '08_VERIFICATION';
@@ -281,7 +288,7 @@ export function resolveDestination(item) {
       suggestedRelativePath = `03_SKILLS/${slug}.md`;
       break;
     case '05_KNOWLEDGE':
-      if (kType === 'engineering_pattern' || item.type === 'engineering_pattern' || item.is_rule) {
+      if (kType === 'engineering_pattern' || item.type === 'engineering_pattern' || item.is_rule || isRuleCandidate) {
         suggestedRelativePath = '05_KNOWLEDGE/engineering-patterns.md';
       } else {
         suggestedRelativePath = `05_KNOWLEDGE/domain-intelligence/DOM-${primaryLetter}-${slug}.md`;
