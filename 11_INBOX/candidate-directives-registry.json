@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T16:05:42.048Z",
+  "last_updated": "2026-11-13T16:26:53.475Z",
   "directives": [
     {
       "id": "CD-001",
@@ -9339,6 +9339,46 @@
       "source_repo": "open-source-legal-opencontracts",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-12A371-mcp-preserve-distinct-block-search-resul.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-W3M2",
+      "directive_title": "arm64-kk-wine11.18-r5: r4 with patches-arm64 0056 and 0057, the spatial audio pa",
+      "source_repo": "gauthierpiarrette-highball-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W3M2-arm64-kk-wine11-18-r5-r4-with-patches-arm64-0056-and-0057-the-spatial-audio-pa.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-W42Q",
+      "directive_title": "build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (#14733)",
+      "source_repo": "gocd-gocd-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W42Q-build-deps-dev-bump-aquasec-trivy-from-0-76-1-to-0-76-2-in-docker-14733.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-REV-C20C0C",
+      "directive_title": "arm64-kk-wine11.18-r5: r4 with patches-arm64 0056 and 0057, the spatial audio pa",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gauthierpiarrette-highball",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C20C0C-arm64-kk-wine11-18-r5-r4-with-patches-ar.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-087E9C",
+      "directive_title": "build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (#14733)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gocd-gocd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-087E9C-build-deps-dev-bump-aquasec-trivy-from-0.md",
       "staged_date": "2026-11-13"
     }
   ]

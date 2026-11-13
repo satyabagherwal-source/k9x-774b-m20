@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T16:05:05.744Z",
+  "last_updated": "2026-11-13T16:26:01.293Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -545,14 +545,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "content_hash": "0f683e98f5818c47f05bf5be788ef8e93e0c17bb50567b7766ba14e5d5297f4b",
-      "verified_at": "2026-11-08T15:49:45.629Z",
+      "content_hash": "7bccaede06ed3cd6aee194f79157de103045c52ef198137ae5c7809ff280620d",
+      "verified_at": "2026-11-13T16:26:01.292Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T15:49:45.629Z"
+      "last_updated": "2026-11-13T16:26:01.292Z"
     },
     "TaichuAI/ZDTaichu5.0-9B": {
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "16df7d6253ac81de19da60ec6b60facfa61f5fcd59bbb8ccc282f2919fc1e79a",
-      "verified_at": "2026-11-12T12:15:11.728Z",
+      "content_hash": "1ea04846b32a801ce89c901426062294b78aa5385a88f1657d97b079adc05916",
+      "verified_at": "2026-11-13T16:25:49.538Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T12:15:11.728Z"
+      "last_updated": "2026-11-13T16:25:49.538Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -15876,14 +15876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gauthierpiarrette-highball",
-      "content_hash": "98e8be75d7aa7fd8c964e4c7b54f65b38329121371d5074da49807f98ee2a08f",
-      "verified_at": "2026-11-09T05:40:43.197Z",
+      "content_hash": "e1d817ecf77b9bc98cdc66450546e6dd2b642b5c16b4bc710fa52c97b7c93a90",
+      "verified_at": "2026-11-13T16:25:48.436Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T05:40:43.197Z"
+      "last_updated": "2026-11-13T16:25:48.436Z"
     },
     "MiniMaxAI/MiniMax-M3.1-Flash": {
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",

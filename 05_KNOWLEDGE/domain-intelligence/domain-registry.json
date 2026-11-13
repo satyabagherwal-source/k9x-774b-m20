@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T16:05:42.112Z",
-  "total_records": 194,
+  "last_updated": "2026-11-13T16:26:53.588Z",
+  "total_records": 201,
   "domains": {
     "A": {
       "total": 1,
@@ -26,7 +26,7 @@
       ]
     },
     "D": {
-      "total": 116,
+      "total": 119,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -143,7 +143,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
         "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari",
         "DOM-D-F7590A97",
-        "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learning"
+        "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learning",
+        "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
+        "DOM-D-1FD73085",
+        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar"
       ]
     },
     "E": {
@@ -160,7 +163,7 @@
       ]
     },
     "G": {
-      "total": 13,
+      "total": 15,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -174,11 +177,13 @@
         "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-core-invariants",
         "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-core-invariants",
         "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria"
+        "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria",
+        "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-core-invariants",
+        "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 32,
+      "total": 34,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -211,7 +216,9 @@
         "domain_intelligence-technical-construction-intelligence-meshery-meshery-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian"
+        "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian",
+        "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants"
       ]
     },
     "I": {
@@ -6572,6 +6579,102 @@
       "repository": "open-source-legal-opencontracts-learnings",
       "content_hash": "23fe798cba151daa94c88278c178ace489984b6c52fe649e3632ec9833134dae",
       "created_at": "2026-11-13T16:05:42.112Z"
+    },
+    "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: gauthierpiarrette/highball Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-architecture-intelligence-gauthierpiarrette-highball-.md",
+      "repository": "gauthierpiarrette/highball",
+      "content_hash": "50b046c9900c747a6f082824cf12dd5b5589b08dcbe9a9cc84361a4d9c0daeb0",
+      "created_at": "2026-11-13T16:25:48.749Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
+      "repository": "gocd/gocd",
+      "content_hash": "f911c4c407fd90210749a599e5441713ea89ea7e28318e2bfe6744827d57325f",
+      "created_at": "2026-11-13T16:25:49.842Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-27B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-27b-research-knowledge-intelligence-orcarouter-orcasaq-2.md",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "content_hash": "414258617cf27834170394163e9fc778f48d81528cac5c945de582a1636517a8",
+      "created_at": "2026-11-13T16:26:01.480Z"
+    },
+    "DOM-D-1FD73085": {
+      "record_id": "DOM-D-1FD73085",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): orcarouter/OrcaSAQ-2-27B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/orcarouter/OrcaSAQ-2-27B](https://huggingface.co/orcarouter/OrcaSAQ-2-27B))  \n> **Source Version**: `hf-orcaroute`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "663d70e59feeef35847f94020de51fe827e3799cbfa2e52fc6cd55ae7728bf4e",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-orcarouter-orcasaq-2-27b/hf-orcarouter-orcasaq-2-27b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T16:26:04.244Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-orcarouter-orcasaq-2-27b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-orcarouter-orcasaq-2-27b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T16:26:52.095Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-27b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-27b-learnings-research-knowledge-intelligence-hf-orcarou.md",
+      "repository": "hf-orcarouter-orcasaq-2-27b-learnings",
+      "content_hash": "a4b0a45669c4044057c8c35427fe475e9f68d86db8be3d5e90016c62d3884eb1",
+      "created_at": "2026-11-13T16:26:52.313Z"
+    },
+    "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: gauthierpiarrette-highball-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-learnings-architecture-intelligence-gauthierpiarrette.md",
+      "repository": "gauthierpiarrette-highball-learnings",
+      "content_hash": "3f4ddb6af247c1faf5ca93c5c90555409f998ae9daf0d378351c600d6908eb04",
+      "created_at": "2026-11-13T16:26:52.990Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-learnings-technical-construction-intelligence-gocd-gocd-learnings-core.md",
+      "repository": "gocd-gocd-learnings",
+      "content_hash": "02b1f933131fdb56132a02032270904a39cb814cfa8506165332c7e931320c38",
+      "created_at": "2026-11-13T16:26:53.588Z"
     }
   }
 }

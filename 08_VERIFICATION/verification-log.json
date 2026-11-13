@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-AEQ9",
-    "timestamp": "2026-11-12T21:02:16.593Z",
-    "repository": "facebook/sam-3d-body-dinov3",
-    "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
-    "contentHash": "cc5aeb88b697480d3dbaa63f4d6e51045a602ca20f898124c7df9ddada63266b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-AIG5",
-    "timestamp": "2026-11-12T21:02:21.413Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "f9033c9f474bbf8cd407885184c85f9c49ed58075c00a0b4fcdbb50a983b5c8f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-AKGX",
-    "timestamp": "2026-11-12T21:02:24.033Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "570227c119d9b6dbbe72ad2b63d68792ae5b201a4f5f3c0389563d93a305f5e3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-L6MK",
     "timestamp": "2026-11-12T21:10:39.308Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7447,51 @@
     "contentHash": "83b23511df7183c657b2795031db38d643944619a570547ed94037f29b6280d5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-UPV8",
+    "timestamp": "2026-11-13T16:25:48.404Z",
+    "repository": "gauthierpiarrette/highball",
+    "learningId": "learn-github-gauthierpiarrette-highball",
+    "contentHash": "e1d817ecf77b9bc98cdc66450546e6dd2b642b5c16b4bc710fa52c97b7c93a90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-UQPX",
+    "timestamp": "2026-11-13T16:25:49.509Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "1ea04846b32a801ce89c901426062294b78aa5385a88f1657d97b079adc05916",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-UZST",
+    "timestamp": "2026-11-13T16:26:01.277Z",
+    "repository": "orcarouter/OrcaSAQ-2-27B",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+    "contentHash": "7bccaede06ed3cd6aee194f79157de103045c52ef198137ae5c7809ff280620d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

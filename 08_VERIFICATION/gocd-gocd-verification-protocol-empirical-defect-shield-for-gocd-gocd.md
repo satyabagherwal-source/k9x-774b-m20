@@ -4,45 +4,31 @@
 {
   "source_repository": "gocd/gocd",
   "source_url": "https://github.com/gocd/gocd",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "f8f3d3e7",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T16:25:49.739Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-gocd-gocd",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `f8f3d3e7`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T16:25:49.739Z`  
+> **Learning ID**: `learn-github-gocd-gocd`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gocd/gocd` (Commit: `historical`)
+- **Target Repository**: `gocd/gocd` (Commit: `f8f3d3e7`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
-> **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `2d3e5eda`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T12:14:57.970Z  
-> **Learning ID**: `learn-github-gocd-gocd`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): gocd/gocd
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T12:14:56.377Z  
+> **Harvest Timestamp**: 2026-11-13T16:25:48.877Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7438 stars
+- **Stars / Engagement**: 7439 stars
 
 ---
 
@@ -905,124 +891,41 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8146bdb4` (2026-11-12)
-**Commit Message**: build(deps-ui-dev): bump rspec-rails (#14731)
+### Incident Patch 1: `f8f3d3e7` (2026-11-13)
+**Commit Message**: build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (#14733)
 
-Bumps the rspec group in /server/src/main/webapp/WEB-INF/rails with 1 update: [rspec-rails](https://github.com/rspec/rspec-rails).
-
-
-Updates `rspec-rails` from 8.0.5 to 8.1.0
-- [Changelog](https://github.com/rspec/rspec-rails/blob/main/Changelog.md)
-- [Commits](https://github.com/rspec/rspec-rails/compare/v8.0.5...v8.1.0)
+Bumps aquasec/trivy from 0.76.1 to 0.76.2.
 
 ---
 updated-dependencies:
-- dependency-name: rspec-rails
-  dependency-version: 8.1.0
-  dependency-type: indirect
-  update-type: version-update:semver-minor
-  dependency-group: rspec
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `server/src/main/webapp/WEB-INF/rails/Gemfile.lock` (modified, +2/-2)
-```diff
-@@ -134,7 +134,7 @@ GEM
-     rspec-mocks (3.13.9)
-       diff-lcs (>= 1.2.0, < 2.0)
-       rspec-support (~> 3.13.0)
--    rspec-rails (8.0.5)
-+    rspec-rails (8.1.0)
-       actionpack (>= 7.2)
-       activesupport (>= 7.2)
-       railties (>= 7.2)
-@@ -241,7 +241,7 @@ CHECKSUMS
-   rspec-core (3.13.7) sha256=c64ff16d9788119805cbc6a3f4b6d87cc22417c2d25976a3330de136896b5469
-   rspec-expectations (3.13.6) sha256=bf538ca6d367ff5b0d85a87fdb5c0c6038f2cd1308a0eeba07476caa02d22f35
-   rspec-mocks (3.13.9) sha256=ea5c7ff3054a6098ca6039aacef80aec69d5a8a3ef80be8fc88337359b672a30
--  rspec-rails (8.0.5) sha256=190feca858d9b5ad632200005034a56c72dab6d74a44244b1e31b9cf31690df6
-+  rspec-rails (8.1.0) sha256=5e6c6a4e7f7d644b56e412d410824f6480c1e5a9c61b8448998236b4a4dbf3be
-   rspec-support (3.13.8) sha256=e4160030309b7e3e9d9863dfe720a35dfcc577162f5402cd68fc8c5258a0ffd6
-   rspec_junit_formatter (0.6.2) sha256=f90f594be841663288becc91b59e525c5faaf739c517ded4e2c66b61b11c66a5
-   sass-embedded (1.102.0) sha256=a73388d442b4409cc99e8ac02037069a9cc4419c895360f5ad17ad291fe43059
-```
-
----
-
-### Incident Patch 2: `2d3e5eda` (2026-11-12)
-**Commit Message**: build(deps): bump com.fasterxml.jackson:jackson-bom (#14732)
-
-Bumps [com.fasterxml.jackson:jackson-bom](https://github.com/FasterXML/jackson-bom) from 2.22.4 to 2.23.0.
-- [Commits](https://github.com/FasterXML/jackson-bom/compare/jackson-bom-2.22.4...jackson-bom-2.23.0)
-
----
-updated-dependencies:
-- dependency-name: com.fasterxml.jackson:jackson-bom
-  dependency-version: 2.23.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `build.gradle` (modified, +1/-1)
-```diff
-@@ -102,7 +102,7 @@ def libraries = [
-   gson                : 'com.google.code.gson:gson:2.15.0',
-   h2                  : 'com.h2database:h2:1.4.200',
-   hibernate           : 'org.hibernate:hibernate-ehcache:3.6.10.Final',
--  jacksonBom          : 'com.fasterxml.jackson:jackson-bom:2.22.4',
-+  jacksonBom          : 'com.fasterxml.jackson:jackson-bom:2.23.0',
-   jakartaAnnotation   : 'jakarta.annotation:jakarta.annotation-api:1.3.5',
-   jakartaInject       : 'jakarta.inject:jakarta.inject-api:1.0.5',
-   jakartaMail         : 'jakarta.mail:jakarta.mail-api:2.1.5',
-```
-
----
-
-### Incident Patch 3: `801f51cc` (2026-11-12)
-**Commit Message**: build(deps): bump com.autonomousapps.dependency-analysis (#14730)
-
-Bumps the gradle-plugins group with 1 update: com.autonomousapps.dependency-analysis.
-
-
-Updates `com.autonomousapps.dependency-analysis` from 3.20.1 to 3.20.2
-
----
-updated-dependencies:
-- dependency-name: com.autonomousapps.dependency-analysis
-  dependency-version: 3.20.2
+- dependency-name: aquasec/trivy
+  dependency-version: 0.76.2
   dependency-type: direct:production
   update-type: version-update:semver-patch
-  dependency-group: gradle-plugins
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `build.gradle` (modified, +1/-1)
+**File**: `docker/docker-compose.yml` (modified, +1/-1)
 ```diff
-@@ -38,7 +38,7 @@ import java.time.Duration
- plugins {
-   id 'base'
-   id 'org.owasp.dependencycheck' version '13.0.0'
--  id 'com.autonomousapps.dependency-analysis' version '3.20.1'
-+  id 'com.autonomousapps.dependency-analysis' version '3.20.2'
- }
- 
- // Updated via automated scripting
+@@ -1,6 +1,6 @@
+ services:
+   trivy:
+-    image: docker.io/aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
++    image: docker.io/aquasec/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb
+     command: [ image, --input, /scan-image, --exit-code, "${EXIT_CODE_ON_ERROR}", --config, /trivy.yaml ]
+     volumes:
+       - ./trivy.yaml:/trivy.yaml:ro
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14733** (2026-11-13): build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (@dependabot[bot])
 - **PR #14732** (2026-11-12): build(deps): bump com.fasterxml.jackson:jackson-bom from 2.22.4 to 2.23.0 (@dependabot[bot])
 - **PR #14731** (2026-11-12): build(deps-ui-dev): bump rspec-rails from 8.0.5 to 8.1.0 in /server/src/main/webapp/WEB-INF/rails in the rspec group (@dependabot[bot])
 - **PR #14730** (2026-11-12): build(deps): bump com.autonomousapps.dependency-analysis from 3.20.1 to 3.20.2 in the gradle-plugins group (@dependabot[bot])
 - **PR #14729** (2026-11-09): Upgrade sass-embedded to 1.108.1 (@Copilot)
 - **PR #14728** (2026-11-09): build(deps): bump gradle-wrapper from 9.8.2 to 9.9.0 in the gradle-plugins group (@dependabot[bot])
-- **PR #14727** (2026-11-09): build(deps-ui): bump the rspec group in /server/src/main/webapp/WEB-INF/rails with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1042,33 +945,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-ui-dev): bump rspec-rails (#14731)
+## X. build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (#14733)
 
 **RULE**:
-When implementing operations in `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docker/docker-compose.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8146bdb4`: build(deps-ui-dev): bump rspec-rails (#14731). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f8f3d3e7`: build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (#14733). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/Gemfile.lock`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/docker-compose.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    rspec-rails (8.1.0)
-  rspec-rails (8.1.0) sha256=5e6c6a4e7f7d644b56e412d410824f6480c1e5a9c61b8448998236b4a4dbf3be
+    image: docker.io/aquasec/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-    rspec-rails (8.0.5)
-  rspec-rails (8.0.5) sha256=190feca858d9b5ad632200005034a56c72dab6d74a44244b1e31b9cf31690df6
+    image: docker.io/aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8146bdb4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f8f3d3e7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

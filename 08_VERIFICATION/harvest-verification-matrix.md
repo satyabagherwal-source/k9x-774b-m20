@@ -9523,3 +9523,7 @@
 | `CYCLE-20261113-3WD5` | `2026-11-13T16:04:57.113Z` | `a2ui-project/a2ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`aa731da3...`) |
 | `CYCLE-20261113-4309` | `2026-11-13T16:05:05.721Z` | `Open-Source-Legal/OpenContracts` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`83b23511...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T16:05:40.822Z` | `hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F7590A97` [Domain D] | Yes (`4e4e86da...`) |
+| `CYCLE-20261113-UPV8` | `2026-11-13T16:25:48.404Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e1d817ec...`) |
+| `CYCLE-20261113-UQPX` | `2026-11-13T16:25:49.509Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1ea04846...`) |
+| `CYCLE-20261113-UZST` | `2026-11-13T16:26:01.277Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`7bccaede...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T16:26:52.103Z` | `hf-orcarouter-orcasaq-2-27b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1FD73085` [Domain D] | Yes (`663d70e5...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T16:05:42.185Z",
+  "last_updated": "2026-11-13T16:26:53.700Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17821,8 +17821,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "2d3e5eda",
-      "content_hash": "16df7d6253ac81de19da60ec6b60facfa61f5fcd59bbb8ccc282f2919fc1e79a",
+      "source_version": "f8f3d3e7",
+      "content_hash": "1ea04846b32a801ce89c901426062294b78aa5385a88f1657d97b079adc05916",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -17839,6 +17839,11 @@
         {
           "number": null,
           "title": "build(deps-ui-dev): bump rspec-rails (#14731)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (#14733)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -17907,7 +17912,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T12:15:11.547Z",
+      "verified_at": "2026-11-13T16:25:49.365Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31300,7 +31305,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
       "source_version": "hf-orcarouter-orcasaq-2-27b",
-      "content_hash": "0f683e98f5818c47f05bf5be788ef8e93e0c17bb50567b7766ba14e5d5297f4b",
+      "content_hash": "7bccaede06ed3cd6aee194f79157de103045c52ef198137ae5c7809ff280620d",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "promoted_rules": [
@@ -31363,7 +31368,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv45w2u2",
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4j68vm"
       ],
-      "verified_at": "2026-11-08T15:49:45.489Z",
+      "verified_at": "2026-11-13T16:26:01.106Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135899,8 +135904,8 @@
       "slug": "gauthierpiarrette-highball",
       "platform": "github",
       "source_url": "https://github.com/gauthierpiarrette/highball",
-      "source_version": "8aacc6b0",
-      "content_hash": "98e8be75d7aa7fd8c964e4c7b54f65b38329121371d5074da49807f98ee2a08f",
+      "source_version": "d8187e2a",
+      "content_hash": "e1d817ecf77b9bc98cdc66450546e6dd2b642b5c16b4bc710fa52c97b7c93a90",
       "dossier_path": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "promoted_rules": [
@@ -135912,6 +135917,11 @@
         {
           "number": null,
           "title": "A variable typed in quotes reaches Wine without them. No shell reads the environ",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "arm64-kk-wine11.18-r5: r4 with patches-arm64 0056 and 0057, the spatial audio pa",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -135940,7 +135950,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T05:40:43.082Z",
+      "verified_at": "2026-11-13T16:25:48.254Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -194220,6 +194230,150 @@
       "content_hash": "23fe798cba151daa94c88278c178ace489984b6c52fe649e3632ec9833134dae",
       "domain_letter": "G",
       "persisted_at": "2026-11-13T16:05:42.112Z"
+    },
+    "candidate_directive-arm64-kk-wine11-18-r5-r4-with-patches-arm64-0056-and-0057-the-spatial-audio-pa": {
+      "item_id": "candidate_directive-arm64-kk-wine11-18-r5-r4-with-patches-arm64-0056-and-0057-the-spatial-audio-pa",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W3M2-arm64-kk-wine11-18-r5-r4-with-patches-arm64-0056-and-0057-the-spatial-audio-pa.md",
+      "title": "arm64-kk-wine11.18-r5: r4 with patches-arm64 0056 and 0057, the spatial audio pa",
+      "repository": "gauthierpiarrette-highball-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7aa90a185872564d0afe46f38d69ac514986e9d47e07791d137341c250cbc28f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T16:26:52.882Z"
+    },
+    "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-architecture-intelligence-gauthierpiarrette-highball-.md",
+      "title": "Architecture Intelligence: gauthierpiarrette/highball Core Invariants",
+      "repository": "gauthierpiarrette/highball",
+      "source_version": "d8187e2a",
+      "content_hash": "50b046c9900c747a6f082824cf12dd5b5589b08dcbe9a9cc84361a4d9c0daeb0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T16:25:48.749Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/gauthierpiarrette-highball-verification-protocol-empirical-defect-shield-for-gau.md",
+      "title": "Verification Protocol: Empirical Defect Shield for gauthierpiarrette/highball",
+      "repository": "gauthierpiarrette/highball",
+      "source_version": "d8187e2a",
+      "content_hash": "05717a35ea3bff900fb3a937358efb1a4a26f74512615932c199728b9d423858",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:25:48.855Z"
+    },
+    "candidate_directive-build-deps-dev-bump-aquasec-trivy-from-0-76-1-to-0-76-2-in-docker-14733": {
+      "item_id": "candidate_directive-build-deps-dev-bump-aquasec-trivy-from-0-76-1-to-0-76-2-in-docker-14733",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W42Q-build-deps-dev-bump-aquasec-trivy-from-0-76-1-to-0-76-2-in-docker-14733.md",
+      "title": "build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (#14733)",
+      "repository": "gocd-gocd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a2bbb5502f0e6529e87a17f92e07200217ad117fd573eec048888d81138376cc",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-13T16:26:53.475Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
+      "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
+      "repository": "gocd/gocd",
+      "source_version": "f8f3d3e7",
+      "content_hash": "f911c4c407fd90210749a599e5441713ea89ea7e28318e2bfe6744827d57325f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T16:25:49.842Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
+      "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
+      "repository": "gocd/gocd",
+      "source_version": "f8f3d3e7",
+      "content_hash": "455f7219c3f11b2aeda2e54e972dbd425a986e32f69257c5aa3378c3565f6281",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:25:49.943Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-27b-research-knowledge-intelligence-orcarouter-orcasaq-2.md",
+      "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-27B Core Invariants",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "source_version": "hf-orcarouter-orcasaq-2-27b",
+      "content_hash": "414258617cf27834170394163e9fc778f48d81528cac5c945de582a1636517a8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T16:26:01.480Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-27b-learnings-research-knowledge-intelligence-hf-orcarou.md",
+      "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-27b-learnings Core Invariants",
+      "repository": "hf-orcarouter-orcasaq-2-27b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a4b0a45669c4044057c8c35427fe475e9f68d86db8be3d5e90016c62d3884eb1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T16:26:52.313Z"
+    },
+    "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gauthierpiarrette-highball-learnings-architecture-intelligence-gauthierpiarrette.md",
+      "title": "Architecture Intelligence: gauthierpiarrette-highball-learnings Core Invariants",
+      "repository": "gauthierpiarrette-highball-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3f4ddb6af247c1faf5ca93c5c90555409f998ae9daf0d378351c600d6908eb04",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T16:26:52.990Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball-lea": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gauthierpiarrette-highball-lea",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/gauthierpiarrette-highball-learnings-verification-protocol-empirical-defect-shie.md",
+      "title": "Verification Protocol: Empirical Defect Shield for gauthierpiarrette-highball-learnings",
+      "repository": "gauthierpiarrette-highball-learnings",
+      "source_version": "HEAD",
+      "content_hash": "104bbf839d42b40574f27d7ffbb78ab4e50fda37f3bd403ea309367b21774f0f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:26:53.103Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-gocd-gocd-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-learnings-technical-construction-intelligence-gocd-gocd-learnings-core.md",
+      "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
+      "repository": "gocd-gocd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "02b1f933131fdb56132a02032270904a39cb814cfa8506165332c7e931320c38",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T16:26:53.588Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/gocd-gocd-learnings-verification-protocol-empirical-defect-shield-for-gocd-gocd-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for gocd-gocd-learnings",
+      "repository": "gocd-gocd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "12112e3ddcbfb1bad75e6480a1de189ec27347f67a29eef321b07b2d84d7e4bc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T16:26:53.700Z"
     }
   },
   "aliases": {
@@ -200218,5 +200372,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9139
+  "total_items": 9151
 }

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:35:59.850Z",
+  "timestamp": "2026-11-13T16:26:52.732Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-gauthierpiarrette-highball-learnings",
+  "learning_id": "LEARN-EVO-gauthierpiarrette-highball-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gauthierpiarrette-highball-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:35:59.850Z`  
-> **Learning ID**: `LEARN-REEXTRACT-gauthierpiarrette-highball-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T16:26:52.732Z`  
+> **Learning ID**: `LEARN-EVO-gauthierpiarrette-highball-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source**: github ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
-> **Source Version**: `8aacc6b0`  
+> **Source Version**: `d8187e2a`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T05:40:41.970Z  
+> **Timestamp**: 2026-11-13T16:25:47.724Z  
 > **Learning ID**: `learn-github-gauthierpiarrette-highball`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gauthierpiarrette/highball](https://github.com/gauthierpiarrette/highball))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T05:40:41.964Z  
+> **Harvest Timestamp**: 2026-11-13T16:25:47.540Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Run Windows games on Apple Silicon — free, open source, with an open compatibility database that tells you what actually works.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2208 stars
+- **Stars / Engagement**: 2246 stars
 
 ---
 
@@ -1058,17 +1058,14 @@ for path in sys.argv[1:]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #659** (2026-11-06): **«Moon Mystery» no longer starts, crashes with every Engine & Mode**
-  *Symptoms*: ### What happened  Since positively reported #381 : it no longer suceeds to start  ```Error Couldn't start: "D:|SteamLibrary-Winisteamapps|common Mystery on the moon MoonMystery Binariest win641 MoonMystery-Win64-Shipping exeịi MoonMystery CreateProcess() returned 2. ```  <img width="400" height="259" alt="Image" src="https://github.com/user-attachments/assets/fe60e070-ac53-41bf-b1d4-a17b44dd467b" />  Tried different Engines & Modes – same error every time. Other (Steam) gums start & run properly, could be Game-specific.  ### Chip and macOS  Apple M5 Pro, macOS 27.2  ### Highball version  0.10.25  ### Log  ``` ~/Library/Application Support/Highball/logs/2026-11-05T202934Z-Games-steam.exe.log: # gin x64-crossover26.3-r29 bottle=Games renderer=dxvk # wine ~/Library/Application Support/Highball/bottles/Games/drive_c/Program Files (x86)/Steam/steam.exe -silent -applaunch 1933840 # sync=none winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/x64-crossover26.3-r29/frameworks/renderer/d9vk/wine:~/Library/Application Support/Highball/engines/x64-crossover26.3-r29/frameworks/renderer/dxvk/wine # WINEDLLOVERRIDES=dxgi,d3d9,d3d10core,d3d11=n,b;winemenubuilder.exe=d # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs # DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN=1 # DXMT_LOG_PATH=C:\highball\logs # MVK_CONFIG_LOG_LEVEL=2 #   dxvk.enableAsync = False # note: restar
+- **Issue #706** (2026-11-12): **Problems with Tomodachi Life Editor**
+  *Symptoms*: ### What happened  Note; this may be an issue with the editor itself and not the Highball emulator. I opened the exe file with highball and used Tomodachi Life Editor accordingly, selecting correct regions and using the 3ds editor via checkpoint correctly using a verified tutorial. After reloading my SD card into my 3ds, it read "Save data is corrupted and will be deleted." I am currently trying to restore my old save file through checkpoint by using the backup feature on Tomodachi Life Editor. I am unsure what went wrong in my beginning editing process that impacted my SD card, but I am doing everything I can to restore my unedited version of Tomodachi Life before using the editor.  ### Chip and macOS  Apple A18 Pro, macOS 26.6.2  ### Highball version  0.10.26  ### Log  ~/Library/Application Support/Highball/logs/2026-11-12T045822Z-Games-Tomodachi Life Save Editor.exe.log: # gin x64-sikarugir10.0_6-r28 bottle=Games renderer=dxmt # wine ~/Downloads/Tomodachi.Life.Save.Editor.5.1.0/Tomodachi Life Save Editor.exe # sync=msync winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/renderers/dxmt/wine:~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/frameworks/renderer/d9vk/wine # WINEDLLOVERRIDES=winemenubuilder.exe=d # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs # DXMT_LOG_PATH=C:\highball\logs # M
   **Post-Mortem & Fix Analysis**:
-  > Thanks. Error 2 means Windows found no file at that path. The starter MoonMystery.exe runs fine, then fails to open MoonMystery-Win64-Shipping.exe inside Binaries\Win64. The game hasn't been updated since December 2024, so the likely change is the move to D:.  Two things to check. In Steam, the game's Properties, Installed Files, Verify integrity of game files, which puts back a file a move left out. And if any folder on that path, the game's folder or one above it, is a Finder alias rather than a real folder, Wine can't go through it, while a symlink made with ln -s works. Tell me what you find and I'll take it from there.
-  > > Thanks. Error 2 means Windows found no file at that path. The starter MoonMystery.exe runs fine, then fails to open MoonMystery-Win64-Shipping.exe inside Binaries\Win64. The game hasn't been updated since December 2024, so the likely change is the move to D:.  Aye - you we're right, somehow the Game dir within /steamapps/ was as zombie, Game dir there with Folder structure, but most Game files actually missing. Steam file integrity fixed the issue!  <img width="847" height="381" alt="Image" src="https://github.com/user-attachments/assets/9256f678-888b-46fc-9fc0-14f9202f939a" />  P.s. Game runs like a charm even on 3200x1800 Fullscreen using Highball 0.10.26 x64-crossover26.3-r29 ! Only occassional lags due to Shaders loading, but generally 60FPS+ solid.
+  > Thanks for the report, and sorry about the save. The log shows the editor running for 80 seconds and closing normally with no errors, so it doesn't tell what went wrong with the file, and Highball has no way to check a 3DS save, so I can't test this one. If you backed the save up with Checkpoint before editing, that backup is still in Checkpoint's saves folder on the SD card and you can restore it from Checkpoint.
+  > How do I do that? I'm not completely sure if I edited the save or if I have two saves. Using checkpoint, I created a save, then imported the save into the editor, and hit "restore" on Checkpoint when finished. What exactly can I do to restore it from Checkpoint? I used https://www.instagram.com/reel/DV8pgMqCFUy/  for the tutorial.
 
-- **Issue #626** (2026-11-02): **VC++ not installing**
-  *Symptoms*: ### What happened  <img width="949" height="702" alt="Image" src="https://github.com/user-attachments/assets/f38af6f0-4d46-4e68-9b9d-cad67f9d8373" />  ### Chip and macOS  Apple M4, macOS 27.0.1  ### Highball version  0.10.23  ### Log  ~/Library/Application Support/Highball/logs/2026-11-02T153953Z-Games-steam.exe.log: # gin x64-sikarugir10.0_6-r28 bottle=Games renderer=dxmt # wine ~/Library/Application Support/Highball/bottles/Games/drive_c/Program Files (x86)/Steam/steam.exe # sync=none (bottle asks msync) winver=win7 dpi=96 dxvkAsync=false frameGen=off # audio out=48000 Hz # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/renderers/dxmt/wine:~/Library/Application Support/Highball/engines/x64-sikarugir10.0_6-r28/frameworks/renderer/d9vk/wine # WINEDLLOVERRIDES=winemenubuilder.exe=d # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs # DXMT_LOG_PATH=C:\highball\logs # MVK_CONFIG_LOG_LEVEL=2 #   dxvk.enableAsync = False … 1 lines … 0024:err:environ:init_peb starting L"C:\\Program Files (x86)\\Steam\\steam.exe" in experimental wow64 mode … 10 lines … 0254:err:environ:init_peb starting L"C:\\Program Files (x86)\\Steam\\bin\\gldriverquery.exe" in experimental wow64 mode 0254:err:module:import_dll Library SDL2.dll (which is needed by L"C:\\Program Files (x86)\\Steam\\bin\\gldriverquery.exe") not found 0254:err:module:loader_init Importing dlls for L"C:\\Program Files (x86)\\Steam\\bin\\gldrive
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the report. Your environment is set to Windows 7, and the current Visual C++ installer quits with an error on Windows 7. I reproduced it here, and the next version of Highball makes the installer see Windows 10 so it works either way. Until then, in the environment's settings set Windows version to Windows 10, then press Try again.
-  > Works, thx 
+- **Issue #697** (2026-11-11): **Detroit Become Human**
+  *Symptoms*: ### What happened  Detroit: Become Human on an M4 MacBook Air, 16GB RAM, Highball 0.10.27 beta, Wine 11 r31.  The game successfully completed shader compilation and entered gameplay on its first launch, but the display flickered severely. On subsequent launches, DetroitBecomeHuman.exe remains running at high CPU usage without a visible game window.  Restarting macOS and testing with the external monitor disconnected did not resolve the issue. A process sample showed the main thread waiting in Apple's AppKit event loop.  Could this be related to the missing fullscreen/window handling changes in the current Detroit fix?  ### Chip and macOS  Apple M4, macOS 27.2  ### Highball version  0.10.27  ### Log  ~/Library/Application Support/Highball/logs/2026-11-11T134227Z-Detroit - Become Human-DetroitBecomeHuman.exe.log: # gin x64-crossover26.3-r31 bottle=Detroit - Become Human renderer=dxmt # wine /Volumes/Windows/Robot/Detroit-Become-Human-AnkerGames/Detroit Become Human/DetroitBecomeHuman.exe # sync=msync winver=win10 dpi=96 dxvkAsync=false frameGen=off # audio out=96000 Hz (most games mix at 48000 Hz) # WINEDLLPATH_PREPEND=~/Library/Application Support/Highball/engines/x64-crossover26.3-r31/renderers/dxmt/wine # WINEDLLOVERRIDES=winemenubuilder.exe=d # CX_FWD_COMPAT_GL_CTX=1 # DXVK_CONFIG_FILE=C:\highball\dxvk.conf # DXVK_LOG_PATH=C:\highball\logs # DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN=1 # DXMT_LOG_PATH=C:\highball\logs # HB_MVK_LENIENT_INTERFACES=1 # MVK_CONFIG_LOG_LEVEL=2 # MVK_CON
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1085,70 +1082,506 @@ for path in sys.argv[1:]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d5af52ff` (2026-11-06)
-**Commit Message**: A variable typed in quotes reaches Wine without them. No shell reads the environment editor's values, so quotes around one went to the program as part of it, and macOS's text view turns typed quotes curly: a player's WINEDEBUG arrived as " loaddll” and Wine read no channel from it (highball-db#862). A value wrapped in one pair of quotes, straight or curly, now loses that pair; quotes inside a value stay (DXVK_CONFIG's customDeviceDesc="…"). (#654)
+### Incident Patch 1: `0c3a6a16` (2026-11-10)
+**Commit Message**: arm64-kk-wine11.18-r5: r4 with patches-arm64 0056 and 0057, the spatial audio pair Tx wrote for the Wine 11 line (highball#313), from the release engine-arm64-wine-11.18-20261108T132317Z-spatial-0056-0057 (build-arm64 run 42480524132, branch arm64-spatial-audio at 1dc6db7). A surround bed on a Mac's two-channel output lost everything but front left and right, so Forza Horizon 6 dropped the sounds behind the camera on headphones (highball#672); it now goes through AUSpatialMixer. Installed from that archive (sha256 6721b1f4, the same bytes as the public release) into a throwaway home on an M1 Pro with macOS 27.0: a test program's 7.1 and 7.1.4 float streams open, run their clock for 1.5 s and log 'rendered by AUSpatialMixer for built-in speakers on a 2-channel device', stereo keeps the old path. Every other file is r4's. Forza Horizon 6 was not run on r5, its route stays on r3. 93 manifest and engine tests pass.
 
-**File**: `Sources/HighballKit/EnvText.swift` (modified, +13/-1)
+**File**: `spike/engines/arm64-kk-wine11.18-r5.json` (added, +103/-0)
 ```diff
-@@ -19,14 +19,26 @@ public enum EnvText {
-             let parts = line.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false).map(String.init)
-             let key = parts.first?.trimmingCharacters(in: .whitespaces) ?? ""
-             if parts.count == 2, !key.isEmpty, key.range(of: "^[A-Za-z_][A-Za-z0-9_]*$", options: .regularExpression) != nil {
--                env[key] = parts[1]
-+                env[key] = unquoted(parts[1])
-             } else {
-                 ignored.append(line)
+@@ -0,0 +1,103 @@
++{
++  "$schema": "https://highball.app/schemas/engine-manifest/v0",
++  "id": "arm64-kk-wine11.18-r5",
++  "displayName": "Wine 11.18 native arm64 (preview, KosmicKrisp) r5",
++  "arch": "arm64",
++  "minMacOS": "27.0",
++  "requires": [],
++  "channel": "preview",
++  "direct3D9": "wined3d",
++  "notes": [
++    "r5 (2026-11-10): r4 with patches-arm64 0056 and 0057, the spatial audio pair Tx wrote for the Wine 11 line (highball#313). A game that plays a surround bed (5.1, 7.1, 7.1.4) on a Mac's two-channel output lost everything but front left and right, so Forza Horizon 6 dropped the sounds behind the camera on headphones (highball#672). The bed now goes through Apple's AUSpatialMixer, which renders it for the Mac's speakers, headphones or external speakers. HB_SPATIAL=speakers, headphones or external overrides that guess and HB_SPATIAL=0 turns the path off. Every other file is r4's. Checked on an M1 Pro with macOS 27.0: a 7.1 and a 7.1.4 stream from a test program open, run their clock and go through the mixer on the built-in speakers, stereo streams keep the old path. Forza Horizon 6 was not run on r5, its route stays on r3.",
++    "r4 (2026-11-04): r3 with fixes for games beyond Forza Horizon 6. Video: GStreamer's VideoToolbox plugin imports MoltenVK's vkGetMTLDeviceMVK, which the Khronos loader this line ships as libMoltenVK.dylib lacked, so the plugin never loaded, no H.264 video played and a game waiting on its intro video stayed black (ContractVille). The loader now carries that call (highball-engine kosmickrisp-arm64/mvk_compat.c). OpenGL: Wine 11.18 marked no extension in a legacy (before 3.0) context, so a game asking for framebuffer objects there got nothing; patches-arm64 0054 is the upstream fix by Rémi Bernon (1c2d909829c). 0053 gives a legacy context GL_ARB_ES2_compatibility's five calls, as the Wine 11 line's 0021 does. Paperback: The Game needed both. KosmicKrisp: highball patch 0008 gives a LINEAR image Metal cannot back with a buffer (several levels or layers, or 3D) a tiled texture with linear-looking subresource layouts, as MoltenVK did; Red Dead Redemption 2 aborted in Metal during its first load before, and now reaches its menu and the opening cutscene at 60 fps. Every other file is r3's: FEX with ineshd's 0034, vkd3d-proton and DXVK. On a base M4 with macOS 27.0 FNAF, Among Us, the Half-Life 2 demo, WHERE SAFETY ENDS, Bloodbreaker, Portal, Portal 2, Big Walk, The Last Flame, The Sims Legacy Collection, ContractVille and Paperback reach their menus. Forza Horizon 6 was not run on r4, its route stays on r3.",
++    "r3 (2026-11-03): r2 with FEX patch 0034 by ineshd. FEX patched an unaligned atomic in its code buffer without the MAP_JIT write permission the engine turns on, and Forza Horizon 6 crashed at xtajit64.dll+0x1177ac within a minute of a controller coming into use (highball#618). Every other archive is r2's. Tested by the contributor for 30 minutes with an Xbox controller on an M5; on an M4 here the engine boots and runs 32-bit and 64-bit programs.",
++    "r2 (2026-11-01): r1 with a KosmicKrisp build that carries highball patch 0007, every other archive the same. Encoder end barriers ask for Device visibility instead of ResourceAlias, and HB_KK_NO_UBO_ROBUST=1, which a recipe asks for, drops the bounds check on constant buffer reads. Forza Horizon 6's benchmark on a base M4 at 1080p, Very Low, FSR Quality: GPU time per frame from 26.7 ms to about 21 ms, 36 to 43 fps uncapped. A new driver build means the shader cache fills again on the first start.",
++    "r1 (2026-11-01): Forza Horizon 6's native route. Wine 11.18 with patches-arm64 through 0052, FEX 2610 with fex/patches through 0033, vkd3d-proton with renderers-arm64 through 0010, and KosmicKrisp (Mesa's Vulkan driver on Metal 4) with steamac's patches and kosmickrisp-arm64/highball in place of MoltenVK. A line of its own: Microsoft Flight Simulator 2024's engine and its offers do not move until a flight has run on these patches.",
++    "The Khronos loader is engine/lib/libMoltenVK.dylib, the name winevulkan opens, and VK_DRIVER_FILES points it at the driver in renderers/kosmickrisp. Steam's browser runs without Chromium's sandbox (appDefaults): with the game's emulator switches its renderer dies at once inside the sandbox and is relaunched for good, so the sign-in window never comes (measured 2026-11-01).",
++    "Known: a burst of stalls of several seconds in all, about half a minute into the first drive of a session on a warm shader cache, cause open. Measured only on a base M4 with 32 GB."
++  ],
++  "components": {
++    "wine": {
++      "kind": "engine",
++      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/engine-arm64-wine-11.18-20261108T132317Z-spatial-0056-0057/engine-arm64-wine-11.18-20261108T132317Z-spatial-0056-0057.tar.gz",
++      "size": 402959865,
++      "sha256": "6721b1f4ee2665283f7c16e4e0b3cf5737c454399fac3d74657fde181d148f33",
++      "extract": {
++        "into": "eng
+```
+
+---
+
+### Incident Patch 2: `639c2486` (2026-11-10)
+**Commit Message**: Uninstalling a GOG game removes only the files its install put there, as Steam does, and leaves what the player added beside it: a patched DLL, a mod, the Mac build Fallout CE wants in the game's folder (highball#652, udance4ever). Highball now lists an install's files in .highball-install-files when gogdl's download finishes (app and CLI) and again after setup, every file in the folder but what an earlier uninstall left there (.highball-left-files) and the download did not touch. An update adds what it changed. The status change time counts with the other dates, since Finder and unzip keep a file's old modification date and nothing sets a status change time back. The uninstall removes the listed files, the install's records at the top (goggame-, unins, .highball-) and the folders left empty (Finder's .DS_Store aside), never through a link or a .. path, and logs how many files stay. An install from before this (no list) or an uninstall that deletes the saves too removes the whole folder as before. Highball's records stay out of the kept backup. GOGUninstallFilesTests (6) and the 113 GOG tests pass.
+
+**File**: `Sources/HighballApp/AppState.swift` (modified, +18/-1)
+```diff
+@@ -4591,14 +4591,19 @@ final class AppState {
+                 if status != 0 { appendLog("\(item.title): the shared Windows runtimes did not all download; the game may ask for them") }
+             }
+             stage = String(format: L("Downloading %@"), item.title)
++            let downloadStart = Date()
+             try await gogDownload(title: item.title, command: "gogdl download", completed: { store.downloadCompleted(id) }) { control, onLine in
+                 try store.install(id, into: bottle, language: language, control: control, onLine: onLine)
+             }
+             busyProgress = nil; transferRate = nil
+             refreshGOGInstalls()
+             if let game = gogInstalledByBottle[bottle.name]?.first(where: { $0.id == id }) {
+                 store.keepManifest(for: game)
++                // The install's own files, so an uninstall leaves what the player adds (#652);
++                // again after setup, which can write into the folder too.
++                GOGStore.recordInstallFiles(for: game, downloadStarted: downloadStart)
+                 try await gogRunSetup(game, title: item.title, in: bottle, language: language)
++                GOGStore.recordInstallFiles(for: game, downloadStarted: downloadStart)
+             }
+             await MainActor.run { self.gogRefresh() }
+         }
+@@ -4851,9 +4856,11 @@ final class AppState {
+             }
+             busyProgress = nil; transferRate = nil
+             store.keepManifest(for: game)
++            GOGStore.recordUpdatedFiles(for: game, updateStarted: start)
+             refreshGOGInstalls()
+             if let fresh = gogInstalledByBottle[bottle.name]?.first(where: { $0.id == game.id }) {
+                 try await gogRunSetup(fresh, title: item.title, in: bottle, language: language)
++                GOGStore.recordUpdatedFiles(for: fresh, updateStarted: start)
              }
          }
-         return Parsed(environment: env, ignored: ignored)
      }
- 
-+    /// No shell reads these values, so quotes typed around one reached the program as part of it.
-+    /// A value wrapped in one pair of quotes, straight or the curly ones macOS's text view types
-+    /// for them, is taken without that pair: a player's WINEDEBUG arrived as `" loaddll”` and Wine
-+    /// read no channel from it (highball-db#862). Quotes inside a value stay, as in DXVK_CONFIG's
-+    /// customDeviceDesc="…".
-+    static func unquoted(_ value: String) -> String {
-+        let quotes: Set<Character> = ["\"", "'", "\u{201C}", "\u{201D}", "\u{201E}", "\u{2018}", "\u{2019}"]
-+        guard value.count >= 2, let first = value.first, let last = value.last,
-+              quotes.contains(first), quotes.contains(last) else { return value }
-+        return String(value.dropFirst().dropLast()).trimmingCharacters(in: .whitespaces)
+@@ -5572,7 +5579,17 @@ final class AppState {
+             if FileManager.default.fileExists(atPath: game.folder.path) {
+                 // One call with no progress of its own, and a big game is tens of thousands of files.
+                 stage = L("Deleting the game's files")
+-                try await Task.detached { try FileManager.default.removeItem(at: game.folder) }.value
++                // An install Highball listed loses only its own files, as on Steam: a mod, a patch or a
++                // Mac build the player put beside it stays (#652). Asked to delete the saves too, or
++                // with no list (installed before 0.10.28), the whole folder goes as before.
++                let left = deleteSaves ? nil : await Task.detached { GOGStore.removeInstallFiles(of: game) }.value
++                if let left {
++                    if !left.isEmpty {
++                        appendLog("\(title): \(left.count) file\(left.count == 1 ? "" : "s") the install didn't put there stay in \(game.folder.path)")
++                    }
++                } else {
++                    try await Task.detached { try FileManager.default.removeItem(at: game.folder) }.value
++                }
+             }
+             let elsewhere = GOGStore.otherInstallsRemain(id, removingFrom: bottle.name, installedByBottle: gogInstalledByBottle,
+                                                          macInstalls: Set(gogMacInstalled.keys))
+```
+
+**File**: `Sources/HighballKit/GOGLibrary.swift` (modified, +133/-0)
+```diff
+@@ -627,3 +627,136 @@ extension GOGStore {
+         save(history, for: game, driveC: driveC)
+     }
+ }
++
++// MARK: The install's own files (an uninstall removes those and nothing else)
++
++extension GOGStore {
++    /// The files gogdl put in an install's folder, one path below the folder per line, kept in
++    /// the folder like the manifest. An uninstall removes these and leaves what the player or the
++    /// game added (a mod, a patch, a Mac build the game wants beside it), as Steam does (highball#652).
++    static func installFilesRecord(_ folder: URL) -> URL { folder.appending(path: ".highball-install-files") }
++
++    /// The files an uninstall left in the folder (the player's or the game's), so a later download
++    /// into the same folder does not count them as its own.
++    static func leftFilesRecord(_ folder: URL) -> URL { folder.appending(path: ".highball-left-files") }
++
++    /// After a finished download that began at `start`: lists every file in the game's folder as
++    /// the install's, all of it gogdl's, a download stopped and resumed included. The exception is
++    /// what an earlier uninstall left there (leftFilesRecord) and the download did not touch. The
++    /// status change time counts as well as the modification and creation dates: Finder and unzip
++    /// keep a file's old modification date, but nothing sets a status change time back.
++    /// Links are listed, never followed.
++    public static func recordInstallFiles(for game: InstalledGame, downloadStarted start: Date) {
++        recordInstallFiles(in: game.folder, downloadStarted: start)
 +    }
 +
-     public static func text(for environment: [String: String]) -> String {
-         environment.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value)" }.joined(separator: "\n")
++    static func recordInstallFiles(in folder: URL, downloadStarted start: Date) {
++        let since = start.addingTimeInterval(-2)
++        let left = Set(readList(leftFilesRecord(folder)) ?? [])
++        let listed = filesWithDates(in: folder).filter { !left.contains($0.0) || $0.1 >= since }.map(\.0)
++        writeList(listed, to: installFilesRecord(folder))
++        try? FileManager.default.removeItem(at: leftFilesRecord(folder))
++    }
++
++    /// After an update that began at `start`: adds what changed in the folder since then. An
++    /// install with no list keeps none, since the update's files alone are not the whole game.
++    public static func recordUpdatedFiles(for game: InstalledGame, updateStarted start: Date) {
++        recordUpdatedFiles(in: game.folder, updateStarted: start)
++    }
++
++    static func recordUpdatedFiles(in folder: URL, updateStarted start: Date) {
++        guard let old = installFiles(folder) else { return }
++        let since = start.addingTimeInterval(-2)
++        writeList(old + filesWithDates(in: folder).filter { $0.1 >= since }.map(\.0), to: installFilesRecord(folder))
++    }
++
++    /// The install's list, nil when it has none (installed before Highball kept one).
++    static func installFiles(_ folder: URL) -> [String]? { readList(installFilesRecord(folder)) }
++
++    private static func readList(_ file: URL) -> [String]? {
++        guard let text = try? String(contentsOf: file, encoding: .utf8) else { return nil }
++        return text.split(separator: "\n").map(String.init).filter { !$0.isEmpty }
++    }
++
++    private static func writeList(_ paths: [String], to file: URL) {
++        let text = Set(paths).filter { !$0.hasPrefix(".highball-") }.sorted().joined(separator: "\n") + "\n"
++        try? Data(text.utf8).write(to: file, options: .atomic)
++    }
++
++    /// Every file and link below `folder`, by its path below it, with the latest of its dates.
++    /// Folders behind a link are not entered.
++    static func filesWithDates(in folder: URL) -> [(String, Date)] {
++        let keys: [URLResourceKey] = [.isDirectoryKey, .isSymbolicLinkKey, .contentModificationDateKey,
++                                      .attributeModificationDateKey, .creationDateKey]
++        guard let walk = FileManager.default.enumerator(at: folder, includingPropertiesForKeys: keys) else { return [] }
++        let top = folder.standardizedFileURL.path + "/"
++        var found: [(String, Date)] = []
++        for case let url as URL in walk {
++            guard let v = try? url.resourceValues(forKeys: Set(keys)) else { continue }
++            if v.isDirectory == true && v.isSymbolicLink != true { continue }
++            let path = url.standardizedFileURL.path
++            guard path.hasPrefix(top) else { continue }
++            let dates = [v.contentModificationDate, v.attributeModificationDate, v.creationDate].compactMap { $0 }
++            found.append((String(path.dropFirst(top.count)), dates.max() ?? .distantPast))
++        }
++        return found
++    }
++
++    /// Uninstall for an install with a list: removes the listed files and the install's records at
++    /// the top of the folder (goggame-<id>.info, unins*, Highball's .highball-* files), then the
++    /// folders left empty, the game's folder too when nothing is left. Returns the files that stay,
++    /// and lists them in the folder for a later download (leftFile
+```
+
+**File**: `Sources/HighballKit/GOGSaves.swift` (modified, +5/-4)
+```diff
+@@ -365,15 +365,16 @@ public struct GOGSaves: Sendable {
+         GOGStore.history(for: game, driveC: driveC).firstSetup != nil
+     }
+ 
+-    /// The uninstaller's and GOG's own records at the top of the game's folder (unins000.dat,
+-    /// goggame-<id>.info, …): written by the install, not the game, and putting an old one back
+-    /// into a new install would break its uninstaller.
++    /// The uninstaller's, GOG's and Highball's own records at the top of the game's folder
++    /// (unins000.dat, goggame-<id>.info, .highball-install-files, …): written by the install, not
++    /// the game, and putting an old one back into a new install would break its uninstaller or
++    /// hand it the old install's file list.
+     static func isInstallerRecord(_ path: String, in top: String) -> Bool {
+         guard path.hasPrefix(top) else { return false }
+         let rest = path.dropFirst(top.count)
+         guard !rest.contains("/") else { return false }
+         let name = rest.lowercased()
+-        return name.hasPrefix("unins") || name.hasPrefix("goggame-")
++        return name.hasPrefix("unins") || name.hasPrefix("goggame-") || name.hasPrefix(".highball-")
+     }
+ 
+     /// How many files a backup holds and their size, for the log.
+```
+
+**File**: `Sources/highball/main.swift` (modified, +2/-0)
+```diff
+@@ -807,6 +807,7 @@ struct GOG: AsyncParsableCommand {
+             let info = try store.info(id)
+             let language = GOGStore.language(for: info.languages)
+             if !info.dependencies.isEmpty { _ = try? store.downloadRedists(info.dependencies) { print($0) } }
++            let downloadStart = Date()
+             let status = try store.install(id, into: b, language: language) { line in
+                 if !line.contains("[PROGRESS]") || line.contains("= Progress:") { print(line) }
+             }
+@@ -818,6 +819,7 @@ struct GOG: AsyncParsableCommand {
+             try await store.runSetup(game, language: language, runner: runner,
+                                      onStep: { n, total, label in print("setup \(n)/\(total): \(label)") },
+                                      onFailure: { label, code in print("setup: \(label) ended with code \(code); carrying on") })
++            GOGStore.recordInstallFiles(for: game, downloadStarted: downloadStart)   // so the app's uninstall keeps what the player adds (#652)
+             print("installed \(game.title) into \(b.name): \(game.folder.path)")
+         }
      }
 ```
 
-**File**: `Tests/HighballKitTests/EnvTextTests.swift` (modified, +11/-0)
+**File**: `Tests/HighballKitTests/GOGUninstallFilesTests.swift` (added, +105/-0)
 ```diff
-@@ -13,6 +13,17 @@ final class EnvTextTests: XCTestCase {
-         XCTAssertEqual(EnvText.parse("DXMT_METAL_HUD=").environment, ["DXMT_METAL_HUD": ""])
-     }
- 
-+    /// highball-db#862: macOS turned the typed quotes curly, and the value reached Wine with them.
-+    func testAValueInOnePairOfQuotesLosesThem() {
-+        let p = EnvText.parse("WINEDEBUG=\" loaddll\u{201D}\nA='x y'\nB=\u{201C}+seh\u{201D}\nC=dxgi.customDeviceDesc=\"Intel(R) Arc\"\nD=\"\nE=plain")
-+        XCTAssertEqual(p.environment["WINEDEBUG"], "loaddll")
-+        XCTAssertEqual(p.environment["A"], "x y")
-+        XCTAssertEqual(p.environment["B"], "+seh")
-+        XCTAssertEqual(p.environment["C"], "dxgi.customDeviceDesc=\"Intel(R) Arc\"", "quotes inside a value stay")
-+        XCTAssertEqual(p.environment["D"], "\"", "a lone quote is not a pair")
-+        XCTAssertEqual(p.environment["E"], "plain")
+@@ -0,0 +1,105 @@
++import XCTest
++@testable import HighballKit
++
++/// An uninstall removes the files the install put there and leaves what the player added (highball#652).
++final class GOGUninstallFilesTests: XCTestCase {
++    var dir: URL!
++    var game: URL { dir.appending(path: "drive_c/GOG Games/Gunslugs", directoryHint: .isDirectory) }
++    let fm = FileManager.default
++
++    override func setUpWithError() throws {
++        dir = fm.temporaryDirectory.appending(path: "gog-uninstall-\(UUID().uuidString)", directoryHint: .isDirectory)
++        try fm.createDirectory(at: game, withIntermediateDirectories: true)
 +    }
 +
-     func testRoundTrip() {
-         let env = ["B": "2", "A": "1"]
-         XCTAssertEqual(EnvText.text(for: env), "A=1\nB=2")
++    override func tearDownWithError() throws { try? fm.removeItem(at: dir) }
++
++    func write(_ path: String, in folder: URL? = nil, modified: Date? = nil) throws {
++        let url = (folder ?? game).appending(path: path)
++        try fm.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
++        try Data(path.utf8).write(to: url)
++        if let modified { try fm.setAttributes([.modificationDate: modified, .creationDate: modified], ofItemAtPath: url.path) }
++    }
++
++    func exists(_ path: String) -> Bool { fm.fileExists(atPath: game.appending(path: path).path) }
++
++    func testUninstallRemovesTheInstallsFilesAndKeepsThePlayers() throws {
++        try write("Gunslugs.exe"); try write("data/levels/1.dat"); try write("data/sound/a.ogg")
++        try write("goggame-1234.info"); try write(".highball-gogdl-manifest")
++        GOGStore.recordInstallFiles(in: game, downloadStarted: Date())
++        // After the install: a patched DLL from a zip keeps its 2001 date, an app bundle copied by
++        // Finder keeps its own, and the game writes a config.
++        let old = Date(timeIntervalSince1970: 1_000_000_000)
++        try write("patch/d3d9.dll", modified: old)
++        try write("Fallout CE.app/Contents/MacOS/fallout-ce", modified: old)
++        try write("data/levels/user.cfg")
++        try write("data/sound/.DS_Store")
++
++        let left = try XCTUnwrap(GOGStore.removeInstallFiles(in: game))
++        XCTAssertFalse(exists("Gunslugs.exe")); XCTAssertFalse(exists("data/levels/1.dat"))
++        XCTAssertFalse(exists("goggame-1234.info")); XCTAssertFalse(exists(".highball-gogdl-manifest"))
++        XCTAssertFalse(exists(".highball-install-files"))
++        XCTAssertFalse(exists("data/sound"), "a folder left with only Finder's .DS_Store goes")
++        XCTAssertTrue(exists("patch/d3d9.dll")); XCTAssertTrue(exists("Fallout CE.app/Contents/MacOS/fallout-ce"))
++        XCTAssertTrue(exists("data/levels/user.cfg"))
++        XCTAssertEqual(Set(left.map(\.lastPathComponent)), ["d3d9.dll", "fallout-ce", "user.cfg"])
++        XCTAssertEqual(GOGStore.installFiles(game), nil)
++    }
++
++    func testAFolderWithNothingAddedIsRemovedWhole() throws {
++        try write("Gunslugs.exe"); try write("data/1.dat"); try write("goggame-1234.info")
++        GOGStore.recordInstallFiles(in: game, downloadStarted: Date())
++        XCTAssertEqual(GOGStore.removeInstallFiles(in: game), [])
++        XCTAssertFalse(fm.fileExists(atPath: game.path))
++    }
++
++    func testWithoutAListNothingIsTouched() throws {
++        try write("Gunslugs.exe")
++        XCTAssertNil(GOGStore.removeInstallFiles(in: game))
++        XCTAssertTrue(exists("Gunslugs.exe"))
++    }
++
++    func testAReinstallDoesNotClaimWhatTheLastUninstallLeft() throws {
++        try write("Gunslugs.exe"); try write("goggame-1234.info")
++        GOGStore.recordInstallFiles(in: game, downloadStarted: Date())
++        try write("mods/big.pak"); try write("notes.txt")
++        _ = GOGStore.removeInstallFiles(in: game)
++        XCTAssertTrue(exists(".highball-left-files"))
++        // A later download into the same folder rewrites notes.txt (the game ships one too) but not the mod.
++        let later = Date().addingTimeInterval(60)
++        try write("Gunslugs.exe"); try write("goggame-1234.info")
++        try fm.setAttributes([.modificationDate: later.addingTimeInterval(5)], ofItemAtPath: game.appending(path: "notes.txt").path)
++        GOGStore.recordInstallFiles(in: game, downloadStarted: later)
++        XCTAssertEqual(Set(try XCTUnwrap(GOGStore.installFiles(game))), ["Gunslugs.exe", "goggame-1234.info", "notes.txt"])
++        XCTAssertFalse(exists(".highball-left-files"))
++        _ = GOGStore.removeInstallFiles(in: game)
++        XCTAssertTrue(exists("mods/big.pak")); XCTAssertFalse(exists("notes.txt"))
++    }
++
++    func testAnUpdateAddsWhatItChangedAndStartsNoList() throws {
++        try write("Gunslugs.exe")
++        let later = Date().addingTimeInterval(60)
++        GOGStore.recordUpdatedFiles(in: game, updateStarted: later)
++        XCTAssertNil(GOGStore.installFiles(game), "an install from before the lists keeps none")
++
++        GOGStore.recordInstallFiles(in: game, downloadStarted: Date())
++        try write("added-by-player.txt")
++        try write("data/new-in-patch.dat", modified: later.addingTimeInterval(5))
++
+```
+
+---
+
+### Incident Patch 3: `203928f1` (2026-11-12)
+**Commit Message**: Wine 11 engines r32 and r33: r30 and r31 with one rebuilt Wine (highball-engine run 43188180198, PR #34, sha256 94936e0d). The Wine is r31's source and series plus patch 0030, gdi32 exporting D3DKMTSetProcessSchedulingPriorityClass, which Steam's client service imports and whose absence made Wine end the service (#699), and its Unix side links no Homebrew paths: winegstreamer.so's /usr/local/opt names loaded Intel Homebrew's GLib and GStreamer beside the frameworks' on Macs that have them, and GLib broke in Steam's web helper (#698). Every other archive is the base's. r33 sits above r32 so plain Wine 11 pins land on D3DMetal 3, as before. Checked on the M1 Pro in a throwaway home: an H.264 Media Foundation test, the D3DKMT call from 64 and 32 bits, and Steam's web helpers for 100 s. 865 tests pass.
+
+**File**: `Tests/HighballKitTests/BundledEngineTests.swift` (modified, +29/-5)
+```diff
+@@ -101,19 +101,20 @@ final class BundledEngineTests: XCTestCase {
+         }
+         XCTAssertEqual(try one("x64-crossover26.3-r20").components["wine"]?.sha256, try one("x64-crossover26.3-r21").components["wine"]?.sha256,
+                        "one Wine build behind both, downloaded once")
+-        // Every older plain Wine 11 pin is offered the newest plain revision on macOS 27 (r31 since
+-        // the D3DMetal 4 line moved to r30, below), never a D3DMetal 4 one.
++        // Every older plain Wine 11 pin is offered the newest plain revision on macOS 27 (r33 since
++        // the D3DMetal 4 line moved to r32, below), never a D3DMetal 4 one.
+         for pin in ["x64-crossover26.3-r5", "x64-crossover26.3-r7", "x64-crossover26.3-r8", "x64-crossover26.3-r9", "x64-crossover26.3-r15", "x64-crossover26.3-r19",
+-                    "x64-crossover26.3-r21", "x64-crossover26.3-r23", "x64-crossover26.3-r25", "x64-crossover26.3-r27"] {
++                    "x64-crossover26.3-r21", "x64-crossover26.3-r23", "x64-crossover26.3-r25", "x64-crossover26.3-r27",
++                    "x64-crossover26.3-r29", "x64-crossover26.3-r31"] {
+             let wanted = try one(pin)
+             let offered = all.filter { EngineManifest.satisfies(current: $0, wanted: wanted) && $0.runs(onMacOS: "27.0") }
+                 .max { (EngineManifest.revision(of: $0.id) ?? 0) < (EngineManifest.revision(of: $1.id) ?? 0) }
+-            XCTAssertEqual(offered?.id, "x64-crossover26.3-r31", "a pin on \(pin) must get the newest D3DMetal 3 revision")
++            XCTAssertEqual(offered?.id, "x64-crossover26.3-r33", "a pin on \(pin) must get the newest D3DMetal 3 revision")
+         }
+         let forzaPin = try one("x64-crossover26.3-r18")
+         let forOffer = all.filter { EngineManifest.satisfies(current: $0, wanted: forzaPin) && $0.runs(onMacOS: "27.0") }
+             .max { (EngineManifest.revision(of: $0.id) ?? 0) < (EngineManifest.revision(of: $1.id) ?? 0) }
+-        XCTAssertEqual(forOffer?.id, "x64-crossover26.3-r30", "Forza Horizon 6's pin gets the newest D3DMetal 4 revision")
++        XCTAssertEqual(forOffer?.id, "x64-crossover26.3-r32", "Forza Horizon 6's pin gets the newest D3DMetal 4 revision")
+         XCTAssertFalse(EngineManifest.satisfies(current: try one("x64-crossover26.3-r21"), wanted: forzaPin), "r21 lacks D3DMetal 4")
+     }
+ 
+@@ -260,6 +261,29 @@ final class BundledEngineTests: XCTestCase {
+         XCTAssertFalse(EngineManifest.satisfies(current: r31, wanted: try one("x64-crossover26.3-r18")), "r31 lacks D3DMetal 4")
+     }
+ 
++    /// r32 and r33 are r30 and r31 with one rebuilt Wine: patch 0030 (gdi32 exports
++    /// D3DKMTSetProcessSchedulingPriorityClass for Steam's client service, highball#699) and a Unix side
++    /// with no Homebrew paths (highball#698). Every other archive is the base's, so only Wine downloads.
++    func testR32AndR33AreR30AndR31WithTheNewWine() throws {
++        let all = try manifests()
++        func one(_ id: String) throws -> EngineManifest { try XCTUnwrap(all.first { $0.id == id }, "\(id) missing") }
++        for (old, new) in [("x64-crossover26.3-r30", "x64-crossover26.3-r32"), ("x64-crossover26.3-r31", "x64-crossover26.3-r33")] {
++            let o = try one(old), n = try one(new)
++            XCTAssertEqual(Set(n.components.keys), Set(o.components.keys), "\(new) has \(old)'s components")
++            for (name, c) in o.components where name != "wine" {
++                XCTAssertEqual(n.components[name]?.sha256, c.sha256, "\(new)/\(name) must be \(old)'s, only Wine is rebuilt")
++            }
++            XCTAssertNotEqual(n.components["wine"]?.sha256, o.components["wine"]?.sha256, "\(new) carries the rebuilt Wine")
++            XCTAssertTrue(n.components["wine"]?.url.absoluteString.hasPrefix("https://github.com/gauthierpiarrette/highball-engine/releases/download/engine-wine-11.0-") == true)
++            XCTAssertEqual(n.minMacOS, o.minMacOS)
++            XCTAssertEqual(n.baseEnv, o.baseEnv)
++        }
++        let r32 = try one("x64-crossover26.3-r32"), r33 = try one("x64-crossover26.3-r33")
++        XCTAssertEqual(r32.components["wine"]?.sha256, r33.components["wine"]?.sha256, "one Wine build behind both, downloaded once")
++        XCTAssertTrue(EngineManifest.satisfies(current: r32, wanted: try one("x64-crossover26.3-r18")), "r32 carries D3DMetal 4")
++        XCTAssertFalse(EngineManifest.satisfies(current: r33, wanted: try one("x64-crossover26.3-r18")), "r33 lacks D3DMetal 4")
++    }
++
+     /// Frame generation left Highball on 2026-09-27 at its author's request (itsOwen's lsfg-metal,
+     /// highball#171): no engine may ship the component any more. The revisions since are their
+     /// bases (r5 on the main line, r6 on the GPTK 4 line) with DXMT swapped and one file added.
+```
+
+**File**: `spike/engines/x64-crossover26.3-r32.json` (added, +200/-0)
+```diff
+@@ -0,0 +1,200 @@
++{
++  "$schema": "https://highball.app/schemas/engine-manifest/v0",
++  "arch": "x86_64",
++  "baseEnv": {
++    "DYLD_FALLBACK_FRAMEWORK_PATH": "${frameworks}",
++    "DYLD_FALLBACK_LIBRARY_PATH": "${frameworks}:${frameworks}/GStreamer.framework/Versions/1.0/lib",
++    "GST_PLUGIN_PATH": "${frameworks}/GStreamer.framework/Versions/1.0/lib/gstreamer-1.0",
++    "WINEDEBUG": "fixme-all",
++    "DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN": "1",
++    "D3DM_MTL4": "0"
++  },
++  "components": {
++    "d3dmetal-tsshim": {
++      "extract": {
++        "into": "renderers/d3dmetal-tsshim/wine",
++        "subpath": "renderers/d3dmetal-tsshim/wine"
++      },
++      "kind": "renderer",
++      "layout": [
++        "x86_64-windows/d3d12.dll"
++      ],
++      "license": "MIT",
++      "note": "A d3d12.dll in front of D3DMetal's that serves DirectX 12 timestamp queries (D3DMetal 3.0 resolves them to zero at a reported 60 Hz). Exports carry the ordinals D3DMetal 4.0 beta 3 uses (D3D12CreateDevice at 101, D3D12GetInterface at 109, the two Serialize calls at 110 and 111), so games that bind d3d12 imports by ordinal load through it. Kill switch HB_D3D12_TSSHIM=0 idles the patches; the DLL stays in front. HB_TSSHIM_ATOMIC64=1 in a game's variables answers yes to OPTIONS11's 64-bit atomics on descriptor heap resources, which D3DMetal 3 answers no to and Capcom's RE Engine requires (opt-in, for a game's fix to set). Input layouts that place elements with D3D12_APPEND_ALIGNED_ELEMENT reach D3DMetal with those offsets written out, which D3DMetal 4.0 beta 2 and beta 3 get wrong (HB_TSSHIM_APPEND_OFFSETS=0 passes them through). D3D12GetInterface is passed through, and a device factory it returns gets its CreateDevice wrapped so those devices are patched too. Built for beta 3 only: older D3DMetal numbers the Serialize calls 109 and 110. Source: spike/tsshim, Scripts/build-tsshim.sh.",
++      "order": 1,
++      "sha256": "30fccd4ea8f88ad55d44e46b2ac943ad633b2c90fd6a56774294573062ae1259",
++      "size": 52852,
++      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/d3dmetal-tsshim-20261020/d3dmetal-tsshim-20261020.tar.xz",
++      "version": "20261020"
++    },
++    "dxmt": {
++      "extract": {
++        "into": "renderers/dxmt/wine",
++        "subpath": "highball"
++      },
++      "kind": "renderer",
++      "license": "MIT (Highball branch of DXMT: SwapDeviceContextState, cross-process opt-in)",
++      "sha256": "96feaf5d98d3c6cdc3edea9503e2891d435df8d5bfdf7d3f6998a56ec62bbd58",
++      "size": 18923969,
++      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/dxmt-highball-20260930T161516Z-a444716/dxmt-highball-20260930T161516Z-a444716.tar.gz",
++      "note": "DXMT from Highball's fork (gauthierpiarrette/dxmt, branch highball-20260928 at 5c50790): upstream main of 2026-09-16 (v0.80 plus five months of upstream work, among it keyed-mutex and shared-resource support and DXGI functions Steam's overlay can hook) plus four Highball changes: cross-process swapchains behind DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN (off by default), SwapDeviceContextState implemented instead of aborting, 2D textures answering IDXGISurface, and the one that matters on this Wine: a shared texture with no D3DKMT device behind it is created as a private one, with one error line, instead of failing the game. On this Wine the driver assigns GPU LUIDs of its own, so DXMT's lookup of its adapter fails (the build also tries the primary display's name, which fails here too) and there is never a D3DKMT device; before this build every shared texture then died at creation. This revision's DXMT is that branch plus a444716 (branch highball-20260930): the encoding context's Metal device is declared before the command helpers whose constructors build pipelines through it. Declared after them it was still uninitialised memory there, and a game could die at start in newComputePipelineStateWithDescriptor sent to a garbage object: Among Us's 64-bit build did in 8 of 12 launches on r13, and in none of 12 with this build. The bug is in upstream DXMT too."
++    },
++    "moltenvk": {
++      "extract": {
++        "into": "frameworks/libMoltenVK.dylib",
++        "subpath": "libMoltenVK.dylib"
++      },
++      "kind": "runtime",
++      "license": "Apache-2.0",
++      "note": "MoltenVK 1.4.2 rebuilt with three Highball patches (spike/patches/moltenvk-shadow-import.patch, moltenvk-linear-fallback.patch and moltenvk-shadow-readback.patch, Scripts/build-moltenvk.sh). Shadow import is off unless a launch sets MVK_SHADOW_IMPORT=1 (32-bit native-Vulkan games such as The Sims Legacy Collection). Linear fallback is always on: a linear-tiled image that Metal cannot back with linear memory (3D, mipmapped or array images) is created with optimal tiling instead of failing vkCreateImage, which is what takes Red Dead Redemption 2 from an exit at 98 per cent to the main menu and the story. Shadow readback (highball#283) copies what the GPU writes into 
+```
+
+**File**: `spike/engines/x64-crossover26.3-r33.json` (added, +178/-0)
+```diff
+@@ -0,0 +1,178 @@
++{
++  "$schema": "https://highball.app/schemas/engine-manifest/v0",
++  "arch": "x86_64",
++  "baseEnv": {
++    "DYLD_FALLBACK_FRAMEWORK_PATH": "${frameworks}",
++    "DYLD_FALLBACK_LIBRARY_PATH": "${frameworks}:${frameworks}/GStreamer.framework/Versions/1.0/lib",
++    "GST_PLUGIN_PATH": "${frameworks}/GStreamer.framework/Versions/1.0/lib/gstreamer-1.0",
++    "WINEDEBUG": "fixme-all",
++    "DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN": "1"
++  },
++  "components": {
++    "d3dmetal-tsshim": {
++      "extract": {
++        "into": "renderers/d3dmetal-tsshim/wine",
++        "subpath": "renderers/d3dmetal-tsshim/wine"
++      },
++      "kind": "renderer",
++      "layout": [
++        "x86_64-windows/d3d12.dll"
++      ],
++      "license": "MIT",
++      "note": "A d3d12.dll in front of D3DMetal's that serves DirectX 12 timestamp queries (D3DMetal 3.0 resolves them to zero at a reported 60 Hz). Exports carry Microsoft's d3d12 ordinals (D3D12CreateDevice at 101), which D3DMetal mirrors, so games that bind d3d12 imports by ordinal load through it. Kill switch HB_D3D12_TSSHIM=0 idles the patches; the DLL stays in front. HB_TSSHIM_ATOMIC64=1 in a game's variables answers yes to OPTIONS11's 64-bit atomics on descriptor heap resources, which D3DMetal 3 answers no to and Capcom's RE Engine requires (opt-in, for a game's fix to set). Source: spike/tsshim, Scripts/build-tsshim.sh.",
++      "order": 1,
++      "sha256": "5906fd46813e0cbe5e59909f77fd86344768ea8c07babe60cf4d8bbad1d0d00a",
++      "size": 50532,
++      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/d3dmetal-tsshim-20261014/d3dmetal-tsshim-20261014.tar.xz",
++      "version": "20261014"
++    },
++    "dxmt": {
++      "extract": {
++        "into": "renderers/dxmt/wine",
++        "subpath": "highball"
++      },
++      "kind": "renderer",
++      "license": "MIT (Highball branch of DXMT: SwapDeviceContextState, cross-process opt-in)",
++      "sha256": "96feaf5d98d3c6cdc3edea9503e2891d435df8d5bfdf7d3f6998a56ec62bbd58",
++      "size": 18923969,
++      "url": "https://github.com/gauthierpiarrette/highball-engine/releases/download/dxmt-highball-20260930T161516Z-a444716/dxmt-highball-20260930T161516Z-a444716.tar.gz",
++      "note": "DXMT from Highball's fork (gauthierpiarrette/dxmt, branch highball-20260928 at 5c50790): upstream main of 2026-09-16 (v0.80 plus five months of upstream work, among it keyed-mutex and shared-resource support and DXGI functions Steam's overlay can hook) plus four Highball changes: cross-process swapchains behind DXMT_ALLOW_CROSS_PROCESS_SWAPCHAIN (off by default), SwapDeviceContextState implemented instead of aborting, 2D textures answering IDXGISurface, and the one that matters on this Wine: a shared texture with no D3DKMT device behind it is created as a private one, with one error line, instead of failing the game. On this Wine the driver assigns GPU LUIDs of its own, so DXMT's lookup of its adapter fails (the build also tries the primary display's name, which fails here too) and there is never a D3DKMT device; before this build every shared texture then died at creation. This revision's DXMT is that branch plus a444716 (branch highball-20260930): the encoding context's Metal device is declared before the command helpers whose constructors build pipelines through it. Declared after them it was still uninitialised memory there, and a game could die at start in newComputePipelineStateWithDescriptor sent to a garbage object: Among Us's 64-bit build did in 8 of 12 launches on r13, and in none of 12 with this build. The bug is in upstream DXMT too."
++    },
++    "moltenvk": {
++      "extract": {
++        "into": "frameworks/libMoltenVK.dylib",
++        "subpath": "libMoltenVK.dylib"
++      },
++      "kind": "runtime",
++      "license": "Apache-2.0",
++      "note": "MoltenVK 1.4.2 rebuilt with three Highball patches (spike/patches/moltenvk-shadow-import.patch, moltenvk-linear-fallback.patch and moltenvk-shadow-readback.patch, Scripts/build-moltenvk.sh). Shadow import is off unless a launch sets MVK_SHADOW_IMPORT=1 (32-bit native-Vulkan games such as The Sims Legacy Collection). Linear fallback is always on: a linear-tiled image that Metal cannot back with linear memory (3D, mipmapped or array images) is created with optimal tiling instead of failing vkCreateImage, which is what takes Red Dead Redemption 2 from an exit at 98 per cent to the main menu and the story. Shadow readback (highball#283) copies what the GPU writes into shadowed memory back to the game's pages when a submission completes, so a 32-bit game's readbacks under MVK_SHADOW_IMPORT=1 stop being stale (The Sims' thumbnails); without the variable it does nothing. Since r30 and r31 also: device-memory-cap (HB_MVK_DEVICE_MEMORY_PERCENT caps the heap and its budget, highball#398) and two changes from DiAvisoo's MoltenVK-Detroit (cache-drawid-present, lenient-interfaces, highball#125), CI build run 41367170976.",
++      "order": 1,
++      "sha256": "662d7c06
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #670** (2026-11-07): Empty store tab offers to connect that store (@gauthierpiarrette)
-- **PR #665** (2026-11-07): Show legendary's last lines when an Epic install fails (@gauthierpiarrette)
-- **PR #664** (2026-11-06): highball library lists every owned GOG game (@gauthierpiarrette)
-- **PR #655** (2026-11-06): firstrun-smoke asks a component URL again on 5xx (@gauthierpiarrette)
-- **PR #654** (2026-11-06): A variable typed in quotes reaches Wine without them (@gauthierpiarrette)
-- **PR #649** (2026-11-04): arm64-kk-wine11.18-r4 (@gauthierpiarrette)
+- **PR #715** (2026-11-12): A Steam game's session follows its program after it relaunches itself (@gauthierpiarrette)
+- **PR #714** (2026-11-12): Steam demos stay in the library like games (#432) (@gauthierpiarrette)
+- **PR #713** (2026-11-12): Epic can be disconnected (#708) (@gauthierpiarrette)
+- **PR #710** (2026-11-12): Wine 11 engines r32 and r33: no Homebrew paths (#698), D3DKMTSetProcessSchedulingPriorityClass (#699) (@gauthierpiarrette)
+- **PR #692** (2026-11-11): Play reports say when DLSS (MetalFX) is on (@gauthierpiarrette)
+- **PR #691** (2026-11-11): Uninstalling a GOG game keeps the files the player added (@gauthierpiarrette)
 
 ---
 
@@ -1168,43 +1601,42 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. A variable typed in quotes reaches Wine without them. No shell reads the environ
+## X. arm64-kk-wine11.18-r5: r4 with patches-arm64 0056 and 0057, the spatial audio pa
 
 **RULE**:
-When implementing operations in `Sources/HighballKit/EnvText.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `spike/engines/arm64-kk-wine11.18-r5.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gauthierpiarrette/highball. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d5af52ff`: A variable typed in quotes reaches Wine without them. No shell reads the environment editor's values, so quotes around one went to the program as part of it, and macOS's text view turns typed quotes curly: a player's WINEDEBUG arrived as " loaddll” and Wine read no channel from it (highball-db#862). A value wrapped in one pair of quotes, straight or curly, now loses that pair; quotes inside a value stay (DXVK_CONFIG's customDeviceDesc="…"). (#654). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0c3a6a16`: arm64-kk-wine11.18-r5: r4 with patches-arm64 0056 and 0057, the spatial audio pair Tx wrote for the Wine 11 line (highball#313), from the release engine-arm64-wine-11.18-20261108T132317Z-spatial-0056-0057 (build-arm64 run 42480524132, branch arm64-spatial-audio at 1dc6db7). A surround bed on a Mac's two-channel output lost everything but front left and right, so Forza Horizon 6 dropped the sounds behind the camera on headphones (highball#672); it now goes through AUSpatialMixer. Installed from that archive (sha256 6721b1f4, the same bytes as the public release) into a throwaway home on an M1 Pro with macOS 27.0: a test program's 7.1 and 7.1.4 float streams open, run their clock for 1.5 s and log 'rendered by AUSpatialMixer for built-in speakers on a 2-channel device', stereo keeps the old path. Every other file is r4's. Forza Horizon 6 was not run on r5, its route stays on r3. 93 manifest and engine tests pass.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/HighballKit/EnvText.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `spike/engines/arm64-kk-wine11.18-r5.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                env[key] = unquoted(parts[1])
-    /// No shell reads these values, so quotes typed around one reached the program as part of it.
-    /// A value wrapped in one pair of quotes, straight or the curly ones macOS's text view types
-    /// for them, is taken without that pair: a player's WINEDEBUG arrived as `" loaddll”` and Wine
-    /// read no channel from it (highball-db#862). Quotes inside a value stay, as in DXVK_CONFIG's
-    /// customDeviceDesc="…".
-    static func unquoted(_ value: String) -> String {
-        let quotes: Set<Character> = ["\"", "'", "\u{201C}", "\u{201D}", "\u{201E}", "\u{2018}", "\u{2019}"]
-        guard value.count >= 2, let first = value.first, let last = value.last,
-              quotes.contains(first), quotes.contains(last) else { return value }
-        return String(value.dropFirst().dropLast()).trimmingCharacters(in: .whitespaces)
-    }
-
+{
+  "$schema": "https://highball.app/schemas/engine-manifest/v0",
+  "id": "arm64-kk-wine11.18-r5",
+  "displayName": "Wine 11.18 native arm64 (preview, KosmicKrisp) r5",
+  "arch": "arm64",
+  "minMacOS": "27.0",
+  "requires": [],
+  "channel": "preview",
+  "direct3D9": "wined3d",
+  "notes": [
+    "r5 (2026-11-10): r4 with patches-arm64 0056 and 0057, the spatial audio pair Tx wrote for the Wine 11 line (highball#313). A game that plays a surround bed (5.1, 7.1, 7.1.4) on a Mac's two-channel output lost everything but front left and right, so Forza Horizon 6 dropped the sounds behind the camera on headphones (highball#672). The bed now goes through Apple's AUSpatialMixer, which renders it for the Mac's speakers, headphones or external speakers. HB_SPATIAL=speakers, headphones or external overrides that guess and HB_SPATIAL=0 turns the path off. Every other file is r4's. Checked on an M1 Pro with macOS 27.0: a 7.1 and a 7.1.4 stream from a test program open, run their clock and go through the mixer on the built-in speakers, stereo streams keep the old path. Forza Horizon 6 was not run on r5, its route stays on r3.",
+    "r4 (2026-11-04): r3 with fixes for games beyond Forza Horizon 6. V
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-                env[key] = parts[1]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d5af52ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0c3a6a16` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

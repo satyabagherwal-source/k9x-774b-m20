@@ -9556,3 +9556,7 @@ Every entry in this ledger must capture:
 | `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `f2c410ae` | Multi-dimensional audit evidence | 2026-11-13T16:04:57.116Z |
 | `learn-github-open-source-legal-opencontracts` | `https://github.com/Open-Source-Legal/OpenContracts` | `2263a19d` | Multi-dimensional audit evidence | 2026-11-13T16:05:05.724Z |
 | `learn-dom-d-f7590a97` | `project://hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | 2026-11-13T16:05:40.822Z |
+| `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `d8187e2a` | Multi-dimensional audit evidence | 2026-11-13T16:25:48.408Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `f8f3d3e7` | Multi-dimensional audit evidence | 2026-11-13T16:25:49.513Z |
+| `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-13T16:26:01.282Z |
+| `learn-dom-d-1fd73085` | `project://hf-orcarouter-orcasaq-2-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | 2026-11-13T16:26:52.103Z |
