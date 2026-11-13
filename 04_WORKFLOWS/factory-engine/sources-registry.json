@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T16:58:58.183Z",
-    "lastVerified": "2026-11-13T16:58:58.183Z",
+    "lastChecked": "2026-11-13T17:11:11.555Z",
+    "lastVerified": "2026-11-13T17:11:11.555Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-13T16:25:50.983Z",
-    "lastVerified": "2026-11-13T16:25:50.983Z",
+    "lastChecked": "2026-11-13T17:11:04.165Z",
+    "lastVerified": "2026-11-13T17:11:04.165Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -239,14 +239,14 @@
     "officialUrl": "https://github.com/meilisearch/meilisearch",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T11:37:22.789Z",
-    "lastVerified": "2026-11-12T11:37:22.789Z",
+    "lastChecked": "2026-11-13T17:11:07.882Z",
+    "lastVerified": "2026-11-13T17:11:07.882Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "db48414cfdbdbfb2fea0af6e924e4b4a664db95993bcf4de81acb803a05a89a2",
+    "contentHash": "c1d21ea36fed0b9251a67101ca075a2ea5e123a6095e4b150e8d200685b63cf9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -645,22 +645,21 @@
     "revisionIdentifier": "763f4021"
   },
   "nolabs-ai-nono": {
-    "name": "nono",
+    "name": "nolabs-ai/nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T11:40:05.924Z",
-    "lastVerified": "2026-11-13T11:40:05.924Z",
+    "lastChecked": "2026-11-13T17:11:04.062Z",
+    "lastVerified": "2026-11-13T17:11:04.062Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "9fe31a22db52273698c562e664d208d0afc1056e3ab615d17f5234cae8dd0808",
+    "contentHash": "e3d6ec28deb81e6c0f22ec6ef281ff0261ae2dedbaa0aee37b92053b55f93a0c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c2990d81"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vectifyai-pageindex": {
     "name": "PageIndex",
@@ -2767,13 +2766,13 @@
     "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T16:26:17.573Z",
-    "lastVerified": "2026-11-08T16:26:17.573Z",
+    "lastChecked": "2026-11-13T17:10:51.745Z",
+    "lastVerified": "2026-11-13T17:10:51.745Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-    "contentHash": "b48ae4a5f110bc0fb35102e2e0fc7678b20490ffb8d26061faa9882b71807d80",
-    "promotedRulesCount": 3,
+    "contentHash": "20ebe3d5f43459d3c157beb0502661f3dad8d421eb3c58dc429c9b4893aa8c4a",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -4382,9 +4381,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-11-12T04:31:52.850Z",
+    "lastChecked": "2026-11-13T17:10:49.172Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-11-12T04:31:52.850Z"
+    "lastVerified": "2026-11-13T17:10:49.172Z"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "name": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -6291,9 +6290,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-12T13:10:13.561Z",
+    "lastChecked": "2026-11-13T17:10:56.574Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-12T13:10:13.561Z"
+    "lastVerified": "2026-11-13T17:10:56.574Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
@@ -13033,9 +13032,9 @@
   "xotahal-react-native-material-ui": {
     "name": "react-native-material-ui",
     "officialUrl": "https://github.com/xotahal/react-native-material-ui",
-    "lastChecked": "2026-11-09T06:38:52.164Z",
+    "lastChecked": "2026-11-13T17:10:54.206Z",
     "revisionIdentifier": "254006ae",
-    "lastVerified": "2026-11-09T06:38:52.164Z"
+    "lastVerified": "2026-11-13T17:10:54.206Z"
   },
   "fastify-fastify": {
     "name": "fastify",

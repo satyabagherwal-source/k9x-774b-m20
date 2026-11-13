@@ -9570,3 +9570,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-11-13T16:58:40.345Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `1626d971` | Multi-dimensional audit evidence | 2026-11-13T16:58:55.095Z |
 | `learn-dom-d-afa4f352` | `project://hf-akhilaaa3-jev-omni` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | 2026-11-13T16:59:44.504Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-13T17:10:52.287Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `f1e0a7ac` | Multi-dimensional audit evidence | 2026-11-13T17:11:04.696Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `1b782653` | Multi-dimensional audit evidence | 2026-11-13T17:11:08.509Z |
+| `learn-dom-d-f5004225` | `project://hf-xiaomimimo-mimo-v2.6-distill-qwen-9b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md` | 2026-11-13T17:11:56.809Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T16:59:46.308Z",
-  "total_records": 219,
+  "last_updated": "2026-11-13T17:11:59.115Z",
+  "total_records": 226,
   "domains": {
     "A": {
       "total": 1,
@@ -26,7 +26,7 @@
       ]
     },
     "D": {
-      "total": 128,
+      "total": 131,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -155,7 +155,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
         "DOM-D-AFA4F352",
-        "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
+        "DOM-D-F5004225",
+        "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning"
       ]
     },
     "E": {
@@ -172,7 +175,7 @@
       ]
     },
     "G": {
-      "total": 17,
+      "total": 19,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -190,11 +193,13 @@
         "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-core-invariants",
         "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-core-invariants",
-        "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva"
+        "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva",
+        "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants",
+        "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 41,
+      "total": 43,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -236,7 +241,9 @@
         "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-core-invariants",
         "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in",
-        "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar"
       ]
     },
     "I": {
@@ -6954,6 +6961,102 @@
       "repository": "zseven-w-openpencil-learnings",
       "content_hash": "7304d3414eb1cc9d7188295b6e26a4f9f0839f756663a6853e5a15ebe0298163",
       "created_at": "2026-11-13T16:59:46.308Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-research-knowledge-intelligence-xiaomimi.md",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "content_hash": "89e6f920861b10a99f7aa3d45e79ddf5dd0348b095e5578bc755f89c3d589423",
+      "created_at": "2026-11-13T17:10:52.491Z"
+    },
+    "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
+      "repository": "nolabs-ai/nono",
+      "content_hash": "62d70a0a91cfb43bcf747ae35d76db8c07b9cce05fcbd530c347dfb899032f12",
+      "created_at": "2026-11-13T17:11:05.034Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
+      "repository": "meilisearch/meilisearch",
+      "content_hash": "294c35ae61fd2a2f9c4e6cbf8a6e638fc26221ac18a78150e1f86b18b445183c",
+      "created_at": "2026-11-13T17:11:08.830Z"
+    },
+    "DOM-D-F5004225": {
+      "record_id": "DOM-D-F5004225",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B))  \n> **Source Version**: `hf-xiaomimim",
+      "content_hash": "d12f60bb71944d59bd43558d8e89fb022a856f4e54d13111c315a81e5977c600",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md`  \n> **Source**: huggingface ([ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md`  \n> **Source**: huggingface ([",
+      "provenance": {
+        "source_uri": "project://hf-xiaomimimo-mimo-v2.6-distill-qwen-9b/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T17:11:11.691Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-xiaomimimo-mimo-v2.6-distill-qwen-9b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-xiaomimimo-mimo-v2.6-distill-qwen-9b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T17:11:56.801Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learnings-research-knowledge-intelligenc.md",
+      "repository": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings",
+      "content_hash": "7768ae249c731fb2594a9b531e181d0644806ebbeae57c46c91059d9e9990e8b",
+      "created_at": "2026-11-13T17:11:57.024Z"
+    },
+    "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-learnings-architecture-intelligence-nolabs-ai-nono-learnings-core.md",
+      "repository": "nolabs-ai-nono-learnings",
+      "content_hash": "6e1c3e9733e7f38681314e31f05da364a9fccd463d47df58d652bbd0045dfa04",
+      "created_at": "2026-11-13T17:11:58.247Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: meilisearch-meilisearch-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-learnings-technical-construction-intelligence-meilisearc.md",
+      "repository": "meilisearch-meilisearch-learnings",
+      "content_hash": "0c685c3ec70687ffbf705284b77bb2bd1726441f70915375089cd9d969b663d9",
+      "created_at": "2026-11-13T17:11:59.115Z"
     }
   }
 }

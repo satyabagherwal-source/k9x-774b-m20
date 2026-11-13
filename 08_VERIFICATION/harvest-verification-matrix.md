@@ -9537,3 +9537,7 @@
 | `CYCLE-20261113-0ZF8` | `2026-11-13T16:58:40.340Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`376a1511...`) |
 | `CYCLE-20261113-1ASR` | `2026-11-13T16:58:55.083Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`54a79647...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T16:59:44.504Z` | `hf-akhilaaa3-jev-omni` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AFA4F352` [Domain D] | Yes (`e495e90c...`) |
+| `CYCLE-20261113-GO6Z` | `2026-11-13T17:10:52.283Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md` | Yes (`20ebe3d5...`) |
+| `CYCLE-20261113-GXRO` | `2026-11-13T17:11:04.692Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e3d6ec28...`) |
+| `CYCLE-20261113-H0PC` | `2026-11-13T17:11:08.496Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c1d21ea3...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T17:11:56.809Z` | `hf-xiaomimimo-mimo-v2.6-distill-qwen-9b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F5004225` [Domain D] | Yes (`d12f60bb...`) |

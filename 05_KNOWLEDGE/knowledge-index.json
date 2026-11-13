@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T16:59:46.434Z",
+  "last_updated": "2026-11-13T17:11:59.224Z",
   "total_verified_learnings": 1264,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -35204,7 +35204,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "b48ae4a5f110bc0fb35102e2e0fc7678b20490ffb8d26061faa9882b71807d80",
+      "content_hash": "20ebe3d5f43459d3c157beb0502661f3dad8d421eb3c58dc429c9b4893aa8c4a",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
@@ -35467,7 +35467,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-11-08T16:26:25.164Z",
+      "verified_at": "2026-11-13T17:10:52.135Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44310,8 +44310,8 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "c25aa858",
-      "content_hash": "db48414cfdbdbfb2fea0af6e924e4b4a664db95993bcf4de81acb803a05a89a2",
+      "source_version": "1b782653",
+      "content_hash": "c1d21ea36fed0b9251a67101ca075a2ea5e123a6095e4b150e8d200685b63cf9",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
@@ -44323,6 +44323,11 @@
         {
           "number": null,
           "title": "Merge pull request #6731 from meilisearch/fix-merge-issues",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #6734 from meilisearch/switch-macos-runner",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -44376,7 +44381,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T11:37:40.004Z",
+      "verified_at": "2026-11-13T17:11:08.357Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48857,8 +48862,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "c2990d81",
-      "content_hash": "9fe31a22db52273698c562e664d208d0afc1056e3ab615d17f5234cae8dd0808",
+      "source_version": "f1e0a7ac",
+      "content_hash": "e3d6ec28deb81e6c0f22ec6ef281ff0261ae2dedbaa0aee37b92053b55f93a0c",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -48890,6 +48895,11 @@
         {
           "number": null,
           "title": "cli): allow mise to read ~/.tool-versions (#2307)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "release v0.82.0 (#2311)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -48998,7 +49008,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T05:07:57.390Z",
+      "verified_at": "2026-11-13T17:11:04.550Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -194754,6 +194764,174 @@
       "content_hash": "690a1838a91b6ee3867c58ae48d908cb4582ad5b898b47c9a6ecce06f9ffeca6",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T16:59:46.434Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-research-knowledge-intelligence-xiaomimi.md",
+      "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B Core Invariants",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "content_hash": "89e6f920861b10a99f7aa3d45e79ddf5dd0348b095e5578bc755f89c3d589423",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T17:10:52.491Z"
+    },
+    "candidate_directive-release-v0-82-0-2311": {
+      "item_id": "candidate_directive-release-v0-82-0-2311",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I306-release-v0-82-0-2311.md",
+      "title": "release v0.82.0 (#2311)",
+      "repository": "nolabs-ai-nono-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a44322567ac7ac55d1aa2c23742912119de9b8e4730d38f4af7be40e4f938f4b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T17:11:58.142Z"
+    },
+    "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
+      "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
+      "repository": "nolabs-ai/nono",
+      "source_version": "f1e0a7ac",
+      "content_hash": "62d70a0a91cfb43bcf747ae35d76db8c07b9cce05fcbd530c347dfb899032f12",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T17:11:05.034Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-nolabs-ai-nono-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai/nono",
+      "repository": "nolabs-ai/nono",
+      "source_version": "f1e0a7ac",
+      "content_hash": "edae67e1adb1b89871c470eb7257ab9fa2270c64037d5db68ee7c13bf6fe146f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T17:11:05.134Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nolabs-ai-nono-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai/nono",
+      "repository": "nolabs-ai/nono",
+      "source_version": "f1e0a7ac",
+      "content_hash": "a67e8028b4380452e719ce6e0b2e035cfb889d3f9c297cfa3ca5f4d80dc74e5c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T17:11:05.232Z"
+    },
+    "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner": {
+      "item_id": "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I3OB-merge-pull-request-6734-from-meilisearch-switch-macos-runner.md",
+      "title": "Merge pull request #6734 from meilisearch/switch-macos-runner",
+      "repository": "meilisearch-meilisearch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3fa594c20a7535d15eb34b1edda560278b3ce3b463f081fb34ee55e1df55da1e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T17:11:59.010Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
+      "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
+      "repository": "meilisearch/meilisearch",
+      "source_version": "1b782653",
+      "content_hash": "294c35ae61fd2a2f9c4e6cbf8a6e638fc26221ac18a78150e1f86b18b445183c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T17:11:08.830Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/meilisearch-meilisearch-verification-protocol-empirical-defect-shield-for-meilis.md",
+      "title": "Verification Protocol: Empirical Defect Shield for meilisearch/meilisearch",
+      "repository": "meilisearch/meilisearch",
+      "source_version": "1b782653",
+      "content_hash": "768b4dd088967014ac46328d3b4dded6b11a03886a6ebe03f08ab6a2b429e6fd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T17:11:08.929Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learnings-research-knowledge-intelligenc.md",
+      "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings Core Invariants",
+      "repository": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7768ae249c731fb2594a9b531e181d0644806ebbeae57c46c91059d9e9990e8b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T17:11:57.024Z"
+    },
+    "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-learnings-architecture-intelligence-nolabs-ai-nono-learnings-core.md",
+      "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
+      "repository": "nolabs-ai-nono-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6e1c3e9733e7f38681314e31f05da364a9fccd463d47df58d652bbd0045dfa04",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T17:11:58.247Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-nolabs-ai-nono-learnings-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai-nono-learnings",
+      "repository": "nolabs-ai-nono-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7709e705a2f4b276bb0bc2429677a75c354f2aa07e5b844b1b6923834df5ed41",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T17:11:58.359Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nolabs-ai-nono-learnings-verification-protocol-empirical-defect-shield-for-nolab.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai-nono-learnings",
+      "repository": "nolabs-ai-nono-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5c89bdae2f4ccb1c1cedf15628301bdab76c1b456ef7167c15c9fa11217d800e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T17:11:58.466Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-learnings-technical-construction-intelligence-meilisearc.md",
+      "title": "Technical Construction Intelligence: meilisearch-meilisearch-learnings Core Invariants",
+      "repository": "meilisearch-meilisearch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0c685c3ec70687ffbf705284b77bb2bd1726441f70915375089cd9d969b663d9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T17:11:59.115Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch-learni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch-learni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/meilisearch-meilisearch-learnings-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for meilisearch-meilisearch-learnings",
+      "repository": "meilisearch-meilisearch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1ca6e319597910b1e0704b9fc00a5a6339d0fd95a05f25c4f9e160498624d4a4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T17:11:59.224Z"
     }
   },
   "aliases": {
@@ -200752,5 +200930,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9181
+  "total_items": 9195
 }

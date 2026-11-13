@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261112-B64L",
-    "timestamp": "2026-11-12T21:30:51.717Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "a6ebf9a28d4663240a1b5c671c4c590d974b9cbc5dc2d6a91cacb2b127dfd90b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-BAB1",
-    "timestamp": "2026-11-12T21:30:57.133Z",
-    "repository": "jestjs/jest",
-    "learningId": "learn-github-jestjs-jest",
-    "contentHash": "1271782d4bacf61b24edaf0a4142517378fa3ace1c5941642619fccec8e3ee5f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261112-BL2P",
-    "timestamp": "2026-11-12T21:31:11.089Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "9c7d56d15cd9264fcdf63ed47a10ef0c70a473db35792cbeacbd9f675db83777",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261112-BNQB",
     "timestamp": "2026-11-12T21:31:14.531Z",
     "repository": "langchain4j/langchain4j",
@@ -7490,6 +7445,51 @@
     "repository": "Mintplex-Labs/anything-llm",
     "learningId": "learn-github-mintplex-labs-anything-llm",
     "contentHash": "54a796474e163fcaeb38358e17a4464791107648823afc32189b40aac40ea900",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-GO6Z",
+    "timestamp": "2026-11-13T17:10:52.283Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+    "contentHash": "20ebe3d5f43459d3c157beb0502661f3dad8d421eb3c58dc429c9b4893aa8c4a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-GXRO",
+    "timestamp": "2026-11-13T17:11:04.692Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "e3d6ec28deb81e6c0f22ec6ef281ff0261ae2dedbaa0aee37b92053b55f93a0c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-H0PC",
+    "timestamp": "2026-11-13T17:11:08.496Z",
+    "repository": "meilisearch/meilisearch",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "c1d21ea36fed0b9251a67101ca075a2ea5e123a6095e4b150e8d200685b63cf9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

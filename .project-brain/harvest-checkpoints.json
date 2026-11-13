@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T16:58:55.114Z",
+  "last_updated": "2026-11-13T17:11:08.527Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -605,14 +605,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "content_hash": "b48ae4a5f110bc0fb35102e2e0fc7678b20490ffb8d26061faa9882b71807d80",
-      "verified_at": "2026-11-08T16:26:25.299Z",
+      "content_hash": "20ebe3d5f43459d3c157beb0502661f3dad8d421eb3c58dc429c9b4893aa8c4a",
+      "verified_at": "2026-11-13T17:10:52.297Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T16:26:25.299Z"
+      "last_updated": "2026-11-13T17:10:52.297Z"
     },
     "inclusionAI/Ming-Image-0.1-Design": {
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "9fe31a22db52273698c562e664d208d0afc1056e3ab615d17f5234cae8dd0808",
-      "verified_at": "2026-11-13T05:07:57.669Z",
+      "content_hash": "e3d6ec28deb81e6c0f22ec6ef281ff0261ae2dedbaa0aee37b92053b55f93a0c",
+      "verified_at": "2026-11-13T17:11:04.723Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T05:07:57.669Z"
+      "last_updated": "2026-11-13T17:11:04.723Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "db48414cfdbdbfb2fea0af6e924e4b4a664db95993bcf4de81acb803a05a89a2",
-      "verified_at": "2026-11-12T11:37:40.209Z",
+      "content_hash": "c1d21ea36fed0b9251a67101ca075a2ea5e123a6095e4b150e8d200685b63cf9",
+      "verified_at": "2026-11-13T17:11:08.526Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T11:37:40.209Z"
+      "last_updated": "2026-11-13T17:11:08.526Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",

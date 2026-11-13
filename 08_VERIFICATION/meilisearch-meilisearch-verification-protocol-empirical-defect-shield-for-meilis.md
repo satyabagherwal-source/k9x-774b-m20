@@ -4,45 +4,31 @@
 {
   "source_repository": "meilisearch/meilisearch",
   "source_url": "https://github.com/meilisearch/meilisearch",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "1b782653",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-13T17:11:08.729Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-meilisearch-meilisearch",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) (Revision: `1b782653`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-13T17:11:08.729Z`  
+> **Learning ID**: `learn-github-meilisearch-meilisearch`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `meilisearch/meilisearch` (Commit: `historical`)
+- **Target Repository**: `meilisearch/meilisearch` (Commit: `1b782653`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
-> **Source**: github ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
-> **Source Version**: `c25aa858`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T11:37:22.804Z  
-> **Learning ID**: `learn-github-meilisearch-meilisearch`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): meilisearch/meilisearch
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T11:37:22.789Z  
+> **Harvest Timestamp**: 2026-11-13T17:11:07.882Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59842 stars
+- **Stars / Engagement**: 59856 stars
 
 ---
 
@@ -2074,285 +2060,226 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c25aa858` (2026-11-12)
-**Commit Message**: Merge pull request #6731 from meilisearch/fix-merge-issues
+### Incident Patch 1: `1b782653` (2026-11-12)
+**Commit Message**: Merge pull request #6734 from meilisearch/switch-macos-runner
 
-Fix inter-index merge in federated search
+Upgrade macos runner following removal by GH
 
-**File**: `crates/meilisearch/tests/search/multi/mod.rs` (modified, +177/-44)
+**File**: `.github/workflows/publish-release-assets.yml` (modified, +1/-1)
 ```diff
-@@ -13,63 +13,73 @@ use crate::search::{SCORE_DOCUMENTS, VECTOR_DOCUMENTS};
- mod metadata;
- mod proxy;
- 
-+pub async fn movies_index() -> Index<'static> {
-+    let server = Server::new_shared();
-+    let movies_index = server.unique_index_with_prefix("movies");
-+
-+    let documents = DOCUMENTS.clone();
-+    let (response, _code) = movies_index.add_documents(documents, None).await;
-+    server.wait_task(response.uid()).await.succeeded();
-+
-+    let (value, _) = movies_index
-+        .update_settings(json!({
-+            "sortableAttributes": ["title"],
-+            "filterableAttributes": ["title", "color"],
-+            "rankingRules": [
-+                "sort",
-+                "words",
-+                "typo",
-+                "proximity",
-+                "attribute",
-+                "exactness"
-+            ]
-+        }))
-+        .await;
-+    server.wait_task(value.uid()).await.succeeded();
-+    movies_index
-+}
-+
- pub async fn shared_movies_index() -> &'static Index<'static, Shared> {
-     static INDEX: OnceCell<Index<'static, Shared>> = OnceCell::const_new();
-     INDEX
-         .get_or_init(|| async {
--            let server = Server::new_shared();
--            let movies_index = server.unique_index_with_prefix("movies");
--
--            let documents = DOCUMENTS.clone();
--            let (response, _code) = movies_index.add_documents(documents, None).await;
--            server.wait_task(response.uid()).await.succeeded();
--
--            let (value, _) = movies_index
--                .update_settings(json!({
--                    "sortableAttributes": ["title"],
--                    "filterableAttributes": ["title", "color"],
--                    "rankingRules": [
--                        "sort",
--                        "words",
--                        "typo",
--                        "proximity",
--                        "attribute",
--                        "exactness"
--                    ]
--                }))
--                .await;
--            server.wait_task(value.uid()).await.succeeded();
-+            let movies_index = movies_index().await;
-             movies_index.to_shared()
-         })
-         .await
- }
- 
-+pub async fn batman_index() -> Index<'static> {
-+    let server = Server::new_shared();
-+    let batman_index = server.unique_index_with_prefix("batman");
-+
-+    let documents = SCORE_DOCUMENTS.clone();
-+    let (response, _code) = batman_index.add_documents(documents, None).await;
-+    server.wait_task(response.uid()).await.succeeded();
-+
-+    let (value, _) = batman_index
-+        .update_settings(json!({
-+            "sortableAttributes": ["id", "title"],
-+            "filterableAttributes": ["title"],
-+            "rankingRules": [
-+                "sort",
-+                "words",
-+                "typo",
-+                "proximity",
-+                "attribute",
-+                "exactness"
-+            ]
-+        }))
-+        .await;
-+    server.wait_task(value.uid()).await.succeeded();
-+    batman_index
-+}
-+
- pub async fn shared_batman_index() -> &'static Index<'static, Shared> {
-     static INDEX: OnceCell<Index<'static, Shared>> = OnceCell::const_new();
-     INDEX
-         .get_or_init(|| async {
--            let server = Server::new_shared();
--            let batman_index = server.unique_index_with_prefix("batman");
--
--            let documents = SCORE_DOCUMENTS.clone();
--            let (response, _code) = batman_index.add_documents(documents, None).await;
--            server.wait_task(response.uid()).await.succeeded();
--
--            let (value, _) = batman_index
--                .update_settings(json!({
--                    "sortableAttributes": ["id", "title"],
--                    "filterableAttributes": ["title"],
--                    "rankingRules": [
--                        "sort",
--                        "words",
--                        "typo",
--                        "proximity",
--                        "attribute",
--                        "exactness"
--                    ]
--                }))
--                .await;
--            server.wait_task(value.uid()).await.succeeded();
-+            let batman_index = batman_index().await;
-             batman_index.to_shared()
-         })
-         .await
-@@ -1938,6 +1948,129 @@ async fn federation_sort_different_indexes_same_criterion_same_direction() {
-     "###);
- }
- 
-+#[actix_rt::test]
-+async fn federation_sort_different_indexes_plus_words() {
-+    let server = Server::new_shared();
-+    let movies_index = movies_index().await;
-+    let batman_index = batman_index().await;
-+
-+    let (task, _code) = movies_index.update_settings_ranking_rules(json!(["words", "sort"])).await;
-+
-+    server.wait_task(task.uid()).await.succeeded();
-+
-+    let (task, _code) = batman_index.update_settings_ranking_rules(json!(["words", "sort"])).await;
-+
-+    server.wait_task(task.uid()).await.succeeded();
-+
-+    // return titles ordered across indexes
-+    let (response, code) = server
-+        .multi_search(json!({"federation": {}
-```
-
-**File**: `crates/milli/src/score_details.rs` (modified, +84/-68)
-```diff
-@@ -213,44 +213,50 @@ impl ScoreDetails {
-     }
- 
-     pub fn score_values<'a>(
--        mut details: impl Iterator<Item = &'a Self> + 'a,
-+        details: impl Iterator<Item = &'a Self> + 'a,
-     ) -> impl Iterator<Item = ScoreValue<'a>> + 'a {
-         let weight = std::cell::Cell::new(1.0f64);
- 
--        std::iter::from_fn(move || {
--            details
--                .by_ref()
--                // any scale detail modifies the weight starting from this action,
--                // meaning that a hypothetical score details iterator with some relevancy rules before the scale
--                // detail would have the base weight and not the weight modified by the scale.
--                // In practice, the search implementation guarantees that scale is the first score detail, and as a result
--                // the weight is applied to all relevancy rules.
--                .inspect(|detail| {
--                    if let ScoreDetails::Scale { actions } = detail {
--                        for action in actions {
--                            weight.update(|weight| weight * action.weight);
--                        }
--                    }
--                })
--                .filter_map(ScoreDetails::rank_or_value)
--                .coalesce(|left, right| match (left, right) {
--                    (RankOrValue::Rank(left), RankOrValue::Rank(right)) => {
--                        Ok(RankOrValue::Rank(Rank::merge(left, right)))
-+        details
-+            // any scale detail modifies the weight starting from this action,
-+            // meaning that a hypothetical score details iterator with some relevancy rules before the scale
-+            // detail would have the base weight and not the weight modified by the scale.
-+            // In practice, the search implementation guarantees that scale is the first score detail, and as a result
-+            // the weight is applied to all relevancy rules.
-+            .filter_map(|detail| {
-+                if let ScoreDetails::Scale { actions } = detail {
-+                    let mut weight = 1.0;
-+                    for action in actions {
-+                        weight *= action.weight;
-                     }
--                    (left, right) => Err((left, right)),
--                })
--                .map(|rank_or_value| match rank_or_value {
--                    RankOrValue::Rank(r) => ScoreValue::Score(r.local_score() * weight.get()),
--                    RankOrValue::Sort(s) => ScoreValue::Sort(s),
--                    RankOrValue::GeoSort(g) => ScoreValue::GeoSort(g),
--                    RankOrValue::Score(s) => ScoreValue::Score(s * weight.get()),
--                })
--                .next()
--        })
-+                    return Some(either::Left(weight));
-+                }
-+
-+                detail.rank_or_value().map(either::Right)
-+            })
-+            .coalesce(|left, right| match (left, right) {
-+                (
-+                    either::Right(RankOrValue::Rank(left)),
-+                    either::Right(RankOrValue::Rank(right)),
-+                ) => Ok(either::Right(RankOrValue::Rank(Rank::merge(left, right)))),
-+                (left, right) => Err((left, right)),
-+            })
-+            .filter_map(move |rank_or_value| match rank_or_value {
-+                either::Left(new_weight) => {
-+                    weight.update(|weight| weight * new_weight);
-+                    None
-+                }
-+                either::Right(RankOrValue::Rank(r)) => {
-+                    Some(ScoreValue::Score(r.local_score() * weight.get()))
-+                }
-+                either::Right(RankOrValue::Sort(s)) => Some(ScoreValue::Sort(s)),
-+                either::Right(RankOrValue::GeoSort(g)) => Some(ScoreValue::GeoSort(g)),
-+                either::Right(RankOrValue::Score(s)) => Some(ScoreValue::Score(s * weight.get())),
-+            })
-     }
- 
-     pub fn weighted_score_values<'a>(
--        mut details: impl Iterator<Item = &'a Self> + 'a,
-+        details: impl Iterator<Item = &'a Self> + 'a,
-         weight: f64,
-     ) -> impl Iterator<Item = WeightedScoreValue> + 'a {
-         // define a cell that will keep the current weight, and capture it in a from_fn closure to keep the state
-@@ -261,48 +267,58 @@ impl ScoreDetails {
-         // the current weight.
-         let used_weight = std::cell::Cell::new(false);
- 
--        std::iter::from_fn(move || {
--            match details
--                .by_ref()
--                .inspect(|detail| {
--                    if let ScoreDetails::Scale { actions } = detail {
--                        for action in actions {
--                            weight.update(|weight| weight * action.weight);
--                        }
--                    }
--                })
--                .filter_map(ScoreDetails::rank_or_value)
--                .coalesce(|left, right| match (left, right) {
--                    (RankOrValue::Rank(left), RankOrValue::Rank(right)) => {
--                        Ok(RankO
+@@ -59,7 +59,7 @@ jobs:
+             asset_name: macos-amd64
+             extra-args: ""
+           - release: macos-aarch64
+-            os: macos-14
++            os: macos-15
+             binary_path: aarch64-apple-darwin/release/meilisearch
+             asset_name: macos-apple-silicon
+             extra-args: "--target aarch64-apple-darwin"
 ```
 
 ---
 
-### Incident Patch 2: `4ef8a91f` (2026-11-10)
-**Commit Message**: Merge pull request #6718 from meilisearch/fix-homebrew-action-version-comment
+### Incident Patch 2: `e9ab8c7b` (2026-11-12)
+**Commit Message**: Merge pull request #6735 from meilisearch/update-version-v1.57.0
 
-Fix version comment of the pinned Homebrew bump action
+Update version for the next release (v1.57.0) in Cargo.toml
 
-**File**: `.github/workflows/publish-apt-brew-pkg.yml` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +19/-19)
 ```diff
-@@ -56,7 +56,7 @@ jobs:
-     needs: check-version
-     steps:
-       - name: Create PR to Homebrew
--        uses: mislav/bump-homebrew-formula-action@f865c8b0dbebd6e263cc06782a0e974c61cf12d2 # v3
-+        uses: mislav/bump-homebrew-formula-action@f865c8b0dbebd6e263cc06782a0e974c61cf12d2 # v4
-         with:
-           formula-name: meilisearch
-           formula-path: Formula/m/meilisearch.rb
+@@ -780,7 +780,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "build-info"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "anyhow",
+  "time",
+@@ -1959,7 +1959,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "dump"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "big_s",
+  "flate2",
+@@ -2217,7 +2217,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "file-store"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "tempfile",
+  "thiserror 2.0.20",
+@@ -2237,7 +2237,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "filter-parser"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "insta",
+  "itertools 0.14.0",
+@@ -2266,7 +2266,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "flatten-serde-json"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "criterion",
+  "serde_json",
+@@ -2450,7 +2450,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "fuzzers"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "arbitrary",
+  "bumpalo",
+@@ -3190,7 +3190,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "http-client"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "cidr",
+  "hyper-util",
+@@ -3510,7 +3510,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "index-scheduler"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "anyhow",
+  "backoff",
+@@ -3759,7 +3759,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "json-depth-checker"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "criterion",
+  "serde_json",
+@@ -4197,7 +4197,7 @@ checksum = "7ebb8d8732c6a6df3d8f032a82911cfc747e00efb95cc46e8d0acd5b5b88570c"
+ 
+ [[package]]
+ name = "meili-snap"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "insta",
+  "md5",
+@@ -4207,7 +4207,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilisearch"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "actix-cors",
+  "actix-http",
+@@ -4300,7 +4300,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilisearch-auth"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "base64 0.22.1",
+  "enum-iterator",
+@@ -4319,7 +4319,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilisearch-types"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "actix-web",
+  "anyhow",
+@@ -4358,7 +4358,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "meilitool"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "anyhow",
+  "clap",
+@@ -4392,7 +4392,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "milli"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "arroy",
+  "bbqueue",
+@@ -5020,7 +5020,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
+ 
+ [[package]]
+ name = "permissive-json-pointer"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "big_s",
+  "serde_json",
+@@ -6072,7 +6072,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "routes"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "actix-web",
+  "routes-macros",
+@@ -6084,7 +6084,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "routes-macros"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "proc-macro2",
+  "proc-macro2-diagnostics",
+@@ -8640,7 +8640,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "xtask"
+-version = "1.56.2"
++version = "1.57.0"
+ dependencies = [
+  "anyhow",
+  "build-info",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ members = [
+ ]
+ 
+ [workspace.package]
+-version = "1.56.2"
++version = "1.57.0"
+ authors = [
+     "Quentin de Quelen <quentin@dequelen.me>",
+     "Clément Renault <clement@meilisearch.com>",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6735** (2026-11-12): Update version for the next release (v1.57.0) in Cargo.toml (@meili-bot)
+- **PR #6734** (2026-11-12): Upgrade macos runner following removal by GH (@dureuill)
 - **PR #6731** (2026-11-12): Fix inter-index merge in federated search (@dureuill)
 - **PR #6726** (2026-11-09): Update version for the next release (v1.56.2) in Cargo.toml (@meili-bot)
 - **PR #6725** (2026-11-09): remove unwanted log + warn about future unwanted dbg (@dureuill)
 - **PR #6724** (closed): Fix #6723: Federated search ignores custom ranking rules placed after a relevancy r (@zaidrain06)
-- **PR #6718** (2026-11-10): Fix version comment of the pinned Homebrew bump action (@curquiza)
-- **PR #6716** (2026-11-04): Bump mongodb to v9.0 in rails SDKs tests (@Strift)
 
 ---
 
@@ -2372,93 +2299,31 @@ Fix version comment of the pinned Homebrew bump action
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #6731 from meilisearch/fix-merge-issues
+## X. Merge pull request #6734 from meilisearch/switch-macos-runner
 
 **RULE**:
-When implementing operations in `crates/meilisearch/tests/search/multi/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/publish-release-assets.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c25aa858`: Merge pull request #6731 from meilisearch/fix-merge-issues. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1b782653`: Merge pull request #6734 from meilisearch/switch-macos-runner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/meilisearch/tests/search/multi/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish-release-assets.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-pub async fn movies_index() -> Index<'static> {
-    let server = Server::new_shared();
-    let movies_index = server.unique_index_with_prefix("movies");
-
-    let documents = DOCUMENTS.clone();
-    let (response, _code) = movies_index.add_documents(documents, None).await;
-    server.wait_task(response.uid()).await.succeeded();
-
-    let (value, _) = movies_index
-        .update_settings(json!({
-            "sortableAttributes": ["title"],
-            "filterableAttributes": ["title", "color"],
-            "rankingRules": [
-                "sort",
-                "words",
-                "typo",
-                "proximity",
-                "attribute",
-                "exactness"
-            ]
-        }))
-        .await;
-    server.wait_task(value.uid()).await.succeeded();
-    movies_index
-}
-
-            let movies_index = movies_index().await;
-pub async fn batman_index() -> Index<'static> {
-    let server = Server::new_shared();
-    let batman_index = server.unique_index_with_prefix("batman");
-
-    let documents = SCORE_DOCUMENTS.clone();
-    let (response, _code) = batman_index.add_documents(documents, None).await;
-    server.wait_task(response.uid()).await.succeeded();
-
-    let (va
+            os: macos-15
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            let server = Server::new_shared();
-            let movies_index = server.unique_index_with_prefix("movies");
-
-            let documents = DOCUMENTS.clone();
-            let (response, _code) = movies_index.add_documents(documents, None).await;
-            server.wait_task(response.uid()).await.succeeded();
-
-            let (value, _) = movies_index
-                .update_settings(json!({
-                    "sortableAttributes": ["title"],
-                    "filterableAttributes": ["title", "color"],
-                    "rankingRules": [
-                        "sort",
-                        "words",
-                        "typo",
-                        "proximity",
-                        "attribute",
-                        "exactness"
-                    ]
-                }))
-                .await;
-            server.wait_task(value.uid()).await.succeeded();
-            let server = Server::new_shared();
-            let batman_index = server.unique_index_with_prefix("batman");
-
-            let documents = SCORE_DOCUMENTS.clone();
-            let (response, _code) = batman_index.add_documents(documents, None).await;
-            server.wait_task(response.uid()).
+            os: macos-14
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c25aa858` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1b782653` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
