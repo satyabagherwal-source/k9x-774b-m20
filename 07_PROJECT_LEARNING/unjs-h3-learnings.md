@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unjs-h3-learnings.md`  
 > **Source**: github ([https://github.com/unjs/h3](https://github.com/unjs/h3))  
-> **Source Version**: `f0e17808`  
+> **Source Version**: `2f29b875`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T19:50:13.222Z  
+> **Timestamp**: 2026-11-13T00:30:56.813Z  
 > **Learning ID**: `learn-github-h3js-h3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unjs-h3-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unjs/h3](https://github.com/unjs/h3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T19:50:11.361Z  
+> **Harvest Timestamp**: 2026-11-13T00:30:56.571Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡️ Minimal H(TTP) framework built for high performance and portability 
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5470 stars
+- **Stars / Engagement**: 5536 stars
 
 ---
 
@@ -780,8 +780,10 @@ const RE_PUBLIC = /(?:^|,)\s*public(?:\s*=|\s*,|\s*$)/i;
 /**
  * Check request caching headers (`If-None-Match`, `If-Modified-Since`) and add caching headers (Last-Modified, ETag, Cache-Control).
  *
+ * Matching validators set status `304` for `GET`, `HEAD`, and `QUERY`. `CONNECT`, `OPTIONS`, and `TRACE` ignore both conditional headers. Other methods ignore `If-Modified-Since` and set status `412` for a matching `If-None-Match` (without a `Cache-Control` header). When building your own response, use `event.res.status` rather than assuming `304`.
+ *
  * Note: `public` is added by default, but never alongside a caller-supplied `private`/`no-store` directive, so passing `cacheControls: ["private"]` no longer produces a contradictory `public, private`.
- * @returns `true` when cache headers are matching. When `true` is returned, no response should be sent anymore
+ * @returns `true` when the request should stop with the status set above. When `true` is returned, no response should be sent anymore
  */
 export function handleCacheHeaders(event: H3Event, opts: CacheConditions): boolean {
   const cacheControls = [...(opts.cacheControls || [])];
@@ -817,21 +819,30 @@ export function handleCacheHeaders(event: H3Event, opts: CacheConditions): boole
     event.res.headers.set("last-modified", lastModified.toUTCString());
   }
 
-  event.res.headers.set("cache-control", cacheControls.join(", "));
-
-  if (
+  const method = event.req.method;
+  const cacheable = method === "GET" || method === "HEAD" || method === "QUERY";
+  const matched =
+    method !== "CONNECT" &&
+    method !== "OPTIONS" &&
+    method !== "TRACE" &&
     isCacheMatch(event.req.headers, {
       etag: opts.etag,
-      lastModified,
+      lastModified: cacheable ? lastModified : undefined,
       ifNoneMatch: opts.ifNoneMatch,
       ifModifiedSince: opts.ifModifiedSince,
-    })
-  ) {
-    event.res.status = 304;
-    return true;
+    });
+
+  // A `412` describes a failed precondition, not the representation, so it
+  // must not carry the representation's freshness directives.
+  if (!matched || cacheable) {
+    event.res.headers.set("cache-control", cacheControls.join(", "));
   }
 
-  return false;
+  if (matched) {
+    event.res.status = cacheable ? 304 : 412;
+  }
+
+  return matched;
 }
 
 /**
@@ -1721,1014 +1732,446 @@ export function isEventStream(input: unknown): input is EventStream {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f90f4c8e` (2026-10-22)
-**Commit Message**: fix(rules): let `HTTPError.headers` opt out of `headers` rule on errors (#1613)
+### Incident Patch 1: `fb2a9943` (2026-11-10)
+**Commit Message**: fix(proxy): preserve content-length for unencoded responses (#1643)
 
-**File**: `src/rules/handlers/headers.ts` (modified, +31/-8)
+* fix(proxy): preserve content-length for unencoded responses
+
+The proxy strips Content-Length from every upstream response even when fetch returns the body unchanged. This discards valid framing metadata for full and partial media responses, as well as HEAD and empty responses. Stripping the header is still necessary when fetch transparently decompresses a response.
+
+Move Content-Length out of the unconditional response-header denylist and preserve it when Content-Encoding is absent or identity. Keep dropping it for encoded or CORS-filtered responses and respect Connection-nominated hop-by-hop fields. Add regression coverage for full and partial binary responses, identity encoding, empty responses, HEAD, real HTTP gzip/deflate/Brotli decompression, and the header-filtering safeguards.
+
+* fix(proxy): handle head method overrides when forwarding length
+
+A GET request proxied with fetchOptions.method set to HEAD could forward the upstream representation length despite having no response body. Clients would wait for bytes that never arrived.
+
+Only preserve a nonzero length without a body when the downstream request i
+
+**File**: `src/utils/internal/proxy.ts` (modified, +2/-4)
 ```diff
-@@ -1,27 +1,50 @@
-+import type { HTTPError } from "../../error.ts";
-+import type { H3Event } from "../../event.ts";
- import type { RuleHandler } from "../types.ts";
- 
- // order: -1. Sets headers after `next()` so they win even when an inner rule
- // (e.g. `cache`) short-circuits and overwrites headers like `cache-control` (h3js/h3-rules#5).
- //
--// `finally`, not a plain post-`next()` loop: a downstream throw unwinds past the
--// `await`, and the rule's headers must still apply to the resulting error
-+// Applied on both the return and the throw path: a downstream throw unwinds past
-+// the `await`, and the rule's headers must still apply to the resulting error
- // response. Both header bags are set for the same reason — `prepareResponse`
- // serves `event.res.errHeaders` (not `event.res.headers`) for status >= 400, so
- // a `headers`-only bag vanishes on every 4xx/5xx (mirrors h3's own
- // `setCorsHeaders`, `src/utils/cors.ts`).
-+//
-+// An `HTTPError` (thrown or returned) that carries one of the rule's keys in its
-+// own `headers` keeps it: that is the handler explicitly opting its error response
-+// out (e.g. `cache-control: no-store` on a 404 under an immutable asset rule,
-+// h3js/h3#1612). `errHeaders` would otherwise win over `error.headers`.
- export const headers: RuleHandler<"headers"> = {
-   order: -1,
-   handler: (m) => {
-     const entries = Object.entries(m.options || {});
-     return async function headersRouteRule(event, next) {
-+      let result: unknown;
-       try {
--        return await next();
--      } finally {
--        for (const [key, value] of entries) {
--          event.res.headers.set(key, value);
--          event.res.errHeaders.set(key, value);
--        }
-+        result = await next();
-+      } catch (error) {
-+        setRuleHeaders(event, entries, error);
-+        throw error;
-       }
-+      setRuleHeaders(event, entries, result);
-+      return result;
-     };
-   },
- };
-+
-+function setRuleHeaders(event: H3Event, entries: [string, string][], outcome: unknown): void {
-+  // Inlined `HTTPError.isError`: importing `HTTPError` would pull `error.ts` into
-+  // every `headers`-only bundle (test/rules/treeshake.test.ts budget).
-+  const own =
-+    outcome instanceof Error && outcome.name === "HTTPError" && (outcome as HTTPError).status > 99
-+      ? (outcome as HTTPError).headers
-+      : undefined;
-+  for (const [key, value] of entries) {
-+    event.res.headers.set(key, value);
-+    if (!own?.has(key)) {
-+      event.res.errHeaders.set(key, value);
-+    }
-+  }
-+}
-```
-
-**File**: `test/rules/rules.test.ts` (modified, +135/-1)
-```diff
-@@ -1,4 +1,4 @@
--import { H3 } from "../../src/index.ts";
-+import { H3, HTTPError, appendCorsHeaders } from "../../src/index.ts";
- import { describe, expect, it } from "vitest";
- import { routeRules } from "../../src/rules/middleware.ts";
- import { canonicalPath, isPathInScope } from "../../src/rules/internal/scope.ts";
-@@ -75,6 +75,140 @@ describe("headers rule on error responses", () => {
-     expect(res.status).toBe(500);
-     expect(res.headers.get("x-rule")).toBe("1");
-   });
-+
-+  // h3js/h3#1612: an error carrying the header in its own `headers` opts its
-+  // response out of that rule header (e.g. keep an immutable `cache-control` off a 404).
-+  const CACHE_RULES: Record<string, RouteRuleConfig> = {
-+    "/build/**": {
-+      headers: { "cache-control": "public, max-age=31536000, immutable", "x-rule": "1" },
-+    },
-+  };
-+  const IMMUTABLE = "public, max-age=31536000, immutable";
-+
-+  it("yields to a thrown HTTPError's own header", async () => {
-+    const app = createApp(CACHE_RULES);
-+    app.get("/build/**", () => {
-+      throw new HTTPError({ status: 404, headers: { "Cache-Control": "no-store" } });
-+    });
-+    const res = await app.fetch(new Request("http://test/build/missing.js"));
-+    expect(res.status).toBe(404);
-+    expect(res.headers.get("cache-control")).toBe("no-store");
-+    expect(res.headers.get("x-rule")).toBe("1");
-+  });
-+
-+  it("yields to a returned HTTPError's own header", async () => {
-+    const app = createApp(CACHE_RULES);
-+    app.get(
-+      "/build/**",
-+      () => new HTTPError({ status: 404, headers: { "cache-control": "no-store" } }),
-+    );
-+    const res = await app.fetch(new Request("http://test/build/missing.js"));
-+    expect(res.status).toBe(404);
-+    expect(res.headers.get("cache-control")).toBe("no-store");
-+    expect(res.headers.get("x-rule")).toBe("1");
-+  });
-+
-+  it("yields to an HTTPError header from inner middleware, with onError", async () => {
-+    const app = new H3({ onError: () => {} });
-+    app.use(routeRules(CACHE_RULES));
-+    app.use(() => {
-+      throw new HTTPError({ status: 404, headers: { "cache-control": "no-store" } });
-+    });
-+    const res = await app.fetch(new Request("http://test/build/missing.js"));
-+    expect(res.status).toBe(404);
-+    expect(res.headers.get("cache-control")).toBe("no-store");
-+  });
-+
-+  it("still wins over errHeaders staged inside the rule", async () => {
-+    // CORS helpers and appends write errHeaders too, so it is not an opt-out signal.
-+    const app = createApp({
-+      "/build/**": {
-+        headers: { "access-control-allow-origin": "https://rule.com", vary: "x-rule" },
-+      },
-+    });
-+    app.use((event) => {
-+      appendCorsHeaders(event, { origin: "*" });
-+      event.res.errHeaders.append("vary", "accept-encoding");
-+    });
-+    app.get("/build/**", () => {
-+      throw new HTTPError({ status: 404 });
-+    });
-+    const res = await app.fetch(new Request("http://test/build/missing.js"));
-+    expect(res.status).toBe(404);
-+    expect(res.headers.get("access-control-allow-origin")).toBe("https://rule.com");
-+    expect(res.headers.get("vary")).toBe("x-rule");
-+  });
-+
-+  it("still wins over a returned error Response's own header", async () => {
-+    // e.g. an upstream 404 passed through by `proxy`: not an h3-level opt-out.
-+    const app = createApp(CACHE_RULES);
-+    app.get(
-+      "/build/**",
-+      () => new Response("nope", { status: 404, headers: { "cache-control": "max-age=60" } }),
-+    );
-+    const res = await app.fetch(new Request("http://test/build/missing.js"));
-+    expect(res.status).toBe(404);
-+    expect(res.headers.get("cache-control")).toBe(IMMUTABLE);
-+  });
-+
-+  it("still wins over errHeaders staged outside the rule", async () => {
-+    const app = new H3();
-+    app.use((event) => {
-+      event.res.errHeaders.set("cache-control", "outer");
-+    });
-+    app.use(routeRules(CACHE_RULES));
-+    app.get("/build/**", () => {
-+      throw new HTTPError({ status: 404 });
-+    });
-+    const res = await app.fetch(new Request("http://test/build/missing.js"));
-+    expect(res.status).toBe(404);
-+    expect(res.headers.get("cache-control")).toBe(IMMUTABLE);
-+  });
-+
-+  it("still wins over cors-staged errHeaders", async () => {
-+    // `cors` (order -3) stages `vary: origin` into errHeaders before this rule runs.
-+    const app = createApp({
-+      "/api/**": { cors: { origin: ["https://a.com"] }, headers: { vary: "x-rule" } },
-+    });
-+    app.get("/api/x", () => {
-+      throw new HTTPError({ status: 404 });
-+    });
-+    const res = await app.fetch(
-+      new Request("http://test/api/x", { headers: { origin: "https://a.com" } }),
-+    );
-+    expect(res.status).toBe(404);
-+    expect(res.headers.get("access-control-allow-origin")).toBe("https://a.com");
-+    expect(res.headers.get("vary")).toBe("x-rule");
-+  });
-+
-+  it("stacked rules: outer wins, and both yield to an HTTPError header", async () => {
-+    const app = new H3();
-+    app.use(routeRules({ "/build/**": { 
-```
-
----
-
-### Incident Patch 2: `1326e74d` (2026-10-20)
-**Commit Message**: fix: keep middleware-staged headers out of handler-level caches (#1608)
-
-**File**: `AGENTS.md` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ src/
- │   ├── json-rpc.ts       # defineJsonRpcHandler, defineJsonRpcWebSocketHandler
- │   ├── event-stream.ts   # createEventStream (SSE)
- │   ├── static.ts         # serveStatic
--│   ├── cache.ts          # handleCacheHeaders
-+│   ├── cache.ts          # handleCacheHeaders, withCacheIsolation
- │   ├── middleware.ts      # onRequest, onResponse, onError, bodyLimit
- │   ├── route.ts          # defineRoute
- │   ├── base.ts           # withBase
-```
-
-**File**: `docs/2.utils/1.request.md` (modified, +27/-0)
-```diff
-@@ -162,6 +162,33 @@ Check request caching headers (`If-None-Match`, `If-Modified-Since`) and add cac
- 
- Note: `public` is added by default, but never alongside a caller-supplied `private`/`no-store` directive, so passing `cacheControls: ["private"]` no longer produces a contradictory `public, private`.
- 
-+### `withCacheIsolation(handler)`
-+
-+Wrap a cached handler so headers staged on `event.res` before it runs (for example by global middleware) never enter its cache entry.
-+
-+A cache miss usually renders the handler result with `toResponse(value, event)`, which merges staged headers into the stored response, so later hits would replay one user's headers to everyone. The wrapper takes them off the event for the cached dispatch and merges them onto each successful response, hit or miss; error responses (4xx/5xx) don't receive them, as in h3. When the handler returns something other than a `Response`, they are put back on the event instead.
-+
-+A staged header wins over the same header set by the handler, so a miss looks the same as a hit.
-+
-+Headers that decide whether a response may be stored stay visible to the cache: a staged `Cache-Control` and every staged `Vary` name except `origin`. A response that middleware marked `private`/`no-store`, or that varies on a request header the cache isn't keyed on, is therefore not stored. A staged `private`/`no-store` `Cache-Control` is also sent to the client in place of the one the cached handler sets, so a CDN in front of the app doesn't store it either. A `Vary: Origin` is isolated, because the CORS headers it declares are staged per request as well.
-+
-+Properties of the wrapped handler (such as ocache's `invalidate`, `expire` and `resolveKeys`) are copied to the returned handler.
-+
-+**Example:**
-+
-+```ts
-+import { handleCacheHeaders, toResponse, withCacheIsolation } from "h3";
-+import { defineCachedHandler } from "ocache";
-+const cached = withCacheIsolation(
-+  defineCachedHandler(() => "hello", {
-+    maxAge: 60,
-+    toResponse: (value, event) => toResponse(value, event),
-+    handleCacheHeaders: (event, conditions) => handleCacheHeaders(event, conditions),
-+  }),
-+);
-+app.get("/cached", cached);
-+```
-+
- <!-- /automd -->
- 
- ## More Request Utils
-```
-
-**File**: `src/index.ts` (modified, +1/-1)
-```diff
-@@ -177,7 +177,7 @@ export { sanitizeStatusCode, sanitizeStatusMessage } from "./utils/sanitize.ts";
- 
- // Cache
- 
--export { type CacheConditions, handleCacheHeaders } from "./utils/cache.ts";
-+export { type CacheConditions, handleCacheHeaders, withCacheIsolation } from "./utils/cache.ts";
- 
- // Path
- 
-```
-
-**File**: `src/rules/cache.ts` (modified, +4/-118)
-```diff
-@@ -1,8 +1,7 @@
- import { defineHandler } from "../handler.ts";
- import { HTTPError } from "../error.ts";
- import { HTTPResponse, toResponse } from "../response.ts";
--import { handleCacheHeaders } from "../utils/cache.ts";
--import { kEventRes, kEventResHeaders } from "../event.ts";
-+import { handleCacheHeaders, withCacheIsolation } from "../utils/cache.ts";
- import type { H3Event } from "../event.ts";
- import type { EventHandler } from "../types/handler.ts";
- import type { ServerRequest } from "srvx";
-@@ -77,7 +76,7 @@ function withoutVaryOrigin(vary: string): string | undefined {
-  * an undeclared `Vary` name is not cacheable, and keying by origin instead
-  * would give every origin its own copy of the same body.
-  *
-- * With `routeRules()` as global middleware {@link detachStagedHeaders} already
-+ * With `routeRules()` as global middleware {@link withCacheIsolation} already
-  * keeps the rule's headers out; as route middleware the `cors` rule runs again
-  * inside the cached dispatch and stages them where `toResponse` sees them.
-  */
-@@ -137,104 +136,6 @@ function moveVolatileHeaders(res: Response, event: H3Event): Response {
-   return res;
+@@ -55,13 +55,11 @@ export function connectionTokens(connection: string | null): Set<string> {
  }
  
--// Matches a `*` entry of a comma-separated `Vary` list.
--const RE_VARY_WILDCARD = /(?:^|,)\s*\*\s*(?:,|$)/;
--
--/**
-- * Take the headers earlier middleware staged on `event.res` out of the event,
-- * so the `toResponse` of a cache miss cannot merge them into the shared entry
-- * (h3js/h3#1605). They are per-request and go back onto every response, hit
-- * or miss, through {@link withStagedHeaders}.
-- *
-- * `Cache-Control` and a wildcard `Vary` stay staged: they decide whether the
-- * response may be stored at all, and ocache only sees them in the entry. A
-- * middleware staging `private` for an authenticated request must keep that
-- * response out of the shared cache, not just off the wire.
-- *
-- * They stay out of the event rather than being restored onto it: an `swr`
-- * revalidation keeps running the handler on this event after the stale
-- * response is returned. Error headers are left alone, since an error status
-- * is never stored.
-- */
--function detachStagedHeaders(event: H3Event): Headers | undefined {
--  const res = (event as any)[kEventRes];
--  const staged: Headers | undefined = res?.[kEventResHeaders];
--  if (!staged) {
--    return;
--  }
--  const kept = new Headers();
--  const cacheControl = staged.get("cache-control");
--  if (cacheControl !== null) {
--    kept.set("cache-control", cacheControl);
--    staged.delete("cache-control");
--  }
--  const vary = staged.get("vary");
--  if (vary !== null && RE_VARY_WILDCARD.test(vary)) {
--    kept.set("vary", vary);
--    staged.delete("vary");
--  }
--  res[kEventResHeaders] = kept.keys().next().done ? undefined : kept;
--  return staged.keys().next().done ? undefined : staged;
--}
--
--/**
-- * Merge `source` into `target` the way h3 merges staged headers into a
-- * response, except that `Vary` lists are joined: the entry's own `Vary`
-- * declares its cache key and must not be replaced by a staged one.
-- */
--function mergeStagedHeaders(target: Headers, source: Headers): void {
--  for (const [name, value] of source) {
--    if (name === "set-cookie") {
--      target.append(name, value);
--    } else if (name === "vary" && target.has("vary")) {
--      appendVary(target, value);
--    } else {
--      target.set(name, value);
--    }
--  }
--}
--
--function appendVary(headers: Headers, value: string): void {
--  const names = headers
--    .get("vary")!
--    .split(",")
--    .map((name) => name.trim());
--  const known = new Set(names.map((name) => name.toLowerCase()));
--  for (const name of value.split(",")) {
--    const trimmed = name.trim();
--    if (trimmed && !known.has(trimmed.toLowerCase())) {
--      known.add(trimmed.toLowerCase());
--      names.push(trimmed);
--    }
--  }
--  headers.set("vary", names.filter(Boolean).join(", "));
--}
--
--/**
-- * Apply detached staged headers to the response the cache returned. Headers
-- * staged during the dispatch (`handleCacheHeaders`, moved volatile headers)
-- * are still on `event.res` and are merged over these by h3 as usual. Like h3,
-- * success headers never reach an error response.
-- */
--function withStagedHeaders(res: Response, staged: Headers): Response {
--  if (res.status >= 400) {
--    return res;
--  }
--  const headers = new Headers(res.headers);
--  mergeStagedHeaders(headers, staged);
--  return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
--}
--
--/** Put detached headers back under whatever was staged since, for h3 to render. */
--function reattachStagedHeaders(event: H3Event, staged: Headers): void {
--  const res = event.res as any;
--  const after: Headers | undefined = res[kEventResHeaders];
--  if (after) {
--    mergeStagedHeaders(staged, after);
--  }
--  res[kEventResHeaders] = staged;
--}
--
  /**
-  * Requests ocache never reads or writes an entry for (`isBypassedMethod`): it
-  * runs the handler live and returns, so the rule has nothing to cont
+- * Hop-by-hop response headers (plus length/encoding headers that fetch has
+- * already normalized) that must be stripped from the upstream response instead
+- * of being relayed to the client.
++ * Hop-by-hop response headers and the encoding header normalized by fetch.
++ * Content-Length is handled separately because decoded bodies need a new length.
+  */
+ export const ignoredResponseHeaders: Set<string> = /* @__PURE__ */ new Set([
+   "content-encoding",
+-  "content-length",
+   "transfer-encoding",
+   "connection",
+   "keep-alive",
 ```
 
-**File**: `src/utils/cache.ts` (modified, +64/-0)
+**File**: `src/utils/proxy.ts` (modified, +16/-1)
 ```diff
-@@ -1,5 +1,11 @@
- import type { H3Event } from "../event.ts";
- import { isCacheMatch } from "./internal/cache.ts";
-+import {
-+  detachStagedHeaders,
-+  getStagedHeader,
-+  reattachStagedHeaders,
-+  withStagedHeaders,
-+} from "./internal/staged-headers.ts";
+@@ -413,8 +413,23 @@ export async function proxy(
+   // `Connection` header (RFC 9110 §7.6.1), on top of the static denylist.
+   const connectionNominated = connectionTokens(response.headers.get("connection"));
  
- export interface CacheConditions {
-   modifiedTime?: string | Date;
-@@ -79,3 +85,61 @@ export function handleCacheHeaders(event: H3Event, opts: CacheConditions): boole
- 
-   return false;
- }
++  // Fetch can decode bodies without updating headers; CORS can hide the encoding.
++  // Without a body, a nonzero length is only meaningful for downstream HEAD or 304.
++  const contentEncoding = response.headers.get("content-encoding")?.toLowerCase();
++  const preserveContentLength =
++    response.status !== 204 &&
++    response.type !== "cors" &&
++    !response.headers.has("transfer-encoding") &&
++    (!contentEncoding || contentEncoding === "identity") &&
++    (response.body !== null || event.req.method === "HEAD" || response.status === 304);
 +
-+/**
-+ * Wrap a cached handler so headers staged on `event.res` before it runs (for example by global middleware) never enter its cache entry.
-+ *
-+ * A cache miss usually renders the handler result with `toResponse(value, event)`, which merges staged headers into the stored response, so later hits would replay one user's headers to everyone. The wrapper takes them off the event for the cached dispatch and merges them onto each successful response, hit or miss; error responses (4xx/5xx) don't receive them, as in h3. When the handler returns something other than a `Response`, they are put back on the event instead.
-+ *
-+ * A staged header wins over the same header set by the handler, so a miss looks the same as a hit.
-+ *
-+ * Headers that decide whether a response may be stored stay visible to the cache: a staged `Cache-Control` and every staged `Vary` name except `origin`. A response that middleware marked `private`/`no-store`, or that varies on a request header the cache isn't keyed on, is therefore not stored. A staged `private`/`no-store` `Cache-Control` is also sent to the client in place of the one the cached handler sets, so a CDN in front of the app doesn't store it either. A `Vary: Origin` is isolated, because the CORS headers it declares are staged per request as well.
-+ *
-+ * Properties of the wrapped handler (such as ocache's `invalidate`, `expire` and `resolveKeys`) are copied to the returned handler.
-+ *
-+ * @example
-+ * import { handleCacheHeaders, toResponse, withCacheIsolation } from "h3";
-+ * import { defineCachedHandler } from "ocache";
-+ *
-+ * const cached = withCacheIsolation(
-+ *   defineCachedHandler(() => "hello", {
-+ *     maxAge: 60,
-+ *     toResponse: (value, event) => toResponse(value, event),
-+ *     handleCacheHeaders: (event, conditions) => handleCacheHeaders(event, conditions),
-+ *   }),
-+ * );
-+ * app.get("/cached", cached);
-+ *
-+ * @param handler The cached event handler to wrap.
-+ */
-+export function withCacheIsolation<T extends (event: H3Event) => unknown>(handler: T): T {
-+  async function _handlerWithCacheIsolation(event: H3Event) {
-+    const cacheControl = getStagedHeader(event, "cache-control");
-+    const privateCacheControl =
-+      cacheControl !== null && RE_PRIVATE.test(cacheControl) ? cacheControl : undefined;
-+    const staged = detachStagedHeaders(event);
-+    let res: unknown;
-+    try {
-+      res = await handler(event);
-+    } catch (error) {
-+      if (staged) {
-+        reattachStagedHeaders(event, staged);
-+      }
-+      throw error;
-+    }
-+    if (privateCacheControl) {
-+      // The cached dispatch's `handleCacheHeaders` replaces it with `public`;
-+      // a shared cache in front of the app must still see it as private.
-+      event.res.headers.set("cache-control", privateCacheControl);
-+    }
-+    if (!staged) {
-+      return res;
-+    }
-+    if (res instanceof Response) {
-+      return withStagedHeaders(res, staged);
-+    }
-+    reattachStagedHeaders(event, staged);
-+    return res;
-+  }
-+  return Object.assign(_handlerWithCacheIsolation, handler) as unknown as T;
-+}
+   for (const [key, value] of response.headers.entries()) {
+-    if (ignoredResponseHeaders.has(key) || connectionNominated.has(key) || key === "set-cookie") {
++    if (
++      ignoredResponseHeaders.has(key) ||
++      connectionNominated.has(key) ||
++      key === "set-cookie" ||
++      (key === "content-length" && !preserveContentLength)
++    ) {
+       continue;
+     }
+     headers.append(key, value);
 ```
 
-**File**: `src/utils/internal/staged-headers.ts` (added, +118/-0)
+**File**: `test/proxy-response.test.ts` (added, +192/-0)
 ```diff
-@@ -0,0 +1,118 @@
-+import { kEventRes, kEventResHeaders } from "../../event.ts";
-+import type { H3Event } from "../../event.ts";
-+
-+/** Read a header staged on `event.res` without creating the response. */
-+export function getStagedHeader(event: H3Event, name: string): string | null {
-+  return (event as any)[kEventRes]?.[kEventResHeaders]?.get(name) ?? null;
-+}
-+
-+/**
-+ * Take the headers earlier middleware staged on `event.res` out of the event,
-+ * so the `toResponse` of a cache miss cannot merge them into the shared entry
-+ * (h3js/h3#1605). They are per-request and go back onto every response, hit
-+ * or miss, through {@link withStagedHeaders}.
-+ *
-+ * `Cache-Control` and `Vary` names other than `origin` stay staged: they
-+ * decide whether the response may be stored at all, and the cache only sees
-+ * them in the entry. A middleware staging `private` for an authenticated
-+ * request must keep that response out of the shared cache, not just off the
-+ * wire.
-+ *
-+ * They stay out of the event rather than being restored onto it: an `swr`
-+ * revalidation keeps running the handler on this event after the stale
-+ * response is returned. Error headers are left alone, since an error status
-+ * is never stored.
-+ */
-+export function detachStagedHeaders(event: H3Event): Headers | undefined {
-+  const res = (event as any)[kEventRes];
-+  const staged: Headers | undefined = res?.[kEventResHeaders];
-+  if (!staged) {
-+    return;
-+  }
-+  const kept = new Headers();
-+  const cacheControl = staged.get("cache-control");
-+  if (cacheControl !== null) {
-+    kept.set("cache-control", cacheControl);
-+    staged.delete("cache-control");
-+  }
-+  const vary = staged.get("vary");
-+  if (vary !== null) {
-+    // Only `origin` is detached: it declares the per-request CORS headers that
-+    // are detached with it. Any other name may select what the handler renders
-+    // (e.g. middleware reading `accept-language` into the context), so the
-+    // cache must see it and refuse to store an entry it isn't keyed on.
-+    const names = vary
-+      .split(",")
-+      .map((name) => name.trim())
-+      .filter(Boolean);
-+    const rest = names.filter((name) => name.toLowerCase() !== "origin");
-+    if (rest.length > 0) {
-+      kept.set("vary", rest.join(", "));
-+    }
-+    if (rest.length === names.length) {
-+      staged.delete("vary");
-+    } else {
-+      staged.set("vary", "origin");
-+    }
-+  }
-+  res[kEventResHeaders] = kept.keys().next().done ? undefined : kept;
-+  return staged.keys().next().done ? undefined : staged;
-+}
-+
-+/**
-+ * Apply detached staged headers to the response the cache returned. Headers
-+ * staged during the dispatch (`handleCacheHeaders`, ...) are still on
-+ * `event.res` and are merged over these by h3 as usual. Like h3, success
-+ * headers never reach an error response.
-+ */
-+export function withStagedHeaders(res: Response, staged: Headers): Response {
-+  if (res.status >= 400) {
-+    return res;
-+  }
-+  const headers = new Headers(res.headers);
-+  mergeStagedHeaders(headers, staged);
-+  return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
-+}
-+
-+/** Put detached headers back under whatever was staged since, for h3 to render. */
-+export function reattachStagedHeaders(event: H3Event, staged: Headers): void {
-+  const res = event.res as any;
-+  const after: Headers | undefined = res[kEventResHeaders];
-+  if (after) {
-+    mergeStagedHeaders(staged, after);
-+  }
-+  res[kEventResHeaders] = staged;
-+}
-+
-+/**
-+ * Merge `source` into `target` the way h3 merges staged headers into a
-+ * response, except that `Vary` lists are joined: the entry's own `Vary`
-+ * declares its cache key and must not be replaced by a staged one.
-+ */
-+function mergeStagedHeaders(target: Headers, source: Headers): void {
-+  for (const [name, value] of source) {
-+    if (name === "set-cookie") {
-+      target.append(name, value);
-+    } else if (name === "vary" && target.has("vary")) {
-+      appendVary(target, value);
-+    } else {
-+      target.set(name, value);
-+    }
-+  }
-+}
-+
-+function appendVary(headers: Headers, value: string): void {
-+  const names = headers
-+    .get("vary")!
-+    .split(",")
-+    .map((name) => name.trim());
-+  const known = new Set(names.map((name) => name.toLowerCase()));
-+  for (const name of value.split(",")) {
-+    const trimmed = name.trim();
-+    if (trimmed && !known.has(trimmed.toLowerCase())) {
-+      known.add(trimmed.toLowerCase());
-+      names.push(trimmed);
-+    }
-+  }
-+  headers.set("vary", names.filter(Boolean).join(", "));
-+}
-```
-
-**File**: `test/cache.test.ts` (added, +226/-0)
-```diff
-@@ -0,0 +1,226 @@
-+import { createMemoryStorage, defineCachedHandler } from "ocache";
-+import {
-+  HTTPError,
-+  defineHandler,
-+  handleCacheHeaders,
-+  toResponse,
-+  withCacheIsolation,
-+} from "../src/index.ts";
-+import { H3Event } from "../src/index.ts";
+@@ -0,0 +1,192 @@
++import { brotliCompressSync, deflateSync, gzipSync } from "node:zlib";
++import { vi } from "vitest";
++import { proxyRequest } from "../src/utils/proxy.ts";
 +import { describeMatrix } from "./_setup.ts";
 +
-+describeMatrix("withCacheIsolation", (t, { it, expect }) => {
-+  // A handler-level cache the way frameworks such as Nitro build one (h3js/h3#1607).
-+  const createCached = (handler: (event: H3Event) => unknown, opts?: { varies?: string[] }) =>
-+    withCacheIsolation(
-+      defineCachedHandler(handler, {
-+        storage: createMemoryStorage(),
-+        maxAge: 60,
-+        ...opts,
-+        toResponse: (value, event) => toResponse(value, event as H3Event),
-+        handleCacheHeaders: (event, conditions) => handleCacheHeaders(event as H3Event, conditions),
-+      }),
++describeMatrix("proxy response content-length", (t, { it, expect }) => {
++  // Exercise internal sub-requests in web mode and native fetch over HTTP in node mode.
++  const upstream = () => (t.target === "node" ? `${t.url}/upstream` : "/upstream");
++
++  for (const status of [200, 206]) {
++    it(`preserves content-length for an unencoded ${status} response`, async () => {
++      const body = new Uint8Array([0, 255]);
++      t.app.all(
++        "/upstream",
++        () =>
++          new Response(body, {
++            status,
++            headers: {
++              "content-type": "video/mp4",
++              "content-length": "2",
++              "accept-ranges": "bytes",
++              ...(status === 206 ? { "content-range": "bytes 0-1/100" } : {}),
++            },
++          }),
++      );
++      t.app.all("/", (event) => proxyRequest(event, upstream()));
++
++      const res = await t.fetch("/", {
++        headers: status === 206 ? { range: "bytes=0-1" } : {},
++      });
++      expect(res.status).toBe(status);
++      expect(res.headers.get("content-length")).toBe("2");
++      expect(res.headers.get("accept-ranges")).toBe("bytes");
++      expect(res.headers.get("content-range")).toBe(status === 206 ? "bytes 0-1/100" : null);
++      expect(new Uint8Array(await res.arrayBuffer())).toEqual(body);
++    });
++  }
++
++  it("preserves content-length with identity encoding", async () => {
++    t.app.all(
++      "/upstream",
++      () =>
++        new Response("hello", {
++          headers: { "content-length": "5", "content-encoding": "Identity" },
++        }),
++    );
++    t.app.all("/", (event) => proxyRequest(event, upstream()));
++
++    const res = await t.fetch("/");
++    expect(res.headers.get("content-length")).toBe("5");
++    expect(res.headers.has("content-encoding")).toBe(false);
++    expect(await res.text()).toBe("hello");
++  });
++
++  it("preserves the representation length for HEAD", async () => {
++    t.app.all("/upstream", () => new Response(null, { headers: { "content-length": "100" } }));
++    t.app.all("/", (event) => proxyRequest(event, upstream()));
++
++    const res = await t.fetch("/", { method: "HEAD" });
++    expect(res.headers.get("content-length")).toBe("100");
++    expect(await res.text()).toBe("");
++  });
++
++  it("does not send a HEAD representation length for a downstream GET", async () => {
++    t.app.all("/upstream", (event) => {
++      expect(event.req.method).toBe("HEAD");
++      return new Response(null, { headers: { "content-length": "5" } });
++    });
++    t.app.all("/", (event) =>
++      proxyRequest(event, upstream(), { fetchOptions: { method: "HEAD" } }),
 +    );
 +
-+  it("keeps middleware-staged headers out of the cache entry", async () => {
-+    const cached = createCached(() => "hello");
-+    t.app.use((event) => {
-+      const echo = event.req.headers.get("x-echo");
-+      if (echo) event.res.headers.set("x-echo", echo);
-+    });
-+    t.app.get(
-+      "/cached",
-+      defineHandler((event) => cached(event)),
++    const res = await t.fetch("/");
++    expect(res.status).toBe(200);
++    expect(res.headers.has("content-length")).toBe(false);
++    expect(await res.text()).toBe("");
++  });
++
++  it("preserves the representation length for 304", async () => {
++    t.app.all(
++      "/upstream",
++      () => new Response(null, { status: 304, headers: { "content-length": "100" } }),
 +    );
++    t.app.all("/", (event) => proxyRequest(event, upstream()));
 +
-+    const miss = await t.fetch("/cached", { headers: { "x-echo": "a" } });
-+    expect(miss.headers.get("x-echo")).toBe("a");
-+    expect(await miss.text()).toBe("hello");
-+
-+    const hit = await t.fetch("/cached");
-+    expect(hit.headers.get("x-echo")).toBeNull();
-+    expect(await hit.text()).toBe("hello");
-+
-+    const other = await t.fetch("/cached", { headers: { "x-echo": "b" } });
-+    expect(other.headers.get("x-echo")).toBe("b");
++    const res = await t.fetch("/");
++    expect(res.status).toBe(304);
++    expect(res.headers.get("content-length")).toBe("100");
++    expect(await res.text()).toBe("");
 +  });
 +
-+  it("keeps middleware-staged cookies out of the cache entry", async () => {
-+    const cached = createCached(() => "hello");
-+    t.app.use((event) => {
-+      const user = event.req.headers.get("x-user");
-+      if (user) event.res.headers.append("set-cookie", `user=${user}`);
-+    });
-+    t.app.get("/cached", cached);
++  for (const [method, length] of [
++    ["GET", "0"],
++    ["HEAD", "5"],
++  ] as const) {
++    it(`strips content-length from a 204 response to ${method}`, async () => {
++      t.app.all(
++        "/upstream",
++        () =>
++          new Response(null, {
++            status: 204,
++            headers: { "content-length": length },
++          }),
++      );
++      t.app.all("/", (event) => proxyRequest(event, upstream()));
 +
-+    const miss = await t.fetch("/cached", { headers: { "x-user": "alice" } });
-+    expect(miss.headers.get("set-cookie")).toBe("user=alice");
-+    const hit = await t.fetch("/cached");
-+    expect(hit.headers.get("set-cookie")).toBeNull();
++      const res = await t.fetch("/", { method });
++      expect(res.status).toBe(204);
++      expect(res.headers.has("content-length")).toBe(false);
++      expect(await res.text()).toBe("");
++    });
++  }
++
++  it("drops content-length when transfer-encoding is present", async () => {
++    t.app.all(
++      "/upstream",
++      () =>
++        new Response("hello", {
++          headers: { "transfer-encoding": "chunked", "content-length": "100" },
++        }),
++    );
++    // Internal targets bypass the HTTP parser that rejects conflicting headers.
++    t.app.all("/", (event) => proxyRequest(event, "/upstream"));
++
++    const res = await t.fetch("/");
++    expect(res.headers.has("content-length")).toBe(false);
++    expect(await res.text()).toBe("hello");
 +  });
 +
-+  it("still caches a route behind middleware that stages `vary: origin`", async () => {
-+    let calls = 0;
-+    const cached = createCached(() => `hello ${++calls}`);
-+    t.app.use((event) => {
-+      event.res.headers.set("vary", "origin");
-+    });
-+    t.app.get("/cached", cached);
-+
-+    const first = await t.fetch("/cached");
-+    expect(await first.text()).toBe("hello 1");
-+    expect(first.headers.get("vary")).toBe("origin");
-+    const second = await t.fetch("/cached");
-+    expect(await second.text()).toBe("hello 1");
-+    expect(second.headers.get("vary")).toBe("origin");
-+  });
-+
-+  it("does not store a response that varies on a header the cache isn't keyed on", async () => {
-+    const cached = createCached((event) => `hello in ${event.context.lang}`);
-+    t.app.use((event) => {
-+      event.context.lang = event.req.headers.get("accept-language") ?? "en";
-+      event.res.headers.set("vary", "origin, accept-language");
-+    });
-+    t.app.get("/cached", cached);
-+
-+    const en = await t.fetch("/cached", { headers: { "accept-language": "en" } });
-+    expect(await en.text()).toBe("hello in en");
-+    const fr = await t.fetch("/cached", { headers: { "accept-language": "fr" } });
-+    expect(await fr.text()).toBe("hello in fr");
-+    expect(fr.headers.get("vary")).toBe("accept-language, origin");
-+  });
-+
-+  it("caches per value of a staged `Vary` the cache is keyed on", async () => {
-+    let calls = 0;
-+    const cached = createCached((event) => `hello in ${event.context.lang} (${++calls})`, {
-+      varies: ["accept-language"],
-+    });
-+    t.app.use((event) => {
-+      event.context.lang = event.req.headers.get("accept-language") ?? "en";
-+      event.res.headers.set("vary", "accept-language");
-+    });
-+    t.app.get("/cached", cached);
-+
-+    const fetchLang = async (lang: string) =>
-+      (await t.fetch("/cached", { headers: { "accept-language": lang } })).text();
-+    expect(await fetchLang("en")).toBe("hello in en (1)");
-+    expect(await fetchLang("fr")).toBe("hello in fr (2)");
-+    expect(await fetchLang("en")).toBe("hello in en (1)");
-+  });
-+
-+  it("keeps the cached handler's own methods", async () => {
-+    let calls = 0;
-+    let url = "";
-+    const cached = createCached((event) => {
-+      url = event.req.url;
-+      return `hello ${++calls}`;
-+    });
-+    t.app.get("/cached", cached);
-+
-+    expect(await (await t.fetch("/cached")).text()).toBe("hello 1");
-+    expect(await (await t.fetch("/cached")).text()).toBe("hello 1");
-+    expect(typeof cached.expire).toBe("function");
-+    expect(typeof cached.resolveKeys).toBe("function");
-+    await cached.invalidate(new H3Event(new Request(url)));
-+    expect(await (await t.fetch
++  for (const [encoding, compress] of [
++    ["gzip", gzipSync],
++    ["deflate", deflateSync],
++    ["br", brotliCompressSync],
++  ] as const) {
++    it.runIf(t.target === "node")(
++      `drops the stale length after fetch decompresses ${encoding}`,
++      async () => {
++        const body = "hello from the compr
 ```
 
-**File**: `test/rules/cache.test.ts` (modified, +22/-0)
+**File**: `test/unit/proxy.test.ts` (modified, +1/-2)
 ```diff
-@@ -753,6 +753,28 @@ describe("cache rule (ocache-backed, h3/rules/cache)", () => {
-     }
+@@ -11,10 +11,9 @@ describe("proxy internal header sets", () => {
+     expect(ignoredHeaders.has("accept-encoding")).toBe(true);
    });
  
-+  it("never stores a response behind middleware staging a non-`origin` `Vary`", async () => {
-+    // Middleware that picks the rendered language from a request header the
-+    // rule isn't keyed on must keep the cache from storing one language for all.
-+    const app = new H3();
-+    app.use((event) => {
-+      event.context.lang = event.req.headers.get("accept-language") ?? "en";
-+      event.res.headers.set("vary", "accept-language");
-+    });
-+    app.use(routeRules({ "/cached-lang": { cache: { maxAge: 60 } } }, { handlers: { cache } }));
-+    app.get("/cached-lang", (event) => `hello in ${event.context.lang}`);
-+
-+    const en = await app.fetch(
-+      new Request("http://localhost/cached-lang", { headers: { "accept-language": "en" } }),
-+    );
-+    expect(await en.text()).toBe("hello in en");
-+    const fr = await app.fetch(
-+      new Request("http://localhost/cached-lang", { headers: { "accept-language": "fr" } }),
-+    );
-+    expect(await fr.text()).toBe("hello in fr");
-+    expect(fr.headers.get("vary")).toMatch(/accept-language/i);
-+  });
-+
-   it("never stores a response middleware staged as `private`", async () => {
-     // An auth middleware marks a personalized response private. Detaching that
-     // `cache-control` with the other staged headers would store Alice's body
+-  it("strips hop-by-hop and length/encoding response headers", () => {
++  it("strips hop-by-hop and encoding response headers", () => {
+     for (const key of [
+       "content-encoding",
+-      "content-length",
+       "transfer-encoding",
+       "connection",
+       "keep-alive",
 ```
 
 ---
 
-### Incident Patch 3: `d6588158` (2026-10-20)
-**Commit Message**: fix(rules): keep middleware-staged headers out of `cache` entries (#1606)
+### Incident Patch 2: `2f29b875` (2026-11-10)
+**Commit Message**: fix(static): join `indexNames` on a single `/` while keeping extension fallbacks (#1585)
 
-**File**: `src/rules/cache.ts` (modified, +120/-1)
+**File**: `src/utils/static.ts` (modified, +23/-2)
 ```diff
-@@ -2,6 +2,7 @@ import { defineHandler } from "../handler.ts";
- import { HTTPError } from "../error.ts";
- import { HTTPResponse, toResponse } from "../response.ts";
- import { handleCacheHeaders } from "../utils/cache.ts";
-+import { kEventRes, kEventResHeaders } from "../event.ts";
- import type { H3Event } from "../event.ts";
- import type { EventHandler } from "../types/handler.ts";
- import type { ServerRequest } from "srvx";
-@@ -75,6 +76,10 @@ function withoutVaryOrigin(vary: string): string | undefined {
-  * Left in place it would only make ocache refuse to store the entry at all —
-  * an undeclared `Vary` name is not cacheable, and keying by origin instead
-  * would give every origin its own copy of the same body.
-+ *
-+ * With `routeRules()` as global middleware {@link detachStagedHeaders} already
-+ * keeps the rule's headers out; as route middleware the `cors` rule runs again
-+ * inside the cached dispatch and stages them where `toResponse` sees them.
-  */
- function moveVolatileHeaders(res: Response, event: H3Event): Response {
-   if (event.req.method !== "GET" && event.req.method !== "HEAD") {
-@@ -132,6 +137,104 @@ function moveVolatileHeaders(res: Response, event: H3Event): Response {
-   return res;
- }
+@@ -47,7 +47,13 @@ export interface ServeStaticOptions {
+   encodings?: Record<string, string>;
  
-+// Matches a `*` entry of a comma-separated `Vary` list.
-+const RE_VARY_WILDCARD = /(?:^|,)\s*\*\s*(?:,|$)/;
+   /**
+-   * Default index file to serve when the path is a directory
++   * Candidate names tried, in order, when the exact path is not found.
++   *
++   * - Entries starting with `.` are extension fallbacks appended to the path
++   *   (e.g. `".html"` resolves `/about` to `/about.html`).
++   * - Other entries are directory index files joined with `/`; the leading slash
++   *   is optional (`"/index.html"` and `"index.html"` both resolve `/` to
++   *   `/index.html` and `/docs` to `/docs/index.html`).
+    *
+    * @default ["/index.html"]
+    */
+@@ -341,11 +347,26 @@ function idSearchPaths(id: string, encodings: string[], indexNames: string[]) {
+   const ids: { id: string; assetId: string }[] = [];
+ 
+   for (const suffix of ["", ...indexNames]) {
+-    const assetId = `${id}${suffix}`;
++    const assetId = withIndexName(id, suffix);
+     for (const encoding of [...encodings, ""]) {
+       ids.push({ id: `${assetId}${encoding}`, assetId });
+     }
+   }
+ 
+   return ids;
+ }
 +
 +/**
-+ * Take the headers earlier middleware staged on `event.res` out of the event,
-+ * so the `toResponse` of a cache miss cannot merge them into the shared entry
-+ * (h3js/h3#1605). They are per-request and go back onto every response, hit
-+ * or miss, through {@link withStagedHeaders}.
++ * Resolve an `indexNames` entry against the request path `id`.
 + *
-+ * `Cache-Control` and a wildcard `Vary` stay staged: they decide whether the
-+ * response may be stored at all, and ocache only sees them in the entry. A
-+ * middleware staging `private` for an authenticated request must keep that
-+ * response out of the shared cache, not just off the wire.
-+ *
-+ * They stay out of the event rather than being restored onto it: an `swr`
-+ * revalidation keeps running the handler on this event after the stale
-+ * response is returned. Error headers are left alone, since an error status
-+ * is never stored.
++ * Entries starting with `.` are extension fallbacks appended as-is (`/about` → `/about.html`).
++ * Other entries are index files joined on a single `/`, with leading slashes optional
++ * (`/` → `/index.html`, `/docs` → `/docs/index.html`).
 + */
-+function detachStagedHeaders(event: H3Event): Headers | undefined {
-+  const res = (event as any)[kEventRes];
-+  const staged: Headers | undefined = res?.[kEventResHeaders];
-+  if (!staged) {
-+    return;
++function withIndexName(id: string, name: string): string {
++  if (!name || name[0] === ".") {
++    return id + name;
 +  }
-+  const kept = new Headers();
-+  const cacheControl = staged.get("cache-control");
-+  if (cacheControl !== null) {
-+    kept.set("cache-control", cacheControl);
-+    staged.delete("cache-control");
-+  }
-+  const vary = staged.get("vary");
-+  if (vary !== null && RE_VARY_WILDCARD.test(vary)) {
-+    kept.set("vary", vary);
-+    staged.delete("vary");
-+  }
-+  res[kEventResHeaders] = kept.keys().next().done ? undefined : kept;
-+  return staged.keys().next().done ? undefined : staged;
++  const file = name.replace(/^\/+/, "");
++  return !file ? id : id === "/" ? `/${file}` : `${id}/${file}`;
 +}
-+
-+/**
-+ * Merge `source` into `target` the way h3 merges staged headers into a
-+ * response, except that `Vary` lists are joined: the entry's own `Vary`
-+ * declares its cache key and must not be replaced by a staged one.
-+ */
-+function mergeStagedHeaders(target: Headers, source: Headers): void {
-+  for (const [name, value] of source) {
-+    if (name === "set-cookie") {
-+      target.append(name, value);
-+    } else if (name === "vary" && target.has("vary")) {
-+      appendVary(target, value);
-+    } else {
-+      target.set(name, value);
-+    }
-+  }
-+}
-+
-+function appendVary(headers: Headers, value: string): void {
-+  const names = headers
-+    .get("vary")!
-+    .split(",")
-+    .map((name) => name.trim());
-+  const known = new Set(names.map((name) => name.toLowerCase()));
-+  for (const name of value.split(",")) {
-+    const trimmed = name.trim();
-+    if (trimmed && !known.has(trimmed.toLowerCase())) {
-+      known.add(trimmed.toLowerCase());
-+      names.push(trimmed);
-+    }
-+  }
-+  headers.set("vary", names.filter(Boolean).join(", "));
-+}
-+
-+/**
-+ * Apply detached staged headers to the response the cache returned. Headers
-+ * staged during the dispatch (`handleCacheHeaders`, moved volatile headers)
-+ * are still on `event.res` and are merged over these by h3 as usual. Like h3,
-+ * success headers never reach an error response.
-+ */
-+function withStagedHeaders(res: Response, staged: Headers): Response {
-+  if (res.status >= 400) {
-+    return res;
-+  }
-+  const headers = new Headers(res.headers);
-+  mergeStagedHeaders(headers, staged);
-+  return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
-+}
-+
-+/** Put detached headers back under whatever was staged since, for h3 to render. */
-+function reattachStagedHeaders(event: H3Event, staged: Headers): void {
-+  const res = event.res as any;
-+  const after: Headers | undefined = res[kEventResHeaders];
-+  if (after) {
-+    mergeStagedHeaders(staged, after);
-+  }
-+  res[kEventResHeaders] = staged;
-+}
-+
- /**
-  * Requests ocache never reads or writes an entry for (`isBypassedMethod`): it
-  * run
 ```
 
-**File**: `test/rules/cache.test.ts` (modified, +114/-1)
+**File**: `test/static.test.ts` (modified, +81/-0)
 ```diff
-@@ -1,4 +1,4 @@
--import { H3, defineHandler, setCookie } from "../../src/index.ts";
-+import { H3, HTTPError, defineHandler, setCookie } from "../../src/index.ts";
- import type { EventHandler } from "../../src/index.ts";
- import { describe, expect, it, vi } from "vitest";
- import { routeRules } from "../../src/rules/middleware.ts";
-@@ -702,6 +702,119 @@ describe("cache rule (ocache-backed, h3/rules/cache)", () => {
-     expect(calls).toBe(1);
+@@ -676,3 +676,84 @@ describe("serve static (malformed url)", () => {
+     expect(servedId).not.toMatch(/(^|[\\/])\.\.([\\/]|$)/); // no bare `..` segment
    });
+ });
++
++describeMatrix("serve static index resolution", (t, { it, expect }) => {
++  const assets: Record<string, string> = {
++    "/index.html": "root-index",
++    "/about.html": "about-page",
++    "/docs/index.html": "docs-index",
++  };
++
++  const createOptions = (indexNames?: string[]): ServeStaticOptions => ({
++    getContents: (id) => assets[id] ?? null,
++    getMeta: (id) => (assets[id] ? { size: assets[id].length } : undefined),
++    indexNames,
++  });
++
++  it("serves root index.html without double slashes", async () => {
++    t.app.all("/**", (event) => serveStatic(event, createOptions(["/index.html"])));
++    const res = await t.fetch("/");
++    expect(res.status).toBe(200);
++    expect(await res.text()).toBe("root-index");
++  });
++
++  it("serves subdirectory index.html with leading slash indexName", async () => {
++    t.app.all("/**", (event) => serveStatic(event, createOptions(["/index.html"])));
++    const res = await t.fetch("/docs");
++    expect(res.status).toBe(200);
++    expect(await res.text()).toBe("docs-index");
++
++    const resSlash = await t.fetch("/docs/");
++    expect(resSlash.status).toBe(200);
++    expect(await resSlash.text()).toBe("docs-index");
++  });
++
++  it("supports extension fallback with indexNames", async () => {
++    t.app.all("/**", (event) => serveStatic(event, createOptions([".html", "/index.html"])));
++    const res = await t.fetch("/about");
++    expect(res.status).toBe(200);
++    expect(await res.text()).toBe("about-page");
++  });
++
++  it("serves index.html when relative indexNames entries lack leading slashes", async () => {
++    t.app.all("/**", (event) => serveStatic(event, createOptions(["index.html"])));
++    const rootRes = await t.fetch("/");
++    expect(rootRes.status).toBe(200);
++    expect(await rootRes.text()).toBe("root-index");
++
++    const docsRes = await t.fetch("/docs");
++    expect(docsRes.status).toBe(200);
++    expect(await docsRes.text()).toBe("docs-index");
++
++    const docsSlashRes = await t.fetch("/docs/");
++    expect(docsSlashRes.status).toBe(200);
++    expect(await docsSlashRes.text()).toBe("docs-index");
++  });
++
++  it("does not add a double slash when joining indexNames", async () => {
++    const options = createOptions(["/index.html", "index.html", "//index.html"]);
++    const getMeta = vi.fn(options.getMeta);
++    t.app.all("/**", (event) => serveStatic(event, { ...options, getMeta }));
++    await t.fetch("/");
++    await t.fetch("/missing/");
++    const ids = getMeta.mock.calls.map(([id]) => id);
++    expect(ids).toContain("/index.html");
++    expect(ids).toContain("/missing/index.html");
++    expect(ids.filter((id) => id.includes("//"))).toEqual([]);
++  });
++
++  it("normalizes multiple leading slashes in indexNames entries", async () => {
++    t.app.all("/**", (event) => serveStatic(event, createOptions(["//index.html"])));
++    const rootRes = await t.fetch("/");
++    expect(rootRes.status).toBe(200);
++    expect(await rootRes.text()).toBe("root-index");
++
++    const docsRes = await t.fetch("/docs");
++    expect(docsRes.status).toBe(200);
++    expect(await docsRes.text()).toBe("docs-index");
++
++    const docsSlashRes = await t.fetch("/docs/");
++    expect(docsSlashRes.status).toBe(200);
++    expect(await docsSlashRes.text()).toBe("docs-index");
++  });
++});
+```
+
+---
+
+### Incident Patch 3: `3a7ed0e7` (2026-11-10)
+**Commit Message**: fix(response): absorb rejected `iterator.return()` when `iterable` is cancelled
+
+Resolves #1645
+
+**File**: `src/utils/response.ts` (modified, +5/-1)
+```diff
+@@ -253,7 +253,11 @@ export async function iterable<Value = unknown, Return = unknown>(
+       },
+       cancel() {
+         cancelled = true;
+-        iterator.return?.();
++        // Nobody awaits a cancelled body (e.g. client disconnect), so a failing cleanup
++        // (sync throw or rejected `return()`) must not surface as an unhandled rejection.
++        try {
++          Promise.resolve(iterator.return?.()).catch(() => {});
++        } catch {}
+       },
+     }),
+   );
+```
+
+**File**: `test/iterable.test.ts` (modified, +34/-0)
+```diff
+@@ -96,6 +96,40 @@ describeMatrix("iterable", (t, { it, expect, describe }) => {
+       expect(serialized).toEqual(["a"]);
+     });
  
-+  it("keeps headers staged by earlier middleware out of the entry (#1605)", async () => {
-+    let calls = 0;
-+    const app = new H3();
-+    app.use((event) => {
-+      const user = event.url.searchParams.get("user");
-+      if (user) event.res.headers.set("x-user", user);
-+    });
-+    app.use(routeRules({ "/cached": { cache: { maxAge: 60 } } }, { handlers: { cache } }));
-+    app.get("/cached", () => ({ calls: ++calls }));
-+
-+    const miss = await app.fetch(new Request("http://localhost/cached?user=alice"));
-+    expect(miss.headers.get("x-cache")).toBe("MISS");
-+    expect(miss.headers.get("x-user")).toBe("alice");
-+
-+    const hit = await app.fetch(new Request("http://localhost/cached"));
-+    expect(hit.headers.get("x-cache")).toBe("HIT");
-+    expect(await hit.json()).toEqual({ calls: 1 });
-+    expect(hit.headers.get("x-user")).toBeNull();
-+
-+    // Merged back onto hits too.
-+    const bob = await app.fetch(new Request("http://localhost/cached?user=bob"));
-+    expect(bob.headers.get("x-cache")).toBe("HIT");
-+    expect(bob.headers.get("x-user")).toBe("bob");
-+  });
-+
-+  it("caches a route behind middleware that stages `vary: origin` (#1605)", async () => {
-+    let calls = 0;
-+    const app = new H3();
-+    app.use((event) => {
-+      event.res.headers.set("vary", "origin");
-+    });
-+    app.use(
-+      routeRules(
-+        { "/cached-vary": { cache: { maxAge: 60, varies: ["accept-language"] } } },
-+        { handlers: { cache } },
-+      ),
-+    );
-+    app.get("/cached-vary", () => ({ calls: ++calls }));
-+
-+    const first = await app.fetch(new Request("http://localhost/cached-vary"));
-+    expect(first.headers.get("x-cache")).toBe("MISS");
-+    const second = await app.fetch(new Request("http://localhost/cached-vary"));
-+    expect(second.headers.get("x-cache")).toBe("HIT");
-+    expect(await second.json()).toEqual({ calls: 1 });
-+    // The staged `Vary` joins the entry's own instead of replacing it.
-+    for (const res of [first, second]) {
-+      expect(res.headers.get("vary")).toMatch(/origin/i);
-+      expect(res.headers.get("vary")).toMatch(/accept-language/i);
-+    }
-+  });
-+
-+  it("never stores a response middleware staged as `private`", async () => {
-+    // An auth middleware marks a personalized response private. Detaching that
-+    // `cache-control` with the other staged headers would store Alice's body
-+    // and serve it to the next anonymous request.
-+    const app = new H3();
-+    app.use((event) => {
-+      const user = event.url.searchParams.get("user");
-+      if (user) {
-+        event.context.user = user;
-+        event.res.headers.set("cache-control", "private, no-store");
++    it("absorbs a rejected iterator cleanup when the response is cancelled", async () => {
++      const unhandled: unknown[] = [];
++      const onUnhandled = (reason: unknown) => unhandled.push(reason);
++      process.on("unhandledRejection", onUnhandled);
++      try {
++        let cleanedUp = false;
++        t.app.use(() =>
++          iterable(async function* () {
++            try {
++              for (;;) {
++                yield "a";
++                await new Promise((resolve) => setTimeout(resolve, 5));
++              }
++            } finally {
++              cleanedUp = true;
++              // oxlint-disable-next-line no-unsafe-finally
++              throw new Error("cleanup failed");
++            }
++          }),
++        );
++        const controller = new AbortController();
++        const result = await t.fetch("/", { signal: controller.signal });
++        const reader = result.body!.getReader();
++        await reader.read();
++        controller.abort();
++        reader.cancel().catch(() => {});
++        await vi.waitFor(() => expect(cleanedUp).toBe(true));
++        await new Promise((resolve) => setTimeout(resolve, 10));
++        expect(unhandled).toEqual([]);
++      } finally {
++        process.off("unhandledRejection", onUnhandled);
 +      }
 +    });
-+    app.use(routeRules({ "/cached-private": { cache: { maxAge: 60 } } }, { handlers: { cache } }));
-+    app.get("/cached-private", (event) => ({ user: event.context.user ?? null }));
 +
-+    const alice = await app.fetch(new Request("http://localhost/cached-private?user=alice"));
-+    expect(alice.headers.get("cache-control")).toBe("private, no-store");
-+    expect(await alice.json()).toEqual({ user: "alice" });
-+
-+    const anon = await app.fetch(new Request("http://localhost/cached-private"));
-+    expect(anon.headers.get("x-cache")).toBe("MISS");
-+    expect(await anon.json()).toEqual({ user: null });
-+  });
-+
-+  it("caches a `cors` + `cache` route with `routeRules()` as route middleware", async () => {
-+    // The `cors` rule runs again inside the cached dispatch here, staging its
-+    // `Vary: Origin` where the miss's `toResponse` merges it into the entry.
-+    let calls = 0;
-+    const app = new H3();
-+    app.get("/cached-route-cors/:id", () => ({ calls: ++calls }), {
-+      middleware: [
-+        routeRules(
-+          { "/cached-route-cors/**": { cors: { origin: "*" }, cache: { maxAge: 60 } } },
-+          { handlers: { cache } },
-+        ),
-+      ],
-+    });
-+
-+    const req = (origin: string) =>
-+      app.fetch(new Request("http://localhost/cached-route-cors/a", { headers: { origin } }));
-+    const first = await req("https://a.com");
-+    expect(first.headers.get("x-cache")).toBe("MISS");
-+    const second = await req("https://b.com");
-+    expect(second.headers.get("x-cache")).toBe("HIT");
-+    expect(await second.json()).toEqual({ calls: 1 });
-+  });
-+
-+  it("keeps middleware-staged error headers when the cached handler throws", async () => {
-+    const app = new H3();
-+    app.use((event) => {
-+      event.res.errHeaders.set("x-request-id", "abc");
-+    });
-+    app.use(routeRules({ "/cached-throw": { cache: { maxAg
+     describe("iterable support", () => {
+       const cases: [string, () => unknown][] = [
+         ["Array", () => ["the-value"]],
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1614** (closed): fix(rules): keep `errHeaders` a handler staged for its own error response (@sarankumar1325)
-- **PR #1613** (2026-10-22): fix(rules): let `HTTPError.headers` opt out of `headers` rule on errors (@pi0x)
-- **PR #1608** (2026-10-20): fix: keep middleware-staged headers out of handler-level caches (@pi0x)
-- **PR #1606** (2026-10-20): fix(rules): keep middleware-staged headers out of `cache` entries (@pi0x)
-- **PR #1604** (closed): chore: remove `CLAUDE.md` (@iiio2)
-- **PR #1602** (2026-10-18): build: remove bundled docs and open h3.dev from `h3 docs` (@pi0x)
+- **PR #1649** (closed): fix(response): preserve Vary when merging headers (@obaseyi2)
+- **PR #1646** (closed): fix(static): evaluate `If-Match` and `If-Unmodified-Since` preconditions (@Ishkirat-Singh)
+- **PR #1644** (closed): fix(response): merge Vary when combining prepared headers (@junaidkhan80121)
+- **PR #1643** (2026-11-10): fix(proxy): preserve content-length for unencoded responses (@caiquecastro)
+- **PR #1641** (closed): fix(static): evaluate If-Match and If-Unmodified-Since preconditions (@abdul-karim-mia)
+- **PR #1640** (closed): test(proxy): unit-cover x-forwarded, location rewrite and header merge helpers (@pengzh1)
 
 ---
 
@@ -2748,58 +2191,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rules): let `HTTPError.headers` opt out of `headers` rule on errors (#1613)
+## X. proxy): preserve content-length for unencoded responses (#1643)
 
 **RULE**:
-When implementing operations in `src/rules/handlers/headers.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in h3js/h3. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/utils/internal/proxy.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in h3js/h3. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f90f4c8e`: rules): let `HTTPError.headers` opt out of `headers` rule on errors (#1613). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fb2a9943`: proxy): preserve content-length for unencoded responses (#1643). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/rules/handlers/headers.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/utils/internal/proxy.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import type { HTTPError } from "../../error.ts";
-import type { H3Event } from "../../event.ts";
-// Applied on both the return and the throw path: a downstream throw unwinds past
-// the `await`, and the rule's headers must still apply to the resulting error
-//
-// An `HTTPError` (thrown or returned) that carries one of the rule's keys in its
-// own `headers` keeps it: that is the handler explicitly opting its error response
-// out (e.g. `cache-control: no-store` on a 404 under an immutable asset rule,
-// h3js/h3#1612). `errHeaders` would otherwise win over `error.headers`.
-      let result: unknown;
-        result = await next();
-      } catch (error) {
-        setRuleHeaders(event, entries, error);
-        throw error;
-      setRuleHeaders(event, entries, result);
-      return result;
-
-function setRuleHeaders(event: H3Event, entries: [string, string][], outcome: unknown): void {
-  // Inlined `HTTPError.isError`: importing `HTTPError` would pull `error.ts` into
-  // every `headers`-only bundle (test/rules/treeshake.test.ts budget).
-  const own =
-    outcome instanceof Error && outcome.name === "HTTPError" && (outcome as HTTPError).status > 99
-      ? (outcome as HTTPError).headers
-  
+ * Hop-by-hop response headers and the encoding header normalized by fetch.
+ * Content-Length is handled separately because decoded bodies need a new length.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// `finally`, not a plain post-`next()` loop: a downstream throw unwinds past the
-// `await`, and the rule's headers must still apply to the resulting error
-        return await next();
-      } finally {
-        for (const [key, value] of entries) {
-          event.res.headers.set(key, value);
-          event.res.errHeaders.set(key, value);
-        }
+ * Hop-by-hop response headers (plus length/encoding headers that fetch has
+ * already normalized) that must be stripped from the upstream response instead
+ * of being relayed to the client.
+  "content-length",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f90f4c8e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fb2a9943` are properly handled with clean fallback behavior.

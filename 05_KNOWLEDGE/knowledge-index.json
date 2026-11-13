@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T00:24:14.178Z",
+  "last_updated": "2026-11-13T00:31:14.615Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16037,8 +16037,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "201a62bc",
-      "content_hash": "b294ca60d16c4ee225e74c8ba611fa806b5174a8caa4ecae6f94482c98720975",
+      "source_version": "620db4dd",
+      "content_hash": "3e78a7b994723f3497435a9fb24cc85d8e3e420fa6275f33bcad737a33fe0c24",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -16115,6 +16115,11 @@
         {
           "number": null,
           "title": "transport): keep the last eighth of the QUIC ingress queue for quiet sources (#6",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "transport): sum QUIC memory in the node aggregate; cap connections for it with d",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16333,7 +16338,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T14:24:06.779Z",
+      "verified_at": "2026-11-13T00:31:14.592Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40124,8 +40129,8 @@
       "slug": "kube-rs-kube",
       "platform": "github",
       "source_url": "https://github.com/kube-rs/kube",
-      "source_version": "b970938d",
-      "content_hash": "1c91047131e5a2f63c3299a79c194bb8d5dc647b2f3a889c6a0b6c52ab835df6",
+      "source_version": "fc801fba",
+      "content_hash": "83fa1a011f117c49c324ed38fa7a621aefe4a808378696af71fd1968d8b2922c",
       "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "promoted_rules": [
@@ -40142,6 +40147,11 @@
         {
           "number": null,
           "title": "Bound watch startup with the watcher idle timeout (#2149)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "correct eviction deleteOptions key (#2152)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40195,7 +40205,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T14:39:22.077Z",
+      "verified_at": "2026-11-13T00:31:10.277Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85955,11 +85965,16 @@
       "slug": "unjs-h3",
       "platform": "github",
       "source_url": "https://github.com/unjs/h3",
-      "source_version": "f0e17808",
-      "content_hash": "bdc4f0623713517fbb7fa410e24dff1199b5bd6d6d4437a779f4564b65d5d3d0",
+      "source_version": "2f29b875",
+      "content_hash": "f4a9760cb0d81fe432bc89d3dc9cb2e2643acab99b29e3b9ba3e74a12867ba7e",
       "dossier_path": "07_PROJECT_LEARNING/unjs-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unjs-h3-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "proxy): preserve content-length for unencoded responses (#1643)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1679,
           "title": "Invariant Scope Confinement for Dynamic URI Redirection and Proxy Rewrites",
@@ -85981,7 +85996,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-24T19:50:13.282Z",
+      "verified_at": "2026-11-13T00:31:09.410Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

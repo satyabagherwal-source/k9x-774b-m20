@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T00:24:14.525Z",
+  "last_updated": "2026-11-13T00:31:14.752Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3186,14 +3186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-h3js-h3",
-      "content_hash": "bdc4f0623713517fbb7fa410e24dff1199b5bd6d6d4437a779f4564b65d5d3d0",
-      "verified_at": "2026-10-24T19:50:13.344Z",
+      "content_hash": "f4a9760cb0d81fe432bc89d3dc9cb2e2643acab99b29e3b9ba3e74a12867ba7e",
+      "verified_at": "2026-11-13T00:31:09.641Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T19:50:13.344Z"
+      "last_updated": "2026-11-13T00:31:09.641Z"
     },
     "unjs/ufo": {
       "repository": "unjs/ufo",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "b294ca60d16c4ee225e74c8ba611fa806b5174a8caa4ecae6f94482c98720975",
-      "verified_at": "2026-11-12T14:24:06.958Z",
+      "content_hash": "3e78a7b994723f3497435a9fb24cc85d8e3e420fa6275f33bcad737a33fe0c24",
+      "verified_at": "2026-11-13T00:31:14.751Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T14:24:06.958Z"
+      "last_updated": "2026-11-13T00:31:14.751Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -10326,14 +10326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kube-rs-kube",
-      "content_hash": "1c91047131e5a2f63c3299a79c194bb8d5dc647b2f3a889c6a0b6c52ab835df6",
-      "verified_at": "2026-11-11T14:39:22.233Z",
+      "content_hash": "83fa1a011f117c49c324ed38fa7a621aefe4a808378696af71fd1968d8b2922c",
+      "verified_at": "2026-11-13T00:31:10.424Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T14:39:22.233Z"
+      "last_updated": "2026-11-13T00:31:10.424Z"
     },
     "weaviate/weaviate": {
       "repository": "weaviate/weaviate",

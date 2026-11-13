@@ -9274,3 +9274,6 @@ Every entry in this ledger must capture:
 | `learn-github-damascenorafael-reminders-menubar` | `https://github.com/DamascenoRafael/reminders-menubar` | `f5330cb5` | Multi-dimensional audit evidence | 2026-11-13T00:24:07.022Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `32f4c211` | Multi-dimensional audit evidence | 2026-11-13T00:24:11.370Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `56afe28f` | Multi-dimensional audit evidence | 2026-11-13T00:24:14.365Z |
+| `learn-github-h3js-h3` | `https://github.com/unjs/h3` | `2f29b875` | Multi-dimensional audit evidence | 2026-11-13T00:31:09.630Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `fc801fba` | Multi-dimensional audit evidence | 2026-11-13T00:31:10.414Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `620db4dd` | Multi-dimensional audit evidence | 2026-11-13T00:31:14.720Z |

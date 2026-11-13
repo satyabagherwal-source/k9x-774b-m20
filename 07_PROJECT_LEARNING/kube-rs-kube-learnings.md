@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source**: github ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
-> **Source Version**: `b970938d`  
+> **Source Version**: `fc801fba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T14:39:05.720Z  
+> **Timestamp**: 2026-11-13T00:30:57.174Z  
 > **Learning ID**: `learn-github-kube-rs-kube`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T14:38:36.898Z  
+> **Harvest Timestamp**: 2026-11-13T00:30:57.168Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rust Kubernetes client and controller runtime
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3861 stars
+- **Stars / Engagement**: 3862 stars
 
 ---
 
@@ -1707,162 +1707,74 @@ fn test_to_plural_native() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `224f8434` (2026-11-11)
-**Commit Message**: Bound watch startup with the watcher idle timeout (#2149)
+### Incident Patch 1: `d207fbc1` (2026-11-12)
+**Commit Message**: fix: correct eviction deleteOptions key (#2152)
 
-Fixes #2148
+fix(kube-core): send eviction deleteOptions under its API field name
 
-Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
-Co-authored-by: Eirik A <[REDACTED_EMAIL]>
+Request::evict built the Eviction body with the key `delete_options`.
+The Eviction API field is `deleteOptions`, so the apiserver dropped it
+as an unknown field and every eviction ignored its preconditions,
+gracePeriodSeconds, dryRun and propagationPolicy. With a UID
+precondition, a controller holding a stale view could evict a
+recreated pod of the same name.
 
-**File**: `kube-runtime/Cargo.toml` (modified, +3/-0)
+Rename the key and add a test that asserts the serialized body.
+
+Signed-off-by: Kyle Kosic <[REDACTED_EMAIL]>
+
+**File**: `kube-core/src/subresource.rs` (modified, +25/-2)
 ```diff
-@@ -47,6 +47,9 @@ async-stream.workspace = true
- hostname.workspace = true
+@@ -121,7 +121,7 @@ impl Request {
+         let urlstr = qp.finish();
+         // eviction body parameters are awkward, need metadata with name
+         let data = serde_json::to_vec(&serde_json::json!({
+-            "delete_options": ep.delete_options,
++            "deleteOptions": ep.delete_options,
+             "metadata": { "name": name }
+         }))
+         .map_err(Error::SerializeBody)?;
+@@ -424,7 +424,30 @@ mod test {
+     use k8s::core::v1 as corev1;
+     use k8s_openapi::api as k8s;
  
- [dev-dependencies]
-+http.workspace = true
-+http-body-util.workspace = true
-+tower.workspace = true
- kube = { path = "../kube", features = ["derive", "client", "runtime"] }
- serde_json.workspace = true
- serde-saphyr.workspace = true
-```
-
-**File**: `kube-runtime/src/watcher.rs` (modified, +188/-20)
-```diff
-@@ -530,17 +530,25 @@ async fn next_with_idle_timeout<S, T>(stream: &mut S, timeout: Option<u32>) -> O
- where
-     S: Stream<Item = T> + Unpin,
- {
-+    with_idle_timeout(stream.next(), timeout).await.flatten()
-+}
-+
-+/// Await `fut` with the same idle timeout, returning `None` on expiry.
-+///
-+/// Also wraps the watch call, which can stall before a stream exists,
-+/// e.g. on an error response whose body never completes.
-+async fn with_idle_timeout<F: Future>(fut: F, timeout: Option<u32>) -> Option<F::Output> {
-     if timeout == Some(0) {
--        return stream.next().await;
-+        return Some(fut.await);
-     }
- 
-     let idle_timeout = Duration::from_secs(u64::from(timeout.unwrap_or(290))) + WATCH_IDLE_TIMEOUT_MARGIN;
--    match tokio::time::timeout(idle_timeout, stream.next()).await {
--        Ok(item) => item,
-+    match tokio::time::timeout(idle_timeout, fut).await {
-+        Ok(output) => Some(output),
-         Err(_elapsed) => {
-             debug!(
-                 timeout_secs = idle_timeout.as_secs(),
--                "watch stream idle timeout, reconnecting"
-+                "watch idle timeout, reconnecting"
-             );
-             None
-         }
-@@ -569,16 +577,22 @@ where
-                 last_bookmark: None,
-             }),
-             InitialListStrategy::StreamingList => {
--                match api.watch(&wc.to_watch_params(WatchPhase::Initial), "0").await {
--                    Ok(stream) => (Some(Ok(Event::Init)), State::InitialWatch { stream }),
--                    Err(err) => {
-+                match with_idle_timeout(
-+                    api.watch(&wc.to_watch_params(WatchPhase::Initial), "0"),
-+                    wc.timeout,
-+                )
-+                .await
-+                {
-+                    Some(Ok(stream)) => (Some(Ok(Event::Init)), State::InitialWatch { stream }),
-+                    Some(Err(err)) => {
-                         if std::matches!(err, ClientErr::Api(ref status) if status.is_forbidden()) {
-                             warn!("watch initlist error with 403: {err:?}");
-                         } else {
-                             debug!("watch initlist error: {err:?}");
-                         }
-                         (Some(Err(Error::WatchStartFailed(err))), State::default())
-                     }
-+                    None => (None, State::default()),
-                 }
-             }
-         },
-@@ -676,15 +690,17 @@ where
-             }
-         }
-         State::InitListed { resource_version } => {
--            match api
--                .watch(&wc.to_watch_params(WatchPhase::Resumed), &resource_version)
--                .await
-+            match with_idle_timeout(
-+                api.watch(&wc.to_watch_params(WatchPhase::Resumed), &resource_version),
-+                wc.timeout,
-+            )
-+            .await
-             {
--                Ok(stream) => (None, State::Watching {
-+                Some(Ok(stream)) => (None, State::Watching {
-                     resource_version,
-                     stream,
-                 }),
--                Err(err) => {
-+                Some(Err(err)) => {
-                     if std::matches!(err, ClientErr::Api(ref status) if status.is_forbidden()) {
-                         warn!("watch initlist error with 403: {err:?}");
-                     } else {
-@@ -694,6 +710,7 @@ where
-                         resource_version,
-                     })
-                 }
-+                None => (None, State::InitListed { resource_version }),
-             }
-         }
-         State::Watching {
-@@ -1052,22 +1069,30 @@ impl Backoff for DefaultBackoff {
- mod tests {
-     use std::{collections::BTreeMap, time::Duration};
- 
--    use futures::StreamExt;
-+    use futures::{StreamExt, TryStreamExt, stream::BoxStream};
-+    use http::{Request, Response, StatusCode, header::CONTENT_LENGTH};
-+    use http_body_util::{BodyExt, StreamBody};
-     use k8s_openapi::{api::core::v1::ConfigMap, apimachinery::pkg::apis::meta::v1::ObjectMeta};
-     use kube_client::{
--        api::{TypeMeta, WatchEvent, WatchParams},
-+        Api, Client,
-+        api::{ListParams, TypeMeta, WatchEvent, WatchParams},
-+        client::Body,
-         core::{
--            Status,
-+            ObjectList, Status,
-             watch::{Bookmark, BookmarkMeta},
-         },
-     };
- 
--    use crate::watcher::{
--        ApiMode, Config, ExponentialBackoff, State, WatchPhase, next_with_idle_timeout, step,
--        stub_watcher::{
--            Recording, Sequence, SequenceStep, TestMode, error_indicates_graceful_watch_seq_exhaustion,
+-    use crate::subresource::LogParams;
 +    use crate::{
-+        WatchStreamExt,
-+        watcher::{
-+            ApiMode, Config, Error, ExponentialBackoff, State, WatchPhase, next_with_idle_timeout, step,
-+            step_trampolined,
-+            stub_watcher::{
-+                Recording, Sequence, SequenceStep, TestMode, error_indicates_graceful_watch_seq_exhaustion,
-+            },
-+            watcher, watcher_inner,
-         },
--        watch
++        params::{DeleteParams, Preconditions},
++        subresource::{EvictParams, LogParams},
++    };
++
++    #[test]
++    fn evict_body_carries_delete_options() {
++        let url = corev1::Pod::url_path(&(), Some("ns"));
++        let ep = EvictParams {
++            delete_options: Some(DeleteParams {
++                preconditions: Some(Preconditions {
++                    uid: Some("u1".into()),
++                    resource_version: None,
++                }),
++                ..Default::default()
++            }),
++            ..Default::default()
++        };
++        let req = Request::new(url).evict("mypod", &ep).unwrap();
++        let body: serde_json::Value = serde_json::from_slice(req.body()).unwrap();
++        assert_eq!(body["deleteOptions"]["preconditions"]["uid"], "u1");
++        assert_eq!(body["metadata"]["name"], "mypod");
++        assert!(body.get("delete_options").is_none());
++    }
+ 
+     #[test]
+     fn logs_all_params() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2152** (2026-11-12): fix: correct eviction deleteOptions key (@kykosic)
 - **PR #2149** (2026-11-11): Bound watch startup with the watcher idle timeout (@doxxx93)
 - **PR #2146** (2026-11-06): Fix nightly clippy and rustdoc warnings (@doxxx93)
 - **PR #2145** (2026-11-06): Make kube-client modules visible to rustfmt (@doxxx93)
 - **PR #2144** (2026-11-06): Match NO_PROXY against the apiserver instead of the proxy (@doxxx93)
 - **PR #2143** (2026-11-05): fix parse error messages for LabelSelectorRequirement into Expression (@orangecms)
-- **PR #2141** (2026-11-05): Show missing feature requirements on kube-client items in docs (@doxxx93)
 
 ---
 
@@ -1882,30 +1794,53 @@ Co-authored-by: Eirik A <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bound watch startup with the watcher idle timeout (#2149)
+## X. correct eviction deleteOptions key (#2152)
 
 **RULE**:
-When implementing operations in `kube-runtime/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kube-core/src/subresource.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `224f8434`: Bound watch startup with the watcher idle timeout (#2149). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d207fbc1`: correct eviction deleteOptions key (#2152). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-runtime/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-core/src/subresource.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-http.workspace = true
-http-body-util.workspace = true
-tower.workspace = true
+            "deleteOptions": ep.delete_options,
+    use crate::{
+        params::{DeleteParams, Preconditions},
+        subresource::{EvictParams, LogParams},
+    };
+
+    #[test]
+    fn evict_body_carries_delete_options() {
+        let url = corev1::Pod::url_path(&(), Some("ns"));
+        let ep = EvictParams {
+            delete_options: Some(DeleteParams {
+                preconditions: Some(Preconditions {
+                    uid: Some("u1".into()),
+                    resource_version: None,
+                }),
+                ..Default::default()
+            }),
+            ..Default::default()
+        };
+        let req = Request::new(url).evict("mypod", &ep).unwrap();
+        let body: serde_json::Value = serde_json::from_slice(req.body()).unwrap();
+        assert_eq!(body["deleteOptions"]["preconditions"]["uid"], "u1");
+        assert_eq!(body["metadata"]["name"], "mypod");
+        assert!(body.get("delete_options").is_none());
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            "delete_options": ep.delete_options,
+    use crate::subresource::LogParams;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `224f8434` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d207fbc1` are properly handled with clean fallback behavior.

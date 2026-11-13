@@ -2033,10 +2033,10 @@
     "repository": "h3js/h3",
     "platform": "github",
     "sourceUrl": "https://github.com/unjs/h3",
-    "sourceVersion": "f0e17808",
+    "sourceVersion": "2f29b875",
     "license": "MIT",
-    "contentHash": "bdc4f0623713517fbb7fa410e24dff1199b5bd6d6d4437a779f4564b65d5d3d0",
-    "lastHarvestedAt": "2026-10-24T19:50:13.335Z",
+    "contentHash": "f4a9760cb0d81fe432bc89d3dc9cb2e2643acab99b29e3b9ba3e74a12867ba7e",
+    "lastHarvestedAt": "2026-11-13T00:31:09.630Z",
     "learningId": "learn-github-h3js-h3"
   },
   "unjs-ufo": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "201a62bc",
+    "sourceVersion": "620db4dd",
     "license": "NOASSERTION",
-    "contentHash": "b294ca60d16c4ee225e74c8ba611fa806b5174a8caa4ecae6f94482c98720975",
-    "lastHarvestedAt": "2026-11-12T14:24:06.943Z",
+    "contentHash": "3e78a7b994723f3497435a9fb24cc85d8e3e420fa6275f33bcad737a33fe0c24",
+    "lastHarvestedAt": "2026-11-13T00:31:14.720Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "b970938d",
+    "sourceVersion": "fc801fba",
     "license": "Apache-2.0",
-    "contentHash": "1c91047131e5a2f63c3299a79c194bb8d5dc647b2f3a889c6a0b6c52ab835df6",
-    "lastHarvestedAt": "2026-11-11T14:39:22.223Z",
+    "contentHash": "83fa1a011f117c49c324ed38fa7a621aefe4a808378696af71fd1968d8b2922c",
+    "lastHarvestedAt": "2026-11-13T00:31:10.414Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {

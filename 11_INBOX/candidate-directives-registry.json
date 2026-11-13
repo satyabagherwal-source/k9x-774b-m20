@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T00:24:21.858Z",
+  "last_updated": "2026-11-13T00:31:21.253Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7697,6 +7697,33 @@
       "source_repo": "damascenorafael-reminders-menubar",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1A35C9-request-activation-before-showing-the-po.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-826592",
+      "directive_title": "proxy): preserve content-length for unencoded responses (#1643)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "unjs-h3",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-826592-proxy-preserve-content-length-for-unenco.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-AC784C",
+      "directive_title": "correct eviction deleteOptions key (#2152)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kube-rs-kube",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AC784C-correct-eviction-deleteoptions-key-2152-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-F31C2D",
+      "directive_title": "transport): sum QUIC memory in the node aggregate; cap connections for it with d",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "freenet-freenet-core",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F31C2D-transport-sum-quic-memory-in-the-node-ag.md",
       "staged_date": "2026-11-13"
     }
   ]

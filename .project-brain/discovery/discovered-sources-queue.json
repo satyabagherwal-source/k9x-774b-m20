@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T00:24:21.933Z",
+  "updated_at": "2026-11-13T00:31:21.245Z",
   "stats": {
-    "total_discovered": 1881,
-    "approved_pending_harvest": 1733,
+    "total_discovered": 1911,
+    "approved_pending_harvest": 1762,
     "harvested_count": 0,
-    "rejected_count": 148,
+    "rejected_count": 149,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1741,
-      "OFFICIAL_DOCUMENTATION": 69,
-      "STANDARDS_AND_SPECIFICATIONS": 67,
+      "COMMUNITY_AND_EXPERT": 1758,
+      "OFFICIAL_DOCUMENTATION": 80,
+      "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 3
     }
@@ -40363,6 +40363,659 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
         "fileName": "damascenorafael-reminders-menubar-learnings.md"
+      }
+    },
+    "SRC-CC8C71202E24": {
+      "id": "SRC-CC8C71202E24",
+      "url": "https://github.com/unjs/h3",
+      "title": "https://github.com/unjs/h3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.028Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-C6D369EBCE20": {
+      "id": "SRC-C6D369EBCE20",
+      "url": "http://h`/",
+      "title": "http://h`/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T00:31:21.035Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-D00B412FE754": {
+      "id": "SRC-D00B412FE754",
+      "url": "https://datatracker.ietf.org/doc/html/rfc7230",
+      "title": "https://datatracker.ietf.org/doc/html/rfc7230",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.043Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-5AB3E709B133": {
+      "id": "SRC-5AB3E709B133",
+      "url": "https://httpwg.org/specs/rfc6265.html",
+      "title": "https://httpwg.org/specs/rfc6265.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.050Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-21A7985F2A62": {
+      "id": "SRC-21A7985F2A62",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/Privacy/Guides/Privacy_sandbox/Partitioned_cookies",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/Privacy/Guides/Privacy_sandbox/Partitioned_cookies",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.057Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-D19FE8A22D07": {
+      "id": "SRC-D19FE8A22D07",
+      "url": "https://example.com.evil.test`/",
+      "title": "https://example.com.evil.test`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.066Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-893160AA57ED": {
+      "id": "SRC-893160AA57ED",
+      "url": "https://notexample.com`/",
+      "title": "https://notexample.com`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.072Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-2CA780EFD154": {
+      "id": "SRC-2CA780EFD154",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.079Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-F0D3CE73498F": {
+      "id": "SRC-F0D3CE73498F",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Methods",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Methods",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.086Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-C501B8266E21": {
+      "id": "SRC-C501B8266E21",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-13F590812553": {
+      "id": "SRC-13F590812553",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Expose-Headers",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Expose-Headers",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.101Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-769A46F162BF": {
+      "id": "SRC-769A46F162BF",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Credentials",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Credentials",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.107Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-B1662D996120": {
+      "id": "SRC-B1662D996120",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Max-Age",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Max-Age",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.117Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-CC66A82750C7": {
+      "id": "SRC-CC66A82750C7",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.123Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-F040364062A2": {
+      "id": "SRC-F040364062A2",
+      "url": "https://stackblitz.com/edit/unjs-h3-pqkunrof?file=server.ts",
+      "title": "https://stackblitz.com/edit/unjs-h3-pqkunrof?file=server.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.130Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-920B1BD94FF7": {
+      "id": "SRC-920B1BD94FF7",
+      "url": "https://github.com/h3js/h3/commit/69ec3c73bc2b2f5086023a5fb3e7bd9a201b0f00",
+      "title": "https://github.com/h3js/h3/commit/69ec3c73bc2b2f5086023a5fb3e7bd9a201b0f00",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.138Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-16A3ECC869B6": {
+      "id": "SRC-16A3ECC869B6",
+      "url": "https://h3.dev/utils/response",
+      "title": "https://h3.dev/utils/response",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.144Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-C6FD88AA6AAF": {
+      "id": "SRC-C6FD88AA6AAF",
+      "url": "https://www.rfc-editor.org/rfc/rfc7617",
+      "title": "IETF RFC 7617",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.151Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-D9B4958C6579": {
+      "id": "SRC-D9B4958C6579",
+      "url": "https://www.rfc-editor.org/rfc/rfc7230",
+      "title": "IETF RFC 7230",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.160Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-h3-learnings.md",
+        "fileName": "unjs-h3-learnings.md"
+      }
+    },
+    "SRC-827DCB8626C3": {
+      "id": "SRC-827DCB8626C3",
+      "url": "https://github.com/kube-rs/kube",
+      "title": "https://github.com/kube-rs/kube",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.176Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-DA5399BCC350": {
+      "id": "SRC-DA5399BCC350",
+      "url": "https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers",
+      "title": "https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.185Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-857AFE0EDC85": {
+      "id": "SRC-857AFE0EDC85",
+      "url": "https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers",
+      "title": "https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.191Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-80590E57FA38": {
+      "id": "SRC-80590E57FA38",
+      "url": "https://github.com/kubernetes/api/blob/master/admission/v1/types.go",
+      "title": "https://github.com/kubernetes/api/blob/master/admission/v1/types.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.198Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-EEDC15252EE2": {
+      "id": "SRC-EEDC15252EE2",
+      "url": "https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-re",
+      "title": "https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-re",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.204Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-6D35881077BA": {
+      "id": "SRC-6D35881077BA",
+      "url": "https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinition.html",
+      "title": "https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinition.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.212Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-7BB4B601AD0F": {
+      "id": "SRC-7BB4B601AD0F",
+      "url": "https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinitionVersion.html",
+      "title": "https://docs.rs/k8s-openapi/latest/k8s_openapi/apiextensions_apiserver/pkg/apis/apiextensions/v1/struct.CustomResourceDefinitionVersion.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.218Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-790EE05706A3": {
+      "id": "SRC-790EE05706A3",
+      "url": "https://docs.rs/kube/latest/kube/derive.CustomResource.html",
+      "title": "https://docs.rs/kube/latest/kube/derive.CustomResource.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.225Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-4FE47094C78D": {
+      "id": "SRC-4FE47094C78D",
+      "url": "https://github.com/crust-gather/crust-gather/issues/587",
+      "title": "https://github.com/crust-gather/crust-gather/issues/587",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.232Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-54EC54EAEE12": {
+      "id": "SRC-54EC54EAEE12",
+      "url": "https://github.com/kube-rs/kube/pull/2075",
+      "title": "https://github.com/kube-rs/kube/pull/2075",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.239Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
+      }
+    },
+    "SRC-B36A4015BF5F": {
+      "id": "SRC-B36A4015BF5F",
+      "url": "https://10.2.2.5:6443/apis",
+      "title": "https://10.2.2.5:6443/apis",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:31:21.245Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+        "fileName": "kube-rs-kube-learnings.md"
       }
     }
   }
