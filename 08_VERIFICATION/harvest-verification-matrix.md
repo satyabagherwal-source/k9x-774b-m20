@@ -9319,3 +9319,8 @@
 | `CYCLE-20261113-SJPG` | `2026-11-13T03:48:17.476Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ca1e324c...`) |
 | `CYCLE-20261113-SR1Z` | `2026-11-13T03:48:26.999Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e9d63bd4...`) |
 | `CYCLE-20261113-SRLK` | `2026-11-13T03:48:27.704Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`cb4b7869...`) |
+| `CYCLE-20261113-2G9I` | `2026-11-13T03:55:59.574Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md` | Yes (`dfa722cb...`) |
+| `CYCLE-20261113-2OAS` | `2026-11-13T03:56:09.988Z` | `higress-group/higress` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/higress-group-higress-learnings.md` | Yes (`1401b4d3...`) |
+| `CYCLE-20261113-2SO9` | `2026-11-13T03:56:15.657Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e093b4e4...`) |
+| `CYCLE-20261113-2X1P` | `2026-11-13T03:56:21.325Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9d9e473d...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T03:56:42.669Z` | `hf-lodestones-kromoss` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FE04D8FE` [Domain D] | Yes (`cee5cdef...`) |

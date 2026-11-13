@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T03:48:27.733Z",
+  "last_updated": "2026-11-13T03:56:21.345Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "79c87ef277ca63e1510c6971ec93e9812d48297f21ba0d3b36ead6264b484c3a",
-      "verified_at": "2026-11-11T18:54:54.362Z",
+      "content_hash": "1401b4d374d6a269bde16e0f5410e6faa0f14cab9db1802dbbd47a04c01db566",
+      "verified_at": "2026-11-13T03:56:10.028Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T18:54:54.362Z"
+      "last_updated": "2026-11-13T03:56:10.028Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "6923469fc70e78aaeae0e14896ca4924e758f78f1e503e4743f3fa374dcf9db4",
-      "verified_at": "2026-11-11T10:08:18.531Z",
+      "content_hash": "e093b4e45072efd989690fc7197e3cb5c567570c0eb9254b8b5dfbd01e88e810",
+      "verified_at": "2026-11-13T03:56:15.678Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:08:18.531Z"
+      "last_updated": "2026-11-13T03:56:15.678Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",
@@ -14001,14 +14001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-louis-cfm-coucou",
-      "content_hash": "d8d5400aeac1edab2e74a62f31964fba2dd60abf95b126acff369ce544a3ba1e",
-      "verified_at": "2026-11-08T20:53:01.618Z",
+      "content_hash": "9d9e473dd3face7170f75ea177272885af79fd6246946b57a4417645075cf420",
+      "verified_at": "2026-11-13T03:56:21.344Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T20:53:01.618Z"
+      "last_updated": "2026-11-13T03:56:21.344Z"
     },
     "lxml/lxml": {
       "repository": "lxml/lxml",
@@ -15621,14 +15621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-kromoss",
-      "content_hash": "f23353bdbe11efecbb7747f6c710a16bb8e0574a52a126fdbdab558a72311c30",
-      "verified_at": "2026-11-08T03:45:05.206Z",
+      "content_hash": "dfa722cba28fc0f98492c2c70f51ee302d7e7debda7a652f6c7328901a87bdea",
+      "verified_at": "2026-11-13T03:55:59.588Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T03:45:05.206Z"
+      "last_updated": "2026-11-13T03:55:59.588Z"
     },
     "HemmingwayAI/Hemmingway-1": {
       "repository": "HemmingwayAI/Hemmingway-1",

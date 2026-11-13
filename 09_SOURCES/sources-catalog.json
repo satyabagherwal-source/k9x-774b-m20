@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "f0260049",
+    "sourceVersion": "6726080d",
     "license": "Apache-2.0",
-    "contentHash": "79c87ef277ca63e1510c6971ec93e9812d48297f21ba0d3b36ead6264b484c3a",
-    "lastHarvestedAt": "2026-11-11T18:54:54.343Z",
+    "contentHash": "1401b4d374d6a269bde16e0f5410e6faa0f14cab9db1802dbbd47a04c01db566",
+    "lastHarvestedAt": "2026-11-13T03:56:09.994Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "976779b2",
+    "sourceVersion": "dd619adc",
     "license": "Apache-2.0",
-    "contentHash": "6923469fc70e78aaeae0e14896ca4924e758f78f1e503e4743f3fa374dcf9db4",
-    "lastHarvestedAt": "2026-11-11T10:08:18.515Z",
+    "contentHash": "e093b4e45072efd989690fc7197e3cb5c567570c0eb9254b8b5dfbd01e88e810",
+    "lastHarvestedAt": "2026-11-13T03:56:15.663Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {
@@ -9303,10 +9303,10 @@
     "repository": "Louis-CFM/coucou",
     "platform": "github",
     "sourceUrl": "https://github.com/Louis-CFM/coucou",
-    "sourceVersion": "b1bc09de",
+    "sourceVersion": "15cc178d",
     "license": "MIT",
-    "contentHash": "d8d5400aeac1edab2e74a62f31964fba2dd60abf95b126acff369ce544a3ba1e",
-    "lastHarvestedAt": "2026-11-08T20:53:01.601Z",
+    "contentHash": "9d9e473dd3face7170f75ea177272885af79fd6246946b57a4417645075cf420",
+    "lastHarvestedAt": "2026-11-13T03:56:21.331Z",
     "learningId": "learn-github-louis-cfm-coucou"
   },
   "lxml-lxml": {
@@ -10405,8 +10405,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/Kromoss",
     "sourceVersion": "hf-lodestones-kromoss",
     "license": "Open-Source",
-    "contentHash": "f23353bdbe11efecbb7747f6c710a16bb8e0574a52a126fdbdab558a72311c30",
-    "lastHarvestedAt": "2026-11-08T03:45:05.196Z",
+    "contentHash": "dfa722cba28fc0f98492c2c70f51ee302d7e7debda7a652f6c7328901a87bdea",
+    "lastHarvestedAt": "2026-11-13T03:55:59.578Z",
     "learningId": "learn-huggingface-lodestones-kromoss"
   },
   "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T03:48:36.417Z",
+  "last_updated": "2026-11-13T03:56:42.695Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8039,6 +8039,42 @@
       "source_repo": "0xcub3-wblock",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-68DD8C-engine-leave-more-room-when-packing-bloc.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-2OBA",
+      "directive_title": "ai-data-masking): check and restore tool arguments when enabled (#5299)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "higress-group/higress",
+      "source_commit": "6726080d",
+      "date_staged": "2026-11-13",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-higress-group-higress",
+      "candidateDomain": "UNASSIGNED",
+      "candidateDomainName": null,
+      "secondaryDomains": [],
+      "classificationConfidence": 0,
+      "intendedFolder": "05_KNOWLEDGE",
+      "intendedPath": "05_KNOWLEDGE/domain-intelligence/DOM-H-ai-data-masking-check-and-restore-tool-arguments-when-enable.md",
+      "isUntrusted": false
+    },
+    {
+      "id": "CD-REV-601B80",
+      "directive_title": "GH-51482: [R] allow building with shared snappy (#51490)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-arrow",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-601B80-gh-51482-r-allow-building-with-shared-sn.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-2540F3",
+      "directive_title": "Windows and Linux: show the relay settings to testers",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "louis-cfm-coucou",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2540F3-windows-and-linux-show-the-relay-setting.md",
       "staged_date": "2026-11-13"
     }
   ]

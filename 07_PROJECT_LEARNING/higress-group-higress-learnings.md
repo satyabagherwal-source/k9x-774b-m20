@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source**: github ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Source Version**: `f0260049`  
+> **Source Version**: `6726080d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:54:53.826Z  
+> **Timestamp**: 2026-11-13T03:56:09.237Z  
 > **Learning ID**: `learn-github-higress-group-higress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:54:53.816Z  
+> **Harvest Timestamp**: 2026-11-13T03:56:09.215Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9750 stars
+- **Stars / Engagement**: 9761 stars
 
 ---
 
@@ -1736,11 +1736,11 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5337** (2026-11-11): **fix(mcp-server): acknowledge valid Legacy JSON-RPC responses**
-  *Symptoms*: ## I. Summary  Valid client responses to native Legacy SSE heartbeats currently fail in the shared envelope parser before reaching the existing receipt dispatcher. Admit well-formed Legacy JSON-RPC result/error envelopes and reuse the bodyless HTTP 202 acknowledgement. Ordinary client `ping` stays HTTP 200, invalid/mixed envelopes remain rejected, and Modern response envelopes remain rejected.  Production code changes only `plugins/wasm-go/pkg/mcp/protocol/envelope.go`. Add focused protocol/TestHost cases and an opt-in real native-session + Redis + plain Wasm fixture. Existing public types, dispatcher, ordinary request duplicate-field behavior and normal runtime-verification modes are preserved.  ## II. Related issue  Fixes #5334. Proposal #5335; authoritative Design #5336.  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agent use was limited to mechanical editing. - [x] **Verified maintainer/administrator exception:** Material agent participation occurred; canonical-repository identity/role and actual PR author were checked with token overrides unset. - [ ] **Material agent participation:** Standard planning gate rather than the verified-role exception.  Timed obligations for the standard gate: N/A under the verified-administrator exc
+- **Issue #5350** (2026-11-12): **feat(mcp-server): support custom REST server instructions**
+  *Symptoms*: ## I. Summary  REST-to-MCP services can now configure `server.instructions`. The gateway returns the text in `result.instructions` for both legacy `initialize` and modern `server/discover`.  Missing or empty strings omit the response field. Non-empty strings preserve whitespace, newlines, Unicode and JSON escaping. Configuration validation rejects non-string values and use outside REST-to-MCP. The setting is scoped to each matched service configuration.  Adds configuration validation/reload tests, Go and compiled-Wasm response/rule-isolation tests, and Chinese/English configuration documentation.  ## II. Related issue  N/A: implements a feature requested directly by the maintainer; no issue was supplied.  ## III. Change type  - [ ] Bug fix - [x] Feature or enhancement - [ ] Documentation or configuration only - [ ] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agent use was limited to spelling, punctuation, whitespace, or formatting. - [x] **Verified maintainer/administrator exception:** Material agent participation occurred, and authenticated `gh` verification confirmed a qualifying canonical-repository role. - [ ] **Material agent participation:** Normal Proposal/Design/TASK gate applies.  Choose exactly one overall gate status:  - [ ] Complete: all three timed obligations were satisfied. - [ ] Noncompliant: one or more obligations were not s
 
-- **Issue #5334** (2026-11-11): **mcp-server：新版协议解析拒绝旧版 HTTP+SSE 链路中的合法心跳响应 || mcp-server: New version of protocol parsing rejects legitimate heartbeat responses in old version of HTTP+SSE links**
-  *Symptoms*: ## 问题背景  旧版 HTTP+SSE 会话层会定期向客户端发送 JSON-RPC `ping` 请求。客户端收到后，按照 [MCP Ping 规范](https://modelcontextprotocol.io/specification/2025-03-26/basic/utilities/ping)返回相同 ID、包含空 `result` 的响应，例如：  ```json {"jsonrpc":"2.0","id":"ping-1","result":{}} ```  旧实现会对这类没有 `method` 的报文返回 HTTP 202 和空响应体。新版 mcp-server 增加统一协议解析后，在进入 Legacy 分支之前便检查报文结构，并拒绝包含 `result` 或 `error` 的 JSON-RPC 响应，返回 HTTP 400：  ```json {"jsonrpc":"2.0","id":"ping-1","error":{"code":-32600,"message":"JSON-RPC response envelopes are not accepted"}} ```  这使得会话层主动发送的心跳请求，其合法客户端响应被 Wasm 插件拒绝，破坏了原有 HTTP+SSE 心跳交互的兼容性。客户端主动发送 `method: ping` 的请求处理器仍然存在；本问题针对的是客户端回复服务端 ping 的反向响应。  当前上游 `d388d06a92dd125bbe99330888690fd6deeb352f` 仍包含这一行为，相关公开代码：  - [会话层周期性发送 ping](https://github.com/higress-group/higress/blob/d388d06a92dd125bbe99330888690fd6deeb352f/plugins/golang-filter/mcp-session/common/sse.go#L260)。 - [PrepareRequestWithPolicy 在 Legacy 分支之前解析报文](https://github.com/higress-group/higress/blob/d388d06a92dd125bbe99330888690fd6deeb352f/plugins/wasm-go/pkg/mcp/protocol/request.go#L173)。 - [decodeEnvelope 拒绝响应报文](https://github.com/higress-group/higress/blob/d388d06a92dd125bbe99330888690fd6deeb352f/plugins/wasm-go/pkg/mcp/protocol/envelope.go#L81)。  以上 JSON 均为合成示例，只说明可从公开代码复现的协议兼容性问题。  <!--This is a translation content dividing line, the content below is generated by machine, please do not modify the content below--> --- ## Problem background   The legacy HTTP+SSE session layer periodically sends JSON-RPC `ping` requests to the client. Af
+- **Issue #5342** (2026-11-12): **chore(plugins): bump wasm-go for request body buffering fix**
+  *Symptoms*: ## Summary  Bump `wasm-go` for plugins that use request-body buffering to the commit containing the request body buffering fix.  - wasm-go PR: https://github.com/higress-group/wasm-go/pull/60 - Merge commit: `647ef409a302eb234b80715edfa2557702705835` - Resolved module version: `v1.2.1-0.20261111151630-647ef409a302` - Resolution: `go get github.com/higress-group/wasm-go@647ef409a302`; `go list -m github.com/higress-group/wasm-go` reports the pseudo-version above and `Origin.Hash` matches the merge commit.  ## Included  - `ext-auth`: pinned to `wasm-go v1.2.0` after #5291 and uses the v1.2.0 raw-body delivery API (`RequireRequestBody()`), so it is in scope for the request body buffering fix. Only `go.mod`/`go.sum` change. - `hmac-auth-apisix`: also pinned to `v1.2.0` and uses `RequireRequestBody()`. The module bump exposed a header-phase local-401 path: the plugin sent a 401 and returned `ActionContinue` without disabling body reading, so the new wrapper held headers and the existing test saw `HeaderStopIteration`. Added one `ctx.DontReadRequestBody()` at the start of `onHttpRequestHeaders`; the validated raw-body path later calls `RequireRequestBody()` and overrides it. - `transformer`: on an older SDK but directly affected because its request-body rules rely on header iteration and body buffering. Bumped to the same pseudo-version. The new SDK intentionally holds headers until the buffered body is complete, so request-body tests now expect `HeaderStopIteration` at the header 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1757,934 +1757,1041 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f0260049` (2026-11-11)
-**Commit Message**: fix(mcp-server): acknowledge valid Legacy JSON-RPC responses (#5337)
-
-Signed-off-by: sunxia0 <[REDACTED_EMAIL]>
-Co-authored-by: sunxia0 <[REDACTED_EMAIL]>
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md` (modified, +69/-0)
-```diff
-@@ -339,3 +339,72 @@ assertion fault injection, source/config/request equivalence and failed cleanup.
- They run alongside all retained normal-mode fixture assertions. These injected
- self-tests establish harness behavior; real Wasm evidence requires the command
- above.
-+
-+## Focused Legacy response acknowledgements (#5336)
-+
-+This opt-in mode uses the real native `mcp-session` filter, isolated Redis and
-+plain production Wasm. Ordinary modes, historical pins and `compose.yaml` are
-+unchanged. Run only after committing a clean candidate, with an empty external
-+evidence directory and all three images available locally:
-+
-+```sh
-+env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 \
-+  /opt/homebrew/bin/python3.12 \
-+  plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py \
-+  --legacy-response-ack \
-+  --response-baseline d388d06a92dd125bbe99330888690fd6deeb352f \
-+  --candidate HEAD \
-+  --gateway-image higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/gateway@sha256:2b00548e16aafc5ee51314a0de8c4df4369877b1d0f9eaec13becc3675dd04b7 \
-+  --backend-image docker.io/library/python@sha256:34d4d54d6f68a1980ad02433a5078d998ab394d55c97d953efa50b442135baf2 \
-+  --redis-image docker.io/library/redis@sha256:52d1ea8a654b10f06af3ecda4e9dbcd035c7868b5c49ee7975de917f81de13db \
-+  --output "$SSE_EVIDENCE/runtime"
-+```
-+
-+Run this command from the repository root; define `SSE_EVIDENCE` as an external
-+run-owned directory. The mode cannot mix with `--sse-no-space`, `--skip-routing`
-+or alternate ordinary oracle/control pins. It freezes the actual image
-+RepoDigests, measures `/var/lib/istio/envoy/golang-filter.so`, then checks its
-+hash and the mounted Wasm inside each running gateway. A missing native plugin,
-+ABI/load failure, unavailable Redis or stream startup failure fails the run;
-+none qualifies as affected-source reproduction.
-+
-+`legacy_response_ack.cases()` owns the closed 36-case registry (37 POSTs):
-+A1 direct result, A2 explicit-Legacy error and A3 two observed native heartbeats;
-+C1 client ping; C2 initialize, initialized, list and call; 22 individually named
-+C3 invalid-response cases; C4 header-result, header-error and body-result;
-+and C5 Modern discovery, list and call. The same single REST echo tool performs
-+GET `/unified/rest/legacy-ack` on the unchanged synthetic backend. Only the two
-+submitted tool calls may reach it. Direct listener 15100 isolates protocol
-+controls; listener 15101 places the real native filter before Wasm. Requests
-+send `Host: gateway` to match the exact synthetic native rule. Redis publishes
-+no host port and is recreated between affected/candidate roles.
-+
-+The SSE client first consumes the native endpoint, then initializes that actual
-+session, observes two natural native pings, sends their matching replies and
-+lists/calls the tool on the same connection. Its reader drains concurrently for
-+at most 20 seconds and always closes/joins. Raw synthetic frames, POST bytes,
-+access identities, endpoint/session bindings and ping/reply equality are
-+retained per role. Equivalence normalizes only the bound endpoint session ID
-+and corresponding top-level ping-reply IDs to ordered logical labels. It does
-+not normalize status, result, error, arbitrary values, headers or extra fields.
-+Native heartbeat/control/business and backend counts are recorded separately.
-+
-+`legacy-response-{affected,candidate}.json` retain actual observations and
-+assertions; `legacy-response-inputs.json` binds source, compiler/module,
-+image/native/Wasm/config and frozen-harness identities. Affected verification
-+must exit 1 with actual 400/-32600 target failures while all controls pass;
-+candidate verification must exit 0 with empty 202 target receipts. The focused
-+`legacy-response-manifest.json` can pass only after validating both observations,
-+unique gateway accesses, input equivalence and zero run-owned
-+containers/networks/volumes. No host listeners are published; reader processes
-+live only in removed verifier containers. Diagnostics are captured before
-+cleanup. Build products and logs belong only in external evidence directories.
-+
-+Offline fixture/finalizer fault injection remains separate from actual runtime
-+acceptance:
-+
-+```sh
-+# From this runtime-verification directory:
-+env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 \
-+  /opt/homebrew/bin/python3.12 compat_self_test.py
-+```
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_self_test.py` (modified, +187/-1)
-```diff
-@@ -685,8 +685,194 @@ def fake_run(command, log, **options):
-             require(recorded["cleanupComplete"] == (cleanup_status == 0), "cleanup failure hidden")
-             require(any(command[:3] == ["podman", "network", "ls"] for command in commands) and any(command[:3] == ["podman", "volume", "ls"] for command in commands), "cleanup inventories missing")
- 
-+def legacy_response_ack_checks():
-+    """Offline synthetic evidence; actual acceptance still requires native SSE."""
-+    import legacy_response_ack as ack
-+    import run_compat
-+    import contextlib
-+    import unittest.mock as mock
-+
-+    def snapshot(role):
-+        endpoint = "/mcp/legacy?sessionId=synthetic-" + role
-+        value = {"variant": role, "expectedCases": ack.cases(), "cases": [], "exchanges": [], "frames": [],
-+                 "bindings": {"endpoint": endpoint, "sessionId": "synthetic-" + role, "pings": []},
-+                 "startupError": None, "readerClosed": True,
-+                 "backend": {"events": [{"case": name, "method": "GET", "path": "/unified/rest/legacy-ack", "accepted": True} for name in ("C2/call", "C5/call")]}}
-+        def frame(event, raw):
-+            value["frames"].append({"event": event, "data": ack.raw_record(raw), "wire": ack.raw_record(b"event: " + event.encode() + b"\ndata: " + raw + b"\n\n")})
-+        frame("endpoint", endpoint.encode())
-+        for case in ack.cases():
-+            red = role == "affected" and case["target"]
-+            value["cases"].append({"id": case["id"], "status": "FAIL" if red else "PASS", "validRedReproduction": red})
-+            for repetition in range(2 if case["id"] == "A3/native-heartbeats" else 1):
-+                port = ack.SESSION if case["id"].startswith(("C2/", "A3/")) else ack.DIRECT
-+                raw = ack.dump({"synthetic": case["id"]})
-+                if case["id"].startswith("A3/"):
-+                    ping_id = role + "-synthetic-ping-" + str(repetition)
-+                    value["bindings"]["pings"].append({"id": ping_id, "frame": len(value["frames"]), "replySequence": len(value["exchanges"]) + 1})
-+                    frame("message", ack.dump({"jsonrpc": "2.0", "id": ping_id, "method": "ping"}))
-+                    raw = ack.dump({"jsonrpc": "2.0", "id": ping_id, "result": {}})
-+                status = 400 if red or case["id"].startswith(("C3/", "C4/")) else 202 if case["target"] or case["id"] == "C2/initialized" else 200
-+                body = ack.dump({"jsonrpc": "2.0", "id": "synthetic", "error": {"code": -32600}}) if status == 400 else b"" if status == 202 else ack.dump({"jsonrpc": "2.0", "id": "synthetic", "result": {}})
-+                value["exchanges"].append({"case": case["id"], "accessRequestId": "request-" + str(len(value["exchanges"])), "port": port,
-+                                           "path": endpoint if port == ack.SESSION else "/mcp", "headers": [["Host", "gateway"]],
-+                                           "request": ack.raw_record(raw), "status": status, "response": ack.raw_record(body)})
-+                if port == ack.SESSION and body: frame("message", body)
-+        value["counts"] = ack.observed_counts(value)
-+        return value
-+
-+    before, after = snapshot("affected"), snapshot("candidate")
-+    require(not ack.observation_errors(before) and not ack.observation_errors(after), "synthetic focused observations rejected")
-+    require(ack.normalized(before) == ack.normalized(after) and ack.normalized_frames(before) == ack.normalized_frames(after), "bound-only native normalization differs")
-+    mutations = [
-+        lambda value: value.update(startupError="native ABI unavailable"),
-+        lambda value: value["cases"].pop(),
-+        lambda value: value["cases"].append(copy.deepcopy(value["cases"][0])),
-+        lambda value: value["bindings"]["pings"][0].update(id="tampered"),
-+        lambda value: value["bindings"].update(sessionId="tampered"),
-+        lambda value: value["exchanges"][2].update(request=ack.raw_record(b'{"jsonrpc":"2.0","id":"tampered","result":{}}')),
-+        lambda value: value["frames"].append(copy.deepcopy(value["frames"][-1])),
-+        lambda value: value["backend"]["events"].append(copy.deepcopy(value["backend"]["events"][0])),
-+        lambda value: value.update(readerClosed=False),
-+        lambda value: value["cases"][0].update(validRedReproduction=False),
-+        lambda value: value["exchanges"][0].update(status=503),
-+    ]
-+    for mutate in mutations:
-+        value = copy.deepcopy(before); mutate(value)
-+        require(ack.observation_errors(value), "focused corruption accepted")
-+    value = copy.deepcopy(after)
-+    value["exchanges"][0]["request"] = ack.raw_record(b'{"different":"ordinary-user-value"}')
-+    require(ack.normalized(value) != ack.normalized(after), "arbitrary value normalized away")
-+    with tempfile.TemporaryDirectory() as temporary:
-+        root = Path(temporary); ack.config(root)
-+        config = (root / "envoy.yaml").read_text()
-+        re
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/legacy_response_ack.py` (added, +642/-0)
-```diff
-@@ -0,0 +1,642 @@
-+"""Closed synthetic #5336 native-session acknowledgement fixture and finalizer.
-+
-+Only observed native endpoint/session/ping identities are normalized. No native
-+implementation, heartbeat source, production overlay or shared Redis is used.
-+"""
-+import base64
-+from collections import Counter
-+from copy import deepcopy
-+import hashlib
-+import http.client
-+import json
-+import os
-+from pathlib import Path
-+import queue
-+import shutil
-+import socket
-+import subprocess
-+import sys
-+import tarfile
-+import tempfile
-+import threading
-+import time
-+import uuid
-+from urllib.parse import parse_qsl, urlencode, urlsplit
-+
-+import generate_envoy as base
-+
-+AFFECTED = "d388d06a92dd125bbe99330888690fd6deeb352f"
-+NATIVE_PATH = "/var/lib/istio/envoy/golang-filter.so"
-+DIRECT, SESSION = 15100, 15101
-+MODERN = "2026-07-28"
-+META = {"io.modelcontextprotocol/protocolVersion": MODERN,
-+        "io.modelcontextprotocol/clientCapabilities": {}}
-+INVALID = {
-+    "missing-id": b'{"jsonrpc":"2.0","result":{}}',
-+    "boolean-id": b'{"jsonrpc":"2.0","id":true,"result":{}}',
-+    "composite-id": b'{"jsonrpc":"2.0","id":{},"result":{}}',
-+    "missing-version": b'{"id":1,"result":{}}',
-+    "wrong-version": b'{"jsonrpc":"1.0","id":1,"result":{}}',
-+    "missing-result": b'{"jsonrpc":"2.0","id":1}',
-+    "both": b'{"jsonrpc":"2.0","id":1,"result":null,"error":null}',
-+    "mixed-method": b'{"jsonrpc":"2.0","id":1,"method":"tools/call","result":{}}',
-+    "null-method": b'{"jsonrpc":"2.0","id":1,"method":null,"result":{}}',
-+    "error-null": b'{"jsonrpc":"2.0","id":1,"error":null}',
-+    "error-code": b'{"jsonrpc":"2.0","id":1,"error":{"code":1.5,"message":"x"}}',
-+    "error-message": b'{"jsonrpc":"2.0","id":1,"error":{"code":1,"message":null}}',
-+    "duplicate-id": b'{"jsonrpc":"2.0","id":1,"id":2,"result":{}}',
-+    "duplicate-jsonrpc": b'{"jsonrpc":"2.0","jsonrpc":"2.0","id":1,"result":{}}',
-+    "duplicate-result": b'{"jsonrpc":"2.0","id":1,"result":{},"result":{}}',
-+    "duplicate-code": b'{"jsonrpc":"2.0","id":1,"error":{"code":1,"code":2,"message":"x"}}',
-+    "duplicate-message": b'{"jsonrpc":"2.0","id":1,"error":{"code":1,"message":"x","message":"y"}}',
-+    "malformed": b'{"jsonrpc":"2.0","id":1,"result":',
-+    "utf8": b'{"jsonrpc":"2.0","id":1,"result":"\xff"}',
-+    "trailing": b'{"jsonrpc":"2.0","id":1,"result":{}}{}',
-+    "batch": b'[{"jsonrpc":"2.0","id":1,"result":{}}]',
-+    "non-object": b'null',
-+}
-+
-+
-+def require(value, message):
-+    if not value:
-+        raise AssertionError(message)
-+
-+
-+def cases():
-+    return ([{"id": name, "target": True} for name in ("A1/direct-result", "A2/direct-error", "A3/native-heartbeats")]
-+            + [{"id": name, "target": False} for name in ("C1/client-ping", "C2/initialize", "C2/initialized", "C2/list", "C2/call")]
-+            + [{"id": "C3/" + name, "target": False} for name in INVALID]
-+            + [{"id": "C4/" + name, "target": False} for name in ("header-result", "header-error", "body-result")]
-+            + [{"id": "C5/" + name, "target": False} for name in ("discover", "list", "call")])
-+
-+
-+def raw_record(raw):
-+    return {"base64": base64.b64encode(raw).decode(), "sha256": hashlib.sha256(raw).hexdigest(), "bytes": len(raw)}
-+
-+
-+def raw_bytes(record):
-+    value = base64.b64decode(record["base64"], validate=True)
-+    require(raw_record(value) == record, "raw byte/hash record altered")
-+    return value
-+
-+
-+def dump(value):
-+    return json.dumps(value, separators=(",", ":"), ensure_ascii=False).encode()
-+
-+
-+def request(method, rpc_id, params=None, modern=False):
-+    value = {"jsonrpc": "2.0", "id": rpc_id, "method": method}
-+    if params is not None or modern:
-+        value["params"] = deepcopy(params or {})
-+    if modern:
-+        value["params"]["_meta"] = META
-+    return dump(value)
-+
-+
-+def config(out, library=NATIVE_PATH):
-+    """One fixed REST fixture/module and a native-before-Wasm session listener."""
-+    fixture = {"server": {"name": "legacy-ack", "type": "rest"}, "tools": [{"name": "echo", "description": "Synthetic echo",
-+               "requestTemplate": {"url": "http://backend-primary:8080/unified/rest/legacy-ack", "method": "GET"}}]}
-+    direct = base.listener_yaml(DIRECT, "legacy-ack-direct", "backend-primary", fixture)
-+    session = base.listener_yaml(SESSION, "legacy-ack-session", "backend-primary", fixture)
-+    native = '''                - name: envoy.filters.http.golang
-+                  typed_config:
-+                    "@type": type.googleapis.com/envoy.extensions.filters.http.golang.v3alpha.Config
-+                    library_id: legacy-ack-native
-+                    library_path: %s
-+                    plugin_name: mcp-session
-+                    plugin_config:
-+                      "@type": type.googleapis.com/xds.type.v3.TypedStruct
-+                      value:
-+                        sse_path_suffix: /sse
-+                        redis: {address: "redis:6379"}
-+                        match_
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py` (modified, +10/-0)
-```diff
-@@ -96,7 +96,17 @@ def main():
-     parser.add_argument("--skip-routing", action="store_true", help="Development only; evidence cannot pass A12 without routing")
-     parser.add_argument("--sse-no-space", action="store_true", help="Only the closed #5308 plain baseline/candidate matrix")
-     parser.add_argument("--sse-baseline", help="Exact affected #5308 source, required with --sse-no-space")
-+    parser.add_argument("--legacy-response-ack", action="store_true", help="Only the closed #5336 real native-session response matrix")
-+    parser.add_argument("--response-baseline", help="Exact affected #5336 source, required with --legacy-response-ack")
-+    parser.add_argument("--redis-image", help="Run-owned Redis image, required with --legacy-response-ack")
-     args = parser.parse_args()
-+    if args.legacy_response_ack or args.response_baseline or args.redis_image:
-+        from legacy_response_ack import AFFECTED, run
-+        if not args.legacy_response_ack or args.response_baseline != AFFECTED or not args.redis_image:
-+            parser.error("--legacy-response-ack requires --response-baseline " + AFFECTED + " and --redis-image")
-+        if args.sse_no_space or args.sse_baseline or args.skip_routing or args.oracle != contract.ORACLE or args.control != contract.CONTROL:
-+            parser.error("focused legacy-response mode cannot mix ordinary or other focused modes")
-+        return run(args)
-     if args.sse_no_space != bool(args.sse_baseline) or args.sse_no_space and args.sse_baseline != SSE_NO_SPACE_BASELINE:
-         parser.error("--sse-no-space requires --sse-baseline " + SSE_NO_SPACE_BASELINE)
-     candidate = subprocess.check_output(["git", "rev-parse", args.candidate + "^{commit}"], cwd=ROOT, text=True).strip()
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/verify_compat.py` (modified, +3/-0)
-```diff
-@@ -746,6 +746,9 @@ def supplements(variant, out):
- 
- 
- if __name__ == "__main__":
-+    if "--legacy-response-ack" in sys.argv:
-+        from legacy_response_ack import Fixture
-+        raise SystemExit(Fixture(os.environ["COMPAT_VARIANT"], os.environ.get("RUNTIME_EVIDENCE", "/evidence")).run())
-     variant = os.environ["COMPAT_VARIANT"]
-     out = os.environ.get("RUNTIME_EVIDENCE", "/evidence")
-     if "--sse-no-space" in sys.argv:
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/protocol/envelope.go` (modified, +74/-4)
-```diff
-@@ -48,7 +48,9 @@ func (id ID) Raw() json.RawMessage {
- 	return bytes.Clone(id.raw)
- }
- 
--// Envelope is a single JSON-RPC request or notification.
-+// Envelope is a single JSON-RPC request, notification, or acknowledged Legacy
-+// response. A Legacy response intentionally has an empty Method and is not a
-+// notification; the existing Legacy dispatcher sends its bodyless receipt.
- type Envelope struct {
- 	ID           ID
- 	Method       string
-@@ -57,8 +59,9 @@ type Envelope struct {
- 	Raw          json.RawMessage
- }
- 
--// decodeEnvelope checks message framing independently of the control decoder.
--// Ordinary fields use the same first occurrence as the legacy gjson handlers.
-+// decodeEnvelope 校验输入报文的完整 JSON 边界并返回独立持有原文和 ID 的 Envelope。
-+// 普通请求字段保留 Legacy gjson 的首次出现语义；合法 Legacy 响应以空 Method
-+// 返回，仅交给现有 dispatcher 确认收件，不查找方法或赋予通知语义。Modern 响应仍拒绝。
- func decodeEnvelope(body []byte, modern bool) (Envelope, *Error) {
- 	if !utf8.Valid(body) || !gjson.ValidBytes(body) {
- 		return Envelope{}, ParseError()
-@@ -79,7 +82,11 @@ func decodeEnvelope(body []byte, modern bool) (Envelope, *Error) {
- 		return envelope, ParseError()
- 	}
- 	if len(members["result"]) != 0 || len(members["error"]) != 0 {
--		return envelope, InvalidRequest("JSON-RPC response envelopes are not accepted")
-+		// 只承认合法 Legacy 响应，避免把缺少方法的畸形请求误吞为收件确认。
-+		if modern || !validLegacyResponse(owned, members, id) {
-+			return envelope, InvalidRequest("JSON-RPC response envelopes are not accepted")
-+		}
-+		return envelope, nil
- 	}
- 	if modern {
- 		var jsonrpc string
-@@ -96,6 +103,69 @@ func decodeEnvelope(body []byte, modern bool) (Envelope, *Error) {
- 	return envelope, nil
- }
- 
-+// validLegacyResponse 校验已通过完整 JSON 和 ParseID 检查的 Legacy 响应。
-+// 输入成员借用 body；返回值只表示可确认收件，不关联 pending 请求。仅响应身份字段
-+// 和 error.code/message 禁止重复，result/error.data 保持不透明且不施加递归深度限制。
-+func validLegacyResponse(body []byte, members JSONObject, id ID) bool {
-+	version := gjson.ParseBytes(members["jsonrpc"])
-+	if version.Type != gjson.String || version.String() != "2.0" || !id.IsPresent() || len(members["method"]) != 0 {
-+		return false
-+	}
-+	if (len(members["result"]) != 0) == (len(members["error"]) != 0) || duplicateResponseMembers(body, false) {
-+		return false
-+	}
-+	if len(members["error"]) == 0 {
-+		return true
-+	}
-+	errorBody := members["error"]
-+	if !isJSONObject(errorBody) || duplicateResponseMembers(errorBody, true) {
-+		return false
-+	}
-+	errorMembers := businessObjectMembers(errorBody)
-+	return integerToken(errorMembers["code"]) && gjson.ParseBytes(errorMembers["message"]).Type == gjson.String
-+}
-+
-+// duplicateResponseMembers 只统计当前对象的响应判别字段，返回是否有歧义。
-+// errorObject 选择 error.code/message 范围，不递归遍历业务值或改变普通请求语义。
-+func duplicateResponseMembers(body []byte, errorObject bool) bool {
-+	seen := make(map[string]bool)
-+	duplicate := false
-+	gjson.ParseBytes(body).ForEach(func(key, _ gjson.Result) bool {
-+		name := key.String()
-+		tracked := name == "jsonrpc" || name == "id" || name == "method" || name == "result" || name == "error"
-+		if errorObject {
-+			tracked = name == "code" || name == "message"
-+		}
-+		if tracked {
-+			if seen[name] {
-+				duplicate = true
-+				return false
-+			}
-+			seen[name] = true
-+		}
-+		return true
-+	})
-+	return duplicate
-+}
-+
-+// integerToken 判断合法 JSON 数字是否使用整数词法，返回值不受 int64 范围影响。
-+// 输入已经过完整 JSON 校验；禁止小数和指数，不做 float64 转换或截断。
-+func integerToken(raw json.RawMessage) bool {
-+	token := bytes.TrimSpace(raw)
-+	if len(token) > 0 && token[0] == '-' {
-+		token = token[1:]
-+	}
-+	if len(token) == 0 {
-+		return false
-+	}
-+	for _, digit := range token {
-+		if digit < '0' || digit > '9' {
-+			return false
-+		}
-+	}
-+	return true
-+}
-+
- // ParseID retains an independently owned client token, including explicit null.
- // The legacy handler's int64 view is deliberately separate from this identity.
- func ParseID(raw json.RawMessage) (ID, *Error) {
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/protocol/legacy_response_ack_test.go` (added, +90/-0)
-```diff
-@@ -0,0 +1,90 @@
-+// Copyright (c) 2026 Alibaba Group Holding Ltd.
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy at http://www.apache.org/licenses/LICENSE-2.0
-+package protocol
-+
-+import (
-+	"bytes"
-+	"strings"
-+	"testing"
-+)
-+
-+// TestLegacyResponseAckAccepts 证明收件确认保留原始 ID/报文，且不查找业务方法。
-+func TestLegacyResponseAckAccepts(t *testing.T) {
-+	deep := strings.Repeat(`{"nested":`, 80) + `{"same":1,"same":2}` + strings.Repeat(`}`, 80)
-+	for _, version := range append([]Version{""}, LegacyVersions()...) {
-+		for _, token := range []string{`"ping\\id"`, `9007199254740993`, `9223372036854775808`, `1.50`, `1E+03`, `null`} {
-+			for _, field := range []string{`"result":{}`, `"result":null`, `"result":[1,"x"]`, `"result":` + deep, `"result":{"large":"` + strings.Repeat("x", 1<<20) + `"}`, `"error":{"code":-32603,"message":"synthetic","data":` + deep + `}`, `"error":{"code":92233720368547758080,"message":""}`} {
-+				t.Run(string(version)+"/"+token+"/"+field[:min(22, len(field))], func(t *testing.T) {
-+					body := []byte(`{"jsonrpc":"2.0","id":` + token + `,` + field + `,"extension":1,"extension":2}`)
-+					original := bytes.Clone(body)
-+					request, err := PrepareRequest(Transport{ProtocolVersion: string(version)}, body, func(string) bool { t.Fatal("response looked up a method"); return false })
-+					if err != nil {
-+						t.Fatalf("response rejected: %+v", err)
-+					}
-+					if request.Era != EraLegacy || request.Envelope.Method != "" || request.Envelope.Notification || !request.Envelope.ID.IsPresent() {
-+						t.Fatalf("not a receipt: %+v", request)
-+					}
-+					if string(request.Envelope.ID.Raw()) != token || !bytes.Equal(request.Envelope.Raw, original) {
-+						t.Fatal("raw token/body changed")
-+					}
-+					body[0] = '['
-+					if !bytes.Equal(request.Envelope.Raw, original) {
-+						t.Fatal("envelope retained caller buffer")
-+					}
-+				})
-+			}
-+		}
-+	}
-+}
-+
-+// TestLegacyResponseAckRejects 验证畸形或冲突响应不获得确认，也不触发业务分派。
-+func TestLegacyResponseAckRejects(t *testing.T) {
-+	cases := []string{
-+		`{"jsonrpc":"2.0","result":{}}`, `{"jsonrpc":"2.0","id":true,"result":{}}`, `{"jsonrpc":"2.0","id":{},"result":{}}`, `{"jsonrpc":"2.0","id":[],"result":{}}`,
-+		`{"id":1,"result":{}}`, `{"jsonrpc":2,"id":1,"result":{}}`, `{"jsonrpc":"1.0","id":1,"result":{}}`, `{"jsonrpc":"2.0","id":1}`,
-+		`{"jsonrpc":"2.0","id":1,"result":null,"error":null}`, `{"jsonrpc":"2.0","id":1,"method":"","result":{}}`, `{"jsonrpc":"2.0","id":1,"method":null,"result":{}}`, `{"jsonrpc":"2.0","id":1,"method":"tools/call","result":{}}`,
-+		`{"jsonrpc":"2.0","id":1,"error":null}`, `{"jsonrpc":"2.0","id":1,"error":[]}`, `{"jsonrpc":"2.0","id":1,"error":{}}`, `{"jsonrpc":"2.0","id":1,"error":{"code":1.0,"message":"x"}}`, `{"jsonrpc":"2.0","id":1,"error":{"code":1e3,"message":"x"}}`, `{"jsonrpc":"2.0","id":1,"error":{"code":"1","message":"x"}}`, `{"jsonrpc":"2.0","id":1,"error":{"code":1,"message":null}}`, `{"jsonrpc":"2.0","id":1,"error":{"code":1,"message":2}}`,
-+		`[]`, `null`, `{"jsonrpc":"2.0","id":1,"result":{}}{}`, `{"jsonrpc":"2.0","id":1,"result":`, "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":\"\xff\"}",
-+	}
-+	for _, field := range []string{`"jsonrpc":"2.0"`, `"id":1`, `"method":null`, `"result":{}`, `"error":null`} {
-+		cases = append(cases, `{"jsonrpc":"2.0","id":1,"result":{},`+field+`}`)
-+	}
-+	for _, field := range []string{`"code":1`, `"message":"x"`} {
-+		cases = append(cases, `{"jsonrpc":"2.0","id":1,"error":{"code":1,"message":"x",`+field+`}}`)
-+	}
-+	for _, body := range cases {
-+		t.Run(body, func(t *testing.T) {
-+			_, err := PrepareRequest(Transport{}, []byte(body), func(string) bool { t.Fatal("invalid response dispatched"); return false })
-+			if err == nil {
-+				t.Fatal("invalid response acknowledged")
-+			}
-+		})
-+	}
-+}
-+
-+// TestLegacyResponseAckModernBoundary 保证头部或保留元数据选择的 Modern 响应仍被拒绝。
-+func TestLegacyResponseAckModernBoundary(t *testing.T) {
-+	for _, body := range []string{`{"jsonrpc":"2.0","id":1,"result":{}}`, `{"jsonrpc":"2.0","id":1,"error":{"code":-1,"message":"x"}}`} {
-+		for _, transport := range []Transport{modernTransport("tools/list", ""), modernTransportFromHeaders("tools/list", "")} {
-+			_, err := PrepareRequest(transport, []byte(body), available)
-+			if err == nil || err.Message != "JSON-RPC response envelopes are not accepted" {
-+				t.Fatalf("modern response changed rejection: %+v", err)
-+			}
-+		}
-+		marked := strings.TrimSuffix(body, "}") + `,"params":{"_meta":{"` + MetaProtocolVersion + `":"2026-07-28"}}}`
-+		_, err := PrepareRequest(Transport{}, []byte(marked), available)
-+		if err == nil {
-+			t.Fatal("body identity downgraded")
-+		}
-+	}
-+}
-+
-+// TestLegacyResponseAckOrdinaryRequestDuplicates 保留普通 Legacy 请求的首次出现语义。
-+func TestLegacyResponseAckOrdinaryRequestDuplicates(t *testing.T) {
-+	request, err := PrepareRequest(Transport{}, []byte(`{"jsonrpc":"2.0","id":1,"id":2,"method":"ping","method":"to
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/server/plugin_test.go` (modified, +71/-0)
-```diff
-@@ -1276,3 +1276,74 @@ func TestProductionEntryModernUsesLegacyOrdinaryHTTPPolicy(t *testing.T) {
- 		})
- 	}
- }
-+
-+// TestProductionEntryLegacyResponseAck 通过生产入口验证 Legacy 响应只得到空 202，
-+// 非法候选和 Modern 响应仍拒绝；注册工具计数和 HTTP callout 共同证明没有业务分派。
-+func TestProductionEntryLegacyResponseAck(t *testing.T) {
-+	counters := &validationToolCounters{}
-+	installRegisteredValidationServer(t, counters)
-+	for _, version := range append([]protocol.Version{""}, protocol.LegacyVersions()...) {
-+		for _, token := range []string{`"native-ping"`, `9223372036854775808`, `1.50`, `1E+03`, `null`} {
-+			for _, field := range []string{`"result":{}`, `"result":null`, `"error":{"code":-32603,"message":"synthetic","data":{"duplicate":1,"duplicate":2}}`} {
-+				t.Run(string(version)+"/"+token+"/"+field, func(t *testing.T) {
-+					host := newValidationHost(t, json.RawMessage(`{"server":{"name":"registered"}}`))
-+					headers := legacyToolHeaders()
-+					if version != "" {
-+						headers = append(headers, [2]string{protocol.HeaderProtocolVersion, string(version)})
-+					}
-+					require.Equal(t, types.ActionPause, host.CallOnHttpRequestHeaders(headers))
-+					require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(`{"jsonrpc":"2.0","id":`+token+`,`+field+`}`)))
-+					response := host.GetLocalResponse()
-+					require.NotNil(t, response)
-+					assert.Equal(t, uint32(202), response.StatusCode)
-+					assert.Empty(t, response.Data)
-+					assert.Zero(t, counters.create)
-+					assert.Zero(t, counters.call)
-+					assert.Empty(t, host.GetHttpCalloutAttributes())
-+				})
-+			}
-+		}
-+	}
-+	for _, test := range []struct {
-+		name, body string
-+		modern     bool
-+	}{
-+		{"missing id", `{"jsonrpc":"2.0","result":{}}`, false},
-+		{"mixed method", `{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"count","arguments":{"count":1}},"result":{}}`, false},
-+		{"duplicate id", `{"jsonrpc":"2.0","id":1,"id":2,"result":{}}`, false},
-+		{"invalid error", `{"jsonrpc":"2.0","id":1,"error":{"code":1.5,"message":"x"}}`, false},
-+		{"modern headers", `{"jsonrpc":"2.0","id":1,"result":{}}`, true},
-+		{"modern metadata", `{"jsonrpc":"2.0","id":1,"result":{},"params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28"}}}`, false},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			host := newValidationHost(t, json.RawMessage(`{"server":{"name":"registered"}}`))
-+			headers := legacyToolHeaders()
-+			if test.modern {
-+				headers = modernToolListHeaders()
-+			}
-+			require.Equal(t, types.ActionPause, host.CallOnHttpRequestHeaders(headers))
-+			host.CallOnHttpRequestBody([]byte(test.body))
-+			response := host.GetLocalResponse()
-+			require.NotNil(t, response)
-+			assert.Equal(t, uint32(400), response.StatusCode)
-+			assert.Zero(t, counters.create)
-+			assert.Zero(t, counters.call)
-+			assert.Empty(t, host.GetHttpCalloutAttributes())
-+		})
-+	}
-+}
-+
-+// TestProductionEntryLegacyResponseAckClientPing 保留客户端主动 ping 的原始 ID 和空结果。
-+func TestProductionEntryLegacyResponseAckClientPing(t *testing.T) {
-+	counters := &validationToolCounters{}
-+	installRegisteredValidationServer(t, counters)
-+	host := newValidationHost(t, json.RawMessage(`{"server":{"name":"registered"}}`))
-+	require.Equal(t, types.ActionPause, host.CallOnHttpRequestHeaders(legacyToolHeaders()))
-+	host.CallOnHttpRequestBody([]byte(`{"jsonrpc":"2.0","id":"client-ping","method":"ping"}`))
-+	response := host.GetLocalResponse()
-+	require.NotNil(t, response)
-+	assert.Equal(t, uint32(200), response.StatusCode)
-+	assert.Equal(t, `"client-ping"`, gjson.GetBytes(response.Data, "id").Raw)
-+	assert.JSONEq(t, `{}`, gjson.GetBytes(response.Data, "result").Raw)
-+	assert.Empty(t, host.GetHttpCalloutAttributes())
-+}
-```
-
----
-
-### Incident Patch 2: `c2fe889f` (2026-11-09)
-**Commit Message**: fix(ai-proxy): isolate Claude streaming state per request
+### Incident Patch 1: `6d8d4c36` (2026-11-12)
+**Commit Message**: fix(ai-data-masking): check and restore tool arguments when enabled (#5299)
 
 Signed-off-by: zhihao-yuan <[REDACTED_EMAIL]>
 Co-authored-by: zhihao-yuan <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-go/extensions/ai-proxy/provider/claude.go` (modified, +27/-12)
+**File**: `plugins/wasm-rust/extensions/ai-data-masking/README.md` (modified, +55/-0)
 ```diff
-@@ -20,6 +20,7 @@ const (
- 	claudeDefaultVersion          = "2023-06-01"
- 	claudeDefaultMaxTokens        = 4096
- 	claudeMinThinkingBudgetTokens = 1024
-+	ctxKeyClaudeStreamState       = "claudeStreamState"
+@@ -50,6 +50,61 @@ description: AI 数据脱敏插件配置参考
+ |  replace_roles.restore  | bool            | false |  是否恢复  |
+ |  replace_roles.value    | string          |   -   |  替换值（支持正则变量）  |
  
- 	// Claude Code mode constants
- 	claudeCodeUserAgent    = "claude-cli/2.1.2 (external, cli)"
-@@ -325,12 +326,23 @@ func (c *claudeProviderInitializer) CreateProvider(config ProviderConfig) (Provi
- type claudeProvider struct {
- 	config       ProviderConfig
- 	contextCache *contextCache
-+}
- 
-+type claudeStreamState struct {
- 	messageId   string
- 	usage       usage
- 	serviceTier string
- }
- 
-+func getClaudeStreamState(ctx wrapper.HttpContext) *claudeStreamState {
-+	state, _ := ctx.GetContext(ctxKeyClaudeStreamState).(*claudeStreamState)
-+	if state == nil {
-+		state = &claudeStreamState{}
-+		ctx.SetContext(ctxKeyClaudeStreamState, state)
-+	}
-+	return state
-+}
++## 工具定义和参数（显式开启）
 +
- func (c *claudeProvider) GetProviderType() string {
- 	return providerTypeClaude
- }
-@@ -857,15 +869,17 @@ func stopReasonClaude2OpenAI(reason *string) string {
- }
++三个新开关默认都是 `false`，互不隐含。升级后不配置它们，继续使用原来的 OpenAI、JSONPath 和 raw 处理。原有 `replace_roles.restore: true` 不会自动开启工具参数还原。
++
++| 字段 | 类型 | 默认值 | 作用 |
++| --- | --- | --- | --- |
++| `tool_arguments.check` | bool | false | 请求参数执行 deny 和 mask；响应参数执行 deny |
++| `tool_arguments.restore` | bool | false | 按独立白名单还原响应参数 |
++| `tool_arguments.restore_allowlist` | array | [] | `{tool, paths}` 列表，开启工具还原时不能为空 |
++| `tool_definitions.check` | bool | false | 检查请求中的 tools/functions 定义，命中即拒绝，不做新增替换 |
++| `tool_arguments.limits.max_call_bytes` | 正整数 | 1048576 | 单 call 的输入和改写结果上限，按解开外层转义后的 UTF-8 字节计 |
++| `tool_arguments.limits.max_buffer_bytes` | 正整数 | 4194304 | 每个响应保留的参数总量，含原文、改写结果、排队参数及 name/id |
++| `tool_arguments.limits.max_unparsed_bytes` | 正整数 | 沿用 `max_buffer_bytes` | 单个原始 SSE 帧及响应格式识别缓存的硬上限，按网络字节计 |
++| `tool_arguments.limits.max_calls` | 正整数 | 128 | 每个响应登记过的需处理 call 数，结束后仍计数 |
++
++未解析缓存单独按 `max_unparsed_bytes` 限制，包含协议字段和外层 JSON 转义。可以单独调高它，同时保留较小的参数预算；未配置时沿用 `max_buffer_bytes`。帧边界之前先检查空间，再追加数据；一次回调中的多帧逐帧处理。启用 `deny_raw` 时，原始检查也只接收已经检查过大小的帧，不复制整批回调。其关键词重叠窗口另有开销。已经识别为普通 JSON 的完整响应不受这项 SSE 限制。超限后丢弃待发参数并保持拒绝状态。只开启定义检查不启用这项响应限制。
++
++单 call 1 MiB、单响应 4 MiB、128 次调用作为过渡期默认值保留。后续收紧前，需要观察解码后参数大小的 P95/P99 和超限率。总量预算不等于网关 RSS 上限；解析树、协议编码、旧文字窗口和其他 HTTP 缓冲另有开销。请求历史只检查单 call 上限，不套用响应总量和 call 数上限。关闭新功能时，这些上限不影响旧路径。
++
++新检查复用 `deny_words`、`system_deny` 和 `replace_roles`。参数覆盖现代 `tool_calls[].function.arguments` 与 legacy `function_call.arguments`，包括请求历史、普通响应和 SSE delta；不依赖旧 `deny_openai` 开关。只开定义检查不接管响应。定义检查涵盖字符串叶子以及 schema 的 properties、patternProperties、$defs、definitions 等动态名称。
++
++```yaml
++deny_openai: false
++tool_arguments:
++  check: true
++  restore: true
++  restore_allowlist:
++    - tool: lookup_customer
++      paths: ["/email", "/contacts/0/email"]
++  limits:
++    max_call_bytes: 1048576
++    max_buffer_bytes: 4194304
++    max_calls: 128
++tool_definitions:
++  check: false
++replace_roles:
++  - regex: "%{EMAILADDRESS}"
++    type: hash
++    restore: true
++```
++
++白名单工具名区分大小写。路径使用 RFC 6901 原始 JSON Pointer，`~0` 代表 `~`，`~1` 代表 `/`；空路径只选择根字符串。仅还原路径精确指向的字符串值，不支持通配符、子树授权、URI fragment 或数组追加 `-`，数组下标不能带前导零。重复工具、重复路径和无效转义会导致配置失败。不存在或非字符串的目标不还原。
++
++参数内部的 JSON 字符串会先解码再检查，key 只检查、不改写。只有实际改变的值重新编码；其他 key 顺序、空白、转义、重复 key 和数字写法保留。重复 key 影响白名单路径唯一定位时拒绝。外层 arguments 缺失、null 或空字符串视为无参数；需要处理的非空 arguments 必须是包含合法 JSON 的字符串。
++
++SSE 参数按 choice/call 分别保存，等该 choice 的非 null `finish_reason`（包括空串）、`[DONE]` 或 HTTP end 再处理。id/name/type/index 等 metadata 仍尽早发送。完整名称收齐后才授权还原；同一 choice 的待发文字先于参数，参数先于结束标记。此功能会增加完整参数的等待时间。choice index 必须是原生非负 i64；tool index 还可使用可解析为 u64 的十进制字符串。缺 tool index 只能用已知 id 关联，不能猜数组位置；legacy call 单独归属。
++
++仅支持 delta 契约，不猜测或去重 cumulative 片段；无法可靠识别的累计响应仍可能拼成错误内容，应在接入前确认上游协议。未授权工具的仅还原请求保留原参数，不承担新增还原预算；仍可能命中白名单的 call 超限会失败。
++
++开启对应处理后，坏 JSON/SSE、无法归属的 call、歧义还原或超限会明确失败。请求沿用 `deny_code`（默认 200）和现有拒绝正文；普通响应替换整包；SSE 丢弃待发内容，并在后续回调中保持拒绝状态。已下发的 metadata/文字无法撤回。合法 SSE 注释、心跳、event/id/retry 和上游 error 保留，不补造成功结束。
++
++新参数 mask 与旧 raw/JSONPath/content 改写只各执行一次规则表；旧 deny 仍检查原范围。响应受管参数只按新的还原开关和白名单决定，旧全局还原不能越界。旧改写跨越受管参数边界时拒绝。
++
++工具还原只读取同请求、明确配置 `restore: true` 的实际映射。新参数产生的映射不用于普通回答还原；同值对应多个原值时不任选一条，也不递归还原。建议使用 hash 或足够独特的占位值，静态 `***` 可能误命中。白名单也不能防止模型或 prompt injection 把秘密填入一个已允许的参数；工具执行方仍需自行校验权限、用途和目的地址。
++
+ ## 配置示例
  
- func (c *claudeProvider) streamResponseClaude2OpenAI(ctx wrapper.HttpContext, origResponse *claudeTextGenStreamResponse) *chatCompletionResponse {
-+	state := getClaudeStreamState(ctx)
- 	switch origResponse.Type {
- 	case "message_start":
-+		*state = claudeStreamState{}
- 		if origResponse.Message != nil {
--			c.messageId = origResponse.Message.Id
--			c.usage = usage{
-+			state.messageId = origResponse.Message.Id
-+			state.usage = usage{
- 				PromptTokens:     origResponse.Message.Usage.InputTokens,
- 				CompletionTokens: origResponse.Message.Usage.OutputTokens,
- 			}
--			c.serviceTier = origResponse.Message.Usage.ServiceTier
-+			state.serviceTier = origResponse.Message.Usage.ServiceTier
- 		}
- 		var index int
- 		if origResponse.Index != nil {
-@@ -978,8 +992,8 @@ func (c *claudeProvider) streamResponseClaude2OpenAI(ctx wrapper.HttpContext, or
- 
- 	case "message_delta":
- 		if origResponse.Usage != nil {
--			c.usage.CompletionTokens += origResponse.Usage.OutputTokens
--			c.usage.TotalTokens = c.usage.PromptTokens + c.usage.CompletionTokens
-+			state.usage.CompletionTokens += origResponse.Usage.OutputTokens
-+			state.usage.TotalTokens = state.usage.PromptTokens + state.usage.CompletionTokens
- 		}
- 
- 		var index int
-@@ -994,16 +1008,16 @@ func (c *claudeProvider) streamResponseClaude2OpenAI(ctx wrapper.HttpContext, or
- 		return c.createChatCompletionResponse(ctx, origResponse, choice)
- 	case "message_stop":
- 		return &chatCompletionResponse{
--			Id:          c.messageId,
-+			Id:          state.messageId,
- 			Created:     time.Now().UnixMilli() / 1000,
- 			Model:       ctx.GetStringContext(ctxKeyFinalRequestModel, ""),
- 			Object:      objectChatCompletionChunk,
- 			Choices:     []chatCompletionChoice{},
--			ServiceTier: c.serviceTier,
-+			ServiceTier: state.serviceTier,
- 			Usage: &usage{
--				PromptTokens:     c.usage.PromptTokens,
--				CompletionTokens: c.usage.CompletionTokens,
--				TotalTokens:      c.usage.TotalTokens,
-+				PromptTokens:     state.usage.PromptTokens,
-+				CompletionTokens: state.usage.CompletionTokens,
-+				TotalTokens:      state.usage.TotalTokens,
- 			},
- 		}
- 	case "content_block_stop":
-@@ -1032,13 +1046,14 @@ func (c *claudeProvider) streamResponseClaude2OpenAI(ctx wrapper.HttpContext, or
- }
- 
- func (c *claudeProvider) createChatCompletionResponse(ctx wrapper.HttpContext, response *claudeTextGenStreamResponse, choice chatCompletionChoice) *chatCompletionResponse {
-+	state := getClaudeStreamState(ctx)
- 	return &chatCompletionResponse{
--		Id:          c.messageId,
-+		Id:          state.messageId,
- 		Created:     time.Now().UnixMilli() / 1000,
- 		Model:       ctx.GetStringContext(ctxKeyFinalRequestModel, ""),
- 		Object:      objectChatCompletionChunk,
- 		Choices:     []chatCompletionChoice{choice},
--		ServiceTier: c.serviceTier,
-+		ServiceTier: state.serviceTier,
- 	}
- }
- 
+ ```yaml
 ```
 
-**File**: `plugins/wasm-go/extensions/ai-proxy/provider/claude_stream_test.go` (added, +227/-0)
+**File**: `plugins/wasm-rust/extensions/ai-data-masking/README_EN.md` (modified, +55/-0)
 ```diff
-@@ -0,0 +1,227 @@
-+package provider
+@@ -45,6 +45,61 @@ Plugin Execution Priority: `991`
+ |  replace_roles.restore  | bool             | false          | Whether to restore                   |
+ |  replace_roles.value    | string          |   -            | Replacement value (supports regex variables) |
+ 
++## Tool definitions and arguments (opt in)
 +
-+import (
-+	"encoding/json"
-+	"net/http"
-+	"strings"
-+	"testing"
++`tool_arguments.check`, `tool_arguments.restore`, and `tool_definitions.check` default to `false` and do not imply each other. Existing configurations keep the original OpenAI, JSONPath, and raw behavior. A rule's `restore: true` does not authorize tool argument restoration.
 +
-+	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/proxytest"
-+	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/types"
-+	"github.com/higress-group/wasm-go/pkg/wrapper"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
++| Field | Type | Default | Purpose |
++| --- | --- | --- | --- |
++| `tool_arguments.check` | bool | false | Deny/mask request arguments; deny response arguments |
++| `tool_arguments.restore` | bool | false | Restore response arguments through a separate allowlist |
++| `tool_arguments.restore_allowlist` | array | [] | `{tool, paths}` entries; required when tool restore is enabled |
++| `tool_definitions.check` | bool | false | Deny matching tools/functions definitions; no new definition masking |
++| `tool_arguments.limits.max_call_bytes` | positive integer | 1048576 | Per-call input and rewritten arguments, in UTF-8 bytes after outer JSON decoding |
++| `tool_arguments.limits.max_buffer_bytes` | positive integer | 4194304 | Retained response parameters: input, rewritten/queued arguments, name and id |
++| `tool_arguments.limits.max_unparsed_bytes` | positive integer | Inherits `max_buffer_bytes` | Hard byte ceiling for one wire SSE frame and buffered response-format detection |
++| `tool_arguments.limits.max_calls` | positive integer | 128 | Registered calls requiring processing, including completed calls |
 +
-+func TestClaudeProvider_InterleavedStreams(t *testing.T) {
-+	initClaudeStreamTestHost(t)
-+	for _, providerType := range []string{"claude", "vertex"} {
-+		t.Run(providerType, func(t *testing.T) {
-+			for _, first := range []string{"a", "b"} {
-+				t.Run(first+"_finishes_first", func(t *testing.T) {
-+					p, newContext := newClaudeStreamTestProvider(t, providerType)
-+					contexts := map[string]wrapper.HttpContext{"a": newContext(), "b": newContext()}
-+					responses := map[string][]chatCompletionResponse{}
-+					for _, role := range []string{"a", "b"} {
-+						responses[role] = convertClaudeTestStream(t, p, contexts[role], claudeStreamTestFrames(role)[0], false)
-+					}
-+					order := []string{"a", "b"}
-+					if first == "b" {
-+						order = []string{"b", "a"}
-+					}
-+					for _, role := range order {
-+						frames := claudeStreamTestFrames(role)
-+						for i, frame := range frames[1:] {
-+							last := i == len(frames)-2
-+							if last {
-+								frame = strings.TrimRight(frame, "\n")
-+							}
-+							responses[role] = append(responses[role], convertClaudeTestStream(t, p, contexts[role], frame, last)...)
-+						}
-+					}
-+					for _, role := range []string{"a", "b"} {
-+						assertClaudeTestStream(t, role, responses[role])
-+					}
-+				})
-+			}
-+		})
-+	}
++`max_unparsed_bytes` counts wire bytes, including protocol fields and outer JSON escaping. Set it separately when framing requires more room than the parameter budget. If omitted, it inherits `max_buffer_bytes`. Space is checked before appending bytes, and batched events are processed one at a time. With `deny_raw` enabled, raw checks receive only size-checked frames, rather than copying the entire callback. The deny-word overlap window has separate overhead. Complete responses identified as ordinary JSON are not subject to this SSE limit. Exceeding this ceiling discards queued arguments and keeps the response rejected. Definition-only checks do not enable this response limit.
++
++The transitional defaults remain 1 MiB per call, 4 MiB per response, and 128 calls. Tightening them requires observations of decoded argument sizes (P95/P99) and exceedance rates. The buffer budget is not an RSS cap: parsing trees, protocol encoding, legacy text windows, and HTTP buffering have additional costs. Request history uses only the per-call limit, not response byte/count quotas. Disabled features do not impose these limits on legacy traffic.
++
++The checks use existing `deny_words`, `system_deny`, and `replace_roles`. Arguments include modern `tool_calls[].function.arguments` and legacy `function_call.arguments` in request history, JSON responses, and SSE deltas, independently of `deny_openai`. Definition-only checks do not take over responses. Definitions include string leaves and dynamic schema names under properties, patternProperties, $defs, definitions and related dependency fields.
++
++```yaml
++deny_openai: false
++tool_arguments:
++  check: true
++  restore: true
++  restore_allowlist:
++    - tool: lookup_customer
++      paths: ["/email", "/contacts/0/email"]
++  limits:
++    max_call_bytes: 1048576
++    max_buffer_bytes: 4194304
++    max_calls: 128
++tool_definitions:
++  check: false
++replace_roles:
++  - regex: "%{EMAILADDRESS}"
++    type: hash
++    restore: true
++```
++
++Tool names are case sensitive. Paths are raw RFC 6901 JSON Pointers (`~0` for `~`, `~1` for `/`); an empty pointer selects only a root string. Only exact string values are restored. Wildcards, subtree grants, URI fragments, array append `-`, and leading-zero array indices are unsupported. Invalid escapes, duplicate tools/paths and an empty required allowlist reject configuration. Missing or non-string targets are not restored.
++
++Inner JSON string literals are decoded before inspection. Keys are checked but never masked. Only changed values are encoded again; unchanged key order, whitespace, escapes, duplicate keys and numeric spelling remain intact. Duplicate keys that make an allowlisted target ambiguous reject processing. Missing, null and empty outer arguments mean no parameters. Other arguments requiring processing must be strings containing valid JSON.
++
++SSE arguments are buffered per choice/call until a non-null `finish_reason` (including an empty string), `[DONE]`, or HTTP end. Metadata is forwarded promptly; the complete delta-concatenated tool name authorizes restoration only at completion. Pending text precedes arguments, which precede termination. Full arguments therefore arrive later. Choice indices must be native nonnegative i64 integers; tool indices may a
+```
+
+**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/deny_word.rs` (modified, +8/-0)
+```diff
+@@ -68,4 +68,12 @@ impl DenyWord {
+         }
+         None
+     }
++
++    pub(crate) fn max_word_bytes(&self) -> usize {
++        self.words.iter().map(String::len).max().unwrap_or(0)
++    }
++
++    pub(crate) fn is_empty(&self) -> bool {
++        self.words.is_empty()
++    }
+ }
+```
+
+**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/lib.rs` (modified, +119/-0)
+```diff
+@@ -16,3 +16,122 @@ mod ai_data_masking;
+ mod deny_word;
+ mod msg_win_openai;
+ mod msg_window;
++mod tool_arguments;
++mod tool_config;
++
++// Native callback tests record host I/O. T5 still runs the actual Wasm module
++// in Envoy; these imports do not replace runtime verification.
++#[cfg(all(test, not(target_arch = "wasm32")))]
++mod test_host {
++    use proxy_wasm::types::BufferType;
++    use std::cell::RefCell;
++
++    thread_local! {
++        static INPUT: RefCell<Vec<u8>> = const { RefCell::new(Vec::new()) };
++        static BUFFERS: RefCell<Vec<(u32, Vec<u8>)>> = const { RefCell::new(Vec::new()) };
++        static REJECTIONS: RefCell<Vec<(u32, Vec<u8>)>> = const { RefCell::new(Vec::new()) };
++    }
++
++    pub(crate) fn response_input(bytes: &[u8]) {
++        INPUT.with(|input| *input.borrow_mut() = bytes.to_vec());
++    }
++
++    #[no_mangle]
++    unsafe extern "C" fn proxy_get_buffer_bytes(
++        _kind: u32,
++        start: usize,
++        size: usize,
++        data: *mut *mut u8,
++        len: *mut usize,
++    ) -> u32 {
++        let bytes = INPUT.with(|input| {
++            let input = input.borrow();
++            input
++                .get(start..start.saturating_add(size).min(input.len()))
++                .unwrap_or(&[])
++                .to_vec()
++                .into_boxed_slice()
++        });
++        // Match the SDK's ownership transfer: it frees a buffer of exactly len bytes.
++        unsafe {
++            *len = bytes.len();
++            *data = Box::into_raw(bytes) as *mut u8;
++        }
++        0
++    }
++
++    pub(crate) fn reset() {
++        BUFFERS.with(|buffers| buffers.borrow_mut().clear());
++        REJECTIONS.with(|responses| responses.borrow_mut().clear());
++    }
++
++    pub(crate) fn take_request_body() -> Option<Vec<u8>> {
++        BUFFERS.with(|buffers| {
++            buffers
++                .borrow_mut()
++                .iter()
++                .rev()
++                .find(|(kind, _)| *kind == BufferType::HttpRequestBody as u32)
++                .map(|(_, bytes)| bytes.clone())
++        })
++    }
++
++    pub(crate) fn last_rejection() -> Option<(u32, Vec<u8>)> {
++        REJECTIONS.with(|responses| responses.borrow().last().cloned())
++    }
++
++    pub(crate) fn take_response_body() -> Option<Vec<u8>> {
++        BUFFERS.with(|buffers| {
++            buffers
++                .borrow()
++                .iter()
++                .rev()
++                .find(|(kind, _)| *kind == BufferType::HttpResponseBody as u32)
++                .map(|(_, bytes)| bytes.clone())
++        })
++    }
++
++    #[no_mangle]
++    extern "C" fn proxy_log(_level: u32, _message: *const u8, _size: usize) -> u32 {
++        0
++    }
++
++    #[no_mangle]
++    unsafe extern "C" fn proxy_set_buffer_bytes(
++        kind: u32,
++        _start: usize,
++        _size: usize,
++        data: *const u8,
++        len: usize,
++    ) -> u32 {
++        // The SDK supplies a live slice for this synchronous host call.
++        let bytes = if len == 0 {
++            Vec::new()
++        } else {
++            unsafe { std::slice::from_raw_parts(data, len) }.to_vec()
++        };
++        BUFFERS.with(|buffers| buffers.borrow_mut().push((kind, bytes)));
++        0
++    }
++
++    #[no_mangle]
++    unsafe extern "C" fn proxy_send_local_response(
++        code: u32,
++        _details: *const u8,
++        _details_len: usize,
++        data: *const u8,
++        len: usize,
++        _headers: *const u8,
++        _headers_len: usize,
++        _grpc: i32,
++    ) -> u32 {
++        // The SDK supplies a live slice for this synchronous host call.
++        let bytes = if len == 0 {
++            Vec::new()
++        } else {
++            unsafe { std::slice::from_raw_parts(data, len) }.to_vec()
++        };
++        REJECTIONS.with(|responses| responses.borrow_mut().push((code, bytes)));
++        0
++    }
++}
+```
+
+**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/msg_win_openai.rs` (modified, +81/-0)
+```diff
+@@ -452,6 +452,87 @@ impl MsgWindow {
+         output
+     }
+ 
++    // The tool path already owns incremental SSE decoding and strict JSON
++    // validation. Keep the existing text barrier for its parsed events.
++    pub(crate) fn push_tool_event(
++        &mut self,
++        raw: Vec<u8>,
++        payload: &[u8],
++        char_window_size: usize,
++        byte_window_size: usize,
++        inspect: &mut impl FnMut(&mut Vec<u8>) -> bool,
++    ) {
++        self.char_window_size = char_window_size;
++        self.byte_window_size = byte_window_size;
++        if payload.iter().all(u8::is_ascii_whitespace) {
++            self.queued_events.push(QueuedEvent::Raw(raw));
++            return;
++        }
++        let before = self.queued_events.len();
++        let mut canonical = b"data: ".to_vec();
++        canonical.extend_from_slice(payload);
++        self.update_event(canonical, inspect);
++        let has_text = serde_json::from_slice::<Value>(payload)
++            .ok()
++            .is_some_and(|value| {
++                value["choices"].as_array().is_some_and(|choices| {
++                    choices.iter().any(|choice| {
++                        ["content", "reasoning_content"].iter().any(|field| {
++                            choice["delta"][field]
++                                .as_str()
++                                .is_some_and(|text| !text.is_empty())
++                        })
++                    })
++                })
++            });
++        if !has_text {
++            if let Some(QueuedEvent::Raw(event)) = self.queued_events[before..]
++                .iter_mut()
++                .rev()
++                .find(|event| matches!(event, QueuedEvent::Raw(_)))
++            {
++                *event = raw;
++            }
++        } else {
++            let mut fields = Vec::new();
++            for line in raw.split(|byte| *byte == b'\r' || *byte == b'\n') {
++                if !line.is_empty() && !line.starts_with(b"data:") && line != b"data" {
++                    fields.extend_from_slice(line);
++                    fields.push(b'\n');
++                }
++            }
++            if !fields.is_empty() {
++                if let Some(QueuedEvent::Raw(event)) = self.queued_events[before..]
++                    .iter_mut()
++                    .find(|event| matches!(event, QueuedEvent::Raw(_)))
++                {
++                    fields.append(event);
++                    *event = fields;
++                } else {
++                    fields.extend_from_slice(b"data: {\"choices\":[]}\n\n");
++                    self.queued_events.push(QueuedEvent::Raw(fields));
++                }
++            }
++        }
++        for window in self.message_windows.values_mut() {
++            window.check(inspect);
++        }
++    }
++
++    pub(crate) fn flush_tool_choice(
++        &mut self,
++        index: i64,
++        inspect: &mut impl FnMut(&mut Vec<u8>) -> bool,
++    ) {
++        self.queue_text(index, true, inspect);
++    }
++    pub(crate) fn flush_tool_text(&mut self, inspect: &mut impl FnMut(&mut Vec<u8>) -> bool) {
++        self.queue_all_text(inspect);
++    }
++    pub(crate) fn queue_tool_arguments(&mut self, value: Value) {
++        self.queue_raw(format!("data: {value}").into_bytes());
++    }
++
+     pub(crate) fn push(
+         &mut self,
+         data: &[u8],
+```
+
+**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/tool_arguments.rs` (added, +477/-0)
+```diff
+@@ -0,0 +1,477 @@
++// Copyright (c) 2026 Alibaba Group Holding Ltd.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use crate::tool_config::pointer_tokens;
++use serde_json::Value;
++use std::collections::HashSet;
++use std::ops::Range;
++
++struct Literal {
++    span: Range<usize>,
++    value: String,
++    key: bool,
 +}
 +
-+func TestClaudeProvider_InterleavedFragmentedStreams(t *testing.T) {
-+	initClaudeStreamTestHost(t)
-+	for _, providerType := range []string{"claude", "vertex"} {
-+		t.Run(providerType, func(t *testing.T) {
-+			for _, role := range []string{"a", "b"} {
-+				t.Run("split_"+role, func(t *testing.T) {
-+					other := "b"
-+					if role == "b" {
-+						other = "a"
-+					}
-+					stream := strings.TrimRight(strings.Join(claudeStreamTestFrames(role), ""), "\n")
-+					otherStream := strings.TrimRight(strings.Join(claudeStreamTestFrames(other), ""), "\n")
-+					// Complete the other stream between every possible byte boundary.
-+					for split := 0; split <= len(stream); split++ {
-+						p, newContext := newClaudeStreamTestProvider(t, providerType)
-+						a, b := newContext(), newContext()
-+						responses := convertClaudeTestStream(t, p, a, stream[:split], false)
-+						otherResponses := convertClaudeTestStream(t, p, b, otherStream, true)
-+						responses = append(responses, convertClaudeTestStream(t, p, a, stream[split:], true)...)
-+						assertClaudeTestStream(t, role, responses)
-+						assertClaudeTestStream(t, other, otherResponses)
-+					}
-+				})
-+			}
-+		})
-+	}
++enum Node {
++    String(usize),
++    Object(Vec<(usize, Node)>, Range<usize>),
++    Array(Vec<Node>, Range<usize>),
++    Other(Range<usize>),
 +}
 +
-+func TestClaudeProvider_StreamStateInitialization(t *testing.T) {
-+	initClaudeStreamTestHost(t)
-+	for _, providerType := range []string{"claude", "vertex"} {
-+		t.Run(providerType, func(t *testing.T) {
-+			p, newContext := newClaudeStreamTestProvider(t, providerType)
-+			a, b := newContext(), newContext()
-+			start := `data: {"type":"message_start","message":{"id":"msg_a","usage":{"input_tokens":10,"output_tokens":1,"service_tier":"standard"}}}` + "\n\n"
-+			convertClaudeTestStream(t, p, a, start, false)
-+
-+			// A stream without message_start must not inherit another request's state.
-+			end := convertClaudeTestStream(t, p, b, `data: {"type":"message_stop"}`+"\n\n", true)
-+			require.Len(t, end, 1)
-+			assert.Empty(t, end[0].Id)
-+			assert.Empty(t, end[0].ServiceTier)
-+			assert.Equal(t, &usage{}, end[0].Usage)
-+
-+			// A new message on the same context resets accumulated usage.
-+			convertClaudeTestStream(t, p, a, `data: {"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"output_tokens":3}}`+"\n\n", false)
-+			convertClaudeTestStream(t, p, a, start, false)
-+			end = convertClaudeTestStream(t, p, a, `data: {"type":"message_stop"}`+"\n\n", false)
-+			require.Len(t, end, 1)
-+			assert.Equal(t, "msg_a", end[0].Id)
-+			assert.Equal(t, &usage{PromptTokens: 10, CompletionTokens: 1}, end[0].Usage)
-+
-+			convertClaudeTestStream(t, p, a, `data: {"type":"message_start"}`+"\n\n", false)
-+			end = convertClaudeTestStream(t, p, a, `data: {"type":"message_stop"}`+"\n\n", true)
-+			require.Len(t, end, 1)
-+			assert.Empty(t, end[0].Id)
-+			assert.Empty(t, end[0].ServiceTier)
-+			assert.Equal(t, &usage{}, end[0].Usage)
-+
-+			// Reuse the provider for single and consecutive requests.
-+			for _, role := range []string{"a", "b", "a"} {
-+				responses := convertClaudeTestStream(t, p, newContext(), strings.Join(claudeStreamTestFrames(role), ""), true)
-+				assertClaudeTestStream(t, role, responses)
-+			}
-+		})
-+	}
++/// Keep string positions and duplicate keys; a Value alone loses both.
++pub(crate) struct JsonStrings {
++    literals: Vec<Literal>,
++    root: Node,
 +}
 +
-+func initClaudeStreamTestHost(t *testing.T) {
-+	t.Helper()
-+	host, reset := proxytest.NewHostEmulator(proxytest.NewEmulatorOption().WithHttpContext(func(uint32) types.HttpContext {
-+		return &types.DefaultHttpContext{
++impl JsonStrings {
++    pub(crate) fn parse(input: &str) -> Result<Self, &'static str> {
++        // Use serde's JSON and depth validation, but never serialize its Value.
++        serde_json::from_str::<Value>(input).map_err(|_| "invalid arguments JSON")?;
++        let mut scanner = Scanner {
++            input,
++            at: 0,
++            literals: Vec::new(),
++        };
++        let root = scanner.value()?;
++        scanner.whitespace();
++        if scanner.at != input.len() {
++            return Err("trailing arguments data");
++        }
++        Ok(Self {
++            literals: scanner.literals,
++            root,
++        })
++    }
++
++    fn resolve(&self, tokens: &[String]) -> Result<Option<&Node>, &'static str> {
++        let mut node = &self.root;
++        for token in tokens {
++            node = match node {
++                Node::Object(entries, _) => {
++                    let mut matches = entries
++                        .iter()
++                        .filter(|(key, _)| self.literals[*key].value == *token);
++                    let Some((_, child)) = matches.next() else {
++                        return Ok(None);
++                    };
++                    if matches.next().is_some() {
++                        return Err("ambiguous duplicate arguments key");
++                    }
++                    child
++                }
++                Node::Array(entries, _) => {
++                    if token.is_empty()
++                        || !token.bytes().all(|byte| byte.is_ascii_digit())
++                        || (token.len() > 1 && token.starts_with('0'))
++                    {
++                        return Err("invalid arguments array index");
++                    }
++                    let index = token
++                        .parse::<usize>()
++                        .map_err(|_| "arguments array index overflow")?;
++                    let Some(child) = entries.get(index) else {
++                        return Ok(None);
++                    };
++                    child
++                }
++                _ => return Ok(None),
++            };
++        }
++        Ok(Some(node))
++    }
++
++    pub(crate) fn string_span(
++        &self,
++        tokens: &[String],
++    ) -> Result<Option<Range<usize>>, &'static str> {
++        Ok(match self.resolve(tokens)? {
++            Some(Node::String(index)) => Some(self.literals[*index].span.clone()),
++            _ => None,
++        })
++    }
++}
++
++impl JsonStrings {
++    pub(crate) fn value_span(
++        &self,
++        tokens: &[String],
++    ) -> Result<Option<Range<usize>>, &'static str> {
++        Ok(match self.resolve(tokens)? {
++            Some(Node::String(index)) => Some(self.literals[*index].span.clone()),
++            Some(Node::Other(span) | Node::Object(_, span) | Node::Array(_, span)) => {
++                Some(span.clone())
++            }
++            _ => None,
++        })
++    }
++}
++
++struct Scanner<'a> {
++    input: &'a str,
++    at: usize,
++    literals: Vec<Literal>,
++}
++
++impl Scanner<'_> {
++    fn byte(&self) -> Option<u8> {
++        self.input.as_bytes().get(self.at).copied()
++    }
++
++    fn whitespace(&mut self) {
++        while self.byte().is_some_and(|byte| byte.is_ascii_whitespace()) {
++            self.at += 1;
++        }
++    }
++
++    fn string(&mut self, key: bool) -> Result<usize, &'static str> {
++        if self.byte() != Some(b'"') {
++            return Err("expected JSON string");
++        }
++        let start = self.at;
++        self.at += 1;
++        loop {
++            match self.byte() {
++                Some(b'\\') => self.at += 2,
++                Some(b'"') => {
++                    self.at += 1;
++                    break;
++                }
++                Some(_) => self.at += 1,
++                None => return Err("incomplete JSON string"),
++            }
++    
+```
+
+**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/tool_config.rs` (added, +225/-0)
+```diff
+@@ -0,0 +1,225 @@
++// Copyright (c) 2026 Alibaba Group Holding Ltd.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use serde::{de::Error, Deserialize, Deserializer};
++use serde_json::Value;
++use std::collections::HashSet;
++
++#[derive(Clone, Debug, Default)]
++pub(crate) struct ToolArgumentsConfig {
++    pub(crate) check: bool,
++    pub(crate) restore: bool,
++    pub(crate) restore_allowlist: Vec<RestoreTool>,
++    pub(crate) limits: ToolLimits,
++}
++
++// Transitional defaults retained after maintainer review; tightening needs size observations.
++#[derive(Clone, Debug)]
++pub(crate) struct ToolLimits {
++    pub(crate) max_call_bytes: usize,
++    pub(crate) max_buffer_bytes: usize,
++    pub(crate) max_unparsed_bytes: usize,
++    pub(crate) max_calls: usize,
++}
++
++impl Default for ToolLimits {
++    fn default() -> Self {
++        Self {
++            max_call_bytes: 1_048_576,
++            max_buffer_bytes: 4_194_304,
++            max_unparsed_bytes: 4_194_304,
++            max_calls: 128,
++        }
++    }
++}
++
++impl<'de> Deserialize<'de> for ToolLimits {
++    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
++        let value = Value::deserialize(deserializer)?;
++        let object = value
++            .as_object()
++            .ok_or_else(|| D::Error::custom("tool limits must be an object"))?;
++        let default = Self::default();
++        let read = |name, fallback| match object.get(name) {
++            None => Ok(fallback),
++            Some(value) => value
++                .as_u64()
++                .filter(|number| *number > 0)
++                .and_then(|number| usize::try_from(number).ok())
++                .ok_or_else(|| {
++                    D::Error::custom("tool limit must be a positive representable integer")
++                }),
++        };
++        let max_buffer_bytes = read("max_buffer_bytes", default.max_buffer_bytes)?;
++        Ok(Self {
++            max_call_bytes: read("max_call_bytes", default.max_call_bytes)?,
++            max_buffer_bytes,
++            max_unparsed_bytes: read("max_unparsed_bytes", max_buffer_bytes)?,
++            max_calls: read("max_calls", default.max_calls)?,
++        })
++    }
++}
++
++fn empty_object() -> Value {
++    serde_json::json!({})
++}
++
++#[derive(Clone, Debug, Deserialize)]
++pub(crate) struct RestoreTool {
++    pub(crate) tool: String,
++    pub(crate) paths: Vec<String>,
++}
++
++#[derive(Clone, Debug, Default, Deserialize)]
++#[serde(default)]
++pub(crate) struct ToolDefinitionsConfig {
++    pub(crate) check: bool,
++}
++
++/// Detect enabled or malformed new options before choosing the legacy loader.
++/// Inactive dependencies (limits and allowlists) do not activate strict loading.
++pub(crate) fn requests_tool_processing(value: &Value) -> bool {
++    for (group, fields) in [
++        ("tool_arguments", &["check", "restore"][..]),
++        ("tool_definitions", &["check"][..]),
++    ] {
++        if let Some(options) = value.get(group) {
++            let Some(options) = options.as_object() else {
++                return true;
++            };
++            if fields.iter().any(|field| {
++                options
++                    .get(*field)
++                    .is_some_and(|value| value != &Value::Bool(false))
++            }) {
++                return true;
++            }
++        }
++    }
++    value.get("_rules_").is_some_and(|rules| {
++        if let Some(rules) = rules.as_array() {
++            rules.iter().any(requests_tool_processing)
++        } else {
++            requests_tool_processing(rules)
++        }
++    })
++}
++
++pub(crate) fn pointer_tokens(pointer: &str) -> Result<Vec<String>, &'static str> {
++    if pointer.is_empty() {
++        return Ok(Vec::new());
++    }
++    if !pointer.starts_with('/') {
++        return Err("tool restore path must be a raw JSON Pointer");
++    }
++    pointer[1..]
++        .split('/')
++        .map(|part| {
++            let mut token = String::new();
++            let mut chars = part.chars();
++            while let Some(character) = chars.next() {
++                if character == '~' {
++                    token.push(match chars.next() {
++                        Some('0') => '~',
++                        Some('1') => '/',
++                        _ => return Err("invalid JSON Pointer escape"),
++                    });
++                } else {
++                    token.push(character);
++                }
++            }
++            Ok(token)
++        })
++        .collect()
++}
++
+```
+
+**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/tool_raw.rs` (added, +443/-0)
+```diff
+@@ -0,0 +1,443 @@
++// Copyright (c) 2026 Alibaba Group Holding Ltd.
++// SPDX-License-Identifier: Apache-2.0
++use super::*;
++
++#[derive(Default)]
++pub(super) struct RawRestoreWindow {
++    text: String,
++    protected: Vec<ProtectedPart>,
++}
++
++struct ProtectedPart {
++    span: Range<usize>,
++    frame: Option<Range<usize>>,
++    logical: usize,
++}
++
++impl ProtectedPart {
++    fn advance(&mut self, cutoff: usize) {
++        if let Some(frame) = &mut self.frame {
++            // Charged argument frames are retained or emitted as a whole.
++            debug_assert!(cutoff <= frame.start || cutoff >= frame.end);
++            if cutoff >= frame.end {
++                self.logical = 0;
++            }
++            *frame = frame.start.saturating_sub(cutoff)..frame.end.saturating_sub(cutoff);
++        }
++        self.span = self.span.start.saturating_sub(cutoff)..self.span.end.saturating_sub(cutoff);
++    }
++}
++
++fn data_positions(raw: &[u8]) -> (Vec<u8>, Vec<usize>) {
++    let mut data = Vec::new();
++    let mut positions = Vec::new();
++    let mut start = if raw.starts_with(b"\xef\xbb\xbf") {
++        3
++    } else {
++        0
++    };
++    let mut had_data = false;
++    while start < raw.len() {
++        let end = (start..raw.len())
++            .find(|&at| raw[at] == b'\r' || raw[at] == b'\n')
++            .unwrap_or(raw.len());
++        let line = &raw[start..end];
++        let content = if line.starts_with(b"data:") {
++            Some(start + 5 + usize::from(raw.get(start + 5) == Some(&b' ')))
++        } else if line == b"data" {
++            Some(end)
++        } else {
++            None
++        };
++        if let Some(content) = content {
++            if had_data {
++                data.push(b'\n');
++                positions.push(start);
++            }
++            data.extend_from_slice(&raw[content..end]);
++            positions.extend(content..end);
++            had_data = true;
++        }
++        start = end + 1;
++        if raw.get(end) == Some(&b'\r') && raw.get(end + 1) == Some(&b'\n') {
++            start += 1;
++        }
++    }
++    (data, positions)
++}
++
++fn protected_arguments(
++    raw: &[u8],
++    offset: usize,
++    charged: bool,
++) -> Result<Vec<ProtectedPart>, &'static str> {
++    let (data, positions) = data_positions(raw);
++    if data.is_empty()
++        || data
++            .iter()
++            .copied()
++            .filter(|byte| !byte.is_ascii_whitespace())
++            .eq(b"[DONE]".iter().copied())
++    {
++        return Ok(Vec::new());
++    }
++    let text = std::str::from_utf8(&data).map_err(|_| "invalid raw SSE data")?;
++    let value: Value = serde_json::from_str(text).map_err(|_| "invalid raw SSE JSON")?;
++    let document = JsonStrings::parse(text)?;
++    let mut parts = Vec::new();
++    let Some(choices) = value.get("choices").and_then(Value::as_array) else {
++        return Ok(parts);
++    };
++    for (choice_position, choice) in choices.iter().enumerate() {
++        let Some(delta) = choice.get("delta") else {
++            continue;
++        };
++        let mut collect = |function: &Value, path: Vec<String>| -> Result<(), &'static str> {
++            let Some(arguments) = function.get("arguments") else {
++                return Ok(());
++            };
++            let span = document
++                .value_span(&path)?
++                .ok_or("missing raw arguments location")?;
++            let start = *positions
++                .get(span.start)
++                .ok_or("missing raw arguments offset")?
++                + offset;
++            let end = *positions
++                .get(span.end - 1)
++                .ok_or("missing raw arguments offset")?
++                + 1
++                + offset;
++            let logical = if charged {
++                arguments.as_str().map_or(0, str::len)
++            } else {
++                0
++            };
++            parts.push(ProtectedPart {
++                span: start..end,
++                frame: charged.then_some(offset..offset + raw.len()),
++                logical,
++            });
++            Ok(())
++        };
++        if let Some(calls) = delta.get("tool_calls").and_then(Value::as_array) {
++            for (call_position, call) in calls.iter().enumerate() {
++                collect(
++                    &call["function"],
++                    vec![
++                        "choices".into(),
++                        choice_position.to_string(),
++                        "delta".into(),
++                        "tool_calls".into(),
++                        call_position.to_string(),
++                        "function".into(),
++                        "arguments".into(),
++                    ],
++                )?;
++            }
++        }
++        collect(
++            &delta["function_call"],
++            vec![
++                "choices".into(),
++                choice_position.to_string(),
++                "delta".into(),
++                "function_call".into(),
++                "arguments".into(),
++           
 ```
 
 ---
 
-### Incident Patch 3: `b6069b6b` (2026-11-09)
-**Commit Message**: build: update Envoy 1.36.12 dependencies and images (#5324)
+### Incident Patch 2: `dedd5ed7` (2026-11-12)
+**Commit Message**: chore(plugins): bump wasm-go for request body buffering fix (#5342)
 
-Signed-off-by: zty98751 <[REDACTED_EMAIL]>
+Signed-off-by: johnlanni <[REDACTED_EMAIL]>
+Signed-off-by: johnlanni <[REDACTED_EMAIL]>
 
-**File**: `Makefile.core.mk` (modified, +2/-2)
+**File**: `plugins/wasm-go/extensions/ext-auth/go.mod` (modified, +1/-1)
 ```diff
-@@ -200,7 +200,7 @@ docker-buildx-push: clean-env docker.higress-buildx
- export PARENT_GIT_TAG:=$(shell cat VERSION)
- export PARENT_GIT_REVISION:=$(TAG)
- 
--export ENVOY_PACKAGE_URL_PATTERN?=https://github.com/higress-group/proxy/releases/download/v2.2.5/envoy-symbol-ARCH.tar.gz
-+export ENVOY_PACKAGE_URL_PATTERN?=https://github.com/higress-group/proxy/releases/download/v2.2.6/envoy-symbol-ARCH.tar.gz
- 
- build-envoy: prebuild
- 	./tools/hack/build-envoy.sh
-@@ -258,7 +258,7 @@ install: pre-install
- 	helm install higress helm/higress -n higress-system --create-namespace --set 'global.local=true'
- 
- HIGRESS_LATEST_IMAGE_TAG ?= latest
--ENVOY_LATEST_IMAGE_TAG ?= 49b0ec03e77386b875fc6772ec4e79b088e4a634
-+ENVOY_LATEST_IMAGE_TAG ?= 1cf20e40264ffc6b10919f0005edc135af1683c4
- ISTIO_LATEST_IMAGE_TAG ?= 3498bc95bdea417fe0ce3f3017b0015cda907908
- TEST_ISTIO_IMAGE_TAG ?= $(ISTIO_LATEST_IMAGE_TAG)
- 
-```
-
-**File**: `envoy/envoy` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit 9bd2ded786073d115beb71d0f2ca0afc075e4f4d
-+Subproject commit 0b37c366dfc09c0d780e4b1dc5b6a92b6c992ce6
-```
-
-**File**: `plugins/golang-filter/go.mod` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@ module github.com/alibaba/higress/plugins/golang-filter
- 
- go 1.23
- 
--replace github.com/envoyproxy/envoy => github.com/higress-group/envoy v0.0.0-20260908125308-9bd2ded78607
-+replace github.com/envoyproxy/envoy => github.com/higress-group/envoy v0.0.0-20261108101017-0b37c366dfc0
- 
- replace github.com/mark3labs/mcp-go => github.com/higress-group/mcp-go v0.0.0-20250428145706-792ce64b4b30
- 
-```
-
-**File**: `plugins/golang-filter/go.sum` (modified, +2/-2)
-```diff
-@@ -297,8 +297,8 @@ github.com/hashicorp/go-version v1.6.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09
- github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
- github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
- github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
--github.com/higress-group/envoy v0.0.0-20260908125308-9bd2ded78607 h1:WBnOE/sF5slOSSQbf/UMbBmAk0bbkWvHC/i9qXrzexk=
--github.com/higress-group/envoy v0.0.0-20260908125308-9bd2ded78607/go.mod h1:mgMEye9tOlNiUTG+iYhQYgCzQcX46MMS0Jo6bVwRt1U=
-+github.com/higress-group/envoy v0.0.0-20261108101017-0b37c366dfc0 h1:DVbiujPnSbTsRrjfEgN6zeVqIxzaWFUYmt+w62bb02A=
-+github.com/higress-group/envoy v0.0.0-20261108101017-0b37c366dfc0/go.mod h1:mgMEye9tOlNiUTG+iYhQYgCzQcX46MMS0Jo6bVwRt1U=
- github.com/higress-group/mcp-go v0.0.0-20250428145706-792ce64b4b30 h1:N4NMq8M1nZyyChPyzn+EUUdHi5asig2uLR5hOyRmsXI=
- github.com/higress-group/mcp-go v0.0.0-20250428145706-792ce64b4b30/go.mod h1:O9gri9UOzthw728vusc2oNu99lVh8cKCajpxNfC90gE=
- github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
-```
-
-**File**: `plugins/golang-filter/mcp-server/servers/higress/nginx-migration/go.mod` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ require (
- 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.1.13
- 	github.com/alibabacloud-go/tea v1.3.13
- 	github.com/alibabacloud-go/tea-utils/v2 v2.0.7
--	github.com/envoyproxy/envoy v1.36.10
-+	github.com/envoyproxy/envoy v1.36.12
- 	github.com/mark3labs/mcp-go v0.12.0
+@@ -9,7 +9,7 @@ replace github.com/alibaba/higress/plugins/wasm-go/pkg/pathutil => ../../pkg/pat
+ require (
+ 	github.com/alibaba/higress/plugins/wasm-go/pkg/pathutil v0.0.0
+ 	github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2
+-	github.com/higress-group/wasm-go v1.2.0
++	github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302
+ 	github.com/stretchr/testify v1.9.0
+ 	github.com/tidwall/gjson v1.18.0
  )
- 
 ```
 
-**File**: `plugins/golang-filter/mcp-server/servers/higress/nginx-migration/go.sum` (modified, +2/-2)
+**File**: `plugins/wasm-go/extensions/ext-auth/go.sum` (modified, +2/-2)
 ```diff
-@@ -63,8 +63,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
- github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
- github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
- github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
--github.com/envoyproxy/envoy v1.36.10 h1:igZsbN2lxwrYgVGYKtR8OEoCbHm622/janwLHWhv9GU=
--github.com/envoyproxy/envoy v1.36.10/go.mod h1:mgMEye9tOlNiUTG+iYhQYgCzQcX46MMS0Jo6bVwRt1U=
-+github.com/envoyproxy/envoy v1.36.12 h1:QbyhXe4F4Y+6qZXXKl1ae5CUxOL39gly7TJZbnEDvd0=
-+github.com/envoyproxy/envoy v1.36.12/go.mod h1:mgMEye9tOlNiUTG+iYhQYgCzQcX46MMS0Jo6bVwRt1U=
- github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
- github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
- github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
+@@ -4,8 +4,8 @@ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+ github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+ github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2 h1:NY33OrWCJJ+DFiLc+lsBY4Ywor2Ik61ssk6qkGF8Ypo=
+ github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2/go.mod h1:tRI2LfMudSkKHhyv1uex3BWzcice2s/l8Ah8axporfA=
+-github.com/higress-group/wasm-go v1.2.0 h1:uzCXlnCPhoyuTStrI18oFHjlKaZYKzT8bxdaWYtPW+Q=
+-github.com/higress-group/wasm-go v1.2.0/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
++github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302 h1:uFnvegc0KF1hi3rxBq4n4ehmzH7IkqKbSuhuUwq5XdQ=
++github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
+ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+ github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
+```
+
+**File**: `plugins/wasm-go/extensions/hmac-auth-apisix/go.mod` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@ toolchain go1.24.4
+ 
+ require (
+ 	github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20260525073613-662ed045bf0b
+-	github.com/higress-group/wasm-go v1.2.0
++	github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302
+ 	github.com/stretchr/testify v1.9.0
+ 	github.com/tidwall/gjson v1.18.0
+ )
+```
+
+**File**: `plugins/wasm-go/extensions/hmac-auth-apisix/go.sum` (modified, +2/-2)
+```diff
+@@ -4,8 +4,8 @@ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+ github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+ github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20260525073613-662ed045bf0b h1:eZIbb96GJoipLqmUg67ECjVu8KJiFShKvYYva+24mDg=
+ github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20260525073613-662ed045bf0b/go.mod h1:tRI2LfMudSkKHhyv1uex3BWzcice2s/l8Ah8axporfA=
+-github.com/higress-group/wasm-go v1.2.0 h1:uzCXlnCPhoyuTStrI18oFHjlKaZYKzT8bxdaWYtPW+Q=
+-github.com/higress-group/wasm-go v1.2.0/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
++github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302 h1:uFnvegc0KF1hi3rxBq4n4ehmzH7IkqKbSuhuUwq5XdQ=
++github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
+ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+ github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
+```
+
+**File**: `plugins/wasm-go/extensions/hmac-auth-apisix/main.go` (modified, +5/-0)
+```diff
+@@ -64,6 +64,11 @@ func init() {
+ }
+ 
+ func onHttpRequestHeaders(ctx wrapper.HttpContext, cfg config.HmacAuthConfig) types.Action {
++	// Reject paths send a local response without consuming the request body.
++	// Disable body reading by default; the validated raw-body path below opts
++	// back in with RequireRequestBody.
++	ctx.DontReadRequestBody()
++
+ 	var (
+ 		noAllow            = len(cfg.Allow) == 0
+ 		globalAuthNoSet    = cfg.GlobalAuth == nil
+```
+
+**File**: `plugins/wasm-go/extensions/transformer/go.mod` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@ toolchain go1.24.4
+ 
+ require (
+ 	github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2
+-	github.com/higress-group/wasm-go v1.0.10-0.20260120033417-1c84f010156d
++	github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/stretchr/testify v1.9.0
+ 	github.com/tidwall/gjson v1.18.0
+```
+
+**File**: `plugins/wasm-go/extensions/transformer/go.sum` (modified, +2/-2)
+```diff
+@@ -4,8 +4,8 @@ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+ github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+ github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2 h1:NY33OrWCJJ+DFiLc+lsBY4Ywor2Ik61ssk6qkGF8Ypo=
+ github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2/go.mod h1:tRI2LfMudSkKHhyv1uex3BWzcice2s/l8Ah8axporfA=
+-github.com/higress-group/wasm-go v1.0.10-0.20260120033417-1c84f010156d h1:LgYbzEBtg0+LEqoebQeMVgAB6H5SgqG+KN+gBhNfKbM=
+-github.com/higress-group/wasm-go v1.0.10-0.20260120033417-1c84f010156d/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
++github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302 h1:uFnvegc0KF1hi3rxBq4n4ehmzH7IkqKbSuhuUwq5XdQ=
++github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
+ github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
+ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+```
+
+**File**: `plugins/wasm-go/extensions/transformer/main_test.go` (modified, +11/-11)
+```diff
+@@ -293,7 +293,7 @@ func TestRequest_BodyJson_AddAndRemove(t *testing.T) {
+ 		defer host.Reset()
+ 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ 
+-		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
++		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
+ 			{":authority", "test.com"},
+ 			{":path", "/p"},
+ 			{"content-type", "application/json"},
+@@ -322,7 +322,7 @@ func TestRequest_BodyJson_ValueTypeNumber(t *testing.T) {
+ 		defer host.Reset()
+ 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ 
+-		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
++		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
+ 			{":authority", "test.com"},
+ 			{":path", "/p"},
+ 			{"content-type", "application/json"},
+@@ -348,7 +348,7 @@ func TestRequest_BodyForm_Urlencoded(t *testing.T) {
+ 		defer host.Reset()
+ 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ 
+-		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
++		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
+ 			{":authority", "test.com"},
+ 			{":path", "/p"},
+ 			{"content-type", "application/x-www-form-urlencoded"},
+@@ -651,7 +651,7 @@ func TestRequest_BodyJson_Rename(t *testing.T) {
+ 		defer host.Reset()
+ 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ 
+-		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
++		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
+ 			{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
+ 		}))
+ 		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(`{"old":"v","keep":1}`)))
+@@ -674,7 +674,7 @@ func TestRequest_BodyJson_Replace(t *testing.T) {
+ 		defer host.Reset()
+ 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ 
+-		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
++		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
+ 			{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
+ 		}))
+ 		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(`{"status":"raw"}`)))
+@@ -699,7 +699,7 @@ func TestRequest_BodyJson_AppendNewExistingScalarAndArray(t *testing.T) {
+ 		defer host.Reset()
+ 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ 
+-		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
++		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
+ 			{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
+ 		}))
+ 		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(
+@@ -743,7 +743,7 @@ func TestRequest_BodyJson_DedupeStrategies(t *testing.T) {
+ 				defer host.Reset()
+ 				require.Equal(t, types.OnPluginStartStatusOK, status)
+ 
+-				require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
++				require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
+ 					{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
+ 				}))
+ 				require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(tc.body)))
+@@ -767,7 +767,7 @@ func TestRequest_BodyJson_ValueTypeBooleanObject(t *testing.T) {
+ 		defer host.Reset()
+ 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ 
+-		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
++		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
+ 			{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
+ 		}))
+ 		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(`{}`)))
+@@ -796,7 +796,7 @@ func TestRequest_BodyJson_NestedPathAndArrayIndex(t *testing.T) {
+ 		defer host.Reset()
+ 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ 
+-		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
++		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
+ 			{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
+ 		}))
+ 		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(
+@@ -819,7 +819,7 @@ func TestRequest_BodyJson_InvalidJsonReturnsAction(t *testing.T) {
+ 		}))
+ 		defer host.Reset()
+ 		require.Equal(t, types.OnPluginStartStatusOK, status)
+-		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
++		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
+ 			{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
+ 		}))
+ 		// not valid json — handler returns err, plugin logs warn but does not crash.
+@@ -846,7 +846,7 @@ func TestRequest_MapFromHeaders_ToBody(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5350** (2026-11-12): feat(mcp-server): support custom REST server instructions (@johnlanni)
+- **PR #5342** (2026-11-12): chore(plugins): bump wasm-go for request body buffering fix (@johnlanni)
 - **PR #5337** (2026-11-11): fix(mcp-server): acknowledge valid Legacy JSON-RPC responses (@sunxia0)
 - **PR #5333** (2026-11-10): ci: add hgctl macOS amd64 asset recovery workflow (@johnlanni)
 - **PR #5331** (2026-11-11): Add release notes (@github-actions[bot])
 - **PR #5330** (2026-11-09): Release v2.2.6 (@johnlanni)
-- **PR #5329** (2026-11-09): ci: pin plugin preparation validation to Ubuntu 22.04 (@johnlanni)
-- **PR #5328** (2026-11-09): chore: prepare plugin snapshot 2.2.6 (@higress-release-automation[bot])
 
 ---
 
@@ -2704,43 +2811,38 @@ Signed-off-by: zty98751 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp-server): acknowledge valid Legacy JSON-RPC responses (#5337)
+## X. ai-data-masking): check and restore tool arguments when enabled (#5299)
 
 **RULE**:
-When implementing operations in `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/wasm-rust/extensions/ai-data-masking/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f0260049`: mcp-server): acknowledge valid Legacy JSON-RPC responses (#5337). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6d8d4c36`: ai-data-masking): check and restore tool arguments when enabled (#5299). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-rust/extensions/ai-data-masking/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+## 工具定义和参数（显式开启）
 
-## Focused Legacy response acknowledgements (#5336)
+三个新开关默认都是 `false`，互不隐含。升级后不配置它们，继续使用原来的 OpenAI、JSONPath 和 raw 处理。原有 `replace_roles.restore: true` 不会自动开启工具参数还原。
 
-This opt-in mode uses the real native `mcp-session` filter, isolated Redis and
-plain production Wasm. Ordinary modes, historical pins and `compose.yaml` are
-unchanged. Run only after committing a clean candidate, with an empty external
-evidence directory and all three images available locally:
+| 字段 | 类型 | 默认值 | 作用 |
+| --- | --- | --- | --- |
+| `tool_arguments.check` | bool | false | 请求参数执行 deny 和 mask；响应参数执行 deny |
+| `tool_arguments.restore` | bool | false | 按独立白名单还原响应参数 |
+| `tool_arguments.restore_allowlist` | array | [] | `{tool, paths}` 列表，开启工具还原时不能为空 |
+| `tool_definitions.check` | bool | false | 检查请求中的 tools/functions 定义，命中即拒绝，不做新增替换 |
+| `tool_arguments.limits.max_call_bytes` | 正整数 | 1048576 | 单 call 的输入和改写结果上限，按解开外层转义后的 UTF-8 字节计 |
+| `tool_arguments.limits.max_buffer_bytes` | 正整数 | 4194304 | 每个响应保留的参数总量，含原文、改写结果、排队参数及 name/id |
+| `tool_arguments.limits.max_unparsed_bytes` | 正整数 | 沿用 `max_buffer_bytes` | 单个原始 SSE 帧及响应格式识别缓存的硬上限，按网络字节计 |
+| `tool_arguments.limits.max_calls` | 正整数 | 128 | 每个响应登记过的需处理 call 数，结束后仍计数 |
 
-```sh
-env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 \
-  /opt/homebrew/bin/python3.12 \
-  plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py \
-  --legacy-response-ack \
-  --response-baseline d388d06a92dd125bbe99330888690fd6deeb352f \
-  --candidate HEAD \
-  --gateway-image higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/gateway@sha256:2b00548e16aafc5ee51314a0de8c4df4369877b1d0f9eaec13becc3675dd04b7 \
-  --backend-image docker.io/library/python@sha256:34d4d54d6f68a1980ad02433a5078d998ab394d55c97d953efa50b442135baf2 \
-  --redis-image docker.io/library/redis@sha256:52d1ea8a654b10f06af3ecda4e9dbcd035c7868b5c49ee7975de917f81de13db \
-  --output "$SSE_EVIDENCE/runtime"
-```
+未解析缓存单独按 `max_unparsed_bytes` 限制，包含协议字段和外层 JSON 转义。可以单独调高它，同时保留较小的参数预算；未配置时沿用 `max_buffer_bytes`。帧边界之前先检查空间，再追加数据；一次回调中的多帧逐帧处理。启用 `deny_raw` 时，原始检查也只接收已经检查过大小的帧，不复制整批回调。其关键词重叠窗口另有开销。已经识别为普通 JSON 的完整响应不受这项 SSE 限制。超限后丢弃待发参数并保持拒绝状态。只开启定义检查不启用这项响应限制。
 
-Run this command from the repository root; define `SSE_EVIDENCE` as an external
-run-owned directory. The mode cannot mix with `--
+单 call 1 MiB、单响应 4 MiB、128 次调用作为过渡期默认值保留。后续收紧前，需要观察解码后参数大小的 P95/P99 和超限率。总量预算不等于网关
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2750,4 +2852,4 @@ run-owned directory. The mode cannot mix with `--
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f0260049` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6d8d4c36` are properly handled with clean fallback behavior.

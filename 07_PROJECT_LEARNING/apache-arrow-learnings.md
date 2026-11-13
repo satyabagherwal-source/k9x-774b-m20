@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `976779b2`  
+> **Source Version**: `dd619adc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:08:04.386Z  
+> **Timestamp**: 2026-11-13T03:56:02.170Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:08:04.215Z  
+> **Harvest Timestamp**: 2026-11-13T03:56:02.164Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17290 stars
+- **Stars / Engagement**: 17306 stars
 
 ---
 
@@ -1377,11 +1377,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55482** (2026-11-11): **MINOR: [CI] Bump docker/login-action from 4.7.0 to 4.8.0**
-  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.7.0 to 4.8.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.8.0</h2> <ul> <li>Set Docker Hub OIDC token lifetime default to 1 hour by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1070">docker/login-action#1070</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1161.0 in <a href="https://redirect.github.com/docker/login-action/pull/1103">docker/login-action#1103</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.107.0 to 0.109.0 in <a href="https://redirect.github.com/docker/login-action/pull/1105">docker/login-action#1105</a></li> <li>Bump vite from 7.3.6 to 7.3.7 in <a href="https://redirect.github.com/docker/login-action/pull/1101">docker/login-action#1101</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/login-action/compare/v4.7.0...v4.8.0">https://github.com/docker/login-action/compare/v4.7.0...v4.8.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/docker/login-action/commit/8aa5831fb8d48d8f76594c7ddde61ae58019f550"><code>8aa5831</code></a> Merge pull request <a href="https://redirect.github.com/docker/login-action/iss
+- **Issue #55507** (2026-11-11): **Fix Homebrew dependency mode in CMake**
+  *Symptoms*: **What** - Fix Homebrew dependency setup.  **Why** - `BREW` skipped dependency discovery. Parquet configure failed.  **Implementation** - Use system lookup and detect the Homebrew prefix. - Enable CMP0177 when available. 
 
-- **Issue #55481** (2026-11-11): **MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates**
-  *Symptoms*: Updates the requirements on [apache/infrastructure-actions/stash/restore](https://github.com/apache/infrastructure-actions) and [apache/infrastructure-actions/stash/save](https://github.com/apache/infrastructure-actions) to permit the latest version. Updates `apache/infrastructure-actions/stash/restore` to 5a4eaabe6c43770c9df95875a513a6b8362be5eb <details> <summary>Commits</summary> <ul> <li>See full diff in <a href="https://github.com/apache/infrastructure-actions/commits/5a4eaabe6c43770c9df95875a513a6b8362be5eb">compare view</a></li> </ul> </details> <br />  Updates `apache/infrastructure-actions/stash/save` to 5a4eaabe6c43770c9df95875a513a6b8362be5eb <details> <summary>Commits</summary> <ul> <li>See full diff in <a href="https://github.com/apache/infrastructure-actions/commits/5a4eaabe6c43770c9df95875a513a6b8362be5eb">compare view</a></li> </ul> </details> <br />   Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the sp
+- **Issue #55496** (2026-11-12): **GH-55495: [Packaging][deb] Extract source archive like dpkg-source in apt/build.sh**
+  *Symptoms*: ### Rationale for this change  `dev/tasks/linux-packages/apt/build.sh` assumes that the top-level directory in the source archive is `${PACKAGE}-${VERSION}/`. It needs special cases for `~dev` and `~rc` versions because their source archives use different top-level directory names.  `dpkg-source` doesn't assume the top-level directory name. If the archive has only one top-level directory, it uses the directory whatever its name is.  ### What changes are included in this PR?  Extract the source archive like `dpkg-source` does:  1. Extract the archive into a temporary directory. 2. If the temporary directory has only one entry and it's a directory (not a symbolic link), rename it to `${PACKAGE}-${VERSION}`. Otherwise, rename the temporary directory itself to `${PACKAGE}-${VERSION}`.  The `~dev`/`~rc` special cases are removed.  `apache-arrow-apt-source` no longer needs to re-create its source archive to rename the top-level directory for `apt/build.sh`. It just copies the source archive like `apache-arrow` does.  ### Are these changes tested?  Yes.  ### Are there any user-facing changes?  No.  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [x] AI - [ ] Not reviewed  * GitHub Issue: #55495
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1398,495 +1398,267 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bea76d64` (2026-11-11)
-**Commit Message**: GH-55277: [C++][Gandiva] Fix stack overflow in decimal evaluation with JIT optimization disabled (#55278)
+### Incident Patch 1: `dd619adc` (2026-11-12)
+**Commit Message**: GH-51482: [R] allow building with shared snappy (#51490)
 
 ### Rationale for this change
-Gandiva can exhaust the stack when evaluating decimal expressions with JIT optimization disabled. Decimal return slots are allocated inside the record loop, so each row uses more stack. The stack is only released when the function returns.
+
+Couldn't build with shared snappy
 
 ### What changes are included in this PR?
-Move return-slot allocations to the function entry block in `CallDecimalFunction` and `AddLarge`.
+
+Allow it to be specified; default is `OFF`
 
 ### Are these changes tested?
-Locally, the large-batch test crashes before the fix (SIGSEGV, exit 139) and passes afterward. It checks negative values and nulls, with optimization off and on.
+
+Will run CI
 
 ### Are there any user-facing changes?
-No.
 
-**This PR contains a "Critical Fix".** It fixes a native process crash.
+No
 
 ### Was AI used for this PR?
-AI tools helped investigate the crash and write the fix, tests, and description.
+
+In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
 
 **PR code and description written by:**
+
+- [ ] Human
+- [x] AI
+
+**Reviewed before submission by:**
+
+- [x] Human
+- [x] AI
+- [ ] Not reviewed
+
+* GitHub Issue: #51482
+
+Authored-by: Nic Crane <[REDACTED_EMAIL]>
+Signed-off-by: Nic Crane <[REDACTED_EMAIL]>
+
+**File**: `r/inst/build_arrow_static.sh` (modified, +1/-1)
+```diff
+@@ -77,7 +77,7 @@ read -r -a ARROW_EXTRA_CMAKE_FLAGS <<< "${EXTRA_CMAKE_FLAGS}"
+ mkdir -p "${BUILD_DIR}"
+ pushd "${BUILD_DIR}"
+ "${CMAKE_COMMAND[@]}" -DARROW_BOOST_USE_SHARED=OFF \
+-    -DARROW_SNAPPY_USE_SHARED=OFF \
++    -DARROW_SNAPPY_USE_SHARED="${ARROW_SNAPPY_USE_SHARED:-OFF}" \
+     -DARROW_BUILD_TESTS=OFF \
+     -DARROW_BUILD_SHARED=OFF \
+     -DARROW_BUILD_STATIC=ON \
+```
+
+**File**: `r/tools/nixlibs.R` (modified, +1/-0)
+```diff
+@@ -945,6 +945,7 @@ with_wasm_support <- function(env_var_list) {
+     CMAKE_WRAPPER = "emcmake",
+     ARROW_DEPENDENCY_SOURCE = "BUNDLED",
+     ARROW_DEPENDENCY_USE_SHARED = "OFF",
++    ARROW_SNAPPY_USE_SHARED = "OFF",
+     ARROW_ENABLE_THREADING = "OFF",
+     ARROW_GCS = "OFF",
+     ARROW_AZURE = "OFF",
+```
+
+**File**: `r/vignettes/install.Rmd` (modified, +5/-0)
+```diff
+@@ -196,6 +196,11 @@ uses only system-installed dependencies (when set to `SYSTEM`) or checks
+ system-installed dependencies first and only installs dependencies which aren't
+ already present (when set to `AUTO`, the default).
+ 
++Snappy is an exception: by default it is always linked statically, even when
++`ARROW_DEPENDENCY_SOURCE` is `SYSTEM`. If your system only provides a shared
++`libsnappy`, set `ARROW_SNAPPY_USE_SHARED=ON` to link against it; the library
++must then be present at runtime.
++
+ These dependencies vary by platform; however, if you wish to install these
+ yourself prior to libarrow installation, we recommend that you take a look at
+ the [docker file for whichever of our CI builds](https://github.com/apache/arrow/tree/main/ci/docker)
+```
+
+---
+
+### Incident Patch 2: `2105eadf` (2026-11-12)
+**Commit Message**: GH-38983: [Python] Bug in pyarrow.from_pandas() when input has MultiIndex index columns having non-string names (#55485)
+
+### Rationale for this change
+
+`pa.Table.from_pandas()` on a DataFrame whose `MultiIndex` has integer level names returned the wrong data for some index levels. For example, with `names=[1, 2]` both index columns were named `"1"` and both contained the values of the first level, so the second level's data was lost.
+
+### What changes are included in this PR?
+
+`_get_index_level_values()` in `pandas_compat.py` called `index.get_level_values(i)` with a position, but pandas matches an integer against level names before treating it as a position. The levels are now looked up by position regardless of their names.
+
+### Are these changes tested?
+
+Yes
+
+### Are there any user-facing changes?
+
+No
+
+### Was AI used for this PR?
+
+Used Claude, asked lots of questions about why etc, did an adversarial review with roborev too
+
+**PR code and description written by:**
+
 - [x] Human
 - [x] AI
 
 **Reviewed before submission by:**
+
 - [x] Human
-- [ ] AI
+- [x] AI
+- [ ] Not reviewed
 
-GitHub Issue: #55277
+* GitHub Issue: #38983
 
-P.S. The first commit contains only the regression test. The second commit contains only the fix.
-* GitHub Issue: #5527
+Authored-by: Nic Crane <[REDACTED_EMAIL]>
+Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
 
-**File**: `cpp/src/gandiva/decimal_ir.cc` (modified, +12/-6)
+**File**: `python/pyarrow/pandas_compat.py` (modified, +6/-2)
 ```diff
-@@ -243,12 +243,18 @@ DecimalIR::ValueWithOverflow DecimalIR::AddWithOverflowCheck(const ValueFull& x,
-   return ValueWithOverflow(sum_descaled, overflow);
- }
+@@ -547,8 +547,12 @@ def _get_range_index_descriptor(level):
  
-+std::pair<llvm::AllocaInst*, llvm::AllocaInst*> DecimalIR::CreateEntryBlockReturnSlots() {
-+  auto& entry = ir_builder()->GetInsertBlock()->getParent()->getEntryBlock();
-+  llvm::IRBuilder<> entry_builder(&entry, entry.begin());
-+  auto out_high_ptr = entry_builder.CreateAlloca(types()->i64_type(), nullptr, "out_hi");
-+  auto out_low_ptr = entry_builder.CreateAlloca(types()->i64_type(), nullptr, "out_low");
-+  return {out_high_ptr, out_low_ptr};
-+}
-+
- // This is pretty complex, so use CPP fns.
- llvm::Value* DecimalIR::AddLarge(const ValueFull& x, const ValueFull& y,
-                                  const ValueFull& out) {
--  auto block = ir_builder()->GetInsertBlock();
--  auto out_high_ptr = new llvm::AllocaInst(types()->i64_type(), 0, "out_hi", block);
--  auto out_low_ptr = new llvm::AllocaInst(types()->i64_type(), 0, "out_low", block);
-+  auto [out_high_ptr, out_low_ptr] = CreateEntryBlockReturnSlots();
-   auto x_split = ValueSplit::MakeFromInt128(this, x.value());
-   auto y_split = ValueSplit::MakeFromInt128(this, y.value());
  
-@@ -454,9 +460,9 @@ llvm::Value* DecimalIR::CallDecimalFunction(const std::string& function_name,
-   llvm::Value* result = nullptr;
-   if (return_type == i128) {
-     // for i128 ret, replace with two int64* args, and join them.
--    auto block = ir_builder()->GetInsertBlock();
--    auto out_high_ptr = new llvm::AllocaInst(i64, 0, "out_hi", block);
--    auto out_low_ptr = new llvm::AllocaInst(i64, 0, "out_low", block);
-+    // Decimal calls can be emitted inside the record loop or a CASE branch.
-+    // Allocate return slots once per invocation, rather than once per row.
-+    auto [out_high_ptr, out_low_ptr] = CreateEntryBlockReturnSlots();
-     dis_assembled_args.push_back(out_high_ptr);
-     dis_assembled_args.push_back(out_low_ptr);
+ def _get_index_level_values(index):
+-    n = len(getattr(index, 'levels', [index]))
+-    return [index.get_level_values(i) for i in range(n)]
++    if not hasattr(index, 'levels'):
++        return [index.get_level_values(0)]
++    # get_level_values() matches integers against level names first
++    positional = index.set_names(list(range(index.nlevels)))
++    return [positional.get_level_values(i).rename(name)
++            for i, name in enumerate(index.names)]
  
+ 
+ def _resolve_columns_of_interest(df, schema, columns):
 ```
 
-**File**: `cpp/src/gandiva/decimal_ir.h` (modified, +4/-0)
+**File**: `python/pyarrow/tests/test_pandas.py` (modified, +20/-0)
 ```diff
-@@ -19,6 +19,7 @@
- 
- #include <memory>
- #include <string>
-+#include <utility>
- #include <vector>
- 
- #include "gandiva/function_ir_builder.h"
-@@ -137,6 +138,9 @@ class DecimalIR : public FunctionIRBuilder {
-   ValueWithOverflow AddWithOverflowCheck(const ValueFull& x, const ValueFull& y,
-                                          const ValueFull& out);
- 
-+  // Allocate decimal return slots in the current function's entry block.
-+  std::pair<llvm::AllocaInst*, llvm::AllocaInst*> CreateEntryBlockReturnSlots();
+@@ -5370,3 +5370,23 @@ def test_pandas_array_likes_with_extension_arrays():
+         for box in [pd.array, pd.Index, pd.Series]:
+             _check_array_roundtrip(box(arr[0]), expected=pd.Series(
+                 arr[1]) if arr[1] is not None else None)
 +
-   // Do addition of large integers (both positive and negative).
-   llvm::Value* AddLarge(const ValueFull& x, const ValueFull& y, const ValueFull& out);
- 
-```
-
-**File**: `cpp/src/gandiva/tests/decimal_test.cc` (modified, +36/-0)
-```diff
-@@ -67,6 +67,42 @@ std::vector<Decimal128> TestDecimal::MakeDecimalVector(std::vector<std::string>
-   return ret;
- }
- 
-+TEST_F(TestDecimal, CastLargeBatch) {
-+  // Allocating decimal return slots in the record loop can exhaust the stack
-+  // when optimization is disabled. A single int32-to-decimal cast is sufficient.
-+  constexpr int kNumRecords = 1 << 19;
-+  auto input_field = arrow::field("large_batch_decimal", arrow::int32());
-+  auto schema = arrow::schema({input_field});
-+  auto decimal_type = arrow::decimal128(10, 0);
-+  auto decimal = TreeExprBuilder::MakeFunction(
-+      "castDECIMAL", {TreeExprBuilder::MakeField(input_field)}, decimal_type);
-+  auto expression =
-+      TreeExprBuilder::MakeExpression(decimal, arrow::field("result", decimal_type));
 +
-+  std::vector<int32_t> values(kNumRecords);
-+  std::vector<bool> validity(kNumRecords);
-+  std::vector<Decimal128> expected_values(kNumRecords);
-+  for (int i = 0; i < kNumRecords; ++i) {
-+    values[i] = i % 17 - 8;
-+    validity[i] = i % 11 != 0;
-+    expected_values[i] = Decimal128(values[i]);
-+  }
-+  auto batch = arrow::RecordBatch::Make(schema, kNumRecords,
-+                                        {MakeArrowArrayInt32(values, validity)});
-+  auto expected = MakeArrowArrayDecimal(decimal_type, expected_values, validity);
++def test_multiindex_integer_level_names():
++    # https://github.com/apache/arrow/issues/38983
++    index = pd.MultiIndex.from_tuples(
++        [(10, 20), (30, 40), (50, 60), (70, 80)], names=[1, 2])
++    df = pd.DataFrame({"a": [1, 2, 3, 4], "b": [5, 6, 7, 8]}, index=index)
 +
-+  for (bool optimize : {false, true}) {
-+    SCOPED_TRACE(optimize);
-+    auto config = std::make_shared<Configuration>(optimize);
-+    std::shared_ptr<Projector> projector;
-+    ASSERT_OK(Projector::Make(schema, {expression}, config, &projector));
-+    arrow::ArrayVector output;
-+    ASSERT_OK(projector->Evaluate(*batch, pool_, &output));
-+    ASSERT_EQ(output.size(), 1);
-+    EXPECT_ARROW_ARRAY_EQUALS(expected, output[0]);
-+  }
-+}
++    # non-str index names are converted to str, with a warning
++    with pytest.warns(UserWarning):
++        table = pa.Table.from_pandas(df)
 +
- TEST_F(TestDecimal, TestSimple) {
-   // schema for input fields
-   constexpr int32_t precision = 36;
++    assert table.column_names == ["a", "b", "1", "2"]
++    assert table.column(2).to_pylist() == [10, 30, 50, 70]
++    assert table.column(3).to_pylist() == [20, 40, 60, 80]
++
++    expected = df.copy()
++    expected.index.names = ["1", "2"]
++    with pytest.warns(UserWarning):
++        _check_pandas_roundtrip(df, expected=expected, preserve_index=True)
 ```
 
 ---
 
-### Incident Patch 2: `16900e3b` (2026-11-10)
-**Commit Message**: GH-49884: [C++] Fix integer overflow in BufferBuilder reachable from JSON parsing (#49883)
+### Incident Patch 3: `7eb865cd` (2026-11-12)
+**Commit Message**: GH-55495: [Packaging][deb] Extract source archive like dpkg-source in apt/build.sh (#55496)
 
 ### Rationale for this change
 
-`BufferBuilder` and `TypedBufferBuilder` perform size calculations that are reachable from JSON parsing of untrusted input. These calculations previously used unchecked integer arithmetic (e.g., `size_ + additional_bytes`, `num_elements * sizeof(T)`), which can overflow.
+`dev/tasks/linux-packages/apt/build.sh` assumes that the top-level directory in the source archive is `${PACKAGE}-${VERSION}/`. It needs special cases for `~dev` and `~rc` versions because their source archives use different top-level directory names.
 
-Since the JSON parser constructs arrays, strings, and offsets based on input data, an attacker can influence these values. Overflow in these calculations can result in incorrect buffer sizing and unsafe memory operations.
-
-### What changes are included in this PR?
-
-- Added overflow-safe arithmetic using `internal::AddWithOverflow` and `internal::MultiplyWithOverflow` for:
-  - `size_ + additional_bytes`
-  - `num_elements * sizeof(T)`
-  - capacity growth logic
-
-- Centralised the negative / too-large capacity check in a single `ValidateBufferCapacity` helper in `memory_pool.cc`, used by `PoolBuffer::Reserve`, `PoolBuffer::Resize` and `AllocateResizableBuffer`
-
-- Hardened `GrowByFactor` to prevent overflow when doubling capacity
-
-- Updated `TypedBufferBuilder` to safely compute byte sizes from ele
-
-**File**: `cpp/src/arrow/buffer_builder.h` (modified, +54/-14)
-```diff
-@@ -29,6 +29,7 @@
- #include "arrow/util/bit_util.h"
- #include "arrow/util/bitmap_generate.h"
- #include "arrow/util/bitmap_ops.h"
-+#include "arrow/util/int_util_overflow.h"
- #include "arrow/util/macros.h"
- #include "arrow/util/ubsan.h"
- #include "arrow/util/visibility.h"
-@@ -91,7 +92,12 @@ class ARROW_EXPORT BufferBuilder {
-   /// \param[in] additional_bytes number of additional bytes to make space for
-   /// \return Status
-   Status Reserve(const int64_t additional_bytes) {
--    auto min_capacity = size_ + additional_bytes;
-+    int64_t min_capacity;
-+    if (ARROW_PREDICT_FALSE(
-+            internal::AddWithOverflow(size_, additional_bytes, &min_capacity))) {
-+      return Status::CapacityError("Reserve: capacity overflow: ", size_, " + ",
-+                                   additional_bytes);
-+    }
-     if (min_capacity <= capacity_) {
-       return Status::OK();
-     }
-@@ -104,15 +110,24 @@ class ARROW_EXPORT BufferBuilder {
-     // (versus 1.5x) seems to have slightly better performance when using
-     // jemalloc, but significantly better performance when using the system
-     // allocator. See ARROW-6450 for further discussion
--    return std::max(new_capacity, current_capacity * 2);
-+    int64_t doubled;
-+    if (ARROW_PREDICT_FALSE(
-+            internal::AddWithOverflow(current_capacity, current_capacity, &doubled))) {
-+      return new_capacity;
-+    }
-+    return std::max(new_capacity, doubled);
-   }
- 
-   /// \brief Append the given data to the buffer
-   ///
-   /// The buffer is automatically expanded if necessary.
-   Status Append(const void* data, const int64_t length) {
--    if (ARROW_PREDICT_FALSE(size_ + length > capacity_)) {
--      ARROW_RETURN_NOT_OK(Resize(GrowByFactor(capacity_, size_ + length), false));
-+    int64_t new_size;
-+    if (ARROW_PREDICT_FALSE(internal::AddWithOverflow(size_, length, &new_size))) {
-+      return Status::CapacityError("Append: size overflow: ", size_, " + ", length);
-+    }
-+    if (ARROW_PREDICT_FALSE(new_size > capacity_)) {
-+      ARROW_RETURN_NOT_OK(Resize(GrowByFactor(capacity_, new_size), false));
-     }
-     UnsafeAppend(data, length);
-     return Status::OK();
-@@ -250,12 +265,13 @@ class TypedBufferBuilder<
-   }
- 
-   Status Append(const T* values, int64_t num_elements) {
--    return bytes_builder_.Append(reinterpret_cast<const uint8_t*>(values),
--                                 num_elements * sizeof(T));
-+    int64_t num_bytes = 0;
-+    ARROW_RETURN_NOT_OK(ElementsToBytes("Append", num_elements, &num_bytes));
-+    return bytes_builder_.Append(reinterpret_cast<const uint8_t*>(values), num_bytes);
-   }
- 
-   Status Append(const int64_t num_copies, T value) {
--    ARROW_RETURN_NOT_OK(Reserve(num_copies + length()));
-+    ARROW_RETURN_NOT_OK(Reserve(num_copies));
-     UnsafeAppend(num_copies, value);
-     return Status::OK();
-   }
-@@ -284,15 +300,21 @@ class TypedBufferBuilder<
-   }
- 
-   Status Resize(const int64_t new_capacity, bool shrink_to_fit = true) {
--    return bytes_builder_.Resize(new_capacity * sizeof(T), shrink_to_fit);
-+    int64_t num_bytes = 0;
-+    ARROW_RETURN_NOT_OK(ElementsToBytes("Resize", new_capacity, &num_bytes));
-+    return bytes_builder_.Resize(num_bytes, shrink_to_fit);
-   }
- 
-   Status Reserve(const int64_t additional_elements) {
--    return bytes_builder_.Reserve(additional_elements * sizeof(T));
-+    int64_t num_bytes = 0;
-+    ARROW_RETURN_NOT_OK(ElementsToBytes("Reserve", additional_elements, &num_bytes));
-+    return bytes_builder_.Reserve(num_bytes);
-   }
- 
-   Status Advance(const int64_t length) {
--    return bytes_builder_.Advance(length * sizeof(T));
-+    int64_t num_bytes = 0;
-+    ARROW_RETURN_NOT_OK(ElementsToBytes("Advance", length, &num_bytes));
-+    return bytes_builder_.Advance(num_bytes);
-   }
- 
-   void UnsafeAdvance(const int64_t length) {
-@@ -316,7 +338,9 @@ class TypedBufferBuilder<
-   /// only for memory allocation).
-   Result<std::shared_ptr<Buffer>> FinishWithLength(int64_t final_length,
-                                                    bool shrink_to_fit = true) {
--    return bytes_builder_.FinishWithLength(final_length * sizeof(T), shrink_to_fit);
-+    int64_t num_bytes = 0;
-+    ARROW_RETURN_NOT_OK(ElementsToBytes("FinishWithLength", final_length, &num_bytes));
-+    return bytes_builder_.FinishWithLength(num_bytes, shrink_to_fit);
-   }
- 
-   void Reset() { bytes_builder_.Reset(); }
-@@ -327,6 +351,18 @@ class TypedBufferBuilder<
-   T* mutable_data() { return reinterpret_cast<T*>(bytes_builder_.mutable_data()); }
- 
-  private:
-+  // Convert a number of elements to a number of bytes, erroring out on
-+  // byte size overflow.
-+  static Status ElementsToBytes(const char* operation, int64_t num_elements,
-+                                int64_t* num_bytes) {
-+    if (ARROW_PREDICT_FALSE(internal::MultiplyWithOverflow(
-+            num_elements, static_cast<int64_t>(sizeof(T)), num_bytes))) {
-+      return Status::CapacityError(operation, ": byte size overflow: ", num_elements,
-+                            
-```
-
-**File**: `cpp/src/arrow/buffer_test.cc` (modified, +24/-0)
-```diff
-@@ -726,6 +726,21 @@ TEST(TestBufferBuilder, ResizeReserve) {
-   ASSERT_EQ(9, builder.length());
- }
- 
-+TEST(TestBufferBuilder, ReserveAndAppendOverflow) {
-+  const std::string data = "x";
-+  auto data_ptr = data.c_str();
-+  BufferBuilder builder;
-+
-+  const int64_t overflow_add = std::numeric_limits<int64_t>::max() - 8;
-+  ASSERT_RAISES(OutOfMemory, builder.Reserve(overflow_add));
-+
-+  ASSERT_OK(builder.Append(data_ptr, 1));
-+  constexpr int64_t kMaxLength = std::numeric_limits<int64_t>::max();
-+  ASSERT_RAISES(CapacityError, builder.Reserve(kMaxLength));
-+  ASSERT_RAISES(CapacityError, builder.Append(data_ptr, kMaxLength));
-+  ASSERT_EQ(1, builder.length());
-+}
-+
- TEST(TestBufferBuilder, Alignment) {
-   const std::string data = "some data";
-   auto data_ptr = data.c_str();
-@@ -862,6 +877,15 @@ TYPED_TEST(TypedTestBufferBuilder, AppendCopies) {
-   }
- }
- 
-+TYPED_TEST(TypedTestBufferBuilder, OverflowAppend) {
-+  TypedBufferBuilder<TypeParam> builder;
-+
-+  const int64_t max_num_elements =
-+      std::numeric_limits<int64_t>::max() / static_cast<int64_t>(sizeof(TypeParam)) + 1;
-+  ASSERT_RAISES(CapacityError,
-+                builder.Append(max_num_elements, static_cast<TypeParam>(0)));
-+}
-+
- TEST(TestBoolBufferBuilder, Basics) {
-   TypedBufferBuilder<bool> builder;
- 
-```
-
-**File**: `cpp/src/arrow/memory_pool.cc` (modified, +14/-9)
-```diff
-@@ -64,6 +64,17 @@ namespace {
- 
- constexpr char kDefaultBackendEnvVar[] = "ARROW_DEFAULT_MEMORY_POOL";
- constexpr char kDebugMemoryEnvVar[] = "ARROW_DEBUG_MEMORY_POOL";
-+constexpr int64_t kMaxBufferCapacity = std::numeric_limits<int64_t>::max() - 63;
-+
-+Status ValidateBufferCapacity(int64_t capacity, const char* operation) {
-+  if (ARROW_PREDICT_FALSE(capacity < 0)) {
-+    return Status::Invalid(operation, ": negative capacity: ", capacity);
-+  }
-+  if (ARROW_PREDICT_FALSE(capacity > kMaxBufferCapacity)) {
-+    return Status::OutOfMemory(operation, ": capacity too large: ", capacity);
-+  }
-+  return Status::OK();
-+}
- 
- enum class MemoryPoolBackend : uint8_t { System, Jemalloc, Mimalloc };
- 
-@@ -915,9 +926,7 @@ class PoolBuffer final : public ResizableBuffer {
-   }
- 
-   Status Reserve(const int64_t capacity) override {
--    if (capacity < 0) {
--      return Status::Invalid("Negative buffer capacity: ", capacity);
--    }
-+    RETURN_NOT_OK(ValidateBufferCapacity(capacity, "Reserve"));
-     uint8_t* ptr = mutable_data();
-     if (!ptr || capacity > capacity_) {
-       ARROW_ASSIGN_OR_RAISE(int64_t new_capacity, RoundCapacity(capacity));
-@@ -933,9 +942,7 @@ class PoolBuffer final : public ResizableBuffer {
-   }
- 
-   Status Resize(const int64_t new_size, bool shrink_to_fit = true) override {
--    if (ARROW_PREDICT_FALSE(new_size < 0)) {
--      return Status::Invalid("Negative buffer resize: ", new_size);
--    }
-+    RETURN_NOT_OK(ValidateBufferCapacity(new_size, "Resize"));
-     uint8_t* ptr = mutable_data();
-     if (ptr && shrink_to_fit && new_size <= size_) {
-       // Buffer is non-null and is not growing, so shrink to the requested size without
-@@ -979,9 +986,7 @@ class PoolBuffer final : public ResizableBuffer {
- 
-  private:
-   static Result<int64_t> RoundCapacity(int64_t capacity) {
--    if (capacity > std::numeric_limits<int64_t>::max() - 63) {
--      return Status::OutOfMemory("capacity too large");
--    }
-+    DCHECK_LE(capacity, kMaxBufferCapacity);
-     return bit_util::RoundUpToMultipleOf64(capacity);
-   }
- 
-```
-
----
-
-### Incident Patch 3: `87eb47ec` (2026-11-09)
-**Commit Message**: GH-53500: [Python][Parquet] Prevent crashes when comparing metadata with None (#55168)
-
-### Rationale for this change
-Five Parquet metadata/schema `equals()` wrappers (`Statistics`, `ColumnChunkMetaData`, `RowGroupMetaData`, `ParquetSchema`, `ColumnSchema`) accept `None` for their typed `other` argument and then dereference a native pointer on it, which can crash the interpreter. This follows the existing `FileMetaData.equals()` pattern, which already declares `other not None`.
+`dpkg-source` doesn't assume the top-level directory name. If the archive has only one top-level directory, it uses the directory whatever its name is.
 
 ### What changes are included in this PR?
-- Require non-null typed arguments in the five affected Cython `equals()` methods. `__eq__` already catches the resulting `TypeError` and returns `NotImplemented`, so `obj == None` is `False` and `obj != None` is `True`.
-- Add a regression test covering `==`, `!=` and direct `.equals(None)` for all five wrappers.
+
+Extract the source archive like `dpkg-source` does:
+
+1. Extract the archive into a temporary directory.
+2. If the temporary directory has only one entry and it's a directory (not a symbolic link), rename it to `${PACKAGE}-${VERSION}`. Otherwise, rename the temporary directory itself to `${PACKAGE}-${VERSION}`.
+
+The `~dev`/`~rc` special cases are removed.
+
+`apache-arrow-apt-source` no longer needs to re-create its source archive to rename the top-level directory for `apt/build.sh`. It just copies the source archive like `apache-arrow` does.
 
 ### Are these changes tested?
-Yes. I added a regression test and ran it locally: it passes with the fix and segfaults without it (details in the comment below). `flake8` and `cython-lint` pass on the changed files.
 
-See comment for detailed testing evidence.
+Yes.
 
 ### Are there any user-facing changes?
-`obj.equals(None)` now raises `TypeError` instead of riskin
 
-**File**: `python/pyarrow/_parquet.pyx` (modified, +5/-5)
+No.
+
+**File**: `dev/tasks/linux-packages/apache-arrow-apt-source/Rakefile` (modified, +1/-7)
 ```diff
-@@ -108,7 +108,7 @@ cdef class Statistics(_Weakrefable):
-         except TypeError:
-             return NotImplemented
+@@ -57,13 +57,7 @@ class ApacheArrowAptSourcePackageTask < PackageTask
  
--    def equals(self, Statistics other):
-+    def equals(self, Statistics other not None):
-         """
-         Return whether the two column statistics objects are equal.
- 
-@@ -521,7 +521,7 @@ cdef class ColumnChunkMetaData(_Weakrefable):
-         except TypeError:
-             return NotImplemented
- 
--    def equals(self, ColumnChunkMetaData other):
-+    def equals(self, ColumnChunkMetaData other not None):
-         """
-         Return whether the two column chunk metadata objects are equal.
- 
-@@ -919,7 +919,7 @@ cdef class RowGroupMetaData(_Weakrefable):
-         except TypeError:
-             return NotImplemented
- 
--    def equals(self, RowGroupMetaData other):
-+    def equals(self, RowGroupMetaData other not None):
-         """
-         Return whether the two row group metadata objects are equal.
- 
-@@ -1295,7 +1295,7 @@ cdef class ParquetSchema(_Weakrefable):
-         except TypeError:
-             return NotImplemented
- 
--    def equals(self, ParquetSchema other):
-+    def equals(self, ParquetSchema other not None):
-         """
-         Return whether the two schemas are equal.
- 
-@@ -1350,7 +1350,7 @@ cdef class ColumnSchema(_Weakrefable):
-     def __reduce__(self):
-         return ColumnSchema, (self.parent, self.index)
- 
--    def equals(self, ColumnSchema other):
-+    def equals(self, ColumnSchema other not None):
-         """
-         Return whether the two column schemas are equal.
- 
+     if deb_archive_name != @archive_name
+       file deb_archive_name => @archive_name do
+-        if @archive_base_name == deb_archive_base_name
+-          cp(@archive_name, deb_archive_name)
+-        else
+-          sh("tar", "xf", @archive_name)
+-          mv(@archive_base_name, deb_archive_base_name)
+-          sh("tar", "czf", deb_archive_name, deb_archive_base_name)
+-        end
++        cp(@archive_name, deb_archive_name)
+       end
+     end
+   end
 ```
 
-**File**: `python/pyarrow/tests/parquet/test_metadata.py` (modified, +21/-0)
+**File**: `dev/tasks/linux-packages/apt/build.sh` (modified, +15/-11)
 ```diff
-@@ -724,6 +724,27 @@ def test_metadata_equals():
-         original_metadata.equals(None)
- 
- 
-+def test_parquet_metadata_equals_none(tempdir):
-+    table = pa.table({"a": [1, 2, 3]})
-+    path = tempdir / "metadata_equals_none.parquet"
-+    pq.write_table(table, path)
-+
-+    metadata = pq.read_metadata(path)
-+    row_group = metadata.row_group(0)
-+    column_chunk = row_group.column(0)
-+    objects = [
-+        column_chunk.statistics,
-+        column_chunk,
-+        row_group,
-+        metadata.schema,
-+        metadata.schema[0],
-+    ]
-+
-+    for obj in objects:
-+        with pytest.raises(TypeError):
-+            obj.equals(None)
-+
-+
- @pytest.mark.parametrize("t1,t2,expected_error", (
-     ({'col1': range(10)}, {'col1': range(10)}, None),
-     ({'col1': range(10)}, {'col2': range(10)},
+@@ -96,17 +96,21 @@ run mkdir -p "${build_dir}"
+ run pushd "${build_dir}"
+ run cp /host/tmp/${PACKAGE}-${VERSION}.tar.gz \
+   ${PACKAGE}_${VERSION}.orig.tar.gz
+-run tar xfz ${PACKAGE}_${VERSION}.orig.tar.gz
+-case "${VERSION}" in
+-  *~dev*)
+-    run mv ${PACKAGE}-$(echo $VERSION | sed -e 's/~dev/-dev/') \
+-        ${PACKAGE}-${VERSION}
+-    ;;
+-  *~rc*)
+-    run mv ${PACKAGE}-$(echo $VERSION | sed -r -e 's/~rc[0-9]+//') \
+-        ${PACKAGE}-${VERSION}
+-    ;;
+-esac
++# Extract the source archive like dpkg-source does. If the archive has
++# only one top-level directory, use it as the source directory whatever
++# its name is. Otherwise, use the extracted directory as is.
++source_tmp_dir=${PACKAGE}-${VERSION}.tmp
++run mkdir ${source_tmp_dir}
++run tar xfz ${PACKAGE}_${VERSION}.orig.tar.gz -C ${source_tmp_dir}
++# "d" means that there is only one entry and it's a directory (not a
++# symbolic link).
++top_level_entry_types=$(find ${source_tmp_dir} -mindepth 1 -maxdepth 1 -printf '%y')
++if [ "${top_level_entry_types}" = "d" ]; then
++  run mv "$(find ${source_tmp_dir} -mindepth 1 -maxdepth 1)" ${PACKAGE}-${VERSION}
++  run rm -rf ${source_tmp_dir}
++else
++  run mv ${source_tmp_dir} ${PACKAGE}-${VERSION}
++fi
+ run pushd ${PACKAGE}-${VERSION}/
+ platform="${distribution}-${code_name}"
+ if [ -d "/host/tmp/debian.${platform}-${architecture}" ]; then
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55507** (closed): Fix Homebrew dependency mode in CMake (@fallintoplace)
+- **PR #55496** (2026-11-12): GH-55495: [Packaging][deb] Extract source archive like dpkg-source in apt/build.sh (@kou)
+- **PR #55485** (2026-11-12): GH-38983: [Python] Bug in pyarrow.from_pandas() when input has MultiIndex index columns having non-string names (@thisisnic)
 - **PR #55482** (2026-11-11): MINOR: [CI] Bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
 - **PR #55481** (2026-11-11): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
 - **PR #55477** (closed): GH-35721: [Python] Recognize pandas arrays in the array() constructor for the from_pandas argument (@jay23606)
-- **PR #55472** (2026-11-11): GH-55471: [Dev] Stop clearing non-existent PR workflow labels on merge script (@raulcd)
-- **PR #55469** (2026-11-10): GH-55468: [CI][Packaging] Add libarrow-s3 to the list of allow-downgrades (@raulcd)
-- **PR #55466** (2026-11-11): MINOR: [R] Update backwards compatibility matrix for 26.0.1 release (@amoeba)
 
 ---
 
@@ -1906,44 +1678,28 @@ See comment for detailed testing evidence.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-55277: [C++][Gandiva] Fix stack overflow in decimal evaluation with JIT optim
+## X. GH-51482: [R] allow building with shared snappy (#51490)
 
 **RULE**:
-When implementing operations in `cpp/src/gandiva/decimal_ir.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `r/inst/build_arrow_static.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bea76d64`: GH-55277: [C++][Gandiva] Fix stack overflow in decimal evaluation with JIT optimization disabled (#55278). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd619adc`: GH-51482: [R] allow building with shared snappy (#51490). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/gandiva/decimal_ir.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `r/inst/build_arrow_static.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-std::pair<llvm::AllocaInst*, llvm::AllocaInst*> DecimalIR::CreateEntryBlockReturnSlots() {
-  auto& entry = ir_builder()->GetInsertBlock()->getParent()->getEntryBlock();
-  llvm::IRBuilder<> entry_builder(&entry, entry.begin());
-  auto out_high_ptr = entry_builder.CreateAlloca(types()->i64_type(), nullptr, "out_hi");
-  auto out_low_ptr = entry_builder.CreateAlloca(types()->i64_type(), nullptr, "out_low");
-  return {out_high_ptr, out_low_ptr};
-}
-
-  auto [out_high_ptr, out_low_ptr] = CreateEntryBlockReturnSlots();
-    // Decimal calls can be emitted inside the record loop or a CASE branch.
-    // Allocate return slots once per invocation, rather than once per row.
-    auto [out_high_ptr, out_low_ptr] = CreateEntryBlockReturnSlots();
+    -DARROW_SNAPPY_USE_SHARED="${ARROW_SNAPPY_USE_SHARED:-OFF}" \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-  auto block = ir_builder()->GetInsertBlock();
-  auto out_high_ptr = new llvm::AllocaInst(types()->i64_type(), 0, "out_hi", block);
-  auto out_low_ptr = new llvm::AllocaInst(types()->i64_type(), 0, "out_low", block);
-    auto block = ir_builder()->GetInsertBlock();
-    auto out_high_ptr = new llvm::AllocaInst(i64, 0, "out_hi", block);
-    auto out_low_ptr = new llvm::AllocaInst(i64, 0, "out_low", block);
+    -DARROW_SNAPPY_USE_SHARED=OFF \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bea76d64` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd619adc` are properly handled with clean fallback behavior.

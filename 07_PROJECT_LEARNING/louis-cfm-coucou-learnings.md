@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source**: github ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
-> **Source Version**: `b1bc09de`  
+> **Source Version**: `15cc178d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T20:53:00.196Z  
+> **Timestamp**: 2026-11-13T03:56:06.996Z  
 > **Learning ID**: `learn-github-louis-cfm-coucou`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T20:52:59.978Z  
+> **Harvest Timestamp**: 2026-11-13T03:56:06.987Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A tiny friend in your Mac's notch and on your iPhone that keeps an eye on your AI coding agents: Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more. Approve from the notch or your Lock Screen.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7059 stars
+- **Stars / Engagement**: 7155 stars
 
 ---
 
@@ -1793,1008 +1793,325 @@ final class SoundEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `56a4f76d` (2026-11-06)
-**Commit Message**: 0.6: small fixes on merged pull requests
+### Incident Patch 1: `6bc221c7` (2026-11-12)
+**Commit Message**: Windows and Linux: show the relay settings to testers
 
-- #991 compiles (var task) and the Hermes plugin keeps the terminal's own bundle id.
-- #1022 keeps one renderer per window (a crash no longer takes all four).
-- #1038 cuts a long PDF's text on a character boundary; its timer-only test goes.
-- #1062 runs herdr only from a path to a program named herdr.
-- #1055 Coucoudoro: one timer at the phase's deadline instead of a half-second tick.
-- #952 "As heard" in the 16 languages.
+The "Away from home Wi-Fi" block stays hidden until a relay is ready for everyone, but now shows when Coucou starts with
+COUCOU_RELAY_SETTINGS=1, or when a relay is already on. Without it, nobody could reach a relay, so the Android 0.5 relay
+fixes (#19, #30 on Rhytam23/coucou) could not be tested. Nothing changes for other users.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
-
-**File**: `NotchBuddy/Resources/Localizable.xcstrings` (modified, +144/-0)
-```diff
-@@ -33411,24 +33411,96 @@
-     "hub.history-heard" : {
-       "extractionState" : "manual",
-       "localizations" : {
-+        "ar" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "كما سُمع"
-+          }
-+        },
-+        "bn" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "যেমন শোনা গেছে"
-+          }
-+        },
-+        "de" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Wie gehört"
-+          }
-+        },
-         "en" : {
-           "stringUnit" : {
-             "state" : "translated",
-             "value" : "As heard"
-           }
-         },
-+        "es" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Tal como se oyó"
-+          }
-+        },
-         "fr" : {
-           "stringUnit" : {
-             "state" : "translated",
-             "value" : "Tel qu’entendu"
-           }
-         },
-+        "hi" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "जैसा सुना गया"
-+          }
-+        },
-+        "id" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Seperti yang terdengar"
-+          }
-+        },
-+        "ja" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "聞き取ったまま"
-+          }
-+        },
-         "ko" : {
-           "stringUnit" : {
-             "state" : "translated",
-             "value" : "들린 그대로"
-           }
-         },
-+        "pt-BR" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Como foi ouvido"
-+          }
-+        },
-+        "ru" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Как услышано"
-+          }
-+        },
-+        "th" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "ตามที่ได้ยิน"
-+          }
-+        },
-+        "tr" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Duyulduğu gibi"
-+          }
-+        },
-+        "zh-Hans" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "听到的原文"
-+          }
-+        },
-         "zh-Hant" : {
-           "stringUnit" : {
-             "state" : "translated",
-@@ -33440,24 +33512,96 @@
-     "hub.copy-heard" : {
-       "extractionState" : "manual",
-       "localizations" : {
-+        "ar" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "نسخ كما سُمع"
-+          }
-+        },
-+        "bn" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "যেমন শোনা গেছে তেমন কপি"
-+          }
-+        },
-+        "de" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Wie gehört kopieren"
-+          }
-+        },
-         "en" : {
-           "stringUnit" : {
-             "state" : "translated",
-             "value" : "Copy as heard"
-           }
-         },
-+        "es" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Copiar tal como se oyó"
-+          }
-+        },
-         "fr" : {
-           "stringUnit" : {
-             "state" : "translated",
-             "value" : "Copier tel qu’entendu"
-           }
-         },
-+        "hi" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "जैसा सुना वैसा कॉपी करें"
-+          }
-+        },
-+        "id" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Salin seperti yang terdengar"
-+          }
-+        },
-+        "ja" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "聞き取ったままコピー"
-+          }
-+        },
-         "ko" : {
-           "stringUnit" : {
-             "state" : "translated",
-             "value" : "들린 그대로 복사"
-           }
-         },
-+        "pt-BR" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Copiar como foi ouvido"
-+          }
-+        },
-+        "ru" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Скопировать как услышано"
-+          }
-+        },
-+        "th" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "คัดลอกตามที่ได้ยิน"
-+          }
-+        },
-+        "tr" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Duyulduğu gibi kopyala"
-+          }
-+        },
-+        "zh-Hans" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "拷贝听到的原文"
-+          }
-+        },
-         "zh-Hant" : {
-           "stringUnit" : {
-             "state" : "translated",
-```
-
-**File**: `NotchBuddy/Sources/App/CoucoudoroController.swift` (modified, +14/-7)
-```diff
-@@ -2,8 +2,8 @@ import Combine
- import Foundation
- 
- /// Coucoudoro: work, then rest, then work again, until the user stops.
--/// The session is a deadline. A half-second timer only checks that deadline while a
--/// session is running and the pill is on; the card draws the clock from the deadline itself.
-+/// The session is a deadline. One timer fires at that deadline (nothing ticks in between, so
-+/// Coucou stays at 0 % CPU while hidden); the card and the pill draw the clock from the deadline.
- @MainActor
- final class CoucoudoroController: ObservableObject {
-     static let shared = CoucoudoroController()
-@@ -126,12 +126,18 @@ final class CoucoudoroController: ObservableObject {
-         }
-     }
- 
-+    /// One timer, at the running phase's deadline.
-     private func ensureTimer() {
--        guard timer == nil else { return }
--        let t = Timer(timeInterval: 0.5, repeats: true) { _ in
--            MainActor.assumeIsolated { CoucoudoroController.shared.tick() }
-+        timer?.invalidate()
-+        timer = nil
-+        guard snap.phase != .idle, !snap.paused, let deadline = snap.deadline else { return }
-+        let t = Timer(fire: deadline.addingTimeInterval(0.05), interval: 0, repeats: false) { _ in
-+            MainActor.assumeIsolated {
-+                CoucoudoroController.shared.timer = nil
-+                CoucoudoroController.shared.tick()
-+            }
-         }
--        t.tolerance = 0.15
-+        t.tolerance = 0.1
-         RunLoop.main.add(t, forMode: .common)
-         timer = t
-     }
-@@ -144,10 +150,11 @@ final class CoucoudoroController: ObservableObject {
-     private func tick() {
-         guard isPillActive else { updatePolling(); return }
-         let (next, events) = CoucoudoroEngine.tick(snap, config: CoucoudoroSettings.config, now: Date())
--        guard next != snap else { return }
-+        guard next != snap else { ensureTimer(); return }
-         snap = next
-         publish()
-         if let last = events.last { surface(last) }
-+        ensureTimer()
-     }
- 
-     private func publish() {
-```
-
-**File**: `NotchBuddy/Sources/App/HookServer.swift` (modified, +2/-2)
-```diff
-@@ -964,7 +964,7 @@ final class HookServer: @unchecked Sendable {
-         } else {
-             color = IslandConst.colorForProject(name)
-         }
--        let task = AgentTask(id: id, name: name, color: color, state: .idle, steps: [], source: .agent)
-+        var task = AgentTask(id: id, name: name, color: color, state: .idle, steps: [], source: .agent)
-         if !bundleId.isEmpty { task.sessionBundleId = bundleId }
-         if let claudeIdx = state.tasks.firstIndex(where: { $0.id == "integration_claude" }) {
-             state.tasks.insert(task, at: claudeIdx + 1)
-@@ -3143,7 +3143,7 @@ def _fire(fields: dict) -> None:
-                 stdout=subprocess.DEVNULL,
-                 stderr=subprocess.DEVNULL,
-                 start_new_session=True,   # detach from process group
--                env={**os.environ, '__CFBundleIdentifier': 'com.nousresearch.hermes'},
-+                env={'__CFBundleIdentifier': 'com.nousresearch.hermes', **os.environ},
-             )
-             p.stdin.write(json.dumps(fields).encode() + b'\\n')
-             p.stdin.close()
-```
-
-**File**: `windows/src-tauri/src/herdr.rs` (modified, +13/-1)
-```diff
-@@ -28,8 +28,12 @@ fn valid_name(value: &str) -> bool {
-         && value.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, ':' | '.' | '_' | '-'))
- }
- 
-+/// An absolute path to a program named herdr: Coucou runs it, so nothing else.
- fn valid_bin(value: &str) -> bool {
--    value.starts_with('/') && value.len() <= 512 && !value.chars().any(char::is_control)
-+    value.starts_with('/')
-+        && value.len() <= 512
-+        && !value.chars().any(char::is_control)
-+        && value.rsplit('/').next() == Some("herdr")
- }
- 
- pub fn from_payload(payload: &Value) -> Option<Pane> {
-@@ -140,6 +144,14 @@ mod tests {
-         assert_eq!(args, ["agent", "focus", "w1:pA"]);
-     }
- 
-+    #[test]
-+    fn only_a_program_named_herdr_is_run() {
-+        for bin in ["/tmp/evil", "/usr/bin/herdr-x", "/usr/bin/sh", "herdr", "/usr/bin/herdr/"] {
-+            assert!(from_payload(&payload("w1:pA", bin, "Ubuntu")).is_none(), "{bin}");
-+        }
-+        assert!(from_payload(&payload("w1:pA", "/home/me/.cargo/bin/herdr", "Ubuntu")).is_some());
-+    }
-+
-     #[test]
-     fn the_pane_list_is_capped() {
-         let extra = crate::session_window::MAX_SESSIONS + 3;
-```
-
-**File**: `windows/src-tauri/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -733,7 +733,7 @@ fn shortcuts_suspend(app: AppHandle, shared: State<Shared>, suspended: bool) {
- /// for the *same* arguments as the island (see `additionalBrowserArgs` in
- /// tauri.conf.json) — a mismatch makes the second window come up blank, with no
- /// error anywhere.
--pub(crate) const BROWSER_ARGS: &str = "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --autoplay-policy=no-user-gesture-required --renderer-process-limit=1";
-+pub(crate) const BROWSER_ARGS: &str = "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --autoplay-policy=no-user-gesture-required";
- 
- /// In a dev build the pages are served by Vite, so the second window needs the
- /// absolute dev URL; a bundled build resolves it inside the app bundle.
-```
-
-**File**: `windows/src-tauri/src/openai_compat.rs` (modified, +4/-1)
-```diff
-@@ -278,7 +278,10 @@ fn extract_pdf_text(path: &str) -> Option<String> {
-             }
-         }
-         if full.len() as u64 > MAX_INLINE_TEXT {
--            full.truncate(MAX_INLINE_TEXT as usize);
-+            // On a character boundary: a cut inside an accented letter would panic.
-+            let mut cut = MAX_INLINE_TEXT as usize;
-+            while !full.is_char_boundary(cut) { cut -= 1; }
-+            full.truncate(cut);
-             full.push_str("\n... [truncated]");
-             break;
-         }
-```
-
-**File**: `windows/src-tauri/src/webview_memory.rs` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--// Memory of the webviews that nobody is looking at (this fork).
-+// Memory of the webviews that nobody is looking at.
- //
- // Coucou keeps four WebView2 windows alive (the island, the Coucou window, the
- // pill, Mochi on the desktop): windows made later come up blank (see
-```
-
-**File**: `windows/src-tauri/tauri.conf.json` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@
-         "minimizable": false,
-         "closable": false,
-         "dragDropEnabled": false,
--        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --autoplay-policy=no-user-gesture-required --renderer-process-limit=1"
-+        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --autoplay-policy=no-user-gesture-required"
-       }
-     ]
-   },
-```
-
----
-
-### Incident Patch 2: `b1bc09de` (2026-11-06)
-**Commit Message**: Merge #1075: Coucou 0.6 (Mac, Windows, Linux)
-
-Start a session from the notch, drop a file on a session, ⌘⇧2, approvals for Antigravity and OpenCode, and 41 community pull requests. See CHANGELOG.md.
-
-**File**: `.github/workflows/android-release.yml` (modified, +71/-24)
-```diff
-@@ -8,19 +8,27 @@ name: Android release
- # The release key lives only in two repository secrets: ANDROID_KEYSTORE_BASE64 (the .jks file, base64) and
- # ANDROID_KEYSTORE_PASSWORD. Keep a backup of the .jks and its password outside GitHub: an app signed with a lost key can never
- # be updated in place.
-+#
-+# The key never meets repository code, the same split as the Linux workflow: the apk job builds the unsigned APK
-+# from the repo with no secrets at all; the sign job runs nothing but the runner's own build-tools binaries with
-+# the keystore; the publish job carries the release token and runs nothing from the repo either.
- on:
-   push:
-     tags:
-       - 'android-v*'
-   workflow_dispatch:
- 
- permissions:
--  contents: write
-+  contents: read
- 
- jobs:
-   apk:
-     runs-on: ubuntu-24.04
-+    permissions:
-+      contents: read
-     defaults: { run: { working-directory: android } }
-+    outputs:
-+      version: ${{ steps.version.outputs.version }}
-     steps:
-       - uses: actions/checkout@v7
-         with: { persist-credentials: false }
-@@ -41,6 +49,32 @@ jobs:
-             test "$tag" = "$v" || { echo "the tag says $tag but versionName is $v"; exit 1; }
-           fi
- 
-+      - name: Unsigned release APK
-+        run: |
-+          node scripts/gen-strings.mjs --check
-+          ./gradlew assembleRelease --console=plain
-+          apk=app/build/outputs/apk/release/app-release-unsigned.apk
-+          test -f "$apk" || { echo "no unsigned release APK at $apk"; ls app/build/outputs/apk/release/; exit 1; }
-+          mkdir -p ../release-unsigned
-+          cp "$apk" ../release-unsigned/
-+          cp app/build/outputs/mapping/release/mapping.txt ../release-unsigned/
-+
-+      - uses: actions/upload-artifact@v7
-+        with:
-+          name: unsigned-apk
-+          path: release-unsigned/
-+          retention-days: 3
-+
-+  sign:
-+    needs: apk
-+    runs-on: ubuntu-24.04
-+    permissions:
-+      contents: read
-+    steps:
-+      - uses: actions/download-artifact@v8
-+        with:
-+          name: unsigned-apk
-+
-       - name: The release key
-         env:
-           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-@@ -50,36 +84,49 @@ jobs:
- 
-       - name: Signed release APK
-         env:
--          COUCOU_KEYSTORE_FILE: ${{ runner.temp }}/release.jks
--          COUCOU_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
--          COUCOU_KEY_ALIAS: coucou
--        run: |
--          test -n "$COUCOU_KEYSTORE_PASSWORD" || { echo "ANDROID_KEYSTORE_PASSWORD is not set"; exit 1; }
--          node scripts/gen-strings.mjs --check
--          ./gradlew assembleRelease --console=plain
--          rm -f "$COUCOU_KEYSTORE_FILE"
--
--      - name: Check the signature
-+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-+          VERSION: ${{ needs.apk.outputs.version }}
-         run: |
--          apksigner="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner"
--          "$apksigner" verify --print-certs app/build/outputs/apk/release/app-release.apk
--          v="${{ steps.version.outputs.version }}"
--          mkdir -p release
--          cp app/build/outputs/apk/release/app-release.apk "release/Coucou-Android-$v.apk"
--          (cd release && sha256sum "Coucou-Android-$v.apk" > SHA256SUMS)
-+          test -n "$KEYSTORE_PASSWORD" || { echo "ANDROID_KEYSTORE_PASSWORD is not set: refusing to build an unsigned release"; exit 1; }
-+          bt="$(find "$ANDROID_HOME"/build-tools -mindepth 1 -maxdepth 1 | sort -V | tail -1)"
-+          v="$VERSION"
-+          # Nothing from the repository runs in this job: only the runner's own
-+          # zipalign and apksigner, over the artifact built by the apk job.
-+          "$bt/zipalign" -p -f 4 app-release-unsigned.apk aligned.apk
-+          "$bt/apksigner" sign \
-+            --ks "$RUNNER_TEMP/release.jks" \
-+            --ks-key-alias coucou \
-+            --ks-pass env:KEYSTORE_PASSWORD \
-+            --key-pass env:KEYSTORE_PASSWORD \
-+            --out "Coucou-Android-$v.apk" \
-+            aligned.apk
-+          rm -f "$RUNNER_TEMP/release.jks" aligned.apk
-+          "$bt/apksigner" verify --print-certs "Coucou-Android-$v.apk"
-+          sha256sum "Coucou-Android-$v.apk" > SHA256SUMS
- 
-       - uses: actions/upload-artifact@v7
-         with:
--          name: Coucou-Android-${{ steps.version.outputs.version }}
-+          name: Coucou-Android-${{ needs.apk.outputs.version }}
-           path: |
--            android/release/
--            android/app/build/outputs/mapping/release/mapping.txt
-+            Coucou-Android-*.apk
-+            SHA256SUMS
-+            mapping.txt
-+
-+  publish:
-+    needs: [apk, sign]
-+    if: startsWith(github.ref, 'refs/tags/android-v')
-+    runs-on: ubuntu-24.04
-+    permissions:
-+      contents: write
-+    steps:
-+      - uses: actions/download-artifact@v8
-+        with:
-+          name: Coucou-Android-${{ needs.apk.outputs.version }}
- 
-       - name: Publish the release
--        if: startsWith(github.ref, 'ref
-```
-
-**File**: `.github/workflows/build.yml` (modified, +18/-0)
-```diff
-@@ -51,18 +51,27 @@ jobs:
-       - name: Test the chat on your subscription (Claude Code, Antigravity, Gemini, Codex, Cursor, Copilot)
-         run: bash scripts/test-cli-relay.sh
- 
-+      - name: Test a subscription run on stand-in tools (stdin, no thinking, signed out, time limit)
-+        run: bash scripts/test-cli-relay-run.sh
-+
-       - name: Test Mail triage (rules, banned words, VIPs, search)
-         run: bash scripts/test-mail-triage.sh
- 
-       - name: Test the settings search (accents, words, labels)
-         run: bash scripts/test-settings-search.sh
- 
-+      - name: Test Antigravity permission rules
-+        run: bash scripts/test-agy-permissions.sh
-+
-       - name: Test Flow dictation keys
-         run: bash scripts/test-flow-keys.sh
- 
-       - name: Test Flow text (snippets, dictionary, numbers)
-         run: bash scripts/test-flow-text.sh
- 
-+      - name: Test the work streak (Mochi sleepy after long work, fresh after a break)
-+        run: bash scripts/test-work-streak.sh
-+
-       - name: Test Notetaker transcript (speakers, echo, summary, Markdown)
-         run: bash scripts/test-notetaker.sh
- 
-@@ -140,6 +149,12 @@ jobs:
-       - name: Test ask question
-         run: bash scripts/test-ask-question.sh
- 
-+      - name: Test the App Store review moments
-+        run: bash scripts/test-review-policy.sh
-+
-+      - name: Test the new-session launcher
-+        run: bash scripts/test-session-launch.sh
-+
-       - name: Test the Android link (pairing, framing, admission, approvals, certificate)
-         run: bash scripts/test-android-link.sh
- 
-@@ -173,6 +188,9 @@ jobs:
-       - name: Conversation context tests
-         run: bash scripts/test-conversation-context.sh
- 
-+      - name: Codex automatic-review filter tests
-+        run: bash scripts/test-codex-auto-review.sh
-+
-       - name: Build
-         run: |
-           set -o pipefail
-```
-
-**File**: `CHANGELOG.md` (modified, +49/-3)
-```diff
-@@ -1,11 +1,57 @@
- # Changelog
- 
--## Unreleased
--
--- **Android phone link (Mac)** — Coucou for Android can now pair with your Mac, the way it already does with Windows and Linux (Settings → Android phone, off by default). Scan the QR code on the same Wi-Fi, see your agent sessions, and allow or deny a permission request from the phone; Allow still needs the phone's fingerprint or screen lock. Optional switches show session details, let the phone answer Claude Code's questions and show your plan usage. Coucou listens on your local network only while the switch is on, the certificate and the pairing code stay in the Keychain, and nothing runs while it is off (GitHub build; not in the App Store build)
-+## 0.6.0 — Unreleased
-+
-+- **Start a Claude Code session from the notch** *(GitHub build)* — the terminal tab in the island's header, or ⌃⌥N: pick the project (the folders your sessions ran in, or any folder), type or dictate what Claude should do, and your terminal opens there with Claude Code and your words. Terminal, iTerm2, Ghostty, kitty, WezTerm and Alacritty; the prompt is never written into a command line
-+- **Drop a file on a session** *(GitHub build)* — drag a file over the notch (a ⌘⇧2 thumbnail, a capture, anything from Finder) and let go on one of the sessions listed on the right of the drop card: its terminal comes forward and the file lands in its prompt, as if dropped on the terminal itself
-+- **Screenshot of the whole screen, copied** *(GitHub build)* — ⌘⇧2 takes the whole screen the pointer is on, with the Mac's shutter sound. The picture is on the clipboard right away, so ⌘V pastes it into a chat (⌃V in Claude Code's terminal), and a thumbnail shows in the bottom right corner like macOS's own: drag it into a chat, a folder or a mail, click it to open it in Preview, swipe it to the right to put it away. It leaves by itself after a few seconds, and stays while the pointer is on it. Both screenshot shortcuts, the whole screen and a zone (⌘⇧S), now have their own Screenshots box at the top of Settings → Shortcuts, to change or turn each off (GitHub build; not in the App Store build)
-+- **Approve Antigravity commands from the notch** *(GitHub build, optional)* — turn on Settings → Antigravity → **Approve commands from the notch**, and a shell command that none of your Antigravity rules covers waits for you on the approval card, as with Claude Code: **Allow**, **Deny**, or **Reply in terminal** for Antigravity's own prompt (and its *Always allow*). Commands your rules allow or deny are left to Antigravity, and with no answer in 2 min, or Coucou closed, Antigravity asks in its terminal as before. Coucou can't see Antigravity's mode, so in Auto mode the notch also asks about commands Antigravity would have run on its own. Install the Antigravity hooks once more, then restart Antigravity: its command hook now waits up to 2 min (#934 by @Brendon20011007)
-+- **Android phone link** — Coucou for Android can now pair with your Mac, the way it already does with Windows and Linux (Settings → Android phone, off by default). Scan the QR code on the same Wi-Fi, see your agent sessions, and allow or deny a permission request from the phone; Allow still needs the phone's fingerprint or screen lock. Optional switches show session details, let the phone answer Claude Code's questions and show your plan usage. Coucou listens on your local network only while the switch is on, the certificate and the pairing code stay in the Keychain, and nothing runs while it is off (GitHub build; not in the App Store build)
-+- **Coucoudoro** — a work and rest timer in the notch: start, pause and stop from its card, lengths in Settings (#1055 by @PeachyCad)
-+- **Flow: one press starts hands-free** — a new setting: a short press of the dictation key starts hands-free, a hold stays push-to-talk (#1063 by @Brezinben, on Windows and Linux too)
-+- **Flow on your Claude plan** — with Claude's subscription switch on, clean-up, prompt mode and translation go through your own Claude Code, no API key (#971 by @NikitaBulichev)
-+- **Flow hears better on macOS 26** — the Mac's newer speech model when its languages are installed (#968 by @lovyestar); the history keeps what was heard beside the rewrite, with its own copy button (#952 by @lovyestar)
-+- **Mochi gets sleepy** after long hours with the agents, and fresh again after a break (#970 by @lovyestar)
-+- **Voice speed** — a Speed slider for Coucou's voice (#967 by @BilliamsFluster)
-+- **App Store build: a review, once in a while** — after a good moment (a few finished sessions on the Mac, a few decisions sent from the iPhone), never in the first days and once per version, Apple's own review request; macOS and iOS show it at most three times a year
-+
-+Fixes:
-+
-+- **Open terminal, ↗, Spotify and Music bring their app forward again on macOS 14+** (#678 by @orrrrli)
-+- **No approval card for Codex requests its own automatic reviewer handles** (#767 by @Danielweng0902)
-+- **The step ticker keeps mov
-```
-
-**File**: `NotchBuddy/Resources/whats-new.json` (modified, +161/-0)
-```diff
-@@ -1,6 +1,167 @@
- {
-   "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 16 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
-   "releases": [
-+    {
-+      "version": "0.6.0",
-+      "items": [
-+        {
-+          "icon": "terminal",
-+          "title": {
-+            "en": "Start a session from the notch",
-+            "fr": "Lance une session depuis le notch",
-+            "es": "Inicia una sesión desde el notch",
-+            "pt-BR": "Inicie uma sessão pelo notch",
-+            "ru": "Новая сессия прямо из выреза",
-+            "zh-Hans": "从刘海直接开始会话",
-+            "hi": "नॉच से सत्र शुरू करें",
-+            "ar": "ابدأ جلسة من النوتش",
-+            "bn": "নচ থেকে সেশন শুরু করুন",
-+            "id": "Mulai sesi dari notch",
-+            "de": "Eine Sitzung aus der Notch starten",
-+            "tr": "Çentikten oturum başlat",
-+            "th": "เริ่มเซสชันจากรอยบาก",
-+            "zh-Hant": "從瀏海直接開始工作階段",
-+            "ko": "노치에서 세션 시작",
-+            "ja": "ノッチからセッションを開始"
-+          },
-+          "detail": {
-+            "en": "Pick a project, say what to do: your terminal opens with Claude Code and your words.",
-+            "fr": "Choisis un projet, dis quoi faire : ton terminal s'ouvre avec Claude Code et tes mots.",
-+            "es": "Elige un proyecto, di qué hacer: tu terminal se abre con Claude Code y tus palabras.",
-+            "pt-BR": "Escolha um projeto, diga o que fazer: o terminal abre com o Claude Code e suas palavras.",
-+            "ru": "Выберите проект и скажите, что сделать: терминал откроется с Claude Code и вашими словами.",
-+            "zh-Hans": "选个项目，说出要做的事：终端会带着 Claude Code 和你的话打开。",
-+            "hi": "प्रोजेक्ट चुनें, बताएँ क्या करना है: टर्मिनल Claude Code और आपके शब्दों के साथ खुलता है।",
-+            "ar": "اختر مشروعًا وقل ما المطلوب: تفتح الطرفية مع Claude Code وكلماتك.",
-+            "bn": "প্রজেক্ট বেছে কী করতে হবে বলুন: টার্মিনাল Claude Code আর আপনার কথা নিয়ে খোলে।",
-+            "id": "Pilih proyek, katakan tugasnya: terminal terbuka dengan Claude Code dan kata-katamu.",
-+            "de": "Projekt wählen, Aufgabe sagen: Dein Terminal öffnet sich mit Claude Code und deinen Worten.",
-+            "tr": "Bir proje seç, ne yapılacağını söyle: terminal Claude Code ve sözlerinle açılır.",
-+            "th": "เลือกโปรเจกต์ บอกสิ่งที่ต้องทำ: เทอร์มินัลเปิดพร้อม Claude Code และคำของคุณ",
-+            "zh-Hant": "選個專案，說出要做的事：終端機會帶著 Claude Code 和你的話開啟。",
-+            "ko": "프로젝트를 고르고 할 일을 말하면 Claude Code와 함께 터미널이 열립니다.",
-+            "ja": "プロジェクトを選んで頼むと、Claude Code とあなたの言葉でターミナルが開きます。"
-+          }
-+        },
-+        {
-+          "icon": "download",
-+          "title": {
-+            "en": "Drop a file on a session",
-+            "fr": "Lâche un fichier sur une session",
-+            "es": "Suelta un archivo en una sesión",
-+            "pt-BR": "Solte um arquivo numa sessão",
-+            "ru": "Бросьте файл на сессию",
-+            "zh-Hans": "把文件拖到会话上",
-+            "hi": "फ़ाइल को सत्र पर छोड़ें",
-+            "ar": "أفلت ملفًا على جلسة",
-+            "bn": "সেশনের ওপর ফাইল ছাড়ুন",
-+            "id": "Jatuhkan file ke sesi",
-+            "de": "Eine Datei auf eine Sitzung ziehen",
-+            "tr": "Bir dosyayı oturuma bırak",
-+            "th": "วางไฟล์ลงในเซสชัน",
-+            "zh-Hant": "把檔案拖到工作階段上",
-+            "ko": "파일을 세션에 놓기",
-+            "ja": "ファイルをセッションにドロップ"
-+          },
-+          "detail": {
-+            "en": "Let go on a session in the drop card: the file lands in its prompt.",
-+            "fr": "Lâche-le sur une session de la carte de dépôt : le fichier arrive dans son prompt.",
-+            "es": "Suéltalo sobre una sesión en la tarjeta: el archivo llega a su prompt.",
-+            "pt-BR": "Solte sobre uma sessão no cartão: o arquivo chega ao prompt dela.",
-+            "ru": "Отпустите над сессией в карточке: файл попадёт в её запрос.",
-+            "zh-Hans": "在投放卡片上松开到某个会话：文件就进入它的提示里。",
-+            "hi": "ड्रॉप कार्ड में किसी सत्र पर छोड़ें: फ़ाइल उसके प्रॉम्प्ट में पहुँचती है।",
-+            "ar": "أفلته على جلسة في بطاقة الإفلات: يصل الملف إلى موجّهها.",
-+            "bn": "ড্রপ কার্ডে কোনো সেশনের ওপর ছাড়ুন: ফাইলটি তার প্রম্পটে পৌঁছায়।",
-+            "id": "Lepaskan di sebuah sesi pada kartu: file masuk ke prompt-nya.",
-+            "de": "Auf einer Sitzung der Ablagekarte loslassen: Die Datei landet in ihrem Prompt.",
-+            "tr": "Bırakma kartındaki bir oturumun üstüne bırak: dosya onun komutuna girer.",
-+            "th": "ปล่อยบนเซสชันในการ์ดวางไฟล์ แล้วไฟล์จะเข้าไปในพรอมต์ของมัน",
-+            "zh-Hant": "在投放卡片上放開到某個工作階段：檔案就進入它的提示裡。",
-+            "ko": "드롭 카드의 세션 위에 놓으면 파일이 그 프롬프트로 들어갑니다.",
-+            "ja": "ドロップカードのセッションで離すと、ファイルがそのプロンプトに入ります。"
-+          }
-+        },
-+        {
-+          "icon": "eye",
-+          "t
-```
-
-**File**: `NotchBuddy/Sources/App/AgyPermissionRules.swift` (added, +230/-0)
-```diff
-@@ -0,0 +1,230 @@
-+import Foundation
-+
-+// MARK: - AgyPermissionRules
-+// Antigravity's own `command(...)` rules, read from its config files, so the notch only asks
-+// about the shell commands Antigravity has no rule for (Settings → Antigravity → Approve
-+// commands from the notch).
-+//
-+// This never allows anything. A verdict only decides whether Coucou shows a card:
-+// - `.allowed` / `.denied`: no card, the hook answers "ask" and Antigravity applies its rule.
-+// - `.unknown`: the card shows, and only a click on Allow lets the command run.
-+// Both mistakes are safe: a command wrongly read as allowed gets Antigravity's own prompt,
-+// one wrongly read as new gets a card it did not need.
-+// Pure Foundation, no AppKit: tested by scripts/test-agy-permissions.sh.
-+
-+struct AgyPermissionRules: Equatable, Sendable {
-+    /// The text inside each `command(...)` rule.
-+    private(set) var allow: [String] = []
-+    private(set) var deny: [String] = []
-+
-+    enum Verdict: Equatable, Sendable { case allowed, denied, unknown }
-+
-+    init(allow: [String] = [], deny: [String] = []) {
-+        self.allow = allow
-+        self.deny = deny
-+    }
-+
-+    /// Adds the `command(...)` entries of a grants object: `{"allow": [...], "deny": [...]}`.
-+    /// Other rule kinds (read_file, mcp, read_url…) do not apply to shell commands.
-+    mutating func add(grants: [String: Any]) {
-+        allow += Self.commandRules(grants["allow"] as? [String] ?? [])
-+        deny += Self.commandRules(grants["deny"] as? [String] ?? [])
-+    }
-+
-+    /// What Antigravity's rules say about `command`.
-+    func verdict(for command: String) -> Verdict {
-+        guard let parsed = Self.parse(command), !parsed.segments.isEmpty else { return .unknown }
-+        let denyRules = deny.compactMap(Self.parse)
-+        let allowRules = allow.compactMap(Self.parse)
-+        // A deny rule wins: Antigravity blocks the command itself, no card is needed.
-+        for rule in denyRules where Self.matches(rule, parsed) { return .denied }
-+        // A chained command saved as one rule ("git fetch && git rebase") matches exactly.
-+        if allowRules.contains(where: { $0.segments.count > 1 && $0.segments == parsed.segments }) {
-+            return .allowed
-+        }
-+        // A command run inside $(…) or backticks is hidden from the rules below.
-+        if parsed.hasSubstitution {
-+            return allowRules.contains { $0.segments == parsed.segments } ? .allowed : .unknown
-+        }
-+        let everyPartAllowed = parsed.segments.allSatisfy { segment in
-+            allowRules.contains { $0.segments.count == 1 && Self.hasPrefix(segment, $0.segments[0]) }
-+        }
-+        return everyPartAllowed ? .allowed : .unknown
-+    }
-+
-+    // MARK: Matching
-+
-+    /// A rule's words start every part (single-part rule) or match the whole chain.
-+    private static func matches(_ rule: Parsed, _ command: Parsed) -> Bool {
-+        if rule.segments.count > 1 { return rule.segments == command.segments }
-+        guard let words = rule.segments.first else { return false }
-+        return command.segments.contains { hasPrefix($0, words) }
-+    }
-+
-+    /// True when `segment` starts with every word of `words`. A rule with no words
-+    /// (`command()`, `command(   )`) matches nothing, as in Antigravity.
-+    private static func hasPrefix(_ segment: [String], _ words: [String]) -> Bool {
-+        !words.isEmpty && segment.count >= words.count && Array(segment.prefix(words.count)) == words
-+    }
-+
-+    /// `["command(git log)", "mcp(x/y)"]` → `["git log"]`.
-+    static func commandRules(_ entries: [String]) -> [String] {
-+        entries.compactMap { entry in
-+            let trimmed = entry.trimmingCharacters(in: .whitespacesAndNewlines)
-+            guard trimmed.hasPrefix("command("), trimmed.hasSuffix(")") else { return nil }
-+            return String(trimmed.dropFirst("command(".count).dropLast())
-+        }
-+    }
-+
-+    // MARK: Shell words
-+
-+    struct Parsed: Equatable, Sendable {
-+        /// Each part of the command line (split on && || ; | & and new lines), as words.
-+        var segments: [[String]]
-+        /// The line runs another command through $(…) or backticks.
-+        var hasSubstitution: Bool
-+    }
-+
-+    /// Splits a command line into parts and words, the way a POSIX shell reads quotes
-+    /// and backslashes. Nil when a quote is left open: the line cannot be read reliably.
-+    static func parse(_ line: String) -> Parsed? {
-+        var segments: [[String]] = []
-+        var words: [String] = []
-+        var word = ""
-+        var inWord = false
-+        var substitution = false
-+        var quote: Character? = nil
-+        var chars = Array(line)
-+        chars.append(" ")
-+        var i = 0
-+
-+        func endWord() {
-+            if inWord { words.append(word) }
-+            word = ""
-+            inWord = false
-+        }
-+        func endSegment() {
-+            endWord()
-+            if !words.isEmpty { segments.append(word
-```
-
-**File**: `NotchBuddy/Sources/App/AnalyzerDictation.swift` (added, +211/-0)
-```diff
-@@ -0,0 +1,211 @@
-+#if !APPSTORE
-+import AVFoundation
-+import Speech
-+
-+/// Flow dictation with the Mac's newer speech model (SpeechAnalyzer, macOS 26), when the Mac's
-+/// recognizer is chosen and the languages it listens for are installed on this Mac. It is more
-+/// accurate than SFSpeechRecognizer, writes the punctuation, and runs on the Mac only.
-+///
-+/// Like MacDictation, "Automatic" listens in up to three languages at once and keeps the one it
-+/// was the most confident about. Nothing is downloaded: a language that isn't installed leaves
-+/// Flow on MacDictation.
-+@available(macOS 26.0, *)
-+final class AnalyzerDictation: @unchecked Sendable {
-+    @MainActor private(set) var isRecording = false
-+    /// Flow dictation's pill: the microphone's levels by frequency, fed from the same tap.
-+    var bands: FlowAudioBands?
-+
-+    private let locales: [Locale]
-+    private let engine = AVAudioEngine()
-+    @MainActor private var lanes: [Lane] = []
-+
-+    /// One language: its transcriber, its analyzer and the audio going in.
-+    private final class Lane: @unchecked Sendable {
-+        let locale: Locale
-+        let transcriber: SpeechTranscriber
-+        let analyzer: SpeechAnalyzer
-+        let input: AsyncStream<AnalyzerInput>.Continuation
-+        private let stream: AsyncStream<AnalyzerInput>
-+        private var collecting: Task<Heard, Never>?
-+
-+        struct Heard {
-+            var text = ""
-+            /// Mean confidence of the words, 0 when none were heard.
-+            var confidence = 0.0
-+        }
-+
-+        init(locale: Locale) {
-+            self.locale = locale
-+            transcriber = SpeechTranscriber(locale: locale, transcriptionOptions: [], reportingOptions: [],
-+                                            attributeOptions: [.transcriptionConfidence])
-+            analyzer = SpeechAnalyzer(modules: [transcriber])
-+            (stream, input) = AsyncStream<AnalyzerInput>.makeStream()
-+        }
-+
-+        func begin() {
-+            let transcriber = transcriber
-+            collecting = Task {
-+                var heard = Heard()
-+                var total = 0.0
-+                var count = 0
-+                do {
-+                    // Final results only: each one is a stretch of speech, in order.
-+                    for try await result in transcriber.results {
-+                        heard.text = AnalyzerDictation.join(heard.text, String(result.text.characters))
-+                        for run in result.text.runs {
-+                            if let confidence = run.transcriptionConfidence { total += confidence; count += 1 }
-+                        }
-+                    }
-+                } catch {
-+                    appendAppLog("nb.log", "[Flow] SpeechAnalyzer failed: \(error.localizedDescription)")
-+                }
-+                heard.confidence = count > 0 ? total / Double(count) : 0
-+                return heard
-+            }
-+            let analyzer = analyzer
-+            let stream = stream
-+            Task { try? await analyzer.start(inputSequence: stream) }
-+        }
-+
-+        /// The words, once the audio sent so far is transcribed (or after a few seconds, never longer).
-+        func finish() async -> Heard {
-+            input.finish()
-+            let analyzer = analyzer
-+            let done = Task { try? await analyzer.finalizeAndFinishThroughEndOfInput() }
-+            let timeout = Task {
-+                try? await Task.sleep(for: .seconds(3))
-+                if !Task.isCancelled { await analyzer.cancelAndFinishNow() }
-+            }
-+            _ = await done.value
-+            timeout.cancel()
-+            return await collecting?.value ?? Heard()
-+        }
-+
-+        func cancel() {
-+            input.finish()
-+            collecting?.cancel()
-+            let analyzer = analyzer
-+            Task { await analyzer.cancelAndFinishNow() }
-+        }
-+    }
-+
-+    init(locales: [Locale]) {
-+        self.locales = locales
-+    }
-+
-+    /// The languages to listen for with this engine, or nil when one of them can't be (not
-+    /// supported, or not installed on this Mac): MacDictation listens then, as before.
-+    static func locales(for language: String) async -> [Locale]? {
-+        guard SpeechTranscriber.isAvailable else { return nil }
-+        let wanted = language == MacDictation.automatic ? MacDictation.automaticLocales() : [Locale(identifier: language)]
-+        guard !wanted.isEmpty else { return nil }
-+        let installed = Set(await SpeechTranscriber.installedLocales.map { $0.identifier(.bcp47) })
-+        var out: [Locale] = []
-+        for locale in wanted {
-+            guard let match = await SpeechTranscriber.supportedLocale(equivalentTo: locale),
-+                  installed.contains(match.identifier(.bcp47)) else { return nil }
-+            out.append(match)
-+        }
-+        return out
-+    }
-+
-+    // MARK: Start / finish
-+
-+    @MainActor func start() async {
-+        guard !isRecording, !locales.isEmpty, awa
-```
-
-**File**: `NotchBuddy/Sources/App/AppDelegate.swift` (modified, +1/-0)
-```diff
-@@ -375,6 +375,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
-         ClaudeDesktopChatWatcher.shared.start()
-         #endif
-         CryptoController.shared.start()
-+        CoucoudoroController.shared.start()
-         PortfolioController.shared.start()
-     }
- }
-```
-
-**File**: `NotchBuddy/Sources/App/AppReview.swift` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+import SwiftUI
-+#if APPSTORE
-+import StoreKit
-+#endif
-+
-+/// The App Store build asks for a review after a good moment: a Claude Code session that
-+/// finished, the 8th one at least, never in the first three days, once per version
-+/// (ReviewPolicy). The request is Apple's own: macOS decides whether it shows, at most three
-+/// times a year, and never to someone who turned it off. The GitHub build never asks.
-+@MainActor
-+enum AppReview {
-+    static func noteFinished() {
-+        #if APPSTORE
-+        guard ReviewPolicy.note(needed: ReviewPolicy.macMoments) else { return }
-+        // Once the finished card has had its moment.
-+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-+            appendAppLog("nb.log", "[Review] asking for an App Store review")
-+            NotificationCenter.default.post(name: .askAppReview, object: nil)
-+        }
-+        #endif
-+    }
-+}
-+
-+extension Notification.Name {
-+    static let askAppReview = Notification.Name("notchBuddy.askAppReview")
-+}
-+
-+/// On the island's root view: the request needs a SwiftUI view on screen to come from.
-+struct AppReviewAsker: ViewModifier {
-+    #if APPSTORE
-+    @Environment(\.requestReview) private var requestReview
-+    #endif
-+
-+    func body(content: Content) -> some View {
-+        #if APPSTORE
-+        content.onReceive(NotificationCenter.default.publisher(for: .askAppReview)) { _ in requestReview() }
-+        #else
-+        content
-+        #endif
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `cd15b127` (2026-11-06)
-**Commit Message**: CHANGELOG: Windows and Linux 0.6.0 gets the new session and the drop on a session
+- phone_relay_status carries `shown`; Settings → Android phone inserts the block only when it is set.
+- docs/RELAY_DEPLOY.md says how to start Coucou with the variable; CHANGELOG notes it.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +2/-1)
 ```diff
-@@ -28,6 +28,8 @@ Fixes:
- 
- ## Windows and Linux 0.6.0 — Unreleased
- 
-+- **Start a Claude Code session from the island** — the terminal tab in the island's header: pick the project (the folders your sessions ran in, or any folder), say what Claude should do, and your terminal opens there with Claude Code and your words. Windows Terminal or PowerShell on Windows; your own terminal on Linux. The prompt is never written into a command line
-+- **Drop a file on a session** — drag a file over the island and let go on one of the sessions listed on the right of the drop card: its window comes forward and the file's path lands in its prompt
+@@ -31,6 +31,7 @@ Fixes:
+ - **Start a Claude Code session from the island** — the terminal tab in the island's header: pick the project (the folders your sessions ran in, or any folder), say what Claude should do, and your terminal opens there with Claude Code and your words. Windows Terminal or PowerShell on Windows; your own terminal on Linux. The prompt is never written into a command line
+ - **Drop a file on a session** — drag a file over the island and let go on one of the sessions listed on the right of the drop card: its window comes forward and the file's path lands in its prompt
  - **Approve Antigravity commands from the island** *(optional)* — the Mac's setting comes to Windows and Linux: turn on Settings → Agents → Antigravity → **Approve commands from the notch**, and a shell command that none of your Antigravity rules covers waits for you on the approval card: **Allow**, **Deny**, or **Reply in terminal** for Antigravity's own prompt. Commands your rules allow or deny are left to Antigravity, and with no answer in 2 min, or Coucou closed, Antigravity asks in its terminal as before. Reinstall the Antigravity hooks once, then restart Antigravity: its command hook now waits up to 2 min
++- **Relay settings for testers** — the *Away from home Wi-Fi* block in Settings → Android phone stays hidden until a relay is ready for everyone, but now shows when Coucou starts with `COUCOU_RELAY_SETTINGS=1` (or when a relay is already on), so the Android relay link can be tested; how in [docs/RELAY_DEPLOY.md](docs/RELAY_DEPLOY.md)
  - **Approve OpenCode from the island** — OpenCode's permission requests get Allow and Deny on the island; with no click, OpenCode asks as usual (#442 by @ValentinoMartz)
  - **A card answered in the terminal goes away** — allow or deny in the terminal (or Claude's app) and the island's card closes by itself (#740 by @arnavaggarwal-dev)
+ - **Flow: one press starts hands-free** (#1063 by @Brezinben)
+@@ -53,7 +54,7 @@ Fixes:
+ ## Android 0.5.0 — Unreleased
+ 
+ - **Coucou for Android 0.5.0**, by @Rhytam23 (versionCode 5)
+-  - **A steadier link through your own relay** — the connection no longer drops after a quiet moment (from #554 by @rollecode), and the phone reconnects at once when the computer comes back instead of waiting on a dead connection (from #1041 by @lazarevtill)
++  - **A steadier link through your own relay** — the connection no longer drops after a quiet moment (from #554 by @rollecode), and the phone reconnects at once when the computer comes back instead of waiting on a dead connection (from #1041 by @lazarevtill). The relay settings are still hidden on Windows and Linux, so this is for testers for now (see Windows and Linux 0.6.0)
+   - **Swipe the island up to put it away** — it goes back into the camera hole and stays there while the same thing goes on (the same agent working, the same request); anything new brings it back down. TalkBack has a *Dismiss the island* action for it
+   - **Nothing is lost with the swipe** — a finish, an error, a usage limit or a question becomes a quiet notification, and a permission request keeps its own notification with Deny and Allow
+   - **Hide the island in Do Not Disturb** *(optional, off by default)* — Settings → **Hide the island in Do Not Disturb**: while the phone is in Do Not Disturb, nothing drops from the top of the screen; requests still arrive as notifications, which Android handles by its own Do Not Disturb rules
+```
+
+**File**: `docs/RELAY_DEPLOY.md` (modified, +4/-0)
+```diff
+@@ -44,6 +44,10 @@ Notes:
+ 
+ ## 2. Set up the computer (Windows or Linux)
+ 
++The **Away from home Wi-Fi** block is hidden in Settings until a relay is ready for everyone. To see it, quit Coucou and start
++it with `COUCOU_RELAY_SETTINGS=1`: in PowerShell, `$env:COUCOU_RELAY_SETTINGS="1"` then start Coucou from that window; on Linux, from a terminal,
++`COUCOU_RELAY_SETTINGS=1 coucou` (or the path to the AppImage instead of `coucou`). Once the relay is turned on, the block stays visible without it.
++
+ 1. Settings > **Android phone**. Turn **Phone link** on.
+ 2. In the block **Away from home Wi-Fi**:
+    - **Relay address**: `wss://coucou-link.<your-name>.workers.dev` (it must start with `wss://`), press **Save address**.
+```
+
+**File**: `windows/src-tauri/src/phone_link/mod.rs` (modified, +9/-0)
+```diff
+@@ -390,6 +390,14 @@ pub struct RelayStatus {
+     /// An access key is stored. The key itself is never sent back to the window.
+     pub has_access: bool,
+     pub state: relay_client::State,
++    /// The "Away from home Wi-Fi" block is shown in Settings. It stays hidden until a relay is ready to use, except for
++    /// testers who start Coucou with `COUCOU_RELAY_SETTINGS=1`, and for a relay that is already turned on.
++    pub shown: bool,
++}
++
++/// Testers start Coucou with `COUCOU_RELAY_SETTINGS=1` to see the relay settings (docs/RELAY_DEPLOY.md).
++fn relay_settings_for_testers() -> bool {
++    std::env::var("COUCOU_RELAY_SETTINGS").map(|v| v == "1").unwrap_or(false)
+ }
+ 
+ fn relay_status_of(link: &PhoneLink, shared: &Shared) -> RelayStatus {
+@@ -399,6 +407,7 @@ fn relay_status_of(link: &PhoneLink, shared: &Shared) -> RelayStatus {
+         url: s.phone_relay_url.clone(),
+         has_access: relay_client::access_key(&*link.store).is_some(),
+         state: link.relay.lock().unwrap().as_ref().map_or(relay_client::State::Off, |h| h.state()),
++        shown: relay_settings_for_testers() || s.phone_relay,
+     }
+ }
+ 
+```
+
+**File**: `windows/src/core/bridge.ts` (modified, +2/-0)
+```diff
+@@ -55,6 +55,8 @@ export interface PhoneRelayStatus {
+   url: string;
+   hasAccess: boolean;
+   state: PhoneRelayState;
++  /** The relay settings are shown: for testers (COUCOU_RELAY_SETTINGS=1), or when a relay is already on. */
++  shown: boolean;
+ }
+ 
+ /** Session details for the phone: the switch (off by default). */
+```
+
+**File**: `windows/src/settings/phone.ts` (modified, +12/-5)
+```diff
+@@ -11,10 +11,17 @@ import { t } from "../i18n/i18n";
+ type Toggle = (on: boolean, onChange: (v: boolean) => void) => HTMLElement;
+ 
+ /**
+- * The relay block ("Away from home Wi-Fi") is hidden until a relay is ready to use: the code and its tests stay, and
+- * turning this on shows it again. Nothing else changes.
++ * The relay block ("Away from home Wi-Fi") is hidden until a relay is ready to use: the code and its tests stay.
++ * Testers who start Coucou with COUCOU_RELAY_SETTINGS=1 see it (docs/RELAY_DEPLOY.md), and so does anyone whose relay
++ * is already on. Nothing else changes.
+  */
+-const SHOW_RELAY_SETTINGS = false;
++function relaySlot(makeToggle: Toggle, refreshPairing: () => void): HTMLElement {
++  const slot = h("div", {});
++  void Bridge.phoneRelayStatus().then((status) => {
++    if (status?.shown) slot.replaceWith(relayBlock(makeToggle, refreshPairing));
++  });
++  return slot;
++}
+ 
+ export function phoneSection(on: boolean, makeToggle: Toggle, settings: Settings): HTMLElement {
+   const detail = h("div", {});
+@@ -64,7 +71,7 @@ export function phoneSection(on: boolean, makeToggle: Toggle, settings: Settings
+       h("div", { class: "hint", text: t("The phone connects to {address}", { address }) }),
+       h("div", { class: "hint", text: t("If Windows asks about the firewall, allow Coucou on private networks. The phone and this computer must be on the same Wi-Fi.") }),
+       h("div", { class: "hint", text: t("Your phone finds this computer again by itself when the network changes. It is announced on your local network only while this switch is on. Some hotspots and guest networks block this.") }),
+-      ...(SHOW_RELAY_SETTINGS ? [relayBlock(makeToggle, () => void refreshPairing())] : []),
++      relaySlot(makeToggle, () => void refreshPairing()),
+       detailsBlock(makeToggle),
+       answersBlock(makeToggle),
+       diffsBlock(makeToggle),
+@@ -138,7 +145,7 @@ function relayBlock(makeToggle: Toggle, changed: () => void): HTMLElement {
+   const state = h("div", { class: "hint" });
+   const address = h("input", { type: "text", placeholder: "wss://", style: "width:100%", autocomplete: "off", spellcheck: "false" }) as HTMLInputElement;
+   const access = h("input", { type: "password", style: "width:100%", autocomplete: "off", spellcheck: "false" }) as HTMLInputElement;
+-  let current: PhoneRelayStatus = { enabled: false, url: "", hasAccess: false, state: "off" };
++  let current: PhoneRelayStatus = { enabled: false, url: "", hasAccess: false, state: "off", shown: true };
+ 
+   const show = (status: PhoneRelayStatus | null) => {
+     if (!status) return;
+```
+
+**File**: `windows/tests/phone-relay.test.mjs` (modified, +11/-0)
+```diff
+@@ -33,3 +33,14 @@ test("the bridge never asks Rust for the access key", () => {
+   assert.match(status.slice(0, 400), /hasAccess: boolean/);
+   assert.ok(!/access: string/.test(status.slice(0, 400)));
+ });
++
++test("the relay block shows only for testers (COUCOU_RELAY_SETTINGS=1) or when a relay is already on", () => {
++  const src = readFileSync(new URL("../src/settings/phone.ts", import.meta.url), "utf8");
++  assert.ok(!/SHOW_RELAY_SETTINGS/.test(src), "no hard-coded switch left");
++  const slot = src.slice(src.indexOf("function relaySlot"), src.indexOf("export function phoneSection"));
++  assert.match(slot, /status\?\.shown/);
++  assert.match(src, /relaySlot\(makeToggle/);
++  const rust = readFileSync(new URL("../src-tauri/src/phone_link/mod.rs", import.meta.url), "utf8");
++  assert.match(rust, /env::var\("COUCOU_RELAY_SETTINGS"\)\.map\(\|v\| v == "1"\)\.unwrap_or\(false\)/);
++  assert.match(rust, /shown: relay_settings_for_testers\(\) \|\| s\.phone_relay/);
++});
+```
+
+---
+
+### Incident Patch 2: `fd056232` (2026-10-24)
+**Commit Message**: Relay link: keep reading after the handshake without its timeout, and forward frames in order in the Node twin (#19, from PR #554 by rollecode)
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `android/app/src/main/kotlin/com/coucou/android/link/RelayLink.kt` (modified, +2/-0)
+```diff
+@@ -88,6 +88,8 @@ class RelayConnector(
+         }
+         try {
+             val session = handshake(ws, key)
++            // The stream keeps its own read timeout; the handshake's would end it after any quiet stretch.
++            ws.setReadTimeout(0)
+             issue = RelayIssue.NONE
+             return RelayStreamSocket(ws, session)
+         } catch (e: Throwable) {
+```
+
+**File**: `android/app/src/test/kotlin/com/coucou/android/link/RelayConnectorTest.kt` (modified, +13/-0)
+```diff
+@@ -276,6 +276,19 @@ class RelayConnectorTest {
+         assertTrue(s.isClosed)
+     }
+ 
++    @Test fun aQuietStretchAfterTheHandshakeDoesNotEndTheStream() {
++        val f = Fake()
++        val s = connectorFor(f, resendMs = 150).connect(2_000)
++        try {
++            f.awaitSession()
++            Thread.sleep(400) // longer than the handshake waited for each answer
++            f.sendLine("{\"type\":\"welcome\"}")
++            assertEquals("{\"type\":\"welcome\"}", readLine(s))
++        } finally {
++            s.close()
++        }
++    }
++
+     @Test fun aLineOverTheLimitCannotBeSent() {
+         val f = Fake()
+         val s = connectorFor(f).connect(2_000)
+```
+
+**File**: `android/relay/tests/behaviour.ts` (modified, +13/-0)
+```diff
+@@ -124,6 +124,19 @@ export function behaviour(name: string, make: () => Promise<Harness>) {
+       expect(got.kind === "binary" && got.data.length).toBe(66_000);
+     });
+ 
++    it("forwards a burst in the order it was sent", async () => {
++      const { pc, phone } = await pair();
++      // Under the rate burst (60); frames of different sizes, as a conversation sends them.
++      const count = 50;
++      for (let i = 0; i < count; i++) phone.send(new Uint8Array(1 + ((i * 7919) % 40_000)).fill(i));
++      const order: number[] = [];
++      for (let i = 0; i < count; i++) {
++        const m = await pc.next(5000);
++        if (m.kind === "binary") order.push(m.data[0]);
++      }
++      expect(order).toEqual(Array.from({ length: count }, (_, i) => i));
++    });
++
+     it("closes a socket that sends a frame over 66,000 bytes (1009)", async () => {
+       const { pc, phone } = await pair();
+       phone.send(new Uint8Array(66_001));
+```
+
+**File**: `android/relay/tools/dev-relay.ts` (modified, +6/-1)
+```diff
+@@ -96,7 +96,7 @@ export async function startRelay(options: { port?: number; host?: string; access
+         peer.ws.send(PEER_ONLINE);
+       }
+ 
+-      ws.on("message", async (data, isBinary) => {
++      const onMessage = async (data: WebSocket.RawData, isBinary: boolean) => {
+         if ((await accessGeneration(accessKey)) !== me.gen || !me.gen) return ws.close(1008, "access key changed");
+         if (!isBinary) {
+           if (data.toString() === "ping") return ws.send("pong"); // the platform's auto-response in the Worker
+@@ -108,6 +108,11 @@ export async function startRelay(options: { port?: number; host?: string; access
+         const other = room[otherRole(me.role)];
+         if (!other || other.replaced || other.ws.readyState !== other.ws.OPEN) return ws.send(PEER_OFFLINE);
+         other.ws.send(frame, { binary: true });
++      };
++      // One message at a time: the await above would otherwise let a burst overtake itself, which the Worker never does.
++      let turn: Promise<void> = Promise.resolve();
++      ws.on("message", (data, isBinary) => {
++        turn = turn.then(() => onMessage(data, isBinary)).catch(() => {});
+       });
+ 
+       const left = () => {
+```
+
+---
+
+### Incident Patch 3: `1a61b5e5` (2026-11-11)
+**Commit Message**: Release prep: Mac 0.6.0 (build 26)
+
+- project.yml and Info.plist: 0.6.0, build 26.
+- CHANGELOG: 0.6.0 dated November 12, 2026.
+- README: 0.6.0 row in the Versions table.
+- What's new 0.6.0 was already in whats-new.json (16 languages).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ # Changelog
+ 
+-## 0.6.0 — Unreleased
++## 0.6.0 — November 12, 2026
+ 
+ - **Start a Claude Code session from the notch** *(GitHub build)* — the terminal tab in the island's header, or ⌃⌥N: pick the project (the folders your sessions ran in, or any folder), type or dictate what Claude should do, and your terminal opens there with Claude Code and your words. Terminal, iTerm2, Ghostty, kitty, WezTerm and Alacritty; the prompt is never written into a command line
+ - **Drop a file on a session** *(GitHub build)* — drag a file over the notch (a ⌘⇧2 thumbnail, a capture, anything from Finder) and let go on one of the sessions listed on the right of the drop card: its terminal comes forward and the file lands in its prompt, as if dropped on the terminal itself
+```
+
+**File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
+```diff
+@@ -36,9 +36,9 @@
+ 	<key>CFBundlePackageType</key>
+ 	<string>APPL</string>
+ 	<key>CFBundleShortVersionString</key>
+-	<string>0.5.8</string>
++	<string>0.6.0</string>
+ 	<key>CFBundleVersion</key>
+-	<string>25</string>
++	<string>26</string>
+ 	<key>LSUIElement</key>
+ 	<true/>
+ 	<key>NSAccessibilityUsageDescription</key>
+```
+
+**File**: `NotchBuddy/project.yml` (modified, +2/-2)
+```diff
+@@ -140,8 +140,8 @@ targets:
+         CFBundleName: Coucou
+         CFBundleDisplayName: Coucou
+         CFBundleIdentifier: fr.louisraille.NotchBuddy
+-        CFBundleVersion: "25"
+-        CFBundleShortVersionString: "0.5.8"
++        CFBundleVersion: "26"
++        CFBundleShortVersionString: "0.6.0"
+         CFBundlePackageType: APPL
+         LSUIElement: YES
+         NSHighResolutionCapable: YES
+```
+
+**File**: `README.md` (modified, +1/-0)
+```diff
+@@ -151,6 +151,7 @@ macOS releases are published as `v*` tags. See [CHANGELOG.md](CHANGELOG.md) for
+ 
+ | Version | Date | Highlights |
+ |---------|------|------------|
++| [0.6.0](https://github.com/Louis-CFM/coucou/releases/tag/v0.6.0) | Nov 12, 2026 | Start a Claude Code session from the notch, drop a file on a session, ⌘⇧2 screenshot copied, approve Antigravity commands, Android phone link, Coucoudoro |
+ | [0.5.8](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.8) | Oct 31, 2026 | Fixes by @Ohualtex: approvals and questions stay put, desktop Mochi stays visible, dropped files no longer overwrite each other |
+ | [0.5.7](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.7) | Oct 31, 2026 | Mail in the notch: search, filters, reading, automatic sorting with rules and Undo, mail plans from the chat; search the settings; Coucou in a corner of the screen |
+ | [0.5.6](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.6) | Oct 30, 2026 | Chat on your own AI subscription (Claude Code, Antigravity, Gemini CLI, Codex, Cursor, Copilot), switched on in Settings → Chat; Korean and Japanese |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1092** (2026-11-12): Windows and Linux: show the relay settings to testers (@Louis-CFM)
+- **PR #1090** (2026-11-12): Windows and Linux: Flow can hide the pill until you dictate (@Rhytam23)
+- **PR #1089** (2026-11-12): Android 0.5.0: swipe the island away, Do Not Disturb, six more languages, a steadier relay link (@Rhytam23)
+- **PR #1088** (2026-11-11): Release prep: Mac 0.6.0 (@Louis-CFM)
+- **PR #1085** (closed): feat: initialize ml7a Windows app and complete Milestone 1 (@marceleno1717)
 - **PR #1082** (closed): Worktree nexisland plan (@Snzy09)
-- **PR #1075** (2026-11-06): Coucou 0.6 (work in progress) (@Louis-CFM)
-- **PR #1070** (2026-11-06): Windows: WhatsApp's ↗ opens WhatsApp Desktop, at the open chat (@Joshuabarradas234)
-- **PR #1066** (2026-11-06): Mac: ⌘⇧2 takes the whole screen, copied, with a thumbnail to drag (@Louis-CFM)
-- **PR #1063** (2026-11-06): Flow: one press of the key starts hands-free (@Brezinben)
-- **PR #1062** (2026-11-06): Open terminal: select the session's pane in herdr (@Brezinben)
 
 ---
 
@@ -2814,78 +2131,29 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 0.6: small fixes on merged pull requests
+## X. Windows and Linux: show the relay settings to testers
 
 **RULE**:
-When implementing operations in `NotchBuddy/Resources/Localizable.xcstrings`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `56a4f76d`: 0.6: small fixes on merged pull requests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6bc221c7`: Windows and Linux: show the relay settings to testers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `NotchBuddy/Resources/Localizable.xcstrings`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "كما سُمع"
-          }
-        },
-        "bn" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "যেমন শোনা গেছে"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wie gehört"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tal como se oyó"
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "जैसा सुना गया"
-          }
-        },
-        "id" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seperti yang terdengar"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "聞き取ったまま"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Como foi ouvido"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "tr
+- **Relay settings for testers** — the *Away from home Wi-Fi* block in Settings → Android phone stays hidden until a relay is ready for everyone, but now shows when Coucou starts with `COUCOU_RELAY_SETTINGS=1` (or when a relay is already on), so the Android relay link can be tested; how in [docs/RELAY_DEPLOY.md](docs/RELAY_DEPLOY.md)
+  - **A steadier link through your own relay** — the connection no longer drops after a quiet moment (from #554 by @rollecode), and the phone reconnects at once when the computer comes back instead of waiting on a dead connection (from #1041 by @lazarevtill). The relay settings are still hidden on Windows and Linux, so this is for testers for now (see Windows and Linux 0.6.0)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  - **A steadier link through your own relay** — the connection no longer drops after a quiet moment (from #554 by @rollecode), and the phone reconnects at once when the computer comes back instead of waiting on a dead connection (from #1041 by @lazarevtill)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `56a4f76d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6bc221c7` are properly handled with clean fallback behavior.

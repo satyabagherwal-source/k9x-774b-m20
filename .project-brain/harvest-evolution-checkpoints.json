@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T03:48:36.527Z",
+  "last_updated": "2026-11-13T03:56:42.826Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T01:31:37.311Z",
@@ -123,7 +123,7 @@
       "staged_for_review": 1
     },
     "apache-arrow-learnings.md": {
-      "processed_at": "2026-11-11T10:09:35.579Z",
+      "processed_at": "2026-11-13T03:56:27.027Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1506,9 +1506,19 @@
       "processed_at": "2026-11-13T03:48:36.419Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-lodestones-kromoss-learnings.md": {
+      "processed_at": "2026-11-13T03:56:42.669Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "louis-cfm-coucou-learnings.md": {
+      "processed_at": "2026-11-13T03:56:42.697Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 441,
-  "total_canonical_promoted": 55,
-  "total_staged_for_review": 384
+  "total_dossiers_evaluated": 444,
+  "total_canonical_promoted": 56,
+  "total_staged_for_review": 386
 }

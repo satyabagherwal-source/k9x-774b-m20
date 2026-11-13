@@ -9328,3 +9328,8 @@ Every entry in this ledger must capture:
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `548e19a3` | Multi-dimensional audit evidence | 2026-11-13T03:48:17.481Z |
 | `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `6cd9c5b8` | Multi-dimensional audit evidence | 2026-11-13T03:48:27.003Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `d667ec05` | Multi-dimensional audit evidence | 2026-11-13T03:48:27.708Z |
+| `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-13T03:55:59.578Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `6726080d` | Multi-dimensional audit evidence | 2026-11-13T03:56:09.994Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `dd619adc` | Multi-dimensional audit evidence | 2026-11-13T03:56:15.663Z |
+| `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `15cc178d` | Multi-dimensional audit evidence | 2026-11-13T03:56:21.331Z |
+| `learn-dom-d-fe04d8fe` | `project://hf-lodestones-kromoss` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md` | 2026-11-13T03:56:42.669Z |

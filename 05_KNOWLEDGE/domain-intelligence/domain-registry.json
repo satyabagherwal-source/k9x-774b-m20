@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T03:32:06.694Z",
-  "total_records": 88,
+  "last_updated": "2026-11-13T03:56:42.667Z",
+  "total_records": 89,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 47,
+      "total": 48,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -72,7 +72,8 @@
         "DOM-D-8804A7F5",
         "DOM-D-2C1C9237",
         "DOM-D-B0538309",
-        "DOM-D-27F43F41"
+        "DOM-D-27F43F41",
+        "DOM-D-FE04D8FE"
       ]
     },
     "E": {
@@ -3613,6 +3614,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T03:32:06.692Z"
+    },
+    "DOM-D-FE04D8FE": {
+      "record_id": "DOM-D-FE04D8FE",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): lodestones/Kromoss",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/lodestones/Kromoss](https://huggingface.co/lodestones/Kromoss))  \n> **Source Version**: `hf-lodestone`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "cee5cdef5065264371e2e3d66ea6f7a89a8d839a01e68f23a728ab98f1e12c1b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-lodestones-kromoss/hf-lodestones-kromoss-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T03:56:27.115Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-lodestones-kromoss)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-lodestones-kromoss"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T03:56:42.664Z"
     }
   }
 }

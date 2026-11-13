@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-VEOU",
-    "timestamp": "2026-11-09T18:11:38.142Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "4bc21bf972095bbc9523e3a154fefe8471cf2b902ccc39ef16a226ea7a18bc24",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-1HJV",
-    "timestamp": "2026-11-09T18:16:21.787Z",
-    "repository": "Dicklesworthstone/destructive_command_guard",
-    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "421ec89624cc4c71057f91f562a1f3e3c13386efa4154c6da2d6c2f01e665e17",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-3MN1",
-    "timestamp": "2026-11-09T21:05:59.389Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "132ab0185028c2d92583c72e7ddda398dae0bcb1a121804177105ea5a811ab0c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-3PF9",
-    "timestamp": "2026-11-09T21:06:02.997Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "c2bf03f482ce2f2ccd207be8acc410b6374d1619d285aa7ce070ef089f64af6c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-UR5I",
     "timestamp": "2026-11-09T21:27:04.950Z",
     "repository": "ydb-platform/ydb",
@@ -7490,6 +7430,66 @@
     "repository": "moby/buildkit",
     "learningId": "learn-github-moby-buildkit",
     "contentHash": "cb4b786957dd2966cf56883abee56463569fa541c7f947c9f4bceba784bc3638",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-2G9I",
+    "timestamp": "2026-11-13T03:55:59.574Z",
+    "repository": "lodestones/Kromoss",
+    "learningId": "learn-huggingface-lodestones-kromoss",
+    "contentHash": "dfa722cba28fc0f98492c2c70f51ee302d7e7debda7a652f6c7328901a87bdea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-2OAS",
+    "timestamp": "2026-11-13T03:56:09.988Z",
+    "repository": "higress-group/higress",
+    "learningId": "learn-github-higress-group-higress",
+    "contentHash": "1401b4d374d6a269bde16e0f5410e6faa0f14cab9db1802dbbd47a04c01db566",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-2SO9",
+    "timestamp": "2026-11-13T03:56:15.657Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "e093b4e45072efd989690fc7197e3cb5c567570c0eb9254b8b5dfbd01e88e810",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-2X1P",
+    "timestamp": "2026-11-13T03:56:21.325Z",
+    "repository": "Louis-CFM/coucou",
+    "learningId": "learn-github-louis-cfm-coucou",
+    "contentHash": "9d9e473dd3face7170f75ea177272885af79fd6246946b57a4417645075cf420",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

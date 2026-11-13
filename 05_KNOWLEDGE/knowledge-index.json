@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T03:48:27.583Z",
+  "last_updated": "2026-11-13T03:56:21.177Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2482,8 +2482,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "976779b2",
-      "content_hash": "6923469fc70e78aaeae0e14896ca4924e758f78f1e503e4743f3fa374dcf9db4",
+      "source_version": "dd619adc",
+      "content_hash": "e093b4e45072efd989690fc7197e3cb5c567570c0eb9254b8b5dfbd01e88e810",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -2505,6 +2505,11 @@
         {
           "number": null,
           "title": "GH-55277: [C++][Gandiva] Fix stack overflow in decimal evaluation with JIT optim",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "GH-51482: [R] allow building with shared snappy (#51490)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2563,7 +2568,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:08:18.290Z",
+      "verified_at": "2026-11-13T03:56:15.380Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35864,8 +35869,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "f0260049",
-      "content_hash": "79c87ef277ca63e1510c6971ec93e9812d48297f21ba0d3b36ead6264b484c3a",
+      "source_version": "6726080d",
+      "content_hash": "1401b4d374d6a269bde16e0f5410e6faa0f14cab9db1802dbbd47a04c01db566",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -35930,7 +35935,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T18:54:54.099Z",
+      "verified_at": "2026-11-13T03:56:09.646Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42463,14 +42468,19 @@
       "slug": "louis-cfm-coucou",
       "platform": "github",
       "source_url": "https://github.com/Louis-CFM/coucou",
-      "source_version": "b1bc09de",
-      "content_hash": "d8d5400aeac1edab2e74a62f31964fba2dd60abf95b126acff369ce544a3ba1e",
+      "source_version": "15cc178d",
+      "content_hash": "9d9e473dd3face7170f75ea177272885af79fd6246946b57a4417645075cf420",
       "dossier_path": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "6: small fixes on merged pull requests",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Windows and Linux: show the relay settings to testers",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -42499,7 +42509,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T20:53:01.484Z",
+      "verified_at": "2026-11-13T03:56:21.138Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -127362,7 +127372,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/Kromoss",
       "source_version": "hf-lodestones-kromoss",
-      "content_hash": "f23353bdbe11efecbb7747f6c710a16bb8e0574a52a126fdbdab558a72311c30",
+      "content_hash": "dfa722cba28fc0f98492c2c70f51ee302d7e7debda7a652f6c7328901a87bdea",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
       "promoted_rules": [
@@ -127427,7 +127437,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:45:05.024Z",
+      "verified_at": "2026-11-13T03:55:59.438Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
