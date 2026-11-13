@@ -9376,3 +9376,5 @@
 | `CYCLE-20261113-L5PN` | `2026-11-13T06:58:30.059Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`efb445f7...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T06:58:48.895Z` | `hf-ornith-ai-ornith-1.5-122b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-552AF493` [Domain D] | Yes (`226a0d4c...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T06:59:10.944Z` | `beclab-olares` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-414482D7` [Domain H] | Yes (`65359d6a...`) |
+| `CYCLE-20261113-VCXX` | `2026-11-13T07:06:25.989Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md` | Yes (`779c4b17...`) |
+| `CYCLE-20261113-VV4Z` | `2026-11-13T07:06:49.571Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e9a7f8e6...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T06:59:11.030Z",
+  "last_updated": "2026-11-13T07:06:53.433Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T05:23:59.465Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-13T05:52:03.048Z",
+      "processed_at": "2026-11-13T07:06:53.362Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -608,7 +608,7 @@
       "staged_for_review": 1
     },
     "slatedb-slatedb-learnings.md": {
-      "processed_at": "2026-11-12T00:58:53.202Z",
+      "processed_at": "2026-11-13T07:06:53.334Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1611,9 +1611,14 @@
       "processed_at": "2026-11-13T06:58:48.896Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md": {
+      "processed_at": "2026-11-13T07:06:53.306Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 486,
+  "total_dossiers_evaluated": 489,
   "total_canonical_promoted": 70,
-  "total_staged_for_review": 413
+  "total_staged_for_review": 416
 }

@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "9aedb400",
+    "sourceVersion": "e19ff24f",
     "license": "Apache-2.0",
-    "contentHash": "a4ec99c1335af934d00a7c3d06197879487c2a7354082964722c995c8b7c8b7d",
-    "lastHarvestedAt": "2026-11-12T00:58:47.006Z",
+    "contentHash": "e9a7f8e66a68b2716865b1fefbd929c74c73b4633ec093fc9d52ba411d5f6e38",
+    "lastHarvestedAt": "2026-11-13T07:06:49.574Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -10675,8 +10675,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
     "sourceVersion": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "8f0c76644da0c554b155b971c19fc4c364ed8a60ca8b6b5034c32d8bf3444f2c",
-    "lastHarvestedAt": "2026-11-08T05:48:11.838Z",
+    "contentHash": "779c4b17b447f06da2eb8476c3f3b8eee8901bb3c258db6f9d5831a9173a9897",
+    "lastHarvestedAt": "2026-11-13T07:06:25.992Z",
     "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf"
   },
   "makecindy-cindy": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `9aedb400`  
+> **Source Version**: `e19ff24f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T00:58:32.922Z  
+> **Timestamp**: 2026-11-13T07:06:39.848Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T00:58:32.912Z  
+> **Harvest Timestamp**: 2026-11-13T07:06:39.842Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3640 stars
+- **Stars / Engagement**: 3641 stars
 
 ---
 
@@ -2346,162 +2346,185 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3492ae1b` (2026-11-11)
-**Commit Message**: Share one clock in compactor test fixture (#2250)
+### Incident Patch 1: `e19ff24f` (2026-11-12)
+**Commit Message**: Support clone when using object store mirror (#2243)
 
-**File**: `slatedb/src/compactor.rs` (modified, +8/-6)
+**File**: `rfcs/0034-local-object-mirroring.md` (modified, +33/-1)
 ```diff
-@@ -5168,11 +5168,14 @@ mod tests {
-             let compactor_options = Arc::new(compactor_options());
-             let worker_options = Arc::new(CompactionWorkerOptions::default());
-             let options = db_options(None);
-+            // Share a clock so output SST timestamps cannot precede their compaction job timestamps.
-+            let system_clock = Arc::new(DefaultSystemClock::new());
+@@ -650,7 +650,9 @@ error instead of `Mirror` for a `PutMode::Update` write:
  
-             let os = Arc::new(InMemory::new());
-             let (manifest_store, compactions_store, table_store) = build_test_stores(os.clone());
-             let db = Db::builder(PATH, os.clone())
-                 .with_settings(options.clone())
-+                .with_system_clock(system_clock.clone())
-                 .build()
-                 .await
-                 .unwrap();
-@@ -5195,7 +5198,7 @@ mod tests {
-                     rand: rand.clone(),
-                     stats: compactor_stats.clone(),
-                     worker_stats: stats::WorkerStats::new(&recorder, "test-worker"),
--                    clock: Arc::new(DefaultSystemClock::new()),
-+                    clock: system_clock.clone(),
-                     merge_operator: None,
-                     #[cfg(feature = "compaction_filters")]
-                     compaction_filter_supplier: None,
-@@ -5208,16 +5211,15 @@ mod tests {
-                 scheduler.clone(),
-                 rand.clone(),
-                 compactor_stats.clone(),
--                Arc::new(DefaultSystemClock::new()),
-+                system_clock.clone(),
-                 MetricsRecorderHelper::noop(),
-                 None,
-             )
-             .await
-             .unwrap();
--            let manifest =
--                StoredManifest::load(manifest_store.clone(), Arc::new(DefaultSystemClock::new()))
--                    .await
--                    .unwrap();
-+            let manifest = StoredManifest::load(manifest_store.clone(), system_clock)
-+                .await
-+                .unwrap();
-             Self {
-                 manifest,
-                 manifest_store,
+ | Call | Route |
+ |---|---|
+-| GET or PUT of `*.manifest` or `*.compactions` | `Observe` (error if the database root doesn't match) |
++| GET or PUT of `*.manifest` or `*.compactions` under the database root | `Observe` |
++| GET or PUT of `*.manifest` or `*.compactions` under a parent root (see [Clones](#clones)) | `Remote` |
++| GET or PUT of `*.manifest` or `*.compactions` under any other root | Error |
+ | Multipart upload of `*.manifest` or `*.compactions` | Error, because a multipart upload has no `Observe` route |
+ | Tagged compacted SST in a selected segment, with `tag.retry.is_some()` | `Refetch` |
+ | Tagged compacted SST in a selected segment | `Local` for reads, `Mirror` for writes |
+@@ -664,6 +666,7 @@ The policy keeps this state behind a mutex:
+   it sees.
+ - The ID of the newest manifest it has processed.
+ - `retained`: the SST paths that must not be evicted.
++- The parent roots: the paths in the `external_dbs` of the newest manifest.
+ - Decoded checkpoint manifests, cached by ID. Manifests are immutable, so these
+   never go stale.
+ 
+@@ -797,6 +800,31 @@ The mirror's [remote scan](#remote-scan) is the backstop. It handles SSTs that
+ were written locally and then lost before they were recorded in `.compactions`
+ or `.manifest` files. Manifest transitions can't discover such files.
+ 
++#### Clones
++
++A clone reads SSTs of its parent databases. Its manifest references them
++through `ExternalDb.sst_ids`, so the policy downloads, retains, and evicts
++them like the clone's own SSTs.
++
++The clone also reads and writes the manifests of its parents. The clone's
++garbage collector deletes the clone's final checkpoint in a parent when it
++detaches the clone. `Admin::delete_db` does the same for each parent. These
++calls take the `Remote` route. The policy does not observe a parent manifest,
++because the parent's SSTs are not the clone's SSTs. The clone's manifest
++already lists the parent SSTs to keep.
++
++When a newer manifest becomes current, the policy replaces the parent roots
++with the paths in its `external_dbs`. Detach deletes the parent checkpoint
++before it removes the `ExternalDb` entry. So the parent root is known for
++every parent call. Inherited entries stay in `external_dbs` while the clone
++references their SSTs, so a clone of a clone can also detach.
++
++Clones must be created with the wrapped store. Clone creation reads the
++parent manifest before the clone has a manifest. A new mirror would record
++the parent as its database root, and the write of the clone manifest would
++fail. The caller passes the wrapped store to `ObjectStoreMirror::builder`, so
++the caller has it.
++
+ #### Segment Support
+ 
+ Segment-based routing requires two changes:
+@@ -1158,6 +1186,10 @@ There is, however, an open question around the CPU cost of computing the MD5 pre
+ 
+ ## Updates
+ 
++- Added clone support to `SlateDbMirrorPolicy`. Manifest and `.compactions`
++  calls under a parent root in the newest manifest's `external_dbs` take the
++  `Remote` route instead of failing. This lets a mirrored clone detach from
++  its parents. Clones must still be created with the wrapped store.
+ - Aligned with the `SlateDbMirrorPolicy` implementation. The segment
+   predicate receives a `VersionedManifest` instead of `ManifestCore`, which is
+   crate-private. Added `with_compactions_poll_interval` and
 ```
 
----
-
-### Incident Patch 2: `9aedb400` (2026-11-11)
-**Commit Message**: Fix startup synchronization in writer fencing tests (#2253)
-
-**File**: `slatedb/src/fence.rs` (modified, +12/-13)
+**File**: `slatedb/src/admin.rs` (modified, +5/-0)
 ```diff
-@@ -147,8 +147,7 @@ mod tests {
-     use crate::wal::slatedb::store::{WalFileId, WalTableStore};
-     use crate::{CloseReason, Db, ErrorKind, Settings};
-     use bytes::Bytes;
--    use fail_parallel::fail_point_channel;
--    use fail_parallel::FailPointRegistry;
-+    use fail_parallel::{fail_point_channel, FailGuard, FailPointRegistry};
-     use object_store::memory::InMemory;
-     use object_store::path::Path;
-     use object_store::ObjectStore;
-@@ -251,15 +250,15 @@ mod tests {
-                 .build()
-                 .await
-                 .unwrap();
--            // wait for initial manifest poll using "manifest_refresh_count" stat
--            // so the db has settled before the test starts fencing it.
-+            // Wait for the replay validation refresh and the first timer poll.
-+            // The timer must finish its first poll before the test starts fencing.
-             for _ in 0..600 {
--                if lookup_metric(&recorder, MANIFEST_REFRESH_COUNT).unwrap_or(0) > 0 {
-+                if lookup_metric(&recorder, MANIFEST_REFRESH_COUNT).unwrap_or(0) >= 2 {
-                     return db;
-                 }
-                 tokio::time::sleep(Duration::from_millis(10)).await;
-             }
--            panic!("manifest writer did not perform initial poll");
-+            panic!("manifest writer did not complete both startup refreshes");
-         }
- 
-         async fn db(&self) -> Db {
-@@ -337,7 +336,7 @@ mod tests {
-                 );
-             } else {
-                 self.data.insert(k, v);
--                assert!(result.is_ok());
-+                assert!(result.is_ok(), "expected write to succeed, got {result:?}");
-             }
-         }
- 
-@@ -553,15 +552,15 @@ mod tests {
-         // write a wal file
-         h.put(&db, 0, false).await;
- 
--        // configure the fencer to pause
--        fail_parallel::cfg(h.fp_registry.clone(), case.event, "pause").unwrap();
-+        // Release the pause if an assertion fails, so runtime shutdown cannot hang.
-+        let pause = FailGuard::new(h.fp_registry.clone(), case.event, "pause").unwrap();
- 
-         // spawn WriterFencer on another task
-         let fencer = h.fencer.take().unwrap();
-         let stored_manifest = h.stored_manifest.take().unwrap();
-         let jh = tokio::task::spawn(async move { fencer.fence(stored_manifest, None).await });
--        // wait for fencer to load empty wal id and pause
--        h.event_rx.recv().await.unwrap();
-+        // Each failpoint sends an event, so wait for the configured pause.
-+        while h.event_rx.recv().await.unwrap() != case.event {}
- 
-         // write 2 new wal files to fenced db (write with await durable twice)
-         h.put(&db, 1, case.write_fenced).await;
-@@ -593,8 +592,8 @@ mod tests {
-             h.run_gc(replay_after_wal_id).await;
-         }
- 
--        // unpause WriterFencer
--        fail_parallel::cfg(h.fp_registry.clone(), case.event, "off").unwrap();
-+        // Resume the fencer.
-+        drop(pause);
-         // verify it returns successfully
-         let mut result = jh.await.unwrap().unwrap();
-         // The fencer's stale empty_wal_id was retried above the fenced writer's possibly
+@@ -820,6 +820,11 @@ impl Admin {
+     ///
+     /// Segmented sources only have to be non-overlapping within each segment that they share.
+     ///
++    /// If the databases use an [`ObjectStoreMirror`](slatedb_mirror::ObjectStoreMirror), build
++    /// this admin client with the wrapped store, not with a mirror, otherwise the
++    /// write of the clone manifest fails. See
++    /// [`SlateDbMirrorPolicy`](crate::SlateDbMirrorPolicy).
++    ///
+     /// # Examples
+     ///
+     /// ```
 ```
 
----
-
-### Incident Patch 3: `b547b9ab` (2026-11-11)
-**Commit Message**: Reduce build time for nightly pprof benchmarks (#2249)
-
-**File**: `.github/workflows/nightly.yaml` (modified, +4/-6)
+**File**: `slatedb/src/mirror_policy.rs` (modified, +210/-35)
 ```diff
-@@ -71,13 +71,11 @@ jobs:
+@@ -56,18 +56,14 @@ type SegmentPredicate = dyn Fn(&VersionedManifest, &[u8]) -> bool + Send + Sync;
+ /// A [`MirrorPolicy`] that mirrors the compacted SSTs of one SlateDB database.
+ ///
+ /// The policy serves one database. It records the root of that database from
+-/// the first manifest or `.compactions` object that it reads or writes. After
+-/// that, a read or write of a manifest or `.compactions` object under another
+-/// root fails, because the policy tracks the manifests of one database only.
+-/// This check does not apply to SSTs. The policy also mirrors the SSTs that
+-/// the manifest references under other roots, for example the SSTs of the
+-/// parent database after a clone.
++/// the first manifest or `.compactions` object that it reads or writes, and it
++/// tracks the manifests under that root only.
+ ///
+-/// The policy does not support cloning. Creating a clone and detaching a clone
+-/// from its parent both read and write the manifest of the parent database,
+-/// and the policy rejects that manifest because it is under another root. Use
+-/// the wrapped store to create clones and to run the garbage collector of a
+-/// clone, which does the detach.
++/// For a clone, the policy also mirrors the parent SSTs that the clone
++/// references. Calls for the manifests and `.compactions` objects of a parent
++/// go to the wrapped store. The parents are the databases in the
++/// `external_dbs` of the newest manifest. Create a clone with the wrapped
++/// store, not with a mirror. Then open the clone with its own mirror.
+ ///
+ /// ```no_run
+ /// # use std::sync::Arc;
+@@ -122,11 +118,13 @@ impl MirrorPolicy for SlateDbMirrorPolicy {
+         }
+         // A manifest or `.compactions` object is read from object storage.
+         // Then `observe` downloads the SSTs that SlateDB reads next, before
+-        // the caller gets the object. An object of a database other than the
+-        // first one fails.
++        // the caller gets the object. An object of a parent database is not
++        // observed. An object of any other database fails.
+         if let Some(root) = manifest_or_compactions_root(path) {
+-            self.record_or_check_root(&root)?;
+-            return Ok(ReadRoute::Observe);
++            return Ok(match self.classify_root(&root)? {
++                RootKind::Mirrored => ReadRoute::Observe,
++                RootKind::Parent => ReadRoute::Remote,
++            });
+         }
+         // WAL SSTs, compacted SSTs in segments that are not selected, and all
+         // other objects are read from object storage.
+@@ -154,9 +152,13 @@ impl MirrorPolicy for SlateDbMirrorPolicy {
+         // coordinator's `CompactionsStore`, which keeps the bytes of its own
+         // last write. So the worker gets that object without a GET, and only
+         // this write can download the output that the worker resumes from.
++        //
++        // An object of a parent database is not observed, as in `read_route`.
+         if let Some(root) = manifest_or_compactions_root(path) {
+-            self.record_or_check_root(&root)?;
+-            return Ok(WriteRoute::Observe);
++            return Ok(match self.classify_root(&root)? {
++                RootKind::Mirrored => WriteRoute::Observe,
++                RootKind::Parent => WriteRoute::Remote,
++            });
+         }
+         // All other objects are written to object storage only.
+         Ok(WriteRoute::Remote)
+@@ -314,6 +316,11 @@ impl SlateDbMirrorPolicy {
+                     // removes them.
+                     mirror.evict(state.retained.difference(&retained).cloned());
+                     state.retained = retained;
++                    state.parent_roots = versioned_manifest
++                        .external_dbs()
++                        .iter()
++                        .map(|external_db| Path::from(external_db.path.as_str()))
++                        .collect();
+                     state.newest = Some(Arc::clone(&versioned_manifest));
+                     state.checkpoints = checkpoints;
+                     to_download
+@@ -407,19 +414,21 @@ impl SlateDbMirrorPolicy {
+         newest.is_some_and(|newest| predicate(&newest, segment))
+     }
  
-       - name: Generate pprofs
-         env:
--          CARGO_PROFILE_BENCH_DEBUG: true
--          SLATE_BENCH_PROFILE: true
-+          # Keep source lines in profiles and reduce link time.
-+          CARGO_PROFILE_BENCH_DEBUG: line-tables-only
-+          CARGO_PROFILE_BENCH_LTO: thin
-         run: |
--          BENCHMARKS=$(cargo bench --no-run --message-format=json | jq -r 'select(.profile.test == true and (.target.kind | contains(["bench"]))) | .target.name' | sort -u)
--          for bench in $BENCHMARKS; do
--            cargo bench --bench $bench -- --profile-time 10
--          done
-+          cargo bench -p slatedb --benches -- --profile-time 10
-           find . -name "*.pb" -exec gzip {} \;
- 
-       # install instructions from https://github.com/polarsignals/pprofme/tree/main
+-    /// Records `root` as the database root, or fails if the policy already
+-    /// serves another root.
+-    fn record_or_check_root(&self, root: &Path) -> object_store::Result<()> {
++    /// Tells whether `root` is the mirrored database or one of its parents.
++    /// The first root becomes the mirrored database. Any other root fails.
++    fn classify_root(&self, root: &Path) -> object_store::Result<RootKind> {
+         let mut state = self.state.lock();
+         match &state.root {
+-            Some(known) if known != root => Err(policy_error(format!(
+-                "object is outside the mirrored database. root=`{root}`, mirrored_root=`{known}`"
+-            ))),
+-            Some(_) => Ok(()),
+             None => {
+                 state.root = Some(root.clone());
+-                Ok(())
++           
 ```
 
 #### Recent Merged Pull Requests:
@@ -2510,7 +2533,7 @@ Observed empirical fixes and code patches:
 - **PR #2250** (2026-11-11): Share one clock in compactor test fixture (@criccomini)
 - **PR #2249** (2026-11-11): Reduce build time for nightly pprof benchmarks (@criccomini)
 - **PR #2245** (closed): Dispatch row entry iterators statically instead of boxing every next (@KKould)
-- **PR #2238** (2026-11-10): Remove unused time-based retention (@siddontang)
+- **PR #2243** (2026-11-12): Support clone when using object store mirror (@nomiero)
 
 ---
 
@@ -2530,40 +2553,48 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Share one clock in compactor test fixture (#2250)
+## X. Support clone when using object store mirror (#2243)
 
 **RULE**:
-When implementing operations in `slatedb/src/compactor.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rfcs/0034-local-object-mirroring.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3492ae1b`: Share one clock in compactor test fixture (#2250). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e19ff24f`: Support clone when using object store mirror (#2243). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/compactor.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rfcs/0034-local-object-mirroring.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // Share a clock so output SST timestamps cannot precede their compaction job timestamps.
-            let system_clock = Arc::new(DefaultSystemClock::new());
-                .with_system_clock(system_clock.clone())
-                    clock: system_clock.clone(),
-                system_clock.clone(),
-            let manifest = StoredManifest::load(manifest_store.clone(), system_clock)
-                .await
-                .unwrap();
+| GET or PUT of `*.manifest` or `*.compactions` under the database root | `Observe` |
+| GET or PUT of `*.manifest` or `*.compactions` under a parent root (see [Clones](#clones)) | `Remote` |
+| GET or PUT of `*.manifest` or `*.compactions` under any other root | Error |
+- The parent roots: the paths in the `external_dbs` of the newest manifest.
+#### Clones
+
+A clone reads SSTs of its parent databases. Its manifest references them
+through `ExternalDb.sst_ids`, so the policy downloads, retains, and evicts
+them like the clone's own SSTs.
+
+The clone also reads and writes the manifests of its parents. The clone's
+garbage collector deletes the clone's final checkpoint in a parent when it
+detaches the clone. `Admin::delete_db` does the same for each parent. These
+calls take the `Remote` route. The policy does not observe a parent manifest,
+because the parent's SSTs are not the clone's SSTs. The clone's manifest
+already lists the parent SSTs to keep.
+
+When a newer manifest becomes current, the policy replaces the parent roots
+with the paths in its `external_dbs`. Detach deletes the parent checkpoint
+before it removes the `ExternalDb` entry. So the parent root is known for
+every parent call. 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                    clock: Arc::new(DefaultSystemClock::new()),
-                Arc::new(DefaultSystemClock::new()),
-            let manifest =
-                StoredManifest::load(manifest_store.clone(), Arc::new(DefaultSystemClock::new()))
-                    .await
-                    .unwrap();
+| GET or PUT of `*.manifest` or `*.compactions` | `Observe` (error if the database root doesn't match) |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3492ae1b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e19ff24f` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T06:58:29.959Z",
+  "last_updated": "2026-11-13T07:06:49.435Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -59757,8 +59757,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "9aedb400",
-      "content_hash": "a4ec99c1335af934d00a7c3d06197879487c2a7354082964722c995c8b7c8b7d",
+      "source_version": "e19ff24f",
+      "content_hash": "e9a7f8e66a68b2716865b1fefbd929c74c73b4633ec093fc9d52ba411d5f6e38",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -59775,6 +59775,11 @@
         {
           "number": null,
           "title": "Share one clock in compactor test fixture (#2250)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Support clone when using object store mirror (#2243)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -59828,7 +59833,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T00:58:46.852Z",
+      "verified_at": "2026-11-13T07:06:49.395Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -140832,7 +140837,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
       "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
-      "content_hash": "8f0c76644da0c554b155b971c19fc4c364ed8a60ca8b6b5034c32d8bf3444f2c",
+      "content_hash": "779c4b17b447f06da2eb8476c3f3b8eee8901bb3c258db6f9d5831a9173a9897",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
       "promoted_rules": [
@@ -140912,7 +140917,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T05:48:11.660Z",
+      "verified_at": "2026-11-13T07:06:25.878Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

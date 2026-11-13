@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T06:59:10.971Z",
+  "last_updated": "2026-11-13T07:06:53.361Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8318,6 +8318,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1A1A44-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-BB176D",
+      "directive_title": "Forensic Learning Record (Deep Inspection): orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BB176D-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-AACB4B",
+      "directive_title": "Support clone when using object store mirror (#2243)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "slatedb-slatedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AACB4B-support-clone-when-using-object-store-mi.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-3EE422",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3EE422-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-13"
     }
   ]

@@ -9385,3 +9385,5 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `e61c4d06` | Multi-dimensional audit evidence | 2026-11-13T06:58:30.062Z |
 | `learn-dom-d-552af493` | `project://hf-ornith-ai-ornith-1.5-122b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ornith-ai-ornith-1.5-122b-learnings.md` | 2026-11-13T06:58:48.895Z |
 | `learn-dom-h-414482d7` | `project://beclab-olares` | `e61c4d06` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/beclab-olares-learnings.md` | 2026-11-13T06:59:10.944Z |
+| `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-13T07:06:25.992Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `e19ff24f` | Multi-dimensional audit evidence | 2026-11-13T07:06:49.574Z |
