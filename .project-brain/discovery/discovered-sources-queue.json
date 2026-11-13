@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T09:17:56.473Z",
+  "updated_at": "2026-11-13T09:38:28.990Z",
   "stats": {
-    "total_discovered": 2304,
-    "approved_pending_harvest": 2142,
+    "total_discovered": 2316,
+    "approved_pending_harvest": 2154,
     "harvested_count": 0,
     "rejected_count": 162,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2131,
+      "COMMUNITY_AND_EXPERT": 2143,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 73,
       "ENGINEERING_BLOGS": 1,
@@ -49572,6 +49572,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
         "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-916A3DBC8774": {
+      "id": "SRC-916A3DBC8774",
+      "url": "https://github.com/Michael-A-Kuykendall/shimmy",
+      "title": "https://github.com/Michael-A-Kuykendall/shimmy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:37:48.083Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
+        "fileName": "michael-a-kuykendall-shimmy-learnings.md"
+      }
+    },
+    "SRC-410B1B670ECC": {
+      "id": "SRC-410B1B670ECC",
+      "url": "https://github.com/user-attachments/assets/220c8b36-2d86-4a6c-a87b-689c0ced4adb",
+      "title": "https://github.com/user-attachments/assets/220c8b36-2d86-4a6c-a87b-689c0ced4adb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:37:48.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
+        "fileName": "michael-a-kuykendall-shimmy-learnings.md"
+      }
+    },
+    "SRC-1B9D533809E1": {
+      "id": "SRC-1B9D533809E1",
+      "url": "https://github.com/Michael-A-Kuykendall/shimmy/blob/main/README.md",
+      "title": "https://github.com/Michael-A-Kuykendall/shimmy/blob/main/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:37:48.121Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
+        "fileName": "michael-a-kuykendall-shimmy-learnings.md"
+      }
+    },
+    "SRC-3C0F5DB9E3E6": {
+      "id": "SRC-3C0F5DB9E3E6",
+      "url": "https://github.com/Michael-A-Kuykendall/shimmy/wiki",
+      "title": "https://github.com/Michael-A-Kuykendall/shimmy/wiki",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:37:48.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
+        "fileName": "michael-a-kuykendall-shimmy-learnings.md"
+      }
+    },
+    "SRC-BB8A268ADB7B": {
+      "id": "SRC-BB8A268ADB7B",
+      "url": "https://github.com/Michael-A-Kuykendall/airframe/blob/8efb1e7a830b0822cfc5ac1b121e149948d5ffe3/crates/libfse/LICENSE-GRANT-0.1.4.md",
+      "title": "https://github.com/Michael-A-Kuykendall/airframe/blob/8efb1e7a830b0822cfc5ac1b121e149948d5ffe3/crates/libfse/LICENSE-GRANT-0.1.4.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:37:48.157Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
+        "fileName": "michael-a-kuykendall-shimmy-learnings.md"
+      }
+    },
+    "SRC-5D885F2B9705": {
+      "id": "SRC-5D885F2B9705",
+      "url": "https://huggingface.co/convaiinnovations/laya",
+      "title": "https://huggingface.co/convaiinnovations/laya",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:38:04.494Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
+        "fileName": "hf-convaiinnovations-laya-learnings.md"
+      }
+    },
+    "SRC-D49D7C2017A4": {
+      "id": "SRC-D49D7C2017A4",
+      "url": "https://github.com/apple/foundationdb",
+      "title": "https://github.com/apple/foundationdb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:38:28.877Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
+        "fileName": "apple-foundationdb-learnings.md"
+      }
+    },
+    "SRC-4F6D2611F8DB": {
+      "id": "SRC-4F6D2611F8DB",
+      "url": "https://github.com/apple/foundationdb/wi",
+      "title": "https://github.com/apple/foundationdb/wi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:38:28.904Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
+        "fileName": "apple-foundationdb-learnings.md"
+      }
+    },
+    "SRC-37062020AD6D": {
+      "id": "SRC-37062020AD6D",
+      "url": "https://apple.github.io/foundationdb/configuration.html",
+      "title": "https://apple.github.io/foundationdb/configuration.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:38:28.923Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
+        "fileName": "apple-foundationdb-learnings.md"
+      }
+    },
+    "SRC-8CB70059A8E2": {
+      "id": "SRC-8CB70059A8E2",
+      "url": "https://github.com/apple/foundationdb/blob/main/fdbmonitor/fdbmonitor.h",
+      "title": "https://github.com/apple/foundationdb/blob/main/fdbmonitor/fdbmonitor.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:38:28.951Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
+        "fileName": "apple-foundationdb-learnings.md"
+      }
+    },
+    "SRC-B455E2BEC857": {
+      "id": "SRC-B455E2BEC857",
+      "url": "https://github.com/apple/foundationdb/blob/main/fdbmonitor/fdbmonitor.cpp",
+      "title": "https://github.com/apple/foundationdb/blob/main/fdbmonitor/fdbmonitor.cpp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:38:28.971Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
+        "fileName": "apple-foundationdb-learnings.md"
+      }
+    },
+    "SRC-C0CAF8283F37": {
+      "id": "SRC-C0CAF8283F37",
+      "url": "https://github.com/apple/foundationdb/issues/11764",
+      "title": "https://github.com/apple/foundationdb/issues/11764",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T09:38:28.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
+        "fileName": "apple-foundationdb-learnings.md"
       }
     }
   }

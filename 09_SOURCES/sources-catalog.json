@@ -115,8 +115,8 @@
     "sourceUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceVersion": "hf-convaiinnovations-laya",
     "license": "Open-Source",
-    "contentHash": "8e1c32e0c70e9aa7bd9ee8e43d06d11f7f0476be7311bfb89cc998bf97e5b042",
-    "lastHarvestedAt": "2026-11-08T07:15:27.347Z",
+    "contentHash": "b8a23452731f5861f341ce8a724a76e1a7f7afe2547b1b69763e06ac4bc79c38",
+    "lastHarvestedAt": "2026-11-13T09:37:45.397Z",
     "learningId": "learn-huggingface-convaiinnovations-laya"
   },
   "hf-edge0-audio8-asr-infinite": {
@@ -2953,10 +2953,10 @@
     "repository": "Michael-A-Kuykendall/shimmy",
     "platform": "github",
     "sourceUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
-    "sourceVersion": "8dc08d28",
+    "sourceVersion": "9f6d996e",
     "license": "Apache-2.0",
-    "contentHash": "d49be6c2cf6d65cfa666ed31119dbc2fe22e825604f07418f0c6e67a579366e3",
-    "lastHarvestedAt": "2026-11-08T01:46:12.873Z",
+    "contentHash": "8e3a6872ae91976c15cdc66aada67d472402c256d45d7ad938c61a0673242270",
+    "lastHarvestedAt": "2026-11-13T09:31:25.190Z",
     "learningId": "learn-github-michael-a-kuykendall-shimmy"
   },
   "infinitered-reactotron": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "5431e621",
+    "sourceVersion": "66c65979",
     "license": "Apache-2.0",
-    "contentHash": "6b1c1a0fdb06274053c266aa45f29f2855ceecc2fec835a4647af0a6734900ac",
-    "lastHarvestedAt": "2026-11-12T03:10:45.844Z",
+    "contentHash": "9e8e7be5847bdbdd4dde950cddc78f3bda5e7250c32e31bc4f2ab1de57e79a82",
+    "lastHarvestedAt": "2026-11-13T09:31:37.543Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {

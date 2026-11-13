@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T09:17:56.414Z",
+  "last_updated": "2026-11-13T09:37:48.068Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8516,6 +8516,15 @@
       "source_repo": "fabio-rovai-open-ontologies",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-599FAA-the-399-and-400-changelog-entries-sit-in.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-ED1578",
+      "directive_title": "docs(post-release): update current 2.6.7 docs/REGRESSION_TESTING.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "michael-a-kuykendall-shimmy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ED1578-docs-post-release-update-current-2-6-7-d.md",
       "staged_date": "2026-11-13"
     }
   ]

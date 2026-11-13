@@ -9426,3 +9426,8 @@ Every entry in this ledger must capture:
 | `learn-github-synalinks-synalinks-skills` | `https://github.com/SynaLinks/synalinks-skills` | `c5c3a70d` | Multi-dimensional audit evidence | 2026-11-13T09:17:35.632Z |
 | `learn-huggingface-thinkingmachines-inkling-2-small` | `https://huggingface.co/thinkingmachines/Inkling-2-Small` | `hf-thinkin` | Multi-dimensional audit evidence | 2026-11-13T09:17:37.239Z |
 | `learn-dom-d-489bc9ca` | `project://hf-thinkingmachines-inkling-2-small` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md` | 2026-11-13T09:17:56.199Z |
+| `learn-github-michael-a-kuykendall-shimmy` | `https://github.com/Michael-A-Kuykendall/shimmy` | `9f6d996e` | Multi-dimensional audit evidence | 2026-11-13T09:31:25.190Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `66c65979` | Multi-dimensional audit evidence | 2026-11-13T09:31:37.543Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-11-13T09:37:45.397Z |
+| `learn-dom-d-0d23526b` | `project://hf-convaiinnovations-laya` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | 2026-11-13T09:38:04.486Z |
+| `learn-dom-l-2a739777` | `project://apple-foundationdb` | `66c65979` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apple-foundationdb-learnings.md` | 2026-11-13T09:38:28.866Z |

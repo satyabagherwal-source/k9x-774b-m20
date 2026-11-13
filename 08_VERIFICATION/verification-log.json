@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-QOIP",
-    "timestamp": "2026-11-10T04:51:48.769Z",
-    "repository": "react/metro",
-    "learningId": "learn-github-react-metro",
-    "contentHash": "e474935394132a8feedee55b208296d327f117b63b9f8c862ba8ed7eaae8e45f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-QPP9",
-    "timestamp": "2026-11-10T04:51:50.301Z",
-    "repository": "crossplane/crossplane",
-    "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "1d151e429a00bbfc4d39a1ee2905380a19a65d417498f99d1356de4a61aa4401",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-QUTO",
-    "timestamp": "2026-11-10T04:51:56.940Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "e36b0f0a10cc4867d3a03bbce67ff91e62aeeb247e7f12269096f296ef6c65dd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-QWD6",
     "timestamp": "2026-11-10T04:51:58.938Z",
     "repository": "Diffuspace/Clover-35B-A3B-Preview",
@@ -7490,6 +7445,51 @@
     "repository": "thinkingmachines/Inkling-2-Small",
     "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
     "contentHash": "845378fe300a1bc7082e0ed1793e7ab5c5b971692d0b0be7c4efded35cb1dce9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-1TA8",
+    "timestamp": "2026-11-13T09:31:25.184Z",
+    "repository": "Michael-A-Kuykendall/shimmy",
+    "learningId": "learn-github-michael-a-kuykendall-shimmy",
+    "contentHash": "8e3a6872ae91976c15cdc66aada67d472402c256d45d7ad938c61a0673242270",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-22TE",
+    "timestamp": "2026-11-13T09:31:37.538Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "9e8e7be5847bdbdd4dde950cddc78f3bda5e7250c32e31bc4f2ab1de57e79a82",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-9YNK",
+    "timestamp": "2026-11-13T09:37:45.392Z",
+    "repository": "convaiinnovations/laya",
+    "learningId": "learn-huggingface-convaiinnovations-laya",
+    "contentHash": "b8a23452731f5861f341ce8a724a76e1a7f7afe2547b1b69763e06ac4bc79c38",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

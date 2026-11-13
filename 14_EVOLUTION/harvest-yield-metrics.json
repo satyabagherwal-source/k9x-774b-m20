@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T09:17:37.246Z",
-  "total_cycles_completed": 9197,
-  "total_learnings_persisted": 9197,
-  "total_rules_promoted": 8989,
+  "last_updated": "2026-11-13T09:37:45.403Z",
+  "total_cycles_completed": 9200,
+  "total_learnings_persisted": 9200,
+  "total_rules_promoted": 8991,
   "history": [
-    {
-      "timestamp": "2026-11-12T13:41:09.144Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T13:50:57.881Z",
-      "repository": "Ataraxy-Labs/sem",
-      "learningId": "learn-github-ataraxy-labs-sem",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T14:08:35.319Z",
-      "repository": "TanStack/query",
-      "learningId": "learn-github-tanstack-query",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T14:08:45.723Z",
       "repository": "weaviate/weaviate",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-13T09:17:37.246Z",
       "repository": "thinkingmachines/Inkling-2-Small",
       "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T09:31:25.217Z",
+      "repository": "Michael-A-Kuykendall/shimmy",
+      "learningId": "learn-github-michael-a-kuykendall-shimmy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T09:31:37.550Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T09:37:45.403Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

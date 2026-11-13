@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T09:17:56.196Z",
-  "total_records": 114,
+  "last_updated": "2026-11-13T09:38:28.861Z",
+  "total_records": 116,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 71,
+      "total": 72,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -96,7 +96,8 @@
         "DOM-D-A90E6A82",
         "DOM-D-0F6D40BE",
         "DOM-D-64627742",
-        "DOM-D-489BC9CA"
+        "DOM-D-489BC9CA",
+        "DOM-D-0D23526B"
       ]
     },
     "E": {
@@ -171,10 +172,11 @@
       ]
     },
     "L": {
-      "total": 2,
+      "total": 3,
       "record_ids": [
         "DOM-L-1B851132",
-        "DOM-L-80D1F65C"
+        "DOM-L-80D1F65C",
+        "DOM-L-2A739777"
       ]
     },
     "M": {
@@ -4737,6 +4739,96 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T09:17:56.193Z"
+    },
+    "DOM-D-0D23526B": {
+      "record_id": "DOM-D-0D23526B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): convaiinnovations/laya",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya))  \n> **Source Version**: `hf-convaiinn`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "31e92c27e76d27fbbf396d690773d5fdf94d496be69d4b9e1f6ce0473fa0fafc",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-convaiinnovations-laya/hf-convaiinnovations-laya-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T09:37:48.170Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-convaiinnovations-laya)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-convaiinnovations-laya"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T09:38:04.477Z"
+    },
+    "DOM-L-2A739777": {
+      "record_id": "DOM-L-2A739777",
+      "domain_letter": "L",
+      "domain_id": "deployment_operations",
+      "domain_name": "Deployment & Operations Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        },
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "Merge pull request #14531 from kumarnitin15/fix-expire-bulkdump-test",
+      "content": "When implementing operations in `fdbclient/BackupContainerFileSystem.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "737b57d385fd5065a511fedc6f71e65bd4f66d526908a2b552bdcdda8f1cbe98",
+      "summary": "Prevents defects observed in production commit `3dc2d504`: Merge pull request #14531 from kumarnitin15/fix-expire-bulkdump-test. Unvalidated -> When implementing operations in `fdbclient/BackupContainerFileSystem.cpp`, engineers MUST enforce rigorous boundary validation, safe state t",
+      "provenance": {
+        "source_uri": "project://apple-foundationdb/apple-foundationdb-learnings.md",
+        "source_version": "66c65979",
+        "observed_at": "2026-11-13T09:31:23.850Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (apple-foundationdb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of apple-foundationdb"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G",
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.63,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T09:38:28.858Z"
     }
   }
 }

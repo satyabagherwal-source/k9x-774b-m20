@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T09:17:37.119Z",
+  "last_updated": "2026-11-13T09:37:45.255Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2912,8 +2912,8 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "5431e621",
-      "content_hash": "6b1c1a0fdb06274053c266aa45f29f2855ceecc2fec835a4647af0a6734900ac",
+      "source_version": "66c65979",
+      "content_hash": "9e8e7be5847bdbdd4dde950cddc78f3bda5e7250c32e31bc4f2ab1de57e79a82",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
@@ -2930,6 +2930,11 @@
         {
           "number": null,
           "title": "tests: fix flow test hangs in threadSafeQueue and onMainThreadFIFO (#14474)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #14531 from kumarnitin15/fix-expire-bulkdump-test",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -2998,7 +3003,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T03:10:45.724Z",
+      "verified_at": "2026-11-13T09:31:37.346Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -24699,7 +24704,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "8e1c32e0c70e9aa7bd9ee8e43d06d11f7f0476be7311bfb89cc998bf97e5b042",
+      "content_hash": "b8a23452731f5861f341ce8a724a76e1a7f7afe2547b1b69763e06ac4bc79c38",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -25162,7 +25167,7 @@
         "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
         "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
       ],
-      "verified_at": "2026-11-08T07:15:27.276Z",
+      "verified_at": "2026-11-13T09:37:45.213Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44831,11 +44836,16 @@
       "slug": "michael-a-kuykendall-shimmy",
       "platform": "github",
       "source_url": "https://github.com/Michael-A-Kuykendall/shimmy",
-      "source_version": "8dc08d28",
-      "content_hash": "d49be6c2cf6d65cfa666ed31119dbc2fe22e825604f07418f0c6e67a579366e3",
+      "source_version": "9f6d996e",
+      "content_hash": "8e3a6872ae91976c15cdc66aada67d472402c256d45d7ad938c61a0673242270",
       "dossier_path": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "docs(post-release): update current 2.6.7 docs/REGRESSION_TESTING.md",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1780,
           "title": "template): Gemma family fallback + slice-step renderer (oqu.11)",
@@ -44867,7 +44877,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:46:12.778Z",
+      "verified_at": "2026-11-13T09:31:24.930Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

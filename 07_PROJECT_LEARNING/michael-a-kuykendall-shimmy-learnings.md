@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md`  
 > **Source**: github ([https://github.com/Michael-A-Kuykendall/shimmy](https://github.com/Michael-A-Kuykendall/shimmy))  
-> **Source Version**: `8dc08d28`  
+> **Source Version**: `9f6d996e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T01:46:12.665Z  
+> **Timestamp**: 2026-11-13T09:31:12.159Z  
 > **Learning ID**: `learn-github-michael-a-kuykendall-shimmy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/michael-a-kuykendall-shimmy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Michael-A-Kuykendall/shimmy](https://github.com/Michael-A-Kuykendall/shimmy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T01:46:10.647Z  
+> **Harvest Timestamp**: 2026-11-13T09:31:11.949Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Pure-Rust WebGPU inference engine — OpenAI-API compatible, GGUF native, runs on any GPU. No Python. No llama.cpp. Single binary.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6012 stars
+- **Stars / Engagement**: 6013 stars
 
 ---
 
@@ -1773,118 +1773,53 @@ criterion_main!(benches);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8dc08d28` (2026-11-07)
-**Commit Message**: shimmy-0py: record verified distribution channels and support limits [skip ci]
+### Incident Patch 1: `ed019561` (2026-11-12)
+**Commit Message**: docs(post-release): update current 2.6.7 docs/REGRESSION_TESTING.md
 
-**File**: `CHANGELOG.md` (modified, +5/-1)
+**File**: `docs/REGRESSION_TESTING.md` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,10 @@
- # Changelog
+@@ -1,4 +1,4 @@
+-# Regression testing — Shimmy 2.6.6
++# Regression testing — Shimmy 2.6.7
  
--## 2.6.6 postpublication licensing correction — 2026-11-07
-+## 2.6.6 postpublication licensing and distribution — 2026-11-07
-+
-+- Publish verified native Linux x86-64/ARM64, Windows x86-64 and macOS ARM64 binary bundles with component and third-party licenses, exact checksums and source identities.
-+- Add the versioned GHCR 2.6.6 multiarch image with native startup/authentication checks; retain the existing latest tag. Add tested custom Homebrew and Scoop installation paths. No crate republishing or npm release.
-+- Execute an Apple Paravirtual Metal compute/Qwen3-0.6B HTTP diagnostic; full-vector Metal/M4 and WSL stability remain uncertified. Preserve the active macOS Paste maintenance warning.
- 
- - The existing libfse 0.1.4 archive is additionally licensed under [Apache-2.0](https://github.com/Michael-A-Kuykendall/airframe/blob/8efb1e7a830b0822cfc5ac1b121e149948d5ffe3/crates/libfse/LICENSE-GRANT-0.1.4.md), including commercial use, modification and redistribution without separate permission. Original crates, dependency locks and tags remain unchanged; see [stack licensing](LICENSING.md).
- 
-```
-
-**File**: `README.md` (modified, +1/-2)
-```diff
-@@ -41,8 +41,7 @@ shimmy --ctx 512 --kv-quant f32 serve --model-path /path/to/model.gguf --bind 12
- 
- Use a verified admitted fixture in place of the path. A working Rust toolchain
- and GPU driver are required. The fast profile does not provide inference.
--A **crates.io-only 2.6.6 release does not create GitHub binary assets, Docker
--images, Homebrew, Scoop or npm packages**. Verify the installed version; an old latest asset is not version 2.6.6.
-+The separately verified [native downloads, Homebrew and Scoop installers](docs/BINARY_INSTALL.md) and [versioned GHCR image](README-DOCKER.md) are now available for 2.6.6. A crates.io upload does not create those channels automatically. Docker latest is unchanged; npm is not included. Verify the exact installed version.
- 
- See [quickstart](docs/quickstart.md) for model hashes, listing, requests and
- network access. Unavailable translations are not linked as current guides.
-```
-
-**File**: `ROADMAP.md` (modified, +6/-5)
-```diff
-@@ -1,20 +1,21 @@
- # Roadmap — Shimmy 2.6.6
- 
--## Current scoped candidate
-+## Current delivered release
- 
- Deliver the coordinated dense-text correctness foundation and reviewed
- dependency/documentation corrections. The release contract is
- [SUPPORTED_MODELS](docs/SUPPORTED_MODELS.md), with explicit unsupported and
- NOT_RUN modes. No broad family count or universal speed promise supersedes that contract. Commercial use is permitted under the [component licenses and additional libfse grant](LICENSING.md).
- 
--The five prepared versions are ShimmyTok 0.8.5, libfse 0.1.4,
--airframe-observe 0.1.4, Airframe 0.4.5 and Shimmy 2.6.6.
--A prepared candidate is not published until explicitly approved and verified.
-+The five published versions are ShimmyTok 0.8.5, libfse 0.1.4,
-+airframe-observe 0.1.4, Airframe 0.4.5 and Shimmy 2.6.6. Their published archives and tags remain unchanged.
-+
-+[Native downloads and custom Homebrew/Scoop installers](docs/BINARY_INSTALL.md) and the [versioned GHCR image](README-DOCKER.md) have separate executed distribution checks. These do not expand GPU numerical certification. Docker latest remains unchanged; npm is excluded.
- 
- ## Separately scoped later work
- 
- Other architectures, larger fixtures, native-platform certification, WSL
--stability, performance changes and distribution channels each need their own
-+stability, performance changes and additional distribution channels each need their own
- design, acceptance evidence and approval. Gemma/MoE/recurrent development does
- not automatically enable an executor in this release.
- 
+ Use the exact integrated sources and locked dependency graph. Keep unit/protocol,
+ numerical, state, real HTTP and platform evidence distinct.
 ```
 
 ---
 
-### Incident Patch 2: `dd97812b` (2026-11-07)
-**Commit Message**: shimmy-0py: add exact licensed Windows Scoop distribution [skip ci]
+### Incident Patch 2: `9f6d996e` (2026-11-12)
+**Commit Message**: docs: distinguish Apple M1 certification from physical M4 in features
 
-**File**: `bucket/shimmy.json` (added, +17/-0)
+**File**: `docs/FEATURES.md` (modified, +1/-2)
 ```diff
-@@ -0,0 +1,17 @@
-+{
-+    "version": "2.6.6",
-+    "description": "Local model inference server with the default Airframe engine",
-+    "homepage": "https://github.com/Michael-A-Kuykendall/shimmy",
-+    "license": {
-+        "identifier": "Apache-2.0",
-+        "url": "https://github.com/Michael-A-Kuykendall/shimmy/blob/main/LICENSING.md"
-+    },
-+    "architecture": {
-+        "64bit": {
-+            "url": "https://github.com/Michael-A-Kuykendall/shimmy/releases/download/v2.6.6/shimmy-windows-x86_64.zip",
-+            "hash": "6c7b854ba851f54347601827d5948c661283ae0a60f03c9a9f6e0ec7ddfd6dd4"
-+        }
-+    },
-+    "bin": "shimmy.exe",
-+    "notes": "Primary Shimmy license: Apache-2.0. Complete component licenses, third-party notices and the libfse 0.1.4 additional Apache-2.0 grant are retained in LICENSES and DISTRIBUTION-LICENSE.txt. Native CLI tests do not certify Windows GPU inference. No separate commercial permission is required."
-+}
+@@ -14,7 +14,6 @@ Discovery and parser support do not certify an arbitrary model.
+ Management/tool placeholder routes are not a complete model service.
+ 
+ Not enabled/certified: Gemma2, MoE, MLA, recurrent/SSM/multimodal executors,
+-INT4 and experimental kernels. Physical M4 and other unexecuted native platforms
+-are NOT_RUN; WSL device-loss issues remain open.
++INT4 and experimental kernels. The released Airframe 0.4.6 passed 198/198 full-logit comparisons on Apple M1 (Virtual) / Paravirtual Metal for exact tested fixtures; **physical M4 and other unexecuted native GPU platforms remain NOT_RUN**. WSL device-loss issues remain open.
+ The fast profile is non-inference, and compatibility flags do not restore
+ removed engines. The released 2.6.7 distribution includes verified native bundles, versioned GHCR, Homebrew and Scoop; `latest` and npm were unchanged.
 ```
 
-**File**: `docs/BINARY_INSTALL.md` (modified, +14/-1)
+---
+
+### Incident Patch 3: `7e9c77c6` (2026-11-12)
+**Commit Message**: docs(post-release): correct live published guidance and mark legacy wiki scope
+
+**File**: `README.md` (modified, +2/-0)
 ```diff
-@@ -56,4 +56,17 @@ brew test Michael-A-Kuykendall/shimmy/shimmy
+@@ -86,6 +86,8 @@ before readiness without eliminating it or guaranteeing stability.
+ - [Security](SECURITY.md), [release process](RELEASE_PROCESS.md) and [release gates](RELEASE_GATES_CHECKLIST.md)
+ - [Developer guide](DEVELOPERS.md), [contribution policy](CONTRIBUTING.md) and [roadmap](ROADMAP.md)
  
- macOS ARM64 and Linux x86-64/ARM64 select their exact licensed archives above. macOS Intel has no release binary. Licenses and the libfse grant are retained under the formula prefix at share/shimmy. This custom formula does not certify additional GPU configurations.
++**Wiki notice:** The separate [GitHub Wiki](https://github.com/Michael-A-Kuykendall/shimmy/wiki) contains historical pre-2.6.7 instructions. For current installation, supported models, security policy and feature availability, use the maintained documents linked above; old llama.cpp/MLX/MoE commands and family-wide GPU claims are not the 2.6.7 support contract.
++
+ Shimmy source is Apache-2.0. Airframe runtime and Observe are MIT; ShimmyTok is dual-licensed. libfse 0.1.4 is covered by the [additional Apache-2.0 grant](https://github.com/Michael-A-Kuykendall/airframe/blob/8efb1e7a830b0822cfc5ac1b121e149948d5ffe3/crates/libfse/LICENSE-GRANT-0.1.4.md), permitting commercial use without separate permission. Preserve applicable component, dependency and model terms; see [stack licensing](LICENSING.md).
  
--[Versioned Docker/GHCR instructions](../README-DOCKER.md) are separate from native downloads; Docker latest remains unchanged. Scoop requires its own installation gate. npm is not included.
-+[Versioned Docker/GHCR instructions](../README-DOCKER.md) are separate from native downloads; Docker latest remains unchanged. Scoop installation is described below. npm is not included.
-+
-+## Scoop (Windows x86-64)
-+
-+The repository provides an explicit custom bucket (not Scoop main):
-+
-+```powershell
-+scoop bucket add shimmy https://github.com/Michael-A-Kuykendall/shimmy
-+scoop install shimmy/shimmy
-+shimmy --version
-+shimmy --help
-+```
-+
-+The 2.6.6 manifest selects the exact Windows ZIP and checksum above. It retains LICENSES, the libfse additional grant and notices in the installed app directory. ARM Windows and native Windows GPU inference are not certified by the x86-64 CLI installation test. No npm package is implied.
+ ## Support
 ```
 
 #### Recent Merged Pull Requests:
@@ -1913,32 +1848,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. shimmy-0py: record verified distribution channels and support limits [skip ci]
+## X. docs(post-release): update current 2.6.7 docs/REGRESSION_TESTING.md
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Michael-A-Kuykendall/shimmy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/REGRESSION_TESTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Michael-A-Kuykendall/shimmy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8dc08d28`: shimmy-0py: record verified distribution channels and support limits [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ed019561`: docs(post-release): update current 2.6.7 docs/REGRESSION_TESTING.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/REGRESSION_TESTING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## 2.6.6 postpublication licensing and distribution — 2026-11-07
-
-- Publish verified native Linux x86-64/ARM64, Windows x86-64 and macOS ARM64 binary bundles with component and third-party licenses, exact checksums and source identities.
-- Add the versioned GHCR 2.6.6 multiarch image with native startup/authentication checks; retain the existing latest tag. Add tested custom Homebrew and Scoop installation paths. No crate republishing or npm release.
-- Execute an Apple Paravirtual Metal compute/Qwen3-0.6B HTTP diagnostic; full-vector Metal/M4 and WSL stability remain uncertified. Preserve the active macOS Paste maintenance warning.
+# Regression testing — Shimmy 2.6.7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-## 2.6.6 postpublication licensing correction — 2026-11-07
+# Regression testing — Shimmy 2.6.6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8dc08d28` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ed019561` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `5431e621`  
+> **Source Version**: `66c65979`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:10:34.168Z  
+> **Timestamp**: 2026-11-13T09:31:23.850Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:10:34.155Z  
+> **Harvest Timestamp**: 2026-11-13T09:31:23.842Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16855 stars
+- **Stars / Engagement**: 16858 stars
 
 ---
 
@@ -1957,224 +1957,59 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50f1c933` (2026-11-10)
-**Commit Message**: tests: fix flow test hangs in threadSafeQueue and onMainThreadFIFO (#14474)
+### Incident Patch 1: `3dc2d504` (2026-11-13)
+**Commit Message**: Merge pull request #14531 from kumarnitin15/fix-expire-bulkdump-test
 
-Each producer thread called `s.doneProducing.send(Void())` directly.
-Promises aren't thread-safe: `SAV::send()` sets the ready state and then
-walks the callback list with no synchronization. Meanwhile the main thread,
-having drained the queue, enters `waitForAll(doneProducing)` and registers
-a callback on that promise. If the main thread sees "not ready" and the
-producer sees "no callbacks" (at roughly the same time), the wakeup is lost
-and the test hangs.
+Use one size bound for bulkdump manifests in expire and restore
 
-In flow/Net2/ThreadSafeQueue/Threaded, the consumer loop already knows
-when every element has been popped, it doesn't need promises. It now
-just joins the producer threads, checks counts, and returns Void()
-instead of being a coroutine.
-
-In noSim/flow/Net2/onMainThreadFIFO, it does need to wait on
-doneProducing, so it needs to call Future.send() on the main thread
-(instead of each producer thread).
-
-**File**: `flow/Net2.cpp` (modified, +2/-12)
+**File**: `fdbclient/BackupContainerFileSystem.cpp` (modified, +8/-5)
 ```diff
-@@ -2406,12 +2406,10 @@ TEST_CASE("flow/Net2/ThreadSafeQueue/Threaded") {
- 	std::vector<QueueTestThreadState> perThread = { QueueTestThreadState(0, 1000000),
- 		                                            QueueTestThreadState(1, 100000),
- 		                                            QueueTestThreadState(2, 1000000) };
--	std::vector<Future<Void>> doneProducing;
+@@ -61,6 +61,9 @@ class BackupContainerFileSystemImpl {
+ 		       e.code() == error_code_bulkload_manifest_decode_error;
+ 	}
  
- 	int total = 0;
- 	for (int t = 0; t < perThread.size(); ++t) {
- 		auto& s = perThread[t];
--		doneProducing.push_back(s.doneProducing.getFuture());
- 		total += s.toProduce;
- 		auto produce = [&queue, &s]() {
- 			printf("Thread%d\n", s.threadId);
-@@ -2424,7 +2422,6 @@ TEST_CASE("flow/Net2/ThreadSafeQueue/Threaded") {
- 				}
++	// A bulkdump snapshot manifest holds only the job ID and a single key range, so it is far smaller than this.
++	static constexpr int64_t kMaxBulkDumpManifestSize = 1 << 20;
++
+ 	// Returns the bulkdump job id recorded in a keyspace snapshot, or empty if the snapshot has none or
+ 	// cannot be read. The job id is only in the snapshot's JSON body -- the filename carries the snapshot
+ 	// type but not the id -- and it is what locates the SST tree under bulkdump_data/<jobId>/.
+@@ -74,21 +77,21 @@ class BackupContainerFileSystemImpl {
+ 		try {
+ 			Reference<IAsyncFile> f = co_await bc->readFile(snapshot.fileName);
+ 			int64_t size = co_await f->size();
+-			if (restoring && size > (1 << 20)) {
++			if (restoring && size > kMaxBulkDumpManifestSize) {
+ 				// A bulkdump descriptor contains only the job ID and a single key range.
+ 				throw restore_corrupted_data();
  			}
- 			printf("T%dDone\n", s.threadId);
--			s.doneProducing.send(Void());
- 		};
- 		s.handle = startThreadF(produce);
- 	}
-@@ -2443,18 +2440,11 @@ TEST_CASE("flow/Net2/ThreadSafeQueue/Threaded") {
- 			queue.canSleep();
- 	}
- 
--	co_await waitForAll(doneProducing);
--
--	// Make sure we continue on the main thread.
--	Promise<Void> signal;
--	Future<Void> doneConsuming = signal.getFuture();
--	g_network->onMainThread(std::move(signal), TaskPriority::DefaultOnMainThread);
--	co_await doneConsuming;
--
- 	for (int t = 0; t < perThread.size(); ++t) {
- 		waitThread(perThread[t].handle);
- 		perThread[t].checkDone();
- 	}
-+	return Void();
- }
- 
- TEST_CASE("noSim/flow/Net2/onMainThreadFIFO") {
-@@ -2478,7 +2468,7 @@ TEST_CASE("noSim/flow/Net2/onMainThreadFIFO") {
- 				int v = s.nextProduced();
- 				onMainThreadVoid([&s, v]() { ASSERT_EQ(v, s.nextConsumed()); });
+ 			// A bulkdump manifest has an empty "files" array and so is a few hundred bytes, while a
+ 			// rangefile manifest lists every range file and can reach hundreds of megabytes. Size is the
+ 			// only cheap discriminator available: the snapshot filename carries the type suffix solely in
+ 			// 'both' mode, so a plain bulkdump snapshot is indistinguishable from a rangefile one by name.
+-			// Refusing to read anything over a chunk keeps expire from pulling in a huge manifest just to
+-			// discover it has no job id.
+-			if (!restoring && size > CLIENT_KNOBS->BACKUP_MANIFEST_CHUNK_SIZE) {
++			// Refusing to read anything over kMaxBulkDumpManifestSize keeps expire from pulling in a huge
++			// manifest just to discover it has no job id.
++			if (!restoring && size > kMaxBulkDumpManifestSize) {
+ 				TraceEvent("BackupContainerExpireSkipLargeSnapshotManifest")
+ 				    .detail("Snapshot", snapshot.fileName)
+ 				    .detail("Size", size)
+-				    .detail("Limit", CLIENT_KNOBS->BACKUP_MANIFEST_CHUNK_SIZE);
++				    .detail("Limit", kMaxBulkDumpManifestSize);
+ 				co_return std::string();
  			}
--			s.doneProducing.send(Void());
-+			onMainThreadVoid([&s]() { s.doneProducing.send(Void()); });
- 		});
- 	}
- 	co_await waitForAll(doneProducing);
-```
-
----
-
-### Incident Patch 2: `5ca27474` (2026-11-11)
-**Commit Message**: bindings/ruby: fix tuple float comparison on Ruby 3.3 and later (#14507)
-
-FDB::Tuple._compare_floats packed its arguments with the format
-strings ">g" and ">G". ">" is only a modifier for the integer
-directives; in front of "g"/"G" it is an unknown directive. Older
-Rubies ignored it (with a warning under -w), but since Ruby 3.3
-Array#pack raises ArgumentError for unknown directives. As a result
-FDB::Tuple.compare raised for any pair of tuples that reached a float
-or double comparison, and so did FDB::Tuple::SingleFloat#<=>.
-
-"g" and "G" are already big-endian, so drop the ">". The packed bytes
-are the same as before on Rubies that ignored it.
-
-Add a TUPLE_SORT of tuples containing floats and doubles to the
-scripted binding test, which until now did not sort tuples at all.
-
-Signed-off-by: Dezhen Lu <[REDACTED_EMAIL]>
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `bindings/bindingtester/tests/scripted.py` (modified, +17/-0)
-```diff
-@@ -331,6 +331,23 @@ def generate(self, args, thread_number):
-         self.add_result(main_thread, args, rng.stop)
-         self.add_result(main_thread, args, rng.start)
- 
-+        main_thread.append("EMPTY_STACK")
-+        float_tups = [
-+            (2.5,),
-+            (fdb.tuple.SingleFloat(1.5), b"foo"),
-+            (-1.0, "bar"),
-+            (fdb.tuple.SingleFloat(-3.0),),
-+            ((0.0, -0.0),),
-+            ((-0.0, 0.0),),
-+        ]
-+        for float_tup in float_tups:
-+            main_thread.push_args(*test_util.with_length(float_tup))
-+            main_thread.append("TUPLE_PACK")
-+        main_thread.push_args(len(float_tups))
-+        main_thread.append("TUPLE_SORT")
-+        for packed in sorted(map(fdb.tuple.pack, float_tups), reverse=True):
-+            self.add_result(main_thread, args, packed)
-+
-         stampKey = b"stampedXXXXXXXXXXsuffix"
-         stampKeyIndex = stampKey.find(b"XXXXXXXXXX")
-         main_thread.push_args(
-```
-
-**File**: `bindings/ruby/lib/fdbtuple.rb` (modified, +2/-2)
-```diff
-@@ -308,8 +308,8 @@ def self._compare_floats(f1, f2, is_double)
-       #   2) -0.0 == 0.0 in Ruby but not in our representation
-       # It would be better to just take the floats and compare them, but
-       # this way handles the edge cases correctly.
--      b1 = float_adjust([f1].pack(is_double ? ">G" : ">g"), 0, (is_double ? 8 : 4), true)
--      b2 = float_adjust([f2].pack(is_double ? ">G" : ">g"), 0, (is_double ? 8 : 4), true)
-+      b1 = float_adjust([f1].pack(is_double ? "G" : "g"), 0, (is_double ? 8 : 4), true)
-+      b2 = float_adjust([f2].pack(is_double ? "G" : "g"), 0, (is_double ? 8 : 4), true)
-       b1 <=> b2
-     end
- 
-```
-
----
-
-### Incident Patch 3: `26fc5eea` (2026-11-11)
-**Commit Message**: bindings/python: fix truth testing of an absent Value on Python 3 (#14508)
-
-FutureString defined __nonzero__, the Python 2 name of the truth
-hook. Python 3 never calls it, so bool() fell back to __len__,
-which is forwarded to bytes.__len__(self.value). For the Value of a
-key that is not present self.value is None, and code such as
-
-    if not tr[key]:
-
-raised "TypeError: descriptor '__len__' requires a 'bytes' object but
-received a 'NoneType'" instead of treating the value as false.
-
-Rename the method to __bool__. An absent value is now false; present
-values and keys keep the truth value they already had through __len__
-(false only when empty).
-
-Signed-off-by: Dezhen Lu <[REDACTED_EMAIL]>
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `bindings/python/fdb/impl.py` (modified, +1/-1)
-```diff
-@@ -1082,7 +1082,7 @@ def __eq__(self, rhs):
-     def __ne__(self, rhs):
-         return not self == rhs
- 
--    def __nonzero__(self):
-+    def __bool__(self):
-         return bool(self.value)
- 
-     def __int__(self):
-```
-
-**File**: `bindings/python/tests/unit_tests.py` (modified, +19/-0)
-```diff
-@@ -210,6 +210,23 @@ def test_predicates():
-     assert not fdb.predicates.is_retryable(fdb.FDBError(10))
- 
- 
-+def test_value_truthiness(db):
-+    missing = b"\x02value-truthiness-missing"
-+    empty = b"\x02value-truthiness-empty"
-+    present = b"\x02value-truthiness-present"
-+
-+    # Nothing is committed; the reads below see the transaction's own writes.
-+    tr = db.create_transaction()
-+    del tr[missing]
-+    tr[empty] = b""
-+    tr[present] = b"x"
-+
-+    assert not tr[missing]
-+    assert not tr[empty]
-+    assert tr[present]
-+    assert tr.get_key(fdb.KeySelector.first_greater_or_equal(present))
-+
-+
- def test_get_client_status(db):
-     @fdb.transactional
-     def simple_txn(tr):
-@@ -263,6 +280,8 @@ def run_unit_tests(db):
-         test_locality(db)
-         log("test_predicates")
-         test_predicates()
-+        log("test_value_truthiness")
-+        test_value_truthiness(db)
-         log("test_size_limit_option")
-         test_size_limit_option(db)
-         log("test_get_approximate_size")
+ 			auto buf = std::make_shared<std::string>(size, '\0');
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14515** (2026-11-11): [release-7.4] Release notes 7.4.9 (@spraza)
-- **PR #14514** (2026-11-12): Open every backup's container in getLayerStatus() (@shreechaturvedi)
-- **PR #14513** (2026-11-11): [release-8.0] Send one clear per range-restore transaction instead of one per gap (@nos-a)
-- **PR #14512** (2026-11-11): Skip the range-restore clear when the span has no keys (@nos-a)
-- **PR #14510** (2026-11-11): release notes 7.3.80,81 (@ploxiln)
-- **PR #14509** (2026-11-11): [release-8.0] release notes 7.3.80,81 (@ploxiln)
+- **PR #14534** (2026-11-13): [release-8.0] Don't set off ASSERT(skip) in test deliveredToNotAssigned (@saintstack)
+- **PR #14532** (2026-11-13): [release-8.0] Let fdbrestore -v/--version take the restore version again (@saintstack)
+- **PR #14531** (2026-11-13): Use one size bound for bulkdump manifests in expire and restore (@kumarnitin15)
+- **PR #14528** (2026-11-12): Pass blob store endpoint settings in BlobStoreEndpointParams (@shreechaturvedi)
+- **PR #14525** (2026-11-12): [release-8.0] Skip the range-restore clear when the span has no keys (@nos-a)
+- **PR #14522** (2026-11-12): Backup per-URL aws_v4_header (v4) blobstore parameter (#14471) (@shreechaturvedi)
 
 ---
 
@@ -2194,40 +2029,39 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests: fix flow test hangs in threadSafeQueue and onMainThreadFIFO (#14474)
+## X. Merge pull request #14531 from kumarnitin15/fix-expire-bulkdump-test
 
 **RULE**:
-When implementing operations in `flow/Net2.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbclient/BackupContainerFileSystem.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50f1c933`: tests: fix flow test hangs in threadSafeQueue and onMainThreadFIFO (#14474). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3dc2d504`: Merge pull request #14531 from kumarnitin15/fix-expire-bulkdump-test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/Net2.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbclient/BackupContainerFileSystem.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	return Void();
-			onMainThreadVoid([&s]() { s.doneProducing.send(Void()); });
+	// A bulkdump snapshot manifest holds only the job ID and a single key range, so it is far smaller than this.
+	static constexpr int64_t kMaxBulkDumpManifestSize = 1 << 20;
+
+			if (restoring && size > kMaxBulkDumpManifestSize) {
+			// Refusing to read anything over kMaxBulkDumpManifestSize keeps expire from pulling in a huge
+			// manifest just to discover it has no job id.
+			if (!restoring && size > kMaxBulkDumpManifestSize) {
+				    .detail("Limit", kMaxBulkDumpManifestSize);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-	std::vector<Future<Void>> doneProducing;
-		doneProducing.push_back(s.doneProducing.getFuture());
-			s.doneProducing.send(Void());
-	co_await waitForAll(doneProducing);
-
-	// Make sure we continue on the main thread.
-	Promise<Void> signal;
-	Future<Void> doneConsuming = signal.getFuture();
-	g_network->onMainThread(std::move(signal), TaskPriority::DefaultOnMainThread);
-	co_await doneConsuming;
-
-			s.doneProducing.send(Void());
+			if (restoring && size > (1 << 20)) {
+			// Refusing to read anything over a chunk keeps expire from pulling in a huge manifest just to
+			// discover it has no job id.
+			if (!restoring && size > CLIENT_KNOBS->BACKUP_MANIFEST_CHUNK_SIZE) {
+				    .detail("Limit", CLIENT_KNOBS->BACKUP_MANIFEST_CHUNK_SIZE);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50f1c933` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3dc2d504` are properly handled with clean fallback behavior.
