@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-JZ0D",
-    "timestamp": "2026-11-10T01:58:38.077Z",
-    "repository": "Open-Source-Legal/OpenContracts",
-    "learningId": "learn-github-open-source-legal-opencontracts",
-    "contentHash": "1404444574df573324d42d48c3f3091b7f4b7d2af00f40b9f111fb15e85617ed",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-UHWH",
-    "timestamp": "2026-11-10T02:06:49.121Z",
-    "repository": "tickernelz/opencode-mem",
-    "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "f7aba3b01d51cfb849e01036a99f6465b5200b752b026f92d54eb5854ff58f49",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-0SH3",
     "timestamp": "2026-11-10T02:11:42.759Z",
     "repository": "crate-ci/typos",
@@ -7490,6 +7460,36 @@
     "repository": "skyhook-io/radar",
     "learningId": "learn-github-skyhook-io-radar",
     "contentHash": "72b34d1ff00f85ef0e34efab68f9724758327cf0358e611bd0e62144ceeae87f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-Z5AG",
+    "timestamp": "2026-11-13T08:05:21.928Z",
+    "repository": "FastVideo/FastH3-Omni-Comfy",
+    "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
+    "contentHash": "1bf42b6e6e45cc0f3eb28a9af194fe7291fa68d5128d5127551831ca2350db2a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-8Z3L",
+    "timestamp": "2026-11-13T08:13:00.465Z",
+    "repository": "sqlpage/SQLPage",
+    "learningId": "learn-github-sqlpage-sqlpage",
+    "contentHash": "fbf2c763987b5e208cab73d87483a4b0f34afafffea8f9e8af8afc54ea6b18a3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

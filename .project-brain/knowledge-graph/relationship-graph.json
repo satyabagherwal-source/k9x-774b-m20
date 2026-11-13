@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T07:55:49.994Z",
+  "updated_at": "2026-11-13T08:13:20.796Z",
   "statistics": {
-    "total_nodes": 62,
+    "total_nodes": 63,
     "total_edges": 31,
     "domain_distribution": {
-      "D": 48,
+      "D": 49,
       "M": 1,
       "H": 8,
       "J": 2,
@@ -1387,6 +1387,28 @@
       ],
       "created_at": "2026-11-13T07:55:49.994Z",
       "updated_at": "2026-11-13T07:55:49.994Z"
+    },
+    "DOM-D-46E94697": {
+      "id": "DOM-D-46E94697",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): FastVideo/FastH3-Omni-Comfy",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-fastvideo-fasth3-omni-comfy/hf-fastvideo-fasth3-omni-comfy-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T08:13:05.500Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-fastvideo-fasth3-omni-comfy)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T08:13:20.796Z",
+      "updated_at": "2026-11-13T08:13:20.796Z"
     }
   },
   "edges": [

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T07:55:26.209Z",
+  "last_updated": "2026-11-13T08:13:00.342Z",
   "total_verified_learnings": 1262,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -60585,11 +60585,16 @@
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "3c673a3b",
-      "content_hash": "2ce122bd971384009a5c1ee40501ebe523515b2e2fa8f34231627846ef1cf12f",
+      "source_version": "4cb43afc",
+      "content_hash": "fbf2c763987b5e208cab73d87483a4b0f34afafffea8f9e8af8afc54ea6b18a3",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "database) :: decode rows into named columns first (#1595)",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 1999,
           "title": "test(suite) :: share helpers, close pools deterministically, slim OIDC harness (",
@@ -60641,7 +60646,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T02:03:45.704Z",
+      "verified_at": "2026-11-13T08:13:00.304Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150499,7 +150504,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
       "source_version": "hf-fastvideo-fasth3-omni-comfy",
-      "content_hash": "7805a4f72db08bb89c80f4f2a3704c3d8339b28db63ae440388054c45c1300d3",
+      "content_hash": "1bf42b6e6e45cc0f3eb28a9af194fe7291fa68d5128d5127551831ca2350db2a",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
       "promoted_rules": [
@@ -150549,7 +150554,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T06:32:59.575Z",
+      "verified_at": "2026-11-13T08:05:21.781Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

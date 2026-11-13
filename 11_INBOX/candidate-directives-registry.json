@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T07:55:50.175Z",
+  "last_updated": "2026-11-13T08:13:20.967Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8435,6 +8435,24 @@
       "source_repo": "skyhook-io-radar",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9E7B73-docs-add-nvidia-desktop-rendering-workar.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-2E441B",
+      "directive_title": "database) :: decode rows into named columns first (#1595)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sqlpage-sqlpage",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2E441B-database-decode-rows-into-named-columns-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-9A1B61",
+      "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9A1B61-engine-restore-text-fallback-for-unknown.md",
       "staged_date": "2026-11-13"
     }
   ]

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T07:55:49.992Z",
-  "total_records": 108,
+  "last_updated": "2026-11-13T08:13:20.794Z",
+  "total_records": 109,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 66,
+      "total": 67,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -91,7 +91,8 @@
         "DOM-D-263ECAA8",
         "DOM-D-CE32BB74",
         "DOM-D-388F29C6",
-        "DOM-D-4E597F40"
+        "DOM-D-4E597F40",
+        "DOM-D-46E94697"
       ]
     },
     "E": {
@@ -4473,6 +4474,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T07:55:49.989Z"
+    },
+    "DOM-D-46E94697": {
+      "record_id": "DOM-D-46E94697",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): FastVideo/FastH3-Omni-Comfy",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/FastVideo/FastH3-Omni-Comfy](https://huggingface.co/FastVideo/FastH3-Omni-Comfy))  \n> **Source Version**: `hf-fastvideo`  \n> **License**: Open-Sou",
+      "content_hash": "44cc5a5d74cfa8d1b58f30c23986c0753f2fdecbe5a7ed7228dcc66f944161ab",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "provenance": {
+        "source_uri": "project://hf-fastvideo-fasth3-omni-comfy/hf-fastvideo-fasth3-omni-comfy-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T08:13:05.500Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-fastvideo-fasth3-omni-comfy)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-fastvideo-fasth3-omni-comfy"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T08:13:20.791Z"
     }
   }
 }

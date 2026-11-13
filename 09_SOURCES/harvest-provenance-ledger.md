@@ -9403,3 +9403,6 @@ Every entry in this ledger must capture:
 | `learn-github-iplug2-iplug2` | `https://github.com/iPlug2/iPlug2` | `0cf04038` | Multi-dimensional audit evidence | 2026-11-13T07:55:23.882Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `e7a377fa` | Multi-dimensional audit evidence | 2026-11-13T07:55:26.414Z |
 | `learn-dom-d-4e597f40` | `project://hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb-learnings.md` | 2026-11-13T07:55:49.995Z |
+| `learn-huggingface-fastvideo-fasth3-omni-comfy` | `https://huggingface.co/FastVideo/FastH3-Omni-Comfy` | `hf-fastvid` | Multi-dimensional audit evidence | 2026-11-13T08:05:21.932Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `4cb43afc` | Multi-dimensional audit evidence | 2026-11-13T08:13:00.486Z |
+| `learn-dom-d-46e94697` | `project://hf-fastvideo-fasth3-omni-comfy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md` | 2026-11-13T08:13:20.797Z |

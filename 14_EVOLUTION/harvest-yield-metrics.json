@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T07:55:26.443Z",
-  "total_cycles_completed": 9180,
-  "total_learnings_persisted": 9180,
-  "total_rules_promoted": 8977,
+  "last_updated": "2026-11-13T08:13:00.492Z",
+  "total_cycles_completed": 9182,
+  "total_learnings_persisted": 9182,
+  "total_rules_promoted": 8978,
   "history": [
-    {
-      "timestamp": "2026-11-12T11:50:57.920Z",
-      "repository": "sveltejs/svelte",
-      "learningId": "learn-github-sveltejs-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T11:51:08.795Z",
-      "repository": "pathwaycom/serviette",
-      "learningId": "learn-github-pathwaycom-serviette",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T12:15:11.721Z",
       "repository": "gocd/gocd",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T07:55:26.443Z",
       "repository": "skyhook-io/radar",
       "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T08:05:21.938Z",
+      "repository": "FastVideo/FastH3-Omni-Comfy",
+      "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T08:13:00.492Z",
+      "repository": "sqlpage/SQLPage",
+      "learningId": "learn-github-sqlpage-sqlpage",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

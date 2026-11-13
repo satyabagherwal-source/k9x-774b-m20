@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "3c673a3b",
+    "sourceVersion": "4cb43afc",
     "license": "MIT",
-    "contentHash": "2ce122bd971384009a5c1ee40501ebe523515b2e2fa8f34231627846ef1cf12f",
-    "lastHarvestedAt": "2026-11-12T02:03:45.833Z",
+    "contentHash": "fbf2c763987b5e208cab73d87483a4b0f34afafffea8f9e8af8afc54ea6b18a3",
+    "lastHarvestedAt": "2026-11-13T08:13:00.486Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {
@@ -10865,8 +10865,8 @@
     "sourceUrl": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
     "sourceVersion": "hf-fastvideo-fasth3-omni-comfy",
     "license": "Open-Source",
-    "contentHash": "7805a4f72db08bb89c80f4f2a3704c3d8339b28db63ae440388054c45c1300d3",
-    "lastHarvestedAt": "2026-11-08T06:32:59.739Z",
+    "contentHash": "1bf42b6e6e45cc0f3eb28a9af194fe7291fa68d5128d5127551831ca2350db2a",
+    "lastHarvestedAt": "2026-11-13T08:05:21.932Z",
     "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy"
   },
   "yoanwai-agent-manager": {

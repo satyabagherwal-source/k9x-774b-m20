@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T07:55:50.242Z",
+  "last_updated": "2026-11-13T08:13:21.026Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T07:39:41.956Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-13T06:59:10.972Z",
+      "processed_at": "2026-11-13T08:13:20.969Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -668,7 +668,7 @@
       "staged_for_review": 1
     },
     "sqlpage-sqlpage-learnings.md": {
-      "processed_at": "2026-11-12T02:03:51.118Z",
+      "processed_at": "2026-11-13T08:13:20.826Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1661,9 +1661,14 @@
       "processed_at": "2026-11-13T07:55:50.177Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-fastvideo-fasth3-omni-comfy-learnings.md": {
+      "processed_at": "2026-11-13T08:13:20.797Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 504,
-  "total_canonical_promoted": 75,
-  "total_staged_for_review": 426
+  "total_dossiers_evaluated": 507,
+  "total_canonical_promoted": 76,
+  "total_staged_for_review": 428
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
-> **Source Version**: `3c673a3b`  
+> **Source Version**: `4cb43afc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T02:03:45.581Z  
+> **Timestamp**: 2026-11-13T08:12:49.256Z  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T02:03:45.577Z  
+> **Harvest Timestamp**: 2026-11-13T08:05:10.645Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1161,413 +1161,225 @@ export function initInstantMotion(root) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c673a3b` (2026-11-11)
-**Commit Message**: Pin sqlparser until the upstream quoted-parameter fix is released
+### Incident Patch 1: `4cb43afc` (2026-11-12)
+**Commit Message**: refactor(database) :: decode rows into named columns first (#1595)
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- ## unreleased
- 
--## v0.48.0 (2026-11-10)
-+## v0.48.0 (2026-11-12)
- 
- - Updated Rust and browser dependencies, including ApexCharts 8.8.1, Tabler 1.7.4, Tabler icons 3.51, and Tom Select 2.7. Chart series names and labels now display HTML as text, fixing upstream script injection in legends and tooltips.
- 
-```
+* refactor(database) :: decode rows into named columns first
 
-**File**: `Cargo.toml` (modified, +3/-2)
+Behavior does not change.
+
+Refs #1056
+
+* avoid unneeded allocation in row_to_json_with_inputs
+
+---------
+
+Co-authored-by: lovasoa <[REDACTED_EMAIL]>
+
+**File**: `src/webserver/database/sql_to_json.rs` (modified, +20/-17)
 ```diff
-@@ -77,8 +77,9 @@ lambda_http = { version = "1.3.0", default-features = false, features = [
- actix-http = { version = "3", optional = true }
- actix-service = { version = "2", optional = true }
- http-body-util = { version = "0.1", optional = true }
--# 0.64 rejects quoted parameter names: https://github.com/apache/datafusion-sqlparser-rs/pull/2539
--sqlparser = { version = "0.63.0", default-features = false, features = [
-+# Update after a sqlparser release includes the quoted-parameter fix:
-+# https://github.com/apache/datafusion-sqlparser-rs/pull/2917
-+sqlparser = { version = "=0.63.0", default-features = false, features = [
-     "std",
-     "visitor",
- ] }
+@@ -44,29 +44,32 @@ pub(super) fn row_to_json(row: &AnyRow) -> Value {
+     Object(map)
+ }
+ 
+-/// Decodes a row into user-visible columns and a private trailing input suffix.
++/// Decodes a database row into (key, value) pairs
++pub(super) fn decode_columns(row: &AnyRow) -> impl ExactSizeIterator<Item = (String, Value)> {
++    row.columns()
++        .iter()
++        .map(|column| (canonical_col_name(column), sql_to_json(row, column)))
++}
++
++/// A row returned by the database starts with a certain number of user-accessible "public" values,
++/// followed by values generated internally by sqlpage's query rewriting engine to serve as inputs to
++/// sqlpage functions.
++///
++/// Given `[(public_key_1, public_val_1), (public_key_2, public_val_2), (internal_key_1, internal_val_1)], 1`
++/// This function returns `{public_key_1:public_val_1, public_key_2:public_val_2}, [internal_val_1]`
+ ///
+-/// Every SQL value is decoded exactly once. Private values are addressed by
+-/// ordinal, so their generated SQL aliases cannot collide with user columns.
++/// If there are fewer than `internal_count` columns, all columns are considered internal
+ pub(super) fn row_to_json_with_inputs(
+     row: &AnyRow,
+-    input_count: usize,
++    internal_count: usize,
+ ) -> anyhow::Result<(Value, Vec<Value>)> {
+-    let columns = row.columns();
+-    let public_count = columns
+-        .len()
+-        .checked_sub(input_count)
+-        .ok_or_else(|| anyhow::anyhow!("The query returned fewer columns than SQLPage expected"))?;
++    let mut db_pairs = decode_columns(row);
+     let mut map = Map::new();
+-    let mut inputs = Vec::with_capacity(input_count);
+-    for column in &columns[..public_count] {
+-        let key = canonical_col_name(column);
+-        let value = sql_to_json(row, column);
+-        map = add_value_to_map(map, (key, value));
+-    }
+-    for column in &columns[public_count..] {
+-        inputs.push(sql_to_json(row, column));
++    while db_pairs.len() > internal_count {
++        map = add_value_to_map(map, db_pairs.next().expect("len was checked"));
+     }
++    anyhow::ensure!(db_pairs.len() == internal_count, "missing internal columns");
++    let inputs = db_pairs.map(|(_, value)| value).collect();
+     Ok((Value::Object(map), inputs))
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `e391c05c` (2026-11-10)
-**Commit Message**: Keep compatible sqlparser version and remove local workaround
+### Incident Patch 2: `8c58104e` (2026-11-12)
+**Commit Message**: refactor(database) :: share connection setup between pools (#1594)
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- 
- ## v0.48.0 (2026-11-10)
- 
--- Updated Rust and browser dependencies, including SQL parser 0.64, ApexCharts 8.8.1, Tabler 1.7.4, Tabler icons 3.51, and Tom Select 2.7. Chart series names and labels now display HTML as text, fixing upstream script injection in legends and tooltips.
-+- Updated Rust and browser dependencies, including ApexCharts 8.8.1, Tabler 1.7.4, Tabler icons 3.51, and Tom Select 2.7. Chart series names and labels now display HTML as text, fixing upstream script injection in legends and tooltips.
- 
- - SQLPage no longer trusts the compromised eMudhra certificates. ([nixpkgs#576544](https://github.com/NixOS/nixpkgs/issues/576544))
- 
-```
+* refactor(database) :: share connection setup between pools
 
-**File**: `Cargo.lock` (modified, +4/-4)
-```diff
-@@ -4648,19 +4648,19 @@ dependencies = [
- 
- [[package]]
- name = "sqlparser"
--version = "0.64.0"
-+version = "0.63.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "92e0d273b4f8ddd14a35ed36862acbc9cc96cec578e36ee1881a9d42e0e0f2c8"
-+checksum = "3679862809bd1f92e563cf6fd820e28f39135303668001c10331d5027183e8b4"
- dependencies = [
-  "log",
-  "sqlparser_derive",
- ]
- 
- [[package]]
- name = "sqlparser_derive"
--version = "0.7.0"
-+version = "0.6.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5fa4939c717eaef717f244768d35a5f93c62e1d440865097d2edef7d86ddb7e0"
-+checksum = "2905ae8e8148d8f7f5748ea95d1e949fa4fc1d7f5161547b758ad118b2e4b0aa"
- dependencies = [
-  "proc-macro2",
-  "quote",
-```
+The two hook files were read by two copies of the same code. One function now reads both. Behaviour and log messages are unchanged.
 
-**File**: `Cargo.toml` (modified, +2/-2)
-```diff
-@@ -77,8 +77,8 @@ lambda_http = { version = "1.3.0", default-features = false, features = [
- actix-http = { version = "3", optional = true }
- actix-service = { version = "2", optional = true }
- http-body-util = { version = "0.1", optional = true }
--sqlparser = { version = "0.64.0", default-features = false, features = [
--    "derive-dialect",
-+# 0.64 rejects quoted parameter names: https://github.com/apache/datafusion-sqlparser-rs/pull/2539
-+sqlparser = { version = "0.63.0", default-features = false, features = [
-     "std",
-     "visitor",
- ] }
-```
+Refs #1056
 
-**File**: `fuzz/Cargo.lock` (modified, +4/-4)
+* Avoid double indirection
+
+---------
+
+Co-authored-by: lovasoa <[REDACTED_EMAIL]>
+
+**File**: `src/webserver/database/connect.rs` (modified, +102/-91)
 ```diff
-@@ -4498,19 +4498,19 @@ dependencies = [
+@@ -1,4 +1,4 @@
+-use std::{mem::take, time::Duration};
++use std::{future::Future, mem::take, sync::Arc, time::Duration};
  
- [[package]]
- name = "sqlparser"
--version = "0.64.0"
-+version = "0.63.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "92e0d273b4f8ddd14a35ed36862acbc9cc96cec578e36ee1881a9d42e0e0f2c8"
-+checksum = "3679862809bd1f92e563cf6fd820e28f39135303668001c10331d5027183e8b4"
- dependencies = [
-  "log",
-  "sqlparser_derive",
- ]
- 
- [[package]]
- name = "sqlparser_derive"
--version = "0.7.0"
-+version = "0.6.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5fa4939c717eaef717f244768d35a5f93c62e1d440865097d2edef7d86ddb7e0"
-+checksum = "2905ae8e8148d8f7f5748ea95d1e949fa4fc1d7f5161547b758ad118b2e4b0aa"
- dependencies = [
-  "proc-macro2",
-  "quote",
-```
-
-**File**: `src/webserver/database/csv_import.rs` (modified, +3/-3)
-```diff
-@@ -90,11 +90,11 @@ pub(super) fn extract_csv_copy_statement(stmt: &mut Statement) -> Option<CsvImpo
-         target: source,
-         options,
-         legacy_options,
--        payload,
-+        values,
-     } = stmt
-     {
--        if payload.is_some() {
--            log::warn!("COPY with inline data not compatible with SQLPage: {stmt}");
-+        if !values.is_empty() {
-+            log::warn!("COPY ... VALUES not compatible with SQLPage: {stmt}");
-             return None;
-         }
-         let uploaded_file = match std::mem::replace(source, CopyTarget::Stdin) {
-```
-
-**File**: `src/webserver/database/sql.rs` (modified, +0/-56)
-```diff
-@@ -659,62 +659,6 @@ mod tests {
-         assert!(error.to_string().contains("GROUP BY"));
+ use super::Database;
+ use crate::{
+@@ -35,22 +35,8 @@ impl Database {
+         );
+         set_custom_connect_options(&mut connect_options, config);
+         log::debug!("Connecting to database: {database_url}");
+-        let mut retries = config.database_connection_retries;
+-
+-        let mut conn: AnyConnection = loop {
+-            match AnyConnection::connect_with(&connect_options).await {
+-                Ok(c) => break c,
+-                Err(e) => {
+-                    if retries == 0 {
+-                        return Err(anyhow::Error::new(e)
+-                            .context(format!("Unable to open connection to {database_url}")));
+-                    }
+-                    log::warn!("Failed to connect to the database: {e:#}. Retrying in 5 seconds.");
+-                    retries -= 1;
+-                    tokio::time::sleep(Duration::from_secs(5)).await;
+-                }
+-            }
+-        };
++        let mut conn: AnyConnection =
++            retry_connecting(config, || AnyConnection::connect_with(&connect_options)).await?;
+         let dbms_name: String = conn.dbms_name().await?;
+         let database_type = SupportedDatabase::from_dbms_name(&dbms_name);
+         drop(conn);
+@@ -73,64 +59,112 @@ impl Database {
      }
  
--    #[test]
--    fn quoted_form_parameters_keep_their_name_and_source() {
--        use SupportedDatabase::{
--            Duckdb, Generic, Mssql, MySql, Oracle, Postgres, Snowflake, Sqlite,
--        };
--
--        for db in [
--            Duckdb, Generic, Mssql, MySql, Oracle, Postgres, Snowflake, Sqlite,
--        ] {
--            let database = database(db);
--            let quote = if db == MySql { '`' } else { '"' };
--            let name = format!("First {quote}name{quote}");
--            let quoted_name = name.replace(quote, &format!("{quote}{quote}"));
--            let sql = format!("SELECT :{quote}{quoted_name}{quote} FROM t");
--            let file = SqlFile::from_db_info(&database, &sql, Path::new("quoted.sql"));
--            let [
--                FileStatement::Query(Query {
--                    body: QueryBody::Database(query),
--                    ..
--                }),
--            ] = file.statements.as_ref()
--            else {
--                panic!("{db:?}: {:?}", file.statements);
--            };
--            assert_eq!(
--                query.bindings.as_ref(),
--                [SqlPageExpr::Variable(VariableRef {
--                    name,
--                    source: VariableSource::SetOrForm,
--                })],
--                "{db:?}"
--            );
--        }
--    }
--
--    #[test]
--    fn json_object_colon_preserves_quoted_columns() {
--        let database = database(SupportedDatabase::Mssql);
--        let file = SqlFile::from_db_info(
--            &database,
--            r#"SELECT JSON_OBJECT('key':"Column") AS data FROM t"#,
--            Path::new("quoted.sql"),
--        );
--        let [
--            FileStatement::Query(Query {
--                body: QueryBody::Database(query),
--                ..
--            }),
--        ] = file.statements.as_ref()
--        else {
--            panic!("{:?}", file.statements);
--        };
--        assert!(query.sql.contains(r#""Column""#), "{}", query.sql);
--        assert!(query.bindings.is_empty());
--    }
--
-     #[test]
-     fn placeholder_like_literal_is_not_rewritten() {
-         let database = database(SupportedDatabase::MySql);
-```
-
-**File**: `src/webserver/database/sql/dialect.rs` (modified, +8/-66)
-```diff
-@@ -1,12 +1,9 @@
- //! Database-specific parser dialects and bind-placeholder syntax.
- 
--use sqlparser::ast::{Expr, Value};
- use sqlparser::dialect::{
-     Dialect, DuckDbDialect, GenericDialect, MsSqlDialect, MySqlDialect, OracleDialect,
-     PostgreSqlDialect, SQLiteDialect, SnowflakeDialect,
- };
--use sqlparser::parser::{Parser, ParserError};
--use sqlparser::tokenizer::{Span, Token};
- use sqlx::any::AnyKind;
- 
- use crate::webserver::database::SupportedDatabase;
-@@ -21,72 +18,17 @@ pub(super) enum PlaceholderStyle {
- /// Returns the `sqlparser` dialect matching the configured database.
- pub(super) fn parser_dialect(database: SupportedDatabase) -> Box<dyn Dialect> {
-     match database {
--        SupportedDatabase::Duckdb => Box::new(extended::SqlPageDuckDbDialect::new()),
--        SupportedDatabase::Oracle => Box::new(extended::SqlPageOracleDialect::new()),
--        SupportedDatabase::Postgres => Box::new(extended::SqlPagePostgreSqlDialect::new()),
--        SupportedDatabase::Generic => Box::new(extended::SqlPageGenericDialect::new()),
--        SupportedDatabase::Mssql => Box::new(extended::SqlPageMsSqlDialect::new()),
--        SupportedDatabase::MySql => Box::new(extended::SqlPageMySqlDialect::new()),
--        SupportedDatabase::Sqlite => Box::new(extended::SqlPageSQLiteDialect::new()),
--        SupportedDatabase::Snowflake => Box::new(extended::SqlPageSnowflakeDialect::new()),
-+        SupportedDatabase::Duckdb => Box::new(DuckDbDialect {}),
-+        SupportedDatabase::Oracle => Box::new(OracleDialect {}),
-+        SupportedDatabase::Postgres => Box::new(PostgreSqlDialect {}),
-+        SupportedDatabase::Generic => Box::new(GenericDialect {}),
-+        SupportedDatabase::Mssql => Box::new(MsSqlDialect {}),
-+        SupportedDatabase::MySql => Box::new(MySqlDialect {}),
-+        SupportedDatabase::Sqlite => Box::new(SQLiteDialect {}),
-+        SupportedDatabase::Snowflake => Box::new(SnowflakeDialect {}),
+     fn create_pool_options(config: &AppConfig, kind: AnyKind) -> PoolOptions<Any> {
++        let ConnectionHooks {
++            on_connect,
++            on_reset,
++        } = ConnectionHooks::read(config);
+         let mut pool_options = PoolOptions::new()
+-            .max_connections(if let Some(max) = config.max_database_pool_connections {
+-                max
+-            } else {
+-                // Different databases have a different number of max concurrent connections allowed by default
+-                match kind {
+-                    AnyKind::Postgres | AnyKind::Odbc => 50, // Default to PostgreSQL-like limits for Generic
+-                    AnyKind::MySql => 75,
+-                    AnyKind::Sqlite => {
+-                        if config.database_url.contains(":memory:") {
+-                            128
+-                        } else {
+-                            16
+-                        }
+-                    }
+-                    AnyKind::Mssql => 100,
+-                }
+-            })
++            .max_connections(max_connections(config, kind))
+             .idle_timeout(config.database_connection_idle_timeout)
+             .max_lifetime(config.database_connection_max_lifetime)
+             .acquire_timeout(Duration::from_secs_f64(
+                 config.database_connection_acquire_timeout_seconds,
+             ));
+-        pool_options = add_on_return_to_pool(config, pool_options);
+-        pool_options = add_on_connection_handler(config, pool_options);
++        pool_options = add_on_return_to_pool(pool_options, on_reset);
++        pool_options = add_on_connection_handler(config, pool_options, on_connect);
+         pool_options
      }
  }
  
--// sqlparser 0.64 only accepts unquoted placeholder names. SQLPage also accepts
--// quoted form inputs such as :"First name". Handle these at expression boundaries
--// so a JSON_OBJECT key/value separator followed by a quoted column stays intact.
--fn parse_quoted_form_parameter(parser: &mut Parser<'_>) -> Option<Result<Expr, ParserError>> {
--    let prefix = parser.peek_token();
--    if prefix.token != Token::Colon {
--        return None;
--    }
--    let name = parser.peek_nth_token(1);
--    let Token::Word(word) = &name.token else {
--        return None;
--    };
--    if word.quote_style.is_none() || prefix.span.end != name.span.start {
--        return None;
--    }
--    let value = Value::Placeholder(format!(":{}", word.value));
--    parser.next_token();
--    parser.next_token();
--    Some(Ok(Expr::Value(
--        value.with_span(Span::new(prefix.span.start, name.span.end)),
--    )))
--}
--
--// derive_dialect! always emits public types and constructors.
--#[allow(unreachable_pub)]
--mod extended {
--    use super::{
--        DuckDbDialect, GenericDialect, MsSqlDialect, MySqlDialect, OracleDialect,
--        PostgreSqlDialect, SQLiteDialect, SnowflakeDialect, parse_quoted_form_parameter,
--    };
--
--    macro_rules! sqlpage_dialect {
--        ($name:ident, $base:ty) => {
--            sqlparser::derive_dialect!(
--                $name,
--                $base,
--                preserve_type_id = true,
--                overrides = {
--                    parse_prefix = parse_quoted_form_parameter(_parser)
--                        .or_else(|| self.dialect.parse_prefix(_parser))
--                }
--            );
--        };
--    }
--
--    sqlpage_dialect!(SqlPageDuckDbDialect, DuckDbDialect);
--    sqlpage_dialect!(SqlPageOracleDialect, OracleDialect);
--    sqlpage_dialect!(SqlPagePostgreSqlDialect, PostgreSqlDialect);
--    sqlpage_dialect!(SqlPageGenericDialect, GenericDialect);
--    sqlpage_dialect!(SqlPageMsSqlDialect, MsSqlDialect);
--    sqlpage_dialect!(SqlPageMySqlDialect, MySqlDialect);
--    sqlpage_dialect!(SqlPageSQLiteDialect, SQLiteDialect);
--    sqlpage_dialect!(SqlPageSnowflakeDialect, SnowflakeDialect);
--}
--
- /// Returns the native placeholder syntax emitted into rewritten SQL.
- pub(super) fn placeholder_style(kind: AnyKind) -> PlaceholderStyle {
-     match kind {
-```
-
-**File**: `tests/sql_test_files/data/quoted_form_parameters_nomysql.sql` (removed, +0/-5)
-```diff
-@@ -1,5 +0,0 @@
--SET "First name" = 'Ada';
--SELECT :"First name" AS actual, 'Ada' AS expected;
--SELECT LOWER(:"First name") AS actual, 'ada' AS expected;
--SELECT sqlpage.url_encode(:"First name") AS actual, 'Ada' AS expected;
--SELECT :"Missing name" AS actual, NULL AS expected;
-```
-
----
-
-### Incident Patch 3: `88eaf4f5` (2026-11-10)
-**Commit Message**: fix(deps) :: stop trusting compromised eMudhra certificates (#1592)
-
-Update webpki-roots from 1.0.9 to 1.0.11 and rustls-webpki from 0.103.15 to 0.103.16.
-
-Refs: https://github.com/rustls/webpki/releases/tag/v%2F0.103.16
-Refs: https://github.com/rustls/webpki-roots/releases/tag/v%2F1.0.11
-Refs: https://github.com/NixOS/nixpkgs/issues/576544
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -2,6 +2,8 @@
- 
- ## unreleased
- 
-+- SQLPage no longer trusts the compromised eMudhra certificates. ([nixpkgs#576544](https://github.com/NixOS/nixpkgs/issues/576544))
+-fn add_on_return_to_pool(config: &AppConfig, pool_options: PoolOptions<Any>) -> PoolOptions<Any> {
+-    let on_disconnect_file = config.configuration_directory.join(ON_RESET_FILE);
+-    let sql = if on_disconnect_file.exists() {
+-        log::info!(
+-            "Creating a custom SQL connection cleanup handler from {}",
+-            on_disconnect_file.display()
+-        );
+-        match std::fs::read_to_string(&on_disconnect_file) {
+-            Ok(sql) => {
+-                log::trace!("The custom SQL connection cleanup handler is:\n{sql}");
+-                Some(std::sync::Arc::new(sql))
+-            }
++async fn retry_connecting<C, E, F>(
++    config: &AppConfig,
++    mut connect: impl FnMut() -> F,
++) -> anyhow::Result<C>
++where
++    F: Future<Output = Result<C, E>>,
++    E: std::error::Error + Send + Sync + 'static,
++{
++    let mut retries = config.database_connection_retries;
++    loop {
++        match connect().await {
++            Ok(connection) => return Ok(connection),
+             Err(e) => {
+-                log::error!(
+-                    "Unable to read the file {}: {}",
+-                    on_disconnect_file.display(),
+-                    e
+-                );
+-                None
++                if retries == 0 {
++                    return Err(anyhow::Error::new(e).context(format!(
++                        "Unable to open connection to {}",
++                        config.database_url
++                    )));
++                }
++                log::warn!("Failed to connect to the database: {e:#}. Retrying in 5 seconds.");
++                retries -= 1;
++                tokio::time::sleep(Duration::from_secs(5)).await;
+             }
+         }
+-    } else {
++    }
++}
 +
- - Now a tab with a `color` is underlined only when it is active. ([#791](https://github.com/sqlpage/SQLPage/issues/791))
- 
- - Striped table rows are visible in dark mode again. Tabler was updated to [v1.7.3](https://github.com/tabler/tabler/releases/tag/%40tabler%2Fcore%401.7.3) to fix this. ([#957](https://github.com/sqlpage/SQLPage/issues/957))
-```
-
-**File**: `Cargo.lock` (modified, +8/-8)
-```diff
-@@ -2634,7 +2634,7 @@ dependencies = [
-  "tokio",
-  "tokio-rustls",
-  "url",
-- "webpki-roots 1.0.9",
-+ "webpki-roots 1.0.11",
- ]
- 
- [[package]]
-@@ -4082,7 +4082,7 @@ dependencies = [
-  "serde",
-  "serde_json",
-  "thiserror 2.0.21",
-- "webpki-roots 1.0.9",
-+ "webpki-roots 1.0.11",
-  "x509-parser",
- ]
- 
-@@ -4109,9 +4109,9 @@ dependencies = [
- 
- [[package]]
- name = "rustls-webpki"
--version = "0.103.15"
-+version = "0.103.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
- dependencies = [
-  "aws-lc-rs",
-  "ring",
-@@ -4655,7 +4655,7 @@ dependencies = [
-  "tokio-util",
-  "url",
-  "uuid",
-- "webpki-roots 1.0.9",
-+ "webpki-roots 1.0.11",
-  "whoami",
- ]
- 
-@@ -5378,14 +5378,14 @@ version = "0.26.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
- dependencies = [
-- "webpki-roots 1.0.9",
-+ "webpki-roots 1.0.11",
- ]
- 
- [[package]]
- name = "webpki-roots"
--version = "1.0.9"
-+version = "1.0.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
-+checksum = "f5f280bbb2b287bc8e7de7e3852945a0ff50d1bbcb5ed42b6c7a568c546df171"
- dependencies = [
-  "rustls-pki-types",
- ]
++fn max_connections(config: &AppConfig, kind: AnyKind) -> u32 {
++    if let Some(max) = config.max_database_pool_connections {
++        return max;
++    }
++    // Different databases have
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1601** (2026-11-12): Update 'http_only' cookie description (@lovasoa)
+- **PR #1595** (2026-11-12): refactor(database) :: decode rows into named columns first (@81reap)
+- **PR #1594** (2026-11-12): refactor(database) :: share connection setup between pools (@81reap)
+- **PR #1593** (2026-11-12): test(transactions) :: check the rollback through a page (@81reap)
 - **PR #1592** (2026-11-10): fix(deps) :: stop trusting compromised eMudhra certificates (@81reap)
 - **PR #1589** (closed): Supply one-click deploy templates under Hosting section (@cosark)
-- **PR #1586** (2026-10-31): feat(card) :: let a card's link open a new tab (@81reap)
-- **PR #1585** (2026-11-02): fix(modal) :: apply `height` to the model's content (@81reap)
-- **PR #1584** (2026-10-30): fix(frontend) :: drop source map comments from joined sylesheet (@81reap)
-- **PR #1583** (2026-10-30): fix(tab) :: underline only the active tab (@81reap)
 
 ---
 
@@ -1587,28 +1399,63 @@ Refs: https://github.com/NixOS/nixpkgs/issues/576544
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pin sqlparser until the upstream quoted-parameter fix is released
+## X. database) :: decode rows into named columns first (#1595)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/webserver/database/sql_to_json.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c673a3b`: Pin sqlparser until the upstream quoted-parameter fix is released. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4cb43afc`: database) :: decode rows into named columns first (#1595). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/webserver/database/sql_to_json.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## v0.48.0 (2026-11-12)
+/// Decodes a database row into (key, value) pairs
+pub(super) fn decode_columns(row: &AnyRow) -> impl ExactSizeIterator<Item = (String, Value)> {
+    row.columns()
+        .iter()
+        .map(|column| (canonical_col_name(column), sql_to_json(row, column)))
+}
+
+/// A row returned by the database starts with a certain number of user-accessible "public" values,
+/// followed by values generated internally by sqlpage's query rewriting engine to serve as inputs to
+/// sqlpage functions.
+///
+/// Given `[(public_key_1, public_val_1), (public_key_2, public_val_2), (internal_key_1, internal_val_1)], 1`
+/// This function returns `{public_key_1:public_val_1, public_key_2:public_val_2}, [internal_val_1]`
+/// If there are fewer than `internal_count` columns, all columns are considered internal
+    internal_count: usize,
+    let mut db_pairs = decode_columns(row);
+    while db_pairs.len() > internal_count {
+        map = add_value_to_map(map, db_pairs.next().expect("len was checked"));
+    anyhow::ensure!(db_pairs.len() == internal_count, "missing internal columns");
+    let inputs = db_pairs.map(|(_, value)| value).collect();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-## v0.48.0 (2026-11-10)
+/// Decodes a row into user-visible columns and a private trailing input suffix.
+/// Every SQL value is decoded exactly once. Private values are addressed by
+/// ordinal, so their generated SQL aliases cannot collide with user columns.
+    input_count: usize,
+    let columns = row.columns();
+    let public_count = columns
+        .len()
+        .checked_sub(input_count)
+        .ok_or_else(|| anyhow::anyhow!("The query returned fewer columns than SQLPage expected"))?;
+    let mut inputs = Vec::with_capacity(input_count);
+    for column in &columns[..public_count] {
+        let key = canonical_col_name(column);
+        let value = sql_to_json(row, column);
+        map = add_value_to_map(map, (key, value));
+    }
+    for column in &columns[public_count..] {
+        inputs.push(sql_to_json(row, column));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c673a3b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4cb43afc` are properly handled with clean fallback behavior.
