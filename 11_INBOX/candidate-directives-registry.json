@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T04:31:52.320Z",
+  "last_updated": "2026-11-13T04:43:37.197Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8102,6 +8102,24 @@
       "source_repo": "chaos-mesh-chaos-mesh",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-74F813-dashboard-split-event-pagination-into-a-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-FFCFD6",
+      "directive_title": "Merge pull request #7358 from saket0187/fix/mapper-otel-push-method",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kubeedge-kubeedge",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FFCFD6-merge-pull-request-7358-from-saket0187-f.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-7D99D0",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7D99D0-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-13"
     }
   ]

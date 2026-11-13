@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T04:31:52.416Z",
+  "updated_at": "2026-11-13T04:43:37.171Z",
   "stats": {
-    "total_discovered": 2173,
-    "approved_pending_harvest": 2015,
+    "total_discovered": 2176,
+    "approved_pending_harvest": 2018,
     "harvested_count": 0,
     "rejected_count": 158,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2006,
+      "COMMUNITY_AND_EXPERT": 2009,
       "OFFICIAL_DOCUMENTATION": 89,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -46718,6 +46718,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
         "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-6C5B89FB0AC8": {
+      "id": "SRC-6C5B89FB0AC8",
+      "url": "https://huggingface.co/RecursiveSI/flint",
+      "title": "https://huggingface.co/RecursiveSI/flint",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:43:37.127Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md",
+        "fileName": "hf-recursivesi-flint-learnings.md"
+      }
+    },
+    "SRC-0663613841C8": {
+      "id": "SRC-0663613841C8",
+      "url": "https://github.com/kubeedge/kubeedge",
+      "title": "https://github.com/kubeedge/kubeedge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:43:37.149Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
+        "fileName": "kubeedge-kubeedge-learnings.md"
+      }
+    },
+    "SRC-A3ACA72CF94A": {
+      "id": "SRC-A3ACA72CF94A",
+      "url": "https://github.com/kubeedge/kubeedge/blob/master/CONTRIBUTING.md",
+      "title": "https://github.com/kubeedge/kubeedge/blob/master/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:43:37.171Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
+        "fileName": "kubeedge-kubeedge-learnings.md"
       }
     }
   }

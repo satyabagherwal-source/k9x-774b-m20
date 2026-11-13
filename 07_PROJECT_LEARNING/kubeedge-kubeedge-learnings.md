@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source**: github ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
-> **Source Version**: `b1a36daf`  
+> **Source Version**: `65659fb7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T14:11:51.693Z  
+> **Timestamp**: 2026-11-13T04:43:07.624Z  
 > **Learning ID**: `learn-github-kubeedge-kubeedge`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T14:11:51.333Z  
+> **Harvest Timestamp**: 2026-11-13T04:43:07.620Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kubernetes Native Edge Computing Framework (project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7620 stars
+- **Stars / Engagement**: 7631 stars
 
 ---
 
@@ -1212,11 +1212,11 @@ func RuleContains(rulePath, rule2Path string) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7428** (2026-11-10): **Upgrade golang.org/x/crypto to v0.52.0**
+  *Symptoms*: <!--  Thanks for sending a pull request!  Here are some tips for you:  1. If this is your first time, please read our contributor guidelines: https://github.com/kubeedge/kubeedge/blob/master/CONTRIBUTING.md 2. Ensure you have added or ran the appropriate tests for your PR  -->  **What type of PR is this?**   /kind feature     **What this PR does / why we need it**:  /sig security  Upgrade golang.org/x/crypto to v0.52.0  **Which issue(s) this PR fixes**: <!-- *Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. _If PR is about `failing-tests or flakes`, please post the related issues/tests in a comment and do not use `Fixes`_* --> Fixes #  **Special notes for your reviewer**:  **Does this PR introduce a user-facing change?**: <!-- If no, just write "NONE" in the release-note block below. If yes, a release note is required: Enter your extended release note in the block below. If the PR requires additional action from users switching to the new release, include the string "action required". --> ```release-note  ``` 
+
 - **Issue #7386** (2026-10-27): **metaserver: add unit tests for the unhold-upgrade handlers**
   *Symptoms*: **What type of PR is this?**  /kind test  **What this PR does / why we need it**:  `edge/pkg/metamanager/metaserver/handlerfactory/extend_unhold_upgrade.go` has no unit tests (0% coverage on master). It holds the two metaserver handlers that `keadm ctl unhold-upgrade` calls to release pods held with the `edge.kubeedge.io/hold-upgrade=true` annotation. The other extended handlers next to it, such as confirm-upgrade, exec, logs and restart, are tested. This PR adds `extend_unhold_upgrade_test.go` in the same style:  - `UnholdUpgrade`:   - Rejects a body that isn't `namespace/name`.   - Fails when it can't create a kube client.   - Rejects a pod that doesn't exist, isn't held, has `hold-upgrade` set to something other than `true`, or isn't `Pending`.   - Fails on an oversized body.   - Sends a held `Pending` pod to edged as an `unhold-upgrade` message with the resource `<namespace>/pod/<name>`. - `UnholdUpgradeNode`:   - Rejects an empty node name.   - Fails when it can't create a kube client.   - Rejects a node that doesn't exist.   - Fails when it can't list pods, or the body is oversized.   - Does nothing on a node without held pods.   - On a node with a mix of pods, unholds only the held `Pending` pods of that node, and trims the node name in the body.  Coverage of `extend_unhold_upgrade.go` goes from 0% to 100% of its statements, and the `handlerfactory` package goes from 56.7% to 75.9%.  **Which issue(s) this PR fixes**:  None. This PR only adds tests.  **Special notes for
-
-- **Issue #7379** (2026-10-27): **metamanager : support for arrayList of objects for watch events creation**
-  *Symptoms*: <!--  Thanks for sending a pull request!  Here are some tips for you:  1. If this is your first time, please read our contributor guidelines: https://github.com/kubeedge/kubeedge/blob/master/CONTRIBUTING.md 2. Ensure you have added or ran the appropriate tests for your PR  -->  **What type of PR is this?** /kind feature <!-- Add one of the following kinds: /kind bug /kind cleanup /kind documentation /kind feature /kind test /kind design  Optionally add one or more of the following kinds if applicable: /kind api-change /kind failing-test -->   **What this PR does / why we need it**: Adds support for array-formatted object lists in the MetaManager imitator, alongside existing Kubernetes List objects. Also Includes tests covering the same.    **Which issue(s) this PR fixes**: Fixes  #7250   <!-- *Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. _If PR is about `failing-tests or flakes`, please post the related issues/tests in a comment and do not use `Fixes`_* -->  **Special notes for your reviewer**:  **Does this PR introduce a user-facing change?**: <!-- If no, just write "NONE" in the release-note block below. If yes, a release note is required: Enter your extended release note in the block below. If the PR requires additional action from users switching to the new release, include the string "action required". -->  ```  release-note  ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1233,81 +1233,44 @@ func RuleContains(rulePath, rule2Path string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce567751` (2026-10-23)
-**Commit Message**: hack: tolerate a missing docker group in build_with_container.sh
+### Incident Patch 1: `65659fb7` (2026-11-13)
+**Commit Message**: Merge pull request #7358 from saket0187/fix/mapper-otel-push-method
 
-On macOS /etc/group has no docker entry, because Docker Desktop does not
-create one. The docker group lookup used a bare grep, which exits 1 when
-the entry is absent. The script runs under errexit and pipefail, so it
-exited there without printing anything or invoking docker.
+mapper-framework: fix OTEL push method parsing and report interval
 
-Let the lookup fail quietly and pass the host UID alone when no group ID
-was found, so the build still runs as the invoking user and the files it
-writes into the bind mount keep that ownership. Behaviour is unchanged
-where the docker group exists.
-
-Signed-off-by: tarone-saloni <[REDACTED_EMAIL]>
-
-**File**: `hack/make-rules/build_with_container.sh` (modified, +7/-2)
+**File**: `staging/src/github.com/kubeedge/mapper-framework/_template/mapper/data/publish/otel/handler.go` (modified, +1/-1)
 ```diff
-@@ -23,11 +23,16 @@ set -o pipefail
- KUBEEDGE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
- MOUNTPATH="${MOUNTPATH:-/kubeedge}"
- KUBEEDGE_BUILD_IMAGE=${KUBEEDGE_BUILD_IMAGE:-"kubeedge/build-tools:1.25.14-ke1"}
--DOCKER_GID="${DOCKER_GID:-$(grep '^docker:' /etc/group | cut -f3 -d:)}"
-+DOCKER_GID="${DOCKER_GID:-$(grep '^docker:' /etc/group 2>/dev/null | cut -f3 -d: || true)}"
- CONTAINER_RUN_OPTIONS="${CONTAINER_RUN_OPTIONS:--it}"
+@@ -38,7 +38,7 @@ func DataHandler(ctx context.Context, twin *common.Twin, client *driver.Customiz
+ 		return
+ 	}
  
-+CONTAINER_USER="${UID}"
-+if [[ -n "${DOCKER_GID}" ]]; then
-+    CONTAINER_USER="${UID}:${DOCKER_GID}"
-+fi
-+
- echo "start building inside container"
--docker run --rm ${CONTAINER_RUN_OPTIONS} -u "${UID}:${DOCKER_GID}" \
-+docker run --rm ${CONTAINER_RUN_OPTIONS} -u "${CONTAINER_USER}" \
-     --init \
-     --sig-proxy=true \
-     -e XDG_CACHE_HOME=/tmp/.cache \
+-	provider, err := cfg.InitProvider(time.Duration(twin.Property.ReportCycle), dataModel)
++	provider, err := cfg.InitProvider(time.Millisecond*time.Duration(twin.Property.ReportCycle), dataModel)
+ 	if err != nil {
+ 		klog.Errorf("init provider fail: %v", err)
+ 		return
 ```
 
----
-
-### Incident Patch 2: `b1a36daf` (2026-10-29)
-**Commit Message**: Merge pull request #7312 from tarone-saloni/fix/build-container-docker-gid
-
-hack: tolerate a missing docker group in build_with_container.sh
-
-**File**: `hack/make-rules/build_with_container.sh` (modified, +7/-2)
+**File**: `staging/src/github.com/kubeedge/mapper-framework/pkg/util/parse/grpc.go` (modified, +1/-1)
 ```diff
-@@ -23,11 +23,16 @@ set -o pipefail
- KUBEEDGE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
- MOUNTPATH="${MOUNTPATH:-/kubeedge}"
- KUBEEDGE_BUILD_IMAGE=${KUBEEDGE_BUILD_IMAGE:-"kubeedge/build-tools:1.25.14-ke1"}
--DOCKER_GID="${DOCKER_GID:-$(grep '^docker:' /etc/group | cut -f3 -d:)}"
-+DOCKER_GID="${DOCKER_GID:-$(grep '^docker:' /etc/group 2>/dev/null | cut -f3 -d: || true)}"
- CONTAINER_RUN_OPTIONS="${CONTAINER_RUN_OPTIONS:--it}"
- 
-+CONTAINER_USER="${UID}"
-+if [[ -n "${DOCKER_GID}" ]]; then
-+    CONTAINER_USER="${UID}:${DOCKER_GID}"
-+fi
-+
- echo "start building inside container"
--docker run --rm ${CONTAINER_RUN_OPTIONS} -u "${UID}:${DOCKER_GID}" \
-+docker run --rm ${CONTAINER_RUN_OPTIONS} -u "${CONTAINER_USER}" \
-     --init \
-     --sig-proxy=true \
-     -e XDG_CACHE_HOME=/tmp/.cache \
+@@ -181,7 +181,7 @@ func buildPropertiesFromGrpc(device *dmiapi.Device) []common.DeviceProperty {
+ 					return nil
+ 				}
+ 			case pptv.PushMethod.Otel != nil:
+-				dbMethodName = common.PushMethodOTEL
++				pushMethodName = common.PushMethodOTEL
+ 				pushMethod, err = json.Marshal(pptv.PushMethod.Otel)
+ 				if err != nil {
+ 					klog.Errorf("err: %+v", err)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7428** (closed): Upgrade golang.org/x/crypto to v0.52.0 (@kubeedge-bot)
 - **PR #7386** (2026-10-27): metaserver: add unit tests for the unhold-upgrade handlers (@adity1raut)
 - **PR #7379** (2026-10-27): metamanager : support for arrayList of objects for watch events creation (@EncHawk)
+- **PR #7358** (2026-11-13): mapper-framework: fix OTEL push method parsing and report interval (@saket0187)
 - **PR #7357** (2026-10-19): tests/e2e: poll for running pods instead of watching for updates (@ryoheimorimoto)
 - **PR #7354** (2026-10-16): nodetask: add unit tests for the ConfigUpdateJob reconcile handler (@adity1raut)
-- **PR #7351** (2026-10-20): nodegroup: do not match every node when matchLabels is nil (@vidhisingh24)
-- **PR #7343** (closed): controllermanager: escape resource names in JSON patch paths (@nzy0804)
 
 ---
 
@@ -1327,35 +1290,28 @@ hack: tolerate a missing docker group in build_with_container.sh
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hack: tolerate a missing docker group in build_with_container.sh
+## X. Merge pull request #7358 from saket0187/fix/mapper-otel-push-method
 
 **RULE**:
-When implementing operations in `hack/make-rules/build_with_container.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `staging/src/github.com/kubeedge/mapper-framework/_template/mapper/data/publish/otel/handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce567751`: hack: tolerate a missing docker group in build_with_container.sh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `65659fb7`: Merge pull request #7358 from saket0187/fix/mapper-otel-push-method. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `hack/make-rules/build_with_container.sh`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `staging/src/github.com/kubeedge/mapper-framework/_template/mapper/data/publish/otel/handler.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-DOCKER_GID="${DOCKER_GID:-$(grep '^docker:' /etc/group 2>/dev/null | cut -f3 -d: || true)}"
-CONTAINER_USER="${UID}"
-if [[ -n "${DOCKER_GID}" ]]; then
-    CONTAINER_USER="${UID}:${DOCKER_GID}"
-fi
-
-docker run --rm ${CONTAINER_RUN_OPTIONS} -u "${CONTAINER_USER}" \
+	provider, err := cfg.InitProvider(time.Millisecond*time.Duration(twin.Property.ReportCycle), dataModel)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-DOCKER_GID="${DOCKER_GID:-$(grep '^docker:' /etc/group | cut -f3 -d:)}"
-docker run --rm ${CONTAINER_RUN_OPTIONS} -u "${UID}:${DOCKER_GID}" \
+	provider, err := cfg.InitProvider(time.Duration(twin.Property.ReportCycle), dataModel)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce567751` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `65659fb7` are properly handled with clean fallback behavior.

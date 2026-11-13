@@ -2403,10 +2403,10 @@
     "repository": "kubeedge/kubeedge",
     "platform": "github",
     "sourceUrl": "https://github.com/kubeedge/kubeedge",
-    "sourceVersion": "b1a36daf",
+    "sourceVersion": "65659fb7",
     "license": "Apache-2.0",
-    "contentHash": "f282cf052e310405a42fab6159ffb0e41c9ac79e36b07d3c6bdaa6534657d80e",
-    "lastHarvestedAt": "2026-10-30T14:11:52.138Z",
+    "contentHash": "0285b275d2a7374af91b5b50e98669ba911929bb62d750c922dc85612ada7cd7",
+    "lastHarvestedAt": "2026-11-13T04:43:17.994Z",
     "learningId": "learn-github-kubeedge-kubeedge"
   },
   "giancarloerra-socraticode": {
@@ -10515,8 +10515,8 @@
     "sourceUrl": "https://huggingface.co/RecursiveSI/flint",
     "sourceVersion": "hf-recursivesi-flint",
     "license": "Open-Source",
-    "contentHash": "b1215a7c4bcd40867fc2d5be0ff3f6fb17a3f0128de0dedab983aace68bf7158",
-    "lastHarvestedAt": "2026-11-08T04:09:48.868Z",
+    "contentHash": "f3e7d189378d552319d6069006654ce36df08cced5ea568fe52a06123691bb69",
+    "lastHarvestedAt": "2026-11-13T04:42:59.009Z",
     "learningId": "learn-huggingface-recursivesi-flint"
   },
   "hf-qwen-qwen3-14b": {

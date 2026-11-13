@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T04:31:39.115Z",
-    "lastVerified": "2026-11-13T04:31:39.115Z",
+    "lastChecked": "2026-11-13T04:43:22.670Z",
+    "lastVerified": "2026-11-13T04:43:22.670Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-13T03:48:15.261Z",
-    "lastVerified": "2026-11-13T03:48:15.261Z",
+    "lastChecked": "2026-11-13T04:43:10.910Z",
+    "lastVerified": "2026-11-13T04:43:10.910Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -429,12 +429,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "openziti-zrok": {
-    "name": "openziti/zrok",
+    "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-12T22:48:30.337Z",
-    "lastVerified": "2026-11-12T22:48:30.337Z",
+    "lastChecked": "2026-11-13T04:43:05.882Z",
+    "lastVerified": "2026-11-13T04:43:05.882Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -443,7 +443,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f2c7dcf6"
   },
   "run-llama-llama_index": {
     "name": "run-llama/llama_index",
@@ -2473,22 +2474,21 @@
     "lastVerified": "2026-11-09T14:35:27.002Z"
   },
   "kubeedge-kubeedge": {
-    "name": "kubeedge",
+    "name": "kubeedge/kubeedge",
     "officialUrl": "https://github.com/kubeedge/kubeedge",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T19:46:06.281Z",
-    "lastVerified": "2026-11-11T19:46:06.281Z",
+    "lastChecked": "2026-11-13T04:43:07.620Z",
+    "lastVerified": "2026-11-13T04:43:07.620Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubeedge-kubeedge",
-    "contentHash": "f282cf052e310405a42fab6159ffb0e41c9ac79e36b07d3c6bdaa6534657d80e",
+    "contentHash": "0285b275d2a7374af91b5b50e98669ba911929bb62d750c922dc85612ada7cd7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b1a36daf"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "aleo-labs-protocol-snarkos": {
     "name": "snarkOS",
@@ -4598,9 +4598,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-11-11T18:11:53.082Z",
+    "lastChecked": "2026-11-13T04:43:08.406Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-11-11T18:11:53.082Z"
+    "lastVerified": "2026-11-13T04:43:08.406Z"
   },
   "aome510-spotify-player": {
     "name": "spotify-player",
@@ -9177,12 +9177,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nguyenphutrong-quotio": {
-    "name": "nguyenphutrong/quotio",
+    "name": "quotio",
     "officialUrl": "https://github.com/nguyenphutrong/quotio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T10:34:55.867Z",
-    "lastVerified": "2026-11-11T10:34:55.867Z",
+    "lastChecked": "2026-11-13T04:42:55.871Z",
+    "lastVerified": "2026-11-13T04:42:55.871Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nguyenphutrong-quotio",
@@ -9191,7 +9191,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3ea984cf"
   },
   "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8": {
     "name": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -11539,12 +11540,12 @@
     "lastVerified": "2026-11-12T03:30:30.840Z"
   },
   "hmlongco-factory": {
-    "name": "hmlongco/Factory",
+    "name": "Factory",
     "officialUrl": "https://github.com/hmlongco/Factory",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-08T21:16:40.401Z",
-    "lastVerified": "2026-11-08T21:16:40.401Z",
+    "lastChecked": "2026-11-13T04:43:00.949Z",
+    "lastVerified": "2026-11-13T04:43:00.949Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-hmlongco-factory",
@@ -11553,7 +11554,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5f4ea2bf"
   },
   "syntax-tree-hast-util-from-html": {
     "name": "hast-util-from-html",
@@ -13342,12 +13344,12 @@
     "officialUrl": "https://huggingface.co/RecursiveSI/flint",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T04:09:47.919Z",
-    "lastVerified": "2026-11-08T04:09:47.919Z",
+    "lastChecked": "2026-11-13T04:42:58.479Z",
+    "lastVerified": "2026-11-13T04:42:58.479Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-recursivesi-flint",
-    "contentHash": "b1215a7c4bcd40867fc2d5be0ff3f6fb17a3f0128de0dedab983aace68bf7158",
+    "contentHash": "f3e7d189378d552319d6069006654ce36df08cced5ea568fe52a06123691bb69",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

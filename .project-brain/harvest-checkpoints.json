@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T04:31:32.237Z",
+  "last_updated": "2026-11-13T04:43:18.020Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3741,14 +3741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubeedge-kubeedge",
-      "content_hash": "f282cf052e310405a42fab6159ffb0e41c9ac79e36b07d3c6bdaa6534657d80e",
-      "verified_at": "2026-10-30T14:11:52.144Z",
+      "content_hash": "0285b275d2a7374af91b5b50e98669ba911929bb62d750c922dc85612ada7cd7",
+      "verified_at": "2026-11-13T04:43:18.019Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T14:11:52.144Z"
+      "last_updated": "2026-11-13T04:43:18.019Z"
     },
     "giancarloerra/SocratiCode": {
       "repository": "giancarloerra/SocratiCode",
@@ -15801,14 +15801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-recursivesi-flint",
-      "content_hash": "b1215a7c4bcd40867fc2d5be0ff3f6fb17a3f0128de0dedab983aace68bf7158",
-      "verified_at": "2026-11-08T04:09:48.876Z",
+      "content_hash": "f3e7d189378d552319d6069006654ce36df08cced5ea568fe52a06123691bb69",
+      "verified_at": "2026-11-13T04:42:59.018Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T04:09:48.876Z"
+      "last_updated": "2026-11-13T04:42:59.018Z"
     },
     "Qwen/Qwen3-14B": {
       "repository": "Qwen/Qwen3-14B",

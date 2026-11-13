@@ -9334,3 +9334,6 @@
 | `CYCLE-20261113-C3T5` | `2026-11-13T04:31:29.609Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7cea2228...`) |
 | `CYCLE-20261113-C5LM` | `2026-11-13T04:31:31.930Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b7b6bfaa...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T04:31:52.288Z` | `hf-orcarouter-orcacyber-nano-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-527E8201` [Domain D] | Yes (`c5d1d10e...`) |
+| `CYCLE-20261113-QVR1` | `2026-11-13T04:42:59.005Z` | `RecursiveSI/flint` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md` | Yes (`f3e7d189...`) |
+| `CYCLE-20261113-RAEF` | `2026-11-13T04:43:17.991Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0285b275...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T04:43:37.119Z` | `hf-recursivesi-flint` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FE25E160` [Domain D] | Yes (`c9ef3f38...`) |

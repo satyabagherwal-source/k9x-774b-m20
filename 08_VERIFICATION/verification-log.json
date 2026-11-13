@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-K4WP",
-    "timestamp": "2026-11-09T22:14:48.793Z",
-    "repository": "yvgude/lean-ctx",
-    "learningId": "learn-github-yvgude-lean-ctx",
-    "contentHash": "cce419abe5983bcb417ea5aab779e1eb34ac9f27aef07318adeff0f74fe92995",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-K6V0",
-    "timestamp": "2026-11-09T22:14:51.324Z",
-    "repository": "xiaomi-research/Xiaomi-OCR-0",
-    "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
-    "contentHash": "2f70e81c46fcda9f0f160776b762950140775452b5baf9736571caf552578577",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-KCBL",
     "timestamp": "2026-11-09T22:14:58.401Z",
     "repository": "nolabs-ai/nono",
@@ -7490,6 +7460,36 @@
     "repository": "risingwavelabs/risingwave",
     "learningId": "learn-github-risingwavelabs-risingwave",
     "contentHash": "b7b6bfaa783e7d7c8017dd1ba8f4e1a7909f61e49533ac91aa6d3011a0110ed7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-QVR1",
+    "timestamp": "2026-11-13T04:42:59.005Z",
+    "repository": "RecursiveSI/flint",
+    "learningId": "learn-huggingface-recursivesi-flint",
+    "contentHash": "f3e7d189378d552319d6069006654ce36df08cced5ea568fe52a06123691bb69",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-RAEF",
+    "timestamp": "2026-11-13T04:43:17.991Z",
+    "repository": "kubeedge/kubeedge",
+    "learningId": "learn-github-kubeedge-kubeedge",
+    "contentHash": "0285b275d2a7374af91b5b50e98669ba911929bb62d750c922dc85612ada7cd7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

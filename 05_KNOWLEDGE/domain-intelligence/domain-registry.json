@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T04:31:52.285Z",
-  "total_records": 91,
+  "last_updated": "2026-11-13T04:43:37.117Z",
+  "total_records": 92,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 50,
+      "total": 51,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -75,7 +75,8 @@
         "DOM-D-27F43F41",
         "DOM-D-FE04D8FE",
         "DOM-D-C22A41DF",
-        "DOM-D-527E8201"
+        "DOM-D-527E8201",
+        "DOM-D-FE25E160"
       ]
     },
     "E": {
@@ -3742,6 +3743,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T04:31:52.283Z"
+    },
+    "DOM-D-FE25E160": {
+      "record_id": "DOM-D-FE25E160",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): RecursiveSI/flint",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/RecursiveSI/flint](https://huggingface.co/RecursiveSI/flint))  \n> **Source Version**: `hf-recursive`  \n> **License**: Open-Source  \n> **Synthesized By**: ze",
+      "content_hash": "c9ef3f38c60e7d73cd24076823b0eedf85c387adfcb648f24d25b28cb2269ba4",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md`  \n> **Source**: huggingface ([https://huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md`  \n> **Source**: huggingface ([https://huggingface",
+      "provenance": {
+        "source_uri": "project://hf-recursivesi-flint/hf-recursivesi-flint-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T04:43:22.773Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-recursivesi-flint)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-recursivesi-flint"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T04:43:37.114Z"
     }
   }
 }

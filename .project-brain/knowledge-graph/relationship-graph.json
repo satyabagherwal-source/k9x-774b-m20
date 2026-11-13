@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T04:31:52.287Z",
+  "updated_at": "2026-11-13T04:43:37.119Z",
   "statistics": {
-    "total_nodes": 45,
-    "total_edges": 19,
+    "total_nodes": 46,
+    "total_edges": 20,
     "domain_distribution": {
-      "D": 32,
+      "D": 33,
       "M": 1,
       "H": 7,
       "J": 2,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 19
+      "CONSTRAINED_BY_ARCHITECTURE": 20
     }
   },
   "nodes": {
@@ -1001,6 +1001,29 @@
       ],
       "created_at": "2026-11-13T04:31:52.287Z",
       "updated_at": "2026-11-13T04:31:52.287Z"
+    },
+    "DOM-D-FE25E160": {
+      "id": "DOM-D-FE25E160",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): RecursiveSI/flint",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md`  \n> **Source**: huggingface ([https://huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md`  \n> **Source**: huggingface ([https://huggingface",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-recursivesi-flint/hf-recursivesi-flint-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T04:43:22.773Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-recursivesi-flint)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T04:43:37.118Z",
+      "updated_at": "2026-11-13T04:43:37.118Z"
     }
   },
   "edges": [
@@ -1193,6 +1216,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-FE04D8FE [D] with Domain M",
       "created_at": "2026-11-13T03:56:42.669Z"
+    },
+    {
+      "id": "EDGE-1CA1189258DF",
+      "sourceId": "DOM-D-FE25E160",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-FE25E160 [D] with Domain M",
+      "created_at": "2026-11-13T04:43:37.118Z"
     }
   ]
 }

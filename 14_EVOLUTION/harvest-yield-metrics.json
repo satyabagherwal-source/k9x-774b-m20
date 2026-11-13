@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T04:31:32.124Z",
-  "total_cycles_completed": 9137,
-  "total_learnings_persisted": 9137,
-  "total_rules_promoted": 8954,
+  "last_updated": "2026-11-13T04:43:18.016Z",
+  "total_cycles_completed": 9139,
+  "total_learnings_persisted": 9139,
+  "total_rules_promoted": 8955,
   "history": [
-    {
-      "timestamp": "2026-11-12T07:46:38.036Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T07:54:24.216Z",
-      "repository": "nsh07/Tomato",
-      "learningId": "learn-github-nsh07-tomato",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T07:54:27.757Z",
       "repository": "clastix/kamaji",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T04:31:32.124Z",
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T04:42:59.015Z",
+      "repository": "RecursiveSI/flint",
+      "learningId": "learn-huggingface-recursivesi-flint",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T04:43:18.016Z",
+      "repository": "kubeedge/kubeedge",
+      "learningId": "learn-github-kubeedge-kubeedge",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

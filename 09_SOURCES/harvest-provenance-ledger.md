@@ -9343,3 +9343,6 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `c3596c83` | Multi-dimensional audit evidence | 2026-11-13T04:31:29.613Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `365307c5` | Multi-dimensional audit evidence | 2026-11-13T04:31:32.012Z |
 | `learn-dom-d-527e8201` | `project://hf-orcarouter-orcacyber-nano-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md` | 2026-11-13T04:31:52.288Z |
+| `learn-huggingface-recursivesi-flint` | `https://huggingface.co/RecursiveSI/flint` | `hf-recursi` | Multi-dimensional audit evidence | 2026-11-13T04:42:59.009Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `65659fb7` | Multi-dimensional audit evidence | 2026-11-13T04:43:17.994Z |
+| `learn-dom-d-fe25e160` | `project://hf-recursivesi-flint` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-recursivesi-flint-learnings.md` | 2026-11-13T04:43:37.119Z |
