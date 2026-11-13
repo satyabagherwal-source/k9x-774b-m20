@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T11:55:59.658Z",
+  "updated_at": "2026-11-13T12:09:03.896Z",
   "stats": {
-    "total_discovered": 2392,
-    "approved_pending_harvest": 2224,
+    "total_discovered": 2402,
+    "approved_pending_harvest": 2232,
     "harvested_count": 0,
-    "rejected_count": 168,
+    "rejected_count": 170,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2215,
+      "COMMUNITY_AND_EXPERT": 2225,
       "OFFICIAL_DOCUMENTATION": 93,
       "STANDARDS_AND_SPECIFICATIONS": 74,
       "ENGINEERING_BLOGS": 1,
@@ -51467,6 +51467,212 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md",
         "fileName": "hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md"
+      }
+    },
+    "SRC-DB2149BB1038": {
+      "id": "SRC-DB2149BB1038",
+      "url": "https://api.appstoreconnect.apple.com/v1/builds?filter%5Bapp=",
+      "title": "https://api.appstoreconnect.apple.com/v1/builds?filter%5Bapp=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:08:49.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-38B155A105F5": {
+      "id": "SRC-38B155A105F5",
+      "url": "https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9",
+      "title": "https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:08:49.865Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-C6E653B6392A": {
+      "id": "SRC-C6E653B6392A",
+      "url": "https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be",
+      "title": "https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:08:49.882Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-028B185E87E6": {
+      "id": "SRC-028B185E87E6",
+      "url": "https://github.com/zeronsh/gpui-component?rev=59f89243cea79dd70eb7a619b3930c374ef6958a",
+      "title": "https://github.com/zeronsh/gpui-component?rev=59f89243cea79dd70eb7a619b3930c374ef6958a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:08:49.899Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-F675160115B3": {
+      "id": "SRC-F675160115B3",
+      "url": "https://github.com/zeronsh/gpui-component?rev=cab50b071497683a119ae0e4038880f195c0f23f",
+      "title": "https://github.com/zeronsh/gpui-component?rev=cab50b071497683a119ae0e4038880f195c0f23f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:08:49.914Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-55D4EC835880": {
+      "id": "SRC-55D4EC835880",
+      "url": "https://github.com/zeronsh/zui",
+      "title": "https://github.com/zeronsh/zui",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:08:49.932Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-2419A6E7EDB3": {
+      "id": "SRC-2419A6E7EDB3",
+      "url": "https://github.com/zeronsh/gpui-component",
+      "title": "https://github.com/zeronsh/gpui-component",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:08:49.948Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-C46DE5B108B0": {
+      "id": "SRC-C46DE5B108B0",
+      "url": "http://schemas.android.com/apk/res/android",
+      "title": "http://schemas.android.com/apk/res/android",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T12:08:49.965Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-D0E1DCE45957": {
+      "id": "SRC-D0E1DCE45957",
+      "url": "https://huggingface.co/audio-cpp/audio.cpp-gguf",
+      "title": "https://huggingface.co/audio-cpp/audio.cpp-gguf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T12:09:03.831Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md",
+        "fileName": "hf-audio-cpp-audio.cpp-gguf-learnings.md"
+      }
+    },
+    "SRC-52376FCD0935": {
+      "id": "SRC-52376FCD0935",
+      "url": "http://localhost:8080`",
+      "title": "http://localhost:8080`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T12:09:03.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
       }
     }
   }

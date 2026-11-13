@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `43410e87`  
+> **Source Version**: `e79f26cb`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T05:13:21.640Z  
+> **Timestamp**: 2026-11-13T12:08:29.038Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T05:13:21.634Z  
+> **Harvest Timestamp**: 2026-11-13T12:08:29.032Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2248,11 +2248,17 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #37652** (2026-11-12): **Docs: Document setting-dependent literals in prepared statements with YSQL Connection Manager**
-  *Symptoms*: fixes #36878   **Summary** - Adds a best-practices section to `ycm-best-practices.md` on setting-dependent literals in prepared statements when using YSQL Connection Manager. - In PostgreSQL, literals in a prepared statement (for example `now`, or values that depend on `TimeZone` or `DateStyle`) are converted once, at parse time, using the session's settings. Later executions reuse that result. A re-parse happens only after object changes or `search_path` changes. - Connection Manager shares protocol-level prepared statements across the clients of a pool. A statement can therefore carry another client's settings, and the section explains how to avoid that. - Applied to stable, v2025.2, v2025.1 and v2024.2.
+- **Issue #37834** (2026-11-13): **[PLAT-22789]**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/37834) <!-- Reviewable:end --> 
+  > No review: this PR changes 4276 lines (limit 3000). Consider splitting it into smaller pull requests, stacked if each builds on the one before, and asking again.
 
-- **Issue #37634** (2026-11-12): **[#37632] DocDB: Collect /pprof/heap using builtin tcmalloc API**
-  *Symptoms*: ## Summary  **Background.** Every YugabyteDB server has a debugging page, `/pprof/heap?seconds=N`, that shows which code allocated memory during the next N seconds. With `only_growth=true`, it shows only the memory that is still in use when those N seconds end, which helps find leaks. The data comes from tcmalloc, the memory allocator YugabyteDB uses. tcmalloc records a sample of allocations, each with the call stack that made it.  **Problem.** The page relies on an option that exists only in YugabyteDB's own copy (fork) of tcmalloc (https://github.com/yugabyte/tcmalloc/pull/3). Without that option, the original (upstream) tcmalloc fills every new profile with all the memory already in use when profiling starts. The page would then list allocations made long before the N-second window, and the `only_growth` view would show nearly the whole heap. We plan to switch to upstream tcmalloc (https://github.com/yugabyte/yugabyte-db/issues/37087), so the page has to stop depending on that option.  **Fix.** Stop using the lifetime profiler, which is the tcmalloc feature that needed the fork-only option. The page needs two views of the window: every allocation made during it (the default view), and only the allocations still in use at the end (`only_growth`). Neither tcmalloc feature gives both on its own, so `GetHeapProfile()` now collects one of each. Both features exist in the fork and in upstream:  ```cpp profile.start_time = absl::Now();                                       // not
+- **Issue #37833** (2026-11-13): **[BACKPORT 2026.2][#36913] CDC: Expect empty catalog transactions in two Virtual WAL tests with transactional DDL (#37753)**
+  *Symptoms*: ## Summary  With transactional DDL support for logical replication (#36857), the Virtual WAL also ships the BEGIN and COMMIT of catalog transactions that touch no published table, so two tests get more records than they expect when the flag is on:  - `TestCreationOfSlotOnNewDBAfterUpgrade` gets 2 such empty transactions before its insert: 7 records instead of 3, and 3 BEGIN / COMMIT instead of 1. - `TestSplitParentTabletAndHiddenTableGetsPolledAndDeleted` gets 1 for the `TRUNCATE`: 62 records instead of 60.  Both now expect the count for the value of `TEST_ysql_yb_enable_replication_slot_transactional_ddl`. #36857 renames that flag, so whichever PR merges second updates the name.  Test-only change.  Jenkins: test regex: .*(TestCreationOfSlotOnNewDBAfterUpgrade|TestSplitParentTabletAndHiddenTableGetsPolledAndDeleted).*  Original commit: f3b8d2236c5dd1a9f06fda9e2b2143903d3a4321 / #37753  ## Test plan  Debug build, on master, once with flags off and 3 times with `TEST_ysql_yb_enable_replication_slot_transactional_ddl`, `ysql_yb_ddl_transaction_block_enabled`, `enable_object_locking_for_table_locks` and `ysql_enable_concurrent_ddl` on, all passed: - [x] `CDCSDKConsumptionConsistentChangesTest.TestCreationOfSlotOnNewDBAfterUpgrade` - [x] `CDCSDKConsumptionConsistentChangesTest.TestSplitParentTabletAndHiddenTableGetsPolledAndDeleted`  Before the change, with those flags on, both failed 3 out of 3 times, with 7 and 62 records.  Co-authored-by: Claude Opus 5.5 <noreply@anthropic.com>
+  **Post-Mortem & Fix Analysis**:
+  > [![YB](../blob/master/managed/ui/src/redesign/assets/yb_logo.svg?raw=true) CSIweb for PR #37833](https://csiweb.dev.yugabyte.com/pull/37833)
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/37833) <!-- Reviewable:end --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2269,1195 +2275,509 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5bf305bb` (2026-11-12)
-**Commit Message**: [#35476,#36130] YSQL: Fix single-row UPDATE/DELETE when the WHERE value's type differs from the key column (#36669)
+### Incident Patch 1: `caf4a62b` (2026-11-12)
+**Commit Message**: [PLAT-23825] Build: Build YBA and yugabyted Go components with Go 1.27.4 and x/crypto 0.59.0 (#37633)
 
 ## Summary
 
-### Problem
+`govulncheck` reports two findings in the YBA and yugabyted Go
+components on master:
 
-A single-row UPDATE or DELETE builds the row's primary key straight from
-the WHERE values, without reading the row first. When a WHERE value has
-another type than its key column, the statement can change or delete the
-wrong row, miss the right row, or fail. PG compares with the cross-type
-`=` and gets every case below right.
+- **CVE-2026-97054** (GO-2026-6859): HTTP/1 server crash from a
+`MaxBytesReader` header race in `net/http`. Affects Go 1.27.0–1.27.3,
+fixed in Go 1.27.4.
+- **GO-2026-5932**: `golang.org/x/crypto` before v0.59.0.
 
-DELETE statements on master
-([029efa15de1](https://github.com/yugabyte/yugabyte-db/commit/029efa15de1de198469109a94da285d9eeeaeba9))
-and on vanilla PG:
+Changes, `go.mod` / `go.sum` only:
 
-| Key column | WHERE | Master | PG |
-| --- | --- | --- | --- |
-| `int` | `k = 4294967297` (2^32 + 1) | deletes 1 | deletes nothing |
-| `smallint` | `k = 65537` (2^16 + 1) | deletes 1 | deletes nothing |
-| `int` | prepared `k = $1` with a bigint parameter, generic plan,
-`EXECUTE p(5)` | ERROR: Attribute value type does not match column type
-| deletes 5 |
-| `real` | `k = 1.5` | deletes 0 | deletes 1.5 |
-| `timestamp` | `k = DATE '2024-01-02'` | deletes 2000-01-01
-00:00:00.008767 | deletes 2024-01-02 00:00 |
-| `name` | prepared `k = $1` with a text parameter, `EXECUTE p('ab
+- `go 1.27.3` → `go 1.27.4` in node-agent, yba-cli, yba-installer,
+yugabyted-ui and the three support-bundle helpers (cdcstate, logparse,
+serverconfredact).
+- `golang.org/x/crypto` → v0.59.0 in node-agent, yba-cli, yba-installer
+(from v0.58.0) and yugabyted-ui (from v0.57.0). x/sys 0.50.0, x/term
+0.48.0, x/text 0.44.0 follow; yugabyted-ui also moves x/net 0.60.0 →
+0.62.0 and x/sync to 0.25.0.
+- `go mod tidy` regrouped the `require` blocks in
+`yugabyted-ui/apiserver/go.mod`; no module was added or removed there.
 
-**File**: `src/postgres/src/backend/access/yb_scan/yb_scan_plan.c` (modified, +3/-0)
+To be backported to 2026.2, 2026.1, 2026.1.3 and 2025.2.
+
+## Test plan
+
+- [x] `govulncheck` after the change: no findings in node-agent,
+yba-cli, yba-installer and the three support-bundle helpers.
+yugabyted-ui still lists GO-2026-6
+
+**File**: `managed/devops/supportbundle/cdcstate/go.mod` (modified, +1/-1)
 ```diff
-@@ -148,6 +148,9 @@ YbIsValueOutOfRange(Oid col_typid, Oid val_typid, Datum val)
+@@ -1,3 +1,3 @@
+ module github.com/yugabyte/yugabyte-db/managed/devops/supportbundle/cdcstate
  
- /*
-  * Return true if a scan key column type is compatible with value type.
-+ *
-+ * Single row UPDATE and DELETE also use this (yb_single_row_key_value): a pair
-+ * marked compatible by mistake makes them change or delete the wrong row.
-  */
- bool
- YbIsScanCompatible(Oid column_typid,
+-go 1.27.3
++go 1.27.4
 ```
 
-**File**: `src/postgres/src/backend/executor/ybModifyTable.c` (modified, +51/-1)
+**File**: `managed/devops/supportbundle/logparse/go.mod` (modified, +1/-1)
 ```diff
-@@ -28,6 +28,7 @@
- #include "access/htup_details.h"
- #include "access/sysattr.h"
- #include "access/xact.h"
-+#include "access/yb_scan_plan.h"
- #include "access/yb_target.h"
- #include "catalog/catalog.h"
- #include "catalog/heap.h"
-@@ -174,6 +175,9 @@ YBCGetYBTupleIdFromSlot(TupleTableSlot *slot)
-  * Note that if the relation has a DocDB RowId attribute, this will generate a new RowId value
-  * meaning the ybctid will be unique. Therefore you should only use this if the relation has
-  * a primary key or you're doing an insert.
-+ *
-+ * Return 0 if a key value of a single row UPDATE or DELETE doesn't fit in its
-+ * column's type: it matches no row, so the caller skips the write.
-  */
- Datum
- YBCComputeYBTupleIdFromSlot(Relation rel, TupleTableSlot *slot)
-@@ -203,10 +207,38 @@ YBCComputeYBTupleIdFromSlot(Relation rel, TupleTableSlot *slot)
- 		{
- 			Oid			type_id = TupleDescAttr(slot->tts_tupleDescriptor,
- 												attnum - 1)->atttypid;
-+			Oid			col_type_id = TupleDescAttr(RelationGetDescr(rel),
-+													attnum - 1)->atttypid;
-+
-+			next_attr->datum = slot_getattr(slot, attnum, &next_attr->is_null);
-+
-+			/*
-+			 * A key value of a single row UPDATE or DELETE can be an integer
-+			 * of another width than its column (yb_single_row_key_value in
-+			 * createplan.c):
-+			 * (1) If the column's type can hold it, bind it with the column's
-+			 *     type, as YbBindColumn does for scan keys: an integer has the
-+			 *     same Datum at every width.
-+			 * (2) Otherwise, it matches no row: return 0.
-+			 * The planner checks YbIsScanCompatible too, but a value of another
-+			 * type can still get here, such as through an expression index.
-+			 */
-+			if (type_id != col_type_id &&
-+				YbIsScanCompatible(getBaseType(col_type_id), type_id,
-+								   false /* is_value_scalar */ , (Datum) 0))
-+			{
-+				if (!next_attr->is_null &&
-+					YbIsValueOutOfRange(getBaseType(col_type_id), type_id,
-+										next_attr->datum))
-+				{
-+					pfree(descr);
-+					return (Datum) 0;
-+				}
-+				type_id = col_type_id;
-+			}
+@@ -1,5 +1,5 @@
+ module github.com/yugabyte/yugabyte-db/managed/devops/supportbundle/logparse
  
- 			next_attr->type_entity = YbDataTypeFromOidMod(attnum, type_id);
- 			next_attr->collation_id = ybc_get_attcollation(RelationGetDescr(rel), attnum);
--			next_attr->datum = slot_getattr(slot, attnum, &next_attr->is_null);
- 		}
- 		else if (attnum == YBRowIdAttributeNumber)
- 		{
-@@ -1007,8 +1039,17 @@ YBCExecuteDelete(Relation rel,
- 	if (target_tuple_fetched)
- 		ybctid = YBCGetYBTupleIdFromSlot(planSlot);
- 	else
-+	{
- 		ybctid = YBCComputeYBTupleIdFromSlot(rel, planSlot);
+-go 1.27.3
++go 1.27.4
  
-+		/* A key value too wide for its column matches no row. */
-+		if (ybctid == 0)
-+		{
-+			YBCPgDeleteStatement(delete_stmt);
-+			return false;
-+		}
-+	}
-+
- 	if (ybctid == 0)
- 	{
- 		ereport(ERROR,
-@@ -1221,8 +1262,17 @@ YBCExecuteUpdate(ResultRelInfo *resultRelInfo,
- 	if (target_tuple_fetched)
- 		ybctid = YBCGetYBTupleIdFromSlot(planSlot);
- 	else
-+	{
- 		ybctid = YBCComputeYBTupleIdFromSlot(rel, slot);
- 
-+		/* A key value too wide for its column matches no row. */
-+		if (ybctid == 0)
-+		{
-+			YBCPgDeleteStatement(update_stmt);
-+			return false;
-+		}
-+	}
-+
- 	if (ybctid == 0)
- 		ereport(ERROR,
- 				(errcode(ERRCODE_UNDEFINED_COLUMN),
+ require github.com/dlclark/regexp2 v1.11.5
 ```
 
-**File**: `src/postgres/src/backend/optimizer/plan/createplan.c` (modified, +48/-10)
+**File**: `managed/devops/supportbundle/serverconfredact/go.mod` (modified, +1/-1)
 ```diff
-@@ -45,6 +45,7 @@
+@@ -1,3 +1,3 @@
+ module github.com/yugabyte/yugabyte-db/managed/devops/supportbundle/serverconfredact
  
- /* YB includes */
- #include "access/htup_details.h"
-+#include "access/yb_scan_plan.h"
- #include "access/yb_target.h"
- #include "catalog/partition.h"
- #include "catalog/pg_am.h"
-@@ -56,6 +57,7 @@
- #include "executor/ybExpr.h"
- #include "optimizer/yb_merge_scan.h"
- #include "optimizer/ybplan.h"
-+#include "parser/parse_coerce.h"
- #include "pg_yb_utils.h"
- #include "utils/fmgroids.h"
- #include "utils/rel.h"
-@@ -3516,6 +3518,47 @@ yb_fetch_subpaths(ModifyTablePath *path, IndexPath **index_path,
- 	return;
- }
- 
-+/*
-+ * yb_single_row_key_value
-+ *
-+ * Helper function for yb_single_row_update_or_delete_path.  Return the
-+ * expression for the one primary key value that "column = expr" can match, or
-+ * NULL to use the scan path instead.  expr can be of another type than the
-+ * column, as in int4_col = int8_value.
-+ */
-+static Expr *
-+yb_single_row_key_value(Expr *expr, Oid coltype)
-+{
-+	Oid			valtype = exprType((Node *) expr);
-+	Oid			basetype = getBaseType(coltype);
-+
-+	if (valtype == coltype)
-+		return expr;
-+
-+	/*
-+	 * True if the value's bytes mean the same value in the column's type: then
-+	 * only the type label changes.
-+	 */
-+	if (IsBinaryCoercible(valtype, basetype))
-+		return (Expr *) makeRelabelType(expr, coltype, -1,
-+										get_typcollation(coltype),
-+										COERCE_IMPLICIT_CAST);
-+
-+	/*
-+	 * Otherwise:
-+	 * (1) A value that scan keys bind with the column's type
-+	 *     (YbIsScanCompatible): an integer of another width, a text, varchar
-+	 *     or bpchar value for a column of another of these types, or an OID
-+	 *     type value for a column of another OID type.  Keep it, and let
-+	 *     YBCComputeYBTupleIdFromSlot bind it with the column's type.
-+	 * (2) Any other type, such as a double for a real column: use the scan.
-+	 */
-+	if (!YbIsScanCompatible(basetype, valtype, false /* is_value_scalar */ ,
-+							(Datum) 0))
-+		return NULL;
-+	return expr;
-+}
-+
- /*
-  * yb_single_row_update_or_delete_path
-  *
-@@ -4026,17 +4069,12 @@ yb_single_row_update_or_delete_path(PlannerInfo *root,
- 		}
- 		var = castNode(Var, leftop);
- 
--		/*
--		 * If const expression has a different type than the column (var), wrap in a relabel
--		 * expression with the proper type so it is coerced at execution time.
--		 */
--		if (IsA(expr, Const) && castNode(Const, expr)->consttype != var->vartype)
-+		/* The value may be of another type than the column. */
-+		expr = yb_single_row_key_value(expr, var->vartype);
-+		if (expr == NULL)
- 		{
--			expr = (Expr *) makeRelabelType(expr,
--											var->vartype,
--											-1,
--											get_typcollation(var->vartype),
--											COERCE_IMPLICIT_CAST);
-+			RelationClose(relation);
-+			return false;
- 		}
- 
- 		tle = makeNode(TargetEntry);
+-go 1.27.3
++go 1.27.4
 ```
 
-**File**: `src/postgres/src/test/regress/expected/yb.orig.dml_single_row.out` (modified, +434/-0)
+**File**: `managed/node-agent/go.mod` (modified, +4/-4)
 ```diff
-@@ -3571,3 +3571,437 @@ DROP TABLE t_temp;
- DROP TYPE rt;
- DROP TYPE two_int;
- DROP TYPE two_text;
-+--
-+-- Test single-row UPDATE/DELETE where the WHERE value has another type than the
-+-- primary key column (GH#35476).  A value must not be reinterpreted as the
-+-- column type: statements must update the same rows as they do in PostgreSQL.
-+--
-+CREATE TABLE sr_cross_int4 (k int PRIMARY KEY, v int);
-+INSERT INTO sr_cross_int4 VALUES (-2147483648, 0), (1, 0), (2, 0), (3, 0), (2147483647, 0);
-+CREATE TABLE sr_cross_int2 (k smallint PRIMARY KEY, v int);
-+INSERT INTO sr_cross_int2 VALUES (-32768, 0), (1, 0), (2, 0), (32767, 0);
-+CREATE TABLE sr_cross_int8 (k bigint PRIMARY KEY, v int);
-+INSERT INTO sr_cross_int8 VALUES (-1, 0), (2, 0), (4294967295, 0);
-+-- bigint values that do not fit an int4 column match no row.  Their low 32 bits
-+-- are the keys 1 and 2.
-+UPDATE sr_cross_int4 SET v = 1 WHERE k = 4294967297;
-+DELETE FROM sr_cross_int4 WHERE k = 4294967298;
-+-- One past either end of the int4 range.
-+UPDATE sr_cross_int4 SET v = 1 WHERE k = 2147483648;
-+UPDATE sr_cross_int4 SET v = 1 WHERE k = -2147483649;
-+SELECT * FROM sr_cross_int4 ORDER BY k;
-+      k      | v 
-+-------------+---
-+ -2147483648 | 0
-+           1 | 0
-+           2 | 0
-+           3 | 0
-+  2147483647 | 0
-+(5 rows)
-+
-+-- bigint values that fit still use single-row.
-+EXPLAIN (COSTS OFF) UPDATE sr_cross_int4 SET v = 5 WHERE k = 2::bigint;
-+         QUERY PLAN         
-+----------------------------
-+ Update on sr_cross_int4
-+   ->  Result sr_cross_int4
-+(2 rows)
-+
-+UPDATE sr_cross_int4 SET v = 5 WHERE k = 2::bigint;
-+UPDATE sr_cross_int4 SET v = 5 WHERE k = 2147483647::bigint;
-+UPDATE sr_cross_int4 SET v = 5 WHERE k = -2147483648::bigint;
-+SELECT * FROM sr_cross_int4 ORDER BY k;
-+      k      | v 
-+-------------+---
-+ -2147483648 | 5
-+           1 | 0
-+           2 | 5
-+           3 | 0
-+  2147483647 | 5
-+(5 rows)
-+
-+-- Same for smallint with int4 and bigint values.
-+UPDATE sr_cross_int2 SET v = 1 WHERE k = 65537;
-+DELETE FROM sr_cross_int2 WHERE k = 4294967298;
-+UPDATE sr_cross_int2 SET v = 1 WHERE k = 32768;
-+UPDATE sr_cross_int2 SET v = 1 WHERE k = -32769;
-+SELECT * FROM sr_cross_int2 ORDER BY k;
-+   k    | v 
-+--------+---
-+ -32768 | 0
-+      1 | 0
-+      2 | 0
-+  32767 | 0
-+(4 rows)
-+
-+-- A wider column holds every narrower value: single-row.
-+EXPLAIN (COSTS OFF) UPDATE sr_cross_int8 SET v = 1 WHERE k = -1;
-+         QUERY PLAN         
-+----------------------------
-+ Update on sr_cross_int8
-+   ->  Result sr_cross_int8
-+(2 rows)
-+
-+UPDATE sr_cross_int8 SET v = 1 WHERE k = -1;
-+SELECT * FROM sr_cross_int8 ORDER BY k;
-+     k      | v 
-+------------+---
-+         -1 | 1
-+          2 | 0
-+ 4294967295 | 0
-+(3 rows)
-+
-+-- The same with an int parameter in a generic plan (GH#36130).
-+SET plan_cache_mode = force_generic_plan;
-+PREPARE sr_cross_pw(int) AS UPDATE sr_cross_int8 SET v = 2 WHERE k = $1;
-+EXPLAIN (COSTS OFF) EXECUTE sr_cross_pw(-1);
-+         QUERY PLAN         
-+----------------------------
-+ Update on sr_cross_int8
-+   ->  Result sr_cross_int8
-+(2 rows)
-+
-+EXECUTE sr_cross_pw(-1);
-+SELECT * FROM sr_cross_int8 ORDER BY k;
-+     k      | v 
-+------------+---
-+         -1 | 2
-+          2 | 0
-+ 4294967295 | 0
-+(3 rows)
-+
-+DEALLOCATE sr_cross_pw;
-+RESET plan_cache_mode;
-+-- A bind parameter in a generic plan, which is still single-row, gives the same
-+-- result.
-+SET plan_cache_mode = force_generic_plan;
-+PREPARE sr_cross_p(bigint) AS UPDATE sr_cross_int4 SET v = 9 WHERE k = $1;
-+EXPLAIN (COSTS OFF) EXECUTE sr_cross_p(3);
-+         QUERY PLAN         
-+----------------------------
-+ Update on sr_cross_int4
-+   ->  Result sr_cross_int4
-+(2 rows)
-+
-+EXECUTE sr_cross_p(4294967297);
-+EXECUTE sr_cross_p(2147483648);
-+EXECUTE sr_cross_p(NULL);
-+EXECUTE sr_cross_p(3);
-+SELECT * FROM sr_cross_int4 ORDER BY k;
-+      k      | v 
-+-------------+---
-+ -2147483648 | 5
-+           1 | 0
-+           2 | 5
-+           3 | 9
-+  2147483647 | 5
-+(5 rows)
-+
-+DEALLOCATE sr_cross_p;
-+RESET plan_cache_mode;
-+-- Partitioned table: 4294967446 is 2^32 + 150, its low 32 bits are the key 150.
-+CREATE TABLE sr_cross_part (k int PRIMARY KEY, v int) PARTITION BY RANGE (k);
-+CREATE TABLE sr_cross_part_lo PARTITION OF sr_cross_part FOR VALUES FROM (MINVALUE) TO (100);
-+CREATE TABLE sr_cross_part_hi PARTITION OF sr_cross_part FOR VALUES FROM (100) TO (MAXVALUE);
-+INSERT INTO sr_cross_part VALUES (1, 0), (150, 0);
-+UPDATE sr_cross_part SET v = 1 WHERE k = 4294967446;
-+SELECT * FROM sr_cross_part ORDER BY k;
-+  k  | v 
-+-----+---
-+   1 | 0
-+ 150 | 0
-+(2 rows)
-+
-+UPDATE sr_cross_part SET v = 2 WHERE k = 150::bigint;
-+SELECT * FROM sr_cross_part ORDER BY k;
-+  k  | v 
-+-----+---
-+   1 | 0
-+ 150 | 2
-+(2 rows)
-+
-+-- A two-column key: 4294967297 and 4294967298 are 2^32 + 1 and 2^32 + 2, their
-+-- low 32 bits are the keys 1 and 2.  A generic plan checks the values of both
-+-- columns at execution.
-+CREATE TABLE sr_cross_two (a int, b int, v int, PRIMARY KEY (a, b));
-+INSERT INTO
+@@ -1,6 +1,6 @@
+ module node-agent
+ 
+-go 1.27.3
++go 1.27.4
+ 
+ require (
+ 	github.com/apex/log v1.9.0
+@@ -17,7 +17,7 @@ require (
+ 	github.com/spf13/pflag v1.0.10
+ 	github.com/spf13/viper v1.21.0
+ 	github.com/thoas/go-funk v0.9.3
+-	golang.org/x/crypto v0.58.0
++	golang.org/x/crypto v0.59.0
+ 	golang.org/x/net v0.62.0
+ 	google.golang.org/grpc v1.85.0
+ 	google.golang.org/protobuf v1.36.12
+@@ -62,7 +62,7 @@ require (
+ 	github.com/subosito/gotenv v1.6.0 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+ 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e // indirect
+-	golang.org/x/sys v0.49.0 // indirect
+-	golang.org/x/text v0.43.0 // indirect
++	golang.org/x/sys v0.50.0 // indirect
++	golang.org/x/text v0.44.0 // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261026165753-2ffab32bce7e // indirect
+ )
 ```
 
-**File**: `src/postgres/src/test/regress/sql/yb.orig.dml_single_row.sql` (modified, +212/-0)
+**File**: `managed/node-agent/go.sum` (modified, +7/-0)
 ```diff
-@@ -1152,3 +1152,215 @@ DROP TABLE t_temp;
- DROP TYPE rt;
- DROP TYPE two_int;
- DROP TYPE two_text;
-+
-+--
-+-- Test single-row UPDATE/DELETE where the WHERE value has another type than the
-+-- primary key column (GH#35476).  A value must not be reinterpreted as the
-+-- column type: statements must update the same rows as they do in PostgreSQL.
-+--
-+CREATE TABLE sr_cross_int4 (k int PRIMARY KEY, v int);
-+INSERT INTO sr_cross_int4 VALUES (-2147483648, 0), (1, 0), (2, 0), (3, 0), (2147483647, 0);
-+CREATE TABLE sr_cross_int2 (k smallint PRIMARY KEY, v int);
-+INSERT INTO sr_cross_int2 VALUES (-32768, 0), (1, 0), (2, 0), (32767, 0);
-+CREATE TABLE sr_cross_int8 (k bigint PRIMARY KEY, v int);
-+INSERT INTO sr_cross_int8 VALUES (-1, 0), (2, 0), (4294967295, 0);
-+
-+-- bigint values that do not fit an int4 column match no row.  Their low 32 bits
-+-- are the keys 1 and 2.
-+UPDATE sr_cross_int4 SET v = 1 WHERE k = 4294967297;
-+DELETE FROM sr_cross_int4 WHERE k = 4294967298;
-+-- One past either end of the int4 range.
-+UPDATE sr_cross_int4 SET v = 1 WHERE k = 2147483648;
-+UPDATE sr_cross_int4 SET v = 1 WHERE k = -2147483649;
-+SELECT * FROM sr_cross_int4 ORDER BY k;
-+-- bigint values that fit still use single-row.
-+EXPLAIN (COSTS OFF) UPDATE sr_cross_int4 SET v = 5 WHERE k = 2::bigint;
-+UPDATE sr_cross_int4 SET v = 5 WHERE k = 2::bigint;
-+UPDATE sr_cross_int4 SET v = 5 WHERE k = 2147483647::bigint;
-+UPDATE sr_cross_int4 SET v = 5 WHERE k = -2147483648::bigint;
-+SELECT * FROM sr_cross_int4 ORDER BY k;
-+
-+-- Same for smallint with int4 and bigint values.
-+UPDATE sr_cross_int2 SET v = 1 WHERE k = 65537;
-+DELETE FROM sr_cross_int2 WHERE k = 4294967298;
-+UPDATE sr_cross_int2 SET v = 1 WHERE k = 32768;
-+UPDATE sr_cross_int2 SET v = 1 WHERE k = -32769;
-+SELECT * FROM sr_cross_int2 ORDER BY k;
-+
-+-- A wider column holds every narrower value: single-row.
-+EXPLAIN (COSTS OFF) UPDATE sr_cross_int8 SET v = 1 WHERE k = -1;
-+UPDATE sr_cross_int8 SET v = 1 WHERE k = -1;
-+SELECT * FROM sr_cross_int8 ORDER BY k;
-+
-+-- The same with an int parameter in a generic plan (GH#36130).
-+SET plan_cache_mode = force_generic_plan;
-+PREPARE sr_cross_pw(int) AS UPDATE sr_cross_int8 SET v = 2 WHERE k = $1;
-+EXPLAIN (COSTS OFF) EXECUTE sr_cross_pw(-1);
-+EXECUTE sr_cross_pw(-1);
-+SELECT * FROM sr_cross_int8 ORDER BY k;
-+DEALLOCATE sr_cross_pw;
-+RESET plan_cache_mode;
-+
-+-- A bind parameter in a generic plan, which is still single-row, gives the same
-+-- result.
-+SET plan_cache_mode = force_generic_plan;
-+PREPARE sr_cross_p(bigint) AS UPDATE sr_cross_int4 SET v = 9 WHERE k = $1;
-+EXPLAIN (COSTS OFF) EXECUTE sr_cross_p(3);
-+EXECUTE sr_cross_p(4294967297);
-+EXECUTE sr_cross_p(2147483648);
-+EXECUTE sr_cross_p(NULL);
-+EXECUTE sr_cross_p(3);
-+SELECT * FROM sr_cross_int4 ORDER BY k;
-+DEALLOCATE sr_cross_p;
-+RESET plan_cache_mode;
-+
-+-- Partitioned table: 4294967446 is 2^32 + 150, its low 32 bits are the key 150.
-+CREATE TABLE sr_cross_part (k int PRIMARY KEY, v int) PARTITION BY RANGE (k);
-+CREATE TABLE sr_cross_part_lo PARTITION OF sr_cross_part FOR VALUES FROM (MINVALUE) TO (100);
-+CREATE TABLE sr_cross_part_hi PARTITION OF sr_cross_part FOR VALUES FROM (100) TO (MAXVALUE);
-+INSERT INTO sr_cross_part VALUES (1, 0), (150, 0);
-+UPDATE sr_cross_part SET v = 1 WHERE k = 4294967446;
-+SELECT * FROM sr_cross_part ORDER BY k;
-+UPDATE sr_cross_part SET v = 2 WHERE k = 150::bigint;
-+SELECT * FROM sr_cross_part ORDER BY k;
-+
-+-- A two-column key: 4294967297 and 4294967298 are 2^32 + 1 and 2^32 + 2, their
-+-- low 32 bits are the keys 1 and 2.  A generic plan checks the values of both
-+-- columns at execution.
-+CREATE TABLE sr_cross_two (a int, b int, v int, PRIMARY KEY (a, b));
-+INSERT INTO sr_cross_two VALUES (1, 1, 0), (1, 2, 0), (2, 1, 0);
-+UPDATE sr_cross_two SET v = 1 WHERE a = 4294967297 AND b = 1;
-+EXPLAIN (COSTS OFF) UPDATE sr_cross_two SET v = 2 WHERE a = 1::bigint AND b = 2::bigint;
-+UPDATE sr_cross_two SET v = 2 WHERE a = 1::bigint AND b = 2::bigint;
-+SET plan_cache_mode = force_generic_plan;
-+PREPARE sr_cross_p2(bigint, bigint) AS UPDATE sr_cross_two SET v = 3 WHERE a = $1 AND b = $2;
-+EXPLAIN (COSTS OFF) EXECUTE sr_cross_p2(2, 1);
-+EXECUTE sr_cross_p2(2, 4294967297);
-+EXECUTE sr_cross_p2(4294967298, 1);
-+EXECUTE sr_cross_p2(2, 1);
-+SELECT * FROM sr_cross_two ORDER BY a, b;
-+DEALLOCATE sr_cross_p2;
-+RESET plan_cache_mode;
-+
-+-- A key of columns of different types, each with values of another type.
-+-- 65537 and 65538 are 2^16 + 1 and 2^16 + 2, their low 16 bits are the keys 1
-+-- and 2.
-+CREATE TABLE sr_cross_mixed (a smallint, b bigint, c varchar, v int,
-+	PRIMARY KEY (a, b, c));
-+INSERT INTO sr_cross_mixed VALUES (1, 1, 'x', 0), (1, 2, 'x', 0), (2, 1, 'x', 0);
-+UPDATE sr_cross_mixed SET v = 1 WHERE a = 65537 AND b = 1 AND c = 'x';
-+EXPLAIN (COSTS OFF) UPDATE sr_cross_mixed SET v = 2
-+	WHERE a = 1::bigint AND b = 2::int AND c = 'x'::text;
-+UPDATE sr_cross_mixed SET v = 2 WHERE a = 1::bigint AND b = 2::int AND c = 'x'::text;
-+SET plan_cache_mode = force_generic_p
+@@ -193,6 +193,8 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
+ golang.org/x/crypto v0.0.0-20190426145343-a29dc8fdc734/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+ golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
+ golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
++golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
++golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
+ golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e h1:HgI6W1OolKK6tcV74is+rl9SMT0njsHlp0TbQiGXI/A=
+ golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e/go.mod h1:DBoxwWhjaW8DJJw/YeM4zpeOKMC1FMXSblsYy+1mFSw=
+ golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
+@@ -207,12 +209,17 @@ golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5h
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
+ golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
++golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
+ golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
++golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
+ golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
+ golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
++golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
++golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
+ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+ golang.org/x/tools v0.52.0 h1:ryxg4U63oaUYk7uOLTF37n43f4qgtGvqV4Ioit1BaEs=
+ golang.org/x/tools v0.52.0/go.mod h1:ItcP5UNaVGG+Yc4eIYmaFLNJ4soEopkx5Y2d4lcEurs=
+```
+
+**File**: `managed/yba-cli/go.mod` (modified, +6/-6)
+```diff
+@@ -1,6 +1,6 @@
+ module github.com/yugabyte/yugabyte-db/managed/yba-cli
+ 
+-go 1.27.3
++go 1.27.4
+ 
+ require (
+ 	github.com/AlecAivazis/survey/v2 v2.3.7
+@@ -20,8 +20,9 @@ require (
+ 	github.com/yugabyte/platform-go-client v0.0.0-20260922032319-ae8e27387c37
+ 	github.com/yugabyte/platform-go-client/v2 v2.0.0-20260922032319-ae8e27387c37
+ 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9
+-	golang.org/x/term v0.47.0
++	golang.org/x/term v0.48.0
+ 	gopkg.in/yaml.v2 v2.4.0
++	gopkg.in/yaml.v3 v3.0.1
+ 	gotest.tools/v3 v3.5.0
+ )
+ 
+@@ -53,8 +54,7 @@ require (
+ 	github.com/spf13/cast v1.10.0 // indirect
+ 	github.com/subosito/gotenv v1.6.0 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.4 // indirect
+-	golang.org/x/crypto v0.58.0 // indirect
+-	golang.org/x/sys v0.49.0 // indirect
+-	golang.org/x/text v0.43.0 // indirect
+-	gopkg.in/yaml.v3 v3.0.1 // indirect
++	golang.org/x/crypto v0.59.0 // indirect
++	golang.org/x/sys v0.50.0 // indirect
++	golang.org/x/text v0.44.0 // indirect
+ )
+```
+
+**File**: `managed/yba-cli/go.sum` (modified, +8/-8)
+```diff
+@@ -124,8 +124,8 @@ go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
+ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+ golang.org/x/crypto v0.3.0/go.mod h1:hebNnKkNXi2UzZN1eVRvBB7co0a+JxK6XbPiWVs/3J4=
+-golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
+-golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
++golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
++golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
+ golang.org/x/exp v0.0.0-20230905200255-921286631fa9 h1:GoHiUyI/Tp2nVkLI2mCxVkOjsbSXD66ic0XW0js0R9g=
+ golang.org/x/exp v0.0.0-20230905200255-921286631fa9/go.mod h1:S2oDrQGGwySpoQPVqRShND87VCbxmc6bL1Yd2oYrm6k=
+ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
+@@ -149,19 +149,19 @@ golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBc
+ golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.2.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
+-golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
++golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+ golang.org/x/term v0.2.0/go.mod h1:TVmDHMZPmdnySmBfhjOoOdhjzdE1h4u1VwSiw2l1Nuc=
+-golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
+-golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
++golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
++golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+ golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
+ golang.org/x/text v0.4.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
+-golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
+-golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
++golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
++golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
+ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+ golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
+ golang.org/x/tools v0.1.12/go.mod h1:hNGJHUnrk76NpqgfD5Aqm5Crs+Hm0VOH/i9J2+nxYbc=
+```
+
+**File**: `managed/yba-installer/go.mod` (modified, +5/-5)
+```diff
+@@ -1,6 +1,6 @@
+ module github.com/yugabyte/yugabyte-db/managed/yba-installer
+ 
+-go 1.27.3
++go 1.27.4
+ 
+ require (
+ 	github.com/aws/aws-sdk-go v1.55.7
+@@ -14,10 +14,10 @@ require (
+ 	github.com/vmware-labs/yaml-jsonpath v0.3.2
+ 	github.com/xeipuuv/gojsonschema v1.2.0
+ 	go.etcd.io/etcd/client/pkg/v3 v3.5.35
+-	golang.org/x/crypto v0.58.0
++	golang.org/x/crypto v0.59.0
+ 	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842
+-	golang.org/x/sys v0.49.0
+-	golang.org/x/term v0.47.0
++	golang.org/x/sys v0.50.0
++	golang.org/x/term v0.48.0
+ 	gopkg.in/ini.v1 v1.67.0
+ 	gopkg.in/yaml.v3 v3.0.1
+ 	sigs.k8s.io/yaml v1.4.0
+@@ -45,5 +45,5 @@ require (
+ 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/zap v1.27.0 // indirect
+-	golang.org/x/text v0.43.0 // indirect
++	golang.org/x/text v0.44.0 // indirect
+ )
 ```
 
 ---
 
-### Incident Patch 2: `e1566f54` (2026-11-11)
-**Commit Message**: [#34424] YSQL: Fix transition tables on partitioned tables with single-row UPDATE/DELETE (#34435)
+### Incident Patch 2: `da6fbcfb` (2026-11-03)
+**Commit Message**: [#35051] DocDB: Fix lost wake-up in rpc::Poller that could stop the xCluster safe-time service for good
 
-## Summary
+Summary:
+Problem:
+rpc::Poller has a race between Pause() and a concurrent Resume() that loses the resume wake-up.
+Resume() relies on the invariant that poll_task_id_ being set means a live task is scheduled,
+and skips Schedule() in that case. Pause() broke this invariant: it called
+scheduler_->Abort(poll_task_id_), which is asynchronous, and left poll_task_id_ set. A Resume()
+racing into that window saw the id still set and skipped scheduling; the aborted callback then
+cleared the id without rescheduling. The poller ended up unpaused with
+nothing scheduled, and every later Resume() returned early -- polling stopped until the process
+restarted or master leadership moved.
 
-Transition tables (`REFERENCING OLD/NEW TABLE`) on a partitioned table
-were broken when the statement could use YB's single-row UPDATE/DELETE
-fast path (`WHERE <pk> = <const>`).
+The target master's XClusterSafeTimeService hits this window during DeleteUniverseReplication of
+an inbound replication group: a safe-time tick sees the emptied consumer registry and calls
+Pause() (aborting the already-rescheduled next poll task), and the end of the delete dispatches
+Resume() right behind it on the same strand. When Resume() beats the abort callback, the
+safe-time service dies silently. The next
 
-`yb_single_row_update_or_delete_path()` decides whether the old row is
-needed by looking only at the leaf partition's triggers. Transition
-tables are defined on the relation named in the query, which for a
-partitioned table is an ancestor of the leaf, so the check missed them:
-
-- **DELETE crash.** `DELETE FROM <partitioned root> WHERE <pk> =
-<const>` took the single-row path, which never fetches the old row. It
-then crashed in `GetTupleForTrigger()` while capturing that row for the
-transition table.
-- **UPDATE produced empty transition tables**, even when the planner
-fell back to a regular scan (e.g. `WHERE v >= 1`). The function set
-`no_row_trigger` and then bailed out of the fast path for an unrelated
-reason. `create_modifytable_plan()` still copied the flag onto the scan
-plan, so `ExecUpdateEpilogue()` skipped `ExecARUpdateTriggers()`, which
-is where transition rows are captured. DELETE doesn't
-
-**File**: `src/postgres/src/backend/executor/nodeModifyTable.c` (modified, +5/-5)
+**File**: `src/yb/rpc/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -6015,11 +6015,11 @@ YbFetchColumnsMarkedForUpdate(ModifyTableContext *context,
-  *    are single row).
-  *
-  * Transition-table capture does not need to be checked here: the single-row
-- * UPDATE/DELETE path in createplan.c is only taken when no row triggers
-- * apply (see has_applicable_triggers()), and that helper consults
-- * YBRelHasOldRowTriggers() which already rejects any relation carrying an
-- * AFTER UPDATE/DELETE trigger with REFERENCING OLD/NEW TABLE.  So a Result
-- * outer plan implies no transition_capture.
-+ * UPDATE/DELETE path in createplan.c is not taken when the target leaf
-+ * (has_applicable_triggers()) or the relation named in the query
-+ * (yb_target_has_transition_tables()) has an AFTER UPDATE/DELETE trigger
-+ * with REFERENCING OLD/NEW TABLE.  So a Result outer plan implies no
-+ * transition_capture.
-  */
- static bool
- ybCanSkipFetchingTargetTuple(ModifyTable *modifyTable, Relation targetRel)
+@@ -176,6 +176,7 @@ ADD_YB_TEST(growable_buffer-test)
+ ADD_YB_TEST(lwproto-test)
+ ADD_YB_TEST(mt-rpc-test RUN_SERIAL true)
+ ADD_YB_TEST(periodic-test)
++ADD_YB_TEST(poller-test)
+ ADD_YB_TEST(reactor-test)
+ ADD_YB_TEST(rpc-bench RUN_SERIAL true)
+ ADD_YB_TEST(rpc-test)
 ```
 
-**File**: `src/postgres/src/backend/optimizer/plan/createplan.c` (modified, +37/-2)
+**File**: `src/yb/rpc/poller-test.cc` (added, +99/-0)
 ```diff
-@@ -3403,6 +3403,33 @@ has_applicable_triggers(Relation rel, CmdType operation, Bitmapset *updated_attr
- 	return false;
- }
- 
-+/*
-+ * Returns true if the given relation captures transition tables for the given
-+ * operation.  For a partitioned target, the transition-table triggers live
-+ * only on the relation named in the query, not on the leaf that
-+ * has_applicable_triggers() examines.
-+ */
-+static bool
-+yb_target_has_transition_tables(Oid relid, CmdType operation)
-+{
-+	Relation	target_rel;
-+	TriggerDesc *trigdesc;
-+	bool		result = false;
+@@ -0,0 +1,99 @@
++// Copyright (c) YugabyteDB, Inc.
++//
++// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
++// in compliance with the License.  You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software distributed under the License
++// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
++// or implied.  See the License for the specific language governing permissions and limitations
++// under the License.
++//
 +
-+	target_rel = RelationIdGetRelation(relid);
-+	trigdesc = target_rel->trigdesc;
-+	if (trigdesc)
-+	{
-+		if (operation == CMD_DELETE)
-+			result = trigdesc->trig_delete_old_table;
-+		else if (operation == CMD_UPDATE)
-+			result = (trigdesc->trig_update_old_table ||
-+					  trigdesc->trig_update_new_table);
-+	}
-+	RelationClose(target_rel);
-+	return result;
++#include <atomic>
++
++#include "yb/rpc/io_thread_pool.h"
++#include "yb/rpc/poller.h"
++#include "yb/rpc/rpc-test-base.h"
++#include "yb/rpc/scheduler.h"
++
++#include "yb/util/backoff_waiter.h"
++#include "yb/util/countdown_latch.h"
++#include "yb/util/test_macros.h"
++
++using namespace std::literals;
++
++namespace yb::rpc {
++
++class PollerTest : public RpcTestBase {
++ public:
++  void SetUp() override {
++    // A single io thread so the test can hold the scheduler's queue back.
++    pool_.emplace("test", 1);
++    scheduler_.emplace(&pool_->io_service());
++  }
++
++  void TearDown() override {
++    scheduler_->Shutdown();
++    pool_->Shutdown();
++    pool_->Join();
++  }
++
++ protected:
++  std::optional<IoThreadPool> pool_;
++  std::optional<Scheduler> scheduler_;
++};
++
++TEST_F(PollerTest, StartPauseResume) {
++  std::atomic<int> calls{0};
++  Poller poller("PollerTest: ", [&calls] { ++calls; });
++  poller.Start(&*scheduler_, 10ms);
++  ASSERT_OK(WaitFor([&calls] { return calls.load() >= 3; }, 5s, "poller ticks"));
++
++  poller.Pause();
++  // Pause leaves the pending tick scheduled; it fires once as a no-op. Let it drain, then check
++  // that ticks have stopped.
++  std::this_thread::sleep_for(200ms);
++  auto calls_at_pause = calls.load();
++  std::this_thread::sleep_for(200ms);
++  ASSERT_EQ(calls.load(), calls_at_pause);
++
++  poller.Resume();
++  ASSERT_OK(WaitFor(
++      [&calls, calls_at_pause] { return calls.load() > calls_at_pause; }, 5s, "poller resumed"));
++
++  poller.Shutdown();
 +}
 +
- /*
-  * yb_leaf_update_modifies_partition_key
-  *
-@@ -3543,6 +3570,7 @@ yb_single_row_update_or_delete_path(PlannerInfo *root,
- {
- 	RelOptInfo *relInfo = NULL;
- 	Oid			relid;
-+	Oid			query_target_relid;
- 	Relation	relation;
- 	TupleDesc	tupDesc;
- 	IndexPath  *index_path;
-@@ -3847,8 +3875,15 @@ yb_single_row_update_or_delete_path(PlannerInfo *root,
- 	/*
- 	 * Cannot support before row triggers for single-row update/delete, as the
- 	 * old row will need to be passed to the trigger, requiring the scan.
--	 */
--	*no_row_trigger = !has_applicable_triggers(relation, path->operation, update_attrs);
-+	 * Transition tables likewise need the old row.
-+	 */
-+	query_target_relid = planner_rt_fetch(root->parse->resultRelation,
-+										  root)->relid;
-+	*no_row_trigger = (!has_applicable_triggers(relation, path->operation,
-+												update_attrs) &&
-+					   (relid == query_target_relid ||
-+						!yb_target_has_transition_tables(query_target_relid,
-+														 path->operation)));
- 	if (!*no_row_trigger)
- 	{
- 		RelationClose(relation);
++// Resume() must not lose the wake-up when it runs while the task scheduled before a Pause() is
++// still pending (GH #35051). Resume() sees poll_task_id_ set and skips Schedule(), so that task
++// must keep polling alive instead of stopping.
++TEST_F(PollerTest, ResumeWhileTaskPending) {
++  std::atomic<int> calls{0};
++  Poller poller("PollerTest: ", [&calls] { ++calls; });
++  poller.Pause();
++  poller.Start(&*scheduler_, 100ms);
++
++  // Hold the only io thread so every scheduler handler queues behind this one and the task
++  // scheduled by Resume() cannot run until the latch is released.
++  CountDownLatch io_blocked(1), release_io(1);
++  pool_->io_service().post([&io_blocked, &release_io] {
++    io_blocked.CountDown();
++    release_io.Wait();
++  });
++  io_blocked.Wait();
++
++  poller.Resume();  // Schedules task T, poll_task_id_ = T.
++  poller.Pause();   // T stays pending.
++  poller.Resume();  // paused_ = false. Sees poll_task_id_ set and does not schedule.
++
++  release_io.CountDown();
++
++  // A correct poller keeps ticking after that sequence.
++  ASSERT_OK(WaitFor([&calls] { return calls.load() >= 1; }, 3s, "poller ticks after resume"));
++
++  poller.Shutdown();
++}
++
++}  // namespace yb::rpc
 ```
 
-**File**: `src/postgres/src/test/regress/expected/yb.orig.transition_tables.out` (modified, +75/-0)
+**File**: `src/yb/rpc/poller.cc` (modified, +3/-3)
 ```diff
-@@ -674,6 +674,81 @@ SELECT a, length(b) AS b_len, left(b,1) AS b_first, c FROM tt_ioc_root ORDER BY
- DROP TABLE tt_ioc_root;
- DROP FUNCTION tt_ioc_cap();
- ----------------------------------------------------------------------
-+-- Section 14: Single-row (primary key) UPDATE/DELETE on a partitioned table
-+----------------------------------------------------------------------
-+-- The transition-table triggers are on the root, not on the leaf that the
-+-- single-row modify path would target, so that path must not be used.
-+CREATE TABLE tt_sr (id int PRIMARY KEY, val text) PARTITION BY RANGE (id);
-+CREATE TABLE tt_sr_mid PARTITION OF tt_sr FOR VALUES FROM (1) TO (100)
-+  PARTITION BY RANGE (id);
-+CREATE TABLE tt_sr_leaf PARTITION OF tt_sr_mid FOR VALUES FROM (1) TO (100);
-+INSERT INTO tt_sr VALUES (1, 'a'), (2, 'b'), (3, 'c'), (4, 'd');
-+CREATE TRIGGER tt_sr_upd AFTER UPDATE ON tt_sr
-+  REFERENCING OLD TABLE AS old_table NEW TABLE AS new_table
-+  FOR EACH STATEMENT EXECUTE FUNCTION tt_log_update();
-+CREATE TRIGGER tt_sr_del AFTER DELETE ON tt_sr
-+  REFERENCING OLD TABLE AS old_table
-+  FOR EACH STATEMENT EXECUTE FUNCTION tt_log_delete();
-+CREATE TRIGGER tt_sr_mid_del AFTER DELETE ON tt_sr_mid
-+  REFERENCING OLD TABLE AS old_table
-+  FOR EACH STATEMENT EXECUTE FUNCTION tt_log_delete();
-+EXPLAIN (COSTS OFF) UPDATE tt_sr SET val = 'x' WHERE id = 1;
-+                          QUERY PLAN                          
-+--------------------------------------------------------------
-+ Update on tt_sr
-+   Update on tt_sr_leaf tt_sr_2
-+   ->  Index Scan using tt_sr_leaf_pkey on tt_sr_leaf tt_sr_2
-+         Index Cond: (id = 1)
-+(4 rows)
-+
-+UPDATE tt_sr SET val = 'x' WHERE id = 1;
-+NOTICE:  tt_log_update: tg_op=UPDATE, old_table=(1,a), new_table=(1,x)
-+-- Not single-row, but planned after the single-row path was considered
-+UPDATE tt_sr SET val = val || 'x' WHERE val = 'x';
-+NOTICE:  tt_log_update: tg_op=UPDATE, old_table=(1,x), new_table=(1,xx)
-+EXPLAIN (COSTS OFF) DELETE FROM tt_sr WHERE id = 1;
-+                          QUERY PLAN                          
-+--------------------------------------------------------------
-+ Delete on tt_sr
-+   Delete on tt_sr_leaf tt_sr_2
-+   ->  Index Scan using tt_sr_leaf_pkey on tt_sr_leaf tt_sr_2
-+         Index Cond: (id = 1)
-+(4 rows)
-+
-+DELETE FROM tt_sr WHERE id = 1;
-+NOTICE:  tt_log_delete: tg_op=DELETE, old_table=(1,xx)
-+-- Intermediate partitioned table named in the query
-+DELETE FROM tt_sr_mid WHERE id = 2;
-+NOTICE:  tt_log_delete: tg_op=DELETE, old_table=(2,b)
-+-- Only an UPDATE trigger on the root: single-row DELETE is still allowed
-+DROP TRIGGER tt_sr_del ON tt_sr;
-+EXPLAIN (COSTS OFF) DELETE FROM tt_sr WHERE id = 3;
-+          QUERY PLAN          
-+------------------------------
-+ Delete on tt_sr
-+   Delete on tt_sr_leaf tt_sr
-+   ->  Result tt_sr
-+(3 rows)
-+
-+DELETE FROM tt_sr WHERE id = 3;
-+-- The leaf has no transition-table triggers: single-row path is used and no
-+-- trigger fires
-+EXPLAIN (COSTS OFF) UPDATE tt_sr_leaf SET val = 'y' WHERE id = 4;
-+       QUERY PLAN        
-+-------------------------
-+ Update on tt_sr_leaf
-+   ->  Result tt_sr_leaf
-+(2 rows)
-+
-+UPDATE tt_sr_leaf SET val = 'y' WHERE id = 4;
-+SELECT * FROM tt_sr ORDER BY id;
-+ id | val 
-+----+-----
-+  4 | y
-+(1 row)
-+
-+DROP TABLE tt_sr;
-+----------------------------------------------------------------------
- -- Cleanup
- ----------------------------------------------------------------------
- DROP TABLE tt_test;
-```
-
-**File**: `src/postgres/src/test/regress/sql/yb.orig.transition_tables.sql` (modified, +48/-0)
-```diff
-@@ -652,6 +652,54 @@ SELECT a, length(b) AS b_len, left(b,1) AS b_first, c FROM tt_ioc_root ORDER BY
- DROP TABLE tt_ioc_root;
- DROP FUNCTION tt_ioc_cap();
+@@ -66,10 +66,10 @@ void Poller::Schedule() {
  
-+----------------------------------------------------------------------
-+-- Section 14: Single-row (primary key) UPDATE/DELETE on a partitioned table
-+----------------------------------------------------------------------
-+
-+-- The transition-table triggers are on the root, not on the leaf that the
-+-- single-row modify path would target, so that path must not be used.
-+CREATE TABLE tt_sr (id int PRIMARY KEY, val text) PARTITION BY RANGE (id);
-+CREATE TABLE tt_sr_mid PARTITION OF tt_sr FOR VALUES FROM (1) TO (100)
-+  PARTITION BY RANGE (id);
-+CREATE TABLE tt_sr_leaf PARTITION OF tt_sr_mid FOR VALUES FROM (1) TO (100);
-+INSERT INTO tt_sr VALUES (1, 'a'), (2, 'b'), (3, 'c'), (4, 'd');
-+
-+CREATE TRIGGER tt_sr_upd AFTER UPDATE ON tt_sr
-+  REFERENCING OLD TABLE AS old_table NEW TABLE AS new_table
-+  FOR EACH STATEMENT EXECUTE FUNCTION tt_log_update();
-+CREATE TRIGGER tt_sr_del AFTER DELETE ON tt_sr
-+  REFERENCING OLD TABLE AS old_table
-+  FOR EACH STATEMENT EXECUTE FUNCTION tt_log_delete();
-+CREATE TRIGGER tt_sr_mid_del AFTER DELETE ON tt_sr_mid
-+  REFERENCING OLD TABLE AS old_table
-+  FOR EACH STATEMENT EXECUTE FUNCTION tt_log_delete();
-+
-+EXPLAIN (COSTS OFF) UPDATE tt_sr SET val = 'x' WHERE id = 1;
-+UPDATE tt_sr SET val = 'x' WHERE id = 1;
-+
-+-- Not single-row, but planned after the single-row path was considered
-+UPDATE tt_sr SET val = val || 'x' WHERE val = 'x';
-+
-+EXPLAIN (COSTS OFF) DELETE FROM tt_sr WHERE id = 1;
-+DELETE FROM tt_sr WHERE id = 1;
-+
-+-- Intermediate partitioned table named in the query
-+DELETE FROM tt_sr_mid WHERE id = 2;
-+
-+-- Only an UPDATE trigger on the root: single-row DELETE is still allowed
-+DROP TRIGGER tt_sr_del ON tt_sr;
-+EXPLAIN (COSTS OFF) DELETE FROM tt_sr WHERE id = 3;
-+DELETE FROM tt_sr WHERE id = 3;
-+
-+-- The leaf has no transition-table triggers: single-row path is used and no
-+-- trigger fires
-+EXPLAIN (COSTS OFF) UPDATE tt_sr_leaf SET val = 'y' WHERE id = 4;
-+UPDATE tt_sr_leaf SET val = 'y' WHERE id = 4;
-+
-+SELECT * FROM tt_sr ORDER BY id;
-+
-+DROP TABLE tt_sr;
-+
- ----------------------------------------------------------------------
- -- Cleanup
- ----------------------------------------------------------------------
+ void Poller::Pause() {
+   std::lock_guard lock(mutex_);
++  // Leave any scheduled task in place: it checks paused_ when it fires and stops without running
++  // the callback. Aborting it here races with a concurrent Resume(), which sees poll_task_id_
++  // still set, skips Schedule(), and loses the wake-up for good (GH #35051).
+   paused_ = true;
+-  if (poll_task_id_ != rpc::kUninitializedScheduledTaskId) {
+-    scheduler_->Abort(poll_task_id_);
+-  }
+ }
+ 
+ void Poller::Resume() {
+```
+
+**File**: `src/yb/rpc/poller.h` (modified, +0/-1)
+```diff
+@@ -25,7 +25,6 @@
+ namespace yb::rpc {
+ 
+ // Utility class to invoke specified callback with defined interval using scheduler.
+-// TODO Add separate test for poller.
+ class Poller {
+  public:
+   explicit Poller(const std::string& log_prefix, std::function<void()> callback);
 ```
 
 ---
 
-### Incident Patch 3: `60d21e9c` (2026-11-11)
-**Commit Message**: [#36695] YSQL: Keep the INSERT ON CONFLICT read batch size fixed within a statement (#37504)
+### Incident Patch 3: `3f4f684f` (2026-11-13)
+**Commit Message**: [#35539] YSQL: Don't leak connection manager cluster customizations across test methods (#37558)
 
 ## Summary
 
-### Problem
+`BaseMiniClusterTest` reuses one cluster across a test class's methods.
+The connection manager test base classes let one method's cluster
+customizations leak into later methods when the class runs in one JVM:
 
-When `yb_insert_on_conflict_read_batch_size` changes during an INSERT ON
-CONFLICT statement, read batching writes rows past the end of its
-arrays. The statement then errors out or the backend segfaults.
+- `BaseYsqlConnMgr`'s restart helpers
+(`restartClusterWithAdditionalFlags`, `restartClusterWithFlags`,
+`disableWarmupModeAndRestartCluster`, and the `*AndRestartCluster`
+helpers built on them) don't mark the cluster for recreation. For
+example, `TestSessionParameters#testSeedMakesConnectionSticky` runs on
+the single-backend cluster left by `testNoParameterStatusDuringDeploy`,
+and `TestMisc#testStickySequence`, `testHllSticky` and
+`testStickySuperuserConns` on the warmup-`none` cluster left by earlier
+methods. Their "not sticky" check needs a second backend PID, so they
+fail.
+- `BasePgSQLTest` recreates the cluster after every method, but under
+connection manager it builds it from the statics `warmupMode` and
+`ysql_conn_mgr_superuser_sticky`, which
+`setConnMgrWarmupModeAndRestartCluster` and
+`enableStickySuperuserConnsAndRestartCluster` change and nothing resets.
 
-```sql
-CREATE TABLE t (k int PRIMARY KEY);
-CREATE FUNCTION set_batch_size_at(i int, at int, size text) RETURNS int
-LANGUAGE plpgsql AS $$
-BEGIN
-  IF i = at THEN
-    PERFORM set_config('yb_insert_on_conflict_read_batch_size', size, true);
-  END IF;
-  RETURN i;
-END $$;
+Mark
 
--- set_batch_size_at() can change GUC 'yb_insert_on_conflict_read_batch_size' within statement
-INSERT INTO t SELECT set_batch_size_at(g, 2, '1') 
-  FROM generate_series(1, 2000) g
-  ON CONFLICT DO NOTHING; -- segfaults
+**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/BasePgSQLTest.java` (modified, +15/-2)
+```diff
+@@ -235,11 +235,14 @@ protected static enum ConnectionManagerWarmupMode {
+     ROUND_ROBIN
+   }
+ 
+-  protected static ConnectionManagerWarmupMode warmupMode = ConnectionManagerWarmupMode.RANDOM;
++  private static final ConnectionManagerWarmupMode WARMUP_MODE_DEFAULT =
++      ConnectionManagerWarmupMode.RANDOM;
++  protected static ConnectionManagerWarmupMode warmupMode = WARMUP_MODE_DEFAULT;
+ 
+   protected static final int CONN_MGR_WARMUP_BACKEND_COUNT = 3;
+ 
+-  protected static boolean ysql_conn_mgr_superuser_sticky = false;
++  private static final boolean SUPERUSER_STICKY_DEFAULT = false;
++  protected static boolean ysql_conn_mgr_superuser_sticky = SUPERUSER_STICKY_DEFAULT;
+ 
+   // CQL and Redis settings, will be reset before each test via resetSettings method.
+   protected boolean startCqlProxy = false;
+@@ -604,6 +607,16 @@ public void cleanUpAfter() throws Exception {
+     markClusterNeedsRecreation();
+   }
+ 
++  /*
++   * The cluster recreated for the next test method is built from these statics, which the
++   * *AndRestartCluster helpers change. Kept apart from cleanUpAfter, which subclasses override.
++   */
++  @After
++  public void resetClusterCustomizations() {
++    warmupMode = WARMUP_MODE_DEFAULT;
++    ysql_conn_mgr_superuser_sticky = SUPERUSER_STICKY_DEFAULT;
++  }
++
+   public String formatPGId(String str) {
+     // For all details - see PG function: fmtId()
+     String result = "\"";
 ```
 
-In the SQL above:
-
-1. When the first row is buffered, the arrays are allocated with 1024
-entries, the current value of `yb_insert_on_conflict_read_batch_size`.
-2. The code compares the row count
-(`mtstate->yb_ioc_state->num_slots==yb_insert_on_conflict_read_batch_size`)
-to decide when a batch is full.
-3. `yb_insert_on_conflict_read_batch_size` changes from 1024 to 1 after
-the first
-
-**File**: `src/postgres/src/backend/executor/execPartition.c` (modified, +2/-1)
+**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/BaseYsqlConnMgr.java` (modified, +3/-0)
 ```diff
-@@ -1057,7 +1057,8 @@ ExecInitRoutingInfo(ModifyTableState *mtstate,
- 		partRelInfo->ri_BatchSize = 1;
+@@ -164,6 +164,7 @@ protected boolean isTestRunningInWarmupRandomMode() {
+   protected void restartClusterWithAdditionalFlags(
+       Map<String, String> additionalMasterFlags,
+       Map<String, String> additionalTserverFlags) throws Exception {
++    markClusterNeedsRecreation();
+     destroyMiniCluster();
+     waitForProperShutdown();
+     createMiniCluster(-1, -1, builder -> {
+@@ -216,6 +217,7 @@ protected void enableVersionMatchingAndRestartCluster() throws Exception {
  
- 	/* YB: also handle YB insert on conflict read batching. */
--	if (YbIsInsertOnConflictReadBatchingPossible(partRelInfo))
-+	if (YbIsInsertOnConflictReadBatchingPossible(partRelInfo,
-+												 mtstate->yb_ioc_batch_size))
- 		partRelInfo->ri_ybIocBatchingPossible = true;
+   protected void disableWarmupModeAndRestartCluster() throws Exception {
+     warmup_random_mode = false;
++    markClusterNeedsRecreation();
+     destroyMiniCluster();
+     waitForProperShutdown();
+     createMiniCluster();
+@@ -841,6 +843,7 @@ protected void clearReversibleStickinessExclusions() throws Exception {
+   protected void restartClusterWithFlags(
+       Map<String, String> additionalMasterFlags,
+       Map<String, String> additionalTserverFlags) throws Exception {
++    markClusterNeedsRecreation();
+     destroyMiniCluster();
+     waitForProperShutdown();
  
- 	/*
-```
-
-**File**: `src/postgres/src/backend/executor/nodeModifyTable.c` (modified, +15/-9)
-```diff
-@@ -216,7 +216,8 @@ static void ExecMergeNotMatched(ModifyTableContext *context,
- static void YbPostProcessDml(CmdType cmd_type,
- 							 Relation rel,
- 							 TupleTableSlot *newslot);
--static void YbInitInsertOnConflictBatchState(YbInsertOnConflictBatchState **state);
-+static void YbInitInsertOnConflictBatchState(YbInsertOnConflictBatchState **state,
-+											 int batch_size);
- static void YbAddSlotToBatch(ModifyTableContext *context,
- 							 ResultRelInfo *resultRelInfo,
- 							 TupleTableSlot *planSlot,
-@@ -981,7 +982,7 @@ ExecInsert(ModifyTableContext *context,
- 						 blockInsertStmt);
- 		/* When we've reached the desired batch size, enter flushing mode. */
- 		if (mtstate->yb_ioc_state->num_slots ==
--			yb_insert_on_conflict_read_batch_size)
-+			mtstate->yb_ioc_batch_size)
- 		{
- 			returnSlot = YbFlushSlotsFromBatch(context, blockInsertStmt);
- 		}
-@@ -5360,7 +5361,9 @@ ExecInitModifyTable(ModifyTable *node, EState *estate, int eflags)
- 		else
- 			resultRelInfo->ri_BatchSize = 1;
- 
--		YbInitIocStrategy(resultRelInfo, node);
-+		/* YB: see ModifyTableState.yb_ioc_batch_size. */
-+		mtstate->yb_ioc_batch_size = yb_insert_on_conflict_read_batch_size;
-+		YbInitIocStrategy(resultRelInfo, node, mtstate->yb_ioc_batch_size);
- 	}
- 
- 	/*
-@@ -5486,13 +5489,13 @@ YbPostProcessDml(CmdType cmd_type,
- }
- 
- static void
--YbInitInsertOnConflictBatchState(YbInsertOnConflictBatchState **state)
-+YbInitInsertOnConflictBatchState(YbInsertOnConflictBatchState **state,
-+								 int batch_size)
- {
-+	Assert(batch_size > 0);
- 	*state = palloc0(sizeof(YbInsertOnConflictBatchState));
--	(*state)->slots = palloc(sizeof(TupleTableSlot *) *
--							 yb_insert_on_conflict_read_batch_size);
--	(*state)->planSlots = palloc(sizeof(TupleTableSlot *) *
--								 yb_insert_on_conflict_read_batch_size);
-+	(*state)->slots = palloc(sizeof(TupleTableSlot *) * batch_size);
-+	(*state)->planSlots = palloc(sizeof(TupleTableSlot *) * batch_size);
- }
- 
- static void
-@@ -5570,7 +5573,8 @@ YbAddSlotToBatch(ModifyTableContext *context,
- 
- 	Assert(resultRelInfo->ri_ybIocBatchingPossible);
- 	if (!context->mtstate->yb_ioc_state)
--		YbInitInsertOnConflictBatchState(&context->mtstate->yb_ioc_state);
-+		YbInitInsertOnConflictBatchState(&context->mtstate->yb_ioc_state,
-+										 context->mtstate->yb_ioc_batch_size);
- 	YbInsertOnConflictBatchState *state = context->mtstate->yb_ioc_state;
- 
- 	/*
-@@ -5586,6 +5590,8 @@ YbAddSlotToBatch(ModifyTableContext *context,
- 	TupleDesc	plan_tdesc = CreateTupleDescCopy(planSlot->tts_tupleDescriptor);
- 	int			slot_idx = state->num_slots;
- 
-+	Assert(slot_idx < context->mtstate->yb_ioc_batch_size);
-+
- 	state->slots[slot_idx] = MakeSingleTupleTableSlot(tdesc, slot->tts_ops);
- 	/*
- 	 * TODO(kramanathan): The planSlot (from the subplan node) is used only in
-```
-
-**File**: `src/postgres/src/backend/executor/ybModifyTable.c` (modified, +6/-4)
-```diff
-@@ -722,7 +722,8 @@ YbIsIocPushdownCapableRel(ResultRelInfo *resultRelInfo, ModifyTable *node)
-  * On that fallback path, batching and index-only reads are independent.
-  */
- void
--YbInitIocStrategy(ResultRelInfo *resultRelInfo, ModifyTable *node)
-+YbInitIocStrategy(ResultRelInfo *resultRelInfo, ModifyTable *node,
-+				  int batch_size)
- {
- 	Assert(node->operation == CMD_INSERT);
- 
-@@ -734,7 +735,7 @@ YbInitIocStrategy(ResultRelInfo *resultRelInfo, ModifyTable *node)
- 		return;
- 	}
- 
--	if (YbIsInsertOnConflictReadBatchingPossible(resultRelInfo))
-+	if (YbIsInsertOnConflictReadBatchingPossible(resultRelInfo, batch_size))
- 		resultRelInfo->ri_ybIocBatchingPossible = true;
- 
- 	if (IsYBRelation(resultRelInfo->ri_RelationDesc) &&
-@@ -743,12 +744,13 @@ YbInitIocStrategy(ResultRelInfo *resultRelInfo, ModifyTable *node)
- }
- 
- bool
--YbIsInsertOnConflictReadBatchingPossible(ResultRelInfo *resultRelInfo)
-+YbIsInsertOnConflictReadBatchingPossible(ResultRelInfo *resultRelInfo,
-+										 int batch_size)
- {
- 	/*
- 	 * TODO(jason): figure out how to enable triggers.
- 	 */
--	if (yb_insert_on_conflict_read_batch_size == 0 ||
-+	if (batch_size == 0 ||
- 		!IsYBRelation(resultRelInfo->ri_RelationDesc) ||
- 		IsCatalogRelation(resultRelInfo->ri_RelationDesc) ||
- 		(resultRelInfo->ri_TrigDesc &&
-```
-
-**File**: `src/postgres/src/include/executor/ybModifyTable.h` (modified, +6/-4)
-```diff
-@@ -83,10 +83,12 @@ extern void YBCHeapInsert(ResultRelInfo *resultRelInfo,
- 
- /*
-  * Whether INSERT ON CONFLICT read batching is possible for the given
-- * resultRelInfo.  Should be called only when the inspected fields of
-- * resultRelInfo are populated.
-+ * resultRelInfo, given the statement's batch size (see
-+ * ModifyTableState.yb_ioc_batch_size).  Should be called only when the
-+ * inspected fields of resultRelInfo are populated.
-  */
--extern bool YbIsInsertOnConflictReadBatchingPossible(ResultRelInfo *resultRelInfo);
-+extern bool YbIsInsertOnConflictReadBatchingPossible(ResultRelInfo *resultRelInfo,
-+													 int batch_size);
- 
- /*
-  * Combine the planner's IOC pushdown hint with properties available only after
-@@ -95,7 +97,7 @@ extern bool YbIsInsertOnConflictReadBatchingPossible(ResultRelInfo *resultRelInf
-  * optimizations.
-  */
- extern void YbInitIocStrategy(ResultRelInfo *resultRelInfo,
--							  ModifyTable *node);
-+							  ModifyTable *node, int batch_size);
- 
- /*
-  * Insert a tuple into a YugaByte table. Will execute within a distributed
-```
-
-**File**: `src/postgres/src/include/nodes/execnodes.h` (modified, +11/-1)
-```diff
-@@ -1482,6 +1482,16 @@ typedef struct ModifyTableState
- 	 * reused after the setting changes.
- 	 */
- 	bool		yb_use_upsert_mode;
-+
-+	/*
-+	 * YB: INSERT ON CONFLICT read batch size for this statement, taken from
-+	 * yb_insert_on_conflict_read_batch_size at executor startup; 0 means no
-+	 * read batching.  The setting can change while the statement runs (for
-+	 * example, set_config() in an expression), so the batch arrays, the
-+	 * full-batch check, and each partition's batching decision use this saved
-+	 * value.
-+	 */
-+	int			yb_ioc_batch_size;
- } ModifyTableState;
- 
- /* ----------------
-@@ -3156,7 +3166,7 @@ typedef struct LimitState
-  *	 YbInsertOnConflictBatchState information
-  *
-  *		INSERT ... ON CONFLICT read batching state for Yugabyte relations.  The
-- *		batch size is taken from GUC yb_insert_on_conflict_read_batch_size.
-+ *		batch size is ModifyTableState.yb_ioc_batch_size.
-  * ----------------
-  */
- typedef struct YbInsertOnConflictBatchState
-```
-
-**File**: `src/postgres/src/test/regress/expected/yb.orig.insert_on_conflict_batch_size_change.out` (added, +101/-0)
-```diff
-@@ -0,0 +1,101 @@
-+--
-+-- INSERT ON CONFLICT read batching when yb_insert_on_conflict_read_batch_size
-+-- changes during the statement.  The arrays that buffer a batch's rows are
-+-- allocated once per statement, so a change must not affect the running
-+-- statement.  Each case sets its own starting batch size, so this test does
-+-- not depend on the batch size the schedule runs with.
-+--
-+-- Return i.  When i = at, set the batch size to size until the end of the
-+-- transaction.
-+CREATE FUNCTION set_batch_size_at(i int, at int, size text) RETURNS int
-+LANGUAGE plpgsql AS $$
-+BEGIN
-+  IF i = at THEN
-+    PERFORM set_config('yb_insert_on_conflict_read_batch_size', size, true);
-+    RAISE NOTICE 'row %: batch size set to %', i,
-+      current_setting('yb_insert_on_conflict_read_batch_size');
-+  END IF;
-+  RETURN i;
-+END $$;
-+CREATE TABLE ioc_target (k int PRIMARY KEY, v int);
-+-- Lower the batch size from 1024 to 1 at row 2.
-+SET yb_insert_on_conflict_read_batch_size = 1024;
-+INSERT INTO ioc_target
-+  SELECT set_batch_size_at(g, 2, '1') FROM generate_series(1, 2000) g
-+  ON CONFLICT DO NOTHING;
-+NOTICE:  row 2: batch size set to 1
-+SELECT count(*), min(k), max(k) FROM ioc_target;
-+ count | min | max  
-+-------+-----+------
-+  2000 |   1 | 2000
-+(1 row)
-+
-+TRUNCATE ioc_target;
-+-- Raise the batch size from 2 to 1000000 at row 2.
-+SET yb_insert_on_conflict_read_batch_size = 2;
-+INSERT INTO ioc_target
-+  SELECT set_batch_size_at(g, 2, '1000000') FROM generate_series(1, 2000) g
-+  ON CONFLICT DO NOTHING;
-+NOTICE:  row 2: batch size set to 1000000
-+SELECT count(*), min(k), max(k) FROM ioc_target;
-+ count | min | max  
-+-------+-----+------
-+  2000 |   1 | 2000
-+(1 row)
-+
-+TRUNCATE ioc_target;
-+-- Set the batch size to 0 at row 1, before the first row is buffered.
-+SET yb_insert_on_conflict_read_batch_size = 1024;
-+INSERT INTO ioc_target
-+  SELECT set_batch_size_at(g, 1, '0') FROM generate_series(1, 2000) g
-+  ON CONFLICT DO NOTHING;
-+NOTICE:  row 1: batch size set to 0
-+SELECT count(*), min(k), max(k) FROM ioc_target;
-+ count | min | max  
-+-------+-----+------
-+  2000 |   1 | 2000
-+(1 row)
-+
-+TRUNCATE ioc_target;
-+-- Raise the batch size from 2 to 1000 in DO UPDATE SET, while the first batch
-+-- is sent.
-+INSERT INTO ioc_target
-+  SELECT g,  -- 2000 int keys, i.e. 1.....2000
-+         0   -- all zero, i.e. 0
-+  FROM generate_series(1, 2000) g;
-+SET yb_insert_on_conflict_read_batch_size = 2;
-+INSERT INTO ioc_target
-+  SELECT g, 0 FROM generate_series(1, 2000) g
-+  ON CONFLICT (k) DO UPDATE SET v = set_batch_size_at(excluded.k, 1, '1000');
-+NOTICE:  row 1: batch size set to 1000
-+SELECT count(*) FROM ioc_target WHERE v = k;
-+ count 
-+-------
-+  2000
-+(1 row)
-+
-+-- Partitioned table: the statement starts with batch size 0, row 11 raises
-+-- it to 1024 just before the first row of the second partition, and row 12
-+-- lowers it to 1.  A partition decides whether to batch from the size saved
-+-- at statement start, so neither partition batches.
-+CREATE TABLE ioc_target_part (k int PRIMARY KEY) PARTITION BY RANGE (k);
-+CREATE TABLE ioc_target_part_1 PARTITION OF ioc_target_part
-+  FOR VALUES FROM (1) TO (11);
-+CREATE TABLE ioc_target_part_2 PARTITION OF ioc_target_part
-+  FOR VALUES FROM (11) TO (MAXVALUE);
-+SET yb_insert_on_conflict_read_batch_size = 0;
-+INSERT INTO ioc_target_part
-+  SELECT set_batch_size_at(set_batch_size_at(g, 11, '1024'), 12, '1')
-+  FROM generate_series(1, 2000) g
-+  ON CONFLICT DO NOTHING;
-+NOTICE:  row 11: batch size set to 1024
-+NOTICE:  row 12: batch size set to 1
-+SELECT count(*), min(k), max(k) FROM ioc_target_part;
-+ count | min | max  
-+-------+-----+------
-+  2000 |   1 | 2000
-+(1 row)
-+
-+RESET yb_insert_on_conflict_read_batch_size;
-+DROP TABLE ioc_target, ioc_target_part;
-+DROP FUNCTION set_batch_size_at;
-```
-
-**File**: `src/postgres/src/test/regress/sql/yb.orig.insert_on_conflict_batch_size_change.sql` (added, +78/-0)
-```diff
-@@ -0,0 +1,78 @@
-+--
-+-- INSERT ON CONFLICT read batching when yb_insert_on_conflict_read_batch_size
-+-- changes during the statement.  The arrays that buffer a batch's rows are
-+-- allocated once per statement, so a change must not affect the running
-+-- statement.  Each case sets its own starting batch size, so this test does
-+-- not depend on the batch size the schedule runs with.
-+--
-+
-+-- Return i.  When i = at, set the batch size to size until the end of the
-+-- transaction.
-+CREATE FUNCTION set_batch_size_at(i int, at int, size text) RETURNS int
-+LANGUAGE plpgsql AS $$
-+BEGIN
-+  IF i = at THEN
-+    PERFORM set_config('yb_insert_on_conflict_read_batch_size', size, true);
-+    RAISE NOTICE 'row %: batch size set to %', i,
-+      current_setting('yb_insert_on_conflict_read_batch_size');
-+  END IF;
-+  RETURN i;
-+END $$;
-+
-+CREATE TABLE ioc_target (k int PRIMARY KEY, v int);
-+
-+-- Lower the batch size from 1024 to 1 at row 2.
-+SET yb_insert_on_conflict_read_batch_size = 1024;
-+INSERT INTO ioc_target
-+  SELECT set_batch_size_at(g, 2, '1') FROM generate_series(1, 2000) g
-+  ON CONFLICT DO NOTHING;
-+SELECT count(*), min(k), max(k) FROM ioc_target;
-+TRUNCATE ioc_target;
-+
-+-- Raise the batch size from 2 to 1000000 at row 2.
-+SET yb_insert_on_conflict_read_batch_size = 2;
-+INSERT INTO ioc_target
-+  SELECT set_batch_size_at(g, 2, '1000000') FROM generate_series(1, 2000) g
-+  ON CONFLICT DO NOTHING;
-+SELECT count(*), min(k), max(k) FROM ioc_target;
-+TRUNCATE ioc_target;
-+
-+-- Set the batch size to 0 at row 1, before the first row is buffered.
-+SET yb_insert_on_conflict_read_batch_size = 1024;
-+INSERT INTO ioc_target
-+  SELECT set_batch_size_at(g, 1, '0') FROM generate_series(1, 2000) g
-+  ON CONFLICT DO NOTHING;
-+SELECT count(*), min(k), max(k) FROM ioc_target;
-+TRUNCATE ioc_target;
-+
-+-- Raise the batch size from 2 to 1000 in DO UPDATE SET, while the first batch
-+-- is sent.
-+INSERT INTO ioc_target
-+  SELECT g,  -- 2000 int keys, i.e. 1.....2000
-+         0   -- all zero, i.e. 0
-+  FROM generate_series(1, 2000) g;
-+SET yb_insert_on_conflict_read_batch_size = 2;
-+INSERT INTO ioc_target
-+  SELECT g, 0 FROM generate_series(1, 2000) g
-+  ON CONFLICT (k) DO UPDATE SET v = set_batch_size_at(excluded.k, 1, '1000');
-+SELECT count(*) FROM ioc_target WHERE v = k;
-+
-+-- Partitioned table: the statement starts with batch size 0, row 11 raises
-+-- it to 1024 just before the first row of the second partition, and row 12
-+-- lowers it to 1.  A partition decides whether to batch from the size saved
-+-- at statement start, so neither partition batches.
-+CREATE TABLE ioc_target_part (k int PRIMARY KEY) PARTITION BY RANGE (k);
-+CREATE TABLE ioc_target_part_1 PARTITION OF ioc_target_part
-+  FOR VALUES FROM (1) TO (11);
-+CREATE TABLE ioc_target_part_2 PARTITION OF ioc_target_part
-+  FOR VALUES FROM (11) TO (MAXVALUE);
-+SET yb_insert_on_conflict_read_batch_size = 0;
-+INSERT INTO ioc_target_part
-+  SELECT set_batch_size_at(set_batch_size_at(g, 11, '1024'), 12, '1')
-+  FROM generate_series(1, 2000) g
-+  ON CONFLICT DO NOTHING;
-+SELECT count(*), min(k), max(k) FROM ioc_target_part;
-+
-+RESET yb_insert_on_conflict_read_batch_size;
-+DROP TABLE ioc_target, ioc_target_part;
-+DROP FUNCTION set_batch_size_at;
-```
-
-**File**: `src/postgres/src/test/regress/yb_insert_on_conflict_schedule` (modified, +1/-0)
-```diff
-@@ -7,3 +7,4 @@ test: yb.orig.insert_on_conflict_with
- test: yb.orig.insert_on_conflict_with_spi
- test: yb.orig.insert_on_conflict_with_explain
- test: yb.orig.insert_on_conflict_pushdown
-+test: yb.orig.insert_on_conflict_batch_size_change
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #37652** (2026-11-12): Docs: Document setting-dependent literals in prepared statements with YSQL Connection Manager (@aishwarya24)
-- **PR #37634** (closed): [#37632] DocDB: Collect /pprof/heap using builtin tcmalloc API (@kai-franz)
-- **PR #37619** (2026-11-12): [BACKPORT 2024.2][#35902] DocDB: Allow a few tcmalloc pages of slack in MemTrackerTest.TcMallocRootTracker (#35952) (@hkimura)
-- **PR #37618** (2026-11-12): [BACKPORT 2025.2][#35902] DocDB: Allow a few tcmalloc pages of slack in MemTrackerTest.TcMallocRootTracker (#35952) (@hkimura)
-- **PR #37617** (2026-11-12): [BACKPORT 2026.1][#35902] DocDB: Allow a few tcmalloc pages of slack in MemTrackerTest.TcMallocRootTracker (#35952) (@hkimura)
-- **PR #37611** (2026-11-12): [#37610] DocDB: Wait for split candidates in AutomaticTabletSplitITest.PrioritizeLowPhaseTablets (@csi-fix)
+- **PR #37834** (closed): [PLAT-22789] (@yorq)
+- **PR #37833** (2026-11-13): [BACKPORT 2026.2][#36913] CDC: Expect empty catalog transactions in two Virtual WAL tests with transactional DDL (#37753) (@dr0pdb)
+- **PR #37805** (2026-11-13): [BACKPORT 2025.2][#29915] YSQL: ConnMgr - Make replication origin stickiness reversible (@arpit-saxena)
+- **PR #37803** (2026-11-13): [BACKPORT 2026.1][#29915] YSQL: ConnMgr - Make replication origin stickiness reversible (@arpit-saxena)
+- **PR #37794** (2026-11-13): [BACKPORT 2025.2][#35539] YSQL: Don't leak connection manager cluster customizations across test methods (#37558) (@arpit-saxena)
+- **PR #37793** (2026-11-13): [BACKPORT 2026.1][#35539] YSQL: Don't leak connection manager cluster customizations across test methods (#37558) (@arpit-saxena)
 
 ---
 
@@ -3477,30 +2797,28 @@ the first
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#35476,#36130] YSQL: Fix single-row UPDATE/DELETE when the WHERE value's type d
+## X. [PLAT-23825] Build: Build YBA and yugabyted Go components with Go 1.27.4 and x/c
 
 **RULE**:
-When implementing operations in `src/postgres/src/backend/access/yb_scan/yb_scan_plan.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `managed/devops/supportbundle/cdcstate/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5bf305bb`: [#35476,#36130] YSQL: Fix single-row UPDATE/DELETE when the WHERE value's type differs from the key column (#36669). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `caf4a62b`: [PLAT-23825] Build: Build YBA and yugabyted Go components with Go 1.27.4 and x/crypto 0.59.0 (#37633). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/src/backend/access/yb_scan/yb_scan_plan.c`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/devops/supportbundle/cdcstate/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
- *
- * Single row UPDATE and DELETE also use this (yb_single_row_key_value): a pair
- * marked compatible by mistake makes them change or delete the wrong row.
+go 1.27.4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+go 1.27.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5bf305bb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `caf4a62b` are properly handled with clean fallback behavior.

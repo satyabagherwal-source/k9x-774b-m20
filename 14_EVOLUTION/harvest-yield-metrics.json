@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T11:55:45.278Z",
-  "total_cycles_completed": 9219,
-  "total_learnings_persisted": 9219,
-  "total_rules_promoted": 9000,
+  "last_updated": "2026-11-13T12:08:43.181Z",
+  "total_cycles_completed": 9223,
+  "total_learnings_persisted": 9223,
+  "total_rules_promoted": 9002,
   "history": [
-    {
-      "timestamp": "2026-11-12T21:02:24.057Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:10:39.322Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:10:44.559Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T21:10:48.738Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T21:19:24.404Z",
       "repository": "Qwen/Qwen3-Embedding-0.6B",
@@ -1403,6 +1375,34 @@
       "repository": "apache/pinot",
       "learningId": "learn-github-apache-pinot",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T12:08:12.464Z",
+      "repository": "audio-cpp/audio.cpp-gguf",
+      "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T12:08:21.271Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T12:08:24.209Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T12:08:43.181Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

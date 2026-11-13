@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T11:55:45.282Z",
+  "last_updated": "2026-11-13T12:08:43.185Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "828db638a33df3b4e7504735e093ad4bdf914ffbf97f29fbc3ea24a82a6e7496",
-      "verified_at": "2026-11-11T18:54:57.378Z",
+      "content_hash": "c7d37ab9c55fe32b7d2e2fc9f1ba27650b33852ec98b8d4fe300f7eaded76b85",
+      "verified_at": "2026-11-13T12:08:24.213Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T18:54:57.378Z"
+      "last_updated": "2026-11-13T12:08:24.213Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "79121a7d041b95e27ba7973c20604e034c372e57ecedc5c1740e14248da3c6ef",
-      "verified_at": "2026-11-12T06:27:05.807Z",
+      "content_hash": "d2e5370f1a35e2ca8eb2455c38e979b49c7d7e6d0ef1b58f11656ea97b059569",
+      "verified_at": "2026-11-13T12:08:21.275Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T06:27:05.807Z"
+      "last_updated": "2026-11-13T12:08:21.275Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "cc5dca54cc99e6cac5510523e4013cae95c294c130f30769f2eb3db3eea2f5e6",
-      "verified_at": "2026-11-12T05:13:31.991Z",
+      "content_hash": "681e4acb259912ecdbfcfee03196f6d3489917ffd30a555c05333bfde8ea2b6d",
+      "verified_at": "2026-11-13T12:08:43.184Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T05:13:31.991Z"
+      "last_updated": "2026-11-13T12:08:43.184Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -18351,14 +18351,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-audio-cpp-audio-cpp-gguf",
-      "content_hash": "dc59d311cd7971092095b47ba0889eceda0dc77711649fa4321d73a032ac48e0",
-      "verified_at": "2026-11-08T10:25:00.508Z",
+      "content_hash": "0a3d263a1527f6bebc8d7f13dc4750ffb249ac1e49402d6e417866ef6de7b21d",
+      "verified_at": "2026-11-13T12:08:12.468Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T10:25:00.508Z"
+      "last_updated": "2026-11-13T12:08:12.468Z"
     },
     "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF": {
       "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T11:55:45.122Z",
+  "last_updated": "2026-11-13T12:08:43.026Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -856,8 +856,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "522cc8b7",
-      "content_hash": "79121a7d041b95e27ba7973c20604e034c372e57ecedc5c1740e14248da3c6ef",
+      "source_version": "cb1ba113",
+      "content_hash": "d2e5370f1a35e2ca8eb2455c38e979b49c7d7e6d0ef1b58f11656ea97b059569",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -937,7 +937,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T06:27:05.661Z",
+      "verified_at": "2026-11-13T12:08:21.073Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69098,8 +69098,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "43410e87",
-      "content_hash": "cc5dca54cc99e6cac5510523e4013cae95c294c130f30769f2eb3db3eea2f5e6",
+      "source_version": "e79f26cb",
+      "content_hash": "681e4acb259912ecdbfcfee03196f6d3489917ffd30a555c05333bfde8ea2b6d",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -69126,6 +69126,11 @@
         {
           "number": null,
           "title": "[#35476,#36130] YSQL: Fix single-row UPDATE/DELETE when the WHERE value's type d",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "[PLAT-23825] Build: Build YBA and yugabyted Go components with Go 1.27.4 and x/c",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -69209,7 +69214,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T05:13:31.837Z",
+      "verified_at": "2026-11-13T12:08:43.004Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69959,8 +69964,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "7437e3e9",
-      "content_hash": "828db638a33df3b4e7504735e093ad4bdf914ffbf97f29fbc3ea24a82a6e7496",
+      "source_version": "8065b000",
+      "content_hash": "c7d37ab9c55fe32b7d2e2fc9f1ba27650b33852ec98b8d4fe300f7eaded76b85",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -69982,6 +69987,11 @@
         {
           "number": null,
           "title": "Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #1103 from katulevskiy/fix/tool-image-previews",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -70045,7 +70055,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T18:54:57.220Z",
+      "verified_at": "2026-11-13T12:08:24.038Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -191843,7 +191853,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/audio-cpp/audio.cpp-gguf",
       "source_version": "hf-audio-cpp-audio.cpp-gguf",
-      "content_hash": "dc59d311cd7971092095b47ba0889eceda0dc77711649fa4321d73a032ac48e0",
+      "content_hash": "0a3d263a1527f6bebc8d7f13dc4750ffb249ac1e49402d6e417866ef6de7b21d",
       "dossier_path": "07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md",
       "promoted_rules": [
@@ -191868,7 +191878,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T10:25:00.366Z",
+      "verified_at": "2026-11-13T12:08:12.338Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "7437e3e9",
+    "sourceVersion": "8065b000",
     "license": "MIT",
-    "contentHash": "828db638a33df3b4e7504735e093ad4bdf914ffbf97f29fbc3ea24a82a6e7496",
-    "lastHarvestedAt": "2026-11-11T18:54:57.369Z",
+    "contentHash": "c7d37ab9c55fe32b7d2e2fc9f1ba27650b33852ec98b8d4fe300f7eaded76b85",
+    "lastHarvestedAt": "2026-11-13T12:08:24.188Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "522cc8b7",
+    "sourceVersion": "cb1ba113",
     "license": "Apache-2.0",
-    "contentHash": "79121a7d041b95e27ba7973c20604e034c372e57ecedc5c1740e14248da3c6ef",
-    "lastHarvestedAt": "2026-11-12T06:27:05.782Z",
+    "contentHash": "d2e5370f1a35e2ca8eb2455c38e979b49c7d7e6d0ef1b58f11656ea97b059569",
+    "lastHarvestedAt": "2026-11-13T12:08:21.258Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "43410e87",
+    "sourceVersion": "e79f26cb",
     "license": "NOASSERTION",
-    "contentHash": "cc5dca54cc99e6cac5510523e4013cae95c294c130f30769f2eb3db3eea2f5e6",
-    "lastHarvestedAt": "2026-11-12T05:13:31.982Z",
+    "contentHash": "681e4acb259912ecdbfcfee03196f6d3489917ffd30a555c05333bfde8ea2b6d",
+    "lastHarvestedAt": "2026-11-13T12:08:43.166Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -12195,8 +12195,8 @@
     "sourceUrl": "https://huggingface.co/audio-cpp/audio.cpp-gguf",
     "sourceVersion": "hf-audio-cpp-audio.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "dc59d311cd7971092095b47ba0889eceda0dc77711649fa4321d73a032ac48e0",
-    "lastHarvestedAt": "2026-11-08T10:25:00.500Z",
+    "contentHash": "0a3d263a1527f6bebc8d7f13dc4750ffb249ac1e49402d6e417866ef6de7b21d",
+    "lastHarvestedAt": "2026-11-13T12:08:12.459Z",
     "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf"
   },
   "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf": {

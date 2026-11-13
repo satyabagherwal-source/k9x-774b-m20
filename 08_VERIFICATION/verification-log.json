@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-TDX1",
-    "timestamp": "2026-11-11T06:33:33.877Z",
-    "repository": "react-native-webrtc/react-native-webrtc",
-    "learningId": "learn-github-react-native-webrtc-react-native-webrtc",
-    "contentHash": "7be113e6b09c6113db8cf1f9eadd3312409b674da02ac8123f183e98d7e2e1e7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-TK7R",
-    "timestamp": "2026-11-11T06:33:42.039Z",
-    "repository": "DNSControl/dnscontrol",
-    "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "6d43f52ba96a94ba5a4750794a7ac20022da41d0eb7a7cf1c10427ecc31fdfc5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-TNLU",
-    "timestamp": "2026-11-11T06:33:46.434Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "202ef1b99982dda3dceb7a6a55584e3fe0aa27cad0c86179546001082f47dd6b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-TPUE",
-    "timestamp": "2026-11-11T06:33:49.334Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "5267b93a83889b02f61a5dd0e45b5406178f29e23e07e32af0e69759448a849e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-TQCP",
     "timestamp": "2026-11-11T06:33:49.993Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7432,66 @@
     "contentHash": "a37300ee698820d98dedb5a2c19668dc7f1be9f3edfdb964674fbf4bf79aaf29",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-NFZB",
+    "timestamp": "2026-11-13T12:08:12.456Z",
+    "repository": "audio-cpp/audio.cpp-gguf",
+    "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
+    "contentHash": "0a3d263a1527f6bebc8d7f13dc4750ffb249ac1e49402d6e417866ef6de7b21d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-NMRP",
+    "timestamp": "2026-11-13T12:08:21.253Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "d2e5370f1a35e2ca8eb2455c38e979b49c7d7e6d0ef1b58f11656ea97b059569",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-NP15",
+    "timestamp": "2026-11-13T12:08:24.185Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "c7d37ab9c55fe32b7d2e2fc9f1ba27650b33852ec98b8d4fe300f7eaded76b85",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-O3OB",
+    "timestamp": "2026-11-13T12:08:43.163Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "681e4acb259912ecdbfcfee03196f6d3489917ffd30a555c05333bfde8ea2b6d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

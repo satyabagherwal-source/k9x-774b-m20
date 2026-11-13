@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `7437e3e9`  
+> **Source Version**: `8065b000`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:54:45.632Z  
+> **Timestamp**: 2026-11-13T12:08:13.648Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:54:45.448Z  
+> **Harvest Timestamp**: 2026-11-13T12:08:13.642Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3487 stars
+- **Stars / Engagement**: 3589 stars
 
 ---
 
@@ -1741,11 +1741,8 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1352** (2026-11-11): **zgx: a folded row is held at its compressed length**
-  *Symptoms*: LZ4 writes a folded row into a buffer made for its worst case, about the row's own size, and `compressed()` shrank it with `into_boxed_slice`. That is a realloc. mimalloc (and macOS's malloc) keeps a block where it is when it shrinks by less than half, and real rows compress by only about a fifth (1.24×). So every folded row kept nearly its uncompressed size. A 15,443-row chat whose rows compress to 20.4 MB held 30.7 MB of them.  `compressed()` now copies the output into a box of its own length. The rows are identical, and nothing else changes.  **Measured** on the M5 Max (zgx-zz rig: d7df47220 against zgx 0bce8ef43 + #1945/#1960/#1981, isolated engine, kept-chats off). One launch per build, alternated, two launches each. The long chat is da5bd3cc's, 15,442 folded rows. Each rest is the new-chat page versus the long chat open, after 16 s.  | the long chat's cost at rest | before | after | |---|---|---| | heap in use (mimalloc) | +42.8, +42.5 MB | +35.1, +35.2 MB | | mimalloc dirty pages | +40.4, +41.1 MB | +33.6, +33.8 MB | | footprint | +39.0, +42.6 MB | +35.1, +35.5 MB |  The new-chat page at launch also drops (128–129 MB, against 130–138), since rows folded at launch shrink the same way.  **Test:** `chat::tests::a_folded_rows_bytes_take_their_own_length` checks mimalloc's usable size of a folded row with a real-like ratio. It fails without the change ("held 4096 for 2291 bytes").  This is step 1 of the plan sent to V3. Step 2 (zstd with an on-device dictionary, ~10 MB for 
-
-- **Issue #1349** (2026-11-11): **zgx: zgx-linux green (real causes, no skips)**
-  *Symptoms*: Work in progress: makes the `zgx / zgx-linux` job pass, each failure fixed at its cause.  So far (first commit): - SDK copies re-copied from `plugins-sdk/zeron.luau` (#1290 changed the canonical copy only). - Zeron v2's `.base.json` re-blessed (its copies already had the default's fixes). - **Bug, off a Mac only:** the shortcut recorder wrote Ctrl as `ctrl`, while commands spell the command key `cmd`. So Settings → Shortcuts let another command take Toggle sidebar's Ctrl+B. It now writes `cmd`. What it writes on a Mac is unchanged. - Tests that pressed a Mac's keys on every platform are now platform-aware: rival plugin keys, rebinding, the editor's line-edge keys, and the editor's secondary click.  Still to do: the GPU visuals test, the any-focus shortcuts test, the Linux UI tests, the flaky large-diff test, and the known Mac failures.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  <!-- codesmith:footer --> --- <a href="https://backend.blacksmith.sh/track/enable-autofix?expires=1796977118&installation_model_id=425430&pr_number=1349&ref=codesmith_pr_footer&repository=zeronsh%2Fzeron&return_to=https%3A%2F%2Fgithub.com%2Fzeronsh%2Fzeron%2Fpull%2F1349&signature=c6071a7e60f33355ef726e99c057cec50c308e0c36cc61e105a091176354dfe8"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/autofix-with-codesmith-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.s
+- **Issue #1369** (2026-11-12): **Engine: the headless engine holds up to 1.75 GB of GPU memory (Metal/Vision loaded)**
+  *Symptoms*: The background engine (`Zeron Engine`) has no UI, but it holds hundreds of MB of GPU memory. On the installed 0.3.0 app after 70 minutes, `footprint` showed:  | Category | Dirty | Reclaimable | |---|---|---| | IOAccelerator (GPU) | **819 MB** | 4,562 MB | | Rust heap (`MALLOC_*`) | about 20 MB | | | Phys footprint | 851 MB (peak **1,753 MB**) | |  `ps` RSS read 5.3 GB.  **What's loaded:** `vmmap` shows Metal, MetalPerformanceShaders (incl. MPSNeuralNetwork), Vision, CoreImage, QuartzCore, AppKit, IOSurface and SensitiveContentAnalysisML loaded at runtime. `otool -L` on the binary links none of them. Every engine process has some of this, even `Zeron Engine mcp` (13 MB IOAccelerator); the long-lived main engine grows it.  **Leads, unverified:** - `crates/notify` posts banners through `NSUserNotification` and swizzles `-[NSBundle bundleIdentifier]` to pose as the app. - The `zeron-engine` bin lives in `apps/zeron`, which depends on `zeron-ui`.  **Status:** under investigation (root cause, growth trigger, before/after numbers). The fix follows once the cause is proven.  **Done when:** an idle and a busy engine both show IOAccelerator at about 0 under `footprint`.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,345 +1759,694 @@ typedef void (*UniffiCallbackInterfacePlatformMeasurerMethod0)(uint64_t, RustBuf
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7437e3e9` (2026-11-11)
-**Commit Message**: Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333)
+### Incident Patch 1: `8065b000` (2026-11-13)
+**Commit Message**: Merge pull request #1103 from katulevskiy/fix/tool-image-previews
 
-Chimes were played by an afplay child. While a game holds the foreground
-macOS keeps other apps' process coalitions in the background, and the
-child's CoreAudio assertion makes RunningBoard lift the app's coalition out
-and drop it back when the sound ends. On macOS 27.2 a coalition change that
-lands while a process of that coalition is in exec can deadlock in the
-kernel; runningboardd never returns, the window server blocks behind it and
-the watchdog panics the machine.
+fix: preview images embedded in tool results
 
-Play them through the System Sound server instead, which holds the
-assertion itself.
-
-**File**: `crates/ui/src/sound.rs` (modified, +117/-4)
+**File**: `crates/client/src/demo/transcripts.rs` (modified, +1/-0)
 ```diff
-@@ -5,9 +5,11 @@
- //!   the start and end of a voice call;
- //! - macOS Appshots use a preloaded native player; other cues write to a
- //!   temp file and use the system player on a
--//!   background thread: `afplay` (macOS), PowerShell `Media.SoundPlayer`
--//!   (Windows), first of `paplay`/`pw-play`/`aplay`/`ffplay`/`mpv` (Linux —
--//!   WAV, so even bare ALSA `aplay` decodes it);
-+//!   background thread: the System Sound server (macOS, see
-+//!   `macos_system_sound` for why not `afplay`), PowerShell
-+//!   `Media.SoundPlayer` (Windows), first of
-+//!   `paplay`/`pw-play`/`aplay`/`ffplay`/`mpv` (Linux — WAV, so even bare
-+//!   ALSA `aplay` decodes it);
- //! - `ZERON_DISABLE_SOUND` env kill-switch + the `soundEnabled` ui-setting;
- //! - failures are logged and swallowed — a missing player must never bother
- //!   the session flow.
-@@ -235,7 +237,97 @@ fn create_temp_file() -> std::io::Result<(std::fs::File, TempSoundFile)> {
+@@ -38,6 +38,7 @@ pub(crate) fn tool(id: &str, call: ToolCall, is_error: bool, output: Option<&str
+         subagent_ref: None,
+         subagent_status: None,
+         subagent_tail: None,
++        preview_paths: Vec::new(),
+         exit_code: None,
+         output_truncated: false,
+         output_lines: None,
+```
+
+**File**: `crates/client/src/session/mod.rs` (modified, +1/-0)
+```diff
+@@ -908,6 +908,7 @@ fn refresh_setup_placeholder(st: &mut CoreState, cloud_booting: bool) -> bool {
+                     subagent_ref: None,
+                     subagent_status: None,
+                     subagent_tail: None,
++                    preview_paths: Vec::new(),
+                     exit_code: None,
+                     output_truncated: false,
+                     output_lines: None,
+```
+
+**File**: `crates/client/src/subagents.rs` (modified, +1/-0)
+```diff
+@@ -285,6 +285,7 @@ mod tests {
+             subagent_ref: status.map(|_| format!("chat--sub--{id}")),
+             subagent_status: status,
+             subagent_tail: Some("Reading veil.rs".into()),
++            preview_paths: Vec::new(),
+             exit_code: None,
+             output_truncated: false,
+             output_lines: None,
+```
+
+**File**: `crates/doc/examples/gen_fixture.rs` (modified, +2/-0)
+```diff
+@@ -55,6 +55,8 @@ fn main() {
+             is_error: false,
+             output: None,
+             diff: None,
++            preview_paths: Vec::new(),
++            image_payloads: Vec::new(),
+             exit_code: None,
+         },
+     );
+```
+
+**File**: `crates/doc/src/parts.rs` (modified, +83/-0)
+```diff
+@@ -302,6 +302,12 @@ pub enum MessagePart {
+         /// its tagged text deltas (capped; display-only).
+         #[serde(default, skip_serializing_if = "Option::is_none")]
+         subagent_tail: Option<String>,
++        /// Uploads copies of images embedded in this tool's result. When
++        /// this is non-empty the chip previews these paths instead of files
++        /// the call named, which may sit outside the attachment jail.
++        /// Empty on older parts and on results that carried no image bytes.
++        #[serde(default, skip_serializing_if = "Vec::is_empty")]
++        preview_paths: Vec<String>,
+         /// A command's exit status, as its harness reported it (command
+         /// tools only — see [`command_output_tail`]).
+         #[serde(default, skip_serializing_if = "Option::is_none")]
+@@ -391,6 +397,7 @@ impl MessagePart {
+                 output,
+                 diff,
+                 diff_stats,
++                preview_paths,
+                 ..
+             } => {
+                 serde_json::to_vec(call).map_or(0, |v| v.len())
+@@ -401,6 +408,7 @@ impl MessagePart {
+                     + diff_stats
+                         .as_ref()
+                         .map_or(0, |s| serde_json::to_vec(s).map_or(0, |v| v.len()))
++                    + preview_paths.iter().map(String::len).sum::<usize>()
+             }
+             MessagePart::Input {
+                 questions, answers, ..
+@@ -527,6 +535,7 @@ pub fn fold_event_into_parts(out: &mut Vec<MessagePart>, event: &AgentEvent) {
+                     subagent_ref: None,
+                     subagent_status: None,
+                     subagent_tail: None,
++                    preview_paths: Vec::new(),
+                     exit_code: None,
+                     output_truncated: false,
+                     output_lines: None,
+@@ -538,7 +547,9 @@ pub fn fold_event_into_parts(out: &mut Vec<MessagePart>, event: &AgentEvent) {
+             is_error,
+             output,
+             diff,
++            preview_paths,
+             exit_code,
++            ..
+         } => {
+             for p in out.iter_mut() {
+                 if let MessagePart::Tool {
+@@ -550,6 +561,7 @@ pub fn fold_event_into_parts(out: &mut Vec<MessagePart>, event: &AgentEvent) {
+                     diff: diff_slot,
+                     output_bytes,
+                     diff_stats,
++                    preview_paths: stored,
+                     exit_code: exit_slot,
+                     output_truncated,
+                     output_lines,
+@@ -605,6 +617,11 @@ pub fn fold_event_into_parts(out: &mut Vec<MessagePart>, event: &AgentEvent) {
+                     }
+                     *diff_slot = None;
+                     *diff_stats = diff.as_ref().map(|d| vec![diff_stat(d)]);
++                    // A later result with no images must not wipe a preview
++                    // already stored for this chip.
++                    if !preview_paths.is_empty() {
++                        *stored = preview_paths.clone();
++                    }
+                 }
+             }
+         }
+@@ -1155,6 +1172,8 @@ mod tests {
+                 is_error: true,
+                 output: None,
+                 diff: None,
++                preview_paths: Vec::new(),
++                image_payloads: Vec::new(),
+                 exit_code: None,
+             },
+         );
+@@ -1169,6 +1188,55 @@ mod tests {
+         }
+     }
  
- #[cfg(target_os = "macos")]
- fn run_player(path: &Path) -> Result<(), String> {
--    run_checked("afplay", &[], path)
-+    macos_system_sound::play(path)
-+}
-+
-+/// Chimes play in the System Sound server, not in a process of ours.
-+///
-+/// Whoever plays audio holds a CoreAudio assertion for as long as it sounds.
-+/// While a game holds the foreground macOS keeps every other app's process
-+/// coalition in the background, and the assertion of an `afplay` child lifts
-+/// the whole coalition out and drops it back when the sound ends.
-+/// AVAudioPlayer and NSSound take the same assertion, in the app. On macOS
-+/// 27.2 such a change can deadlock in the kernel against a process of the
-+/// same coalition that is in `exec`, and agents exec all the time: the window
-+/// server hangs behind it and the machine needs a reboot. The sound server
-+/// holds the assertion itself, so a chime leaves this app's processes alone.
-+#[cfg(target_os = "macos")]
-+mod macos_system_sound {
-+    use core_foundation::base::TCFType;
-+    use core_foundation::url::{CFURL, CFURLRef};
-+    use std::ffi::c_void;
-+    use std::path::Path;
-+    use std::sync::mpsc;
-+    use std::time::Duration;
-+
-+    type SystemSoundId = u32;
-+
-+    const PROPERTY_IS_UI_SOUND: u32 = u32::from_be_bytes(*b"isui");
-+
-+    #[link(name = "AudioToolbox", kind = "framework")]
-+    unsafe extern "C" {
-+        fn AudioServicesCreateSystemSoundID(url: CFURLRef, id: *mut SystemSoundId) -> i32;
-+        fn AudioServicesDisposeSystemSoundID(id: SystemSoundId) -> i32;
-+        fn AudioServicesSetProperty(
-+            property: u32,
-+            specifier_size: u32,
-+            specifier: *const c_void,
-+            data_size: u32,
-+            data: *const c_void,
-+        ) -> i32;
-+        fn AudioServicesPlaySystemSoundWithCompletion(
-+            id: SystemSoundId,
-+            completion: &block2::Block<dyn Fn()>,
++    #[test]
++    fn tool_result_preview_paths_stick_and_an_empty_result_does_not_wipe_them() {
++        let mut parts = Vec::new();
++        fold_event_into_parts(
++            &mut parts,
++            &AgentEvent::ToolCall {
++                id: "t".into(),
++                call: ToolCall::ReadFile {
++                    path: "/tmp/shots/1.png".into(),
++                },
++            },
 +        );
-+    }
-+
-+    pub(super) struct SystemSound(SystemSoundId);
-+
-+    impl Drop for SystemSound {
-+        fn drop(&mut self) {
-+            unsafe {
-+                AudioServicesDisposeSystemSoundID(self.0);
++        fold_event_into_parts(
++            &mut parts,
++            &AgentEvent::ToolResult {
++                exit_code: None,
++                id: "t".into(),
++                is_error: false,
++                output: None,
++                diff: None,
++                preview_paths: vec!["/uploads/abc-image.png".into()],
++                image_payloads: Vec::new(),
++            },
++        );
++        fold_event_into_parts(
++            &mut parts,
++            &AgentEvent::ToolResult {
++                exit_code: None,
++                id: "t".into(),
++                is_error: false,
++                output: None,
++                diff: None,
++                preview_paths: Vec::new(),
++                image_payloads: Vec::new(),
++            },
++        );
++        match &parts[0] {
++            MessagePart::Tool {
++                preview_paths,
++                resolved,
++                ..
++            } => {
++                assert!(*resolved);
++                assert_eq!(preview_paths, &vec!["/uploads/abc-image.png".to_string()]);
 +            }
++            other => panic!("unexpected {other:?}"),
 +        }
 +    }
 +
-+    pub(super) fn register(path: &Path) -> Result<SystemSound, String> {
-+        let url = CFURL::from_path(path, false)
-+            .ok_or_else(|| format!("no file URL for {}", path.display()))?;
-+        let mut id: SystemSoundId = 0;
-+        let status = unsafe { AudioServicesCreateSystemSoundID(url.as_concrete_TypeRef(), &mut id) };
-+        if status != 0 {
-+            return Err(format!("system sound server refused the chime ({status})"));
-+        }
-+        let sound = SystemSound(id);
-+        // System sounds default to interface feedback, silent when the user
-+        // turns interface sound effects off. A chime has its own setting.
-+        let ui_sound: u32 = 0;
-+        unsafe {
-+            AudioServicesSetProperty(
-+                PROPERTY_IS_UI_SOUND,
-+                size_of::<SystemSoundId>() as u32,
-+                (&raw const sound.0).cast(),
-+                size_of::<u32>() as u32,
-+                (&raw const ui_sound).cast(),
-+            );
-+        }
-+        Ok(sound)
+     #[test]
+     fn sanitize_strips_he
+```
+
+**File**: `crates/doc/src/rebuild.rs` (modified, +1/-0)
+```diff
+@@ -183,6 +183,7 @@ mod tests {
+                     subagent_ref: None,
+                     subagent_status: None,
+                     subagent_tail: None,
++                    preview_paths: Vec::new(),
+                     exit_code: None,
+                     output_truncated: false,
+                     output_lines: None,
+```
+
+**File**: `crates/doc/src/schema.rs` (modified, +81/-0)
+```diff
+@@ -142,6 +142,9 @@ struct DocPartJson {
+     /// One-line live tail of the subagent's output (additive).
+     #[serde(default, skip_serializing_if = "Option::is_none")]
+     subagent_tail: Option<String>,
++    /// Uploads copies of images embedded in a tool result (additive).
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    preview_paths: Option<Vec<String>>,
+     /// A command's exit status (additive; command tools only).
+     #[serde(default, skip_serializing_if = "Option::is_none")]
+     exit_code: Option<i32>,
+@@ -205,6 +208,7 @@ fn to_doc_part(part: &MessagePart) -> Result<DocPartJson, DocError> {
+             subagent_ref,
+             subagent_status,
+             subagent_tail,
++            preview_paths,
+             exit_code,
+             output_truncated,
+             output_lines,
+@@ -231,6 +235,7 @@ fn to_doc_part(part: &MessagePart) -> Result<DocPartJson, DocError> {
+                 .to_owned()
+             }),
+             subagent_tail: subagent_tail.clone(),
++            preview_paths: (!preview_paths.is_empty()).then(|| preview_paths.clone()),
+             exit_code: *exit_code,
+             output_truncated: output_truncated.then_some(true),
+             output_lines: *output_lines,
+@@ -320,6 +325,7 @@ fn from_doc_part(p: DocPartJson) -> MessagePart {
+                     _ => None,
+                 }),
+                 subagent_tail: p.subagent_tail,
++                preview_paths: p.preview_paths.unwrap_or_default(),
+                 exit_code: p.exit_code,
+                 output_truncated: p.output_truncated.unwrap_or(false),
+                 output_lines: p.output_lines,
+@@ -1095,6 +1101,18 @@ fn push_part(parts: &LoroList, part: &MessagePart) -> Result<(), DocError> {
+     if let Some(subagent_tail) = &doc_part.subagent_tail {
+         map.insert("subagentTail", subagent_tail.as_str())?;
+     }
++    if let Some(preview_paths) = &doc_part.preview_paths {
++        map.insert(
++            "previewPaths",
++            loro_value_from_json(&serde_json::Value::Array(
++                preview_paths
++                    .iter()
++                    .cloned()
++                    .map(serde_json::Value::String)
++                    .collect(),
++            )),
++        )?;
 +    }
-+
-+    pub(super) fn play(path: &Path) -> Result<(), String> {
-+        let sound = register(path)?;
-+        let (finished, wait) = mpsc::channel();
-+        let completion = block2::RcBlock::new(move || {
-+            let _ = finished.send(());
-+        });
-+        unsafe { AudioServicesPlaySystemSoundWithCompletion(sound.0, &completion) };
-+        // The caller deletes the file when this returns, so wait the chime
-+        // out. Bounded like the other players: a wedged sound server must not
-+        // accumulate threads.
-+        wait.recv_timeout(Duration::from_secs(10))
-+            .map_err(|_| "system sound timed out".to_string())
+     if let Some(exit_code) = doc_part.exit_code {
+         map.insert("exitCode", exit_code as i64)?;
+     }
+@@ -1268,6 +1286,10 @@ fn salvage_part(part: &serde_json::Value, entry_id: &str, ix: usize) -> Option<M
+             subagent_ref: None,
+             subagent_status: None,
+             subagent_tail: None,
++            preview_paths: obj
++                .get("previewPaths")
++                .and_then(|value| serde_json::from_value(value.clone()).ok())
++                .unwrap_or_default(),
+             exit_code: obj
+                 .get("exitCode")
+                 .and_then(|x| x.as_i64())
+@@ -1581,6 +1603,18 @@ fn update_part_fields(map: &LoroMap, part: &MessagePart) -> Result<(), DocError>
+     if let Some(subagent_tail) = &doc_part.subagent_tail {
+         map.insert("subagentTail", subagent_tail.as_str())?;
+     }
++    if let Some(preview_paths) = &doc_part.preview_paths {
++        map.insert(
++            "previewPaths",
++            loro_value_from_json(&serde_json::Value::Array(
++                preview_paths
++                    .iter()
++                    .cloned()
++                    .map(serde_json::Value::String)
++                    .collect(),
++            )),
++        )?;
 +    }
- }
+     if let Some(exit_code) = doc_part.exit_code {
+         map.insert("exitCode", exit_code as i64)?;
+     }
+@@ -1890,6 +1924,7 @@ mod tests {
+             subagent_ref: None,
+             subagent_status: None,
+             subagent_tail: None,
++            preview_paths: Vec::new(),
+             exit_code: None,
+             output_truncated: false,
+             output_lines: None,
+@@ -1957,6 +1992,7 @@ mod tests {
+             subagent_ref: None,
+             subagent_status: None,
+             subagent_tail: None,
++            preview_paths: Vec::new(),
+             exit_code: None,
+             output_truncated: false,
+             output_lines: None,
+@@ -2012,6 +2048,7 @@ mod tests {
+             subagent_ref: None,
+             subagent_status: None,
+             subagent_tail: None,
++            preview_paths: Vec::new(),
+             exit_code: None,
+             output_truncated: false,
+             output_lines: None,
+@@ -2196,6 +2233,43 @@ mod tests {
+         assert_eq!(ea.len(), 2); // one insert from each peer, converged in the same order
+     }
  
- #[cfg(windows)]
-@@ -285,6 +377,7 @@ fn run_player(path: &Path) -> Result<(), String> {
-     Err(format!("no audio player available: {}", errors.join("; ")))
- }
- 
-+#[cfg(not(target_os = "macos"))]
- fn run_checked(prog
++    #[test]
++    fn tool_preview_paths_round_trip_through_the_doc() {
++        let doc = SessionDoc::init("previews").unwrap();
++        let mut writer = SegmentWriter::begin(&doc, "a1", "dev", 1).unwrap();
++        let mut folded = Vec::new();
++        fold_event_into_parts(
++            &mut folded,
++            &AgentEvent::ToolCall {
++                id: "t".into(),
++                call: ToolCall::ReadFile {
++              
+```
+
+**File**: `crates/engine/src/registry.rs` (modified, +4/-0)
+```diff
+@@ -836,6 +836,8 @@ fn full_registry() -> HarnessRegistry {
+                 is_error: false,
+                 output: None,
+                 diff: None,
++                preview_paths: Vec::new(),
++                image_payloads: Vec::new(),
+                 exit_code: None,
+             },
+             AgentEvent::ToolCall {
+@@ -850,6 +852,8 @@ fn full_registry() -> HarnessRegistry {
+                 is_error: false,
+                 output: None,
+                 diff: None,
++                preview_paths: Vec::new(),
++                image_payloads: Vec::new(),
+                 exit_code: None,
+             },
+             AgentEvent::TextDelta {
 ```
 
 ---
 
-### Incident Patch 2: `89b0d156` (2026-11-09)
-**Commit Message**: zgx: pin the scene3d change as it merged, with its review fixes
+### Incident Patch 2: `4e1efa53` (2026-11-13)
+**Commit Message**: Merge remote-tracking branch 'upstream/main' into pr1103-fix
 
-The pin was ce91055f plus #1760 as first written. #1760 merged with a
-fix commit on top (a079c236): a mesh with no triangles drew a panic
-(`buffer slices can not be empty`), which the CAD plugin hits when cuts
-leave nothing; non-finite numbers passed its checks; `flat` dropped
-`colors`; `double_sided` took any value as true; and a plugin's own
-geometry now counts against its memory limit. zeron/pin-scene3d-2 is
-the old pin plus that commit, so the pin carries #1760 as it landed and
-still moves nothing else in zgx.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `apps/zgx/Cargo.lock` (modified, +22/-22)
+**File**: `.github/workflows/testflight.yml` (modified, +17/-3)
 ```diff
-@@ -30,7 +30,7 @@ dependencies = [
- [[package]]
- name = "accesskit_atspi_common"
- version = "0.19.1"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -43,7 +43,7 @@ dependencies = [
- [[package]]
- name = "accesskit_consumer"
- version = "0.38.0"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "accesskit",
-  "hashbrown 0.16.1",
-@@ -66,7 +66,7 @@ dependencies = [
- [[package]]
- name = "accesskit_macos"
- version = "0.26.3"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -79,7 +79,7 @@ dependencies = [
- [[package]]
- name = "accesskit_unix"
- version = "0.22.1"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "accesskit",
-  "accesskit_atspi_common",
-@@ -96,7 +96,7 @@ dependencies = [
- [[package]]
- name = "accesskit_windows"
- version = "0.34.0"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "accesskit",
-  "accesskit_consumer",
-@@ -5539,7 +5539,7 @@ dependencies = [
- [[package]]
- name = "wgpu-hal"
- version = "29.0.4"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "android_system_properties",
-  "arrayvec",
-@@ -5911,7 +5911,7 @@ checksum = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"
- [[package]]
- name = "winit"
- version = "0.30.13"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "ahash",
-  "android-activity",
-@@ -6447,7 +6447,7 @@ dependencies = [
- [[package]]
- name = "zgx"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "fixed_decimal",
-  "foldhash 0.2.0",
-@@ -6473,7 +6473,7 @@ dependencies = [
- [[package]]
- name = "zgx-3d"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "bytemuck",
-  "zgx",
-@@ -6483,7 +6483,7 @@ dependencies = [
- [[package]]
- name = "zgx-alacritty-terminal"
- version = "0.26.1"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "base64 0.22.1",
-  "bitflags 2.13.2",
-@@ -6506,15 +6506,15 @@ dependencies = [
- [[package]]
- name = "zgx-components"
- version = "0.1.10"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "zgx",
- ]
+@@ -93,7 +93,14 @@ jobs:
+           builds="$RUNNER_TEMP/builds.json"
+           api "https://api.appstoreconnect.apple.com/v1/builds?filter[app]=$app_id&fields[builds]=version&limit=200" > "$builds"
+           latest_build="$(jq -r '[.data[].attributes.version | select(test("^[0-9]+$")) | tonumber] | max // 0' "$builds")"
++          # Apple's list lags an upload by minutes or more, so the next number can't
++          # come from it alone: a rerun, or a run soon after, would reuse one Apple
++          # has already taken. Each run and attempt has a higher floor of its own.
++          build_floor="$((GITHUB_RUN_NUMBER * 10 + GITHUB_RUN_ATTEMPT))"
+           build_number="$((latest_build + 1))"
++          if [ "$build_floor" -gt "$build_number" ]; then
++            build_number="$build_floor"
++          fi
  
- [[package]]
- name = "zgx-cosmic-text"
- version = "0.19.10"
--source = "git+https://github.com/zeronsh/zgx?rev=7714321b1fe46246221d8dbb94510b4774fbf8dd#7714321b1fe46246221d8dbb94510b4774fbf8dd"
-+source = "git+https://github.com/zeronsh/zgx?rev=2e2334a3f3611caa23684ef40709c466456a36b5#2e2334a3f3611caa23684ef40709c466456a36b5"
- dependencies = [
-  "bitflags 2.13.2",
-  "fontdb",
-@@ -653
+           # Session notifications need the Push capability on the App ID (so
+           # the distribution profile the export makes includes it). Best
+@@ -198,6 +205,8 @@ jobs:
+         shell: bash
+         run: |
+           set -euo pipefail
++          # A token lasts 20 minutes and the wait can outlast it.
++          mint_token() {
+           python - "$AC_KEY_PATH" "$AC_API_KEY_ID" "$AC_API_ISSUER_ID" > "$AC_TOKEN_PATH" <<'PY'
+           import sys
+           import time
+@@ -214,10 +223,15 @@ jobs:
+               headers={"kid": key_id, "typ": "JWT"},
+           ))
+           PY
+-
+           token="$(cat "$AC_TOKEN_PATH")"
++          }
++          mint_token
++
+           builds="$RUNNER_TEMP/processing-builds.json"
+-          for attempt in $(seq 1 40); do
++          for attempt in $(seq 1 120); do
++            if [ "$((attempt % 60))" -eq 0 ]; then
++              mint_token
++            fi
+             curl --globoff --fail-with-body --silent --show-error \
+               -H "Authorization: Bearer $token" \
+               -H 'Content-Type: application/json' \
+@@ -239,7 +253,7 @@ jobs:
+             esac
+             sleep 15
+           done
+-          echo "Build $BUILD_NUMBER did not finish processing within ten minutes." >&2
++          echo "Build $BUILD_NUMBER did not finish processing within thirty minutes." >&2
+           exit 5
+ 
+       - name: Distribute to external testers
 ```
 
-**File**: `apps/zgx/Cargo.toml` (modified, +13/-13)
+**File**: `ARCHITECTURE.md` (modified, +7/-0)
 ```diff
-@@ -30,7 +30,7 @@ beta = []
- layout_probe = []
+@@ -58,6 +58,13 @@ Binaries `zeron` (app + CLI) and `zeron-engine` (the app's background engine, no
+   (with Retry) rather than embedding — an engine bug would crash an in-process engine too.
+   The engine stops by itself once idle if its app is moved to the Trash or uninstalled, and its log
+   (like every long-running mode's) moves to `.old` past 64 MB rather than growing for weeks.
++- **Updates from another device are transactions** (`crates/update/src/transaction.rs`, `crates/engine/src/update_trial.rs`).
++  The installed version changes in one step, only once a new version has proved it's ready: `app/current` on Linux, an atomic
++  bundle swap on macOS, a rename on Windows. Until then every start runs the old version, which is how a new binary that exits,
++  hangs or loses power gets undone. The old version copies the SQLite stores, leaves a watchdog and hands over; the new one holds
++  back what it can't take back (resuming chats, queued messages) until it has committed. A failed trial restores the stores, and
++  `UpdateStatus.update` says which happened under the id `ApplyUpdate` answered with. Only the SQLite stores roll back. Provider
++  CLIs update under running chats where their installer keeps old files (`UpdatePlan::while_chats_run`), and wait otherwise.
+ - Desktop banners are the engine's (`desktop_notify.rs`, advertised as `desktop-notifications-v1`):
+   finished runs, questions, failures, connection loss and agent updates keep arriving with the app
+   closed. Preferences come from the app's `ui-settings.json`; "only in the background" uses window
+```
+
+**File**: `Cargo.lock` (modified, +62/-54)
+```diff
+@@ -1650,7 +1650,7 @@ dependencies = [
+ [[package]]
+ name = "collections"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "gpui_util",
+  "indexmap",
+@@ -2454,7 +2454,7 @@ dependencies = [
+ [[package]]
+ name = "derive_refineable"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -3839,7 +3839,7 @@ dependencies = [
+ [[package]]
+ name = "gpui"
+ version = "0.2.2"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "accesskit",
+  "anyhow",
+@@ -3925,7 +3925,7 @@ dependencies = [
+ [[package]]
+ name = "gpui-base"
+ version = "0.5.2"
+-source = "git+https://github.com/zeronsh/gpui-component?rev=59f89243cea79dd70eb7a619b3930c374ef6958a#59f89243cea79dd70eb7a619b3930c374ef6958a"
++source = "git+https://github.com/zeronsh/gpui-component?rev=cab50b071497683a119ae0e4038880f195c0f23f#cab50b071497683a119ae0e4038880f195c0f23f"
+ dependencies = [
+  "aho-corasick",
+  "anyhow",
+@@ -3955,7 +3955,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_linux"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "accesskit",
+  "accesskit_unix",
+@@ -4007,7 +4007,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_macos"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "accesskit",
+  "accesskit_macos",
+@@ -4056,7 +4056,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_macros"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "heck 0.5.0",
+  "proc-macro2",
+@@ -4067,7 +4067,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_platform"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "console_error_panic_hook",
+  "gpui",
+@@ -4080,7 +4080,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_shared_string"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "schemars",
+  "serde",
+@@ -4090,7 +4090,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_tokio"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "anyhow",
+  "gpui",
+@@ -4101,7 +4101,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_util"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "anyhow",
+  "log",
+@@ -4111,7 +4111,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_web"
+ version = "0.1.0"
+-source = "git+https://github.com/zeronsh/zui?rev=b564a34413bb7ef1da04121c4a287758f94993d9#b564a34413bb7ef1da04121c4a287758f94993d9"
++source = "git+https://github.com/zeronsh/zui?rev=15ee7082c4f910618be306166436a6d9fe0451be#15ee7082c4f910618be306166436a6d9fe0451be"
+ dependencies = [
+  "anyhow",
+  "console_error_panic_hook",
+@@ -4135,7 +4135,7 @@ dependencies = [
+ [[package]]
+ name = "gpui_wgpu"
+ version = "0.1.
+```
+
+**File**: `Cargo.toml` (modified, +10/-5)
+```diff
+@@ -12,6 +12,7 @@ members = [
+     "crates/audio",
+     "crates/proto",
+     "crates/preview",
++    "crates/preview-label",
+     "crates/doc",
+     "crates/sync",
+     "crates/harness",
+@@ -37,7 +38,7 @@ members = [
+ ]
  
- [dependencies]
--zgx = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
-+zgx = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5" }
- # `mimalloc`: the program's allocator, in place of the system's. It hands
- # freed memory back to the system (the system's keeps the most it ever
- # held), and zgx measures 1-10% less CPU for script, text and layout work.
-@@ -41,26 +41,26 @@ zgx = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb9
- # none of it, and without it pages are placeholders ("Web view · <url>").
- # zgx-run turns it on by default, but this app takes zgx-run without its
- # defaults (below). Nothing on macOS or Windows.
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", features = ["mimalloc", "terminal", "webkitgtk"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", features = ["mimalloc", "terminal", "webkitgtk"] }
- # `inspect`: devtools for `zgx inspect` (and its MCP server), asked for
- # with `--inspect`. `i18n`: `ui.t`'s plurals and numbers by each locale's
- # own rules (ICU4X's data, about 90 KB), for ui/locales' translations.
- # `scene3d`: `ui.scene3d`, `ui.mesh`, `ui.light`, `ui.group` (zgx-3d on the
- # wgpu this app already links), for plugins that show 3D: the CAD plugin
- # hands it its own triangles (`geometry = { positions, indices, … }`). It
- # asks no grant; a scene draws a frame only when something in it changes.
--zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", features = ["inspect", "i18n", "scene3d"] }
-+zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", features = ["inspect", "i18n", "scene3d"] }
- # A picture's pixels for the clipboard (src/images.rs): zgx's own decoder,
- # the formats `ui.image` shows (no features of its own: the ones zgx-desktop
- # turns on).
--zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", default-features = false }
-+zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", default-features = false }
- # Each plugin's own database (`zeron.db`, src/plugins/db.rs): SQLite,
- # built in; `limits` to keep one from attaching any other file.
- rusqlite = { version = "0.32", features = ["bundled", "limits", "hooks"] }
- # `fetch`: zgx's own transport for `ui.fetch` and remote images (HTTP and
- # HTTPS, rustls), given to every window (src/main.rs): the app's scripts,
- # and plugins granted "network". Nothing else of the runner.
--zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", default-features = false, features = ["fetch"] }
-+zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", default-features = false, features = ["fetch"] }
- # `webp`: `ui.image` decodes through this crate, by what its features
- # allow, so turning WebP on here is all it takes (the member cards' art).
- # `ico`: sites' favicons (the browser tab's: src/favicons.rs), most of
-@@ -156,7 +156,7 @@ foreign-types = "0.5"
- # elements, box drawing and Powerline glyphs to the cell; zgx's own renderer
- # draws them from the font at its text line height, gapped. Builds Ghostty
- # with Zig 0.16 (cached in ~/Library/Caches/zgx-ghostty).
--zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd", features = ["ghostty"] }
-+zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "2e2334a3f3611caa23684ef40709c466456a36b5", features = ["ghostty"] }
+ [workspace.package]
+-version = "0.2.136"
++version = "0.2.138"
+ edition = "2024"
+ license = "MIT"
+ publish = false
+@@ -52,6 +53,7 @@ zeron-voice-media = { path = "crates/voice-media" }
+ zeron-audio = { path = "crates/audio" }
+ zeron-proto = { path = "crates/proto" }
+ zeron-preview = { path = "crates/preview" }
++zeron-preview-label = { path = "crates/preview-label" }
+ zeron-doc = { path = "crates/doc" }
+ zeron-sync = { path = "crates/sync" }
+ zeron-harness = { path = "crates/harness" }
+@@ -111,15 +113,18 @@ loro-protocol = "0.3"
+ # Atlas tiles updated in place from pixels or imported dma-bufs, display-rate
+ # frame callbacks in inactive windows, and Wayland frames that no longer stop
+ # after a forced draw (b564a34, zeronsh/zui#18).
+-gpui = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9" }
+-gpui_platform = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9", features = [
++# Dropped images stay in the atlas until the next draw, so presenting the last
++# frame again no longer aborts with "texture must exist" (15ee708,
++# zeronsh/zui#19; gpui-base cab50b0, zeronsh/gpui-component#7).
++gpui = { git = "https://github.com/zeronsh/zui", rev = "15ee7082c4f910618be306166436a6d9fe0451be" }
++gpui_platform = { git = "https://github.com/zeronsh/zui", rev = "15ee7082c4f910618be306166436a6d9fe0451be", features = [
+     "wayland",
+     "x11",
+     "font-kit",
+     "runtime_shaders",
+ ] }
+-gpui_tokio = { git = "https://github.com/zeronsh/zui", rev = "b564a34413bb7ef1da04121c4a287758f94993d9" }
+-gpui-base = { git = "https://github.com/zeronsh/gpui-component", rev = "59f89243cea79dd70eb7a619b3930c374ef6958a" }
++gpui_tokio = { git = "https://github.com/zeronsh/zui", rev = "15ee7082c4f910618be306166436a6d9fe0451be" }
++gpui-base = { git = "https://github.com/zeronsh/gpui-component", rev = "cab50b071497683a119ae0e4038880f195c0f23f" }
  
- # Windows' Transparency effects (src/transparency.rs), read and watched in
- # the registry, until zgx reports them (zgx-asks/windows-transparency); a
-@@ -167,13 +167,13 @@ windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphic
- # zgx's own patches (its root Cargo.toml): a git dependency does not bring
- # them, so every consumer repeats them.
- [patch.crates-io]
--wgpu-hal = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
--winit = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
--accesskit_macos = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
--accesskit_consumer = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
--accesskit_atspi_common = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
--accesskit_unix = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
--accesskit_windows = { git = "https://github.com/zeronsh/zgx", rev = "7714321b1fe46246221d8dbb94510b4774fbf8dd" }
-+wgpu-hal = 
+ # diffs
+ similar = "2"
+```
+
+**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/Components.kt` (modified, +2/-1)
+```diff
+@@ -139,7 +139,8 @@ fun StatusLabel(row: SessionRow) {
+     // run reads Done only until it's been seen.
+     if (row.sendState == uniffi.zeron_core.SendState.FAILED) return label("Failed", MaterialTheme.colorScheme.error, dot = true)
+     when (row.indicator) {
+-        ChatIndicator.WORKING -> LoadingIndicator(Modifier.size(26.dp))
++        // (Waiting on background work is drawn as Working, as on desktop and iOS.)
++        ChatIndicator.WORKING, ChatIndicator.WAITING -> LoadingIndicator(Modifier.size(26.dp))
+         ChatIndicator.AWAITING_INPUT -> label("Input", MaterialTheme.colorScheme.primary, dot = true)
+         ChatIndicator.ERRORED -> label("Failed", MaterialTheme.colorScheme.error, dot = true)
+         ChatIndicator.COMPLETED, ChatIndicator.IDLE -> if (row.indicator == ChatIndicator.COMPLETED && row.unseen) label("Done", successColor(), dot = false) else Row(verticalAlignment = Alignment.CenterVertically) {
+```
+
+**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/SessionsScreen.kt` (modified, +2/-2)
+```diff
+@@ -167,7 +167,7 @@ private fun frontRows(ws: WorkspaceSnapshot): List<SessionRow> {
+ 
+ private fun liveCounts(ws: WorkspaceSnapshot): Pair<Int, Int> {
+     val rows = frontRows(ws)
+-    return rows.count { it.indicator == ChatIndicator.WORKING } to rows.count { it.indicator == ChatIndicator.AWAITING_INPUT }
++    return rows.count { it.indicator == ChatIndicator.WORKING || it.indicator == ChatIndicator.WAITING } to rows.count { it.indicator == ChatIndicator.AWAITING_INPUT }
+ }
+ 
+ @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@@ -348,7 +348,7 @@ fun SessionsScreen(
+                         }
+                     }
+                     Filter.NeedsYou -> group("f", null, frontRows(ws).filter { it.indicator == ChatIndicator.AWAITING_INPUT }, actions)
+-                    Filter.Working -> group("f", null, frontRows(ws).filter { it.indicator == ChatIndicator.WORKING }, actions)
++                    Filter.Working -> group("f", null, frontRows(ws).filter { it.indicator == ChatIndicator.WORKING || it.indicator == ChatIndicator.WAITING }, actions)
+                     Filter.Pinned -> group("f", null, front.pinned, actions)
+                 }
+                 val empty = when (filter) {
+```
+
+**File**: `apps/android/app/src/main/java/sh/zeron/android/ui/SignInScreen.kt` (modified, +6/-2)
+```diff
+@@ -3,6 +3,7 @@ package sh.zeron.android.ui
+ import android.net.Uri
+ import androidx.browser.customtabs.CustomTabsIntent
+ import androidx.compose.foundation.Image
++import androidx.compose.foundation.background
+ import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Column
+ import androidx.compose.foundation.layout.Spacer
+@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.platform.LocalContext
++import androidx.compose.ui.res.colorResource
+ import androidx.compose.ui.res.painterResource
+ import androidx.compose.ui.text.style.TextAlign
+ import androidx.compose.ui.unit.dp
+@@ -49,9 +51,11 @@ fun SignInScreen(model: AppModel) {
+         verticalArrangement = Arrangement.Center,
+     ) {
+         Image(
+-            painterResource(R.mipmap.ic_launcher_foreground),
++            painterResource(R.drawable.ic_launcher_foreground),
+             null,
+-            Modifier.size(148.dp).clip(MaterialShapes.Cookie12Sided.toShape()),
++            Modifier.size(148.dp)
++                .clip(MaterialShapes.Cookie12Sided.toShape())
++                .background(colorResource(R.color.icon_background)),
+         )
+         Spacer(Modifier.height(32.dp))
+         Text("Zeron", style = MaterialTheme.typography.displayMedium)
+```
+
+**File**: `apps/android/app/src/main/res/drawable/ic_launcher_foreground.xml` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!-- Written by scripts/make-app-icons.py. -->
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="108dp"
++    android:height="108dp"
++    android:viewportWidth="108"
++    android:viewportHeight="108">
++    <group android:translateX="18.0013" android:translateY="18.0013" android:scaleX="0.07031" android:scaleY="0.07031">
++        <path
++            android:fillColor="@color/icon_foreground"
++            android:pathData="M289.41,369.31 L289.36,384.72 L289.24,390.73 L289.04,395.26 L288.75,399.03 L288.38,402.30 L287.92,405.20 L287.38,407.83 L286.76,410.22 L286.05,412.42 L285.25,414.44 L284.36,416.32 L283.38,418.06 L282.30,419.67 L281.13,421.16 L279.85,422.54 L278.47,423.82 L276.98,424.99 L275.37,426.07 L273.63,427.05 L271.76,427.94 L269.73,428.74 L267.53,429.45 L265.14,430.07 L262.51,430.61 L259.61,431.07 L256.34,431.44 L252.58,431.73 L248.04,431.93 L242.03,432.05 L226.62,432.09 L211.21,432.05 L205.20,431.93 L200.67,431.73 L196.90,431.44 L193.64,431.07 L190.73,430.61 L188.11,430.07 L185.72,429.45 L183.52,428.74 L181.49,427.94 L179.61,427.05 L177.88,426.07 L176.27,424.99 L174.77,423.82 L173.39,422.54 L172.12,421.16 L170.94,419.67 L169.87,418.06 L168.89,416.32 L168.00,414.44 L167.20,412.42 L166.49,410.22 L165.86,407.83 L165.32,405.20 L164.87,402.30 L164.50,399.03 L164.21,395.26 L164.00,390.73 L163.88,384.72 L163.84,369.31 L163.88,353.90 L164.00,347.89 L164.21,343.36 L164.50,339.59 L164.87,336.33 L165.32,333.42 L165.86,330.80 L166.49,328.40 L167.20,326.21 L168.00,324.18 L168.89,322.30 L169.87,320.56 L170.94,318.95 L172.12,317.46 L173.39,316.08 L174.77,314.80 L176.27,313.63 L177.88,312.56 L179.61,311.57 L181.49,310.68 L183.52,309.89 L185.72,309.17 L188.11,308.55 L190.73,308.01 L193.64,307.56 L196.90,307.19 L200.67,306.90 L205.20,306.69 L211.21,306.57 L226.62,306.53 L242.03,306.57 L248.04,306.69 L252.58,306.90 L256.34,307.19 L259.61,307.56 L262.51,308.01 L265.14,308.55 L267.53,309.17 L269.73,309.89 L271.76,310.68 L273.63,311.57 L275.37,312.56 L276.98,313.63 L278.47,314.80 L279.85,316.08 L281.13,317.46 L282.30,318.95 L283.38,320.56 L284.36,322.30 L285.25,324.18 L286.05,326.21 L286.76,328.40 L287.38,330.80 L287.92,333.42 L288.38,336.33 L288.75,339.59 L289.04,343.36 L289.24,347.89 L289.36,353.90 Z M432.09,369.31 L432.05,384.72 L431.93,390.73 L431.73,395.26 L431.44,399.03 L431.07,402.30 L430.61,405.20 L430.07,407.83 L429.45,410.22 L428.74,412.42 L427.94,414.44 L427.05,416.32 L426.07,418.06 L424.99,419.67 L423.82,421.16 L422.54,422.54 L421.16,423.82 L419.67,424.99 L418.06,426.07 L416.32,427.05 L414.44,427.94 L412.42,428.74 L410.22,429.45 L407.83,430.07 L405.20,430.61 L402.30,431.07 L399.03,431.44 L395.26,431.73 L390.73,431.93 L384.72,432.05 L369.31,432.09 L353.90,432.05 L347.89,431.93 L343.36,431.73 L339.59,431.44 L336.33,431.07 L333.42,430.61 L330.80,430.07 L328.40,429.45 L326.21,428.74 L324.18,427.94 L322.30,427.05 L320.56,426.07 L318.95,424.99 L317.46,423.82 L316.08,422.54 L314.80,421.16 L313.63,419.67 L312.56,418.06 L311.57,416.32 L310.68,414.44 L309.89,412.42 L309.17,410.22 L308.55,407.83 L308.01,405.20 L307.56,402.30 L307.19,399.03 L306.90,395.26 L306.69,390.73 L306.57,384.72 L306.53,369.31 L306.57,353.90 L306.69,347.89 L306.90,343.36 L307.19,339.59 L307.56,336.33 L308.01,333.42 L308.55,330.80 L309.17,328.40 L309.89,326.21 L310.68,324.18 L311.57,322.30 L312.56,320.56 L313.63,318.95 L314.80,317.46 L316.08,316.08 L317.46,314.80 L318.95,313.63 L320.56,312.56 L322.30,311.57 L324.18,310.68 L326.21,309.89 L328.40,309.17 L330.80,308.55 L333.42,308.01 L336.33,307.56 L339.59,307.19 L343.36,306.90 L347.89,306.69 L353.90,306.57 L369.31,306.53 L384.72,306.57 L390.73,306.69 L395.26,306.90 L399.03,307.19 L402.30,307.56 L405.20,308.01 L407.83,308.55 L410.22,309.17 L412.42,309.89 L414.44,310.68 L416.32,311.57 L418.06,312.56 L419.67,313.63 L421.16,314.80 L422.54,316.08 L423.82,317.46 L424.99,318.95 L426.07,320.56 L427.05,322.30 L427.94,324.18 L428.74,326.21 L429.45,328.40 L430.07,330.80 L430.61,333.42 L431.07,336.33 L431.44,339.59 L431.73,343.36 L431.93,347.89 L432.05,353.90 Z M574.78,369.31 L574.74,384.72 L574.62,390.73 L574.41,395.26 L574.13,399.03 L573.75,402.30 L573.30,405.20 L572.76,407.83 L572.14,410.22 L571.43,412.42 L570.63,414.44 L569.74,416.32 L568.76,418.06 L567.68,419.67 L566.51,421.16 L565.23,422.54 L563.85,423.82 L562.36,424.99 L560.75,426.07 L559.01,427.05 L557.13,427.94 L555.11,428.74 L552.91,429.45 L550.51,430.07 L547.89,430.61 L544.98,431.07 L541.72,431.44 L537.95,431.73 L533.42,431.93 L527.41,432.05 L512.00,432.09 L496.59,432.05 L490.58,431.93 L486.05,431.73 L482.28,431.44 L479.02,431.07 L476.11,430.61 L473.49,430.07 L471.09,429.45 L468.89,428.74 L466.87,427.94 L464.99,427.05 L463.25,426.07 L461.64,424.99 L460.15,423.82 L458.77,422.54 L457.49,421.16 L456.32,419.67 L455.24,418.06 L454.26,416.32 L453.37,414.44 L452.57,412.42 L451.86,410.22 L451.24,407.83 L450.70,405.20 L450.25,402.30 L449.87,399.03 L449.59,395.26 L449.38
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1352** (2026-11-11): zgx: a folded row is held at its compressed length (@wingleeio)
-- **PR #1349** (2026-11-11): zgx: zgx-linux green (real causes, no skips) (@wingleeio)
-- **PR #1347** (closed): engine: a big chat's threshold checkpoint waits for 8 MB of rows (@wingleeio)
-- **PR #1341** (2026-11-11): Relay: a frame the room's queue can't take yet waits, in order (@wingleeio)
-- **PR #1340** (2026-11-11): Relay: a heal the room's checkpoint already covers sends nothing (@wingleeio)
-- **PR #1336** (2026-11-11): zgx: a picked skill reaches Claude Code as its slash command (@wingleeio)
+- **PR #1398** (closed): Plugin services can write files into Documents and your projects (@hoangvu12)
+- **PR #1387** (closed): Document Linux issues seen on Zeron 0.3.0 (@rabuawad)
+- **PR #1381** (closed): Edge: the relay layer for everyone again (@wingleeio)
+- **PR #1380** (closed): Plugins: a plugin's service gets zeron.db, the same file its windows open (@hoangvu12)
+- **PR #1379** (closed): Plugins: zeron.fetch can return a font's or a picture's bytes whole, in base64 (@hoangvu12)
+- **PR #1378** (closed): Plugins: a plugin may ask for "fonts" and load font files in its windows (@hoangvu12)
 
 ---
 
@@ -2120,53 +2466,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333)
+## X. Merge pull request #1103 from katulevskiy/fix/tool-image-previews
 
 **RULE**:
-When implementing operations in `crates/ui/src/sound.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/client/src/demo/transcripts.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7437e3e9`: Sound: macOS chimes stop triggering a kernel deadlock that hangs the Mac (#1333). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8065b000`: Merge pull request #1103 from katulevskiy/fix/tool-image-previews. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ui/src/sound.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/client/src/demo/transcripts.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//!   background thread: the System Sound server (macOS, see
-//!   `macos_system_sound` for why not `afplay`), PowerShell
-//!   `Media.SoundPlayer` (Windows), first of
-//!   `paplay`/`pw-play`/`aplay`/`ffplay`/`mpv` (Linux — WAV, so even bare
-//!   ALSA `aplay` decodes it);
-    macos_system_sound::play(path)
-}
-
-/// Chimes play in the System Sound server, not in a process of ours.
-///
-/// Whoever plays audio holds a CoreAudio assertion for as long as it sounds.
-/// While a game holds the foreground macOS keeps every other app's process
-/// coalition in the background, and the assertion of an `afplay` child lifts
-/// the whole coalition out and drops it back when the sound ends.
-/// AVAudioPlayer and NSSound take the same assertion, in the app. On macOS
-/// 27.2 such a change can deadlock in the kernel against a process of the
-/// same coalition that is in `exec`, and agents exec all the time: the window
-/// server hangs behind it and the machine needs a reboot. The sound server
-/// holds the assertion itself, so a chime leaves this app's processes alone.
-#[cfg(target_os = "macos")]
-mod macos_system_sound {
-    use core_foundation::base::TCFType;
-    use core_foundation::url::{CFURL,
+        preview_paths: Vec::new(),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-//!   background thread: `afplay` (macOS), PowerShell `Media.SoundPlayer`
-//!   (Windows), first of `paplay`/`pw-play`/`aplay`/`ffplay`/`mpv` (Linux —
-//!   WAV, so even bare ALSA `aplay` decodes it);
-    run_checked("afplay", &[], path)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7437e3e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8065b000` are properly handled with clean fallback behavior.

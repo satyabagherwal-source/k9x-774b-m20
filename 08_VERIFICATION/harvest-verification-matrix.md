@@ -9449,3 +9449,8 @@
 | `CYCLE-20261113-7FG4` | `2026-11-13T11:55:45.268Z` | `apache/pinot` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/apache-pinot-learnings.md` | Yes (`a37300ee...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T11:55:59.653Z` | `hf-tencent-hy-simulmt-30b-a3b-fp8` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BC1FB9A1` [Domain D] | Yes (`a9890834...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T11:56:17.762Z` | `apache-pinot` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9BACEDC2` [Domain D] | Yes (`7d2a3327...`) |
+| `CYCLE-20261113-NFZB` | `2026-11-13T12:08:12.456Z` | `audio-cpp/audio.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md` | Yes (`0a3d263a...`) |
+| `CYCLE-20261113-NMRP` | `2026-11-13T12:08:21.253Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md` | Yes (`d2e5370f...`) |
+| `CYCLE-20261113-NP15` | `2026-11-13T12:08:24.185Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c7d37ab9...`) |
+| `CYCLE-20261113-O3OB` | `2026-11-13T12:08:43.163Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`681e4acb...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T12:09:03.823Z` | `hf-audio-cpp-audio.cpp-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FD88FD4E` [Domain D] | Yes (`10e3e98d...`) |
