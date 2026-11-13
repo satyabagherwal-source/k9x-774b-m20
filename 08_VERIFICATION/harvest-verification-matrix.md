@@ -9307,3 +9307,6 @@
 | `CYCLE-20261113-GAW6` | `2026-11-13T03:10:46.566Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b5c65542...`) |
 | `CYCLE-20261113-GFFF` | `2026-11-13T03:10:52.443Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7e10bc32...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T03:11:08.603Z` | `hf-meta-models-muse-spark-open-816b-a42b-nvfp4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-F84C9E58` [Domain J] | Yes (`d6b8531f...`) |
+| `CYCLE-20261113-QDUH` | `2026-11-13T03:18:36.953Z` | `agentes-chat/agentes-chat` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/agentes-chat-agentes-chat-learnings.md` | Yes (`0bdcdd7e...`) |
+| `CYCLE-20261113-QH7N` | `2026-11-13T03:18:41.315Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md` | Yes (`e5ccac13...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T03:19:04.435Z` | `hf-reflection-beam-1.0-501b-a23b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2C1C9237` [Domain D] | Yes (`7651e21a...`) |

@@ -20953,5 +20953,20 @@
     "downloads": 14473,
     "qualityScore": 12760,
     "discoveredAt": "2026-11-12T20:59:45.525Z"
+  },
+  {
+    "name": "agentes-chat",
+    "fullName": "agentes-chat/agentes-chat",
+    "url": "https://github.com/agentes-chat/agentes-chat",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source, self-hosted Slack alternative where your team and AI agents work together in channels and DMs. Agents run on Claude, ChatGPT/Codex, Gemini or Grok, with MCP tools, their own computer and browser, routines, memory and approvals. Web, desktop and phone apps. Docker Compose + Postgres. AGPL-3.0.",
+    "stars": 1214,
+    "forks": 197,
+    "openIssues": 150,
+    "language": "TypeScript",
+    "qualityScore": 1016,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-13T03:15:07.014Z"
   }
 ]

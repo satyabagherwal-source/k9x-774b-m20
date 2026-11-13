@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-VR0N",
-    "timestamp": "2026-11-09T17:43:54.503Z",
-    "repository": "u-root/u-root",
-    "learningId": "learn-github-u-root-u-root",
-    "contentHash": "f2b18b9c0da435050fb621ad72c29ecbd92518e08a887f17e897d95b7c5852bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-VYZT",
-    "timestamp": "2026-11-09T17:44:04.841Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "94893217a6eefb970bdb257c8f850815874f8d8e3d487fe5c890f2bd8d6520e5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-W2SZ",
     "timestamp": "2026-11-09T17:44:09.779Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7462,36 @@
     "contentHash": "7e10bc329b758fa0f0c00fa8900ae35a5e3f7caf758bd785099602e0f89a18fa",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-QDUH",
+    "timestamp": "2026-11-13T03:18:36.953Z",
+    "repository": "agentes-chat/agentes-chat",
+    "learningId": "learn-github-agentes-chat-agentes-chat",
+    "contentHash": "0bdcdd7e064ab6e1a3f4f697e2d21be2035a1f89a0e31ab6b537e2edfd6d820d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-QH7N",
+    "timestamp": "2026-11-13T03:18:41.315Z",
+    "repository": "reflection/Beam-1.0-501B-A23B",
+    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
+    "contentHash": "e5ccac13b877a2199d55d318666affdaec7133e337efa12f2d63598b03ae92c4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

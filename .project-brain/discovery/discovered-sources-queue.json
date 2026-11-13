@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T03:11:08.642Z",
+  "updated_at": "2026-11-13T03:19:04.444Z",
   "stats": {
-    "total_discovered": 2114,
-    "approved_pending_harvest": 1958,
+    "total_discovered": 2119,
+    "approved_pending_harvest": 1963,
     "harvested_count": 0,
     "rejected_count": 156,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1948,
+      "COMMUNITY_AND_EXPERT": 1953,
       "OFFICIAL_DOCUMENTATION": 88,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -45434,6 +45434,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
         "fileName": "revenuecat-purchases-ios-learnings.md"
+      }
+    },
+    "SRC-0D55C9B9C720": {
+      "id": "SRC-0D55C9B9C720",
+      "url": "https://github.com/agentes-chat/agentes-chat",
+      "title": "https://github.com/agentes-chat/agentes-chat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:18:53.571Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agentes-chat-agentes-chat-learnings.md",
+        "fileName": "agentes-chat-agentes-chat-learnings.md"
+      }
+    },
+    "SRC-F0BD4BD5ABEB": {
+      "id": "SRC-F0BD4BD5ABEB",
+      "url": "https://backend/.composio/.dev/api/v3/.1/toolkits",
+      "title": "https://backend/.composio/.dev/api/v3/.1/toolkits",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:18:53.592Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agentes-chat-agentes-chat-learnings.md",
+        "fileName": "agentes-chat-agentes-chat-learnings.md"
+      }
+    },
+    "SRC-5577EA8E4F4D": {
+      "id": "SRC-5577EA8E4F4D",
+      "url": "https://tools.example.com/mcp",
+      "title": "https://tools.example.com/mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:18:53.611Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agentes-chat-agentes-chat-learnings.md",
+        "fileName": "agentes-chat-agentes-chat-learnings.md"
+      }
+    },
+    "SRC-C43D7FAC9F4D": {
+      "id": "SRC-C43D7FAC9F4D",
+      "url": "https://tasks.example.com/mcp",
+      "title": "https://tasks.example.com/mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:18:53.630Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agentes-chat-agentes-chat-learnings.md",
+        "fileName": "agentes-chat-agentes-chat-learnings.md"
+      }
+    },
+    "SRC-8BB4B5C800D4": {
+      "id": "SRC-8BB4B5C800D4",
+      "url": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "title": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:19:04.444Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
+        "fileName": "hf-reflection-beam-1.0-501b-a23b-learnings.md"
       }
     }
   }

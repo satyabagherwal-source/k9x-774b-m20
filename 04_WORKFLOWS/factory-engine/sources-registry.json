@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T03:10:56.410Z",
-    "lastVerified": "2026-11-13T03:10:56.410Z",
+    "lastChecked": "2026-11-13T03:18:53.419Z",
+    "lastVerified": "2026-11-13T03:18:53.419Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -366,8 +366,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-13T02:24:42.440Z",
-    "lastVerified": "2026-11-13T02:24:42.440Z",
+    "lastChecked": "2026-11-13T03:18:53.407Z",
+    "lastVerified": "2026-11-13T03:18:53.407Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -1891,12 +1891,12 @@
     "lastVerified": "2026-11-09T13:09:57.043Z"
   },
   "loft-sh-vcluster": {
-    "name": "loft-sh/vcluster",
+    "name": "vcluster",
     "officialUrl": "https://github.com/loft-sh/vcluster",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T18:11:52.122Z",
-    "lastVerified": "2026-11-11T18:11:52.122Z",
+    "lastChecked": "2026-11-13T03:18:45.926Z",
+    "lastVerified": "2026-11-13T03:18:45.926Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-loft-sh-vcluster",
@@ -1905,7 +1905,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c5e9027e"
   },
   "sigstore-cosign": {
     "name": "cosign",
@@ -2398,8 +2399,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-12T21:49:09.072Z",
-    "lastVerified": "2026-11-12T21:49:09.072Z",
+    "lastChecked": "2026-11-13T03:18:48.449Z",
+    "lastVerified": "2026-11-13T03:18:48.449Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -4177,9 +4178,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-11-11T16:35:50.113Z",
+    "lastChecked": "2026-11-13T03:18:50.894Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-11-11T16:35:50.113Z"
+    "lastVerified": "2026-11-13T03:18:50.894Z"
   },
   "svenstaro-miniserve": {
     "name": "miniserve",
@@ -11381,9 +11382,9 @@
   "kruszoneq-macusb": {
     "name": "macUSB",
     "officialUrl": "https://github.com/Kruszoneq/macUSB",
-    "lastChecked": "2026-11-08T20:31:16.263Z",
+    "lastChecked": "2026-11-13T03:18:43.456Z",
     "revisionIdentifier": "777ed534",
-    "lastVerified": "2026-11-08T20:31:16.263Z"
+    "lastVerified": "2026-11-13T03:18:43.456Z"
   },
   "fb55-htmlparser2": {
     "name": "fb55/htmlparser2",
@@ -13218,12 +13219,12 @@
     "officialUrl": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T03:21:22.353Z",
-    "lastVerified": "2026-11-08T03:21:22.353Z",
+    "lastChecked": "2026-11-13T03:18:40.974Z",
+    "lastVerified": "2026-11-13T03:18:40.974Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-    "contentHash": "46375b5ec832d2d68d59195f403477aaba212f47d90a9e8128c1ba3f2bbba0a0",
+    "contentHash": "e5ccac13b877a2199d55d318666affdaec7133e337efa12f2d63598b03ae92c4",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -15014,6 +15015,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "agentes-chat-agentes-chat": {
+    "name": "agentes-chat/agentes-chat",
+    "officialUrl": "https://github.com/agentes-chat/agentes-chat",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-13T03:18:36.411Z",
+    "lastVerified": "2026-11-13T03:18:36.411Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-agentes-chat-agentes-chat",
+    "contentHash": "0bdcdd7e064ab6e1a3f4f697e2d21be2035a1f89a0e31ab6b537e2edfd6d820d",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 22,
+    "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

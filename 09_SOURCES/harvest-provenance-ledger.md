@@ -9316,3 +9316,6 @@ Every entry in this ledger must capture:
 | `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `efd30907` | Multi-dimensional audit evidence | 2026-11-13T03:10:46.570Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `59064619` | Multi-dimensional audit evidence | 2026-11-13T03:10:52.447Z |
 | `learn-dom-j-f84c9e58` | `project://hf-meta-models-muse-spark-open-816b-a42b-nvfp4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md` | 2026-11-13T03:11:08.603Z |
+| `learn-github-agentes-chat-agentes-chat` | `https://github.com/agentes-chat/agentes-chat` | `2556f336` | Multi-dimensional audit evidence | 2026-11-13T03:18:36.957Z |
+| `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-11-13T03:18:41.319Z |
+| `learn-dom-d-2c1c9237` | `project://hf-reflection-beam-1.0-501b-a23b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md` | 2026-11-13T03:19:04.435Z |

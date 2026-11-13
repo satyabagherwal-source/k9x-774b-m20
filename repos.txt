@@ -5026,3 +5026,7 @@ https://github.com/tonhowtf/omniget
 # --- Automatically Discovered by AI Scout Engine [2026-11-12T21:01:53.863Z] ---
 # [HUGGINGFACE-AI-MODELS] facebook/sam-3d-body-dinov3 (12760 score) - Verified Hugging Face Model: facebook/sam-3d-body-dinov3 (1076 likes, 14473 down
 https://huggingface.co/facebook/sam-3d-body-dinov3
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-13T03:18:33.018Z] ---
+# [AI-AGENTS] agentes-chat/agentes-chat (1016 score) - Open-source, self-hosted Slack alternative where your team and AI agents work to
+https://github.com/agentes-chat/agentes-chat

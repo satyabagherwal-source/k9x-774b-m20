@@ -9225,8 +9225,8 @@
     "sourceUrl": "https://huggingface.co/reflection/Beam-1.0-501B-A23B",
     "sourceVersion": "hf-reflection-beam-1.0-501b-a23b",
     "license": "Open-Source",
-    "contentHash": "46375b5ec832d2d68d59195f403477aaba212f47d90a9e8128c1ba3f2bbba0a0",
-    "lastHarvestedAt": "2026-11-08T03:21:23.210Z",
+    "contentHash": "e5ccac13b877a2199d55d318666affdaec7133e337efa12f2d63598b03ae92c4",
+    "lastHarvestedAt": "2026-11-13T03:18:41.319Z",
     "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b"
   },
   "webrecorder-pywb": {
@@ -12418,5 +12418,15 @@
     "contentHash": "cc5aeb88b697480d3dbaa63f4d6e51045a602ca20f898124c7df9ddada63266b",
     "lastHarvestedAt": "2026-11-12T21:02:16.598Z",
     "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3"
+  },
+  "agentes-chat-agentes-chat": {
+    "repository": "agentes-chat/agentes-chat",
+    "platform": "github",
+    "sourceUrl": "https://github.com/agentes-chat/agentes-chat",
+    "sourceVersion": "2556f336",
+    "license": "AGPL-3.0",
+    "contentHash": "0bdcdd7e064ab6e1a3f4f697e2d21be2035a1f89a0e31ab6b537e2edfd6d820d",
+    "lastHarvestedAt": "2026-11-13T03:18:36.957Z",
+    "learningId": "learn-github-agentes-chat-agentes-chat"
   }
 }
