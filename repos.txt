@@ -5030,3 +5030,7 @@ https://huggingface.co/facebook/sam-3d-body-dinov3
 # --- Automatically Discovered by AI Scout Engine [2026-11-13T03:18:33.018Z] ---
 # [AI-AGENTS] agentes-chat/agentes-chat (1016 score) - Open-source, self-hosted Slack alternative where your team and AI agents work to
 https://github.com/agentes-chat/agentes-chat
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-13T07:17:48.339Z] ---
+# [HUGGINGFACE-AI-MODELS] huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF (22420 score) - Verified Hugging Face Model: huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF (2042
+https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF

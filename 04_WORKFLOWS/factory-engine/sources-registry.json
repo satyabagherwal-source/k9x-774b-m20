@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T07:06:53.195Z",
-    "lastVerified": "2026-11-13T07:06:53.195Z",
+    "lastChecked": "2026-11-13T07:18:09.091Z",
+    "lastVerified": "2026-11-13T07:18:09.091Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -256,8 +256,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T06:33:24.854Z",
-    "lastVerified": "2026-11-13T06:33:24.854Z",
+    "lastChecked": "2026-11-13T07:18:09.082Z",
+    "lastVerified": "2026-11-13T07:18:09.082Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1655,9 +1655,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-13T01:31:25.008Z",
+    "lastChecked": "2026-11-13T07:18:04.007Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-13T01:31:25.008Z"
+    "lastVerified": "2026-11-13T07:18:04.007Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -3434,9 +3434,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-12T02:16:34.765Z",
+    "lastChecked": "2026-11-13T07:18:01.441Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-12T02:16:34.765Z"
+    "lastVerified": "2026-11-13T07:18:01.441Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -5465,9 +5465,9 @@
   "tako8ki-gobang": {
     "name": "gobang",
     "officialUrl": "https://github.com/TaKO8Ki/gobang",
-    "lastChecked": "2026-11-12T01:11:54.022Z",
+    "lastChecked": "2026-11-13T07:18:06.336Z",
     "revisionIdentifier": "7b1b5f7e",
-    "lastVerified": "2026-11-12T01:11:54.022Z"
+    "lastVerified": "2026-11-13T07:18:06.336Z"
   },
   "salvo-rs-salvo": {
     "name": "salvo-rs/salvo",
@@ -11831,9 +11831,9 @@
   "jasonjmcghee-rem": {
     "name": "rem",
     "officialUrl": "https://github.com/jasonjmcghee/rem",
-    "lastChecked": "2026-11-08T23:19:55.553Z",
+    "lastChecked": "2026-11-13T07:17:58.867Z",
     "revisionIdentifier": "f4f68049",
-    "lastVerified": "2026-11-08T23:19:55.553Z"
+    "lastVerified": "2026-11-13T07:17:58.867Z"
   },
   "mobile-next-mobile-mcp": {
     "name": "mobile-next/mobile-mcp",
@@ -13553,13 +13553,13 @@
     "officialUrl": "https://huggingface.co/HuggingFaceBio/Carbon-X",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T05:56:55.412Z",
-    "lastVerified": "2026-11-08T05:56:55.412Z",
+    "lastChecked": "2026-11-13T07:17:56.513Z",
+    "lastVerified": "2026-11-13T07:17:56.513Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-    "contentHash": "547f7fd802977f97270204d3529b15f3390eb5dc9edc730bf8037757f832ac96",
-    "promotedRulesCount": 3,
+    "contentHash": "4fc4869052406968871df10a7999b844a0c86f75191060589a270ba33a4fbc2d",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -15043,6 +15043,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 22,
     "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf": {
+    "name": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+    "officialUrl": "https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-13T07:17:53.931Z",
+    "lastVerified": "2026-11-13T07:17:53.931Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
+    "contentHash": "e96b4b5e647562def31356a757a7449b65a5677f459bd2415eba3ce124df18c9",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T06:59:10.944Z",
+  "updated_at": "2026-11-13T07:18:15.855Z",
   "statistics": {
-    "total_nodes": 57,
-    "total_edges": 27,
+    "total_nodes": 58,
+    "total_edges": 28,
     "domain_distribution": {
-      "D": 43,
+      "D": 44,
       "M": 1,
       "H": 8,
       "J": 2,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 27
+      "CONSTRAINED_BY_ARCHITECTURE": 28
     }
   },
   "nodes": {
@@ -1273,6 +1273,29 @@
       ],
       "created_at": "2026-11-13T06:59:10.944Z",
       "updated_at": "2026-11-13T06:59:10.944Z"
+    },
+    "DOM-D-ABE6FCAB": {
+      "id": "DOM-D-ABE6FCAB",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): HuggingFaceBio/Carbon-X",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-huggingfacebio-carbon-x/hf-huggingfacebio-carbon-x-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T07:18:09.188Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-huggingfacebio-carbon-x)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T07:18:15.855Z",
+      "updated_at": "2026-11-13T07:18:15.855Z"
     }
   },
   "edges": [
@@ -1545,6 +1568,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-552AF493 [D] with Domain M",
       "created_at": "2026-11-13T06:58:48.895Z"
+    },
+    {
+      "id": "EDGE-79945B36FBE3",
+      "sourceId": "DOM-D-ABE6FCAB",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-ABE6FCAB [D] with Domain M",
+      "created_at": "2026-11-13T07:18:15.855Z"
     }
   ]
 }

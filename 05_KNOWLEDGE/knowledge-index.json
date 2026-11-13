@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T07:06:49.435Z",
-  "total_verified_learnings": 1261,
+  "last_updated": "2026-11-13T07:17:56.654Z",
+  "total_verified_learnings": 1262,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -140678,7 +140678,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
       "source_version": "hf-huggingfacebio-carbon-x",
-      "content_hash": "547f7fd802977f97270204d3529b15f3390eb5dc9edc730bf8037757f832ac96",
+      "content_hash": "4fc4869052406968871df10a7999b844a0c86f75191060589a270ba33a4fbc2d",
       "dossier_path": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "promoted_rules": [
@@ -140763,7 +140763,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T05:57:02.761Z",
+      "verified_at": "2026-11-13T07:17:56.638Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -192480,6 +192480,33 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-11-13T03:18:36.816Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf": {
+      "learning_id": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+      "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+      "slug": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+      "source_version": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf",
+      "content_hash": "e96b4b5e647562def31356a757a7449b65a5677f459bd2415eba3ce124df18c9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T07:17:54.202Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

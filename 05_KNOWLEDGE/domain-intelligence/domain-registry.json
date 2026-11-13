@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T06:59:10.942Z",
-  "total_records": 103,
+  "last_updated": "2026-11-13T07:18:15.854Z",
+  "total_records": 104,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 61,
+      "total": 62,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -86,7 +86,8 @@
         "DOM-D-80F82307",
         "DOM-D-B83FE1C6",
         "DOM-D-64949094",
-        "DOM-D-552AF493"
+        "DOM-D-552AF493",
+        "DOM-D-ABE6FCAB"
       ]
     },
     "E": {
@@ -4258,6 +4259,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T06:59:10.940Z"
+    },
+    "DOM-D-ABE6FCAB": {
+      "record_id": "DOM-D-ABE6FCAB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): HuggingFaceBio/Carbon-X",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/HuggingFaceBio/Carbon-X](https://huggingface.co/HuggingFaceBio/Carbon-X))  \n> **Source Version**: `hf-huggingfa`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "1918f21b64f4f895a8a0eac04c172c1c211658c8da26f8b9ad3aa93428e393c4",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-huggingfacebio-carbon-x/hf-huggingfacebio-carbon-x-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T07:18:09.188Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-huggingfacebio-carbon-x)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-huggingfacebio-carbon-x"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T07:18:15.852Z"
     }
   }
 }

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T07:06:49.590Z",
-  "total_cycles_completed": 9169,
-  "total_learnings_persisted": 9169,
+  "last_updated": "2026-11-13T07:17:56.727Z",
+  "total_cycles_completed": 9171,
+  "total_learnings_persisted": 9171,
   "total_rules_promoted": 8972,
   "history": [
-    {
-      "timestamp": "2026-11-12T11:00:58.685Z",
-      "repository": "Xudong-Huang/may",
-      "learningId": "learn-github-xudong-huang-may",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T11:01:10.491Z",
-      "repository": "gravitl/netmaker",
-      "learningId": "learn-github-gravitl-netmaker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T11:01:13.812Z",
       "repository": "volcengine/OpenViking",
@@ -1403,6 +1389,20 @@
       "repository": "slatedb/slatedb",
       "learningId": "learn-github-slatedb-slatedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T07:17:54.299Z",
+      "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+      "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T07:17:56.727Z",
+      "repository": "HuggingFaceBio/Carbon-X",
+      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

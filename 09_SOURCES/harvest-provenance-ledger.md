@@ -9387,3 +9387,6 @@ Every entry in this ledger must capture:
 | `learn-dom-h-414482d7` | `project://beclab-olares` | `e61c4d06` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/beclab-olares-learnings.md` | 2026-11-13T06:59:10.944Z |
 | `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-13T07:06:25.992Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `e19ff24f` | Multi-dimensional audit evidence | 2026-11-13T07:06:49.574Z |
+| `learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf` | `https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF` | `hf-huihui-` | Multi-dimensional audit evidence | 2026-11-13T07:17:54.295Z |
+| `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-13T07:17:56.722Z |
+| `learn-dom-d-abe6fcab` | `project://hf-huggingfacebio-carbon-x` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md` | 2026-11-13T07:18:15.856Z |

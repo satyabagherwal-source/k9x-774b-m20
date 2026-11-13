@@ -10665,8 +10665,8 @@
     "sourceUrl": "https://huggingface.co/HuggingFaceBio/Carbon-X",
     "sourceVersion": "hf-huggingfacebio-carbon-x",
     "license": "Open-Source",
-    "contentHash": "547f7fd802977f97270204d3529b15f3390eb5dc9edc730bf8037757f832ac96",
-    "lastHarvestedAt": "2026-11-08T05:57:02.856Z",
+    "contentHash": "4fc4869052406968871df10a7999b844a0c86f75191060589a270ba33a4fbc2d",
+    "lastHarvestedAt": "2026-11-13T07:17:56.722Z",
     "learningId": "learn-huggingface-huggingfacebio-carbon-x"
   },
   "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf": {
@@ -12428,5 +12428,15 @@
     "contentHash": "0bdcdd7e064ab6e1a3f4f697e2d21be2035a1f89a0e31ab6b537e2edfd6d820d",
     "lastHarvestedAt": "2026-11-13T03:18:36.957Z",
     "learningId": "learn-github-agentes-chat-agentes-chat"
+  },
+  "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf": {
+    "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+    "sourceVersion": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf",
+    "license": "Open-Source",
+    "contentHash": "e96b4b5e647562def31356a757a7449b65a5677f459bd2415eba3ce124df18c9",
+    "lastHarvestedAt": "2026-11-13T07:17:54.295Z",
+    "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf"
   }
 }

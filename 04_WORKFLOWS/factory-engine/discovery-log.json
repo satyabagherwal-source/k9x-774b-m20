@@ -20968,5 +20968,17 @@
     "qualityScore": 1016,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-13T03:15:07.014Z"
+  },
+  {
+    "name": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+    "fullName": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+    "url": "https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF (2042 likes, 4011565 downloads)",
+    "likes": 2042,
+    "downloads": 4011565,
+    "qualityScore": 22420,
+    "discoveredAt": "2026-11-13T07:15:39.785Z"
   }
 ]

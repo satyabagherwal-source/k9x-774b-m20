@@ -9378,3 +9378,6 @@
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T06:59:10.944Z` | `beclab-olares` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-414482D7` [Domain H] | Yes (`65359d6a...`) |
 | `CYCLE-20261113-VCXX` | `2026-11-13T07:06:25.989Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md` | Yes (`779c4b17...`) |
 | `CYCLE-20261113-VV4Z` | `2026-11-13T07:06:49.571Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e9a7f8e6...`) |
+| `CYCLE-20261113-A41H` | `2026-11-13T07:17:54.293Z` | `huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings.md` | Yes (`e96b4b5e...`) |
+| `CYCLE-20261113-A5WV` | `2026-11-13T07:17:56.719Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md` | Yes (`4fc48690...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T07:18:15.856Z` | `hf-huggingfacebio-carbon-x` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-ABE6FCAB` [Domain D] | Yes (`1918f21b...`) |
