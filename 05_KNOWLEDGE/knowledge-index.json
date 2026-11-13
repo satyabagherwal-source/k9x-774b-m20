@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T18:43:51.737Z",
+  "last_updated": "2026-11-13T18:53:11.067Z",
   "total_verified_learnings": 1266,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -552,8 +552,8 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "5613284a",
-      "content_hash": "14713634de47c67d8614b2e636afc603fe8326270000c1313617d8ebfe95e522",
+      "source_version": "0ac7d216",
+      "content_hash": "f63f582ae633872e624f4031448fc970b4922e24c6732f5808390048e84861fa",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
@@ -575,6 +575,11 @@
         {
           "number": null,
           "title": "build(deps): bump actions-rust-lang/setup-rust-toolchain from 2.0.0 to 2.0.1 (#4",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "test: replace Actix test attributes with Tokio local tests (#4417)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -628,7 +633,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T06:27:16.836Z",
+      "verified_at": "2026-11-13T18:52:21.808Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11883,8 +11888,8 @@
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "002eb155",
-      "content_hash": "0b8a3436d540af7ef6eca724634e0976e93d05c54c2ab21278a3f632b4cfa6c5",
+      "source_version": "b0c66974",
+      "content_hash": "5f388e7b4c5a375e29b57d7fda9cf38158de29c3744fbe8a0ebb1f9da546db47",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "promoted_rules": [
@@ -11912,6 +11917,11 @@
           "number": null,
           "title": "Normalized Array Serialization & Whitespace Preservation",
           "status": "WITHHELD_CONDITIONAL_PASS"
+        },
+        {
+          "number": null,
+          "title": "Update YT Music: now a native SwiftUI app (#2523)",
+          "status": "WITHHELD_REJECT"
         },
         {
           "number": 1691,
@@ -11984,7 +11994,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T08:39:39.498Z",
+      "verified_at": "2026-11-13T18:52:25.965Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -20722,7 +20732,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
       "source_version": "hf-alissonerdx-bfs-best-face-swap",
-      "content_hash": "1267de3b14aa16be2d0412562a899374caf3ef76d62eeb0ce2b572526790ec03",
+      "content_hash": "7e7e5649d41c689771237e5b2208eb6dad0c3b468cc68db73de960bc642857a4",
       "dossier_path": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "promoted_rules": [
@@ -20767,7 +20777,7 @@
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv476k43",
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4kgwuz"
       ],
-      "verified_at": "2026-11-08T17:49:24.736Z",
+      "verified_at": "2026-11-13T18:52:19.183Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67824,8 +67834,8 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "36357612",
-      "content_hash": "3d31d133095b03314ff760a87e62ce7358ddc8f6fba9e7d9702c349a7d827de0",
+      "source_version": "927ec35c",
+      "content_hash": "e4ed48be14ce83ce16d3d5351f67867a9250869c1c93c3d085ea4177def2a47b",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
@@ -67842,6 +67852,11 @@
         {
           "number": null,
           "title": "lsmkv): return an error for damaged RoaringSet WAL record lengths",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #13862 from weaviate/jose/fix-named-vector-index-type-change-",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -67885,7 +67900,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T14:08:45.576Z",
+      "verified_at": "2026-11-13T18:52:34.307Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -196090,6 +196105,150 @@
       "content_hash": "1bd5a61cdbcd33a0a15ef115c17db0ffaf2dcca875632478773c4b0f2d437f07",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T18:43:51.737Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-alissonerdx-bfs-best-face-swap-research-knowledge-intelligence-alissonerdx-bf.md",
+      "title": "Research & Knowledge Intelligence: Alissonerdx/BFS-Best-Face-Swap Core Invariants",
+      "repository": "Alissonerdx/BFS-Best-Face-Swap",
+      "source_version": "hf-alissonerdx-bfs-best-face-swap",
+      "content_hash": "468e7069ea72e1b68cf53b3a2ac9d16f5ad9f3da4e3fd4524321690f84954eef",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T18:52:19.400Z"
+    },
+    "candidate_directive-test-replace-actix-test-attributes-with-tokio-local-tests-4417": {
+      "item_id": "candidate_directive-test-replace-actix-test-attributes-with-tokio-local-tests-4417",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-48QN-test-replace-actix-test-attributes-with-tokio-local-tests-4417.md",
+      "title": "test: replace Actix test attributes with Tokio local tests (#4417)",
+      "repository": "actix-actix-web-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dc872cc10f659f8372eed487a0a40b78caa791bfbae34053dbac0b315a2205f8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:53:10.848Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-technical-construction-intelligence-actix-actix-web-core-invaria.md",
+      "title": "Technical Construction Intelligence: actix/actix-web Core Invariants",
+      "repository": "actix/actix-web",
+      "source_version": "0ac7d216",
+      "content_hash": "513e43021c2179ad6b65558bbff71dc4bb0cc613f6ab95c2928ea87ff5e8ae7e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:52:22.104Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/actix-actix-web-verification-protocol-empirical-defect-shield-for-actix-actix-we.md",
+      "title": "Verification Protocol: Empirical Defect Shield for actix/actix-web",
+      "repository": "actix/actix-web",
+      "source_version": "0ac7d216",
+      "content_hash": "ca7bccff83a2467ac2442d262f4d3f65942056bf789b2341dc822e3f80ffd630",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:52:22.166Z"
+    },
+    "candidate_directive-update-yt-music-now-a-native-swiftui-app-2523": {
+      "item_id": "candidate_directive-update-yt-music-now-a-native-swiftui-app-2523",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3AAR-update-yt-music-now-a-native-swiftui-app-2523.md",
+      "title": "Update YT Music: now a native SwiftUI app (#2523)",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "source_version": "b0c66974",
+      "content_hash": "ebf17467408f72a6d41d830e6c6f2aac3a84bf23aa9cdd96c20c2b3ce22d95be",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T18:52:26.212Z"
+    },
+    "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dkhamsing-open-source-ios-apps-architecture-intelligence-dkhamsing-open-source-i.md",
+      "title": "Architecture Intelligence: dkhamsing/open-source-ios-apps Core Invariants",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "source_version": "b0c66974",
+      "content_hash": "d4c80353cb235851a068d643ee475e64a805e267d537ffd96a34879d5bc46965",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T18:52:26.275Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dkhamsing-open-source-ios-apps": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dkhamsing-open-source-ios-apps",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dkhamsing-open-source-ios-apps-verification-protocol-empirical-defect-shield-for.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dkhamsing/open-source-ios-apps",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "source_version": "b0c66974",
+      "content_hash": "5561948089c4f2b1004c553200145f19e88a71f6d8f5a93adc9f1d74c9dbcf18",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:52:26.346Z"
+    },
+    "candidate_directive-merge-pull-request-13862-from-weaviate-jose-fix-named-vector-index-type-change": {
+      "item_id": "candidate_directive-merge-pull-request-13862-from-weaviate-jose-fix-named-vector-index-type-change",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3GQV-merge-pull-request-13862-from-weaviate-jose-fix-named-vector-index-type-change.md",
+      "title": "Merge pull request #13862 from weaviate/jose/fix-named-vector-index-type-change-",
+      "repository": "weaviate/weaviate",
+      "source_version": "927ec35c",
+      "content_hash": "ebe1e1937c3e05a59f47ed87b3c1cc78938f6103d24e5d4baba7a54578b0bda8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T18:52:34.572Z"
+    },
+    "domain_intelligence-architecture-intelligence-weaviate-weaviate-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-weaviate-weaviate-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
+      "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
+      "repository": "weaviate/weaviate",
+      "source_version": "927ec35c",
+      "content_hash": "525f4cbc311f4186b253080e5c7f2fd3c57b450ab4ea4194bc4f168e963dc5bc",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-13T18:52:34.649Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/weaviate-weaviate-verification-protocol-empirical-defect-shield-for-weaviate-wea.md",
+      "title": "Verification Protocol: Empirical Defect Shield for weaviate/weaviate",
+      "repository": "weaviate/weaviate",
+      "source_version": "927ec35c",
+      "content_hash": "ebfd8f8b89943fc59269e01da573ae86dab3c7afbb8437fde7217732aa78994a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:52:34.713Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-learnings-technical-construction-intelligence-actix-actix-web-le.md",
+      "title": "Technical Construction Intelligence: actix-actix-web-learnings Core Invariants",
+      "repository": "actix-actix-web-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e6657e100ed2f90c0a2fab55a0b8567a3f2608c7ad7940b882e63c6ffcdd68f9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T18:53:10.946Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/actix-actix-web-learnings-verification-protocol-empirical-defect-shield-for-acti.md",
+      "title": "Verification Protocol: Empirical Defect Shield for actix-actix-web-learnings",
+      "repository": "actix-actix-web-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c625b566dc65496c4e446deee9fd1d6cbe3e79bc3ac8fb5a67a9574e91c7c7fc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T18:53:11.067Z"
     }
   },
   "aliases": {
@@ -202088,5 +202247,5 @@
     "dossier": "07_PROJECT_LEARNING/ai-builder-brain-learnings.md",
     "updatedAt": "2026-10-18T07:41:48.955Z"
   },
-  "total_items": 9283
+  "total_items": 9295
 }

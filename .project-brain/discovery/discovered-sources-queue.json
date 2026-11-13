@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T18:43:51.357Z",
+  "updated_at": "2026-11-13T18:53:10.693Z",
   "stats": {
-    "total_discovered": 2816,
-    "approved_pending_harvest": 2634,
+    "total_discovered": 2817,
+    "approved_pending_harvest": 2635,
     "harvested_count": 0,
     "rejected_count": 182,
     "category_distribution": {
       "COMMUNITY_AND_EXPERT": 2628,
       "OFFICIAL_DOCUMENTATION": 97,
-      "STANDARDS_AND_SPECIFICATIONS": 78,
+      "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
       "LEGAL_AND_REGULATORY": 1,
@@ -60698,6 +60698,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
         "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-7B96AA6DCCAE": {
+      "id": "SRC-7B96AA6DCCAE",
+      "url": "https://www.rfc-editor.org/rfc/rfc7578",
+      "title": "IETF RFC 7578",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T18:53:10.692Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
       }
     }
   }

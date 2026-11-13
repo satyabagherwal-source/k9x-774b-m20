@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T18:43:47.283Z",
+  "last_updated": "2026-11-13T18:52:34.434Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -710,14 +710,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "content_hash": "1267de3b14aa16be2d0412562a899374caf3ef76d62eeb0ce2b572526790ec03",
-      "verified_at": "2026-11-08T17:49:24.850Z",
+      "content_hash": "7e7e5649d41c689771237e5b2208eb6dad0c3b468cc68db73de960bc642857a4",
+      "verified_at": "2026-11-13T18:52:19.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T17:49:24.850Z"
+      "last_updated": "2026-11-13T18:52:19.284Z"
     },
     "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -3291,14 +3291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
-      "content_hash": "0b8a3436d540af7ef6eca724634e0976e93d05c54c2ab21278a3f632b4cfa6c5",
-      "verified_at": "2026-11-09T08:39:39.729Z",
+      "content_hash": "5f388e7b4c5a375e29b57d7fda9cf38158de29c3744fbe8a0ebb1f9da546db47",
+      "verified_at": "2026-11-13T18:52:26.083Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T08:39:39.729Z"
+      "last_updated": "2026-11-13T18:52:26.083Z"
     },
     "moby/buildkit": {
       "repository": "moby/buildkit",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "14713634de47c67d8614b2e636afc603fe8326270000c1313617d8ebfe95e522",
-      "verified_at": "2026-11-12T06:27:16.981Z",
+      "content_hash": "f63f582ae633872e624f4031448fc970b4922e24c6732f5808390048e84861fa",
+      "verified_at": "2026-11-13T18:52:21.914Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T06:27:16.981Z"
+      "last_updated": "2026-11-13T18:52:21.914Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "3d31d133095b03314ff760a87e62ce7358ddc8f6fba9e7d9702c349a7d827de0",
-      "verified_at": "2026-11-12T14:08:45.726Z",
+      "content_hash": "e4ed48be14ce83ce16d3d5351f67867a9250869c1c93c3d085ea4177def2a47b",
+      "verified_at": "2026-11-13T18:52:34.433Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T14:08:45.726Z"
+      "last_updated": "2026-11-13T18:52:34.433Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",

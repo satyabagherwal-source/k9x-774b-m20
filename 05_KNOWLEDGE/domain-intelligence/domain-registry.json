@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T18:43:51.638Z",
-  "total_records": 274,
+  "last_updated": "2026-11-13T18:53:10.946Z",
+  "total_records": 280,
   "domains": {
     "A": {
       "total": 3,
@@ -30,7 +30,7 @@
       ]
     },
     "D": {
-      "total": 154,
+      "total": 155,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -185,7 +185,8 @@
         "DOM-D-20558436",
         "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning",
         "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
-        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu"
+        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu",
+        "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants"
       ]
     },
     "E": {
@@ -203,7 +204,7 @@
       ]
     },
     "G": {
-      "total": 25,
+      "total": 27,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -229,11 +230,13 @@
         "domain_intelligence-architecture-intelligence-appwrite-appwrite-core-invariants",
         "domain_intelligence-architecture-intelligence-qdrant-qdrant-core-invariants",
         "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
+        "domain_intelligence-architecture-intelligence-weaviate-weaviate-core-invariants"
       ]
     },
     "H": {
-      "total": 57,
+      "total": 59,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -291,7 +294,9 @@
         "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-core-invariants",
         "domain_intelligence-technical-construction-intelligence-expo-expo-core-invariants",
         "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants"
       ]
     },
     "I": {
@@ -318,7 +323,7 @@
       ]
     },
     "K": {
-      "total": 7,
+      "total": 8,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -326,7 +331,8 @@
         "DOM-K-AE91E0B9",
         "DOM-K-66271FDB",
         "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants",
+        "DOM-K-199063A7"
       ]
     },
     "L": {
@@ -7774,6 +7780,93 @@
       "repository": "expo-expo-learnings",
       "content_hash": "660b61f83138b540ab3bb4013b105db9a88e2a467708512d287fc9da89764512",
       "created_at": "2026-11-13T18:43:51.638Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Alissonerdx/BFS-Best-Face-Swap Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-alissonerdx-bfs-best-face-swap-research-knowledge-intelligence-alissonerdx-bf.md",
+      "repository": "Alissonerdx/BFS-Best-Face-Swap",
+      "content_hash": "468e7069ea72e1b68cf53b3a2ac9d16f5ad9f3da4e3fd4524321690f84954eef",
+      "created_at": "2026-11-13T18:52:19.400Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: actix/actix-web Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-technical-construction-intelligence-actix-actix-web-core-invaria.md",
+      "repository": "actix/actix-web",
+      "content_hash": "513e43021c2179ad6b65558bbff71dc4bb0cc613f6ab95c2928ea87ff5e8ae7e",
+      "created_at": "2026-11-13T18:52:22.104Z"
+    },
+    "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: dkhamsing/open-source-ios-apps Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dkhamsing-open-source-ios-apps-architecture-intelligence-dkhamsing-open-source-i.md",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "content_hash": "d4c80353cb235851a068d643ee475e64a805e267d537ffd96a34879d5bc46965",
+      "created_at": "2026-11-13T18:52:26.275Z"
+    },
+    "domain_intelligence-architecture-intelligence-weaviate-weaviate-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-weaviate-weaviate-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
+      "repository": "weaviate/weaviate",
+      "content_hash": "525f4cbc311f4186b253080e5c7f2fd3c57b450ab4ea4194bc4f168e963dc5bc",
+      "created_at": "2026-11-13T18:52:34.649Z"
+    },
+    "DOM-K-199063A7": {
+      "record_id": "DOM-K-199063A7",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "test: replace Actix test attributes with Tokio local tests (#4417)",
+      "content": "When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "5ae06628ae55782622680a91b8eae5ebcb30a570b8888208fb58cddef2550337",
+      "summary": "Prevents defects observed in production commit `0ac7d216`: test: replace Actix test attributes with Tokio local tests (#4417). Unvalidated e -> When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concur",
+      "provenance": {
+        "source_uri": "project://actix-actix-web/actix-actix-web-learnings.md",
+        "source_version": "0ac7d216",
+        "observed_at": "2026-11-13T18:52:21.499Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (actix-actix-web)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of actix-actix-web"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T18:53:10.633Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: actix-actix-web-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-learnings-technical-construction-intelligence-actix-actix-web-le.md",
+      "repository": "actix-actix-web-learnings",
+      "content_hash": "e6657e100ed2f90c0a2fab55a0b8567a3f2608c7ad7940b882e63c6ffcdd68f9",
+      "created_at": "2026-11-13T18:53:10.946Z"
     }
   }
 }

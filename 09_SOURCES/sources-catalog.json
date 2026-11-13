@@ -565,8 +565,8 @@
     "sourceUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceVersion": "hf-alissonerdx-bfs-best-face-swap",
     "license": "Open-Source",
-    "contentHash": "1267de3b14aa16be2d0412562a899374caf3ef76d62eeb0ce2b572526790ec03",
-    "lastHarvestedAt": "2026-11-08T17:49:24.843Z",
+    "contentHash": "7e7e5649d41c689771237e5b2208eb6dad0c3b468cc68db73de960bc642857a4",
+    "lastHarvestedAt": "2026-11-13T18:52:19.277Z",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
@@ -2103,10 +2103,10 @@
     "repository": "dkhamsing/open-source-ios-apps",
     "platform": "github",
     "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
-    "sourceVersion": "002eb155",
+    "sourceVersion": "b0c66974",
     "license": "CC0-1.0",
-    "contentHash": "0b8a3436d540af7ef6eca724634e0976e93d05c54c2ab21278a3f632b4cfa6c5",
-    "lastHarvestedAt": "2026-11-09T08:39:39.721Z",
+    "contentHash": "5f388e7b4c5a375e29b57d7fda9cf38158de29c3744fbe8a0ebb1f9da546db47",
+    "lastHarvestedAt": "2026-11-13T18:52:26.067Z",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps"
   },
   "moby-buildkit": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "5613284a",
+    "sourceVersion": "0ac7d216",
     "license": "Apache-2.0",
-    "contentHash": "14713634de47c67d8614b2e636afc603fe8326270000c1313617d8ebfe95e522",
-    "lastHarvestedAt": "2026-11-12T06:27:16.974Z",
+    "contentHash": "f63f582ae633872e624f4031448fc970b4922e24c6732f5808390048e84861fa",
+    "lastHarvestedAt": "2026-11-13T18:52:21.902Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "36357612",
+    "sourceVersion": "927ec35c",
     "license": "NOASSERTION",
-    "contentHash": "3d31d133095b03314ff760a87e62ce7358ddc8f6fba9e7d9702c349a7d827de0",
-    "lastHarvestedAt": "2026-11-12T14:08:45.716Z",
+    "contentHash": "e4ed48be14ce83ce16d3d5351f67867a9250869c1c93c3d085ea4177def2a47b",
+    "lastHarvestedAt": "2026-11-13T18:52:34.422Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {

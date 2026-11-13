@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
-> **Source Version**: `36357612`  
+> **Source Version**: `927ec35c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T14:08:33.760Z  
+> **Timestamp**: 2026-11-13T18:52:33.998Z  
 > **Learning ID**: `learn-github-weaviate-weaviate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T14:08:33.751Z  
+> **Harvest Timestamp**: 2026-11-13T18:52:33.993Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16945 stars
+- **Stars / Engagement**: 16944 stars
 
 ---
 
@@ -390,13 +390,14 @@ func (s *stats) getThroughputEma() float64 {
 package batch
 
 import (
+	"bytes"
 	"context"
-	"fmt"
 	"math"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	enterrors "github.com/weaviate/weaviate/entities/errors"
 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
@@ -647,7 +648,7 @@ func (w *worker) fanInReplies(
 			outer := outerIdxs[resp.offset+int(err.Index)]
 			obj := objs[outer]
 			failed[outer] = struct{}{}
-			if w.isTransientReplicationError(err.Error) && retries < MAX_RETRI
+			if w.isTransientReplicationError(err.E
 ```
 
 ### Core Architecture Module: `adapters/handlers/rest/clusterapi/shared/util.go`
@@ -1732,396 +1733,772 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8a56463` (2026-11-12)
-**Commit Message**: fix(lsmkv): return an error for damaged RoaringSet WAL record lengths
+### Incident Patch 1: `473e7c80` (2026-11-13)
+**Commit Message**: Merge pull request #13862 from weaviate/jose/fix-named-vector-index-type-change-panic
 
-parseNode and parseNodeList trusted the lengths read from the WAL. A
-total length below 8 panicked on segBuf[8:], a garbage total length
-sized an allocation before any bytes were read, and out-of-range
-additions, deletions or key lengths panicked in the decoders. The panic
-failed the bucket, and with it the shard, instead of ending replay at
-the damaged record like other WAL corruption does.
+Schema update: reject a changed vector index type of a named vector instead of panicking
 
-Both now read through readSegmentRecord, which rejects bad total
-lengths, grows the buffer only as bytes arrive past 16 MiB, and checks
-the inner lengths with byteops' checked readers.
-
-Fixes weaviate/0-weaviate-issues#704
-
-**File**: `adapters/repos/db/lsmkv/bucket_recover_test.go` (modified, +92/-0)
+**File**: `test/acceptance_with_go_client/collection_config_tests/update_named_vector_index_type_test.go` (added, +106/-0)
 ```diff
-@@ -23,6 +23,7 @@ import (
- 
- 	"github.com/weaviate/weaviate/adapters/repos/db/roaringset"
- 	"github.com/weaviate/weaviate/entities/cyclemanager"
-+	"github.com/weaviate/weaviate/entities/filters"
- )
- 
- func TestBucketWalReload(t *testing.T) {
-@@ -418,3 +419,94 @@ func TestBucketRecoveryWithWALShorterThanChecksum(t *testing.T) {
- 		})
- 	}
- }
+@@ -0,0 +1,106 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
 +
-+// TestBucketRecoveryRoaringSetWALWithCorruptRecord opens a RoaringSet or
-+// RoaringSetRange bucket whose write-ahead-log ends in a damaged v0 record, the
-+// state a volume returning I/O errors left behind in production. The bucket
-+// must open with the records written before the damaged one.
-+func TestBucketRecoveryRoaringSetWALWithCorruptRecord(t *testing.T) {
++package collection_config_tests
++
++import (
++	"context"
++	"net"
++	"net/http"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"github.com/weaviate/weaviate-go-client/v6"
++	"github.com/weaviate/weaviate-go-client/v6/collections"
++	"github.com/weaviate/weaviate-go-client/v6/collections/vectorindex"
++	"github.com/weaviate/weaviate-go-client/v6/modules/selfprovided"
++	"github.com/weaviate/weaviate/test/docker"
++)
++
++func TestUpdateNamedVectorIndexType_SingleNode(t *testing.T) {
++	c := newClient(t, docker.New().WithWeaviateWithGRPC())
++	testUpdateNamedVectorIndexType(t, c)
++}
++
++func TestUpdateNamedVectorIndexType_Cluster(t *testing.T) {
++	c := newClient(t, docker.New().WithWeaviateCluster(3).WithWeaviateExposeGRPCPort())
++	testUpdateNamedVectorIndexType(t, c)
++}
++
++// testUpdateNamedVectorIndexType checks that changing the vector index type of
++// a named vector is rejected with 422. The server used to panic on this update
++// and answer 500.
++func testUpdateNamedVectorIndexType(t *testing.T, c *weaviate.Client) {
 +	ctx := context.Background()
-+	logger, _ := test.NewNullLogger()
-+
-+	nodes := []struct {
-+		name string
-+		node []byte
-+	}{
-+		{name: "total length 0", node: le64(0)},
-+		{name: "total length 7", node: le64(7)},
-+		{name: "total length beyond int64", node: append(le64(1<<63+16), make([]byte, 32)...)},
-+		{name: "additions length beyond the record", node: withTotalLen(le64(1<<40), make([]byte, 8))},
-+		{name: "key length beyond the record", node: withTotalLen(le64(0), le64(0), le32(1<<20))},
++	indexes := map[string]collections.VectorIndex{
++		"hnsw": vectorindex.HNSW{},
++		"flat": vectorindex.Flat{},
 +	}
-+	strategies := []struct {
-+		strategy string
-+		write    func(t *testing.T, b *Bucket, key, value uint64)
-+		check    func(t *testing.T, b *Bucket, key, value uint64)
-+	}{
-+		{
-+			strategy: StrategyRoaringSet,
-+			write: func(t *testing.T, b *Bucket, key, value uint64) {
-+				require.NoError(t, b.RoaringSetAddOne(le64(key), value))
-+			},
-+			check: func(t *testing.T, b *Bucket, key, value uint64) {
-+				bm, release, err := b.RoaringSetGet(ctx, le64(key))
-+				require.NoError(t, err)
-+				defer release()
-+				require.Equal(t, []uint64{value}, bm.ToArray())
-+			},
-+		},
-+		{
-+			strategy: StrategyRoaringSetRange,
-+			write: func(t *testing.T, b *Bucket, key, value uint64) {
-+				require.NoError(t, b.RoaringSetRangeAdd(key, value))
-+			},
-+			check: func(t *testing.T, b *Bucket, key, value uint64) {
-+				reader := b.ReaderRoaringSetRange()
-+				defer reader.Close()
-+				bm, release, err := reader.Read(ctx, key, filters.OperatorEqual)
-+				require.NoError(t, err)
-+				defer release()
-+				require.Equal(t, []uint64{value}, bm.ToArray())
-+			},
-+		},
++	for _, tt := range []struct{ from, to string }{
++		{from: "hnsw", to: "flat"},
++		{from: "flat", to: "hnsw"},
++	} {
++		t.Run(tt.from+" to "+tt.to, func(t *testing.T) {
++			name := "UpdateNamedVectorIndexType"
++			require.NoError(t, c.Collections.Delete(ctx, name))
++			t.Cleanup(func() { require.NoError(t, c.Collections.Delete(ctx, name)) })
++
++			h, err := c.Collections.Create(ctx, collections.Collection{
++				Name:       name,
++				Properties: []collections.Property{{Name: "name", DataType: collections.DataTypeText}},
++				Vectors: map[string]collections.VectorConfig{
++					"v": {Vectorizer: selfprovided.Vectorizer, Index: indexes[tt.from]},
++				},
++			})
++			require.NoError(t, err)
++
++			// The stored compression settings belong to the old index type. Without
++			// clearing them the server rejects them before it checks the type change.
++			err = h.Config.UpdateVectorConfig(ctx, "v", func(vc *collections.VectorConfig) {
++				vc.Index = indexes[tt.to]
++				vc.Compression = nil
++			})
++			require.Error(t, err, "changing the index type of a named vector must be rejected")
++			var httpErr *weaviate.HTTPError
++			require.ErrorAs(t, err, &httpErr, "expected an HTTP error, got: %v", err)
++			assert.Equal(t, http.StatusUnprocessableEntity, httpErr.Code, "body: %s", httpErr.Body)
++			assert.Contains(t, httpErr.Body, `vector index type of vector \"v\" is immutable`)
++
++			got, err := c.Collections.GetConfig(ctx, name)
++			require.NoError(t, err)
++			require.NotNil(t, got.Vectors["v"].Index)
++			assert.Equal(t, vectorindex.Type(tt.from), got.Vectors["v"].Index.Name())
++		})
 +	}
-+	commitTypes := []CommitType{CommitTypeRoaringSet, CommitTypeRoaringSetList}
++}
 +
-+	openBucket := func(t *testing.T, dir, strategy string) *Bucket {
-+		t.Helper()
-+		b, err := NewBucketCreator().NewBucket(ctx, dir, "", logger, nil,
-+			cyclemanager.NewCallbackGroupNoop(), cyclemanager.NewCallbackGroupNoop(),
-+			WithStrategy(strategy), WithBitmapBufPool(roaringset.NewBitmapBufPoolNoop()))
-+		require.NoError(t, err)
-+		return b
-+	}
++func newClient(t *testing.T, compose *docker.Compose) *weaviate.Client {
++	t.Helper()
++	ctx := context.Background()
++	env, err := compose.Start(ctx)
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, env.Terminate(ctx)) })
 +
-+	for _, s := range strategies {
-+		for _, ct := range commitTypes {
-+			for _, n := range nodes {
-+				t.Run(fmt.Sprintf("%s/%s/%s", s.strategy, ct, n.name), func(t *testing.T) {
-+					dir := t.TempDir()
-+					b := openBucket(t, dir, s.strategy)
-+					for k := uint64(1); k <= 3; k++ {
-+						s.write(t, b, k, 100+k)
-+					}
-+					require.NoError(t, b.Shutdown(ctx))
++	host, httpPort, err := net.SplitHostPort(env.GetWeaviate().URI())
++	require.NoError(t, err)
++	_, grpcPort, err := net.SplitHostPort(env.GetWeaviate().GrpcURI())
++	require.NoError(t, err)
 +
-+					wals := filesWithExt(t, dir, ".wal")
-+					require.Len(t, wals, 1)
-+					f, err := os.OpenFile(filepath.Join(dir, wals[0]), os.O_APPEND|os.O_WRONLY, 0o644)
-+					require.NoError(t, err)
-+					_, err = f.Write(append([]byte{byte(ct), 0}, n.node...))
-+					require.NoError(t, err)
-+					require.NoError(t, f.Close())
-+
-+					b = openBucket(t, dir, s.strategy)
-+					for k := uint64(1); k <= 3; k++ {
-+						s.check(t, b, k, 100+k)
-+					}
-+					require.NoError(t, b.Shutdown(ctx))
-+				})
-+			}
-+		}
-+	}
++	c, err := weaviate.NewLocal(ctx,
++		weaviate.WithHost(host),
++		weaviate.WithHTTPPort(httpPort),
++		weaviate.WithGRPCPort(grpcPort),
++	)
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, c.Close()) })
++	return c
 +}
 ```
 
-**File**: `adapters/repos/db/lsmkv/commitlogger_parser_roaring_set.go` (modified, +67/-20)
+**File**: `usecases/schema/class.go` (modified, +12/-3)
 ```diff
-@@ -16,9 +16,12 @@ import (
- 	"encoding/binary"
- 	"fmt"
- 	"io"
-+	"math"
-+	"slices"
+@@ -2147,17 +2147,26 @@ func validateImmutableFields(initial, updated *models.Class, modulesProvider mod
+ 		// without enforcing that on the client. We just set these fields to their initial values.
+ 		switch cfg := v.VectorIndexConfig.(type) {
+ 		case hnsw.UserConfig:
+-			cfgInitial := initial.VectorConfig[k].VectorIndexConfig.(hnsw.UserConfig)
++			cfgInitial, ok := initialVecCfg.VectorIndexConfig.(hnsw.UserConfig)
++			if !ok {
++				return errVectorIndexTypeImmutable(k, initialVecCfg.VectorIndexType, v.VectorIndexType)
++			}
+ 			cfg.SkipDefaultQuantization = cfgInitial.SkipDefaultQuantization
+ 			cfg.TrackDefaultQuantization = cfgInitial.TrackDefaultQuantization
+ 			v.VectorIndexConfig = cfg
+ 		case flat.UserConfig:
+-			cfgInitial := initial.VectorConfig[k].VectorIndexConfig.(flat.UserConfig)
++			cfgInitial, ok := initialVecCfg.VectorIndexConfig.(flat.UserConfig)
++			if !ok {
++				return errVectorIndexTypeImmutable(k, initialVecCfg.VectorIndexType, v.VectorIndexType)
++			}
+ 			cfg.SkipDefaultQuantization = cfgInitial.SkipDefaultQuantization
+ 			cfg.TrackDefaultQuantization = cfgInitial.TrackDefaultQuantization
+ 			v.VectorIndexConfig = cfg
+ 		case dynamic.UserConfig:
+-			cfgInitial := initial.VectorConfig[k].VectorIndexConfig.(dynamic.UserConfig)
++			cfgInitial, ok := initialVecCfg.VectorIndexConfig.(dynamic.UserConfig)
++			if !ok {
++				return errVectorIndexTypeImmutable(k, initialVecCfg.VectorIndexType, v.VectorIndexType)
++			}
+ 			cfg.HnswUC.SkipDefaultQuantization = cfgInitial.HnswUC.SkipDefaultQuantization
+ 			cfg.HnswUC.TrackDefaultQuantization = cfgInitial.HnswUC.TrackDefaultQuantization
+ 			cfg.FlatUC.SkipDefaultQuantization = cfgInitial.FlatUC.SkipDefaultQuantization
+```
+
+**File**: `usecases/schema/class_test.go` (modified, +37/-0)
+```diff
+@@ -36,6 +36,7 @@ import (
+ 	"github.com/weaviate/weaviate/entities/schema"
+ 	"github.com/weaviate/weaviate/entities/vectorindex/dynamic"
+ 	"github.com/weaviate/weaviate/entities/vectorindex/flat"
++	"github.com/weaviate/weaviate/entities/vectorindex/hfresh"
+ 	"github.com/weaviate/weaviate/entities/vectorindex/hnsw"
+ 	"github.com/weaviate/weaviate/usecases/cluster/mocks"
+ 	"github.com/weaviate/weaviate/usecases/config"
+@@ -1539,6 +1540,42 @@ func Test_UpdateClass(t *testing.T) {
+ 		}
+ 	})
  
- 	"github.com/pkg/errors"
- 	"github.com/weaviate/weaviate/adapters/repos/db/roaringset"
-+	"github.com/weaviate/weaviate/usecases/byteops"
- )
++	t.Run("changing the vector index type of a named vector is rejected", func(t *testing.T) {
++		configs := map[string]any{
++			"hnsw":    hnsw.NewDefaultUserConfig(),
++			"flat":    flat.NewDefaultUserConfig(),
++			"dynamic": dynamic.NewDefaultUserConfig(),
++			"hfresh":  hfresh.NewDefaultUserConfig(),
++		}
++		for _, tt := range []struct{ from, to string }{
++			{from: "hnsw", to: "flat"},
++			{from: "hnsw", to: "dynamic"},
++			{from: "flat", to: "hnsw"},
++			{from: "flat", to: "dynamic"},
++			{from: "dynamic", to: "hnsw"},
++			{from: "dynamic", to: "flat"},
++			{from: "hfresh", to: "hnsw"},
++			{from: "hfresh", to: "flat"},
++			{from: "hfresh", to: "dynamic"},
++		} {
++			t.Run(tt.from+" to "+tt.to, func(t *testing.T) {
++				vectorConfig := func(indexType string) map[string]models.VectorConfig {
++					return map[string]models.VectorConfig{"example": {
++						VectorIndexType:   indexType,
++						VectorIndexConfig: configs[indexType],
++						Vectorizer:        map[string]any{"none": map[string]any{}},
++					}}
++				}
++				initial := &models.Class{Class: "Immutable", VectorConfig: vectorConfig(tt.from)}
++				updated := &models.Class{Class: "Immutable", VectorConfig: vectorConfig(tt.to)}
++
++				var err error
++				require.NotPanics(t, func() { err = validateImmutableFields(initial, updated, nil, nil) })
++				require.Error(t, err, "validation should fail")
++			})
++		}
++	})
++
+ 	t.Run("fields validation", func(t *testing.T) {
+ 		tests := []struct {
+ 			name          string
+```
+
+**File**: `usecases/schema/parser.go` (modified, +5/-2)
+```diff
+@@ -613,8 +613,7 @@ func (p *Parser) validateNamedVectorConfigsParityAndImmutables(initial, updated
  
- func (p *commitloggerParser) doRoaringSet() error {
-@@ -114,16 +117,9 @@ func (prs *commitlogParserRoaringSet) parseNodeV1(commitType CommitType) error {
- }
+ 		// immutable vector type
+ 		if initialCfg.VectorIndexType != updatedCfg.VectorIndexType {
+-			return fmt.Errorf("vector index type of vector %q is immutable: attempted change from %q to %q",
+-				vecName, initialCfg.VectorIndexType, updatedCfg.VectorIndexType)
++			return errVectorIndexTypeImmutable(vecName, initialCfg.VectorIndexType, updatedCfg.VectorIndexType)
+ 		}
  
- func (prs *commitlogParserRoaringSet) parseNode(reader io.Reader) error {
--	lenBuf := make([]byte, 8)
--	if _, err := io.ReadFull(reader, lenBuf); err != nil {
--		return errors.Wrap(err, "read segment len")
--	}
--	segmentLen := binary.LittleEndian.Uint64(lenBuf)
--
--	segBuf := make([]byte, segmentLen)
--	copy(segBuf, lenBuf)
--	if _, err := io.ReadFull(reader, segBuf[8:]); err != nil {
--		return errors.Wrap(err, "read segment contents")
-+	segBuf, err := readSegmentRecord(reader)
-+	if err != nil {
-+		return err
+ 		// immutable vectorizer
+@@ -686,3 +685,7 @@ func validateShardingConfig(current, update *models.Class, mtEnabled bool) error
  	}
- 
- 	segment := roaringset.NewSegmentNodeFromBuffer(segBuf)
-@@ -140,16 +136,9 @@ func (prs *commitlogParserRoaringSet) parseNode(reader io.Reader) error {
- }
- 
- func (prs *commitlogParserRoaringSet) parseNodeList(reader io.Reader) error {
--	lenBuf := make([]byte, 8)
--	if _, err := io.ReadFull(reader, lenBuf); err != nil {
--		return errors.Wrap(err, "read segment len")
--	}
--	segmentLen := binary.LittleEndian.Uint64(lenBuf)
--
--	segBuf := make([]byte, segmentLen)
--	copy(segBuf, lenBuf)
--	if _, err := io.ReadFull(reader, segBuf[8:]); err != nil {
--		return errors.Wrap(err, "read segment contents")
-+	segBuf, err := readSegmentRecord(reader)
-+	if err != nil {
-+		return err
- 	}
- 
- 	segment := roaringset.NewSegmentNodeListFromBuffer(segBuf)
-@@ -161,3 +150,61 @@ func (prs *commitlogParserRoaringSet) parseNodeList(reader io.Reader) error {
- 
  	return nil
  }
 +
-+// maxRecordPrealloc caps the buffer a record's length field sizes before any of
-+// the record is read. A v0 record has no checksum, so that length can be
-+// garbage; a longer record grows the buffer only as its bytes arrive.
-+const maxRecordPrealloc = 16 << 20
++func errVectorIndexTypeImmutable(vector, from, to string) error {
++	return fmt.Errorf("vector index type of vector %q is immutable: attempted change from %q to %q", vector, from, to)
++}
+```
+
+---
+
+### Incident Patch 2: `927ec35c` (2026-11-13)
+**Commit Message**: Merge pull request #13850 from weaviate/fix/ssb-beacon
+
+fix(ssb): Use UUIDv3 as reference ID in Acks and Results messages
+
+**File**: `adapters/handlers/grpc/v1/batch/stream.go` (modified, +1/-1)
+```diff
+@@ -696,7 +696,7 @@ func uuidsAndBeacons(objs []*pb.BatchObject, refs []*pb.BatchReference) (uuids,
+ 		uuids = append(uuids, obj.GetUuid())
+ 	}
+ 	for _, ref := range refs {
+-		beacons = append(beacons, toBeacon(ref))
++		beacons = append(beacons, ReferenceUUID(ref))
+ 	}
+ 	return uuids, beacons
+ }
+```
+
+**File**: `adapters/handlers/grpc/v1/batch/stream_test.go` (modified, +23/-11)
+```diff
+@@ -649,7 +649,13 @@ func TestOutOfMemoryReply(t *testing.T) {
+ 			{Collection: collection, Uuid: uuid.New().String()},
+ 		}
+ 		refs := []*pb.BatchReference{
+-			{FromCollection: collection, FromUuid: uuid.New().String(), ToUuid: uuid.New().String(), Name: "ref"},
++			{
++				FromCollection: collection,
++				FromUuid:       uuid.New().String(),
++				ToCollection:   new("TargetCollection"),
++				ToUuid:         uuid.New().String(),
++				Name:           "ref",
++			},
+ 		}
+ 
+ 		checker, _ := newAdmissionChecker(t, 0, admitNone)
+@@ -664,9 +670,7 @@ func TestOutOfMemoryReply(t *testing.T) {
+ 		require.NotEqual(t, -1, oom, "a rejected message must produce an OutOfMemory message")
+ 		got := sent.all()[oom].GetOutOfMemory()
+ 		require.Equal(t, []string{objs[0].GetUuid(), objs[1].GetUuid()}, got.GetUuids())
+-		require.Equal(t, []string{
+-			batch.BEACON_START + refs[0].GetFromCollection() + "/" + refs[0].GetFromUuid() + "/" + refs[0].GetName(),
+-		}, got.GetBeacons())
++		require.Equal(t, []string{batch.ReferenceUUID(refs[0])}, got.GetBeacons())
+ 		require.EqualValues(t, batch.OOM_WAIT_TIME, got.GetWaitTime())
+ 	})
+ }
+@@ -1110,7 +1114,13 @@ func Test_receiver_ackForDelay(t *testing.T) {
+ 			{Collection: collection, Uuid: uuid.New().String()},
+ 		}
+ 		refs := []*pb.BatchReference{
+-			{FromCollection: collection, FromUuid: uuid.New().String(), ToUuid: uuid.New().String(), Name: "ref"},
++			{
++				FromCollection: collection,
++				FromUuid:       uuid.New().String(),
++				ToCollection:   new("TargetCollection"),
++				ToUuid:         uuid.New().String(),
++				Name:           "ref",
++			},
+ 		}
+ 
+ 		cfg := config.NewBatchStream(new(0.9), new(0.5), new(400*time.Millisecond), nil, nil)
+@@ -1127,9 +1137,7 @@ func Test_receiver_ackForDelay(t *testing.T) {
+ 		require.NotEqual(t, -1, acks)
+ 		got := sent.all()[acks].GetAcks()
+ 		require.Equal(t, []string{objs[0].GetUuid(), objs[1].GetUuid()}, got.GetUuids())
+-		require.Equal(t, []string{
+-			batch.BEACON_START + refs[0].GetFromCollection() + "/" + refs[0].GetFromUuid() + "/" + refs[0].GetName(),
+-		}, got.GetBeacons())
++		require.Equal(t, []string{batch.ReferenceUUID(refs[0])}, got.GetBeacons())
+ 	})
+ 
+ 	t.Run("no delay at or below the engage ratio", func(t *testing.T) {
+@@ -1377,7 +1385,12 @@ func TestStreamHandlerReportsSchemaResolutionFailures(t *testing.T) {
+ 				{Collection: tc.collection, Uuid: uuid.New().String()},
+ 			}
+ 			refs := []*pb.BatchReference{
+-				{FromCollection: tc.collection, FromUuid: uuid.New().String(), ToUuid: uuid.New().String(), Name: "ref"},
++				{
++					FromCollection: tc.collection,
++					FromUuid:       uuid.New().String(),
++					ToCollection:   new("TargetCollection"),
++					ToUuid:         uuid.New().String(), Name: "ref",
++				},
+ 			}
+ 
+ 			mockBatcher := mocks.NewMockBatcher(t)
+@@ -1438,8 +1451,7 @@ func TestStreamHandlerReportsSchemaResolutionFailures(t *testing.T) {
+ 			defer sentMu.Unlock()
+ 			require.ElementsMatch(t, []string{objs[0].GetUuid(), objs[1].GetUuid()}, reportedUuids,
+ 				"every object of the rejected message must be reported to the client")
+-			expectedBeacon := batch.BEACON_START + refs[0].GetFromCollection() + "/" + refs[0].GetFromUuid() + "/" + refs[0].GetName()
+-			require.ElementsMatch(t, []string{expectedBeacon}, reportedBeacons,
++			require.ElementsMatch(t, []string{batch.ReferenceUUID(refs[0])}, reportedBeacons,
+ 				"every reference of the rejected message must be reported to the client")
+ 			require.Len(t, reportedErrors, 3, "one error per object and per reference")
+ 			for _, e := range reportedErrors {
+```
+
+**File**: `adapters/handlers/grpc/v1/batch/worker.go` (modified, +26/-8)
+```diff
+@@ -12,13 +12,14 @@
+ package batch
+ 
+ import (
++	"bytes"
+ 	"context"
+-	"fmt"
+ 	"math"
+ 	"strings"
+ 	"sync"
+ 	"time"
+ 
++	"github.com/google/uuid"
+ 	"github.com/sirupsen/logrus"
+ 	enterrors "github.com/weaviate/weaviate/entities/errors"
+ 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
+@@ -283,8 +284,25 @@ func (w *worker) fanInReplies(
+ 	return errs, retriable
+ }
+ 
+-func toBeacon(ref *pb.BatchReference) string {
+-	return fmt.Sprintf("%s%s/%s/%s", BEACON_START, ref.FromCollection, ref.FromUuid, ref.Name)
++// ReferenceUUID creates a universally unique reference ID.
++// It's a UUIDv3 (MD5 hash), that includes information
++// about both the source and the target of a cross-reference.
++//
++// The MD5 hash is a bit faster for having a higher collision rate.
++// Still, it's 2^64 to have a 50% probability of collision, an unlikely
++// number of references to be processed by a single stream.
++func ReferenceUUID(ref *pb.BatchReference) string {
++	var buf bytes.Buffer
++	buf.WriteString(ref.GetName())
++	buf.WriteString(ref.GetFromCollection())
++	buf.WriteString(ref.GetFromUuid())
++	buf.WriteString(ref.GetToCollection())
++	buf.WriteString(ref.GetToUuid())
++	buf.WriteString(ref.GetTenant())
 +
-+// readSegmentRecord reads one length-prefixed SegmentNode or SegmentNodeList and
-+// checks that the lengths inside it stay within it. Their decoders slice by
-+// those lengths unchecked, so a damaged record would otherwise panic and fail
-+// the whole bucket instead of ending the replay at this record.
-+func readSegmentRecord(reader io.Reader) ([]byte, error) {
-+	var lenBuf [8]byte
-+	if _, err := io.ReadFull(reader, lenBuf[:]); err != nil {
-+		return nil, errors.Wrap(err, "read segment len")
-+	}
-+	segmentLen := binary.LittleEndian.Uint64(lenBuf[:])
-+	if segmentLen < 8 || segmentLen > math.MaxInt {
-+		return nil, fmt.Errorf("invalid segment len %d", segmentLen)
-+	}
++	// The ID is only relevant in the scope a single stream and doesn't need a namespace.
++	id := uuid.NewMD5(uuid.Nil, buf.Bytes())
++	return id.String()
+ }
+ 
+ func (w *worker) sendReferences(ctx context.Context, streamId string, refs []*pb.BatchReference, cl *pb.ConsistencyLevel, retries int) ([]*pb.BatchStreamReply_Results_Success, []*pb.BatchStreamReply_Results_Error) {
+@@ -294,7 +312,7 @@ func (w *worker) sendReferences(ctx context.Context, streamId string, refs []*pb
+ 		for _, ref := range refs {
+ 			errors = append(errors, &pb.BatchStreamReply_Results_Error{
+ 				Error:  ctx.Err().Error(),
+-				Detail: &pb.BatchStreamReply_Results_Error_Beacon{Beacon: toBeacon(ref)},
++				Detail: &pb.BatchStreamReply_Results_Error_Beacon{Beacon: ReferenceUUID(ref)},
+ 			})
+ 		}
+ 		return nil, errors
+@@ -309,7 +327,7 @@ func (w *worker) sendReferences(ctx context.Context, streamId string, refs []*pb
+ 		for _, ref := range refs {
+ 			errors = append(errors, &pb.BatchStreamReply_Results_Error{
+ 				Error:  enterrors.MessageWithDocsLink(err),
+-				Detail: &pb.BatchStreamReply_Results_Error_Beacon{Beacon: toBeacon(ref)},
++				Detail: &pb.BatchStreamReply_Results_Error_Beacon{Beacon: ReferenceUUID(ref)},
+ 			})
+ 		}
+ 		return nil, errors
+@@ -334,13 +352,13 @@ func (w *worker) sendReferences(ctx context.Context, streamId string, refs []*pb
+ 			}
+ 			failed[err.Index] = struct{}{}
+ 			if w.isTransientReplicationError(err.Error) && retries < MAX_RETRIES {
+-				w.logger.WithField("streamId", streamId).Infof("transient replication error for reference %s: %s", toBeacon(refs[err.Index]), err.Error)
++				w.logger.WithField("streamId", streamId).Infof("transient replication error for reference %s: %s", ReferenceUUID(refs[err.Index]), err.Error)
+ 				retriable = append(retriable, refs[err.Index])
+ 				continue
+ 			}
+ 			errors = append(errors, &pb.BatchStreamReply_Results_Error{
+ 				Error:  err.Error,
+-				Detail: &pb.BatchStreamReply_Results_Error_Beacon{Beacon: toBeacon(refs[err.Index])},
++				Detail: &pb.BatchStreamReply_Results_Error_Beacon{Beacon: ReferenceUUID(refs[err.Index])},
+ 			})
+ 		}
+ 		if len(retriable) > 0 {
+@@ -361,7 +379,7 @@ func (w *worker) sendReferences(ctx context.Context, streamId string, refs []*pb
+ 			continue
+ 		}
+ 		successes = append(successes, &pb.BatchStreamReply_Results_Success{
+-			Detail: &pb.BatchStreamReply_Results_Success_Beacon{Beacon: toBeacon(ref)},
++			Detail: &pb.BatchStreamReply_Results_Success_Beacon{Beacon: ReferenceUUID(ref)},
+ 		})
+ 	}
+ 	return successes, errors
+```
+
+**File**: `adapters/handlers/grpc/v1/batch/worker_test.go` (modified, +4/-4)
+```diff
+@@ -109,7 +109,7 @@ func TestWorkerLoop(t *testing.T) {
+ 		require.NotNil(t, report.Stats, "Expected stats to be returned")
+ 		require.Len(t, report.Successes, 1, "Expected one result to be returned")
+ 
+-		require.Equal(t, toBeacon(ref1), report.Successes[0].GetBeacon(), "Expected second result's beacon to match")
++		require.Equal(t, ReferenceUUID(ref1), report.Successes[0].GetBeacon(), "Expected second result's beacon to match")
+ 
+ 		require.Empty(t, rq, "Expected reporting queue to be empty after reading all messages")
+ 		close(processingQueue) // Allow the draining logic to exit naturally
+@@ -207,12 +207,12 @@ func TestWorkerLoop(t *testing.T) {
+ 
+ 		require.Equal(t, UUID0, report.Successes[0].GetUuid(), "Expected first success' UUID to match")
+ 		require.Equal(t, UUID2, report.Successes[1].GetUuid(), "Expected second success' UUID to match")
+-		require.Equal(t, toBeacon(ref2), report.Successes[2].GetBeacon(), "Expected third success' beacon to match")
++		require.Equal(t, ReferenceUUID(ref2), report.Successes[2].GetBeacon(), "Expected third success' beacon to match")
+ 
+ 		require.Equal(t, "objs error", report.Errors[0].GetError(), "Expected first error to be first non-retriable object error")
+ 		require.Equal(t, UUID1, report.Errors[0].GetUuid(), "Expected first error's UUID to match")
+ 		require.Equal(t, "refs error", report.Errors[1].GetError(), "Expected second error to be first non-retriable reference error")
+-		require.Equal(t, toBeacon(ref1), report.Errors[1].GetBeacon(), "Expected second error's beacon to match")
++		require.Equal(t, ReferenceUUID(ref1), report.Errors[1].GetBeacon(), "Expected second error's beacon to match")
+ 
+ 		require.Empty(t, rq, "Expected reporting queue to be empty after reading all messages")
+ 		close(processingQueue) // Allow the draining logic to exit naturally
+@@ -575,7 +575,7 @@ func TestSendReferencesReplyIndexGuards(t *testing.T) {
+ 	beaconsOf := func(idxs ...int) []string {
+ 		out := make([]string, 0, len(idxs))
+ 		for _, i := range idxs {
+-			out = append(out, toBeacon(refs[i]))
++			out = append(out, ReferenceUUID(refs[i]))
+ 		}
+ 		return out
+ 	}
+```
+
+**File**: `test/acceptance/grpc/batching_test.go` (modified, +3/-6)
+```diff
+@@ -28,6 +28,7 @@ import (
+ 	"github.com/google/uuid"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
++	"github.com/weaviate/weaviate/adapters/handlers/grpc/v1/batch"
+ 	"github.com/weaviate/weaviate/entities/models"
+ 	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
+ 	"github.com/weaviate/weaviate/test/acceptance/replication/common"
+@@ -184,10 +185,10 @@ func TestGRPC_Batching(t *testing.T) {
+ 
+ 		require.Equal(t, uuid0, msg.GetResults().GetSuccesses()[0].GetUuid(), "First object UUID should match")
+ 		require.Equal(t, objects[1].Uuid, msg.GetResults().GetSuccesses()[1].GetUuid(), "Second object UUID should match")
+-		require.Equal(t, toBeacon(references[0]), msg.GetResults().GetSuccesses()[2].GetBeacon(), "First reference beacon should match")
++		require.Equal(t, batch.ReferenceUUID(references[0]), msg.GetResults().GetSuccesses()[2].GetBeacon(), "First reference beacon should match")
+ 
+ 		require.Equal(t, "property hasParagraphss does not exist for class Article", msg.GetResults().GetErrors()[0].GetError())
+-		require.Equal(t, toBeacon(references[1]), msg.GetResults().GetErrors()[0].GetBeacon(), "Second reference beacon should match")
++		require.Equal(t, batch.ReferenceUUID(references[1]), msg.GetResults().GetErrors()[0].GetBeacon(), "Second reference beacon should match")
+ 
+ 		obj, err := helper.GetObject(t, clsA.Class, strfmt.UUID(uuid0))
+ 		require.NoError(t, err, "ListObjects should not return an error")
+@@ -969,10 +970,6 @@ func stop(stream pb.Weaviate_BatchStreamClient) {
+ 	require.NoError(nil, err, "sending Stop over the stream should not return an error")
+ }
+ 
+-func toBeacon(ref *pb.BatchReference) string {
+-	return fmt.Sprintf("weaviate://localhost/%s/%s/%s", ref.FromCollection, ref.FromUuid, ref.Name)
+-}
+-
+ func randomByteVector(dim int) []byte {
+ 	vector := make([]byte, dim*4)
+ 
+```
+
+---
+
+### Incident Patch 3: `ea6d860b` (2026-11-13)
+**Commit Message**: Merge pull request #13863 from weaviate/jose/fix-update-rejects-unknown-module
+
+Schema update: reject a class-level module that does not exist
+
+**File**: `test/acceptance_with_go_client/collection_config_tests/update_unknown_module_test.go` (added, +118/-0)
+```diff
+@@ -0,0 +1,118 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
 +
-+	total := int(segmentLen)
-+	segBuf := make([]byte, 8, min(total, maxRecordPrealloc))
-+	copy(segBuf, lenBuf[:])
-+	for len(segBuf) < total {
-+		start := len(segBuf)
-+		chunk := min(total-start, maxRecordPrealloc)
-+		segBuf = slices.Grow(segBuf, chunk)[:start+chunk]
-+		if _, err := io.ReadFull(reader, segBuf[start:]); err != nil {
-+			return nil, errors.Wrap(err, "read segment contents")
-+		}
-+	}
++package collection_config_tests
 +
-+	if err := checkSegmentLayout(segBuf); err != nil {
-+		return nil, fmt.Errorf("segment of len %d: %w", segmentLen, err)
-+	}
-+	return segBuf, nil
++import (
++	"context"
++	"net"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"github.com/weaviate/weaviate-go-client/v6"
++	"github.com/weaviate/weaviate-go-client/v6/collections"
++	"github.com/weaviate/weaviate-go-client/v6/modules"
++	"github.com/weaviate/weaviate-go-client/v6/modules/selfprovided"
++	clschema "github.com/weaviate/weaviate/client/schema"
++	"github.com/weaviate/weaviate/test/docker"
++	"github.com/weaviate/weaviate/test/helper"
++)
++
++func TestUpdateWithUnknownModule_SingleNode(t *testing.T) {
++	c := connect(t, docker.New().WithWeaviateWithGRPC().WithWeaviateEnv("ENABLE_MODULES", "reranker-dummy"))
++	testUpdateWithUnknownModule(t, c)
 +}
 +
-+// checkSegmentLayout checks the layout SegmentNode and SegmentNodeList share
-+// after the total length: uint64-prefixed additions, uint64-prefixed deletions,
-+// uint32-prefixed key.
-+func checkSegmentLayout(segBuf []byte) error {
-+	rw := byteops.NewReadWriter(segBuf)
-+	rw.MoveBufferToAbsolutePosition(8)
-+	for _, field := range [2]string{"additions", "deletions"} {
-+		lenBytes, err := rw.ReadBytesFromBufferChecked(8)
-+		if err != nil {
-+			return fmt.Errorf("read %s len: %w", field, err)
-+		}
-+		if err := rw.SkipChecked(binary.LittleEndian.Uint64(lenBytes)); err != nil {
-+			return fmt.Errorf("read %s: %w", field, err)
-+		}
++func TestUpdateWithUnknownModule_Cluster(t *testing.T) {
++	c := connect(t, docker.New().WithWeaviateCluster(3).WithWeaviateExposeGRPCPort().
++		WithWeaviateEnv("ENABLE_MODULES", "reranker-dummy"))
++	testUpdateWithUnknownModule(t, c)
++}
++
++// rerankerDummy names the reranker-dummy module, which the Go client has no type for.
++type rerankerDummy struct{}
++
++func (rerankerDummy) Name() string { return "reranker-dummy" }
++
++// The client registry must know every module in a collection's moduleConfig:
++// api.Collection.UnmarshalJSON loops until it has matched every key against the
++// registry, so an unregistered key makes GetConfig spin forever.
++func init() { modules.Register(rerankerDummy{}) }
++
++// testUpdateWithUnknownModule checks that a class update naming a module the
++// node does not have is rejected with 422 and leaves the module config as it
++// was. The server used to accept the update and store the unknown module.
++//
++// The Go client v6 has no call that changes the module config of a
++// collection, so the update goes through the REST client of this repository.
++func testUpdateWithUnknownModule(t *testing.T, c *weaviate.Client) {
++	ctx := context.Background()
++	name := "UpdateWithUnknownModule"
++	require.NoError(t, c.Collections.Delete(ctx, name))
++	t.Cleanup(func() { require.NoError(t, c.Collections.Delete(ctx, name)) })
++
++	_, err := c.Collections.Create(ctx, collections.Collection{
++		Name:            name,
++		Properties:      []collections.Property{{Name: "name", DataType: collections.DataTypeText}},
++		Vectors:         map[string]collections.VectorConfig{"v": {Vectorizer: selfprovided.Vectorizer}},
++		RerankerModules: []modules.Module{rerankerDummy{}},
++	})
++	require.NoError(t, err)
++
++	update := helper.GetClass(t, name)
++	require.NotNil(t, update)
++	moduleConfig, ok := update.ModuleConfig.(map[string]any)
++	require.True(t, ok, "module config of the stored class: %#v", update.ModuleConfig)
++	moduleConfig["rerankr-openai"] = map[string]any{}
++
++	_, err = helper.Client(t).Schema.SchemaObjectsUpdate(
++		clschema.NewSchemaObjectsUpdateParams().WithClassName(name).WithObjectClass(update), nil)
++	require.Error(t, err, "an update naming a module that does not exist must be rejected")
++	var unprocessable *clschema.SchemaObjectsUpdateUnprocessableEntity
++	require.ErrorAs(t, err, &unprocessable, "expected 422, got: %v", err)
++	assert.Contains(t, unprocessable.Payload.Error[0].Message, "module with name rerankr-openai doesn't exist")
++
++	got, err := c.Collections.GetConfig(ctx, name)
++	require.NoError(t, err)
++	var rerankers []string
++	for _, m := range got.RerankerModules {
++		rerankers = append(rerankers, m.Name())
 +	}
-+	if _, err := rw.ReadBytesFromBufferWithUint32LengthIndicatorChecked(); err != nil {
-+		return fmt.Errorf("read key: %w", err)
++	assert.Equal(t, []string{"reranker-dummy"}, rerankers)
++}
++
++// connect starts the containers, points the REST client of this repository at
++// Weaviate and returns a Go client v6 for the same node.
++func connect(t *testing.T, compose *docker.Compose) *weaviate.Client {
++	t.Helper()
++	ctx := context.Background()
++	env, err := compose.Start(ctx)
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, env.Terminate(ctx)) })
++
++	helper.SetupClient(env.GetWeaviate().URI())
++	t.Cleanup(helper.ResetClient)
++
++	host, httpPort, err := net.SplitHostPort(env.GetWeaviate().URI())
++	require.NoError(t, err)
++	_, grpcPort, err := net.SplitHostPort(env.GetWeaviate().GrpcURI())
++	require.NoError(t, err)
++
++	c, err := weaviate.NewLocal(ctx,
++		weaviate.WithHost(host),
++		weaviate.WithHTTPPort(httpPort),
++		weaviate.WithGRPCPort(grpcPort),
++	)
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, c.Close()) })
++	return c
++}
+```
+
+**File**: `usecases/schema/class.go` (modified, +26/-0)
+```diff
+@@ -30,6 +30,7 @@ import (
+ 	"github.com/weaviate/weaviate/entities/vectorindex/flat"
+ 	enthfresh "github.com/weaviate/weaviate/entities/vectorindex/hfresh"
+ 	"github.com/weaviate/weaviate/entities/vectorindex/hnsw"
++	"golang.org/x/exp/maps"
+ 	"golang.org/x/text/unicode/norm"
+ 
+ 	"github.com/weaviate/weaviate/adapters/repos/db/inverted/stopwords"
+@@ -669,6 +670,10 @@ func UpdateClassInternal(h *Handler, ctx context.Context, className string, upda
+ 			}
+ 		}
+ 
++		if err := rejectUnknownModules(h.parser.modules, initial, updated); err != nil {
++			return err
++		}
++
+ 		allowed, err := mutableSettingsChanges(h.parser.modules, initial, updated, func(module, targetVector string) error {
+ 			return h.moduleConfig.ValidateModuleConfig(ctx, updated, module, targetVector)
+ 		})
+@@ -2096,6 +2101,27 @@ func validateUpdatingMT(current, update *models.Class) (enabled bool, err error)
+ 	return enabled, err
+ }
+ 
++// rejectUnknownModules fails when the update adds a class-level module this
++// node does not have, as class create does. A module already stored passes,
++// so a class still updates after one of its modules is disabled. It runs
++// before the RAFT command and not in the apply, where nodes with different
++// modules would disagree.
++func rejectUnknownModules(modules modulesProvider, initial, updated *models.Class) error {
++	updatedConfig, _ := updated.ModuleConfig.(map[string]any)
++	initialConfig, _ := initial.ModuleConfig.(map[string]any)
++	added := maps.Keys(updatedConfig)
++	slices.Sort(added)
++	for _, module := range added {
++		if _, stored := initialConfig[module]; stored {
++			continue
++		}
++		if !modules.HasModule(module) {
++			return fmt.Errorf("module with name %s doesn't exist", module)
++		}
 +	}
 +	return nil
 +}
++
+ func validateImmutableFields(initial, updated *models.Class, modulesProvider modulesProvider, allowed map[string][]string) error {
+ 	immutableFields := []immutableText{
+ 		{
 ```
 
-**File**: `adapters/repos/db/lsmkv/commitlogger_parser_roaring_set_test.go` (modified, +87/-0)
+**File**: `usecases/schema/module_config_update_test.go` (added, +68/-0)
 ```diff
-@@ -13,7 +13,10 @@ package lsmkv
- 
- import (
- 	"bytes"
-+	"encoding/binary"
- 	"io"
-+	"math"
-+	"runtime"
- 	"testing"
- 
- 	"github.com/stretchr/testify/assert"
-@@ -137,3 +140,87 @@ func TestCommitlogParserRoaringSetCopiesKey(t *testing.T) {
- 		})
- 	}
- }
+@@ -0,0 +1,68 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
 +
-+func le64(v uint64) []byte { return binary.LittleEndian.AppendUint64(nil, v) }
++package schema
 +
-+func le32(v uint32) []byte { return binary.LittleEndian.AppendUint32(nil, v) }
++import (
++	"testing"
 +
-+// withTotalLen prefixes fields with a total length that matches them, so the
-+// record passes the outer length check and reaches the inner fields.
-+func withTotalLen(fields ...[]byte) []byte {
-+	body := bytes.Join(fields, nil)
-+	return append(le64(uint64(8+len(body))), body...)
-+}
++	"github.com/stretchr/testify/require"
++)
 +
-+// TestCommitlogParserRoaringSetCorruptRecord pins that a damaged record is an
-+// error and not a panic. A v0 record has no checksum, so every length in it
-+// comes straight from the file. Recovery logs the error and keeps what it read
-+// before the record; a panic instead fails the bucket, and with it the shard.
-+func TestCommitlogParserRoaringSetCorruptRecord(t *testing.T) {
-+	records := []struct {
-+		name   string
-+		record []byte
-+	}{
-+		{name: "total length 0", record: le64(0)},
-+		{name: "total length 7", record: le64(7)},
-+		{name: "total length 4, more bytes follow", record: append(le64(4), make([]byte, 32)...)},
-+		{name: "total length beyond int64", record: append(le64(1<<63+16), make([]byte, 32)...)},
-+		{name: "total length beyond the data", record: append(le64(1<<20), make([]byte, 32)...)},
-+		{name: "record ends before the additions length", record: withTotalLen(le32(0))},
-+		{name: "additions length beyond the record", record: withTotalLen(le64(1<<40), make([]byte, 8))},
-+		{name: "additions length max uint64", record: withTotalLen(le64(math.MaxUint64), make([]byte, 8))},
-+		{name: "deletions length beyond the record", record: withTotalLen(le64(0), le64(1<<40))},
-+		{name: "record ends before the key length", record: withTotalLen(le64(0), le64(0))},
-+		{name: "key length beyond the record", record: withTotalLen(le64(0), le64(0), le32(1<<20))},
-+	}
-+	parsers := []struct {
-+		name  string
-+		parse func(prs *commitlogParserRoaringSet, r io.Reader) error
-+	}{
-+		{name: "bitmap record", parse: func(prs *commitlogParserRoaringSet, r io.Reader) error { return prs.parseNode(r) }},
-+		{name: "list record", parse: func(prs *commitlogParserRoaringSet, r io.Reader) error { return prs.parseNodeList(r) }},
-+	}
++func TestUpdateClass_ModuleConfigNamesOnlyEnabledModules(t *testing.T) {
++	const missing = "rerankr-openai"
 +
-+	for _, p := range parsers {
-+		for _, rec := range records {
-+			t.Run(p.name+"/"+rec.name, func(t *testing.T) {
-+				consumed := false
-+				prs := &commitlogParserRoaringSet{
-+					parser: &commitloggerParser{},
-+					consume: func(*Memtable, []byte, []uint64, []uint64) error {
-+						consumed = true
-+						return nil
-+					},
-+				}
++	t.Run("rejects a module that does not exist", func(t *testing.T) {
++		s := newSchemaWithModules(t)
++		stored := s.create(t, namedVectorClass(mutableModule, moduleSettings("a", "m")))
++		stored.ModuleConfig = map[string]any{generativeModule: map[string]any{"setting": "a"}}
 +
-+				var err error
-+				require.NotPanics(t, func() { err = p.parse(prs, bytes.NewReader(rec.record)) })
-+				require.Error(t, err)
-+				require.False(t, consumed, "a damaged record must not reach the memtable")
-+			})
++		update := namedVectorClass(mutableModule, moduleSettings("a", "m"))
++		update.ModuleConfig = map[string]any{
++			generativeModule: map[string]any{"setting": "a"},
++			missing:          map[string]any{"model": "x"},
 +		}
-+	}
-+}
++		require.EqualError(t, s.update(update), "module with name "+missing+" doesn't exist")
++		require.Equal(t, map[string]any{generativeModule: map[string]any{"setting": "a"}}, stored.ModuleConfig)
++	})
 +
-+// TestCommitlogParserRoaringSetLengthDoesNotSizeAllocation pins that a total
-+// length read from a damaged record does not decide how much memory replay
-+// allocates: only bytes actually present in the log do.
-+func TestCommitlogParserRoaringSetLengthDoesNotSizeAllocation(t *testing.T) {
-+	const claimed = 1 << 30
-+	record := append(le64(claimed), make([]byte, 64)...)
++	t.Run("rejects a module that does not exist on a class without module config", func(t *testing.T) {
++		s := newSchemaWithModules(t)
++		s.create(t, namedVectorClass(mutableModule, moduleSettings("a", "m")))
 +
-+	for _, parse := range []func(prs *commitlogParserRoaringSet, r io.Reader) error{
-+		func(prs *commitlogParserRoaringSet, r io.Reader) error { return prs.parseNode(r) },
-+		func(prs *commitlogParserRoaringSet, r io.Reader) error { return prs.parseNodeList(r) },
-+	} {
-+		prs := &commitlogParserRoaringSet{parser: &commitloggerParser{}}
++		update := namedVectorClass(mutableModule, moduleSettings("a", "m"))
++		update.ModuleConfig = map[string]any{missing: map[string]any{}}
++		require.EqualError(t, s.update(update), "module with name "+missing+" doesn't exist")
++	})
 +
-+		var before, after runtime.MemStats
-+		runtime.ReadMemStats(&before)
-+		err := parse(prs, bytes.NewReader(record))
-+		runtime.ReadMemStats(&after)
++	t.Run("accepts a module that exists", func(t *testing.T) {
++		s := newSchemaWithModules(t)
++		stored := s.create(t, namedVectorClass(mutableModule, moduleSettings("a", "m")))
 +
-+		require.Error(t, err)
-+		require.Less(t, after.TotalAlloc-before.TotalAlloc, uint64(claimed/16))
-+	}
++		update := namedVectorClass(mutableModule, moduleSettings("a", "m"))
++		update.ModuleConfig = map[string]any{"reranker-fake": map[string]any{"model": "x"}}
++		require.NoError(t, s.update(update))
++		require.Equal(t, "x", storedModuleSettings(t, stored, "reranker-fake", "")["model"])
++	})
++
++	t.Run("keeps a stored module that is no longer enabled", func(t *testing.T) {
++		// A module disabled after the class was created stays in its config;
++		// an update that carries it unchanged must still pass.
++		s := newSchemaWithModules(t)
++		stored := s.create(t, namedVectorClass(mutableModule, moduleSettings("a", "m")))
++		stored.ModuleConfig = map[string]any{missing: map[string]any{"model": "x"}}
++
++		update := namedVectorClass(mutableModule, moduleSettings("a", "m"))
++		update.ModuleConfig = map[string]any{missing: map[string]any{"model": "x"}}
++		update.Description = "new description"
++		require.NoError(t, s.update(update))
++	})
 +}
 ```
 
----
-
-### Incident Patch 2: `d857e797` (2026-11-12)
-**Commit Message**: Merge pull request #13870 from weaviate/fix/document-auto-generated-collection
-
-fix(auto_schema): fix description of a collection generated by auto-schema
-
-**File**: `usecases/objects/auto_schema.go` (modified, +1/-1)
+**File**: `usecases/schema/parser_test.go` (modified, +2/-1)
 ```diff
-@@ -165,7 +165,7 @@ func (m *AutoSchemaManager) createClass(ctx context.Context, principal *models.P
- 	class := &models.Class{
- 		Class:       className,
- 		Properties:  properties,
--		Description: "This property was generated by Weaviate's auto-schema feature on " + now.Format(time.ANSIC),
-+		Description: "This collection was generated by Weaviate's auto-schema feature on " + now.Format(time.ANSIC),
- 		// Auto-schema only ever creates named vectors. The legacy collection-level
- 		// vector index is left unset so the class never gets one, which also keeps
- 		// the door open for adding further named vectors later.
-```
-
----
-
-### Incident Patch 3: `24bb0782` (2026-11-11)
-**Commit Message**: fix(auto_schema): fix description of a collection generated by auto-schema
-
-**File**: `usecases/objects/auto_schema.go` (modified, +1/-1)
-```diff
-@@ -165,7 +165,7 @@ func (m *AutoSchemaManager) createClass(ctx context.Context, principal *models.P
- 	class := &models.Class{
- 		Class:       className,
- 		Properties:  properties,
--		Description: "This property was generated by Weaviate's auto-schema feature on " + now.Format(time.ANSIC),
-+		Description: "This collection was generated by Weaviate's auto-schema feature on " + now.Format(time.ANSIC),
- 		// Auto-schema only ever creates named vectors. The legacy collection-level
- 		// vector index is left unset so the class never gets one, which also keeps
- 		// the door open for adding further named vectors later.
+@@ -305,7 +305,8 @@ func (m fakeModulesProvider) IsMultiVector(name string) bool {
+ }
+ 
+ func (m fakeModulesProvider) HasModule(name string) bool {
+-	return name == "none" || strings.Contains(name, "colbert") || strings.Contains(name, "text2vec") || strings.Contains(name, "multi2vec")
++	return name == "none" || strings.Contains(name, "colbert") || strings.Contains(name, "text2vec") || strings.Contains(name, "multi2vec") ||
++		m.IsGenerative(name) || m.IsReranker(name) || strings.HasPrefix(name, "my-module")
+ }
+ 
+ func (m fakeModulesProvider) MigrateVectorizerSettings(any, any) bool {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13891** (2026-11-13): Return an error body with the GET /v1/tasks 403 (@etiennedi)
+- **PR #13883** (2026-11-13): Allow hfresh with multi-vector vectorizers; MUVERA implied and required for hfresh multi-vectors (stable/v1.40) (@rlmanrique)
 - **PR #13877** (closed): Cover /tasks in the RBAC no-permissions endpoint sweep (@etiennedi)
 - **PR #13873** (2026-11-12): fix(lsmkv): return an error for damaged RoaringSet WAL record lengths (@jfrancoa)
 - **PR #13870** (2026-11-12): fix(auto_schema): fix description of a collection generated by auto-schema (@bevzzz)
-- **PR #13868** (2026-11-12): Merge stable/v1.39 into stable/v1.40 (@etiennedi)
-- **PR #13867** (2026-11-12): Delete a collection's files at once even while a backup runs (@dirkkul)
-- **PR #13866** (2026-11-11): fix(replication): stop a count waiting on a replica in maintenance (@byronvoorbach)
+- **PR #13869** (2026-11-12): replication: allow async replication while a node is in maintenance mode (@jeroiraz)
 
 ---
 
@@ -2141,49 +2518,60 @@ fix(auto_schema): fix description of a collection generated by auto-schema
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lsmkv): return an error for damaged RoaringSet WAL record lengths
+## X. Merge pull request #13862 from weaviate/jose/fix-named-vector-index-type-change-
 
 **RULE**:
-When implementing operations in `adapters/repos/db/lsmkv/bucket_recover_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/acceptance_with_go_client/collection_config_tests/update_named_vector_index_type_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8a56463`: lsmkv): return an error for damaged RoaringSet WAL record lengths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `473e7c80`: Merge pull request #13862 from weaviate/jose/fix-named-vector-index-type-change-panic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/lsmkv/bucket_recover_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/acceptance_with_go_client/collection_config_tests/update_named_vector_index_type_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/weaviate/weaviate/entities/filters"
+//                           _       _
+// __      _____  __ ___   ___  __ _| |_ ___
+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
+//
+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
+//
+//  CONTACT: hello@weaviate.io
+//
 
-// TestBucketRecoveryRoaringSetWALWithCorruptRecord opens a RoaringSet or
-// RoaringSetRange bucket whose write-ahead-log ends in a damaged v0 record, the
-// state a volume returning I/O errors left behind in production. The bucket
-// must open with the records written before the damaged one.
-func TestBucketRecoveryRoaringSetWALWithCorruptRecord(t *testing.T) {
-	ctx := context.Background()
-	logger, _ := test.NewNullLogger()
+package collection_config_tests
 
-	nodes := []struct {
-		name string
-		node []byte
-	}{
-		{name: "total length 0", node: le64(0)},
-		{name: "total length 7", node: le64(7)},
-		{name: "total length beyond int64", node: append(le64(1<<63+16), make([]byte, 32)...)},
-		{name: "additions length beyond the record", node: withTotalLen(le64(1<<40), make([]byte, 8))},
-		{name: "key length beyond the record", node: withTotalLen(le64(0), le64(0), le32(1<<20))},
-	}
-	strategies := []struct {
-		strategy string
-		write    func(t *testing.T, b *Bucket, key, value uint64)
-		check    func(t *testing.T, b *Bucket, key, value uint64)
-	}{
-		{
-			strategy: StrategyRoaringSet,
-			write: func(t *testing.T, b *Bucket, key, value uint64) {
-				require.NoError(t, b.Roaring
+import (
+	"context"
+	"net"
+	"net/http"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/weaviate/weaviate-go-client/v6"
+	"github.com/weaviate/weaviate-go-client/v6/collections"
+	"github.com/weaviate/weaviate-go-client/v6/collections/vectorindex"
+	"github.com/weaviate/weaviate-go-client/v6/modules/selfprovided"
+	"github.com/weaviate/weaviate/test/docker"
+)
+
+func TestUpdateNamedVectorIndexType_SingleNode(t *testing.T) {
+	c := newClient(t, docker.New().WithWeaviateWithGRPC())
+	testUpdateNamedVectorIndexType(t, c)
+}
+
+func TestUpdateNamedVectorIndexType_Cluster(t *testing.T) {
+	c := newClient(t, docker.New().WithWeaviateCluster(3).WithWeaviateExposeGRPCPort())
+	testUpdateNamedVectorIndexType(t, c)
+}
+
+// testUpdateNamedVectorIndexType checks that changing the vector index type of
+// 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2193,4 +2581,4 @@ func TestBucketRecoveryRoaringSetWALWithCorruptRecord(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8a56463` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `473e7c80` are properly handled with clean fallback behavior.

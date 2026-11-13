@@ -9604,3 +9604,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-13T18:43:37.840Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `b79927a3` | Multi-dimensional audit evidence | 2026-11-13T18:43:41.070Z |
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `117d1254` | Multi-dimensional audit evidence | 2026-11-13T18:43:47.262Z |
+| `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-11-13T18:52:19.277Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `0ac7d216` | Multi-dimensional audit evidence | 2026-11-13T18:52:21.902Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `b0c66974` | Multi-dimensional audit evidence | 2026-11-13T18:52:26.067Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `927ec35c` | Multi-dimensional audit evidence | 2026-11-13T18:52:34.422Z |
+| `learn-dom-k-199063a7` | `project://actix-actix-web` | `0ac7d216` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md` | 2026-11-13T18:53:10.638Z |

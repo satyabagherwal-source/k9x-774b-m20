@@ -9571,3 +9571,8 @@
 | `CYCLE-20261113-RYLO` | `2026-11-13T18:43:37.836Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`e6b4b187...`) |
 | `CYCLE-20261113-S137` | `2026-11-13T18:43:41.059Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`657cdf25...`) |
 | `CYCLE-20261113-S5V5` | `2026-11-13T18:43:47.249Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`20065d23...`) |
+| `CYCLE-20261113-34Y2` | `2026-11-13T18:52:19.274Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`7e7e5649...`) |
+| `CYCLE-20261113-36YT` | `2026-11-13T18:52:21.893Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f63f582a...`) |
+| `CYCLE-20261113-3A6F` | `2026-11-13T18:52:26.055Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`5f388e7b...`) |
+| `CYCLE-20261113-3GMJ` | `2026-11-13T18:52:34.411Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e4ed48be...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T18:53:10.638Z` | `actix-actix-web` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-199063A7` [Domain K] | Yes (`5ae06628...`) |

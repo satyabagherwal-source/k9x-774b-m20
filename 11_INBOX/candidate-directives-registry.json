@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T18:43:51.537Z",
+  "last_updated": "2026-11-13T18:53:10.848Z",
   "directives": [
     {
       "id": "CD-001",
@@ -9836,6 +9836,39 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-81187E--docs-fix-api-links-for-library-types-na.md",
       "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-48QN",
+      "directive_title": "test: replace Actix test attributes with Tokio local tests (#4417)",
+      "source_repo": "actix-actix-web-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-48QN-test-replace-actix-test-attributes-with-tokio-local-tests-4417.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-3AAR",
+      "directive_title": "Update YT Music: now a native SwiftUI app (#2523)",
+      "source_repo": "dkhamsing/open-source-ios-apps",
+      "source_commit": "b0c66974",
+      "staged_file": "11_INBOX/candidate-directives/CD-3AAR-update-yt-music-now-a-native-swiftui-app-2523.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-3GQV",
+      "directive_title": "Merge pull request #13862 from weaviate/jose/fix-named-vector-index-type-change-",
+      "source_repo": "weaviate/weaviate",
+      "source_commit": "927ec35c",
+      "staged_file": "11_INBOX/candidate-directives/CD-3GQV-merge-pull-request-13862-from-weaviate-jose-fix-named-vector-index-type-change.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "date_staged": "2026-11-13",
+      "domain_letter": "G"
     }
   ]
 }
