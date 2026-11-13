@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-4AWG",
-    "timestamp": "2026-11-10T01:46:26.992Z",
-    "repository": "restatedev/restate",
-    "learningId": "learn-github-restatedev-restate",
-    "contentHash": "b6bbb39efa479d5f36287371e8001c0b0c262efa736e57e2dd747c2b9fc8cf52",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-JMXC",
-    "timestamp": "2026-11-10T01:58:22.416Z",
-    "repository": "jhspetersson/fselect",
-    "learningId": "learn-github-jhspetersson-fselect",
-    "contentHash": "f2bfad2dbea05e4376b54be15b984f6617e618e3d1c7bb97f44c46e9cae3d0bb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-JPMX",
-    "timestamp": "2026-11-10T01:58:25.929Z",
-    "repository": "software-mansion/react-native-gesture-handler",
-    "learningId": "learn-github-software-mansion-react-native-gesture-handler",
-    "contentHash": "6fccda01d8b60ef6bac6482ab9690b7b37721ff6e7d593d3fba40fda11cad76a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-JV0Q",
     "timestamp": "2026-11-10T01:58:32.906Z",
     "repository": "projectdiscovery/nuclei",
@@ -7492,6 +7447,51 @@
     "contentHash": "cd861169bd54da2377c70ee21076d37f4e0155d4fd30f0ee9f6ed2a6bdf1881b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-BHGF",
+    "timestamp": "2026-11-13T07:46:57.951Z",
+    "repository": "XHToken/Spark-X2.6-4B-GGUF",
+    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
+    "contentHash": "5fa1f936992d0563bd2077ac6fe4381b5eba5fcdfac0fd29052b3c5e53bfe845",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-BW7L",
+    "timestamp": "2026-11-13T07:47:17.073Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "0427a1dc11b01f790dccafcc687da63eb58a97420f550cd0cf6ac419c0347a83",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-C0HG",
+    "timestamp": "2026-11-13T07:47:22.612Z",
+    "repository": "kumahq/kuma",
+    "learningId": "learn-github-kumahq-kuma",
+    "contentHash": "6c7548a6c39a929d2e5541bace632dc19f3f619440d1288b82e3a3f7992e123b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

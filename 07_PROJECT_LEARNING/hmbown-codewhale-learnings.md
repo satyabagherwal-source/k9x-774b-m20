@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `1e2106e6`  
+> **Source Version**: `622a4930`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T14:56:22.546Z  
+> **Timestamp**: 2026-11-13T07:47:05.747Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,14 +17,14 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T14:56:22.263Z  
+> **Harvest Timestamp**: 2026-11-13T07:47:05.740Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `codewhale-hq/Codewhale`
-- **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
+- **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
 - **Stars / Engagement**: 41176 stars
@@ -1824,11 +1824,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7276** (2026-11-10): **fix(engine): match search include globs in linear time**
-  *Symptoms*: ## What and why  For each `*`, `matches_simple_glob` retried the rest of the pattern at every remaining position. It kept no memo and built a new `String` on every attempt. With an include pattern such as `*a*a*a*a*a*a*a*a*a*a*b`, a file named 40 `a`s plus `.rs` took on the order of C(40,10) ≈ 8·10^8 recursive calls. That cost repeats for every similar file in the walk. #7254 already bounded brace expansion and repeated globstars; this was the last unbounded path.  The function now uses the standard iterative two-pointer wildcard match: it remembers the last `*` and backtracks to it, so it runs in O(text × pattern). The matching rules are unchanged:  - `*` matches zero or more characters, including `/` as before. - `?` matches exactly one character. - Literals are compared by `char`, so multi-byte names stay safe (#249).  ## Related issue (optional)  Refs #7274 (partial: the glob item)  ## How I tested it  - I extended `pathological_globs_stay_bounded` with the many-stars case. On `main` it does not finish within the test's 2 s bound; I stopped it after 60 s. With the fix it passes, and a positive match for the same pattern still holds. - `cargo test -p codewhale-engine --lib tools::search`: 31 passed - `cargo clippy -p codewhale-engine --all-targets --all-features --locked -- -D warnings`: clean - `cargo fmt --all -- --check`: clean  ## Checklist  - [x] One focused change, started from current `main` (no need to rebase when `main` moves) - [x] `cargo fmt --all` passes, and t
+- **Issue #7323** (2026-11-12): **fix(app-server): read the original path of a worktree-side rename**
+  *Symptoms*: ## What and why  `parse_porcelain` in `crates/app-server/src/runtime_api/git.rs` read the extra original-path record of a rename/copy only when the **index** column was `R` or `C`.  Git reports a rename in either column, and since 2.18 the worktree column carries one when only the working tree moved — for example `git mv` followed by `git reset` and `git add -N`, which reports `" R new.md\0old.md\0"`. The original-path record was then parsed as a status row of its own:  - With a non-ASCII source (`ab说明.md`), `record[3..]` sliced at byte 3, inside `说` (`E8 AF B4`), and panicked. The panic happens inside `spawn_blocking`, so every `GET /v1/git` and `GET /v1/changes` returned 500 `git status failed` until the worktree changed. - With an ASCII source, a phantom row appeared (`index = 'a'`, `worktree = '.'`, `path = "xt"`), corrupting the file list, the staged/unstaged counts and the row revision tokens.  The parser now reads the original path when either column reports a rename or copy, and slices the path through `get` before consuming the next field, so a malformed record is skipped instead of panicking and the record stream stays in sync.  ## Where this came from  Refs #7309  ## How I tested it  Two new tests in the existing `runtime_api::git::tests` module. Both use a real temporary repository and drive the same sequence the issue describes (`git mv`, `git reset`, `git add -N`), so neither mocks the parser input.  `cargo test -p codewhale-app-server --lib -- worktree_column_r
 
-- **Issue #7275** (2026-11-10): **fix: reject negative retry delays at config load instead of panicking on retry**
-  *Symptoms*: ## What and why  With `[retry] jitter = false` and a negative `max_delay` or `initial_delay`, `RetryConfig::delay_for_attempt` called `Duration::from_secs_f64` with a negative value, which panicked on the first transport retry. With jitter on, the `.max(0.0)` clamp hid the problem.  - `Config::validate` now rejects a negative or non-finite `initial_delay`, `max_delay` or `exponential_base` when the config loads. This matches how `[retry.rate_limit]` already rejects invalid values. - `delay_for_attempt` and `TokenBucket::delay_until_available` keep a no-panic fallback for the public builders and for environment input:   - a negative delay becomes zero;   - a delay too large for a `Duration` becomes `Duration::MAX`. Every caller already caps or saturates the value.   - As a result, a tiny `CODEWHALE_RATE_LIMIT_RPS`, such as `1e-30`, now waits indefinitely instead of panicking.  ## Related issue (optional)  Refs #7274 (partial: the retry item)  ## How I tested it  - New tests, all of which fail on `main`:   - `negative_retry_delay_is_invalid` (runtime)   - `delay_for_attempt_survives_negative_and_huge_configured_delays` (engine)   - `token_bucket_saturates_delay_for_a_tiny_refill_rate` (engine) - `cargo test -p codewhale-runtime --lib negative_retry_delay`: 1 passed - `cargo test -p codewhale-engine --lib -- delay_for_attempt token_bucket`: 7 passed - `cargo clippy -p codewhale-runtime -p codewhale-engine --all-targets --all-features --locked -- -D warnings`: clean - `cargo fmt 
+- **Issue #7322** (2026-11-12): **fix(tui): count characters, not bytes, for the session title limit**
+  *Symptoms*: ## What and why  Renaming a session in the session picker rejected a 36-character Chinese title as too long ("1–100 characters").  - **Root cause**: `SessionPickerView::rename_selected` checked `new_title.len() > 100`, which counts bytes. A CJK character is three bytes in UTF-8, so a Chinese title over 33 characters failed the check. The engine's own rename validation already counts characters against `MAX_SESSION_TITLE_CHARS`. - **Fix**: the picker counts characters and uses `MAX_SESSION_TITLE_CHARS` instead of the literal `100`, so it matches the engine and the message.  ## Where this came from  Bug fix, no issue.  ## How I tested it  - New regression test `rename_selected_limits_title_by_characters` (36 Chinese characters, 108 bytes). It fails on `main` (the rename is rejected) and passes with the fix. - With the branch merged onto current `main`: `RUST_MIN_STACK=16777216 cargo test --locked -p codewhale-tui --lib -- session_picker::tests::rename_selected`: 2 passed, 0 failed. With the old byte check put back: 1 passed, 1 failed (`rename_selected_limits_title_by_characters`). - `cargo fmt --all -- --check`: clean  ## Checklist  - [x] One focused change, started from current `main` (no need to rebase when `main` moves) - [x] `cargo fmt --all` passes, and tests cover new or changed behavior - [ ] If this adds or changes a user-facing feature, I updated its docs and its row in `docs/features.toml` (not applicable: bug fix only) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1845,407 +1845,1217 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cdf6dff9` (2026-11-11)
-**Commit Message**: fix(receipts): a thread receipt carries tokens only, with no provider-call count (CW-8032)
+### Incident Patch 1: `3f2a0194` (2026-11-12)
+**Commit Message**: fix(state,snapshot): keep index entries after a torn line and clamp prune age (#7316)
 
-A Runtime thread's receipt counted turns and printed them as provider calls,
-which they are not. thread_tokens no longer sets the count, and both
-docs/RECEIPTS.md samples drop it. The opening sentence now says what is true
-for this change: tokens on every receipt, the cost line on terminal sessions
-only; a thread receipt's cost follows in a later slice.
+* fix(state,snapshot): keep index entries after a torn line and clamp prune age
 
-Regenerated web/data/agent-docs.generated.json.
+Session index: a crash mid-append leaves a final line with no trailing
+newline. The next append_thread_name wrote straight after it, so the new
+entry joined the fragment, failed to parse and was skipped, and the name
+the caller had just saved was lost. Start the entry on a new line when
+the file does not end in one. The existing torn-line test wrote its
+fragment with writeln!, so it never covered the unterminated case.
 
-Checks, rebased on origin/main fc78dc86d8 (Boat farm, Linux x86_64, local-test
-evidence only): receipts::tests, metrics::, debug:: lib tests passed 43, 3, 28,
-23 and 106 across the five crates, 0 failed, 0 ignored; clippy --all-targets
--D warnings on the same five crates exit 0. Locally: cargo fmt --all --check
-and scripts/preflight.sh --check OK.
+Snapshot prune: cutoff was `now - max_age.as_secs() as i64`. A
+max_age_days above about 1.07e14 (for example i64::MAX as "keep
+forever") gives more than i64::MAX seconds after saturating_mul, the
+cast wraps negative, the cutoff lands in the future and every snapshot
+is pruned at boot. Clamp to i64::MAX and use saturating_sub.
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Both new tests fail on main (thread-3 lookup None; 1 snapshot removed
+instead of 0) and pass here: codewhale-state 28 passed,
+codewhale-snapshot 92 passed.
 
-**File**: `crates/engine/src/receipts/tests.rs` (modified, +5/-2)
+Refs #7298
+
+* chore: keep changelog edits out of the branch
+
+**File**: `crates/snapshot/src/repo.rs` (modified, +17/-1)
 ```diff
-@@ -490,8 +490,10 @@ fn markdown_and_json_share_one_record() {
-         "Changed 1 file (+2 −1) · ran 1 command · made 1 MCP call · 1 approved by you · 1 approved by session rule · 1 ran without asking under Ask · 1 denied by you · 2 other failures"
-     ));
-     assert!(markdown.contains("\n1. edited `src/parse.rs` (+2 −1)"));
--    assert!(markdown.contains("\nNot recorded:\n- Cost: ")
--        && markdown.contains("\n- Shell file changes:"));
-+    assert!(
-+        markdown.contains("\nNot recorded:\n- Cost: ")
-+            && markdown.contains("\n- Shell file changes:")
-+    );
+@@ -1851,7 +1851,7 @@ impl SnapshotRepo {
+             .duration_since(UNIX_EPOCH)
+             .map_err(|e| io_other(format!("clock error: {e}")))?
+             .as_secs() as i64;
+-        let cutoff = now - max_age.as_secs() as i64;
++        let cutoff = now.saturating_sub(i64::try_from(max_age.as_secs()).unwrap_or(i64::MAX));
  
-     let json: Value = serde_json::from_str(&render_json(&receipt)).expect("json");
-     assert_eq!(json["schema_id"], RECEIPT_SCHEMA_ID);
-@@ -1281,6 +1283,7 @@ fn thread_receipt_sums_turn_tokens_and_points_to_the_usage_endpoint_for_cost() {
-         (tokens.input, tokens.output, tokens.total),
-         (Some(100), Some(20), 120)
-     );
-+    assert_eq!(tokens.calls, None);
-     assert!(usage.cost.is_none());
-     assert!(
-         receipt
-```
-
-**File**: `crates/engine/src/receipts/usage.rs` (modified, +3/-4)
-```diff
-@@ -188,20 +188,19 @@ pub fn with_usage(mut receipt: Receipt, usage: ReceiptUsage) -> Receipt {
- 
- pub fn thread_tokens(turns: &[&crate::runtime_threads::TurnRecord]) -> Option<ReceiptTokens> {
-     let mut tokens = ReceiptTokens::default();
--    let (mut input, mut output, mut calls) = (0u64, 0u64, 0usize);
-+    let (mut input, mut output, mut turns_with_usage) = (0u64, 0u64, 0usize);
-     for usage in turns.iter().filter_map(|turn| turn.usage.as_ref()) {
-         input = input.saturating_add(u64::from(usage.input_tokens));
-         output = output.saturating_add(u64::from(usage.output_tokens));
-         add(&mut tokens.cache_read, usage.prompt_cache_hit_tokens);
-         add(&mut tokens.cache_write, usage.prompt_cache_write_tokens);
-         add(&mut tokens.reasoning, usage.reasoning_tokens);
--        calls += 1;
-+        turns_with_usage += 1;
-     }
--    (calls > 0).then(|| {
-+    (turns_with_usage > 0).then(|| {
-         tokens.input = Some(input);
-         tokens.output = Some(output);
-         tokens.total = input.saturating_add(output);
--        tokens.calls = Some(calls);
-         tokens
-     })
- }
-```
-
-**File**: `docs/RECEIPTS.md` (modified, +4/-3)
-```diff
-@@ -7,8 +7,9 @@ already keeps. It lists, in order, the files changed, commands run, web and
- MCP calls, agents started, approvals (and who decided each one), and
- failures, with totals on top. It also counts what ran without asking, and
- names the permission posture that let it. Below the totals it carries the
--provider's token counts and the cost line `/cost` prints (see
--[Tokens and cost](#tokens-and-cost)).
-+provider's token counts; a terminal session's receipt also carries the cost
-+line `/cost` prints, and a Runtime thread's receipt carries token counts only
-+(see [Tokens and cost](#tokens-and-cost)).
- 
- ```text
- # Receipt: Fix the parser
-@@ -286,7 +287,7 @@ totals always cover every action, and `omitted_actions` counts the rest.
-     "other_tool_calls": 0
-   },
-   "usage": {
--    "tokens": { "input": 1200, "output": 90, "total": 1290, "cache_read": 800, "calls": 2 }
-+    "tokens": { "input": 1200, "output": 90, "total": 1290, "cache_read": 800 }
-   },
-   "actions": [
-     {
-```
-
-**File**: `docs/zh_hans/RECEIPTS.md` (modified, +2/-2)
-```diff
-@@ -3,7 +3,7 @@
- > 英文原文：[RECEIPTS.md](../RECEIPTS.md)。
- > 最后与英文同步日期（last synced with English revision）：2026-11-11。
- 
--回执（receipt）用 Codewhale 已经保存的记录回答“这个会话做了什么？”。它按顺序列出改动的文件、运行的命令、Web 与 MCP 调用、启动的智能体、审批（以及每一项由谁决定）和失败，并在顶部给出汇总。它还会统计哪些操作未经询问就运行了，并写明放行它们的权限姿态。汇总下方还会给出提供商报告的 token 数，以及 `/cost` 打印的同一条费用说明（见[Token 与费用](#token-与费用)）。
-+回执（receipt）用 Codewhale 已经保存的记录回答“这个会话做了什么？”。它按顺序列出改动的文件、运行的命令、Web 与 MCP 调用、启动的智能体、审批（以及每一项由谁决定）和失败，并在顶部给出汇总。它还会统计哪些操作未经询问就运行了，并写明放行它们的权限姿态。汇总下方还会给出提供商报告的 token 数；终端会话的回执另有 `/cost` 打印的同一条费用说明，Runtime 线程的回执只给 token 数（见[Token 与费用](#token-与费用)）。
- 
- ```text
- # Receipt: Fix the parser
-@@ -176,7 +176,7 @@ JSON 中同一部分是 `usage`，费用是一个对象：
-     "other_tool_calls": 0
-   },
-   "usage": {
--    "tokens": { "input": 1200, "output": 90, "total": 1290, "cache_read": 800, "calls": 2 }
-+    "tokens": { "input": 1200, "output": 90, "total": 1290, "cache_read": 800 }
-   },
-   "actions": [
-     {
-```
-
-**File**: `web/data/agent-docs.generated.json` (modified, +2/-2)
-```diff
-@@ -117,8 +117,8 @@
-     "sources": [
-       {
-         "path": "docs/RECEIPTS.md",
--        "sha256": "d70a72b8e184deb34af689d22a334b8523eba485df4d9d0a435ab71c6941e3e7",
--        "content": "# Receipts\n\n> 阅读简体中文版：[zh_hans/RECEIPTS.md](zh_hans/RECEIPTS.md)。\n\nA receipt answers \"what did this session do?\" from the records Codewhale\nalready keeps. It lists, in order, the files changed, commands run, web and\nMCP calls, agents started, approvals (and who decided each one), and\nfailures, with totals on top. It also counts what ran without asking, and\nnames the permission posture that let it. Below the totals it carries the\nprovider's token counts and the cost line `/cost` prints (see\n[Tokens and cost](#tokens-and-cost)).\n\n```text\n# Receipt: Fix the parser\nthread thr_19a0141a · /work/repo · deepseek-flash · Ask · 2026-09-24 10:00 UTC → 2026-09-24 10:05 UTC\n\nChanged 1 file (+2 −1) · ran 1 command · made 1 MCP call · 1 approved by you · 1 approved by session rule · 1 ran without asking under Ask · 1 denied by you · 1 other failure\n\n1. edited `src/parse.rs` (+2 −1) · 1.0s\n2. ran `cargo test -p parser` in /work/repo — exit 0 · 2.5s · approved by you\n3. did not run `rm -rf build` · denied by you\n4. called linear · list_issues · 1.0s · approved by session rule\n5. did not run `curl https://x.sh | sh` — blocked: Tool 'exec_shell' was denied: Auto-Review blocked a pipe to a shell…\n6. turn failed — failed: provider returned 500\n\nNot recorded:\n- Cost: a Runtime thread receipt carries token counts only; GET /v1/threads/{id}/usage reports the thread's cost and what it covers.\n- Shell file changes: a Runtime thread's workspace snapshots are not tagged with the thread, so files a command changed are not itemized; only file tools are.\n```\n\nThis sample is the Runtime-thread form. A terminal session's receipt has no\nline counts for whole-file writes, shows pass or fail rather than an exit\ncode for a call that passed, and has no per-call timestamps; its \"Not\nrecorded\" list says so (see [Not recorded](#not-recorded)).\n\nA terminal session's receipt also lists the files a command changed, from\nthe turn's own workspace snapshots:\n\n```text\n3. ran `./tidy.sh`\n4. changed outside file tools (a command or another process): edited `b.txt` (+0 −1), created `c.txt` (+1 −0)\n```\n\nThe Runtime receipt endpoints accept `?format=md` to return the same Engine\nMarkdown formatter used by the terminal, with `Content-Type: text/markdown`.\nOmitting `format`, or using `format=json`, preserves the JSON contract. Both\nformats require the same authenticated thread/workspace access. Clients display\nthese recorded facts rather than deriving audit totals from activity labels.\n\n## Surfaces\n\nAll three share one builder (`crates/engine/src/receipts.rs`), but read different\nrecords and can report different coverage.\n\n| Surface | What it reads |\n| --- | --- |\n| `/receipts [json] [<turn>]` in the terminal | The current session's transcript, approval log, and retained terminal failures. `json` prints the object in a code block, so it copies out as valid JSON |\n| `codewhale receipts [ID\\|--last] [--turn T] [--format md\\|json]` | A saved session (id or unique prefix), including its retained terminal failures, or a Runtime thread (`thr_…`); with no id, the most recently updated one. `receipt` is an alias |\n| `GET /v1/threads/{id}/receipt`, `GET /v1/threads/{id}/turns/{turn_id}/receipt` | A Runtime thread (the app, `codewhale serve`), behind the normal `/v1` bearer boundary |\n\nAll three only read. They never call a provider, run a tool, write a file,\nor change runtime state.\n\nExec runs that offer tools, including `exec --auto`, save a session in every\noutput format, so `codewhale receipts --last` can read their receipts after\nthey finish. Resumed sessions and `--output-format stream-json` runs are also\nsaved. Other answer-only text and `--json` runs are saved only if conversation\ncompaction starts; use `--output-format stream-json` to always keep a session.\n\n`codewhale receipts` reads Runtime threads from the machine's default store\n(`tasks/runtime/`, or `$CODEWHALE_RUNTIME_DIR`). A thread kept in one\nterminal session's own store (`sessions/<id>/runtime/`) is not found by id;\nthe API reads whatever store its server owns.\n\n## Where the facts come from\n\n| Session kind | Record | Holds |\n| --- | --- | --- |\n| Terminal session | `sessions/<id>.json` | Every tool call and its result text, in order; each prompt's `<turn_meta>` names the posture the turn ran under; `turn_outcomes` records terminal turn status and errors |\n| Terminal session | `sessions/<id>/approval_receipts.jsonl` | Every approval ask and decision, with time and who decided |\n| Runtime thread | `tasks/runtime/turns`, `items` | Every tool call with its input, status, start and end time, and structured result (exit code, diff, agent status); each turn's `permission_posture` |\n| Runtime thread | `tasks/runtime/events/<thread>.json
-```
-
----
-
-### Incident Patch 2: `aa3d4235` (2026-11-11)
-**Commit Message**: fix(acp): a child engine gets no MCP tools from the ACP tool build (CW-7941)
-
-The ordinary tool build drops MCP tools for a child engine. The ACP build now
-does the same: for a child it adds no MCP tool to the catalog or to the turn's
-allow list. No child engine runs an ACP turn today (children use the Child
-profile and ACP turns offer no spawn tool), so this closes a path that cannot
-be reached yet and keeps the two builds from drifting apart.
-
-acp_tool_build_with_mcp becomes pub(super) so the child-host tests can call
-it. The new test child_engine_gets_no_mcp_tools_from_the_acp_tool_build hands
-the same live MCP tool to a root ACP engine (in the catalog, on the allow
-list) and to a child engine (in neither).
-
-Checks on the stack tip (farm, Linux x86_64, cargo nextest; run
-20261111T062016Z-acpplugland-tests-74e101: 97 run, 97 passed, 0 failed):
-- codewhale-engine tests matching acp, host_profile or child_host:
-  40 passed, 0 failed, the new test among them
-- cargo clippy --workspace --all-targets --all-features --locked (CI flags):
-  exit 0, no lint output (run 20261111T062101Z-acpplugland-clippy-4c7ea7)
-Not run: the new test against the build without this change. It asserts on
-th
-
-**File**: `crates/engine/src/core/engine/host_profile.rs` (modified, +6/-2)
-```diff
-@@ -89,7 +89,7 @@ impl Engine {
-         self.acp_tool_build_with_mcp(authority, route, allowed, McpToolState::Disabled)
-     }
- 
--    fn acp_tool_build_with_mcp(
-+    pub(super) fn acp_tool_build_with_mcp(
-         &self,
-         authority: &TurnAuthority,
-         route: &TurnRouteContext,
-@@ -157,7 +157,11 @@ impl Engine {
-             .unwrap_or_default()
-             .into_iter()
-             .collect();
--        let mut mcp_tools = mcp.tools().to_vec();
-+        let mut mcp_tools = if self.child_host.is_none() {
-+            mcp.tools().to_vec()
-+        } else {
-+            Vec::new()
-+        };
-         mcp_tools.sort_by(|a, b| a.name.cmp(&b.name));
-         let mcp_tool_names: Vec<String> = mcp_tools.iter().map(|tool| tool.name.clone()).collect();
-         let allowed = Some(
-```
-
-**File**: `crates/engine/src/core/engine/tests/child_host.rs` (modified, +43/-0)
-```diff
-@@ -179,6 +179,49 @@ async fn child_ceiling_filters_acp_foreground_catalog_without_optional_allow_lis
-     assert!(!dir.path().join("blocked.txt").exists());
- }
- 
-+#[tokio::test(flavor = "current_thread")]
-+async fn child_engine_gets_no_mcp_tools_from_the_acp_tool_build() {
-+    let dir = tempdir().unwrap();
-+    let _home = crate::test_support::SealedHome::at(dir.path());
-+    let (child, _handle, _authority, route) = fixture(dir.path(), None);
-+    let (mut root, _root_handle) = Engine::new(
-+        EngineConfig {
-+            workspace: dir.path().into(),
-+            snapshots_enabled: false,
-+            memory_enabled: false,
-+            ..Default::default()
-+        },
-+        &route.api_config,
-+    );
-+    root.host_profile = EngineHostProfile::Acp;
-+    let authority =
-+        TurnAuthority::from_effective_fields(AppMode::Agent, true, false, true, ApprovalMode::Auto);
-+    let live = || McpToolState::Live {
-+        tools: vec![api_tool("mcp_fixture_echo")],
-+        server_count: 1,
-+    };
-+    let offered = root.acp_tool_build_with_mcp(&authority, &route, None, live());
-+    assert_eq!(offered.mcp_tool_names, ["mcp_fixture_echo"]);
-+    assert!(
-+        offered
-+            .surface
-+            .catalog
-+            .iter()
-+            .any(|tool| tool.name == "mcp_fixture_echo")
-+    );
-+    assert!(offered.surface.passes_allow_list("mcp_fixture_echo"));
-+    let build = child.acp_tool_build_with_mcp(&authority, &route, None, live());
-+    assert!(build.mcp_tool_names.is_empty());
-+    assert!(
-+        !build
-+            .surface
-+            .catalog
-+            .iter()
-+            .any(|tool| tool.name == "mcp_fixture_echo")
-+    );
-+    assert!(!build.surface.passes_allow_list("mcp_fixture_echo"));
-+}
-+
- #[tokio::test(flavor = "current_thread")]
- async fn child_registry_rejects_context_override_identity_before_tool_effect() {
-     let dir = tempdir().unwrap();
-```
-
----
-
-### Incident Patch 3: `fc78dc86` (2026-11-11)
-**Commit Message**: fix(plugins): replace plugin state on Windows while a plugin UI grant holds the file open (CW-7956)
-
-On Windows, disabling or revoking a plugin whose UI had just been opened was
-refused with 409:
-
-    disabled failed for 'panel': failed to atomically and durably persist
-    ...\runtime\plugins\state.json: Access is denied. (0x80070005)
-
-A plugin UI grant keeps the plugin state file open for up to an hour, so that
-every asset request can prove the state file is still the one the grant was
-minted against. The Windows publication replaced the file with MoveFileExW, and
-Windows refuses that replacement for as long as any handle is open on the
-destination, whatever its share mode. The bounded retry around it was sized for
-a scanner or an ACL pass that lets go within about a second, so it ran out and
-the refusal surfaced. While any grant was live, every state change of every
-plugin was refused, from this process or another: trust, enable, disable,
-revoke and the state prune of an uninstall.
-
-When MoveFileExW answers access denied, publication now opens the hardened
-temporary and falls back to std::fs::rename, which replaces the destination
-with POSIX rename semantics. A reader that share
-
-**File**: `crates/app-server/src/runtime_api/tests/plugin_ui.rs` (modified, +11/-6)
-```diff
-@@ -135,6 +135,11 @@ async fn ui(
-     Ok((status, response.json().await?))
- }
- 
-+async fn mutate(client: &reqwest::Client, url: String) -> Result<(StatusCode, String)> {
-+    let response = client.post(url).send().await?;
-+    Ok((response.status(), response.text().await?))
-+}
-+
- fn refusal(status: u16, body: &serde_json::Value) -> (u16, String) {
-     (
-         status,
-@@ -370,14 +375,14 @@ async fn plugin_ui_dsh_client_serves_admitted_seats_and_denies_and_revokes() ->
-             .is_client_error()
-     );
- 
--    let disabled = client.post(format!("{base}/{name}/disable")).send().await?;
--    assert_eq!(disabled.status(), StatusCode::OK);
-+    let (status, body) = mutate(&client, format!("{base}/{name}/disable")).await?;
-+    assert_eq!(status, StatusCode::OK, "{body}");
-     for url in [&asset_url, &route] {
-         let response = client.get(url).header("If-Match", &revision).send().await?;
-         assert_eq!(response.status(), StatusCode::PRECONDITION_FAILED, "{url}");
-     }
--    let enabled = client.post(format!("{base}/{name}/enable")).send().await?;
--    assert_eq!(enabled.status(), StatusCode::OK);
-+    let (status, body) = mutate(&client, format!("{base}/{name}/enable")).await?;
-+    assert_eq!(status, StatusCode::OK, "{body}");
-     let stale = client
-         .get(&asset_url)
-         .header("If-Match", &revision)
-@@ -509,8 +514,8 @@ async fn plugin_ui_native_client_serves_only_the_detail_seat_and_is_revoked() ->
-     let body: serde_json::Value = routed.json().await?;
-     assert_eq!(body["error"]["code"], "plugin_route_not_admitted");
- 
--    let revoked = client.post(format!("{base}/{name}/revoke")).send().await?;
--    assert_eq!(revoked.status(), StatusCode::OK);
-+    let (status, body) = mutate(&client, format!("{base}/{name}/revoke")).await?;
-+    assert_eq!(status, StatusCode::OK, "{body}");
-     let after = client
-         .get(&asset)
-         .header("If-Match", &revision)
-```
-
-**File**: `crates/plugins/src/registry.rs` (modified, +54/-3)
-```diff
-@@ -1208,7 +1208,7 @@ fn persist_plugin_state_with_directory_sync(
- #[cfg(windows)]
- fn persist_plugin_state(mut temporary: tempfile::TempPath, path: &Path) -> Result<(), String> {
-     use std::os::windows::ffi::OsStrExt as _;
--    use windows::Win32::Foundation::WIN32_ERROR;
-+    use windows::Win32::Foundation::{ERROR_ACCESS_DENIED, WIN32_ERROR};
-     use windows::Win32::Storage::FileSystem::{
-         FILE_ATTRIBUTE_NORMAL, FILE_ATTRIBUTE_TEMPORARY, MOVEFILE_REPLACE_EXISTING,
-         MOVEFILE_WRITE_THROUGH, MoveFileExW, SetFileAttributesW,
-@@ -1254,7 +1254,19 @@ fn persist_plugin_state(mut temporary: tempfile::TempPath, path: &Path) -> Resul
-     } {
-         // MoveFileExW reports an HRESULT; the shared classifier reads the
-         // Win32 code it wraps.
--        let backoff = WIN32_ERROR::from_error(&error).and_then(|code| {
-+        let code = WIN32_ERROR::from_error(&error);
-+        if code == Some(ERROR_ACCESS_DENIED)
-+            && let Ok(Some(source)) = open_existing_regular_file(&temporary_path, true)
-+            && fs::rename(&temporary_path, path).is_ok()
-+        {
-+            temporary.disable_cleanup(true);
-+            return source.sync_all().map_err(|error| {
-+                format!(
-+                    "plugin state was published but its durability could not be confirmed: {error}"
-+                )
-+            });
-+        }
-+        let backoff = code.and_then(|code| {
-             codewhale_util::utils::windows_publish_retry_delay(
-                 &std::io::Error::from_raw_os_error(code.0 as i32),
-                 attempt,
-@@ -3060,7 +3072,10 @@ pub fn capture_plugin_state_authority(
- 
- #[cfg(test)]
- mod state_publication_tests {
--    use super::{PluginStateFile, harden_plugin_state_file, save_state_with_hardener};
-+    use super::{
-+        PluginStateFile, harden_plugin_state_file, open_existing_regular_file,
-+        save_state_with_hardener,
-+    };
- 
-     fn prepare_private_directory(_path: &std::path::Path) {
-         #[cfg(unix)]
-@@ -3093,6 +3108,42 @@ mod state_publication_tests {
-         assert_eq!(entries, [std::ffi::OsString::from("state-鲸.json")]);
+         let snapshots = self.list(usize::MAX)?;
+         if snapshots.is_empty() {
+@@ -3949,6 +3949,22 @@ mod tests {
+         assert_eq!(list[0].label, "turn:1");
      }
  
 +    #[test]
-+    fn state_publication_replaces_a_stable_file_that_a_reader_still_holds_open() {
-+        use std::io::Read as _;
++    fn prune_with_an_age_beyond_i64_keeps_every_snapshot() {
++        let tmp = tempdir().unwrap();
++        let (repo, _home) = make_repo(tmp.path());
++        std::fs::write(repo.work_tree().join("f.txt"), "v0").unwrap();
++        repo.snapshot("turn:0").unwrap();
++        std::thread::sleep(Duration::from_millis(1100));
 +
-+        let directory = tempfile::tempdir().unwrap();
-+        prepare_private_directory(directory.path());
-+        let state_path = directory.path().join("state.json");
-+        std::fs::write(&state_path, b"old-authoritative-state").unwrap();
-+        let mut held = open_existing_regular_file(&state_path, false)
-+            .unwrap()
++        let removed = repo
++            .prune_older_than(Duration::from_secs(u64::MAX))
 +            .unwrap();
 +
-+        save_state_with_hardener(
-+            &state_path,
-+            &PluginStateFile::default(),
-+            harden_plugin_state_file,
-+        )
-+        .unwrap();
-+
-+        let mut published = open_existing_regular_file(&state_path, false)
-+            .unwrap()
-+            .unwrap();
-+        assert!(!codewhale_util::files::same_file(&held, &published).unwrap());
-+        let mut superseded = String::new();
-+        held.read_to_string(&mut superseded).unwrap();
-+        assert_eq!(superseded, "old-authoritative-state");
-+        let mut current = String::new();
-+        published.read_to_string(&mut current).unwrap();
-+        assert!(current.contains("\"schema_version\": 1"));
-+        let entries = std::fs::read_dir(directory.path())
-+            .unwrap()
-+            .map(|entry| entry.unwrap().file_name())
-+            .collect::<Vec<_>>();
-+        assert_eq!(entries, [std::ffi::OsString::from("state.json")]);
++        assert_eq!(removed, 0);
++        assert_eq!(repo.list(10).unwrap().len(), 1);
 +    }
 +
-     #[test]
-     fn failed_temp_hardening_never_publishes_new_plugin_state() {
-         let directory = tempfile::tempdir().unwrap();
+     /// The 2026-08-04 regression: with a cut in the MIDDLE of history,
+     /// `prune_older_than` used to `update-ref HEAD <oldest survivor>`, which
+     /// orphaned (and gc destroyed) the NEWEST snapshots while keeping the
+```
+
+**File**: `crates/state/src/lib.rs` (modified, +37/-2)
+```diff
+@@ -11,7 +11,7 @@ mod runtime_aliases;
+ 
+ use std::collections::HashMap;
+ use std::fs::{self, OpenOptions};
+-use std::io::{BufRead, BufReader, Write};
++use std::io::{BufRead, BufReader, Read, Seek, SeekFrom, Write};
+ use std::path::{Path, PathBuf};
+ use std::sync::{Arc, LazyLock, Mutex, MutexGuard};
+ 
+@@ -1453,6 +1453,7 @@ impl StateStore {
+         self.with_session_index_lock(|| {
+             let mut file = OpenOptions::new()
+                 .create(true)
++                .read(true)
+                 .append(true)
+                 .open(&self.session_index_path)
+                 .with_context(|| {
+@@ -1461,7 +1462,14 @@ impl StateStore {
+                         self.session_index_path.display()
+                     )
+                 })?;
+-            writeln!(file, "{encoded}").context("failed to append session index entry")?;
++            let mut last = *b"\n";
++            if file.metadata()?.len() > 0 {
++                file.seek(SeekFrom::End(-1))?;
++                file.read_exact(&mut last)?;
++            }
++            let separator = if last[0] == b'\n' { "" } else { "\n" };
++            writeln!(file, "{separator}{encoded}")
++                .context("failed to append session index entry")?;
+             // Durability: without this a crash mid-write can leave a torn
+             // final line. Reads tolerate one (see `session_index_map`), but
+             // not losing the entry beats recovering from having lost it.
+@@ -2922,6 +2930,33 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn session_index_append_after_an_unterminated_torn_line_is_kept() {
++        let store = temp_state_store("session-index-unterminated");
++        store
++            .append_thread_name("thread-1", Some("first".to_string()), 1, None)
++            .expect("append first entry");
++        {
++            let mut file = OpenOptions::new()
++                .append(true)
++                .open(&store.session_index_path)
++                .expect("open session index");
++            write!(file, "{{\"thread_id\":\"thread-2\",\"thread_na").expect("write torn line");
++        }
++
++        store
++            .append_thread_name("thread-3", Some("third".to_string()), 3, None)
++            .expect("append third entry");
++
++        assert_eq!(
++            store
++                .find_thread_name_by_id("thread-3")
++                .expect("lookup thread-3")
++                .as_deref(),
++            Some("third"),
++        );
++    }
++
+     /// Hook fired by compaction between writing the snapshot and renaming it
+     /// over the live index — the window a concurrent append can be lost in.
+     /// Only the store whose path a test registered is affected, so tests
+```
+
+---
+
+### Incident Patch 2: `97c1ad92` (2026-11-13)
+**Commit Message**: feat(web): first-time guide for people who have never used a terminal (CW-8181)
+
+New docs page /docs/first-time ("Use Codewhale for the first time", en + zh)
+on the existing DocArticle renderer and docs-map registry. It covers opening a
+terminal on macOS, Windows and Linux; installing and checking the version;
+choosing the folder Codewhale works in and when that choice matters; opening a
+terminal in a folder from Finder (Services > New Terminal at Folder),
+File Explorer (Open in Terminal / Open PowerShell window here), `cd` + drag,
+or `codewhale -C <dir>`; first run and provider choice; a first task; and
+Esc, /undo, /diff, /receipts, /exit and `codewhale --continue`.
+
+Every claim was checked against the v0.10.2 release, not main:
+- workspace = current directory or -C/--workspace (resolve_workspace)
+- file tools stay in the workspace unless /trust add, /trust on or Full Access
+- Seatbelt on macOS, bubblewrap on Linux only when installed, no Windows sandbox
+- snapshots and /undo are off in /, home, and ~/Desktop, Documents,
+  Downloads, Library, Movies, Music and Pictures themselves
+  (unsafe_workspace_snapshot_reason); snapshots do not need git
+- no-git folders ask before edits ("No
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Qwen Code as an external agent:** Codewhale now finds an installed Qwen Code CLI (`qwen`, 0.6.1 or newer) and can run it as a session over ACP with `qwen --acp`. `GET /v1/agents/external` lists it, an older install is reported as needing `npm i -g @qwen-code/qwen-code@latest`, and sign-in stays inside Qwen Code (`/auth`). Thanks [@MannXo](https://github.com/MannXo) (#7293).
+ - **README and contributor credit:** the repository front page now opens the way the website does: the line "The model can be anyone's. The agent should be yours.", one sentence on what Codewhale is, the install command and one picture, with reference detail moved into the linked guides; the 18 translated READMEs follow the same structure and say they are machine-drafted. The contributor wall and the website now count the same 433 people (407 GitHub accounts and the commit authors whose email is not linked to an account), where the website had counted accounts only. `DEPENDENCY_SECURITY.md` moved into `docs/dependency-maintenance.md`, and `.github/SUPPORT.md` says where to ask for help.
+ - **Website Plugins page:** The website's Plugins page now describes what the released version does, and a labelled section says what 0.10.3 adds: one Plugins place, Standard and Creator mode, and the Permissions control.
++- **First-time guide on the website:** a new docs page, "Use Codewhale for the first time" (`/docs/first-time`, English and Simplified Chinese), walks someone who has never used a terminal through opening one, installing, choosing the folder Codewhale works in and when that choice matters, opening a terminal in a folder from Finder or File Explorer, connecting a model, a first task, and stopping, undoing and quitting. The install page gains a short "New to the terminal?" block for macOS and Windows that links to it, and `llms.txt` carries the same steps.
+ - **Plugin docs and plugin-creator:** Docs now say everything you add is a plugin. The bundled plugin-creator skill no longer tells an agent never to trust or enable a plugin (in Full Access it may, for one it wrote and installed from its project), points code and screen plugins at cordis-plugin-development, and an untouched copy from 0.10.2 now upgrades. The Chinese extension and Runtime API docs now say editor ACP sessions get plugin tools and configured MCP servers.
+ - **Model thinking:** New installs show model thinking by default: it streams live in the transcript and collapses under a "Thought for …" header when the answer starts. Existing installs keep their saved setting; turn it on under Model reasoning in chat in /config.
+ - **Footer clock:** The footer clock and phase now say "thinking", matching the transcript.
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Qwen Code as an external agent:** Codewhale now finds an installed Qwen Code CLI (`qwen`, 0.6.1 or newer) and can run it as a session over ACP with `qwen --acp`. `GET /v1/agents/external` lists it, an older install is reported as needing `npm i -g @qwen-code/qwen-code@latest`, and sign-in stays inside Qwen Code (`/auth`). Thanks [@MannXo](https://github.com/MannXo) (#7293).
+ - **README and contributor credit:** the repository front page now opens the way the website does: the line "The model can be anyone's. The agent should be yours.", one sentence on what Codewhale is, the install command and one picture, with reference detail moved into the linked guides; the 18 translated READMEs follow the same structure and say they are machine-drafted. The contributor wall and the website now count the same 433 people (407 GitHub accounts and the commit authors whose email is not linked to an account), where the website had counted accounts only. `DEPENDENCY_SECURITY.md` moved into `docs/dependency-maintenance.md`, and `.github/SUPPORT.md` says where to ask for help.
+ - **Website Plugins page:** The website's Plugins page now describes what the released version does, and a labelled section says what 0.10.3 adds: one Plugins place, Standard and Creator mode, and the Permissions control.
++- **First-time guide on the website:** a new docs page, "Use Codewhale for the first time" (`/docs/first-time`, English and Simplified Chinese), walks someone who has never used a terminal through opening one, installing, choosing the folder Codewhale works in and when that choice matters, opening a terminal in a folder from Finder or File Explorer, connecting a model, a first task, and stopping, undoing and quitting. The install page gains a short "New to the terminal?" block for macOS and Windows that links to it, and `llms.txt` carries the same steps.
+ - **Plugin docs and plugin-creator:** Docs now say everything you add is a plugin. The bundled plugin-creator skill no longer tells an agent never to trust or enable a plugin (in Full Access it may, for one it wrote and installed from its project), points code and screen plugins at cordis-plugin-development, and an untouched copy from 0.10.2 now upgrades. The Chinese extension and Runtime API docs now say editor ACP sessions get plugin tools and configured MCP servers.
+ - **Model thinking:** New installs show model thinking by default: it streams live in the transcript and collapses under a "Thought for …" header when the answer starts. Existing installs keep their saved setting; turn it on under Model reasoning in chat in /config.
+ - **Footer clock:** The footer clock and phase now say "thinking", matching the transcript.
+```
+
+**File**: `web/app/[locale]/docs/first-time/page.tsx` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++import { DocArticle } from "../_components/doc-article";
++import { getDocsFirstTime } from "@/lib/i18n/dictionaries";
++import { buildPageMetadata } from "@/lib/page-meta";
++
++export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
++  const { locale } = await params;
++  const t = getDocsFirstTime(locale);
++  return buildPageMetadata({
++    path: "/docs/first-time",
++    locale,
++    title: t.metaTitle,
++    description: t.metaDescription,
++  });
++}
++
++export default async function FirstTimePage({ params }: { params: Promise<{ locale: string }> }) {
++  const { locale } = await params;
++  return <DocArticle t={getDocsFirstTime(locale)} locale={locale} />;
++}
+```
+
+**File**: `web/app/[locale]/install/page.tsx` (modified, +24/-0)
+```diff
+@@ -97,6 +97,30 @@ export default async function InstallPage({ params }: { params: Promise<{ locale
+         <div lang={copyLocale}>
+           {locale === "zh" ? mirrors : null}
+ 
++          <Block id="install-new-to-terminal" title={t(INSTALL_COPY.newTitle)}>
++            {p(INSTALL_COPY.newLead)}
++            <Channel id="install-new-macos" title={t(INSTALL_COPY.newMacTitle)}>
++              <ol>
++                <li><Rich text={t(INSTALL_COPY.newMac1)} /></li>
++                <li><Rich text={t(INSTALL_COPY.newMac2)} />{code(INSTALL_COMMANDS.shell)}</li>
++                <li><Rich text={t(INSTALL_COPY.newMac3)} /></li>
++              </ol>
++            </Channel>
++            <Channel id="install-new-windows" title={t(INSTALL_COPY.newWinTitle)}>
++              <ol>
++                <li><Rich text={t(INSTALL_COPY.newWin1)} /></li>
++                <li><Rich text={t(INSTALL_COPY.newWin2)} />{code(INSTALL_COMMANDS.windows)}</li>
++                <li><Rich text={t(INSTALL_COPY.newWin3)} /></li>
++              </ol>
++            </Channel>
++            <p>
++              <Link href={`/${locale}/docs/first-time`} className="section-link">
++                {t(INSTALL_COPY.newNext)}
++                <Icon name="arrow-right" className="icon icon-flip" />
++              </Link>
++            </p>
++          </Block>
++
+           <Block id="install-path" title={t(INSTALL_COPY.pathTitle)}>
+             {p(INSTALL_COPY.pathPlaces)}
+             <ul>
+```
+
+**File**: `web/app/styles/install-guide.css` (modified, +1/-0)
+```diff
+@@ -23,6 +23,7 @@
+ .install-guide ul { list-style: disc; }
+ .install-guide ol { list-style: decimal; }
+ .install-guide li { margin-block: var(--space-1); }
++.install-guide li > .code { margin-block: var(--space-3); }
+ .install-guide ::marker { color: var(--muted); }
+ .install-guide a:not(.btn) { color: var(--accent); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent); text-underline-offset: 0.2em; }
+ .install-guide a:not(.btn):hover { text-decoration-color: var(--accent); }
+```
+
+**File**: `web/data/agent-docs.release-index.json` (modified, +1/-0)
+```diff
+@@ -1,6 +1,7 @@
+ {
+   "tag": "v0.10.2",
+   "slugs": [
++    "first-time",
+     "install",
+     "guide",
+     "auth",
+```
+
+**File**: `web/gt-catalog/en.json` (modified, +273/-0)
+```diff
+@@ -2299,6 +2299,279 @@
+     ],
+     "sourceNote": "Source documents: docs/public-surface-facts.json (trust), docs/TELEMETRY.md, docs/SANDBOX.md · Update docs-map.ts when changing."
+   },
++  "docs-first-time": {
++    "metaTitle": "Use Codewhale for the first time · Codewhale Docs",
++    "metaDescription": "Open a terminal, install Codewhale, pick the folder it works in, connect a model and finish a first task, with no terminal experience needed.",
++    "bodyClassName": "text-ink-soft leading-relaxed",
++    "title": "Use Codewhale for the first time",
++    "lede": "This page takes you from opening a terminal for the first time to finishing a small task with Codewhale. It also explains which folder to start in, because that folder decides what Codewhale can change.",
++    "sections": [
++      {
++        "id": "what-you-need",
++        "title": "Check what you need",
++        "blocks": [
++          {
++            "p": "You need a Mac, a Windows x64 PC or a Linux computer, and an internet connection for the install. To get answers you also need a model: an API key from a hosted provider such as DeepSeek, or a model running on your own computer with Ollama."
++          },
++          {
++            "p": "Codewhale is free and needs no account. A hosted provider bills you directly for what you use, and a model you run yourself needs no key."
++          }
++        ]
++      },
++      {
++        "id": "open-terminal",
++        "title": "Open a terminal",
++        "blocks": [
++          {
++            "p": "A terminal is a window where you type commands instead of clicking. A command runs when you press Return, which is Enter on Windows."
++          },
++          {
++            "rows": [
++              [
++                "macOS",
++                "Press Cmd+Space, type Terminal and press Return."
++              ],
++              [
++                "Windows",
++                "Open the Start menu, type PowerShell and press Enter."
++              ],
++              [
++                "Linux",
++                "Open your applications menu and search for Terminal. On Ubuntu, Ctrl+Alt+T opens one."
++              ]
++            ]
++          },
++          {
++            "note": "Paste with Cmd+V on a Mac and Ctrl+V on Windows. Most Linux terminals paste with Ctrl+Shift+V."
++          }
++        ]
++      },
++      {
++        "id": "install",
++        "title": "Install Codewhale",
++        "blocks": [
++          {
++            "p": "On a Mac or Linux, paste this command and press Return. It downloads Codewhale, checks the download, and adds Codewhale to your PATH, the list of folders your terminal searches for commands."
++          },
++          {
++            "code": "curl -fsSL https://codewhale.net/install.sh | sh",
++            "lang": "macOS · Linux"
++          },
++          {
++            "p": "On Windows, paste this command and press Enter:"
++          },
++          {
++            "code": "winget install --id HunterBown.CodeWhale --exact --source winget",
++            "lang": "Windows"
++          },
++          {
++            "p": "When it finishes, open a new terminal window so it picks up the new PATH. Then check that it worked: a version number means Codewhale is installed."
++          },
++          {
++            "code": "codewhale --version",
++            "lang": "Terminal"
++          },
++          {
++            "p": "If the terminal says `command not found`, follow [the PATH steps on the install page](/install#install-path)."
++          }
++        ]
++      },
++      {
++        "id": "choose-folder",
++        "title": "Choose the folder to work in",
++        "blocks": [
++          {
++            "p": "Codewhale works in the folder your terminal is in when you start it. That folder is its workspace: Codewhale reads and changes files there, and its file tools cannot reach other folders unless you allow it."
++          },
++          {
++            "p": "On a Mac, an operating-system sandbox also stops its commands from writing outside the workspace, apart from temporary files. Linux gets the same sandbox when bubblewrap is installed. Windows has no such sandbox yet, so Codewhale relies on asking you first."
++          },
++          {
++            "rows": [
++              [
++                "A folder for one project",
++                "The best choice for most work. Codewhale sees only that project, and `/undo` can take back what it changed."
++              ],
++              [
++                "A new, empty folder",
++                "A good start for something new, such as a website or a script. The next section shows how to make one."
++              ],
++              [
++                "A folder that holds several projects",
++                "Lets one task read and change files across all of them. Pick the smallest folder that holds everything the task needs; in a very large folder Codewhale turns snapshots off and tells you."
++              ],
++              [
++                "Your home folder, Desktop, Documents or
+```
+
+**File**: `web/gt-catalog/zh.json` (modified, +273/-0)
+```diff
+@@ -2296,6 +2296,279 @@
+     ],
+     "sourceNote": "来源文档：docs/public-surface-facts.json（trust）、docs/TELEMETRY.md、docs/SANDBOX.md · 修改时同步更新 docs-map.ts。"
+   },
++  "docs-first-time": {
++    "metaTitle": "第一次使用 Codewhale · Codewhale 文档",
++    "metaDescription": "打开终端、安装 Codewhale、选择它工作的文件夹、连接模型并完成第一个任务，不需要任何终端经验。",
++    "bodyClassName": "text-ink-soft leading-[1.9] tracking-wide",
++    "title": "第一次使用 Codewhale",
++    "lede": "这一页带你从第一次打开终端开始，一直到用 Codewhale 完成一个小任务。它还会说明应该从哪个文件夹启动，因为这个文件夹决定了 Codewhale 能修改什么。",
++    "sections": [
++      {
++        "id": "what-you-need",
++        "title": "确认你需要准备什么",
++        "blocks": [
++          {
++            "p": "你需要一台 Mac、一台 Windows x64 电脑或一台 Linux 电脑，安装时还需要联网。要得到回答，你还需要一个模型：来自 DeepSeek 等托管提供商的 API 密钥，或者用 Ollama 在你自己电脑上运行的模型。"
++          },
++          {
++            "p": "Codewhale 免费，也不需要账号。托管提供商会按你的用量直接向你收费；你自己运行的模型不需要密钥。"
++          }
++        ]
++      },
++      {
++        "id": "open-terminal",
++        "title": "打开终端",
++        "blocks": [
++          {
++            "p": "终端是一个用输入命令代替点击的窗口。按下回车键后，命令就会运行。"
++          },
++          {
++            "rows": [
++              [
++                "macOS",
++                "按 Cmd+空格键，输入 Terminal，然后按回车键。"
++              ],
++              [
++                "Windows",
++                "打开“开始”菜单，输入 PowerShell，然后按回车键。"
++              ],
++              [
++                "Linux",
++                "打开应用程序菜单并搜索“终端”。在 Ubuntu 上，按 Ctrl+Alt+T 也能打开。"
++              ]
++            ]
++          },
++          {
++            "note": "在 Mac 上用 Cmd+V 粘贴，在 Windows 上用 Ctrl+V 粘贴。大多数 Linux 终端用 Ctrl+Shift+V 粘贴。"
++          }
++        ]
++      },
++      {
++        "id": "install",
++        "title": "安装 Codewhale",
++        "blocks": [
++          {
++            "p": "在 Mac 或 Linux 上，粘贴下面这条命令并按回车键。它会下载 Codewhale、校验下载内容，并把 Codewhale 加入 PATH，也就是终端查找命令时会搜索的文件夹列表。"
++          },
++          {
++            "code": "curl -fsSL https://codewhale.net/install.sh | sh",
++            "lang": "macOS · Linux"
++          },
++          {
++            "p": "在 Windows 上，粘贴下面这条命令并按回车键："
++          },
++          {
++            "code": "winget install --id HunterBown.CodeWhale --exact --source winget",
++            "lang": "Windows"
++          },
++          {
++            "p": "安装完成后，打开一个新的终端窗口，让它读取新的 PATH。然后确认安装成功：显示版本号就说明 Codewhale 已经安装好了。"
++          },
++          {
++            "code": "codewhale --version",
++            "lang": "终端"
++          },
++          {
++            "p": "如果终端提示 `command not found`，请按照[安装页面上的 PATH 步骤](/install#install-path)操作。"
++          }
++        ]
++      },
++      {
++        "id": "choose-folder",
++        "title": "选择工作的文件夹",
++        "blocks": [
++          {
++            "p": "Codewhale 在你启动它时终端所在的文件夹里工作。这个文件夹就是它的工作区：Codewhale 在这里读取和修改文件，除非你允许，它的文件工具无法访问其他文件夹。"
++          },
++          {
++            "p": "在 Mac 上，操作系统沙箱还会阻止它的命令写入工作区以外的位置（临时文件除外）。在 Linux 上，安装 bubblewrap 后也有同样的沙箱。Windows 目前还没有这种沙箱，因此 Codewhale 依靠先征求你的同意。"
++          },
++          {
++            "rows": [
++              [
++                "只放一个项目的文件夹",
++                "大多数情况下的最佳选择。Codewhale 只看到这个项目，`/undo` 可以撤回它做的修改。"
++              ],
++              [
++                "一个新的空文件夹",
++                "适合开始做新东西，比如一个网站或一个脚本。下一节会说明如何创建。"
++              ],
++              [
++                "包含多个项目的文件夹",
++                "让一个任务可以读取和修改所有这些项目里的文件。请选择能装下任务所需全部内容的最小文件夹；文件夹非常大时，Codewhale 会关闭快照并告诉你。"
++              ],
++              [
++                "你的主文件夹、桌面、文稿或下载",
++                "Codewhale 可以在这里运行，但在这些文件夹本身中 `/undo` 和快照是关闭的，因为它们范围太大，无法安全地做快照。它们里面的子文件夹可以正常使用。"
++              ]
++            ]
++          },
++          {
++            "note": "快照是 Codewhale 为它修改的文件保存的副本。它们保存在 Codewhale 的设置文件夹里，而不是你的项目里，并且不需要 git。"
++          },
++          {
++            "p": "要让 Codewhale 多访问一个文件夹，请在 Codewhale 中输入 `/trust add` 和该文件夹的路径。Full Access 模式可以访问所有文件夹，并且在没有沙箱的情况下运行命令，所以只有在你希望 Codewhale 在整台电脑范围内工作时才使用它。"
++          },
++          {
++            "p": "默认情况下，在 git 仓库中 Codewhale 会直接修改文件，并向你展示改了什么。在没有 git 的文件夹中，它会在每次修改前询问你。"
++          }
++        ]
++      },
++      {
++        "id": "open-in-folder",
++        "title": "在那个文件夹中打开终端",
++        "blocks": [
++          {
++            "rows": [
++              [
++                "macOS 访达",
++                "按住 Control 点按该文件夹，选择“服务”>“新建位于文件夹位置的终端窗口”。如果没有这一项，请在“系统设置”>“键盘”>“键盘快捷键”>“服务”>“文件和文件夹”中打开它。"
++              ],
++              [
++                "Windows 文件资源管理器",
++                "右键点击该文件夹，选择“在终端中打开”。在 Windows 10 上，按住 Shift 再右键点击，选择“在此处打开 PowerShell 窗口”。"
++              ],
++              [
++                "任意终端",
++                "输入 `cd` 和一个空格，把文件夹从访达或文件资源管理器拖进窗口，然后按回车键。"
++              ],
++              [
++                "不切换文件夹",
++                "启动 Codewhale 时加上 `-C` 和文件夹路径，例如在 Mac 上输入 `codewhale -C ~/Projects/my-site`。"
++              ]
++            ]
++          },
++          {
++            "p": "下面这些命令可以在终端里切换和查看文件夹。它们在 Mac、Linux 和 PowerShell 中都能用。"
++          },
++          {
++            "codeTerms": true,
++            "rows": [
++            
+```
+
+---
+
+### Incident Patch 3: `622a4930` (2026-11-13)
+**Commit Message**: feat(tui-kit): animated data displays an agent can send as JSON (CW-8202)
+
+The vendored terminal kit could move things (MotionStep, MotionPolicy) but
+had nothing that shows numbers. This adds three displays and a data
+description of them:
+
+- DataSparkline: one row, newest values on the right, with now/min/max in
+  words. DataBars: a titled list of bars in eighth-cell steps that grow
+  with a stagger and glide from previous values. DataTrend: a braille line
+  chart with its range on the axis; it draws in from the left with a
+  body-ink pen and falls back to a sparkline when too small.
+- Every value is in the words, so colour and ink never carry a fact alone,
+  and ASCII and NoColor profiles keep the rules. Draw-in reads a caller
+  progress from the new MotionStep::drawn, so reduced and still motion
+  paint the end state and the kit still never reads a clock.
+- DataDisplay is the same vocabulary as serde JSON, borrowing the UI SDK
+  idea (vercel-labs/ui) that a component says what it is and holds as data
+  so an agent reads and writes facts, not pixels. from_json validates at
+  the trust boundary (finite numbers, <=1024 points, <=24 bars, labels
+  <=120 chars, trend rows 3..=16); des
+
+**File**: `vendor/codewhale-ratatui/CHANGELOG.md` (modified, +10/-0)
+```diff
+@@ -2,6 +2,16 @@
+ 
+ ## Unreleased — 0.2.0
+ 
++- Add data displays: `DataSparkline`, `DataBars` and `DataTrend` (a braille
++  line chart). The words carry every value; the ink draws in from a caller
++  progress (`MotionStep::drawn`) and is at its end state under reduced or
++  still motion. Bars glide from their previous values.
++- Add `DataDisplay`, the same displays as JSON an agent can send:
++  `DataDisplay::from_json` validates it (finite numbers, at most 1024 points
++  or 24 bars, labels up to 120 characters), `describe` says the same facts as
++  plain text, and `DATA_DISPLAY_SCHEMA` is its tool schema. Try
++  `cargo run --example data`.
++
+ - Reexport the shared avatar contract from Codewhale Protocol. Rendering and
+   artwork stay in this library. Protocol 0.10.3 registry proof must precede
+   this package publication.
+```
+
+**File**: `vendor/codewhale-ratatui/COMPONENTS.md` (modified, +1/-0)
+```diff
+@@ -57,6 +57,7 @@ Gallery names are the exact names accepted by the gallery example; the
+ | Engine `agent_roster.rs::render_agent_roster`, `widgets/workflow_panel.rs::row_receipt_text`, `gate_receipts.rs`; GPUI `usage.rs::TurnRow`, `workbar.rs::Readout`, `working_context.rs::ExecutionReceipt` | `Receipt`, `ReceiptTable`, `ReceiptValue`, `Cost`, formatting helpers | Primitive/composite | `receipt-row`, `receipt-table`, `receipt-table-compact`, `receipt-table-minimal`, `receipt-table-clipped` |
+ | Engine `diff_render.rs::BoundedDiffRender`, `render_diff_bounded`, `history/file_mutation.rs`; GPUI `review.rs::DiffRowKind`, `workspace/render/review.rs::ReviewRows` | `Diff`, `DiffLine`, `DiffKind`, `DiffGutter`, `DiffHighlight`, `parse_unified` | Primitive | `diff`, `diff-wrapped`, `diff-no-numbers`, `diff-highlighted`, `review-scene` |
+ | Engine `widgets/workflow_panel.rs::WorkflowPanel`, `WorkflowPanelRow`, `history/checklist.rs`; GPUI `plans.rs`, `workspace/render/workers.rs` | `WorkflowTree`, `TreeNode`, `TreeState`, `CountBar` | Primitive/composite | `workflow-tree`, `workflow-tree-selected`, `workflow-tree-clipped`, `workflow-tree-long`, `count-bars` |
++| Kit-native; data from the host or an agent's JSON (CW-8202) | `DataSparkline`, `DataBars`, `DataBarItem`, `DataTrend`, `DataDisplay`, `DataDisplayView`, `DataWords`, `DATA_DISPLAY_SCHEMA`, `MotionStep::drawn` | Primitive | `data-sparkline`, `data-bars`, `data-bars-growing`, `data-trend`, `data-trend-drawing`, `data-from-agent` |
+ | Engine `approval/view.rs::ApprovalView`, `approval/elevation.rs::ElevationView`, `auto_review.rs`; GPUI `workspace/render/conversation.rs::Workspace::render_attention`, `workspace/render/review.rs::Workspace::render_restore_confirmation` | `ApprovalCard`, `ApprovalSubject`, `ApprovalState`, `ApprovalChoice`, `ApprovalPaint`, `DecisionBand`, `DecisionBandPlan`, `DecisionBandAction`, `DecisionBandSave`, `ReviewVerdict`, `ReviewAggregate` | Composite | `approval-command`, `approval-outside`, `approval-patch`, `approval-elevation`, `approval-clipped`, `approval-spoofed`, `approval-native-band`, `approval-native-band-collapsed`, `review-verdicts`, `review-aggregate` |
+ | GPUI `workspace/render/conversation.rs::Workspace::render_attention`, `workspace/render/files.rs::Workspace::render_artifact_column` | `AttentionQueue`, `AttentionItem`, `ArtifactShelf`, `Artifact` | Composite | `attention-queue`, `attention-focused`, `attention-narrow`, `attention-empty`, `artifact`, `artifact-shelf`, `artifact-narrow`, `artifact-unknown`, `artifact-empty` |
+ | Engine `views/mod.rs::ConfigView`, `ConfigRow`, `ConfigView::render_setting_detail`; GPUI `settings.rs::Spec`, `Applies`, `workspace/settings/mod.rs::Settings` | `SettingRow`, `SettingDetail`, `SettingWords` | Composite | `setting-row`, `setting-detail` |
+```
+
+**File**: `vendor/codewhale-ratatui/examples/data.rs` (added, +276/-0)
+```diff
+@@ -0,0 +1,276 @@
++//! Live data displays: `cargo run --example data`.
++//!
++//! A sparkline takes a new value every 400 ms, the trend draws in, and the
++//! bars glide to new values every three seconds. r replays, m switches
++//! between full and reduced motion, q or Escape exits.
++//!
++//! `--json FILE` shows one agent-sent [`DataDisplay`] instead.
++//! `--text` prints the final frame and each display's plain description.
++//! `--svg DIR` writes frames at fixed draw-in points.
++
++use std::{
++    io,
++    path::PathBuf,
++    time::{Duration, Instant},
++};
++
++use codewhale_ratatui::{
++    DataBarItem, DataDisplay, DataWords, MotionEasing, MotionMode, MotionPolicy, MotionStep,
++    MotionTiming, Paint, Role, Theme,
++    testing::{self, Profile},
++};
++use crossterm::{
++    event::{self, Event, KeyCode, KeyEventKind},
++    execute,
++    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
++};
++use ratatui::{Terminal, backend::CrosstermBackend, buffer::Buffer, layout::Rect};
++
++const TICK: Duration = Duration::from_millis(400);
++const RESHUFFLE: Duration = Duration::from_secs(3);
++const DRAW_IN: MotionTiming =
++    MotionTiming::space(Duration::from_millis(1_400), MotionEasing::EaseOut);
++const GLIDE: MotionTiming = MotionTiming::PANEL;
++
++struct Noise(u64);
++
++impl Noise {
++    fn next(&mut self) -> f64 {
++        self.0 = self
++            .0
++            .wrapping_mul(6_364_136_223_846_793_005)
++            .wrapping_add(1);
++        (self.0 >> 33) as f64 / f64::from(1u32 << 31)
++    }
++}
++
++struct Board {
++    noise: Noise,
++    requests: Vec<f64>,
++    latency: Vec<f64>,
++    bars: DataDisplay,
++    bars_before: DataDisplay,
++    draw: MotionStep,
++    glide: MotionStep,
++    agent: Option<DataDisplay>,
++}
++
++fn crate_bars(noise: &mut Noise) -> DataDisplay {
++    DataDisplay::Bars {
++        label: "Tests by crate".into(),
++        unit: "tests".into(),
++        items: ["engine", "tui", "runtime", "protocol", "config"]
++            .into_iter()
++            .map(|name| DataBarItem::new(name, (40.0 + noise.next() * 400.0).round()))
++            .collect(),
++    }
++}
++
++impl Board {
++    fn new(agent: Option<DataDisplay>) -> Self {
++        let mut noise = Noise(7);
++        let latency = (0..96)
++            .map(|i| 80.0 + 45.0 * (f64::from(i) / 9.0).sin() + noise.next() * 30.0)
++            .collect();
++        let requests = (0..40).map(|_| 20.0 + noise.next() * 60.0).collect();
++        let bars = crate_bars(&mut noise);
++        Self {
++            noise,
++            requests,
++            latency,
++            bars_before: DataDisplay::Bars {
++                label: String::new(),
++                unit: String::new(),
++                items: Vec::new(),
++            },
++            bars,
++            draw: MotionStep::at_rest(0.0),
++            glide: MotionStep::at_rest(1.0),
++            agent,
++        }
++    }
++
++    fn replay(&mut self, now: Instant, policy: MotionPolicy) {
++        self.draw = MotionStep::at_rest(0.0);
++        self.draw.go(1.0, now, DRAW_IN, policy);
++    }
++
++    fn tick(&mut self) {
++        let last = self.requests.last().copied().unwrap_or(50.0);
++        let next = (last + (self.noise.next() - 0.5) * 30.0).clamp(5.0, 120.0);
++        self.requests.push(next.round());
++        if self.requests.len() > 200 {
++            self.requests.remove(0);
++        }
++    }
++
++    fn reshuffle(&mut self, now: Instant, policy: MotionPolicy) {
++        self.bars_before = std::mem::replace(&mut self.bars, crate_bars(&mut self.noise));
++        self.glide = MotionStep::at_rest(0.0);
++        self.glide.go(1.0, now, GLIDE, policy);
++    }
++
++    fn paint(&self, area: Rect, buf: &mut Buffer, theme: &Theme, draw: f32, glide: f32) {
++        buf.set_style(area, theme.bg(Role::Background));
++        let inner = Rect::new(
++            area.x + 2,
++            area.y + 1,
++            area.width.saturating_sub(4),
++            area.height.saturating_sub(2),
++        );
++        if let Some(agent) = &self.agent {
++            agent.view().drawn(draw).paint(inner, buf, theme);
++            return;
++        }
++        let row =
++            |y: u16, h: u16| Rect::new(inner.x, inner.y + y, inner.width, h).intersection(inner);
++        let requests = DataDisplay::Sparkline {
++            label: "Requests".into(),
++            unit: "rpm".into(),
++            values: self.requests.clone(),
++        };
++        let latency = DataDisplay::Trend {
++            label: "Latency".into(),
++            unit: "ms".into(),
++            values: self.latency.clone(),
++            rows: Some(9),
++        };
++        requests.view().drawn(draw).paint(row(0, 1), buf, theme);
++        latency.view().drawn(draw).paint(row(2, 9), buf, theme);
++        self.bars
++            .view()
++            .from(&self.bars_before)
++            .drawn(glide.min(draw))
++            .paint(row(12, 6), buf, theme);
++    }
++
++    fn displays(&self) -> Vec<DataDisplay> {
++        if let Some(agent)
+```
+
+**File**: `vendor/codewhale-ratatui/src/components/chart.rs` (added, +1261/-0)
+```diff
+@@ -0,0 +1,1261 @@
++//! Data displays: numbers the host or an agent reports, drawn as a
++//! sparkline, a bar list or a trend.
++//!
++//! - The words carry every fact (`now 42  min 3  max 57`); the ink is a
++//!   picture of the same numbers and never the only place a value appears.
++//! - Each display takes `drawn`, a caller-clock progress in `0..=1` from
++//!   [`crate::MotionStep::drawn`]. Under reduced or still motion that is the
++//!   end state, so nothing moves and every value is shown.
++//! - [`DataDisplay`] is the same vocabulary as data: an agent sends JSON,
++//!   the host validates it with [`DataDisplay::from_json`] and paints it with
++//!   [`DataDisplay::view`]. [`DataDisplay::describe`] says the same facts as
++//!   plain text for a transcript, a screen reader or the model's own context.
++
++use std::borrow::Cow;
++use std::fmt;
++
++use ratatui::{
++    buffer::Buffer,
++    layout::Rect,
++    style::{Modifier, Style},
++    text::{Line, Span},
++    widgets::Widget,
++};
++use serde::{Deserialize, Serialize};
++
++use crate::{Paint, Role, Theme, glyphs, text};
++
++/// The most points a [`DataDisplay`] sparkline or trend may carry.
++pub const DATA_MAX_POINTS: usize = 1024;
++/// The most rows a [`DataDisplay`] bar list may carry.
++pub const DATA_MAX_BARS: usize = 24;
++/// The longest label or unit, in characters.
++pub const DATA_MAX_LABEL: usize = 120;
++/// The rows a trend may ask for.
++pub const DATA_TREND_ROWS: std::ops::RangeInclusive<u16> = 3..=16;
++
++const SPARK: [&str; 8] = [
++    "\u{2581}", "\u{2582}", "\u{2583}", "\u{2584}", "\u{2585}", "\u{2586}", "\u{2587}", "\u{2588}",
++];
++const SPARK_ASCII: [&str; 8] = ["_", "_", ".", "-", "-", "=", "#", "#"];
++const EIGHTHS: [&str; 8] = [
++    "", "\u{258F}", "\u{258E}", "\u{258D}", "\u{258C}", "\u{258B}", "\u{258A}", "\u{2589}",
++];
++const FULL: &str = "\u{2588}";
++const MIN_SPARK: usize = 4;
++const MAX_SPARK: usize = 64;
++const MIN_BAR: usize = 4;
++const BAR_STAGGER: f32 = 0.35;
++
++/// Words the data displays print. `Default` is English.
++#[derive(Clone, Debug, PartialEq, Eq)]
++pub struct DataWords {
++    pub now: Cow<'static, str>,
++    pub min: Cow<'static, str>,
++    pub max: Cow<'static, str>,
++    /// Shown when there are no values yet.
++    pub empty: Cow<'static, str>,
++    /// `24 points` in [`DataDisplay::describe`].
++    pub points: Cow<'static, str>,
++}
++
++impl Default for DataWords {
++    fn default() -> Self {
++        Self {
++            now: Cow::Borrowed("now"),
++            min: Cow::Borrowed("min"),
++            max: Cow::Borrowed("max"),
++            empty: Cow::Borrowed("no data yet"),
++            points: Cow::Borrowed("points"),
++        }
++    }
++}
++
++/// A short form of `value`: `42`, `3.14`, `12.4k`, `1.2M`.
++#[must_use]
++pub fn data_number(value: f64) -> String {
++    if !value.is_finite() {
++        return "?".to_owned();
++    }
++    if value == 0.0 {
++        return "0".to_owned();
++    }
++    let a = value.abs();
++    let (scaled, suffix) = if a >= 1e9 {
++        (value / 1e9, "B")
++    } else if a >= 1e6 {
++        (value / 1e6, "M")
++    } else if a >= 1e4 {
++        (value / 1e3, "k")
++    } else {
++        (value, "")
++    };
++    let s = if scaled.abs() >= 100.0 {
++        format!("{scaled:.0}")
++    } else if scaled.abs() >= 10.0 {
++        format!("{scaled:.1}")
++    } else {
++        format!("{scaled:.2}")
++    };
++    let s = if s.contains('.') {
++        s.trim_end_matches('0').trim_end_matches('.').to_owned()
++    } else {
++        s
++    };
++    format!("{s}{suffix}")
++}
++
++fn with_unit(value: f64, unit: &str) -> String {
++    let n = data_number(value);
++    let unit = text::display_safe(unit);
++    match unit.as_ref() {
++        "" => n,
++        "%" => format!("{n}%"),
++        u => format!("{n} {u}"),
++    }
++}
++
++fn unit_f(v: f32) -> f32 {
++    if v.is_nan() { 1.0 } else { v.clamp(0.0, 1.0) }
++}
++
++fn bounds(values: &[f64]) -> Option<(f64, f64)> {
++    let mut it = values.iter().copied().filter(|v| v.is_finite());
++    let first = it.next()?;
++    Some(it.fold((first, first), |(lo, hi), v| (lo.min(v), hi.max(v))))
++}
++
++fn level(v: f64, lo: f64, hi: f64, steps: usize) -> usize {
++    if !v.is_finite() || steps == 0 {
++        return 0;
++    }
++    if hi <= lo {
++        return steps / 2;
++    }
++    let t = ((v - lo) / (hi - lo)).clamp(0.0, 1.0);
++    ((t * (steps - 1) as f64).round() as usize).min(steps - 1)
++}
++
++struct Stats {
++    full: Vec<Span<'static>>,
++    short: Vec<Span<'static>>,
++    full_w: usize,
++    short_w: usize,
++}
++
++fn stats(values: &[f64], unit: &str, words: &DataWords, theme: &Theme) -> Option<Stats> {
++    let (lo, hi) = bounds(values)?;
++    let last = values.iter().rev().copied().find(|v| v.is_finite())?;
++    let muted = theme.fg(Role::Muted);
++    let ink = theme.fg(Role::Foreground);
++    let pair = |word: &str, v: f64| {
++        [
++            Span::styled(format!("{} ", text::display_safe(word)), muted),
++            Span::styled(with_unit(v, unit), ink),
++        ]
++    };
++  
+```
+
+**File**: `vendor/codewhale-ratatui/src/components/mod.rs` (modified, +2/-0)
+```diff
+@@ -59,10 +59,12 @@ pub use tabs::*;
+ pub use toggle::*;
+ 
+ // Package Display.
++mod chart;
+ mod diff;
+ mod progress;
+ mod receipt;
+ mod tree;
++pub use chart::*;
+ pub use diff::*;
+ pub use progress::*;
+ pub use receipt::*;
+```
+
+**File**: `vendor/codewhale-ratatui/src/components/motion.rs` (modified, +8/-0)
+```diff
+@@ -366,6 +366,14 @@ impl MotionStep {
+         }
+     }
+ 
++    /// Progress for a draw-in, in `0..=1`: eased where `policy` lets space
++    /// move, the target where it does not. Feed it to a data display's
++    /// `drawn`.
++    #[must_use]
++    pub fn drawn(&self, now: Instant, policy: MotionPolicy) -> f32 {
++        self.shown(now, policy, MotionChannel::Space)
++    }
++
+     /// A column between `from` and `to`: slide a marker, nudge a panel.
+     #[must_use]
+     pub fn offset(&self, now: Instant, policy: MotionPolicy, from: u16, to: u16) -> u16 {
+```
+
+**File**: `vendor/codewhale-ratatui/src/components/snapshots/codewhale_ratatui__components__chart__tests__data-displays.snap` (added, +360/-0)
+```diff
+@@ -0,0 +1,360 @@
++---
++source: src/components/chart.rs
++assertion_line: 1242
++expression: "testing::snapshot(12, |area, buf, theme|\n{\n    let row = |y: u16, h: u16|\n    { Rect::new(area.x, area.y + y, area.width, h).intersection(area) };\n    DataSparkline::new(\"Requests\",\n    &values).unit(\"rpm\").paint(row(0, 1), buf, theme);\n    DataBars::new(\"Tokens by model\",\n    &items).unit(\"tokens\").paint(row(2, 5), buf, theme);\n    DataTrend::new(\"Latency\",\n    &values).unit(\"ms\").rows(5).paint(row(7, 5), buf, theme);\n})"
++---
++== dark-truecolor · 40x12
++Requests  ▁▃▅▄▅▆▇███▆▅▄▃▂▁  now 45.6 rpm
++
++Tokens by model
++opus    ██████████████████  12.4k tokens
++sonnet  ███████████▌        7900 tokens
++haiku   ████▌               3100 tokens
++cache                       0 tokens
++Latency  now 45.6 ms
++69.7 ms │  ⡠⠒⠑⠒⠒⠢⣀             ⡀⡠⠔⠉⠉⢢⡀
++        │⢀⠔⠁      ⢇          ⢀⠔⠉     ⠈⠑⢄
++        │⠁         ⠑⠢⡀      ⡠⠊
++17.2 ms │            ⠈⠱⣀⣀⠤⠊⠊
++---
++r0 c0..8 fg=Foreground bg=Background bold
++r0 c8..10 bg=Background
++r0 c10..26 fg=Accent bg=Background
++r0 c26..28 bg=Background
++r0 c28..32 fg=Muted bg=Background
++r0 c32..40 fg=Foreground bg=Background
++r1 c0..40 bg=Background
++r2 c0..15 fg=Foreground bg=Background bold
++r2 c15..40 bg=Background
++r3 c0..6 fg=Foreground bg=Background
++r3 c6..8 bg=Background
++r3 c8..26 fg=Accent bg=Background
++r3 c26..28 bg=Background
++r3 c28..40 fg=Muted bg=Background
++r4 c0..6 fg=Foreground bg=Background
++r4 c6..8 bg=Background
++r4 c8..20 fg=Accent bg=Background
++r4 c20..28 bg=Background
++r4 c28..39 fg=Muted bg=Background
++r4 c39..40 bg=Background
++r5 c0..6 fg=Foreground bg=Background
++r5 c6..8 bg=Background
++r5 c8..13 fg=Accent bg=Background
++r5 c13..28 bg=Background
++r5 c28..39 fg=Muted bg=Background
++r5 c39..40 bg=Background
++r6 c0..6 fg=Foreground bg=Background
++r6 c6..28 bg=Background
++r6 c28..36 fg=Muted bg=Background
++r6 c36..40 bg=Background
++r7 c0..7 fg=Foreground bg=Background bold
++r7 c7..9 bg=Background
++r7 c9..13 fg=Muted bg=Background
++r7 c13..20 fg=Foreground bg=Background
++r7 c20..40 bg=Background
++r8 c0..8 fg=Muted bg=Background
++r8 c8..9 fg=Dim bg=Background
++r8 c9..11 bg=Background
++r8 c11..18 fg=Accent bg=Background
++r8 c18..31 bg=Background
++r8 c31..38 fg=Accent bg=Background
++r8 c38..40 bg=Background
++r9 c0..8 fg=Muted bg=Background
++r9 c8..9 fg=Dim bg=Background
++r9 c9..12 fg=Accent bg=Background
++r9 c12..18 bg=Background
++r9 c18..19 fg=Accent bg=Background
++r9 c19..29 bg=Background
++r9 c29..32 fg=Accent bg=Background
++r9 c32..37 bg=Background
++r9 c37..40 fg=Accent bg=Background
++r10 c0..8 fg=Muted bg=Background
++r10 c8..9 fg=Dim bg=Background
++r10 c9..10 fg=Accent bg=Background
++r10 c10..19 bg=Background
++r10 c19..22 fg=Accent bg=Background
++r10 c22..28 bg=Background
++r10 c28..30 fg=Accent bg=Background
++r10 c30..40 bg=Background
++r11 c0..8 fg=Muted bg=Background
++r11 c8..9 fg=Dim bg=Background
++r11 c9..21 bg=Background
++r11 c21..28 fg=Accent bg=Background
++r11 c28..40 bg=Background
++
++== dark-truecolor · 80x12
++Requests  ▂▁▁▁▁▁▂▂▂▃▃▄▅▆▆▆▇▇████▇▇▆▆▅▅  now 45.6 rpm  min 17.2 rpm  max 69.7 rpm
++
++Tokens by model
++opus    ██████████████████████████████████████████████████████████  12.4k tokens
++sonnet  █████████████████████████████████████                       7900 tokens
++haiku   ██████████████▌                                             3100 tokens
++cache                                                               0 tokens
++Latency  now 45.6 ms  min 17.2 ms  max 69.7 ms
++69.7 ms │     ⣀⠤⠒⠊⠑⠒⠒⠒⠒⠒⠒⠢⠤⢄⣀                               ⣀ ⣀⡠⠤⠒⠒⠉⠉⠉⠉⠢⢄⣀⣀
++        │ ⣀⠤⠒⠉               ⠑⠤⣀                        ⢀⡠⠒⠉ ⠉             ⠉⠑⠒⠤⣀
++        │⠉                      ⠉⠑⠒⠤⢄⣀               ⡠⠔⠊⠁
++17.2 ms │                             ⠉⠑⢄⣀⣀⣀⣀⣀⠤⠤⠒⠊⠒⠊⠉
++---
++r0 c0..8 fg=Foreground bg=Background bold
++r0 c8..10 bg=Background
++r0 c10..38 fg=Accent bg=Background
++r0 c38..40 bg=Background
++r0 c40..44 fg=Muted bg=Background
++r0 c44..52 fg=Foreground bg=Background
++r0 c52..54 bg=Background
++r0 c54..58 fg=Muted bg=Background
++r0 c58..66 fg=Foreground bg=Background
++r0 c66..68 bg=Background
++r0 c68..72 fg=Muted bg=Background
++r0 c72..80 fg=Foreground bg=Background
++r1 c0..80 bg=Background
++r2 c0..15 fg=Foreground bg=Background bold
++r2 c15..80 bg=Background
++r3 c0..6 fg=Foreground bg=Background
++r3 c6..8 bg=Background
++r3 c8..66 fg=Accent bg=Background
++r3 c66..68 bg=Background
++r3 c68..80 fg=Muted bg=Background
++r4 c0..6 fg=Foreground bg=Background
++r4 c6..8 bg=Background
++r4 c8..45 fg=Accent bg=Background
++r4 c45..68 bg=Background
++r4 c68..79 fg=Muted bg=Background
++r4 c79..80 bg=Background
++r5 c0..6 fg=Foreground bg=Background
++r5 c6..8 bg=Background
++r5 c8..23 fg=Accent bg=Background
++r5 c23..68 bg=Background
++r5 c68..79 fg=Muted bg=Background
++r5 c79..80 bg=Background
++r6 c0..6 fg=Foreground bg=Background
++r6 c6..68 bg=Background
++r6 c68..76 fg=Muted bg=Background
++r6 c76..80 bg=Background
++r7 c0..7 fg=Foreground bg=Background bold
++r7 c7..9 bg=Background
++r7 c9..
+```
+
+**File**: `vendor/codewhale-ratatui/src/gallery/chart.rs` (added, +118/-0)
+```diff
+@@ -0,0 +1,118 @@
++//! Gallery: data displays fully drawn, mid draw-in, empty and from agent JSON.
++
++use ratatui::{buffer::Buffer, layout::Rect};
++
++use super::Entry;
++use crate::{DataBarItem, DataBars, DataDisplay, DataSparkline, DataTrend, Paint, Theme};
++
++fn series() -> Vec<f64> {
++    (0..64)
++        .map(|i| 120.0 + 60.0 * (f64::from(i) / 6.0).sin() + f64::from((i * 7) % 11) * 3.0)
++        .collect()
++}
++
++fn items() -> Vec<DataBarItem> {
++    vec![
++        DataBarItem::new("engine", 412.0),
++        DataBarItem::new("tui", 268.0),
++        DataBarItem::new("runtime", 131.0),
++        DataBarItem::new("protocol", 44.0),
++    ]
++}
++
++fn row(area: Rect, y: u16, h: u16) -> Rect {
++    Rect::new(area.x, area.y.saturating_add(y), area.width, h).intersection(area)
++}
++
++fn sparklines(area: Rect, buf: &mut Buffer, theme: &Theme) {
++    let values = series();
++    DataSparkline::new("Requests", &values)
++        .unit("rpm")
++        .paint(row(area, 0, 1), buf, theme);
++    DataSparkline::new("Requests", &values)
++        .unit("rpm")
++        .drawn(0.45)
++        .paint(row(area, 1, 1), buf, theme);
++    DataSparkline::new("Requests", &[]).paint(row(area, 2, 1), buf, theme);
++}
++
++fn bars(area: Rect, buf: &mut Buffer, theme: &Theme) {
++    let items = items();
++    DataBars::new("Tests by crate", &items).paint(row(area, 0, 5), buf, theme);
++}
++
++fn bars_growing(area: Rect, buf: &mut Buffer, theme: &Theme) {
++    let items = items();
++    DataBars::new("Tests by crate", &items)
++        .previous(&[300.0, 300.0, 300.0, 300.0])
++        .drawn(0.5)
++        .paint(row(area, 0, 5), buf, theme);
++}
++
++fn trend(area: Rect, buf: &mut Buffer, theme: &Theme) {
++    let values = series();
++    DataTrend::new("Latency", &values)
++        .unit("ms")
++        .rows(7)
++        .paint(area, buf, theme);
++}
++
++fn trend_drawing(area: Rect, buf: &mut Buffer, theme: &Theme) {
++    let values = series();
++    DataTrend::new("Latency", &values)
++        .unit("ms")
++        .rows(7)
++        .drawn(0.6)
++        .paint(area, buf, theme);
++}
++
++fn from_agent(area: Rect, buf: &mut Buffer, theme: &Theme) {
++    let shown = DataDisplay::from_json(
++        r#"{"kind":"bars","label":"Tokens this turn","unit":"tokens",
++            "items":[{"label":"read","value":18200},{"label":"wrote","value":2400},
++                     {"label":"cached","value":61000}]}"#,
++    )
++    .expect("gallery fixture is a valid data display");
++    shown.view().paint(area, buf, theme);
++}
++
++pub(crate) fn entries() -> Vec<Entry> {
++    vec![
++        Entry {
++            name: "data-sparkline",
++            width: 80,
++            height: 3,
++            draw: sparklines,
++        },
++        Entry {
++            name: "data-bars",
++            width: 60,
++            height: 5,
++            draw: bars,
++        },
++        Entry {
++            name: "data-bars-growing",
++            width: 60,
++            height: 5,
++            draw: bars_growing,
++        },
++        Entry {
++            name: "data-trend",
++            width: 72,
++            height: 7,
++            draw: trend,
++        },
++        Entry {
++            name: "data-trend-drawing",
++            width: 72,
++            height: 7,
++            draw: trend_drawing,
++        },
++        Entry {
++            name: "data-from-agent",
++            width: 60,
++            height: 4,
++            draw: from_agent,
++        },
++    ]
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7286** (closed): chore(catalog): refresh the Models.dev offline seed (@codewhale-agent[bot])
-- **PR #7277** (2026-11-11): feat(app-server,tui): run read-only builtins over the Runtime API (@gaord)
-- **PR #7276** (2026-11-10): fix(engine): match search include globs in linear time (@luochen211)
-- **PR #7275** (2026-11-10): fix: reject negative retry delays at config load instead of panicking on retry (@luochen211)
-- **PR #7273** (2026-11-10): fix(tui): pad and truncate CJK text by display width (@luochen211)
-- **PR #7272** (2026-11-10): chore: remove unreferenced code and stale dead_code allows (@luochen211)
+- **PR #7323** (closed): fix(app-server): read the original path of a worktree-side rename (@SparkofSpike)
+- **PR #7322** (2026-11-12): fix(tui): count characters, not bytes, for the session title limit (@luochen211)
+- **PR #7319** (2026-11-12): fix(mcp,lsp): answer server requests instead of taking them as replies (@luochen211)
+- **PR #7317** (2026-11-12): fix: show non-ASCII paths as written in /diff and git mentions (@luochen211)
+- **PR #7316** (2026-11-12): fix(state,snapshot): keep index entries after a torn line and clamp prune age (@luochen211)
+- **PR #7315** (2026-11-12): fix(config): read every env alias chain through env_non_blank (@luochen211)
 
 ---
 
@@ -2265,33 +3075,44 @@ with POSIX rename semantics. A reader that share
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. receipts): a thread receipt carries tokens only, with no provider-call count (CW
+## X. state,snapshot): keep index entries after a torn line and clamp prune age (#7316
 
 **RULE**:
-When implementing operations in `crates/engine/src/receipts/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/snapshot/src/repo.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cdf6dff9`: receipts): a thread receipt carries tokens only, with no provider-call count (CW-8032). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3f2a0194`: state,snapshot): keep index entries after a torn line and clamp prune age (#7316). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/engine/src/receipts/tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/snapshot/src/repo.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    assert!(
-        markdown.contains("\nNot recorded:\n- Cost: ")
-            && markdown.contains("\n- Shell file changes:")
-    );
-    assert_eq!(tokens.calls, None);
+        let cutoff = now.saturating_sub(i64::try_from(max_age.as_secs()).unwrap_or(i64::MAX));
+    #[test]
+    fn prune_with_an_age_beyond_i64_keeps_every_snapshot() {
+        let tmp = tempdir().unwrap();
+        let (repo, _home) = make_repo(tmp.path());
+        std::fs::write(repo.work_tree().join("f.txt"), "v0").unwrap();
+        repo.snapshot("turn:0").unwrap();
+        std::thread::sleep(Duration::from_millis(1100));
+
+        let removed = repo
+            .prune_older_than(Duration::from_secs(u64::MAX))
+            .unwrap();
+
+        assert_eq!(removed, 0);
+        assert_eq!(repo.list(10).unwrap().len(), 1);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    assert!(markdown.contains("\nNot recorded:\n- Cost: ")
-        && markdown.contains("\n- Shell file changes:"));
+        let cutoff = now - max_age.as_secs() as i64;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cdf6dff9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3f2a0194` are properly handled with clean fallback behavior.

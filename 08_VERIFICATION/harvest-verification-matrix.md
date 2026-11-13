@@ -9386,3 +9386,7 @@
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T07:26:07.275Z` | `hf-nanbeige-nanbeige4.3-33b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-263ECAA8` [Domain D] | Yes (`10a5c4b3...`) |
 | `CYCLE-20261113-1OYX` | `2026-11-13T07:39:21.129Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md` | Yes (`cd861169...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T07:39:41.794Z` | `hf-briaai-fibo-2.0-dev` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CE32BB74` [Domain D] | Yes (`2d531889...`) |
+| `CYCLE-20261113-BHGF` | `2026-11-13T07:46:57.951Z` | `XHToken/Spark-X2.6-4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md` | Yes (`5fa1f936...`) |
+| `CYCLE-20261113-BW7L` | `2026-11-13T07:47:17.073Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0427a1dc...`) |
+| `CYCLE-20261113-C0HG` | `2026-11-13T07:47:22.612Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6c7548a6...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T07:47:42.744Z` | `hf-xhtoken-spark-x2.6-4b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-388F29C6` [Domain D] | Yes (`3f691ebb...`) |

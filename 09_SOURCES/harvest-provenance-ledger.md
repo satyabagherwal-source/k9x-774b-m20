@@ -9395,3 +9395,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-263ecaa8` | `project://hf-nanbeige-nanbeige4.3-33b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md` | 2026-11-13T07:26:07.275Z |
 | `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-13T07:39:21.132Z |
 | `learn-dom-d-ce32bb74` | `project://hf-briaai-fibo-2.0-dev` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md` | 2026-11-13T07:39:41.794Z |
+| `learn-huggingface-xhtoken-spark-x2-6-4b-gguf` | `https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-13T07:46:57.955Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `622a4930` | Multi-dimensional audit evidence | 2026-11-13T07:47:17.078Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `db67396d` | Multi-dimensional audit evidence | 2026-11-13T07:47:22.616Z |
+| `learn-dom-d-388f29c6` | `project://hf-xhtoken-spark-x2.6-4b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md` | 2026-11-13T07:47:42.744Z |

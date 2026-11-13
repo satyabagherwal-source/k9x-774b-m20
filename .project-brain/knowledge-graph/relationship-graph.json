@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T07:39:41.793Z",
+  "updated_at": "2026-11-13T07:47:42.743Z",
   "statistics": {
-    "total_nodes": 60,
-    "total_edges": 30,
+    "total_nodes": 61,
+    "total_edges": 31,
     "domain_distribution": {
-      "D": 46,
+      "D": 47,
       "M": 1,
       "H": 8,
       "J": 2,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 30
+      "CONSTRAINED_BY_ARCHITECTURE": 31
     }
   },
   "nodes": {
@@ -1342,6 +1342,29 @@
       ],
       "created_at": "2026-11-13T07:39:41.793Z",
       "updated_at": "2026-11-13T07:39:41.793Z"
+    },
+    "DOM-D-388F29C6": {
+      "id": "DOM-D-388F29C6",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): XHToken/Spark-X2.6-4B-GGUF",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-xhtoken-spark-x2.6-4b-gguf/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T07:47:28.879Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-xhtoken-spark-x2.6-4b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T07:47:42.743Z",
+      "updated_at": "2026-11-13T07:47:42.743Z"
     }
   },
   "edges": [
@@ -1644,6 +1667,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-CE32BB74 [D] with Domain M",
       "created_at": "2026-11-13T07:39:41.793Z"
+    },
+    {
+      "id": "EDGE-D7208D285D70",
+      "sourceId": "DOM-D-388F29C6",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-388F29C6 [D] with Domain M",
+      "created_at": "2026-11-13T07:47:42.743Z"
     }
   ]
 }

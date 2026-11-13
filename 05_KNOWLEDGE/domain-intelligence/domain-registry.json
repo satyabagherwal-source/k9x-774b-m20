@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T07:39:41.791Z",
-  "total_records": 106,
+  "last_updated": "2026-11-13T07:47:42.741Z",
+  "total_records": 107,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 64,
+      "total": 65,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -89,7 +89,8 @@
         "DOM-D-552AF493",
         "DOM-D-ABE6FCAB",
         "DOM-D-263ECAA8",
-        "DOM-D-CE32BB74"
+        "DOM-D-CE32BB74",
+        "DOM-D-388F29C6"
       ]
     },
     "E": {
@@ -4387,6 +4388,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T07:39:41.789Z"
+    },
+    "DOM-D-388F29C6": {
+      "record_id": "DOM-D-388F29C6",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): XHToken/Spark-X2.6-4B-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF](https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF))  \n> **Source Version**: `hf-xhtoken-s`  \n> **License**: Open-Source",
+      "content_hash": "3f691ebb02a6c3c726517ed50a3fe8b1c6a451954b52cdbab5a2a436e80132e4",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "provenance": {
+        "source_uri": "project://hf-xhtoken-spark-x2.6-4b-gguf/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T07:47:28.879Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-xhtoken-spark-x2.6-4b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-xhtoken-spark-x2.6-4b-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T07:47:42.738Z"
     }
   }
 }

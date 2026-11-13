@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T07:39:21.056Z",
+  "last_updated": "2026-11-13T07:47:22.447Z",
   "total_verified_learnings": 1262,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9089,13 +9089,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "8aa7707d",
-      "content_hash": "3d4f8c2ceac51a4c3e8aab70488ea0292cdb08f3c350d43ad40a948103c652ef",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "622a4930",
+      "content_hash": "0427a1dc11b01f790dccafcc687da63eb58a97420f550cd0cf6ac419c0347a83",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -9238,7 +9238,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T01:39:06.446Z",
+      "verified_at": "2026-11-13T07:47:16.886Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40872,8 +40872,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "b65a7b2f",
-      "content_hash": "7a03e93c40c9d9f9e2e8d2f73c720a7b341de59ee00cf02c60ea76a346438aba",
+      "source_version": "db67396d",
+      "content_hash": "6c7548a6c39a929d2e5541bace632dc19f3f619440d1288b82e3a3f7992e123b",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -40885,6 +40885,11 @@
         {
           "number": null,
           "title": "deps): bump ubuntu from 24.04 to 26.04 (#18827)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "kds): retry ZoneInsight flush on conflict (#19402)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40933,7 +40938,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T02:56:23.219Z",
+      "verified_at": "2026-11-13T07:47:22.404Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149445,7 +149450,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
       "source_version": "hf-xhtoken-spark-x2.6-4b-gguf",
-      "content_hash": "b6cd20bdd64f0a133ae41c2d1b05e4643a32262c31d39f64f230dfbf99bb5254",
+      "content_hash": "5fa1f936992d0563bd2077ac6fe4381b5eba5fcdfac0fd29052b3c5e53bfe845",
       "dossier_path": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
       "promoted_rules": [
@@ -149495,7 +149500,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T06:19:02.519Z",
+      "verified_at": "2026-11-13T07:46:57.819Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T07:39:21.142Z",
+  "last_updated": "2026-11-13T07:47:22.640Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "3d4f8c2ceac51a4c3e8aab70488ea0292cdb08f3c350d43ad40a948103c652ef",
-      "verified_at": "2026-11-13T01:39:06.692Z",
+      "content_hash": "0427a1dc11b01f790dccafcc687da63eb58a97420f550cd0cf6ac419c0347a83",
+      "verified_at": "2026-11-13T07:47:17.099Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T01:39:06.692Z"
+      "last_updated": "2026-11-13T07:47:17.099Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "7a03e93c40c9d9f9e2e8d2f73c720a7b341de59ee00cf02c60ea76a346438aba",
-      "verified_at": "2026-11-12T02:56:23.423Z",
+      "content_hash": "6c7548a6c39a929d2e5541bace632dc19f3f619440d1288b82e3a3f7992e123b",
+      "verified_at": "2026-11-13T07:47:22.639Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T02:56:23.423Z"
+      "last_updated": "2026-11-13T07:47:22.639Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -16251,14 +16251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-      "content_hash": "b6cd20bdd64f0a133ae41c2d1b05e4643a32262c31d39f64f230dfbf99bb5254",
-      "verified_at": "2026-11-08T06:19:02.601Z",
+      "content_hash": "5fa1f936992d0563bd2077ac6fe4381b5eba5fcdfac0fd29052b3c5e53bfe845",
+      "verified_at": "2026-11-13T07:46:57.964Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T06:19:02.601Z"
+      "last_updated": "2026-11-13T07:46:57.964Z"
     },
     "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB": {
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T07:39:41.803Z",
+  "updated_at": "2026-11-13T07:47:42.820Z",
   "stats": {
-    "total_discovered": 2246,
-    "approved_pending_harvest": 2088,
+    "total_discovered": 2250,
+    "approved_pending_harvest": 2092,
     "harvested_count": 0,
     "rejected_count": 158,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2075,
+      "COMMUNITY_AND_EXPERT": 2079,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 72,
       "ENGINEERING_BLOGS": 1,
@@ -48324,6 +48324,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md",
         "fileName": "hf-briaai-fibo-2.0-dev-learnings.md"
+      }
+    },
+    "SRC-99D8721F1544": {
+      "id": "SRC-99D8721F1544",
+      "url": "https://github.com/Hmbown/Codewhale",
+      "title": "https://github.com/Hmbown/Codewhale",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:47:28.848Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-90D2B47ABB68": {
+      "id": "SRC-90D2B47ABB68",
+      "url": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
+      "title": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:47:42.752Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-gguf-learnings.md",
+        "fileName": "hf-xhtoken-spark-x2.6-4b-gguf-learnings.md"
+      }
+    },
+    "SRC-27066627B08C": {
+      "id": "SRC-27066627B08C",
+      "url": "https://github.com/kumahq/kuma/actions/runs/43242394502",
+      "title": "https://github.com/kumahq/kuma/actions/runs/43242394502",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:47:42.798Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-E4213A88D926": {
+      "id": "SRC-E4213A88D926",
+      "url": "https://github.com/kumahq/kuma/actions/runs/42898229203/job/130138666351",
+      "title": "https://github.com/kumahq/kuma/actions/runs/42898229203/job/130138666351",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T07:47:42.820Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T07:39:41.954Z",
+  "last_updated": "2026-11-13T07:47:42.768Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8399,6 +8399,24 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D6A301-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-974BD2",
+      "directive_title": "state,snapshot): keep index entries after a torn line and clamp prune age (#7316",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hmbown-codewhale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-974BD2-state-snapshot-keep-index-entries-after-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-3A57A4",
+      "directive_title": "kds): retry ZoneInsight flush on conflict (#19402)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kumahq-kuma",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3A57A4-kds-retry-zoneinsight-flush-on-conflict-.md",
       "staged_date": "2026-11-13"
     }
   ]

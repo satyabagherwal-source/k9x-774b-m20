@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "1e2106e6",
+    "sourceVersion": "622a4930",
     "license": "MIT",
-    "contentHash": "0a8e501d40fcbdb3aef99f891cc59cb174929fd2286617b2bc2803269201c4f9",
-    "lastHarvestedAt": "2026-11-11T14:56:37.826Z",
+    "contentHash": "0427a1dc11b01f790dccafcc687da63eb58a97420f550cd0cf6ac419c0347a83",
+    "lastHarvestedAt": "2026-11-13T07:47:17.078Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "b65a7b2f",
+    "sourceVersion": "db67396d",
     "license": "Apache-2.0",
-    "contentHash": "7a03e93c40c9d9f9e2e8d2f73c720a7b341de59ee00cf02c60ea76a346438aba",
-    "lastHarvestedAt": "2026-11-12T02:56:23.413Z",
+    "contentHash": "6c7548a6c39a929d2e5541bace632dc19f3f619440d1288b82e3a3f7992e123b",
+    "lastHarvestedAt": "2026-11-13T07:47:22.616Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -10815,8 +10815,8 @@
     "sourceUrl": "https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF",
     "sourceVersion": "hf-xhtoken-spark-x2.6-4b-gguf",
     "license": "Open-Source",
-    "contentHash": "b6cd20bdd64f0a133ae41c2d1b05e4643a32262c31d39f64f230dfbf99bb5254",
-    "lastHarvestedAt": "2026-11-08T06:19:02.586Z",
+    "contentHash": "5fa1f936992d0563bd2077ac6fe4381b5eba5fcdfac0fd29052b3c5e53bfe845",
+    "lastHarvestedAt": "2026-11-13T07:46:57.955Z",
     "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf"
   },
   "hf-nvidia-nvidia-nemotron-3.5-bolt-e4b-4gb": {

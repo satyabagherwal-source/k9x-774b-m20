@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T07:39:41.978Z",
+  "last_updated": "2026-11-13T07:47:42.843Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T07:39:41.956Z",
@@ -353,7 +353,7 @@
       "staged_for_review": 1
     },
     "hmbown-codewhale-learnings.md": {
-      "processed_at": "2026-11-11T14:56:57.862Z",
+      "processed_at": "2026-11-13T07:47:28.835Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -718,9 +718,9 @@
       "staged_for_review": 1
     },
     "kumahq-kuma-learnings.md": {
-      "processed_at": "2026-11-12T02:57:07.405Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-13T07:47:42.770Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "vi-websocat-learnings.md": {
       "processed_at": "2026-11-12T03:10:50.937Z",
@@ -1641,9 +1641,14 @@
       "processed_at": "2026-11-13T07:39:41.794Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-xhtoken-spark-x2.6-4b-gguf-learnings.md": {
+      "processed_at": "2026-11-13T07:47:42.744Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 498,
-  "total_canonical_promoted": 73,
-  "total_staged_for_review": 422
+  "total_dossiers_evaluated": 501,
+  "total_canonical_promoted": 74,
+  "total_staged_for_review": 424
 }
