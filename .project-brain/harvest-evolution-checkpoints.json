@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T08:13:21.026Z",
+  "last_updated": "2026-11-13T08:22:31.238Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T07:39:41.956Z",
@@ -378,7 +378,7 @@
       "staged_for_review": 1
     },
     "cachix-devenv-learnings.md": {
-      "processed_at": "2026-11-11T16:12:24.169Z",
+      "processed_at": "2026-11-13T08:22:17.926Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1666,9 +1666,19 @@
       "processed_at": "2026-11-13T08:13:20.797Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-baidu-unlimited-ocr-2-learnings.md": {
+      "processed_at": "2026-11-13T08:22:31.156Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "iziz-libphonenumber-ios-learnings.md": {
+      "processed_at": "2026-11-13T08:22:31.178Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 507,
-  "total_canonical_promoted": 76,
-  "total_staged_for_review": 428
+  "total_dossiers_evaluated": 510,
+  "total_canonical_promoted": 77,
+  "total_staged_for_review": 430
 }

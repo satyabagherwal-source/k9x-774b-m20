@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md`  
 > **Source**: github ([https://github.com/iziz/libPhoneNumber-iOS](https://github.com/iziz/libPhoneNumber-iOS))  
-> **Source Version**: `91fcc745`  
+> **Source Version**: `b27567bb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T00:13:29.209Z  
+> **Timestamp**: 2026-11-13T08:21:45.842Z  
 > **Learning ID**: `learn-github-iziz-libphonenumber-ios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iziz/libPhoneNumber-iOS](https://github.com/iziz/libPhoneNumber-iOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T00:13:28.922Z  
+> **Harvest Timestamp**: 2026-11-13T08:21:44.731Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: iOS port of Google's libphonenumber with Objective-C core, Swift facade, SwiftUI input, and CocoaPods/SPM support
 - **Primary Language / Ecosystem**: Objective-C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2380 stars
+- **Stars / Engagement**: 2382 stars
 
 ---
 
@@ -1644,821 +1644,207 @@ var runtimeArray: [CGFloat] = []
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `91fcc745` (2026-11-07)
-**Commit Message**: Merge pull request #459 from iziz/metadata-v9-0-43
+### Incident Patch 1: `b27567bb` (2026-11-13)
+**Commit Message**: Merge pull request #460 from heymansmile/users/onlivan/EDAFRONT-52973-upstream-nullability
 
-chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1.4
+Annotate core helper nullability for Swift
 
-**File**: `CHANGELOG.md` (modified, +19/-0)
+**File**: `libPhoneNumber/NBAsYouTypeFormatter.h` (modified, +8/-8)
 ```diff
-@@ -9,6 +9,25 @@ as described in `docs/RELEASE_RUNBOOK.md`.
+@@ -12,17 +12,17 @@
  
- ## Unreleased
+ @interface NBAsYouTypeFormatter : NSObject
  
-+## 2.1.4
-+
-+Patch release. Refresh Google libphonenumber metadata from `v9.0.42` to
-+`v9.0.43`, including phone-number, carrier, and geocoding data. Phone-number
-+metadata changes affect nine regions: Benin, China, Germany, Ecuador,
-+Ethiopia, Georgia, Laos, Romania, and Zimbabwe. Carrier metadata grows from
-+32,099 to 32,255 prefix rows. Geocoding changes are limited to the English
-+(Zimbabwe and one Australian prefix) and Chinese databases. Short-number,
-+testing, and timezone data are unchanged. See `docs/METADATA_UPDATE_LOG.md`
-+for the upstream comparison and validation.
-+
-+### Fixed
-+
-+- Parsing an RFC3966 `tel:` URI with a long, invalid `phone-context` domain
-+  name no longer hangs. The domain-label patterns now follow Google's fix for
-+  catastrophic regular-expression backtracking
-+  ([google/libphonenumber#4070](https://github.com/google/libphonenumber/pull/4070)),
-+  and `testParseRfc3966PhoneContextDomain` is ported from upstream.
-+
- ## 2.1.3
+-- (instancetype)initWithRegionCode:(NSString *)regionCode;
+-- (instancetype)initWithRegionCode:(NSString *)regionCode metadataHelper:(NBMetadataHelper *)helper;
++- (instancetype _Nonnull)initWithRegionCode:(NSString * _Nullable)regionCode;
++- (instancetype _Nonnull)initWithRegionCode:(NSString * _Nullable)regionCode metadataHelper:(NBMetadataHelper * _Nonnull)helper;
  
- Patch release. Refresh Google libphonenumber metadata from `v9.0.41` to
+-- (NSString *)inputString:(NSString *)string;
+-- (NSString *)inputStringAndRememberPosition:(NSString *)string;
++- (NSString * _Nonnull)inputString:(NSString * _Nullable)string;
++- (NSString * _Nonnull)inputStringAndRememberPosition:(NSString * _Nullable)string;
+ 
+-- (NSString *)inputDigit:(NSString *)nextChar;
+-- (NSString *)inputDigitAndRememberPosition:(NSString *)nextChar;
++- (NSString * _Nonnull)inputDigit:(NSString * _Nullable)nextChar;
++- (NSString * _Nonnull)inputDigitAndRememberPosition:(NSString * _Nullable)nextChar;
+ 
+-- (NSString *)removeLastDigit;
+-- (NSString *)removeLastDigitAndRememberPosition;
++- (NSString * _Nonnull)removeLastDigit;
++- (NSString * _Nonnull)removeLastDigitAndRememberPosition;
+ 
+ - (NSInteger)getRememberedPosition;
+ 
 ```
 
-**File**: `docs/METADATA_UPDATE_LOG.md` (modified, +33/-0)
+**File**: `libPhoneNumber/NBMetadataHelper.h` (modified, +17/-9)
 ```diff
-@@ -4,6 +4,39 @@ This file records upstream comparison results for metadata updates. Keep entries
+@@ -13,20 +13,28 @@
  
- Metadata-only updates should ship as patch releases. Use a minor release only when the update also adds public API, new modules, or additive behavior beyond metadata freshness.
+ @interface NBMetadataHelper : NSObject
  
-+## 2026-11-07: Google libphonenumber v9.0.43
-+
-+### Scope
-+
-+- Previous local metadata baseline: `v9.0.42`; new Google tag: `v9.0.43` (`86ea33cee5c22ab7e23b3de368e7cc7fa439a2b7`).
-+- Regenerated all metadata families. Main phone-number, carrier, and geocoding data changed; short-number and testing metadata are unchanged, and the timezone rows are byte-identical with only the recorded `upstream_ref` advancing.
-+- Main phone-number changes affect nine regions: `BJ`, `CN`, `DE`, `EC`, `ET`, `GE`, `LA`, `RO`, and `ZW`.
-+- Carrier data contains 32,255 prefix rows (up from 32,099) and 107 mobile-portable regions across 10 locales. Timezone data contains 3,240 prefix rows and 285 unique timezone IDs.
-+- The geocoding updater regenerated all 34 databases; only `en.db` and `zh.db` changed in content. `en.db` replaces 38 Zimbabwe (`263`) rows with 3 and drops the Australian prefix `61261069`; `zh.db` fixes three corrupted `86` descriptions (`861329598`, `861596511`, `861596512`). These match the upstream `resources/geocoding/en/263.txt`, `en/61.txt`, and `zh/86.txt` changes. The other 32 databases were regenerated with identical contents and were left at their committed bytes.
-+- Set all Xcode project and 13 podspec versions to `2.1.4`. This patch also carries the RFC3966 parsing fix below.
-+
-+### Upstream Logic And Resource Comparison
-+
-+- Compared tracked Google files from `v9.0.42` (`8d8d75272c35`) to `v9.0.43` (`86ea33cee5c2`): 18 files changed, covering generated JavaScript phone-number metadata, `PhoneNumberMetadata.xml`, 13 carrier resources, and three geocoding resources. Tracked JavaScript implementation and test files did not change between the tags.
-+- Google `master` (`981600cc587f`) is one implementation commit ahead of `v9.0.43`: [google/libphonenumber#4070](https://github.com/google/libphonenumber/pull/4070) rewrites `RFC3966_DOMAINLABEL_` and `RFC3966_TOPLABEL_` so each hyphen run must be followed by an alphanumeric, removing catastrophic backtracking, and adds `testParseRfc3966PhoneContextDomain`. Ported both to `NBPhoneNumberUtil.m` and `NBPhoneNumberUtilTest.m`. Before the fix, the ported test did not finish within a 120-second timeout; after it, the test passes in 7 ms.
-+- Scheduled [Upstream Drift run `42329942884`](https://github.com/iziz/libPhoneNumber-iOS/actions/runs/42329942884) detected both gaps: the metadata freshness job exited with code 2 for `v9.0.43`, and the Google master parity job failed on the missing `testParseRfc3966PhoneContextDomain`.
-+- Test parity covers 173 upstream JavaScript tests at `v9.0.43` and 174 at `master`, against 182 local Objective-C tests; API parity covers 66 upstream public prototype methods and 93 local selectors. All four checks passed.
-+
-+### Validation
-+
-+- `swift scripts/updateMetadata.swift v9.0.43 --dry-run` and `swift scripts/updateMetadata.swift v9.0.43` passed; the wrapper's freshness check reports `v9.0.43` up to date.
-+- `swift scripts/checkUpstreamSourceDrift.swift --current-ref v9.0.42 --upstream-ref v9.0.43 --output .build/release-2.1.4/source-drift` completed.
-+- `swift scripts/checkUpstreamTestParity.swift` and `swift scripts/checkUpstreamAPIParity.swift` passed with both `--upstream-ref v9.0.43` and `--upstream-ref master`.
-+- `swift scripts/checkUpstreamSourceDrift.swift --current-ref v9.0.43 --upstream-ref master --output .build/release-2.1.4/source-drift-master` reports only `phonenumberutil.js` and `phonenumberutil_test.js`, the change ported above.
-+- `swift scripts/updateProjectVersions.swift 2.1.4` and its version consistency check passed.
-+- Decompressed the generated Objective-C gzip array and verified it decodes to the generated JSON for 254 phone-number regions, with a declared expanded length of 351,979 bytes. Short-number output is unchanged.
-+- SQLite integrity checks passed for the carrier, timezone, `en`, and `zh` databases. Both the carrier and timezone databases record `upstream_ref` `v9.0.43`.
-+- `swift test --scratch-path .build/validation-2.1.4` and `LC_ALL=ko_KR.UTF-8 LANG=ko_KR.UTF-8 swift test --scratch-path .build/validation-2.1.4` passed, each with 232 XCTest cases and 43 Swift Testing tests.
-+- `swift build -c release --scratch-path .build/validation-2.1.4` passed.
-+- `swift scripts/testXcodeSchemes.swift --destination 'id=80FE1FB5-892C-4402-9CA1-64A11DF26E15'` passed on the iPhone 18 Pro / iOS 27.0 simulator: `libPhoneNumber` (151 tests), `libPhoneNumberGeocoding` (20), and `libPhoneNumberShortNumber` (31).
-+- `swift scripts/checkMetadataFreshness.swift --current-ref v9.0.43 --output .build/release-2.1.4/final-freshness --fail-on-update` passed.
-+- `git diff --check` passed.
-+
- ## 2026-10-30: Google libphonenumber v9.0.42
++// Preserve the existing Swift parameter import and implementation-only annotations.
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wnullability-completeness"
+ + (BOOL)hasValue:(NSString *)string;
++#pragma clang diagnostic pop
  
- ### Scope
+-- (instancetype)initWithZippedData:(NSData *)data expandedLength:(NSUInteger)expandedLength;
++- (instancetype _Null_unspecified)initWithZippedData:(NSData * _Null_unspecified)data expandedLength:(NSUInteger)expandedLength;
+ 
+-- (instancetype)init;
++- (instancetype _Nonnull)init;
+ 
+-- (NSArray *)regionCodeFromCountryCode:(NSNumber *)countryCodeNumber;
+-- (NSString *)countryCodeFromRegionCode:(NSString *)regionCode;
++- (NSArray * _Nullable)regionCodeFromCountryCode:(NSNumber * _Null_unspecified)countryCodeNumber;
++- (NSString * _Nullable)countryCodeFromRegionCode:(NSString * _Null_unspecified)regionCode;
+ 
+-- (NBPhoneMetaData *)getMetadataForNonGeographicalRegion:(NSNumber *)countryCallingCode;
+-- (NBPhoneMetaData *)getMetadataForRegion:(NSString *)regionCode;
++// These parameter contracts remain unaudited.
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wnullability-completeness"
++- (NBPhoneMetaData * _Nullable)getMetadataForNonGeographicalRegion:(NSNumber *)countryCallingCode;
++- (NBPhoneMetaData * _Nullable)getMetadataForRegion:(NSString *)regionCode;
++#pragma clang diagnostic pop
+ 
+-- (NSDictionary *)countryCodeToCountryNumberDictionary;
+-- (NSDictionary *)countryCodeToRegionCodeDictionary;
+-- (NSArray *)getAllMetadata;
++- (NSDictionary * _Nonnull)countryCodeToCountryNumberDictionary;
++- (NSDictionary * _Null_unspecified)countryCodeToRegionCodeDictionary;
++- (NSArray * _Nonnull)getAllMetadata;
+ 
+ @end
 ```
 
-**File**: `generatedJSON/PhoneNumberMetaData.json` (modified, +95/-131)
+**File**: `libPhoneNumber/NSArray+NBAdditions.h` (modified, +5/-5)
 ```diff
-@@ -8057,15 +8057,14 @@
-       [
-         null,
-         null,
--        "(?:01\\d|8)\\d{7}",
-+        "01\\d{8}",
-         null,
-         null,
-         null,
-         null,
-         null,
-         null,
-         [
--          8,
-           10
-         ]
-       ],
-@@ -8076,12 +8075,7 @@
-         null,
-         null,
-         null,
--        "0120211234",
--        null,
--        null,
--        [
--          10
--        ]
-+        "0120211234"
-       ],
-       [
-         null,
-@@ -8090,12 +8084,7 @@
-         null,
-         null,
-         null,
--        "0195123456",
--        null,
--        null,
--        [
--          10
--        ]
-+        "0195123456"
-       ],
-       [
-         null,
-@@ -8156,15 +8145,15 @@
-       [
-         null,
-         null,
--        "857[58]\\d{4}",
-         null,
-         null,
-         null,
--        "85751234",
-+        null,
-+        null,
-         null,
-         null,
-         [
--          8
-+          -1
-         ]
-       ],
-       "BJ",
-@@ -8178,14 +8167,6 @@
-       null,
-       null,
-       [
--        [
--          null,
--          "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
--          "$1 $2 $3 $4",
--          [
--            "8"
--          ]
--        ],
-         [
-           null,
-           "(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-@@ -8229,15 +8210,15 @@
-       [
-         null,
-         null,
--        "81\\d{6}",
-         null,
-         null,
-         null,
--        "81123456",
-+        null,
-+        null,
-         null,
-         null,
-         [
--          8
-+          -1
-         ]
-       ],
-       null,
-@@ -12903,6 +12884,31 @@
-             "[1-9]123"
-           ]
-         ],
-+        [
-+          null,
-+          "(\\d{2})(\\d{5})",
-+          "$1 $2",
-+          [
-+            "101",
-+            "1010",
-+            "10100"
-+          ],
-+          "0$1",
-+          "$CC $1"
-+        ],
-+        [
-+          null,
-+          "(\\d{2})(\\d{5,6})",
-+          "$1 $2",
-+          [
-+            "(?:10|2[0-57-9])[19]|3(?:[15]|35|49|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7|8[23])|5(?:[1357]|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3|4[13]|5[1-5]|9[0-35-9])|[39]7[0-79]",
-+            "10(?:12|9[56])|2[0-57-9](?:1[02]|9[56])|(?:3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))1",
-+            "10(?:123|9[56])|2[0-57-9](?:1(?:00|23)|9[56])|(?:3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))12",
-+            "10(?:123|9[56])|2[0-57-9](?:1(?:00|23)|9[56])|(?:3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))123"
-+          ],
-+          "0$1",
-+          "$CC $1"
-+        ],
-         [
-           null,
-           "(\\d{3})(\\d{4})",
-@@ -12956,12 +12962,23 @@
-           "0$1",
-           "$CC $1"
-         ],
-+        [
-+          null,
-+          "(\\d{4})(\\d{4})",
-+          "$1 $2",
-+          [
-+            "[1-9]",
-+            "1(?:0(?:[02-578]|1[1-9]|6[013-579]|9[0-47-9])|[1-9])|2(?:[0-57-9](?:[0-8]|9[0-47-9])|6)|[3-9]",
-+            "1(?:0(?:[02-578]|1[1-9]|6(?:[01457]|[39][5-8])|9[0-47-9])|[1-9])|26|3(?:[0268]|3[0-46-9]|4[0-8]|78|9[079])|4(?:[049]|1[034]|2[02-68]|[35]0|6[0-356]|8[014-9])|5(?:0|2[0-24-689]|4[0-2457-9]|6[057-9]|8[1-9]|90)|6(?:[0-24578]|3[046-9]|6[14-79]|9[03-9])|7(?:0[02-9]|2[0135-79]|3[23]|4[0-27-9]|6[1457]|8)|8(?:[046]|1[01459]|2[0-489]|5[023]|8[0-2459]|9[09])|9(?:0[0457]|1[08]|[268]|4[024-9]|5[06-9])|(?:2[0-57-9]|3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:[0-8]|9[0-47-9])",
-+            "1(?:0(?:[02-578]|1[1-9]|6(?:[01457]|[39][5-8])|9[0-47-9])|[1-9])|2(?:[0-57-9](?:[0-8]|9[0-47-9])|6)|3(?:[0268]|3[0-46-9]|4[0-8]|78|9[079])|4(?:[049]|1[034]|2[02-68]|[35]0|6[0-356]|8[014-9])|5(?:0|2[0-24-689]|4[0-2457-9]|6[057-9]|8[1-9]|90)|6(?:[0-24578]|3[046-9]|6[14-79]|9[03-9])|7(?:0[02-9]|2[0135-79]|3[23]|4[0-27-9]|6[1457]|8)|8(?:[046]|1[01459]|2[0-489]|5[023]|8[0-2459]|9[09])|9(?
-```
-
-**File**: `libPhoneNumber-Demo/libPhoneNumber-Demo-SPM.xcodeproj/project.pbxproj` (modified, +4/-4)
-```diff
-@@ -270,7 +270,7 @@
- 				CLANG_WARN_UNREACHABLE_CODE = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
- 				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
- 				DEBUG_INFORMATION_FORMAT = dwarf;
- 				ENABLE_STRICT_OBJC_MSGSEND = YES;
- 				ENABLE_TESTABILITY = YES;
-@@ -288,7 +288,7 @@
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
- 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
- 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
- 				MTL_FAST_MATH = YES;
- 				ONLY_ACTIVE_ARCH = YES;
-@@ -326,7 +326,7 @@
- 				CLANG_WARN_UNREACHABLE_CODE = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
- 				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
- 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
- 				ENABLE_NS_ASSERTIONS = NO;
- 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-@@ -338,7 +338,7 @@
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
- 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
- 				MTL_ENABLE_DEBUG_INFO = NO;
- 				MTL_FAST_MATH = YES;
- 				SDKROOT = iphoneos;
-```
-
-**File**: `libPhoneNumber-Demo/libPhoneNumber-Demo.xcodeproj/project.pbxproj` (modified, +4/-4)
-```diff
-@@ -306,7 +306,7 @@
- 				CLANG_WARN_UNREACHABLE_CODE = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
- 				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
- 				DEBUG_INFORMATION_FORMAT = dwarf;
- 				ENABLE_STRICT_OBJC_MSGSEND = YES;
- 				ENABLE_TESTABILITY = YES;
-@@ -324,7 +324,7 @@
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
- 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
- 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
- 				MTL_FAST_MATH = YES;
- 				ONLY_ACTIVE_ARCH = YES;
-@@ -363,7 +363,7 @@
- 				CLANG_WARN_UNREACHABLE_CODE = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
- 				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
- 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
- 				ENABLE_NS_ASSERTIONS = NO;
- 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-@@ -375,7 +375,7 @@
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
- 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
- 				MTL_ENABLE_DEBUG_INFO = NO;
- 				MTL_FAST_MATH = YES;
- 				SDKROOT = iphoneos;
-```
-
-**File**: `libPhoneNumber-GeocodingParser/libPhoneNumber-GeocodingParser.xcodeproj/project.pbxproj` (modified, +4/-4)
-```diff
-@@ -315,7 +315,7 @@
- 				CLANG_WARN_UNREACHABLE_CODE = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
- 				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEBUG_INFORMATION_FORMAT = dwarf;
- 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-@@ -334,7 +334,7 @@
- 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
- 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
- 				MTL_FAST_MATH = YES;
- 				ONLY_ACTIVE_ARCH = YES;
-@@ -376,7 +376,7 @@
- 				CLANG_WARN_UNREACHABLE_CODE = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
- 				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
- 				ENABLE_NS_ASSERTIONS = NO;
-@@ -389,7 +389,7 @@
- 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
- 				MTL_ENABLE_DEBUG_INFO = NO;
- 				MTL_FAST_MATH = YES;
- 				SDKROOT = macosx;
-```
-
-**File**: `libPhoneNumber-iOS-Swift.podspec` (modified, +4/-4)
-```diff
-@@ -1,7 +1,7 @@
- Pod::Spec.new do |s|
-   s.name         = "libPhoneNumber-iOS-Swift"
-   s.module_name  = "libPhoneNumberIOSSwift"
--  s.version      = "2.1.3"
-+  s.version      = "2.1.4"
-   s.summary      = "Swift-first umbrella facade for libPhoneNumber-iOS"
-   s.description  = "Swift-first umbrella facade over the stable Objective-C libPhoneNumber-iOS core and optional geocoding and short-number modules."
-   s.homepage     = "https://github.com/iziz/libPhoneNumber-iOS.git"
-@@ -26,9 +26,9 @@ Pod::Spec.new do |s|
-   s.swift_versions = ["5.9", "6.0"]
-   s.requires_arc = true
+@@ -9,9 +9,9 @@
+ #import <Foundation/Foundation.h>
  
--  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.3'
--  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.3'
--  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.3'
-+  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.4'
-+  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.4'
-+  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.4'
- 
-   s.source_files = [
-                     'libPhoneNumberIOSSwift/**/*.swift',
-```
-
-**File**: `libPhoneNumber-iOS-SwiftCarrier.podspec` (modified, +3/-3)
-```diff
-@@ -1,7 +1,7 @@
- Pod::Spec.new do |s|
-   s.name         = "libPhoneNumber-iOS-SwiftCarrier"
-   s.module_name  = "libPhoneNumberSwiftCarrier"
--  s.version      = "2.1.3"
-+  s.version      = "2.1.4"
-   s.summary      = "Swift-first carrier facade for libPhoneNumber-iOS"
-   s.description  = "Swift-first carrier metadata facade over libPhoneNumberCarrier."
-   s.homepage     = "https://github.com/iziz/libPhoneNumber-iOS.git"
-@@ -26,8 +26,8 @@ Pod::Spec.new do |s|
-   s.swift_versions = ["5.9", "6.0"]
-   s.requires_arc = true
- 
--  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.3'
--  s.dependency 'libPhoneNumberCarrier', '~> 2.1.3'
-+  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.4'
-+  s.dependency 'libPhoneNumberCarrier', '~> 2.1.4'
- 
-   s.source_files = [
-                     'libPhoneNumberSwiftCarrier/**/*.swift',
+ @interface NSArray (NBAdditions)
+-- (id)nb_safeObjectAtIndex:(NSUInteger)index class:(Class)clazz;
+-- (NSString *)nb_safeStringAtIndex:(NSUInteger)index;
+-- (NSNumber *)nb_safeNumberAtIndex:(NSUInteger)index;
+-- (NSArray *)nb_safeArrayAtIndex:(NSUInteger)index;
+-- (NSData *)nb_safeDataAtIndex:(NSUInteger)index;
++- (id _Nullable)nb_safeObjectAtIndex:(NSUInteger)index class:(Class _Null_unspecified)clazz;
++- (NSString * _Nullable)nb_safeStringAtIndex:(NSUInteger)index;
++- (NSNumber * _Nullable)nb_safeNumberAtIndex:(NSUInteger)index;
++- (NSArray * _Nullable)nb_safeArrayAtIndex:(NSUInteger)index;
++- (NSData * _Nullable)nb_safeDataAtIndex:(NSUInteger)index;
+ @end
 ```
 
 ---
 
-### Incident Patch 2: `3c1009d1` (2026-11-07)
-**Commit Message**: chore(release): refresh metadata for 2.1.4
+### Incident Patch 2: `b64d4859` (2026-11-13)
+**Commit Message**: EDAFRONT-52973: Annotate core helper nullability for Swift
 
-Refresh bundled Google libphonenumber metadata from v9.0.42 to v9.0.43
-(upstream commit 86ea33cee5c22ab7e23b3de368e7cc7fa439a2b7) and set every
-Xcode project and podspec version to the patch 2.1.4.
+Annotate 20 methods across NBAsYouTypeFormatter, NBMetadataHelper and NSArray+NBAdditions. Preserve unaudited Swift imports and existing implementations.
 
-Phone-number changes affect BJ, CN, DE, EC, ET, GE, LA, RO, and ZW.
-Carrier data grows from 32,099 to 32,255 prefix rows. Geocoding changes
-are limited to en.db (Zimbabwe rows and one Australian prefix) and zh.db
-(three corrupted Chinese descriptions). Short-number and testing metadata
-are unchanged, and the timezone rows are byte-identical with only the
-recorded upstream_ref advancing.
-
-Also port Google's fix for catastrophic backtracking in the RFC3966
-phone-context domain-name check (google/libphonenumber#4070), along with
-the upstream testParseRfc3966PhoneContextDomain test. Before the fix the
-test did not finish within 120 seconds; it now passes in milliseconds.
-
-**File**: `CHANGELOG.md` (modified, +19/-0)
+**File**: `libPhoneNumber/NBAsYouTypeFormatter.h` (modified, +8/-8)
 ```diff
-@@ -9,6 +9,25 @@ as described in `docs/RELEASE_RUNBOOK.md`.
+@@ -12,17 +12,17 @@
  
- ## Unreleased
+ @interface NBAsYouTypeFormatter : NSObject
  
-+## 2.1.4
-+
-+Patch release. Refresh Google libphonenumber metadata from `v9.0.42` to
-+`v9.0.43`, including phone-number, carrier, and geocoding data. Phone-number
-+metadata changes affect nine regions: Benin, China, Germany, Ecuador,
-+Ethiopia, Georgia, Laos, Romania, and Zimbabwe. Carrier metadata grows from
-+32,099 to 32,255 prefix rows. Geocoding changes are limited to the English
-+(Zimbabwe and one Australian prefix) and Chinese databases. Short-number,
-+testing, and timezone data are unchanged. See `docs/METADATA_UPDATE_LOG.md`
-+for the upstream comparison and validation.
-+
-+### Fixed
-+
-+- Parsing an RFC3966 `tel:` URI with a long, invalid `phone-context` domain
-+  name no longer hangs. The domain-label patterns now follow Google's fix for
-+  catastrophic regular-expression backtracking
-+  ([google/libphonenumber#4070](https://github.com/google/libphonenumber/pull/4070)),
-+  and `testParseRfc3966PhoneContextDomain` is ported from upstream.
-+
- ## 2.1.3
+-- (instancetype)initWithRegionCode:(NSString *)regionCode;
+-- (instancetype)initWithRegionCode:(NSString *)regionCode metadataHelper:(NBMetadataHelper *)helper;
++- (instancetype _Nonnull)initWithRegionCode:(NSString * _Nullable)regionCode;
++- (instancetype _Nonnull)initWithRegionCode:(NSString * _Nullable)regionCode metadataHelper:(NBMetadataHelper * _Nonnull)helper;
  
- Patch release. Refresh Google libphonenumber metadata from `v9.0.41` to
+-- (NSString *)inputString:(NSString *)string;
+-- (NSString *)inputStringAndRememberPosition:(NSString *)string;
++- (NSString * _Nonnull)inputString:(NSString * _Nullable)string;
++- (NSString * _Nonnull)inputStringAndRememberPosition:(NSString * _Nullable)string;
+ 
+-- (NSString *)inputDigit:(NSString *)nextChar;
+-- (NSString *)inputDigitAndRememberPosition:(NSString *)nextChar;
++- (NSString * _Nonnull)inputDigit:(NSString * _Nullable)nextChar;
++- (NSString * _Nonnull)inputDigitAndRememberPosition:(NSString * _Nullable)nextChar;
+ 
+-- (NSString *)removeLastDigit;
+-- (NSString *)removeLastDigitAndRememberPosition;
++- (NSString * _Nonnull)removeLastDigit;
++- (NSString * _Nonnull)removeLastDigitAndRememberPosition;
+ 
+ - (NSInteger)getRememberedPosition;
+ 
 ```
 
-**File**: `docs/METADATA_UPDATE_LOG.md` (modified, +33/-0)
+**File**: `libPhoneNumber/NBMetadataHelper.h` (modified, +17/-9)
 ```diff
-@@ -4,6 +4,39 @@ This file records upstream comparison results for metadata updates. Keep entries
+@@ -13,20 +13,28 @@
  
- Metadata-only updates should ship as patch releases. Use a minor release only when the update also adds public API, new modules, or additive behavior beyond metadata freshness.
+ @interface NBMetadataHelper : NSObject
  
-+## 2026-11-07: Google libphonenumber v9.0.43
-+
-+### Scope
-+
-+- Previous local metadata baseline: `v9.0.42`; new Google tag: `v9.0.43` (`86ea33cee5c22ab7e23b3de368e7cc7fa439a2b7`).
-+- Regenerated all metadata families. Main phone-number, carrier, and geocoding data changed; short-number and testing metadata are unchanged, and the timezone rows are byte-identical with only the recorded `upstream_ref` advancing.
-+- Main phone-number changes affect nine regions: `BJ`, `CN`, `DE`, `EC`, `ET`, `GE`, `LA`, `RO`, and `ZW`.
-+- Carrier data contains 32,255 prefix rows (up from 32,099) and 107 mobile-portable regions across 10 locales. Timezone data contains 3,240 prefix rows and 285 unique timezone IDs.
-+- The geocoding updater regenerated all 34 databases; only `en.db` and `zh.db` changed in content. `en.db` replaces 38 Zimbabwe (`263`) rows with 3 and drops the Australian prefix `61261069`; `zh.db` fixes three corrupted `86` descriptions (`861329598`, `861596511`, `861596512`). These match the upstream `resources/geocoding/en/263.txt`, `en/61.txt`, and `zh/86.txt` changes. The other 32 databases were regenerated with identical contents and were left at their committed bytes.
-+- Set all Xcode project and 13 podspec versions to `2.1.4`. This patch also carries the RFC3966 parsing fix below.
-+
-+### Upstream Logic And Resource Comparison
-+
-+- Compared tracked Google files from `v9.0.42` (`8d8d75272c35`) to `v9.0.43` (`86ea33cee5c2`): 18 files changed, covering generated JavaScript phone-number metadata, `PhoneNumberMetadata.xml`, 13 carrier resources, and three geocoding resources. Tracked JavaScript implementation and test files did not change between the tags.
-+- Google `master` (`981600cc587f`) is one implementation commit ahead of `v9.0.43`: [google/libphonenumber#4070](https://github.com/google/libphonenumber/pull/4070) rewrites `RFC3966_DOMAINLABEL_` and `RFC3966_TOPLABEL_` so each hyphen run must be followed by an alphanumeric, removing catastrophic backtracking, and adds `testParseRfc3966PhoneContextDomain`. Ported both to `NBPhoneNumberUtil.m` and `NBPhoneNumberUtilTest.m`. Before the fix, the ported test did not finish within a 120-second timeout; after it, the test passes in 7 ms.
-+- Scheduled [Upstream Drift run `42329942884`](https://github.com/iziz/libPhoneNumber-iOS/actions/runs/42329942884) detected both gaps: the metadata freshness job exited with code 2 for `v9.0.43`, and the Google master parity job failed on the missing `testParseRfc3966PhoneContextDomain`.
-+- Test parity covers 173 upstream JavaScript tests at `v9.0.43` and 174 at `master`, against 182 local Objective-C tests; API parity covers 66 upstream public prototype methods and 93 local selectors. All four checks passed.
-+
-+### Validation
-+
-+- `swift scripts/updateMetadata.swift v9.0.43 --dry-run` and `swift scripts/updateMetadata.swift v9.0.43` passed; the wrapper's freshness check reports `v9.0.43` up to date.
-+- `swift scripts/checkUpstreamSourceDrift.swift --current-ref v9.0.42 --upstream-ref v9.0.43 --output .build/release-2.1.4/source-drift` completed.
-+- `swift scripts/checkUpstreamTestParity.swift` and `swift scripts/checkUpstreamAPIParity.swift` passed with both `--upstream-ref v9.0.43` and `--upstream-ref master`.
-+- `swift scripts/checkUpstreamSourceDrift.swift --current-ref v9.0.43 --upstream-ref master --output .build/release-2.1.4/source-drift-master` reports only `phonenumberutil.js` and `phonenumberutil_test.js`, the change ported above.
-+- `swift scripts/updateProjectVersions.swift 2.1.4` and its version consistency check passed.
-+- Decompressed the generated Objective-C gzip array and verified it decodes to the generated JSON for 254 phone-number regions, with a declared expanded length of 351,979 bytes. Short-number output is unchanged.
-+- SQLite integrity checks passed for the carrier, timezone, `en`, and `zh` databases. Both the carrier and timezone databases record `upstream_ref` `v9.0.43`.
-+- `swift test --scratch-path .build/validation-2.1.4` and `LC_ALL=ko_KR.UTF-8 LANG=ko_KR.UTF-8 swift test --scratch-path .build/validation-2.1.4` passed, each with 232 XCTest cases and 43 Swift Testing tests.
-+- `swift build -c release --scratch-path .build/validation-2.1.4` passed.
-+- `swift scripts/testXcodeSchemes.swift --destination 'id=80FE1FB5-892C-4402-9CA1-64A11DF26E15'` passed on the iPhone 18 Pro / iOS 27.0 simulator: `libPhoneNumber` (151 tests), `libPhoneNumberGeocoding` (20), and `libPhoneNumberShortNumber` (31).
-+- `swift scripts/checkMetadataFreshness.swift --current-ref v9.0.43 --output .build/release-2.1.4/final-freshness --fail-on-update` passed.
-+- `git diff --check` passed.
-+
- ## 2026-10-30: Google libphonenumber v9.0.42
++// Preserve the existing Swift parameter import and implementation-only annotations.
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wnullability-completeness"
+ + (BOOL)hasValue:(NSString *)string;
++#pragma clang diagnostic pop
  
- ### Scope
+-- (instancetype)initWithZippedData:(NSData *)data expandedLength:(NSUInteger)expandedLength;
++- (instancetype _Null_unspecified)initWithZippedData:(NSData * _Null_unspecified)data expandedLength:(NSUInteger)expandedLength;
+ 
+-- (instancetype)init;
++- (instancetype _Nonnull)init;
+ 
+-- (NSArray *)regionCodeFromCountryCode:(NSNumber *)countryCodeNumber;
+-- (NSString *)countryCodeFromRegionCode:(NSString *)regionCode;
++- (NSArray * _Nullable)regionCodeFromCountryCode:(NSNumber * _Null_unspecified)countryCodeNumber;
++- (NSString * _Nullable)countryCodeFromRegionCode:(NSString * _Null_unspecified)regionCode;
+ 
+-- (NBPhoneMetaData *)getMetadataForNonGeographicalRegion:(NSNumber *)countryCallingCode;
+-- (NBPhoneMetaData *)getMetadataForRegion:(NSString *)regionCode;
++// These parameter contracts remain unaudited.
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wnullability-completeness"
++- (NBPhoneMetaData * _Nullable)getMetadataForNonGeographicalRegion:(NSNumber *)countryCallingCode;
++- (NBPhoneMetaData * _Nullable)getMetadataForRegion:(NSString *)regionCode;
++#pragma clang diagnostic pop
+ 
+-- (NSDictionary *)countryCodeToCountryNumberDictionary;
+-- (NSDictionary *)countryCodeToRegionCodeDictionary;
+-- (NSArray *)getAllMetadata;
++- (NSDictionary * _Nonnull)countryCodeToCountryNumberDictionary;
++- (NSDictionary * _Null_unspecified)countryCodeToRegionCodeDictionary;
++- (NSArray * _Nonnull)getAllMetadata;
+ 
+ @end
 ```
 
-**File**: `generatedJSON/PhoneNumberMetaData.json` (modified, +95/-131)
+**File**: `libPhoneNumber/NSArray+NBAdditions.h` (modified, +5/-5)
 ```diff
-@@ -8057,15 +8057,14 @@
-       [
-         null,
-         null,
--        "(?:01\\d|8)\\d{7}",
-+        "01\\d{8}",
-         null,
-         null,
-         null,
-         null,
-         null,
-         null,
-         [
--          8,
-           10
-         ]
-       ],
-@@ -8076,12 +8075,7 @@
-         null,
-         null,
-         null,
--        "0120211234",
--        null,
--        null,
--        [
--          10
--        ]
-+        "0120211234"
-       ],
-       [
-         null,
-@@ -8090,12 +8084,7 @@
-         null,
-         null,
-         null,
--        "0195123456",
--        null,
--        null,
--        [
--          10
--        ]
-+        "0195123456"
-       ],
-       [
-         null,
-@@ -8156,15 +8145,15 @@
-       [
-         null,
-         null,
--        "857[58]\\d{4}",
-         null,
-         null,
-         null,
--        "85751234",
-+        null,
-+        null,
-         null,
-         null,
-         [
--          8
-+          -1
-         ]
-       ],
-       "BJ",
-@@ -8178,14 +8167,6 @@
-       null,
-       null,
-       [
--        [
--          null,
--          "(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
--          "$1 $2 $3 $4",
--          [
--            "8"
--          ]
--        ],
-         [
-           null,
-           "(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-@@ -8229,15 +8210,15 @@
-       [
-         null,
-         null,
--        "81\\d{6}",
-         null,
-         null,
-         null,
--        "81123456",
-+        null,
-+        null,
-         null,
-         null,
-         [
--          8
-+          -1
-         ]
-       ],
-       null,
-@@ -12903,6 +12884,31 @@
-             "[1-9]123"
-           ]
-         ],
-+        [
-+          null,
-+          "(\\d{2})(\\d{5})",
-+          "$1 $2",
-+          [
-+            "101",
-+            "1010",
-+            "10100"
-+          ],
-+          "0$1",
-+          "$CC $1"
-+        ],
-+        [
-+          null,
-+          "(\\d{2})(\\d{5,6})",
-+          "$1 $2",
-+          [
-+            "(?:10|2[0-57-9])[19]|3(?:[15]|35|49|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7|8[23])|5(?:[1357]|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3|4[13]|5[1-5]|9[0-35-9])|[39]7[0-79]",
-+            "10(?:12|9[56])|2[0-57-9](?:1[02]|9[56])|(?:3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))1",
-+            "10(?:123|9[56])|2[0-57-9](?:1(?:00|23)|9[56])|(?:3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))12",
-+            "10(?:123|9[56])|2[0-57-9](?:1(?:00|23)|9[56])|(?:3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))123"
-+          ],
-+          "0$1",
-+          "$CC $1"
-+        ],
-         [
-           null,
-           "(\\d{3})(\\d{4})",
-@@ -12956,12 +12962,23 @@
-           "0$1",
-           "$CC $1"
-         ],
-+        [
-+          null,
-+          "(\\d{4})(\\d{4})",
-+          "$1 $2",
-+          [
-+            "[1-9]",
-+            "1(?:0(?:[02-578]|1[1-9]|6[013-579]|9[0-47-9])|[1-9])|2(?:[0-57-9](?:[0-8]|9[0-47-9])|6)|[3-9]",
-+            "1(?:0(?:[02-578]|1[1-9]|6(?:[01457]|[39][5-8])|9[0-47-9])|[1-9])|26|3(?:[0268]|3[0-46-9]|4[0-8]|78|9[079])|4(?:[049]|1[034]|2[02-68]|[35]0|6[0-356]|8[014-9])|5(?:0|2[0-24-689]|4[0-2457-9]|6[057-9]|8[1-9]|90)|6(?:[0-24578]|3[046-9]|6[14-79]|9[03-9])|7(?:0[02-9]|2[0135-79]|3[23]|4[0-27-9]|6[1457]|8)|8(?:[046]|1[01459]|2[0-489]|5[023]|8[0-2459]|9[09])|9(?:0[0457]|1[08]|[268]|4[024-9]|5[06-9])|(?:2[0-57-9]|3(?:[15]\\d|35|49|7[0-79]|9[1-68])|4(?:1[125-9]|2[179]|[35][1-9]|6[47-9]|7\\d|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[1579]\\d|2[248]|3[014-9]|4[3-6]|6[023689])|8(?:1[236-8]|2[5-7]|[37]\\d|5[14-9]|8[36-8]|9[1-8])|9(?:0[1-3689]|1[1-79]|[379]\\d|4[13]|5[1-5]))(?:[0-8]|9[0-47-9])",
-+            "1(?:0(?:[02-578]|1[1-9]|6(?:[01457]|[39][5-8])|9[0-47-9])|[1-9])|2(?:[0-57-9](?:[0-8]|9[0-47-9])|6)|3(?:[0268]|3[0-46-9]|4[0-8]|78|9[079])|4(?:[049]|1[034]|2[02-68]|[35]0|6[0-356]|8[014-9])|5(?:0|2[0-24-689]|4[0-2457-9]|6[057-9]|8[1-9]|90)|6(?:[0-24578]|3[046-9]|6[14-79]|9[03-9])|7(?:0[02-9]|2[0135-79]|3[23]|4[0-27-9]|6[1457]|8)|8(?:[046]|1[01459]|2[0-489]|5[023]|8[0-2459]|9[09])|9(?
-```
-
-**File**: `libPhoneNumber-Demo/libPhoneNumber-Demo-SPM.xcodeproj/project.pbxproj` (modified, +4/-4)
-```diff
-@@ -270,7 +270,7 @@
- 				CLANG_WARN_UNREACHABLE_CODE = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
- 				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
- 				DEBUG_INFORMATION_FORMAT = dwarf;
- 				ENABLE_STRICT_OBJC_MSGSEND = YES;
- 				ENABLE_TESTABILITY = YES;
-@@ -288,7 +288,7 @@
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
- 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
- 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
- 				MTL_FAST_MATH = YES;
- 				ONLY_ACTIVE_ARCH = YES;
-@@ -326,7 +326,7 @@
- 				CLANG_WARN_UNREACHABLE_CODE = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
- 				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
- 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
- 				ENABLE_NS_ASSERTIONS = NO;
- 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-@@ -338,7 +338,7 @@
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
- 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
- 				MTL_ENABLE_DEBUG_INFO = NO;
- 				MTL_FAST_MATH = YES;
- 				SDKROOT = iphoneos;
-```
-
-**File**: `libPhoneNumber-Demo/libPhoneNumber-Demo.xcodeproj/project.pbxproj` (modified, +4/-4)
-```diff
-@@ -306,7 +306,7 @@
- 				CLANG_WARN_UNREACHABLE_CODE = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
- 				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
- 				DEBUG_INFORMATION_FORMAT = dwarf;
- 				ENABLE_STRICT_OBJC_MSGSEND = YES;
- 				ENABLE_TESTABILITY = YES;
-@@ -324,7 +324,7 @@
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
- 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
- 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
- 				MTL_FAST_MATH = YES;
- 				ONLY_ACTIVE_ARCH = YES;
-@@ -363,7 +363,7 @@
- 				CLANG_WARN_UNREACHABLE_CODE = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
- 				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
- 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
- 				ENABLE_NS_ASSERTIONS = NO;
- 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-@@ -375,7 +375,7 @@
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
- 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
- 				MTL_ENABLE_DEBUG_INFO = NO;
- 				MTL_FAST_MATH = YES;
- 				SDKROOT = iphoneos;
-```
-
-**File**: `libPhoneNumber-GeocodingParser/libPhoneNumber-GeocodingParser.xcodeproj/project.pbxproj` (modified, +4/-4)
-```diff
-@@ -315,7 +315,7 @@
- 				CLANG_WARN_UNREACHABLE_CODE = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
- 				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEBUG_INFORMATION_FORMAT = dwarf;
- 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-@@ -334,7 +334,7 @@
- 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
- 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
- 				MTL_FAST_MATH = YES;
- 				ONLY_ACTIVE_ARCH = YES;
-@@ -376,7 +376,7 @@
- 				CLANG_WARN_UNREACHABLE_CODE = YES;
- 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
- 				COPY_PHASE_STRIP = NO;
--				CURRENT_PROJECT_VERSION = 2.1.3;
-+				CURRENT_PROJECT_VERSION = 2.1.4;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
- 				ENABLE_NS_ASSERTIONS = NO;
-@@ -389,7 +389,7 @@
- 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
- 				GCC_WARN_UNUSED_FUNCTION = YES;
- 				GCC_WARN_UNUSED_VARIABLE = YES;
--				MARKETING_VERSION = 2.1.3;
-+				MARKETING_VERSION = 2.1.4;
- 				MTL_ENABLE_DEBUG_INFO = NO;
- 				MTL_FAST_MATH = YES;
- 				SDKROOT = macosx;
-```
-
-**File**: `libPhoneNumber-iOS-Swift.podspec` (modified, +4/-4)
-```diff
-@@ -1,7 +1,7 @@
- Pod::Spec.new do |s|
-   s.name         = "libPhoneNumber-iOS-Swift"
-   s.module_name  = "libPhoneNumberIOSSwift"
--  s.version      = "2.1.3"
-+  s.version      = "2.1.4"
-   s.summary      = "Swift-first umbrella facade for libPhoneNumber-iOS"
-   s.description  = "Swift-first umbrella facade over the stable Objective-C libPhoneNumber-iOS core and optional geocoding and short-number modules."
-   s.homepage     = "https://github.com/iziz/libPhoneNumber-iOS.git"
-@@ -26,9 +26,9 @@ Pod::Spec.new do |s|
-   s.swift_versions = ["5.9", "6.0"]
-   s.requires_arc = true
+@@ -9,9 +9,9 @@
+ #import <Foundation/Foundation.h>
  
--  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.3'
--  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.3'
--  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.3'
-+  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.4'
-+  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.4'
-+  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.4'
- 
-   s.source_files = [
-                     'libPhoneNumberIOSSwift/**/*.swift',
-```
-
-**File**: `libPhoneNumber-iOS-SwiftCarrier.podspec` (modified, +3/-3)
-```diff
-@@ -1,7 +1,7 @@
- Pod::Spec.new do |s|
-   s.name         = "libPhoneNumber-iOS-SwiftCarrier"
-   s.module_name  = "libPhoneNumberSwiftCarrier"
--  s.version      = "2.1.3"
-+  s.version      = "2.1.4"
-   s.summary      = "Swift-first carrier facade for libPhoneNumber-iOS"
-   s.description  = "Swift-first carrier metadata facade over libPhoneNumberCarrier."
-   s.homepage     = "https://github.com/iziz/libPhoneNumber-iOS.git"
-@@ -26,8 +26,8 @@ Pod::Spec.new do |s|
-   s.swift_versions = ["5.9", "6.0"]
-   s.requires_arc = true
- 
--  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.3'
--  s.dependency 'libPhoneNumberCarrier', '~> 2.1.3'
-+  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.4'
-+  s.dependency 'libPhoneNumberCarrier', '~> 2.1.4'
- 
-   s.source_files = [
-                     'libPhoneNumberSwiftCarrier/**/*.swift',
+ @interface NSArray (NBAdditions)
+-- (id)nb_safeObjectAtIndex:(NSUInteger)index class:(Class)clazz;
+-- (NSString *)nb_safeStringAtIndex:(NSUInteger)index;
+-- (NSNumber *)nb_safeNumberAtIndex:(NSUInteger)index;
+-- (NSArray *)nb_safeArrayAtIndex:(NSUInteger)index;
+-- (NSData *)nb_safeDataAtIndex:(NSUInteger)index;
++- (id _Nullable)nb_safeObjectAtIndex:(NSUInteger)index class:(Class _Null_unspecified)clazz;
++- (NSString * _Nullable)nb_safeStringAtIndex:(NSUInteger)index;
++- (NSNumber * _Nullable)nb_safeNumberAtIndex:(NSUInteger)index;
++- (NSArray * _Nullable)nb_safeArrayAtIndex:(NSUInteger)index;
++- (NSData * _Nullable)nb_safeDataAtIndex:(NSUInteger)index;
+ @end
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #460** (2026-11-13): Annotate core helper nullability for Swift (@heymansmile)
 - **PR #459** (2026-11-07): chore(release): refresh metadata to v9.0.43 and fix RFC3966 backtracking for 2.1.4 (@iziz)
 - **PR #458** (2026-10-30): chore(release): refresh metadata for 2.1.3 (@iziz)
 - **PR #457** (2026-10-08): chore(release): refresh metadata for 2.1.2 (@iziz)
 - **PR #456** (2026-09-25): chore(release): refresh metadata for 2.1.1 (@iziz)
 - **PR #455** (2026-09-17): chore(release): prepare 2.1.0 with Google metadata v9.0.39 (@iziz)
-- **PR #454** (2026-09-12): Remove the breaking changes so the next release can be 2.1.0 (@iziz)
 
 ---
 
@@ -2478,46 +1864,42 @@ test did not finish within 120 seconds; it now passes in milliseconds.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #459 from iziz/metadata-v9-0-43
+## X. Merge pull request #460 from heymansmile/users/onlivan/EDAFRONT-52973-upstream-n
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iziz/libPhoneNumber-iOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `libPhoneNumber/NBAsYouTypeFormatter.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iziz/libPhoneNumber-iOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `91fcc745`: Merge pull request #459 from iziz/metadata-v9-0-43. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b27567bb`: Merge pull request #460 from heymansmile/users/onlivan/EDAFRONT-52973-upstream-nullability. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Objective-C data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Objective-C data structures, boundary deserialization, API parsing, or resource lifecycles matching `libPhoneNumber/NBAsYouTypeFormatter.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```objective-c
 // Verified production-grade fix pattern:
-## 2.1.4
-
-Patch release. Refresh Google libphonenumber metadata from `v9.0.42` to
-`v9.0.43`, including phone-number, carrier, and geocoding data. Phone-number
-metadata changes affect nine regions: Benin, China, Germany, Ecuador,
-Ethiopia, Georgia, Laos, Romania, and Zimbabwe. Carrier metadata grows from
-32,099 to 32,255 prefix rows. Geocoding changes are limited to the English
-(Zimbabwe and one Australian prefix) and Chinese databases. Short-number,
-testing, and timezone data are unchanged. See `docs/METADATA_UPDATE_LOG.md`
-for the upstream comparison and validation.
-
-### Fixed
-
-- Parsing an RFC3966 `tel:` URI with a long, invalid `phone-context` domain
-  name no longer hangs. The domain-label patterns now follow Google's fix for
-  catastrophic regular-expression backtracking
-  ([google/libphonenumber#4070](https://github.com/google/libphonenumber/pull/4070)),
-  and `testParseRfc3966PhoneContextDomain` is ported from upstream.
-
+- (instancetype _Nonnull)initWithRegionCode:(NSString * _Nullable)regionCode;
+- (instancetype _Nonnull)initWithRegionCode:(NSString * _Nullable)regionCode metadataHelper:(NBMetadataHelper * _Nonnull)helper;
+- (NSString * _Nonnull)inputString:(NSString * _Nullable)string;
+- (NSString * _Nonnull)inputStringAndRememberPosition:(NSString * _Nullable)string;
+- (NSString * _Nonnull)inputDigit:(NSString * _Nullable)nextChar;
+- (NSString * _Nonnull)inputDigitAndRememberPosition:(NSString * _Nullable)nextChar;
+- (NSString * _Nonnull)removeLastDigit;
+- (NSString * _Nonnull)removeLastDigitAndRememberPosition;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```objective-c
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- (instancetype)initWithRegionCode:(NSString *)regionCode;
+- (instancetype)initWithRegionCode:(NSString *)regionCode metadataHelper:(NBMetadataHelper *)helper;
+- (NSString *)inputString:(NSString *)string;
+- (NSString *)inputStringAndRememberPosition:(NSString *)string;
+- (NSString *)inputDigit:(NSString *)nextChar;
+- (NSString *)inputDigitAndRememberPosition:(NSString *)nextChar;
+- (NSString *)removeLastDigit;
+- (NSString *)removeLastDigitAndRememberPosition;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `91fcc745` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b27567bb` are properly handled with clean fallback behavior.

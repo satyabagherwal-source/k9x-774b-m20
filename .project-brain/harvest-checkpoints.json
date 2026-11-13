@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T08:13:00.497Z",
+  "last_updated": "2026-11-13T08:22:10.312Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "741d6ef28d6f74a994137aba3b08a615b711785e2e2d8a3ba4e27770de558dd9",
-      "verified_at": "2026-11-11T16:11:47.655Z",
+      "content_hash": "91700e308434dea7f19b85a54945b892f30e52c32f9906a98fa1a7b8618924f0",
+      "verified_at": "2026-11-13T08:22:03.664Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T16:11:47.655Z"
+      "last_updated": "2026-11-13T08:22:03.664Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",
@@ -5391,14 +5391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflyoss-dragonfly",
-      "content_hash": "fae37663eee5110a7bf3f64de9d04d32fce15e9fdd235bfdad670d8602273b13",
-      "verified_at": "2026-11-12T03:30:47.949Z",
+      "content_hash": "9114cfef656a1eba3b0e7a6e6aabfda58ca50441b033db3585fa87a0275b95a8",
+      "verified_at": "2026-11-13T08:22:06.428Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T03:30:47.949Z"
+      "last_updated": "2026-11-13T08:22:06.428Z"
     },
     "sigstore/cosign": {
       "repository": "sigstore/cosign",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "66fc21e3e937794a0301a953bc2d1a69457e80f4d29d3ec186bd88507fb3cb92",
-      "verified_at": "2026-11-12T02:17:03.520Z",
+      "content_hash": "70db2db93254a3f49818303d49bc0eb90195c31d4a450526794960c50f1a086d",
+      "verified_at": "2026-11-13T08:22:10.311Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T02:17:03.520Z"
+      "last_updated": "2026-11-13T08:22:10.311Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -14631,14 +14631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iziz-libphonenumber-ios",
-      "content_hash": "0fb9b32b6462e79a8f5d8de498ca7d2611412483aa61641018fb8248514c1e9a",
-      "verified_at": "2026-11-09T00:13:29.542Z",
+      "content_hash": "3bb6d0abf031ad0e02d3731225220952ab60e19d3178d6fbfd0ba029fe3849f0",
+      "verified_at": "2026-11-13T08:22:02.393Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T00:13:29.542Z"
+      "last_updated": "2026-11-13T08:22:02.393Z"
     },
     "RDFLib/rdflib": {
       "repository": "RDFLib/rdflib",
@@ -16401,14 +16401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr-2",
-      "content_hash": "a485d497085605e57e117f8d25eb4b365a73f9a49b8b14c69ba3a1bc8e25e82f",
-      "verified_at": "2026-11-08T06:42:25.258Z",
+      "content_hash": "a6a6483d2b0aab2db9d1bb68844d21c6a3d5e6b14e8c054ca5f39a2834cecc77",
+      "verified_at": "2026-11-13T08:21:38.985Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T06:42:25.258Z"
+      "last_updated": "2026-11-13T08:21:38.985Z"
     },
     "Joooook/12306-mcp": {
       "repository": "Joooook/12306-mcp",

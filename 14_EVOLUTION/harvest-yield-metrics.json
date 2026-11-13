@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T08:13:00.492Z",
-  "total_cycles_completed": 9182,
-  "total_learnings_persisted": 9182,
-  "total_rules_promoted": 8978,
+  "last_updated": "2026-11-13T08:22:10.191Z",
+  "total_cycles_completed": 9187,
+  "total_learnings_persisted": 9187,
+  "total_rules_promoted": 8982,
   "history": [
-    {
-      "timestamp": "2026-11-12T12:15:11.721Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T12:15:17.367Z",
-      "repository": "run-llama/llama_index",
-      "learningId": "learn-github-run-llama-llama_index",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T12:20:07.942Z",
-      "repository": "u-root/u-root",
-      "learningId": "learn-github-u-root-u-root",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T12:20:14.343Z",
-      "repository": "solidjs/solid",
-      "learningId": "learn-github-solidjs-solid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T12:32:51.884Z",
-      "repository": "vitejs/vite",
-      "learningId": "learn-github-vitejs-vite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T12:33:02.210Z",
       "repository": "nolabs-ai/nono",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-13T08:13:00.492Z",
       "repository": "sqlpage/SQLPage",
       "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T08:21:38.982Z",
+      "repository": "baidu/Unlimited-OCR-2",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T08:22:02.386Z",
+      "repository": "iziz/libPhoneNumber-iOS",
+      "learningId": "learn-github-iziz-libphonenumber-ios",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T08:22:03.660Z",
+      "repository": "cachix/devenv",
+      "learningId": "learn-github-cachix-devenv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T08:22:06.424Z",
+      "repository": "dragonflyoss/dragonfly",
+      "learningId": "learn-github-dragonflyoss-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T08:22:10.191Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

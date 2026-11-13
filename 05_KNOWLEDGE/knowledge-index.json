@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T08:13:00.342Z",
+  "last_updated": "2026-11-13T08:22:09.878Z",
   "total_verified_learnings": 1262,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6625,14 +6625,19 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "622870a7",
-      "content_hash": "741d6ef28d6f74a994137aba3b08a615b711785e2e2d8a3ba4e27770de558dd9",
+      "source_version": "9eaaab8d",
+      "content_hash": "91700e308434dea7f19b85a54945b892f30e52c32f9906a98fa1a7b8618924f0",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (#3362)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "docs): prevent page reload on navigation",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -6696,7 +6701,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T16:11:46.643Z",
+      "verified_at": "2026-11-13T08:22:03.382Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -12665,8 +12670,8 @@
       "slug": "dragonflyoss-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflyoss/dragonfly",
-      "source_version": "d73d3cc5",
-      "content_hash": "fae37663eee5110a7bf3f64de9d04d32fce15e9fdd235bfdad670d8602273b13",
+      "source_version": "5ace19fb",
+      "content_hash": "9114cfef656a1eba3b0e7a6e6aabfda58ca50441b033db3585fa87a0275b95a8",
       "dossier_path": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "promoted_rules": [
@@ -12678,6 +12683,11 @@
         {
           "number": null,
           "title": "Enhance multi-platform image preheat and deduplication process (#5112)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "oci,scheduler): harden manifest URL parsing and preheat request handling (#5113)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -12711,7 +12721,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T03:30:47.820Z",
+      "verified_at": "2026-11-13T08:22:06.211Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14541,8 +14551,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "d87ef4ce",
-      "content_hash": "66fc21e3e937794a0301a953bc2d1a69457e80f4d29d3ec186bd88507fb3cb92",
+      "source_version": "1b969e26",
+      "content_hash": "70db2db93254a3f49818303d49bc0eb90195c31d4a450526794960c50f1a086d",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -14559,6 +14569,11 @@
         {
           "number": null,
           "title": "etcdutl : Fix lint failure",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #22799 from rattboi/fix/verify-yamllint-standalone-script",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -14627,7 +14642,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T02:17:03.346Z",
+      "verified_at": "2026-11-13T08:22:09.844Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37512,11 +37527,16 @@
       "slug": "iziz-libphonenumber-ios",
       "platform": "github",
       "source_url": "https://github.com/iziz/libPhoneNumber-iOS",
-      "source_version": "91fcc745",
-      "content_hash": "0fb9b32b6462e79a8f5d8de498ca7d2611412483aa61641018fb8248514c1e9a",
+      "source_version": "b27567bb",
+      "content_hash": "3bb6d0abf031ad0e02d3731225220952ab60e19d3178d6fbfd0ba029fe3849f0",
       "dossier_path": "07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Merge pull request #460 from heymansmile/users/onlivan/EDAFRONT-52973-upstream-n",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2932,
           "title": "docs: add changelog, contributing guide, security policy, and DocC",
@@ -37528,7 +37548,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-09T00:13:29.388Z",
+      "verified_at": "2026-11-13T08:22:01.787Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -151432,7 +151452,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR-2",
       "source_version": "hf-baidu-unlimited-ocr-2",
-      "content_hash": "a485d497085605e57e117f8d25eb4b365a73f9a49b8b14c69ba3a1bc8e25e82f",
+      "content_hash": "a6a6483d2b0aab2db9d1bb68844d21c6a3d5e6b14e8c054ca5f39a2834cecc77",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
       "promoted_rules": [
@@ -151477,7 +151497,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T06:42:25.127Z",
+      "verified_at": "2026-11-13T08:21:38.839Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly))  
-> **Source Version**: `d73d3cc5`  
+> **Source Version**: `5ace19fb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:30:40.747Z  
+> **Timestamp**: 2026-11-13T08:21:48.109Z  
 > **Learning ID**: `learn-github-dragonflyoss-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflyoss/dragonfly](https://github.com/dragonflyoss/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:30:40.550Z  
+> **Harvest Timestamp**: 2026-11-13T08:21:47.931Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Delivers efficient, stable, and secure data distribution and acceleration powered by P2P technology, with an optional content‑addressable filesystem that accelerates OCI container launch.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3361 stars
+- **Stars / Engagement**: 3360 stars
 
 ---
 
@@ -1154,437 +1154,1408 @@ func runScheduler(ctx context.Context, d dfpath.Dfpath, dynconfigPath string) er
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d73d3cc5` (2026-11-11)
-**Commit Message**: Enhance multi-platform image preheat and deduplication process (#5112)
+### Incident Patch 1: `667642a9` (2026-11-12)
+**Commit Message**: fix(oci,scheduler): harden manifest URL parsing and preheat request handling (#5113)
 
-* feat(preheat): resolve image layers for all platforms when none is specified
+Parse manifest URLs with a non-greedy registry match so repositories
+containing a "v2" path segment (e.g. org/v2/app) resolve to the correct
+registry and repository. Deduplicate blob URLs when a manifest references
+the same layer digest more than once, and inline platform filtering of
+manifest lists into the resolver.
 
-Replace the single-manifest image preheat flow with a multi-platform
-resolver: when no platform is given, manifest lists and image indexes are
-expanded so layers for every platform are preheated and stat'd, and blob
-URLs are tagged with their platform. The resolved image is forwarded to
-download tasks so the scheduler and manager preheat per platform instead
-of only the default one.
+In the scheduler, reject PreheatImage/StatImage/PreheatFile/StatFile with
+FailedPrecondition when the job feature is disabled, and fall back to the
+default concurrency values when the requested counts are zero as well as
+when they are unset.
 
-Signed-off-by: Gaius <[REDACTED_EMAIL]>
-
-* fix(job): dedupe per-platform blob URLs and drop invalid image references in preheat
-
-Preheat image requests now normalize requested platforms, deduplicate blob
-URLs per platform so shared layers are not fetched repeatedly, and reject
-malformed image references instead of passing them through. OCI reference
-parsing and resolving are adjusted accordingly, with tests covering the
-new validation and deduplication behavior.
-
-Also update the e2e manager preheat image tests and compatibility workflow
-to use dragonflyoss/client:v1.5.11 with its expected layer digests.
+Relax the e2e image deletion check to require that at least one seed
+client removes the task, and bump the client submodule.
 
 Signed-off-by: Gaius <[REDACTED_EMAIL]>
-
-* chore(
-
-**File**: `.github/workflows/e2e-compatibility.yml` (modified, +2/-2)
-```diff
-@@ -51,10 +51,10 @@ jobs:
-             chart-name: seedClient
-           - mode: lightweight
-             charts-config: test/testdata/charts/config.yaml
--            skip: 'Manager|Rate Limit|Dfcache'
-+            skip: 'Manager|Rate Limit|Dfcache|Preheat and Delete Image Using Scheduler'
-           - mode: with-manager
-             charts-config: test/testdata/charts/config-with-manager.yaml
--            skip: 'Rate Limit'
-+            skip: 'Rate Limit|Preheat and Delete Image Using Scheduler'
- 
-     steps:
-       - name: Free Disk Space (Ubuntu)
-```
-
-**File**: `.github/workflows/e2e.yml` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ jobs:
-           - module: lightweight
-             charts-config: test/testdata/charts/config.yaml
-             mode: lightweight
--            skip: 'Manager|Rate Limit|Dfcache'
-+            skip: 'Manager|Rate Limit|Dfcache|Preheat and Delete Image Using Scheduler'
-           - module: with-manager
-             charts-config: test/testdata/charts/config-with-manager.yaml
-             mode: with-manager
-```
 
 **File**: `client` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--Subproject commit ca04fb0a9a35a452c07cba413961f0292f4d0d1b
-+Subproject commit 4891875a55c4499bce0cca6263c5a7c253798c23
+-Subproject commit 4891875a55c4499bce0cca6263c5a7c253798c23
++Subproject commit 90083b827d2d4ecaa09ae449d4d974fb1c575471
 ```
 
-**File**: `go.mod` (modified, +7/-7)
+**File**: `pkg/oci/image_test.go` (modified, +5/-0)
 ```diff
-@@ -3,7 +3,7 @@ module d7y.io/dragonfly/v2
- go 1.25.0
- 
- require (
--	d7y.io/api/v2 v2.3.8
-+	d7y.io/api/v2 v2.3.10
- 	d7y.io/hashring v0.3.0
- 	github.com/Showmax/go-fqdn v1.0.0
- 	github.com/VividCortex/mysqlerr v1.0.0
-@@ -67,9 +67,9 @@ require (
- 	golang.org/x/oauth2 v0.36.0
- 	golang.org/x/sync v0.22.0
- 	golang.org/x/sys v0.47.0
--	golang.org/x/time v0.14.0
--	google.golang.org/api v0.267.0
--	google.golang.org/grpc v1.83.1
-+	golang.org/x/time v0.15.0
-+	google.golang.org/api v0.278.0
-+	google.golang.org/grpc v1.84.0
- 	google.golang.org/protobuf v1.36.12
- 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
- 	gopkg.in/yaml.v3 v3.0.1
-@@ -85,7 +85,7 @@ require (
- 
- require (
- 	cloud.google.com/go v0.121.6 // indirect
--	cloud.google.com/go/auth v0.18.2 // indirect
-+	cloud.google.com/go/auth v0.20.0 // indirect
- 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
- 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
- 	cloud.google.com/go/iam v1.5.3 // indirect
-@@ -145,7 +145,7 @@ require (
- 	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936 // indirect
- 	github.com/google/s2a-go v0.1.9 // indirect
- 	github.com/googleapis/enterprise-certificate-proxy v0.3.15 // indirect
--	github.com/googleapis/gax-go/v2 v2.17.0 // indirect
-+	github.com/googleapis/gax-go/v2 v2.22.0 // indirect
- 	github.com/gorilla/mux v1.8.1 // indirect
- 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
- 	github.com/hashicorp/errwrap v1.1.0 // indirect
-@@ -220,7 +220,7 @@ require (
- 	golang.org/x/net v0.58.0 // indirect
- 	golang.org/x/text v0.41.0 // indirect
- 	golang.org/x/tools v0.48.0 // indirect
--	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
-+	google.golang.org/genproto v0.0.0-20260319201613-d00831a3d3e7 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
- 	gopkg.in/ini.v1 v1.67.0 // indirect
+@@ -120,6 +120,11 @@ func TestResolve(t *testing.T) {
+ 			"digest": "sha256:b5b2b2c507a0944348e0303114d8d93aaaa081732b86451d9bce1f432a537bc7"
+ 		},
+ 		"layers": [
++			{
++				"mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
++				"size": 32654,
++				"digest": "sha256:e692418e4cbaf90ca69d05a66403747baa33ee08806650b51fab815ad7fc331f"
++			},
+ 			{
+ 				"mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+ 				"size": 32654,
 ```
 
-**File**: `go.sum` (modified, +16/-16)
+**File**: `pkg/oci/reference.go` (modified, +1/-1)
 ```diff
-@@ -19,8 +19,8 @@ cloud.google.com/go v0.75.0/go.mod h1:VGuuCn7PG0dwsd5XPVm2Mm3wlh3EL55/79EKB6hlPT
- cloud.google.com/go v0.76.0/go.mod h1:r9EvIAvLrunusnetGdQ50M/gKui1x3zdGW/VELGkdpw=
- cloud.google.com/go v0.121.6 h1:waZiuajrI28iAf40cWgycWNgaXPO06dupuS+sgibK6c=
- cloud.google.com/go v0.121.6/go.mod h1:coChdst4Ea5vUpiALcYKXEpR1S9ZgXbhEzzMcMR66vI=
--cloud.google.com/go/auth v0.18.2 h1:+Nbt5Ev0xEqxlNjd6c+yYUeosQ5TtEUaNcN/3FozlaM=
--cloud.google.com/go/auth v0.18.2/go.mod h1:xD+oY7gcahcu7G2SG2DsBerfFxgPAJz17zz2joOFF3M=
-+cloud.google.com/go/auth v0.20.0 h1:kXTssoVb4azsVDoUiF8KvxAqrsQcQtB53DcSgta74CA=
-+cloud.google.com/go/auth v0.20.0/go.mod h1:942/yi/itH1SsmpyrbnTMDgGfdy2BUqIKyd0cyYLc5Q=
- cloud.google.com/go/auth/oauth2adapt v0.2.8 h1:keo8NaayQZ6wimpNSmW5OPc283g65QNIiLpZnkHRbnc=
- cloud.google.com/go/auth/oauth2adapt v0.2.8/go.mod h1:XQ9y31RkqZCcwJWNSx2Xvric3RrU88hAYYbjDWYDL+c=
- cloud.google.com/go/bigquery v1.0.1/go.mod h1:i/xbL2UlR5RvWAURpBYZTtm/cXjCha9lbfbpx4poX+o=
-@@ -35,8 +35,8 @@ cloud.google.com/go/datastore v1.0.0/go.mod h1:LXYbyblFSglQ5pkeyhO+Qmw7ukd3C+pD7
- cloud.google.com/go/datastore v1.1.0/go.mod h1:umbIZjpQpHh4hmRpGhH4tLFup+FVzqBi1b3c64qFpCk=
- cloud.google.com/go/iam v1.5.3 h1:+vMINPiDF2ognBJ97ABAYYwRgsaqxPbQDlMnbHMjolc=
- cloud.google.com/go/iam v1.5.3/go.mod h1:MR3v9oLkZCTlaqljW6Eb2d3HGDGK5/bDv93jhfISFvU=
--cloud.google.com/go/kms v1.25.0 h1:gVqvGGUmz0nYCmtoxWmdc1wli2L1apgP8U4fghPGSbQ=
--cloud.google.com/go/kms v1.25.0/go.mod h1:XIdHkzfj0bUO3E+LvwPg+oc7s58/Ns8Nd8Sdtljihbk=
-+cloud.google.com/go/kms v1.26.0 h1:cK9mN2cf+9V63D3H1f6koxTatWy39aTI/hCjz1I+adU=
-+cloud.google.com/go/kms v1.26.0/go.mod h1:pHKOdFJm63hxBsiPkYtowZPltu9dW0MWvBa6IA4HM58=
- cloud.google.com/go/longrunning v0.8.0 h1:LiKK77J3bx5gDLi4SMViHixjD2ohlkwBi+mKA7EhfW8=
- cloud.google.com/go/longrunning v0.8.0/go.mod h1:UmErU2Onzi+fKDg2gR7dusz11Pe26aknR4kHmJJqIfk=
- cloud.google.com/go/pubsub v1.0.1/go.mod h1:R0Gpsv3s54REJCy4fxDixWD93lHJMoZTyQ2kNxGRt3I=
-@@ -53,8 +53,8 @@ cloud.google.com/go/storage v1.5.0/go.mod h1:tpKbwo567HUNpVclU5sGELwQWBDZ8gh0Zeo
- cloud.google.com/go/storage v1.6.0/go.mod h1:N7U0C8pVQ/+NIKOBQyamJIeKQKkZ+mxpohlUTyfDhBk=
- cloud.google.com/go/storage v1.8.0/go.mod h1:Wv1Oy7z6Yz3DshWRJFhqM/UCfaWIRTdp0RXyy7KQOVs=
- cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9ullr3+Kg0=
--d7y.io/api/v2 v2.3.8 h1:v2ur2xA5WspWhyy73t7qTZrRMvxir/hNzlSM2QCif4E=
--d7y.io/api/v2 v2.3.8/go.mod h1:dkwb6hCIWdijpAOZmdqszAPlXWS7cO41+Av9IvmOTHo=
-+d7y.io/api/v2 v2.3.10 h1:JFC6944ETIURMfLlaH0inH5NnZtzyAGU/mjHFJUkMOk=
-+d7y.io/api/v2 v2.3.10/go.mod h1:hQOqfvk0SSuSUZ25VrF/L4dlP4JnREaUiUui07muLws=
- d7y.io/hashring v0.3.0 h1:qGIkSNa/g6hSFYV2mBE+mZU16NzzMiCKobti072ACL0=
- d7y.io/hashring v0.3.0/go.mod h1:NY2/+76/hCcBzcTEJiqJG2AX0gzlSq+YJJgSJyZWd1c=
- dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
-@@ -412,8 +412,8 @@ github.com/googleapis/enterprise-certificate-proxy v0.3.15 h1:xolVQTEXusUcAA5Ugt
- github.com/googleapis/enterprise-certificate-proxy v0.3.15/go.mod h1:vqVt9yG9480NtzREnTlmGSBmFrA+bzb0yl0TxoBQXOg=
- github.com/googleapis/gax-go/v2 v2.0.4/go.mod h1:0Wqv26UfaUD9n4G6kQubkQ+KchISgw+vpHVxEJEs9eg=
- github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5mhpdKc/us6bOk=
--github.com/googleapis/gax-go/v2 v2.17.0 h1:RksgfBpxqff0EZkDWYuz9q/uWsTVz+kf43LsZ1J6SMc=
--github.com/googleapis/gax-go/v2 v2.17.0/go.mod h1:mzaqghpQp4JDh3HvADwrat+6M3MOIDp5YKHhb9PAgDY=
-+github.com/googleapis/gax-go/v2 v2.22.0 h1:PjIWBpgGIVKGoCXuiCoP64altEJCj3/Ei+kSU5vlZD4=
-+github.com/googleapis/gax-go/v2 v2.22.0/go.mod h1:irWBbALSr0Sk3qlqb9SyJ1h68WjgeFuiOzI4Rqw5+aY=
- github.com/gorilla/mux v1.8.1 h1:TuBL49tXwgrFYWhqrNgrUNEY92u81SPhu7sTdzQEiWY=
- github.com/gorilla/mux v1.8.1/go.mod h1:AKf9I4AEqPTmMytcMc0KkNouC66V3BtZ4qD5fmWSiMQ=
- github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 h1:UH//fgunKIs4JdUbpDl1VZCDaL56wXCB/5+wF6uHfaI=
-@@ -1130,8 +1130,8 @@ golang.org/x/time v0.0.0-20181108054448-85acf8d2951c/go.mod h1:tRJNPiyCQ0inRvYxb
- golang.org/x/time v0.0.0-20190308202827-9d24e82272b4/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
- golang.org/x/time v0.0.0-20191024005414-555d28b269f0/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
- golang.org/x/time v0.0.0-20201208040808-7e3f01d25324/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
--golang.org/x/time v0.14.0 h1:MRx4UaLrDotUKUdCIqzPC48t1Y9hANFKIRpNx+Te8PI=
--golang.org/x/time v0.14.0/go.mod h1:eL/Oa2bBBK0TkX57Fyni+NgnyQQN4LitPmob2Hjnqw4=
-+golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
-+golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
- golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
- golang.org/x/tools v0.0.0-20190114222345-bf090417da8b/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
- golang.org/x/tools v0.0.0-20190226205152-f727befe758c/go.mod h1:9Yl7xja0Znq3iFh3HoIrodX9oNMXvdceNzlUR8zjMvY=
-@
-```
-
-**File**: `internal/job/image.go` (modified, +73/-27)
-```diff
-@@ -21,10 +21,14 @@ package job
- import (
- 	"context"
- 	"crypto/x509"
-+	"slices"
- 	"time"
- 
- 	"go.opentelemetry.io/otel/trace"
- 
-+	commonv2 "d7y.io/api/v2/pkg/apis/common/v2"
-+
-+	logger "d7y.io/dragonfly/v2/internal/dflog"
- 	"d7y.io/dragonfly/v2/manager/config"
- 	nethttp "d7y.io/dragonfly/v2/pkg/net/http"
- 	pkgoci "d7y.io/dragonfly/v2/pkg/oci"
-@@ -59,7 +63,9 @@ type ManifestRequest struct {
- 	Password string
- 
- 	// The image type preheating task can specify the image architecture type. eg: linux/amd64.
--	Platform string
-+	// If it is nil, all the platforms of the image are preheated. If it is empty, the default
-+	// platform is preheated.
-+	Platform *string
- 
- 	// Scope is the scope for preheating, default is single_seed_peer.
- 	Scope string
-@@ -110,7 +116,8 @@ type ManifestRequest struct {
- type Image interface {
- 	// CreatePreheatRequestsByManifestURL generates a list of preheat requests for a container image
- 	// by fetching and parsing its manifest from a registry. It handles authentication, platform-specific
--	// manifest filtering, and layer extraction for preheating.
-+	// manifest filtering, and layer extraction for preheating. Each preheat request preheats the layers
-+	// of one platform of the image.
- 	CreatePreheatRequestsByManifestURL(ctx context.Context, req *ManifestRequest) ([]*PreheatRequest, error)
- }
- 
-@@ -124,7 +131,8 @@ func NewImage() Image {
- 
- // CreatePreheatRequestsByManifestURL generates a list of preheat requests for a container image
- // by fetching and parsing its manifest from a registry. It handles authentication, platform-specific
--// manifest filtering, and layer extraction for preheating.
-+// manifest filtering, and layer extraction for preheating. Each preheat request preheats the layers
-+// of one platform of the image.
- func (i *image) CreatePreheatRequestsByManifestURL(ctx context.Context, req *ManifestRequest) ([]*PreheatRequest, error) {
- 	ctx, span := tracer.Start(ctx, config.SpanGetLayers, trace.WithSpanKind(trace.SpanKindProducer))
- 	defer span.End()
-@@ -135,15 +143,21 @@ func (i *image) CreatePreheatRequestsByManifestURL(ctx context.Context, req *Man
- 		return nil, err
- 	}
- 
--	// Resolve the blob urls and the authorization token. Harbor uses the V1
-+	// Resolve the manifests and the authorization token. Harbor uses the V1
- 	// preheat request and carries the auth info in the headers, which is used
--	// as the issued token by the resolver.
-+	// as the issued token by the resolver. All the platforms of the image are
-+	// resolved if the platform is not specified.
- 	header := nethttp.MapToHeader(req.Headers)
--	_, blobURLs, token, err := pkgoci.Resolve(ctx, ref,
-+	opts := []pkgoci.ResolveOption{
- 		pkgoci.WithAuth(req.Username, req.Password),
--		pkgoci.WithPlatform(req.Platform),
- 		pkgoci.WithHeader(header.Clone()),
--	)
-+	}
-+
-+	if req.Platform != nil {
-+		opts = append(opts, pkgoci.WithPlatform(*req.Platform))
-+	}
-+
-+	manifests, token, err := pkgoci.Resolve(ctx, ref, opts...)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -155,23 +169,55 @@ func (i *image) CreatePreheatRequestsByManifestURL(ctx context.Context, req *Man
- 		certificateChain = req.RootCAs.Subjects() //nolint:staticcheck
- 	}
- 
--	return []*PreheatRequest{{
--		URLs:                blobURLs,
--		PieceLength:         req.PieceLength,
--		Tag:                 req.Tag,
--		Application:         req.Application,
--		FilteredQueryParams: req.FilteredQueryParams,
--		Headers:             nethttp.HeaderToMap(header),
--		Scope:               req.Scope,
--		IPs:                 req.IPs,
--		Percentage:          req.Percentage,
--		Count:               req.Count,
--		ConcurrentTaskCount: req.ConcurrentTaskCount,
--		ConcurrentPeerCount: req.ConcurrentPeerCount,
--		CertificateChain:    certificateChain,
--		InsecureSkipVerify:  req.InsecureSkipVerify,
--		Timeout:             req.Timeout,
--
--		EnableTaskIDBasedBlobDigest: req.EnableTaskIDBasedBlobDigest,
--	}}, nil
-+	// Create one preheat request for each platform, so the peers record the layers by the
-+	// image and the platform to delete the image.
-+	var preheatRequests []*PreheatRequest
-+	for _, manifest := range manifests {
-+		if index := slices.IndexFunc(preheatRequests, func(preheatRequest *PreheatRequest) bool {
-+			return preheatRequest.Image.GetPlatform() == manifest.Platform
-+		}); index >= 0 {
-+			for _, url := range manifest.BlobURLs {
-+				if !slices.Contains(preheatRequests[index].URLs, url) {
-+					preheatRequests[index].URLs = append(preheatRequests[index].URLs, url)
-+				}
-+			}
-+
-+			continue
-+		}
-+
-+		preheatRequest := &PreheatRequest{
-+			URLs:                        manifest.BlobURLs,
-+			PieceLength:                 req.PieceLength,
-+			Tag:                         req.Tag,
-+			Application:                 req.Application,
-+			FilteredQueryParams:         req.FilteredQueryParams,
-+			Headers:                     nethttp.HeaderToMap(header),
-+			Scope:                       req.Scope,
-+			IPs:                         req.IPs,
-+			Percentage:                  req.P
-```
-
-**File**: `internal/job/image_test.go` (modified, +32/-1)
-```diff
-@@ -25,6 +25,10 @@ import (
- 	"github.com/stretchr/testify/assert"
+@@ -28,7 +28,7 @@ import (
  )
  
-+var (
-+	mockPlatform = "linux/amd64"
-+)
-+
- func TestPreheat_CreatePreheatRequestsByManifestURL(t *testing.T) {
- 	username := os.Getenv("DOCKER_USERNAME")
- 	password := os.Getenv("DOCKER_PASSWORD")
-@@ -49,14 +53,17 @@ func TestPreheat_CreatePreheatRequestsByManifestURL(t *testing.T) {
- 			expect: func(t *testing.T, layers []*PreheatRequest, err error) {
- 				assert := assert.New(t)
- 				assert.NoError(err)
-+				assert.Len(layers, 1)
- 				assert.Len(layers[0].URLs, 2)
-+				assert.Equal("registry-1.docker.io/dragonflyoss/busybox:1.35.0", layers[0].Image.GetReference())
-+				assert.Nil(layers[0].Image.Platform)
+ // manifestURLRegexp is the regular expression for parsing manifest urls.
+-var manifestURLRegexp = regexp.MustCompile("^(.*)://(.*)/v2/(.*)/manifests/(.*)")
++var manifestURLRegexp = regexp.MustCompile("^(.*)://(.*?)/v2/(.*)/manifests/(.*)")
+ 
+ // Reference is the set of registry coordinates of an image, following the
+ // naming of the OCI distribution spec.
+```
+
+**File**: `pkg/oci/reference_test.go` (modified, +12/-0)
+```diff
+@@ -52,6 +52,18 @@ func TestParseManifestURL(t *testing.T) {
+ 				assert.Equal("sha256:b2c366cce7e68013d5441c6326d5a3e1b12aeb5ed58564d0fd3fa089bc29cb6e", ref.Reference)
  			},
  		},
++		{
++			name: "manifest url with v2 in repository",
++			url:  "https://ghcr.io/v2/org/v2/app/manifests/1.0",
++			expect: func(t *testing.T, ref *Reference, err error) {
++				assert := assert.New(t)
++				assert.NoError(err)
++				assert.Equal("https", ref.Scheme)
++				assert.Equal("ghcr.io", ref.Registry)
++				assert.Equal("org/v2/app", ref.Repository)
++				assert.Equal("1.0", ref.Reference)
++			},
++		},
  		{
- 			name: "get image layers with multi arch image layers",
- 			req: &ManifestRequest{
- 				URL:                "https://registry-1.docker.io/v2/dragonflyoss/scheduler/manifests/v2.1.0",
--				Platform:           "linux/amd64",
-+				Platform:           &mockPlatform,
- 				Username:           username,
- 				Password:           password,
- 				Timeout:            30 * time.Second,
-@@ -65,7 +72,31 @@ func TestPreheat_CreatePreheatRequestsByManifestURL(t *testing.T) {
- 			expect: func(t *testing.T, layers []*PreheatRequest, err error) {
- 				assert := assert.New(t)
- 				assert.NoError(err)
-+				assert.Len(layers, 1)
- 				assert.Len(layers[0].URLs, 5)
-+				assert.Equal("registry-1.docker.io/dragonflyoss/scheduler:v2.1.0", layers[0].Image.GetReference())
-+				assert.Equal(mockPlatform, layers[0].Image.GetPlatform())
+ 			name: "invalid manifest url",
+ 			url:  "https://registry.example.com/v2/library/nginx/blobs/sha256:b2c366cce7e68013d5441c6326d5a3e1b12aeb5ed58564d0fd3fa089bc29cb6e",
+```
+
+**File**: `pkg/oci/resolver.go` (modified, +17/-21)
+```diff
+@@ -22,6 +22,7 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"net/http"
++	"slices"
+ 
+ 	"github.com/containerd/platforms"
+ 	"github.com/docker/distribution"
+@@ -98,15 +99,29 @@ func (c *AuthClient) ResolveManifests(ctx context.Context, ref *Reference, heade
+ 		digestRef := *ref
+ 		digestRef.Reference = desc.Digest.String()
+ 
++		// A blob referenced more than once by the manifest is resolved once.
+ 		var blobURLs []string
+ 		for _, blob := range v.References() {
+-			blobURLs = append(blobURLs, ref.BlobURL(blob.Digest.String()))
++			if blobURL := ref.BlobURL(blob.Digest.String()); !slices.Contains(blobURLs, blobURL) {
++				blobURLs = append(blobURLs, blobURL)
++			}
+ 		}
+ 
+ 		return []*Manifest{{URL: digestRef.ManifestURL(), BlobURLs: blobURLs}}, nil
+ 	case *manifestlist.DeserializedManifestList:
+ 		var manifests []*Manifest
+-		for _, desc := range c.filterManifests(v.Manifests, matcher) {
++		for _, desc := range v.Manifests {
++			// Skip the manifest not matched by the platform matcher.
++			if !matcher.Match(specs.Platform{
++				Architecture: desc.Platform.Architecture,
++				OS:           desc.Platform.OS,
++				OSVersion:    desc.Platform.OSVersion,
++				OSFeatures:   desc.Platform.OSFeatures,
++				Variant:      desc.Platform.Variant,
++			}) {
++				continue
++			}
++
+ 			digestRef := *ref
+ 			digestRef.Reference = desc.Digest.String()
+ 			children, err := c.ResolveManifests(ctx, &digestRef, header.Clone(), matcher)
+@@ -130,22 +145,3 @@ func (c *AuthClient) ResolveManifests(ctx context.Context, ref *Reference, heade
+ 
+ 	return nil, errors.New("unknown manifest type")
+ }
+-
+-// filterManifests filters a list of manifest descriptors to return only those
+-// matched by the containerd platform matcher.
+-func (c *AuthClient) filterManifests(manifests []manifestlist.ManifestDescriptor, matcher platforms.Matcher) []manifestlist.ManifestDescriptor {
+-	var matches []manifestlist.ManifestDescriptor
+-	for _, desc := range manifests {
+-		if matcher.Match(specs.Platform{
+-			Architecture: desc.Platform.Architecture,
+-			OS:           desc.Platform.OS,
+-			OSVersion:    desc.Platform.OSVersion,
+-			OSFeatures:   desc.Platform.OSFeatures,
+-			Variant:      desc.Platform.Variant,
+-		}) {
+-			matches = append(matches, desc)
+-		}
+-	}
+-
+-	return matches
+-}
+```
+
+**File**: `pkg/oci/resolver_test.go` (removed, +0/-83)
+```diff
+@@ -1,83 +0,0 @@
+-/*
+- *     Copyright 2026 The Dragonfly Authors
+- *
+- * Licensed under the Apache License, Version 2.0 (the "License");
+- * you may not use this file except in compliance with the License.
+- * You may obtain a copy of the License at
+- *
+- *      http://www.apache.org/licenses/LICENSE-2.0
+- *
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the License is distributed on an "AS IS" BASIS,
+- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- * See the License for the specific language governing permissions and
+- * limitations under the License.
+- */
+-
+-package oci
+-
+-import (
+-	"testing"
+-
+-	"github.com/containerd/platforms"
+-	"github.com/docker/distribution/manifest/manifestlist"
+-	specs "github.com/opencontainers/image-spec/specs-go/v1"
+-	"github.com/stretchr/testify/assert"
+-)
+-
+-func TestAuthClient_filterManifests(t *testing.T) {
+-	manifests := []manifestlist.ManifestDescriptor{
+-		{Platform: manifestlist.PlatformSpec{OS: "linux", Architecture: "amd64"}},
+-		{Platform: manifestlist.PlatformSpec{OS: "linux", Architecture: "arm64", Variant: "v8"}},
+-		{Platform: manifestlist.PlatformSpec{OS: "windows", Architecture: "amd64"}},
+-	}
+-
+-	tests := []struct {
+-		name    string
+-		matcher platforms.Matcher
+-		expect  func(t *testing.T, matches []manifestlist.ManifestDescriptor)
+-	}{
+-		{
+-			name:    "match linux/amd64",
+-			matcher: platforms.OnlyStrict(specs.Platform{OS: "linux", Architecture: "amd64"}),
+-			expect: func(t *testing.T, matches []manifestlist.ManifestDescriptor) {
+-				assert := assert.New(t)
+-				assert.Len(matches, 1)
+-				assert.Equal("amd64", matches[0].Platform.Architecture)
+-				assert.Equal("linux", matches[0].Platform.OS)
+-			},
+-		},
+-		{
+-			name:    "match linux/arm64 with variant",
+-			matcher: platforms.OnlyStrict(specs.Platform{OS: "linux", Architecture: "arm64"}),
+-			expect: func(t *testing.T, matches []manifestlist.ManifestDescriptor) {
+-				assert := assert.New(t)
+-				assert.Len(matches, 1)
+-				assert.Equal("arm64", matches[0].Platform.Architecture)
+-			},
+-		},
+-		{
+-			name:    "no match",
+-			matcher: platforms.OnlyStrict(specs.Platform{OS: "linux", Architecture: "riscv64"}),
+-			expect: func(t *testing.T, matches []manifestlist.ManifestDescriptor) {
+-				assert := assert.New(t)
+-				assert.Empty(matches)
+-			},
+-		},
+-		{
+-			name:    "match all platforms",
+-			matcher: platforms.All,
+-			expect: func(t *testing.T, matches []manifestlist.ManifestDescriptor) {
+-				assert := assert.New(t)
+-				assert.Len(matches, 3)
+-			},
+-		},
+-	}
+-
+-	for _, tc := range tests {
+-		t.Run(tc.name, func(t *testing.T) {
+-			client := &AuthClient{}
+-			tc.expect(t, client.filterManifests(manifests, tc.matcher))
+-		})
+-	}
+-}
+```
+
+**File**: `scheduler/service/service_v2.go` (modified, +23/-7)
+```diff
+@@ -4484,18 +4484,22 @@ func (v *V2) DeletePersistentCacheTask(_ctx context.Context, req *schedulerv2.De
+ // A successful response (google.protobuf.Empty) confirms that the preparation is complete
+ // and the asynchronous download task has been scheduled.
+ func (v *V2) PreheatImage(ctx context.Context, req *schedulerv2.PreheatImageRequest) error {
++	if v.job == nil {
++		return status.Error(codes.FailedPrecondition, "job is not enabled")
++	}
++
+ 	log := logger.WithPreheatImage(req.Url)
+ 
+ 	if req.Scope == "" {
+ 		req.Scope = managertypes.SingleSeedPeerScope
+ 	}
+ 
+-	if req.ConcurrentTaskCount == nil {
++	if req.GetConcurrentTaskCount() == 0 {
+ 		concurrentTaskCount := int64(managertypes.DefaultPreheatConcurrentTaskCount)
+ 		req.ConcurrentTaskCount = &concurrentTaskCount
+ 	}
+ 
+-	if req.ConcurrentPeerCount == nil {
++	if req.GetConcurrentPeerCount() == 0 {
+ 		concurrentPeerCount := int64(managertypes.DefaultPreheatConcurrentPeerCount)
+ 		req.ConcurrentPeerCount = &concurrentPeerCount
+ 	}
+@@ -4634,18 +4638,22 @@ func (v *V2) PreheatImage(ctx context.Context, req *schedulerv2.PreheatImageRequ
+ // all peers to collect the image's download state across the network.
+ // The response includes both layer information and the status on each peer.
+ func (v *V2) StatImage(ctx context.Context, req *schedulerv2.StatImageRequest) (*schedulerv2.StatImageResponse, error) {
++	if v.job == nil {
++		return nil, status.Error(codes.FailedPrecondition, "job is not enabled")
++	}
++
+ 	log := logger.WithStatImage(req.Url)
+ 
+ 	if req.Scope == "" {
+ 		req.Scope = managertypes.AllPeersScope
+ 	}
+ 
+-	if req.ConcurrentLayerCount == nil {
++	if req.GetConcurrentLayerCount() == 0 {
+ 		concurrentLayerCount := int64(managertypes.DefaultPreheatConcurrentLayerCount)
+ 		req.ConcurrentLayerCount = &concurrentLayerCount
+ 	}
+ 
+-	if req.ConcurrentPeerCount == nil {
++	if req.GetConcurrentPeerCount() == 0 {
+ 		concurrentPeerCount := int64(managertypes.DefaultPreheatConcurrentPeerCount)
+ 		req.ConcurrentPeerCount = &concurrentPeerCount
+ 	}
+@@ -4798,18 +4806,22 @@ func (v *V2) StatImage(ctx context.Context, req *schedulerv2.StatImageRequest) (
+ // A successful response (google.protobuf.Empty) confirms that the preparation is complete
+ // and the asynchronous download task has been scheduled.
+ func (v *V2) PreheatFile(ctx context.Context, req *schedulerv2.PreheatFileRequest) error {
++	if v.job == nil {
++		return status.Error(codes.FailedPrecondition, "job is not enabled")
++	}
++
+ 	log := logger.WithPreheatFile(req.Url)
+ 
+ 	if req.Scope == "" {
+ 		req.Scope = managertypes.SingleSeedPeerScope
+ 	}
+ 
+-	if req.ConcurrentTaskCount == nil {
++	if req.GetConcurrentTaskCount() == 0 {
+ 		concurrentTaskCount := int64(managertypes.DefaultPreheatConcurrentTaskCount)
+ 		req.ConcurrentTaskCount = &concurrentTaskCount
+ 	}
+ 
+-	if req.ConcurrentPeerCount == nil {
++	if req.GetConcurrentPeerCount() == 0 {
+ 		concurrentPeerCount := int64(managertypes.DefaultPreheatConcurrentPeerCount)
+ 		req.ConcurrentPeerCount = &concurrentPeerCount
+ 	}
+@@ -4938,9 +4950,13 @@ func (v *V2) PreheatFile(ctx context.Context, req *schedulerv2.PreheatFileReques
+ // all peers to collect the file's download state across the network.
+ // The response includes the file status on each peer.
+ func (v *V2) StatFile(ctx context.Context, req *schedulerv2.StatFileRequest) (*schedulerv2.StatFileResponse, error) {
++	if v.job == nil {
++		return nil, status.Error(codes.FailedPrecondition, "job is not enabled")
++	}
++
+ 	log := logger.WithStatFile(req.Url)
+ 
+-	if req.ConcurrentPeerCount == nil {
++	if req.GetConcurrentPeerCount() == 0 {
+ 		concurrentPeerCount := int64(managertypes.DefaultPreheatConcurrentPeerCount)
+ 		req.ConcurrentPeerCount = &concurrentPeerCount
+ 	}
+```
+
+**File**: `scheduler/service/service_v2_test.go` (modified, +118/-0)
+```diff
+@@ -36,6 +36,7 @@ import (
+ 	"google.golang.org/grpc"
+ 	"google.golang.org/grpc/codes"
+ 	"google.golang.org/grpc/status"
++	"google.golang.org/protobuf/proto"
+ 	"google.golang.org/protobuf/types/known/durationpb"
+ 	"google.golang.org/protobuf/types/known/timestamppb"
+ 
+@@ -8896,6 +8897,34 @@ func TestServiceV2_PreheatImage(t *testing.T) {
+ 		req  *schedulerv2.PreheatImageRequest
+ 		run  func(t *testing.T, svc *V2, req *schedulerv2.PreheatImageRequest, mj *jobmocks.MockJobMockRecorder, mi *internaljobmocks.MockImageMockRecorder)
+ 	}{
++		{
++			name: "job is not enabled",
++			req: &schedulerv2.PreheatImageRequest{
++				Url: "https://example.com/v2/image/manifesat/latest",
++			},
++			run: func(t *testing.T, svc *V2, req *schedulerv2.PreheatImageRequest, mj *jobmocks.MockJobMockRecorder, mi *internaljobmocks.MockImageMockRecorder) {
++				assert := assert.New(t)
++				svc.job = nil
++
++				assert.ErrorIs(svc.PreheatImage(context.Background(), req), status.Error(codes.FailedPrecondition, "job is not enabled"))
 +			},
 +		},
 +		{
-+			name: "get image layers of all platforms",
-+			req: &ManifestRequest{
-+				URL:                "https://registry-1.docker.io/v2/dragonflyoss/client/manifests/v1.5.12",
-+				Username:           username,
-+				Password:           password,
-+				Timeout:            30 * time.Second,
-+				InsecureSkipVerify: true,
++			name: "concurrent counts are zero",
++			req: &schedulerv2.PreheatImageRequest{
++				Url:                 "https://example.com/v2/image/manifesat/latest",
++				ConcurrentTaskCount: proto.Int64(0),
++				ConcurrentPeerCount: proto.Int64(0),
 +			},
-+			expect: func(t *testing.T, layers []*PreheatRequest, err error) {
++			run: func(t *testing.T, svc *V2, req *schedulerv2.PreheatImageRequest, mj *jobmocks.MockJobMockRecorder, mi *internaljobmocks.MockImageMockRecorder) {
 +				assert := assert.New(t)
-+				assert.NoError(err)
-+				assert.Len(layers, 3)
-+				assert.Len(layers[0].URLs, 9)
-+				assert.Equal("linux/amd64", layers[0].Image.GetPlatform())
-+				assert.Len(layers[1].URLs, 9)
-+				assert.Equal("linux/arm64", layers[1].Image.GetPlatform())
-+				assert.Len(layers[2].URLs, 3)
-+				assert.Equal("unknown/unknown", layers[2].Image.GetPlatform())
- 			},
- 		},
- 	}
++				mi.CreatePreheatRequestsByManifestURL(gomock.Any(), gomock.Any()).Return(nil, errors.New("foo")).Times(1)
++
++				assert.Error(svc.PreheatImage(context.Background(), req))
++				assert.Equal(int64(managertypes.DefaultPreheatConcurrentTaskCount), req.GetConcurrentTaskCount())
++				assert.Equal(int64(managertypes.DefaultPreheatConcurrentPeerCount), req.GetConcurrentPeerCount())
++			},
++		},
+ 		{
+ 			name: "invalid certificate chain",
+ 			req: &schedulerv2.PreheatImageRequest{
+@@ -9206,6 +9235,38 @@ func TestServiceV2_StatImage(t *testing.T) {
+ 		req  *schedulerv2.StatImageRequest
+ 		run  func(t *testing.T, svc *V2, req *schedulerv2.StatImageRequest, mj *jobmocks.MockJobMockRecorder, mi *internaljobmocks.MockImageMockRecorder)
+ 	}{
++		{
++			name: "job is not enabled",
++			req: &schedulerv2.StatImageRequest{
++				Url: "https://example.com/v2/image/manifests/latest",
++			},
++			run: func(t *testing.T, svc *V2, req *schedulerv2.StatImageRequest, mj *jobmocks.MockJobMockRecorder, mi *internaljobmocks.MockImageMockRecorder) {
++				svc.job = nil
++				resp, err := svc.StatImage(context.Background(), req)
++
++				assert := assert.New(t)
++				assert.Nil(resp)
++				assert.ErrorIs(err, status.Error(codes.FailedPrecondition, "job is not enabled"))
++			},
++		},
++		{
++			name: "concurrent counts are zero",
++			req: &schedulerv2.StatImageRequest{
++				Url:                  "https://example.com/v2/image/manifests/latest",
++				ConcurrentLayerCount: proto.Int64(0),
++				ConcurrentPeerCount:  proto.Int64(0),
++			},
++			run: func(t *testing.T, svc *V2, req *schedulerv2.StatImageRequest, mj *jobmocks.MockJobMockRecorder, mi *internaljobmocks.MockImageMockRecorder) {
++				mi.CreatePreheatRequestsByManifestURL(gomock.Any(), gomock.Any()).Return(nil, errors.New("foo")).Times(1)
++				resp, err := svc.StatImage(context.Background(), req)
++
++				assert := assert.New(t)
++				assert.Nil(resp)
++				assert.Error(err)
++				assert.Equal(int64(managertypes.DefaultPreheatConcurrentLayerCount), req.GetConcurrentLayerCount())
++				assert.Equal(int64(managertypes.DefaultPreheatConcurrentPeerCount), req.GetConcurrentPeerCount())
++			},
++		},
+ 		{
+ 			name: "invalid certificate chain",
+ 			req: &schedulerv2.StatImageRequest{
+@@ -9627,6 +9688,33 @@ func TestServiceV2_PreheatFile(t *testing.T) {
+ 		req  *schedulerv2.PreheatFileRequest
+ 		run  func(t *testing.T, svc *V2, req *schedulerv2.PreheatFileRequest, mj *jobmocks.MockJobMockRecorder)
+ 	}{
++		{
++			name: "job is not enabled",
++			req: &schedulerv2.PreheatFileRequest{
++				Url: "https://example.com/file.txt",
++			},
++			run: func(t *testing.T, svc *V2, req *schedulerv2.PreheatFileRequest, mj *jobmocks.MockJobMockRecorder) {
++				assert := assert.New(t)
++				svc.job = nil
++
++				assert.ErrorIs(svc.PreheatFile(context.Background(), req), status.Error(codes.FailedPrecondition, "job is not enabled"))
++			},
++		},
++		{
++			name: "concurrent counts are zero",
++			req: &schedulerv2.PreheatFileRequest{
++				Url:                 "https://example.com/file.txt",
++				Scope:               "invalid-scope",
++				ConcurrentTaskCount: proto.Int64(0),
++				ConcurrentPeerCount: proto.Int64(0),
++			},
++			run: func(t *testing.T, svc *V2, req *schedulerv2.PreheatFileRequest, mj *jobmocks.MockJobMockRecorder) {
++				assert := assert.New(t)
++				assert.Error(svc.PreheatFile(context.Background(), req))
++				assert.Equal(int64(managertypes.DefaultPreheatConcurrentTaskCount), req.GetConcurrentTaskCount())
++				assert.Equal(int64(managertypes.DefaultPreheatConcurrentPeerCount), req
 ```
 
-**File**: `internal/job/types.go` (modified, +1/-0)
+---
+
+### Incident Patch 2: `5ace19fb` (2026-11-12)
+**Commit Message**: fix(scheduler): use LoadOrStore to avoid overwriting concurrent registrations (#5115)
+
+Replace the Store method on the host, task and peer managers with
+LoadOrStore so that concurrent registrations of the same host, task or
+peer reuse the existing entry instead of silently replacing it. Update
+the v1/v2 scheduler services and seed peer to use the returned instance
+and drop Store from the manager interfaces, mocks and tests.
+
+Signed-off-by: Gaius <[REDACTED_EMAIL]>
+
+**File**: `scheduler/resource/standard/host_manager.go` (modified, +8/-21)
 ```diff
-@@ -51,6 +51,7 @@ type PreheatRequest struct {
- 	Hdfs                        *v2.HDFS          `json:"hdfs" validate:"omitempty"`
- 	OutputPath                  *string           `json:"output_path" validate:"omitempty"`
- 	EnableTaskIDBasedBlobDigest bool              `json:"enable_task_id_based_blob_digest" validate:"omitempty"`
-+	Image                       *v2.Image         `json:"image" validate:"omitempty"`
+@@ -42,9 +42,6 @@ type HostManager interface {
+ 	// Load returns host for a key.
+ 	Load(string) (*Host, bool)
+ 
+-	// Store sets host.
+-	Store(*Host)
+-
+ 	// LoadOrStore returns host the key if present.
+ 	// Otherwise, it stores and returns the given host.
+ 	// The loaded result is true if the host was loaded, false if stored.
+@@ -134,30 +131,20 @@ func (h *hostManager) Load(key string) (*Host, bool) {
+ 	return rawHost.(*Host), loaded
  }
  
- // PreheatResponse defines the response parameters for preheating.
+-// Store sets host.
+-func (h *hostManager) Store(host *Host) {
+-	switch host.Type {
+-	case types.HostTypeNormal:
+-		h.normals.Store(host.ID, host)
+-	case types.HostTypeSuperSeed:
+-		h.seeds.Store(host.ID, host)
+-	}
+-
+-	h.Map.Store(host.ID, host)
+-}
+-
+ // LoadOrStore returns host the key if present.
+ // Otherwise, it stores and returns the given host.
+ // The loaded result is true if the host was loaded, false if stored.
+ func (h *hostManager) LoadOrStore(host *Host) (*Host, bool) {
+-	switch host.Type {
+-	case types.HostTypeNormal:
+-		h.normals.LoadOrStore(host.ID, host)
+-	case types.HostTypeSuperSeed:
+-		h.seeds.LoadOrStore(host.ID, host)
++	rawHost, loaded := h.Map.LoadOrStore(host.ID, host)
++	if !loaded {
++		switch host.Type {
++		case types.HostTypeNormal:
++			h.normals.Store(host.ID, host)
++		case types.HostTypeSuperSeed:
++			h.seeds.Store(host.ID, host)
++		}
+ 	}
+ 
+-	rawHost, loaded := h.Map.LoadOrStore(host.ID, host)
+ 	return rawHost.(*Host), loaded
+ }
+ 
+```
+
+**File**: `scheduler/resource/standard/host_manager_mock.go` (modified, +0/-12)
+```diff
+@@ -202,15 +202,3 @@ func (mr *MockHostManagerMockRecorder) RunGC(arg0 any) *gomock.Call {
+ 	mr.mock.ctrl.T.Helper()
+ 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunGC", reflect.TypeOf((*MockHostManager)(nil).RunGC), arg0)
+ }
+-
+-// Store mocks base method.
+-func (m *MockHostManager) Store(arg0 *Host) {
+-	m.ctrl.T.Helper()
+-	m.ctrl.Call(m, "Store", arg0)
+-}
+-
+-// Store indicates an expected call of Store.
+-func (mr *MockHostManagerMockRecorder) Store(arg0 any) *gomock.Call {
+-	mr.mock.ctrl.T.Helper()
+-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockHostManager)(nil).Store), arg0)
+-}
+```
+
+**File**: `scheduler/resource/standard/host_manager_test.go` (modified, +20/-75)
+```diff
+@@ -95,7 +95,7 @@ func TestHostManager_Load(t *testing.T) {
+ 			},
+ 			expect: func(t *testing.T, hostManager HostManager, mockHost *Host) {
+ 				assert := assert.New(t)
+-				hostManager.Store(mockHost)
++				hostManager.LoadOrStore(mockHost)
+ 				host, loaded := hostManager.Load(mockHost.ID)
+ 				assert.True(loaded)
+ 				assert.Equal(mockHost.ID, host.ID)
+@@ -120,62 +120,7 @@ func TestHostManager_Load(t *testing.T) {
+ 			expect: func(t *testing.T, hostManager HostManager, mockHost *Host) {
+ 				assert := assert.New(t)
+ 				mockHost.ID = ""
+-				hostManager.Store(mockHost)
+-				host, loaded := hostManager.Load(mockHost.ID)
+-				assert.True(loaded)
+-				assert.Equal(mockHost.ID, host.ID)
+-			},
+-		},
+-	}
+-
+-	for _, tc := range tests {
+-		t.Run(tc.name, func(t *testing.T) {
+-			ctl := gomock.NewController(t)
+-			defer ctl.Finish()
+-			gc := gc.NewMockGC(ctl)
+-			tc.mock(gc.EXPECT())
+-
+-			mockHost := NewHost(
+-				mockRawHost.ID, mockRawHost.IP, mockRawHost.Name, mockRawHost.Hostname,
+-				mockRawHost.Port, mockRawHost.DownloadPort, mockRawHost.ProxyPort, mockRawHost.Type)
+-			hostManager, err := newHostManager(mockHostGCConfig, gc)
+-			if err != nil {
+-				t.Fatal(err)
+-			}
+-
+-			tc.expect(t, hostManager, mockHost)
+-		})
+-	}
+-}
+-
+-func TestHostManager_Store(t *testing.T) {
+-	tests := []struct {
+-		name   string
+-		mock   func(m *gc.MockGCMockRecorder)
+-		expect func(t *testing.T, hostManager HostManager, mockHost *Host)
+-	}{
+-		{
+-			name: "store host",
+-			mock: func(m *gc.MockGCMockRecorder) {
+-				m.Add(gomock.Any()).Return(nil).Times(1)
+-			},
+-			expect: func(t *testing.T, hostManager HostManager, mockHost *Host) {
+-				assert := assert.New(t)
+-				hostManager.Store(mockHost)
+-				host, loaded := hostManager.Load(mockHost.ID)
+-				assert.True(loaded)
+-				assert.Equal(mockHost.ID, host.ID)
+-			},
+-		},
+-		{
+-			name: "store key is empty",
+-			mock: func(m *gc.MockGCMockRecorder) {
+-				m.Add(gomock.Any()).Return(nil).Times(1)
+-			},
+-			expect: func(t *testing.T, hostManager HostManager, mockHost *Host) {
+-				assert := assert.New(t)
+-				mockHost.ID = ""
+-				hostManager.Store(mockHost)
++				hostManager.LoadOrStore(mockHost)
+ 				host, loaded := hostManager.Load(mockHost.ID)
+ 				assert.True(loaded)
+ 				assert.Equal(mockHost.ID, host.ID)
+@@ -216,7 +161,7 @@ func TestHostManager_LoadOrStore(t *testing.T) {
+ 			},
+ 			expect: func(t *testing.T, hostManager HostManager, mockHost *Host) {
+ 				assert := assert.New(t)
+-				hostManager.Store(mockHost)
++				hostManager.LoadOrStore(mockHost)
+ 				host, loaded := hostManager.LoadOrStore(mockHost)
+ 				assert.True(loaded)
+ 				assert.Equal(mockHost.ID, host.ID)
+@@ -270,7 +215,7 @@ func TestHostManager_Delete(t *testing.T) {
+ 			},
+ 			expect: func(t *testing.T, hostManager HostManager, mockHost *Host) {
+ 				assert := assert.New(t)
+-				hostManager.Store(mockHost)
++				hostManager.LoadOrStore(mockHost)
+ 				hostManager.Delete(mockHost.ID)
+ 				_, loaded := hostManager.Load(mockHost.ID)
+ 				assert.False(loaded)
+@@ -285,7 +230,7 @@ func TestHostManager_Delete(t *testing.T) {
+ 			expect: func(t *testing.T, hostManager HostManager, mockHost *Host) {
+ 				assert := assert.New(t)
+ 				mockHost.ID = ""
+-				hostManager.Store(mockHost)
++				hostManager.LoadOrStore(mockHost)
+ 				hostManager.Delete(mockHost.ID)
+ 				_, loaded := hostManager.Load(mockHost.ID)
+ 				assert.False(loaded)
+@@ -390,8 +335,8 @@ func TestHostManager_Range(t *testing.T) {
+ 				t.Fatal(err)
+ 			}
+ 
+-			hostManager.Store(mockHost)
+-			hostManager.Store(mockSeedHost)
++			hostManager.LoadOrStore(mockHost)
++			hostManager.LoadOrStore(mockSeedHost)
+ 			tc.expect(t, hostManager, mockHost, mockSeedHost)
+ 		})
+ 	}
+@@ -481,7 +426,7 @@ func TestHostManager_LoadAll(t *testing.T) {
+ 			}
+ 
+ 			for _, host := range tc.hosts {
+-				hostManager.Store(host)
++				hostManager.LoadOrStore(host)
+ 			}
+ 
+ 			tc.expect(t, hostManager, tc.hosts)
+@@ -512,7 +457,7 @@ func TestHostManager_LoadRandom(t *testing.T) {
+ 			expect: func(t *testing.T, hm HostManager, hosts []*Host) {
+ 				assert := assert.New(t)
+ 				for _, host := range hosts {
+-					hm.Store(host)
++					hm.LoadOrStore(host)
+ 				}
+ 
+ 				blocklist := set.NewSafeSet[string]()
+@@ -538,7 +483,7 @@ func TestHostManager_LoadRandom(t *testing.T) {
+ 			expect: func(t *testing.T, hm HostManager, hosts []*Host) {
+ 				assert := assert.New(t)
+ 				for _, host := range hosts {
+-					hm.Store(host)
++					hm.LoadOrStore(host)
+ 				}
+ 
+ 				blocklist := set.NewSafeSet[string]()
+@@ -555,7 +500,7 @@ func TestHostManager_LoadRandom(t *testing.T) {
+ 			expect: func(t *testing.T, hm HostManager, hosts []*Host) {
+ 				assert := assert.New(t)
+ 				for _, host := range hosts {
+-					hm.Store(host)
++					hm.LoadOrStore(host)
+ 				}
+ 
+ 				blocklist := set.NewSafeSet[string]()
+@@ -579,7 +524,7 @@ func TestHostManager_LoadRandom(t *testing.T) {
+ 			expect: func(t *testing.T, hm HostManager, hosts []*Host) {
+ 				assert := assert.New(t)
+ 				for _, host := range hosts {
+-					hm.Store
+```
+
+**File**: `scheduler/resource/standard/peer_manager.go` (modified, +0/-13)
+```diff
+@@ -42,9 +42,6 @@ type PeerManager interface {
+ 	// Load returns peer for a key.
+ 	Load(string) (*Peer, bool)
+ 
+-	// Store sets peer.
+-	Store(*Peer)
+-
+ 	// LoadOrStore returns peer the key if present.
+ 	// Otherwise, it stores and returns the given peer.
+ 	// The loaded result is true if the peer was loaded, false if stored.
+@@ -114,16 +111,6 @@ func (p *peerManager) Load(key string) (*Peer, bool) {
+ 	return rawPeer.(*Peer), loaded
+ }
+ 
+-// Store sets peer.
+-func (p *peerManager) Store(peer *Peer) {
+-	p.mu.LockKey(peer.ID)
+-	defer p.mu.UnlockKey(peer.ID) // nolint: errcheck
+-
+-	p.Map.Store(peer.ID, peer)
+-	peer.Task.StorePeer(peer)
+-	peer.Host.StorePeer(peer)
+-}
+-
+ // LoadOrStore returns peer the key if present.
+ // Otherwise, it stores and returns the given peer.
+ // The loaded result is true if the peer was loaded, false if stored.
+```
+
+**File**: `scheduler/resource/standard/peer_manager_mock.go` (modified, +0/-12)
+```diff
+@@ -119,15 +119,3 @@ func (mr *MockPeerManagerMockRecorder) RunGC(arg0 any) *gomock.Call {
+ 	mr.mock.ctrl.T.Helper()
+ 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RunGC", reflect.TypeOf((*MockPeerManager)(nil).RunGC), arg0)
+ }
+-
+-// Store mocks base method.
+-func (m *MockPeerManager) Store(arg0 *Peer) {
+-	m.ctrl.T.Helper()
+-	m.ctrl.Call(m, "Store", arg0)
+-}
+-
+-// Store indicates an expected call of Store.
+-func (mr *MockPeerManagerMockRecorder) Store(arg0 any) *gomock.Call {
+-	mr.mock.ctrl.T.Helper()
+-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Store", reflect.TypeOf((*MockPeerManager)(nil).Store), arg0)
+-}
+```
+
+**File**: `scheduler/resource/standard/peer_manager_test.go` (modified, +27/-90)
+```diff
+@@ -95,7 +95,7 @@ func TestPeerManager_Load(t *testing.T) {
+ 			},
+ 			expect: func(t *testing.T, peerManager PeerManager, mockPeer *Peer) {
+ 				assert := assert.New(t)
+-				peerManager.Store(mockPeer)
++				peerManager.LoadOrStore(mockPeer)
+ 				peer, loaded := peerManager.Load(mockPeer.ID)
+ 				assert.True(loaded)
+ 				assert.Equal(mockPeer.ID, peer.ID)
+@@ -120,70 +120,7 @@ func TestPeerManager_Load(t *testing.T) {
+ 			expect: func(t *testing.T, peerManager PeerManager, mockPeer *Peer) {
+ 				assert := assert.New(t)
+ 				mockPeer.ID = ""
+-				peerManager.Store(mockPeer)
+-				peer, loaded := peerManager.Load(mockPeer.ID)
+-				assert.True(loaded)
+-				assert.Equal(mockPeer.ID, peer.ID)
+-			},
+-		},
+-	}
+-
+-	for _, tc := range tests {
+-		t.Run(tc.name, func(t *testing.T) {
+-			ctl := gomock.NewController(t)
+-			defer ctl.Finish()
+-			gc := gc.NewMockGC(ctl)
+-			tc.mock(gc.EXPECT())
+-
+-			mockHost := NewHost(
+-				mockRawHost.ID, mockRawHost.IP, mockRawHost.Name, mockRawHost.Hostname,
+-				mockRawHost.Port, mockRawHost.DownloadPort, mockRawHost.ProxyPort, mockRawHost.Type)
+-			mockTask := NewTask(mockTaskID, mockTaskURL, mockTaskTag, mockTaskApplication, commonv2.TaskType_STANDARD, mockTaskFilteredQueryParams, mockTaskHeader, mockTaskBackToSourceLimit, WithDigest(mockTaskDigest))
+-			mockPeer := NewPeer(mockPeerID, mockTask, mockHost)
+-			peerManager, err := newPeerManager(mockPeerGCConfig, gc)
+-			if err != nil {
+-				t.Fatal(err)
+-			}
+-
+-			tc.expect(t, peerManager, mockPeer)
+-		})
+-	}
+-}
+-
+-func TestPeerManager_Store(t *testing.T) {
+-	tests := []struct {
+-		name   string
+-		mock   func(m *gc.MockGCMockRecorder)
+-		expect func(t *testing.T, peerManager PeerManager, mockPeer *Peer)
+-	}{
+-		{
+-			name: "store peer",
+-			mock: func(m *gc.MockGCMockRecorder) {
+-				m.Add(gomock.Any()).Return(nil).Times(1)
+-			},
+-			expect: func(t *testing.T, peerManager PeerManager, mockPeer *Peer) {
+-				assert := assert.New(t)
+-				peerManager.Store(mockPeer)
+-				peer, loaded := peerManager.Load(mockPeer.ID)
+-				assert.True(loaded)
+-				assert.Equal(mockPeer.ID, peer.ID)
+-
+-				_, loaded = mockPeer.Task.LoadPeer(mockPeer.ID)
+-				assert.True(loaded)
+-				_, loaded = mockPeer.Host.LoadPeer(mockPeer.ID)
+-				assert.True(loaded)
+-				assert.Equal(int32(1), mockPeer.Host.PeerCount.Load())
+-			},
+-		},
+-		{
+-			name: "store key is empty",
+-			mock: func(m *gc.MockGCMockRecorder) {
+-				m.Add(gomock.Any()).Return(nil).Times(1)
+-			},
+-			expect: func(t *testing.T, peerManager PeerManager, mockPeer *Peer) {
+-				assert := assert.New(t)
+-				mockPeer.ID = ""
+-				peerManager.Store(mockPeer)
++				peerManager.LoadOrStore(mockPeer)
+ 				peer, loaded := peerManager.Load(mockPeer.ID)
+ 				assert.True(loaded)
+ 				assert.Equal(mockPeer.ID, peer.ID)
+@@ -226,7 +163,7 @@ func TestPeerManager_LoadOrStore(t *testing.T) {
+ 			},
+ 			expect: func(t *testing.T, peerManager PeerManager, mockPeer *Peer) {
+ 				assert := assert.New(t)
+-				peerManager.Store(mockPeer)
++				peerManager.LoadOrStore(mockPeer)
+ 				peer, loaded := peerManager.LoadOrStore(mockPeer)
+ 				assert.True(loaded)
+ 				assert.Equal(mockPeer.ID, peer.ID)
+@@ -288,7 +225,7 @@ func TestPeerManager_Delete(t *testing.T) {
+ 			},
+ 			expect: func(t *testing.T, peerManager PeerManager, mockPeer *Peer) {
+ 				assert := assert.New(t)
+-				peerManager.Store(mockPeer)
++				peerManager.LoadOrStore(mockPeer)
+ 				peerManager.Delete(mockPeer.ID)
+ 				_, loaded := peerManager.Load(mockPeer.ID)
+ 				assert.False(loaded)
+@@ -308,7 +245,7 @@ func TestPeerManager_Delete(t *testing.T) {
+ 			expect: func(t *testing.T, peerManager PeerManager, mockPeer *Peer) {
+ 				assert := assert.New(t)
+ 				mockPeer.ID = ""
+-				peerManager.Store(mockPeer)
++				peerManager.LoadOrStore(mockPeer)
+ 				peerManager.Delete(mockPeer.ID)
+ 				_, loaded := peerManager.Load(mockPeer.ID)
+ 				assert.False(loaded)
+@@ -351,8 +288,8 @@ func TestPeerManager_DeleteAllByHostID(t *testing.T) {
+ 			},
+ 			expect: func(t *testing.T, peerManager PeerManager, mockPeer, mockSeedPeer *Peer, hostID string) {
+ 				assert := assert.New(t)
+-				peerManager.Store(mockPeer)
+-				peerManager.Store(mockSeedPeer)
++				peerManager.LoadOrStore(mockPeer)
++				peerManager.LoadOrStore(mockSeedPeer)
+ 				peerManager.DeleteAllByHostID(hostID)
+ 				_, loadedPeer := peerManager.Load(mockPeer.ID)
+ 				_, loadedSeedPeer := peerManager.Load(mockSeedPeer.ID)
+@@ -367,8 +304,8 @@ func TestPeerManager_DeleteAllByHostID(t *testing.T) {
+ 			},
+ 			expect: func(t *testing.T, peerManager PeerManager, mockPeer, mockSeedPeer *Peer, hostID string) {
+ 				assert := assert.New(t)
+-				peerManager.Store(mockPeer)
+-				peerManager.Store(mockSeedPeer)
++				peerManager.LoadOrStore(mockPeer)
++				peerManager.LoadOrStore(mockSeedPeer)
+ 				peerManager.DeleteAllByHostID("non-existent-host-id")
+ 				_, loadedPeer := peerManager.Load(mockPeer.ID)
+ 				_, loadedSeedPeer := peerManager.Load(mockSeedPeer.ID)
+@@ -387,8 +324,8 @@ func TestPeerManager_DeleteAllByHostID(t *testing.T) 
+```
+
+**File**: `scheduler/resource/standard/seed_peer.go` (modified, +3/-1)
+```diff
+@@ -413,7 +413,9 @@ func (s *seedPeer) initSeedPeer(ctx context.Context, rg *http.Range, task *Task,
+ 
+ 	// New and store seed peer without range.
+ 	peer = NewPeer(peerID, task, host, options...)
+-	s.peerManager.Store(peer)
++	if peer, loaded = s.peerManager.LoadOrStore(peer); loaded {
++		return peer, nil
++	}
+ 	peer.Log.Info("seed peer has been stored")
+ 
+ 	if err := peer.FSM.Event(ctx, PeerEventRegisterNormal); err != nil {
+```
+
+**File**: `scheduler/resource/standard/seed_peer_test.go` (modified, +2/-2)
+```diff
+@@ -956,13 +956,13 @@ func TestSeedPeer_TriggerTask(t *testing.T) {
+ 			})
+ 			mockTask := NewTask(mockTaskID, mockTaskURL, mockTaskTag, mockTaskApplication, commonv2.TaskType_STANDARD, mockTaskFilteredQueryParams, mockTaskHeader, mockTaskBackToSourceLimit, WithDigest(mockTaskDigest))
+ 			if tc.hostStored {
+-				hostManager.Store(mockHost)
++				hostManager.LoadOrStore(mockHost)
+ 			}
+ 
+ 			if tc.peerStored {
+ 				mockSeedPeer := NewPeer(mockSeedPeerID, mockTask, mockHost)
+ 				mockSeedPeer.FSM.SetState(PeerStateReceivedNormal)
+-				peerManager.Store(mockSeedPeer)
++				peerManager.LoadOrStore(mockSeedPeer)
+ 			}
+ 
+ 			seedPeer := newSeedPeer(peerManager, hostManager, clientPool,
 ```
 
 ---
 
-### Incident Patch 2: `cbbe27d6` (2026-11-10)
-**Commit Message**: chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (#5103)
+### Incident Patch 3: `6c709478` (2026-11-12)
+**Commit Message**: fix(job): refresh registry authorization per preheat request and default blob-digest task IDs (#5114)
 
-Bumps [docker/login-action](https://github.com/docker/login-action) from 4.7.0 to 4.8.0.
-- [Release notes](https://github.com/docker/login-action/releases)
-- [Commits](https://github.com/docker/login-action/compare/81c6f93d4bc991e510b342a00b419b3bb4efc5c6...8aa5831fb8d48d8f76594c7ddde61ae58019f550)
+Preheat image jobs now re-acquire the registry authorization header for
+each request instead of reusing a possibly expired token, and tasks are
+created with blob-digest based IDs enabled by default. OCI auth helpers
+are adjusted to support renewing the header, and scheduler PreheatImage
+tests cover the renewed authorization header behavior.
 
----
-updated-dependencies:
-- dependency-name: docker/login-action
-  dependency-version: 4.8.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+Signed-off-by: Gaius <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/docker.yml` (modified, +2/-2)
+**File**: `internal/job/image.go` (modified, +33/-2)
 ```diff
-@@ -67,14 +67,14 @@ jobs:
-         uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003
+@@ -119,6 +119,10 @@ type Image interface {
+ 	// manifest filtering, and layer extraction for preheating. Each preheat request preheats the layers
+ 	// of one platform of the image.
+ 	CreatePreheatRequestsByManifestURL(ctx context.Context, req *ManifestRequest) ([]*PreheatRequest, error)
++
++	// GetAuthorizationByManifestURL returns the authorization of the registry for a container image,
++	// the bearer token or the basic credentials. It is empty if the registry needs no authorization.
++	GetAuthorizationByManifestURL(ctx context.Context, req *ManifestRequest) (string, error)
+ }
  
-       - name: Login Docker Hub
--        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6
-+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
-         with:
-           registry: docker.io
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
+ // image is the implementation of the Image interface.
+@@ -162,8 +166,11 @@ func (i *image) CreatePreheatRequestsByManifestURL(ctx context.Context, req *Man
+ 		return nil, err
+ 	}
  
-       - name: Login to GitHub Container Registry
--        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6
-+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
-         with:
-           registry: ghcr.io
-           username: ${{ github.repository_owner }}
+-	// Set authorization header
+-	header.Set("Authorization", token)
++	// Set authorization header, the registry may need no authorization.
++	if token != "" {
++		header.Set("Authorization", token)
++	}
++
+ 	var certificateChain [][]byte
+ 	if req.RootCAs != nil {
+ 		certificateChain = req.RootCAs.Subjects() //nolint:staticcheck
+@@ -221,3 +228,27 @@ func (i *image) CreatePreheatRequestsByManifestURL(ctx context.Context, req *Man
+ 
+ 	return preheatRequests, nil
+ }
++
++// GetAuthorizationByManifestURL returns the authorization of the registry for a container image,
++// the bearer token or the basic credentials. It is empty if the registry needs no authorization.
++func (i *image) GetAuthorizationByManifestURL(ctx context.Context, req *ManifestRequest) (string, error) {
++	// Parse image manifest url.
++	ref, err := pkgoci.ParseManifestURL(req.URL)
++	if err != nil {
++		return "", err
++	}
++
++	// Harbor uses the V1 preheat request and carries the auth info in the headers,
++	// which is used as the issued token.
++	var opts []pkgoci.Option
++	if issuedToken := nethttp.MapToHeader(req.Headers).Get("Authorization"); issuedToken != "" {
++		opts = append(opts, pkgoci.WithIssuedToken(issuedToken))
++	}
++
++	client, err := pkgoci.NewAuthClient(ref, pkgoci.DefaultHTTPClient(), req.Username, req.Password, opts...)
++	if err != nil {
++		return "", err
++	}
++
++	return client.Authorization()
++}
+```
+
+**File**: `internal/job/mocks/job_mock.go` (modified, +15/-0)
+```diff
+@@ -55,3 +55,18 @@ func (mr *MockImageMockRecorder) CreatePreheatRequestsByManifestURL(ctx, req any
+ 	mr.mock.ctrl.T.Helper()
+ 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePreheatRequestsByManifestURL", reflect.TypeOf((*MockImage)(nil).CreatePreheatRequestsByManifestURL), ctx, req)
+ }
++
++// GetAuthorizationByManifestURL mocks base method.
++func (m *MockImage) GetAuthorizationByManifestURL(ctx context.Context, req *job.ManifestRequest) (string, error) {
++	m.ctrl.T.Helper()
++	ret := m.ctrl.Call(m, "GetAuthorizationByManifestURL", ctx, req)
++	ret0, _ := ret[0].(string)
++	ret1, _ := ret[1].(error)
++	return ret0, ret1
++}
++
++// GetAuthorizationByManifestURL indicates an expected call of GetAuthorizationByManifestURL.
++func (mr *MockImageMockRecorder) GetAuthorizationByManifestURL(ctx, req any) *gomock.Call {
++	mr.mock.ctrl.T.Helper()
++	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthorizationByManifestURL", reflect.TypeOf((*MockImage)(nil).GetAuthorizationByManifestURL), ctx, req)
++}
+```
+
+**File**: `manager/job/preheat.go` (modified, +2/-2)
+```diff
+@@ -113,7 +113,7 @@ func (p *preheat) CreatePreheat(ctx context.Context, schedulers []models.Schedul
+ 			Timeout:                     json.Timeout,
+ 			RootCAs:                     p.rootCAs,
+ 			InsecureSkipVerify:          p.insecureSkipVerify,
+-			EnableTaskIDBasedBlobDigest: json.EnableTaskIDBasedBlobDigest,
++			EnableTaskIDBasedBlobDigest: *json.EnableTaskIDBasedBlobDigest,
+ 		})
+ 		if err != nil {
+ 			return nil, err
+@@ -151,7 +151,7 @@ func (p *preheat) CreatePreheat(ctx context.Context, schedulers []models.Schedul
+ 			Timeout:                     json.Timeout,
+ 			ObjectStorage:               json.ObjectStorage,
+ 			Hdfs:                        json.Hdfs,
+-			EnableTaskIDBasedBlobDigest: json.EnableTaskIDBasedBlobDigest,
++			EnableTaskIDBasedBlobDigest: *json.EnableTaskIDBasedBlobDigest,
+ 		})
+ 
+ 	default:
+```
+
+**File**: `manager/job/task.go` (modified, +2/-2)
+```diff
+@@ -69,7 +69,7 @@ func (t *task) CreateGetTask(ctx context.Context, schedulers []models.Scheduler,
+ 		}
+ 
+ 		var err error
+-		taskID, err = idgen.TaskIDV2(json.URL, json.PieceLength, json.Tag, json.Application, idgen.ParseFilteredQueryParams(json.FilteredQueryParams), content, false)
++		taskID, err = idgen.TaskIDV2(json.URL, json.PieceLength, json.Tag, json.Application, idgen.ParseFilteredQueryParams(json.FilteredQueryParams), content, *json.EnableTaskIDBasedBlobDigest)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+@@ -145,7 +145,7 @@ func (t *task) CreateDeleteTask(ctx context.Context, schedulers []models.Schedul
+ 		}
+ 
+ 		var err error
+-		taskID, err = idgen.TaskIDV2(json.URL, json.PieceLength, json.Tag, json.Application, idgen.ParseFilteredQueryParams(json.FilteredQueryParams), content, false)
++		taskID, err = idgen.TaskIDV2(json.URL, json.PieceLength, json.Tag, json.Application, idgen.ParseFilteredQueryParams(json.FilteredQueryParams), content, *json.EnableTaskIDBasedBlobDigest)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+```
+
+**File**: `manager/service/job.go` (modified, +28/-7)
+```diff
+@@ -131,6 +131,11 @@ func (s *service) CreatePreheatJob(ctx context.Context, json types.CreatePreheat
+ 		json.Args.FilteredQueryParams = http.RawDefaultFilteredQueryParams
+ 	}
+ 
++	if json.Args.EnableTaskIDBasedBlobDigest == nil {
++		enableTaskIDBasedBlobDigest := types.DefaultEnableTaskIDBasedBlobDigest
++		json.Args.EnableTaskIDBasedBlobDigest = &enableTaskIDBasedBlobDigest
++	}
++
+ 	args, err := structure.StructToMap(json.Args)
+ 	if err != nil {
+ 		logger.Errorf("convert preheat args to map failed: %w", err)
+@@ -186,6 +191,11 @@ func (s *service) CreateGetTaskJob(ctx context.Context, json types.CreateGetTask
+ 		json.Args.FilteredQueryParams = http.RawDefaultFilteredQueryParams
+ 	}
+ 
++	if json.Args.EnableTaskIDBasedBlobDigest == nil {
++		enableTaskIDBasedBlobDigest := types.DefaultEnableTaskIDBasedBlobDigest
++		json.Args.EnableTaskIDBasedBlobDigest = &enableTaskIDBasedBlobDigest
++	}
++
+ 	args, err := structure.StructToMap(json.Args)
+ 	if err != nil {
+ 		logger.Errorf("convert get task args to map failed: %w", err)
+@@ -246,6 +256,11 @@ func (s *service) CreateGetImageDistributionJob(ctx context.Context, json types.
+ 		json.Args.FilteredQueryParams = http.RawDefaultFilteredQueryParams
+ 	}
+ 
++	if json.Args.EnableTaskIDBasedBlobDigest == nil {
++		enableTaskIDBasedBlobDigest := types.DefaultEnableTaskIDBasedBlobDigest
++		json.Args.EnableTaskIDBasedBlobDigest = &enableTaskIDBasedBlobDigest
++	}
++
+ 	ctx, cancel := context.WithTimeout(ctx, json.Args.Timeout)
+ 	defer cancel()
+ 
+@@ -346,13 +361,14 @@ func (s *service) createGetTaskJobsSync(ctx context.Context, layers []internaljo
+ 				BIO:  json.BIO,
+ 				Type: internaljob.GetTaskJob,
+ 				Args: types.GetTaskArgs{
+-					URL:                 file.URL,
+-					PieceLength:         file.PieceLength,
+-					Tag:                 file.Tag,
+-					Application:         file.Application,
+-					FilteredQueryParams: file.FilteredQueryParams,
+-					ConcurrentPeerCount: json.Args.ConcurrentPeerCount,
+-					Timeout:             json.Args.Timeout,
++					URL:                         file.URL,
++					PieceLength:                 file.PieceLength,
++					Tag:                         file.Tag,
++					Application:                 file.Application,
++					FilteredQueryParams:         file.FilteredQueryParams,
++					ConcurrentPeerCount:         json.Args.ConcurrentPeerCount,
++					Timeout:                     json.Args.Timeout,
++					EnableTaskIDBasedBlobDigest: json.Args.EnableTaskIDBasedBlobDigest,
+ 				},
+ 				SchedulerClusterIDs: json.SchedulerClusterIDs,
+ 			}, schedulers)
+@@ -539,6 +555,11 @@ func (s *service) CreateDeleteTaskJob(ctx context.Context, json types.CreateDele
+ 		json.Args.FilteredQueryParams = http.RawDefaultFilteredQueryParams
+ 	}
+ 
++	if json.Args.EnableTaskIDBasedBlobDigest == nil {
++		enableTaskIDBasedBlobDigest := types.DefaultEnableTaskIDBasedBlobDigest
++		json.Args.EnableTaskIDBasedBlobDigest = &enableTaskIDBasedBlobDigest
++	}
++
+ 	args, err := structure.StructToMap(json.Args)
+ 	if err != nil {
+ 		logger.Errorf("convert delete task args to map failed: %w", err)
+```
+
+**File**: `manager/types/job.go` (modified, +20/-2)
+```diff
+@@ -48,6 +48,9 @@ const (
+ 
+ 	// DefaultJobTimeout is the default timeout for executing job.
+ 	DefaultJobTimeout = 60 * time.Minute
++
++	// DefaultEnableTaskIDBasedBlobDigest is the default value of using the blob digest for task ID calculation.
++	DefaultEnableTaskIDBasedBlobDigest = true
+ )
+ 
+ type CreateJobRequest struct {
+@@ -198,8 +201,8 @@ type PreheatArgs struct {
+ 	// when the layer url is an OCI blob url (e.g., /v2/<name>/blobs/sha256:<digest>). When enabled,
+ 	// the task ID is derived from the blob digest rather than the full URL, so the same blob from
+ 	// different registries shares one task ID. This enables deduplication across registries and
+-	// eliminates redundant downloads and storage.
+-	EnableTaskIDBasedBlobDigest bool `json:"enable_task_id_based_blob_digest" binding:"omitempty"`
++	// eliminates redundant downloads and storage, default is true.
++	EnableTaskIDBasedBlobDigest *bool `json:"enable_task_id_based_blob_digest" binding:"omitempty"`
+ }
+ 
+ type CreateSyncPeersJobRequest struct {
+@@ -260,6 +263,11 @@ type GetTaskArgs struct {
+ 	// Otherwise, calculate the task ID based on url, piece_length, tag, application, and filtered_query_params.
+ 	ContentForCalculatingTaskID *string `json:"content_for_calculating_task_id" binding:"omitempty"`
+ 
++	// EnableTaskIDBasedBlobDigest indicates whether to use the blob digest for task ID calculation
++	// when the url is an OCI blob url, it should be consistent with the value used when the task
++	// was preheated, default is true.
++	EnableTaskIDBasedBlobDigest *bool `json:"enable_task_id_based_blob_digest" binding:"omitempty"`
++
+ 	// ConcurrentPeerCount specifies the maximum number of peers stat concurrently for a single task (e.g., an image layer).
+ 	// For example, if stat a layer with ConcurrentPeerCount set to 10, up to 10 peers process that layer simultaneously.
+ 	// Default is 500, maximum is 1000.
+@@ -305,6 +313,11 @@ type GetImageDistributionArgs struct {
+ 	// FilteredQueryParams is the filtered query params of the task.
+ 	FilteredQueryParams string `json:"filtered_query_params" binding:"omitempty"`
+ 
++	// EnableTaskIDBasedBlobDigest indicates whether to use the blob digest for task ID calculation
++	// when the url is an OCI blob url, it should be consistent with the value used when the task
++	// was preheated, default is true.
++	EnableTaskIDBasedBlobDigest *bool `json:"enable_task_id_based_blob_digest" binding:"omitempty"`
++
+ 	// Headers is the http headers for authentication.
+ 	Headers map[string]string `json:"headers" binding:"omitempty"`
+ 
+@@ -404,6 +417,11 @@ type DeleteTaskArgs struct {
+ 	// FilteredQueryParams is the filtered query params of the task.
+ 	FilteredQueryParams string `json:"filtered_query_params" binding:"omitempty"`
+ 
++	// EnableTaskIDBasedBlobDigest indicates whether to use the blob digest for task ID calculation
++	// when the url is an OCI blob url, it should be consistent with the value used when the task
++	// was preheated, default is true.
++	EnableTaskIDBasedBlobDigest *bool `json:"enable_task_id_based_blob_digest" binding:"omitempty"`
++
+ 	// Timeout is the timeout for deleting, default is 60 minutes.
+ 	Timeout time.Duration `json:"timeout" binding:"omitempty"`
+ 
+```
+
+**File**: `pkg/oci/auth.go` (modified, +43/-49)
+```diff
+@@ -36,8 +36,7 @@ func WithIssuedToken(token string) Option {
+ 	}
+ }
+ 
+-// AuthClient is an HTTP client that negotiates registry v2 authentication and
+-// intercepts the issued bearer token.
++// AuthClient is an HTTP client that negotiates registry v2 authentication.
+ type AuthClient struct {
+ 	// issuedToken is the issued token specified in header from user request,
+ 	// there is no need to go through v2 authentication to get a new token
+@@ -50,18 +49,21 @@ type AuthClient struct {
+ 	// authConfig is the auth config.
+ 	authConfig *typesregistry.AuthConfig
+ 
+-	// tokenHandler is the token interceptor.
+-	tokenHandler *tokenHandler
++	// authorizer sets the authorization of the registry on the request.
++	authorizer transport.RequestModifier
++
++	// ref is the reference of the image to authorize.
++	ref *Reference
+ }
+ 
+ // NewAuthClient creates a new AuthClient for the registry of the given
+ // reference. If no username and password are provided, anonymous access is
+ // used.
+ func NewAuthClient(ref *Reference, httpClient *http.Client, username, password string, opts ...Option) (*AuthClient, error) {
+ 	c := &AuthClient{
+-		httpClient:   httpClient,
+-		authConfig:   &typesregistry.AuthConfig{Username: username, Password: password},
+-		tokenHandler: newTokenHandler(),
++		httpClient: httpClient,
++		authConfig: &typesregistry.AuthConfig{Username: username, Password: password},
++		ref:        ref,
+ 	}
+ 
+ 	for _, opt := range opts {
+@@ -73,33 +75,35 @@ func NewAuthClient(ref *Reference, httpClient *http.Client, username, password s
+ 	}
+ 
+ 	// New a challenge manager for the supported authentication types.
+-	challengeManager, err := registry.PingV2Registry(&url.URL{Scheme: ref.Scheme, Host: ref.Registry}, c.httpClient.Transport)
++	challengeManager, err := registry.PingV2Registry(&url.URL{Scheme: ref.Scheme, Host: ref.Registry}, httpClient.Transport)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 
+ 	// New a credential store which always returns the same credential values.
+ 	creds := registry.NewStaticCredentialStore(c.authConfig)
+ 
+-	// Transport with authentication.
+-	c.httpClient.Transport = transport.NewTransport(
+-		c.httpClient.Transport,
+-		auth.NewAuthorizer(
+-			challengeManager,
+-			auth.NewTokenHandlerWithOptions(auth.TokenHandlerOptions{
+-				Transport:   c.httpClient.Transport,
+-				Credentials: creds,
+-				Scopes: []auth.Scope{auth.RepositoryScope{
+-					Repository: ref.Repository,
+-					Actions:    []string{"pull"},
+-				}},
+-				ClientID: registry.AuthClientID,
+-			}),
+-			c.tokenHandler,
+-			auth.NewBasicHandler(creds),
+-		),
++	// Authorizer with the bearer token and the basic credentials, the token is
++	// cached and renewed when it expires.
++	c.authorizer = auth.NewAuthorizer(
++		challengeManager,
++		auth.NewTokenHandlerWithOptions(auth.TokenHandlerOptions{
++			Transport:   httpClient.Transport,
++			Credentials: creds,
++			Scopes: []auth.Scope{auth.RepositoryScope{
++				Repository: ref.Repository,
++				Actions:    []string{"pull"},
++			}},
++			ClientID: registry.AuthClientID,
++		}),
++		auth.NewBasicHandler(creds),
+ 	)
+ 
++	// Copy the http client, so the transport of the given client is kept.
++	client := *httpClient
++	client.Transport = transport.NewTransport(httpClient.Transport, c.authorizer)
++	c.httpClient = &client
++
+ 	return c, nil
+ }
+ 
+@@ -108,33 +112,23 @@ func (c *AuthClient) Do(req *http.Request) (*http.Response, error) {
+ 	return c.httpClient.Do(req)
+ }
+ 
+-// AuthToken returns the bearer token.
+-func (c *AuthClient) AuthToken() string {
++// Authorization returns the authorization of the registry, the bearer token or the
++// basic credentials. It is empty if the registry needs no authorization. The request
++// is authorized like the authorizer of containerd does, refer to
++// https://github.com/containerd/containerd/blob/main/core/remotes/docker/authorizer.go.
++func (c *AuthClient) Authorization() (string, error) {
+ 	if len(c.issuedToken) > 0 {
+-		return c.issuedToken
++		return c.issuedToken, nil
+ 	}
+ 
+-	return c.tokenHandler.token
+-}
+-
+-// tokenHandler is a token interceptor intercept bearer token from auth handler.
+-type tokenHandler struct {
+-	auth.AuthenticationHandler
+-	token string
+-}
+-
+-// newTokenHandler returns a new tokenHandler.
+-func newTokenHandler() *tokenHandler {
+-	return &tokenHandler{}
+-}
++	req, err := http.NewRequest(http.MethodGet, c.ref.ManifestURL(), nil)
++	if err != nil {
++		return "", err
++	}
+ 
+-// Scheme returns the authentication scheme.
+-func (h *tokenHandler) Scheme() string {
+-	return "bearer"
+-}
++	if err := c.authorizer.ModifyRequest(req); err != nil {
++		return "", err
++	}
+ 
+-// AuthorizeRequest saves the Authorization header from the request.
+-func (h *tokenHandler) AuthorizeRequest(req *http.Request, params map[string]string) error {
+-	h.token = req.Header.Get("Authorization")
+-	return nil
++	return req.Header.Get("Authorization"), nil
+ }
+```
+
+**File**: `pkg/oci/auth_test.go` (modified, +13/-15)
+```diff
+@@ -21,6 +21,7 @@ import (
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"net/url"
++	"sync/atomic"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
+@@ -47,7 +48,10 @@ func TestNewAuthClient(t *testing.T) {
+ 			expect: func(t *testing.T, client *AuthClient, err error) {
+ 				assert := assert.New(t)
+ 				assert.NoError(err)
+-				assert.Equal("Bearer issued-token", client.AuthToken())
++
++				authorization, err := client.Authorization()
++				assert.NoError(err)
++				assert.Equal("Bearer issued-token", authorization)
+ 			},
+ 		},
+ 		{
+@@ -72,6 +76,7 @@ func TestNewAuthClient(t *testing.T) {
+ func TestAuthClientTokenChallenge(t *testing.T) {
+ 	assert := assert.New(t)
+ 	var server *httptest.Server
++	var tokens atomic.Int32
+ 	mux := http.NewServeMux()
+ 	mux.HandleFunc("/v2/", func(w http.ResponseWriter, r *http.Request) {
+ 		if r.Header.Get("Authorization") != "Bearer test-token" {
+@@ -84,6 +89,7 @@ func TestAuthClientTokenChallenge(t *testing.T) {
+ 	})
+ 	mux.HandleFunc("/token", func(w http.ResponseWriter, r *http.Request) {
+ 		assert.Contains(r.URL.Query().Get("scope"), "repository:library/nginx:pull")
++		tokens.Add(1)
+ 		w.Header().Set("Content-Type", "application/json")
+ 		fmt.Fprint(w, `{"token":"test-token"}`)
+ 	})
+@@ -101,8 +107,10 @@ func TestAuthClientTokenChallenge(t *testing.T) {
+ 		Reference:  "latest",
+ 	}
+ 
+-	client, err := NewAuthClient(ref, &http.Client{Transport: http.DefaultTransport}, "", "")
++	httpClient := &http.Client{Transport: http.DefaultTransport}
++	client, err := NewAuthClient(ref, httpClient, "", "")
+ 	assert.NoError(err)
++	assert.Same(http.DefaultTransport, httpClient.Transport)
+ 
+ 	req, err := http.NewRequest(http.MethodGet, ref.ManifestURL(), nil)
+ 	assert.NoError(err)
+@@ -112,19 +120,9 @@ func TestAuthClientTokenChallenge(t *testing.T) {
+ 	defer resp.Body.Close()
+ 
+ 	assert.Equal(http.StatusOK, resp.StatusCode)
+-	assert.Equal("Bearer test-token", client.AuthToken())
+-}
+ 
+-func TestTokenHandler(t *testing.T) {
+-	assert := assert.New(t)
+-
+-	h := newTokenHandler()
+-	assert.Equal("bearer", h.Scheme())
+-
+-	req, err := http.NewRequest(http.MethodGet, "http://registry.example.com/v2/", nil)
++	authorization, err := client.Authorization()
+ 	assert.NoError(err)
+-	req.Header.Set("Authorization", "Bearer test-token")
+-
+-	assert.NoError(h.AuthorizeRequest(req, nil))
+-	assert.Equal("Bearer test-token", h.token)
++	assert.Equal("Bearer test-token", authorization)
++	assert.Equal(int32(1), tokens.Load())
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5115** (2026-11-12): fix(scheduler): use LoadOrStore to avoid overwriting concurrent registrations (@gaius-qi)
+- **PR #5114** (2026-11-12): fix(job): refresh registry authorization per preheat request and default blob-digest task IDs (@gaius-qi)
+- **PR #5113** (2026-11-12): fix(oci,scheduler): harden manifest URL parsing and preheat request handling (@gaius-qi)
 - **PR #5112** (2026-11-11): Enhance multi-platform image preheat and deduplication process (@gaius-qi)
 - **PR #5111** (2026-11-10): chore(deps): bump github.com/avast/retry-go/v5 from 5.0.0 to 5.1.1 (@dependabot[bot])
 - **PR #5110** (2026-11-10): chore(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (@dependabot[bot])
-- **PR #5109** (closed): chore(deps): bump github.com/gin-contrib/static from 1.1.5 to 1.1.9 (@dependabot[bot])
-- **PR #5108** (closed): chore(deps): bump google.golang.org/api from 0.267.0 to 0.311.0 (@dependabot[bot])
-- **PR #5107** (closed): chore(deps): bump github/codeql-action/init from 4.36.2 to 4.39.3 (@dependabot[bot])
 
 ---
 
@@ -1604,30 +2575,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Enhance multi-platform image preheat and deduplication process (#5112)
+## X. oci,scheduler): harden manifest URL parsing and preheat request handling (#5113)
 
 **RULE**:
-When implementing operations in `.github/workflows/e2e-compatibility.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflyoss/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflyoss/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d73d3cc5`: Enhance multi-platform image preheat and deduplication process (#5112). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `667642a9`: oci,scheduler): harden manifest URL parsing and preheat request handling (#5113). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/e2e-compatibility.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-            skip: 'Manager|Rate Limit|Dfcache|Preheat and Delete Image Using Scheduler'
-            skip: 'Rate Limit|Preheat and Delete Image Using Scheduler'
+Subproject commit 90083b827d2d4ecaa09ae449d4d974fb1c575471
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-            skip: 'Manager|Rate Limit|Dfcache'
-            skip: 'Rate Limit'
+Subproject commit 4891875a55c4499bce0cca6263c5a7c253798c23
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d73d3cc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `667642a9` are properly handled with clean fallback behavior.

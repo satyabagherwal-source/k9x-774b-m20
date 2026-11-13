@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T08:13:20.807Z",
+  "updated_at": "2026-11-13T08:22:31.231Z",
   "stats": {
-    "total_discovered": 2261,
-    "approved_pending_harvest": 2102,
+    "total_discovered": 2286,
+    "approved_pending_harvest": 2127,
     "harvested_count": 0,
     "rejected_count": 159,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2090,
+      "COMMUNITY_AND_EXPERT": 2114,
       "OFFICIAL_DOCUMENTATION": 90,
-      "STANDARDS_AND_SPECIFICATIONS": 72,
+      "STANDARDS_AND_SPECIFICATIONS": 73,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 7,
       "LEGAL_AND_REGULATORY": 1
@@ -48647,6 +48647,556 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
         "fileName": "hf-fastvideo-fasth3-omni-comfy-learnings.md"
+      }
+    },
+    "SRC-DA79D3CE72BC": {
+      "id": "SRC-DA79D3CE72BC",
+      "url": "https://github.com/cachix/devenv",
+      "title": "https://github.com/cachix/devenv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:17.937Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-601830835747": {
+      "id": "SRC-601830835747",
+      "url": "https://github.com/cachix/devenv/issues/2947",
+      "title": "https://github.com/cachix/devenv/issues/2947",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:17.953Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-178E96917CD1": {
+      "id": "SRC-178E96917CD1",
+      "url": "https://cache1.cachix.org/",
+      "title": "https://cache1.cachix.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:17.968Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-3F943A640296": {
+      "id": "SRC-3F943A640296",
+      "url": "https://cache2.cachix.org/",
+      "title": "https://cache2.cachix.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:17.983Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-3BA7E4C97CAD": {
+      "id": "SRC-3BA7E4C97CAD",
+      "url": "https://{cache/",
+      "title": "https://{cache/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:17.997Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-0010B2DAA8DA": {
+      "id": "SRC-0010B2DAA8DA",
+      "url": "https://github.com/NixOS/nixpkgs/blob/master/lib/licenses.nix",
+      "title": "https://github.com/NixOS/nixpkgs/blob/master/lib/licenses.nix",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.013Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-FC52FC0A0004": {
+      "id": "SRC-FC52FC0A0004",
+      "url": "https://github.com/user-attachments/assets/cb16d4ac-f295-4339-9a25-9300610cf7e3",
+      "title": "https://github.com/user-attachments/assets/cb16d4ac-f295-4339-9a25-9300610cf7e3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.028Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-C88FE2A59CC8": {
+      "id": "SRC-C88FE2A59CC8",
+      "url": "https://github.com/user-attachments/assets/4ef8c1dd-c235-4d4e-895a-fa3567485219",
+      "title": "https://github.com/user-attachments/assets/4ef8c1dd-c235-4d4e-895a-fa3567485219",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.044Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-456981618E6B": {
+      "id": "SRC-456981618E6B",
+      "url": "https://sscce.org/",
+      "title": "https://sscce.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.058Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-B7DD251DBFFE": {
+      "id": "SRC-B7DD251DBFFE",
+      "url": "https://gist.github.com/",
+      "title": "https://gist.github.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-AFA6161086CC": {
+      "id": "SRC-AFA6161086CC",
+      "url": "https://registry.npmjs.org/@vtbag/cam-shaft/-/cam-shaft-1.0.6.tgz",
+      "title": "https://registry.npmjs.org/@vtbag/cam-shaft/-/cam-shaft-1.0.6.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.088Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-1182D74AF208": {
+      "id": "SRC-1182D74AF208",
+      "url": "https://github.com/sponsors/martrapp",
+      "title": "https://github.com/sponsors/martrapp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.108Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-A5BE2D7CD498": {
+      "id": "SRC-A5BE2D7CD498",
+      "url": "https://registry.npmjs.org/@vtbag/element-crossing/-/element-crossing-1.1.0.tgz",
+      "title": "https://registry.npmjs.org/@vtbag/element-crossing/-/element-crossing-1.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.121Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-5897A460AC19": {
+      "id": "SRC-5897A460AC19",
+      "url": "https://registry.npmjs.org/@vtbag/inspection-chamber/-/inspection-chamber-1.0.24.tgz",
+      "title": "https://registry.npmjs.org/@vtbag/inspection-chamber/-/inspection-chamber-1.0.24.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.137Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-8FCCBBB89AC2": {
+      "id": "SRC-8FCCBBB89AC2",
+      "url": "https://registry.npmjs.org/@vtbag/turn-signal/-/turn-signal-1.3.1.tgz",
+      "title": "https://registry.npmjs.org/@vtbag/turn-signal/-/turn-signal-1.3.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.151Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-BDD6388DD683": {
+      "id": "SRC-BDD6388DD683",
+      "url": "https://registry.npmjs.org/@vtbag/utensil-drawer/-/utensil-drawer-1.2.18.tgz",
+      "title": "https://registry.npmjs.org/@vtbag/utensil-drawer/-/utensil-drawer-1.2.18.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-27993FD7BC5B": {
+      "id": "SRC-27993FD7BC5B",
+      "url": "https://registry.npmjs.org/acorn/-/acorn-8.18.0.tgz",
+      "title": "https://registry.npmjs.org/acorn/-/acorn-8.18.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.180Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-0A9BAB9F3FE2": {
+      "id": "SRC-0A9BAB9F3FE2",
+      "url": "https://registry.npmjs.org/astro-vtbot/-/astro-vtbot-3.1.0.tgz",
+      "title": "https://registry.npmjs.org/astro-vtbot/-/astro-vtbot-3.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.196Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-55E3B20C9854": {
+      "id": "SRC-55E3B20C9854",
+      "url": "https://registry.npmjs.org/magic-string/-/magic-string-1.1.0.tgz",
+      "title": "https://registry.npmjs.org/magic-string/-/magic-string-1.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.209Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-90C3D831B9A6": {
+      "id": "SRC-90C3D831B9A6",
+      "url": "https://ziglang.org/download/$%7Bversion",
+      "title": "https://ziglang.org/download/$%7Bversion",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:18.225Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-23F9CACADF78": {
+      "id": "SRC-23F9CACADF78",
+      "url": "https://huggingface.co/baidu/Unlimited-OCR-2",
+      "title": "https://huggingface.co/baidu/Unlimited-OCR-2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:31.163Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
+        "fileName": "hf-baidu-unlimited-ocr-2-learnings.md"
+      }
+    },
+    "SRC-96EB5FA51BF0": {
+      "id": "SRC-96EB5FA51BF0",
+      "url": "https://github.com/iziz/libPhoneNumber-iOS",
+      "title": "https://github.com/iziz/libPhoneNumber-iOS",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:31.185Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
+        "fileName": "iziz-libphonenumber-ios-learnings.md"
+      }
+    },
+    "SRC-E2222DB15D9A": {
+      "id": "SRC-E2222DB15D9A",
+      "url": "https://www.objc.io/blog/2020/03/16/swiftui-line-graph-animation",
+      "title": "https://www.objc.io/blog/2020/03/16/swiftui-line-graph-animation",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:31.203Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
+        "fileName": "iziz-libphonenumber-ios-learnings.md"
+      }
+    },
+    "SRC-1DA9585C88BE": {
+      "id": "SRC-1DA9585C88BE",
+      "url": "https://github.com/me2day/libPhoneNumber-iOS/issues/39",
+      "title": "https://github.com/me2day/libPhoneNumber-iOS/issues/39",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:31.217Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
+        "fileName": "iziz-libphonenumber-ios-learnings.md"
+      }
+    },
+    "SRC-B4576AE9DB49": {
+      "id": "SRC-B4576AE9DB49",
+      "url": "https://www.rfc-editor.org/rfc/rfc3966",
+      "title": "IETF RFC 3966",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T08:22:31.231Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
+        "fileName": "iziz-libphonenumber-ios-learnings.md"
       }
     }
   }

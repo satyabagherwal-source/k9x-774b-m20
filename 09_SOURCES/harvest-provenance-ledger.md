@@ -9406,3 +9406,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fastvideo-fasth3-omni-comfy` | `https://huggingface.co/FastVideo/FastH3-Omni-Comfy` | `hf-fastvid` | Multi-dimensional audit evidence | 2026-11-13T08:05:21.932Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `4cb43afc` | Multi-dimensional audit evidence | 2026-11-13T08:13:00.486Z |
 | `learn-dom-d-46e94697` | `project://hf-fastvideo-fasth3-omni-comfy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md` | 2026-11-13T08:13:20.797Z |
+| `learn-huggingface-baidu-unlimited-ocr-2` | `https://huggingface.co/baidu/Unlimited-OCR-2` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-13T08:21:38.977Z |
+| `learn-github-iziz-libphonenumber-ios` | `https://github.com/iziz/libPhoneNumber-iOS` | `b27567bb` | Multi-dimensional audit evidence | 2026-11-13T08:22:02.348Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `9eaaab8d` | Multi-dimensional audit evidence | 2026-11-13T08:22:03.652Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `5ace19fb` | Multi-dimensional audit evidence | 2026-11-13T08:22:06.383Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `1b969e26` | Multi-dimensional audit evidence | 2026-11-13T08:22:10.073Z |
+| `learn-dom-d-a90e6a82` | `project://hf-baidu-unlimited-ocr-2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md` | 2026-11-13T08:22:31.156Z |

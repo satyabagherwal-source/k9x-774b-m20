@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T08:13:20.794Z",
-  "total_records": 109,
+  "last_updated": "2026-11-13T08:22:31.153Z",
+  "total_records": 110,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 67,
+      "total": 68,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -92,7 +92,8 @@
         "DOM-D-CE32BB74",
         "DOM-D-388F29C6",
         "DOM-D-4E597F40",
-        "DOM-D-46E94697"
+        "DOM-D-46E94697",
+        "DOM-D-A90E6A82"
       ]
     },
     "E": {
@@ -4516,6 +4517,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T08:13:20.791Z"
+    },
+    "DOM-D-A90E6A82": {
+      "record_id": "DOM-D-A90E6A82",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): baidu/Unlimited-OCR-2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/baidu/Unlimited-OCR-2](https://huggingface.co/baidu/Unlimited-OCR-2))  \n> **Source Version**: `hf-baidu-unl`  \n> **License**: Open-Source  \n> **Synthesi",
+      "content_hash": "e40554dd399b1e4677268dbb157834f474946bf172143738118f51dcc3ec6a6a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "provenance": {
+        "source_uri": "project://hf-baidu-unlimited-ocr-2/hf-baidu-unlimited-ocr-2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T08:22:18.233Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baidu-unlimited-ocr-2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-baidu-unlimited-ocr-2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T08:22:31.151Z"
     }
   }
 }

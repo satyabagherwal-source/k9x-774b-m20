@@ -9397,3 +9397,9 @@
 | `CYCLE-20261113-Z5AG` | `2026-11-13T08:05:21.928Z` | `FastVideo/FastH3-Omni-Comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md` | Yes (`1bf42b6e...`) |
 | `CYCLE-20261113-8Z3L` | `2026-11-13T08:13:00.465Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`fbf2c763...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T08:13:20.797Z` | `hf-fastvideo-fasth3-omni-comfy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-46E94697` [Domain D] | Yes (`44cc5a5d...`) |
+| `CYCLE-20261113-K36L` | `2026-11-13T08:21:38.973Z` | `baidu/Unlimited-OCR-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md` | Yes (`a6a6483d...`) |
+| `CYCLE-20261113-KL7R` | `2026-11-13T08:22:02.343Z` | `iziz/libPhoneNumber-iOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3bb6d0ab...`) |
+| `CYCLE-20261113-KM80` | `2026-11-13T08:22:03.648Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`91700e30...`) |
+| `CYCLE-20261113-KOBU` | `2026-11-13T08:22:06.378Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9114cfef...`) |
+| `CYCLE-20261113-KR4I` | `2026-11-13T08:22:10.002Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`70db2db9...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T08:22:31.156Z` | `hf-baidu-unlimited-ocr-2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A90E6A82` [Domain D] | Yes (`e40554dd...`) |

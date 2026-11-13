@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-0SH3",
-    "timestamp": "2026-11-10T02:11:42.759Z",
-    "repository": "crate-ci/typos",
-    "learningId": "learn-github-crate-ci-typos",
-    "contentHash": "3aa09cfcb12ae48f4eaac4161a35172de4be87ecd2334a51ecc368a99e9057b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-0UYS",
-    "timestamp": "2026-11-10T02:11:45.988Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "7f3f17ba8fe8899f7bff21e933b7ab8c5afc729e6a15d848deb43e334817be16",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-BAY3",
-    "timestamp": "2026-11-10T02:19:53.259Z",
-    "repository": "mistralai/Mistral-Large-4-1T-A52B",
-    "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-    "contentHash": "e7c29efdf68fc4ad91dbbbb1c70e4cc06b892a553295066738532bb3faa4df56",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-GS0M",
-    "timestamp": "2026-11-10T02:24:08.662Z",
-    "repository": "aquasecurity/trivy",
-    "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "9f1702e06efb34de652df61210adada5a84d77f3ec4de44cdb1d38834428a3f7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-GTQ7",
-    "timestamp": "2026-11-10T02:24:10.879Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "fc7ee5d8ef63eab4fdac6c4c4cf4bf9513d4aa25e2e90e98d80ab52db0c4bef0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-QO3G",
     "timestamp": "2026-11-10T02:31:50.140Z",
     "repository": "mitmproxy/mitmproxy",
@@ -7490,6 +7415,81 @@
     "repository": "sqlpage/SQLPage",
     "learningId": "learn-github-sqlpage-sqlpage",
     "contentHash": "fbf2c763987b5e208cab73d87483a4b0f34afafffea8f9e8af8afc54ea6b18a3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-K36L",
+    "timestamp": "2026-11-13T08:21:38.973Z",
+    "repository": "baidu/Unlimited-OCR-2",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
+    "contentHash": "a6a6483d2b0aab2db9d1bb68844d21c6a3d5e6b14e8c054ca5f39a2834cecc77",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-KL7R",
+    "timestamp": "2026-11-13T08:22:02.343Z",
+    "repository": "iziz/libPhoneNumber-iOS",
+    "learningId": "learn-github-iziz-libphonenumber-ios",
+    "contentHash": "3bb6d0abf031ad0e02d3731225220952ab60e19d3178d6fbfd0ba029fe3849f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-KM80",
+    "timestamp": "2026-11-13T08:22:03.648Z",
+    "repository": "cachix/devenv",
+    "learningId": "learn-github-cachix-devenv",
+    "contentHash": "91700e308434dea7f19b85a54945b892f30e52c32f9906a98fa1a7b8618924f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-KOBU",
+    "timestamp": "2026-11-13T08:22:06.378Z",
+    "repository": "dragonflyoss/dragonfly",
+    "learningId": "learn-github-dragonflyoss-dragonfly",
+    "contentHash": "9114cfef656a1eba3b0e7a6e6aabfda58ca50441b033db3585fa87a0275b95a8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-KR4I",
+    "timestamp": "2026-11-13T08:22:10.002Z",
+    "repository": "etcd-io/etcd",
+    "learningId": "learn-github-etcd-io-etcd",
+    "contentHash": "70db2db93254a3f49818303d49bc0eb90195c31d4a450526794960c50f1a086d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

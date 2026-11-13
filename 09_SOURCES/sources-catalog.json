@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "622870a7",
+    "sourceVersion": "9eaaab8d",
     "license": "Apache-2.0",
-    "contentHash": "741d6ef28d6f74a994137aba3b08a615b711785e2e2d8a3ba4e27770de558dd9",
-    "lastHarvestedAt": "2026-11-11T16:11:47.585Z",
+    "contentHash": "91700e308434dea7f19b85a54945b892f30e52c32f9906a98fa1a7b8618924f0",
+    "lastHarvestedAt": "2026-11-13T08:22:03.652Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {
@@ -3513,10 +3513,10 @@
     "repository": "dragonflyoss/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflyoss/dragonfly",
-    "sourceVersion": "d73d3cc5",
+    "sourceVersion": "5ace19fb",
     "license": "Apache-2.0",
-    "contentHash": "fae37663eee5110a7bf3f64de9d04d32fce15e9fdd235bfdad670d8602273b13",
-    "lastHarvestedAt": "2026-11-12T03:30:47.942Z",
+    "contentHash": "9114cfef656a1eba3b0e7a6e6aabfda58ca50441b033db3585fa87a0275b95a8",
+    "lastHarvestedAt": "2026-11-13T08:22:06.383Z",
     "learningId": "learn-github-dragonflyoss-dragonfly"
   },
   "sigstore-cosign": {
@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "d87ef4ce",
+    "sourceVersion": "1b969e26",
     "license": "Apache-2.0",
-    "contentHash": "66fc21e3e937794a0301a953bc2d1a69457e80f4d29d3ec186bd88507fb3cb92",
-    "lastHarvestedAt": "2026-11-12T02:17:03.508Z",
+    "contentHash": "70db2db93254a3f49818303d49bc0eb90195c31d4a450526794960c50f1a086d",
+    "lastHarvestedAt": "2026-11-13T08:22:10.073Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -9723,10 +9723,10 @@
     "repository": "iziz/libPhoneNumber-iOS",
     "platform": "github",
     "sourceUrl": "https://github.com/iziz/libPhoneNumber-iOS",
-    "sourceVersion": "91fcc745",
+    "sourceVersion": "b27567bb",
     "license": "Apache-2.0",
-    "contentHash": "0fb9b32b6462e79a8f5d8de498ca7d2611412483aa61641018fb8248514c1e9a",
-    "lastHarvestedAt": "2026-11-09T00:13:29.529Z",
+    "contentHash": "3bb6d0abf031ad0e02d3731225220952ab60e19d3178d6fbfd0ba029fe3849f0",
+    "lastHarvestedAt": "2026-11-13T08:22:02.348Z",
     "learningId": "learn-github-iziz-libphonenumber-ios"
   },
   "rdflib-rdflib": {
@@ -10915,8 +10915,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR-2",
     "sourceVersion": "hf-baidu-unlimited-ocr-2",
     "license": "Open-Source",
-    "contentHash": "a485d497085605e57e117f8d25eb4b365a73f9a49b8b14c69ba3a1bc8e25e82f",
-    "lastHarvestedAt": "2026-11-08T06:42:25.240Z",
+    "contentHash": "a6a6483d2b0aab2db9d1bb68844d21c6a3d5e6b14e8c054ca5f39a2834cecc77",
+    "lastHarvestedAt": "2026-11-13T08:21:38.977Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr-2"
   },
   "joooook-12306-mcp": {
