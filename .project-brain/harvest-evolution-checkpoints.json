@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T06:21:14.145Z",
+  "last_updated": "2026-11-13T06:33:56.220Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T05:23:59.465Z",
@@ -288,7 +288,7 @@
       "staged_for_review": 0
     },
     "automattic-harper-learnings.md": {
-      "processed_at": "2026-11-11T13:22:17.166Z",
+      "processed_at": "2026-11-13T06:33:42.469Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-13T00:31:21.254Z",
+      "processed_at": "2026-11-13T06:33:56.183Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1596,9 +1596,14 @@
       "processed_at": "2026-11-13T06:21:14.035Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-krafton-raon-1-mini-preview-learnings.md": {
+      "processed_at": "2026-11-13T06:33:56.160Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 477,
-  "total_canonical_promoted": 67,
-  "total_staged_for_review": 407
+  "total_dossiers_evaluated": 480,
+  "total_canonical_promoted": 68,
+  "total_staged_for_review": 409
 }

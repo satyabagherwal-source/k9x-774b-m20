@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T06:20:51.782Z",
+  "last_updated": "2026-11-13T06:33:35.840Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "d28c24d2cc1279fc537980790e37189c68aba7022bef0dddf9c165df02955479",
-      "verified_at": "2026-11-11T13:22:12.670Z",
+      "content_hash": "3d5ab151eccbcb518471ede917334e454122906dbd5b9f8df51d6b3eea57f2f5",
+      "verified_at": "2026-11-13T06:33:25.318Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T13:22:12.670Z"
+      "last_updated": "2026-11-13T06:33:25.318Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "3e78a7b994723f3497435a9fb24cc85d8e3e420fa6275f33bcad737a33fe0c24",
-      "verified_at": "2026-11-13T00:31:14.751Z",
+      "content_hash": "324d77f64cecb73027c33f733bf00f455ae2f7509f6e6ac8221f25e72d0a55ce",
+      "verified_at": "2026-11-13T06:33:35.839Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T00:31:14.751Z"
+      "last_updated": "2026-11-13T06:33:35.839Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -15921,14 +15921,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-krafton-raon-1-mini-preview",
-      "content_hash": "a0906b4ed07a729953dca2d12df92a8c3564b24adf1ca39bfa907162af3229ce",
-      "verified_at": "2026-11-08T05:26:32.530Z",
+      "content_hash": "506d84c12bf7bf15b3bcdac666a0860af77ee001f0384312feab46ccd9dd3812",
+      "verified_at": "2026-11-13T06:33:13.214Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T05:26:32.530Z"
+      "last_updated": "2026-11-13T06:33:13.214Z"
     },
     "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",

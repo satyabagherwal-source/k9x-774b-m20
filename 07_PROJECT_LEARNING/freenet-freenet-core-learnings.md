@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `620db4dd`  
+> **Source Version**: `dbdaf790`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T00:31:01.073Z  
+> **Timestamp**: 2026-11-13T06:33:25.301Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T00:31:01.062Z  
+> **Harvest Timestamp**: 2026-11-13T06:33:25.294Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3120 stars
+- **Stars / Engagement**: 3121 stars
 
 ---
 
@@ -1738,11 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6204** (2026-11-13): **feat(quic): native setup with Hello exchange, punching and native ALPN**
+  *Symptoms*: ## Problem  QUIC-native connections (#5940) are set up by the connect op directly, with no UDP session under them. #6203 added the wire pieces: the `Hello` frame, close codes 9 and 10, and the reserved punch byte. This PR adds what sets a native connection up: the `Hello` exchange, punching, the QUIC handshake with its own ALPN, and the two entry points. Nothing calls them yet. The connect op reaches them only once `NATIVE_DIAL_READY` is true, and it stays false here.  ## Approach  **Hello exchange (`quic/native/exchange.rs`).** Each side writes its `Hello` on one unidirectional stream and reads the other's. The read is bounded by `HELLO_MAX`, checked from the six-byte prefix before the rest is read, and the whole exchange is bounded by the caller's deadline on its `TimeSource`. - A malformed or oversized `Hello` closes the connection with `HELLO_REFUSED`. - A version this node cannot talk to closes with `VERSION_INCOMPATIBLE`, with this node's 8 version bytes as the reason (`QuicCloser::close_with_reason`). - `connection_handler::native_version` applies the UDP handshake's version rules. The peer's version is reported either way. A peer whose floor is above this build triggers an urgent update. A peer's `VERSION_INCOMPATIBLE` sets the version-mismatch signal only when it comes from a gateway, as on UDP.  **ALPN per attempt.** An address allowed with `allow_native_peer` is accepted with `freenet-quic/2` only, and every other address keeps `freenet-quic/1`. So each attempt neg
+
 - **Issue #6203** (2026-11-12): **feat(quic): native Hello frame, two close codes, reserved punch byte**
   *Symptoms*: ## Problem  QUIC-native connections (#5940) are set up by the connect op directly, with no UDP session under them. So the things the UDP handshake carries (each side's protocol version, and the address it sees the other at) need a frame of their own. A native connection also needs close codes for a peer it cannot talk to, and the punch datagrams that open NATs before the handshake need a first byte no other datagram uses. This PR adds those wire pieces. Nothing sets up a native connection yet, and nothing here is reachable from the connect op.  ## Approach  **`Hello` (`transport/quic/native/hello.rs`).** The frame each side of a native connection sends first. Its layout is frozen:  ``` magic "FNH1" (4) | total_len u16 BE (2, the whole Hello, magic included) | protoc_version (8, the UDP handshake's version bytes) | caps u32 LE (4) | observed address family u8 (1: 4 or 6) | address (4 or 16) | port u16 BE (2) | TLV tail: (type u8, len u16 BE, value)* up to total_len ```  - `total_len` comes right after the magic, so `declared_len` reads the length from the first six bytes. A reader can refuse more than `HELLO_MAX` (1 KiB) before reading the rest. - The version bytes are carried unchanged, so both version formats (including #6189's format 2) read as they do in the UDP handshake. - A later field goes in the TLV tail. A reader checks each TLV's length and skips types it does not know. No type is defined yet. There is no must-understand bit, so a field an older reader must not igno
-
-- **Issue #6201** (2026-11-12): **feat(transport): sum QUIC memory in the node aggregate; cap connections for it with data**
-  *Symptoms*: ## Problem  A QUIC data path holds memory the node aggregate does not count: a fixed charge per connection (952,320 B: quinn's state, the `stopped` map at its limit, the ACK-only tail, and the tasks that wait for acknowledgements of dropped sends), a floor grant per data path (its windows at the floor: 435,712 B under 2 GiB, 706,048 B above), and its share of the window-growth budget (memory / 16). The bound is `memory <= data paths x (fixed charge + floor grant) + budget`.  Nothing caps the number of data paths below the connection limit, which defaults to 200. At 200 the bound is about 329 MiB on a 1 GiB host (32%). That memory is not checked against what the caches and the hosting budget already take. This is the last step of the buffer budget (#5940) before any release can set a QUIC data share above 0.  ## Approach  - **A QUIC connection cap.** `quic::config::quic_connection_cap(memory)` is the number of connections whose memory fits an eighth of the host's memory: (memory / 8 - budget) / (fixed charge + floor grant). Every connection is counted as a data path, which is what each becomes once all pairs carry data.    | Memory | 512 MiB | 1 GiB | 2 GiB | 4 GiB | 8 GiB | 7600 MiB gateway |   |---|---|---|---|---|---|---|   | Cap | 24 | 48 | 80 | 161 | 323 | 300 |    At the cap, QUIC holds at most 128 MiB on a 1 GiB host. The cap is not monotonic across 2 GiB, where the floor grant grows (about 96 just under 2 GiB). - **The acknowledgement waits are in the fixed charge.** A
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,1545 +1759,1113 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `620db4dd` (2026-11-12)
-**Commit Message**: feat(transport): sum QUIC memory in the node aggregate; cap connections for it with data (#6201)
+### Incident Patch 1: `fc2888b7` (2026-11-13)
+**Commit Message**: feat(quic): native setup with Hello exchange, punching and native ALPN (#6204)
 
-**File**: `.claude/rules/bug-prevention-patterns.md` (modified, +7/-5)
+**File**: `.claude/rules/transport.md` (modified, +60/-5)
 ```diff
-@@ -899,11 +899,13 @@ node-wide budget (`quic::budget`, `quic_buffer_budget_for`, memory / 16)
- shared max-min between the paths; what does not scale with the windows is a
- fixed charge per connection (`quic::config::QUIC_CONNECTION_CHARGE_BYTES`).
- The budget holds only growth, so the node's QUIC memory is data paths x
--(fixed charge + floor grant) + budget. All of it is in `NOT_SUMMED`
--until the buffer budget's aggregate-accounting step sums those terms, which must
--happen before any release sets `QUIC_DATA_PERCENT` above 0 (pinned by
--`upgrade::policy::tests::no_data_share_before_the_quic_budget_is_summed`;
--shadow paths, on by default since Step 2, carry no data). Do not copy the per-connection
-+(fixed charge + floor grant) + budget. It is not in `declared_cache_ceiling`
-+(caches keep their own half-of-memory rule): it is the transport share,
-+`quic::config::quic_memory_ceiling_terms`, summed at the QUIC connection cap
-+with the caches and the hosting budget in
-+`declared_caches_plus_hosting_budget_leave_room_for_the_runtime`. The node's
-+connection limit is lowered to that cap while it may carry QUIC data, so the
-+bound holds when data is on. Do not copy the per-connection
- exception shape for memory the node holds on its own initiative.
- 
- ```bash
-```
-
-**File**: `.claude/rules/ring.md` (modified, +12/-6)
-```diff
-@@ -49,15 +49,21 @@ WHEN accepting a new connection (should_accept):
-      CONNECT path, not just should_accept. See connection_manager.rs.
-      MINIMUM-DEGREE FLOOR: the whole lattice feature (this exception, the
-      per-side acceptance clause, the route-to-self discovery probe, and the
--     topology.rs retention exemption) is GATED OFF when this peer's CONFIGURED
--     max_connections is below NN_LATTICE_MIN_MAX_CONNECTIONS (= 25 =
-+     topology.rs retention exemption) is GATED OFF when the max_connections
-+     this peer is built with is below NN_LATTICE_MIN_MAX_CONNECTIONS (= 25 =
-      DEFAULT_MIN_CONNECTIONS). Two-tier routing needs enough long links left
-      after the 2-slot base-lattice reserve; below the network's own
-      minimum-degree target a node can't sustain the structure. The gate reads
--     CONFIGURED max (200 in production), NOT the live connection count, so
--     production peers are always active and the floor's real job is to keep the
--     sparse simulation suite (configs top out at max=16) at its pre-lattice
--     baseline — only the production-scale max=200 sim tests exercise the lattice.
-+     the built max (NetworkApiConfig::connection_limit().max: 200 by default,
-+     lowered to the QUIC connection cap while the node may carry QUIC data, but
-+     never below min-number-of-connections), NOT the live connection count. On
-+     defaults that is at least 25, so production peers are active. The
-+     exception: an operator who set min-number-of-connections below 25 on a
-+     host under about 530 MiB (QUIC cap 24) runs below the floor with data on,
-+     and the lattice turns itself off there. Otherwise the floor's job is to
-+     keep the sparse simulation suite (configs top out at max=16) at its
-+     pre-lattice baseline; only the production-scale max=200 sim tests
-+     exercise the lattice.
-      The single activation gate is nn_lattice_active_for(max_connections) /
-      ConnectionManager::nn_lattice_active(); the test-only override that flips
-      the stock/fix validation arm also force-activates below the floor (so the
-```
-
-**File**: `.claude/rules/transport.md` (modified, +48/-16)
-```diff
-@@ -1591,10 +1591,13 @@ not a whole number is ignored with a WARN at startup (only when
- release's value cannot stop the node. On the command line a negative value
- needs `=` (`--quic-max-paths=-1`): with a space clap reads `-1` as a flag and
- refuses the command line, as for every numeric option.
--The default is `max-number-of-connections`, and a larger value is lowered to
--it.
--At the default the limit rarely binds (a permit is held from the offer, so a
--path still closing can briefly hold a slot). A rollback to a release before
-+The default is the node's connection limit (`connection_limit().max`:
-+`max-number-of-connections`, lowered to the QUIC connection cap while the
-+node may carry data), and a larger value is lowered to it. Without data the
-+limit rarely binds at the default (a permit is held from the offer, so a path
-+still closing can briefly hold a slot). With data on a host under about 5 GiB
-+the connection limit is itself the QUIC cap, so the ring and quic-max-paths
-+are bounded by the same number. A rollback to a release before
- the key drops it: the older binary rewrites `config.toml` without it. It is
- kebab-case from the start, so it has no `CONFIG_KEY_SPELLINGS` entry.
- 
-@@ -1703,12 +1706,40 @@ charge, not of the budget: the budget holds only each path's growth above
- it, so a path that arrives never pushes the budget over, whatever the
- others hold. The bound is
- memory <= data paths x (QUIC_CONNECTION_CHARGE_BYTES + floor grant) + budget.
--Until the aggregate step (PR 5) caps data paths, their number is bounded
--only by the connection limit (default 200). PROVISIONAL figures at 200,
--re-sized by PR 5: 1 GiB: 64 MiB + 200 x 1313.5 KiB = 320.5 MiB; 2 GiB:
--128 MiB + 200 x 1577.5 KiB = 436.1 MiB; 7600 MiB gateway: 475 MiB +
--200 x 1577.5 KiB = 783.1 MiB. No data runs on them: QUIC_DATA_PERCENT stays 0
--until PR 5 (`no_data_share_before_the_quic_budget_is_summed`).
-+The fixed charge includes the acknowledgement waits a path's dropped sends
-+leave (`path::ACK_WAITS_WITHOUT_PERMIT` 64 + STREAMED_SEND_LIMIT 48, each
-+QUIC_ACK_WAIT_BYTES 384 B: task, boxed stopped() future and map entry,
-+measured 296 B), 952,320 B in all.
-+Data paths are bounded by the connection limit, which is lowered to the QUIC
-+connection cap (`quic::config::quic_connection_cap`: an eighth of memory, less
-+the budget, over fixed charge + floor grant, every connection counted as a data
-+path) while the node may carry data (`upgrade::policy::may_carry_data`: prefer
-+with a data share above 0, and quic-max-paths not 0; `NetworkApiConfig::connection_limit`,
-+applied in `NodeConfig::new`, never below min-number-of-connections; the
-+configured value is kept, so config.toml is unchanged). Cap 48 / 80 / 161 / 323 / 300 at
-+1 / 2 / 4 / 8 GiB / the 7600 MiB gateway (not monotonic across 2 GiB, where
-+the floor window doubles: about 96 just under it), so the default 200 is lowered below
-+about 5 GiB; QUIC then holds at most an eighth of memory (128 MiB at 1 GiB).
-+A lowered default logs INFO, a lowered explicit setting WARN, and a limit
-+min-number-of-connections holds above the cap WARN, lowered or not.
-+With data off nothing is lowered, and the bound is per shadow path:
-+QUIC_SHADOW_CONNECTION_CHARGE_BYTES (498,152 B), derived from what a shadow
-+path GRANTS the peer, not what an honest peer sends (4 uni streams, the
-+16 KiB window and its staging cap, 256 gaps, the control channel full, the
-+ACK-only tail, and its own single control send: upgrade::machine::CONTROL_SENDS_PER_PATH;
-+`a_shadow_path_is_charged_for_what_it_grants` pins each input). At the
-+default 200 that is about 95 MiB. A node set to more connections with data
-+off holds proportionally more (1,000: about 475 MiB); that is stated, not
-+clamped. Below about 760 MiB the data-off bound is above an eighth of memory,
-+and the aggregate is checked from 1 GiB up: at 512 MiB with data off,
-+caches + hosting + 200 shadow paths come to about 431-464 MB depending on
-+pool size (1/4/16) against 75% of memory (403 MB). Stated, not clamped; lowering connections with data off is
-+a separate decision. The aggregate test sums the larger of the two cases
-+(`quic_memory_ceiling`: data on at the cap, or shadow at 200) with the caches
-+and the hosting budget in
-+`declared_caches_plus_hosting_budget_leave_room_for_the_runtime`, within 75%.
-+The clamp does not know whether QUIC actually runs (the breaker, a failed
-+bind): a node that runs without it keeps the lower limit.
-   → W + debt: quinn records a shrink as debt paid by later credits; the
-     meter mirrors it from the bytes the reader reads (where it can differ,
-     it over-estimates). Every window change and every read
-@@ -1779,10 +1810,9 @@ the buffers behind sent data, allocators other than jemalloc, CRYPTO-frame
- reassembly (`crypto_buffer_size` 16 KiB, charged in the fixed charge). Some quinn terms depend on
- traffic rate and time rather than configuration, as the UDP transport's
- dedup window and sent-packet tracker do, so th
-```
-
-**File**: `crates/core/src/config.rs` (modified, +263/-9)
-```diff
-@@ -364,7 +364,7 @@ impl Default for ConfigArgs {
-                 congestion_control: None,  // Default: fixedrate (set in NetworkApiConfig)
-                 bbr_startup_rate: None,    // Uses default from BBR config
-                 transport_quic: None,      // Default: shadow on Linux, macOS and Windows
--                quic_max_paths: None,      // Default: max-number-of-connections
-+                quic_max_paths: None,      // Default: the node's connection limit
-                 quic_data_percent: None,   // Default: this release's share of pairs
-                 quic_ignore_crash_breaker: None,
-             },
-@@ -2521,7 +2521,13 @@ pub struct NetworkArgs {
-     )]
-     pub min_connections: Option<usize>,
- 
--    /// Maximum allowed connections for the ring topology. Defaults to 20.
-+    /// Maximum allowed connections for the ring topology. Default: 200.
-+    ///
-+    /// While this node carries data on QUIC (`transport-quic` prefer with a
-+    /// data share above 0), it is lowered to what QUIC's per-connection memory
-+    /// fits in an eighth of the host's memory (about 48 at 1 GiB, 80 at 2 GiB,
-+    /// 161 at 4 GiB; 200 is kept from about 5 GiB up), with a line in the log,
-+    /// but never below min-number-of-connections. The configured value is kept.
-     #[arg(long = "max-number-of-connections", env = "MAX_NUMBER_OF_CONNECTIONS")]
-     #[serde(
-         rename = "max-number-of-connections",
-@@ -2598,8 +2604,9 @@ pub struct NetworkArgs {
-     /// The most QUIC paths this node holds at once, counting paths being
-     /// offered or dialed (#5940).
-     ///
--    /// Default: `max-number-of-connections`; a larger value is lowered to it,
--    /// and 0 turns QUIC upgrades off. A value that is not a whole number is
-+    /// Default: the node's connection limit (`max-number-of-connections`,
-+    /// lowered for QUIC memory while the node may carry data); a larger value
-+    /// is lowered to it, and 0 turns QUIC upgrades off. A value that is not a whole number is
-     /// ignored with a warning in the log.
-     #[arg(
-         long = "quic-max-paths",
-@@ -3113,10 +3120,12 @@ impl NetworkApiConfig {
-     }
- 
-     /// The most QUIC paths this node may hold at once: `quic-max-paths`,
--    /// lowered to [`Self::max_connections`], which is also the value when the
--    /// key is unset or cannot be parsed ([`Self::quic_max_paths_setting`]).
-+    /// lowered to the node's connection limit ([`Self::connection_limit`]:
-+    /// `max-number-of-connections`, lowered for QUIC memory while the node may
-+    /// carry data), which is also the value when the key is unset or cannot be
-+    /// parsed ([`Self::quic_max_paths_setting`]).
-     ///
--    /// The cap is `max_connections`: a path needs a UDP session, and the
-+    /// The cap is the connection limit: a path needs a UDP session, and the
-     /// node's QUIC memory is bounded per path (the fixed charge,
-     /// `quic::config::QUIC_CONNECTION_CHARGE_BYTES`, plus, for a data path, the
-     /// floor grant, `quic::budget::floor_grant`) and by the buffer budget its
-@@ -3125,12 +3134,41 @@ impl NetworkApiConfig {
-     /// a permit is held from the offer, so a path still closing can briefly
-     /// hold a slot.
-     pub(crate) fn quic_max_paths(&self) -> usize {
-+        let max_connections = self.connection_limit().max;
-         match self.quic_max_paths_setting() {
--            QuicMaxPathsSetting::Set(limit) => limit.min(self.max_connections),
--            QuicMaxPathsSetting::Unset | QuicMaxPathsSetting::Invalid(_) => self.max_connections,
-+            QuicMaxPathsSetting::Set(limit) => limit.min(max_connections),
-+            QuicMaxPathsSetting::Unset | QuicMaxPathsSetting::Invalid(_) => max_connections,
-         }
-     }
- 
-+    /// The connection limit this node runs with: `max-number-of-connections`,
-+    /// lowered for QUIC memory while the node may carry QUIC data
-+    /// ([`connection_limit_for`]). The host's memory is read as for the QUIC
-+    /// endpoint ([`Self::quic_settings`]). The configured value is not
-+    /// changed, so config.toml keeps it.
-+    pub(crate) fn connection_limit(&self) -> ConnectionLimit {
-+        self.connection_limit_with_memory(
-+            crate::wasm_runtime::read_total_ram_bytes().unwrap_or(QUIC_FALLBACK_TOTAL_RAM),
-+        )
-+    }
-+
-+    /// [`Self::connection_limit`] on a host with `memory` bytes.
-+    pub(crate) fn connection_limit_with_memory(&self, memory: usize) -> ConnectionLimit {
-+        // `quic-max-paths` 0 turns QUIC paths off, so no connection holds QUIC
-+        // memory. Whether QUIC actually runs (the crash-loop breaker, a failed
-+        // bind) is not known here; a node that turns out to run without QUIC
-+        // keeps the lower limit, the conservative side.
-+        let carries_data = crate::transport::quic::upgrade::policy::may_carry_data(self)
-+            && self.quic_settings().is_some()
-+            && !matches!(self.quic_max_paths_setting(), QuicMaxPathsSetting::Set(0));
-+      
-```
-
-**File**: `crates/core/src/contract/executor.rs` (modified, +54/-20)
-```diff
-@@ -1815,13 +1815,13 @@ pub(crate) fn declared_cache_ceiling_terms(
-     let quic_ingress = crate::transport::demux::QUIC_INGRESS_QUEUE_BYTES;
-     // quinn's buffer for pending QUIC connection attempts (#5940): one
-     // endpoint per node, and fixed. Summed whatever `transport-quic` says, as
--    // the ingress queue is. The QUIC flow-control windows and quinn's
--    // per-connection state are NOT summed, so this aggregate does not
--    // account a node's QUIC connections; see `NOT_SUMMED`. The aggregate
--    // step (#5940, PR 5) must sum data paths x (the fixed charge
--    // `QUIC_CONNECTION_CHARGE_BYTES` + the floor grant `quic::budget::floor_grant`)
--    // + the buffer budget `quic_buffer_budget_for`, which holds only growth
--    // above the floor grants.
-+    // the ingress queue is. A node's QUIC connections (their flow-control
-+    // windows and quinn's per-connection state) are NOT in this cache sum:
-+    // they are the transport share, `quic::config::quic_memory_ceiling`
-+    // (the buffer budget plus, at the QUIC connection cap, the fixed charge
-+    // and the floor grant per connection), which
-+    // `declared_caches_plus_hosting_budget_leave_room_for_the_runtime` adds
-+    // to the caches and the hosting budget. See `NOT_SUMMED`.
-     let quic_incoming = crate::transport::quic::config::INCOMING_BUFFER_TOTAL_BYTES as usize;
-     // The delegate context cache (`ctx.write()` bytes). One per node, shared
-     // by every executor, so NOT multiplied by the pool.
-@@ -3079,23 +3079,25 @@ mod tests {
-                 "a measurement of one QUIC connection term (idle connection state, \
-                  jemalloc-rounded on linux-gnu), not a ceiling; an input to the \
-                  per-path ceiling (memory gate M2, #5940), plus the unmeasured terms \
--                 in the quic::config module doc; summed once a QUIC path cap exists \
--                 (M4, #5940)",
-+                 in the quic::config module doc; a term inside \
-+                 QUIC_CONNECTION_CHARGE_BYTES, which the QUIC transport share sums",
-             ),
-             (
-                 "QUIC_ACK_TAIL_BYTES",
-                 "a measurement of one QUIC connection term (ACK-only records after \
-                  the last ack-eliciting send), not a ceiling; the per-path ceiling \
-                  (memory gate M2, #5940) must re-check it against quinn-proto's \
-                  behaviour, plus the unmeasured terms in the quic::config module \
--                 doc; summed once a QUIC path cap exists (M4, #5940)",
-+                 doc; a term inside QUIC_CONNECTION_CHARGE_BYTES, which the QUIC \
-+                 transport share sums",
-             ),
-             // Buffer-budget terms (#5940): the fixed charge per QUIC connection
-             // and the node-wide budget for what scales with the windows. Both
--            // are summed (budget + quic_connections x charge) by the buffer
--            // budget's aggregate-accounting step (PR 5), which must land before
--            // any release carries data on QUIC
--            // (`no_data_share_before_the_quic_budget_is_summed`).
-+            // are summed in the QUIC transport share
-+            // (`quic::config::quic_memory_ceiling_terms`, budget + cap x
-+            // (charge + floor grant)), which the aggregate test adds to these
-+            // caches and the hosting budget; the caches keep their own
-+            // half-of-memory rule here.
-             (
-                 "QUIC_OPEN_STREAM_BYTES",
-                 "a measurement of one QUIC connection term (one open stream, both \
-@@ -3119,17 +3121,49 @@ mod tests {
-             ),
-             (
-                 "QUIC_CONNECTION_CHARGE_BYTES",
--                "the fixed charge per QUIC connection; summed as quic_connections x \
--                 this, plus each data path's floor grant (quic::budget::floor_grant), \
--                 by the buffer budget's aggregate-accounting step (#5940, PR 5), \
--                 before any release carries data on QUIC",
-+                "the fixed charge per QUIC connection; summed at the QUIC connection \
-+                 cap in the QUIC transport share (quic::config::quic_memory_ceiling), \
-+                 which declared_caches_plus_hosting_budget_leave_room_for_the_runtime \
-+                 adds to these caches and the hosting budget",
-             ),
-             (
-                 "quic_buffer_budget_for",
-                 "the node-wide QUIC buffer budget (memory / 16): the data paths' \
-                  window growth above their floor grants (quic::budget), which are \
--                 not in it; summed with data paths x (fixed charge + floor grant) \
--                 by the buffer budget's aggregate-accounting step (#5940)",
-+                 not in it; summed in the QUIC transport share \
-+                 (quic::config::quic_memory_ceiling) with the fixed charge and floor \
-+                 grant per connection at the QUIC connection cap",
-+    
-```
-
-**File**: `crates/core/src/node.rs` (modified, +3/-1)
-```diff
-@@ -864,6 +864,8 @@ impl NodeConfig {
-         if let Some(own_addr) = &config.peer_id {
-             tracing::info!("Node external address: {}", own_addr.socket_addr());
-         }
-+        let connection_limit = config.network_api.connection_limit();
-+        connection_limit.log();
-         Ok(NodeConfig {
-             should_connect: true,
-             is_gateway: config.is_gateway,
-@@ -876,7 +878,7 @@ impl NodeConfig {
-             config: Arc::new(config.clone()),
-             max_hops_to_live: None,
-             rnd_if_htl_above: None,
--            max_number_conn: Some(config.network_api.max_connections),
-+            max_number_conn: Some(connection_limit.max),
-             min_number_conn: Some(config.network_api.min_connections),
-             max_upstream_bandwidth: None,
-             max_downstream_bandwidth: None,
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +5/-1)
-```diff
-@@ -1415,7 +1415,11 @@ impl P2pConnManager {
-                             .unwrap_or(
-                                 crate::transport::global_bandwidth::DEFAULT_MIN_PER_CONNECTION,
-                             ),
--                        config.config.network_api.max_connections,
-+                        // The limit the ring runs with, lowered for QUIC
-+                        // memory where it applies (`NodeConfig::new`).
-+                        config
-+                            .max_number_conn
-+                            .unwrap_or(config.config.network_api.max_connections),
-                     );
-                     // Phase 1.6 shadow telemetry (#4074): expose the
-                     // effective aggregate rate R to the demand aggregator.
-```
-
-**File**: `crates/core/src/ring/connection_manager.rs` (modified, +12/-7)
-```diff
-@@ -162,13 +162,18 @@ pub(crate) fn nn_lattice_enabled() -> bool {
- /// lattice (mechanisms 1-4) activates. Below this floor the feature disables
- /// itself. Anchored to [`Ring::DEFAULT_MIN_CONNECTIONS`].
- ///
--/// This is keyed on the CONFIGURED `max_connections` (the cap a node is built
--/// with — 200 by default in production via `DEFAULT_MAX_CONNECTIONS`), NOT the
--/// live connection count. So in PRODUCTION every node is above the floor and the
--/// feature is always active; the floor's only real effect is to disable the
--/// feature at the sparse scales used by the simulation harness. The gate is
--/// therefore production-neutral: any value in `(max sim config, 200)` behaves
--/// identically in production.
-+/// This is keyed on the `max_connections` a node is built with (200 by
-+/// default in production via `DEFAULT_MAX_CONNECTIONS`), NOT the live
-+/// connection count. While a node may carry QUIC data, that limit is lowered
-+/// to the QUIC connection cap (`NetworkApiConfig::connection_limit`), but never
-+/// below min-number-of-connections (default 25, this floor), so on defaults
-+/// every production node stays at or above the floor and the feature is
-+/// active. The exception: an operator who set min-number-of-connections below
-+/// 25 on a host under about 530 MiB (QUIC cap 24) runs below the floor with
-+/// data on, and the lattice switches itself off there. Otherwise the floor's
-+/// only effect is to disable the feature at the sparse scales used by the
-+/// simulation harness: any value in `(max sim config, 25]` behaves identically
-+/// for a production node on defaults.
- ///
- /// Two-tier routing (2 reserved base-lattice edges + `k - 2` Kleinberg long
- /// links) needs enough long links to keep the O(log^2 n) structure; below a
-```
-
----
-
-### Incident Patch 2: `1fdb4f37` (2026-11-12)
-**Commit Message**: feat(quic): native Hello frame, two close codes, reserved punch byte (#6203)
-
-**File**: `.claude/rules/transport.md` (modified, +24/-8)
-```diff
-@@ -1238,7 +1238,9 @@ doc has the transition table.
-   for the later of the seed and its own delay. e5a-5b must carry it per peer key
-   across a replaced session, or a session that flaps retries at session rate.
-   Failures: close codes 1, 3, 4, 5, 6 and 8, a lost connection, an idle timeout and a
--  deadline each mean fallback plus normal backoff, then a new offer. Never a
-+  deadline each mean fallback plus normal backoff, then a new offer. Codes 9
-+  (VERSION_INCOMPATIBLE) and 10 (HELLO_REFUSED) are sent only on native
-+  connections; on an upgrade path they read as a lost connection. Never a
-   permanent downgrade. Identity: close code 2 received, or Event::IdentityMismatch
-   (closes with IDENTITY_MISMATCH). A TLS failure during the handshake
-   (Refused{Handshake}) takes the normal backoff.
-@@ -1408,7 +1410,8 @@ snapshot except the two gauges.
-   watcher, because `QuicErrorKind` merges codes 1, 3, 4 and 5); a code with no
-   name is `unknown_code`, always the last slot. A new code goes in before it,
-   so a reader must take the last slot as unknown and not use a fixed index
--  (SESSION_ENDED moved `unknown_code` from index 6 to 7). A local close is not
-+  (SESSION_ENDED moved `unknown_code` from index 6 to 7, and
-+  VERSION_INCOMPATIBLE and HELLO_REFUSED from 8 to 10). A local close is not
-   counted.
-   `quic_path_age_at_close_<lt_1m|lt_10m|lt_1h|lt_1d|ge_1d>`: age of an active
-   path at the teardown that ends it. `quic_establish_ms_p50`/`_p90`/`_samples`:
-@@ -2699,9 +2702,9 @@ Errors: TransportError::Quic(QuicError), beside TransportError::Udp and
-     buffer, so the code alone does not blame the endpoint),
-     Refused{reason}:
-     Handshake (a TLS alert, codes 0x100 to 0x1ff), Version,
--    ConnectionRefused (CONNECTION_REFUSED), Downgrade, IdentityMismatch and
--    SessionEnded (the peer's close codes), AllowSetFull, KeyConflict,
--    UnusableKey, Local.
-+    ConnectionRefused (CONNECTION_REFUSED), Downgrade, IdentityMismatch,
-+    SessionEnded, OverBudget, VersionIncompatible and HelloRefused (the
-+    peer's close codes), AllowSetFull, KeyConflict, UnusableKey, Local.
-   → Attribution: error::attribute(availability, kind) turns every
-     connection-scope kind into EndpointDown while the endpoint is Down,
-     whichever error it came from (a connection error, a read or write or
-@@ -2744,7 +2747,18 @@ Application error codes, one range per QUIC frame type, all one-byte
-                 gaps or staged bytes past their cap a second time within 30 s; the peer reads it as
-                 Refused{OverBudget}, falls back, charges as for Downgrade and
-                 counts quic_fallback_over_budget_rx, or setup_downgrade_rx in
--                setup; a node without this code reads ConnectionLost)
-+                setup; a node without this code reads ConnectionLost),
-+                VERSION_INCOMPATIBLE 9 (the peer's native Hello carried a
-+                version this node cannot talk to; the reason is this node's
-+                8 version bytes, sent with QuicCloser::close_with_reason) and
-+                HELLO_REFUSED 10 (the peer's native Hello was malformed or
-+                past HELLO_MAX). Both are sent only on native connections
-+                (#5940 QUIC-native connect); this node reads them as
-+                Refused{VersionIncompatible} and Refused{HelloRefused}, and a
-+                node without them as ConnectionLost. On an upgrade path, where
-+                nothing sends them, the upgrade machine treats either as a
-+                lost connection (handshake_failed in setup, reset once
-+                active), as a node without the codes would.
-     0x10..=0x1f STOP_SENDING: path::stop_code (receiver refusals;
-                 NOT_ACCEPTING_DATA 0x19 is a shadow path refusing data. Data
-                 may be sent only after caps negotiation, so it is a counter
-@@ -2754,8 +2768,10 @@ Application error codes, one range per QUIC frame type, all one-byte
-   The scrape test checks every constant by name against ALL, and
-   close_code::ALL against the QuicCloseCode variants.
-   The close codes are wire values a peer on another release reads: never
--  renumber them; add a new code at the next free value. A code the peer
--  does not know reads as ConnectionLost. Every close the QUIC code sends
-+  renumber them; add a new code at the next free value (0x0B; 0x07 is
-+  taken by the ramp branch). A code the peer does not know reads as
-+  ConnectionLost there; what this node does with each code it knows is
-+  listed above. Every close the QUIC code sends
-   goes through the connection's QuicCloser (QuicConnection::close and
-   Drop, which sends NODE_DROPPED_PEER, and the path's receive
-   supervisor, which shares the closer): a flag swapped once per
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +13/-112)
-```diff
-@@ -53,11 +53,13 @@ use freenet_stdlib::client_api::{ContractResponse, HostResponse};
- 
- mod broadcast;
- mod connection_lifecycle;
-+mod connection_map;
- mod dispatch;
- mod identity;
- mod migration;
- mod zombie_sweep;
- 
-+use connection_map::ConnectionMap;
- use zombie_sweep::ZombieSweepState;
- #[cfg(test)]
- use zombie_sweep::{TransportActivity, is_zombie};
-@@ -693,9 +695,10 @@ pub(in crate::node) struct P2pConnManager {
-     conn_bridge_rx: Receiver<P2pBridgeEvent>,
-     event_listener: Box<dyn NetEventRegister>,
-     /// Connections indexed by socket address (the transport-level identifier).
--    /// This is the source of truth for active connections.
--    /// Uses BTreeMap for deterministic iteration order in simulation tests.
--    connections: BTreeMap<SocketAddr, ConnectionEntry>,
-+    /// This is the source of truth for active connections. Its keys change
-+    /// only through [`Self::insert_connection`] and [`Self::remove_connection`]
-+    /// (`connection_map`).
-+    connections: ConnectionMap,
-     /// Reverse lookup: public key -> socket address.
-     /// Used to find connections when we only know the peer's identity.
-     /// Must be kept in sync with `connections`.
-@@ -1245,31 +1248,20 @@ where
- }
- 
- impl P2pConnManager {
--    /// Adds a transport to the connection map. Every insert goes through
--    /// here, so the connection manager's open-transport set
--    /// (`ConnectionManager::has_open_transport`) holds exactly this map's keys.
-+    /// Adds a transport to the connection map and the connection manager's
-+    /// open-transport set (`ConnectionManager::has_open_transport`), which
-+    /// `ConnectionMap` keeps equal to the map's keys.
-     fn insert_connection(
-         &mut self,
-         addr: SocketAddr,
-         entry: ConnectionEntry,
-     ) -> Option<ConnectionEntry> {
--        self.bridge
--            .op_manager
--            .ring
--            .connection_manager
--            .note_transport_open(addr);
-         self.connections.insert(addr, entry)
-     }
- 
--    /// Removes a transport from the connection map; the only removal path,
--    /// for the same reason as [`Self::insert_connection`].
-+    /// Removes a transport from the connection map and the open-transport set.
-     fn remove_connection(&mut self, addr: SocketAddr) -> Option<ConnectionEntry> {
--        self.bridge
--            .op_manager
--            .ring
--            .connection_manager
--            .note_transport_closed(addr);
--        self.connections.remove(&addr)
-+        self.connections.remove(addr)
-     }
- 
-     pub(in crate::node) fn listening_port(&self) -> u16 {
-@@ -1384,12 +1376,13 @@ impl P2pConnManager {
-             .config
-             .network_api
-             .warn_if_total_bandwidth_limit_is_zero();
-+        let connections = ConnectionMap::new(bridge.op_manager.ring.connection_manager.clone());
-         Ok(P2pConnManager {
-             gateways,
-             bridge,
-             conn_bridge_rx: rx_bridge_cmd,
-             event_listener: Box::new(event_listener),
--            connections: BTreeMap::new(),
-+            connections,
-             addr_by_pub_key: identity::KeyIndex::default(),
-             conn_event_tx: None,
-             key_pair,
-@@ -4271,98 +4264,6 @@ pub(crate) mod tests {
-     use tokio::sync::mpsc;
-     use tokio::time::{Duration, Instant, sleep, timeout};
- 
--    /// Every change to the bridge's connection map goes through
--    /// `insert_connection` / `remove_connection`, which keep the connection
--    /// manager's open-transport set (read by the relay's QUIC-native decision)
--    /// equal to the map's keys. A direct `connections.insert(` elsewhere would
--    /// leave a transport the relay cannot see; a direct `remove(` would leave
--    /// a closed one it still counts. Scans the production code of every file
--    /// of the bridge (before each file's first test module, comment lines
--    /// skipped) for any call that changes the map's keys.
--    #[test]
--    fn the_connection_map_changes_only_through_its_helpers() {
--        const FILES: [(&str, &str); 7] = [
--            ("p2p_protoc.rs", include_str!("p2p_protoc.rs")),
--            (
--                "p2p_protoc/broadcast.rs",
--                include_str!("p2p_protoc/broadcast.rs"),
--            ),
--            (
--                "p2p_protoc/connection_lifecycle.rs",
--                include_str!("p2p_protoc/connection_lifecycle.rs"),
--            ),
--            (
--                "p2p_protoc/dispatch.rs",
--                include_str!("p2p_protoc/dispatch.rs"),
--            ),
--            (
--                "p2p_protoc/identity.rs",
--                include_str!("p2p_protoc/identity.rs"),
--            ),
--            (
--                "p2p_protoc/migration.rs",
--                include_str!("p2p_protoc/migration.rs"),
--            ),
--            (
--                "p2p_protoc/zombie_sweep.rs",
--                include_str!("p2p_protoc/zombie_sweep.rs"),
--            ),
--        ];
--        const KEY_CHANGES: [&str
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs` (modified, +1/-1)
-```diff
-@@ -1603,7 +1603,7 @@ impl P2pConnManager {
-         // network-bridge layer) can gate emission of version-sensitive wire
-         // variants — e.g. the summary-first PUT probe's
-         // `supports_summary_first_put` check. Keep this write paired with
--        // the `self.connections.insert` above if that call site changes.
-+        // the `self.insert_connection` above if that call site changes.
-         // Write the Option THROUGH — unconditionally, so a reconnection whose
-         // version is unknown CLEARS any stale entry rather than leaving us
-         // believing a downgraded peer is still current. Since #5161 a `None`
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_map.rs` (added, +178/-0)
-```diff
-@@ -0,0 +1,178 @@
-+//! The connection map, keyed by socket address, whose keys change only through
-+//! [`ConnectionMap::insert`] and [`ConnectionMap::remove`].
-+//!
-+//! The connection manager keeps the set of addresses with an open transport
-+//! (`ConnectionManager::has_open_transport`), which the relay reads for the
-+//! QUIC-native decision. That set must hold exactly this map's keys. The map
-+//! is a private field and holds the manager itself, so the only ways to add
-+//! or remove a key also note it in the set: anything outside this module reads
-+//! the map through `Deref` (a shared `BTreeMap`) and changes an entry in place
-+//! through [`ConnectionMap::get_mut`] or [`ConnectionMap::iter_mut`], none of
-+//! which can add, remove or replace a key. A map that is dropped, including
-+//! one replaced or taken out of its field whole, closes its keys in the set.
-+//! The compiler enforces all of this, so no source scan has to.
-+//!
-+//! What it does not cover: two live maps over one manager. Production builds
-+//! one; a second would share the set, and dropping it would close addresses
-+//! the first still holds.
-+
-+use std::collections::BTreeMap;
-+use std::collections::btree_map;
-+use std::net::SocketAddr;
-+use std::ops::Deref;
-+
-+use super::ConnectionEntry;
-+use crate::ring::ConnectionManager;
-+
-+/// Connections by socket address (the transport-level identifier); the
-+/// source of truth for active connections. A `BTreeMap` for deterministic
-+/// iteration order in simulation tests.
-+pub(super) struct ConnectionMap {
-+    map: BTreeMap<SocketAddr, ConnectionEntry>,
-+    /// Whose open-transport set mirrors the keys. `None` only in tests that
-+    /// build a map with no connection manager ([`Self::untracked`]).
-+    transports: Option<ConnectionManager>,
-+}
-+
-+impl ConnectionMap {
-+    /// An empty map whose keys `transports`' open-transport set mirrors.
-+    pub(super) fn new(transports: ConnectionManager) -> Self {
-+        Self {
-+            map: BTreeMap::new(),
-+            transports: Some(transports),
-+        }
-+    }
-+
-+    /// An empty map mirrored nowhere, for tests with no connection manager.
-+    #[cfg(test)]
-+    pub(super) fn untracked() -> Self {
-+        Self {
-+            map: BTreeMap::new(),
-+            transports: None,
-+        }
-+    }
-+
-+    /// Add or replace the connection at `addr`, noting the address in the
-+    /// open-transport set.
-+    pub(super) fn insert(
-+        &mut self,
-+        addr: SocketAddr,
-+        entry: ConnectionEntry,
-+    ) -> Option<ConnectionEntry> {
-+        if let Some(transports) = &self.transports {
-+            transports.note_transport_open(addr);
-+        }
-+        self.map.insert(addr, entry)
-+    }
-+
-+    /// Remove the connection at `addr`, and the address from the
-+    /// open-transport set.
-+    pub(super) fn remove(&mut self, addr: SocketAddr) -> Option<ConnectionEntry> {
-+        if let Some(transports) = &self.transports {
-+            transports.note_transport_closed(addr);
-+        }
-+        self.map.remove(&addr)
-+    }
-+
-+    /// The entry at `addr`, to change in place.
-+    pub(super) fn get_mut(&mut self, addr: &SocketAddr) -> Option<&mut ConnectionEntry> {
-+        self.map.get_mut(addr)
-+    }
-+
-+    /// Every entry, to change in place.
-+    pub(super) fn iter_mut(&mut self) -> btree_map::IterMut<'_, SocketAddr, ConnectionEntry> {
-+        self.map.iter_mut()
-+    }
-+}
-+
-+impl Drop for ConnectionMap {
-+    fn drop(&mut self) {
-+        if let Some(transports) = &self.transports {
-+            for addr in self.map.keys() {
-+                transports.note_transport_closed(*addr);
-+            }
-+        }
-+    }
-+}
-+
-+impl Deref for ConnectionMap {
-+    type Target = BTreeMap<SocketAddr, ConnectionEntry>;
-+
-+    fn deref(&self) -> &Self::Target {
-+        &self.map
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use std::collections::BTreeSet;
-+
-+    use tokio::sync::mpsc;
-+    use tokio::time::Instant;
-+
-+    use super::*;
-+    use crate::node::network_bridge::p2p_protoc::zombie_sweep::LinkUseStamp;
-+
-+    fn entry(connection_id: u64) -> ConnectionEntry {
-+        let (sender, _receiver) = mpsc::channel(1);
-+        let now = Instant::now();
-+        ConnectionEntry {
-+            sender,
-+            identity: Default::default(),
-+            receipt: None,
-+            connection_id,
-+            created_at: now,
-+            link_use: LinkUseStamp::new(now),
-+            remote_version: None,
-+        }
-+    }
-+
-+    fn addr(port: u16) -> SocketAddr {
-+        SocketAddr::from(([192, 0, 2, 1], port))
-+    }
-+
-+    fn keys(map: &ConnectionMap) -> BTreeSet<SocketAddr> {
-+        map.keys().copied().collect()
-+    }
-+
-+    /// Insert, replace, in-place changes and remove keep the open-transport
-+    /// set equal to the map's keys.
-+    #[tokio::test]
-+    async fn the_open_transport_set_follows_inserts_and_removes() {
-+        let manager = ConnectionManager::test_default();
-+        let mut map = ConnectionMap::new(manager
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/identity.rs` (modified, +8/-10)
-```diff
-@@ -39,6 +39,7 @@ use std::net::SocketAddr;
- use crate::transport::TransportPublicKey;
- 
- use super::ConnectionEntry;
-+use super::connection_map::ConnectionMap;
- 
- /// How a connection's peer identity was bound.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-@@ -246,7 +247,7 @@ pub(super) fn check(
- /// pending for the same key keeps `promote` if either says so), `None`
- /// leaves the connection as it was.
- pub(super) fn bind(
--    connections: &mut BTreeMap<SocketAddr, ConnectionEntry>,
-+    connections: &mut ConnectionMap,
-     index: &mut KeyIndex,
-     addr: SocketAddr,
-     key: &TransportPublicKey,
-@@ -353,7 +354,7 @@ pub(super) const LONG_CLAIM_WAIT: std::time::Duration =
- /// counted, so a claim is returned once. The caller calls this only while a
- /// holder that is heard from holds `key`.
- pub(super) fn mark_long_waits(
--    connections: &mut BTreeMap<SocketAddr, ConnectionEntry>,
-+    connections: &mut ConnectionMap,
-     key: &TransportPublicKey,
-     now: tokio::time::Instant,
- ) -> Vec<SocketAddr> {
-@@ -374,10 +375,7 @@ pub(super) fn mark_long_waits(
- 
- /// Mark the newest pending claim of `key` as promoting: it takes the ring
- /// place of a holder in the ring that is being replaced for it.
--pub(super) fn promote_newest_claim(
--    connections: &mut BTreeMap<SocketAddr, ConnectionEntry>,
--    key: &TransportPublicKey,
--) {
-+pub(super) fn promote_newest_claim(connections: &mut ConnectionMap, key: &TransportPublicKey) {
-     if let Some((claimant, _)) = pending_claimant(connections, None, key) {
-         if let Some(entry) = connections.get_mut(&claimant) {
-             if let State::Pending(claim) = &mut entry.identity.0 {
-@@ -462,15 +460,15 @@ mod tests {
-     }
- 
-     struct Table {
--        connections: BTreeMap<SocketAddr, ConnectionEntry>,
-+        connections: ConnectionMap,
-         index: KeyIndex,
-         next_id: u64,
-     }
- 
-     impl Table {
-         fn new() -> Self {
-             Self {
--                connections: BTreeMap::new(),
-+                connections: ConnectionMap::untracked(),
-                 index: KeyIndex::default(),
-                 next_id: 0,
-             }
-@@ -512,7 +510,7 @@ mod tests {
-         }
- 
-         fn close(&mut self, at: SocketAddr, key: &TransportPublicKey) -> Release {
--            self.connections.remove(&at);
-+            self.connections.remove(at);
-             release(&self.connections, &mut self.index, at, key)
-         }
-     }
-@@ -819,7 +817,7 @@ mod tests {
-         );
-         t.bind(addr(61), &k, IdentitySource::Claimed, Some(false));
-         assert!(t.index.may_have_pending_claims());
--        t.connections.remove(&addr(61));
-+        t.connections.remove(addr(61));
-         clear_pending_hint(&t.connections, &mut t.index);
-         assert!(!t.index.may_have_pending_claims());
-     }
-```
-
-**File**: `crates/core/src/node/testing_impl.rs` (modified, +5/-0)
-```diff
-@@ -2130,6 +2130,11 @@ impl SimNetwork {
-     #[cfg(any(test, feature = "testing"))]
-     pub fn with_node_pre_floor_native_decoder(&mut self, label: &NodeLabel) -> &mut Self {
-         self.node_config_mut(label).native_wire_pre_floor = true;
-+        let addr = *self
-+            .node_addresses
-+            .get(label)
-+            .expect("a pre-floor node must have an address in this network");
-+        crate::operations::connect::native_wire_trace::mark_pre_floor(&self.name, addr);
-         self
-     }
- 
-```
-
-**File**: `crates/core/src/operations/connect/op_ctx_task.rs` (modified, +30/-7)
-```diff
-@@ -780,8 +780,16 @@ async fn drive_client_connect(
-                     continue;
-                 }
- 
-+                // A joiner standing in for a release below the floor sends no
-+                // offer, so its responses carry no decision by design; only an
-+                // at-floor joiner's missing decision is the fallback the trace
-+                // counts.
-                 #[cfg(any(test, feature = "testing"))]
--                if let Some(addr) = payload.acceptor.socket_addr() {
-+                if let Some(addr) = payload
-+                    .acceptor
-+                    .socket_addr()
-+                    .filter(|_| !op_manager.ring.connection_manager.native_wire().pre_floor)
-+                {
-                     super::wire::sim_trace::record_at(
-                         addr,
-                         super::wire::sim_trace::NativeWireEvent::JoinerResponse {
-@@ -800,7 +808,8 @@ async fn drive_client_connect(
-                 // dial, so a `Native` decision cannot be honoured: the attempt
-                 // with this acceptor fails, is counted by why, and is reported
-                 // upstream as `ConnectFailed` like a failed punch, so the relay
--                // re-routes and the acceptor's reservation is released.
-+                // marks the acceptor visited and re-routes. The acceptor's
-+                // reservation is not released by this; it times out.
-                 if let Err(failure) =
-                     super::native::joiner_response_action(sent_offer, payload.native_decision)
-                 {
-@@ -1016,17 +1025,24 @@ struct AcceptorDial {
- /// Records an accept in the simulation's native-wire trace: whether the
- /// request carried an offer (the response carries a decision exactly then),
- /// and whether it was accepted after a `Rejected` or `ConnectFailed` re-route.
--fn trace_accept(upstream: SocketAddr, response: &super::ConnectResponse, retry: bool) {
-+/// Called once the accept is dispatched, so a failed dispatch is not traced.
-+fn trace_accept(
-+    upstream: SocketAddr,
-+    response: &super::ConnectResponse,
-+    joiner: Option<SocketAddr>,
-+    retry: bool,
-+) {
-     #[cfg(any(test, feature = "testing"))]
-     super::native_wire_trace::record_at(
-         upstream,
-         super::native_wire_trace::NativeWireEvent::Accepted {
-             with_offer: response.native_decision.is_some(),
-             retry,
-+            joiner,
-         },
-     );
-     #[cfg(not(any(test, feature = "testing")))]
--    let _ = (upstream, response, retry);
-+    let _ = (upstream, response, joiner, retry);
- }
- 
- /// Starts the hole punch to `acceptor`, whose Response arrived at
-@@ -1389,7 +1405,12 @@ async fn drive_relay_connect(
-         ) {
-             op_manager.ring.register_events(Either::Left(event)).await;
-         }
--        trace_accept(upstream_addr, &accept.response, false);
-+        trace_accept(
-+            upstream_addr,
-+            &accept.response,
-+            accept.joiner.socket_addr(),
-+            false,
-+        );
-         let mut ctx = op_manager.op_ctx(incoming_tx);
-         ctx.send_fire_and_forget(
-             upstream_addr,
-@@ -1564,8 +1585,9 @@ async fn drive_relay_connect(
-                     ) {
-                         op_manager.ring.register_events(Either::Left(event)).await;
-                     }
-+                    let joiner_addr = accept.joiner.socket_addr();
-                     dispatch_expect_connection_from(op_manager, incoming_tx, accept.joiner).await?;
--                    trace_accept(upstream_addr, &accept.response, true);
-+                    trace_accept(upstream_addr, &accept.response, joiner_addr, true);
-                     let mut ctx = op_manager.op_ctx(incoming_tx);
-                     ctx.send_fire_and_forget(
-                         upstream_addr,
-@@ -1736,8 +1758,9 @@ async fn drive_relay_connect(
-                     ) {
-                         op_manager.ring.register_events(Either::Left(event)).await;
-                     }
-+                    let joiner_addr = accept.joiner.socket_addr();
-                     dispatch_expect_connection_from(op_manager, incoming_tx, accept.joiner).await?;
--                    trace_accept(upstream_addr, &accept.response, true);
-+                    trace_accept(upstream_addr, &accept.response, joiner_addr, true);
-                     let mut ctx = op_manager.op_ctx(incoming_tx);
-                     ctx.send_fire_and_forget(
-                         upstream_addr,
-```
-
-**File**: `crates/core/src/operations/connect/wire.rs` (modified, +29/-3)
-```diff
-@@ -284,6 +284,9 @@ pub mod sim_trace {
-         retry_accepts_with_offer: AtomicU64,
-         joiner_decisions: AtomicU64,
-         joiner_responses_without_decision: AtomicU64,
-+        /// Nodes standing in for a release below the floor
-+        /// ([`mark_pre_floor`]).
-+        pre_floor: parking_lot::Mutex<std::collections::HashSet<SocketAddr>>,
-     }
- 
-     /// What the connect op saw, for [`record_at`].
-@@ -299,7 +302,15 @@ pub mod sim_trace {
-         /// A connection was closed on a message that did not decode.
-         UndecodableClose,
-         /// An acceptor answered a request; `retry` for a re-routed one.
--        Accepted { with_offer: bool, retry: bool },
-+        ///
-+        /// `joiner` is the joiner's address. An answer without an offer to a
-+        /// joiner marked pre-floor ([`mark_pre_floor`]) is not counted: such a
-+        /// joiner sends no offer by design.
-+        Accepted {
-+            with_offer: bool,
-+            retry: bool,
-+            joiner: Option<SocketAddr>,
-+        },
-         /// A joiner received a response.
-         JoinerResponse { with_decision: bool },
-     }
-@@ -332,15 +343,23 @@ pub mod sim_trace {
-             NativeWireEvent::Accepted {
-                 with_offer: true,
-                 retry,
-+                ..
-             } => {
-                 if retry {
-                     c.retry_accepts_with_offer.fetch_add(1, Ordering::Relaxed);
-                 }
-                 &c.accepts_with_offer
-             }
-             NativeWireEvent::Accepted {
--                with_offer: false, ..
--            } => &c.accepts_without_offer,
-+                with_offer: false,
-+                joiner,
-+                ..
-+            } => {
-+                if joiner.is_some_and(|joiner| c.pre_floor.lock().contains(&joiner)) {
-+                    return;
-+                }
-+                &c.accepts_without_offer
-+            }
-             NativeWireEvent::JoinerResponse {
-                 with_decision: true,
-             } => &c.joiner_decisions,
-@@ -351,6 +370,13 @@ pub mod sim_trace {
-         counter.fetch_add(1, Ordering::Relaxed);
-     }
- 
-+    /// Marks the node at `addr` in `network` as standing in for a release
-+    /// below the floor, so answers to its offerless requests are not counted
-+    /// as offers dropped on the way.
-+    pub(crate) fn mark_pre_floor(network: &str, addr: SocketAddr) {
-+        trace(network).0.pre_floor.lock().insert(addr);
-+    }
-+
-     /// Removes the trace of `network` (on `SimNetwork` drop).
-     pub(crate) fn remove(network: &str) {
-         TRACES.remove(network);
-```
-
----
-
-### Incident Patch 3: `80e10694` (2026-11-12)
-**Commit Message**: feat(transport): a QUIC stream limit earned by load, throttle-aware idle, header-phase age (#6196)
-
-**File**: `.claude/rules/transport.md` (modified, +70/-12)
-```diff
-@@ -1438,7 +1438,7 @@ a test passes its own; tests read their own, never the global).
-   quic_data_send_<short|large_short|stream|pipe>_<sent|maybe_delivered|
-   not_opened_udp|failed_udp|dropped>; quic_data_event_<short_overflow_udp|
-   data_refused|stalled_closed|udp_send_failed|suspect_entered|suspect_left|
--  pacer_refused|ack_wait_released>; quic_data_stop_<code> (stops a
-+  pacer_refused|ack_wait_released|stream_limit_full>; quic_data_stop_<code> (stops a
-   peer sent to data sends); quic_inbound_<QuicInboundOutcome> (every receive
-   outcome, refusals by frame kind as short_refused_budget and
-   stream_refused_budget); quic_enabled_data_paths; quic_live_data_paths (a gauge of
-@@ -1626,7 +1626,7 @@ exposes (its module doc lists the few it does not):
-   configured bandwidth (recycle::CappedCubic; QuicRateLimit::without_loss_gate,
-   test-only, gives plain capped Cubic), 4 uni / 0 bidi streams and a
-   16 KiB receive window until a path takes data (a data path raises the
--  streams to 64 and its meter the windows), send window the floor (128 KiB,
-+  streams to 16, then toward 64 with load, and its meter the windows), send window the floor (128 KiB,
+@@ -1635,7 +1635,9 @@ exposes (its module doc lists the few it does not):
+   streams to 16, then toward 64 with load, and its meter the windows), send window the floor (128 KiB,
    64 KiB under 2 GiB), stream receive window 8 MiB, no unreliable datagrams, no
    spin bit, migration off, max_incoming 64, incoming buffers 64 KiB / 1 MiB,
-   no NEW_TOKEN tokens (Retry only), rustls ring, TLS 1.3, fixed ALPN, no SNI, no
-@@ -1670,7 +1670,19 @@ for jitter, AQM and shallow queues: each was tried and broke one of them.
- QUIC memory: every connection starts with a 16 KiB receive window and 4 uni
- streams (`config::INITIAL_RECEIVE_WINDOW_BYTES`, `INITIAL_UNI_STREAMS`): quinn
- cannot take a grant back. A path that takes data raises
--the streams to 64 at build and its meter raises the receive window to the
-+the streams to 16 at build (`config::DATA_START_UNI_STREAMS`, in tests and
-+simulations too), doubling toward 64 once the peer has had every stream busy
-+at once (holding a slot with its end not yet read; a stream whole and
-+waiting on this node's consumer is not busy) and as many again have
-+completed with no gap (a hole between received runs, or a first packet
-+read after a later one; a lost LAST packet leaves no hole and is not
-+counted), with none failing (any end but a completion, a reset by the
-+sender, the connection ending, or an end of this node's own doing: a
-+consumer that cancelled, or a consumer of new streams that is gone; through
-+the reader's `inbound::LimitTicket`), the connection not throttled and the buffer budget
-+charged at most 3/4 (`budget::QuicBudget::has_room`) at the completion that
-+would raise (`inbound::StreamLimit`, never lowered; a waiting one-packet
-+Short takes one off while it waits), and its meter raises the receive window to the
- floor (128 KiB, or 64 KiB under 2 GiB, `budget::floor_window_bytes`); the
- send window starts at the floor, and the stream receive window is the
- largest a connection grows to (`budget::MAX_WINDOW_BYTES`, 8 MiB); all are capped at
-@@ -2003,9 +2015,9 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
-   sent is NOT delivered. send_stream_chunks_bounded resets the stream if the
-   source fails or delivers a different length, and takes nothing before the
-   source's first chunk (no permit, no stream; a source that ends or fails first
--  opens no stream). quinn's MAX_UNI_STREAMS (64)
--  uni streams are the back-pressure (open_uni waits; quinn returns
--  credit only after more than an eighth of the limit is freed).
-+  opens no stream). The peer's current uni-stream limit (16 on a data path,
-+  rising to 64, MAX_UNI_STREAMS) is the back-pressure (open_uni waits; quinn
-+  returns credit only after more than an eighth of the limit is freed).
-   Slot reservation: send_stream_bounded / send_stream_chunks_bounded, and
-   send_short_bounded for a message past one packet (fits_one_packet), each
-   take one of the path's STREAMED_SEND_LIMIT semaphore permits before
-@@ -2049,8 +2061,27 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
-     the connection's shared flow control and send window (quinn-proto
-     write_limit).
-   → The division uses this node's MAX_UNI_STREAMS, not the limit the peer
--    advertised: a change to the limit needs a plan for peers still
--    advertising the old one.
-+    advertised (quinn 0.11.12 does not expose it). A data path's peer starts
-+    at DATA_START_UNI_STREAMS (16) and raises toward 64 only once its streams
-+    are all busy, so the sender keeps its 48 permits: capping it below the
-+    peer's limit would stop the raise. Until the peer has raised, the reserve
-+    does not hold: a send past the peer's limit, streamed, one-packet or
-+    control, waits in open_uni until its open deadline (2 s streamed, 1 s a
-+    one-packet Short) and ends NotOpened, which goes on UDP; it never ends
-+    MaybeDelivered, since nothing was written. Each is counted
-+    quic_data_event_stream_limit_full when its open deadline ends the wait
-+    (a se
+-  no NEW_TOKEN tokens (Retry only), rustls ring, TLS 1.3, fixed ALPN, no SNI, no
++  no NEW_TOKEN tokens (Retry only), rustls ring, TLS 1.3, one ALPN per attempt
++  (freenet-quic/1 for an upgrade, freenet-quic/2 for a native connection; see
++  "QUIC-native setup"), no SNI, no
+   resumption, no early data. Keys and seeds (reset key, token key, CID key,
+   quinn's rng_seed, initial destination CIDs): keys from the OS, seeds and
+   CIDs from GlobalRng (see below).
+@@ -1974,10 +1976,12 @@ no extra message, no exporter proof.
+     signature is checked with ring against the EXPECTED key. Anything else fails the handshake.
+   → Client: connect(addr, &expected_server_key) builds TLS pinned to it.
+   → Server: allow_peer(addr, &expected_client_key) puts the address on the
+-    allow-set AND records the key (QuicPeerPermit; a second key for an
+-    address already held is KeyConflict). accept() looks the key up by the
+-    attempt's (normalized) address and accepts with a per-attempt server
+-    config whose TLS is pinned to it (Incoming::accept_with); an attempt
++    allow-set AND records the key and the connection's kind (QuicPeerPermit;
++    a second key for an address already held, or the same key for the other
++    kind, upgrade or native, is KeyConflict). accept() looks the key and kind
++    up by the attempt's (normalized) address and accepts with a per-attempt
++    server config whose TLS is pinned to the key and offers that kind's one
++    ALPN (Incoming::accept_with); an attempt
+     with no recorded key is ignored. The endpoint's own server config
+     (needed so quinn passes Initials to accept) refuses every client.
+   → When the SERVER refuses the client, the client may see connect()
+@@ -2017,6 +2021,57 @@ refusal of a wrong server key, a wrong client key, a plain Ed25519 key on
+ either side, and a man in the middle with its own key on either leg.
+ ```
+ 
++#### QUIC-native setup (`quic/native/`, #5940 QUIC-native connect, A4)
++
++Built and tested, and unreachable by construction: `setup::connect_native`,
++`setup::accept_native` and the endpoint's native side (`native/endpoint.rs`:
++`allow_native_peer`, `dial_native`, `send_punch`) are
++`pub(in crate::transport::quic::native)`, and registering a native waiter is
++private to `setup`. Nothing outside `quic/native` can call them; A5 widens
++them in a visible diff. The connect op also gates on
++`operations::connect::native::NATIVE_DIAL_READY` (pinned false).
++
++```
++ALPN per attempt: an address allowed with allow_native_peer is accepted with
++  freenet-quic/2 only; every other address keeps freenet-quic/1. An address
++  is allowed for one kind at a time (KeyConflict for the other). dial_native
++  offers /2 only, with a 100 ms initial RTT (NATIVE_INITIAL_RTT).
++Router: an attempt from a native-allowed address goes only to
++  native::waiters (QuicUpgrades::dispatch), never to an upgrade session. The
++  only production registration is in accept_native. Handing an attempt over
++  marks the waiter busy until its InFlight guard drops; others are ignored.
++  An attempt without a Retry token gets a Retry first (one more round trip
++  in the window).
++Hello (native/hello.rs, frozen layout) is exchanged on one uni stream each
++  way (native/exchange.rs). A malformed one closes with HELLO_REFUSED; a
++  version this node cannot talk to closes with VERSION_INCOMPATIBLE and this
++  node's 8 version bytes as the reason (close_with_reason). Version rules
++  are the UDP handshake's (connection_handler::native_version).
++Punches (native/punch.rs): byte 0x03 + 8 GlobalRng bytes, sent on the
++  endpoint's socket with try_send (charged unpaced), at once and every
++  250 ms, at most 32 per setup (288 B). A client also sends at most 12
++  padded Initials (quinn sends two probes per timeout: 9 in 8 s and a
++  close; a Retry does not reset the probe count, so one more after a Retry,
++  11 of 12), so a client setup is charged 14688 B and a server
++  setup 288 B, before anything is sent. PunchBudget: 64 KiB per destination
++  per minute (an IPv4 address, or an IPv6 /64), and 1 MiB per minute for the
++  node (provisional); 4096 destinations remembered, and a new one replaces
++  the least recently charged only once that one has refilled (else
++  refused, PunchRefusal::Table), so forgetting never gives bytes back early.
++  The silent-peer test checks a client sends no more than it was charged.
++Setup (native/setup.rs): one window, 8 s cut to the caller's deadline, not
++  started with less than 4 s left; punching, the handshake and the Hello
++  exchange all inside it. The budget is charged after the checks that fail
++  without sending (window, key, waiter, allo
 ```
 
-**File**: `crates/core/src/transport/peer_connection/ack_policy_tests/quic_send.rs` (modified, +10/-5)
+**File**: `crates/core/src/contract/executor.rs` (modified, +8/-0)
 ```diff
-@@ -105,15 +105,18 @@ impl Rig {
-         self.ack(&[]).await;
+@@ -2809,6 +2809,14 @@ mod tests {
+                 "PACED_TAKE_BYTES",
+                 "egress-cap take per datagram (a rate charge), not memory",
+             ),
++            (
++                "PUNCH_BUDGET_BYTES",
++                "native punch egress allowance per destination per minute (bytes sent), not memory",
++            ),
++            (
++                "NODE_PUNCH_BUDGET_BYTES",
++                "native punch egress allowance per node per minute (bytes sent), not memory",
++            ),
+             ("BLOOM_BYTES", "fixed size of one bloom filter"),
+             (
+                 "CACHE_ENTRY_OVERHEAD_BYTES",
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_map.rs` (modified, +63/-14)
+```diff
+@@ -8,13 +8,15 @@
+ //! or remove a key also note it in the set: anything outside this module reads
+ //! the map through `Deref` (a shared `BTreeMap`) and changes an entry in place
+ //! through [`ConnectionMap::get_mut`] or [`ConnectionMap::iter_mut`], none of
+-//! which can add, remove or replace a key. A map that is dropped, including
+-//! one replaced or taken out of its field whole, closes its keys in the set.
+-//! The compiler enforces all of this, so no source scan has to.
++//! which can add, remove or replace a key. A map that is dropped closes its
++//! keys in the set. The compiler enforces all of this, so no source scan has
++//! to.
+ //!
+-//! What it does not cover: two live maps over one manager. Production builds
+-//! one; a second would share the set, and dropping it would close addresses
+-//! the first still holds.
++//! It holds for one live map per manager, which is what production builds.
++//! [`ConnectionMap::new`] debug-asserts the manager's set is empty. A second
++//! live map over the same manager would share the set, so replacing a map
++//! with a non-empty one, or dropping one while another holds the same
++//! addresses, would leave the set out of step with the live map.
+ 
+ use std::collections::BTreeMap;
+ use std::collections::btree_map;
+@@ -36,7 +38,13 @@ pub(super) struct ConnectionMap {
+ 
+ impl ConnectionMap {
+     /// An empty map whose keys `transports`' open-transport set mirrors.
++    /// The set must be empty: one live map per manager.
+     pub(super) fn new(transports: ConnectionManager) -> Self {
++        debug_assert_eq!(
++            transports.open_transport_count(),
++            0,
++            "a ConnectionMap over a manager whose open-transport set is not empty"
++        );
+         Self {
+             map: BTreeMap::new(),
+             transports: Some(transports),
+@@ -158,21 +166,62 @@ mod tests {
+         assert_eq!(manager.open_transport_addrs(), keys(&map));
      }
  
--    /// Fill every uni stream the peer allows with one it is still reading. The
--    /// next send on the path cannot open a stream.
-+    /// Fill every uni stream the peer allows with one it is still reading,
-+    /// whatever its limit now (`config::DATA_START_UNI_STREAMS` on a fresh
-+    /// data path). The next send on the path cannot open a stream.
-     fn hold_stream_credit(&self) -> impl Future<Output = Vec<quinn::SendStream>> + use<> {
-         let connection = self.route.path().connection().inner().clone();
-         let time = self.path.time.clone();
-         async move {
-+            // Let the peer's limit reach this side.
-+            time.sleep(Duration::from_millis(50)).await;
-             let mut held = Vec::new();
--            for _ in 0..MAX_UNI_STREAMS {
--                let mut stream = connection.open_uni().await.expect("open");
-+            while let Some(stream) = futures::FutureExt::now_or_never(connection.open_uni()) {
-+                let mut stream = stream.expect("open");
-                 let header =
-                     FrameHeader::stream(StreamId::next(), 1000, 0).expect("a valid header");
-                 stream.write_all(&header.encode()).await.expect("header");
-@@ -923,7 +926,8 @@ fn a_busy_relay_whose_transfers_are_acknowledged_keeps_its_path() {
- fn permits_held_with_nothing_acknowledged_close_the_path() {
-     run(
-         "quic-send-held-permits",
--        QuicPathLimits::DEFAULT,
-+        // Every permit held needs a peer at the full stream limit.
-+        QuicPathLimits::FULL_STREAMS,
-         |mut rig| async move {
-             let silenced = DropFrom::new("quic-send-held-permits", &[rig.path.peer_addr()]);
-             for _ in 0..STREAMED_SEND_LIMIT {
-@@ -1443,6 +1447,7 @@ fn quic_source_on_path(total: usize, rtt: Duration) -> StreamHandle {
-         .set_path(QuicSourcePath {
-             rtt: Arc::new(PathRtt::new(rtt)),
-             idle: Duration::from_secs(30),
-+            throttle: None,
-         });
-     handle
+-    /// A map replaced or taken out of its place whole closes its addresses,
+-    /// so the set holds the keys of the map that replaced it.
++    /// A dropped map closes its addresses, after which the manager can take
++    /// a new map.
+     #[tokio::test]
+-    async fn a_replaced_map_closes_its_addresses() {
++    async fn a_dropped_map_closes_its_addresses() {
+         let manager = ConnectionManager::test_default();
+         let mut map = ConnectionMap::new(manager.clone());
+         map.insert(addr(1), entry(1));
+         map.insert(addr(2), entry(2));
+-        map = ConnectionMap::new(manager.clone());
++        drop(map);
+         assert!(manager.open_transport_addrs().is_empty());
++        let mut map = ConnectionMap::new(manager.clone());
+         map.insert(addr(3), entry(3));
+-        let taken = std::mem::replace(&mut map, ConnectionMap::new(manager.clone()));
+-        assert_eq!(keys(&taken), BTreeSet::from([addr(3)]));
+-        drop(taken);
+         assert_eq!(manager.open_transport_addrs(), keys(&map));
+-        assert!(manager.open_transport_addrs().is_empty());
++    }
++
++    /// A map replaced whole, by assignment or taken out with `mem::replace`,
++    /// closes its addresses in its own manager's set once it is dropped, and
++    /// the map that replaced it is mirrored in its manager.
++    #[tokio::test]
++    async fn a_replaced_map_closes_its_addresses_in_its_own_manager() {
++        let (first, second, third) = (
++            ConnectionManager::test_default(),
++            ConnectionManager::test_default(),
++            ConnectionManager::test_default(),
++        );
++        let mut map = ConnectionMap::new(first.clone());
++        map.insert(addr(1), entry(1));
++        map.insert(addr(2), entry(2));
++        let taken = std::mem::replace(&mut map, ConnectionMap::new(second.clone()));
++        assert_eq!(
++            first.open_transport_addrs(),
++            keys(&taken),
++            "held while alive"
++        );
++        drop(taken);
++        assert!(first.open_transport_addrs().is_empty());
++        map.insert(addr(3), entry(3));
++        assert_eq!(second.open_transport_addrs(), keys(&map));
++        map = ConnectionMap::new(third.clone());
++        assert!(
++            second.open_transport_addrs().is_empty(),
++            "assignment drops the old map"
++        );
++        map.insert(addr(4), entry(4));
++        assert_eq!(third.open_transport_addrs(), keys(&map));
++    }
++
++    /// A second map over a manager that already has open transports is
++    /// refused in debug builds: one live map per manager.
++    #[cfg(debug_assertions)]
++    #[tokio::test]
++    #[should_panic(expected = "open-transport set is not empty")]
++    async fn a_second_live_map_over_one_manager_is_refused() {
++        let manager = ConnectionManager::test_default();
++        let mut map = ConnectionMap::new(manager.clone());
++        map.insert(addr(1), entry(1));
++        let _second = ConnectionMap::new(manager.clone());
+     }
  }
 ```
 
-**File**: `crates/core/src/transport/peer_connection/outbound_stream.rs` (modified, +1/-0)
+**File**: `crates/core/src/ring/connection_manager.rs` (modified, +5/-0)
 ```diff
-@@ -3331,6 +3331,7 @@ mod tests {
-             .set_path(QuicSourcePath {
-                 rtt: Arc::new(PathRtt::new(Duration::from_millis(800))),
-                 idle: Duration::from_secs(30),
-+                throttle: None,
-             });
-         assert!(source.fragment_gap_limit() > Duration::from_secs(6));
-         let pipe_task = GlobalExecutor::spawn(pipe_stream(
+@@ -2021,6 +2021,11 @@ impl ConnectionManager {
+         self.open_transports.remove(&addr);
+     }
+ 
++    /// How many addresses the open-transport set holds.
++    pub(crate) fn open_transport_count(&self) -> usize {
++        self.open_transports.len()
++    }
++
+     /// Whether the bridge holds an open transport to `addr`.
+     pub(crate) fn has_open_transport(&self, addr: SocketAddr) -> bool {
+         self.open_transports.contains(&addr)
 ```
 
-**File**: `crates/core/src/transport/peer_connection/streaming.rs` (modified, +95/-1)
+**File**: `crates/core/src/transport/connection_handler.rs` (modified, +138/-0)
 ```diff
-@@ -140,11 +140,27 @@ impl PathRtt {
+@@ -30,6 +30,144 @@ use tracing::{Instrument, span};
+ use version_cmp::PROTOC_VERSION;
+ pub(crate) use version_cmp::{OWN_FLOOR, OWN_VERSION};
+ 
++/// The UDP handshake's version rules, for the `Hello` of a native QUIC
++/// connection (#5940, design 2.1), so both paths read a peer's version the
++/// same way.
++pub(crate) mod native_version {
++    use super::version_cmp::{
++        PROTOC_VERSION, is_compatible, parse_version_bytes, remote_requires_newer_than_us,
++    };
++
++    /// This build's 8 version bytes, as the UDP handshake sends them.
++    pub(crate) const OWN: [u8; 8] = PROTOC_VERSION;
++
++    /// Check a peer's version bytes as the UDP handshake checks an intro's:
++    /// the version is reported (`report_peer_version`) either way, and a peer
++    /// whose floor is above this build asks for an urgent update
++    /// ([`needs_urgent_update`]). `Err` names why the two cannot talk.
++    pub(crate) fn check(remote: &[u8; 8]) -> Result<(u8, u8, u16), String> {
++        check_then(remote, crate::transport::signal_urgent_update)
++    }
++
++    /// [`check`] with the urgent-update signal as `urgent`, so a test can see
++    /// it fire without latching the process-wide flag.
++    fn check_then(remote: &[u8; 8], urgent: impl FnOnce()) -> Result<(u8, u8, u16), String> {
++        match is_compatible(&OWN, remote) {
++            Ok(info) => {
++                crate::transport::report_peer_version(info.version);
++                Ok(info.version)
++            }
++            Err(reason) => {
++                crate::transport::report_peer_version(parse_version_bytes(remote).version);
++                if needs_urgent_update(remote) {
++                    urgent();
++                }
++                Err(reason)
++            }
++        }
++    }
++
++    /// Whether a peer's version bytes say this build must update: the peer's
++    /// floor is above this build.
++    pub(crate) fn needs_urgent_update(remote: &[u8; 8]) -> bool {
++        remote_requires_newer_than_us(&OWN, remote)
++    }
++
++    /// A peer closed with `VERSION_INCOMPATIBLE`, its version bytes as the
++    /// reason; sets the version-mismatch signal when
++    /// [`rejection_signals_mismatch`] says so.
++    pub(crate) fn rejected_by(peer_version: &[u8], peer_is_gateway: bool) {
++        rejected_by_then(
++            peer_version,
++            peer_is_gateway,
++            crate::transport::signal_version_mismatch,
++        );
++    }
++
++    /// [`rejected_by`] with the mismatch signal as `mismatch`, so a test can
++    /// see it fire without latching the process-wide flag.
++    fn rejected_by_then(peer_version: &[u8], peer_is_gateway: bool, mismatch: impl FnOnce()) {
++        if rejection_signals_mismatch(peer_version, peer_is_gateway) {
++            mismatch();
++        }
++    }
++
++    /// As for a gateway's version-mismatch ack on UDP, only a gateway's
++    /// rejection counts, only when its floor is above this build, and only
++    /// with a reason of exactly 8 bytes.
++    pub(crate) fn rejection_signals_mismatch(peer_version: &[u8], peer_is_gateway: bool) -> bool {
++        let Ok(bytes) = <[u8; 8]>::try_from(peer_version) else {
++            return false;
++        };
++        peer_is_gateway && remote_requires_newer_than_us(&OWN, &bytes)
++    }
++
++    #[cfg(test)]
++    mod tests {
++        use super::super::version_cmp::OWN_VERSION;
++        use super::*;
++
++        /// Version bytes in format 1 for this build's major.minor, with
++        /// `patch` and a floor of `floor`.
++        fn same_series(patch: u16, floor: u16) -> [u8; 8] {
++            let (major, minor, _) = OWN_VERSION;
++            let [p_hi, p_lo] = patch.to_be_bytes();
++            let [f_hi, f_lo] = floor.to_be_bytes();
++            [0xFF, major, minor, p_hi, p_lo, f_hi, f_lo, 1]
++        }
++
++        /// A peer whose floor is above this build.
++        fn requires_newer() -> [u8; 8] {
++            let own = OWN_VERSION.2;
++            let newer = same_series(own + 2, own + 1);
++            assert!(remote_requires_newer_than_us(&OWN, &newer), "premise");
++            newer
++        }
++
++        /// Only a gateway's rejection whose floor is above this build sets
++        /// the mismatch signal; an ordinary peer's, a gateway at this build's
++        /// version, and a reason that is not 8 bytes do not.
++        #[test]
++        fn only_a_gateway_requiring_a_newer_build_signals_a_mismatch() {
++            let newer = requires_newer();
++            assert!(rejection_signals_mismatch(&newer, true));
++            assert!(!rejection_signals_mismatch(&newer, false));
++            assert!(!rejection_signals_mismatch(&OWN, true));
++            assert!(!rejection_signals_mismatch(&newer[..7], true));
++            let mut long = newer.to_vec();
++            long.push(0);
++            assert!(!rejection_signals_mismatch(&long, true));
++            // And the signal is really sent, and only then; through a counter,
++            // so no process-wide flag is latched for other tests.
++            for
+```
+
+**File**: `crates/core/src/transport/quic.rs` (modified, +49/-10)
+```diff
+@@ -230,6 +230,9 @@ pub(crate) struct EndpointCore {
+     sources: Arc<dyn QuicSources>,
+     /// The transport settings of every connection (`config::transport_config`).
+     transport: Arc<quinn::TransportConfig>,
++    /// The transport settings of a native client
++    /// (`config::native_client_transport_config`).
++    native_transport: Arc<quinn::TransportConfig>,
+     /// The server settings every accepted connection starts from
+     /// (`config::server_config`), with TLS that refuses every client: each
+     /// accepted attempt replaces the TLS with one pinned to the client it
+@@ -286,6 +289,10 @@ struct ExpectedClients {
+ 
+ struct ExpectedEntry {
+     key: PeerKey,
++    /// The one ALPN an attempt from the address is accepted with: native
++    /// only for an address allowed by `QuicEndpoint::allow_native_peer`
++    /// (`native::endpoint`).
++    alpn: config::Alpn,
+     permits: usize,
+     holds: usize,
+ }
+@@ -301,14 +308,15 @@ impl ExpectedClients {
+             .map(|entry| entry.key.clone())
+     }
+ 
+-    /// The key `addr` was allowed with and a hold on it, in one step, if a
+-    /// permit for it is alive.
+-    fn hold(self: &Arc<Self>, addr: SocketAddr) -> Option<(PeerKey, KeyHold)> {
++    /// The key and ALPN `addr` was allowed with and a hold on it, in one
++    /// step, if a permit for it is alive.
++    fn hold(self: &Arc<Self>, addr: SocketAddr) -> Option<(PeerKey, config::Alpn, KeyHold)> {
+         let mut by_addr = self.by_addr.lock();
+         let entry = by_addr.get_mut(&addr).filter(|entry| entry.permits > 0)?;
+         entry.holds += 1;
+         Some((
+             entry.key.clone(),
++            entry.alpn,
+             KeyHold {
+                 expected: self.clone(),
+                 addr,
+@@ -376,10 +384,12 @@ pub(crate) enum QuicAllowError {
+     /// The demux socket's allow-set is full.
+     #[error("the QUIC allow-set is full")]
+     AllowSetFull,
+-    /// The address is already bound to another key: a permit for it, or an
+-    /// attempt or connection authenticated against it, is alive. The earlier
+-    /// key wins until all of those are gone, so an address cannot be moved to
+-    /// a new key while anything for the old one is using it.
++    /// The address is already bound to another key, or to the same key for
++    /// the other kind of connection (an upgrade or a native one): a permit
++    /// for it, or an attempt or connection authenticated against it, is
++    /// alive. The earlier binding wins until all of those are gone, so an
++    /// address cannot be moved to a new key or kind while anything for the
++    /// old one is using it.
+     #[error("the address is already allowed for another key")]
+     KeyConflict,
+     #[error(transparent)]
+@@ -390,6 +400,8 @@ pub(crate) enum QuicAllowError {
+ trait QuicSources: Send + Sync {
+     fn allow(&self, addr: SocketAddr) -> Option<QuicSourcePermit>;
+     fn allow_existing(&self, addr: SocketAddr) -> Option<QuicSourcePermit>;
++    /// Send one datagram outside quinn, without waiting (a native punch).
++    fn try_send(&self, datagram: &[u8], to: SocketAddr) -> io::Result<usize>;
  }
  
- /// What the reader of a QUIC-fed stream tells its consumers: its path's
--/// round trip and its own idle limit, from which they take their gap.
-+/// round trip and its own idle limit, from which they take their gap, and
-+/// whether the node's buffer budget is throttling the path now.
- #[derive(Debug)]
- pub(crate) struct QuicSourcePath {
-     pub(crate) rtt: Arc<PathRtt>,
-     pub(crate) idle: std::time::Duration,
-+    pub(crate) throttle: Option<ThrottleProbe>,
+ impl<S: Socket> QuicSources for DemuxSocket<S> {
+@@ -400,6 +412,10 @@ impl<S: Socket> QuicSources for DemuxSocket<S> {
+     fn allow_existing(&self, addr: SocketAddr) -> Option<QuicSourcePermit> {
+         self.allow_existing_quic_source(addr)
+     }
++
++    fn try_send(&self, datagram: &[u8], to: SocketAddr) -> io::Result<usize> {
++        Socket::try_send_to(self, datagram, to)
++    }
+ }
+ 
+ impl std::fmt::Debug for QuicEndpoint {
+@@ -571,6 +587,7 @@ impl QuicEndpoint {
+         let refusing = identity.refusing_server_tls().map_err(|e| invalid(&e))?;
+         let sources: Arc<dyn QuicSources> = socket.clone();
+         let transport = Arc::new(config::transport_config(settings, &time));
++        let native_transport = Arc::new(config::native_client_transport_config(settings, &time));
+         let clock = config::system_clock(time.clone());
+         let server = Arc::new(config::server_config(
+             Arc::new(refusing),
+@@ -635,6 +652,7 @@ impl QuicEndpoint {
+                 endpoint,
+                 sources,
+                 transport,
++                native_transport,
+                 server,
+                 identity,
+                 expected_clients: Arc::new(ExpectedClients::default()),
+@@ -803,6 +821,17 @@ impl QuicEndpoint {
+         &self,
+         addr: SocketAddr,
+         expected: &TransportPublicKey,
++    ) -> Result<QuicPeerPermit, QuicAllowError> {
++        self.allow_peer_for(addr, expected, config::Alpn::Upgrade)
++    }
++
++    /// [`Self::allow_peer`] with the one ALPN an attempt from `addr` is
++    /// accepted with (`native::endpoint` allows a native peer through it).
++    fn allow_peer_for(
++        &self,
++        addr: SocketAddr,
++        expected: &TransportPublicKey,
++        alpn: config::Alpn,
+     ) -> Result<QuicPeerPermit, QuicAllowError> {
+         let key = PeerKey::of(expected)?;
+         let source 
+```
+
+**File**: `crates/core/src/transport/quic/config.rs` (modified, +79/-11)
+```diff
+@@ -61,6 +61,38 @@ pub(crate) const QUIC_VERSION: u32 = 1;
+ /// fails the handshake.
+ pub(crate) const ALPN: &[u8] = b"freenet-quic/1";
+ 
++/// The ALPN protocol of a native connection (#5940): one set up without a UDP
++/// session, which begins with the Hello exchange (`native::exchange`). Only
++/// an attempt the endpoint was told to expect as native offers it, and such
++/// an attempt offers nothing else.
++pub(crate) const NATIVE_ALPN: &[u8] = b"freenet-quic/2";
++
++/// Which kind of connection an attempt makes, and so the one ALPN protocol
++/// its TLS offers on either side.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub(crate) enum Alpn {
++    /// An upgrade of a UDP session ([`ALPN`]).
++    Upgrade,
++    /// A native connection ([`NATIVE_ALPN`]).
++    Native,
 +}
 +
-+/// Whether the node's buffer budget is holding a QUIC path below what it
-+/// needs now (`quic::budget::ConnMeter::throttled_since`). A consumer does
-+/// not give up on a gap while it does: the slowdown is this node's own, and
-+/// the reader, which ends the stream with a reason if the peer is the one
-+/// idle, decides instead.
-+#[derive(Clone)]
-+pub(crate) struct ThrottleProbe(pub(crate) Arc<dyn Fn() -> bool + Send + Sync>);
-+
-+impl std::fmt::Debug for ThrottleProbe {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        f.write_str("ThrottleProbe")
-+    }
- }
- 
- /// The source of a QUIC-fed stream, shared by every clone and fork of its
-@@ -178,6 +194,14 @@ impl QuicSource {
-             quic_fragment_gap(path.rtt.get(), path.idle)
-         })
-     }
-+
-+    /// The buffer budget is throttling the stream's path now.
-+    fn throttled(&self) -> bool {
-+        self.path
-+            .get()
-+            .and_then(|path| path.throttle.as_ref())
-+            .is_some_and(|probe| (probe.0)())
-+    }
- }
- 
- /// Allowance for the envelope around the largest payloads in
-@@ -411,6 +435,13 @@ impl StreamHandle {
-         self.quic.as_ref()
-     }
- 
-+    /// Whether the node's buffer budget throttles this stream's QUIC path
-+    /// now, as a consumer reads it. Tests only.
-+    #[cfg(test)]
-+    pub(crate) fn quic_path_throttled(&self) -> bool {
-+        self.quic.as_ref().is_some_and(|quic| quic.throttled())
-+    }
-+
-     /// Record that the reader of a QUIC-fed stream stopped before the stream
-     /// completed, and wake every waiter, forks included. The first reason
-     /// stays. No-op on a UDP-fed stream.
-@@ -774,6 +805,14 @@ impl StreamHandle {
-                     if let Some(data) = self.buffer.assemble() {
-                         return Ok(data);
-                     }
-+                    // A QUIC-fed stream whose path the node's own budget is
-+                    // throttling waits another gap: its reader pauses its
-+                    // idle timer for the same throttle, and records an end
-+                    // (waking this listener) if the peer is idle or the
-+                    // stream reaches its age limit.
-+                    if self.quic.as_ref().is_some_and(|quic| quic.throttled()) {
-+                        continue;
-+                    }
-                     tracing::warn!(
-                         stream_id = %self.stream_id.0,
-                         total_bytes = self.total_bytes,
-@@ -2044,6 +2083,59 @@ mod tests {
-         assert_eq!(b.unwrap().len(), total as usize);
-     }
- 
-+    /// A consumer of a QUIC-fed stream does not give up on a gap while the
-+    /// node's buffer budget throttles the stream's path: with the throttle
-+    /// on through a 20 s gap (four times the 5 s gap) it assembles; with it
-+    /// off it times out at the gap.
-+    #[tokio::test(start_paused = true)]
-+    async fn a_quic_consumer_waits_out_a_gap_while_its_path_is_throttled() {
-+        use super::super::streaming_buffer::FRAGMENT_PAYLOAD_SIZE;
-+        use std::sync::atomic::{AtomicBool, Ordering};
-+        use std::time::Duration;
-+
-+        for throttled in [true, false] {
-+            let total = (FRAGMENT_PAYLOAD_SIZE * 2) as u64;
-+            let on = Arc::new(AtomicBool::new(throttled));
-+            let probe = on.clone();
-+            let handle = StreamHandle::new_quic(make_stream_id(), total);
-+            handle
-+                .quic_source()
-+                .expect("QUIC-fed")
-+                .set_path(QuicSourcePath {
-+                    rtt: Arc::new(PathRtt::new(Duration::from_millis(10))),
-+                    idle: Duration::from_secs(30),
-+                    throttle: Some(ThrottleProbe(Arc::new(move || {
-+                        probe.load(Ordering::Relaxed)
-+                    }))),
-+                });
-+            assert_eq!(handle.fragment_gap_limit(), STREAM_INACTIVITY_TIMEOUT);
-+            let consumer = {
-+                let handle = handle.clone();
-+                tokio::spawn(async move { handle.assemble().await })
-+            };
-+            handle
-+                .push_fragment(1, Bytes::from(vec![1u8; FRAGMENT_PAYLOAD_SIZE]))
-+                .unwrap();
-+            tokio::time::sleep(Duration::from_secs(20)).await;
-+            on.store(false, Ordering::Relaxed);
-+            // Pushed only if the consumer is still waiting.
-+            if !consumer.is_finished() {
-+                handle
-+                    .push_fragm
-```
-
-**File**: `crates/core/src/transport/quic/budget.rs` (modified, +71/-0)
-```diff
-@@ -137,6 +137,11 @@ pub(crate) const WAITING_SHORT_BYTES: u64 = 1280;
- /// and the ramp gate needs them near zero at 5%).
- pub(crate) const STAGING_CREDIT_MULTIPLE: u64 = 2;
- 
-+/// The share of the budget, as (numerator, denominator), that may be
-+/// charged when a data path's stream limit is raised: a raise is new load
-+/// the node takes on, so it waits while the budget is mostly spent.
-+pub(crate) const ROOM_FOR_A_STREAM_RAISE: (u64, u64) = (3, 4);
-+
- /// A connection is window-limited when its contiguous delivery reached this
- /// share of a window per round trip.
- pub(crate) const LIMITED_PERCENT: u64 = 75;
-@@ -389,6 +394,11 @@ impl ConnState {
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- pub(crate) struct Evaluation {
-     pub(crate) limited: bool,
-+    /// The budget held the connection below what it needed: a grow it
-+    /// needed was refused or cut short, or another path's growth shrank it.
-+    /// The budget cannot tell why it was needed: a peer sending flat out
-+    /// into the window it was given makes its own connection throttled.
-+    pub(crate) throttled: bool,
-     pub(crate) recv_window: u64,
-     pub(crate) send_window: u64,
- }
-@@ -409,6 +419,15 @@ impl QuicBudget {
-         self.total
-     }
- 
-+    /// The budget is charged at most three quarters
-+    /// ([`ROOM_FOR_A_STREAM_RAISE`]): a data path's stream limit may be
-+    /// raised (`path::inbound::StreamLimit`).
-+    pub(crate) fn has_room(&self) -> bool {
-+        let charged = self.state.lock().charged;
-+        charged.saturating_mul(ROOM_FOR_A_STREAM_RAISE.1)
-+            <= self.total.saturating_mul(ROOM_FOR_A_STREAM_RAISE.0)
-+    }
-+
-     /// Register a data path's connection at the floor windows, which are set
-     /// on it. The connection must not already have a larger receive window:
-     /// lowering it here would leave quinn a debt the meter does not mirror
-@@ -462,6 +481,8 @@ impl QuicBudget {
-             evaluated_at: AtomicU64::new(now),
-             interval: AtomicU64::new(nanos(MIN_EVALUATION_INTERVAL)),
-             wake: tokio::sync::Notify::new(),
-+            throttled_until: AtomicU64::new(0),
-+            throttle_began: AtomicU64::new(0),
-         }
-     }
- 
-@@ -478,6 +499,12 @@ impl QuicBudget {
-             .sum()
-     }
- 
-+    /// Connections registered and not yet dropped. Tests only.
-+    #[cfg(test)]
-+    pub(crate) fn connections(&self) -> usize {
-+        self.state.lock().conns.len()
-+    }
-+
-     /// The running total. Tests only.
-     #[cfg(test)]
-     pub(crate) fn running_total(&self) -> u64 {
-@@ -548,6 +575,7 @@ impl QuicBudget {
-         let state = &mut *guard;
-         let mut changes = Changes::default();
-         let send_target = cwnd.saturating_mul(2).clamp(self.floor, MAX_WINDOW_BYTES);
-+        let mut throttled = false;
-         let (limited, send_wants) = {
-             let conn = state.conns.get_mut(&id)?;
-             // Reads made before any change this evaluation makes, so they paid
-@@ -560,6 +588,7 @@ impl QuicBudget {
-                 if recv < conn.recv_window {
-                     conn.set_recv(recv, &mut changes);
-                     self.node.record_window_change(WindowChange::Shrank);
-+                    throttled = true;
-                 }
-                 if send < conn.send_window {
-                     conn.set_send(send, &mut changes);
-@@ -631,6 +660,7 @@ impl QuicBudget {
-                     .min(share)
-                     .saturating_sub(allowed);
-             }
-+            throttled |= window < target;
-         } else if conn.recv_window > self.floor
-             && now.saturating_sub(conn.active_at) >= nanos(IDLE_DECAY)
-         {
-@@ -663,6 +693,7 @@ impl QuicBudget {
-         }
-         let result = Evaluation {
-             limited,
-+            throttled,
-             recv_window: conn.recv_window,
-             send_window: conn.send_window,
-         };
-@@ -835,6 +866,11 @@ pub(crate) struct ConnMeter {
-     /// Woken by sends, so a path that only sends still has its send window
-     /// evaluated ([`Self::send_progress`]).
-     wake: tokio::sync::Notify,
-+    /// Until when the connection counts as throttled, in nanoseconds
-+    /// ([`Self::throttled_since`]).
-+    throttled_until: AtomicU64,
-+    /// When the current throttle began.
-+    throttle_began: AtomicU64,
- }
- 
- impl ConnMeter {
-@@ -890,6 +926,17 @@ impl ConnMeter {
-             self.control.congestion_window(),
-             now,
-         )?;
-+        if result.throttled {
-+            if self.throttled_until.load(Ordering::Relaxed) <= now {
-+                self.throttle_began.store(now, Ordering::Relaxed);
-+            }
-+            let hold = self
-+                .interval
-+                .load(Ordering::Relaxed)
-+                .max(nanos(GROWING_FOR));
-+            self.throttled_until
-+                .store(now.saturating_add(hold), Ordering::Relaxed);
++impl Alpn {
++    /// The protocol identifier offered in TLS.
++    pub(crate) fn protocol(self) -> &'static [u8] {
++        match self {
++            Alpn::Upgrade => ALPN,
++            Alpn::Native => NATIVE_ALPN,
 +        }
-         // After the budget's lock is released, in the order decided.
-         if let Some(window) = changes.recv 
++    }
++}
++
++/// The initial RTT estimate of a native client. A native dial has an 8 s
++/// window for the handshake and the Hello exchange, so the client
++/// retransmits a lost Initial after about 300 ms rather than about a second
++/// at quinn's estimate here (333 ms).
++pub(crate) const NATIVE_INITIAL_RTT: Duration = Duration::from_millis(100);
++
+ /// The server name quinn requires for a connection attempt. With SNI off it
+ /// is never sent; peers are identified by their raw public keys.
+ pub(crate) const SERVER_NAME: &str = "freenet";
+@@ -647,14 +679,27 @@ pub(crate) fn endpoint_config_with_cid_key(cid_key: [u8; 32]) -> std::io::Result
+         // Must stay false: a cleared fixed bit could make a short-header
+         // packet start with 0x01 or 0x02, which the demux reads as a UDP
+         // transport packet, or 0x03, which it drops as a native punch
+-        // (demux::PUNCH_FIRST_BYTE) (RFC 9287; transport::demux). Every
+-        // endpoint, native connections included, is built from this config.
++        // (demux::PUNCH_FIRST_BYTE) (RFC 9287; transport::demux). A native
++        // connection must run on an endpoint built from this config (today
++        // it uses the node's one endpoint, built here); a separate native
++        // endpoint must keep greasing off too.
+         .grease_quic_bit(false)
+         .min_reset_interval(Duration::from_millis(20))
+         .rng_seed(Some(seed));
+     Ok(config)
+ }
+ 
++/// [`transport_config`] for a native client: the same, with
++/// [`NATIVE_INITIAL_RTT`].
++pub(crate) fn native_client_transport_config<T: TimeSource>(
++    settings: &QuicSettings,
++    time: &T,
++) -> TransportConfig {
++    let mut config = transport_config(settings, time);
++    config.initial_rtt(NATIVE_INITIAL_RTT);
++    config
++}
++
+ /// The transport configuration shared by both directions of a connection.
+ /// `time` decides the keepalive and the idle timeout, as for the UDP
+ /// transport: no keepalive and a long idle timeout where the time source
+@@ -777,31 +822,43 @@ fn provider() -> Arc<rustls::crypto::CryptoProvider> {
+ }
+ 
+ /// The TLS server configuration: TLS 1.3 only with the ring provider, the
+-/// raw public key in `key`, peers checked by `verifier`, the fixed ALPN, and
++/// raw public key in `key`, peers checked by `verifier`, the one ALPN of
++/// `alpn`, and
+ /// no session resumption, tickets or early data. `identity` builds the key
+ /// and the verifiers.
+ pub(crate) fn tls_server_config(
+     key: Arc<rustls::sign::CertifiedKey>,
+     verifier: Arc<dyn rustls::server::danger::ClientCertVerifier>,
++    alpn: Alpn,
+ ) -> Result<quinn::crypto::rustls::QuicServerConfig, TlsConfigError> {
+-    let config = rustls_server_config(key, verifier)?;
++    let config = rustls_server_config_for(key, verifier, alpn)?;
+     Ok(quinn::crypto::rustls::QuicServerConfig::try_from(
+         Arc::new(config),
+     )?)
+ }
+ 
+-/// The rustls half of [`tls_server_config`].
++/// The rustls half of [`tls_server_config`] for an upgrade.
++#[cfg(test)]
+ pub(crate) fn rustls_server_config(
+     key: Arc<rustls::sign::CertifiedKey>,
+     verifier: Arc<dyn rustls::server::danger::ClientCertVerifier>,
++) -> Result<rustls::ServerConfig, rustls::Error> {
++    rustls_server_config_for(key, verifier, Alpn::Upgrade)
++}
++
++/// The rustls half of [`tls_server_config`], offering `alpn` only.
++pub(crate) fn rustls_server_config_for(
++    key: Arc<rustls::sign::CertifiedKey>,
++    verifier: Arc<dyn rustls::server::danger::ClientCertVerifier>,
++    alpn: Alpn,
+ ) -> Result<rustls::ServerConfig, rustls::Error> {
+     let mut config = rustls::ServerConfig::builder_with_provider(provider())
+         .with_protocol_versions(&[&rustls::version::TLS13])?
+         .with_client_cert_verifier(verifier)
+         .with_cert_resolver(Arc::new(
+             rustls::server::AlwaysResolvesServerRawPublicKeys::new(key),
+         ));
+-    config.alpn_protocols = vec![ALPN.to_vec()];
++    config.alpn_protocols = vec![alpn.protocol().to_vec()]
 ```
 
-**File**: `crates/core/src/transport/quic/budget/tests.rs` (modified, +77/-0)
+**File**: `crates/core/src/transport/quic/identity.rs` (modified, +35/-4)
 ```diff
-@@ -671,6 +671,55 @@ fn concurrent_evaluations_stay_within_the_budget() {
+@@ -39,7 +39,7 @@ use rustls::{
+ };
+ use subtle::ConstantTimeEq;
+ 
+-use super::config::{self, TlsConfigError};
++use super::config::{self, Alpn, TlsConfigError};
+ use crate::transport::crypto::{TransportKeypair, TransportPublicKey};
+ 
+ /// DER prefix of an Ed25519 SubjectPublicKeyInfo (RFC 8410); the 32-byte
+@@ -284,15 +284,42 @@ impl QuicIdentity {
+         &self,
+         server: &PeerKey,
+     ) -> Result<quinn::crypto::rustls::QuicClientConfig, TlsConfigError> {
+-        config::tls_client_config(self.certified_key(), Arc::new(PinnedServerKey::new(server)))
++        self.client_tls_for(server, Alpn::Upgrade)
++    }
++
++    /// [`Self::client_tls`] offering `alpn`.
++    pub(crate) fn client_tls_for(
++        &self,
++        server: &PeerKey,
++        alpn: Alpn,
++    ) -> Result<quinn::crypto::rustls::QuicClientConfig, TlsConfigError> {
++        config::tls_client_config(
++            self.certified_key(),
++            Arc::new(PinnedServerKey::new(server)),
++            alpn,
++        )
+     }
+ 
+     /// TLS for accepting a connection from the holder of `client`.
++    #[cfg(test)]
+     pub(crate) fn server_tls(
+         &self,
+         client: &PeerKey,
+     ) -> Result<quinn::crypto::rustls::QuicServerConfig, TlsConfigError> {
+-        config::tls_server_config(self.certified_key(), Arc::new(PinnedClientKey::new(client)))
++        self.server_tls_for(client, Alpn::Upgrade)
++    }
++
++    /// [`Self::server_tls`] offering `alpn`.
++    pub(crate) fn server_tls_for(
++        &self,
++        client: &PeerKey,
++        alpn: Alpn,
++    ) -> Result<quinn::crypto::rustls::QuicServerConfig, TlsConfigError> {
++        config::tls_server_config(
++            self.certified_key(),
++            Arc::new(PinnedClientKey::new(client)),
++            alpn,
++        )
+     }
+ 
+     /// TLS that completes no handshake: the endpoint's default server
+@@ -301,7 +328,11 @@ impl QuicIdentity {
+     pub(crate) fn refusing_server_tls(
+         &self,
+     ) -> Result<quinn::crypto::rustls::QuicServerConfig, TlsConfigError> {
+-        config::tls_server_config(self.certified_key(), Arc::new(RefuseEveryClient))
++        config::tls_server_config(
++            self.certified_key(),
++            Arc::new(RefuseEveryClient),
++            Alpn::Upgrade,
++        )
+     }
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `dbdaf790` (2026-11-13)
+**Commit Message**: feat(transport): judge QUIC path liveness per connection, with a 2 h stream total and a dark-episode counter (#6202)
+
+**File**: `.claude/rules/transport.md` (modified, +204/-9)
+```diff
+@@ -1490,6 +1490,22 @@ a test passes its own; tests read their own, never the global).
+   level in the period, and the highest count a reset in the period took a path
+   to). They are for the fixed charge, which takes quinn's stopped map at
+   SEND_ABORT_LIMIT x QUIC_STOPPED_ENTRY_BYTES until field data justifies less.
++  quic_dark_episode_<recovered_lt_5s|lt_10s|lt_30s|lt_120s|recovered_ge_120s|
++  unrecovered|cap_held|closed_at_window>: dark episodes (recycle::AckWatch:
++  packets outstanding, nothing acknowledged, nothing heard) by how they ended;
++  read at the watch's 2 s samples, so none recovers in under 2 s, and
++  `cap_held` is an episode ended by the egress cap holding this side's sends
++  (the watch cannot tell then whether the peer is dark). The
++  dark-path rule closes only a path that carries data (QuicPath::enable_data);
++  on every other path (all of them while QUIC_DATA_PERCENT is 0) it only
++  counts, so the field shows how long real dark spells last. A spell is read
++  up to when the peer is next heard from, which waits for quinn's backed-off
++  probes after the outage ends, so it reads longer than the outage (in
++  a_path_without_data_is_not_closed_by_a_dark_spell a 30 s outage read about
++  45 s and a 100 s one about 200 s), and an outage whose backoff runs past
++  quinn's 120 s idle timeout ends the path and counts `unrecovered`. The dark
++  threshold (the 10 s window) is to be revisited from these numbers before the
++  data ramp passes 5%.
+   quic_gate_loss_<queue|share|persistent|ecn|no_sample|ignored> (congestion
+   events by the loss gate's verdict, recycle::loss_gate, reported by the path's
+   report at each tick; over a path's life they sum to its quic_congestion_events,
+@@ -2190,7 +2206,9 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
+   while the stream is open, and not during the ack wait, which includes a send
+   window of backlog) and total. SendDeadlines::short(len) is 1 s and 5 s, or
+   a stream's for a message past one packet; ::stream(len) is 2 s, 5 s
+-  (STREAM_INACTIVITY_TIMEOUT) and inbound_stream_age_limit(len); a plain
++  (STREAM_INACTIVITY_TIMEOUT) and STREAM_AGE_LIMIT (2 h, below), with an
++  ack wait of inbound_stream_age_limit(len) after the end is sent, and a
++  node sends with QuicPath::stream_deadlines (the gap from the path); a plain
+   Duration is one deadline for all of it. A send from a source waits for the
+   first chunk for the gap, counted in total, and open runs from when it arrives.
+   The gap is judged on CONNECTION progress (bounded::ConnectionWatch): a node
+@@ -2261,9 +2279,11 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
+   receiver gives up at 5 s. End to end, a fast last hop still fails a slow
+   chain at its own gap: the receiver does not learn the upstream gap. Control sends have no gap. A receiver reads every announced
+   stream to its end whatever its consumer does (push_fragment does not wait);
+-  its one wait is announcing a stream into a full channel, bounded by
+-  inbound_stream_age_limit(len), the sender's total, so the two give up
+-  together. With keepalive PINGs (15 s apart) as its only acknowledgements, at
++  its one wait is announcing a stream into a full channel, bounded by the
++  stream's age (inbound_stream_age_limit(len), extended while the
++  connection reads at 32 KiB/s, at most STREAM_AGE_LIMIT; see the stream
++  age under the liveness rules), which never ends before the sender's ack
++  wait would and never after the sender's 2 h total. With keepalive PINGs (15 s apart) as its only acknowledgements, at
+   most two wakes in a row (10 s apart) can each see a new one, so they alone
+   extend a stopped send by at most two wakes. Argued, not tested.
+   One timer per send, re-armed when it fires, as BodyReader. Messages are
+@@ -2532,6 +2552,175 @@ Path recycling (quic/recycle.rs, #5940 step M6): besides the send-reset
+   a held transmit is also in quinn's bytes in flight. A hold whose poller
+   is not polled again within socket::cap_hold_validity of the cap's rate
+   (a poller left by an ended connection) stops counting.
++  Liveness rules (#5940 PR 4, recycle::AckWatch, all closing with
++  PEER_NOT_ACKNOWLEDGING; why is in recycle::Stall and the log):
++  → Not acknowledging (above): the peer keeps sending and acknowledges
++    none of ours for ACK_WATCH_WINDOW (10 s).
++  → Dark: this side's packets outstanding at every sample for the window,
++    from a send, nothing acknowledged and nothing heard from the peer, AND
++    two rounds of sends made after the window gone unanswered: the first
++    send made a window after the spell began, then a send seen at a later
++    sample (quinn's next backed-off probe), the second for its grace (3 x
++    the round trip from before the spell, at least one 2 s tick, at most
++    DARK_GRACE_MAX 10 s, so an inflated round trip cannot postpone it).
++    After an outage quinn sends again only at its next backed-off probe,
++    and an ack-only peer (keepalive 15 s
+```
+
+**File**: `crates/core/src/node/network_bridge/broadcast_queue.rs` (modified, +7/-0)
+```diff
+@@ -75,6 +75,13 @@ pub(super) fn no_fanout() -> FanoutTargets {
+ /// lossy uplinks on any transport: a 31 MiB broadcast needs about 271 KB/s to
+ /// finish in 120 s.
+ ///
++/// On UDP that limit is the receiver's whole age limit. On a QUIC path it is
++/// the stream's first age, which the receiver extends while the connection
++/// reads at 32 KiB/s or more (up to 2 h), so a stream it keeps past this wait
++/// can still complete after the wait counted it undelivered; that costs one
++/// full-state resend, as any timed-out wait does. Either way the wait is no
++/// longer than the receiver's limit, which is what the margin is for.
++///
+ /// The margin keeps the sender from recording a delivery the receiver may
+ /// already have dropped. On UDP the completion fires when the last fragment is
+ /// first handed to the socket, and lost fragments are resent after that; and
+```
+
+**File**: `crates/core/src/tracing/telemetry.rs` (modified, +1/-0)
+```diff
+@@ -7902,6 +7902,7 @@ mod tests {
+         data.staged_peak_pct = 1049;
+         data.gate_loss = (1050..1056).collect();
+         data.gate_ended_queue = (1056..1059).collect();
++        data.dark_episodes = (1059..1067).collect();
+         let want: std::collections::BTreeMap<String, u64> =
+             snapshot.quic_data.keys().into_iter().collect();
+         assert!(want.values().all(|value| *value != 0));
+```
+
+**File**: `crates/core/src/transport/metrics.rs` (modified, +3/-1)
+```diff
+@@ -32,7 +32,9 @@ use crate::tracing::{TransferDirection, TransferEvent};
+ 
+ mod quic_data;
+ pub use quic_data::QuicDataSnapshot;
+-pub(crate) use quic_data::{PathGateWindow, PathLossWindow, QuicDataCounters, StreamsOpenPeak};
++pub(crate) use quic_data::{
++    DarkEnd, PathGateWindow, PathLossWindow, QuicDataCounters, StreamsOpenPeak,
++};
+ 
+ /// Global transport metrics instance.
+ ///
+```
+
+**File**: `crates/core/src/transport/metrics/quic_data.rs` (modified, +116/-0)
+```diff
+@@ -27,6 +27,7 @@
+ //! | `quic_streams_sampled_paths`, `quic_streams_open_ge_<n>`, `quic_streams_peak_max` | per path and period, the peak of inbound streams read at once: the paths sampled, those whose peak reached each level, and the highest peak |
+ //! | `quic_gate_loss_<verdict>` | congestion events by the loss gate's verdict (`recycle::loss_gate`): passed to Cubic as `queue`, `share` (loss share above the ceiling), `persistent`, `ecn` (a congestion mark), `no_sample`, or `ignored` as random loss; summed over the node's paths up to each path's last tick. Over a path's life they sum to its `quic_congestion_events`; within one period they can differ by the events between the two reads of a tick |
+ //! | `quic_gate_ended_queue_<bucket>` | paths that ended in the period after at least 20 gate verdicts, by the share of them passed as `queue`: `lt_10pct`, `lt_50pct`, `ge_50pct`. A path whose losses mostly read as a queue runs as plain Cubic, whether the queue is real or jitter |
++//! | `quic_dark_episode_<label>` | dark episodes on QUIC paths (`recycle::AckWatch`: packets outstanding, nothing acknowledged and nothing heard) by how they ended: `recovered_lt_5s`, `lt_10s`, `lt_30s`, `lt_120s`, `recovered_ge_120s`, `unrecovered` (the path closed, or nothing was outstanding any more), `cap_held` (the egress cap held this side's sends, so darkness could no longer be told), `closed_at_window` (the dark-path rule closed a path that carries data). A path that carries no data is never closed by that rule, so its episodes run to their end; read at the watch's 2 s ticks |
+ //! | `quic_send_resets`, `quic_path_ms` | sends a path reset on this side, and the time QUIC paths were up, shadow paths included, up to each path's last tick: resets per connection-hour is their ratio |
+ //! | `quic_budget_bytes`, `quic_budget_charged_bytes`, `quic_budget_charged_peak_bytes` | the node's QUIC buffer budget, what its data paths' windows have grown above their floor grants now (the floor grants are each path's fixed charge, not the budget's, so a node with every path at the floor reports 0 and uploads nothing; gauges, not reset, uploaded when not 0), and the most charged at once in the period (`quic::budget`) |
+ //! | `quic_staged_peak_pct` | the most any connection staged in the period (bytes read for streams whose header its reader had not taken yet) as a percentage of its staging cap (`quic::path::inbound::ConnStaging`); streams stopped at the cap are `quic_inbound_evicted_staged` |
+@@ -120,6 +121,54 @@ pub(crate) const GATE_MIN_VERDICTS: u64 = 20;
+ /// queue: under 10%, under 50%, 50% or more.
+ pub(crate) const GATE_QUEUE_LABELS: [&str; 3] = ["lt_10pct", "lt_50pct", "ge_50pct"];
+ 
++/// The labels of `quic_dark_episode_<label>`: dark episodes on QUIC paths
++/// (`recycle::AckWatch`: this side's packets outstanding, nothing
++/// acknowledged and nothing heard), by how they ended: the peer was heard
++/// from again within 5/10/30/120 s or later (episodes are read at the
++/// watch's 2 s samples, so none recovers in under 2 s); the episode ended without that
++/// (the path closed, at the latest on quinn's idle timeout, or nothing was
++/// outstanding any more); the egress cap held this side's sends, so whether
++/// the peer was dark could no longer be told; or the dark-path rule closed the path at its
++/// window, on a path that carries data. A path that carries no data is never
++/// closed by that rule, so its episodes run to their end and fill the longer
++/// buckets: that is what the dark-path threshold is to be checked against.
++pub(crate) const DARK_EPISODE_LABELS: [&str; 8] = [
++    "recovered_lt_5s",
++    "recovered_lt_10s",
++    "recovered_lt_30s",
++    "recovered_lt_120s",
++    "recovered_ge_120s",
++    "unrecovered",
++    "cap_held",
++    "closed_at_window",
++];
++
++/// The upper bounds of the `recovered_` buckets of [`DARK_EPISODE_LABELS`],
++/// in seconds.
++pub(crate) const DARK_RECOVERED_BOUNDS_SECS: [u64; 4] = [5, 10, 30, 120];
++
++/// [`DARK_EPISODE_LABELS`]' `recovered_ge_120s`, `unrecovered` and
++/// `closed_at_window`.
++const DARK_RECOVERED_LATE: usize = 4;
++const DARK_UNRECOVERED: usize = 5;
++const DARK_CAP_HELD: usize = 6;
++const DARK_CLOSED: usize = 7;
++
++/// How a dark episode ended, for `quic_dark_episode_<label>`.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) enum DarkEnd {
++    /// The peer was heard from or acknowledged something after this many
++    /// nanoseconds.
++    Recovered(u64),
++    /// It ended without that.
++    Unrecovered,
++    /// The egress cap held this side's sends, so whether the peer was dark
++    /// could no longer be told.
++    CapHeld,
++    /// The dark-path rule closed the path at its window.
++    Closed,
++}
++
+ /// The bucket of a path that had `queue` of `total` verdicts passed as a queue.
+ fn gate_queue_bucket(queue: u64, total: u64) -> usize {
+     if queue.saturating_mul(10) < total {
+@@ -293,6 +342,7 @@ pub(crate) struct QuicDataCounters {
+     staged_peak_pct: AtomicU6
+```
+
+**File**: `crates/core/src/transport/peer_connection/ack_policy_tests/quic_send.rs` (modified, +99/-8)
+```diff
+@@ -160,14 +160,27 @@ fn run<F, Fut>(network: &'static str, peer_limits: QuicPathLimits, test: F)
+ where
+     F: FnOnce(Rig) -> Fut + Send + 'static,
+     Fut: Future<Output = ()> + Send + 'static,
++{
++    run_with(network, QuicPathLimits::DEFAULT, peer_limits, test);
++}
++
++/// [`run`] with our side's path limits given too.
++fn run_with<F, Fut>(
++    network: &'static str,
++    our_limits: QuicPathLimits,
++    peer_limits: QuicPathLimits,
++    test: F,
++) where
++    F: FnOnce(Rig) -> Fut + Send + 'static,
++    Fut: Future<Output = ()> + Send + 'static,
+ {
+     run_bounded(move || async move {
+         let mut e = single(CAPABLE);
+         let (data, inbox) = data_channels();
+         e.conn.attach_quic_inbox(inbox);
+         let path = data_path_to(
+             network,
+-            QuicPathLimits::DEFAULT,
++            our_limits,
+             peer_limits,
+             e.conn.inbound_budget(),
+             data,
+@@ -919,9 +932,9 @@ fn a_busy_relay_whose_transfers_are_acknowledged_keeps_its_path() {
+ }
+ 
+ /// Permits held by sends waiting for acknowledgements that never come: nothing on
+-/// the path is acknowledged, every large message times out waiting for a permit,
+-/// and eight of those past the window close the path. That close is the only thing
+-/// that recycles such a path.
++/// the path is acknowledged and every large message times out waiting for a
++/// permit. Those timeouts are back-pressure and do not count toward the stall
++/// close; the acknowledgement watch's dark-path rule closes the path instead.
+ #[test]
+ fn permits_held_with_nothing_acknowledged_close_the_path() {
+     run(
+@@ -945,15 +958,33 @@ fn permits_held_with_nothing_acknowledged_close_the_path() {
+                     .await
+                     .unwrap();
+             }
+-            rig.path.settle(Duration::from_secs(3)).await;
++            // The dark rule closes once a send made a window into the spell
++            // goes unanswered for its grace: at the latest
++            // `dark_close_bound` after the silence began, 9 s of which have
++            // passed.
++            rig.path
++                .settle(
++                    crate::transport::quic::recycle::dark_close_bound(Duration::from_millis(50))
++                        - Duration::from_secs(9),
++                )
++                .await;
+             drop(silenced);
+             assert_eq!(
+                 rig.stats()
+                     .send_count(SendKind::LargeShort, R::NotOpenedUdp),
+                 u64::from(STALLED_SENDS_LIMIT)
+             );
+-            assert_eq!(rig.stats().send_event_count(E::StalledClosed), 1);
++            assert_eq!(
++                rig.stats().send_event_count(E::StalledClosed),
++                0,
++                "a send that never opened does not count"
++            );
+             assert!(rig.route.path().quinn_connection().close_reason().is_some());
++            assert_eq!(
++                crate::transport::quic::recycle::stalls_to(rig.path.peer_addr()),
++                vec![crate::transport::quic::recycle::Stall::Dark],
++                "closed by the watch as dark"
++            );
+         },
+     );
+ }
+@@ -962,8 +993,14 @@ fn permits_held_with_nothing_acknowledged_close_the_path() {
+ /// window, close the path.
+ #[test]
+ fn eight_streams_that_stall_after_opening_close_the_path() {
+-    run(
++    run_with(
+         "quic-send-stall-close",
++        // The stall count's close, which the acknowledgement watch would
++        // otherwise preempt on this dark path (`recycle::AckWatch`).
++        QuicPathLimits {
++            watch_closes: false,
++            ..QuicPathLimits::DEFAULT
++        },
+         QuicPathLimits::DEFAULT,
+         |mut rig| async move {
+             let silenced = DropFrom::new("quic-send-stall-close", &[rig.path.peer_addr()]);
+@@ -1133,6 +1170,53 @@ fn a_pipe_that_stalls_after_opening_gives_up() {
      );
  }
  
-+/// A path the budget holds below what it needs is throttled: a grow it needs
-+/// that does not fit, or a shrink another path's growth asked of it. The
-+/// throttle lasts `GROWING_FOR` past the last such evaluation and remembers
-+/// when it began; a path that grows freely is never throttled.
++/// With the watch on, a dead path costs new traffic seconds, not a minute:
++/// the peer goes silent, a short sent 9 s later times out with nothing
++/// acknowledged and makes the path suspect by 15 s, and from then on new
++/// shorts go on UDP at once, while the path is still up. The watch's dark
++/// rule closes the path only later, waiting out two probe rounds after its
++/// 10 s window (`recycle::dark_close_bound`, about 67 s at this round trip).
 +#[test]
-+fn a_held_back_path_is_throttled_until_it_is_not() {
-+    let total = 4 << 20;
-+    let budget = QuicBudget::new(total, FLOOR, counters());
-+    let a = conn(&budget, 0);
-+    let b = conn(&budget, 0);
-+    let mut at = 10 * MS;
-+    let mut window = FLOOR;
-+    let mut first = None;
-+    for _ in 0..12 {
-+        let seen = deliver_window(&a, window, at);
-+        window = seen.recv_window;
-+        if seen.throttled && first.is_none() {
-+            first = Some(at);
-+        }
-+        if first.is_none() {
-+            assert!(a.meter.throttled_since(at).is_none(), "grew freely");
-+        }
-+        at += 10 * MS;
-+    }
-+    let began = first.expect("a reached the budget and was held back");
-+    assert_eq!(a.meter.throttled_since(at - 10 * MS), Some(began));
-+    // b's growth squeezes a, which then counts as throttled too.
-+    let mut bw = FLOOR;
-+    for _ in 0..12 {
-+        bw = deliver_window(&b, bw, at).recv_window;
-+        at += 10 * MS;
-+    }
-+    assert!(
-+        a.meter.pending_shrink().is_some(),
-+        "premise: b asked a to shrink"
-+    );
-+    let later = at + nanos(GROWING_FOR) * 2;
-+    assert!(a.meter.throttled_since(later).is_none(), "premise: lapsed");
-+    let seen = a.meter.evaluate(later).unwrap();
-+    assert!(seen.throttled, "a shrink it was asked for throttles it");
-+    assert_eq!(a.meter.throttled_since(later + MS), Some(later));
-+    assert!(
-+        a.meter
-+            .throttled_since(later + nanos(GROWING_FOR) + MS)
-+            .is_none(),
-+        "the throttle lapses"
-+    );
-+}
-+
- /// A shrink whose debt is then read lowers the staging cap, but never below
- /// what is staged, and the charge covers the cap as set: staged bytes are
- /// never over the cap or uncharged.
-@@ -910,3 +959,31 @@ fn a_later_sender_reaches_its_share_once_the_squeezed_streams_end() {
++fn a_dark_path_takes_no_new_data_long_before_the_watch_closes_it() {
++    run(
++        "quic-send-suspect-watch-on",
++        QuicPathLimits::DEFAULT,
++        |mut rig| async move {
++            let _silenced = DropFrom::new("quic-send-suspect-watch-on", &[rig.path.peer_addr()]);
++            rig.path.settle(Duration::from_secs(9)).await;
++            rig.e.conn.send_serialized(message(1)).await.unwrap();
++            rig.path.settle(Duration::from_secs(6)).await;
++            assert!(rig.route.path().is_suspect(), "suspect by 15 s");
++            assert!(
++                rig.route.path().quinn_connection().close_reason().is_non
+```
+
+**File**: `crates/core/src/transport/peer_connection/quic_send.rs` (modified, +5/-2)
+```diff
+@@ -264,7 +264,7 @@ pub(super) async fn send_stream_on_path<S: Socket, T: TimeSource>(
+         .path()
+         .send_stream_bounded(
+             route.clock(),
+-            SendDeadlines::stream(bytes),
++            route.path().stream_deadlines(bytes),
+             stream_id,
+             metadata.as_deref(),
+             data.clone(),
+@@ -321,7 +321,10 @@ pub(super) async fn pipe_stream_on_path<S: Socket, T: TimeSource>(
+     let source_gap = inbound_handle
+         .fragment_gap_limit()
+         .min(route.path().receiver_gap());
+-    let deadlines = SendDeadlines::stream(bytes).with_source_gap(source_gap);
++    let deadlines = route
++        .path()
++        .stream_deadlines(bytes)
++        .with_source_gap(source_gap);
+     let outcome = route
+         .path()
+         .send_stream_chunks_bounded(
+```
+
+**File**: `crates/core/src/transport/quic/path.rs` (modified, +98/-15)
+```diff
+@@ -312,6 +312,12 @@ pub(crate) struct QuicPathLimits {
+     /// (supervisor test).
+     #[cfg(test)]
+     pub(crate) panic_in_watch: bool,
++    /// The acknowledgement watch closes the path when a liveness rule says
++    /// so (`recycle::AckWatch`). Off in tests of the send deadlines and the
++    /// stall count on a dark path, which the watch would otherwise close
++    /// first.
++    #[cfg(test)]
++    pub(crate) watch_closes: bool,
+     /// The receive side's gap cap (`inbound::MAX_GAPS_PER_CONNECTION`), lower
+     /// in a test that trips it.
+     #[cfg(test)]
+@@ -370,6 +376,8 @@ impl QuicPathLimits {
+         #[cfg(test)]
+         panic_in_watch: false,
+         #[cfg(test)]
++        watch_closes: true,
++        #[cfg(test)]
+         max_gaps: inbound::MAX_GAPS_PER_CONNECTION,
+         #[cfg(test)]
+         staging_cap: None,
+@@ -753,6 +761,12 @@ pub(crate) struct QuicPath {
+     /// ([`STREAMED_SEND_LIMIT`]), so the remaining uni stream slots stay
+     /// for short messages and control frames. Never closed.
+     stream_slots: Arc<tokio::sync::Semaphore>,
++    /// Sends with data still to write, for the credit rule
++    /// (`recycle::CreditWatch`).
++    writers: Arc<recycle::Writers>,
++    /// Set once the path may send data: only then does the acknowledgement
++    /// watch's dark-path rule close it (`recycle::AckWatch::observing`).
++    carries_data: Arc<std::sync::atomic::AtomicBool>,
+     /// Control frames taking their stream ([`Self::control_first`]); a data
+     /// send opens no stream while any is.
+     controls_opening: Arc<ControlsOpening>,
+@@ -1008,6 +1022,7 @@ impl QuicPath {
+             built_at,
          );
+         let heard = Arc::new(recycle::PeerHeard::default());
++        let writers = Arc::new(recycle::Writers::default());
+         #[cfg_attr(not(test), allow(unused_mut))]
+         let mut report = recycle::PathReport::new(
+             connection.inner().clone(),
+@@ -1018,18 +1033,24 @@ impl QuicPath {
+         #[cfg(test)]
+         {
+             report.panic_once_bucketed = limits.panic_in_watch;
++            report.watch_closes = limits.watch_closes;
+         }
+         let ack_waits = Arc::new(AckWaits::new(stats.clone()));
++        let carries_data = Arc::new(std::sync::atomic::AtomicBool::new(false));
+         let receive = GlobalExecutor::spawn(supervise_receive(
+             connection.inner().clone(),
+             connection.closer(),
+             Arc::new(receiver),
+             stats.clone(),
+             time,
+             recycle::AckWatchParts {
+-                cap_holds: connection.cap_holds(),
+-                rtt: receiver_rtt,
+-                heard: heard.clone(),
++                shared: recycle::WatchShared {
++                    cap_holds: connection.cap_holds(),
++                    writers: writers.clone(),
++                    rtt: receiver_rtt,
++                    heard: heard.clone(),
++                    carries_data: carries_data.clone(),
++                },
+                 report,
+             },
+         ));
+@@ -1042,6 +1063,8 @@ impl QuicPath {
+                 ack_waits,
+                 meter,
+                 stream_slots: Arc::new(tokio::sync::Semaphore::new(STREAMED_SEND_LIMIT as usize)),
++                writers,
++                carries_data,
+                 controls_opening: Arc::default(),
+                 send_data: AtomicU8::new(SEND_DATA_NEVER),
+                 counted_as_data_path: std::sync::atomic::AtomicBool::new(false),
+@@ -1209,6 +1232,12 @@ impl QuicPath {
+             .map_or(0, |meter| meter.send_epoch_holders())
      }
- }
-+
-+/// A stream-limit raise needs the budget charged at most three quarters
-+/// (`QuicBudget::has_room`): a path growing into the budget takes the room
-+/// away once its growth passes three quarters, and it comes back when the
-+/// path's window decays.
-+#[test]
-+fn the_budget_has_room_for_a_stream_raise_up_to_three_quarters() {
-+    let total = 4 << 20;
-+    let budget = QuicBudget::new(total, FLOOR, counters());
-+    let a = conn(&budget, 0);
-+    assert!(a.meter.budget_has_room(), "nothing charged");
-+    let mut at = 10 * MS;
-+    let mut window = FLOOR;
-+    let mut was_room = true;
-+    for _ in 0..12 {
-+        window = deliver_window(&a, window, at).recv_window;
-+        let charged = budget.running_total();
-+        let room = a.meter.budget_has_room();
-+        assert_eq!(
-+            room,
-+            charged * 4 <= total * 3,
-+            "charged {charged} of {total}"
-+        );
-+        was_room &= room;
-+        at += 10 * MS;
+ 
++    /// The path's sends still writing (`recycle::Writers`). Tests only.
++    #[cfg(test)]
++    pub(crate) fn writers(&self) -> &recycle::Writers {
++        &self.writers
 +    }
-+    assert!(!was_room, "premise: the growth passed three quarters");
-+}
-```
-
-**File**: `crates/core/src/transport/quic/config.rs` (modified, +17/-4)
-```diff
-@@ -114,11 +114,20 @@ pub(crate) const MAX_UNI_STREAMS: u32 = 64;
- 
- /// The uni streams every connection's peer may open until the path takes
- /// data: enough for the upgrade's control frames (`Ready`, `ReadyAck`). A
--/// path that accepts data raises it to [`MAX_UNI_STREAMS`] when it is built
--/// (`QuicPath::with_budget`). quinn applies a raise at once and cannot take a
-+/// path that accepts data raises it to [`DATA_START_UNI_STREAMS`] when it is
-+/// built (`QuicPath::with_budget`), and with load toward
-+/// [`MAX_UNI_STREAMS`]. quinn applies a raise at once and cannot take a
- /// grant back, so a connection starts with what a shadow path needs.
- pub(crate) const INITIAL_UNI_STREAMS: u32 = 4;
- 
-+/// The uni streams a data path's peer may open at first. The limit doubles
-+/// toward [`MAX_UNI_STREAMS`] once the peer has used every stream at once and
-+/// as many again have completed with none failing and the buffer budget not
-+/// throttling the connection, among other conditions
-+/// (`path::inbound::StreamLimit`): the stream limit is the one term per
-+/// connection a raise cannot take back, so it is raised only under load.
-+pub(crate) const DATA_START_UNI_STREAMS: u32 = 16;
 +
- /// The connection receive window every connection starts with, until a data
- /// path's buffer-budget meter raises it to the floor (`budget`). Small for the
- /// reason [`INITIAL_UNI_STREAMS`] is: quinn cannot take credit back, and a
-@@ -177,8 +186,12 @@ pub(crate) const UNANNOUNCED_CREDIT_SLACK: u32 = MAX_UNI_STREAMS / 8;
- ///   waits on the connection's shared flow control and send window
- ///   (quinn-proto `write_limit`).
- /// - The division uses this node's [`MAX_UNI_STREAMS`], not the limit the
--///   peer advertised. A change to the limit needs a plan for peers still
--///   advertising the old one.
-+///   peer advertised (quinn does not expose it). A data path's peer starts
-+///   at [`DATA_START_UNI_STREAMS`] and raises only once all its streams are
-+///   busy, so capping the permits below its limit would stop the raise.
-+///   Until it raises, the reserve does not hold: a send past its limit waits
-+///   in `open_uni` until its open deadline and ends `NotOpened` (on UDP),
-+///   never `MaybeDelivered`, counted `quic_data_event_stream_limit_full`.
- pub(crate) const STREAMED_SEND_LIMIT: u32 =
-     MAX_UNI_STREAMS - RESERVED_UNI_STREAMS - UNANNOUNCED_CREDIT_SLACK;
- const _: () = assert!(RESERVED_UNI_STREAMS > 0 && STREAMED_SEND_LIMIT > 0);
-```
-
-**File**: `crates/core/src/transport/quic/memory_tests.rs` (modified, +3/-2)
-```diff
-@@ -22,7 +22,7 @@ use super::config::{
-     QUIC_ACK_TAIL_BYTES, QUIC_CONNECTION_FIXED_BYTES, QUIC_MEMORY_MEASURED_WITH,
-     QUIC_OPEN_STREAM_BYTES, QUIC_STOPPED_ENTRY_BYTES, QuicSettings,
- };
--use super::path::{QuicInbound, QuicPath};
-+use super::path::{QuicInbound, QuicPath, QuicPathLimits};
- use super::tests::{SEED, bounded, drive};
- use super::{QuicConnection, QuicEndpoint};
- use crate::config::GlobalRng;
-@@ -315,7 +315,8 @@ impl StreamRig {
-         .await;
-         let raw = client.inner().clone();
-         let hold = |conn: QuicConnection, time: &VirtualTime| {
--            let (path, inbound) = QuicPath::new(conn, time.clone());
-+            let (path, inbound) =
-+                QuicPath::with_limits(conn, time.clone(), QuicPathLimits::FULL_STREAMS);
-             Held {
-                 _path: path,
-                 _inbound: inbound,
+     /// Streamed-message permits free right now.
+     #[cfg(test)]
+     pub(crate) fn free_stream_slots(&self) -> usize {
+@@ -1251,6 +1280,29 @@ impl QuicPath {
+         )
+     }
+ 
++    /// Deadlines for a node's streamed send of `len` bytes on this path:
++    /// [`SendDeadlines::stream`] with the gap the path's receiver allows
++    /// ([`Self::receiver_gap`], from the path's round trip, at least 5 s)
++    /// rather than a flat 5 s, so a slow path's send is not failed at a gap
++    /// its receiver still waits through. The gap applies only once the
++    /// connection has also stopped making progress (`bounded::ConnectionWatch`).
++    ///
++    /// The ack wait follows the path's round trip too: a stream's length at
++    /// the credit rule's floor (`recycle::credit_floor_rate`, at least
++    /// 16 KiB/s), when that is longer than its first age, so an honest slow
++    /// path's stream is not reset while its acknowledgement is on the way.
++    pub(crate) fn stream_deadlines(&self, len: u64) -> SendDeadlines {
++        let deadlines = SendDeadlines::stream(len).with_gap(self.receiver_gap());
++        let floor = recycle::credit_floor_rate(self.connection.inner().stats().path.rtt).max(1);
++        let at_floor = Duration::
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6204** (2026-11-13): feat(quic): native setup with Hello exchange, punching and native ALPN (@sanity)
 - **PR #6203** (2026-11-12): feat(quic): native Hello frame, two close codes, reserved punch byte (@sanity)
+- **PR #6202** (2026-11-13): feat(transport): judge QUIC path liveness per connection, with a 2 h stream total and a dark-episode counter (@sanity)
 - **PR #6201** (2026-11-12): feat(transport): sum QUIC memory in the node aggregate; cap connections for it with data (@sanity)
 - **PR #6200** (2026-11-12): feat(connect): carry a QUIC-native offer and decision on the connect wire (@sanity)
 - **PR #6199** (2026-11-12): feat(telemetry): hourly join_versions census of gateway joiners and neighbours (@sanity)
-- **PR #6198** (2026-11-12): fix(transport): keep the last eighth of the QUIC ingress queue for quiet sources (@sanity)
-- **PR #6197** (2026-11-12): test(transport): take every simulated QUIC test address from one process-wide allocator (@sanity)
 
 ---
 
@@ -3317,38 +2885,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): sum QUIC memory in the node aggregate; cap connections for it with d
+## X. quic): native setup with Hello exchange, punching and native ALPN (#6204)
 
 **RULE**:
-When implementing operations in `.claude/rules/bug-prevention-patterns.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `620db4dd`: transport): sum QUIC memory in the node aggregate; cap connections for it with data (#6201). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc2888b7`: quic): native setup with Hello exchange, punching and native ALPN (#6204). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/bug-prevention-patterns.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-(fixed charge + floor grant) + budget. It is not in `declared_cache_ceiling`
-(caches keep their own half-of-memory rule): it is the transport share,
-`quic::config::quic_memory_ceiling_terms`, summed at the QUIC connection cap
-with the caches and the hosting budget in
-`declared_caches_plus_hosting_budget_leave_room_for_the_runtime`. The node's
-connection limit is lowered to that cap while it may carry QUIC data, so the
-bound holds when data is on. Do not copy the per-connection
+  no NEW_TOKEN tokens (Retry only), rustls ring, TLS 1.3, one ALPN per attempt
+  (freenet-quic/1 for an upgrade, freenet-quic/2 for a native connection; see
+  "QUIC-native setup"), no SNI, no
+    allow-set AND records the key and the connection's kind (QuicPeerPermit;
+    a second key for an address already held, or the same key for the other
+    kind, upgrade or native, is KeyConflict). accept() looks the key and kind
+    up by the attempt's (normalized) address and accepts with a per-attempt
+    server config whose TLS is pinned to the key and offers that kind's one
+    ALPN (Incoming::accept_with); an attempt
+#### QUIC-native setup (`quic/native/`, #5940 QUIC-native connect, A4)
+
+Built and tested, and unreachable by construction: `setup::connect_native`,
+`setup::accept_native` and the endpoint's native side (`native/endpoint.rs`:
+`allow_native_peer`, `dial_native`, `send_punch`) are
+`pub(in crate::transport::quic::native)`, and registering a native waiter is
+private to `setup`. Nothing outside `quic/native` can call them; A5 widens
+them in a visible diff. The connect op also gates on
+`operations::connect::native::NATIVE_DIAL_READY` (pinned false).
+
+```
+ALPN per attempt: an addre
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-(fixed charge + floor grant) + budget. All of it is in `NOT_SUMMED`
-until the buffer budget's aggregate-accounting step sums those terms, which must
-happen before any release sets `QUIC_DATA_PERCENT` above 0 (pinned by
-`upgrade::policy::tests::no_data_share_before_the_quic_budget_is_summed`;
-shadow paths, on by default since Step 2, carry no data). Do not copy the per-connection
+  no NEW_TOKEN tokens (Retry only), rustls ring, TLS 1.3, fixed ALPN, no SNI, no
+    allow-set AND records the key (QuicPeerPermit; a second key for an
+    address already held is KeyConflict). accept() looks the key up by the
+    attempt's (normalized) address and accepts with a per-attempt server
+    config whose TLS is pinned to it (Incoming::accept_with); an attempt
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `620db4dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc2888b7` are properly handled with clean fallback behavior.

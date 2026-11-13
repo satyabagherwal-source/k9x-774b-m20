@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `2fac72e1`  
+> **Source Version**: `a498d472`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T13:22:03.047Z  
+> **Timestamp**: 2026-11-13T06:33:14.832Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T13:17:02.214Z  
+> **Harvest Timestamp**: 2026-11-13T06:33:14.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17596 stars
+- **Stars / Engagement**: 17650 stars
 
 ---
 
@@ -1408,11 +1408,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4854** (2026-11-07): **False Positive: Incorrect they->them lint**
-  *Symptoms*: ## What got flagged?  "Whether they had families could affect the help they received."  The final 'they' -> 'them' (Harper TheyToThem)  ## Why is this incorrect?  Using the word 'them' in this context is very clearly grammatically incorrect. Harper should let 'they' be.  ## Example of correct usage  "Whether they had families could affect the help they received."
+- **Issue #4904** (2026-11-11): **Broken correciton suggestions on Ellipsus**
+  *Symptoms*: ## Describe the bug Harper is not working as intended on Ellipsus. It keeps placing autocorrect suggestions in misplaced spots, mostly in the case of it extending too far right to the next word(s) after the suggestion. Sometimes, the suggestion refuses to go away if you Dismiss it.  ## To Reproduce Steps to reproduce the behavior: 1. Go to '[write.ellipsus.com](https://write.ellipsus.com/)' 2. Write anything in a writing document 4. The autocorrect suggestions populate in a broken state  ## Expected behavior I expect Harper to behave as normal in Ellipsus, just like any other website with text-writing systems.   ## Platform Firefox (version 159, but also in previous versions, too) on Desktop 
 
-- **Issue #4853** (2026-11-07): **Incorrect lint: out guesses -> outguesses**
-  *Symptoms*: ## What got flagged?  "Leave out guesses about how people felt."  'out guesses' -> 'outguesses' (Harper DisjointPrefixes)  ## Why is this incorrect?  As would be obvious to a human, 'out guesses' is valid and has a distinct meaning, whereas using 'outguesses' wouldn't make very much sense in this sentence, even outside of preserving the meaning.  ## Example of correct usage  "Leave out guesses about how people felt."
+- **Issue #4878** (2026-11-12): **Words with a non-ASCII letter after a leading "Xs" are split in two ("así" → "as" + "í")**
+  *Symptoms*: ## What got flagged? The fragment after the `s` in words like `así`, `osé` and `usé` (flagged as `í` and `é`), and in Slovak text `ídli` in `usídli`.  ## Why is this incorrect? These are single words, but the lexer cuts them after the `s`. `lex_plural_digit` (added for #774 to keep `0s`, `1's` and similar together) ends its token whenever the character after the `s` is not ASCII alphanumeric. So any word that starts with one ASCII letter or digit plus `s` and continues with a letter like `í` or `é` is lexed as two tokens, and the spell checker then flags the leftover fragment. On current master (11f7925c5), `harper-cli lint` on `He only answered: "así es".` reports `í`, while `rosé` in the same text is checked as one word.  The curated English dictionary doesn't seem to contain words of this shape, so in English it mostly shows up with quoted foreign words and names. It matters more for languages with diacritics. I ran into it while working on Slovak support (#3658), where the correct sentence `Rodina sa usídli v meste.` gets a false positive for `ídli`. Czech (`osídlení`) and other languages that reuse the English lexer have the same problem.  Using `is_alphanumeric()` instead of `is_ascii_alphanumeric()` for the character after the `s` fixes it and keeps the #774 cases (`0s`, `1s`, `1's`, `1980s`) lexed as before. I have that change with tests ready and can open a PR if it's welcome.  ## Example of correct usage He only answered: "así es". The old coat looked usé. Rodina sa
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1429,375 +1429,829 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b59b5ad2` (2026-11-10)
-**Commit Message**: fix(desktop): memory leak when the device goes to sleep (#4905)
+### Incident Patch 1: `c9b9bfe1` (2026-11-12)
+**Commit Message**: fix(core): accept British -ise and -yse forms (#4818)
+
+Correct British spellings were reported as misspellings because the
+dictionary had the -ize or -yze form of a word but not its counterpart,
+or had a British entry with fewer affix flags than its American pair.
+"customisable" was even corrected to "customizable", and "synthesised"
+failed even though "synthesise" was accepted.
+
+The new entries use the existing !_₹ dialect flags, so these spellings
+are still flagged in American and Canadian English.
+
+**File**: `harper-core/dictionary.dict` (modified, +129/-31)
+```diff
+@@ -12680,6 +12680,8 @@ anointment/Nmg
+ anomalous/~JY
+ anomaly/~NSg
+ anon/~NSJ
++anonymisation/Nmg!_₹
++anonymise/VdSG!_₹
+ anonymity/~Ng
+ anonymization/Nmg
+ anonymize/Vd
+@@ -12928,6 +12930,7 @@ apothecary/NSg
+ apothegm/NSg
+ apotheoses/N9V
+ apotheosis/N0g
++apotheosise/VdSG!_₹
+ app/~NSg
+ appal/VS!_₹
+ appall/VGdS
+@@ -13632,7 +13635,7 @@ author/~NSgVdG
+ authoress/NgS
+ authorial/J
+ authorisation/NwSg!_₹
+-authorise/VGdS!_₹
++authorise/VGdSr!_₹
+ authorised/JVtT!_₹
+ authoritarian/~JNgS
+ authoritarianism/Nmg
+@@ -16569,6 +16572,7 @@ canoeist/NSg
+ canola/Ng
+ canon/~NgSJ
+ canonical/~JYN
++canonicalisation/Ng!_₹
+ canonicalise/VGdS!_₹
+ canonicalize/VGdS
+ canonisation/NgS!_₹
+@@ -16921,6 +16925,7 @@ cataract/~NgS
+ catarrh/Ng
+ catastrophe/~NgS
+ catastrophic/~JQ
++catastrophise/VdSG!_₹
+ catastrophize/VdSG
+ catatonia/Ng
+ catatonic/JNSg
+@@ -17824,6 +17829,7 @@ civics/~Nmg
+ civil/~JYU
+ civilian/~NgSJ
+ civilisation/NSg!_₹
++civilisational/J!_₹
+ civilise/VGdS!_₹
+ civilised/VJU!_₹tT
+ civility/~Nmgi
+@@ -18368,6 +18374,7 @@ collard/NSg
+ collarless/J
+ collate/VdSGXn
+ collateral/~JYNmg
++collateralisation/Ng!_₹
+ collateralise/V!_₹
+ collateralization/Ng
+ collateralize/V
+@@ -18609,6 +18616,7 @@ commode's
+ commodification/NwSg
+ commodify/VdSG
+ commodious/JY
++commoditise/VdSG!_₹
+ commoditize/VdSG
+ commodity/~NSg
+ commodore/~NSg
+@@ -18811,8 +18819,8 @@ concept/~NSgV
+ conception/~NwSg
+ conceptional/J
+ conceptual/~JY
+-conceptualisation/NSg!_₹
+-conceptualise/VdSG!_₹
++conceptualisation/NSgr!_₹
++conceptualise/VdSGr!_₹
+ conceptualization/NgSr
+ conceptualize/VdSGr
+ concern/~Nw0gVdU
+@@ -20386,8 +20394,11 @@ customarily/~R8
+ customary/~JNU
+ customer/~NgS
+ customhouse/NSg
++customisability/Nmg!_₹
++customisable/J!_₹
+ customisation/NwgS!_₹
+ customise/VdSG!_₹
++customiser/NgS!_₹
+ customizability/Nmg
+ customizable/J
+ customization/~NwgS
+@@ -20752,6 +20763,7 @@ decapitate/VGdSXn
+ decapitator/NgS
+ decapped/VtTJ
+ decapping/V6N
++decarbonise/VdSG!_₹
+ decarbonize/VdSG
+ decathlete/NS
+ decathlon/NSg
+@@ -20847,6 +20859,8 @@ dedicate/~VbGdSJNr
+ dedication/~NwSg
+ dedicator/NSg
+ dedicatory/JN
++dedollarisation/Nmg!_₹
++dedollarise/VSdG!_₹
+ dedollarization/Nmg
+ dedollarize/VSdG
+ deduce/~VGdS
+@@ -21100,6 +21114,8 @@ denim/~NwgS
+ denitrification/N
+ denizen/NgSV
+ denominational/~J
++denormalisation/Nmg!_₹
++denormalise/VGdS!_₹
+ denormalization/Nmg
+ denormalize/VGdS
+ denotation/NSgQ
+@@ -21247,6 +21263,8 @@ descry/VGdS
+ desecrate/VdSGJn
+ desecration/Nmg
+ deselection/Ng
++deserialisation/NgS!_₹
++deserialise/VSGd!_₹
+ deserialization/NgS
+ deserialize/VSGd
+ desert/~NwSgJ>VdGZ
+@@ -21580,6 +21598,7 @@ digital/~JYN
+ digitalis/Ng
+ digitisation/N!_₹
+ digitise/VGdS!_₹
++digitiser/NgS!_₹
+ digitization/N
+ digitize/VGdS
+ digitizer/NgS
+@@ -22131,6 +22150,8 @@ doleful/JYp
+ dolefulness/Nmg
+ doll/~NgSdG
+ dollar/~NSg
++dollarisation/Ng!_₹
++dollarise/VdSG!_₹
+ dollarization/Ng
+ dollarize/VdSG
+ dollhouse/NSg
+@@ -23297,7 +23318,7 @@ empathy/~Nmg
+ emperor/~NgS
+ emphases/N9
+ emphasis/~N0g
+-emphasise/VGdSr!_₹
++emphasise/VGdSre!_₹
+ emphasize/~VGdSre
+ emphatic/~JNUQ
+ emphysema/~Ng
+@@ -23946,6 +23967,7 @@ eulogizer/Ng
+ eulogy/~NSg
+ eunuch/~N0gV
+ eunuchs/~N9
++euphemise/VdGS!_₹
+ euphemize/VdGS!_₹
+ euphemism/~NwSg
+ euphemistic/JQ
+@@ -23959,6 +23981,7 @@ euro/~NgS
+ europium/Nmg
+ eutectic/~JN
+ euthanasia/~Nmg
++euthanise/VdSG!_₹
+ euthanize/VdSG
+ euthenics/Ng
+ eutrophy/Nmn
+@@ -24653,6 +24676,7 @@ far/~JVN
+ far right/NgS
+ far-right/J
+ farad/NSg
++faradise/VdG!_₹
+ faradize/VdG
+ faraway/~JN
+ farce/~NwSgV
+@@ -24932,6 +24956,8 @@ fete/NgSVGd
+ fetid/JpN
+ fetidness/Ng
+ fetish/~NgS
++fetishisation/Ng!_₹
++fetishise/VdSG!_₹
+ fetishism/~Ng
+ fetishist/NSg
+ fetishistic/J
+@@ -25109,6 +25135,8 @@ finalize/~VdSG
+ finance/~NwSVdGr
+ finance's
+ financial/~JY
++financialisation/Ng!_₹
++financialise/VdSG!_₹
+ financialization/Ng
+ financialize/VdSG
+ financials/9
+@@ -26677,7 +26705,7 @@ genealogy/~NSg
+ genera/~N9
+ general/~JYNSgV
+ generalisation/NgS!_₹
+-generalise/VGdS!_₹
++generalise/VGdSB!_₹
+ generaliser/NgS!_₹
+ generalissimo/NgS
+ generalist/NgS
+@@ -29510,7 +29538,7 @@ hypothalamus/~Ng
+ hypothermia/~Ng
+ hypotheses/~N9
+ hypothesis/~N0g
+-hypothesise/V!_₹
++hypothesise/VdSG!_₹
+ hypothesize/VdSG
+ hypothetical/~JYNS
+ hypothyroid/Jg
+@@ -30222,8 +30250,8 @@ indulge/~VdSG
+ indulgence/~NwSgV
+ indulgent/JY
+ industrial/~JYN
+-industrialisation/Ng!_₹
+-industrialise/VdSG!_₹
++industrialisation/Nge!_₹
++industrialise/VdSGr!_₹
+ industrialism/Ng
+ industrialist/~NSg
+ industrialization/~Nge
+@@ -30961,6 +30989,7 @@ ion/~NSgU
+ ionic/~J
+ ionisation/NgU!_₹
+ ionise/VdSGU!_₹
++ioniser/NgS!_₹
+ ionization/~NgU
+ ionize/VdSGU
+ ionizer/NgS
+@@ -32302,6 +32331,7 @@ legal/~JYNSg
+ legalese/Nmg
+ legalisation/Nmg!_₹
+ legalise/VGdS!_₹
++legaliser/NgS!_₹
+ legalism/NgS
+ legalist/JNS
+ legalistic/JQ
+@@ -32338,8 +32368,8 @@ legitimacy/~Ng
+ legitimate/~JYNSVdG
+ legitimatise/VGdS!_₹
+ legitimatize/VGdS
+-legitimisation/Ng!_₹
+-legitimise/VdSG!_₹
++legitimisation/Nge!_₹
++legitimise/VdSGe!_₹
+ legitimization/Nge
+ legitimize/~VdSGe
+ legless/J
+@@ -32647,6 +32677,7 @@ lineage/~NgS
+ lineal/~JY
+ lineament/N
+```
+
+**File**: `harper-core/src/linting/spell_check.rs` (modified, +18/-0)
+```diff
+@@ -262,6 +262,24 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn british_ise_words_in_british_dialect() {
++        assert_lint_count(
++            "We anonymise it with the customisable tokeniser, then we synthesised the results.",
++            SpellCheck::new(FstDictionary::curated(), Dialect::British),
++            0,
++        );
++    }
++
++    #[test]
++    fn british_ise_words_in_american_dialect() {
++        assert_lint_count(
++            "We anonymise it with the customisable tokeniser, then we synthesised the results.",
++            SpellCheck::new(FstDictionary::curated(), Dialect::American),
++            4,
++        );
++    }
++
+     #[test]
+     fn canadian_words_in_australian_dialect() {
+         assert_lint_count(
+```
+
+**File**: `harper-core/tests/run_tests.rs` (modified, +1/-0)
+```diff
+@@ -87,6 +87,7 @@ create_test!(hex_basic_dirty.md, 1, Dialect::American);
+ create_test!(misc_closed_compound_clean.md, 0, Dialect::American);
+ create_test!(statist_localist.md, 0, Dialect::American);
+ create_test!(yogurt_british_clean.md, 0, Dialect::British);
++create_test!(british_ise_spellings_clean.md, 0, Dialect::British);
+ create_test!(issue_1581.md, 0, Dialect::British);
+ create_test!(issue_2054.md, 6, Dialect::British);
+ create_test!(issue_1988.md, 0, Dialect::American);
+```
+
+**File**: `harper-core/tests/test_sources/british_ise_spellings_clean.md` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++The following text should produce no errors when Harper is set to British English.
++
++Our team anonymises and pseudonymises customer records before we deserialise them. The customiser is highly customisable, and the tokeniser and optimisers run whenever we synthesise new data.
++
++Last year, we hypothesised that this would help. We then synthesised the results and deprioritised anything unrelated. Reauthorising each service was tedious, but it stopped us from weaponising a flaw in the serialiser.
++
++The summariser now handles tokenisation and memoisation. Researchers have long warned that decarbonising heavy industry will take time, and that financialisation is hard to measure. Those who catastrophise about it rarely offer a plan.
+```
+
+---
+
+### Incident Patch 2: `468fd0e0` (2026-11-12)
+**Commit Message**: fix(desktop): hide overlays while macOS Screenshot is running (#4929)
 
 Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
 
-**File**: `harper-desktop/src-tauri/src/highlighter/window_manager.rs` (modified, +81/-6)
+**File**: `harper-desktop/src-tauri/Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -1,3 +1,4 @@
-+use std::collections::HashSet;
- use std::time::{Duration, Instant};
+@@ -55,6 +55,8 @@ objc2-app-kit = { version = "0.3.2", default-features = false, features = [
+     "NSApplication",
+     "NSImage",
+     "NSRunningApplication",
++    "NSView",
++    "NSWindow",
+     "NSWorkspace",
+ ] }
+ objc2-foundation = { version = "0.3.2", default-features = false, features = [
+```
+
+**File**: `harper-desktop/src-tauri/src/debug_broker.rs` (modified, +4/-0)
+```diff
+@@ -12,6 +12,10 @@ use crate::rect::ActionableLint;
+ pub struct DebugBroker;
  
- use winit::application::ApplicationHandler;
-@@ -19,6 +20,7 @@ use crate::os_broker::{LintText, OsBroker};
- use crate::rect::ActionableLint;
+ impl OsBroker for DebugBroker {
++    fn should_hide_overlay(&mut self) -> bool {
++        false
++    }
++
+     fn get_boxes(
+         &mut self,
+         _: &mut dyn FnMut(&str) -> BTreeMap<String, Vec<Lint>>,
+```
+
+**File**: `harper-desktop/src-tauri/src/highlighter/window.rs` (modified, +32/-1)
+```diff
+@@ -30,7 +30,11 @@ pub struct Window {
+ }
  
- const CONFIG_POLL_INTERVAL: Duration = Duration::from_secs(1);
-+const OVERLAY_RESUME_CHECK_INTERVAL: Duration = Duration::from_millis(500);
- 
- /// Owns the winit event loop and the overlay windows created for each monitor.
- ///
-@@ -94,7 +96,8 @@ impl WindowManager {
-             },
+ impl Window {
+-    pub async fn new(event_loop: &ActiveEventLoop, monitor: MonitorHandle) -> Result<Self, Error> {
++    pub async fn new(
++        event_loop: &ActiveEventLoop,
++        monitor: MonitorHandle,
++        visible: bool,
++    ) -> Result<Self, Error> {
+         let context = super::fonts::context();
+         let position = monitor.position();
+         let size = monitor.size();
+@@ -45,6 +49,7 @@ impl Window {
+                     .with_decorations(false)
+                     .with_transparent(true)
+                     .with_window_level(WindowLevel::AlwaysOnTop)
++                    .with_visible(visible)
+                     .with_active(false),
+             )?,
          );
+@@ -95,6 +100,32 @@ impl Window {
+         self.inner.request_redraw();
+     }
  
--        // Run continuously without a read timer; VSync presentation provides backpressure.
-+        // VSync provides backpressure while displays are awake. The handler waits while overlays
-+        // are paused instead of relying on presentation to throttle the loop during display sleep.
-         self.event_loop.set_control_flow(ControlFlow::Poll);
-         let result = self.event_loop.run_app(&mut app);
- 
-@@ -115,6 +118,8 @@ struct WindowManagerApp {
-     refresh_config: RefreshConfig,
-     hovered_lint: Option<usize>,
++    /// Restore overlays without making them key or interrupting typing in the underlying app.
++    #[cfg(target_os = "macos")]
++    pub fn set_visible(&self, visible: bool) {
++        use objc2_app_kit::NSView;
++        use winit::raw_window_handle::{HasWindowHandle, RawWindowHandle};
++
++        let handle = self.inner.window_handle().expect("overlay window handle");
++        let RawWindowHandle::AppKit(handle) = handle.as_raw() else {
++            unreachable!("macOS overlay must have an AppKit window handle");
++        };
++        // SAFETY: Winit owns this live NSView, and overlay lifecycle operations run on the main
++        // event-loop thread. Keep the window handle alive while accessing the view and its window.
++        let view = unsafe { handle.ns_view.cast::<NSView>().as_ref() };
++        let window = view.window().expect("overlay view must belong to a window");
++        if visible {
++            window.orderFrontRegardless();
++        } else {
++            window.orderOut(None);
++        }
++    }
++
++    #[cfg(not(target_os = "macos"))]
++    pub fn set_visible(&self, visible: bool) {
++        self.inner.set_visible(visible);
++    }
++
+     /// Controls whether the transparent overlay can receive pointer events.
+     ///
+     /// Highlight windows are click-through by default so the underlying app remains usable. The
+```
+
+**File**: `harper-desktop/src-tauri/src/highlighter/window_manager.rs` (modified, +57/-8)
+```diff
+@@ -120,6 +120,7 @@ struct WindowManagerApp {
      cursor_hittest_enabled: bool,
-+    occluded_windows: HashSet<WindowId>,
-+    overlays_paused: bool,
+     occluded_windows: HashSet<WindowId>,
+     overlays_paused: bool,
++    overlays_hidden: bool,
      error: Option<Error>,
  }
  
-@@ -141,6 +146,8 @@ impl WindowManagerApp {
-             refresh_config: callbacks.refresh_config,
-             hovered_lint: None,
+@@ -148,6 +149,7 @@ impl WindowManagerApp {
              cursor_hittest_enabled: false,
-+            occluded_windows: HashSet::new(),
-+            overlays_paused: false,
+             occluded_windows: HashSet::new(),
+             overlays_paused: false,
++            overlays_hidden: false,
              error: None,
          }
      }
-@@ -154,10 +161,31 @@ impl WindowManagerApp {
-         }
- 
-         for window in &self.windows {
--            window.request_redraw();
-+            if self.can_render_window(window.id()) {
-+                window.request_redraw();
-+            }
-         }
+@@ -171,7 +173,8 @@ impl WindowManagerApp {
+     /// Configuration synchronization remains active. An empty window list alone does not imply
+     /// occlusion: windows may not have been created yet.
+     fn should_pause_overlays(&self) -> bool {
+-        all_displays_asleep()
++        self.overlays_hidden
++            || all_displays_asleep()
+             || (!self.windows.is_empty()
+                 && self
+                     .windows
+@@ -183,7 +186,30 @@ impl WindowManagerApp {
+     /// latest window occlusion events. Apply this both when requesting and consuming redraws:
+     /// an already-queued redraw must not render an unavailable overlay.
+     fn can_render_window(&self, window_id: WindowId) -> bool {
+-        !self.overlays_paused && !self.occluded_windows.contains(&window_id)
++        !self.overlays_hidden
++            && !self.overlays_paused
++            && !self.occluded_windows.contains(&window_id)
++    }
++
++    fn update_overlay_visibility(&mut self) -> Result<(), Error> {
++        let hidden = self.os_broker.should_hide_overlay();
++        if hidden == self.overlays_hidden {
++            return Ok(());
++        }
++        self.overlays_hidden = hidden;
++
++        // Empty geometry also closes the popup. Do not resurrect an old selection or stale
++        // highlights if the first accessibility read after restoring visibility fails.
++        self.render_state.set_lints(Vec::new());
++        self.hovered_lint = None;
++        for window in &self.windows {
++            // Restore visibility even if orderOut previously marked the window occluded. Waiting
++            // for an unoccluded event before showing it would leave it permanently hidden.
++            window.set_visible(!hidden);
++            window.set_cursor_hittest(false)?;
++        }
++        self.cursor_hittest_enabled = false;
++        Ok(())
      }
  
-+    /// Whether to suspend overlay OS reads and rendering because no overlay can be seen.
-+    /// Configuration synchronization remains active. An empty window list alone does not imply
-+    /// occlusion: windows may not have been created yet.
-+    fn should_pause_overlays(&self) -> bool {
-+        all_displays_asleep()
-+            || (!self.windows.is_empty()
-+                && self
-+                    .windows
-+                    .iter()
-+                    .all(|window| self.occluded_windows.contains(&window.id())))
-+    }
-+
-+    /// Checks redraw eligibility using the pause state last refreshed in `about_to_wait` and the
-+    /// latest window occlusion events. Apply this both when requesting and consuming redraws:
-+    /// an already-queued redraw must not render an unavailable overlay.
-+    fn can_render_window(&self, window_id: WindowId) -> bool {
-+        !self.overlays_paused && !self.occluded_windows.contains(&window_id)
-+    }
-+
      fn refresh_config(&mut self) {
-         (self.refresh_config)();
-     }
-@@ -207,7 +235,9 @@ impl WindowManagerApp {
-         self.render_state.set_highlighted_lint(Some(index));
+@@ -244,8 +270,13 @@ impl WindowManagerApp {
  
-         for window in &self.windows {
--            window.request_redraw();
-+            if self.can_render_window(window.id()) {
-+                window.request_redraw();
-+            }
-         }
-     }
- }
-@@ -216,13 +246,23 @@ impl ApplicationHandler for WindowManagerApp {
+ impl ApplicationHandler for WindowManagerApp {
      fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
-         let now = Instant::now();
+-        let now = Instant::now();
++        if let Err(error) = self.update_overlay_visibility() {
++            self.error = Some(error);
++            event_loop.exit();
++            return;
++        }
  
--        self.read_rect_updates();
--
++        let now = Instant::now();
          if now.duration_since(self.last_config_poll) >= CONFIG_POLL_INTERVAL {
              self.refresh_config();
              self.last_config_poll = now;
+@@ -255,8 +286,12 @@ impl ApplicationHandler for WindowManagerApp {
+         // Suspend overlay work until it can be displayed again, but keep config sync alive.
+         self.overlays_paused = self.should_pause_overlays();
+         if self.overlays_paused {
+-            event_loop
+-                .set_control_flow(ControlFlow::WaitUntil(now + OVERLAY_RESUME_CHECK_INTERVAL));
++            // Unrelated events must not postpone the next visibility check while hidden.
++            let next_check = match event_loop.control_flow() {
++                ControlFlow::WaitUntil(deadline) if deadline > now => deadline,
++                _ => now + OVERLAY_RESUME_CHECK_INTERVAL,
++            };
++            event_loop.set_control_flow(ControlFlow::WaitUntil(next_check));
+             return;
          }
  
-+        // Rendering while displays sleep can rapidly accumulate Metal drawables (#3874).
-+        // Suspend overlay work until it can be displayed again, but keep config sync alive.
-+        self.overlays_paused = self.should_pause_overlays();
-+        if self.overlays_paused {
-+            event_loop
-+                .set_control_flow(ControlFlow::WaitUntil(now + OVERLAY_RESUME_CHECK_INTERVAL));
-+            return;
-+        }
-+
-+        // Preserve VSync-driven polling while awake. This also requests a fresh frame on wake.
-+        event_loop.set_control_flow(ControlFlow::Poll);
-+        self.read_rect_updates();
-         self.update_cursor_hittest(event_loop);
-     }
+@@ -271,10 +306,17 @@ impl ApplicationHandler for WindowManagerApp {
+             return;
+         }
  
-@@ -251,6 +291,20 @@ impl ApplicationHandler for WindowManagerApp {
-         window_id: WindowId,
-         event: WindowEvent,
-     ) {
-+        if let WindowEvent::Occluded(occluded) = &event {
-+            if *occluded {
-+                self.occluded_windows.insert(window_id);
-+            } else {
-+                self.occluded_windows.remove(&window_id);
-+            }
-+        }
-+
-+        // Do not pass paused redraws to egui: it requests another redraw in response, which
-+        // would keep waking the event loop even though no frame can be presented (#3874).
-+        if matches!(&event, WindowEvent::RedrawRequested) && !self.can_render_window(window_id) {
++        // Check before creating windows so overlays start hidden when the OS requires it.
++        if let Err(error) = self.update_overlay_visibility() {
++            self.error = Some(error);
++            event_loop.exit();
 +            return;
 +        }
 +
-         let should_select_hit_lint = matches!(
-             &event,
-             WindowEvent::MouseInput 
+         let monitors = event_loop.available_monitors().collect::<Vec<_>>();
+ 
+         for monitor in monitors {
+-            match pollster::block_on(Window::new(event_loop, monitor)) {
++            match pollster::block_on(Window::new(event_loop, monitor, !self.overlays_hidden)) {
+                 Ok(window) => self.windows.push(window),
+                 Err(error) => {
+                     self.error = Some(error);
+@@ -326,14 +368,21 @@ impl ApplicationHandler for WindowManagerApp {
+             .enumerate()
+             .find(|(_, window)| window.id() == window_id)
+         {
+-            window.handle_event(&event);
++            if !self.overlays_hidden
++                || matches!(
++                    &event,
++                    WindowEvent::Resized(_) | WindowEvent::ScaleFactorChanged { .. }
++                )
++            {
++                window.handle_event(&event);
++            }
+ 
+    
 ```
 
----
-
-### Incident Patch 2: `62863ef7` (2026-11-10)
-**Commit Message**: fix(chrome-ext): handle a reset user dictionary (#4827)
-
-Opening the options page saves the user dictionary, which first stores
-null through resetDictionary and then rebuilds the linter. The default
-passed to chrome.storage.local.get only applies to missing keys, so
-getUserDictionary returned null and importWords threw an uncaught
-TypeError in the service worker.
-
-A null left in storage also stopped the linter initialising on startup.
-
-**File**: `packages/chrome-plugin/src/background/index.ts` (modified, +2/-1)
+**File**: `harper-desktop/src-tauri/src/mac_broker/mod.rs` (modified, +8/-0)
 ```diff
-@@ -890,7 +890,8 @@ async function addToDictionary(words: string[]): Promise<void> {
- /** Grab the user dictionary from persistent storage. */
- async function getUserDictionary(): Promise<string[]> {
- 	const resp = await chrome.storage.local.get({ userDictionary: [] });
--	return resp.userDictionary;
-+	// `resetDictionary` stores null, which the default above does not replace.
-+	return resp.userDictionary ?? [];
+@@ -6,6 +6,7 @@ mod app_icons;
+ mod core_foundation_utilities;
+ mod focused_target;
+ mod focused_window_pid;
++mod screenshot;
+ mod window_stability;
+ 
+ use accessibility::TreeWalker;
+@@ -46,6 +47,7 @@ use self::accessibility_activation::{
+ use self::accessibility_text::RectCollector;
+ use self::core_foundation_utilities::ax_element_attribute;
+ use self::focused_target::FocusedTarget;
++use self::screenshot::ScreenshotPoll;
+ use self::window_stability::{
+     WINDOW_MOVEMENT_SETTLE_DURATION, WindowMovementState, frontmost_window_frame_for_pid,
+     settled_window_state, window_frame_changed,
+@@ -67,6 +69,7 @@ pub struct MacBroker {
+     application_icon_cache: Mutex<HashMap<String, Vec<u8>>>,
+     window_movement: Option<WindowMovementState>,
+     accessibility_activation: Option<AccessibilityActivationState>,
++    screenshot_poll: ScreenshotPoll,
  }
  
- /** Record the date the extension was installed, if it's missing. */
+ impl MacBroker {
+@@ -79,6 +82,7 @@ impl MacBroker {
+             application_icon_cache: Mutex::new(HashMap::new()),
+             window_movement: None,
+             accessibility_activation: None,
++            screenshot_poll: ScreenshotPoll::new(Instant::now()),
+         }
+     }
+ 
+@@ -295,6 +299,10 @@ impl OsBroker for MacBroker {
+         app_id == BUNDLE_ID
+     }
+ 
++    fn should_hide_overlay(&mut self) -> bool {
++        self.screenshot_poll.is_running()
++    }
++
+     fn get_boxes(&mut self, lint_text: &mut LintCallback) -> Option<Vec<ActionableLint>> {
+         let focused_pid = match focused_window_pid::focused_window_pid() {
+             Ok(pid) => pid,
+```
+
+**File**: `harper-desktop/src-tauri/src/mac_broker/screenshot.rs` (added, +88/-0)
+```diff
+@@ -0,0 +1,88 @@
++use std::time::{Duration, Instant};
++
++use objc2_app_kit::NSRunningApplication;
++use objc2_foundation::ns_string;
++
++const SCREENSHOT_POLL_INTERVAL: Duration = Duration::from_millis(500);
++
++/// Cache Screenshot's process state between polls, including while overlays are hidden.
++pub struct ScreenshotPoll {
++    running: bool,
++    next_check: Instant,
++}
++
++impl ScreenshotPoll {
++    pub fn new(now: Instant) -> Self {
++        Self {
++            running: false,
++            next_check: now,
++        }
++    }
++
++    pub fn is_running(&mut self) -> bool {
++        self.poll(Instant::now(), || {
++            NSRunningApplication::runningApplicationsWithBundleIdentifier(ns_string!(
++                "com.apple.screencaptureui"
++            ))
++            .iter()
++            .any(|app| !app.isTerminated())
++        })
++    }
++
++    fn poll(&mut self, now: Instant, is_running: impl FnOnce() -> bool) -> bool {
++        if now >= self.next_check {
++            self.next_check = now + SCREENSHOT_POLL_INTERVAL;
++            self.running = is_running();
++        }
++        self.running
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::{SCREENSHOT_POLL_INTERVAL, ScreenshotPoll};
++    use std::time::{Duration, Instant};
++
++    #[test]
++    fn screenshot_running_at_startup_hides_before_the_first_interval() {
++        let now = Instant::now();
++        let mut poll = ScreenshotPoll::new(now);
++
++        assert!(poll.poll(now, || true));
++        assert_eq!(poll.next_check, now + SCREENSHOT_POLL_INTERVAL);
++    }
++
++    #[test]
++    fn frequent_events_use_cached_state_without_postponing_the_next_check() {
++        let now = Instant::now();
++        let mut poll = ScreenshotPoll::new(now);
++        assert!(!poll.poll(now, || false));
++
++        for millis in [1, 16, 250, 499] {
++            assert!(!poll.poll(now + Duration::from_millis(millis), || {
++                panic!("process query ran before its deadline")
++            }));
++            assert_eq!(poll.next_check, now + SCREENSHOT_POLL_INTERVAL);
++        }
++
++        assert!(poll.poll(now + SCREENSHOT_POLL_INTERVAL, || true));
++        assert!(poll.poll(now + Duration::from_millis(501), || {
++            panic!("cached running state should be retained")
++        }));
++    }
++
++    #[test]
++    fn hidden_overlays_keep_polling_until_exit_and_handle_another_capture() {
++        let now = Instant::now();
++        let mut poll = ScreenshotPoll::new(now);
++        assert!(poll.poll(now, || true));
++
++        // An idle Screenshot process must keep overlays hidden until it exits.
++        for tick in 1..=30 {
++            assert!(poll.poll(now + SCREENSHOT_POLL_INTERVAL * tick, || true));
++        }
++        assert!(!poll.poll(now + SCREENSHOT_POLL_INTERVAL * 31, || false));
++        assert!(!poll.poll(now + SCREENSHOT_POLL_INTERVAL * 32, || false));
++        assert!(poll.poll(now + SCREENSHOT_POLL_INTERVAL * 33, || true));
++    }
++}
+```
+
+**File**: `harper-desktop/src-tauri/src/os_broker.rs` (modified, +8/-0)
+```diff
+@@ -42,6 +42,10 @@ pub trait OsBroker {
+     /// Grab the position of the user's cursor on the screen.
+     fn cursor_position(&self) -> Option<egui::Pos2>;
+ 
++    /// Whether the OS currently requires the overlay to be hidden.
++    /// Implementations may cache platform checks between calls.
++    fn should_hide_overlay(&mut self) -> bool;
++
+     /// Check whether Harper has permission to access the OS' native accessibility API.
+     fn accessibility_permission_status(&self) -> AccessibilityPermissionStatus;
+ 
+@@ -88,6 +92,10 @@ pub struct NoopBroker;
+ 
+ #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+ impl OsBroker for NoopBroker {
++    fn should_hide_overlay(&mut self) -> bool {
++        false
++    }
++
+     fn get_boxes(
+         &mut self,
+         _lint_text: &mut dyn FnMut(&str) -> BTreeMap<String, Vec<Lint>>,
+```
+
+**File**: `harper-desktop/src-tauri/src/windows_broker/mod.rs` (modified, +4/-0)
+```diff
+@@ -67,6 +67,10 @@ impl WindowsBroker {
+ }
+ 
+ impl OsBroker for WindowsBroker {
++    fn should_hide_overlay(&mut self) -> bool {
++        false
++    }
++
+     fn is_harper_desktop(app_id: &str) -> bool {
+         let Ok(executable) = std::env::current_exe()
+             .and_then(std::fs::canonicalize)
 ```
 
 ---
 
-### Incident Patch 3: `85403580` (2026-11-10)
-**Commit Message**: fix(ci): upgrade Playwright (#4902)
+### Incident Patch 3: `427855e6` (2026-11-12)
+**Commit Message**: fix(core): correct accidentally holding shift (#4890)
 
-**File**: `packages/chrome-plugin/package.json` (modified, +2/-2)
+**File**: `harper-core/src/linting/orthographic_consistency.rs` (modified, +73/-0)
 ```diff
-@@ -29,7 +29,7 @@
- 	},
- 	"devDependencies": {
- 		"@crxjs/vite-plugin": "^2.3.0",
--		"@playwright/test": "1.60.0",
-+		"@playwright/test": "1.65.0",
- 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
- 		"@tailwindcss/vite": "^4.1.4",
- 		"@types/chrome": "^0.0.246",
-@@ -39,7 +39,7 @@
- 		"gulp": "^5.0.0",
- 		"gulp-zip": "^6.0.0",
- 		"http-server": "^14.1.1",
--		"playwright": "1.60.0",
-+		"playwright": "1.65.0",
- 		"playwright-webextext": "^0.0.5",
- 		"rollup-plugin-copy": "^3.5.0",
- 		"svelte": "^5.0.0",
-```
-
-**File**: `packages/components/package.json` (modified, +1/-1)
-```diff
-@@ -57,7 +57,7 @@
- 		"@vitest/coverage-v8": "4.1.12",
- 		"@vueless/storybook-dark-mode": "^10.0.8",
- 		"flowbite": "^3.1.2",
--		"playwright": "1.60.0",
-+		"playwright": "1.65.0",
- 		"publint": "^0.3.14",
- 		"storybook": "^10.6.3",
- 		"svelte": "^5.57.3",
-```
-
-**File**: `packages/harper-editor/package.json` (modified, +1/-1)
-```diff
-@@ -61,7 +61,7 @@
- 		"components": "workspace:*",
- 		"harper.js": "workspace:*",
- 		"lint-framework": "workspace:*",
--		"playwright": "1.60.0",
-+		"playwright": "1.65.0",
- 		"publint": "^0.3.14",
- 		"storybook": "^10.6.3",
- 		"quill": "^2.0.3",
-```
-
-**File**: `packages/harper.js/package.json` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@
- 		"marked": "^16.4.1",
- 		"p-lazy": "^5.0.0",
- 		"p-memoize": "^7.1.1",
--		"playwright": "1.60.0",
-+		"playwright": "1.65.0",
- 		"type-fest": "^4.37.0",
- 		"typescript": "catalog:",
- 		"vite": "^8.3.5",
-```
-
-**File**: `packages/obsidian-plugin/package.json` (modified, +2/-2)
-```diff
-@@ -4,15 +4,15 @@
- 	"version": "3.1.0",
- 	"main": "main.js",
- 	"devDependencies": {
--		"@playwright/test": "1.60.0",
-+		"@playwright/test": "1.65.0",
- 		"@rollup/plugin-node-resolve": "^16.0.0",
- 		"@types/lodash-es": "^4.17.12",
- 		"@types/node": "catalog:",
- 		"@types/rollup-plugin-peer-deps-external": "^2.2.6",
- 		"@vitest/browser": "^4.0.16",
- 		"@vitest/browser-playwright": "^4.0.16",
- 		"obsidian": "^1.7.2",
--		"playwright": "1.60.0",
-+		"playwright": "1.65.0",
- 		"rollup": "4.35.0",
- 		"rollup-plugin-peer-deps-external": "^2.2.4",
- 		"rollup-plugin-svg-import": "^3.0.0",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +50/-59)
-```diff
-@@ -130,8 +130,8 @@ importers:
-         specifier: ^2.3.0
-         version: 2.3.0
-       '@playwright/test':
--        specifier: 1.60.0
--        version: 1.60.0
-+        specifier: 1.65.0
-+        version: 1.65.0
-       '@sveltejs/vite-plugin-svelte':
-         specifier: ^4.0.0
-         version: 4.0.4(svelte@5.57.3)(vite@5.4.17(@types/node@22.13.10)(lightningcss@1.33.0)(sass@1.85.1)(terser@5.51.2))
-@@ -160,11 +160,11 @@ importers:
-         specifier: ^14.1.1
-         version: 14.1.1
-       playwright:
--        specifier: 1.60.0
--        version: 1.60.0
-+        specifier: 1.65.0
-+        version: 1.65.0
-       playwright-webextext:
-         specifier: ^0.0.5
--        version: 0.0.5(@playwright/test@1.60.0)(playwright@1.60.0)
-+        version: 0.0.5(@playwright/test@1.65.0)(playwright@1.65.0)
-       rollup-plugin-copy:
-         specifier: ^3.5.0
-         version: 3.5.0
-@@ -237,7 +237,7 @@ importers:
-         version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vitest/browser-playwright':
-         specifier: 4.1.12
--        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.60.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-+        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.65.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vitest/coverage-v8':
-         specifier: 4.1.12
-         version: 4.1.12(@vitest/browser@4.1.12)(vitest@4.1.12)
-@@ -248,8 +248,8 @@ importers:
-         specifier: ^3.1.2
-         version: 3.1.2(rollup@4.53.3)
-       playwright:
--        specifier: 1.60.0
--        version: 1.60.0
-+        specifier: 1.65.0
-+        version: 1.65.0
-       publint:
-         specifier: ^0.3.14
-         version: 0.3.15
-@@ -318,7 +318,7 @@ importers:
-         version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vitest/browser-playwright':
-         specifier: 4.1.12
--        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.60.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-+        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.65.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vueless/storybook-dark-mode':
-         specifier: ^10.0.8
-         version: 10.0.8(storybook@10.6.3(@types/react@18.3.18)(react@18.3.1))
-@@ -332,8 +332,8 @@ importers:
-         specifier: workspace:*
-         version: link:../lint-framework
-       playwright:
--        specifier: 1.60.0
--        version: 1.60.0
-+        specifier: 1.65.0
-+        version: 1.65.0
-       publint:
-         specifier: ^0.3.14
-         version: 0.3.15
-@@ -382,7 +382,7 @@ importers:
-         version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vitest/browser-playwright':
-         specifier: 4.1.12
--        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.60.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-+        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.65.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vitest/ui':
-         specifier: 4.1.12
-         version: 4.1.12(vitest@4.1.12)
-@@ -399,8 +399,8 @@ importers:
-         specifier: ^7.1.1
-         version: 7.1.1
-       playwright:
--        specifier: 1.60.0
--        version: 1.60.0
-+        specifier: 1.65.0
-+        version: 1.65.0
-       type-fest:
-         specifier: ^4.37.0
-         version: 4.37.0
-@@ -512,8 +512,8 @@ importers:
-         version: 2.8.1
-     devDependencies:
-       '@playwright/test':
--        specifier: 1.60.0
--        version: 1.60.0
-+        specifier: 1.65.0
-+        version: 1.65.0
-       '@rollup/plugin-node-resolve':
-         specifier: ^16.0.0
-         version: 16.0.3(rollup@4.35.0)
-@@ -531,13 +531,13 @@ importers:
-         version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(vite@6.3.5(@types/node@22.13.10)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vitest/browser-playwright':
-         specifier: ^4.0.16
--        version: 4.1.12(msw@2.7.3(@t
+@@ -90,6 +90,31 @@ impl ExprLinter for OrthographicConsistency {
+         }
+ 
+         let canonical_flags = metadata.orth_info;
++
++        // Correct an accidental second capital without changing the initial capital.
++        if chars.len() >= 3
++            && chars[0].is_ascii_uppercase()
++            && chars[1].is_ascii_uppercase()
++            && chars[2..].iter().all(char::is_ascii_lowercase)
++            && let Some(canonical) = self.dict.get_correct_capitalization_of(chars)
++            && OrthFlags::from_letters(canonical)
++                .intersects(OrthFlags::LOWERCASE | OrthFlags::TITLECASE)
++        {
++            let mut corrected = chars.to_vec();
++            corrected[1].make_ascii_lowercase();
++
++            return Some(Lint {
++                span: word.span,
++                lint_kind: LintKind::Capitalization,
++                message: format!(
++                    "Did you mean `{}`? Only the first letter should be capitalized.",
++                    corrected.iter().collect::<String>()
++                ),
++                suggestions: vec![Suggestion::ReplaceWith(corrected)],
++                priority: 31,
++            });
++        }
++
+         let flags_to_check = [
+             OrthFlags::LOWER_CAMEL,
+             OrthFlags::UPPER_CAMEL,
+@@ -498,6 +523,54 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn corrects_accidental_double_initial_capitals() {
++        for (input, expected) in [
++            ("THe", "The"),
++            ("LIzard", "Lizard"),
++            ("DOor", "Door"),
++            ("THe lizard opened the door.", "The lizard opened the door."),
++            ("A LIzard opened the door.", "A Lizard opened the door."),
++            ("Open the DOor.", "Open the Door."),
++            ("\"THe\"", "\"The\""),
++            ("LIzard!", "Lizard!"),
++            ("DOor?", "Door?"),
++            ("THe, DOor", "The, Door"),
++            ("THe\nLIzard", "The\nLizard"),
++            ("THe\tDOor", "The\tDoor"),
++            ("HEllo", "Hello"),
++            ("WOrld", "World"),
++            ("ENgland", "England"),
++        ] {
++            assert_suggestion_result(input, OrthographicConsistency::default(), expected);
++        }
++    }
++
++    #[test]
++    fn preserves_other_casing_and_unknown_words() {
++        for input in [
++            "The lizard opened the door.",
++            "Lizard Door",
++            "THE LIZARD DOOR",
++            "NASA",
++            "iPhone",
++            "LinkedIn",
++            "WordPress",
++            "macOS",
++            "YouTube",
++            "DO",
++            "PR",
++            "QZxqzq",
++            "tHe",
++            "lIzard",
++            "DOOr",
++            "THe-like",
++            "pre-DOor",
++        ] {
++            assert_no_lints(input, OrthographicConsistency::default());
++        }
++    }
++
+     #[test]
+     fn allows_news() {
+         assert_no_lints(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4905** (2026-11-10): fix(desktop): memory leak when the device goes to sleep (@elijah-potter)
-- **PR #4902** (2026-11-10): fix(ci): upgrade Playwright (@elijah-potter)
-- **PR #4894** (2026-11-11): feat: moment(s) of truths → moments of truth (@hippietrail)
-- **PR #4886** (closed): fix(desktop): make the Windows highlighter overlay transparent (@hridyesh-gupta)
-- **PR #4885** (2026-11-11): feat: look forwards to → look forward to (@hippietrail)
-- **PR #4873** (2026-11-11): feat: if I where to → if I were to (@hippietrail)
+- **PR #4945** (2026-11-13): Bump CI toolkit to 7.1.1 for AWS cost saving (@mokagio)
+- **PR #4942** (2026-11-13): chore: more linters about confusable words into new config group (@hippietrail)
+- **PR #4939** (2026-11-13): feat: dabble down → double down (@hippietrail)
+- **PR #4929** (2026-11-12): fix(desktop): hide overlays while macOS Screenshot is running (@elijah-potter)
+- **PR #4928** (2026-11-12): fix(desktop): update indication and add link to system settings (@elijah-potter)
+- **PR #4924** (2026-11-12): test(chrome-ext): run Typst editor tests against a local CodeMirror page (@GaryJones)
 
 ---
 
@@ -1817,56 +2271,76 @@ A null left in storage also stopped the linter initialising on startup.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. desktop): memory leak when the device goes to sleep (#4905)
+## X. core): accept British -ise and -yse forms (#4818)
 
 **RULE**:
-When implementing operations in `harper-desktop/src-tauri/src/highlighter/window_manager.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/dictionary.dict`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b59b5ad2`: desktop): memory leak when the device goes to sleep (#4905). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9b9bfe1`: core): accept British -ise and -yse forms (#4818). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-desktop/src-tauri/src/highlighter/window_manager.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/dictionary.dict`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::collections::HashSet;
-const OVERLAY_RESUME_CHECK_INTERVAL: Duration = Duration::from_millis(500);
-        // VSync provides backpressure while displays are awake. The handler waits while overlays
-        // are paused instead of relying on presentation to throttle the loop during display sleep.
-    occluded_windows: HashSet<WindowId>,
-    overlays_paused: bool,
-            occluded_windows: HashSet::new(),
-            overlays_paused: false,
-            if self.can_render_window(window.id()) {
-                window.request_redraw();
-            }
-    /// Whether to suspend overlay OS reads and rendering because no overlay can be seen.
-    /// Configuration synchronization remains active. An empty window list alone does not imply
-    /// occlusion: windows may not have been created yet.
-    fn should_pause_overlays(&self) -> bool {
-        all_displays_asleep()
-            || (!self.windows.is_empty()
-                && self
-                    .windows
-                    .iter()
-                    .all(|window| self.occluded_windows.contains(&window.id())))
-    }
-
-    /// Checks redraw eligibility using the pause state last refreshed in `about_to_wait` and the
-    /// l
+anonymisation/Nmg!_₹
+anonymise/VdSG!_₹
+apotheosise/VdSG!_₹
+authorise/VGdSr!_₹
+canonicalisation/Ng!_₹
+catastrophise/VdSG!_₹
+civilisational/J!_₹
+collateralisation/Ng!_₹
+commoditise/VdSG!_₹
+conceptualisation/NSgr!_₹
+conceptualise/VdSGr!_₹
+customisability/Nmg!_₹
+customisable/J!_₹
+customiser/NgS!_₹
+decarbonise/VdSG!_₹
+dedollarisation/Nmg!_₹
+dedollarise/VSdG!_₹
+denormalisation/Nmg!_₹
+denormalise/VGdS!_₹
+deserialisation/NgS!_₹
+deserialise/VSGd!_₹
+digitiser/NgS!_₹
+dollarisation/Ng!_₹
+dollarise/VdSG!_₹
+emphasise/VGdSre!_₹
+euphemise/VdGS!_₹
+euthanise/VdSG!_₹
+faradise/VdG!_₹
+fetishisation/Ng!_₹
+fetishise/VdSG!_₹
+financialisation/Ng!_₹
+financialise/VdSG!_₹
+generalise/VGdSB!_₹
+hypothesise/VdSG!_₹
+industrialisation/Nge!_₹
+industrialise/VdSGr!_₹
+ioniser/NgS!_₹
+legaliser/NgS!_₹
+legitimisation/Nge!_₹
+legitimise/VdSGe!_₹
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        // Run continuously without a read timer; VSync presentation provides backpressure.
-            window.request_redraw();
-            window.request_redraw();
-        self.read_rect_updates();
-
+authorise/VGdS!_₹
+conceptualisation/NSg!_₹
+conceptualise/VdSG!_₹
+emphasise/VGdSr!_₹
+generalise/VGdS!_₹
+hypothesise/V!_₹
+industrialisation/Ng!_₹
+industrialise/VdSG!_₹
+legitimisation/Ng!_₹
+legitimise/VdSG!_₹
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b59b5ad2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9b9bfe1` are properly handled with clean fallback behavior.

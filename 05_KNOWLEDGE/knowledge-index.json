@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T06:20:51.598Z",
+  "last_updated": "2026-11-13T06:33:35.681Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4632,8 +4632,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "2fac72e1",
-      "content_hash": "d28c24d2cc1279fc537980790e37189c68aba7022bef0dddf9c165df02955479",
+      "source_version": "a498d472",
+      "content_hash": "3d5ab151eccbcb518471ede917334e454122906dbd5b9f8df51d6b3eea57f2f5",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -4665,6 +4665,11 @@
         {
           "number": null,
           "title": "desktop): memory leak when the device goes to sleep (#4905)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "core): accept British -ise and -yse forms (#4818)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -4743,7 +4748,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T13:22:12.461Z",
+      "verified_at": "2026-11-13T06:33:25.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16092,8 +16097,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "620db4dd",
-      "content_hash": "3e78a7b994723f3497435a9fb24cc85d8e3e420fa6275f33bcad737a33fe0c24",
+      "source_version": "dbdaf790",
+      "content_hash": "324d77f64cecb73027c33f733bf00f455ae2f7509f6e6ac8221f25e72d0a55ce",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -16175,6 +16180,11 @@
         {
           "number": null,
           "title": "transport): sum QUIC memory in the node aggregate; cap connections for it with d",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "quic): native setup with Hello exchange, punching and native ALPN (#6204)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16393,7 +16403,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T00:31:14.592Z",
+      "verified_at": "2026-11-13T06:33:35.648Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -137850,7 +137860,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
       "source_version": "hf-krafton-raon-1-mini-preview",
-      "content_hash": "a0906b4ed07a729953dca2d12df92a8c3564b24adf1ca39bfa907162af3229ce",
+      "content_hash": "506d84c12bf7bf15b3bcdac666a0860af77ee001f0384312feab46ccd9dd3812",
       "dossier_path": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "promoted_rules": [
@@ -137915,7 +137925,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T05:26:32.415Z",
+      "verified_at": "2026-11-13T06:33:13.071Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

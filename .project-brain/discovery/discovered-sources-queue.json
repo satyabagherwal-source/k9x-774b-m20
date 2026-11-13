@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T06:21:14.131Z",
+  "updated_at": "2026-11-13T06:33:56.212Z",
   "stats": {
-    "total_discovered": 2224,
-    "approved_pending_harvest": 2066,
+    "total_discovered": 2229,
+    "approved_pending_harvest": 2071,
     "harvested_count": 0,
     "rejected_count": 158,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2055,
+      "COMMUNITY_AND_EXPERT": 2058,
       "OFFICIAL_DOCUMENTATION": 90,
-      "STANDARDS_AND_SPECIFICATIONS": 70,
+      "STANDARDS_AND_SPECIFICATIONS": 72,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 7,
       "LEGAL_AND_REGULATORY": 1
@@ -47840,6 +47840,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
         "fileName": "stikdebug-stikdebug-learnings.md"
+      }
+    },
+    "SRC-FFF0BE811E53": {
+      "id": "SRC-FFF0BE811E53",
+      "url": "https://github.com/Automattic/harper",
+      "title": "https://github.com/Automattic/harper",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:33:42.480Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-C6C4E79C5272": {
+      "id": "SRC-C6C4E79C5272",
+      "url": "https://write.ellipsus.com/",
+      "title": "https://write.ellipsus.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:33:42.497Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-10A77AD2F686": {
+      "id": "SRC-10A77AD2F686",
+      "url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+      "title": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:33:56.168Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
+        "fileName": "hf-krafton-raon-1-mini-preview-learnings.md"
+      }
+    },
+    "SRC-3613628939F1": {
+      "id": "SRC-3613628939F1",
+      "url": "https://www.rfc-editor.org/rfc/rfc9287",
+      "title": "IETF RFC 9287",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:33:56.197Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
+        "fileName": "freenet-freenet-core-learnings.md"
+      }
+    },
+    "SRC-85B2A7601FEB": {
+      "id": "SRC-85B2A7601FEB",
+      "url": "https://www.rfc-editor.org/rfc/rfc8410",
+      "title": "IETF RFC 8410",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T06:33:56.212Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
+        "fileName": "freenet-freenet-core-learnings.md"
       }
     }
   }

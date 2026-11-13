@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T06:21:14.033Z",
+  "last_updated": "2026-11-13T06:33:56.182Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8264,6 +8264,24 @@
       "source_repo": "stikdebug-stikdebug",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BDAF4A-change-download-link-to-latest-stikdebug.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-7E5A86",
+      "directive_title": "core): accept British -ise and -yse forms (#4818)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "automattic-harper",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7E5A86-core-accept-british-ise-and-yse-forms-48.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-4261F4",
+      "directive_title": "quic): native setup with Hello exchange, punching and native ALPN (#6204)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "freenet-freenet-core",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4261F4-quic-native-setup-with-hello-exchange-pu.md",
       "staged_date": "2026-11-13"
     }
   ]

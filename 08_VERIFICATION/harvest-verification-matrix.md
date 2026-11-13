@@ -9366,3 +9366,7 @@
 | `CYCLE-20261113-8OVO` | `2026-11-13T06:20:48.756Z` | `StikDebug/StikDebug` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`d4c63a72...`) |
 | `CYCLE-20261113-8R7A` | `2026-11-13T06:20:51.766Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`59c5e3c4...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T06:21:14.009Z` | `hf-comfy-org-fibo-2.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B83FE1C6` [Domain D] | Yes (`d0f12508...`) |
+| `CYCLE-20261113-ONAQ` | `2026-11-13T06:33:13.202Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md` | Yes (`506d84c1...`) |
+| `CYCLE-20261113-OWMK` | `2026-11-13T06:33:25.292Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`3d5ab151...`) |
+| `CYCLE-20261113-P4QV` | `2026-11-13T06:33:35.815Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`324d77f6...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T06:33:56.160Z` | `hf-krafton-raon-1-mini-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-64949094` [Domain D] | Yes (`474e213f...`) |

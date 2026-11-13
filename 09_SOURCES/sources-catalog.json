@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "2fac72e1",
+    "sourceVersion": "a498d472",
     "license": "Apache-2.0",
-    "contentHash": "d28c24d2cc1279fc537980790e37189c68aba7022bef0dddf9c165df02955479",
-    "lastHarvestedAt": "2026-11-11T13:22:12.661Z",
+    "contentHash": "3d5ab151eccbcb518471ede917334e454122906dbd5b9f8df51d6b3eea57f2f5",
+    "lastHarvestedAt": "2026-11-13T06:33:25.296Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "620db4dd",
+    "sourceVersion": "dbdaf790",
     "license": "NOASSERTION",
-    "contentHash": "3e78a7b994723f3497435a9fb24cc85d8e3e420fa6275f33bcad737a33fe0c24",
-    "lastHarvestedAt": "2026-11-13T00:31:14.720Z",
+    "contentHash": "324d77f64cecb73027c33f733bf00f455ae2f7509f6e6ac8221f25e72d0a55ce",
+    "lastHarvestedAt": "2026-11-13T06:33:35.818Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -10595,8 +10595,8 @@
     "sourceUrl": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
     "sourceVersion": "hf-krafton-raon-1-mini-preview",
     "license": "Open-Source",
-    "contentHash": "a0906b4ed07a729953dca2d12df92a8c3564b24adf1ca39bfa907162af3229ce",
-    "lastHarvestedAt": "2026-11-08T05:26:32.524Z",
+    "contentHash": "506d84c12bf7bf15b3bcdac666a0860af77ee001f0384312feab46ccd9dd3812",
+    "lastHarvestedAt": "2026-11-13T06:33:13.206Z",
     "learningId": "learn-huggingface-krafton-raon-1-mini-preview"
   },
   "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf": {

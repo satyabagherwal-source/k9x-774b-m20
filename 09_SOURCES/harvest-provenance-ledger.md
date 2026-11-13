@@ -9375,3 +9375,7 @@ Every entry in this ledger must capture:
 | `learn-github-stikdebug-stikdebug` | `https://github.com/StikDebug/StikDebug` | `7a80dfce` | Multi-dimensional audit evidence | 2026-11-13T06:20:48.761Z |
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `74fb6231` | Multi-dimensional audit evidence | 2026-11-13T06:20:51.771Z |
 | `learn-dom-d-b83fe1c6` | `project://hf-comfy-org-fibo-2.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md` | 2026-11-13T06:21:14.009Z |
+| `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-13T06:33:13.206Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `a498d472` | Multi-dimensional audit evidence | 2026-11-13T06:33:25.296Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `dbdaf790` | Multi-dimensional audit evidence | 2026-11-13T06:33:35.818Z |
+| `learn-dom-d-64949094` | `project://hf-krafton-raon-1-mini-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md` | 2026-11-13T06:33:56.160Z |
