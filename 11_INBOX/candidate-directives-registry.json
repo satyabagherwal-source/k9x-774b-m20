@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T05:16:25.352Z",
+  "last_updated": "2026-11-13T05:23:59.464Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8174,6 +8174,24 @@
       "source_repo": "nats-io-nats.go",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F753B4--fixed-require-a-separator-before-inline.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-166069",
+      "directive_title": "expose mouse modifiers to Lua (#4495)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sxyazi-yazi",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-166069-expose-mouse-modifiers-to-lua-4495-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-7C9BB6",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7C9BB6-export-fix-consent-of-former-subscribers.md",
       "staged_date": "2026-11-13"
     }
   ]

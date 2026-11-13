@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-FYR6",
-    "timestamp": "2026-11-09T23:07:33.426Z",
-    "repository": "MariaDB/server",
-    "learningId": "learn-github-mariadb-server",
-    "contentHash": "0b117dd733524b19ef0ff111c57c9228d9732eeb6e8d754d089c50d4d91bd9b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-JIGK",
-    "timestamp": "2026-11-09T23:10:18.932Z",
-    "repository": "LiquidAI/LFM3-VL-2B",
-    "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
-    "contentHash": "02c31304519120660b66b6c170f61b0558ec5f167867a98ce159269d13036116",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-T3UQ",
     "timestamp": "2026-11-09T23:17:46.562Z",
     "repository": "wcandillon/react-native-skia",
@@ -7490,6 +7460,36 @@
     "repository": "nats-io/nats.go",
     "learningId": "learn-github-nats-io-nats-go",
     "contentHash": "089a887a8c5d8ddca36b23a54488b8ae4bbf08e7b76af37c251f3d5cf83591ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-70K0",
+    "timestamp": "2026-11-13T05:23:31.344Z",
+    "repository": "Comfy-Org/Z-Image-Turbo",
+    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+    "contentHash": "3187fcd13f36923015371e58fc84035a378b3f9531e4fee16abc82aa2fb44d47",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-79C4",
+    "timestamp": "2026-11-13T05:23:42.724Z",
+    "repository": "sxyazi/yazi",
+    "learningId": "learn-github-sxyazi-yazi",
+    "contentHash": "fe63c50f1962d6b6a21be4c84c66a3913f469d60b79943934756c16da89d6efd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

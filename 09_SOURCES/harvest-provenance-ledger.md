@@ -9358,3 +9358,6 @@ Every entry in this ledger must capture:
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `2a786dca` | Multi-dimensional audit evidence | 2026-11-13T05:15:57.874Z |
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `91d00498` | Multi-dimensional audit evidence | 2026-11-13T05:16:05.012Z |
 | `learn-dom-d-5a5516b9` | `project://hf-qwen-qwen3-14b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-14b-learnings.md` | 2026-11-13T05:16:25.325Z |
+| `learn-huggingface-comfy-org-z-image-turbo` | `https://huggingface.co/Comfy-Org/Z-Image-Turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-13T05:23:31.348Z |
+| `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `d5e4beb6` | Multi-dimensional audit evidence | 2026-11-13T05:23:42.728Z |
+| `learn-dom-d-f4ef37a7` | `project://hf-comfy-org-z-image-turbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md` | 2026-11-13T05:23:59.453Z |

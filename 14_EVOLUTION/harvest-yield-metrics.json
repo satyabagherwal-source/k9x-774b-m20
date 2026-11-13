@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T05:16:05.031Z",
-  "total_cycles_completed": 9148,
-  "total_learnings_persisted": 9148,
-  "total_rules_promoted": 8961,
+  "last_updated": "2026-11-13T05:23:42.745Z",
+  "total_cycles_completed": 9150,
+  "total_learnings_persisted": 9150,
+  "total_rules_promoted": 8962,
   "history": [
-    {
-      "timestamp": "2026-11-12T08:52:38.464Z",
-      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
-      "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T08:53:00.364Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T08:53:00.416Z",
       "repository": "maziyarpanahi/openmed",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T05:16:05.031Z",
       "repository": "nats-io/nats.go",
       "learningId": "learn-github-nats-io-nats-go",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T05:23:31.353Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T05:23:42.745Z",
+      "repository": "sxyazi/yazi",
+      "learningId": "learn-github-sxyazi-yazi",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -7863,10 +7863,10 @@
     "repository": "sxyazi/yazi",
     "platform": "github",
     "sourceUrl": "https://github.com/sxyazi/yazi",
-    "sourceVersion": "805579e9",
+    "sourceVersion": "d5e4beb6",
     "license": "MIT",
-    "contentHash": "fddc27f39589ae53b3c5a5aa6c93486f44f1b538dea06a83d901b9bb27713622",
-    "lastHarvestedAt": "2026-11-11T11:18:57.030Z",
+    "contentHash": "fe63c50f1962d6b6a21be4c84c66a3913f469d60b79943934756c16da89d6efd",
+    "lastHarvestedAt": "2026-11-13T05:23:42.728Z",
     "learningId": "learn-github-sxyazi-yazi"
   },
   "ronitsingh10-finetune": {
@@ -10545,8 +10545,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
     "sourceVersion": "hf-comfy-org-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "0f869480fdc3ab1e946b21e88ccd7d45aaf2f9e2e1fd4590bbb5a7287689ea80",
-    "lastHarvestedAt": "2026-11-08T04:42:29.324Z",
+    "contentHash": "3187fcd13f36923015371e58fc84035a378b3f9531e4fee16abc82aa2fb44d47",
+    "lastHarvestedAt": "2026-11-13T05:23:31.348Z",
     "learningId": "learn-huggingface-comfy-org-z-image-turbo"
   },
   "hf-unsloth-flint-gguf": {

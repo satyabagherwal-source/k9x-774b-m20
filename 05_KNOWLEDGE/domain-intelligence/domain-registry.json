@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T05:16:25.322Z",
-  "total_records": 95,
+  "last_updated": "2026-11-13T05:23:59.451Z",
+  "total_records": 96,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 54,
+      "total": 55,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -79,7 +79,8 @@
         "DOM-D-FE25E160",
         "DOM-D-90E0590C",
         "DOM-D-F419AB78",
-        "DOM-D-5A5516B9"
+        "DOM-D-5A5516B9",
+        "DOM-D-F4EF37A7"
       ]
     },
     "E": {
@@ -3914,6 +3915,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T05:16:25.320Z"
+    },
+    "DOM-D-F4EF37A7": {
+      "record_id": "DOM-D-F4EF37A7",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/Z-Image-Turbo",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Comfy-Org/Z-Image-Turbo](https://huggingface.co/Comfy-Org/Z-Image-Turbo))  \n> **Source Version**: `hf-comfy-org`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "0606c8174ae35d99cfa50f3a6d9f784b5c356eaf1cf7ed6f87f5a756f2ed2b5d",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-comfy-org-z-image-turbo/hf-comfy-org-z-image-turbo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T05:23:46.703Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-z-image-turbo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-comfy-org-z-image-turbo"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T05:23:59.448Z"
     }
   }
 }

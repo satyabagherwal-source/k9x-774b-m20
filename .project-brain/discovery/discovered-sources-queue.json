@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T05:16:25.428Z",
+  "updated_at": "2026-11-13T05:23:46.690Z",
   "stats": {
-    "total_discovered": 2199,
-    "approved_pending_harvest": 2041,
+    "total_discovered": 2204,
+    "approved_pending_harvest": 2046,
     "harvested_count": 0,
     "rejected_count": 158,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2031,
+      "COMMUNITY_AND_EXPERT": 2036,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -47290,6 +47290,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
         "fileName": "nats-io-nats.go-learnings.md"
+      }
+    },
+    "SRC-C7D21C81942F": {
+      "id": "SRC-C7D21C81942F",
+      "url": "https://github.com/sxyazi/yazi",
+      "title": "https://github.com/sxyazi/yazi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:23:46.625Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
+        "fileName": "sxyazi-yazi-learnings.md"
+      }
+    },
+    "SRC-E7D050B7CBDB": {
+      "id": "SRC-E7D050B7CBDB",
+      "url": "https://github.com/sxyazi/yazi/pull/4477",
+      "title": "https://github.com/sxyazi/yazi/pull/4477",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:23:46.646Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
+        "fileName": "sxyazi-yazi-learnings.md"
+      }
+    },
+    "SRC-5F199292F85B": {
+      "id": "SRC-5F199292F85B",
+      "url": "https://github.com/sxyazi/yazi/pull/4483",
+      "title": "https://github.com/sxyazi/yazi/pull/4483",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:23:46.662Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
+        "fileName": "sxyazi-yazi-learnings.md"
+      }
+    },
+    "SRC-B7D753881539": {
+      "id": "SRC-B7D753881539",
+      "url": "https://github.com/sxyazi/yazi/pull/4484",
+      "title": "https://github.com/sxyazi/yazi/pull/4484",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:23:46.676Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
+        "fileName": "sxyazi-yazi-learnings.md"
+      }
+    },
+    "SRC-2F9D9BAB4EF1": {
+      "id": "SRC-2F9D9BAB4EF1",
+      "url": "https://github.com/sxyazi/yazi/pull/4494",
+      "title": "https://github.com/sxyazi/yazi/pull/4494",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T05:23:46.690Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
+        "fileName": "sxyazi-yazi-learnings.md"
       }
     }
   }

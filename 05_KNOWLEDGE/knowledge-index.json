@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T05:16:04.875Z",
+  "last_updated": "2026-11-13T05:23:42.561Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -61737,14 +61737,19 @@
       "slug": "sxyazi-yazi",
       "platform": "github",
       "source_url": "https://github.com/sxyazi/yazi",
-      "source_version": "805579e9",
-      "content_hash": "fddc27f39589ae53b3c5a5aa6c93486f44f1b538dea06a83d901b9bb27713622",
+      "source_version": "d5e4beb6",
+      "content_hash": "fe63c50f1962d6b6a21be4c84c66a3913f469d60b79943934756c16da89d6efd",
       "dossier_path": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "new `create` and `bulk-create` DDS events for file creations (#4484)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "expose mouse modifiers to Lua (#4495)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -61793,7 +61798,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T11:18:56.689Z",
+      "verified_at": "2026-11-13T05:23:42.520Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -135228,7 +135233,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Z-Image-Turbo",
       "source_version": "hf-comfy-org-z-image-turbo",
-      "content_hash": "0f869480fdc3ab1e946b21e88ccd7d45aaf2f9e2e1fd4590bbb5a7287689ea80",
+      "content_hash": "3187fcd13f36923015371e58fc84035a378b3f9531e4fee16abc82aa2fb44d47",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md",
       "promoted_rules": [
@@ -135288,7 +135293,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T04:42:29.187Z",
+      "verified_at": "2026-11-13T05:23:31.222Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
