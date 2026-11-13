@@ -9494,3 +9494,8 @@ Every entry in this ledger must capture:
 | `learn-github-planetable-planet` | `https://github.com/Planetable/Planet` | `544b4253` | Multi-dimensional audit evidence | 2026-11-13T13:20:44.348Z |
 | `learn-dom-d-9802962d` | `project://hf-contrastive-lm-clm-v0.1-8b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | 2026-11-13T13:21:07.337Z |
 | `learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf` | `https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-13T13:34:22.602Z |
+| `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-13T13:42:19.177Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `2cf4bab6` | Multi-dimensional audit evidence | 2026-11-13T13:42:27.439Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `52391ebe` | Multi-dimensional audit evidence | 2026-11-13T13:42:44.685Z |
+| `learn-dom-d-f5a07c9a` | `project://hf-nvidia-nemotron-3-diarization` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | 2026-11-13T13:43:04.931Z |
+| `learn-dom-d-b9912729` | `project://hashicorp-terraform` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md` | 2026-11-13T13:43:27.402Z |

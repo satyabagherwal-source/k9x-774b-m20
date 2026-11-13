@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `4a7d3d74`  
+> **Source Version**: `2cf4bab6`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T08:53:41.150Z  
+> **Timestamp**: 2026-11-13T13:42:27.055Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T08:52:43.742Z  
+> **Harvest Timestamp**: 2026-11-13T13:42:27.049Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50210 stars
+- **Stars / Engagement**: 50227 stars
 
 ---
 
@@ -2281,400 +2281,45 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `55436336` (2026-11-09)
-**Commit Message**: fix: Ensure `fmt`'s fallback output is skipped when `fmt` is run in check mode
+### Incident Patch 1: `847f6cde` (2026-11-12)
+**Commit Message**: fix: Make argument parsing for `metadata functions` return best effort interpretation, i.e. don't return early on errors. (#39538)
 
-After all, when `-check` is set the output to indicate formatting is needed is the exit code. Therefore we don't need to fallback to executing this block, which serves to ensure that fmt behaves differently when files need to be formatted.
-
-**File**: `internal/command/fmt.go` (modified, +1/-1)
+**File**: `internal/command/arguments/metadata_functions.go` (modified, +0/-2)
 ```diff
-@@ -205,7 +205,7 @@ func (c *FmtCommand) processFile(path string, r io.Reader, w io.Writer) tfdiags.
- 		}
+@@ -28,8 +28,6 @@ func ParseMetadataFunctions(args []string) (*MetadataFunctions, tfdiags.Diagnost
+ 			"Failed to parse command-line flags",
+ 			err.Error(),
+ 		))
+-
+-		return metadataFunctions, diags
  	}
  
--	if !c.list && !c.write && !c.diff {
-+	if !c.list && !c.write && !c.diff && !c.check {
- 		_, err = w.Write(result)
- 		if err != nil {
- 			diags = diags.Append(fmt.Errorf("Failed to write result"))
+ 	// Positional arguments are currently accepted and ignored.
 ```
 
----
-
-### Incident Patch 2: `73f40fde` (2026-11-10)
-**Commit Message**: command/fmt: Fix issue where output from `-diff` option is suppressed if `-list=false` is set (#39525)
-
-This change refactors how the `fmt` command's `-check` option is used. A new boolean field in the command's struct tracks if changes are found, and output to stdout is now printed the same way regardless of whether `-check` is used or not.
-
-This addresses a bug where output originating from the `-diff` option couldn't be printed to stdout unless `-list` was true. There is a test in place to assert this is fixed.
-
-I also added a test to show that if all options that produce output to stdout are disabled alongside using `-check` then no output is printed to stdout. See: https://github.com/hashicorp/terraform/commit/55436336db424d9ff85151d31dc3a82a541fc382
-
-**File**: `.changes/v1.18/BUG FIXES-20261109-165621.yaml` (added, +5/-0)
+**File**: `internal/command/arguments/metadata_functions_test.go` (modified, +5/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+kind: BUG FIXES
-+body: 'fmt: Output from the `-diff` option is now printed to stdout when using `terraform fmt -check -diff -list=false`'
-+time: 2026-11-09T16:56:21.909029Z
-+custom:
-+    Issue: "39518"
-```
-
-**File**: `internal/command/fmt.go` (modified, +11/-16)
-```diff
-@@ -42,6 +42,10 @@ type FmtCommand struct {
- 	check     bool
- 	recursive bool
- 	input     io.Reader // STDIN if nil
-+
-+	// Boolean indicates if any files need formatting changes.
-+	// This is used to determine the exit code when the -check option is used.
-+	formattingChangesFound bool
- }
- 
- func (c *FmtCommand) Run(args []string) int {
-@@ -65,18 +69,12 @@ func (c *FmtCommand) Run(args []string) int {
- 	c.check = parsedArgs.Check
- 	c.recursive = parsedArgs.Recursive
- 
--	var output io.Writer
--	list := c.list // preserve the original value of -list
- 	if c.check {
--		// set to true so we can use the list output to check
--		// if the input needs formatting
--		c.list = true
-+		// check is a read-only operation
- 		c.write = false
--		output = &bytes.Buffer{}
--	} else {
--		output = &cli.UiWriter{Ui: c.Ui}
- 	}
- 
-+	var output io.Writer = &cli.UiWriter{Ui: c.Ui}
- 	fileDiags := c.fmt(parsedArgs.Paths, c.input, output)
- 	diags = diags.Append(fileDiags)
- 	c.showDiagnostics(diags)
-@@ -85,15 +83,10 @@ func (c *FmtCommand) Run(args []string) int {
- 	}
- 
- 	if c.check {
--		buf := output.(*bytes.Buffer)
--		ok := buf.Len() == 0
--		if list {
--			io.Copy(&cli.UiWriter{Ui: c.Ui}, buf)
--		}
--		if ok {
--			return 0
--		} else {
-+		if c.formattingChangesFound {
- 			return 3
-+		} else {
-+			return 0
- 		}
- 	}
- 
-@@ -185,6 +178,8 @@ func (c *FmtCommand) processFile(path string, r io.Reader, w io.Writer) tfdiags.
- 
- 	if !bytes.Equal(src, result) {
- 		// Something was changed
-+		c.formattingChangesFound = true
-+
- 		if c.list {
- 			fmt.Fprintln(w, path)
- 		}
-```
-
-**File**: `internal/command/fmt_test.go` (modified, +84/-2)
-```diff
-@@ -723,6 +723,45 @@ func TestFmt_check(t *testing.T) {
- 		}
- 	})
- 
-+	t.Run("combining -diff and -list=false options", func(t *testing.T) {
-+		t.Parallel()
-+		tempDir := fmtFixtureWriteDir(t)
-+
-+		ui := testUiWrapped(t)
-+		c := &FmtCommand{
-+			Meta: Meta{
-+				testingOverrides: metaOverridesForProvider(testProvider()),
-+				Ui:               ui,
-+			},
-+		}
-+
-+		args := []string{
-+			"-check",
-+			"-diff",
-+			"-list=false",
-+			tempDir,
-+		}
-+		if code := c.Run(args); code != 3 {
-+			t.Fatalf("wrong exit code. expected 3")
-+		}
-+
-+		tempDir = c.normalizePath(tempDir)
-+		// output doesn't have the file path printed before the diff, which is the -list contribution to output
-+		expectedOutput := fmt.Sprintf(`--- old/%s/main.tf
-++++ new/%s/main.tf
-+@@ -1 +1 @@
-+-  foo  =  "bar"
-++foo = "bar"
-+`, tempDir, tempDir)
-+
-+		if actual := ui.OutputWriter.String(); actual != expectedOutput {
-+			t.Fatalf("expected:\n%s\n\ngot:\n%s", expectedOutput, actual)
-+		}
-+		if actual := ui.ErrorWriter.String(); actual != "" {
-+			t.Fatalf("expected:\n%s\n\nto be empty.", actual)
-+		}
-+	})
-+
- 	t.Run("explicit -write=true option is silently ignored when using the check option", func(t *testing.T) {
- 		t.Parallel()
- 		tempDir := fmtFixtureWriteDir(t)
-@@ -754,6 +793,39 @@ func TestFmt_check(t *testing.T) {
- 			t.Fatalf("expected:\n%s\n\nto be empty.", actual)
- 		}
- 	})
-+
-+	t.Run("all outputs disabled, alongside -check option", func(t *testing.T) {
-+		t.Parallel()
-+		tempDir := fmtFixtureWriteDir(t)
-+
-+		ui := testUiWrapped(t)
-+		c := &FmtCommand{
-+			Meta: Meta{
-+				testingOverrides: metaOverridesForProvider(testProvider()),
-+				Ui:               ui,
-+			},
-+		}
-+
-+		args := []string{
-+			"-check",
-+			"-write=false",
-+			"-list=false",
-+			"-diff=false",
-+			tempDir,
-+		}
-+		if code := c.Run(args); code != 3 {
-+			t.Fatalf("wrong exit code. expected 3")
-+		}
-+
-+		expectedOutput := ""
-+
-+		if actual := ui.OutputWriter.String(); actual != expectedOutput {
-+			t.Fatalf("expected:\n%s\n\ngot:\n%s", expectedOutput, actual)
-+		}
-+		if actual := ui.ErrorWriter.String(); actual != "" {
-+			t.Fatalf("expected:\n%s\n\nto be empty.", actual)
-+		}
-+	})
- }
- 
- // When `fmt` encounters a symlink:
-@@ -829,7 +901,12 @@ c =   "y"
- 
- 		// The symlinked file has been formatted
- 		ui = testUiWrapped(t)
--		c.Ui = ui
-+		c = &FmtCommand{
-+			Meta: Meta{
-+				Ui:         ui,
-+				WorkingDir: workingDir,
-+			},
-+		}
- 		args := []string{
- 			"-no-color",
- 			"-check",
-@@ -912,7 +989,12 @@ c =   "y"
- 
- 		// The symlinked file has been formatted
- 		ui = testUiWrapped(t)
--		c.Ui = ui
-+		c = &FmtCommand{
-+			Meta: Meta{
-+				Ui: ui,
-+				// Not setting WorkingDir
-+			},
-+		}
- 		args = []string{
- 			"-no-color",
- 			"-check",
-```
-
----
-
-### Incident Patch 3: `3a203d33` (2026-11-11)
-**Commit Message**: tests: Remove unused cli.UI vars from some tests, fix test failure handling (#39533)
-
-**File**: `internal/command/workspace_command_test.go` (modified, +28/-58)
-```diff
-@@ -19,7 +19,6 @@ import (
- 	"github.com/hashicorp/terraform/internal/backend/local"
- 	"github.com/hashicorp/terraform/internal/backend/remote-state/inmem"
- 	"github.com/hashicorp/terraform/internal/command/arguments"
--	tfui "github.com/hashicorp/terraform/internal/command/ui"
- 	"github.com/hashicorp/terraform/internal/command/views"
- 	"github.com/hashicorp/terraform/internal/command/workdir"
- 	"github.com/hashicorp/terraform/internal/providers"
-@@ -54,15 +53,17 @@ func TestWorkspaceCommand_alwaysReturnsRunResultHelp(t *testing.T) {
- 
- 	for name, test := range tests {
- 		t.Run(name, func(t *testing.T) {
--			ui := cli.NewMockUi()
-+			view, done := testView(t)
- 			c := &WorkspaceCommand{
--				Meta: Meta{Ui: ui},
-+				Meta: Meta{
-+					View: view,
-+				},
- 			}
- 
- 			// Always returns cli.RunResultHelp
- 			// Returning cli.RunResultHelp causes hashicorp/cli to render the help text.
- 			if code := c.Run(test.args); code != cli.RunResultHelp {
--				t.Fatalf("unexpected exit code: got %d, want %d\n%s", code, cli.RunResultHelp, ui.ErrorWriter)
-+				t.Fatalf("unexpected exit code: got %d, want %d\n%s", code, cli.RunResultHelp, done(t).Stderr())
- 			}
- 		})
- 	}
-@@ -90,11 +91,9 @@ func TestWorkspace_allCommands_pluggableStateStore(t *testing.T) {
- 		"hashicorp/test": {"1.2.3"},
- 	})
- 
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	meta := Meta{
- 		AllowExperimentalFeatures: true,
--		Ui:                        ui,
- 		View:                      view,
- 		testingOverrides: &testingOverrides{
- 			Providers: map[addrs.Provider]providers.Factory{
-@@ -112,7 +111,8 @@ func TestWorkspace_allCommands_pluggableStateStore(t *testing.T) {
- 	args := []string{"-enable-pluggable-state-storage-experiment"} // Needed to test init changes for PSS project
- 	code := intCmd.Run(args)
- 	if code != 0 {
--		t.Fatalf("bad: %d\n\n%s\n%s", code, ui.ErrorWriter, ui.OutputWriter)
-+		output := done(t)
-+		t.Fatalf("bad: %d\n\n%s\n%s", code, output.Stderr(), output.Stdout())
- 	}
- 	// We expect a state to have not been created for the default workspace
- 	ok, err := mock.MockStates.StateIdExists("test_store", "default")
-@@ -125,7 +125,7 @@ func TestWorkspace_allCommands_pluggableStateStore(t *testing.T) {
- 
- 	//// Create Workspace
- 	newWorkspace := "foobar"
--	view, done := testView(t)
-+	view, done = testView(t)
- 	meta.View = view
- 	newCmd := &WorkspaceNewCommand{
- 		Meta: meta,
-@@ -273,11 +273,9 @@ func TestWorkspace_list_noReturnedWorkspaces(t *testing.T) {
- 		"hashicorp/test": {"1.2.3"},
- 	})
- 
--	ui := testUiWrapped(t)
- 	view, done := testView(t)
- 	meta := Meta{
- 		AllowExperimentalFeatures: true,
--		Ui:                        ui,
- 		View:                      view,
- 		testingOverrides: &testingOverrides{
- 			Providers: map[addrs.Provider]providers.Factory{
-@@ -343,15 +341,13 @@ func TestWorkspace_createAndChange(t *testing.T) {
- 	}
- 
- 	args := []string{"test"}
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := testView(t)
- 	newCmd.Meta = Meta{
--		Ui:         ui,
- 		View:       view,
- 		WorkingDir: workdir.NewDir("."),
- 	}
- 	if code := newCmd.Run(args); code != 0 {
--		t.Fatalf("bad: %d\n\n%s", code, ui.ErrorWriter)
-+		t.Fatalf("bad: %d\n\n%s", code, done(t).All())
- 	}
- 
- 	current, _ = newCmd.Workspace()
-@@ -361,7 +357,7 @@ func TestWorkspace_createAndChange(t *testing.T) {
- 
- 	selCmd := &WorkspaceSelectCommand{}
- 	args = []string{backend.DefaultStateName}
--	view, done := testView(t)
-+	view, done = testView(t)
- 	selCmd.Meta = Meta{
- 		View:       view,
- 		WorkingDir: workdir.NewDir("."),
-@@ -607,11 +603,9 @@ func TestWorkspace_createWithState(t *testing.T) {
- 		defer inmem.Reset()
- 
- 		// init the backend
--		ui := testUiWrapped(t)
- 		view, done := testView(t)
- 		initCmd := &InitCommand{
- 			Meta: Meta{
--				Ui:         ui,
- 				View:       view,
- 				WorkingDir: workdir.NewDir("."),
+@@ -68,6 +68,11 @@ func TestParseMetadataFunctions_invalid(t *testing.T) {
+ 					"Failed to parse command-line flags",
+ 					"flag provided but not defined: -wat",
+ 				),
++				tfdiags.Sourceless(
++					tfdiags.Error,
++					"The -json flag is required",
++					"The `terraform metadata functions` command requires the `-json` flag.",
++				),
  			},
-@@ -684,11 +678,9 @@ func TestWorkspace_createWithState(t *testing.T) {
- 		defer inmem.Reset()
- 
- 		// init the backend
--		ui := testUiWrapped(t)
- 		view, done := testView(t)
- 		initCmd := &InitCommand{
- 			Meta: Meta{
--				Ui:         ui,
- 				View:       view,
- 				WorkingDir: workdir.NewDir("."),
- 			},
-@@ -739,11 +731,9 @@ func TestWorkspace_delete(t *testing.T) {
- 		t.Fatal(err)
- 	}
- 
--	ui := testUiWrapped(t)
- 	view, _ := testView(t)
- 	delCmd := &WorkspaceDeleteCommand{
- 		Meta: Meta{
--			Ui:         ui,
- 			View:       view,
- 			WorkingDir: workdir.NewDir("."),
  		},
-@@ -766,10 +756,10 @@ func TestWorkspace_delete(t *testing.T) {
- 	}
- 
- 	// try the delete again
--	ui = testUiWrapped(t)
--	delCmd.Meta.Ui = ui
-+	view, done := testView(t)
-+	delCmd.Meta.View = view
- 	if code := delCmd.Run(args); code != 0 {
--		t.Fatalf("error deleting workspace: %s", ui.ErrorWriter)
-+		t.Fatalf("error deleting workspace: %s", done(t).All())
- 	}
- 
- 	current, _ = delCmd.Workspace()
-@@ -794,19 +784,17 @@ func TestWorkspace_deleteInvalid(t *testing.T) {
- 		t.Fatal(err)
- 	}
- 
--	ui := testUiWrapped(t)
--	view, _ := testView(t)
-+	view, done := 
+ 		"unknown flag after json": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39543** (2026-11-13): chore: Update the maintainer for the `oss` backend (@SarahFrench)
+- **PR #39542** (closed): helper/schema: the easy removals (@mildwonkey)
+- **PR #39540** (2026-11-12): Backport of go: Bump version to 1.26.11 into v1.17 (@github-actions[bot])
+- **PR #39539** (2026-11-12): Backport of go: Bump version to 1.26.11 into v1.16 (@github-actions[bot])
+- **PR #39538** (2026-11-12): fix: Make argument parsing for `metadata functions` return best effort interpretation of inputs (@SarahFrench)
 - **PR #39536** (2026-11-11): command/logout: Remove remaining use of `cli.Ui` via `c.showDiagnostics` (@SarahFrench)
-- **PR #39534** (2026-11-11): tests: Remove unused cli.UI vars and Streams from some tests - Part 4 (@SarahFrench)
-- **PR #39533** (2026-11-11): tests: Remove unused cli.UI vars and Streams from some tests, fix test failure handling - Part 3 (@SarahFrench)
-- **PR #39532** (2026-11-11): tests: Remove unused cli.UI vars and Streams from some tests - Part 2 (@SarahFrench)
-- **PR #39531** (2026-11-11): Cleanup after 1.17.2 release (@hc-github-team-tf-core)
-- **PR #39529** (2026-11-11): Prepare for 1.17.2 release (@hc-github-team-tf-core)
 
 ---
 
@@ -2688,34 +2333,3 @@ I also added a test to show that if all options that produce output to stdout ar
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Ensure `fmt`'s fallback output is skipped when `fmt` is run in check mode
-
-**RULE**:
-When implementing operations in `internal/command/fmt.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `55436336`: Ensure `fmt`'s fallback output is skipped when `fmt` is run in check mode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/fmt.go`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-	if !c.list && !c.write && !c.diff && !c.check {
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-	if !c.list && !c.write && !c.diff {
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `55436336` are properly handled with clean fallback behavior.

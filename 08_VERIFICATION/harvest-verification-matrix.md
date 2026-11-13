@@ -9485,3 +9485,8 @@
 | `CYCLE-20261113-8PX3` | `2026-11-13T13:20:44.343Z` | `Planetable/Planet` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b8adec3d...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:21:07.337Z` | `hf-contrastive-lm-clm-v0.1-8b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9802962D` [Domain D] | Yes (`10cc166e...`) |
 | `CYCLE-20261113-Q9AD` | `2026-11-13T13:34:22.597Z` | `mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md` | Yes (`9970d2b3...`) |
+| `CYCLE-20261113-0H0L` | `2026-11-13T13:42:19.173Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`2d8ced2c...`) |
+| `CYCLE-20261113-0NE3` | `2026-11-13T13:42:27.435Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md` | Yes (`99e14902...`) |
+| `CYCLE-20261113-10OS` | `2026-11-13T13:42:44.668Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6cf0648c...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:43:04.931Z` | `hf-nvidia-nemotron-3-diarization` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F5A07C9A` [Domain D] | Yes (`f483398b...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:43:27.402Z` | `hashicorp-terraform` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B9912729` [Domain D] | Yes (`12892458...`) |

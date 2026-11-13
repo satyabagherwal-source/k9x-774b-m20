@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T13:34:22.612Z",
+  "last_updated": "2026-11-13T13:42:44.696Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -395,14 +395,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "content_hash": "c25d6077a55b3209b82e979adfaef172f8f159f34bcb22a57e166badc3b69033",
-      "verified_at": "2026-11-08T13:59:56.681Z",
+      "content_hash": "2d8ced2c18182e5347901d63a6d6353c47a0f0a37e8eafb3c5d9024509f2e720",
+      "verified_at": "2026-11-13T13:42:19.187Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T13:59:56.681Z"
+      "last_updated": "2026-11-13T13:42:19.187Z"
     },
     "Lightricks/LTX-2.5": {
       "repository": "Lightricks/LTX-2.5",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "29dd9c9c6f3bf4601acc5e53e1820f6f0aed8cade79ec21a09e4bd250e91b361",
-      "verified_at": "2026-11-12T08:53:54.046Z",
+      "content_hash": "99e14902ebffd36c54fdd6a0bc262db327cbc6719203b856f12d27567aa8a505",
+      "verified_at": "2026-11-13T13:42:27.449Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T08:53:54.046Z"
+      "last_updated": "2026-11-13T13:42:27.449Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",
@@ -8856,14 +8856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mariadb-server",
-      "content_hash": "e57571ca8efac2b915ab5d65b5670689615fc834d8825ab6e67e53f7703b1b26",
-      "verified_at": "2026-11-12T07:38:17.650Z",
+      "content_hash": "6cf0648c60692011171d1c801d295de6bf1046128328dc9f0ee55f3147085f36",
+      "verified_at": "2026-11-13T13:42:44.695Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T07:38:17.650Z"
+      "last_updated": "2026-11-13T13:42:44.695Z"
     },
     "NG-ZORRO/ng-zorro-antd": {
       "repository": "NG-ZORRO/ng-zorro-antd",

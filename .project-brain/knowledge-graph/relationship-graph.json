@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T13:21:07.336Z",
+  "updated_at": "2026-11-13T13:43:27.401Z",
   "statistics": {
-    "total_nodes": 89,
+    "total_nodes": 91,
     "total_edges": 49,
     "domain_distribution": {
-      "D": 70,
+      "D": 72,
       "M": 1,
       "H": 9,
       "J": 3,
@@ -1981,6 +1981,50 @@
       ],
       "created_at": "2026-11-13T13:21:07.336Z",
       "updated_at": "2026-11-13T13:21:07.336Z"
+    },
+    "DOM-D-F5A07C9A": {
+      "id": "DOM-D-F5A07C9A",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): nvidia/Nemotron-3-Diarization",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-nvidia-nemotron-3-diarization/hf-nvidia-nemotron-3-diarization-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T13:42:49.484Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-nemotron-3-diarization)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T13:43:04.930Z",
+      "updated_at": "2026-11-13T13:43:04.930Z"
+    },
+    "DOM-D-B9912729": {
+      "id": "DOM-D-B9912729",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): hashicorp/terraform",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  \n> **Source**: github ([https://github.com/hashic -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  \n> **Source**: github ([https://github.com/hashic",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hashicorp-terraform/hashicorp-terraform-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T13:43:04.954Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hashicorp-terraform)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T13:43:27.401Z",
+      "updated_at": "2026-11-13T13:43:27.401Z"
     }
   },
   "edges": [

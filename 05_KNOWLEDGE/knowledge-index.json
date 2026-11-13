@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T13:34:22.451Z",
+  "last_updated": "2026-11-13T13:42:44.527Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -19527,8 +19527,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "4a7d3d74",
-      "content_hash": "29dd9c9c6f3bf4601acc5e53e1820f6f0aed8cade79ec21a09e4bd250e91b361",
+      "source_version": "2cf4bab6",
+      "content_hash": "99e14902ebffd36c54fdd6a0bc262db327cbc6719203b856f12d27567aa8a505",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -19623,7 +19623,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T08:53:53.831Z",
+      "verified_at": "2026-11-13T13:42:27.286Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30815,7 +30815,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "c25d6077a55b3209b82e979adfaef172f8f159f34bcb22a57e166badc3b69033",
+      "content_hash": "2d8ced2c18182e5347901d63a6d6353c47a0f0a37e8eafb3c5d9024509f2e720",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "promoted_rules": [
@@ -30873,7 +30873,7 @@
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv44qfqt",
         "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4hzpqi"
       ],
-      "verified_at": "2026-11-08T13:59:56.594Z",
+      "verified_at": "2026-11-13T13:42:19.008Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43177,8 +43177,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "ef4c7459",
-      "content_hash": "e57571ca8efac2b915ab5d65b5670689615fc834d8825ab6e67e53f7703b1b26",
+      "source_version": "52391ebe",
+      "content_hash": "6cf0648c60692011171d1c801d295de6bf1046128328dc9f0ee55f3147085f36",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -43200,6 +43200,11 @@
         {
           "number": null,
           "title": "main.mdev_31342_kill with view and cursor protocol",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Item_sum_test_plugin_first shallow copy changed b/c its implementation leaked me",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -43253,7 +43258,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T07:38:17.453Z",
+      "verified_at": "2026-11-13T13:42:44.490Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

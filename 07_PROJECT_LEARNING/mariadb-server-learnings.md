@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `ef4c7459`  
+> **Source Version**: `52391ebe`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T07:38:01.591Z  
+> **Timestamp**: 2026-11-13T13:42:32.866Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T07:38:01.584Z  
+> **Harvest Timestamp**: 2026-11-13T13:42:32.860Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8577 stars
+- **Stars / Engagement**: 8585 stars
 
 ---
 
@@ -1613,14 +1613,11 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6123** (2026-11-11): **Fix mdev_31342 test case by disabling test on protocol tests**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > [bb-13.2-mdev_31342_kill](https://buildbot.mariadb.org/#/grid?branch=bb-13.2-mdev_31342_kill) as effective too [54d860e94e9](https://github.com/MariaDB/server/commit/54d860e94e9bef188df8de6eab50119217654304))
-  > sorry @janlindstrom , Sanja merge his own fix - 54d860e94e9bef188df8de6eab50119217654304
+- **Issue #6140** (2026-11-13): **MDEV-42234 : Galera test failure on galera.galera_ws_datatypes**
+  *Symptoms*: Re-record after fk name change. Test change only.
 
-- **Issue #6122** (2026-11-11): **MDEV-42004 STOP SLAVE waits for slave_net_timeout when master is unre…**
-  *Symptoms*: MDEV-42004 STOP SLAVE waits for slave_net_timeout when master is unreachable  STOP SLAVE could take up to slave_net_timeout to stop the slave IO thread when the primary accepts the connection but does not answer, e.g. when its host is frozen or its packets are dropped. The IO thread is blocked in mysql_real_connect(), waiting for the server greeting, and THD::awake() could not interrupt it: until the connect succeeds, the vio is not THD::active_vio.  Let the client tell the owner of the connection about its vio. A new MYSQL_OPT_VIO_CALLBACK (and MYSQL_OPT_VIO_CALLBACK_ARG, its first argument) is called with the new vio as soon as it is created, and with NULL right before it is deleted. It is kept in options.extension, so mysql_reconnect() carries it over to its temporary MYSQL object.  The slave IO thread sets it up in connect_to_master(). The callback makes the vio THD::active_vio, so STOP SLAVE shuts the socket down with vio_shutdown(), which wakes up the blocked wait. If STOP SLAVE has already set abort_slave, the vio is shut down right away. This works on all platforms, no signals are needed.  The test does not need SIGSTOP and runs on Windows too. The "primary" is a socket that listens and never accepts or answers. It fails without the fix (STOP SLAVE waits for most of slave_net_timeout), and passes in about a second with it.  The idea of the test, to freeze the primary and check that STOP SLAVE does not wait for slave_net_timeout, is reused f
+- **Issue #6139** (2026-11-13): **MDEV-42231: galera_sst_check_port_ancestry fails on noexec vardir**
+  *Symptoms*: Issue: The test generates a driver script under $MYSQLTEST_VARDIR/tmp and executes it directly. On a host where that directory is on a noexec-mounted tmpfs, execution fails with "Permission denied" regardless of the script's mode bits, since noexec is enforced by the kernel against the mount itself, not against the file's own permissions.  Solution: Invoke the generated driver script through bash explicitly instead of relying on the kernel executing it directly via its shebang; running it through an interpreter only requires the interpreter itself to be executable, not the script file.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1637,37 +1634,172 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54d860e9` (2026-11-10)
-**Commit Message**: fix main.mdev_31342_kill with view and cursor protocol
+### Incident Patch 1: `52391ebe` (2026-11-13)
+**Commit Message**: Item_sum_test_plugin_first shallow copy changed b/c its implementation leaked memory.
 
-**File**: `mysql-test/main/mdev_31342_kill.test` (modified, +4/-0)
+**File**: `plugin/func_test/plugin.cc` (modified, +1/-4)
 ```diff
-@@ -5,6 +5,8 @@
- --echo # MDEV-41165: KILL / max_statement_time arriving after the WHERE
- --echo # condition was evaluated must not be lost on the I_S fast path
- --echo #
-+--disable_view_protocol
-+--disable_cursor_protocol
- CREATE TABLE t1 (a INT);
- let $q= SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='test';
+@@ -640,10 +640,7 @@ class Item_sum_test_plugin_first: public Item_sum_plugin,
+ protected:
+   Item *shallow_copy(THD *thd) const override
+   {
+-    Self *item= new (thd->mem_root) Self(thd, const_cast<Self *>(this));
+-    if (!item || item->setup_cache(thd, value))
+-      return nullptr;
+-    return item;
++    return get_item_copy<Self>(thd, this);
+   }
+ };
  
-@@ -36,5 +38,7 @@ eval SET STATEMENT max_statement_time=0.5 FOR $q;
+```
+
+---
+
+### Incident Patch 2: `110fa80d` (2026-09-27)
+**Commit Message**: MDEV-41269 PAF fix for DISTINCT + literal argument.
+
+**File**: `plugin/func_test/mysql-test/func_test/function_plugin_extra.result` (modified, +15/-0)
+```diff
+@@ -68,6 +68,21 @@ g	test_plugin_count(DISTINCT v)
+ 1	0
+ 2	1
+ 3	2
++SELECT test_plugin_count(DISTINCT 1);
++test_plugin_count(DISTINCT 1)
++1
++SELECT test_plugin_count(DISTINCT 1.5);
++test_plugin_count(DISTINCT 1.5)
++1
++SELECT test_plugin_count(DISTINCT 1.5e0);
++test_plugin_count(DISTINCT 1.5e0)
++1
++SELECT test_plugin_first(DISTINCT 2.5);
++test_plugin_first(DISTINCT 2.5)
++2.5
++SELECT test_plugin_first(DISTINCT 2.5e0);
++test_plugin_first(DISTINCT 2.5e0)
++2.5
+ SELECT test_plugin_count(DISTINCT v) FROM t_group WHERE v IS NULL;
+ test_plugin_count(DISTINCT v)
+ 0
+```
+
+**File**: `plugin/func_test/mysql-test/func_test/function_plugin_extra.test` (modified, +5/-0)
+```diff
+@@ -45,6 +45,11 @@ SET optimizer_switch= @save_optimizer_switch;
  
- SET debug_sync='RESET';
- DROP TABLE t1;
-+--enable_view_protocol
-+--enable_cursor_protocol
+ SELECT g, test_plugin_count(DISTINCT v)
+ FROM t_group GROUP BY g ORDER BY g;
++SELECT test_plugin_count(DISTINCT 1);
++SELECT test_plugin_count(DISTINCT 1.5);
++SELECT test_plugin_count(DISTINCT 1.5e0);
++SELECT test_plugin_first(DISTINCT 2.5);
++SELECT test_plugin_first(DISTINCT 2.5e0);
+ SELECT test_plugin_count(DISTINCT v) FROM t_group WHERE v IS NULL;
+ SELECT test_plugin_first(DISTINCT v) IS NULL FROM t_group WHERE v IS NULL;
+ SELECT test_plugin_count(DISTINCT v) FROM t_group WHERE FALSE;
+```
+
+**File**: `sql/item_sum.cc` (modified, +24/-10)
+```diff
+@@ -885,11 +885,18 @@ bool Aggregator_distinct::setup(THD *thd)
+     {
+       if (!(distinct_args= thd->alloc<Item *>(item_sum->get_arg_count())))
+         return TRUE;
++      Field **field= table->field;
+       for (uint i= 0; i < item_sum->get_arg_count(); i++)
+       {
+-        if (!(distinct_args[i]= new (thd->mem_root)
+-                                Item_field(thd, table->field[i])))
+-          return TRUE;
++        Item *arg= item_sum->get_arg(i);
++        if (arg->const_item())
++          distinct_args[i]= arg;
++        else
++        {
++          if (!*field || !(distinct_args[i]= new (thd->mem_root)
++                                              Item_field(thd, *field++)))
++            return TRUE;
++        }
+       }
+     }
  
- --echo # End of 13.2 tests
+@@ -1221,7 +1228,8 @@ void Aggregator_distinct::endup()
+      Note that value of field is changed as we walk the tree, in
+      Aggregator_distinct::unique_walk_function, but it's always not NULL.
+    */
+-   table->field[0]->set_notnull();
++    if (table->field[0])
++      table->field[0]->set_notnull();
+     /* go over the tree of distinct keys and calculate the aggregate value */
+     use_distinct_values= TRUE;
+     tree_walk_action func;
+@@ -1959,7 +1967,8 @@ void Item_sum_sum::remove()
+   
+ bool Aggregator_distinct::unique_walk_function(void *element)
+ {
+-  memcpy(table->field[0]->ptr, element, tree_key_length);
++  if (tree_key_length)
++    memcpy(table->field[0]->ptr, element, tree_key_length);
+   item_sum->add();
+   return 0;
+ }
+@@ -2039,23 +2048,28 @@ bool Aggregator_simple::arg_is_null(bool use_null_value)
+ 
+ my_decimal *Aggregator_distinct::arg_val_decimal(my_decimal * value)
+ {
+-  return use_distinct_values ? table->field[0]->val_decimal(value) :
+-    item_sum->args[0]->val_decimal(value);
++  if (!use_distinct_values)
++    return item_sum->args[0]->val_decimal(value);
++  return item_sum->sum_func() == Item_sum::PLUGIN_SUM_FUNC ?
++    distinct_args[0]->val_decimal(value) : table->field[0]->val_decimal(value);
+ }
+ 
+ 
+ double Aggregator_distinct::arg_val_real()
+ {
+-  return use_distinct_values ? table->field[0]->val_real() :
+-    item_sum->args[0]->val_real();
++  if (!use_distinct_values)
++    return item_sum->args[0]->val_real();
++  return item_sum->sum_func() == Item_sum::PLUGIN_SUM_FUNC ?
++    distinct_args[0]->val_real() : table->field[0]->val_real();
+ }
+ 
+ 
+ bool Aggregator_distinct::arg_is_null(bool use_null_value)
+ {
+   if (use_distinct_values)
+   {
+-    const bool rc= table->field[0]->is_null();
++    const bool rc= item_sum->sum_func() == Item_sum::PLUGIN_SUM_FUNC ?
++                   distinct_args[0]->is_null() : table->field[0]->is_null();
+     DBUG_ASSERT(!rc); // NULLs are never stored in 'tree'
+     return rc;
+   }
+```
+
+**File**: `sql/sql_yacc.yy` (modified, +1/-1)
+```diff
+@@ -11582,7 +11582,7 @@ function_call_generic:
+               sum_item->set_distinct(true);
+             }
+ 
+-            if (item && attach_func_filter(item, $7))
++            if (item && attach_func_filter(item, $8))
+               MYSQL_YYABORT;
+ 
+             if ($7.str && !allow_field_accessor)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6123** (closed): Fix mdev_31342 test case by disabling test on protocol tests (@janlindstrom)
-- **PR #6122** (closed): MDEV-42004 STOP SLAVE waits for slave_net_timeout when master is unre… (@andrelkin)
-- **PR #6119** (closed): MDEV-42004 STOP SLAVE waits for slave_net_timeout when master is unre… (@andrelkin)
-- **PR #6118** (2026-11-11): MDEV-42078:  Map macOS errno 63 in main.create_notembedded (@DaveGosselin-MariaDB)
-- **PR #6117** (2026-11-11): MDEV-42175: use uint128 WolfSSL optimizations where available (@gkodinov)
-- **PR #6113** (2026-11-10): MDEV-41165: use I_S fast path with max_statement_time (@janlindstrom)
+- **PR #6140** (2026-11-13): MDEV-42234 : Galera test failure on galera.galera_ws_datatypes (@janlindstrom)
+- **PR #6139** (2026-11-13): MDEV-42231: galera_sst_check_port_ancestry fails on noexec vardir (@hemantdangi-gc)
+- **PR #6133** (closed): MDEV-41388: Avoid causal-wait timeout in galera.MDEV-34117 (@hemantdangi-gc)
+- **PR #6132** (2026-11-12): MDEV-41388: Avoid causal-wait timeout in galera.MDEV-34117 (@hemantdangi-gc)
+- **PR #6130** (2026-11-13): MDEV-41008 main.x509_oneline_separators test stabilization (@grooverdan)
+- **PR #6125** (2026-11-13): MDEV-41446 rpl.rpl_fragment_row_event_main: wait for binlog checkpoint (@mariadb-SusilBehera)
 
 ---
 
@@ -1687,31 +1819,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. main.mdev_31342_kill with view and cursor protocol
+## X. Item_sum_test_plugin_first shallow copy changed b/c its implementation leaked me
 
 **RULE**:
-When implementing operations in `mysql-test/main/mdev_31342_kill.test`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugin/func_test/plugin.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54d860e9`: main.mdev_31342_kill with view and cursor protocol. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `52391ebe`: Item_sum_test_plugin_first shallow copy changed b/c its implementation leaked memory.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/main/mdev_31342_kill.test`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/func_test/plugin.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
---disable_view_protocol
---disable_cursor_protocol
---enable_view_protocol
---enable_cursor_protocol
+    return get_item_copy<Self>(thd, this);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    Self *item= new (thd->mem_root) Self(thd, const_cast<Self *>(this));
+    if (!item || item->setup_cache(thd, value))
+      return nullptr;
+    return item;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54d860e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `52391ebe` are properly handled with clean fallback behavior.

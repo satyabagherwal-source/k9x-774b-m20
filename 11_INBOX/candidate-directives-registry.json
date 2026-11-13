@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T13:34:34.595Z",
+  "last_updated": "2026-11-13T13:43:27.449Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8867,6 +8867,15 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-752D07-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-EE979E",
+      "directive_title": "Item_sum_test_plugin_first shallow copy changed b/c its implementation leaked me",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mariadb-server",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EE979E-item-sum-test-plugin-first-shallow-copy-.md",
       "staged_date": "2026-11-13"
     }
   ]

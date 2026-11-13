@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T13:21:07.333Z",
-  "total_records": 133,
+  "last_updated": "2026-11-13T13:43:27.386Z",
+  "total_records": 135,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 88,
+      "total": 90,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -113,7 +113,9 @@
         "DOM-D-73191B1B",
         "DOM-D-DD9B1ABE",
         "DOM-D-A29F5946",
-        "DOM-D-9802962D"
+        "DOM-D-9802962D",
+        "DOM-D-F5A07C9A",
+        "DOM-D-B9912729"
       ]
     },
     "E": {
@@ -5566,6 +5568,90 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T13:21:07.329Z"
+    },
+    "DOM-D-F5A07C9A": {
+      "record_id": "DOM-D-F5A07C9A",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): nvidia/Nemotron-3-Diarization",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/nvidia/Nemotron-3-Diarization](https://huggingface.co/nvidia/Nemotron-3-Diarization))  \n> **Source Version**: `hf-nvidia-ne`  \n> **License**: Op",
+      "content_hash": "f483398bbfba937d2379b6c6215e05d58a97c1269b7c2a9b2c7db0df19444b58",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-nvidia-nemotron-3-diarization/hf-nvidia-nemotron-3-diarization-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T13:42:49.484Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-nemotron-3-diarization)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-nvidia-nemotron-3-diarization"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T13:43:04.924Z"
+    },
+    "DOM-D-B9912729": {
+      "record_id": "DOM-D-B9912729",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): hashicorp/terraform",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  \n> **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  \n> **Source Version**: `2cf4bab6`  \n> **License**: NOASSERTION  \n> **Synthesized By**: zero-clone-struc",
+      "content_hash": "128924580c52aed4aa50d82a2b2bf17e113e7253003a8df5220ffc0be51cd8b1",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  \n> **Source**: github ([https://github.com/hashic -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  \n> **Source**: github ([https://github.com/hashic",
+      "provenance": {
+        "source_uri": "project://hashicorp-terraform/hashicorp-terraform-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T13:43:04.954Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hashicorp-terraform)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hashicorp-terraform"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T13:43:27.382Z"
     }
   }
 }

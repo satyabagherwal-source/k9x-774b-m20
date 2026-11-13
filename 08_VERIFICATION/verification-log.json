@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261111-IB52",
-    "timestamp": "2026-11-11T09:40:54.374Z",
-    "repository": "webAI-Official/TwIL-8B",
-    "learningId": "learn-huggingface-webai-official-twil-8b",
-    "contentHash": "bd624a4f33850d0ea73b52034983a5fc2a7302265ed192f132386e53b3aafb1a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-SXW0",
-    "timestamp": "2026-11-11T09:49:10.416Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "96d3c49fd4d85f7c369bc66f73ed788959f92a318b93940b724df686fc7dace8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261111-SZXS",
-    "timestamp": "2026-11-11T09:49:13.072Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "627048d36f53c2212f12f1419dc779b18094ff3f0755e64c9ef1dcca56309eea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261111-T67M",
     "timestamp": "2026-11-11T09:49:21.202Z",
     "repository": "argoproj/argo-workflows",
@@ -7492,6 +7447,51 @@
     "contentHash": "9970d2b3fb06fad2935502eddaca45cf33c61f74b3884f28c11f2648208370c4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-0H0L",
+    "timestamp": "2026-11-13T13:42:19.173Z",
+    "repository": "nvidia/Nemotron-3-Diarization",
+    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+    "contentHash": "2d8ced2c18182e5347901d63a6d6353c47a0f0a37e8eafb3c5d9024509f2e720",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-0NE3",
+    "timestamp": "2026-11-13T13:42:27.435Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "99e14902ebffd36c54fdd6a0bc262db327cbc6719203b856f12d27567aa8a505",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-10OS",
+    "timestamp": "2026-11-13T13:42:44.668Z",
+    "repository": "MariaDB/server",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "6cf0648c60692011171d1c801d295de6bf1046128328dc9f0ee55f3147085f36",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

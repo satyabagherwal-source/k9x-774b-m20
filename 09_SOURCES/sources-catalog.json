@@ -335,8 +335,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceVersion": "hf-nvidia-nemotron-3-diarization",
     "license": "Open-Source",
-    "contentHash": "c25d6077a55b3209b82e979adfaef172f8f159f34bcb22a57e166badc3b69033",
-    "lastHarvestedAt": "2026-11-08T13:59:56.665Z",
+    "contentHash": "2d8ced2c18182e5347901d63a6d6353c47a0f0a37e8eafb3c5d9024509f2e720",
+    "lastHarvestedAt": "2026-11-13T13:42:19.177Z",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization"
   },
   "hf-lightricks-ltx-2.5": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "4a7d3d74",
+    "sourceVersion": "2cf4bab6",
     "license": "NOASSERTION",
-    "contentHash": "29dd9c9c6f3bf4601acc5e53e1820f6f0aed8cade79ec21a09e4bd250e91b361",
-    "lastHarvestedAt": "2026-11-12T08:53:54.038Z",
+    "contentHash": "99e14902ebffd36c54fdd6a0bc262db327cbc6719203b856f12d27567aa8a505",
+    "lastHarvestedAt": "2026-11-13T13:42:27.439Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "ef4c7459",
+    "sourceVersion": "52391ebe",
     "license": "GPL-2.0",
-    "contentHash": "e57571ca8efac2b915ab5d65b5670689615fc834d8825ab6e67e53f7703b1b26",
-    "lastHarvestedAt": "2026-11-12T07:38:17.616Z",
+    "contentHash": "6cf0648c60692011171d1c801d295de6bf1046128328dc9f0ee55f3147085f36",
+    "lastHarvestedAt": "2026-11-13T13:42:44.685Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {

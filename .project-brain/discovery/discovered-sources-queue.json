@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T13:34:34.544Z",
+  "updated_at": "2026-11-13T13:43:27.468Z",
   "stats": {
-    "total_discovered": 2480,
-    "approved_pending_harvest": 2309,
+    "total_discovered": 2482,
+    "approved_pending_harvest": 2311,
     "harvested_count": 0,
     "rejected_count": 171,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2302,
+      "COMMUNITY_AND_EXPERT": 2304,
       "OFFICIAL_DOCUMENTATION": 94,
       "STANDARDS_AND_SPECIFICATIONS": 74,
       "ENGINEERING_BLOGS": 1,
@@ -53382,6 +53382,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md",
         "fileName": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md"
+      }
+    },
+    "SRC-4895ED02D15F": {
+      "id": "SRC-4895ED02D15F",
+      "url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
+      "title": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:43:04.942Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
+        "fileName": "hf-nvidia-nemotron-3-diarization-learnings.md"
+      }
+    },
+    "SRC-7BAB62E1F459": {
+      "id": "SRC-7BAB62E1F459",
+      "url": "https://github.com/MariaDB/server",
+      "title": "https://github.com/MariaDB/server",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T13:43:27.468Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mariadb-server-learnings.md",
+        "fileName": "mariadb-server-learnings.md"
       }
     }
   }
