@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-12T23:08:56.566Z",
+  "updated_at": "2026-11-13T01:31:37.279Z",
   "statistics": {
-    "total_nodes": 31,
-    "total_edges": 11,
+    "total_nodes": 32,
+    "total_edges": 12,
     "domain_distribution": {
-      "D": 20,
+      "D": 21,
       "M": 1,
       "H": 6,
       "J": 1,
@@ -16,7 +16,7 @@
       "G": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 11
+      "CONSTRAINED_BY_ARCHITECTURE": 12
     }
   },
   "nodes": {
@@ -694,6 +694,29 @@
       ],
       "created_at": "2026-11-12T23:08:56.566Z",
       "updated_at": "2026-11-12T23:08:56.566Z"
+    },
+    "DOM-D-3EB7AC49": {
+      "id": "DOM-D-3EB7AC49",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): autogluon/chronos-2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-autogluon-chronos-2/hf-autogluon-chronos-2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T01:31:30.051Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-autogluon-chronos-2)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-13T01:31:37.279Z",
+      "updated_at": "2026-11-13T01:31:37.279Z"
     }
   },
   "edges": [
@@ -806,6 +829,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-CDB84B7D [D] with Domain M",
       "created_at": "2026-11-12T23:08:56.566Z"
+    },
+    {
+      "id": "EDGE-1EB8A5DD5E93",
+      "sourceId": "DOM-D-3EB7AC49",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-3EB7AC49 [D] with Domain M",
+      "created_at": "2026-11-13T01:31:37.279Z"
     }
   ]
 }

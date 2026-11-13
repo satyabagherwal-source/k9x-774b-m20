@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-K4S2",
-    "timestamp": "2026-11-09T16:10:53.618Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-Base",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-    "contentHash": "e196a6a131d99d457cfb05f4ce1984135c14ea563fead73169d762bbd2e2bcbe",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-K6NU",
     "timestamp": "2026-11-09T16:10:56.058Z",
     "repository": "NVIDIA/cuda-rust",
@@ -7492,6 +7477,21 @@
     "contentHash": "fff643747d360489c6b5bac9a9c9bfa4b3531f5b13e56f390a2180ace461a25a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-WDJS",
+    "timestamp": "2026-11-13T01:31:18.040Z",
+    "repository": "autogluon/chronos-2",
+    "learningId": "learn-huggingface-autogluon-chronos-2",
+    "contentHash": "014f79f87b663583763bd98e6870126218c7fd2507754f048391ac036e64bc76",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

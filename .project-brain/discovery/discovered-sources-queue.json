@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T01:14:34.391Z",
+  "updated_at": "2026-11-13T01:31:37.285Z",
   "stats": {
-    "total_discovered": 1952,
-    "approved_pending_harvest": 1798,
+    "total_discovered": 1953,
+    "approved_pending_harvest": 1799,
     "harvested_count": 0,
     "rejected_count": 154,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1795,
+      "COMMUNITY_AND_EXPERT": 1796,
       "OFFICIAL_DOCUMENTATION": 80,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -41883,6 +41883,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
         "fileName": "kong-kubernetes-ingress-controller-learnings.md"
+      }
+    },
+    "SRC-A220AF6CDCF7": {
+      "id": "SRC-A220AF6CDCF7",
+      "url": "https://huggingface.co/autogluon/chronos-2",
+      "title": "https://huggingface.co/autogluon/chronos-2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T01:31:37.285Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
+        "fileName": "hf-autogluon-chronos-2-learnings.md"
       }
     }
   }

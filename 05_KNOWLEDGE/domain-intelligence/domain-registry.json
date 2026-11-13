@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-12T23:08:56.542Z",
-  "total_records": 78,
+  "last_updated": "2026-11-13T01:31:37.277Z",
+  "total_records": 79,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 39,
+      "total": 40,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -64,7 +64,8 @@
         "DOM-D-3DABAA62",
         "DOM-D-34E068C1",
         "DOM-D-B36C340C",
-        "DOM-D-CDB84B7D"
+        "DOM-D-CDB84B7D",
+        "DOM-D-3EB7AC49"
       ]
     },
     "E": {
@@ -3177,6 +3178,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-12T23:08:56.540Z"
+    },
+    "DOM-D-3EB7AC49": {
+      "record_id": "DOM-D-3EB7AC49",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): autogluon/chronos-2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/autogluon/chronos-2](https://huggingface.co/autogluon/chronos-2))  \n> **Source Version**: `hf-autogluon`  \n> **License**: Open-Source  \n> **Synthesized By",
+      "content_hash": "6e2130934a5ad4756cc5b23a62590a351c258c8b12829d9d6c7f7de238ac7777",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "provenance": {
+        "source_uri": "project://hf-autogluon-chronos-2/hf-autogluon-chronos-2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T01:31:30.051Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-autogluon-chronos-2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-autogluon-chronos-2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T01:31:37.276Z"
     }
   }
 }

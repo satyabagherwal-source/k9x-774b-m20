@@ -2065,8 +2065,8 @@
     "sourceUrl": "https://huggingface.co/autogluon/chronos-2",
     "sourceVersion": "hf-autogluon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "6c71224d24fdae118d176dc717e1ba659a70c06f2b6e9b89168c377c287b226f",
-    "lastHarvestedAt": "2026-11-08T02:15:41.291Z",
+    "contentHash": "014f79f87b663583763bd98e6870126218c7fd2507754f048391ac036e64bc76",
+    "lastHarvestedAt": "2026-11-13T01:31:18.043Z",
     "learningId": "learn-huggingface-autogluon-chronos-2"
   },
   "deeplethe-solid-glass": {

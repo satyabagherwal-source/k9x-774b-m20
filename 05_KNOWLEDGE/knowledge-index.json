@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T01:14:27.989Z",
+  "last_updated": "2026-11-13T01:31:17.931Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -86095,7 +86095,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autogluon/chronos-2",
       "source_version": "hf-autogluon-chronos-2",
-      "content_hash": "6c71224d24fdae118d176dc717e1ba659a70c06f2b6e9b89168c377c287b226f",
+      "content_hash": "014f79f87b663583763bd98e6870126218c7fd2507754f048391ac036e64bc76",
       "dossier_path": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "promoted_rules": [
@@ -86205,7 +86205,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T02:15:41.167Z",
+      "verified_at": "2026-11-13T01:31:17.914Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -9282,3 +9282,5 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `a6bb9bc5` | Multi-dimensional audit evidence | 2026-11-13T01:01:36.077Z |
 | `learn-github-meta-docusaurus` | `https://github.com/facebook/docusaurus` | `9e7ac3c0` | Multi-dimensional audit evidence | 2026-11-13T01:14:25.829Z |
 | `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `ef5a7724` | Multi-dimensional audit evidence | 2026-11-13T01:14:28.107Z |
+| `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-13T01:31:18.043Z |
+| `learn-dom-d-3eb7ac49` | `project://hf-autogluon-chronos-2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md` | 2026-11-13T01:31:37.279Z |
