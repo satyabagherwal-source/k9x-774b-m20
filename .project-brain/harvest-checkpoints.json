@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T00:16:17.856Z",
+  "last_updated": "2026-11-13T00:24:14.525Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "a828e68bdd75eb287c250672b9d3dcac96a00ff2c82fd528ad7d211a2cdb9bb1",
-      "verified_at": "2026-11-12T21:56:46.133Z",
+      "content_hash": "01a3a26f32ce3b4226c0a4e42e33c5329ad3faf45c3345080ecf67fd8458dea1",
+      "verified_at": "2026-11-13T00:24:14.524Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:56:46.133Z"
+      "last_updated": "2026-11-13T00:24:14.524Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3171,14 +3171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nitrojs-nitro",
-      "content_hash": "17668ac0888318dff8f9aa01b62d9fb1c22cbbaafda1011994d9870bb9500cb2",
-      "verified_at": "2026-11-08T01:25:29.799Z",
+      "content_hash": "19d981a520d39cc08f518afe149722a7c6e4b34e970078479d7e7f99496a23d6",
+      "verified_at": "2026-11-13T00:24:04.876Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T01:25:29.799Z"
+      "last_updated": "2026-11-13T00:24:04.876Z"
     },
     "h3js/h3": {
       "repository": "h3js/h3",
@@ -10251,14 +10251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectcontour-contour",
-      "content_hash": "5921a11e99077fbf2f0a350b66da2d90e6c7ae99ed1c9220d40c4c9c7875cd77",
-      "verified_at": "2026-11-11T14:16:56.017Z",
+      "content_hash": "f9c9d0577fd4803a09a0e1e241ac46f4820a78887641623f527267737a1e7e1c",
+      "verified_at": "2026-11-13T00:24:11.492Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T14:16:56.017Z"
+      "last_updated": "2026-11-13T00:24:11.492Z"
     },
     "topoteretes/cognee": {
       "repository": "topoteretes/cognee",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "86a55c7090fab300960f474ce3f977d3692ab9c248c0dec58e14a2e5f8dfb0b6",
-      "verified_at": "2026-11-10T05:21:51.750Z",
+      "content_hash": "7b75fb4cf40af49ebe9d55c7276c5dc0b6b13cb121f965ac71245a6c9e97bdb0",
+      "verified_at": "2026-11-13T00:23:59.375Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T05:21:51.750Z"
+      "last_updated": "2026-11-13T00:23:59.375Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",
@@ -13506,14 +13506,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-damascenorafael-reminders-menubar",
-      "content_hash": "d58f4ff1b20c8fe05d040b8c969157be0c632c71947da32ecbb97d9ade5f9c2e",
-      "verified_at": "2026-11-05T12:14:31.691Z",
+      "content_hash": "54466b55eba4690e2638583414ca481ccc60ec8f0b3c0f2f593c9f9465709257",
+      "verified_at": "2026-11-13T00:24:07.039Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-05T12:14:31.692Z"
+      "last_updated": "2026-11-13T00:24:07.039Z"
     },
     "joshcarty/google-searchconsole": {
       "repository": "joshcarty/google-searchconsole",

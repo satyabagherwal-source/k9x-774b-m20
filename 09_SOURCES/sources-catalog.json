@@ -2023,10 +2023,10 @@
     "repository": "nitrojs/nitro",
     "platform": "github",
     "sourceUrl": "https://github.com/unjs/nitro",
-    "sourceVersion": "0317e652",
+    "sourceVersion": "0f2a7f49",
     "license": "NOASSERTION",
-    "contentHash": "17668ac0888318dff8f9aa01b62d9fb1c22cbbaafda1011994d9870bb9500cb2",
-    "lastHarvestedAt": "2026-11-08T01:25:29.789Z",
+    "contentHash": "19d981a520d39cc08f518afe149722a7c6e4b34e970078479d7e7f99496a23d6",
+    "lastHarvestedAt": "2026-11-13T00:24:04.816Z",
     "learningId": "learn-github-nitrojs-nitro"
   },
   "unjs-h3": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "b2bfa52b",
+    "sourceVersion": "56afe28f",
     "license": "Apache-2.0",
-    "contentHash": "b0109c4562ba474c10413c2fb2763f311c6c82494c5ba28e783a796432c57d3c",
-    "lastHarvestedAt": "2026-11-11T06:24:00.804Z",
+    "contentHash": "01a3a26f32ce3b4226c0a4e42e33c5329ad3faf45c3345080ecf67fd8458dea1",
+    "lastHarvestedAt": "2026-11-13T00:24:14.365Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "bb06ab91",
+    "sourceVersion": "32f4c211",
     "license": "Apache-2.0",
-    "contentHash": "5921a11e99077fbf2f0a350b66da2d90e6c7ae99ed1c9220d40c4c9c7875cd77",
-    "lastHarvestedAt": "2026-11-11T14:16:55.998Z",
+    "contentHash": "f9c9d0577fd4803a09a0e1e241ac46f4820a78887641623f527267737a1e7e1c",
+    "lastHarvestedAt": "2026-11-13T00:24:11.370Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "ff0a5e36",
+    "sourceVersion": "7ad6f46d",
     "license": "MIT",
-    "contentHash": "86a55c7090fab300960f474ce3f977d3692ab9c248c0dec58e14a2e5f8dfb0b6",
-    "lastHarvestedAt": "2026-11-10T05:21:51.732Z",
+    "contentHash": "7b75fb4cf40af49ebe9d55c7276c5dc0b6b13cb121f965ac71245a6c9e97bdb0",
+    "lastHarvestedAt": "2026-11-13T00:23:59.360Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {
@@ -8973,10 +8973,10 @@
     "repository": "DamascenoRafael/reminders-menubar",
     "platform": "github",
     "sourceUrl": "https://github.com/DamascenoRafael/reminders-menubar",
-    "sourceVersion": "08068dd3",
+    "sourceVersion": "f5330cb5",
     "license": "GPL-3.0",
-    "contentHash": "d58f4ff1b20c8fe05d040b8c969157be0c632c71947da32ecbb97d9ade5f9c2e",
-    "lastHarvestedAt": "2026-11-05T12:14:31.666Z",
+    "contentHash": "54466b55eba4690e2638583414ca481ccc60ec8f0b3c0f2f593c9f9465709257",
+    "lastHarvestedAt": "2026-11-13T00:24:07.022Z",
     "learningId": "learn-github-damascenorafael-reminders-menubar"
   },
   "joshcarty-google-searchconsole": {

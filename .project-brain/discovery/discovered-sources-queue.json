@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T00:16:22.712Z",
+  "updated_at": "2026-11-13T00:24:21.933Z",
   "stats": {
-    "total_discovered": 1866,
-    "approved_pending_harvest": 1719,
+    "total_discovered": 1881,
+    "approved_pending_harvest": 1733,
     "harvested_count": 0,
-    "rejected_count": 147,
+    "rejected_count": 148,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1727,
-      "OFFICIAL_DOCUMENTATION": 68,
+      "COMMUNITY_AND_EXPERT": 1741,
+      "OFFICIAL_DOCUMENTATION": 69,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 3
@@ -40040,6 +40040,329 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
         "fileName": "bahdotsh-wrkflw-learnings.md"
+      }
+    },
+    "SRC-C7EF9C41A364": {
+      "id": "SRC-C7EF9C41A364",
+      "url": "https://github.com/agent-of-empires/agent-of-empires",
+      "title": "https://github.com/agent-of-empires/agent-of-empires",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.755Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
+        "fileName": "agent-of-empires-agent-of-empires-learnings.md"
+      }
+    },
+    "SRC-315B7A3B8C24": {
+      "id": "SRC-315B7A3B8C24",
+      "url": "https://github.com/agent-of-empires/agent-of-empires/issues/4476",
+      "title": "https://github.com/agent-of-empires/agent-of-empires/issues/4476",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.767Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
+        "fileName": "agent-of-empires-agent-of-empires-learnings.md"
+      }
+    },
+    "SRC-43D51D1618A5": {
+      "id": "SRC-43D51D1618A5",
+      "url": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads//n",
+      "title": "https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads//n",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.780Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
+        "fileName": "agent-of-empires-agent-of-empires-learnings.md"
+      }
+    },
+    "SRC-A11363A67F65": {
+      "id": "SRC-A11363A67F65",
+      "url": "https://github.com/unjs/nitro",
+      "title": "https://github.com/unjs/nitro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.799Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+        "fileName": "unjs-nitro-learnings.md"
+      }
+    },
+    "SRC-82D85F3B723D": {
+      "id": "SRC-82D85F3B723D",
+      "url": "https://en.wikipedia.org/wiki/Comparison_of_file_systems",
+      "title": "https://en.wikipedia.org/wiki/Comparison_of_file_systems",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.810Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+        "fileName": "unjs-nitro-learnings.md"
+      }
+    },
+    "SRC-60E1DFB78A34": {
+      "id": "SRC-60E1DFB78A34",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections",
+      "title": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.819Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+        "fileName": "unjs-nitro-learnings.md"
+      }
+    },
+    "SRC-400089E14E6C": {
+      "id": "SRC-400089E14E6C",
+      "url": "http://${addr.family/",
+      "title": "http://${addr.family/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T00:24:21.834Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+        "fileName": "unjs-nitro-learnings.md"
+      }
+    },
+    "SRC-6FD0C64DB41D": {
+      "id": "SRC-6FD0C64DB41D",
+      "url": "https://github.com/nitrojs/nitro/issues/4948",
+      "title": "https://github.com/nitrojs/nitro/issues/4948",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.844Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+        "fileName": "unjs-nitro-learnings.md"
+      }
+    },
+    "SRC-9A54AD13FED0": {
+      "id": "SRC-9A54AD13FED0",
+      "url": "https://github.com/DamascenoRafael/reminders-menubar",
+      "title": "https://github.com/DamascenoRafael/reminders-menubar",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.866Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
+        "fileName": "damascenorafael-reminders-menubar-learnings.md"
+      }
+    },
+    "SRC-3165B86EA051": {
+      "id": "SRC-3165B86EA051",
+      "url": "https://github.com//(repository",
+      "title": "https://github.com//(repository",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.877Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
+        "fileName": "damascenorafael-reminders-menubar-learnings.md"
+      }
+    },
+    "SRC-CC8931555A24": {
+      "id": "SRC-CC8931555A24",
+      "url": "https://itunes.apple.com/lookup?bundleId=%5C%28AppConstants.mainBundleId",
+      "title": "https://itunes.apple.com/lookup?bundleId=%5C%28AppConstants.mainBundleId",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.888Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
+        "fileName": "damascenorafael-reminders-menubar-learnings.md"
+      }
+    },
+    "SRC-0C8D8141657E": {
+      "id": "SRC-0C8D8141657E",
+      "url": "https://user-images.githubusercontent.com/105251221/210699361-757346a6-2fb4-4f61-9012-23d481ff67c8.png",
+      "title": "https://user-images.githubusercontent.com/105251221/210699361-757346a6-2fb4-4f61-9012-23d481ff67c8.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.900Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
+        "fileName": "damascenorafael-reminders-menubar-learnings.md"
+      }
+    },
+    "SRC-7CB77503DC39": {
+      "id": "SRC-7CB77503DC39",
+      "url": "https://user-images.githubusercontent.com/105251221/210702503-e30876ad-5ab3-459a-897a-b68d83a56a80.gif",
+      "title": "https://user-images.githubusercontent.com/105251221/210702503-e30876ad-5ab3-459a-897a-b68d83a56a80.gif",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.911Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
+        "fileName": "damascenorafael-reminders-menubar-learnings.md"
+      }
+    },
+    "SRC-127E518A4000": {
+      "id": "SRC-127E518A4000",
+      "url": "https://user-images.githubusercontent.com/105251221/210702518-4999150b-be9c-4a08-858f-869b67a12f28.gif",
+      "title": "https://user-images.githubusercontent.com/105251221/210702518-4999150b-be9c-4a08-858f-869b67a12f28.gif",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.922Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
+        "fileName": "damascenorafael-reminders-menubar-learnings.md"
+      }
+    },
+    "SRC-3C7BB3519470": {
+      "id": "SRC-3C7BB3519470",
+      "url": "https://user-images.githubusercontent.com/105251221/210703507-40564b5d-5c69-41c1-8bc4-40899f3d2ee3.gif",
+      "title": "https://user-images.githubusercontent.com/105251221/210703507-40564b5d-5c69-41c1-8bc4-40899f3d2ee3.gif",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:24:21.933Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
+        "fileName": "damascenorafael-reminders-menubar-learnings.md"
       }
     }
   }

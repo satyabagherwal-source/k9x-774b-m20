@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T00:16:22.741Z",
+  "last_updated": "2026-11-13T00:24:21.858Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7670,6 +7670,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BE041D-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-7BBB74",
+      "directive_title": "trash): expose safe unfinished-trash retry (#5472)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "agent-of-empires-agent-of-empires",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7BBB74-trash-expose-safe-unfinished-trash-retry.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-81AA81",
+      "directive_title": "vite): do not crash serving public assets from the dev worker (#5121)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "unjs-nitro",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-81AA81-vite-do-not-crash-serving-public-assets-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-1A35C9",
+      "directive_title": "Request activation before showing the popover - Related to #318",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "damascenorafael-reminders-menubar",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1A35C9-request-activation-before-showing-the-po.md",
       "staged_date": "2026-11-13"
     }
   ]

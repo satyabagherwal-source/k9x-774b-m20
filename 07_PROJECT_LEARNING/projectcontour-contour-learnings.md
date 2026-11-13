@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source**: github ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
-> **Source Version**: `bb06ab91`  
+> **Source Version**: `32f4c211`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T14:16:45.308Z  
+> **Timestamp**: 2026-11-13T00:23:45.812Z  
 > **Learning ID**: `learn-github-projectcontour-contour`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T14:16:45.300Z  
+> **Harvest Timestamp**: 2026-11-13T00:23:45.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Contour is a Kubernetes ingress controller using Envoy proxy.
 - **Primary Language / Ecosystem**: HTML
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3954 stars
+- **Stars / Engagement**: 3955 stars
 
 ---
 
@@ -1592,11 +1592,13 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7832** (2026-11-12): **Treat invalid health check policy as a warning, not an error**
+  *Symptoms*: This PR follows up on #7777, which added a check for invalid health check ranges.   Instead of marking the `HTTPProxy` invalid, it now sets a warning as defined in the [conflict resolution design doc](https://github.com/projectcontour/contour/blob/main/design/httpproxy-conflict.md?plain=1#L104).  The route is served without a health check, and the `HTTPProxy` stays valid.  With #7777, an included `HTTPProxy` with an invalid range was dropped, so its requests could be routed to the parent's backend. This is now avoided.
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7832?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :x: Patch coverage is `90.90909%` with `1 line` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 84.39%. Comparing base ([`f383e83`](https://app.codecov.io/gh/projectcontour/contour/commit/f383e833efeeaa45871348505c26a9220e1c9d55?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`c564bcc`](https://app.codecov.io/gh/projectcontour/contour/commit/c564bcc9cacc56ca34698ab37eae94971f3f17b5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  | [Files with missing lines](https://app.codecov.io/gh/projectcontour/contour/pull/7832?dropdown=coverage&src=pr&el=tree&ut
+
 - **Issue #7825** (2026-11-09): **build(deps): bump docker/login-action from 4.7.0 to 4.8.0**
   *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.7.0 to 4.8.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.8.0</h2> <ul> <li>Set Docker Hub OIDC token lifetime default to 1 hour by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1070">docker/login-action#1070</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1161.0 in <a href="https://redirect.github.com/docker/login-action/pull/1103">docker/login-action#1103</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.107.0 to 0.109.0 in <a href="https://redirect.github.com/docker/login-action/pull/1105">docker/login-action#1105</a></li> <li>Bump vite from 7.3.6 to 7.3.7 in <a href="https://redirect.github.com/docker/login-action/pull/1101">docker/login-action#1101</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/login-action/compare/v4.7.0...v4.8.0">https://github.com/docker/login-action/compare/v4.7.0...v4.8.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/docker/login-action/commit/8aa5831fb8d48d8f76594c7ddde61ae58019f550"><code>8aa5831</code></a> Merge pull request <a href="https://redirect.github.com/docker/login-action/iss
-
-- **Issue #7824** (2026-11-09): **build(deps): bump the codeql-action group with 4 updates**
-  *Symptoms*: Bumps the codeql-action group with 4 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/autobuild](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).  Updates `github/codeql-action/init` from 4.39.1 to 4.39.3 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/init's releases</a>.</em></p> <blockquote> <h2>v4.39.3</h2> <ul> <li>Fixed diff-informed alert filtering incorrectly removing alerts in changed files whose paths contain spaces, special characters, or non-ASCII characters. <a href="https://redirect.github.com/github/codeql-action/pull/4283">#4283</a></li> </ul> <h2>v4.39.2</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.4">2.27.4</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4284">#4284</a></li> <li><em>Upcoming breaking change</em>: CodeQL version 2.22.3 and earlier were discontinued on 16 October 2026 alongside GitHub Enterprise Server 3.18, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. <a href="https://redirect.github.com/github/codeql-action/pull/4266">#4266</a></li> <li>Starting
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1613,226 +1615,266 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27b02e00` (2026-11-09)
-**Commit Message**: build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (#7822)
+### Incident Patch 1: `32f4c211` (2026-11-12)
+**Commit Message**: Treat invalid health check policy as a warning, not an error (#7832)
 
-Bumps [github.com/onsi/ginkgo/v2](https://github.com/onsi/ginkgo) from 2.33.1 to 2.34.0.
-- [Release notes](https://github.com/onsi/ginkgo/releases)
-- [Changelog](https://github.com/onsi/ginkgo/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/onsi/ginkgo/compare/v2.33.1...v2.34.0)
+* Treat invalid health check policy as a warning, not an error
 
----
-updated-dependencies:
-- dependency-name: github.com/onsi/ginkgo/v2
-  dependency-version: 2.34.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +1/-1)
+**File**: `changelogs/unreleased/7777-NopeCharon-small.md` (modified, +1/-1)
 ```diff
-@@ -16,7 +16,7 @@ require (
- 	github.com/google/go-github/v48 v48.2.0
- 	github.com/google/uuid v1.6.0
- 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
--	github.com/onsi/ginkgo/v2 v2.33.1
-+	github.com/onsi/ginkgo/v2 v2.34.0
- 	github.com/onsi/gomega v1.44.0
- 	github.com/pkg/errors v0.9.1
- 	github.com/prometheus/client_golang v1.25.0
+@@ -1 +1 @@
+-HTTPProxy health check `expectedStatuses` ranges whose start is not less than their end are now rejected with a `HealthCheckPolicyInvalid` error, instead of being passed through to Envoy, which rejects the resulting cluster.
++HTTPProxy health check `expectedStatuses` ranges whose start is not less than their end are now ignored with a warning in the HTTPProxy status, instead of being passed through to Envoy, which rejects the resulting cluster.
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `internal/dag/httpproxy_processor.go` (modified, +2/-2)
 ```diff
-@@ -166,8 +166,8 @@ github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee h1:W5t00kpgFd
- github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
- github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
- github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
--github.com/onsi/ginkgo/v2 v2.33.1 h1:62XfWJbEIjPSCSDYrsCPP/SHcmH7O0M8ne8zfqQ2iz4=
--github.com/onsi/ginkgo/v2 v2.33.1/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
-+github.com/onsi/ginkgo/v2 v2.34.0 h1:aN3Us823mHHTSWMIi8WIQTdYuSPhl2lWY46E/w3SiAk=
-+github.com/onsi/ginkgo/v2 v2.34.0/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
- github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
- github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
- github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
-```
-
----
-
-### Incident Patch 2: `09f6e30a` (2026-11-09)
-**Commit Message**: build(deps): bump github.com/prometheus/common from 0.73.0 to 0.73.1 (#7823)
-
-Bumps [github.com/prometheus/common](https://github.com/prometheus/common) from 0.73.0 to 0.73.1.
-- [Release notes](https://github.com/prometheus/common/releases)
-- [Changelog](https://github.com/prometheus/common/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/prometheus/common/compare/v0.73.0...v0.73.1)
-
----
-updated-dependencies:
-- dependency-name: github.com/prometheus/common
-  dependency-version: 0.73.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +2/-3)
-```diff
-@@ -21,7 +21,7 @@ require (
- 	github.com/pkg/errors v0.9.1
- 	github.com/prometheus/client_golang v1.25.0
- 	github.com/prometheus/client_model v0.6.3
--	github.com/prometheus/common v0.73.0
-+	github.com/prometheus/common v0.73.1
- 	github.com/sirupsen/logrus v1.10.2
- 	github.com/stretchr/testify v1.12.1
- 	github.com/tsaarni/certyaml v0.13.0
-@@ -83,15 +83,14 @@ require (
- 	github.com/google/go-querystring v1.1.0 // indirect
- 	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936 // indirect
- 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
--	github.com/hashicorp/go-uuid v1.0.3 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/miekg/dns v1.1.65 // indirect
- 	github.com/moby/spdystream v0.5.1 // indirect
- 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
- 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
- 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
- 	github.com/opencontainers/go-digest v1.0.0 // indirect
--	github.com/pandatix/go-abnf v0.5.1 // indirect
-+	github.com/pandatix/go-abnf v0.5.3 // indirect
- 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/prometheus/procfs v0.22.0 // indirect
-```
-
-**File**: `go.sum` (modified, +4/-6)
-```diff
-@@ -137,8 +137,6 @@ github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 h1:JeSE6pjso5T
- github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674/go.mod h1:r4w70xmWCQKmi1ONH4KIaBptdivuRPyosB9RmPlGEwA=
- github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 h1:Ovs26xHkKqVztRpIrF/92BcuyuQ/YW4NSIpoGtfXNho=
- github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgfV/d3M/q6VIi02HzZEHgUlZvzk=
--github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
--github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
- github.com/joshdk/go-junit v1.0.0 h1:S86cUKIdwBHWwA6xCmFlf3RTLfVXYQfvanM5Uh+K6GE=
- github.com/joshdk/go-junit v1.0.0/go.mod h1:TiiV0PqkaNfFXjEiyjWM3XXrhVyCa1K4Zfga6W52ung=
- github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
-@@ -174,8 +172,8 @@ github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
- github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
- github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
- github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
--github.com/pandatix/go-abnf v0.5.1 h1:iyLvSu2Aq12iE0r4n948Qw21BHDuckLq/8WIXAAF+HI=
--github.com/pandatix/go-abnf v0.5.1/go.mod h1:VBmbtpFgQNEaQpyAvmi+Ecd9wAYJKzA3TmiB3L93sVg=
-+github.com/pandatix/go-abnf v0.5.3 h1:LA9AaxAqwzdxfDe7+HIGUB6tzx2N6wYVEAChmfsoPgo=
-+github.com/pandatix/go-abnf v0.5.3/go.mod h1:AE0KD3/VNoCjGzc1gqetRKshbI4SYErXQ/8kPenR5mc=
- github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
- github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
- github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 h1:GFCKgmp0tecUJ0sJuv4pzYCqS9+RGSn52M3FUwPs+uo=
-@@ -189,8 +187,8 @@ github.com/prometheus/client_golang v1.25.0 h1:cDtW1TcFsMi1RJc8khwCKB4VhzwV04aKq
- github.com/prometheus/client_golang v1.25.0/go.mod h1:j2X/4/kaQHLPnmyEU8zjmkndo1T317VpCIQEml8LTKk=
- github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
- github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
--github.com/prometheus/common v0.73.0 h1:NGIOmVi8jrgiiPQgXxD6rP0FfxFsuZxnMQkel0qBy/g=
--github.com/prometheus/common v0.73.0/go.mod h1:Nt+CsVkf/mj4wDAmtSwq1HTPohHSX6fMr6+/f9B5UqM=
-+github.com/prometheus/common v0.73.1 h1:SZWh/j4AvhCdhX8jvYSnxvPxhWlC9QZkjJ+tOrEr7kU=
-+github.com/prometheus/common v0.73.1/go.mod h1:I9aA/Ukz9s1olOobh8KtCkU7B1mQPQsB9UvQPsUQ1Dk=
- github.com/prometheus/procfs v0.22.0 h1:6q9+/JL9IKAPbCmBrv9n5O5Ty3NKnciV5X7YGw0oics=
- github.com/prometheus/procfs v0.22.0/go.mod h1:CvmFr/GVhIjIvWJZW3tgkODBQMRIf0EyWMQLHCHab58=
- github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
-```
-
----
-
-### Incident Patch 3: `28e66586` (2026-11-09)
-**Commit Message**: build(deps): bump the codeql-action group with 4 updates (#7824)
-
-Bumps the codeql-action group with 4 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/autobuild](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).
-
-
-Updates `github/codeql-action/init` from 4.39.1 to 4.39.3
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/9b3254085494b55a0f7c4c2b3d2d52cc712ce370...33d7b85da1a04171e211befe2c739303b9a4c066)
-
-Updates `github/codeql-action/autobuild` from 4.39.1 to 4.39.3
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/9b3254085494b55a0f7c4c2b3d2d52cc712ce370...33d7b85da1a04171e211befe2c739303b9a4c066)
-
-Updates `github/codeql-action/analyze` from 4.39.1 to 4.39.3
-- [Release notes](htt
-
-**File**: `.github/workflows/codeql-analysis.yml` (modified, +5/-5)
-```diff
-@@ -45,14 +45,14 @@ jobs:
-         cache: false
-     # Initializes the CodeQL tools for scanning.
-     - name: Initialize CodeQL
--      uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-       with:
-         languages: go
-     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-     - name: Autobuild
--      uses: github/codeql-action/autobuild@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      uses: github/codeql-action/autobuild@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-     - name: Perform CodeQL Analysis
--      uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-       with:
-         category: /language:go
+@@ -989,8 +989,8 @@ func (p *HTTPProxyProcessor) computeRoutes(
  
-@@ -65,10 +65,10 @@ jobs:
-       with:
-         persist-credentials: false
-     - name: Initialize CodeQL
--      uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-       with:
-         languages: actions
-     - name: Perform CodeQL Analysis
--      uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-       with:
-         category: /language:actions
+ 		healthPolicy, err := httpHealthCheckPolicy(route.HealthCheckPolicy)
+ 		if err != nil {
+-			validCond.AddError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", err.Error())
+-			return nil
++			validCond.AddWarningf(contour_v1.ConditionTypeSpecError, "IgnoredField",
++				"ignoring field %q; %s", "Spec.Routes.HealthCheckPolicy", err)
+ 		}
+ 
+ 		for _, service := range route.Services {
 ```
 
-**File**: `.github/workflows/openssf-scorecard.yaml` (modified, +1/-1)
+**File**: `internal/featuretests/v3/cluster_test.go` (modified, +28/-8)
 ```diff
-@@ -37,6 +37,6 @@ jobs:
-         name: SARIF file
-         path: results.sarif
-     - name: "Upload to code-scanning"
--      uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-       with:
-         sarif_file: results.sarif
+@@ -1103,8 +1103,13 @@ func TestClusterWithHealthChecks(t *testing.T) {
+ 	})
+ 
+ 	rh.OnUpdate(proxy2, proxy3)
+-	c.Status(proxy3).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: end must be in the range [101, 600]")
+-	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
++	c.Status(proxy3).HasWarning(contour_v1.ConditionTypeSpecError, "IgnoredField", `ignoring field "Spec.Routes.HealthCheckPolicy"; invalid expected status range: end must be in the range [101, 600]`)
++	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{
++		Resources: resources(t,
++			cluster("default/kuard/80/da39a3ee5e", "default/kuard", "default_kuard_80"),
++		),
++		TypeUrl: clusterType,
++	})
+ 
+ 	// proxy4 has an invalid expected status range (start is too small).
+ 	proxy4 := fixture.NewProxy("default/simple").WithSpec(contour_v1.HTTPProxySpec{
+@@ -1129,8 +1134,13 @@ func TestClusterWithHealthChecks(t *testing.T) {
+ 	})
+ 
+ 	rh.OnUpdate(proxy3, proxy4)
+-	c.Status(proxy4).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: start must be in the range [100, 599]")
+-	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
++	c.Status(proxy4).HasWarning(contour_v1.ConditionTypeSpecError, "IgnoredField", `ignoring field "Spec.Routes.HealthCheckPolicy"; invalid expected status range: start must be in the range [100, 599]`)
++	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{
++		Resources: resources(t,
++			cluster("default/kuard/80/da39a3ee5e", "default/kuard", "default_kuard_80"),
++		),
++		TypeUrl: clusterType,
++	})
+ 
+ 	// proxy5 has an invalid expected status range (start is greater than end).
+ 	proxy5 := fixture.NewProxy("default/simple").WithSpec(contour_v1.HTTPProxySpec{
+@@ -1155,8 +1165,13 @@ func TestClusterWithHealthChecks(t *testing.T) {
+ 	})
+ 
+ 	rh.OnUpdate(proxy4, proxy5)
+-	c.Status(proxy5).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: start must be less than end")
+-	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
++	c.Status(proxy5).HasWarning(contour_v1.ConditionTypeSpecError, "IgnoredField", `ignoring field "Spec.Routes.HealthCheckPolicy"; invalid expected status range: start must be less than end`)
++	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{
++		Resources: resources(t,
++			cluster("default/kuard/80/da39a3ee5e", "default/kuard", "default_kuard_80"),
++		),
++		TypeUrl: clusterType,
++	})
+ 
+ 	// proxy6 has an invalid expected status range (start is equal to end).
+ 	proxy6 := fixture.NewProxy("default/simple").WithSpec(contour_v1.HTTPProxySpec{
+@@ -1180,8 +1195,13 @@ func TestClusterWithHealthChecks(t *testing.T) {
+ 	})
+ 
+ 	rh.OnUpdate(proxy5, proxy6)
+-	c.Status(proxy6).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: start must be less than end")
+-	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
++	c.Status(proxy6).HasWarning(contour_v1.ConditionTypeSpecError, "IgnoredField", `ignoring field "Spec.Routes.HealthCheckPolicy"; invalid expected status range: start must be less than end`)
++	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{
++		Resources: resources(t,
++			cluster("default/kuard/80/da39a3ee5e", "default/kuard", "default_kuard_80"),
++		),
++		TypeUrl: clusterType,
++	})
+ }
+ 
+ // Test processing a service that exists but is not referenced
 ```
 
-**File**: `.github/workflows/trivy-scan.yaml` (modified, +1/-1)
+**File**: `internal/featuretests/v3/featuretests.go` (modified, +17/-0)
 ```diff
-@@ -33,6 +33,6 @@ jobs:
-           output: 'trivy-results.sarif'
-           ignore-unfixed: true
-           severity: 'HIGH,CRITICAL'
--      - uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      - uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-         with:
-           sarif_file: 'trivy-results.sarif'
+@@ -340,6 +340,23 @@ func (s *StatusResult) HasError(condType, reason, message string) *Contour {
+ 	return s.Contour
+ }
+ 
++// HasWarning asserts that the proxy is valid and there is a warning on the
++// Valid Condition that matches the given values.
++func (s *StatusResult) HasWarning(condType, reason, message string) *Contour {
++	assert.Equal(s.T, string(status.ProxyStatusValid), s.Have.CurrentStatus)
++	validCond := s.Have.GetConditionFor(contour_v1.ValidConditionType)
++	assert.NotNil(s.T, validCond)
++
++	subCond, ok := validCond.GetWarning(condType)
++	if !ok {
++		s.Fatalf("Did not find warning %s", condType)
++	}
++	assert.Equal(s.T, reason, subCond.Reason)
++	assert.Equal(s.T, message, subCond.Message)
++
++	return s.Contour
++}
++
+ // IsValid asserts that the proxy's CurrentStatus field is equal to "valid".
+ func (s *StatusResult) IsValid() *Contour {
+ 	s.Helper()
+```
+
+**File**: `site/content/docs/main/config/health-checks.md` (modified, +1/-0)
+```diff
+@@ -52,6 +52,7 @@ By default, only responses with a 200 status code will be considered healthy.
+ The set of response codes considered healthy can be customized by specifying ranges in `expectedStatuses`.
+ Ranges follow half-open semantics, meaning the start is inclusive and the end is exclusive. 
+ Statuses must be between 100 (inclusive) and 600 (exclusive).
++If a range is invalid, the health check policy is ignored, and the HTTPProxy status reports a warning.
+ For example:
+ 
+ ```yaml
+```
+
+---
+
+### Incident Patch 2: `f383e833` (2026-11-11)
+**Commit Message**: internal/dag: reject health check status ranges with start >= end (#7777)
+
+httpHealthCheckPolicy validated the bounds of each expectedStatuses
+range individually but never checked that start is less than end.
+Reversed or empty ranges such as {start: 500, end: 400} or
+{start: 200, end: 200} were therefore accepted, the HTTPProxy was
+reported as valid, and the range was passed through to Envoy, which
+rejects the cluster with "Invalid http expected status range:
+expecting start < end". The route then has no cluster and returns
+503s with nothing on the HTTPProxy status to explain why.
+
+Reject such ranges with a HealthCheckPolicyInvalid error condition,
+like the existing out-of-bounds checks, and document the requirement.
+
+Fixes #7776
+
+Signed-off-by: NopeCharon <[REDACTED_EMAIL]>
+
+**File**: `changelogs/unreleased/7777-NopeCharon-small.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++HTTPProxy health check `expectedStatuses` ranges whose start is not less than their end are now rejected with a `HealthCheckPolicyInvalid` error, instead of being passed through to Envoy, which rejects the resulting cluster.
+```
+
+**File**: `internal/dag/policy.go` (modified, +3/-0)
+```diff
+@@ -518,6 +518,9 @@ func httpHealthCheckPolicy(hc *contour_v1.HTTPHealthCheckPolicy) (*HTTPHealthChe
+ 		if statusRange.End < 101 || statusRange.End > 600 {
+ 			return nil, fmt.Errorf("invalid expected status range: end must be in the range [101, 600]")
+ 		}
++		if statusRange.Start >= statusRange.End {
++			return nil, fmt.Errorf("invalid expected status range: start must be less than end")
++		}
+ 
+ 		expectedStatuses = append(expectedStatuses, HTTPStatusRange{
+ 			Start: statusRange.Start,
+```
+
+**File**: `internal/featuretests/v3/cluster_test.go` (modified, +51/-0)
+```diff
+@@ -1131,6 +1131,57 @@ func TestClusterWithHealthChecks(t *testing.T) {
+ 	rh.OnUpdate(proxy3, proxy4)
+ 	c.Status(proxy4).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: start must be in the range [100, 599]")
+ 	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
++
++	// proxy5 has an invalid expected status range (start is greater than end).
++	proxy5 := fixture.NewProxy("default/simple").WithSpec(contour_v1.HTTPProxySpec{
++		VirtualHost: &contour_v1.VirtualHost{Fqdn: "www.example.com"},
++		Routes: []contour_v1.Route{{
++			Conditions: []contour_v1.MatchCondition{{
++				Prefix: "/a",
++			}},
++			HealthCheckPolicy: &contour_v1.HTTPHealthCheckPolicy{
++				Path: "/healthz",
++				ExpectedStatuses: []contour_v1.HTTPStatusRange{
++					{Start: 200, End: 300},
++					{Start: 500, End: 400},
++				},
++			},
++			Services: []contour_v1.Service{{
++				Name:   "kuard",
++				Port:   80,
++				Weight: 90,
++			}},
++		}},
++	})
++
++	rh.OnUpdate(proxy4, proxy5)
++	c.Status(proxy5).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: start must be less than end")
++	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
++
++	// proxy6 has an invalid expected status range (start is equal to end).
++	proxy6 := fixture.NewProxy("default/simple").WithSpec(contour_v1.HTTPProxySpec{
++		VirtualHost: &contour_v1.VirtualHost{Fqdn: "www.example.com"},
++		Routes: []contour_v1.Route{{
++			Conditions: []contour_v1.MatchCondition{{
++				Prefix: "/a",
++			}},
++			HealthCheckPolicy: &contour_v1.HTTPHealthCheckPolicy{
++				Path: "/healthz",
++				ExpectedStatuses: []contour_v1.HTTPStatusRange{
++					{Start: 200, End: 200},
++				},
++			},
++			Services: []contour_v1.Service{{
++				Name:   "kuard",
++				Port:   80,
++				Weight: 90,
++			}},
++		}},
++	})
++
++	rh.OnUpdate(proxy5, proxy6)
++	c.Status(proxy6).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: start must be less than end")
++	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
+ }
+ 
+ // Test processing a service that exists but is not referenced
+```
+
+**File**: `site/content/docs/main/config/health-checks.md` (modified, +1/-1)
+```diff
+@@ -44,7 +44,7 @@ Health check configuration parameters:
+ - `timeoutSeconds`: The time to wait (seconds) for a health check response. If the timeout is reached the health check attempt will be considered a failure. Defaults to 2 seconds if not set.
+ - `unhealthyThresholdCount`: The number of unhealthy health checks required before a host is marked unhealthy. Note that for http health checking if a host responds with 503 this threshold is ignored and the host is considered unhealthy immediately. Defaults to 3 if not defined.
+ - `healthyThresholdCount`: The number of healthy health checks required before a host is marked healthy. Note that during startup, only a single successful health check is required to mark a host healthy.
+-- `expectedStatuses`: An optional list of HTTP status ranges that are considered healthy. Ranges follow half-open semantics, meaning the start is inclusive and the end is exclusive. Statuses must be between 100 (inclusive) and 600 (exclusive).
++- `expectedStatuses`: An optional list of HTTP status ranges that are considered healthy. Ranges follow half-open semantics, meaning the start is inclusive and the end is exclusive. Statuses must be between 100 (inclusive) and 600 (exclusive), and each range's start must be less than its end.
+ 
+ ### Non-default expected statuses
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7832** (2026-11-12): Treat invalid health check policy as a warning, not an error (@tsaarni)
 - **PR #7825** (2026-11-09): build(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
 - **PR #7824** (2026-11-09): build(deps): bump the codeql-action group with 4 updates (@dependabot[bot])
 - **PR #7823** (2026-11-09): build(deps): bump github.com/prometheus/common from 0.73.0 to 0.73.1 (@dependabot[bot])
 - **PR #7822** (2026-11-09): build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (@dependabot[bot])
 - **PR #7821** (2026-11-09): Set alt_stat_name for DNS name clusters (@lbarrosby)
-- **PR #7818** (2026-11-05): internal/dag: reject IP filter policy when any CIDR is invalid (@RaphaelFakhri)
 
 ---
 
@@ -1852,28 +1894,28 @@ Updates `github/codeql-action/analyze` from 4.39.1 to 4.39.3
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (#7822)
+## X. Treat invalid health check policy as a warning, not an error (#7832)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/unreleased/7777-NopeCharon-small.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27b02e00`: build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (#7822). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `32f4c211`: Treat invalid health check policy as a warning, not an error (#7832). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/unreleased/7777-NopeCharon-small.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```html
 // Verified production-grade fix pattern:
-	github.com/onsi/ginkgo/v2 v2.34.0
+HTTPProxy health check `expectedStatuses` ranges whose start is not less than their end are now ignored with a warning in the HTTPProxy status, instead of being passed through to Envoy, which rejects the resulting cluster.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```html
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/onsi/ginkgo/v2 v2.33.1
+HTTPProxy health check `expectedStatuses` ranges whose start is not less than their end are now rejected with a `HealthCheckPolicyInvalid` error, instead of being passed through to Envoy, which rejects the resulting cluster.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27b02e00` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `32f4c211` are properly handled with clean fallback behavior.

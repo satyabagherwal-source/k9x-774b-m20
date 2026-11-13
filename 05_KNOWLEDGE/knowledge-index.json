@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T00:16:17.658Z",
+  "last_updated": "2026-11-13T00:24:14.178Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -969,8 +969,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "ff0a5e36",
-      "content_hash": "86a55c7090fab300960f474ce3f977d3692ab9c248c0dec58e14a2e5f8dfb0b6",
+      "source_version": "7ad6f46d",
+      "content_hash": "7b75fb4cf40af49ebe9d55c7276c5dc0b6b13cb121f965ac71245a6c9e97bdb0",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -987,6 +987,11 @@
         {
           "number": null,
           "title": "tui): lock Yolo in the new-session dialog for the agent each view runs (#5412)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "trash): expose safe unfinished-trash retry (#5472)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -1070,7 +1075,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-10T05:21:51.556Z",
+      "verified_at": "2026-11-13T00:23:58.908Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10100,11 +10105,16 @@
       "slug": "damascenorafael-reminders-menubar",
       "platform": "github",
       "source_url": "https://github.com/DamascenoRafael/reminders-menubar",
-      "source_version": "08068dd3",
-      "content_hash": "d58f4ff1b20c8fe05d040b8c969157be0c632c71947da32ecbb97d9ade5f9c2e",
+      "source_version": "f5330cb5",
+      "content_hash": "54466b55eba4690e2638583414ca481ccc60ec8f0b3c0f2f593c9f9465709257",
       "dossier_path": "07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Request activation before showing the popover - Related to #318",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 2799,
           "title": "Improve UI by showing reminder count hidden from lists and surfaced in Upcoming",
@@ -10121,7 +10131,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-05T12:14:31.532Z",
+      "verified_at": "2026-11-13T00:24:06.734Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53512,8 +53522,8 @@
       "slug": "projectcontour-contour",
       "platform": "github",
       "source_url": "https://github.com/projectcontour/contour",
-      "source_version": "bb06ab91",
-      "content_hash": "5921a11e99077fbf2f0a350b66da2d90e6c7ae99ed1c9220d40c4c9c7875cd77",
+      "source_version": "32f4c211",
+      "content_hash": "f9c9d0577fd4803a09a0e1e241ac46f4820a78887641623f527267737a1e7e1c",
       "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
       "promoted_rules": [
@@ -53525,6 +53535,11 @@
         {
           "number": null,
           "title": "build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (#7822)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Treat invalid health check policy as a warning, not an error (#7832)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -53593,7 +53608,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T14:16:55.859Z",
+      "verified_at": "2026-11-13T00:24:10.950Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78804,13 +78819,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "56afe28f",
-      "content_hash": "a828e68bdd75eb287c250672b9d3dcac96a00ff2c82fd528ad7d211a2cdb9bb1",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "01a3a26f32ce3b4226c0a4e42e33c5329ad3faf45c3345080ecf67fd8458dea1",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": null,
@@ -79018,7 +79033,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T21:56:45.978Z",
+      "verified_at": "2026-11-13T00:24:14.136Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -85852,14 +85867,19 @@
       "slug": "unjs-nitro",
       "platform": "github",
       "source_url": "https://github.com/unjs/nitro",
-      "source_version": "0317e652",
-      "content_hash": "17668ac0888318dff8f9aa01b62d9fb1c22cbbaafda1011994d9870bb9500cb2",
+      "source_version": "0f2a7f49",
+      "content_hash": "19d981a520d39cc08f518afe149722a7c6e4b34e970078479d7e7f99496a23d6",
       "dossier_path": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "config): detect `index.html` and `server.ts` added before a vite restart (#5037)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "vite): do not crash serving public assets from the dev worker (#5121)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -85918,7 +85938,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T01:25:29.660Z",
+      "verified_at": "2026-11-13T00:24:04.438Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

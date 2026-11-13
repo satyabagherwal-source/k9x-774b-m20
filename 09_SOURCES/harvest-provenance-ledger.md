@@ -9269,3 +9269,8 @@ Every entry in this ledger must capture:
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `f00b7006` | Multi-dimensional audit evidence | 2026-11-12T23:55:04.785Z |
 | `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `e8491dea` | Multi-dimensional audit evidence | 2026-11-13T00:01:50.723Z |
 | `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `9889b7da` | Multi-dimensional audit evidence | 2026-11-13T00:16:17.831Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `7ad6f46d` | Multi-dimensional audit evidence | 2026-11-13T00:23:59.360Z |
+| `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `0f2a7f49` | Multi-dimensional audit evidence | 2026-11-13T00:24:04.816Z |
+| `learn-github-damascenorafael-reminders-menubar` | `https://github.com/DamascenoRafael/reminders-menubar` | `f5330cb5` | Multi-dimensional audit evidence | 2026-11-13T00:24:07.022Z |
+| `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `32f4c211` | Multi-dimensional audit evidence | 2026-11-13T00:24:11.370Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `56afe28f` | Multi-dimensional audit evidence | 2026-11-13T00:24:14.365Z |

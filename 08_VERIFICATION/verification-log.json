@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-5P3H",
-    "timestamp": "2026-11-09T14:35:41.261Z",
-    "repository": "black-forest-labs/flux-3-image-klein",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "5ee3bbd729adb535d339445f4b41278f1e808c1828723f45964826f0108e2a58",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-5QLW",
-    "timestamp": "2026-11-09T14:35:43.220Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "25700b8b1cc2f150b6f03f71b2f1521aa1c8609f02a533f89f7e2b7ddc3aee62",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-0T3S",
-    "timestamp": "2026-11-09T14:59:52.792Z",
-    "repository": "pyannote/speaker-diarization-community-1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "2fe79bb09c2c72b7da7834a1295289ebd3eff8677289aa415d2cd34421008466",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-H8QQ",
-    "timestamp": "2026-11-09T15:12:39.554Z",
-    "repository": "salvo-rs/salvo",
-    "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "8669bf52cac49c93fa0c71d5bb73fed220f9872e2986bd5eb25e38e76e2c0ea7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-HC4N",
-    "timestamp": "2026-11-09T15:12:43.943Z",
-    "repository": "openreplay/openreplay",
-    "learningId": "learn-github-openreplay-openreplay",
-    "contentHash": "f04ef26644a5b6d6232e1ce7060243421bcfad65edde51accfd2895b740ca6cd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-HG38",
     "timestamp": "2026-11-09T15:12:49.076Z",
     "repository": "RustCrypto/hashes",
@@ -7490,6 +7415,81 @@
     "repository": "bahdotsh/wrkflw",
     "learningId": "learn-github-bahdotsh-wrkflw",
     "contentHash": "f5732766e48793bff353c0b2509e1be0851e2758bba6619a84c55cbfce5baa62",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-HTA2",
+    "timestamp": "2026-11-13T00:23:59.355Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "7b75fb4cf40af49ebe9d55c7276c5dc0b6b13cb121f965ac71245a6c9e97bdb0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-HXHH",
+    "timestamp": "2026-11-13T00:24:04.805Z",
+    "repository": "nitrojs/nitro",
+    "learningId": "learn-github-nitrojs-nitro",
+    "contentHash": "19d981a520d39cc08f518afe149722a7c6e4b34e970078479d7e7f99496a23d6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-HZ6W",
+    "timestamp": "2026-11-13T00:24:07.016Z",
+    "repository": "DamascenoRafael/reminders-menubar",
+    "learningId": "learn-github-damascenorafael-reminders-menubar",
+    "contentHash": "54466b55eba4690e2638583414ca481ccc60ec8f0b3c0f2f593c9f9465709257",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-I2J2",
+    "timestamp": "2026-11-13T00:24:11.342Z",
+    "repository": "projectcontour/contour",
+    "learningId": "learn-github-projectcontour-contour",
+    "contentHash": "f9c9d0577fd4803a09a0e1e241ac46f4820a78887641623f527267737a1e7e1c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-I4UN",
+    "timestamp": "2026-11-13T00:24:14.351Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "01a3a26f32ce3b4226c0a4e42e33c5329ad3faf45c3345080ecf67fd8458dea1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

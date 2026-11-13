@@ -9260,3 +9260,8 @@
 | `CYCLE-20261112-GMVH` | `2026-11-12T23:55:04.781Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`ef574eab...`) |
 | `CYCLE-20261113-PC3K` | `2026-11-13T00:01:50.720Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9a4bfbad...`) |
 | `CYCLE-20261113-7X5V` | `2026-11-13T00:16:17.827Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f5732766...`) |
+| `CYCLE-20261113-HTA2` | `2026-11-13T00:23:59.355Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7b75fb4c...`) |
+| `CYCLE-20261113-HXHH` | `2026-11-13T00:24:04.805Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`19d981a5...`) |
+| `CYCLE-20261113-HZ6W` | `2026-11-13T00:24:07.016Z` | `DamascenoRafael/reminders-menubar` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`54466b55...`) |
+| `CYCLE-20261113-I2J2` | `2026-11-13T00:24:11.342Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`f9c9d057...`) |
+| `CYCLE-20261113-I4UN` | `2026-11-13T00:24:14.351Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`01a3a26f...`) |

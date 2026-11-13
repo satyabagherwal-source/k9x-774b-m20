@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md`  
 > **Source**: github ([https://github.com/DamascenoRafael/reminders-menubar](https://github.com/DamascenoRafael/reminders-menubar))  
-> **Source Version**: `08068dd3`  
+> **Source Version**: `f5330cb5`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-05T12:14:30.791Z  
+> **Timestamp**: 2026-11-13T00:23:42.358Z  
 > **Learning ID**: `learn-github-damascenorafael-reminders-menubar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/damascenorafael-reminders-menubar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DamascenoRafael/reminders-menubar](https://github.com/DamascenoRafael/reminders-menubar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-05T12:14:30.710Z  
+> **Harvest Timestamp**: 2026-11-13T00:23:42.349Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Simple macOS menu bar application to view and interact with reminders. Developed with SwiftUI and using Apple Reminders as a source.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4007 stars
+- **Stars / Engagement**: 4016 stars
 
 ---
 
@@ -444,10 +444,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             didCloseEventDate = .distantPast
             popover.performClose(button)
         } else {
-            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            NSApp.activate(ignoringOtherApps: true)
-            popover.contentViewController?.view.window?.makeKey()
+            showPopover(relativeTo: button)
         }
+    }
+
+    private func showPopover(relativeTo button: NSStatusBarButton) {
+        if #available(macOS 14.0, *) {
+            NSApp.activate()
+        } else {
+            NSApp.activate(ignoringOtherApps: true)
+        }
+
+        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        popover.contentViewController?.view.window?.makeKey()
     }
 
     // - MARK: Popover sizing
@@ -538,14 +547,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             NSEvent.removeMonitor(monitor)
             globalOutsideClickMonitor = nil
         }
-        if let monitor = localOutsideClickMonitor {
-            NSEvent.removeMonitor(monitor)
-            localOutsideClickMonitor = nil
-        }
-    }
-
-    private func isClickOutsidePopover(event: NSEvent) -> Bool {
-  
+        if let
 ```
 
 ### Core Architecture Module: `reminders-menubar/Constants.swift`
@@ -745,342 +747,33 @@ extension Array where Element == ReminderItem {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08068dd3` (2026-11-04)
-**Commit Message**: Add first day of week settings - Closes #324
+### Incident Patch 1: `f5330cb5` (2026-11-10)
+**Commit Message**: Request activation before showing the popover - Related to #318
 
-**File**: `reminders-menubar/Extensions/Date+Extensions.swift` (modified, +1/-1)
+**File**: `reminders-menubar/AppDelegate.swift` (modified, +11/-2)
 ```diff
-@@ -68,7 +68,7 @@ extension Date {
-     }
- 
-     private func dateDescription(withTime showTimeDescription: Bool, relativeFormatting: Bool) -> String {
--        let locale = rmbTimeFormattedLocale()
-+        let locale = rmbDateTimeFormattedLocale()
-         let dateFormatter = DateFormatter()
- 
-         dateFormatter.dateStyle = .medium
-```
-
-**File**: `reminders-menubar/Resources/Localizable.xcstrings` (modified, +250/-0)
-```diff
-@@ -8876,6 +8876,256 @@
-         }
-       }
-     },
-+    "firstWeekdaySettingsLabel" : {
-+      "extractionState" : "manual",
-+      "localizations" : {
-+        "cs" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "První den týdne:"
-+          }
-+        },
-+        "de" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Erster Wochentag:"
-+          }
-+        },
-+        "en" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "First day of week:"
-+          }
-+        },
-+        "es-419" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Primer día de la semana:"
-+          }
-+        },
-+        "fil-PH" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Unang araw ng linggo:"
-+          }
-+        },
-+        "fr" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Premier jour de la semaine :"
-+          }
-+        },
-+        "id" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Hari pertama dalam seminggu:"
-+          }
-+        },
-+        "it" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Primo giorno della settimana:"
-+          }
-+        },
-+        "ja" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "週の開始日："
-+          }
-+        },
-+        "ko" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "한 주의 시작 요일:"
-+          }
-+        },
-+        "nl" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Eerste dag van de week:"
-+          }
-+        },
-+        "pl" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Pierwszy dzień tygodnia:"
-+          }
-+        },
-+        "pt-BR" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Primeiro dia da semana:"
-+          }
-+        },
-+        "ru" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Первый день недели:"
-+          }
-+        },
-+        "sk" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Prvý deň týždňa:"
-+          }
-+        },
-+        "tr" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Haftanın ilk günü:"
-+          }
-+        },
-+        "uk" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Перший день тижня:"
-+          }
-+        },
-+        "vi" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Ngày đầu tuần:"
-+          }
-+        },
-+        "zh-Hans" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "每周起始日："
-+          }
-+        },
-+        "zh-Hant" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "每週起始日："
-+          }
-+        }
-+      }
-+    },
-+    "firstWeekdaySystemOption" : {
-+      "extractionState" : "manual",
-+      "localizations" : {
-+        "cs" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Nastavení systému"
-+          }
-+        },
-+        "de" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Systemeinstellung"
-+          }
-+        },
-+        "en" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "System setting"
-+          }
-+        },
-+        "es-419" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Configuración del sistema"
-+          }
-+        },
-+        "fil-PH" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Setting ng system"
-+          }
-+        },
-+        "fr" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Réglage du système"
-+          }
-+        },
-+        "id" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Pengaturan sistem"
-+          }
-+        },
-+        "it" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Impostazione di sistema"
-+          }
-+        },
-+        "ja" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "システム設定"
-+          }
-+        },
-+        "ko" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "시스템 설정"
-+          }
-+        },
-+        "nl" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Systeeminstelling"
-+          }
-+        },
-+     
-```
-
-**File**: `reminders-menubar/Resources/remindersLocalized.swift` (modified, +15/-3)
-```diff
-@@ -169,6 +169,8 @@ enum RemindersMenuBarLocalizedKeys: String {
-     case timeFormatSettingsLabel
-     case timeFormat12HourOption
-     case timeFormat24HourOption
-+    case firstWeekdaySettingsLabel
-+    case firstWeekdaySystemOption
-     case generalSettingsTab
-     case menuBarSettingsTab
-     case sectionsSettingsTab
-@@ -227,10 +229,20 @@ func rmbAvailableLocales() -> [ReminderMenuBarLocale] {
-     return locales.sorted(by: { $0.name < $1.name })
- }
- 
--func rmbTimeFormattedLocale() -> Locale {
--    let base = rmbCurrentLocale()
-+func rmbDateTimeFormattedLocale() -> Locale {
-+    var components = NSLocale.components(fromLocaleIdentifier: rmbCurrentLocale().identifier)
-     let hourCycle = UserPreferences.shared.timeFormatIs24Hour ? "h23" : "h12"
--    return Locale(identifier: "\(base.identifier)@hours=\(hourCycle)")
-+    components["hours"] = hourCycle
-+    let weekday = UserPreferences.shared.firstWeekday ?? Calendar.current.firstWeekday
-+    components["fw"] = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][weekday - 1]
-+    return Locale(identifier: NSLocale.localeIdentifier(fromComponents: components))
-+}
-+
-+func rmbWeekdaySymbols() -> [String] {
-+    let formatter = DateFormatter()
-+    formatter.locale = rmbCurrentLocale()
-+    formatter.formattingContext = .standalone
-+    return formatter.standaloneWeekdaySymbols
- }
- 
- private func rmbCurrentLocale() -> Locale {
-```
-
-**File**: `reminders-menubar/Services/UserPreferences.swift` (modified, +10/-0)
-```diff
-@@ -24,6 +24,7 @@ private enum PreferencesKeys {
-     static let sortRemindersByFlagAndPriority = "sortRemindersByPriority"
-     static let reminderSortingOrder = "reminderSortingOrder"
-     static let timeFormatIs24Hour = "timeFormatIs24Hour"
-+    static let firstWeekday = "firstWeekday"
-     static let showExternalLinksInReminderItem = "showExternalLinksInReminderItem"
-     static let showNotesInReminderItem = "showNotesInReminderItem"
-     static let menuBarReminderPreviewEnabled = "menuBarReminderPreviewEnabled"
-@@ -426,6 +427,15 @@ class UserPreferences: ObservableObject {
-         }
-     }
- 
-+    @Published var firstWeekday: Int? = {
-+        let weekday = defaults.integer(forKey: PreferencesKeys.firstWeekday)
-+        return (1...7).contains(weekday) ? weekday : nil
-+    }() {
-+        didSet {
-+            UserPreferences.defaults.set(firstWeekday, forKey: PreferencesKeys.firstWeekday)
+@@ -170,10 +170,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
+             didCloseEventDate = .distantPast
+             popover.performClose(button)
+         } else {
+-            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
++            showPopover(relativeTo: button)
 +        }
 +    }
 +
-     // This is intentionally not @Published; it is used for persistence and for driving the NSPopover size directly.
-     var mainPopoverSize: NSSize {
-         get {
-```
-
-**File**: `reminders-menubar/Views/Helpers/RmbDatePicker.swift` (modified, +2/-1)
-```diff
-@@ -33,11 +33,12 @@ struct RmbDatePicker: NSViewRepresentable {
-         picker.datePickerElements = displayedComponents
-         picker.action = #selector(Coordinator.onValueChange(_:))
-         picker.target = context.coordinator
--        picker.locale = rmbTimeFormattedLocale()
-+        picker.locale = rmbDateTimeFormattedLocale()
-         return picker
-     }
- 
-     func updateNSView(_ picker: NSDatePicker, context: Context) {
-+        picker.locale = rmbDateTimeFormattedLocale()
-         picker.dateValue = selection
-     }
- 
-```
-
-**File**: `reminders-menubar/Views/SettingsView/GeneralSettingsTab.swift` (modified, +12/-0)
-```diff
-@@ -82,6 +82,18 @@ struct GeneralSettingsTab: View {
-                 .labelsHidden()
-             }
- 
-+            SettingsSection(rmbLocalized(.firstWeekdaySettingsLabel)) {
-+                Picker(String(""), selection: $userPreferences.firstWeekday) {
-+                    Text(rmbLocalized(.firstWeekdaySystemOption)).tag(Int?.none)
-+                    Divider()
-+                    ForEach(Array(rmbWeekdaySymbols().enumerated()), id: \.element) { index, weekday in
-+                        Text(weekday).tag(Optional(index + 1))
-+                    }
-+                }
-+                .pickerStyle(.menu)
-+                .labelsHidden()
-+            }
++    private func showPopover(relativeTo button: NSStatusBarButton) {
++        if #available(macOS 14.0, *) {
++            NSApp.activate()
++        } else {
+             NSApp.activate(ignoringOtherApps: true)
+-            popover.contentViewController?.view.window?.makeKey()
+         }
 +
-             SettingsDivider()
- 
-             SettingsSection {
-```
-
-**File**: `reminders-menubar/Views/SettingsView/KeyboardSettingsTab.swift` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ struct KeyboardSettingsTab: View {
-         return exampleDate
-             .relativeDateDescription(withTime: true)
-             .replacingOccurrences(of: ", ", with: " ")
--            .lowercased(with: rmbTimeFormattedLocale())
-+            .lowercased(with: rmbDateTimeFormattedLocale())
++        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
++        popover.contentViewController?.view.window?.makeKey()
      }
  
-     var body: some View {
+     // - MARK: Popover sizing
 ```
 
 #### Recent Merged Pull Requests:
@@ -1109,28 +802,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add first day of week settings - Closes #324
+## X. Request activation before showing the popover - Related to #318
 
 **RULE**:
-When implementing operations in `reminders-menubar/Extensions/Date+Extensions.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DamascenoRafael/reminders-menubar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `reminders-menubar/AppDelegate.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DamascenoRafael/reminders-menubar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08068dd3`: Add first day of week settings - Closes #324. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5330cb5`: Request activation before showing the popover - Related to #318. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `reminders-menubar/Extensions/Date+Extensions.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `reminders-menubar/AppDelegate.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        let locale = rmbDateTimeFormattedLocale()
+            showPopover(relativeTo: button)
+        }
+    }
+
+    private func showPopover(relativeTo button: NSStatusBarButton) {
+        if #available(macOS 14.0, *) {
+            NSApp.activate()
+        } else {
+
+        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        popover.contentViewController?.view.window?.makeKey()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-        let locale = rmbTimeFormattedLocale()
+            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            popover.contentViewController?.view.window?.makeKey()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08068dd3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5330cb5` are properly handled with clean fallback behavior.
