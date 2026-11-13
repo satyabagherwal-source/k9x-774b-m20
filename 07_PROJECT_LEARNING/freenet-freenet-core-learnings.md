@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `dbdaf790`  
+> **Source Version**: `23080e91`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T06:33:25.301Z  
+> **Timestamp**: 2026-11-13T12:54:28.511Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T06:33:25.294Z  
+> **Harvest Timestamp**: 2026-11-13T12:51:47.557Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,11 +1738,13 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6204** (2026-11-13): **feat(quic): native setup with Hello exchange, punching and native ALPN**
-  *Symptoms*: ## Problem  QUIC-native connections (#5940) are set up by the connect op directly, with no UDP session under them. #6203 added the wire pieces: the `Hello` frame, close codes 9 and 10, and the reserved punch byte. This PR adds what sets a native connection up: the `Hello` exchange, punching, the QUIC handshake with its own ALPN, and the two entry points. Nothing calls them yet. The connect op reaches them only once `NATIVE_DIAL_READY` is true, and it stays false here.  ## Approach  **Hello exchange (`quic/native/exchange.rs`).** Each side writes its `Hello` on one unidirectional stream and reads the other's. The read is bounded by `HELLO_MAX`, checked from the six-byte prefix before the rest is read, and the whole exchange is bounded by the caller's deadline on its `TimeSource`. - A malformed or oversized `Hello` closes the connection with `HELLO_REFUSED`. - A version this node cannot talk to closes with `VERSION_INCOMPATIBLE`, with this node's 8 version bytes as the reason (`QuicCloser::close_with_reason`). - `connection_handler::native_version` applies the UDP handshake's version rules. The peer's version is reported either way. A peer whose floor is above this build triggers an urgent update. A peer's `VERSION_INCOMPATIBLE` sets the version-mismatch signal only when it comes from a gateway, as on UDP.  **ALPN per attempt.** An address allowed with `allow_native_peer` is accepted with `freenet-quic/2` only, and every other address keeps `freenet-quic/1`. So each attempt neg
+- **Issue #6215** (2026-11-13): **CI: Claude rule review is failing to run**
+  *Symptoms*: <!-- claude-rule-review-outage --> @sanity: the `Claude PR Rule Review` workflow could not complete a review, so affected PRs were not reviewed. They show a red `rule-review/warnings` status; the required `Claude Rule Review` check stays green, so merges are not blocked.  If the run ended within about a turn, before any model work, that points at the credential or account behind `CLAUDE_CODE_OAUTH_TOKEN` rather than the diff (usage exhausted, or the token revoked or expired); see #5628 for that pattern. This was opened for a run that did not complete; the error annotation on the run below carries what the action recorded.  First failing run: https://github.com/freenet/freenet-core/actions/runs/43404429667  This issue is opened and closed automatically. It closes itself after the next review that completes, so a flaky reviewer can open and close it repeatedly.
+  **Post-Mortem & Fix Analysis**:
+  > A review completed again: https://github.com/freenet/freenet-core/actions/runs/43405264586. Closing.
 
-- **Issue #6203** (2026-11-12): **feat(quic): native Hello frame, two close codes, reserved punch byte**
-  *Symptoms*: ## Problem  QUIC-native connections (#5940) are set up by the connect op directly, with no UDP session under them. So the things the UDP handshake carries (each side's protocol version, and the address it sees the other at) need a frame of their own. A native connection also needs close codes for a peer it cannot talk to, and the punch datagrams that open NATs before the handshake need a first byte no other datagram uses. This PR adds those wire pieces. Nothing sets up a native connection yet, and nothing here is reachable from the connect op.  ## Approach  **`Hello` (`transport/quic/native/hello.rs`).** The frame each side of a native connection sends first. Its layout is frozen:  ``` magic "FNH1" (4) | total_len u16 BE (2, the whole Hello, magic included) | protoc_version (8, the UDP handshake's version bytes) | caps u32 LE (4) | observed address family u8 (1: 4 or 6) | address (4 or 16) | port u16 BE (2) | TLV tail: (type u8, len u16 BE, value)* up to total_len ```  - `total_len` comes right after the magic, so `declared_len` reads the length from the first six bytes. A reader can refuse more than `HELLO_MAX` (1 KiB) before reading the rest. - The version bytes are carried unchanged, so both version formats (including #6189's format 2) read as they do in the UDP handshake. - A later field goes in the TLV tail. A reader checks each TLV's length and skips types it does not know. No type is defined yet. There is no must-understand bit, so a field an older reader must not igno
+- **Issue #6213** (2026-11-13): **fix(bin): run the node on a worker thread, not the main thread**
+  *Symptoms*: ## Problem  `run_node` passes the whole node to `rt.block_on`, so the node's futures are polled on the process's main thread. The platform fixes that thread's stack when the process starts: 1 MiB on Windows, 8 MiB on Linux. Every thread std spawns gets 2 MiB, and `RUST_MIN_STACK` (which CI sets to 256 MiB) reaches only spawned threads, never the main one.  In a debug build the node's nested poll frames use about 900 KiB of the main thread by the first event-loop turn. Measured with gdb on a Linux debug build of current main at the overflow point; the largest frames are `run_network` (114 KiB), `run` (100 KiB), the `run_node` async block (94 KiB), the event-listener select (88 KiB) and `run_event_listener` (68 KiB). That leaves a few KiB of headroom on Windows. #6207 grew those frames by a few KiB in total, with no single frame standing out, and its "Windows Service Unit" job failed all four `quic_breaker_windows` tests: the node exited with 3221225725 (0xC00000FD, STATUS_STACK_OVERFLOW) right after "Network listener opened". Main passes today only because of that small margin, so the next change that grows any of these frames hits the same overflow.  ## Approach  The node now runs in a spawned task, so a worker thread polls it and the main thread only waits on the join handle (`rt.spawn` plus `rt.block_on(handle)`). Worker threads get std's 2 MiB default, as every other task already does. Identifying the frame was the first step, and it showed the problem is cumulative depth 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,1113 +1761,1192 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc2888b7` (2026-11-13)
-**Commit Message**: feat(quic): native setup with Hello exchange, punching and native ALPN (#6204)
+### Incident Patch 1: `7fcb4157` (2026-11-13)
+**Commit Message**: fix(bin): run the node on a worker thread, not the main thread (#6213)
 
-**File**: `.claude/rules/transport.md` (modified, +60/-5)
+**File**: `crates/core/src/bin/freenet.rs` (modified, +26/-2)
 ```diff
-@@ -1635,7 +1635,9 @@ exposes (its module doc lists the few it does not):
-   streams to 16, then toward 64 with load, and its meter the windows), send window the floor (128 KiB,
-   64 KiB under 2 GiB), stream receive window 8 MiB, no unreliable datagrams, no
-   spin bit, migration off, max_incoming 64, incoming buffers 64 KiB / 1 MiB,
--  no NEW_TOKEN tokens (Retry only), rustls ring, TLS 1.3, fixed ALPN, no SNI, no
-+  no NEW_TOKEN tokens (Retry only), rustls ring, TLS 1.3, one ALPN per attempt
-+  (freenet-quic/1 for an upgrade, freenet-quic/2 for a native connection; see
-+  "QUIC-native setup"), no SNI, no
-   resumption, no early data. Keys and seeds (reset key, token key, CID key,
-   quinn's rng_seed, initial destination CIDs): keys from the OS, seeds and
-   CIDs from GlobalRng (see below).
-@@ -1974,10 +1976,12 @@ no extra message, no exporter proof.
-     signature is checked with ring against the EXPECTED key. Anything else fails the handshake.
-   → Client: connect(addr, &expected_server_key) builds TLS pinned to it.
-   → Server: allow_peer(addr, &expected_client_key) puts the address on the
--    allow-set AND records the key (QuicPeerPermit; a second key for an
--    address already held is KeyConflict). accept() looks the key up by the
--    attempt's (normalized) address and accepts with a per-attempt server
--    config whose TLS is pinned to it (Incoming::accept_with); an attempt
-+    allow-set AND records the key and the connection's kind (QuicPeerPermit;
-+    a second key for an address already held, or the same key for the other
-+    kind, upgrade or native, is KeyConflict). accept() looks the key and kind
-+    up by the attempt's (normalized) address and accepts with a per-attempt
-+    server config whose TLS is pinned to the key and offers that kind's one
-+    ALPN (Incoming::accept_with); an attempt
-     with no recorded key is ignored. The endpoint's own server config
-     (needed so quinn passes Initials to accept) refuses every client.
-   → When the SERVER refuses the client, the client may see connect()
-@@ -2017,6 +2021,57 @@ refusal of a wrong server key, a wrong client key, a plain Ed25519 key on
- either side, and a man in the middle with its own key on either leg.
- ```
+@@ -1651,7 +1651,24 @@ fn run_node(config_args: ConfigArgs) -> anyhow::Result<()> {
+         .build()
+         .unwrap();
  
-+#### QUIC-native setup (`quic/native/`, #5940 QUIC-native connect, A4)
-+
-+Built and tested, and unreachable by construction: `setup::connect_native`,
-+`setup::accept_native` and the endpoint's native side (`native/endpoint.rs`:
-+`allow_native_peer`, `dial_native`, `send_punch`) are
-+`pub(in crate::transport::quic::native)`, and registering a native waiter is
-+private to `setup`. Nothing outside `quic/native` can call them; A5 widens
-+them in a visible diff. The connect op also gates on
-+`operations::connect::native::NATIVE_DIAL_READY` (pinned false).
-+
-+```
-+ALPN per attempt: an address allowed with allow_native_peer is accepted with
-+  freenet-quic/2 only; every other address keeps freenet-quic/1. An address
-+  is allowed for one kind at a time (KeyConflict for the other). dial_native
-+  offers /2 only, with a 100 ms initial RTT (NATIVE_INITIAL_RTT).
-+Router: an attempt from a native-allowed address goes only to
-+  native::waiters (QuicUpgrades::dispatch), never to an upgrade session. The
-+  only production registration is in accept_native. Handing an attempt over
-+  marks the waiter busy until its InFlight guard drops; others are ignored.
-+  An attempt without a Retry token gets a Retry first (one more round trip
-+  in the window).
-+Hello (native/hello.rs, frozen layout) is exchanged on one uni stream each
-+  way (native/exchange.rs). A malformed one closes with HELLO_REFUSED; a
-+  version this node cannot talk to closes with VERSION_INCOMPATIBLE and this
-+  node's 8 version bytes as the reason (close_with_reason). Version rules
-+  are the UDP handshake's (connection_handler::native_version).
-+Punches (native/punch.rs): byte 0x03 + 8 GlobalRng bytes, sent on the
-+  endpoint's socket with try_send (charged unpaced), at once and every
-+  250 ms, at most 32 per setup (288 B). A client also sends at most 12
-+  padded Initials (quinn sends two probes per timeout: 9 in 8 s and a
-+  close; a Retry does not reset the probe count, so one more after a Retry,
-+  11 of 12), so a client setup is charged 14688 B and a server
-+  setup 288 B, before anything is sent. PunchBudget: 64 KiB per destination
-+  per minute (an IPv4 address, or an IPv6 /64), and 1 MiB per minute for the
-+  node (provisional); 4096 destinations remembered, and a new one replaces
-+  the least recently charged only once that one has refilled (else
-+  refused, PunchRefusal::Table), so forgetting never gives bytes back early.
-+  The silent-peer test checks a client sends no more than it was charged.
-+Setup (native/setup.rs): one window, 8 s cut to the caller's deadline, not
-+  started with less than 4 s left; punching, the handshake and the Hello
-+  exchange all inside it. The budget is charged after the checks that fail
-+  without sending (window, key, waiter, allo
-```
-
-**File**: `crates/core/src/contract/executor.rs` (modified, +8/-0)
-```diff
-@@ -2809,6 +2809,14 @@ mod tests {
-                 "PACED_TAKE_BYTES",
-                 "egress-cap take per datagram (a rate charge), not memory",
-             ),
-+            (
-+                "PUNCH_BUDGET_BYTES",
-+                "native punch egress allowance per destination per minute (bytes sent), not memory",
-+            ),
-+            (
-+                "NODE_PUNCH_BUDGET_BYTES",
-+                "native punch egress allowance per node per minute (bytes sent), not memory",
-+            ),
-             ("BLOOM_BYTES", "fixed size of one bloom filter"),
-             (
-                 "CACHE_ENTRY_OVERHEAD_BYTES",
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_map.rs` (modified, +63/-14)
-```diff
-@@ -8,13 +8,15 @@
- //! or remove a key also note it in the set: anything outside this module reads
- //! the map through `Deref` (a shared `BTreeMap`) and changes an entry in place
- //! through [`ConnectionMap::get_mut`] or [`ConnectionMap::iter_mut`], none of
--//! which can add, remove or replace a key. A map that is dropped, including
--//! one replaced or taken out of its field whole, closes its keys in the set.
--//! The compiler enforces all of this, so no source scan has to.
-+//! which can add, remove or replace a key. A map that is dropped closes its
-+//! keys in the set. The compiler enforces all of this, so no source scan has
-+//! to.
- //!
--//! What it does not cover: two live maps over one manager. Production builds
--//! one; a second would share the set, and dropping it would close addresses
--//! the first still holds.
-+//! It holds for one live map per manager, which is what production builds.
-+//! [`ConnectionMap::new`] debug-asserts the manager's set is empty. A second
-+//! live map over the same manager would share the set, so replacing a map
-+//! with a non-empty one, or dropping one while another holds the same
-+//! addresses, would leave the set out of step with the live map.
- 
- use std::collections::BTreeMap;
- use std::collections::btree_map;
-@@ -36,7 +38,13 @@ pub(super) struct ConnectionMap {
- 
- impl ConnectionMap {
-     /// An empty map whose keys `transports`' open-transport set mirrors.
-+    /// The set must be empty: one live map per manager.
-     pub(super) fn new(transports: ConnectionManager) -> Self {
-+        debug_assert_eq!(
-+            transports.open_transport_count(),
-+            0,
-+            "a ConnectionMap over a manager whose open-transport set is not empty"
-+        );
-         Self {
-             map: BTreeMap::new(),
-             transports: Some(transports),
-@@ -158,21 +166,62 @@ mod tests {
-         assert_eq!(manager.open_transport_addrs(), keys(&map));
-     }
- 
--    /// A map replaced or taken out of its place whole closes its addresses,
--    /// so the set holds the keys of the map that replaced it.
-+    /// A dropped map closes its addresses, after which the manager can take
-+    /// a new map.
-     #[tokio::test]
--    async fn a_replaced_map_closes_its_addresses() {
-+    async fn a_dropped_map_closes_its_addresses() {
-         let manager = ConnectionManager::test_default();
-         let mut map = ConnectionMap::new(manager.clone());
-         map.insert(addr(1), entry(1));
-         map.insert(addr(2), entry(2));
--        map = ConnectionMap::new(manager.clone());
-+        drop(map);
-         assert!(manager.open_transport_addrs().is_empty());
-+        let mut map = ConnectionMap::new(manager.clone());
-         map.insert(addr(3), entry(3));
--        let taken = std::mem::replace(&mut map, ConnectionMap::new(manager.clone()));
--        assert_eq!(keys(&taken), BTreeSet::from([addr(3)]));
--        drop(taken);
-         assert_eq!(manager.open_transport_addrs(), keys(&map));
--        assert!(manager.open_transport_addrs().is_empty());
+-    rt.block_on(async move {
++    // The node runs on a worker thread, never on the main thread. `block_on`
++    // polls its future on the calling thread, and the main thread's stack is
++    // fixed by the platform: 1 MiB on Windows, against 2 MiB for every thread
++    // std spawns. Polled there, the node's nested startup futures used most of
++    // it (about 900 KiB measured in a Linux debug build at the first event
++    // loop turn), within a few KiB of the Windows limit: a branch that grew
++    // those frames slightly overflowed at startup on Windows. A spawned task
++    // is polled by a worker, so the main thread only waits on the join
++    // handle. `tests/main_thread_stack.rs` pins it by starting the node with
++    // a small main-thread stack and workers at their production size.
++    //
++    // The root future is now an ordinary task on a worker, so synchronous
++    // work on its path (config build, logger setup, node construction) holds
++    // a worker while it runs. With `worker_threads` set to the CPU count, a
++    // 1-vCPU host has one worker, so a long blocking call here would stall
++    // the whole runtime. Nothing on that path blocks for long today; anything
++    // added that does belongs in `spawn_blocking`.
++    let node = rt.spawn(async move {
+         let config = config_args.build().await?;
+         freenet::config::set_logger(None, None, config.paths().log_dir());
+         // Same reason as the info! below: `ConfigArgs::build()` resolves the
+@@ -1672,7 +1689,14 @@ fn run_node(config_args: ConfigArgs) -> anyhow::Result<()> {
+         // installed — operators with a custom `UMask=` see the change.
+         log_umask_override();
+         run(config).await
+-    })?;
++    });
++    match rt.block_on(node) {
++        Ok(result) => result?,
++        // A panic in the node keeps unwinding from `main`, as it did when the
++        // node ran on this thread.
++        Err(join) if join.is_panic() => std::panic::resume_unwind(join.into_panic()),
++        Err(join) => return Err(anyhow::anyhow!("the node task was cancelled: {join}")),
 +    }
-+
-+    /// A map replaced whole, by assignment or taken out with `mem::replace`,
-+    /// closes its addresses in its own manager's set once it is dropped, and
-+    /// the map that replaced it is mirrored in its manager.
-+    #[tokio::test]
-+    async fn a_replaced_map_closes_its_addresses_in_its_own_manager() {
-+        let (first, second, third) = (
-+            ConnectionManager::test_default(),
-+            ConnectionManager::test_default(),
-+            ConnectionManager::test_default(),
-+        );
-+        let mut map = ConnectionMap::new(first.clone());
-+        map.insert(addr(1), entry(1));
-+        map.insert(addr(2), entry(2));
-+        let taken = std::mem::replace(&mut map, ConnectionMap::new(second.clone()));
-+        assert_eq!(
-+            first.open_transport_addrs(),
-+            keys(&taken),
-+            "held while alive"
-+        );
-+        drop(taken);
-+        assert!(first.open_transport_addrs().is_empty());
-+        map.insert(addr(3), entry(3));
-+        assert_eq!(second.open_transport_addrs(), keys(&map));
-+        map = ConnectionMap::new(third.clone());
-+        assert!(
-+            second.open_transport_addrs().is_empty(),
-+            "assignment drops the old map"
-+        );
-+        map.insert(addr(4), entry(4));
-+        assert_eq!(third.open_transport_addrs(), keys(&map));
-+    }
-+
-+    /// A second map over a manager that already has open transports is
-+    /// refused in debug builds: one live map per manager.
-+    #[cfg(debug_assertions)]
-+    #[tokio::test]
-+    #[should_panic(expected = "open-transport set is not empty")]
-+    async fn a_second_live_map_over_one_manager_is_refused() {
-+        let manager = ConnectionManager::test_default();
-+        let mut map = ConnectionMap::new(manager.clone());
-+        map.insert(addr(1), entry(1));
-+        let _second = ConnectionMap::new(manager.clone());
-     }
+ 
+     Ok(())
  }
 ```
 
-**File**: `crates/core/src/ring/connection_manager.rs` (modified, +5/-0)
+**File**: `crates/core/tests/main_thread_stack.rs` (added, +254/-0)
 ```diff
-@@ -2021,6 +2021,11 @@ impl ConnectionManager {
-         self.open_transports.remove(&addr);
-     }
- 
-+    /// How many addresses the open-transport set holds.
-+    pub(crate) fn open_transport_count(&self) -> usize {
-+        self.open_transports.len()
-+    }
+@@ -0,0 +1,254 @@
++//! The node must not run on the process's main thread.
++//!
++//! The main thread's stack is fixed by the platform when the process starts:
++//! 1 MiB on Windows, against 2 MiB for every thread std spawns (and more under
++//! `RUST_MIN_STACK`, which CI sets, but which does not reach the main thread).
++//! `run_node` used to `block_on` the whole node, so its startup futures were
++//! polled on the main thread. In a debug build their nested poll frames used
++//! about 900 KiB there by the first event-loop turn, a few KiB short of the
++//! Windows limit. A branch that made those frames slightly larger (#6207, QUIC
++//! `prefer` by default) overflowed in the Windows debug binary at startup
++//! (exit 0xC00000FD, STATUS_STACK_OVERFLOW) before its transport was up. Linux
++//! CI could not see it: the Linux main thread has 8 MiB.
++//!
++//! This test starts the real binary with a 640 KiB main-thread stack, set with
++//! `ulimit -s` before `exec`, and requires the node to come up and keep running.
++//! Before the fix the same build aborted with "thread 'main' has overflowed its
++//! stack" at 640 KiB (and at every size up to about 900 KiB). With the node on
++//! a worker, the main thread holds only command-line parsing and the wait on
++//! the node task; clap's derived parser alone takes about 400 KiB in a debug
++//! build, so the limit leaves room for it and none for the node.
++//!
++//! The node's work now runs on tokio workers, whose stack std sizes from
++//! `RUST_MIN_STACK` (2 MiB when it is unset, as in production). CI sets it to
++//! 256 MiB, which would let worker stack use grow far past the production size
++//! unseen, so every case here sets it explicitly: 2 MiB, the production size,
++//! for each transport, and 1.5 MiB as an early warning. The node's root task
++//! keeps the same nested frames on its worker that it had on the main thread:
++//! in a Linux debug build with CI's unit-test features it needs between 896
++//! KiB and 1 MiB there (measured by lowering `RUST_MIN_STACK`; at 896 KiB it
++//! overflows in the event listener's select). Production's 2 MiB leaves about
++//! twice that, and the 1.5 MiB case fails once use grows by about half.
++//!
++//! Linux only: `ulimit -s` before `exec` sets the main thread's stack there;
++//! Windows fixes it in the executable's header at link time. It proves the
++//! Windows property anyway, because what it checks is where the node runs, not
++//! a platform's frame sizes: at 640 KiB no node work fits on the main thread on
++//! any platform. No test runs Windows at its real sizes on both kinds of
++//! thread. `tests/quic_breaker_windows.rs` runs the binary with its real 1 MiB
++//! main stack, but with QUIC at the default mode and with CI's 256 MiB
++//! `RUST_MIN_STACK` on the workers, and Windows frames are usually somewhat
++//! larger than the Linux ones measured here.
++//!
++//! `ulimit -s` also lowers glibc's default stack for threads that C code
++//! creates without a size (Rust's own threads set theirs). A failure here can
++//! therefore come from such a thread rather than from node work on the main
++//! thread: read the overflow message, which names the thread.
 +
-     /// Whether the bridge holds an open transport to `addr`.
-     pub(crate) fn has_open_transport(&self, addr: SocketAddr) -> bool {
-         self.open_transports.contains(&addr)
-```
-
-**File**: `crates/core/src/transport/connection_handler.rs` (modified, +138/-0)
-```diff
-@@ -30,6 +30,144 @@ use tracing::{Instrument, span};
- use version_cmp::PROTOC_VERSION;
- pub(crate) use version_cmp::{OWN_FLOOR, OWN_VERSION};
- 
-+/// The UDP handshake's version rules, for the `Hello` of a native QUIC
-+/// connection (#5940, design 2.1), so both paths read a peer's version the
-+/// same way.
-+pub(crate) mod native_version {
-+    use super::version_cmp::{
-+        PROTOC_VERSION, is_compatible, parse_version_bytes, remote_requires_newer_than_us,
-+    };
++#![cfg(target_os = "linux")]
 +
-+    /// This build's 8 version bytes, as the UDP handshake sends them.
-+    pub(crate) const OWN: [u8; 8] = PROTOC_VERSION;
++use std::{
++    path::{Path, PathBuf},
++    process::{Child, Command, Stdio},
++    time::{Duration, Instant},
++};
 +
-+    /// Check a peer's version bytes as the UDP handshake checks an intro's:
-+    /// the version is reported (`report_peer_version`) either way, and a peer
-+    /// whose floor is above this build asks for an urgent update
-+    /// ([`needs_urgent_update`]). `Err` names why the two cannot talk.
-+    pub(crate) fn check(remote: &[u8; 8]) -> Result<(u8, u8, u16), String> {
-+        check_then(remote, crate::transport::signal_urgent_update)
-+    }
++/// Main-thread stack for the node, in KiB. See the module doc for the sizes
++/// measured on either side of it.
++const MAIN_STACK_KIB: u32 = 640;
 +
-+    /// [`check`] with the urgent-update signal as `urgent`, so a test can see
-+    /// it fire without latching the process-wide flag.
-+    fn check_then(remote: &[u8; 8], urgent: impl FnOnce()) -> Result<(u8, u8, u16), String> {
-+        match is_compatible(&OWN, remote) {
-+            Ok(info) => {
-+                crate::transport::report_peer_version(info.version);
-+                Ok(info.version)
-+            }
-+            Err(reason) => {
-+                crate::transport::report_peer_version(parse_version_bytes(remote).version);
-+                if needs_urgent_update(remote) {
-+                    urgent();
-+                }
-+                Err(reason)
-+            }
-+        }
-+    }
++/// std's default stack for the threads it spawns, tokio's workers included,
++/// when `RUST_MIN_STACK` is unset: the size production runs with.
++const PRODUCTION_WORKER_STACK: usize = 2 * 1024 * 1024;
 +
-+    /// Whether a peer's version bytes say this build must update: the peer's
-+    /// floor is above this build.
-+    pub(crate) fn needs_urgent_update(remote: &[u8; 8]) -> bool {
-+        remote_requires_newer_than_us(&OWN, remote)
-+    }
++/// Three quarters of the production worker stack: fails when worker stack use
++/// grows by about half from the measured 896 KiB - 1 MiB, before it reaches
++/// production's limit.
++const EARLY_WARNING_WORKER_STACK: usize = 3 * 512 * 1024;
 +
-+    /// A peer closed with `VERSION_INCOMPATIBLE`, its version bytes as the
-+    /// reason; sets the version-mismatch signal when
-+    /// [`rejection_signals_mismatch`] says so.
-+    pub(crate) fn rejected_by(peer_version: &[u8], peer_is_gateway: bool) {
-+        rejected_by_then(
-+            peer_version,
-+            peer_is_gateway,
-+            crate::transport::signal_version_mismatch,
-+        );
-+    }
++/// Logged once the network listener is open, after the transport is bound:
++/// the point the Windows run never reached.
++const LISTENER_OPEN: &str = "Network listener opened";
 +
-+    /// [`rejected_by`] with the mismatch signal as `mismatch`, so a test can
-+    /// see it fire without latching the process-wide flag.
-+    fn rejected_by_then(peer_version: &[u8], peer_is_gateway: bool, mismatch: impl FnOnce()) {
-+        if rejection_signals_mismatch(peer_version, peer_is_gateway) {
-+            mismatch();
-+        }
-+    }
++/// How long the node must keep running after `LISTENER_OPEN`. Before the fix
++/// the overflow came on the first event-loop turns, within milliseconds.
++const KEEP_RUNNING: Duration = Duration::from_secs(3);
 +
-+    /// As for a gateway's version-mismatch ack on UDP, only a gateway's
-+    /// rejection counts, only when its floor is above this build, and only
-+    /// with a reason of exactly 8 bytes.
-+    pub(crate) fn rejection_signals_mismatch(peer_version: &[u8], peer_is_gateway: bool) -> bool {
-+        let Ok(bytes) = <[u8; 8]>::try_from(peer_version) else {
-+            return false;
-+        };
-+        peer_is_gateway && remote_requires_newer_than_us(&OWN, &bytes)
-+    }
-+
-+    #[cfg(test)]
-+    mod tests {
-+        use super::super::version_cmp::OWN_VERSION;
-+        use super::*;
-+
-+        /// Version bytes in format 1 for this build's major.minor, with
-+        /// `patch` and a floor of `floor`.
-+        fn same_series(patch: u16, floor: u16) -> [u8; 8] {
-+            let (major, minor, _) = OWN_VERSION;
-+            let [p_hi, p_lo] = patch.to_be_bytes();
-+            let [f_hi, f_lo] = floor.to_be_bytes();
-+            [0xFF, major, minor, p_hi, p_lo, f_hi, f_lo, 1]
-+        }
-+
-+        /// A peer whose floor is above this build.
-+        fn requires_newer() -> [u8; 8] {
-+            let own = OWN_VERSION.2;
-+            let newer = same_series(own + 2, own + 1);
-+            assert!(remote_requires_newer_than_us(&OWN, &newer), "premise");
-+            newer
-+        }
-+
-+        /// Only a gateway's rejection whose floor is above this build sets
-+        /// the mismatch signal; an ordinary peer's, a gateway at this build's
-+        /// version, and a reason that is not 8 bytes do not.
-+        #[test]
-+        fn only_a_gateway_requiring_a_newer_build_signals_a_mismatch() {
-+            let newer = requires_newer();
-+            assert!(rejection_signals_mismatch(&newer, true));
-+            assert!(!rejection_signals_mismatch(&newer, false));
-+            assert!(!rejection_signals_mismatch(&OWN, true));
-+            assert!(!rejection_signals_mismatch(&newer[..7], true));
-+            let mut long = newer.to_vec();
-+            long.push(0);
-+            assert!(!rejection_signals_mismatch(&long, true));
-+            // And the signal is really sent, and only then; through a counter,
-+            // so no process-wide flag is latched for other tests.
-+            for
-```
-
-**File**: `crates/core/src/transport/quic.rs` (modified, +49/-10)
-```diff
-@@ -230,6 +230,9 @@ pub(crate) struct EndpointCore {
-     sources: Arc<dyn QuicSources>,
-     /// The transport settings of every connection (`config::transport_config`).
-     transport: Arc<quinn::TransportConfig>,
-+    /// The transport settings of a native client
-+    /// (`config::native_client_transport_config`).
-+    native_transport: Arc<quinn::TransportConfig>,
-     /// The server settings every accepted connection starts from
-     /// (`config::server_config`), with TLS that refuses every client: each
-     /// accepted attempt replaces the TLS with one pinned to the client it
-@@ -286,6 +289,10 @@ struct ExpectedClients {
- 
- struct ExpectedEntry {
-     key: PeerKey,
-+    /// The one ALPN an attempt from the address is accepted with: native
-+    /// only for an address allowed by `QuicEndpoint::allow_native_peer`
-+    /// (`native::endpoint`).
-+    alpn: config::Alpn,
-     permits: usize,
-     holds: usize,
- }
-@@ -301,14 +308,15 @@ impl ExpectedClients {
-             .map(|entry| entry.key.clone())
-     }
- 
--    /// The key `addr` was allowed with and a hold on it, in one step, if a
--    /// permit for it is alive.
--    fn hold(self: &Arc<Self>, addr: SocketAddr) -> Option<(PeerKey, KeyHold)> {
-+    /// The key and ALPN `addr` was allowed with and a hold on it, in one
-+    /// step, if a permit for it is alive.
-+    fn hold(self: &Arc<Self>, addr: SocketAddr) -> Option<(PeerKey, config::Alpn, KeyHold)> {
-         let mut by_addr = self.by_addr.lock();
-         let entry = by_addr.get_mut(&addr).filter(|entry| entry.permits > 0)?;
-         entry.holds += 1;
-         Some((
-             entry.key.clone(),
-+            entry.alpn,
-             KeyHold {
-                 expected: self.clone(),
-                 addr,
-@@ -376,10 +384,12 @@ pub(crate) enum QuicAllowError {
-     /// The demux socket's allow-set is full.
-     #[error("the QUIC allow-set is full")]
-     AllowSetFull,
--    /// The address is already bound to another key: a permit for it, or an
--    /// attempt or connection authenticated against it, is alive. The earlier
--    /// key wins until all of those are gone, so an address cannot be moved to
--    /// a new key while anything for the old one is using it.
-+    /// The address is already bound to another key, or to the same key for
-+    /// the other kind of connection (an upgrade or a native one): a permit
-+    /// for it, or an attempt or connection authenticated against it, is
-+    /// alive. The earlier binding wins until all of those are gone, so an
-+    /// address cannot be moved to a new key or kind while anything for the
-+    /// old one is using it.
-     #[error("the address is already allowed for another key")]
-     KeyConflict,
-     #[error(transparent)]
-@@ -390,6 +400,8 @@ pub(crate) enum QuicAllowError {
- trait QuicSources: Send + Sync {
-     fn allow(&self, addr: SocketAddr) -> Option<QuicSourcePermit>;
-     fn allow_existing(&self, addr: SocketAddr) -> Option<QuicSourcePermit>;
-+    /// Send one datagram outside quinn, without waiting (a native punch).
-+    fn try_send(&self, datagram: &[u8], to: SocketAddr) -> io::Result<usize>;
- }
- 
- impl<S: Socket> QuicSources for DemuxSocket<S> {
-@@ -400,6 +412,10 @@ impl<S: Socket> QuicSources for DemuxSocket<S> {
-     fn allow_existing(&self, addr: SocketAddr) -> Option<QuicSourcePermit> {
-         self.allow_existing_quic_source(addr)
-     }
-+
-+    fn try_send(&self, datagram: &[u8], to: SocketAddr) -> io::Result<usize> {
-+        Socket::try_send_to(self, datagram, to)
-+    }
- }
- 
- impl std::fmt::Debug for QuicEndpoint {
-@@ -571,6 +587,7 @@ impl QuicEndpoint {
-         let refusing = identity.refusing_server_tls().map_err(|e| invalid(&e))?;
-         let sources: Arc<dyn QuicSources> = socket.clone();
-         let transport = Arc::new(config::transport_config(settings, &time));
-+        let native_transport = Arc::new(config::native_client_transport_config(settings, &time));
-         let clock = config::system_clock(time.clone());
-         let server = Arc::new(config::server_config(
-             Arc::new(refusing),
-@@ -635,6 +652,7 @@ impl QuicEndpoint {
-                 endpoint,
-                 sources,
-                 transport,
-+                native_transport,
-                 server,
-                 identity,
-                 expected_clients: Arc::new(ExpectedClients::default()),
-@@ -803,6 +821,17 @@ impl QuicEndpoint {
-         &self,
-         addr: SocketAddr,
-         expected: &TransportPublicKey,
-+    ) -> Result<QuicPeerPermit, QuicAllowError> {
-+        self.allow_peer_for(addr, expected, config::Alpn::Upgrade)
-+    }
-+
-+    /// [`Self::allow_peer`] with the one ALPN an attempt from `addr` is
-+    /// accepted with (`native::endpoint` allows a native peer through it).
-+    fn allow_peer_for(
-+        &self,
-+        addr: SocketAddr,
-+        expected: &TransportPublicKey,
-+        alpn: config::Alpn,
-     ) -> Result<QuicPeerPermit, QuicAllowError> {
-         let key = PeerKey::of(expected)?;
-         let source 
-```
-
-**File**: `crates/core/src/transport/quic/config.rs` (modified, +79/-11)
-```diff
-@@ -61,6 +61,38 @@ pub(crate) const QUIC_VERSION: u32 = 1;
- /// fails the handshake.
- pub(crate) const ALPN: &[u8] = b"freenet-quic/1";
- 
-+/// The ALPN protocol of a native connection (#5940): one set up without a UDP
-+/// session, which begins with the Hello exchange (`native::exchange`). Only
-+/// an attempt the endpoint was told to expect as native offers it, and such
-+/// an attempt offers nothing else.
-+pub(crate) const NATIVE_ALPN: &[u8] = b"freenet-quic/2";
-+
-+/// Which kind of connection an attempt makes, and so the one ALPN protocol
-+/// its TLS offers on either side.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub(crate) enum Alpn {
-+    /// An upgrade of a UDP session ([`ALPN`]).
-+    Upgrade,
-+    /// A native connection ([`NATIVE_ALPN`]).
-+    Native,
-+}
-+
-+impl Alpn {
-+    /// The protocol identifier offered in TLS.
-+    pub(crate) fn protocol(self) -> &'static [u8] {
-+        match self {
-+            Alpn::Upgrade => ALPN,
-+            Alpn::Native => NATIVE_ALPN,
-+        }
-+    }
-+}
-+
-+/// The initial RTT estimate of a native client. A native dial has an 8 s
-+/// window for the handshake and the Hello exchange, so the client
-+/// retransmits a lost Initial after about 300 ms rather than about a second
-+/// at quinn's estimate here (333 ms).
-+pub(crate) const NATIVE_INITIAL_RTT: Duration = Duration::from_millis(100);
-+
- /// The server name quinn requires for a connection attempt. With SNI off it
- /// is never sent; peers are identified by their raw public keys.
- pub(crate) const SERVER_NAME: &str = "freenet";
-@@ -647,14 +679,27 @@ pub(crate) fn endpoint_config_with_cid_key(cid_key: [u8; 32]) -> std::io::Result
-         // Must stay false: a cleared fixed bit could make a short-header
-         // packet start with 0x01 or 0x02, which the demux reads as a UDP
-         // transport packet, or 0x03, which it drops as a native punch
--        // (demux::PUNCH_FIRST_BYTE) (RFC 9287; transport::demux). Every
--        // endpoint, native connections included, is built from this config.
-+        // (demux::PUNCH_FIRST_BYTE) (RFC 9287; transport::demux). A native
-+        // connection must run on an endpoint built from this config (today
-+        // it uses the node's one endpoint, built here); a separate native
-+        // endpoint must keep greasing off too.
-         .grease_quic_bit(false)
-         .min_reset_interval(Duration::from_millis(20))
-         .rng_seed(Some(seed));
-     Ok(config)
- }
- 
-+/// [`transport_config`] for a native client: the same, with
-+/// [`NATIVE_INITIAL_RTT`].
-+pub(crate) fn native_client_transport_config<T: TimeSource>(
-+    settings: &QuicSettings,
-+    time: &T,
-+) -> TransportConfig {
-+    let mut config = transport_config(settings, time);
-+    config.initial_rtt(NATIVE_INITIAL_RTT);
-+    config
-+}
-+
- /// The transport configuration shared by both directions of a connection.
- /// `time` decides the keepalive and the idle timeout, as for the UDP
- /// transport: no keepalive and a long idle timeout where the time source
-@@ -777,31 +822,43 @@ fn provider() -> Arc<rustls::crypto::CryptoProvider> {
- }
- 
- /// The TLS server configuration: TLS 1.3 only with the ring provider, the
--/// raw public key in `key`, peers checked by `verifier`, the fixed ALPN, and
-+/// raw public key in `key`, peers checked by `verifier`, the one ALPN of
-+/// `alpn`, and
- /// no session resumption, tickets or early data. `identity` builds the key
- /// and the verifiers.
- pub(crate) fn tls_server_config(
-     key: Arc<rustls::sign::CertifiedKey>,
-     verifier: Arc<dyn rustls::server::danger::ClientCertVerifier>,
-+    alpn: Alpn,
- ) -> Result<quinn::crypto::rustls::QuicServerConfig, TlsConfigError> {
--    let config = rustls_server_config(key, verifier)?;
-+    let config = rustls_server_config_for(key, verifier, alpn)?;
-     Ok(quinn::crypto::rustls::QuicServerConfig::try_from(
-         Arc::new(config),
-     )?)
- }
- 
--/// The rustls half of [`tls_server_config`].
-+/// The rustls half of [`tls_server_config`] for an upgrade.
-+#[cfg(test)]
- pub(crate) fn rustls_server_config(
-     key: Arc<rustls::sign::CertifiedKey>,
-     verifier: Arc<dyn rustls::server::danger::ClientCertVerifier>,
-+) -> Result<rustls::ServerConfig, rustls::Error> {
-+    rustls_server_config_for(key, verifier, Alpn::Upgrade)
-+}
-+
-+/// The rustls half of [`tls_server_config`], offering `alpn` only.
-+pub(crate) fn rustls_server_config_for(
-+    key: Arc<rustls::sign::CertifiedKey>,
-+    verifier: Arc<dyn rustls::server::danger::ClientCertVerifier>,
-+    alpn: Alpn,
- ) -> Result<rustls::ServerConfig, rustls::Error> {
-     let mut config = rustls::ServerConfig::builder_with_provider(provider())
-         .with_protocol_versions(&[&rustls::version::TLS13])?
-         .with_client_cert_verifier(verifier)
-         .with_cert_resolver(Arc::new(
-             rustls::server::AlwaysResolvesServerRawPublicKeys::new(key),
-         ));
--    config.alpn_protocols = vec![ALPN.to_vec()];
-+    config.alpn_protocols = vec![alpn.protocol().to_vec()]
-```
-
-**File**: `crates/core/src/transport/quic/identity.rs` (modified, +35/-4)
-```diff
-@@ -39,7 +39,7 @@ use rustls::{
- };
- use subtle::ConstantTimeEq;
- 
--use super::config::{self, TlsConfigError};
-+use super::config::{self, Alpn, TlsConfigError};
- use crate::transport::crypto::{TransportKeypair, TransportPublicKey};
- 
- /// DER prefix of an Ed25519 SubjectPublicKeyInfo (RFC 8410); the 32-byte
-@@ -284,15 +284,42 @@ impl QuicIdentity {
-         &self,
-         server: &PeerKey,
-     ) -> Result<quinn::crypto::rustls::QuicClientConfig, TlsConfigError> {
--        config::tls_client_config(self.certified_key(), Arc::new(PinnedServerKey::new(server)))
-+        self.client_tls_for(server, Alpn::Upgrade)
-+    }
-+
-+    /// [`Self::client_tls`] offering `alpn`.
-+    pub(crate) fn client_tls_for(
-+        &self,
-+        server: &PeerKey,
-+        alpn: Alpn,
-+    ) -> Result<quinn::crypto::rustls::QuicClientConfig, TlsConfigError> {
-+        config::tls_client_config(
-+            self.certified_key(),
-+            Arc::new(PinnedServerKey::new(server)),
-+            alpn,
-+        )
-     }
- 
-     /// TLS for accepting a connection from the holder of `client`.
-+    #[cfg(test)]
-     pub(crate) fn server_tls(
-         &self,
-         client: &PeerKey,
-     ) -> Result<quinn::crypto::rustls::QuicServerConfig, TlsConfigError> {
--        config::tls_server_config(self.certified_key(), Arc::new(PinnedClientKey::new(client)))
-+        self.server_tls_for(client, Alpn::Upgrade)
-+    }
-+
-+    /// [`Self::server_tls`] offering `alpn`.
-+    pub(crate) fn server_tls_for(
-+        &self,
-+        client: &PeerKey,
-+        alpn: Alpn,
-+    ) -> Result<quinn::crypto::rustls::QuicServerConfig, TlsConfigError> {
-+        config::tls_server_config(
-+            self.certified_key(),
-+            Arc::new(PinnedClientKey::new(client)),
-+            alpn,
-+        )
-     }
- 
-     /// TLS that completes no handshake: the endpoint's default server
-@@ -301,7 +328,11 @@ impl QuicIdentity {
-     pub(crate) fn refusing_server_tls(
-         &self,
-     ) -> Result<quinn::crypto::rustls::QuicServerConfig, TlsConfigError> {
--        config::tls_server_config(self.certified_key(), Arc::new(RefuseEveryClient))
-+        config::tls_server_config(
-+            self.certified_key(),
-+            Arc::new(RefuseEveryClient),
-+            Alpn::Upgrade,
-+        )
-     }
- }
- 
++/// A port free in both TCP and UDP right now, below the ephemeral range.
++fn reserve_port() -> std::io::Result<u16> {
++    use std::sync::atomic::{AtomicU32, Ordering};
++    const FIRST: u32 = 20_000;
++    const COUNT: u32 = 10_000;
++    static NEXT: AtomicU32 = AtomicU32::new(0);
++    let start = std::process::id().wrapping_mul(2_654_435_761);
++    for _ in 0..COUNT {
++        let offset = start.wrapping_add(NEXT.fetch_add(1, Ordering::Relaxed)) % COUNT;
++        let port = (FIRST + offset) as u16;
++        if std::net::TcpListener::bind(("127.0.0.1", port)).is_ok()
++            && std::net::UdpSocket::bind(("127.0.0.1", port)).is_ok()
++        {
++            retu
 ```
 
 ---
 
-### Incident Patch 2: `dbdaf790` (2026-11-13)
-**Commit Message**: feat(transport): judge QUIC path liveness per connection, with a 2 h stream total and a dark-episode counter (#6202)
+### Incident Patch 2: `23080e91` (2026-11-13)
+**Commit Message**: ci(release): refuse a live cut of the QUIC data ramp release far from T0 (#6206)
 
-**File**: `.claude/rules/transport.md` (modified, +204/-9)
+**File**: `.github/workflows/ci.yml` (modified, +8/-1)
 ```diff
-@@ -1490,6 +1490,22 @@ a test passes its own; tests read their own, never the global).
-   level in the period, and the highest count a reset in the period took a path
-   to). They are for the fixed charge, which takes quinn's stopped map at
-   SEND_ABORT_LIMIT x QUIC_STOPPED_ENTRY_BYTES until field data justifies less.
-+  quic_dark_episode_<recovered_lt_5s|lt_10s|lt_30s|lt_120s|recovered_ge_120s|
-+  unrecovered|cap_held|closed_at_window>: dark episodes (recycle::AckWatch:
-+  packets outstanding, nothing acknowledged, nothing heard) by how they ended;
-+  read at the watch's 2 s samples, so none recovers in under 2 s, and
-+  `cap_held` is an episode ended by the egress cap holding this side's sends
-+  (the watch cannot tell then whether the peer is dark). The
-+  dark-path rule closes only a path that carries data (QuicPath::enable_data);
-+  on every other path (all of them while QUIC_DATA_PERCENT is 0) it only
-+  counts, so the field shows how long real dark spells last. A spell is read
-+  up to when the peer is next heard from, which waits for quinn's backed-off
-+  probes after the outage ends, so it reads longer than the outage (in
-+  a_path_without_data_is_not_closed_by_a_dark_spell a 30 s outage read about
-+  45 s and a 100 s one about 200 s), and an outage whose backoff runs past
-+  quinn's 120 s idle timeout ends the path and counts `unrecovered`. The dark
-+  threshold (the 10 s window) is to be revisited from these numbers before the
-+  data ramp passes 5%.
-   quic_gate_loss_<queue|share|persistent|ecn|no_sample|ignored> (congestion
-   events by the loss gate's verdict, recycle::loss_gate, reported by the path's
-   report at each tick; over a path's life they sum to its quic_congestion_events,
-@@ -2190,7 +2206,9 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
-   while the stream is open, and not during the ack wait, which includes a send
-   window of backlog) and total. SendDeadlines::short(len) is 1 s and 5 s, or
-   a stream's for a message past one packet; ::stream(len) is 2 s, 5 s
--  (STREAM_INACTIVITY_TIMEOUT) and inbound_stream_age_limit(len); a plain
-+  (STREAM_INACTIVITY_TIMEOUT) and STREAM_AGE_LIMIT (2 h, below), with an
-+  ack wait of inbound_stream_age_limit(len) after the end is sent, and a
-+  node sends with QuicPath::stream_deadlines (the gap from the path); a plain
-   Duration is one deadline for all of it. A send from a source waits for the
-   first chunk for the gap, counted in total, and open runs from when it arrives.
-   The gap is judged on CONNECTION progress (bounded::ConnectionWatch): a node
-@@ -2261,9 +2279,11 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
-   receiver gives up at 5 s. End to end, a fast last hop still fails a slow
-   chain at its own gap: the receiver does not learn the upstream gap. Control sends have no gap. A receiver reads every announced
-   stream to its end whatever its consumer does (push_fragment does not wait);
--  its one wait is announcing a stream into a full channel, bounded by
--  inbound_stream_age_limit(len), the sender's total, so the two give up
--  together. With keepalive PINGs (15 s apart) as its only acknowledgements, at
-+  its one wait is announcing a stream into a full channel, bounded by the
-+  stream's age (inbound_stream_age_limit(len), extended while the
-+  connection reads at 32 KiB/s, at most STREAM_AGE_LIMIT; see the stream
-+  age under the liveness rules), which never ends before the sender's ack
-+  wait would and never after the sender's 2 h total. With keepalive PINGs (15 s apart) as its only acknowledgements, at
-   most two wakes in a row (10 s apart) can each see a new one, so they alone
-   extend a stopped send by at most two wakes. Argued, not tested.
-   One timer per send, re-armed when it fires, as BodyReader. Messages are
-@@ -2532,6 +2552,175 @@ Path recycling (quic/recycle.rs, #5940 step M6): besides the send-reset
-   a held transmit is also in quinn's bytes in flight. A hold whose poller
-   is not polled again within socket::cap_hold_validity of the cap's rate
-   (a poller left by an ended connection) stops counting.
-+  Liveness rules (#5940 PR 4, recycle::AckWatch, all closing with
-+  PEER_NOT_ACKNOWLEDGING; why is in recycle::Stall and the log):
-+  → Not acknowledging (above): the peer keeps sending and acknowledges
-+    none of ours for ACK_WATCH_WINDOW (10 s).
-+  → Dark: this side's packets outstanding at every sample for the window,
-+    from a send, nothing acknowledged and nothing heard from the peer, AND
-+    two rounds of sends made after the window gone unanswered: the first
-+    send made a window after the spell began, then a send seen at a later
-+    sample (quinn's next backed-off probe), the second for its grace (3 x
-+    the round trip from before the spell, at least one 2 s tick, at most
-+    DARK_GRACE_MAX 10 s, so an inflated round trip cannot postpone it).
-+    After an outage quinn sends again only at its next backed-off probe,
-+    and an ack-only peer (keepalive 15 s
-```
-
-**File**: `crates/core/src/node/network_bridge/broadcast_queue.rs` (modified, +7/-0)
-```diff
-@@ -75,6 +75,13 @@ pub(super) fn no_fanout() -> FanoutTargets {
- /// lossy uplinks on any transport: a 31 MiB broadcast needs about 271 KB/s to
- /// finish in 120 s.
- ///
-+/// On UDP that limit is the receiver's whole age limit. On a QUIC path it is
-+/// the stream's first age, which the receiver extends while the connection
-+/// reads at 32 KiB/s or more (up to 2 h), so a stream it keeps past this wait
-+/// can still complete after the wait counted it undelivered; that costs one
-+/// full-state resend, as any timed-out wait does. Either way the wait is no
-+/// longer than the receiver's limit, which is what the margin is for.
-+///
- /// The margin keeps the sender from recording a delivery the receiver may
- /// already have dropped. On UDP the completion fires when the last fragment is
- /// first handed to the socket, and lost fragments are resent after that; and
-```
-
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +1/-0)
-```diff
-@@ -7902,6 +7902,7 @@ mod tests {
-         data.staged_peak_pct = 1049;
-         data.gate_loss = (1050..1056).collect();
-         data.gate_ended_queue = (1056..1059).collect();
-+        data.dark_episodes = (1059..1067).collect();
-         let want: std::collections::BTreeMap<String, u64> =
-             snapshot.quic_data.keys().into_iter().collect();
-         assert!(want.values().all(|value| *value != 0));
-```
-
-**File**: `crates/core/src/transport/metrics.rs` (modified, +3/-1)
-```diff
-@@ -32,7 +32,9 @@ use crate::tracing::{TransferDirection, TransferEvent};
+@@ -283,6 +283,13 @@ jobs:
+       - name: Self-test x86-64 baseline check
+         run: bash scripts/check-x86-64-baseline_test.sh
  
- mod quic_data;
- pub use quic_data::QuicDataSnapshot;
--pub(crate) use quic_data::{PathGateWindow, PathLossWindow, QuicDataCounters, StreamsOpenPeak};
-+pub(crate) use quic_data::{
-+    DarkEnd, PathGateWindow, PathLossWindow, QuicDataCounters, StreamsOpenPeak,
-+};
- 
- /// Global transport metrics instance.
- ///
++      # The release-time check that the QUIC data ramp release is cut within
++      # 3 h of its ramp start (#5940): its decisions on a fixed clock, that it
++      # is a no-op while QUIC_DATA_RAMP_RELEASE is None, and that release.yml's
++      # validate job still runs it.
++      - name: Self-test QUIC data ramp start check
++        run: bash scripts/check_quic_data_ramp_t0_test.sh
++
+       # Release-driver RESUME state. Two regressions, both of the shape where a
+       # resumed release is wrong in a way the operator cannot see: the v0.2.42
+       # FDEV_VERSION double-bump, and the CRATES_PUBLISHED flag being set on
+@@ -381,7 +388,7 @@ jobs:
+       # clean when they landed but were not actually in this list, so nothing
+       # held them to it. `-x` because the two test scripts `source` the canary.
+       - name: Lint install/uninstall scripts (shellcheck)
+-        run: shellcheck -x scripts/check-x86-64-baseline.sh scripts/check-x86-64-baseline_test.sh scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh scripts/wan-bench-classify.sh scripts/wan-bench-classify_test.sh scripts/cache_warm_parity_test.sh scripts/simulation_schedule_test.sh
++        run: shellcheck -x scripts/check-x86-64-baseline.sh scripts/check-x86-64-baseline_test.sh scripts/install.sh scripts/uninstall.sh scripts/test-install-sh.sh scripts/test-uninstall-sh.sh scripts/macos-url-scheme-e2e.sh scripts/auto-update-canary.sh scripts/auto-update-canary_test.sh scripts/auto-update-canary_lifecycle_test.sh scripts/release_wait_for_binaries_test.sh scripts/release_canary_wiring_test.sh scripts/rule_lint_shell_assertion_counter_test.sh scripts/release.sh scripts/pr-backlog-sweep.sh scripts/pr-backlog-sweep_test.sh scripts/release-rollback.sh scripts/release_rollback_test.sh scripts/resolve_release_mode.sh scripts/release_dry_run_test.sh nix/freenet-node.sh scripts/nix-node-wrapper_test.sh scripts/wan-bench-classify.sh scripts/wan-bench-classify_test.sh scripts/cache_warm_parity_test.sh scripts/simulation_schedule_test.sh scripts/check_quic_data_ramp_t0.sh scripts/check_quic_data_ramp_t0_test.sh
+       # The PR-backlog sweep reports stalled PRs (see
+       # .github/workflows/pr-backlog-sweep.yml). Its self-test drives the ABORT
+       # paths -- failed query, empty listing the REST probe contradicts,
 ```
 
-**File**: `crates/core/src/transport/metrics/quic_data.rs` (modified, +116/-0)
+**File**: `.github/workflows/cross-compile.yml` (modified, +20/-0)
 ```diff
-@@ -27,6 +27,7 @@
- //! | `quic_streams_sampled_paths`, `quic_streams_open_ge_<n>`, `quic_streams_peak_max` | per path and period, the peak of inbound streams read at once: the paths sampled, those whose peak reached each level, and the highest peak |
- //! | `quic_gate_loss_<verdict>` | congestion events by the loss gate's verdict (`recycle::loss_gate`): passed to Cubic as `queue`, `share` (loss share above the ceiling), `persistent`, `ecn` (a congestion mark), `no_sample`, or `ignored` as random loss; summed over the node's paths up to each path's last tick. Over a path's life they sum to its `quic_congestion_events`; within one period they can differ by the events between the two reads of a tick |
- //! | `quic_gate_ended_queue_<bucket>` | paths that ended in the period after at least 20 gate verdicts, by the share of them passed as `queue`: `lt_10pct`, `lt_50pct`, `ge_50pct`. A path whose losses mostly read as a queue runs as plain Cubic, whether the queue is real or jitter |
-+//! | `quic_dark_episode_<label>` | dark episodes on QUIC paths (`recycle::AckWatch`: packets outstanding, nothing acknowledged and nothing heard) by how they ended: `recovered_lt_5s`, `lt_10s`, `lt_30s`, `lt_120s`, `recovered_ge_120s`, `unrecovered` (the path closed, or nothing was outstanding any more), `cap_held` (the egress cap held this side's sends, so darkness could no longer be told), `closed_at_window` (the dark-path rule closed a path that carries data). A path that carries no data is never closed by that rule, so its episodes run to their end; read at the watch's 2 s ticks |
- //! | `quic_send_resets`, `quic_path_ms` | sends a path reset on this side, and the time QUIC paths were up, shadow paths included, up to each path's last tick: resets per connection-hour is their ratio |
- //! | `quic_budget_bytes`, `quic_budget_charged_bytes`, `quic_budget_charged_peak_bytes` | the node's QUIC buffer budget, what its data paths' windows have grown above their floor grants now (the floor grants are each path's fixed charge, not the budget's, so a node with every path at the floor reports 0 and uploads nothing; gauges, not reset, uploaded when not 0), and the most charged at once in the period (`quic::budget`) |
- //! | `quic_staged_peak_pct` | the most any connection staged in the period (bytes read for streams whose header its reader had not taken yet) as a percentage of its staging cap (`quic::path::inbound::ConnStaging`); streams stopped at the cap are `quic_inbound_evicted_staged` |
-@@ -120,6 +121,54 @@ pub(crate) const GATE_MIN_VERDICTS: u64 = 20;
- /// queue: under 10%, under 50%, 50% or more.
- pub(crate) const GATE_QUEUE_LABELS: [&str; 3] = ["lt_10pct", "lt_50pct", "ge_50pct"];
- 
-+/// The labels of `quic_dark_episode_<label>`: dark episodes on QUIC paths
-+/// (`recycle::AckWatch`: this side's packets outstanding, nothing
-+/// acknowledged and nothing heard), by how they ended: the peer was heard
-+/// from again within 5/10/30/120 s or later (episodes are read at the
-+/// watch's 2 s samples, so none recovers in under 2 s); the episode ended without that
-+/// (the path closed, at the latest on quinn's idle timeout, or nothing was
-+/// outstanding any more); the egress cap held this side's sends, so whether
-+/// the peer was dark could no longer be told; or the dark-path rule closed the path at its
-+/// window, on a path that carries data. A path that carries no data is never
-+/// closed by that rule, so its episodes run to their end and fill the longer
-+/// buckets: that is what the dark-path threshold is to be checked against.
-+pub(crate) const DARK_EPISODE_LABELS: [&str; 8] = [
-+    "recovered_lt_5s",
-+    "recovered_lt_10s",
-+    "recovered_lt_30s",
-+    "recovered_lt_120s",
-+    "recovered_ge_120s",
-+    "unrecovered",
-+    "cap_held",
-+    "closed_at_window",
-+];
+@@ -925,6 +925,26 @@ jobs:
+       # does. The default ref for a tag push is the tag, so the tree published
+       # here is exactly the tree the shipped binaries were built from.
+       # ---------------------------------------------------------------------
++      # The QUIC data ramp start (T0) is checked again here, against the tag's
++      # version and the clock now, immediately before the irreversible publish
++      # and the un-draft: release.yml's validate job checks it when the run
++      # starts, but the bump PR, the builds and the canary come between, and a
++      # "re-run failed jobs" of this job hours later must check it again rather
++      # than publish on the earlier verdict. A failure leaves the draft
++      # unpublished, which is the safe state. Pinned by
++      # scripts/check_quic_data_ramp_t0_test.sh.
++      - name: Check the QUIC data ramp start is near now (before publishing)
++        if: ${{ success() && startsWith(github.ref, 'refs/tags/v') }}
++        working-directory: _src
++        env:
++          # Read-only: the check asks the GitHub API whether a release is
++          # published, and the anonymous limit is shared by the runner's
++          # address. The workflow token is enough to read; nothing here writes.
++          GH_TOKEN: ${{ github.token }}
++        run: |
++          TAG_NAME="${GITHUB_REF#refs/tags/}"
++          bash scripts/check_quic_data_ramp_t0.sh --version "${TAG_NAME#v}" --live true
 +
-+/// The upper bounds of the `recovered_` buckets of [`DARK_EPISODE_LABELS`],
-+/// in seconds.
-+pub(crate) const DARK_RECOVERED_BOUNDS_SECS: [u64; 4] = [5, 10, 30, 120];
-+
-+/// [`DARK_EPISODE_LABELS`]' `recovered_ge_120s`, `unrecovered` and
-+/// `closed_at_window`.
-+const DARK_RECOVERED_LATE: usize = 4;
-+const DARK_UNRECOVERED: usize = 5;
-+const DARK_CAP_HELD: usize = 6;
-+const DARK_CLOSED: usize = 7;
-+
-+/// How a dark episode ended, for `quic_dark_episode_<label>`.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(crate) enum DarkEnd {
-+    /// The peer was heard from or acknowledged something after this many
-+    /// nanoseconds.
-+    Recovered(u64),
-+    /// It ended without that.
-+    Unrecovered,
-+    /// The egress cap held this side's sends, so whether the peer was dark
-+    /// could no longer be told.
-+    CapHeld,
-+    /// The dark-path rule closed the path at its window.
-+    Closed,
-+}
-+
- /// The bucket of a path that had `queue` of `total` verdicts passed as a queue.
- fn gate_queue_bucket(queue: u64, total: u64) -> usize {
-     if queue.saturating_mul(10) < total {
-@@ -293,6 +342,7 @@ pub(crate) struct QuicDataCounters {
-     staged_peak_pct: AtomicU6
+       - name: Publish crates to crates.io
+         # Tag-gated as well as job-gated. The job's own
+         # `if: startsWith(github.ref, 'refs/tags/v')` already blocks this on a
 ```
 
-**File**: `crates/core/src/transport/peer_connection/ack_policy_tests/quic_send.rs` (modified, +99/-8)
+**File**: `.github/workflows/release.yml` (modified, +21/-0)
 ```diff
-@@ -160,14 +160,27 @@ fn run<F, Fut>(network: &'static str, peer_limits: QuicPathLimits, test: F)
- where
-     F: FnOnce(Rig) -> Fut + Send + 'static,
-     Fut: Future<Output = ()> + Send + 'static,
-+{
-+    run_with(network, QuicPathLimits::DEFAULT, peer_limits, test);
-+}
+@@ -185,6 +185,27 @@ jobs:
+           echo "  freenet: $VERSION"
+           echo "  fdev: $FDEV_VERSION"
+ 
++      # The QUIC data ramp release must be published within 3 h of its ramp
++      # start (QUIC_DATA_RAMP_START), which is fixed in the binary: a late
++      # publish starts every node part-way along the curve. This measures the
++      # DISPATCH time; cross-compile.yml's attach-to-release job checks again
++      # just before the crates.io publish and the un-draft, so a re-run checks
++      # the clock it publishes at. Nodes then take the release over the 0-4 h
++      # auto-update stagger, on top of either. The ramp release is checked
++      # against T0; another version passes unless it would ship the ramp
++      # unchecked (before the ramp release, or skipping it), which fails
++      # closed. A live run that fails stops here, before anything is created;
++      # a dry run gets a warning. Pinned by scripts/check_quic_data_ramp_t0_test.sh.
++      - name: Check the QUIC data ramp start is near now
++        env:
++          RELEASE_VERSION: ${{ steps.validate.outputs.version }}
++          RELEASE_LIVE: ${{ steps.mode.outputs.live }}
++          # Read-only: the check asks the GitHub API whether a release is
++          # published, and the anonymous limit is shared by the runner's
++          # address. The workflow token is enough to read; nothing here writes.
++          GH_TOKEN: ${{ github.token }}
++        run: bash scripts/check_quic_data_ramp_t0.sh --version "$RELEASE_VERSION" --live "$RELEASE_LIVE"
 +
-+/// [`run`] with our side's path limits given too.
-+fn run_with<F, Fut>(
-+    network: &'static str,
-+    our_limits: QuicPathLimits,
-+    peer_limits: QuicPathLimits,
-+    test: F,
-+) where
-+    F: FnOnce(Rig) -> Fut + Send + 'static,
-+    Fut: Future<Output = ()> + Send + 'static,
- {
-     run_bounded(move || async move {
-         let mut e = single(CAPABLE);
-         let (data, inbox) = data_channels();
-         e.conn.attach_quic_inbox(inbox);
-         let path = data_path_to(
-             network,
--            QuicPathLimits::DEFAULT,
-+            our_limits,
-             peer_limits,
-             e.conn.inbound_budget(),
-             data,
-@@ -919,9 +932,9 @@ fn a_busy_relay_whose_transfers_are_acknowledged_keeps_its_path() {
+   # Runs in BOTH modes: the bump is computed and committed locally either way.
+   # Only a live run pushes it, opens the PR and enables auto-merge (#5936: a
+   # dry run used to do all three, landing the version bump on main).
+```
+
+**File**: `crates/core/src/transport/quic/upgrade/policy.rs` (modified, +45/-0)
+```diff
+@@ -52,6 +52,26 @@ pub(crate) fn may_carry_data(config: &NetworkApiConfig) -> bool {
+         && config.quic_data_percent().unwrap_or(QUIC_DATA_PERCENT) > 0
  }
  
- /// Permits held by sends waiting for acknowledgements that never come: nothing on
--/// the path is acknowledged, every large message times out waiting for a permit,
--/// and eight of those past the window close the path. That close is the only thing
--/// that recycles such a path.
-+/// the path is acknowledged and every large message times out waiting for a
-+/// permit. Those timeouts are back-pressure and do not count toward the stall
-+/// close; the acknowledgement watch's dark-path rule closes the path instead.
- #[test]
- fn permits_held_with_nothing_acknowledged_close_the_path() {
-     run(
-@@ -945,15 +958,33 @@ fn permits_held_with_nothing_acknowledged_close_the_path() {
-                     .await
-                     .unwrap();
-             }
--            rig.path.settle(Duration::from_secs(3)).await;
-+            // The dark rule closes once a send made a window into the spell
-+            // goes unanswered for its grace: at the latest
-+            // `dark_close_bound` after the silence began, 9 s of which have
-+            // passed.
-+            rig.path
-+                .settle(
-+                    crate::transport::quic::recycle::dark_close_bound(Duration::from_millis(50))
-+                        - Duration::from_secs(9),
-+                )
-+                .await;
-             drop(silenced);
-             assert_eq!(
-                 rig.stats()
-                     .send_count(SendKind::LargeShort, R::NotOpenedUdp),
-                 u64::from(STALLED_SENDS_LIMIT)
-             );
--            assert_eq!(rig.stats().send_event_count(E::StalledClosed), 1);
-+            assert_eq!(
-+                rig.stats().send_event_count(E::StalledClosed),
-+                0,
-+                "a send that never opened does not count"
-+            );
-             assert!(rig.route.path().quinn_connection().close_reason().is_some());
-+            assert_eq!(
-+                crate::transport::quic::recycle::stalls_to(rig.path.peer_addr()),
-+                vec![crate::transport::quic::recycle::Stall::Dark],
-+                "closed by the watch as dark"
-+            );
-         },
-     );
- }
-@@ -962,8 +993,14 @@ fn permits_held_with_nothing_acknowledged_close_the_path() {
- /// window, close the path.
- #[test]
- fn eight_streams_that_stall_after_opening_close_the_path() {
--    run(
-+    run_with(
-         "quic-send-stall-close",
-+        // The stall count's close, which the acknowledgement watch would
-+        // otherwise preempt on this dark path (`recycle::AckWatch`).
-+        QuicPathLimits {
-+            watch_closes: false,
-+            ..QuicPathLimits::DEFAULT
-+        },
-         QuicPathLimits::DEFAULT,
-         |mut rig| async move {
-             let silenced = DropFrom::new("quic-send-stall-close", &[rig.path.peer_addr()]);
-@@ -1133,6 +1170,53 @@ fn a_pipe_that_stalls_after_opening_gives_up() {
-     );
- }
++/// When this release's QUIC data ramp starts (T0), in seconds since the Unix
++/// epoch, or `None` for no ramp. `None` in tree; the data ramp (#5940) reads
++/// it, and the reviewed PR for the ramp release sets it to the planned publish
++/// time. `scripts/check_quic_data_ramp_t0.sh` reads this line, so keep it on
++/// one line in this form.
++#[cfg_attr(not(test), allow(dead_code))]
++pub(in crate::transport) const QUIC_DATA_RAMP_START: Option<u64> = None;
++
++/// The release whose cut must come within 3 h of [`QUIC_DATA_RAMP_START`], as
++/// `"X.Y.Z"`, or `None`. Set together with the ramp start, in the same reviewed
++/// PR, to the version of the release that ships it; release.yml's validate job
++/// then refuses a live cut of that version unless the clock is within 3 h of the
++/// start (`scripts/check_quic_data_ramp_t0.sh`, which reads this line, so keep
++/// it on one line in this form). Left set afterwards, like the start: it names
++/// one version, so a later release is not held to T0, though one that would
++/// ship the ramp unchecked (before this release, or skipping it) is refused. An
++/// emergency stop that sets the start back to `None` leaves this as it is.
++#[cfg_attr(not(test), allow(dead_code))]
++pub(in crate::transport) const QUIC_DATA_RAMP_RELEASE: Option<&str> = None;
++
+ /// Whether this build reads data from a QUIC path. It does: `PeerConnection::recv`
+ /// drains the session's data channels, so a node that says it accepts data delivers
+ /// a peer's frames. While this is `false`, [`QuicPolicy::own_caps`] returns 0
+@@ -389,6 +409,31 @@ pub(crate) fn log_startup(config: &NetworkApiConfig) {
+ mod tests {
+     use super::*;
  
-+/// With the watch on, a dead path costs new traffic seconds, not a minute:
-+/// the peer goes silent, a short sent 9 s later times out with nothing
-+/// acknowledged and makes the path suspect by 15 s, and from then on new
-+/// shorts go on UDP at once, while the path is still up. The watch's dark
-+/// rule closes the path only later, waiting out two probe rounds after its
-+/// 10 s window (`recycle::dark_close_bound`, about 67 s at this round trip).
-+#[test]
-+fn a_dark_path_takes_no_new_data_long_before_the_watch_closes_it() {
-+    run(
-+        "quic-send-suspect-watch-on",
-+        QuicPathLimits::DEFAULT,
-+        |mut rig| async move {
-+            let _silenced = DropFrom::new("quic-send-suspect-watch-on", &[rig.path.peer_addr()]);
-+            rig.path.settle(Duration::from_secs(9)).await;
-+            rig.e.conn.send_serialized(message(1)).await.unwrap();
-+            rig.path.settle(Duration::from_secs(6)).await;
-+            assert!(rig.route.path().is_suspect(), "suspect by 15 s");
++    /// A ramp start names the release it ships in, so the release-time check
++    /// (`scripts/check_quic_data_ramp_t0.sh`) has a version to key on; a
++    /// named release is `X.Y.Z`, the form the script and release.yml use. A
++    /// release with no start is allowed: an emergency stop resets the start
++    /// and leaves the release, which names an earlier version.
++    #[test]
++    fn a_ramp_start_names_its_release() {
++        if QUIC_DATA_RAMP_START.is_some() {
 +            assert!(
-+                rig.route.path().quinn_connection().close_reason().is_non
-```
-
-**File**: `crates/core/src/transport/peer_connection/quic_send.rs` (modified, +5/-2)
-```diff
-@@ -264,7 +264,7 @@ pub(super) async fn send_stream_on_path<S: Socket, T: TimeSource>(
-         .path()
-         .send_stream_bounded(
-             route.clock(),
--            SendDeadlines::stream(bytes),
-+            route.path().stream_deadlines(bytes),
-             stream_id,
-             metadata.as_deref(),
-             data.clone(),
-@@ -321,7 +321,10 @@ pub(super) async fn pipe_stream_on_path<S: Socket, T: TimeSource>(
-     let source_gap = inbound_handle
-         .fragment_gap_limit()
-         .min(route.path().receiver_gap());
--    let deadlines = SendDeadlines::stream(bytes).with_source_gap(source_gap);
-+    let deadlines = route
-+        .path()
-+        .stream_deadlines(bytes)
-+        .with_source_gap(source_gap);
-     let outcome = route
-         .path()
-         .send_stream_chunks_bounded(
-```
-
-**File**: `crates/core/src/transport/quic/path.rs` (modified, +98/-15)
-```diff
-@@ -312,6 +312,12 @@ pub(crate) struct QuicPathLimits {
-     /// (supervisor test).
-     #[cfg(test)]
-     pub(crate) panic_in_watch: bool,
-+    /// The acknowledgement watch closes the path when a liveness rule says
-+    /// so (`recycle::AckWatch`). Off in tests of the send deadlines and the
-+    /// stall count on a dark path, which the watch would otherwise close
-+    /// first.
-+    #[cfg(test)]
-+    pub(crate) watch_closes: bool,
-     /// The receive side's gap cap (`inbound::MAX_GAPS_PER_CONNECTION`), lower
-     /// in a test that trips it.
-     #[cfg(test)]
-@@ -370,6 +376,8 @@ impl QuicPathLimits {
-         #[cfg(test)]
-         panic_in_watch: false,
-         #[cfg(test)]
-+        watch_closes: true,
-+        #[cfg(test)]
-         max_gaps: inbound::MAX_GAPS_PER_CONNECTION,
-         #[cfg(test)]
-         staging_cap: None,
-@@ -753,6 +761,12 @@ pub(crate) struct QuicPath {
-     /// ([`STREAMED_SEND_LIMIT`]), so the remaining uni stream slots stay
-     /// for short messages and control frames. Never closed.
-     stream_slots: Arc<tokio::sync::Semaphore>,
-+    /// Sends with data still to write, for the credit rule
-+    /// (`recycle::CreditWatch`).
-+    writers: Arc<recycle::Writers>,
-+    /// Set once the path may send data: only then does the acknowledgement
-+    /// watch's dark-path rule close it (`recycle::AckWatch::observing`).
-+    carries_data: Arc<std::sync::atomic::AtomicBool>,
-     /// Control frames taking their stream ([`Self::control_first`]); a data
-     /// send opens no stream while any is.
-     controls_opening: Arc<ControlsOpening>,
-@@ -1008,6 +1022,7 @@ impl QuicPath {
-             built_at,
-         );
-         let heard = Arc::new(recycle::PeerHeard::default());
-+        let writers = Arc::new(recycle::Writers::default());
-         #[cfg_attr(not(test), allow(unused_mut))]
-         let mut report = recycle::PathReport::new(
-             connection.inner().clone(),
-@@ -1018,18 +1033,24 @@ impl QuicPath {
-         #[cfg(test)]
-         {
-             report.panic_once_bucketed = limits.panic_in_watch;
-+            report.watch_closes = limits.watch_closes;
-         }
-         let ack_waits = Arc::new(AckWaits::new(stats.clone()));
-+        let carries_data = Arc::new(std::sync::atomic::AtomicBool::new(false));
-         let receive = GlobalExecutor::spawn(supervise_receive(
-             connection.inner().clone(),
-             connection.closer(),
-             Arc::new(receiver),
-             stats.clone(),
-             time,
-             recycle::AckWatchParts {
--                cap_holds: connection.cap_holds(),
--                rtt: receiver_rtt,
--                heard: heard.clone(),
-+                shared: recycle::WatchShared {
-+                    cap_holds: connection.cap_holds(),
-+                    writers: writers.clone(),
-+                    rtt: receiver_rtt,
-+                    heard: heard.clone(),
-+                    carries_data: carries_data.clone(),
-+                },
-                 report,
-             },
-         ));
-@@ -1042,6 +1063,8 @@ impl QuicPath {
-                 ack_waits,
-                 meter,
-                 stream_slots: Arc::new(tokio::sync::Semaphore::new(STREAMED_SEND_LIMIT as usize)),
-+                writers,
-+                carries_data,
-                 controls_opening: Arc::default(),
-                 send_data: AtomicU8::new(SEND_DATA_NEVER),
-                 counted_as_data_path: std::sync::atomic::AtomicBool::new(false),
-@@ -1209,6 +1232,12 @@ impl QuicPath {
-             .map_or(0, |meter| meter.send_epoch_holders())
-     }
- 
-+    /// The path's sends still writing (`recycle::Writers`). Tests only.
-+    #[cfg(test)]
-+    pub(crate) fn writers(&self) -> &recycle::Writers {
-+        &self.writers
++                QUIC_DATA_RAMP_RELEASE.is_some(),
++                "QUIC_DATA_RAMP_START is set, so QUIC_DATA_RAMP_RELEASE must name its release"
++            );
++        }
++        if let Some(release) = QUIC_DATA_RAMP_RELEASE {
++            let parts: Vec<&str> = release.split('.').collect();
++            assert!(
++                parts.len() == 3
++                    && parts
++                        .iter()
++                        .all(|p| !p.is_empty() && p.bytes().all(|b| b.is_ascii_digit())),
++                "QUIC_DATA_RAMP_RELEASE must be X.Y.Z, got {release:?}"
++            );
++        }
 +    }
 +
-     /// Streamed-message permits free right now.
-     #[cfg(test)]
-     pub(crate) fn free_stream_slots(&self) -> usize {
-@@ -1251,6 +1280,29 @@ impl QuicPath {
-         )
+     const AVAILABILITIES: [QuicAvailability; 4] = [
+         QuicAvailability::Disabled,
+         QuicAvailability::Up,
+```
+
+**File**: `docs/RELEASING.md` (modified, +52/-0)
+```diff
+@@ -504,6 +504,58 @@ Current wire-gated floors:
+   `quic_native_floor_stays_above_every_release_without_the_decoder` catches the
+   floor being lowered.
+ 
++- `QUIC_DATA_RAMP_START` (T0) and `QUIC_DATA_RAMP_RELEASE` in
++  `crates/core/src/transport/quic/upgrade/policy.rs` (#5940): both `None` in
++  tree. The reviewed PR for the QUIC data ramp release sets T0 to the planned
++  publish time, in Unix seconds, and `QUIC_DATA_RAMP_RELEASE` to that release's
++  version. `scripts/check_quic_data_ramp_t0.sh` then refuses a live cut of
++  that version when the clock is more than 3 h from T0 either side (a dry run
++  only warns). It runs at dispatch (release.yml's validate job), again in
++  cross-compile.yml's attach-to-release job just before the crates.io publish
++  and the un-draft (so "re-run failed jobs" checks the clock it publishes at),
++  and in `scripts/release.sh` at its start and before each publish. What it
++  measures is the publish time; nodes take the release over the 0-4 h
++  auto-update stagger on top of it. Both constants stay set afterwards: a later
++  version passes with a warning. A version that would ship the ramp unchecked
++  fails closed: one before `QUIC_DATA_RAMP_RELEASE`, one that skips it while
++  the tree has not reached it (an auto-bump past a taken number), one cut
++  while `v<QUIC_DATA_RAMP_RELEASE>` is not a published (non-draft) GitHub
++  release, GitHub's latest release is before it, or `freenet` at that version
++  is not on crates.io, or any of these gives no clear answer (the ramp
++  release's bump merged but its publish or un-draft failed or was cancelled,
++  or "latest" stayed pinned to an older build; nodes update from GitHub's
++  latest release, so a crates.io publish alone did not reach them), or one
++  cut more than 3 h
++  before T0, and T0 set with no ramp release named. The check reads the
++  GitHub API with `GH_TOKEN` (the workflow token in CI, `gh auth token`
++  locally) when it has one. Cut the ramp release with `--field version=X.Y.Z` set to
++  `QUIC_DATA_RAMP_RELEASE`, not the auto-bump. If that version is already
++  taken, change the constant in the same reviewed PR as T0. A later re-ramp
++  must set a new T0 and a new `QUIC_DATA_RAMP_RELEASE` together: a new T0 with
++  a stale release name is not caught when the cut comes more than 3 h after
++  the new T0. If the publish slips more than about 3 h past T0, re-set T0 in a
++  new reviewed PR before publishing.
++
++  Which check guards which side. The dispatch check (release.yml) reads the
++  tree before the version bump, so it is the one that sees a cut version
++  skipping or preceding the ramp release. At the tag the tree is already the
++  cut version, so the attach-to-release check sees only the clock and the
++  publication of the ramp release, not a skip. One case neither sees at cut
++  time: `QUIC_DATA_RAMP_RELEASE` naming a version that ships before the ramp
++  PR merges. CI covers it: `scripts/check_quic_data_ramp_t0_test.sh` fails a
++  tree where T0 is more than 3 h away and `QUIC_DATA_RAMP_RELEASE` is not
++  above the `crates/core` version. The same test requires each state the
++  constants pass through to pass CI, including the emergency stop (T0 back to
++  `None` with the release left named: a later version passes, the named one is
++  refused). A stop taken before the ramp release ships leaves the next
++  auto-bump equal to the named version, which is then refused: cut another
++  version, or set `QUIC_DATA_RAMP_RELEASE` to `None` in the stop PR.
++
++  The attach-to-release check reads the version from the tag and accepts only
++  `X.Y.Z`. A pre-release tag (`v0.2.157-rc1`) exits 2 there and stops the
++  publish. The project tags no pre-releases; one would need the check taught
++  its form first.
++
+ - `QUIC_DATA_PERCENT` in `crates/core/src/transport/quic/upgrade/policy.rs` (the
+   share of pairs that carry data on QUIC, #5940). It stays at its value unless
+   this release is a rollout step (0, 5, 25, 100), changed in its own PR. That PR also edits the expectations that pin 0:
+```
+
+**File**: `scripts/RELEASE_RECOVERY.md` (modified, +14/-1)
+```diff
+@@ -299,14 +299,27 @@ gh run view "$RUN_ID" --repo "$REPO" --json jobs --jq '
+ 
+ **That must print `success`.** `failure`, `cancelled`, `skipped` — or no line
+ at all, which means the step never ran — all mean Gate A did not pass. Stop and
+-go to Step 4b. Only continue past this point on `success`:
++go to Step 4b. Only continue past this point on `success`.
++
++Gate A is not the only step that leaves a release in this state. The QUIC data
++ramp start check (`Check the QUIC data ramp start is near now (before
++publishing)`, just before the crates.io publish) refuses a release that would
++ship the ramp at the wrong time, and its refusal also leaves Gate A passed, the
++crates absent and the release a draft. So the publish below runs that check
++first, on the clock you publish at, and stops if it refuses. Do not publish
++around a refusal; follow the remedy it prints (docs/RELEASING.md).
+ 
+ ```bash
+ cd ~/code/freenet/freenet-core/main
+ git fetch origin
+ # Publish from the release commit, not from whatever main is now (see Step 2).
+ git checkout "$RELEASE_SHA"
+ 
++# The QUIC data ramp start check, as attach-to-release runs it.
++if ! bash scripts/check_quic_data_ramp_t0.sh --version 0.1.X --live true; then
++  echo "STOP: the QUIC data ramp start check refused 0.1.X; do not publish"; exit 1
++fi
++
+ # Per crate, because a partial publish is the usual reason to be here:
+ # RELEASING.md routes "fdev failed but freenet succeeded" to this step, and an
+ # unconditional `cargo publish -p freenet` would just error on the crate that
+```
+
+**File**: `scripts/check_quic_data_ramp_t0.sh` (added, +316/-0)
+```diff
+@@ -0,0 +1,316 @@
++#!/usr/bin/env bash
++# Check, when the QUIC data ramp release is cut, that its ramp start (T0) is
++# close to now (#5940, #6138).
++#
++# T0 (`QUIC_DATA_RAMP_START` in crates/core/src/transport/quic/upgrade/policy.rs)
++# is fixed in the binary. A publish long after T0 starts every node that updates
++# part-way along the curve (24 h after T0, at 100%, skipping the ramp), and one
++# long before T0 holds every node at 5% until T0. So the ramp release must be
++# cut within WINDOW of T0, or T0 must be re-set in a new reviewed PR first.
++#
++# Only the release named by `QUIC_DATA_RAMP_RELEASE` (beside T0) is held to
++# T0: T0 stays set after it (past 24 h it reads 100%, the steady state), and
++# later releases must not be held to it, so one passes with a warning. A
++# version that would ship the ramp unchecked fails closed like a late cut:
++# T0 set with no release named; a version before the named one; a later one
++# that skips it while this tree (crates/core/Cargo.toml) has not reached it;
++# a later one while the ramp release is not a published (non-draft) GitHub
++# release, GitHub's latest release is before it, or it is not on crates.io,
++# or any of these has no clear answer (the bump can merge and the publish or
++# un-draft then fail); a later one
++# cut more than WINDOW before T0. With no T0, or no ramp release and no T0, it
++# prints a notice and exits 0.
++#
++# Usage:
++#   check_quic_data_ramp_t0.sh --version X.Y.Z --live true|false
++#                              [--now UNIX_SECS] [--policy PATH] [--window SECS]
++#                              [--cargo-toml PATH]
++#
++# --now defaults to the clock (`date +%s`); tests pass it. A live run that
++# fails the check exits 1. A dry run reports the same finding as a warning and
++# exits 0, so a rehearsal shows it without stopping. A policy file the script
++# cannot read (a constant missing, repeated or written another way) exits 2 in
++# both modes: the check cannot say anything, so it does not pass.
++
++set -uo pipefail
++
++SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++POLICY="$SCRIPT_DIR/../crates/core/src/transport/quic/upgrade/policy.rs"
++CARGO_TOML="$SCRIPT_DIR/../crates/core/Cargo.toml"
++WINDOW=$((3 * 3600))
++VERSION=""
++LIVE=""
++NOW=""
++
++while [[ $# -gt 0 ]]; do
++    case "$1" in
++        --version) VERSION="${2:-}"; shift 2 ;;
++        --live) LIVE="${2:-}"; shift 2 ;;
++        --now) NOW="${2:-}"; shift 2 ;;
++        --policy) POLICY="${2:-}"; shift 2 ;;
++        --window) WINDOW="${2:-}"; shift 2 ;;
++        --cargo-toml) CARGO_TOML="${2:-}"; shift 2 ;;
++        *) echo "::error::check_quic_data_ramp_t0: unknown argument '$1'"; exit 2 ;;
++    esac
++done
++
++if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
++    echo "::error::check_quic_data_ramp_t0: --version must be X.Y.Z (got '$VERSION')"
++    exit 2
++fi
++if [[ "$LIVE" != "true" && "$LIVE" != "false" ]]; then
++    echo "::error::check_quic_data_ramp_t0: --live must be true or false (got '$LIVE')"
++    exit 2
++fi
++if [[ -z "$NOW" ]]; then
++    NOW="$(date +%s)"
++fi
++if [[ ! "$NOW" =~ ^[0-9]+$ || ! "$WINDOW" =~ ^[0-9]+$ ]]; then
++    echo "::error::check_quic_data_ramp_t0: --now and --window must be whole seconds"
++    exit 2
++fi
++if [[ ! -f "$POLICY" ]]; then
++    echo "::error::check_quic_data_ramp_t0: policy file not found: $POLICY"
++    exit 2
++fi
++
++# Sets DECLARED to the value of the one declaration of constant $1 whose type
++# is $2, or exits 2. The declaration starts a line and runs to its `;`,
++# possibly over several lines (rustfmt wraps a long one), and its whitespace
++# is collapsed, so `Some(\n    1_800_000_000,\n)` reads as `Some(1_800_000_000)`.
++# Starting a line keeps a comment or test that mentions the name from being
++# read; two declarations are refused rather than one picked. (Not a command
++# substitution: its error message would be captured.)
++DECLARED=""
++read_declared() {
++    local name="$1" type="$2" found count
++    found="$(awk -v head="pub(in crate::transport) const ${name}: ${type} =" '
++        index($0, head) == 1 { inside = 1; text = "" }
++        inside { text = text " " $0; if ($0 ~ /;[[:space:]]*$/) { print text; inside = 0 } }
++    ' "$POLICY")"
++    count="$(printf '%s' "$found" | grep -c . || true)"
++    if [[ "$count" != "1" ]]; then
++        echo "::error::check_quic_data_ramp_t0: expected one declaration of ${name}: ${type} in $POLICY, found ${count}"
++        exit 2
++    fi
++    found="${found#*= }"
++    found="${found%;*}"
++    # Collapse whitespace, then drop it inside the parentheses and a trailing
++    # comma rustfmt adds to a wrapped argument.
++    found="$(printf '%s' "$found" | tr -s '[:space:]' ' ')"
++    found="${found// /}"
++    found="${found/,)/)}"
++    DECLARED="$found"
++}
++
++read_declared QUIC_DATA_RAMP_RELEASE 'Option<&str>'
++release_value="$DECLARED"
++read_declared QUIC_DATA_RAMP_START 'Option<u64>'
++start_value="$DECLARED"
++
++# Every finding below fails a live run and warns in a dry run.
++finding() {
++    if 
+```
+
+**File**: `scripts/check_quic_data_ramp_t0_test.sh` (added, +522/-0)
+```diff
+@@ -0,0 +1,522 @@
++#!/usr/bin/env bash
++# Tests for scripts/check_quic_data_ramp_t0.sh, the release-time check that the
++# QUIC data ramp release is cut within 3 h of its ramp start (#5940, #6138).
++#
++# Each case runs the script against a policy file written here, with the clock
++# passed as --now, and checks its exit code and one line of its output. Then it
++# checks the tree as it is: with QUIC_DATA_RAMP_RELEASE = None the check is a
++# no-op for any version, live or dry. Last, the wiring, each read from the
++# step's (or function's) own lines: release.yml's validate job runs it on the
++# resolved version and run mode; cross-compile.yml's attach-to-release job runs
++# it again on the tag's version before the crates.io publish and the un-draft;
++# the local release script runs it at the start and in each publish function.
++#
++# Run manually: bash scripts/check_quic_data_ramp_t0_test.sh
++# Also wired into CI (the Fmt job in .github/workflows/ci.yml).
++
++# The needles below are literal workflow and script text, `${{ }}` and `$VAR`
++# included, so single quotes are meant.
++# shellcheck disable=SC2016
++# Two cases run check_tree in a subshell on purpose, so the failures they
++# expect stay out of this run's count.
++# shellcheck disable=SC2030,SC2031
++set -uo pipefail
++
++SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++CHECK="$SCRIPT_DIR/check_quic_data_ramp_t0.sh"
++POLICY="$SCRIPT_DIR/../crates/core/src/transport/quic/upgrade/policy.rs"
++RELEASE_YML="$SCRIPT_DIR/../.github/workflows/release.yml"
++WORK="$(mktemp -d)"
++trap 'rm -rf "$WORK"' EXIT
++FAILURES=0
++T0=1800000000
++HOUR=3600
++
++# A policy file declaring the two constants as $1 and $2.
++policy() {
++    local file="$WORK/policy-$RANDOM.rs"
++    {
++        echo "/// When this release's data ramp starts."
++        echo "pub(in crate::transport) const QUIC_DATA_RAMP_START: Option<u64> = $1;"
++        echo ""
++        echo "#[cfg_attr(not(test), allow(dead_code))]"
++        echo "pub(in crate::transport) const QUIC_DATA_RAMP_RELEASE: Option<&str> = $2;"
++        echo "// QUIC_DATA_RAMP_START: Option<u64> = Some(1); a comment is not read"
++    } > "$file"
++    printf '%s' "$file"
++}
++
++# A crates/core/Cargo.toml at version $1.
++cargo_at() {
++    local file="$WORK/cargo-$1.toml"
++    printf '[package]\nname = "freenet"\nversion = "%s"\n' "$1" > "$file"
++    printf '%s' "$file"
++}
++SHIPPED="$(cargo_at 0.2.157)"
++BEFORE="$(cargo_at 0.2.156)"
++
++# crates.io and GitHub, as the check sees them: a `curl` first on PATH that
++# records its arguments (and the header file it is given, which is where a
++# token goes) and answers by host: GitHub with HTTP $FAKE_GH_CODE and body
++# $FAKE_GH_BODY written to the -o file, crates.io with HTTP $FAKE_CRATES_CODE.
++# $FAKE_CURL_EXIT, when set, makes it fail with no answer at all. A `gh` that
++# fails keeps the check from reading a real token on this machine.
++mkdir -p "$WORK/bin"
++cat > "$WORK/bin/curl" <<'CURL'
++#!/usr/bin/env bash
++printf '%s\n' "$*" >> "$FAKE_CURL_LOG"
++out="" url=""
++while [[ $# -gt 0 ]]; do
++    case "$1" in
++        -o) out="$2"; shift 2 ;;
++        -H) if [[ "$2" == @* ]]; then cat "${2#@}" >> "$FAKE_CURL_LOG.headers"; fi; shift 2 ;;
++        http*) url="$1"; shift ;;
++        *) shift ;;
++    esac
++done
++if [[ -n "${FAKE_CURL_EXIT:-}" ]]; then
++    exit "$FAKE_CURL_EXIT"
++fi
++case "$url" in
++    https://api.github.com/*/releases/latest)
++        if [[ -n "$out" ]]; then printf '%s' "$FAKE_GH_LATEST_BODY" > "$out"; fi
++        printf '%s' "$FAKE_GH_LATEST_CODE" ;;
++    https://api.github.com/*)
++        if [[ -n "$out" ]]; then printf '%s' "$FAKE_GH_BODY" > "$out"; fi
++        printf '%s' "$FAKE_GH_CODE" ;;
++    *) printf '%s' "$FAKE_CRATES_CODE" ;;
++esac
++CURL
++printf '#!/usr/bin/env bash\nexit 1\n' > "$WORK/bin/gh"
++chmod +x "$WORK/bin/curl" "$WORK/bin/gh"
++export PATH="$WORK/bin:$PATH"
++unset GH_TOKEN GITHUB_TOKEN
++export FAKE_CURL_LOG="$WORK/curl.log"
++export FAKE_CRATES_CODE=200 FAKE_GH_CODE=200
++export FAKE_GH_BODY='{"tag_name": "v0.2.157", "draft": false, "prerelease": false}'
++export FAKE_GH_LATEST_CODE=200
++export FAKE_GH_LATEST_BODY='{"tag_name": "v0.2.157", "draft": false}'
++: > "$FAKE_CURL_LOG"
++
++# check_case NAME EXPECTED_RC EXPECTED_TEXT -- ARGS...
++check_case() {
++    local name="$1" want_rc="$2" want_text="$3" out rc
++    shift 4
++    out="$(bash "$CHECK" "$@" 2>&1)"
++    rc=$?
++    if [[ "$rc" != "$want_rc" || "$out" != *"$want_text"* ]]; then
++        echo "FAIL - $name: rc=$rc (want $want_rc), output: $out"
++        FAILURES=$((FAILURES + 1))
++    else
++        echo "ok - $name"
++    fi
++}
++
++unset_both="$(policy None None)"
++check_case "no ramp release, live: no-op" 0 "no ramp release" -- \
++    --version 0.2.156 --live true --now "$T0" --policy "$unset_both"
++check_case "no ramp release, dry run: no-op" 0 "no ramp release" -- \
++    --version 0.2.156 --live false --now "$T0" --policy "$unset_both"
++
++set_both="$(policy "Some(1_800_000_000)" 'Some("0.2.157")')"
++check_case "a
+```
+
+---
+
+### Incident Patch 3: `b9479d5b` (2026-11-13)
+**Commit Message**: feat(transport): a QUIC-native connection as a PeerConnectionApi (#6210)
+
+**File**: `.claude/rules/transport.md` (modified, +41/-2)
+```diff
+@@ -2088,6 +2088,44 @@ Not decided here (A5): fairness between the requesters that steer setups,
+   before UDP is removed.
+ ```
+ 
++Native connection (`peer_connection/native_connection.rs`, A5a): the
++`PeerConnectionApi` over a native connection, built by nothing in production
++until A5b wires the connect op.
++
++```
++Path: QuicPathLimits::NATIVE (DEFAULT with udp_fallback off) and data
++  enabled at once. A send whose next step would be UDP is given up (counted
++  Dropped, a stream's completion told Dropped), and a quiet timeout never
++  makes the path suspect (suspect only diverts data to UDP); a dark path
++  ends by the stall close or the acknowledgement watch's dark rule. A peer
++  refusing data (NOT_ACCEPTING_DATA) closes the native path at once
++  (QuicPath::stop_sending_data); left open it would drop every later send.
++  Upgrade paths keep udp_fallback on and are unchanged.
++Shorts: DataRoute::native, no UDP sender. queue_native_short refuses a full
++  queue with TransportError::SendQueueFull (Transient: the connection
++  survives, the message is counted Dropped, no ShortOverflowUdp), and an
++  ended path with ConnectionClosed. The worker drops and counts a short it
++  cannot put on the path (ended, or refusing data while it closes).
++Receive: recv reads the path's inbox through InboundDispatch, the same record
++  a UDP connection keeps (metadata dispatched once, stream ids not reused).
++  When the connection ends, both inbox channels are drained before recv
++  fails.
++End reasons (close_reason after recv fails): quinn's idle TimedOut is
++  CloseReason::IdleTimeout; everything else is CloseReason::QuicPath with a
++  QuicPathEnd. A close this node makes records its cause at the close site
++  (QuicCloser::close_for: Stalled, NotAcknowledging, SendAborts,
++  PeerOverBudget, RefusedData, PeerRefusedData, ReceiveTaskPanicked), first
++  cause wins; a
++  local close with none is ClosedLocally, the peer's close ClosedByPeer, and
++  any other end Lost. The disconnect label is QuicPathEnd::label.
++Pacing: the bandwidth limit paces its data with a LimitPacer on the path's
++  clock, as an upgrade session's does.
++Drop: closes with NODE_DROPPED_PEER at once (send tasks hold the path) and
++  cancels its unclaimed inbound streams, as PeerConnection's drop does.
++send_bytes_observed is always Unobserved: no message is a stream it reports.
++The route worker runs under report_panics (task_panicked).
++```
++
+ #### QUIC framing and path (`quic/framing.rs`, `quic/path.rs`, #5940 step e3)
+ 
+ The upgrade driver builds a `QuicPath` and sends control frames on it. Data goes on
+@@ -2195,8 +2233,9 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
+     repeated timeouts close the path. NotOpened opened nothing, so it does not
+     count.
+   → A NOT_ACCEPTING_DATA stop means the sender's gating is wrong: log it and
+-    send the message on UDP, do not retry on this path. A sender cannot rely
+-    on seeing it (see the stop code).
++    send the message on UDP, do not retry on this path (a native path, with no
++    UDP, closes instead). A sender cannot rely on seeing it (see the stop
++    code).
+   Sends have no deadline of their own: open_uni, a flow-blocked write
+   and the final wait for acks can wait as long as the connection lives
+   against a peer that does not cooperate. Every node send MUST go through
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +65/-0)
+```diff
+@@ -4116,6 +4116,9 @@ fn disconnect_reason_for_close(
+         Some(CloseReason::InboundStreamRefusals) => {
+             crate::tracing::DisconnectReason::Explicit("inbound_stream_refusals".into())
+         }
++        Some(CloseReason::QuicPath(end)) => {
++            crate::tracing::DisconnectReason::Explicit(end.label().into())
++        }
+         None => crate::tracing::DisconnectReason::NetworkError("transport_closed".into()),
+     }
+ }
+@@ -4470,6 +4473,68 @@ pub(crate) mod tests {
+         }
      }
  
-+    /// Deadlines for a node's streamed send of `len` bytes on this path:
-+    /// [`SendDeadlines::stream`] with the gap the path's receiver allows
-+    /// ([`Self::receiver_gap`], from the path's round trip, at least 5 s)
-+    /// rather than a flat 5 s, so a slow path's send is not failed at a gap
-+    /// its receiver still waits through. The gap applies only once the
-+    /// connection has also stopped making progress (`bounded::ConnectionWatch`).
++    /// Every `QuicPathEnd` label reaches telemetry as `Explicit(label)`, both
++    /// from `disconnect_reason_for_close` and through `DisconnectReason`'s
++    /// substring parser, which reads "timeout", "limit", "pruned" and
++    /// "unresponsive" in a label as another reason. The match gives each
++    /// variant an index, so a new variant does not compile until it has one,
++    /// and the count check fails until it is in the list.
++    #[test]
++    fn every_quic_path_end_label_survives_the_disconnect_reason_parser() {
++        use crate::tracing::DisconnectReason;
++        use crate::transport::{CloseReason, QuicPathEnd as E};
++        fn index(end: E) -> usize {
++            match end {
++                E::Stalled => 0,
++                E::NotAcknowledging => 1,
++                E::SendAborts => 2,
++                E::PeerOverBudget => 3,
++                E::RefusedData => 4,
++                E::PeerRefusedData => 5,
++                E::ReceiveTaskPanicked => 6,
++                E::ClosedByPeer => 7,
++                E::ClosedLocally => 8,
++                E::Lost => 9,
++            }
++        }
++        let all = [
++            E::Stalled,
++            E::NotAcknowledging,
++            E::SendAborts,
++            E::PeerOverBudget,
++            E::RefusedData,
++            E::PeerRefusedData,
++            E::ReceiveTaskPanicked,
++            E::ClosedByPeer,
++            E::ClosedLocally,
++            E::Lost,
++        ];
++        let mut indices: Vec<usize> = all.iter().map(|end| index(*end)).collect();
++        indices.sort_unstable();
++        indices.dedup();
++        assert_eq!(
++            indices,
++            (0..all.len()).collect::<Vec<_>>(),
++            "list every variant once"
++        );
++        let mut labels = std::collections::HashSet::new();
++        for end in all {
++            let label = end.label();
++            assert!(labels.insert(label), "{label} is used twice");
++            let explicit = DisconnectReason::Explicit(label.to_string());
++            assert_eq!(
++                super::disconnect_reason_for_close(Some(CloseReason::QuicPath(end))),
++                explicit,
++                "{end:?}"
++            );
++            assert_eq!(
++                DisconnectReason::from(Some(label.to_string())),
++                explicit,
++                "{label} parses as another reason"
++            );
++        }
++    }
++
+     fn hosting_announce() -> crate::message::NetMessage {
+         use crate::message::{NeighborHostingMessage, NetMessage, NetMessageV1};
+         NetMessage::V1(NetMessageV1::NeighborHosting {
+```
+
+**File**: `crates/core/src/transport.rs` (modified, +12/-0)
+```diff
+@@ -350,6 +350,9 @@ impl From<SocketAddr> for ObservedAddr {
+ }
+ 
+ pub(crate) use self::boundary::TransportHandle;
++// For the node's test that pins each end's disconnect label.
++#[cfg(test)]
++pub(crate) use self::boundary::QuicPathEnd;
+ pub(crate) use self::boundary::{
+     CloseReason, InboundAcceptor, InboundExpectations, InboundStreamRegistry, ListenerExit,
+     NextConnection, ObservedSend, OutboundConnector, PeerConnectionApi, PendingConnection,
+@@ -399,6 +402,12 @@ pub enum TransportError {
+     /// the same message fails the same way on every attempt.
+     #[error("outbound stream to {0} not sent: length {1} is outside the stream limits")]
+     OutboundStreamInvalidLength(SocketAddr, u64),
++    /// A message to the peer was not sent because the connection's queue for
++    /// it is full (a QUIC-native connection's short-message queue, which has
++    /// no UDP session to spill to). Transient: the connection survives, and
++    /// the operation layer retries or gives up as for a lost message.
++    #[error("message to {0} not sent: the connection's send queue is full")]
++    SendQueueFull(SocketAddr),
+     #[error(transparent)]
+     Other(#[from] anyhow::Error),
+     /// An error only the UDP transport produces (a socket send or I/O
+@@ -638,6 +647,7 @@ impl TransportError {
+     pub fn scope(&self) -> ErrorScope {
+         match self {
+             TransportError::OutboundStreamFailed(..)
++            | TransportError::SendQueueFull(..)
+             | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..))) => ErrorScope::Transient,
+             TransportError::Quic(QuicError(QuicErrorKind::Stopped { code }))
+                 if quic::error::stop_is_retryable(*code) =>
+@@ -1204,6 +1214,7 @@ mod tests {
+                     (ErrorScope::Transient, true, false)
+                 }
+                 TransportError::OutboundStreamFailed(_) => (ErrorScope::Transient, true, false),
++                TransportError::SendQueueFull(_) => (ErrorScope::Transient, true, false),
+                 TransportError::OutboundStreamInvalidLength(..) => {
+                     (ErrorScope::Stream, false, false)
+                 }
+@@ -1254,6 +1265,7 @@ mod tests {
+             },
+             TransportError::send_failed(addr, io::ErrorKind::NetworkUnreachable),
+             TransportError::OutboundStreamFailed(addr),
++            TransportError::SendQueueFull(addr),
+             TransportError::OutboundStreamInvalidLength(addr, 0),
+             TransportError::from(io::Error::other("x")),
+             TransportError::Other(anyhow::anyhow!("x")),
+```
+
+**File**: `crates/core/src/transport/boundary.rs` (modified, +53/-0)
+```diff
+@@ -332,6 +332,59 @@ pub(crate) enum CloseReason {
+     /// The peer had more refused inbound streams outstanding than are
+     /// remembered.
+     InboundStreamRefusals,
++    /// A QUIC-native connection's path ended, for the reason given.
++    QuicPath(QuicPathEnd),
++}
++
++/// Why a QUIC-native connection's path ended, other than the idle timeout
++/// ([`CloseReason::IdleTimeout`]). A cause this node closed for is recorded
++/// where it closed (`QuicCloser::close_for`).
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) enum QuicPathEnd {
++    /// This node's sends kept timing out with nothing acknowledged (the
++    /// path's stall count).
++    Stalled,
++    /// The peer acknowledged none of this node's packets while it kept
++    /// sending, or stopped acknowledging data (the acknowledgement watch).
++    NotAcknowledging,
++    /// This node reset more sends on the connection than it remembers
++    /// (`recycle::SEND_ABORT_LIMIT`).
++    SendAborts,
++    /// The peer held more of this node's buffer budget than it allows.
++    PeerOverBudget,
++    /// The peer sent data on a path that refuses it.
++    RefusedData,
++    /// The peer refused this node's data (`NOT_ACCEPTING_DATA`) on a path that
++    /// has no UDP session to send it on instead.
++    PeerRefusedData,
++    /// The path's receive task panicked.
++    ReceiveTaskPanicked,
++    /// The peer closed the connection.
++    ClosedByPeer,
++    /// This node closed it for another reason (its connection was dropped).
++    ClosedLocally,
++    /// The connection was lost: a reset, a transport error, or an end quinn
++    /// reports in any other way.
++    Lost,
++}
++
++impl QuicPathEnd {
++    /// The disconnect label. None contains "timeout", "limit", "pruned" or
++    /// "unresponsive", which `DisconnectReason` parses as other reasons.
++    pub(crate) fn label(self) -> &'static str {
++        match self {
++            Self::Stalled => "quic_path_stalled",
++            Self::NotAcknowledging => "quic_peer_not_acknowledging",
++            Self::SendAborts => "quic_send_aborts",
++            Self::PeerOverBudget => "quic_peer_over_budget",
++            Self::RefusedData => "quic_refused_data",
++            Self::PeerRefusedData => "quic_peer_refused_data",
++            Self::ReceiveTaskPanicked => "quic_receive_task_panicked",
++            Self::ClosedByPeer => "quic_closed_by_peer",
++            Self::ClosedLocally => "quic_closed_locally",
++            Self::Lost => "quic_connection_lost",
++        }
++    }
+ }
+ 
+ /// An inbound stream, as the layers above the transport see it: claimed from
+```
+
+**File**: `crates/core/src/transport/connection_handler.rs` (modified, +4/-1)
+```diff
+@@ -2451,7 +2451,7 @@ impl<S: Socket, T: TimeSource> UdpPacketsListener<S, T> {
+                                     crate::transport::TRANSPORT_METRICS
+                                         .record_nat_traversal_failed_version();
+                                 }
+-                                TransportError::ChannelClosed | TransportError::ConnectionClosed(_) | TransportError::ConnectionEstablishmentFailure { .. } | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..))) | TransportError::OutboundStreamFailed(_) | TransportError::OutboundStreamInvalidLength(..) | TransportError::Udp(UdpError(UdpErrorKind::IO(_))) | TransportError::Other(_) | TransportError::Udp(UdpError(UdpErrorKind::PubKeyDecryptionError(_))) | TransportError::Udp(UdpError(UdpErrorKind::Serialization(_))) | TransportError::Quic(_) => {
++                                TransportError::ChannelClosed | TransportError::ConnectionClosed(_) | TransportError::ConnectionEstablishmentFailure { .. } | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..))) | TransportError::OutboundStreamFailed(_) | TransportError::OutboundStreamInvalidLength(..) | TransportError::SendQueueFull(_) | TransportError::Udp(UdpError(UdpErrorKind::IO(_))) | TransportError::Other(_) | TransportError::Udp(UdpError(UdpErrorKind::PubKeyDecryptionError(_))) | TransportError::Udp(UdpError(UdpErrorKind::Serialization(_))) | TransportError::Quic(_) => {
+                                     tracing::error!(error = %error, peer_addr = %remote_addr, "Failed NAT traversal");
+                                     crate::transport::TRANSPORT_METRICS
+                                         .record_nat_traversal_failed_error();
+@@ -3566,6 +3566,7 @@ fn classify_nat_failure(
+         | TransportError::ConnectionEstablishmentFailure { .. }
+         | TransportError::OutboundStreamFailed(_)
+         | TransportError::OutboundStreamInvalidLength(..)
++        | TransportError::SendQueueFull(_)
+         | TransportError::Udp(UdpError(UdpErrorKind::IO(_)))
+         | TransportError::Other(_)
+         | TransportError::Udp(UdpError(UdpErrorKind::PubKeyDecryptionError(_)))
+@@ -4021,6 +4022,7 @@ pub mod mock_transport {
+             | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..)))
+             | TransportError::OutboundStreamFailed(_)
+             | TransportError::OutboundStreamInvalidLength(..)
++            | TransportError::SendQueueFull(_)
+             | TransportError::Udp(UdpError(UdpErrorKind::IO(_)))
+             | TransportError::Other(_)
+             | TransportError::Udp(UdpError(UdpErrorKind::PubKeyDecryptionError(_)))
+@@ -4041,6 +4043,7 @@ pub mod mock_transport {
+             | TransportError::Udp(UdpError(UdpErrorKind::SendFailed(..)))
+             | TransportError::OutboundStreamFailed(_)
+             | TransportError::OutboundStreamInvalidLength(..)
++            | TransportError::SendQueueFull(_)
+             | TransportError::Udp(UdpError(UdpErrorKind::IO(_)))
+             | TransportError::Other(_)
+             | TransportError::Udp(UdpError(UdpErrorKind::PubKeyDecryptionError(_)))
+```
+
+**File**: `crates/core/src/transport/peer_connection.rs` (modified, +42/-116)
+```diff
+@@ -23,8 +23,12 @@ use tracing::{Instrument, span};
+ 
+ pub(super) mod inbound_budget;
+ mod inbound_concurrency;
++mod inbound_dispatch;
+ mod inbound_stream;
+ mod outbound_stream;
++// Built only by its tests until the connect op uses it (#5940, A5b).
++#[cfg_attr(not(test), allow(dead_code))]
++mod native_connection;
+ pub(super) use outbound_stream::embeds_metadata;
+ mod peer_identity;
+ pub(crate) mod piped_stream;
+@@ -483,19 +487,10 @@ pub struct PeerConnection<S = super::UdpSocket, T: TimeSource = RealTime> {
+     streaming_handles: crate::util::DecisionHashMap<StreamId, (streaming::StreamHandle, u64)>,
+     /// Time source for deterministic simulation support
+     time_source: T,
+-    /// Registry that receives inbound operations streams, handling the race
+-    /// between stream fragments and metadata messages
+-    /// (RequestStreaming/ResponseStreaming).
+-    /// Set by the node layer after connection establishment.
+-    inbound_stream_registry: Option<std::sync::Arc<dyn super::InboundStreamRegistry>>,
+-    /// LRU cache of recently dispatched metadata hashes (capacity 1000), used to dedup
+-    /// embedded-metadata-in-fragment-#1 against the separate ShortMessage.
+-    ///
+-    /// Uses `DefaultHasher` (not cryptographic). A hash collision would cause
+-    /// a silent metadata drop, leading to a 60-second operation timeout for
+-    /// the affected stream -- acceptable given the small working set and
+-    /// negligible collision probability. See issue #3317.
+-    dispatched_msg_hashes: lru::LruCache<u64, ()>,
++    /// What this connection has handed to the node: the inbound stream
++    /// registry, the hashes of dispatched messages and the completed stream
++    /// ids (`inbound_dispatch`).
++    dispatch: inbound_dispatch::InboundDispatch,
+     /// Refused stream ids, so a refused stream's later fragments are dropped
+     /// rather than admitted part-way through (see
+     /// `inbound_budget::RefusedStreams`).
+@@ -505,9 +500,6 @@ pub struct PeerConnection<S = super::UdpSocket, T: TimeSource = RealTime> {
+     closed_by_stream_refusals: bool,
+     /// Rate limiter for the refused-stream warning.
+     refusal_log: RefusalLog,
+-    /// Recently completed (and released) inbound streams, so a late
+-    /// retransmission does not start one again.
+-    completed_inbound_streams: lru::LruCache<StreamId, ()>,
+     /// Tokens of the legacy streams in `inbound_streams`, to cancel them.
+     legacy_tokens: crate::util::DecisionHashMap<StreamId, Arc<inbound_budget::LegacyStreamToken>>,
+     /// This connection's inbound stream outcomes, indexed by
+@@ -581,7 +573,7 @@ impl<S, T: TimeSource> Drop for PeerConnection<S, T> {
+         // retired, too) would otherwise wait out the orphan timeout with
+         // nothing accounting for them. Both paths' streams: a QUIC path's reader
+         // cancels its own streams but not a complete one.
+-        if let Some(registry) = &self.inbound_stream_registry {
++        if let Some(registry) = &self.dispatch.inbound_stream_registry {
+             // Collected first, so the shared budget is not locked while the
+             // registry runs.
+             let live: Vec<_> = self.inbound_budget.lock().live_buffer_streams().collect();
+@@ -1139,14 +1131,7 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
+     /// A Short from a QUIC path, as the UDP arm takes a `ShortMessage`, with its
+     /// charge released at once. It moves neither of the UDP session's clocks.
+     fn take_quic_short(&mut self, short: super::quic::path::InboundShort) -> Vec<u8> {
+-        let (payload, key) = short.into_parts();
+-        if let Some(key) = key {
+-            self.inbound_budget.lock().release_if_gone(key);
+-        }
+-        let bytes = Vec::from(payload);
+-        // Only so that the same metadata embedded in a stream is suppressed; a
+-        // Short itself is always delivered, as on UDP.
+-        self.dispatched_msg_hashes.put(Self::msg_hash(&bytes), ());
++        let bytes = self.dispatch.take_short(short, &self.inbound_budget);
+         self.note_quic_delivery(|| {
+             let decoded = bincode::deserialize::<crate::message::NetMessage>(&bytes).is_ok();
+             format!(
+@@ -1171,70 +1156,24 @@ impl<S: super::Socket, T: TimeSource> PeerConnection<S, T> {
+         &mut self,
+         arrival: super::quic::path::InboundStreamArrival,
+     ) -> Option<Vec<u8>> {
+-        let super::quic::path::InboundStreamArrival {
+-            stream_id,
+-            metadata,
+-            handle,
+-        } = arrival;
+-        // The stream's payload length, counted here because the reader task
+-        // completes the stream later, with no way to count it from there.
+-        // UDP counts at completion; this counts at arrival, and a stream that
+-        // later fails is counted too.
+-        let total = handle.total_bytes();
+-        let seen_on_udp = self
+-            .inbound_budget
+-            .lock()
+-            .contains(InboundKey::Udp(stream_id));
+-        // An id i
+```
+
+**File**: `crates/core/src/transport/peer_connection/ack_policy_tests/quic_data.rs` (modified, +2/-2)
+```diff
+@@ -152,7 +152,7 @@ fn a_short_and_a_stream_on_a_path_arrive_as_the_udp_ones_do() {
+                 .send_stream(id, Some(b"announce"), payload.clone())
+                 .await;
+             assert_eq!(rig.e.conn.recv().await.unwrap(), b"announce");
+-            assert!(rig.e.conn.completed_inbound_streams.contains(&id));
++            assert!(rig.e.conn.dispatch.completed_inbound_streams.contains(&id));
+             assert_eq!(rig.budget().0, 1, "the consumer's to hold");
+             let stream = claim((&rig.registry, rig.peer_addr()), id).await;
+             assert_eq!(stream.assemble().await.unwrap(), payload.to_vec());
+@@ -521,7 +521,7 @@ fn a_stream_with_no_registry_is_cancelled_and_its_charge_released() {
+         "quic-data-noregistry",
+         QuicPathLimits::DEFAULT,
+         |mut rig| async move {
+-            rig.e.conn.inbound_stream_registry = None;
++            rig.e.conn.dispatch.inbound_stream_registry = None;
+             rig.path
+                 .send_stream(StreamId::next(), Some(b"meta"), bytes_of(50))
+                 .await;
+```
+
+**File**: `crates/core/src/transport/peer_connection/inbound_dispatch.rs` (added, +149/-0)
+```diff
+@@ -0,0 +1,149 @@
++//! What a connection has handed to the node, kept to refuse repeats: the
++//! registry that receives its inbound streams, the hashes of the messages it
++//! dispatched, and the ids of the streams it completed. Moved out of
++//! `PeerConnection` unchanged, so a connection with no UDP session can keep
++//! the same record.
++
++use std::net::SocketAddr;
++
++use super::StreamId;
++use super::inbound_budget::{InboundKey, SharedInboundBudget};
++use crate::transport::quic::path::{InboundShort, InboundStreamArrival};
++
++/// What became of a stream that arrived on a QUIC path.
++pub(super) enum TakenStream {
++    /// Its id was in use on UDP or used before: cancelled and released.
++    IdInUse,
++    /// It ended while it waited, or there is no registry: cancelled and
++    /// released.
++    Dropped,
++    /// Registered with the node; `message` is its announcing message, unless
++    /// there was none or it was already dispatched.
++    Registered {
++        stream_id: StreamId,
++        message: Option<Vec<u8>>,
++    },
++}
++
++pub(super) struct InboundDispatch {
++    /// Registry that receives inbound operations streams, handling the race
++    /// between stream fragments and metadata messages
++    /// (RequestStreaming/ResponseStreaming).
++    /// Set by the node layer after connection establishment.
++    pub(super) inbound_stream_registry:
++        Option<std::sync::Arc<dyn crate::transport::InboundStreamRegistry>>,
++    /// LRU cache of recently dispatched metadata hashes (capacity 1000), used to dedup
++    /// embedded-metadata-in-fragment-#1 against the separate ShortMessage.
 +    ///
-+    /// The ack wait follows the path's round trip too: a stream's length at
-+    /// the credit rule's floor (`recycle::credit_floor_rate`, at least
-+    /// 16 KiB/s), when that is longer than its first age, so an honest slow
-+    /// path's stream is not reset while its acknowledgement is on the way.
-+    pub(crate) fn stream_deadlines(&self, len: u64) -> SendDeadlines {
-+        let deadlines = SendDeadlines::stream(len).with_gap(self.receiver_gap());
-+        let floor = recycle::credit_floor_rate(self.connection.inner().stats().path.rtt).max(1);
-+        let at_floor = Duration::
++    /// Uses `DefaultHasher` (not cryptographic). A hash collision would cause
++    /// a silent metadata drop, leading to a 60-second operation timeout for
++    /// the affected stream -- acceptable given the small working set and
++    /// negligible collision probability. See issue #3317.
++    pub(super) dispatched_msg_hashes: lru::LruCache<u64, ()>,
++    /// Recently completed (and released) inbound streams, so a late
++    /// retransmission does not start one again.
++    pub(super) completed_inbound_streams: lru::LruCache<StreamId, ()>,
++}
++
++impl InboundDispatch {
++    /// Compute a fast hash of the given bytes for dedup tracking.
++    pub(super) fn msg_hash(bytes: &[u8]) -> u64 {
++        use std::hash::{Hash, Hasher};
++        let mut h = std::collections::hash_map::DefaultHasher::new();
++        bytes.hash(&mut h);
++        h.finish()
++    }
++
++    /// Returns true if this message was already dispatched (is a duplicate).
++    /// Only used on the embedded-metadata-in-fragment-#1 path to suppress
++    /// duplicates when the same metadata was already dispatched as a ShortMessage.
++    pub(super) fn is_duplicate_dispatch(&mut self, bytes: &[u8]) -> bool {
++        self.dispatched_msg_hashes
++            .put(Self::msg_hash(bytes), ())
++            .is_some()
++    }
++
++    /// A Short taken from a QUIC path: its charge released and its hash
++    /// remembered. Moved from `PeerConnection::take_quic_short`.
++    pub(super) fn take_short(
++        &mut self,
++        short: InboundShort,
++        budget: &SharedInboundBudget,
++    ) -> Vec<u8> {
++        let (payload, key) = short.into_parts();
++        if let Some(key) = key {
++            budget.lock().release_if_gone(key);
++        }
++        let bytes = Vec::from(payload);
++        // Only so that the same metadata embedded in a stream is suppressed; a
++        // Short itself is always delivered, as on UDP.
++        self.dispatched_msg_hashes.put(Self::msg_hash(&bytes), ());
++        bytes
++    }
++
++    /// A stream arrival taken from a QUIC path. Moved from
++    /// `PeerConnection::take_quic_stream`; the caller records the outcome and
++    /// traces the delivery.
++    pub(super) fn take_stream(
++        &mut self,
++        arrival: InboundStreamArrival,
++        budget: &SharedInboundBudget,
++        remote_addr: SocketAddr,
++    ) -> TakenStream {
++        let InboundStreamArrival {
++            stream_id,
++            metadata,
++            handle,
++        } = arrival;
++        // The stream's payload length, counted here because the reader task
++        // completes the stream later, with no way to count it from there.
++        // UDP counts at completion; this counts at arrival, and a stream that
++        // later fails is counted too.
++        let total = handle.total_bytes();
++        let seen_on_udp = budget.lock().contains(InboundKey::Udp(stream_id));
++        // An id in use on UDP, or used before on either path: only a faulty peer
++        // or a bug sends one, and the shared budget bounds what it costs.
++        if seen_on_udp || self.completed_inbound_streams.contains(&stream_id) {
++            handle.cancel();
++            drop(handle);
++            budget.lock().release_if_gone(InboundKey::Quic(stream_id));
++            tracing::debug!(
++                peer_addr = %remote_addr,
++                stream_id = %stream_id,
++                see
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6213** (2026-11-13): fix(bin): run the node on a worker thread, not the main thread (@sanity)
+- **PR #6212** (2026-11-13): test(transport): keep the QUIC test pair alive in partially captured test bodies (@sanity)
+- **PR #6210** (2026-11-13): feat(transport): a QUIC-native connection as a PeerConnectionApi (@sanity)
+- **PR #6206** (2026-11-13): ci(release): refuse a live cut of the QUIC data ramp release far from T0 (@sanity)
 - **PR #6204** (2026-11-13): feat(quic): native setup with Hello exchange, punching and native ALPN (@sanity)
 - **PR #6203** (2026-11-12): feat(quic): native Hello frame, two close codes, reserved punch byte (@sanity)
-- **PR #6202** (2026-11-13): feat(transport): judge QUIC path liveness per connection, with a 2 h stream total and a dark-episode counter (@sanity)
-- **PR #6201** (2026-11-12): feat(transport): sum QUIC memory in the node aggregate; cap connections for it with data (@sanity)
-- **PR #6200** (2026-11-12): feat(connect): carry a QUIC-native offer and decision on the connect wire (@sanity)
-- **PR #6199** (2026-11-12): feat(telemetry): hourly join_versions census of gateway joiners and neighbours (@sanity)
 
 ---
 
@@ -2885,52 +2966,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. quic): native setup with Hello exchange, punching and native ALPN (#6204)
+## X. bin): run the node on a worker thread, not the main thread (#6213)
 
 **RULE**:
-When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/bin/freenet.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc2888b7`: quic): native setup with Hello exchange, punching and native ALPN (#6204). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7fcb4157`: bin): run the node on a worker thread, not the main thread (#6213). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/bin/freenet.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  no NEW_TOKEN tokens (Retry only), rustls ring, TLS 1.3, one ALPN per attempt
-  (freenet-quic/1 for an upgrade, freenet-quic/2 for a native connection; see
-  "QUIC-native setup"), no SNI, no
-    allow-set AND records the key and the connection's kind (QuicPeerPermit;
-    a second key for an address already held, or the same key for the other
-    kind, upgrade or native, is KeyConflict). accept() looks the key and kind
-    up by the attempt's (normalized) address and accepts with a per-attempt
-    server config whose TLS is pinned to the key and offers that kind's one
-    ALPN (Incoming::accept_with); an attempt
-#### QUIC-native setup (`quic/native/`, #5940 QUIC-native connect, A4)
-
-Built and tested, and unreachable by construction: `setup::connect_native`,
-`setup::accept_native` and the endpoint's native side (`native/endpoint.rs`:
-`allow_native_peer`, `dial_native`, `send_punch`) are
-`pub(in crate::transport::quic::native)`, and registering a native waiter is
-private to `setup`. Nothing outside `quic/native` can call them; A5 widens
-them in a visible diff. The connect op also gates on
-`operations::connect::native::NATIVE_DIAL_READY` (pinned false).
-
-```
-ALPN per attempt: an addre
+    // The node runs on a worker thread, never on the main thread. `block_on`
+    // polls its future on the calling thread, and the main thread's stack is
+    // fixed by the platform: 1 MiB on Windows, against 2 MiB for every thread
+    // std spawns. Polled there, the node's nested startup futures used most of
+    // it (about 900 KiB measured in a Linux debug build at the first event
+    // loop turn), within a few KiB of the Windows limit: a branch that grew
+    // those frames slightly overflowed at startup on Windows. A spawned task
+    // is polled by a worker, so the main thread only waits on the join
+    // handle. `tests/main_thread_stack.rs` pins it by starting the node with
+    // a small main-thread stack and workers at their production size.
+    //
+    // The root future is now an ordinary task on a worker, so synchronous
+    // work on its path (config build, logger setup, node construction) holds
+    // a worker while it runs. With `worker_threads` set to the CPU count, a
+    // 1-vCPU host has one worker, so a long blocking call here would stall
+    // the whole runtime. Nothing on that path blocks for long today; anything
+    // added that does belongs in `spawn_
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  no NEW_TOKEN tokens (Retry only), rustls ring, TLS 1.3, fixed ALPN, no SNI, no
-    allow-set AND records the key (QuicPeerPermit; a second key for an
-    address already held is KeyConflict). accept() looks the key up by the
-    attempt's (normalized) address and accepts with a per-attempt server
-    config whose TLS is pinned to it (Incoming::accept_with); an attempt
+    rt.block_on(async move {
+    })?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc2888b7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7fcb4157` are properly handled with clean fallback behavior.

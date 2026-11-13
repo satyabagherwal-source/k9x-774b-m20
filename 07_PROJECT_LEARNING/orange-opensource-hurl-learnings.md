@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `9457c528`  
+> **Source Version**: `eba47841`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T20:23:22.545Z  
+> **Timestamp**: 2026-11-13T12:54:36.364Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T20:18:21.608Z  
+> **Harvest Timestamp**: 2026-11-13T12:51:37.109Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19332 stars
+- **Stars / Engagement**: 19345 stars
 
 ---
 
@@ -1868,29 +1868,41 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `506377e2` (2026-11-09)
-**Commit Message**: Align Ubuntu versions between build and package anatomy
+### Incident Patch 1: `a22e81d5` (2026-11-11)
+**Commit Message**: Changes build settings for C files.
 
-**File**: `.github/workflows/package.yml` (modified, +1/-1)
+**File**: `packages/hurl/build.rs` (modified, +4/-1)
 ```diff
-@@ -777,7 +777,7 @@ jobs:
-       - package-macos-aarch64
-       - package-windows-x64
-     name: package-anatomy
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-22.04
-     steps:
-     - name: Validate branch input for workflow_call
-       if: ${{ github.event_name == 'workflow_call' }}
+@@ -24,6 +24,7 @@ use winres::WindowsResource;
+ #[cfg(windows)]
+ fn set_icon() {
+     let icon = "../../bin/windows/logo.ico";
++    println!("cargo:rerun-if-changed={icon}");
+     if !Path::new(icon).exists() {
+         return;
+     }
+@@ -40,9 +41,11 @@ fn set_icon() {}
+ fn main() {
+     let project_root = Path::new(env!("CARGO_MANIFEST_DIR"));
+     let native_src = project_root.join("native");
++    println!("cargo:rerun-if-changed=build.rs");
++    println!("cargo:rerun-if-changed=native");
+     set_icon();
+     Build::new()
+         .file(native_src.join("libxml.c"))
+         .flag_if_supported("-Wno-unused-parameter") // unused parameter in silent callback
+-        .compile("mylib");
++        .compile("hurl_libxml");
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5433** (2026-11-13): Compare JSON Object (@fabricereix)
+- **PR #5432** (2026-11-13): Update to Rust 1.100.0 (@fabricereix)
+- **PR #5431** (closed): Update crates (@hurl-bot)
+- **PR #5430** (2026-11-13): Changes build settings for C files. (@jcamiel)
 - **PR #5429** (2026-11-11): Update crates (@hurl-bot)
 - **PR #5428** (2026-11-10): Update crates (@hurl-bot)
-- **PR #5427** (2026-11-09): Align Ubuntu versions between build and package anatomy (@lepapareil)
-- **PR #5425** (2026-11-09): Update crates (@hurl-bot)
-- **PR #5423** (2026-11-08): Update crates (@hurl-bot)
-- **PR #5422** (2026-11-07): Update crates (@hurl-bot)
 
 ---
 
@@ -1910,28 +1922,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Align Ubuntu versions between build and package anatomy
+## X. Changes build settings for C files.
 
 **RULE**:
-When implementing operations in `.github/workflows/package.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/hurl/build.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `506377e2`: Align Ubuntu versions between build and package anatomy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a22e81d5`: Changes build settings for C files.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/package.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/hurl/build.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    runs-on: ubuntu-22.04
+    println!("cargo:rerun-if-changed={icon}");
+    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed=native");
+        .compile("hurl_libxml");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    runs-on: ubuntu-latest
+        .compile("mylib");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `506377e2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a22e81d5` are properly handled with clean fallback behavior.

@@ -295,8 +295,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
     "sourceVersion": "hf-meta-llama-llama-3.1-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "05584a521ee2d79d55cad92615372c0d594cd925994bab693271e7b6673e9e7a",
-    "lastHarvestedAt": "2026-11-08T11:59:52.763Z",
+    "contentHash": "e3cbcf3eae4f0ac8c19da7535440cfd39794a345a0f4e04700e4e35733b5877e",
+    "lastHarvestedAt": "2026-11-13T12:51:52.346Z",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct"
   },
   "hf-xingchen-agi-teleocr": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "dbdaf790",
+    "sourceVersion": "23080e91",
     "license": "NOASSERTION",
-    "contentHash": "324d77f64cecb73027c33f733bf00f455ae2f7509f6e6ac8221f25e72d0a55ce",
-    "lastHarvestedAt": "2026-11-13T06:33:35.818Z",
+    "contentHash": "6167bc4a0e87f9db48ed8ce62458fd293e6454b0604c564b7c5de1ef762738f0",
+    "lastHarvestedAt": "2026-11-13T12:54:40.249Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "9457c528",
+    "sourceVersion": "eba47841",
     "license": "Apache-2.0",
-    "contentHash": "11b5bd09de4a6a03e63883ff86507a1f99d2ed5ac4a88aab47ba89f7df2a651c",
-    "lastHarvestedAt": "2026-11-11T20:23:35.896Z",
+    "contentHash": "1aaa6cad4a3452bab5d7e76540d5caf32d04cd3b683319b4822ce8790867a5ce",
+    "lastHarvestedAt": "2026-11-13T12:54:48.800Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {

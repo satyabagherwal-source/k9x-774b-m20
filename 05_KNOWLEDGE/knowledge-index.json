@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T12:42:27.595Z",
+  "last_updated": "2026-11-13T12:54:48.660Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16152,8 +16152,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "dbdaf790",
-      "content_hash": "324d77f64cecb73027c33f733bf00f455ae2f7509f6e6ac8221f25e72d0a55ce",
+      "source_version": "23080e91",
+      "content_hash": "6167bc4a0e87f9db48ed8ce62458fd293e6454b0604c564b7c5de1ef762738f0",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -16240,6 +16240,11 @@
         {
           "number": null,
           "title": "quic): native setup with Hello exchange, punching and native ALPN (#6204)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "bin): run the node on a worker thread, not the main thread (#6213)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -16458,7 +16463,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T06:33:35.648Z",
+      "verified_at": "2026-11-13T12:54:40.102Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -29335,7 +29340,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "05584a521ee2d79d55cad92615372c0d594cd925994bab693271e7b6673e9e7a",
+      "content_hash": "e3cbcf3eae4f0ac8c19da7535440cfd39794a345a0f4e04700e4e35733b5877e",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -29530,7 +29535,7 @@
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf"
       ],
-      "verified_at": "2026-11-08T11:59:52.642Z",
+      "verified_at": "2026-11-13T12:51:52.196Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51618,8 +51623,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "9457c528",
-      "content_hash": "11b5bd09de4a6a03e63883ff86507a1f99d2ed5ac4a88aab47ba89f7df2a651c",
+      "source_version": "eba47841",
+      "content_hash": "1aaa6cad4a3452bab5d7e76540d5caf32d04cd3b683319b4822ce8790867a5ce",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -51636,6 +51641,11 @@
         {
           "number": null,
           "title": "Align Ubuntu versions between build and package anatomy",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Changes build settings for C files.",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -51709,7 +51719,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T20:23:35.746Z",
+      "verified_at": "2026-11-13T12:54:48.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T12:42:27.723Z",
+  "last_updated": "2026-11-13T12:54:48.823Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -335,14 +335,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-      "content_hash": "05584a521ee2d79d55cad92615372c0d594cd925994bab693271e7b6673e9e7a",
-      "verified_at": "2026-11-08T11:59:52.785Z",
+      "content_hash": "e3cbcf3eae4f0ac8c19da7535440cfd39794a345a0f4e04700e4e35733b5877e",
+      "verified_at": "2026-11-13T12:51:52.356Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T11:59:52.785Z"
+      "last_updated": "2026-11-13T12:51:52.356Z"
     },
     "XingChen-AGI/TeleOCR": {
       "repository": "XingChen-AGI/TeleOCR",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "324d77f64cecb73027c33f733bf00f455ae2f7509f6e6ac8221f25e72d0a55ce",
-      "verified_at": "2026-11-13T06:33:35.839Z",
+      "content_hash": "6167bc4a0e87f9db48ed8ce62458fd293e6454b0604c564b7c5de1ef762738f0",
+      "verified_at": "2026-11-13T12:54:40.259Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T06:33:35.839Z"
+      "last_updated": "2026-11-13T12:54:40.259Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "11b5bd09de4a6a03e63883ff86507a1f99d2ed5ac4a88aab47ba89f7df2a651c",
-      "verified_at": "2026-11-11T20:23:35.904Z",
+      "content_hash": "1aaa6cad4a3452bab5d7e76540d5caf32d04cd3b683319b4822ce8790867a5ce",
+      "verified_at": "2026-11-13T12:54:48.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T20:23:35.904Z"
+      "last_updated": "2026-11-13T12:54:48.823Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",

@@ -9476,3 +9476,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-1551b43d` | `project://hf-moonshotai-kimi-k3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | 2026-11-13T12:33:10.578Z |
 | `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-13T12:42:27.712Z |
 | `learn-dom-d-73191b1b` | `project://hf-stabilityai-stable-diffusion-xl-base-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | 2026-11-13T12:42:51.114Z |
+| `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-13T12:51:52.346Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `23080e91` | Multi-dimensional audit evidence | 2026-11-13T12:54:40.249Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `eba47841` | Multi-dimensional audit evidence | 2026-11-13T12:54:48.800Z |
+| `learn-dom-j-782c1a9d` | `project://hf-meta-llama-llama-3.1-8b-instruct` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | 2026-11-13T12:55:09.330Z |

@@ -9467,3 +9467,7 @@
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T12:33:10.578Z` | `hf-moonshotai-kimi-k3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1551B43D` [Domain D] | Yes (`ba694693...`) |
 | `CYCLE-20261113-VHTN` | `2026-11-13T12:42:27.707Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | Yes (`09ee4bfb...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T12:42:51.114Z` | `hf-stabilityai-stable-diffusion-xl-base-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-73191B1B` [Domain D] | Yes (`2ce51ba3...`) |
+| `CYCLE-20261113-7LHY` | `2026-11-13T12:51:52.342Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | Yes (`e3cbcf3e...`) |
+| `CYCLE-20261113-B71X` | `2026-11-13T12:54:40.245Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6167bc4a...`) |
+| `CYCLE-20261113-BDNG` | `2026-11-13T12:54:48.796Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`1aaa6cad...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T12:55:09.330Z` | `hf-meta-llama-llama-3.1-8b-instruct` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-782C1A9D` [Domain J] | Yes (`d43a7ca0...`) |

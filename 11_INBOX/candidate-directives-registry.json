@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T12:42:51.300Z",
+  "last_updated": "2026-11-13T12:55:09.358Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8768,6 +8768,24 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C4F7AC-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-E554A4",
+      "directive_title": "Changes build settings for C files.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "orange-opensource-hurl",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E554A4-changes-build-settings-for-c-files-.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-312633",
+      "directive_title": "bin): run the node on a worker thread, not the main thread (#6213)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "freenet-freenet-core",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-312633-bin-run-the-node-on-a-worker-thread-not-.md",
       "staged_date": "2026-11-13"
     }
   ]
