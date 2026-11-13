@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T21:59:18.754Z",
+  "last_updated": "2026-11-13T22:17:39.840Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -995,14 +995,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-minimax-h3",
-      "content_hash": "87e7cbc4a975c14e504e1afb73210cad4e823fa7df317ab889b140222ca86d94",
-      "verified_at": "2026-11-08T20:52:55.327Z",
+      "content_hash": "aa0ce47f5c4b65f0353c678d21805a65a9282700fa5a636b094650b46875f96e",
+      "verified_at": "2026-11-13T22:17:31.431Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T20:52:55.327Z"
+      "last_updated": "2026-11-13T22:17:31.431Z"
     },
     "timm/mobilenetv3_small_100.lamb_in1k": {
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "ef574eabc189a7fc257d741766b32e159ca7272a2f166d3e6c4620b74ded62b9",
-      "verified_at": "2026-11-12T23:55:04.795Z",
+      "content_hash": "d455c12097f66dce150159bccd316a5ef9e63fa2633a01f703ef5f485d0440a4",
+      "verified_at": "2026-11-13T22:17:39.839Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T23:55:04.795Z"
+      "last_updated": "2026-11-13T22:17:39.839Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",
@@ -17511,14 +17511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vercel-labs-agent-desktop",
-      "content_hash": "e924ac6473db9f0c0be8848a56e7c37fdb3142e6f8410297f9f228970f6032b5",
-      "verified_at": "2026-11-12T11:18:33.455Z",
+      "content_hash": "93d404a51ebf3649bbb99647ce59f1b26aaadcc2d64b9a14598df3c12e3b90f8",
+      "verified_at": "2026-11-13T22:17:32.224Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T11:18:33.455Z"
+      "last_updated": "2026-11-13T22:17:32.224Z"
     },
     "Efficient-Large-Model/Open-H3-Regenerate-2K": {
       "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",

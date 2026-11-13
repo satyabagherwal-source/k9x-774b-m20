@@ -9685,3 +9685,7 @@ Every entry in this ledger must capture:
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `831a1ce2` | Multi-dimensional audit evidence | 2026-11-13T21:58:48.274Z |
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-11-13T21:59:18.743Z |
 | `learn-dom-d-6f87f39b` | `project://hf-amazon-chronos-2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | 2026-11-13T21:59:57.441Z |
+| `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-13T22:17:31.420Z |
+| `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `b0b7277b` | Multi-dimensional audit evidence | 2026-11-13T22:17:32.214Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `8c5b0b9d` | Multi-dimensional audit evidence | 2026-11-13T22:17:39.829Z |
+| `learn-dom-d-9a51060d` | `project://hf-comfy-org-minimax-h3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | 2026-11-13T22:18:20.347Z |

@@ -765,8 +765,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "87e7cbc4a975c14e504e1afb73210cad4e823fa7df317ab889b140222ca86d94",
-    "lastHarvestedAt": "2026-11-08T20:52:55.318Z",
+    "contentHash": "aa0ce47f5c4b65f0353c678d21805a65a9282700fa5a636b094650b46875f96e",
+    "lastHarvestedAt": "2026-11-13T22:17:31.420Z",
     "learningId": "learn-huggingface-comfy-org-minimax-h3"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "f00b7006",
+    "sourceVersion": "8c5b0b9d",
     "license": "Apache-2.0",
-    "contentHash": "ef574eabc189a7fc257d741766b32e159ca7272a2f166d3e6c4620b74ded62b9",
-    "lastHarvestedAt": "2026-11-12T23:55:04.785Z",
+    "contentHash": "d455c12097f66dce150159bccd316a5ef9e63fa2633a01f703ef5f485d0440a4",
+    "lastHarvestedAt": "2026-11-13T22:17:39.829Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -11633,10 +11633,10 @@
     "repository": "vercel-labs/agent-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/vercel-labs/agent-desktop",
-    "sourceVersion": "54855b62",
+    "sourceVersion": "b0b7277b",
     "license": "Apache-2.0",
-    "contentHash": "e924ac6473db9f0c0be8848a56e7c37fdb3142e6f8410297f9f228970f6032b5",
-    "lastHarvestedAt": "2026-11-12T11:18:33.439Z",
+    "contentHash": "93d404a51ebf3649bbb99647ce59f1b26aaadcc2d64b9a14598df3c12e3b90f8",
+    "lastHarvestedAt": "2026-11-13T22:17:32.214Z",
     "learningId": "learn-github-vercel-labs-agent-desktop"
   },
   "hf-efficient-large-model-open-h3-regenerate-2k": {

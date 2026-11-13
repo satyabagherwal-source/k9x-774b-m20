@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T21:59:58.495Z",
+  "last_updated": "2026-11-13T22:18:21.140Z",
   "directives": [
     {
       "id": "CD-001",
@@ -10623,6 +10623,46 @@
       "source_repo": "faridsafi-react-native-gifted-chat",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A8F6FA-android-system-bars-after-leaving-the-ch.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-FAFK",
+      "directive_title": "keep a started sandbox running after its launcher exits",
+      "source_repo": "vercel-labs-agent-desktop-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-FAFK-keep-a-started-sandbox-running-after-its-launcher-exits.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-G3EX",
+      "directive_title": "Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, r",
+      "source_repo": "nginx-kubernetes-ingress-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-G3EX-restore-nightly-regression-signal-fix-zone-sync-configmap-leak-lts-checkout-r.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-2A8223",
+      "directive_title": "keep a started sandbox running after its launcher exits",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vercel-labs-agent-desktop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2A8223-keep-a-started-sandbox-running-after-its.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-D4E989",
+      "directive_title": "Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, r",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nginx-kubernetes-ingress",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D4E989-restore-nightly-regression-signal-fix-zo.md",
       "staged_date": "2026-11-13"
     }
   ]

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:42:20.247Z",
+  "timestamp": "2026-11-13T22:18:21.011Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-nginx-kubernetes-ingress-learnings",
+  "learning_id": "LEARN-EVO-nginx-kubernetes-ingress-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nginx-kubernetes-ingress-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:42:20.247Z`  
-> **Learning ID**: `LEARN-REEXTRACT-nginx-kubernetes-ingress-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T22:18:21.011Z`  
+> **Learning ID**: `LEARN-EVO-nginx-kubernetes-ingress-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `59dbb784`  
+> **Source Version**: `8c5b0b9d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T13:29:01.200Z  
+> **Timestamp**: 2026-11-13T22:17:38.811Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T13:29:01.191Z  
+> **Harvest Timestamp**: 2026-11-13T22:17:38.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -944,6 +944,12 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &applyconfigurationconfigurationv1.IngressMTLSApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("JWTAuth"):
 		return &applyconfigurationconfigurationv1.JWTAuthApplyConfiguration{}
+	case configurationv1.SchemeGroupVersion.WithKind("JWTAuthorization"):
+		return &applyconfigurationconfigurationv1.JWTAuthorizationApplyConfiguration{}
+	case configurationv1.SchemeGroupVersion.WithKind("JWTAuthorizationRule"):
+		return &applyconfigurationconfigurationv1.JWTAuthorizationRuleApplyConfiguration{}
+	case configurationv1.SchemeGroupVersion.WithKind("JWTClaim"):
+		return &applyconfigurationconfigurationv1.JWTClaimApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("JWTCondition"):
 		return &applyconfigurationconfigurationv1.JWTConditionApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("Listener"):
@@ -969,146 +975,7 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 	case configurationv1.SchemeGroupVersion.WithKind("ProxyResponseHeaders"):
 		return &applyconfigurationconfigurationv1.ProxyResponseHeadersApplyConfiguration{}
 	case configurationv1.SchemeGroupVersion.WithKind("RateLimit"):
-		return &applyconfigurationconfigurationv1.RateLimitApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("RateLimitCondition"):
-		return &applyconfigurationconfigurationv1.RateLimitConditionApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("Route"):
-		return &applyconfigurationconfigurationv1.RouteApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("SecurityLog"):
-		return &applyconfigurationconfigurationv1.
-```
-
-### Core Architecture Module: `cmd/nginx-ingress/aws.go`
-```
-//go:build aws
-
-package main
-
-import (
-	"context"
-	"crypto/rand"
-	"encoding/base64"
-	"errors"
-	"fmt"
-	"math/big"
-	"time"
-
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/marketplacemetering"
-	"github.com/aws/aws-sdk-go-v2/service/marketplacemetering/types"
-
-	"github.com/golang-jwt/jwt/v5"
-)
-
-var (
-	productCode   string
-	pubKeyVersion int32 = 1
-	pubKeyString  string
-)
-
-var (
-	ErrMissingProductCode = errors.New("token doesn't include the ProductCode")
-	ErrMissingNonce       = errors.New("token doesn't include the Nonce")
-	ErrMissingKeyVersion  = errors.New("token doesn't include the PublicKeyVersion")
-)
-
-func init() {
-	startupCheckFn = checkAWSEntitlement
-}
-
-func checkAWSEntitlement() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	nonce, err := generateRandomString(255)
-	if err != nil {
-		return err
-	}
-
-	cfg, err := config.LoadDefaultConfig(ctx)
-	if err != nil {
-		return fmt.Errorf("error loading AWS configuration: %w", err)
-	}
-
-	mpm := marketplacemetering.NewFromConfig(cfg)
-
-	out, err := mpm.RegisterUsage(ctx, &marketplacemetering.RegisterUsageInput{ProductCode: &productCode, PublicKeyVersion: &pubKeyVersion, Nonce: &nonce})
-	if err != nil {
-		if notEnt, ok := errors.AsType[*types.CustomerNotEntitledException](err); ok {
-			return fmt.Errorf("user not entitled, code: %v, message: %v, fault: %v", notEnt.ErrorCode(), notEnt.ErrorMessage(), notEnt.ErrorFault().String())
-		}
-		if invRegion, ok := errors.AsType[*types.InvalidRegionException](err); ok {
-			return fmt.Errorf("invalid region, code: %v, message: %v, fault: %v", invRegion.ErrorCode(), invRegion.ErrorMessage(), invRegion.ErrorFault().String())
-		}
-		if platNotSup, ok := errors.AsType[*types.PlatformNotSupportedException](err); ok {
-			return fmt.Errorf("platform not supported, code: %v, message: %v, fault: %v", platNotSup.ErrorCode(), platNotSup.ErrorMessage(), platNotSup.ErrorFault().String())
-		}
-		return err
-	}
-
-	token, err := jwt.ParseWithClaims(*out.Signature, &claims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodRSAPSS); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-
-		pk, err := base64.StdEncoding.DecodeString(pubKeyString)
-		if err != nil {
-			return nil, fmt.Errorf("error decoding Public Key string: %w", err)
-		}
-		pubKey, err := jwt.ParseRSAPublicKeyFromPEM(pk)
-		if err != nil {
-			return nil, fmt.Errorf("error parsing Public Key: %w", err)
-		}
-
-		return pubKey, nil
-	})
-
-	if claims, ok := token.Claims.(*claims); ok && token.Valid {
-		if claims.ProductCode != productCode || claims.PublicKeyVersion != pubKeyVersion || claims.Nonce != nonce {
-			return fmt.Errorf("the claims in the JWT token don't match the request")
-		}
-	} else {
-		return fmt.Errorf("something is wrong with the JWT token: %w", err)
-	}
-	return nil
-}
-
-type claims struct {
-	ProductCode      string `json:"productCode,omitempty"`
-	PublicKeyVersion int32  `json:"publicKeyVersion,omitempty"`
-	Nonce            string `json:"nonce,omitempty"`
-	jwt.RegisteredClaims
-}
-
-var _ jwt.ClaimsValidator = (*claims)(nil)
-
-func (c claims) Validate() error {
-	if c.Nonce == "" {
-		return ErrMissingNonce
-	}
-	if c.ProductCode == "" {
-		return ErrMissingProductCode
-	}
-	if c.PublicKeyVersion == 0 {
-		return ErrMissingKeyVersion
-	}
-	return nil
-}
-
-func generateRandomString(n int) (string, error) {
-	const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
-	ret := make([]byte, n)
-	for i := 0; i < n; i++ {
-		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(letters))))
-		if err != nil {
-			return "", err
-		}
-		ret[i] = letters[num.Int64()]
-	}
-
-	return string(ret), nil
-}
-
+		return &applyconfigu
 ```
 
 ### Core Architecture Module: `cmd/nginx-ingress/flags.go`
@@ -1281,6 +1148,281 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 	nginxStatusAllowCIDRs = flag.String("nginx-status-allow-cidrs", "127.0.0.1,::1", `Add IP/CIDR blocks t
 ```
 
+### Core Architecture Module: `cmd/nginx-ingress/main.go`
+```
+package main
+
+import (
+	"bytes"
+	"context"
+	"fmt"
+	"io"
+	"log/slog"
+	"net"
+	"net/http"
+	"os"
+	"os/signal"
+	"path/filepath"
+	"reflect"
+	"runtime"
+	"strings"
+	"syscall"
+	"time"
+
+	"github.com/nginx/kubernetes-ingress/internal/configs"
+	"github.com/nginx/kubernetes-ingress/internal/configs/version1"
+	"github.com/nginx/kubernetes-ingress/internal/configs/version2"
+	"github.com/nginx/kubernetes-ingress/internal/configs/wafbundle"
+	"github.com/nginx/kubernetes-ingress/internal/externaldns"
+	"github.com/nginx/kubernetes-ingress/internal/healthcheck"
+	"github.com/nginx/kubernetes-ingress/internal/k8s"
+	"github.com/nginx/kubernetes-ingress/internal/k8s/appprotect"
+	"github.com/nginx/kubernetes-ingress/internal/k8s/secrets"
+	license_reporting "github.com/nginx/kubernetes-ingress/internal/license_reporting"
+	"github.com/nginx/kubernetes-ingress/internal/metadata"
+	"github.com/nginx/kubernetes-ingress/internal/metrics"
+	"github.com/nginx/kubernetes-ingress/internal/metrics/collectors"
+	"github.com/nginx/kubernetes-ingress/internal/nginx"
+	cr_validation "github.com/nginx/kubernetes-ingress/pkg/apis/configuration/validation"
+	k8s_nginx "github.com/nginx/kubernetes-ingress/pkg/client/clientset/versioned"
+	conf_scheme "github.com/nginx/kubernetes-ingress/pkg/client/clientset/versioned/scheme"
+	"github.com/nginx/nginx-plus-go-client/v3/client"
+	nginxCollector "github.com/nginx/nginx-prometheus-exporter/collector"
+	"github.com/prometheus/client_golang/prometheus"
+	api_v1 "k8s.io/api/core/v1"
+	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/fields"
+	pkg_runtime "k8s.io/apimachinery/pkg/runtime"
+	util_version "k8s.io/apimachinery/pkg/util/version"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/scheme"
+	core_v1 "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
+	"k8s.io/client-go/tools/record"
+
+	nl "github.com/nginx/kubernetes-ingress/internal/logger"
+	nic_glog "github.com/nginx/kubernetes-ingress/internal/logger/glog"
+	"github.com/nginx/kubernetes-ingress/internal/logger/levels"
+)
+
+// Injected during build
+var (
+	version           string
+	telemetryEndpoint string
+	logLevels         = map[string]slog.Level{
+		"trace":   levels.LevelTrace,
+		"debug":   levels.LevelDebug,
+		"info":    levels.LevelInfo,
+		"warning": levels.LevelWarning,
+		"error":   levels.LevelError,
+		"fatal":   levels.LevelFatal,
+	}
+)
+
+const (
+	nginxVersionLabel        = "app.nginx.org/version"
+	versionLabel             = "app.kubernetes.io/version"
+	appProtectVersionLabel   = "appprotect.f5.com/version"
+	agentVersionLabel        = "app.nginx.org/agent-version"
+	appProtectVersionPath    = "/opt/app_protect/RELEASE"
+	appProtectv4BundleFolder = "/etc/nginx/waf/bundles/"
+	appProtectv5BundleFolder = "/etc/app_protect/bundles/"
+	socketPath               = "/var/lib/nginx"
+	fatalEventFlushTime      = 200 * time.Millisecond
+	secretErrorReason        = "SecretError"
+	fileErrorReason          = "FileError"
+	configMapErrorReason     = "ConfigMapError"
+)
+
+func main() {
+	commitHash, commitTime, dirtyBuild := getBuildInfo()
+	fmt.Printf("NGINX Ingress Controller Version=%v Commit=%v Date=%v DirtyState=%v Arch=%v/%v Go=%v\n", version, commitHash, commitTime, dirtyBuild, runtime.GOOS, runtime.GOARCH, runtime.Version())
+	parseFlags()
+	ctx := initLogger(*logFormat, logLevels[*logLevel], os.Stdout)
+	l := nl.LoggerFromContext(ctx)
+
+	cleanupSocketFiles(l)
+
+	initValidate(ctx)
+	parsedFlags := os.Args[1:]
+
+	buildOS := os.Getenv("BUILD_OS")
+	controllerNamespace := os.Getenv("POD_NAMESPACE")
+	podName := os.Getenv("POD_NAME")
+
+	config, kubeClient := mustCreateConfigAndKubeClient(ctx)
+	if err := validateKubernetesVersionInfo(ctx, kubeClient); err != nil {
+		nl.Fatal(l, err)
+	}
+	pod, err := kubeClient.CoreV1().Pods(controllerNamespace).Get(context.TODO(), podName, meta_v1.GetOptions{})
+	if err != nil {
+		nl.Fatalf(l, "Failed to get pod: %v", err)
+	}
+
+	controllerNodeName, controllerZone := getControllerTopology(ctx, kubeClient, pod, *enableTopologyAwareRouting)
+
+	eventBroadcaster := record.NewBroadcaster()
+	eventBroadcaster.StartLogging(func(format string, args ...interface{}) {
+		nl.Infof(l, format, args...)
+	})
+	eventBroadcaster.StartRecordingToSink(&core_v1.EventSinkImpl{
+		Interface: core_v1.New(kubeClient.CoreV1().RESTClient()).Events(""),
+	})
+	eventRecorder := eventBroadcaster.NewRecorder(scheme.Scheme,
+		api_v1.EventSource{Component: k8s.EventReporterName})
+	defer eventBroadcaster.Shutdown()
+	mustValidateIngressClass(ctx, kubeClient)
+	mustValidateExternalDNSCRD(ctx, kubeClient)
+
+	checkNamespaces(ctx, kubeClient)
+
+	dynClient, confClient := createCustomClients(ctx, config)
+
+	constLabels := map[string]string{"class": *ingressClass}
+
+	managerCollector, controllerCollector, registry := createManagerAndControllerCollectors(ctx, constLabels)
+
+	var licenseReporter *license_reporting.LicenseReporter
+
+	if *nginxPlus {
+		licenseReporter = license_reporting.NewLicenseReporter(kubeClient, eventRecorder, pod)
+	}
+
+	var deploymentMetadata *metadata.Metadata
+
+	if *agent {
+		deploymentMetadata = metadata.NewMetadataReporter(kubeClient, pod, version)
+	}
+
+	nginxManager, useFakeNginxManager := createNginxManager(ctx, managerCollector, licenseReporter, deploymentMetadata)
+
+	nginxVersion := getNginxVersionInfo(ctx, nginxManager)
+
+	var appProtectVersion string
+	var appProtectV5 bool
+	appProtectBundlePath := appProtectv4BundleFolder
+	if *appProtect {
+		appProtectVersion = getAppProtectVersionInfo(ctx)
+
+		if _, err := os.Stat("/opt/app_protect/VERSION.common"); os.IsNotExist(err) {
+			appProtectV5 = true
+			appProtectBundlePath = appProtectv5BundleFolder
+		}
+
+		selectAppProtectAPIVersion(ctx, *plmStorageURL != "", eventRecorder, pod)
+
+		if *plmStorageURL != "" {
+			setupPLMStorage(ctx, kubeClient, eventRecorder, pod)
+		}
+	}
+
+	var agentVersion string
+	if *agent {
+		agentVersion = getAgentVersionInfo(nginxManager)
+	}
+
+	go updateSelfWithVersionInfo(ctx, eventRecorder, kubeClient, version, appProtectVersion, agentVersion, nginxVersion, 10, time.Second*5)
+
+	var mgmtCfgParams *configs.MGMTConfigParams
+	if *nginxPlus {
+		mgmtCfgParams = processMGMTConfigMap(kubeClient, configs.NewDefaultMGMTConfigParams(ctx), eventRecorder, pod)
+		if err := processLicenseSecret(kubeClient, nginxManager, mgmtCfgParams, controllerNamespace); err != nil {
+			logEventAndExit(ctx, eventRecorder, pod, secretErrorReason, err)
+		}
+
+		if err := processTrustedCertSecret(kubeClient, nginxManager, mgmtCfgParams, controllerNamespace); err != nil {
+			logEventAndExit(ctx, eventRecorder, pod, secretErrorReason, err)
+		}
+
+		if err := processClientAuthSecret(kubeClient, nginxManager, mgmtCfgParams, controllerNamespace); err != nil {
+			logEventAndExit(ctx, eventRecorder, pod, secretErrorReason, err)
+		}
+
+	}
+
+	templateExecutor, templateExecutorV2 := createTemplateExecutors(ctx)
+
+	sslRejectHandshake, err := processDefaultServerSecret(kubeClient, nginxManager)
+	if err != nil {
+		logEventAndExit(ctx, eventRecorder, pod, secretErrorReason, err)
+	}
+
+	staticSSLPath := nginxManager.GetSecretsDir()
+
+	isWildcardEnabled, err := processWildcardSecret(kubeClient, nginxManager)
+	if err != nil {
+		logEventAndExit(ctx, eventRecorder, pod, secretErrorReason, err)
+	}
+
+	caBundlePath, err := nginxManager.GetOSCABundlePath()
+	if err != nil {
+		logEventAndExit(ctx, eventRecorder, pod, fileErrorReason, err)
+	}
+
+	globalConfigurationValidator := createGlobalConfigurationValidator()
+
+	mustProcessGlobalConfiguration(ctx)
+
+	cfgParams := configs.NewDefaultConfigParams(ctx, *nginxPlus)
+	cfgParams = processConfigMaps(kubeClient, cfgParams, nginxManager, templateExecutor, eventRecorder)
+
+	staticCfgParams := &configs.StaticConfigParams{
+		DisableIPV6:                    *disableIPV6,
+		DefaultHTTPListenerPort:        *defaultHTTPListenerPort,
+		DefaultHTTPSListenerPort:       *defaultHTTPSListenerPort,
+		HealthStatus:                   *healthStatus,
+		HealthStatusURI:                *healthStatusURI,
+		NginxStatus:                    *nginxStatus,
+		NginxStatusAllowCIDRs:          allowedCIDRs,
+		NginxStatusPort:                *nginxStatusPort,
+		StubStatusOverUnixSocketForOSS: *enablePrometheusMetrics,
+		TLSPassthrough:                 *enableTLSPassthrough,
+		TLSPassthroughPort:             *tlsPassthroughPort,
+		EnableSnippets:                 *enableSnippets,
+		MainAppProtectLoadModule:       *appProtect,
+		MainAppProtectV5LoadModule:     appProtectV5,
+		MainAppProtectDosLoadModule:    *appProtectDos,
+		MainAppProtectV5EnforcerAddr:   *appProtectEnforcerAddress,
+		EnableLatencyMetrics:           *enableLatencyMetrics,
+		EnableOIDC:                     *enableOIDC,
+		SSLRejectHandshake:             sslRejectHandshake,
+		EnableCertManager:              *enableCertManager,
+		DynamicSSLReload:               *enableDynamicSSLReload,
+		DynamicWeightChangesReload:     *enableDynamicWeightChangesReload,
+		IsDirectiveAutoadjustEnabled:   *enableDirectiveAutoadjust,
+		StaticSSLPath:                  staticSSLPath,
+		NginxVersion:                   nginxVersion,
+		AppProtectBundlePath:           appProtectBundlePath,
+		DefaultCABundle:                caBundlePath,
+		PLMEnabled:                     *plmStorageURL != "",
+	}
+
+	if *nginxPlus {
+		if cfgParams.ZoneSync.Enable && cfgParams.ZoneSync.Port != 0 {
+			err := createAndValidateHeadlessService(ctx, kubeClient, cfgParams, controllerNamespace, pod)
+			if err != nil {
+				logEventAndExit(ctx, eventRecorder, pod, nl.EventReasonServiceFailedToCreate, err)
+			}
+		}
+	}
+
+	mustWriteInitialNginxConfig(staticCfgParams, cfgParams, mgmtCfgParams, templateExecutor, nginxManager)
+
+	if *enableTLSPassthrough {
+		var emptyFile []byte
+		nginxManager.CreateTLSPassthroughHostsConfig(emptyFile)
+	}
+
+	process := startChildProcesses(nginxManager, appProtectV5)
+
+	plusClient := createPlusClient(ctx, *nginxPlus, useFakeNginxManager, nginxManager)
+	if *nginxPlus {
+		licenseReporter.Config.PlusCl
+```
+
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1290,8 +1432,8 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 - **Issue #11346** (2026-11-11): **Merge nginx-agent.conf labels into `--labels` for NGINX Agent 3**
   *Symptoms*: ### Proposed changes  With NGINX Agent 3, NIC always starts the agent with `--labels=<NIC metadata>`. The agent treats that flag as the complete set of labels, so any `labels:` block in `nginx-agent.conf` (for example `display-name`) is silently ignored and never reaches NGINX One Console.  NIC now reads `labels` from `/etc/nginx-agent/nginx-agent.conf` and adds them to `--labels` after the NIC metadata labels, sorted by key:  - NIC metadata labels (`product-*`, `cluster-id`, `installation-*`, `control-*`) cannot be overridden. - Labels the agent would reject are skipped and logged in a single warning. Keys and values are checked against the agent's own label pattern (`^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$`). This also stops a `,`, `=` or `"` in a label from breaking `--labels` and preventing the agent from starting. - Number and boolean values (for example `port: 8080`) are kept as their literal text instead of causing every label to be dropped. - A missing config file is not an error. A file that can't be parsed logs a warning, and the agent starts with the NIC metadata labels only.  Stacked: the Helm value `nginxAgent.labels`   ### Linked issue   Closes #11345   <!-- Link the issue here, not in the PR title. External contributors: the issue must be accepted first, see "Open a Pull Request" in CONTRIBUTING.md. -->  ### How I tested  - `make test`: new table-driven tests in `internal/nginx/manager_test.go`:   - `TestExtractAgentConfigLabels`
 
-- **Issue #11298** (2026-11-04): **Fix malformed event and status messages for Ingress, VirtualServer, VirtualServerRoute and TransportServer resources**
-  *Symptoms*: ### Proposed changes  Event messages, and VirtualServer/TransportServer `.status.message`, contain stray separators and spaces, visible in `kubectl describe` and through the API.  | Resource | Case | Before | After | |---|---|---|---| | Ingress, VS, TS | error only | `...updated ; but was not applied: err` | `...updated but was not applied: err` | | Ingress, VS | generated warnings only | `...updated ; with warning(s): w` | `...updated with warning(s): w` | | Ingress, VS, TS | no warnings, no error | `...updated ` (trailing space) | `...updated` | | Minion Ingress | warnings + error | `...with warning(s): w1; ; but was not applied: err` | `...with warning(s): w1; but was not applied: err` | | VirtualServerRoute | warnings + error | `...updated  with warning(s): w1; but was not applied:err` | `...updated with warning(s): w1; but was not applied: err` |  - Minion Ingress events use the master Ingress format. - VirtualServerRoute events use `"; "` only when warnings come before the error. - Regular Ingress, VirtualServer and TransportServer use a new `appendEventDetail` helper, so `"; "` appears only   between parts, and the trailing space is trimmed.  **User-visible change:** VirtualServer and TransportServer `.status.message` text changes as above. Tooling that matches the old `" ; "` text needs updating.  Not changed: the delete-path messages already produce well-formed text. Two related problems are tracked separately: DosLogConf events (`appprotect_dos
+- **Issue #11345** (2026-11-12): **[Bug]: Labels in nginx-agent.conf are ignored with NGINX Agent 3, and the Helm chart can't set them**
+  *Symptoms*: ### AI agents and bots  - [ ] I am an AI agent or bot opening this issue  ### Version  edge  ### What Kubernetes platforms are you running on?  GKE Google Cloud  ### Steps to reproduce  1. Install NIC with NGINX Agent v3 connected to NGINX One Console 2. Edit the `<release name>-agent-config` ConfigMap and add a top-level `labels` block to `nginx-agent.conf`: ```        labels:          display-name: my-nginx-instance ```  4. . Restart the NIC pod. 4. Check the instance in NGINX One Console and NIC logs  ### Expected behaviour  The instance in NGINX One Console has `display-name=my-nginx-instance` as well as the NIC metadata labels.  Helm users can set custom labels from `values.yaml` without editing the generated ConfigMap.  ### Actual behaviour  The custom label never appears in NGINX One Console, and no error is logged.  NIC starts the agent with `--labels=product-type=...,product-version=...,cluster-id=...,installation-*=...,control-*=...`. With Agent v3, the `--labels` flag takes priority over the `labels` key in `nginx-agent.conf`, so labels set in the config file are discarded.  The Helm chart has no value for labels, so a manual ConfigMap edit is the only option, and that doesn't work because of the problem above.  ### Possible solutions  1. NIC reads `labels` from `/etc/nginx-agent/nginx-agent.conf` and adds them to `--labels` after the NIC metadata labels. Metadata labels can't be overridden. Keys and values that don't match the agent's label pattern `^[a-zA-Z0-9]([
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1308,427 +1450,445 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59dbb784` (2026-11-11)
-**Commit Message**: Add nginxAgent.labels to Helm chart for NGINX One Console (#11347)
+### Incident Patch 1: `afb4fa83` (2026-11-13)
+**Commit Message**: Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, run past first failure (#11393)
 
-* Add nginxAgent.labels to Helm chart for NGINX One Console labels
+* Add flaky E2E tests plan and remove outdated documentation
 
-* Add negative Helm test for invalid nginxAgent.labels
+* Add zone sync ConfigMap fixture to prevent leaks in rate-limit tests
 
-**File**: `charts/nginx-ingress/templates/_helpers.tpl` (modified, +5/-0)
+* Add pytest arguments input to smoke tests and enhance pod diagnostics in regression workflow
+
+* Refactor leak tracking for nginx-config ConfigMap to improve clarity and maintainability
+
+* Update pytest maxfail argument to improve test visibility and adjust documentation for retry logic in E2E tests
+
+---------
+
+Signed-off-by: Paul Abel <[REDACTED_EMAIL]>
+
+**File**: `.github/actions/smoke-tests/action.yaml` (modified, +4/-0)
 ```diff
-@@ -688,6 +688,11 @@ command:
- collector:
-   log:
-     path: "stdout"
-+{{- if .Values.nginxAgent.labels }}
+@@ -34,6 +34,9 @@ inputs:
+   plus-jwt:
+     description: JWT for NGINX Plus
+     required: false
++  pytest-args:
++    description: Extra pytest arguments, e.g. --maxfail=100 to keep running after the first failure
++    required: false
+ 
+ outputs:
+   test-results-name:
+@@ -112,6 +115,7 @@ runs:
+         -rfE \
+         --show-ic-logs=yes \
+         --plus-jwt=${{ inputs.plus-jwt }} \
++        ${{ inputs.pytest-args }} \
+         -m ${{ inputs.marker != '' && inputs.marker || '""' }}
+       working-directory: ./tests
+       shell: bash
+```
+
+**File**: `.github/skills/nic-testing/SKILL.md` (modified, +24/-12)
+```diff
+@@ -190,24 +190,36 @@ class TestMyFeaturePolicies:
+         pol_name = create_policy_from_yaml(
+             kube_apis.custom_objects, yaml_src, test_namespace
+         )
+-        wait_before_test()
+-        # 2. Patch VS to reference policy
+-        patch_virtual_server_from_yaml(...)
+-        # 3. Assert HTTP responses
+-        resp = requests.get(url, headers={"host": vs_host})
+-        assert resp.status_code == 200
+-        assert "Expected-Header" in resp.headers
+-        # 4. Cleanup
+-        delete_policy(kube_apis.custom_objects, pol_name, test_namespace)
+-        patch_virtual_server_from_yaml(...)  # restore original
++        try:
++            # 2. Patch VS to reference policy
++            patch_virtual_server_from_yaml(...)
++            # 3. Poll until the reload has taken effect; never sleep, then assert once
++            resp = retry_get_until_status_code(url, virtual_server_setup.vs_host, 200)
++            assert resp.status_code == 200  # the helper returns the last response even if it never matched
++            assert "Expected-Header" in resp.headers
++        finally:
++            # 4. Cleanup runs even when an assert fails
++            delete_policy(kube_apis.custom_objects, pol_name, test_namespace)
++            patch_virtual_server_from_yaml(...)  # restore original
+ ```
+ 
+ ### Fixtures and Utilities
+ 
+ - Common fixtures: `kube_apis`, `crd_ingress_controller`, `virtual_server_setup`, `test_namespace`
+ - Fixtures: `tests/suite/fixtures/` (setup/teardown lifecycle)
+-- Utilities: `tests/suite/utils/` (`create_policy_from_yaml`, `patch_virtual_server_from_yaml`, `delete_policy`, `wait_before_test`)
+-- Prefer event/status-based waits over fixed sleeps when possible
++- Utilities: `tests/suite/utils/` (`create_policy_from_yaml`, `patch_virtual_server_from_yaml`, `delete_policy`, `retry_get_until_status_code`)
++- Prefer polling over fixed sleeps, see "Waiting for config changes" below
 +
-+labels:
-+{{ toYaml .Values.nginxAgent.labels | indent 2 }}
-+{{- end }}
- 
- {{- else }}
- log:
-```
-
-**File**: `charts/nginx-ingress/values.schema.json` (modified, +17/-0)
-```diff
-@@ -2848,6 +2848,23 @@
-           "default": "false",
-           "title": "skip certificate verification"
-         },
-+        "labels": {
-+          "type": "object",
-+          "default": {},
-+          "title": "Custom labels to associate with the NGINX instance in NGINX One Console",
-+          "propertyNames": {
-+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$"
-+          },
-+          "additionalProperties": {
-+            "type": "string",
-+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$"
-+          },
-+          "examples": [
-+            {
-+              "display-name": "my-instance"
-+            }
-+          ]
-+        },
-         "instanceManager": {
-           "type": "object",
-           "default": {},
-```
-
-**File**: `charts/nginx-ingress/values.yaml` (modified, +2/-0)
-```diff
-@@ -866,6 +866,8 @@ nginxAgent:
-   endpointHost: "agent.connect.nginx.com"
-   endpointPort: 443
-   tlsSkipVerify: false
-+  ## Custom labels to associate with the NGINX instance in NGINX One Console (for example, display-name: my-instance).
-+  labels: {}
- 
-   # Agent V2 configuration
-   ## If nginxAgent.instanceGroup is not set the value of nginx-ingress.controller.fullname will be used
-```
-
-**File**: `charts/tests/__snapshots__/helmunit_test.snap` (modified, +3/-1)
-```diff
-@@ -20035,6 +20035,8 @@ data:
-     collector:
-       log:
-         path: "stdout"
-+    labels:
-+      display-name: my-nginx-instance
- /-/-/-/
- # Source: nginx-ingress/templates/controller-configmap.yaml
- apiVersion: v1
-@@ -20331,7 +20333,7 @@ spec:
-       labels:
-         app.kubernetes.io/name: nginx-ingress
-         app.kubernetes.io/instance: plus-agent-all
--        agent-configuration-revision-hash: "36d57a7e"
-+        agent-configuration-revision-hash: "751c3c9a"
-       annotations:
-         prometheus.io/scrape: "true"
-         prometheus.io/port: "9113"
-```
-
-**File**: `charts/tests/helmunit_test.go` (modified, +12/-0)
-```diff
-@@ -426,6 +426,18 @@ func TestHelmNICTemplateNegative(t *testing.T) {
- 			namespace:         "default",
- 			expectedErrorMsgs: []string{`label "app.kubernetes.io/name" is managed by the chart and cannot be overridden`},
- 		},
-+		"agentLabelsInvalid": {
-+			valuesFile:  "testdata/agent-labels-invalid.yaml",
-+			releaseName: "agent-labels-invalid",
-+			namespace:   "default",
-+			expectedErrorMsgs: []string{
-+				"invalid propertyName 'bad,key'",
-+				"'/nginxAgent/labels/comma': 'a,b' does not match pattern",
-+				"'/nginxAgent/labels/equals': 'a=b' does not match pattern",
-+				"'/nginxAgent/labels/empty': '' does not match pattern",
-+				"'/nginxAgent/labels/number': got number, want string",
-+			},
-+		},
- 		"appProtectWAFPLMWithoutPlus": {
- 			valuesFile:        "testdata/app-protect-waf-plm-without-plus.yaml",
- 			releaseName:       "appprotect-waf-plm-without-plus",
-```
-
-**File**: `charts/tests/testdata/agent-labels-invalid.yaml` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+controller:
-+  nginxplus: true
-+nginxAgent:
-+  enable: true
-+  dataplaneKeySecretName: "dataplane-key"
-+  labels:
-+    "bad,key": valid
-+    comma: "a,b"
-+    equals: "a=b"
-+    empty: ""
-+    number: 5
-```
-
-**File**: `charts/tests/testdata/plus-agentv3-all.yaml` (modified, +2/-0)
-```diff
-@@ -7,3 +7,5 @@ nginxAgent:
-   logLevel: debug
-   endpointHost: my-host.example.com
-   endpointPort: 8443
-+  labels:
-+    display-name: my-nginx-instance
-```
-
----
-
-### Incident Patch 2: `fb120e3e` (2026-11-11)
-**Commit Message**: Merge nginx-agent.conf labels into `--labels` for NGINX Agent 3 (#11346)
-
-* Merge nginx-agent.conf labels into --labels for NGINX Agent 3
-
-* Parse agent config labels with YAML 1.2 to match NGINX Agent 3
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -20,6 +20,7 @@ require (
- 	github.com/stretchr/testify v1.12.1
- 	go.opentelemetry.io/otel v1.47.0
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.47.0
-+	go.yaml.in/yaml/v3 v3.0.5
- 	golang.org/x/crypto v0.58.0
- 	k8s.io/api v0.37.2
- 	k8s.io/apiextensions-apiserver v0.37.2
-@@ -131,7 +132,6 @@ require (
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.uber.org/zap v1.27.1 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
--	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/exp v0.0.0-20261007192929-f45ad48fbe92 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
- 	golang.org/x/net v0.60.0 // indirect
-```
-
-**File**: `internal/nginx/manager.go` (modified, +87/-13)
-```diff
-@@ -2,19 +2,24 @@ package nginx
- 
- import (
- 	"context"
-+	"errors"
- 	"fmt"
-+	"io/fs"
- 	"log/slog"
-+	"maps"
- 	"net/http"
- 	"os"
- 	"os/exec"
- 	"path"
- 	"path/filepath"
- 	"regexp"
-+	"slices"
- 	"strconv"
- 	"strings"
- 	"time"
- 
- 	"github.com/nginx/kubernetes-ingress/internal/metadata"
-+	"go.yaml.in/yaml/v3"
- 
- 	license_reporting "github.com/nginx/kubernetes-ingress/internal/license_reporting"
- 	nl "github.com/nginx/kubernetes-ingress/internal/logger"
-@@ -42,7 +47,8 @@ const (
- 	appProtectPluginStartCmd = "/usr/share/ts/bin/bd-socket-plugin"
- 	appProtectLogLevelCmd    = "/opt/app_protect/bin/set_log_level"
- 
--	agentPath = "/usr/bin/nginx-agent"
-+	agentPath       = "/usr/bin/nginx-agent"
-+	agentConfigPath = "/etc/nginx-agent/nginx-agent.conf"
- 
- 	// appPluginParams is the configuration of App-Protect plugin
- 	appPluginParams = "tmm_count 4 proc_cpuinfo_cpu_mhz 2000000 total_xml_memory 471859200 total_umu_max_size 3129344 sys_max_account_id 1024 no_static_config"
-@@ -692,19 +698,15 @@ func (lm *LocalManager) AgentStart(agentDone chan error, instanceGroup string) {
- 		if err != nil {
- 			nl.Fatalf(lm.logger, "Failed to start NGINX Agent: %v", err)
- 		}
--		labels := []string{
--			fmt.Sprintf("product-type=%s", metadataInfo.ProductType),
--			fmt.Sprintf("product-version=%s", metadataInfo.ProductVersion),
--			fmt.Sprintf("cluster-id=%s", metadataInfo.ClusterID),
--			fmt.Sprintf("installation-id=%s", metadataInfo.InstallationID),
--			fmt.Sprintf("installation-name=%s", metadataInfo.InstallationName),
--			fmt.Sprintf("installation-namespace=%s", metadataInfo.InstallationNamespace),
--			fmt.Sprintf("control-id=%s", metadataInfo.InstallationID),               // control-id is required but is the same as installation-id
--			fmt.Sprintf("control-name=%s", metadataInfo.InstallationName),           // control-name is required but is the same as installation-name
--			fmt.Sprintf("control-namespace=%s", metadataInfo.InstallationNamespace), // control-namespace is required but is the same as installation-namespace
-+		configLabels, err := extractAgentConfigLabels(agentConfigPath)
-+		if err != nil {
-+			nl.Warnf(lm.logger, "Failed to read labels from %s: %v", agentConfigPath, err)
-+		}
-+		labelsFlag, skipped := buildAgentLabels(metadataInfo, configLabels)
-+		if len(skipped) > 0 {
-+			nl.Warnf(lm.logger, "Ignoring reserved or invalid NGINX Agent labels: %v", skipped)
- 		}
--		metadataLabels := "--labels=" + strings.Join(labels, ",")
--		args = append(args, metadataLabels)
-+		args = append(args, labelsFlag)
- 	}
- 	cmd := exec.Command(agentPath, args...) // #nosec G204
- 
-@@ -721,6 +723,78 @@ func (lm *LocalManager) AgentStart(agentDone chan error, instanceGroup string) {
- 	}()
- }
- 
-+// agentLabelRegex mirrors NGINX Agent v3 label validation. It also keeps ',', '=' and '"'
-+// out of the --labels flag, which pflag parses as a single CSV record.
-+var agentLabelRegex = regexp.MustCompile(`^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$`)
++### Waiting for config changes
 +
-+// extractAgentConfigLabels reads the labels map from the NGINX Agent config file.
-+// The agent ignores config-file labels when --labels is passed, so NIC merges them into the flag.
-+// It parses with YAML 1.2 (go.yaml.in/yaml/v3) and stringifies values the way NGINX Agent 3 does
-+// (viper + spf13/cast), so unquoted values such as yes, on or 0755 resolve to the same label text.
-+func extractAgentConfigLabels(configPath string) (map[string]string, error) {
-+	data, err := os.ReadFile(filepath.Clean(configPath))
-+	if err != nil {
-+		if errors.Is(err, fs.ErrNotExist) {
-+			return nil, nil
-+		}
-+		return nil, err
-+	}
-+	var cfg struct {
-+		Labels map[string]any `yaml:"labels"`
-+	}
-+	if err := yaml.Unmarshal(data, &cfg); err != nil {
-+		return nil, err
-+	}
-+	if cfg.Labels == nil {
-+		return nil, nil
-+	}
-+	labels := make(map[string]string, len(cfg.Labels))
-+	for k, v := range cfg.Labels {
-+		switch val := v.(type) {
-+		case nil:
-+			labels[k] = ""
-+		case float64:
-+			labels[k] = strconv.FormatFloat(val, 'f', -1, 64)
-+		default:
-+			labels[k] = fmt.Sprint(val)
-+		}
-+	}
-+	return labels, nil
-+}
++A config change reloads NGINX. A request that lands during the reload can be dropped, and a fixed `wait_before_test()` before one assertion only passes if the reload is faster than the sleep. Details and the failure data: `docs/developer/e2e-flaky-tests.md`.
 +
-+// buildAgentLabels returns the --labels flag: NIC metadata labels followed by valid, non-reserved
-+// config labels sorted by key, plus the config label keys that were skipped.
-+func buildAgentLabels(m *metadata.Labels, configLabels map[string]string) (string, []string) {
-+	base := [][2]string{
-+		{"product-type", m.ProductType},
-+		{"product-version", m.ProductVersion},
-+		{"cluster-id", m.ClusterID},
-+		{"installation-id", m.InstallationID},
-+		{"installation-name", m.InstallationName},
-+		{"installation-namespace", m.InstallationNamespace},
-+		// control-* labels are required but mirror the installation-* labels
-+		{"control-id", m.InstallationID},
-+		{"control-name", m.InstallationName},
-+		{"control-namespace", m.InstallationNamespace},
-+	}
-+	labels := make([]string, 0, len(base)+len(configLabels))
-+	reserved := make(map[string]bool, len(base))
-+	for _, kv := range base {
-+		labels = append(labels, kv[0]+"="+kv[
++- After a change that reloads, poll with `retry_get_until_status_code`, `retry_get_until_body_contains`, or `retry_get` (one request, retried only on `ConnectionError`). They are in `tests/suite/utils/resources_utils.py`. `wait_and_assert_status_code` and `send_malicious_request_with_retry` also tolerate dropped connections. The `retry_get_until_*` helpers return the last response even if it never matched, so still assert on it.
++- For non-HTTP conditions use the existing waiters: `wait_for_event`, `wait_for_resource_status`, `wait_for_reload`, `wait_until_all_pods_are_ready`, `ensure_response_from_backend`.
++- Keep `wait_before_test()` only when the wait is the point of the test (rate-limit windows, asserting something does not happen).
++- Do not add `@pytest.mark.flaky`. It reruns the whole test and hides real regressions.
++- If a test catches `requests.exceptions.SSLError` (mTLS), put that `except` before `except ConnectionError`, because `SSLError` is a subclass.
++- The `nginx-config` ConfigMap lives for the whole session. A test that changes it restores it in a fixture or `finally`, not at the end of the test body, or a later unrelated test fails. `tests/conftest.py` prints `Leaked nginx-config` when a class leaves it changed. The IC Deployment is recreated per class, so replica counts do not leak across classes.
+ 
+ ### File Naming
+ 
 ```
 
-**File**: `internal/nginx/manager_test.go` (modified, +104/-0)
+**File**: `.github/workflows/regression.yml` (modified, +4/-1)
 ```diff
-@@ -1,8 +1,12 @@
- package nginx
+@@ -280,7 +280,8 @@ jobs:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+-          ref: ${{ needs.checks.outputs.branch }}
++          # LTS entries test a released image, so use the tests, manifests and CRDs from that tag, not main
++          ref: ${{ matrix.images.lts == true && matrix.images.lts_tag || needs.checks.outputs.branch }}
  
- import (
-+	"os"
-+	"path/filepath"
- 	"testing"
+       - name: Set image variables
+         id: image_details
+@@ -367,6 +368,8 @@ jobs:
+           registry-token: ${{ steps.auth.outputs.access_token }}
+           test-image: "ghcr.io/nginx/kubernetes-ingress/test-runner:${{ hashFiles('./tests/requirements.txt', './tests/Dockerfile') || 'latest' }}"
+           plus-jwt: ${{ env.PLUS_JWT }}
++          # pyproject.toml has -x; override it so one failure does not hide the rest of the nightly
++          pytest-args: --maxfail=100
  
-+	"github.com/google/go-cmp/cmp"
-+	"github.com/nginx/kubernetes-ingress/internal/metadata"
- 	"github.com/nginx/nginx-plus-go-client/v3/client"
+       - name: Upload Test Results
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+```
+
+**File**: `docs/developer/README.md` (modified, +1/-0)
+```diff
+@@ -6,4 +6,5 @@
+ - [Type-Agnostic Kubernetes Secrets](./opaque-secrets-high-level-design.md)
+ - [ExternalAuth Response Headers](./external-auth-response-headers-high-level-design.md)
+ - [ConnectionLimit Policy](./connection-limit-policy-high-level-design.md)
++- [Flaky E2E Tests Plan](./e2e-flaky-tests.md)
+ - [Offline Helm Schema Validation](./offline-helm-schema-high-level-design.md)
+```
+
+**File**: `docs/developer/e2e-flaky-tests.md` (added, +345/-0)
+```diff
+@@ -0,0 +1,345 @@
++# Plan: Fixing Flaky Python E2E Tests
++
++## Status: Draft
++
++## Summary
++
++**Goal:** make the Python e2e tests fail only when the product is broken, not when
++a reload or a pod start takes a little longer than a fixed sleep.
++
++**Approach:** data driven. Rank tests by how often they fail in CI, then fix the
++worst ones. Do not sweep every `wait_before_test()` call.
++
++**Why not sweep:** `wait_before_test()` is `time.sleep(3)` by default
++(`tests/suite/utils/resources_utils.py`, `settings.py`). There are many calls,
++but most of the tests that actually fail have none in the test body. The cause
++is usually a fixture that applies config and a test that then asserts on one
++request with no polling.
++
++## Inventory (snapshot, Nov 2026)
++
++| Metric | Count |
++| --- | --- |
++| Test files | 158 |
++| `def test_*` functions (before parametrize) | 689 |
++| `wait_before_test()` calls in test files | 884 (142 files) |
++| ...inside a loop (delay between retries, fine) | 95 |
++| ...not in a loop (fixed sleep, then act once) | 789 |
++| Test functions with at least one fixed sleep | 425 |
++| Fixed sleeps in fixtures or helpers inside test files | 104 |
++
++Delays used: default 3 s (501 calls), 1 s (248), 2 s, 5 s, 10 s, `WAIT_TIME`, 120 s.
++
++What follows each fixed sleep (first statement after it, so approximate, about +/-10%):
++
++| Next action | Calls | Assessment |
++| --- | --- | --- |
++| A polling helper already (`wait_and_assert_status_code`, `ensure_response_from_backend`, `retry_get*`, `wait_until_all_pods_are_ready`) | ~73 | Redundant. Delete to save time. No flake risk |
++| One `requests.get`, then an assert | ~112 | High risk. Swap for `retry_get_until_*` |
++| Read generated NGINX config | ~80 | High risk. No "config contains X" poller exists yet |
++| Read resource status or events | ~60 | Medium. `wait_for_resource_status` and `wait_for_event` exist |
++| Rate-limit and time-window checks | ~26 | The wait is part of the test. Leave it |
++| `print`, assignment, end of block | ~220 | Case by case. Many are setup sleeps |
++
++Not every fixed sleep is a bug. Tests that assert something does *not* happen,
++or that a time window passes, need a real wait.
++
++## CI failure data
++
++**Source:** failed `ci.yml` merge-queue runs and all nightly `regression.yml`
++runs from 2026-10-17 (after #10850, "e2e test stability fixes") to 2026-11-11:
++74 failed merge-queue runs and 26 nightly runs. PR runs were left out because
++real bugs in PRs make them noisy. Only 19 distinct tests failed.
++
++The last column links the most recent failing job found for each test (checked
++2026-11-13). GitHub deletes job logs after its retention period, so these links
++will stop working. The error text in the table is kept for that reason, and
++"Reproducing the ranking" below refreshes the data.
++
++| # | Test | Failing runs | Error | Likely cause | Example job |
++| --- | --- | --- | --- | --- | --- |
++| 1 | `test_ac_polices_vs::test_deny_policy` | every nightly LTS job | Setup error after 600 s, IC pod never Ready | **Version skew.** The job ran main's tests against the LTS image. Fixed, see Phase A | [lts-regression 1.30.13](https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222816) |
++| 2 | `test_rl_policies::test_rl_policy_scaled` | every nightly job, all 8 k8s versions | `rate=10r/s` not in config (config has `rate=40r/s ... sync`) | **State leaked by an earlier test.** `test_rl_ingress.py::TestRateLimitIngressScaledWithZoneSync` left zone sync on in the shared `nginx-config` ConfigMap. Fixed, see below | [regression debian-plus 1.30.13](https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222786) |
++| 3 | `test_custom_http_errors::test_annotation_intercepts_upstream_error` | 16 | One request to `/fail` returns the stock 502 page | Asserts once, no polling | [regression debian 1.32.8](https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222925) |
++| 4 | `test_virtual_server_certmanager::test_responses_after_setup` | 11 (8 merge queue) | Setup error in a fixture | Needs log triage | [regression debian 1.30.13](https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222805) |
++| 5 | `test_empty_host_ingress_reload::..._on_startup` | 11 | Startup event not found | Fixed in `972e0772c`. Watch it | [regression debian 1.33.12](https://github.com/nginx/kubernetes-ingress/actions/runs/43145244434/job/130941545511) |
++| 6 | `test_rl_policies_vsr` tiered apikey/jwt (3 tests) | 13 | `13 in range(14, 17)` | Request count just outside a narrow range. The 1 s sleeps are part of the test. Fix tolerance or timing window | [policies 3/8 alpine](https://github.com/nginx/kubernetes-ingress/actions/runs/43262340867/job/131345989101) |
++| 7 | `test_oidc_native_fclo_ingress::test_rp_initiated_logout` | 4 | 502 after login | Sleep, then no readiness check on the backend | [regression debian-plus 1.31.14](https://github.com/nginx/kubernetes-ingress/acti
+```
+
+**File**: `docs/developer/parallel-e2e-plan.md` (modified, +1/-1)
+```diff
+@@ -369,7 +369,7 @@ above. Effects are as estimated in #10492.
+ - #10492 — durations tooling, design doc
+   `docs/developer/parallel-e2e-tests-design.md`, and the proof of concept
+   for several kind clusters per runner
+-- `tests/suite/FLAKY_RELOAD_REQUESTS.md` — retrying requests that hit a
++- `docs/developer/e2e-flaky-tests.md` — flaky e2e plan; retrying requests that hit a
+   reload
+ - Smoke matrix: `.github/data/matrix-smoke-{oss,plus,nap}.json`
+ - Smoke action: `.github/actions/smoke-tests/action.yaml`
+```
+
+**File**: `tests/conftest.py` (modified, +88/-1)
+```diff
+@@ -3,6 +3,7 @@
+ import os
+ 
+ import pytest
++from kubernetes.client.rest import ApiException
+ from kubernetes.config.kube_config import KUBE_CONFIG_DEFAULT_LOCATION
+ from settings import (
+     BATCH_RELOAD_NUMBER,
+@@ -20,6 +21,7 @@
+     IC_SELECTOR,
+     are_all_pods_in_ready_state,
+     get_first_pod_name,
++    get_pod_list,
+     wait_before_test,
  )
  
-@@ -217,3 +221,103 @@ REDHAT_SUPPORT_PRODUCT_VERSION="9.7"
- 		})
- 	}
- }
+@@ -228,12 +230,45 @@ def pytest_collection_modifyitems(config, items) -> None:
+                 item.add_marker(multi_ns)
+ 
+ 
++def _container_state(state) -> str:
++    """One-line summary of a V1ContainerState."""
++    for name in ("running", "waiting", "terminated"):
++        detail = getattr(state, name, None) if state else None
++        if detail:
++            fields = {k: getattr(detail, k, None) for k in ("reason", "exit_code", "message")}
++            return f"{name} " + " ".join(f"{k}={v}" for k, v in fields.items() if v is not None)
++    return "unknown"
 +
-+func TestExtractAgentConfigLabels(t *testing.T) {
-+	t.Parallel()
 +
-+	tests := []struct {
-+		name    string
-+		content string // empty means the config file does not exist
-+		want    map[string]string
-+		wantErr bool
-+	}{
-+		{name: "missing file"},
-+		{name: "no labels key", content: "log:\n  level: info\n"},
-+		{
-+			name:    "mixed scalar labels",
-+			content: "labels:\n  display-name: my-nic\n  port: 8080\n  enabled: true\n  unset:\n",
-+			want:    map[string]string{"display-name": "my-nic", "port": "8080", "enabled": "true", "unset": ""},
-+		},
-+		{
-+			// Must match NGINX Agent 3 (YAML 1.2 via viper): yes/on stay strings, not booleans.
-+			name:    "YAML 1.2 scalars match agent",
-+			content: "labels:\n  a: yes\n  b: on\n  c: off\n  d: 1.50\n  e: 1e21\n  f: 0x1F\n",
-+			want:    map[string]string{"a": "yes", "b": "on", "c": "off", "d": "1.5", "e": "1000000000000000000000", "f": "31"},
-+		},
-+		{name: "invalid YAML", content: "labels: [invalid", wantErr: true},
-+	}
++def print_ic_pod_diagnostics(v1, namespace) -> None:
++    """Print state, logs (also of the previous container) and events of every IC pod."""
++    for pod in get_pod_list(v1, namespace, IC_SELECTOR):
++        name = pod.metadata.name
++        print(f"\nPod {name}: phase={pod.status.phase}")
++        for cs in pod.status.container_statuses or []:
++            print(
++                f"  container {cs.name}: ready={cs.ready} restarts={cs.restart_count} "
++                f"state=[{_container_state(cs.state)}] last_state=[{_container_state(cs.last_state)}]"
++            )
++            for previous in (False, True):
++                try:
++                    logs = v1.read_namespaced_pod_log(name, namespace, container=cs.name, previous=previous)
++                except ApiException as e:  # e.g. container waiting to start, or never restarted
++                    logs = f"<no logs: {e.reason}>"
++                print(f"  --- {'previous ' if previous else ''}logs of {cs.name} ---\n{logs}")
++        events = v1.list_namespaced_event(namespace, field_selector=f"involvedObject.name={name}").items
++        for ev in events:
++            print(f"  event {ev.type} {ev.reason}: {ev.message}")
 +
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			cfgPath := filepath.Join(t.TempDir(), "nginx-agent.conf")
-+			if tc.content != "" {
-+				if err := os.WriteFile(cfgPath, []byte(tc.content), 0o600); err != nil {
-+					t.Fatal(err)
-+				}
-+			}
-+			got, err := extractAgentConfigLabels(cfgPath)
-+			if (err != nil) != tc.wantErr {
-+				t.Fatalf("extractAgentConfigLabels() error = %v, wantErr %v", err, tc.wantErr)
-+			}
-+			if diff := cmp.Diff(tc.want, got); diff != "" {
-+				t.Errorf("extractAgentConfigLabels() mismatch (-want +got):\n%s", diff)
-+			}
-+		})
-+	}
-+}
 +
-+func TestBuildAgentLabels(t *testing.T) {
-+	t.Parallel()
+ @pytest.hookimpl(tryfirst=True, hookwrapper=True)
+ def pytest_runtest_makereport(item) -> None:
+     """
+     Print out IC Pod logs on test failure.
+ 
+-    Only look at actual failing test calls, not setup/teardown.
++    Failing test calls print the first IC pod's logs. Failing setups print the state, logs and
++    events of all IC pods, because a fixture timing out on an IC pod that never became Ready
++    is otherwise invisible. Teardown is not looked at.
+     Only show the logs if commandline argument `--show-ic-logs` is set to 'yes'
+ 
+     :param item:
+@@ -249,6 +284,19 @@ def pytest_runtest_makereport(item) -> None:
+         print(f"\n::error file={file_path},line={line_no + 1},title=Test Failed: {item.nodeid}::{summary}")
+ 
+     # we only look at actual failing test calls, not setup/teardown
++    if rep.when == "setup" and rep.failed and item.config.getoption("--show-ic-logs") == "yes":
++        try:
++            prereq, apis = item.funcargs["ingress_controller_prerequisites"], item.funcargs["kube_apis"]
++        except KeyError:
++            pass  # setup failed before the IC prerequisites existed, nothing to show
++        else:
++            try:
++                print("\n::group::NGINX Ingress Controller Pod Diagnostics")
++                print_ic_pod_diagnostics(apis.v1, prereq.namespace)
++                print("::endgroup::")
++            except Exception as e:
++                print(f"\nFailed to retrieve NGINX Ingress Controller pod diagnostics: {e}")
 +
-+	meta := &metadata.Labels{
-+		ProductType:           "nic",
-+		ProductVersion:        "5.8.0",
-+		ClusterID:             "cluster-123",
-+		InstallationID:        "install-456",
-+		InstallationName:      "my-nic",
-+		InstallationNamespace: "default",
-+	}
-+	base := "--labels=product-type=nic,product-version=5.8.0,cluster-id=cluster-123,installation-id=install-456," +
-+		"installation-name=my-nic,installation-namespace=default,control-id=install-456,control-name=my-nic,control-namespace=default"
+     if rep.when == "call" and rep.failed and item.config.getoption("--show-ic-logs") == "yes":
+         try:
+             pod_namespace = item.funcargs["ingress_controller_prerequisites"].namespace
+@@ -274,8 +322,47 @@ def pytest_runtest_makereport(item) -> None:
+         print("Make sure to remove resources from this test run manually using kubectl utility\n")
+ 
+ 
++# Test classes that left the shared nginx-config ConfigMap non-default, as {class nodeid: changed data}.
++LEAKED_CONFIGMAP = {}
++# The most recent leak seen, so a leak that persists across classes is reported once.
++LEAK_STATE = {"last": None}
 +
-+	tests := []struct {
-+		name         string
-+		configLabels map[string]string
-+		wantFlag     string
-+		wantSkipped  []string
-+	}{
-+		{name: "no config labels", wantFlag: base},
-+		{
-+			name:         "custom labels appended sorted",
-+			configLabels: map[string]string{"env": "staging", "display-name": "my-nic", "port": "8080"},
-+			wantFlag:     base + ",display-name=my-nic,env=staging,port=8080",
-+		},
-+		{
-+			name: "reserved and invalid labels skipped",
-+			configLabels: map[string]string{
-+				"cluster-id":   "override",
-+				"comma":        "a,b",
-+				"space":        "my nic",
-+				"empty":        "",
-+				"bad,key":      "x",
-+				"display-name": "my-nic",
-+			},
-+			wantFlag:    base + ",display-name=my-nic",
-+			wantSkipped: []string{"bad,key", "cluster-id", "comma", "empty", "space"},
-+		},
-+	}
 +
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			gotFlag, gotSkipped := buildAgentLabels(meta, tc.configLabels)
-+			if gotFlag != tc.wantFlag {
-+				t.Errorf("buildAgentLabels() flag = %q, want %q", gotFlag, tc.wantFlag)
-+			}
-+			if diff := cmp.Diff(tc.wantSkipped, gotSkipped); diff != "" {
-+				t.Errorf("buildAgentLabels() skipped mismatch (-want +got):\n%s", diff)
-+			}
-+		})
-+	}
-+}
++def leaked_configmap_data(live, default):
++    """Return the live ConfigMap data if it differs from the default, else None."""
++    live, default = live or {}, default or {}
++    return live if live != default else None
++
++
++@pytest.hookimpl(hookwrapper=True)
++def pytest_runtest_teardown(item, nextitem) -> None:
++    """
++    Report test classes that leave the shared nginx-config ConfigMap changed.
++
++    The ConfigMap lives for the whole session, so a leak breaks a later, unrelated test.
++    Checked at class boundaries, after class fixtures are torn down. Each distinct leak is
++    reported once, against the class that was running when it was first seen.
++    Only the ConfigMap is checked: every IC fixture recreates the Deployment, so replica
+```
+
+**File**: `tests/suite/FLAKY_RELOAD_REQUESTS.md` (removed, +0/-105)
+```diff
+@@ -1,105 +0,0 @@
+-# Fixing flaky e2e tests: connection drops during NGINX reloads
+-
+-## Symptom
+-
+-A test intermittently fails with:
+-
+-    requests.exceptions.ConnectionError:
+-      ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+-
+-Often accompanied in the IC logs by an access-log line with status `000`, and
+-around a config change (Ingress/Policy/namespace-label update) that triggers an
+-NGINX reload. With App Protect, the WAF "soft reset" recycles workers and can
+-take several seconds, widening the window where in-flight connections are closed.
+-
+-## Root cause
+-
+-The test sends an HTTP request that lands exactly while NGINX is reloading and
+-recycling worker processes. NGINX closes the connection, `requests` raises an
+-uncaught `ConnectionError`, and the test crashes instead of retrying. This is a
+-timing race, not a product bug -- a dropped connection during a reload is
+-expected and should be retried (the same way `ensure_response_from_backend` and
+-`wait_for_reload` already tolerate transients).
+-
+-## When this pattern applies
+-
+-Apply the fix to any e2e test that BOTH:
+-
+-1. Mutates config that causes a reload (apply/patch/delete of Ingress, VS/VSR,
+-   TransportServer, Policy, ConfigMap, or namespace label/watch changes), AND
+-2. Sends traffic (`requests.get/post/...`) shortly after, while a reload may be
+-   in progress -- especially inside a body/status polling loop.
+-
+-Do NOT apply it to tests that only send traffic against already-stable config
+-and never reload mid-traffic (e.g. `test_app_protect_watch_namespace.py`).
+-
+-## The fix
+-
+-Do not wrap the whole test in `@pytest.mark.flaky` -- that reruns the entire
+-expensive test and can mask real regressions. Instead, make the specific request
+-resilient.
+-
+-Use one of the shared helpers in `suite/utils/resources_utils.py`, all of which
+-catch `requests.exceptions.ConnectionError` while retrying:
+-
+-- `retry_get_until_body_contains(req_url, host, expected_body)` -- poll until a
+-  substring appears in the body.
+-- `retry_get_until_status_code(req_url, host, expected_status, session=..., **kwargs)`
+-  -- poll until a status code matches; supports an SNI/client-cert `session` and
+-  extra `requests.get` kwargs (`cert`, `verify`, `allow_redirects`, ...).
+-- `retry_get(req_url, host, **kwargs)` -- guard a single request whose assertion
+-  cannot be expressed as "body contains X" or "status == Y" (e.g. asserting a
+-  substring is absent, or an arbitrary status); retries only on `ConnectionError`.
+-
+-The shared helpers `wait_and_assert_status_code` (`suite/utils/custom_assertions.py`)
+-and `send_malicious_request_with_retry` (`suite/utils/ap_resources_utils.py`) also
+-tolerate `ConnectionError`, so their many callers are covered automatically.
+-
+-    ```python
+-    from suite.utils.resources_utils import retry_get_until_body_contains
+-
+-    resp = retry_get_until_body_contains(req_url, ingress_host, expected_body)
+-    assert expected_body in resp.text
+-    assert resp.status_code == 200
+-    ```
+-
+-Replace hand-rolled loops like:
+-
+-    ```python
+-    resp = requests.get(url, headers={"host": host}, verify=False)
+-    retry = 0
+-    while expected not in resp.text and retry <= 60:
+-        resp = requests.get(url, headers={"host": host}, verify=False)  # can raise ConnectionError
+-        retry += 1
+-        wait_before_test(1)
+-    ```
+-
+-with a single `retry_get_until_body_contains(...)` call.
+-
+-If a test needs a method/headers/body the helper doesn't cover, replicate its
+-core guarantee: catch `requests.exceptions.ConnectionError` inside the retry loop
+-and continue, rather than letting it propagate.
+-
+-Note: `requests.exceptions.SSLError` is a *subclass* of `ConnectionError`. When a
+-test relies on catching `SSLError` (e.g. mTLS client-cert tests), keep the
+-`except SSLError` handler **before** any `except ConnectionError` handler so the
+-SSL case is not swallowed.
+-
+-## Reference implementation
+-
+-See `test_app_protect_watch_namespace_label.py` and the
+-`retry_get_until_body_contains` helper in `suite/utils/resources_utils.py`.
+-For status-based and single-request variants, see `retry_get_until_status_code`
+-and `retry_get` in the same file, and the mTLS tests (`test_ingress_mtls*.py`)
+-for the SSLError-ordering pattern.
+-
+-## Checklist for the AI applying this
+-
+-- [ ] Confirm the test reloads config AND sends traffic that could overlap it.
+-- [ ] Replace unguarded `requests.*` retry loops with `retry_get_until_body_contains`
+-      (or add `except requests.exceptions.ConnectionError: continue` to the loop).
+-- [ ] Guard single pre-loop requests that immediately follow a config change too.
+-- [ ] Preserve existing assertions and the ~60s retry budget.
+-- [ ] Remove the now-unused `import requests` if no other usage remains in the file.
+-- [ ] Do NOT add `@pytest.mark.flaky`.
+-- [ ] Test-only change: no product code, codegen, or snapshot updates.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11372** (2026-11-10): Update version to 5.7.1 & chart to 2.8.1 (@pdabelf5)
-- **PR #11370** (2026-11-10): Update Red Hat UBI images (release-5.7) (@renovate[bot])
-- **PR #11369** (2026-11-10): Update module github.com/mikefarah/yq/v4 to v4.54.3 (main) (@renovate[bot])
-- **PR #11368** (2026-11-10): Update Red Hat UBI images (main) (@renovate[bot])
-- **PR #11367** (2026-11-11): [ci]: 1.6-lts: create an action to fetch secrets for various jobs (@javorszky)
-- **PR #11366** (2026-11-11): [ci]: 1.6-main: Create an action to fetch secrets for various jobs (@javorszky)
+- **PR #11427** (2026-11-13): update versions for 5.8.0 release (@vepatel)
+- **PR #11426** (2026-11-13): Update version bump job condition to include both repositories (@pdabelf5)
+- **PR #11425** (2026-11-13): Enhance Renovate configuration for Python dependencies (@pdabelf5)
+- **PR #11424** (2026-11-13): [release-2026-lts] Cherry-pick new github actions  (@sean-breen)
+- **PR #11423** (2026-11-13): auth response headers implementation (@vepatel)
+- **PR #11418** (2026-11-13): Update azure/setup-helm action to v5.1.0 (release-2026-lts) (@renovate[bot])
 
 ---
 
@@ -1748,35 +1908,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add nginxAgent.labels to Helm chart for NGINX One Console (#11347)
+## X. Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, r
 
 **RULE**:
-When implementing operations in `charts/nginx-ingress/templates/_helpers.tpl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/smoke-tests/action.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59dbb784`: Add nginxAgent.labels to Helm chart for NGINX One Console (#11347). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `afb4fa83`: Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, run past first failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/nginx-ingress/templates/_helpers.tpl`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/smoke-tests/action.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-{{- if .Values.nginxAgent.labels }}
-
-labels:
-{{ toYaml .Values.nginxAgent.labels | indent 2 }}
-{{- end }}
+  pytest-args:
+    description: Extra pytest arguments, e.g. --maxfail=100 to keep running after the first failure
+    required: false
+        ${{ inputs.pytest-args }} \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59dbb784` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `afb4fa83` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

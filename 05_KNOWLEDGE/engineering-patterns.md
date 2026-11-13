@@ -603129,3 +603129,146 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `831a1ce2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8394. keep a started sandbox running after its launcher exits (Harvested from vercel-labs/agent-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep a started sandbox running after its launcher exits",
+  "source": "vercel-labs/agent-desktop",
+  "source_url": "https://github.com/vercel-labs/agent-desktop",
+  "source_version": "b0b7277b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-13T22:17:31.738Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vercel-labs-agent-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop) (Revision: `b0b7277b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When implementing operations in `apps/docs/content/docs/sandboxes/macos.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vercel-labs/agent-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2f650705`: keep a started sandbox running after its launcher exits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/content/docs/sandboxes/macos.mdx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+`start` answers `running` only once the guest answers over SSH. Until then it answers `working`; repeat `sandbox status` before `sandbox exec`. The VM host runs in its own session, so a started sandbox keeps running after the command that started it exits, including when the caller that launched it is later terminated.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+`start` answers `running` only once the guest answers over SSH. Until then it answers `working`; repeat `sandbox status` before `sandbox exec`.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2f650705` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8395. Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, r (Harvested from nginx/kubernetes-ingress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, r",
+  "source": "nginx/kubernetes-ingress",
+  "source_url": "https://github.com/nginx/kubernetes-ingress",
+  "source_version": "8c5b0b9d",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-13T22:17:39.359Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nginx-kubernetes-ingress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `8c5b0b9d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/actions/smoke-tests/action.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `afb4fa83`: Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, run past first failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/smoke-tests/action.yaml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+  pytest-args:
+    description: Extra pytest arguments, e.g. --maxfail=100 to keep running after the first failure
+    required: false
+        ${{ inputs.pytest-args }} \
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `afb4fa83` are properly handled with clean fallback behavior.

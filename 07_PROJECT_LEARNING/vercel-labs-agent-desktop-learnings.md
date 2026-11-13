@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md`  
 > **Source**: github ([https://github.com/vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop))  
-> **Source Version**: `54855b62`  
+> **Source Version**: `b0b7277b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T11:18:20.071Z  
+> **Timestamp**: 2026-11-13T22:17:31.165Z  
 > **Learning ID**: `learn-github-vercel-labs-agent-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T11:18:20.062Z  
+> **Harvest Timestamp**: 2026-11-13T22:17:31.157Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Computer use CLI for AI agents
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 22434 stars
+- **Stars / Engagement**: 23258 stars
 
 ---
 
@@ -1191,334 +1191,61 @@ pub(super) fn occluded(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab7dfb21` (2026-11-09)
-**Commit Message**: fix: close reachable invalid state transitions in sessions, refs, trace, mcp and waits (#602)
+### Incident Patch 1: `2f650705` (2026-11-13)
+**Commit Message**: fix: keep a started sandbox running after its launcher exits (#672)
 
-* fix: close reachable invalid state transitions in sessions, refs, trace, mcp and waits
-
-- hold refstore.lock across session manifest read-modify-writes and take the liveness lease before reading the manifest (#601)
-- discard ref scaffolding only when the trace copy is byte-identical (#597)
-- write the trace usage ledger atomically (#600)
-- keep a cancelled MCP call id occupied until its call finishes (#599)
-- mark dispatch-preflight refusals not_delivered and confirm every matching app-terminated event (#598)
-- add docs/state-machines.md with states, invariants, transition tables and a findings register
-
-Each regression test fails without its fix. Not verified on macOS or Windows.
-
-* test: drop state machines doc and trim regression tests
-
-**File**: `crates/core/src/commands/wait_event.rs` (modified, +11/-11)
+**File**: `apps/docs/content/docs/sandboxes/macos.mdx` (modified, +1/-1)
 ```diff
-@@ -109,15 +109,15 @@ pub(crate) fn wait_for_event(
-                             input.window_id.as_deref(),
-                             input.window_title.as_deref(),
-                             filter.process.as_ref().map(|process| process.pid),
--                        ) {
--                            if confirm_app_terminated(adapter, found, diff_base, deadline) {
--                                let elapsed = start.elapsed().as_millis();
--                                return Ok(json!({
--                                    "found": true,
--                                    "event": serde_json::to_value(found)?,
--                                    "elapsed_ms": elapsed,
--                                }));
--                            }
-+                        )
-+                        .find(|found| confirm_app_terminated(adapter, found, diff_base, deadline))
-+                        {
-+                            let elapsed = start.elapsed().as_millis();
-+                            return Ok(json!({
-+                                "found": true,
-+                                "event": serde_json::to_value(found)?,
-+                                "elapsed_ms": elapsed,
-+                            }));
-                         }
-                         if disappearance {
-                             seen = Some(merge_signal_baseline(diff_base, &current));
-@@ -211,8 +211,8 @@ fn find_match<'a>(
-     window_id: Option<&str>,
-     window_title: Option<&str>,
-     pinned_pid: Option<crate::ProcessId>,
--) -> Option<&'a UiEvent> {
--    events.iter().find(|event| {
-+) -> impl Iterator<Item = &'a UiEvent> {
-+    events.iter().filter(move |event| {
-         if !requested.same_variant(&event.kind) {
-             return false;
-         }
+@@ -82,7 +82,7 @@ agent-desktop sandbox start work --window --set title="Review build"
+ 
+ The window's title is the sandbox name unless you pass `--set title=<text>`. Closing the window shuts the VM down. A sandbox that is already running headless must be stopped before it can open a window.
+ 
+-`start` answers `running` only once the guest answers over SSH. Until then it answers `working`; repeat `sandbox status` before `sandbox exec`.
++`start` answers `running` only once the guest answers over SSH. Until then it answers `working`; repeat `sandbox status` before `sandbox exec`. The VM host runs in its own session, so a started sandbox keeps running after the command that started it exits, including when the caller that launched it is later terminated.
+ 
+ ## Limits
+ 
 ```
 
-**File**: `crates/core/src/commands/wait_event_liveness_tests.rs` (modified, +26/-0)
+**File**: `providers/macos/vmhost.swift` (modified, +14/-0)
 ```diff
-@@ -6,6 +6,7 @@ struct LivenessAdapter {
-     snapshots: Vec<SignalBaseline>,
-     calls: std::sync::Mutex<usize>,
-     process_state: Result<ProcessState, ()>,
-+    running: Vec<crate::ProcessId>,
-     process_state_calls: std::sync::Mutex<Vec<crate::ProcessIdentity>>,
+@@ -776,6 +776,19 @@ struct IpCommand {
+     }
  }
  
-@@ -15,6 +16,7 @@ impl LivenessAdapter {
-             snapshots,
-             calls: std::sync::Mutex::new(0),
-             process_state,
-+            running: Vec::new(),
-             process_state_calls: std::sync::Mutex::new(Vec::new()),
-         }
-     }
-@@ -41,7 +43,11 @@ impl SystemOps for LivenessAdapter {
-         process: crate::ProcessIdentity,
-         _deadline: crate::Deadline,
-     ) -> Result<ProcessState, AdapterError> {
-+        let running = self.running.contains(&process.pid);
-         self.process_state_calls.lock().unwrap().push(process);
-+        if running {
-+            return Ok(ProcessState::Running);
++/// Leaves the caller's POSIX session so a launcher that exits or is killed does not take a running sandbox
++/// host down with it. A process-group leader may not start a session, so one first joins its parent's group, or its session leader's when the parent is gone.
++enum CallerSession {
++    static func leave() {
++        if getsid(0) == getpid() || setsid() != -1 { return }
++        for group in [getpgid(getppid()), getsid(0)] {
++            if setpgid(0, group) == 0, setsid() != -1 { return }
 +        }
-         self.process_state
-             .map_err(|()| AdapterError::not_supported("process_state"))
-     }
-@@ -92,6 +98,26 @@ fn close_to_tray_is_suppressed_but_a_genuine_exit_still_fires() {
-     );
- }
- 
-+#[test]
-+fn an_unscoped_wait_reports_an_exit_behind_an_app_that_closed_to_tray() {
-+    let seed = baseline_with_apps(vec![
-+        terminating_app(41, "tray"),
-+        terminating_app(42, "exited"),
-+    ]);
-+    let mut adapter = LivenessAdapter::new(
-+        vec![empty_baseline()],
-+        Ok(ProcessState::Exited { code: None }),
-+    );
-+    adapter.running.push(crate::ProcessId::new(41));
-+    let mut request = input("app-terminated", None);
-+    request.timeout_ms = 300;
-+
-+    let result = wait_for_event(request, &adapter, Some(Ok(seed))).unwrap();
-+
-+    assert_eq!(result["found"], true);
-+    assert_eq!(result["event"]["pid"], 42);
-+}
-+
- #[test]
- fn not_supported_process_state_still_reports_a_genuine_termination() {
-     let seed = baseline_with_apps(vec![terminating_app(42, "unsupported-check")]);
-```
-
-**File**: `crates/core/src/context/context_scope_tests.rs` (modified, +23/-0)
-```diff
-@@ -252,3 +252,26 @@ fn command_end_omits_secret_and_huge_error_messages() {
-     assert!(body.len() < 4096);
-     std::fs::remove_file(path).unwrap();
- }
-+
-+#[test]
-+fn a_command_does_not_trace_into_a_session_reaped_while_it_waited_for_its_lease() {
-+    let guard = crate::refs::refs_test_support::HomeGuard::new();
-+    let home = guard.path().to_path_buf();
-+    let manifest = start_session(StartSessionOptions {
-+        trace: SessionTraceMode::On,
-+        ..Default::default()
-+    })
-+    .expect("session starts");
-+    let dir = crate::session::session_dir(&manifest.id).unwrap();
-+    let lock = crate::refs::refs_lock::RefStoreLock::acquire(&dir.join("refstore.lock")).unwrap();
-+    let id = manifest.id.clone();
-+    let command = std::thread::spawn(move || {
-+        crate::refs::set_home_override(Some(home));
-+        CommandContext::new(Some(id), None, false)
-+    });
-+    std::thread::sleep(std::time::Duration::from_millis(200));
-+    std::fs::remove_dir_all(&dir).unwrap();
-+    drop(lock);
-+
-+    assert!(!command.join().unwrap().unwrap().trace_enabled());
-+}
-```
-
-**File**: `crates/core/src/context/mod.rs` (modified, +6/-6)
-```diff
-@@ -89,9 +89,9 @@ impl CommandContext {
-         if let Some(id) = session_id.as_deref() {
-             validate_session_id(id)?;
-         }
-+        let session = acquire_session_scope(session_id.clone(), None)?;
-         let (segment_dir, artifacts_full) =
-             session_trace_state(session_id.as_deref(), trace_path.is_some())?;
--        let session = acquire_session_scope(session_id, None)?;
-         let cursor_overlay =
-             session::cursor_overlay_for_session(session.as_ref().map(|scope| scope.id.as_str()))?;
-         Ok(Self {
-@@ -243,6 +243,11 @@ impl CommandContext {
-         let reuses_parent_session = session_id.as_deref() == self.session_id();
-         let reuses_parent_trace = reuses_parent_session
-             || (self.trace.pending_file_path().is_some() && self.trace.has_sink());
-+        let session = if reuses_parent_session {
-+            self.session.clone()
-+        } else {
-+            acquire_session_scope(session_id.clone(), self.inherited_deadline)?
-+        };
-         let (trace, artifacts_full) = if reuses_parent_trace {
-             (self.trace.clone(), self.artifacts_full)
-         } else {
-@@ -252,11 +257,6 @@ impl CommandContext {
-                 artifacts_full,
-             )
-         };
--        let session = if reuses_parent_session {
--            self.session.clone()
--        } else {
--            acquire_session_scope(session_id, self.inherited_deadline)?
--        };
-         let cursor_overlay = if reuses_parent_session {
-             self.options.cursor_overlay.clone()
-         } else {
-```
-
-**File**: `crates/core/src/ref_action/mod.rs` (modified, +1/-1)
-```diff
-@@ -91,7 +91,7 @@ pub(crate) fn dispatch_resolved_landing(
-     let preflight = match stable_preflight(&initial_target, &request) {
-         Ok(preflight) => preflight,
-         Err(error) => {
--            let error = into_adapter_error(error);
-+            let error = mark_pre_dispatch_resolution_failure(into_adapter_error(error));
-             if !crate::ref_action::ref_action_wait_evidence::should_scroll_after_preflight(
-                 &request, &error,
-             ) {
-```
-
-**File**: `crates/core/src/ref_action/ref_action_wait_unresponsive_tests.rs` (modified, +59/-0)
-```diff
-@@ -59,3 +59,62 @@ fn auto_wait_retries_a_transiently_unresponsive_accessibility_service() {
-     assert_eq!(result.action, "click");
-     assert!(adapter.resolve_calls.load(Ordering::SeqCst) >= 2);
- }
-+
-+struct BusyAtDispatchPreflightAdapter(AtomicU32);
-+
-+impl ObservationOps for BusyAtDispatchPreflightAdapter {
-+    fn resolve_element_strict(
-+        &self,
-+        _entry: &RefEntry,
-+        _deadline: crate::Deadline,
-+    ) -> Result<NativeHandle, AdapterError> {
-+        Ok(NativeHandle::null())
-+    }
-+
-+    crate::adapter::complete_live_observation!("button", "Run", [capability::CLICK], adapter => {
-+        if adapter.0.fetch_add(1, Ordering::SeqCst) == 1 {
-+            return Err(AdapterError::timeout("busy").with_details(serde_json::json!({ "retryable": true })));
-+        }
-+        crate::ElementState {
-+            role: "button".into(),
-+            states: Vec::new(),
-+            value: None,
-+            enabled: Some(true),
-+            hidden: Some(false),
-+            offscreen: Some(false),
-+        }
-+    });
-+    crate::adapter::saved_ref_scope!("button", Some("Run"));
-+}
-+
-+impl ActionOps for BusyAtDispatchPreflightAdapter {
-+    fn execute_action(
-+        &self,
-+        _handle: &NativeHandle,
-+        _request: ActionRequest,
-+        _lease: &crate::InteractionLease,
-+    ) -> Result<crate::actions::action_result::ActionResult, AdapterError> {
-+        Ok(crate::actions::action_result::ActionResult::delivered_unverified("click"))
++        let reason = String(cString: strerror(errno))
++        FileHandle.standardError.write(Data("vmhost: could not leave the caller's session, so the sandbox stops with its launcher: \(reason)\n".utf8))
 +    }
 +}
 +
-+impl InputOps for BusyAtDispatchPreflightAdapter {}
-+impl SystemOps for BusyAtDispatchPreflightAdapter {
-+    crate::adapter::guarded_interaction_lease!();
-+}
-+
-+#[test]
-+fn auto_wait_retries_a_live_read_timeout_in_the_dispatch_preflight() {
-+    let result = execute_with_auto_wait(
-+        RefActionWaitCtx {
-+            adapter: &BusyAtDispatchPreflightAdapter(AtomicU32::new(0)),
-+            entry: &entry(),
-+            ref_id: "@e1",
-+            context: &CommandContext::default(),
-+        },
-+        ActionRequest::headless(Action::Click).with_timeout_ms(Some(2_000)),
-+        crate::ref_action::ref_action_single::dispatch_resolved,
-+    );
-+
-+    assert_eq!(result.unwrap().action, "click");
-+}
-```
-
-**File**: `crates/core/src/refs/refs_store_prune.rs` (modified, +4/-2)
-```diff
-@@ -36,7 +36,7 @@ impl RefStore {
-         );
-     }
- 
--    /// Drops only the refmaps the trace already holds a copy of, leaving every
-+    /// Drops only the refmaps the trace holds a byte-identical copy of, leaving every
-     /// other artifact in place. Being in `ArtifactsMode::Full` is not on its own
-     /// proof that a copy exists: the artifact budget and a serialisation failure
-     /// both skip a copy and report success, so a session that recorded more
-@@ -57,7 +57,9 @@ impl RefStore {
-             if validate_snapshot_id(&id).is_err() {
-                 continue;
-             }
--            if duplicates.join(format!("{id}.json")).is_file() {
-+            let copy = std::fs::read(duplicates.join(format!("{id}.json")));
-+            let original = std::fs::read(entry.path().join("refmap.json"));
-+            if copy.is_ok_and(|copy| original.is_ok_and(|original| copy == original)) {
-                 let _ = std::fs::remove_dir_all(entry.path());
-             }
-         }
-```
-
-**File**: `crates/core/src/refs/refs_store_tests.rs` (modified, +24/-0)
-```diff
-@@ -288,3 +288,27 @@ mod pruning_tests;
- 
- #[path = "refs_store_session_tests.rs"]
- mod session_tests;
-+
-+#[test]
-+fn discarding_scaffolding_keeps_a_snapshot_drilled_after_its_trace_copy() {
-+    let _guard = HomeGuard::new();
-+    let store = RefStore::for_session(Some("drilled")).unwrap();
-+    let snapshot_id = store.save_new_snapshot(&map_with("Root")).unwrap();
-+    let refmaps = crate::trace::trace_artifacts::refmap_artifact_dir(&store.trace_dir());
-+    std::fs::create_dir_all(&refmaps).unwrap();
-+    std::fs::copy(
-+        store.snapshot_path(&snapshot_id),
-+        refmaps.join(format!("{snapshot_id}.json")),
-+    )
-+    .unwrap();
-+    store
-+        .update_existing_snapshot(&snapshot_id, "@e1", &entry("Root"), |map| {
-+            map.allocate(entry("Drilled"));
-+            Ok(())
-+        })
-+        .unwrap();
-+
-+    store.discard_duplicated_ref_scaffolding();
-+
-+    assert!(store.snapshot_path(&snapshot_id).is_file());
-+}
+ enum VMHost {
+     static func run(_ arguments: [String]) -> Int32 {
+         do {
+@@ -785,6 +798,7 @@ enum VMHost {
+             case "install":
+                 try InstallCommand.execute(rest)
+             case "run":
++                CallerSession.leave()
+                 try RunCommand.execute(rest)
+             case "clone":
+                 try CloneCommand.execute(rest)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #680** (2026-11-13): chore(release): 1.3.1 (@lahfir)
+- **PR #672** (2026-11-13): fix: keep a started sandbox running after its launcher exits (@lahfir)
+- **PR #670** (2026-11-13): chore(deps): bump rustix to 1.1.6 for RUSTSEC-2026-0486 (@lahfir)
 - **PR #642** (2026-11-11): test: run the post-action settle budget tests on the virtual clock (@lahfir)
+- **PR #641** (2026-11-12): chore(release): 1.3.0 (@lahfir)
 - **PR #626** (closed): fix(cli): name the window size unit in resize-window help (@argszero)
-- **PR #624** (closed): fix(mcp): keep a cancelled call id occupied until its call finishes (@princejain756)
-- **PR #622** (2026-11-10): Upgrade the docs to TypeScript 7 (@ctate)
-- **PR #621** (closed): fix(jev): read detached macOS dialogs and follow replaced windows (@datasciencerule)
-- **PR #602** (2026-11-09): fix: close reachable invalid state transitions in sessions, refs, trace, mcp and waits (@lahfir)
 
 ---
 
@@ -1538,48 +1265,28 @@ Each regression test fails without its fix. Not verified on macOS or Windows.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. close reachable invalid state transitions in sessions, refs, trace, mcp and wait
+## X. keep a started sandbox running after its launcher exits
 
 **RULE**:
-When implementing operations in `crates/core/src/commands/wait_event.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vercel-labs/agent-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/docs/content/docs/sandboxes/macos.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vercel-labs/agent-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab7dfb21`: close reachable invalid state transitions in sessions, refs, trace, mcp and waits (#602). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f650705`: keep a started sandbox running after its launcher exits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/commands/wait_event.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/content/docs/sandboxes/macos.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        )
-                        .find(|found| confirm_app_terminated(adapter, found, diff_base, deadline))
-                        {
-                            let elapsed = start.elapsed().as_millis();
-                            return Ok(json!({
-                                "found": true,
-                                "event": serde_json::to_value(found)?,
-                                "elapsed_ms": elapsed,
-                            }));
-) -> impl Iterator<Item = &'a UiEvent> {
-    events.iter().filter(move |event| {
+`start` answers `running` only once the guest answers over SSH. Until then it answers `working`; repeat `sandbox status` before `sandbox exec`. The VM host runs in its own session, so a started sandbox keeps running after the command that started it exits, including when the caller that launched it is later terminated.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-                        ) {
-                            if confirm_app_terminated(adapter, found, diff_base, deadline) {
-                                let elapsed = start.elapsed().as_millis();
-                                return Ok(json!({
-                                    "found": true,
-                                    "event": serde_json::to_value(found)?,
-                                    "elapsed_ms": elapsed,
-                                }));
-                            }
-) -> Option<&'a UiEvent> {
-    events.iter().find(|event| {
+// Induced defect failure mode:
+`start` answers `running` only once the guest answers over SSH. Until then it answers `working`; repeat `sandbox status` before `sandbox exec`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab7dfb21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f650705` are properly handled with clean fallback behavior.

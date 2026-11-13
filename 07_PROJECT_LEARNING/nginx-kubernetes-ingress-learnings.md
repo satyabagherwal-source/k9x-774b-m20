@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `f00b7006`  
+> **Source Version**: `8c5b0b9d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T23:54:48.578Z  
+> **Timestamp**: 2026-11-13T22:17:38.811Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T23:54:48.563Z  
+> **Harvest Timestamp**: 2026-11-13T22:17:38.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -953,139 +953,6 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &applyconfigu
 ```
 
-### Core Architecture Module: `cmd/nginx-ingress/aws.go`
-```
-//go:build aws
-
-package main
-
-import (
-	"context"
-	"crypto/rand"
-	"encoding/base64"
-	"errors"
-	"fmt"
-	"math/big"
-	"time"
-
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/marketplacemetering"
-	"github.com/aws/aws-sdk-go-v2/service/marketplacemetering/types"
-
-	"github.com/golang-jwt/jwt/v5"
-)
-
-var (
-	productCode   string
-	pubKeyVersion int32 = 1
-	pubKeyString  string
-)
-
-var (
-	ErrMissingProductCode = errors.New("token doesn't include the ProductCode")
-	ErrMissingNonce       = errors.New("token doesn't include the Nonce")
-	ErrMissingKeyVersion  = errors.New("token doesn't include the PublicKeyVersion")
-)
-
-func init() {
-	startupCheckFn = checkAWSEntitlement
-}
-
-func checkAWSEntitlement() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	nonce, err := generateRandomString(255)
-	if err != nil {
-		return err
-	}
-
-	cfg, err := config.LoadDefaultConfig(ctx)
-	if err != nil {
-		return fmt.Errorf("error loading AWS configuration: %w", err)
-	}
-
-	mpm := marketplacemetering.NewFromConfig(cfg)
-
-	out, err := mpm.RegisterUsage(ctx, &marketplacemetering.RegisterUsageInput{ProductCode: &productCode, PublicKeyVersion: &pubKeyVersion, Nonce: &nonce})
-	if err != nil {
-		if notEnt, ok := errors.AsType[*types.CustomerNotEntitledException](err); ok {
-			return fmt.Errorf("user not entitled, code: %v, message: %v, fault: %v", notEnt.ErrorCode(), notEnt.ErrorMessage(), notEnt.ErrorFault().String())
-		}
-		if invRegion, ok := errors.AsType[*types.InvalidRegionException](err); ok {
-			return fmt.Errorf("invalid region, code: %v, message: %v, fault: %v", invRegion.ErrorCode(), invRegion.ErrorMessage(), invRegion.ErrorFault().String())
-		}
-		if platNotSup, ok := errors.AsType[*types.PlatformNotSupportedException](err); ok {
-			return fmt.Errorf("platform not supported, code: %v, message: %v, fault: %v", platNotSup.ErrorCode(), platNotSup.ErrorMessage(), platNotSup.ErrorFault().String())
-		}
-		return err
-	}
-
-	token, err := jwt.ParseWithClaims(*out.Signature, &claims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodRSAPSS); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-
-		pk, err := base64.StdEncoding.DecodeString(pubKeyString)
-		if err != nil {
-			return nil, fmt.Errorf("error decoding Public Key string: %w", err)
-		}
-		pubKey, err := jwt.ParseRSAPublicKeyFromPEM(pk)
-		if err != nil {
-			return nil, fmt.Errorf("error parsing Public Key: %w", err)
-		}
-
-		return pubKey, nil
-	})
-
-	if claims, ok := token.Claims.(*claims); ok && token.Valid {
-		if claims.ProductCode != productCode || claims.PublicKeyVersion != pubKeyVersion || claims.Nonce != nonce {
-			return fmt.Errorf("the claims in the JWT token don't match the request")
-		}
-	} else {
-		return fmt.Errorf("something is wrong with the JWT token: %w", err)
-	}
-	return nil
-}
-
-type claims struct {
-	ProductCode      string `json:"productCode,omitempty"`
-	PublicKeyVersion int32  `json:"publicKeyVersion,omitempty"`
-	Nonce            string `json:"nonce,omitempty"`
-	jwt.RegisteredClaims
-}
-
-var _ jwt.ClaimsValidator = (*claims)(nil)
-
-func (c claims) Validate() error {
-	if c.Nonce == "" {
-		return ErrMissingNonce
-	}
-	if c.ProductCode == "" {
-		return ErrMissingProductCode
-	}
-	if c.PublicKeyVersion == 0 {
-		return ErrMissingKeyVersion
-	}
-	return nil
-}
-
-func generateRandomString(n int) (string, error) {
-	const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
-	ret := make([]byte, n)
-	for i := 0; i < n; i++ {
-		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(letters))))
-		if err != nil {
-			return "", err
-		}
-		ret[i] = letters[num.Int64()]
-	}
-
-	return string(ret), nil
-}
-
-```
-
 ### Core Architecture Module: `cmd/nginx-ingress/flags.go`
 ```
 package main
@@ -1256,6 +1123,281 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 	nginxStatusAllowCIDRs = flag.String("nginx-status-allow-cidrs", "127.0.0.1,::1", `Add IP/CIDR blocks t
 ```
 
+### Core Architecture Module: `cmd/nginx-ingress/main.go`
+```
+package main
+
+import (
+	"bytes"
+	"context"
+	"fmt"
+	"io"
+	"log/slog"
+	"net"
+	"net/http"
+	"os"
+	"os/signal"
+	"path/filepath"
+	"reflect"
+	"runtime"
+	"strings"
+	"syscall"
+	"time"
+
+	"github.com/nginx/kubernetes-ingress/internal/configs"
+	"github.com/nginx/kubernetes-ingress/internal/configs/version1"
+	"github.com/nginx/kubernetes-ingress/internal/configs/version2"
+	"github.com/nginx/kubernetes-ingress/internal/configs/wafbundle"
+	"github.com/nginx/kubernetes-ingress/internal/externaldns"
+	"github.com/nginx/kubernetes-ingress/internal/healthcheck"
+	"github.com/nginx/kubernetes-ingress/internal/k8s"
+	"github.com/nginx/kubernetes-ingress/internal/k8s/appprotect"
+	"github.com/nginx/kubernetes-ingress/internal/k8s/secrets"
+	license_reporting "github.com/nginx/kubernetes-ingress/internal/license_reporting"
+	"github.com/nginx/kubernetes-ingress/internal/metadata"
+	"github.com/nginx/kubernetes-ingress/internal/metrics"
+	"github.com/nginx/kubernetes-ingress/internal/metrics/collectors"
+	"github.com/nginx/kubernetes-ingress/internal/nginx"
+	cr_validation "github.com/nginx/kubernetes-ingress/pkg/apis/configuration/validation"
+	k8s_nginx "github.com/nginx/kubernetes-ingress/pkg/client/clientset/versioned"
+	conf_scheme "github.com/nginx/kubernetes-ingress/pkg/client/clientset/versioned/scheme"
+	"github.com/nginx/nginx-plus-go-client/v3/client"
+	nginxCollector "github.com/nginx/nginx-prometheus-exporter/collector"
+	"github.com/prometheus/client_golang/prometheus"
+	api_v1 "k8s.io/api/core/v1"
+	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/fields"
+	pkg_runtime "k8s.io/apimachinery/pkg/runtime"
+	util_version "k8s.io/apimachinery/pkg/util/version"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/scheme"
+	core_v1 "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
+	"k8s.io/client-go/tools/record"
+
+	nl "github.com/nginx/kubernetes-ingress/internal/logger"
+	nic_glog "github.com/nginx/kubernetes-ingress/internal/logger/glog"
+	"github.com/nginx/kubernetes-ingress/internal/logger/levels"
+)
+
+// Injected during build
+var (
+	version           string
+	telemetryEndpoint string
+	logLevels         = map[string]slog.Level{
+		"trace":   levels.LevelTrace,
+		"debug":   levels.LevelDebug,
+		"info":    levels.LevelInfo,
+		"warning": levels.LevelWarning,
+		"error":   levels.LevelError,
+		"fatal":   levels.LevelFatal,
+	}
+)
+
+const (
+	nginxVersionLabel        = "app.nginx.org/version"
+	versionLabel             = "app.kubernetes.io/version"
+	appProtectVersionLabel   = "appprotect.f5.com/version"
+	agentVersionLabel        = "app.nginx.org/agent-version"
+	appProtectVersionPath    = "/opt/app_protect/RELEASE"
+	appProtectv4BundleFolder = "/etc/nginx/waf/bundles/"
+	appProtectv5BundleFolder = "/etc/app_protect/bundles/"
+	socketPath               = "/var/lib/nginx"
+	fatalEventFlushTime      = 200 * time.Millisecond
+	secretErrorReason        = "SecretError"
+	fileErrorReason          = "FileError"
+	configMapErrorReason     = "ConfigMapError"
+)
+
+func main() {
+	commitHash, commitTime, dirtyBuild := getBuildInfo()
+	fmt.Printf("NGINX Ingress Controller Version=%v Commit=%v Date=%v DirtyState=%v Arch=%v/%v Go=%v\n", version, commitHash, commitTime, dirtyBuild, runtime.GOOS, runtime.GOARCH, runtime.Version())
+	parseFlags()
+	ctx := initLogger(*logFormat, logLevels[*logLevel], os.Stdout)
+	l := nl.LoggerFromContext(ctx)
+
+	cleanupSocketFiles(l)
+
+	initValidate(ctx)
+	parsedFlags := os.Args[1:]
+
+	buildOS := os.Getenv("BUILD_OS")
+	controllerNamespace := os.Getenv("POD_NAMESPACE")
+	podName := os.Getenv("POD_NAME")
+
+	config, kubeClient := mustCreateConfigAndKubeClient(ctx)
+	if err := validateKubernetesVersionInfo(ctx, kubeClient); err != nil {
+		nl.Fatal(l, err)
+	}
+	pod, err := kubeClient.CoreV1().Pods(controllerNamespace).Get(context.TODO(), podName, meta_v1.GetOptions{})
+	if err != nil {
+		nl.Fatalf(l, "Failed to get pod: %v", err)
+	}
+
+	controllerNodeName, controllerZone := getControllerTopology(ctx, kubeClient, pod, *enableTopologyAwareRouting)
+
+	eventBroadcaster := record.NewBroadcaster()
+	eventBroadcaster.StartLogging(func(format string, args ...interface{}) {
+		nl.Infof(l, format, args...)
+	})
+	eventBroadcaster.StartRecordingToSink(&core_v1.EventSinkImpl{
+		Interface: core_v1.New(kubeClient.CoreV1().RESTClient()).Events(""),
+	})
+	eventRecorder := eventBroadcaster.NewRecorder(scheme.Scheme,
+		api_v1.EventSource{Component: k8s.EventReporterName})
+	defer eventBroadcaster.Shutdown()
+	mustValidateIngressClass(ctx, kubeClient)
+	mustValidateExternalDNSCRD(ctx, kubeClient)
+
+	checkNamespaces(ctx, kubeClient)
+
+	dynClient, confClient := createCustomClients(ctx, config)
+
+	constLabels := map[string]string{"class": *ingressClass}
+
+	managerCollector, controllerCollector, registry := createManagerAndControllerCollectors(ctx, constLabels)
+
+	var licenseReporter *license_reporting.LicenseReporter
+
+	if *nginxPlus {
+		licenseReporter = license_reporting.NewLicenseReporter(kubeClient, eventRecorder, pod)
+	}
+
+	var deploymentMetadata *metadata.Metadata
+
+	if *agent {
+		deploymentMetadata = metadata.NewMetadataReporter(kubeClient, pod, version)
+	}
+
+	nginxManager, useFakeNginxManager := createNginxManager(ctx, managerCollector, licenseReporter, deploymentMetadata)
+
+	nginxVersion := getNginxVersionInfo(ctx, nginxManager)
+
+	var appProtectVersion string
+	var appProtectV5 bool
+	appProtectBundlePath := appProtectv4BundleFolder
+	if *appProtect {
+		appProtectVersion = getAppProtectVersionInfo(ctx)
+
+		if _, err := os.Stat("/opt/app_protect/VERSION.common"); os.IsNotExist(err) {
+			appProtectV5 = true
+			appProtectBundlePath = appProtectv5BundleFolder
+		}
+
+		selectAppProtectAPIVersion(ctx, *plmStorageURL != "", eventRecorder, pod)
+
+		if *plmStorageURL != "" {
+			setupPLMStorage(ctx, kubeClient, eventRecorder, pod)
+		}
+	}
+
+	var agentVersion string
+	if *agent {
+		agentVersion = getAgentVersionInfo(nginxManager)
+	}
+
+	go updateSelfWithVersionInfo(ctx, eventRecorder, kubeClient, version, appProtectVersion, agentVersion, nginxVersion, 10, time.Second*5)
+
+	var mgmtCfgParams *configs.MGMTConfigParams
+	if *nginxPlus {
+		mgmtCfgParams = processMGMTConfigMap(kubeClient, configs.NewDefaultMGMTConfigParams(ctx), eventRecorder, pod)
+		if err := processLicenseSecret(kubeClient, nginxManager, mgmtCfgParams, controllerNamespace); err != nil {
+			logEventAndExit(ctx, eventRecorder, pod, secretErrorReason, err)
+		}
+
+		if err := processTrustedCertSecret(kubeClient, nginxManager, mgmtCfgParams, controllerNamespace); err != nil {
+			logEventAndExit(ctx, eventRecorder, pod, secretErrorReason, err)
+		}
+
+		if err := processClientAuthSecret(kubeClient, nginxManager, mgmtCfgParams, controllerNamespace); err != nil {
+			logEventAndExit(ctx, eventRecorder, pod, secretErrorReason, err)
+		}
+
+	}
+
+	templateExecutor, templateExecutorV2 := createTemplateExecutors(ctx)
+
+	sslRejectHandshake, err := processDefaultServerSecret(kubeClient, nginxManager)
+	if err != nil {
+		logEventAndExit(ctx, eventRecorder, pod, secretErrorReason, err)
+	}
+
+	staticSSLPath := nginxManager.GetSecretsDir()
+
+	isWildcardEnabled, err := processWildcardSecret(kubeClient, nginxManager)
+	if err != nil {
+		logEventAndExit(ctx, eventRecorder, pod, secretErrorReason, err)
+	}
+
+	caBundlePath, err := nginxManager.GetOSCABundlePath()
+	if err != nil {
+		logEventAndExit(ctx, eventRecorder, pod, fileErrorReason, err)
+	}
+
+	globalConfigurationValidator := createGlobalConfigurationValidator()
+
+	mustProcessGlobalConfiguration(ctx)
+
+	cfgParams := configs.NewDefaultConfigParams(ctx, *nginxPlus)
+	cfgParams = processConfigMaps(kubeClient, cfgParams, nginxManager, templateExecutor, eventRecorder)
+
+	staticCfgParams := &configs.StaticConfigParams{
+		DisableIPV6:                    *disableIPV6,
+		DefaultHTTPListenerPort:        *defaultHTTPListenerPort,
+		DefaultHTTPSListenerPort:       *defaultHTTPSListenerPort,
+		HealthStatus:                   *healthStatus,
+		HealthStatusURI:                *healthStatusURI,
+		NginxStatus:                    *nginxStatus,
+		NginxStatusAllowCIDRs:          allowedCIDRs,
+		NginxStatusPort:                *nginxStatusPort,
+		StubStatusOverUnixSocketForOSS: *enablePrometheusMetrics,
+		TLSPassthrough:                 *enableTLSPassthrough,
+		TLSPassthroughPort:             *tlsPassthroughPort,
+		EnableSnippets:                 *enableSnippets,
+		MainAppProtectLoadModule:       *appProtect,
+		MainAppProtectV5LoadModule:     appProtectV5,
+		MainAppProtectDosLoadModule:    *appProtectDos,
+		MainAppProtectV5EnforcerAddr:   *appProtectEnforcerAddress,
+		EnableLatencyMetrics:           *enableLatencyMetrics,
+		EnableOIDC:                     *enableOIDC,
+		SSLRejectHandshake:             sslRejectHandshake,
+		EnableCertManager:              *enableCertManager,
+		DynamicSSLReload:               *enableDynamicSSLReload,
+		DynamicWeightChangesReload:     *enableDynamicWeightChangesReload,
+		IsDirectiveAutoadjustEnabled:   *enableDirectiveAutoadjust,
+		StaticSSLPath:                  staticSSLPath,
+		NginxVersion:                   nginxVersion,
+		AppProtectBundlePath:           appProtectBundlePath,
+		DefaultCABundle:                caBundlePath,
+		PLMEnabled:                     *plmStorageURL != "",
+	}
+
+	if *nginxPlus {
+		if cfgParams.ZoneSync.Enable && cfgParams.ZoneSync.Port != 0 {
+			err := createAndValidateHeadlessService(ctx, kubeClient, cfgParams, controllerNamespace, pod)
+			if err != nil {
+				logEventAndExit(ctx, eventRecorder, pod, nl.EventReasonServiceFailedToCreate, err)
+			}
+		}
+	}
+
+	mustWriteInitialNginxConfig(staticCfgParams, cfgParams, mgmtCfgParams, templateExecutor, nginxManager)
+
+	if *enableTLSPassthrough {
+		var emptyFile []byte
+		nginxManager.CreateTLSPassthroughHostsConfig(emptyFile)
+	}
+
+	process := startChildProcesses(nginxManager, appProtectV5)
+
+	plusClient := createPlusClient(ctx, *nginxPlus, useFakeNginxManager, nginxManager)
+	if *nginxPlus {
+		licenseReporter.Config.PlusCl
+```
+
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1283,1038 +1425,445 @@ NIC prints a startup warning when set. Requires -plm-storage-url.`)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba1960d9` (2026-11-11)
-**Commit Message**: Render JWT claim authorization in the NGINX Plus VirtualServer template (#11227)
+### Incident Patch 1: `afb4fa83` (2026-11-13)
+**Commit Message**: Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, run past first failure (#11393)
 
-* feat: render JWT claim authorization in the NGINX Plus VirtualServer template (#11174)
+* Add flaky E2E tests plan and remove outdated documentation
 
-- Move the server- and location-level auth_jwt directives into one
-  shared "jwtAuth" template, which also renders
-  auth_jwt_require <variable> error=<code> when the policy has claim
-  authorization. A policy without it renders exactly as before, and
-  every existing snapshot is unchanged.
-- Render auth_jwt_require with the always-passing variable on
-  locations that run their own JWT handling under a server policy that
-  requires claims, since the directive is inherited and has no "off".
-  ACME challenge locations never get it.
-- Add snapshot fixtures for server, route and mixed policies, OIDC,
-  ACME and JWKS locations, claim headers for HTTP and gRPC, and the
-  map chain. The OSS template is unchanged.
+* Add zone sync ConfigMap fixture to prevent leaks in rate-limit tests
 
-* fix: let OIDC login run under a server-level JWT policy (#11174)
+* Add pytest arguments input to smoke tests and enhance pod diagnostics in regression workflow
+
+* Refactor leak tracking for nginx-config ConfigMap to improve clarity and maintainability
+
+* Update pytest maxfail argument to improve test visibility and adjust documentation for retry logic in E2E tests
 
 ---------
 
-Co-authored-by: Paul Abel <[REDACTED_EMAIL]>
+Signed-off-by: Paul Abel <[REDACTED_EMAIL]>
 
-**File**: `docs/developer/jwt-claim-validation-plan.md` (modified, +1/-0)
+**File**: `.github/actions/smoke-tests/action.yaml` (modified, +4/-0)
 ```diff
-@@ -320,6 +320,7 @@ One map per claim check. All value matches compile to a **single case-sensitive
-   - **Reset variable:** emit `map $uri $jwt_authz_none_<vsNamespace>_<vsName> { default 1; }` from a VirtualServer **only when one of its locations needs the reset**. The name is per VirtualServer because every VirtualServer renders into the same `http` context, and a fixed name emitted twice fails `nginx -t` with a duplicate variable. A location-level `auth_jwt_require $jwt_authz_none_<vsNamespace>_<vsName>;` replaces the inherited requirement and always passes (the value must start with a variable and be non-empty and not `0`).
-   - **Where the reset is emitted:** (a) a location whose own JWT policy has no `authorization` while the server-level JWT policy has one (route policies override spec policies, `addPoliciesCfgToLocation`). This includes the [validate-then-route](#required-validate-then-route) entry location (`InternalRedirectLocation`, a separate type in `version2/http.go`, assembled separately in `virtualserver.go`), which needs the same reset flag and rendering. A route policy that **has** `authorization` emits its own requirement, never the reset; (b) OIDC locations, which run `auth_jwt "" token=$session_jwt;` and would otherwise inherit.
-   - **Not affected:** ACME-challenge locations, because they emit `auth_jwt off;`, which disables the module so `auth_jwt_require` is never evaluated. `/_jwks_uri_server_*` internal locations do not emit `auth_jwt off`; they are reached by subrequest, and NGINX skips the ACCESS phase for subrequests. Snapshot fixtures still prove both.
-+  - **OIDC helper locations (`oidc.tmpl`):** the legacy OIDC include sits at server level, so `@do_oidc_flow`, the redirect URI (`/_codexch`), `/logout` and `/front_channel_logout` inherit the server's `auth_jwt` and `auth_jwt_require`. A login request carries no token, so the inherited check returns 401 and the login never starts. They emit `auth_jwt off;` when the VirtualServer has a server-level JWT policy (`OIDC.ServerJWTAuth`). A reset variable would not be enough, because the inherited `auth_jwt` alone also demands a bearer token. `/_logout` and `@oidc_error` use `return`, which runs before the access phase, and `/_jwks_uri`, `/_token`, `/_refresh`, `/_token_validation` are subrequests. `auth_jwt off` removes no protection: the entry location still validates the session token.
+@@ -34,6 +34,9 @@ inputs:
+   plus-jwt:
+     description: JWT for NGINX Plus
+     required: false
++  pytest-args:
++    description: Extra pytest arguments, e.g. --maxfail=100 to keep running after the first failure
++    required: false
  
- ### 5. Claim header forwarding (`location` context)
+ outputs:
+   test-results-name:
+@@ -112,6 +115,7 @@ runs:
+         -rfE \
+         --show-ic-logs=yes \
+         --plus-jwt=${{ inputs.plus-jwt }} \
++        ${{ inputs.pytest-args }} \
+         -m ${{ inputs.marker != '' && inputs.marker || '""' }}
+       working-directory: ./tests
+       shell: bash
+```
+
+**File**: `.github/skills/nic-testing/SKILL.md` (modified, +24/-12)
+```diff
+@@ -190,24 +190,36 @@ class TestMyFeaturePolicies:
+         pol_name = create_policy_from_yaml(
+             kube_apis.custom_objects, yaml_src, test_namespace
+         )
+-        wait_before_test()
+-        # 2. Patch VS to reference policy
+-        patch_virtual_server_from_yaml(...)
+-        # 3. Assert HTTP responses
+-        resp = requests.get(url, headers={"host": vs_host})
+-        assert resp.status_code == 200
+-        assert "Expected-Header" in resp.headers
+-        # 4. Cleanup
+-        delete_policy(kube_apis.custom_objects, pol_name, test_namespace)
+-        patch_virtual_server_from_yaml(...)  # restore original
++        try:
++            # 2. Patch VS to reference policy
++            patch_virtual_server_from_yaml(...)
++            # 3. Poll until the reload has taken effect; never sleep, then assert once
++            resp = retry_get_until_status_code(url, virtual_server_setup.vs_host, 200)
++            assert resp.status_code == 200  # the helper returns the last response even if it never matched
++            assert "Expected-Header" in resp.headers
++        finally:
++            # 4. Cleanup runs even when an assert fails
++            delete_policy(kube_apis.custom_objects, pol_name, test_namespace)
++            patch_virtual_server_from_yaml(...)  # restore original
+ ```
+ 
+ ### Fixtures and Utilities
+ 
+ - Common fixtures: `kube_apis`, `crd_ingress_controller`, `virtual_server_setup`, `test_namespace`
+ - Fixtures: `tests/suite/fixtures/` (setup/teardown lifecycle)
+-- Utilities: `tests/suite/utils/` (`create_policy_from_yaml`, `patch_virtual_server_from_yaml`, `delete_policy`, `wait_before_test`)
+-- Prefer event/status-based waits over fixed sleeps when possible
++- Utilities: `tests/suite/utils/` (`create_policy_from_yaml`, `patch_virtual_server_from_yaml`, `delete_policy`, `retry_get_until_status_code`)
++- Prefer polling over fixed sleeps, see "Waiting for config changes" below
++
++### Waiting for config changes
++
++A config change reloads NGINX. A request that lands during the reload can be dropped, and a fixed `wait_before_test()` before one assertion only passes if the reload is faster than the sleep. Details and the failure data: `docs/developer/e2e-flaky-tests.md`.
++
++- After a change that reloads, poll with `retry_get_until_status_code`, `retry_get_until_body_contains`, or `retry_get` (one request, retried only on `ConnectionError`). They are in `tests/suite/utils/resources_utils.py`. `wait_and_assert_status_code` and `send_malicious_request_with_retry` also tolerate dropped connections. The `retry_get_until_*` helpers return the last response even if it never matched, so still assert on it.
++- For non-HTTP conditions use the existing waiters: `wait_for_event`, `wait_for_resource_status`, `wait_for_reload`, `wait_until_all_pods_are_ready`, `ensure_response_from_backend`.
++- Keep `wait_before_test()` only when the wait is the point of the test (rate-limit windows, asserting something does not happen).
++- Do not add `@pytest.mark.flaky`. It reruns the whole test and hides real regressions.
++- If a test catches `requests.exceptions.SSLError` (mTLS), put that `except` before `except ConnectionError`, because `SSLError` is a subclass.
++- The `nginx-config` ConfigMap lives for the whole session. A test that changes it restores it in a fixture or `finally`, not at the end of the test body, or a later unrelated test fails. `tests/conftest.py` prints `Leaked nginx-config` when a class leaves it changed. The IC Deployment is recreated per class, so replica counts do not leak across classes.
+ 
+ ### File Naming
  
 ```
 
-**File**: `internal/configs/version2/__snapshots__/jwt_authorization_templates_test.snap` (added, +779/-0)
+**File**: `.github/workflows/regression.yml` (modified, +4/-1)
 ```diff
-@@ -0,0 +1,779 @@
-+
-+[TestVirtualServerForNginxPlusJWTAuthorizationACMEAndJWKSLocations - 1]
-+
-+upstream coffee-v1 {
-+    zone coffee-v1 ;
-+    server 10.0.0.31:8001 max_fails=0 fail_timeout= max_conns=0;
-+}
-+
-+
-+server {
-+    listen 80;
-+    listen [::]:80;
-+
-+
-+    server_name cafe.example.com;
-+    status_zone "cafe.example.com";
-+    set $resource_type "virtualserver";
-+    set $resource_name "cafe";
-+    set $resource_namespace "default";
-+    set $service "-";
-+
-+    server_tokens "";
-+    auth_jwt "api" token=$http_token;
-+    
-+    auth_jwt_key_cache 1h;
-+    auth_jwt_key_request /_jwks_uri_server_default/shop-jwt;
-+    auth_jwt_require $jwt_authz_default_cafe_vs_default_shop_jwt error=403;
-+    location = /_jwks_uri_server_default/shop-jwt {
-+        internal;
-+        client_max_body_size 0;
-+        proxy_method GET;
-+        proxy_set_header Content-Length "";
-+        proxy_ssl_verify off;
-+        proxy_pass_request_headers off;
-+        proxy_pass_request_body off;
-+        proxy_set_header Host idp.example.com;
-+        set $idp_backend idp.example.com;
-+        proxy_pass https://$idp_backend/keys;
-+    }
-+
-+    
-+
-+    
-+    location "/coffee" {
-+        set $service "coffee-svc";
-+        status_zone "coffee-svc";
-+
-+        
-+        set $default_connection_header close;
-+        proxy_connect_timeout 30s;
-+        proxy_read_timeout 31s;
-+        proxy_send_timeout 32s;
-+        client_max_body_size 1m;
-+
-+        proxy_buffering off;
-+        proxy_set_header Upgrade $http_upgrade;
-+        proxy_set_header Connection $vs_connection_header;
-+        proxy_pass_request_headers off;
-+        proxy_set_header X-Real-IP $remote_addr;
-+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-+        proxy_set_header X-Forwarded-Host $host;
-+        proxy_set_header X-Forwarded-Port $server_port;
-+        proxy_set_header X-Forwarded-Proto $scheme;
-+        proxy_pass http://coffee-v1;
-+        proxy_next_upstream ;
-+        proxy_next_upstream_timeout ;
-+        proxy_next_upstream_tries 0;
-+    }
-+    location = "/.well-known/acme-challenge/tok" {
-+        set $service "cm-acme-http-solver-abcde";
-+        status_zone "cm-acme-http-solver-abcde";
-+        auth_request off;
-+        auth_jwt off;
-+        auth_basic off;
-+
-+        
-+        auth_oidc off;
-+        set $default_connection_header close;
-+        proxy_connect_timeout 30s;
-+        proxy_read_timeout 31s;
-+        proxy_send_timeout 32s;
-+        client_max_body_size 1m;
-+
-+        proxy_buffering off;
-+        proxy_set_header Upgrade $http_upgrade;
-+        proxy_set_header Connection $vs_connection_header;
-+        proxy_pass_request_headers off;
-+        proxy_set_header X-Real-IP $remote_addr;
-+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-+        proxy_set_header X-Forwarded-Host $host;
-+        proxy_set_header X-Forwarded-Port $server_port;
-+        proxy_set_header X-Forwarded-Proto $scheme;
-+        proxy_pass http://vs_default_cafe_cm-acme-http-solver-abcde;
-+        proxy_next_upstream ;
-+        proxy_next_upstream_timeout ;
-+        proxy_next_upstream_tries 0;
-+    }
-+}
-+
-+---
-+
-+[TestVirtualServerForNginxPlusJWTAuthorizationClaimHeaders - 1]
-+
-+upstream coffee-v1 {
-+    zone coffee-v1 ;
-+    server 10.0.0.31:8001 max_fails=0 fail_timeout= max_conns=0;
-+}
-+
-+map $jwt_default_cafe_vs_scope $jwt_authz_r0_c0_hdr {
-+    "~[\r\n]" "";
-+    default $jwt_default_cafe_vs_scope;
-+}
-+map $jwt_default_cafe_vs_ip $jwt_authz_r0_c1_hdr {
-+    "~[\r\n]" "";
-+    default $jwt_default_cafe_vs_ip;
-+}
-+map $jwt_default_cafe_vs_tenant $jwt_authz_r0_c2_hdr {
-+    "~[\r\n]" "";
-+    default $jwt_default_cafe_vs_tenant;
-+}
-+
-+server {
-+    listen 80;
-+    listen [::]:80;
-+
-+
-+    server_name cafe.example.com;
-+    status_zone "cafe.example.com";
-+    set $resource_type "virtualserver";
-+    set $resource_name "cafe";
-+    set $resource_namespace "default";
-+    set $service "-";
-+
-+    server_tokens "";
-+    auth_jwt "api";
-+    auth_jwt_key_file /etc/nginx/secrets/default-jwk;
-+    auth_jwt_require $jwt_authz_default_cafe_vs_default_shop_jwt error=403;
-+
-+    
-+
-+    
-+    location "/http" {
-+        set $service "coffee-svc";
-+        status_zone "coffee-svc";
-+
-+        
-+        set $default_connection_header close;
-+        proxy_connect_timeout 30s;
-+        proxy_read_timeout 31s;
-+        proxy_send_timeout 32s;
-+        client_max_body_size 1m;
-+
-+        proxy_buffering off;
-+        proxy_set_header Upgrade $http_upgrade;
-+        proxy_set_header Connection $vs_connection_header;
-+        proxy_pass_request_headers off;
-+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-+        proxy_set_header X-Forwarded-Host $host;
-+        proxy_set_header X-Forwarded-Port $server_port;
-+        proxy_set_header X-Forwarded-Proto $scheme;
-+        proxy_set_header X-Token-Scope "$jwt_authz_r0_c0_hdr";
-+        proxy_set_header X-Real-IP "$jwt_authz_r0_c1_hdr";
-+        proxy_set
+@@ -280,7 +280,8 @@ jobs:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
+-          ref: ${{ needs.checks.outputs.branch }}
++          # LTS entries test a released image, so use the tests, manifests and CRDs from that tag, not main
++          ref: ${{ matrix.images.lts == true && matrix.images.lts_tag || needs.checks.outputs.branch }}
+ 
+       - name: Set image variables
+         id: image_details
+@@ -367,6 +368,8 @@ jobs:
+           registry-token: ${{ steps.auth.outputs.access_token }}
+           test-image: "ghcr.io/nginx/kubernetes-ingress/test-runner:${{ hashFiles('./tests/requirements.txt', './tests/Dockerfile') || 'latest' }}"
+           plus-jwt: ${{ env.PLUS_JWT }}
++          # pyproject.toml has -x; override it so one failure does not hide the rest of the nightly
++          pytest-args: --maxfail=100
+ 
+       - name: Upload Test Results
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
 ```
 
-**File**: `internal/configs/version2/http.go` (modified, +4/-0)
+**File**: `docs/developer/README.md` (modified, +1/-0)
 ```diff
-@@ -181,6 +181,10 @@ type OIDC struct {
- 	// oidc.tmpl can emit app_protect_enable off; on its internal sub-request
- 	// locations only when the WAF module is actually loaded.
- 	AppProtectLoadModule bool
-+	// ServerJWTAuth is set when the VirtualServer has a server-level JWT policy. Its auth_jwt and
-+	// auth_jwt_require are inherited by the locations below, and a login request carries no token,
-+	// so oidc.tmpl turns auth_jwt off in the ones that run the access phase.
-+	ServerJWTAuth bool
- }
- 
- // APIKey holds API key configuration.
+@@ -6,4 +6,5 @@
+ - [Type-Agnostic Kubernetes Secrets](./opaque-secrets-high-level-design.md)
+ - [ExternalAuth Response Headers](./external-auth-response-headers-high-level-design.md)
+ - [ConnectionLimit Policy](./connection-limit-policy-high-level-design.md)
++- [Flaky E2E Tests Plan](./e2e-flaky-tests.md)
+ - [Offline Helm Schema Validation](./offline-helm-schema-high-level-design.md)
 ```
 
-**File**: `internal/configs/version2/jwt_authorization_templates_test.go` (added, +373/-0)
+**File**: `docs/developer/e2e-flaky-tests.md` (added, +345/-0)
 ```diff
-@@ -0,0 +1,373 @@
-+package version2
+@@ -0,0 +1,345 @@
++# Plan: Fixing Flaky Python E2E Tests
 +
-+import (
-+	"strconv"
-+	"strings"
-+	"testing"
++## Status: Draft
 +
-+	"github.com/gkampitakis/go-snaps/snaps"
-+)
++## Summary
 +
-+const (
-+	jwtAuthzServerVar = "$jwt_authz_default_cafe_vs_default_shop_jwt"
-+	jwtAuthzRouteVar  = "$jwt_authz_default_cafe_vs_default_route_jwt"
-+	jwtAuthzNoneVar   = "$jwt_authz_none_default_cafe"
-+)
++**Goal:** make the Python e2e tests fail only when the product is broken, not when
++a reload or a pod start takes a little longer than a fixed sleep.
 +
-+func jwtAuthzSecretAuth(realm, secret, requireVar string, errorCode int) *JWTAuth {
-+	return &JWTAuth{
-+		Realm:            realm,
-+		Secret:           secret,
-+		RequireVariable:  requireVar,
-+		RequireErrorCode: errorCode,
-+	}
-+}
++**Approach:** data driven. Rank tests by how often they fail in CI, then fix the
++worst ones. Do not sweep every `wait_before_test()` call.
 +
-+func jwtAuthzJWKSAuth(key, requireVar string, errorCode int) *JWTAuth {
-+	return &JWTAuth{
-+		Key:              key,
-+		Realm:            "api",
-+		Token:            "$http_token",
-+		KeyCache:         "1h",
-+		JwksURI:          JwksURI{JwksScheme: "https", JwksHost: "idp.example.com", JwksPath: "/keys"},
-+		RequireVariable:  requireVar,
-+		RequireErrorCode: errorCode,
-+	}
-+}
++**Why not sweep:** `wait_before_test()` is `time.sleep(3)` by default
++(`tests/suite/utils/resources_utils.py`, `settings.py`). There are many calls,
++but most of the tests that actually fail have none in the test body. The cause
++is usually a fixture that applies config and a test that then asserts on one
++request with no polling.
 +
-+func jwtAuthzLocation(path string) Location {
-+	return Location{
-+		Path:                path,
-+		ProxyConnectTimeout: "30s",
-+		ProxyReadTimeout:    "31s",
-+		ProxySendTimeout:    "32s",
-+		ClientMaxBodySize:   "1m",
-+		ProxyPass:           "http://coffee-v1",
-+		ServiceName:         "coffee-svc",
-+		ProxySetHeaders:     []Header{{Name: "Host", Value: "$host"}},
-+	}
-+}
++## Inventory (snapshot, Nov 2026)
 +
-+func jwtAuthzCfg(server *JWTAuth, locations ...Location) VirtualServerConfig {
-+	return VirtualServerConfig{
-+		Upstreams: []Upstream{{Name: "coffee-v1", Servers: []UpstreamServer{{Address: "10.0.0.31:8001"}}}},
-+		Server: Server{
-+			ServerName:  "cafe.example.com",
-+			StatusZone:  "cafe.example.com",
-+			VSNamespace: "default",
-+			VSName:      "cafe",
-+			JWTAuth:     server,
-+			Locations:   locations,
-+		},
-+	}
-+}
++| Metric | Count |
++| --- | --- |
++| Test files | 158 |
++| `def test_*` functions (before parametrize) | 689 |
++| `wait_before_test()` calls in test files | 884 (142 files) |
++| ...inside a loop (delay between retries, fine) | 95 |
++| ...not in a loop (fixed sleep, then act once) | 789 |
++| Test functions with at least one fixed sleep | 425 |
++| Fixed sleeps in fixtures or helpers inside test files | 104 |
 +
-+func executeJWTAuthzTemplate(t *testing.T, cfg VirtualServerConfig) string {
-+	t.Helper()
++Delays used: default 3 s (501 calls), 1 s (248), 2 s, 5 s, 10 s, `WAIT_TIME`, 120 s.
 +
-+	data, err := newTmplExecutorNGINXPlus(t).ExecuteVirtualServerTemplate(&cfg)
-+	if err != nil {
-+		t.Fatalf("Failed to execute template: %v", err)
-+	}
-+	return string(data)
-+}
++What follows each fixed sleep (first statement after it, so approximate, about +/-10%):
 +
-+func TestVirtualServerForNginxPlusJWTAuthorizationServerLevel(t *testing.T) {
-+	t.Parallel()
++| Next action | Calls | Assessment |
++| --- | --- | --- |
++| A polling helper already (`wait_and_assert_status_code`, `ensure_response_from_backend`, `retry_get*`, `wait_until_all_pods_are_ready`) | ~73 | Redundant. Delete to save time. No flake risk |
++| One `requests.get`, then an assert | ~112 | High risk. Swap for `retry_get_until_*` |
++| Read generated NGINX config | ~80 | High risk. No "config contains X" poller exists yet |
++| Read resource status or events | ~60 | Medium. `wait_for_resource_status` and `wait_for_event` exist |
++| Rate-limit and time-window checks | ~26 | The wait is part of the test. Leave it |
++| `print`, assignment, end of block | ~220 | Case by case. Many are setup sleeps |
 +
-+	for _, tc := range []struct {
-+		name      string
-+		auth      *JWTAuth
-+		errorCode int
-+	}{
-+		{"secret, 403", jwtAuthzSecretAuth("api", "/etc/nginx/secrets/default-jwk", jwtAuthzServerVar, 403), 403},
-+		{"secret, 401", jwtAuthzSecretAuth("api", "/etc/nginx/secrets/default-jwk", jwtAuthzServerVar, 401), 401},
-+		{"jwks, 403", jwtAuthzJWKSAuth("default/shop-jwt", jwtAuthzServerVar, 403), 403},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
++Not every fixed sleep is a bug. Tests that assert something does *not* happen,
++or that a time window passes, need a real wait.
 +
-+			conf := executeJWTAuthzTemplate(t, jwtAuthzCfg(tc.auth, jwtAuthzLocation("/coffee")))
++## CI failure data
 +
-+			want := "auth_jwt_require " + jwtAuthzServerVar + " error=" + strconv.Itoa(tc.errorCode) + ";"
-+			assertCount(t, conf, want, 1)
-+			assertCount(t, conf, "auth_jwt_require", 1)
++**Source:** failed `ci.yml` merge-queue runs and all nightly `regression.yml`
++runs from 2026-10-17 (after #10850, "e2e test stability fixes") to 2026-11-11:
++74 failed merge-queue runs and 26 nightly runs. PR runs were left out because
++real bugs in PRs make them noisy. Only 19 distinct tests failed.
 +
-+			// auth_jwt_require sits with the auth_jwt it belongs to, and the location inherits it.
-+			coffee := locationBlock(t, conf, `"/coffee"`)
-+			assertCount(t, coffee, "auth_jwt", 0)
-+			assertCount(t, coffee, "auth_jwt_require", 0)
++The last column links the most recent failing job found for each test (checked
++2026-11-13). GitHub deletes job logs after its retention period, so these links
++will stop working. The error text in the table is kept for that reason, and
++"Reproducing the ranking" below refreshes the data.
 +
-+			snaps.MatchSnapshot(t, conf)
-+		})
-+	}
-+}
-+
-+func TestVirtualServerForNginxPlusJWTAuthorizationRouteLevel(t *testing.T) {
-+	t.Parallel()
-+
-+	coffee := jwtAuthzLocation("/coffee")
-+	coffee.JWTAuth = jwtAuthzSecretAuth("route", "/etc/nginx/secrets/default-route-jwk", jwtAuthzRouteVar, 401)
-+	tea := jwtAuthzLocation("/tea")
-+
-+	conf := executeJWTAuthzTemplate(t, jwtAuthzCfg(nil, coffee, tea))
-+
-+	block := locationBlock(t, conf, `"/coffee"`)
-+	assertCount(t, block, `auth_jwt "route";`, 1)
-+	assertCount(t, block, "auth_jwt_require "+jwtAuthzRouteVar+" error=401;", 1)
-+	assertCount(t, locationBlock(t, conf, `"/tea"`), "auth_jwt", 0)
-+	assertCount(t, conf, "auth_jwt_require", 1)
-+
-+	snaps.MatchSnapshot(t, conf)
-+}
-+
-+// A route policy replaces the server's auth_jwt, but auth_jwt_require is inherited and has no "off",
-+// so the location resets it. A route policy with its own authorization sets its own requirement.
-+func TestVirtualServerForNginxPlusJWTAuthorizationMixedPolicies(t *testing.T) {
-+	t.Parallel()
-+
-+	plain := jwtAuthzLocation("/plain")
-+	plain.JWTAuth = jwtAuthzSecretAuth("plain", "/etc/nginx/secrets/default-plain-jwk", "", 0)
-+	plain.JWTRequireReset = jwtAuthzNoneVar
-+
-+	own := jwtAuthzLocation("/own")
-+	own.JWTAuth = jwtAuthzSecretAuth("own", "/etc/nginx/secrets/default-own-jwk", jwtAuthzRouteVar, 401)
-+
-+	inherits := jwtAuthzLocation("/inherits")
-+
-+	cfg := jwtAuthzCfg(jwtAuthzSecretAuth("api", "/etc/nginx/secrets/default-jwk", jwtAuthzServerVar, 403), plain, own, inherits)
-+	cfg.Maps = []Map{{Source: "$uri", Variable: jwtAuthzNoneVar, Parameters: []Parameter{{Value: "default", Result: "1"}}}}
-+	conf := executeJWTAuthzTemplate(t, cfg)
-+
-+	assertCount(t, conf, "map $uri "+jwtAuthzNoneVar+" {", 1)
-+
-+	plainBlock := locationBlock(t, conf, `"/plain"`)
-+	assertCount(t, plainBlock, `auth_jwt "plain";`, 1)
-+	assertCount(t, plainBlock, "auth_jwt_require "+jwtAuthz
++| # | Test | Failing runs | Error | Likely cause | Example job |
++| --- | --- | --- | --- | --- | --- |
++| 1 | `test_ac_polices_vs::test_deny_policy` | every nightly LTS job | Setup error after 600 s, IC pod never Ready | **Version skew.** The job ran main's tests against the LTS image. Fixed, see Phase A | [lts-regression 1.30.13](https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222816) |
++| 2 | `test_rl_policies::test_rl_policy_scaled` | every nightly job, all 8 k8s versions | `rate=10r/s` not in config (config has `rate=40r/s ... sync`) | **State leaked by an earlier test.** `test_rl_ingress.py::TestRateLimitIngressScaledWithZoneSync` left zone sync on in the shared `nginx-config` ConfigMap. Fixed, see below | [regression debian-plus 1.30.13](https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222786) |
++| 3 | `test_custom_http_errors::test_annotation_intercepts_upstream_error` | 16 | One request to `/fail` returns the stock 502 page | Asserts once, no polling | [regression debian 1.32.8](https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222925) |
++| 4 | `test_virtual_server_certmanager::test_responses_after_setup` | 11 (8 merge queue) | Setup error in a fixture | Needs log triage | [regression debian 1.30.13](https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222805) |
++| 5 | `test_empty_host_ingress_reload::..._on_startup` | 11 | Startup event not found | Fixed in `972e0772c`. Watch it | [regression debian 1.33.12](https://github.com/nginx/kubernetes-ingress/actions/runs/43145244434/job/130941545511) |
++| 6 | `test_rl_policies_vsr` tiered apikey/jwt (3 tests) | 13 | `13 in range(14, 17)` | Request count just outside a narrow range. The 1 s sleeps are part of the test. Fix tolerance or timing window | [policies 3/8 alpine](https://github.com/nginx/kubernetes-ingress/actions/runs/43262340867/job/131345989101) |
++| 7 | `test_oidc_native_fclo_ingress::test_rp_initiated_logout` | 4 | 502 after login | Sleep, then no readiness check on the backend | [regression debian-plus 1.31.14](https://github.com/nginx/kubernetes-ingress/acti
 ```
 
-**File**: `internal/configs/version2/nginx-plus.virtualserver.tmpl` (modified, +24/-24)
+**File**: `docs/developer/parallel-e2e-plan.md` (modified, +1/-1)
 ```diff
-@@ -393,21 +393,7 @@ server {
-         {{- end }}
-     {{- end }}
- 
--    {{- with $s.JWTAuth }}
--    {{- /* .Realm is already escaped for NGINX by realmFmt, which accepts '\"'
--           but rejects an unescaped '"', so plain quoting is correct here and
--           printf "%q" would escape the backslashes a second time. .Token must
--           stay unquoted: NGINX only strips quotes from the start of a token, so
--           token="$http_token" would leave the quotes in the compiled value and
--           the JWT would never be found. See the escaping contract in
--           internal/validation/nginx.go. */}}
--    auth_jwt "{{ .Realm }}"{{ if .Token }} token={{ .Token }}{{ end }};
--    {{ if .Secret}}auth_jwt_key_file {{ .Secret }};{{ end }}
--    {{- if .JwksURI.JwksHost }}
--    {{ if .KeyCache }}auth_jwt_key_cache {{ .KeyCache }};{{ end }}
--    auth_jwt_key_request /_jwks_uri_server_{{ .Key }};
--    {{- end }}
--    {{- end }}
-+    {{- template "jwtAuth" (jwtAuthBlock $s.JWTAuth "    ") }}
- 
-     {{- range $index, $element := $s.JWTAuthList }}
-     location = /_jwks_uri_server_{{ .Key }} {
-@@ -754,15 +740,9 @@ server {
-         {{- if $l.ACMEChallenge }}
-         auth_jwt off;
-         {{- else }}
--        {{- with $l.JWTAuth }}
--        {{- /* See the note on the server-level auth_jwt above: .Realm is
--               pre-escaped and .Token must stay unquoted. */}}
--        auth_jwt "{{ .Realm }}"{{ if .Token }} token={{ .Token }}{{ end }};
--        {{ if .Secret}}auth_jwt_key_file {{ .Secret }};{{ end }}
--        {{- if .JwksURI.JwksHost }}
--        {{ if .KeyCache }}auth_jwt_key_cache {{ .KeyCache }};{{ end }}
--        auth_jwt_key_request /_jwks_uri_server_{{ .Key }};
--        {{- end }}
-+        {{- template "jwtAuth" (jwtAuthBlock $l.JWTAuth "        ") }}
-+        {{- with $l.JWTRequireReset }}
-+        auth_jwt_require {{ . }};
-         {{- end }}
-         {{- end }}
- 
-@@ -1175,3 +1155,23 @@ server {
-     }
-     {{- end }}
- }
-+{{- define "jwtAuth" }}
-+{{- with .Auth }}
-+{{- /* .Realm is already escaped for NGINX by realmFmt, which accepts '\"'
-+       but rejects an unescaped '"', so plain quoting is correct here and
-+       printf "%q" would escape the backslashes a second time. .Token must
-+       stay unquoted: NGINX only strips quotes from the start of a token, so
-+       token="$http_token" would leave the quotes in the compiled value and
-+       the JWT would never be found. See the escaping contract in
-+       internal/validation/nginx.go. */}}
-+{{ $.Indent }}auth_jwt "{{ .Realm }}"{{ if .Token }} token={{ .Token }}{{ end }};
-+{{ $.Indent }}{{ if .Secret}}auth_jwt_key_file {{ .Secret }};{{ end }}
-+{{- if .JwksURI.JwksHost }}
-+{{ $.Indent }}{{ if .KeyCache }}auth_jwt_key_cache {{ .KeyCache }};{{ end }}
-+{{ $.Indent }}auth_jwt_key_request /_jwks_uri_server_{{ .Key }};
-+{{- end }}
-+{{- if .RequireVariable }}
-+{{ $.Indent }}auth_jwt_require {{ .RequireVariable }} error={{ .RequireErrorCode }};
-+{{- end }}
-+{{- end }}
-+{{- end }}
+@@ -369,7 +369,7 @@ above. Effects are as estimated in #10492.
+ - #10492 — durations tooling, design doc
+   `docs/developer/parallel-e2e-tests-design.md`, and the proof of concept
+   for several kind clusters per runner
+-- `tests/suite/FLAKY_RELOAD_REQUESTS.md` — retrying requests that hit a
++- `docs/developer/e2e-flaky-tests.md` — flaky e2e plan; retrying requests that hit a
+   reload
+ - Smoke matrix: `.github/data/matrix-smoke-{oss,plus,nap}.json`
+ - Smoke action: `.github/actions/smoke-tests/action.yaml`
 ```
 
-**File**: `internal/configs/version2/oidc.tmpl` (modified, +12/-0)
+**File**: `tests/conftest.py` (modified, +88/-1)
 ```diff
-@@ -32,6 +32,9 @@
+@@ -3,6 +3,7 @@
+ import os
  
-     location @do_oidc_flow {
-         status_zone "OIDC start";
-+        {{- if .ServerJWTAuth }}
-+        auth_jwt off; # the server-level JWT policy must not gate the OIDC flow
-+        {{- end }}
-         js_content oidc.auth;
-         default_type text/plain; # In case we throw an error
-     }
-@@ -40,6 +43,9 @@
-     location = {{ printf "%q" .RedirectURI }} {
-         # This location is called by the IdP after successful authentication
-         status_zone "OIDC code exchange";
-+        {{- if .ServerJWTAuth }}
-+        auth_jwt off; # the server-level JWT policy must not gate the OIDC flow
-+        {{- end }}
-         js_content oidc.codeExchange;
-         error_page 500 502 504 @oidc_error;
-     }
-@@ -109,6 +115,9 @@
- 
-     location = /logout {
-         status_zone "OIDC logout";
-+        {{- if .ServerJWTAuth }}
-+        auth_jwt off; # the server-level JWT policy must not gate the OIDC flow
-+        {{- end }}
-         add_header Set-Cookie "auth_token=; $oidc_cookie_flags";
-         add_header Set-Cookie "auth_nonce=; $oidc_cookie_flags";
-         add_header Set-Cookie "auth_redir=; $oidc_cookie_flags";
-@@ -117,6 +126,9 @@
- 
-     location = /front_channel_logout {
-         status_zone "OIDC logout";
-+        {{- if .ServerJWTAuth }}
-+        auth_jwt off; # the server-level JWT policy must not gate the OIDC flow
-+        {{- end }}
-         add_header Cache-Control "no-store";
-         default_type text/plain;
-         js_content oidc.handleFrontChannelLogout;
-```
-
-**File**: `internal/configs/version2/template_helper.go` (modified, +12/-0)
-```diff
-@@ -297,9 +297,21 @@ func hasExternalAuthNoSignin(s Server) bool {
- 	return false
- }
- 
-+// jwtAuthBlockData is the data of the "jwtAuth" template, which renders the JWT directives of a
-+// server or a location. The two sit at different indentation, so it is passed in.
-+type jwtAuthBlockData struct {
-+	Auth   *JWTAuth
-+	Indent string
-+}
-+
-+func jwtAuthBlock(auth *JWTAuth, indent string) jwtAuthBlockData {
-+	return jwtAuthBlockData{Auth: auth, Indent: indent}
-+}
-+
- var helperFunctions = template.FuncMap{
- 	"headerListToCIMap":       headerListToCIMap,
- 	"hasCIKey":                hasCIKey,
-+	"jwtAuthBlock":            jwtAuthBlock,
- 	"contains":                strings.Contains,
- 	"hasPrefix":               strings.HasPrefix,
- 	"hasSuffix":               strings.HasSuffix,
-```
-
-**File**: `internal/configs/virtualserver.go` (modified, +1/-0)
-```diff
-@@ -1239,6 +1239,7 @@ func (vsc *virtualServerConfigurator) GenerateVirtualServerConfig(
- 
- 	if policiesCfg.OIDC != nil {
- 		policiesCfg.OIDC.AppProtectLoadModule = vsc.appProtectLoadModule
-+		policiesCfg.OIDC.ServerJWTAuth = policiesCfg.JWTAuth.Auth != nil
- 	}
- 
- 	// auth_jwt_require cannot be turned off, so these locations reset the inherited one.
-```
-
----
-
-### Incident Patch 2: `c33cc3b1` (2026-11-11)
-**Commit Message**: Add yamllint pre-commit hook and fix YAML formatting (#11277)
-
-* add yamllint file for linting issues
-
-* Add yamllint pre-commit hook and fix YAML lint issues
-
-* Revert yamllint changes to external-dns manifests
-
-* Fix yamllint formatting in external-dns manifests
-
----------
-
-Signed-off-by: antojacob <[REDACTED_EMAIL]>
-
-**File**: `.fossa.yml` (modified, +1/-1)
-```diff
-@@ -3,4 +3,4 @@ targets:
-   exclude:
-     - type: setuptools
- paths:
--  exclude:
-+  exclude: []
-```
-
-**File**: `.github/labeler.yml` (modified, +4/-4)
-```diff
-@@ -12,15 +12,15 @@ chore:
- 
- github_actions:
-   - changed-files:
--    - any-glob-to-any-file: ['.github/**/*.yml', '.github/**/*.yaml', '.github/**/*.md']
-+      - any-glob-to-any-file: ['.github/**/*.yml', '.github/**/*.yaml', '.github/**/*.md']
- 
- go:
-   - changed-files:
--    - any-glob-to-any-file: ['**/*.go', 'go.mod', 'go.sum']
-+      - any-glob-to-any-file: ['**/*.go', 'go.mod', 'go.sum']
- 
- python:
-   - changed-files:
--    - any-glob-to-any-file: ['tests/**/*.py', 'tests/**/requirements.txt', 'tests/**/*.yaml', 'perf-tests/**/*.py', 'perf-tests/**/*.yaml']
-+      - any-glob-to-any-file: ['tests/**/*.py', 'tests/**/requirements.txt', 'tests/**/*.yaml', 'perf-tests/**/*.py', 'perf-tests/**/*.yaml']
- 
- tests:
-   - head-branch: ['^tests?/']
-@@ -36,4 +36,4 @@ helm_chart:
- 
- docker:
-   - changed-files:
--    - any-glob-to-any-file: '**/Dockerfile*'
-+      - any-glob-to-any-file: '**/Dockerfile*'
-```
-
-**File**: `.github/workflows/build-artifacts.yml` (modified, +1/-1)
-```diff
-@@ -225,7 +225,7 @@ jobs:
-   #       with:
-   #         assertion-doc: ${{ steps.assertiondoc.outputs.assertion-document-path }}
- 
--  #     - name: Cleanup netrc
-+  #     - name: Cleanup netrc
-   #       run: rm -f $HOME/.netrc
-   #       if: ${{ always() }}
- 
-```
-
-**File**: `.github/workflows/external-pr.yml` (modified, +9/-9)
-```diff
-@@ -1,7 +1,7 @@
- name: External PR Handler
- on:
-   issue_comment:
--    types: [ created ]
-+    types: [created]
- 
- permissions:
-   contents: read
-@@ -17,14 +17,14 @@ jobs:
-       )
-     runs-on: ubuntu-26.04
-     outputs:
--        is_fork: ${{ steps.pr-info.outputs.is_fork }}
--        fork_owner: ${{ steps.pr-info.outputs.fork_owner }}
--        fork_repo: ${{ steps.pr-info.outputs.fork_repo }}
--        sha: ${{ steps.pr-info.outputs.sha }}
--        base_branch: ${{ steps.pr-info.outputs.base_branch }}
--        pr_number: ${{ steps.pr-info.outputs.pr_number }}
--        title: ${{ steps.pr-info.outputs.title }}
--        body: ${{ steps.pr-info.outputs.body }}
-+      is_fork: ${{ steps.pr-info.outputs.is_fork }}
-+      fork_owner: ${{ steps.pr-info.outputs.fork_owner }}
-+      fork_repo: ${{ steps.pr-info.outputs.fork_repo }}
-+      sha: ${{ steps.pr-info.outputs.sha }}
-+      base_branch: ${{ steps.pr-info.outputs.base_branch }}
-+      pr_number: ${{ steps.pr-info.outputs.pr_number }}
-+      title: ${{ steps.pr-info.outputs.title }}
-+      body: ${{ steps.pr-info.outputs.body }}
-     steps:
-       - name: Get PR details
-         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-```
-
-**File**: `.goreleaser.yml` (modified, +70/-70)
-```diff
-@@ -20,76 +20,76 @@ builds:
-       - -s -w -X main.version={{.Version}}
-     main: ./cmd/nginx-ingress/
-     binary: nginx-ingress
--  ## Disable AWS Marketplace builds
--  # - id: aws
--  #   goos:
--  #     - linux
--  #   goarch:
--  #     - amd64
--  #     - arm64
--  #   flags:
--  #     - -trimpath
--  #   gcflags:
--  #     - all=-trimpath={{.Env.GOPATH}}
--  #   asmflags:
--  #     - all=-trimpath={{.Env.GOPATH}}
--  #   ldflags:
--  #     - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_PUB_KEY}}
--  #   main: ./cmd/nginx-ingress/
--  #   binary: nginx-ingress
--  #   tags:
--  #     - aws
--  # - id: aws-nap-dos
--  #   goos:
--  #     - linux
--  #   goarch:
--  #     - amd64
--  #   flags:
--  #     - -trimpath
--  #   gcflags:
--  #     - all=-trimpath={{.Env.GOPATH}}
--  #   asmflags:
--  #     - all=-trimpath={{.Env.GOPATH}}
--  #   ldflags:
--  #     - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_NAP_DOS_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_NAP_DOS_PUB_KEY}}
--  #   main: ./cmd/nginx-ingress/
--  #   binary: nginx-ingress
--  #   tags:
--  #     - aws
--  # - id: aws-nap-waf
--  #   goos:
--  #     - linux
--  #   goarch:
--  #     - amd64
--  #   flags:
--  #     - -trimpath
--  #   gcflags:
--  #     - all=-trimpath={{.Env.GOPATH}}
--  #   asmflags:
--  #     - all=-trimpath={{.Env.GOPATH}}
--  #   ldflags:
--  #     - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_NAP_WAF_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_NAP_WAF_PUB_KEY}}
--  #   main: ./cmd/nginx-ingress/
--  #   binary: nginx-ingress
--  #   tags:
--  #     - aws
--  # - id: aws-nap-both
--  #   goos:
--  #     - linux
--  #   goarch:
--  #     - amd64
--  #   flags:
--  #     - -trimpath
--  #   gcflags:
--  #     - all=-trimpath={{.Env.GOPATH}}
--  #   asmflags:
--  #     - all=-trimpath={{.Env.GOPATH}}
--  #   ldflags:
--  #     - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_NAP_WAF_DOS_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_NAP_WAF_DOS_PUB_KEY}}
--  #   main: ./cmd/nginx-ingress/
--  #   binary: nginx-ingress
--  #   tags:
--  #     - aws
-+# Disable AWS Marketplace builds
-+#   - id: aws
-+#     goos:
-+#       - linux
-+#     goarch:
-+#       - amd64
-+#       - arm64
-+#     flags:
-+#       - -trimpath
-+#     gcflags:
-+#       - all=-trimpath={{.Env.GOPATH}}
-+#     asmflags:
-+#       - all=-trimpath={{.Env.GOPATH}}
-+#     ldflags:
-+#       - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_PUB_KEY}}
-+#     main: ./cmd/nginx-ingress/
-+#     binary: nginx-ingress
-+#     tags:
-+#       - aws
-+#   - id: aws-nap-dos
-+#     goos:
-+#       - linux
-+#     goarch:
-+#       - amd64
-+#     flags:
-+#       - -trimpath
-+#     gcflags:
-+#       - all=-trimpath={{.Env.GOPATH}}
-+#     asmflags:
-+#       - all=-trimpath={{.Env.GOPATH}}
-+#     ldflags:
-+#       - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_NAP_DOS_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_NAP_DOS_PUB_KEY}}
-+#     main: ./cmd/nginx-ingress/
-+#     binary: nginx-ingress
-+#     tags:
-+#       - aws
-+#   - id: aws-nap-waf
-+#     goos:
-+#       - linux
-+#     goarch:
-+#       - amd64
-+#     flags:
-+#       - -trimpath
-+#     gcflags:
-+#       - all=-trimpath={{.Env.GOPATH}}
-+#     asmflags:
-+#       - all=-trimpath={{.Env.GOPATH}}
-+#     ldflags:
-+#       - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_NAP_WAF_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_NAP_WAF_PUB_KEY}}
-+#     main: ./cmd/nginx-ingress/
-+#     binary: nginx-ingress
-+#     tags:
-+#       - aws
-+#   - id: aws-nap-both
-+#     goos:
-+#       - linux
-+#     goarch:
-+#       - amd64
-+#     flags:
-+#       - -trimpath
-+#     gcflags:
-+#       - all=-trimpath={{.Env.GOPATH}}
-+#     asmflags:
-+#       - all=-trimpath={{.Env.GOPATH}}
-+#     ldflags:
-+#       - -s -w -X main.version={{.Version}} -X main.productCode={{.Env.AWS_NAP_WAF_DOS_PRODUCT_CODE}} -X main.pubKeyString={{.Env.AWS_NAP_WAF_DOS_PUB_KEY}}
-+#     main: ./cmd/nginx-ingress/
-+#     binary: nginx-ingress
-+#     tags:
-+#       - aws
- 
- changelog:
-   disable: true
-```
-
-**File**: `.pre-commit-config.yaml` (modified, +11/-2)
-```diff
-@@ -37,7 +37,9 @@ repos:
-     hooks:
-       - id: golangci-lint
-         name: golangci-lint
--        description: Fast linters runner for Go. Note that only modified files are linted, so linters like 'unused' that need to scan all files won't work as expected.
-+        description: >-
-+          Fast linters runner for Go. Note that only modified files are linted,
-+          so linters like 'unused' that need to scan all files won't work as expected.
-         entry: golangci-lint run --new-from-rev HEAD --fix
-         types: [go]
-         language: golang
-@@ -121,10 +123,17 @@ repos:
-     rev: v0.24.0
-     hooks:
-       - id: markdownlint-cli2
--        args: [ "**/*.md", "--fix" ]
-+        args: ["**/*.md", "--fix"]
-         pass_filenames: false
-         always_run: true
- 
-+  # Rules are in .yamllint.yaml file
-+  # See https://yamllint.readthedocs.io/en/stable/rules.html# for rule descriptions
-+  - repo: https://github.com/adrienverge/yamllint.git
-+    rev: v1.38.0
-+    hooks:
-+      - id: yamllint
-+
-   - repo: https://github.com/rhysd/actionlint
-     rev: v1.7.12
-     hooks:
-```
-
-**File**: `.yamllint.yaml` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+---
-+ignore:
-+  - charts/nginx-ingress/templates
-+  - config/crd/bases/
-+  - config/crd/upstream/
-+  - deploy
-+  - tests/data/virtual-server-certmanager/certmanager.yaml
-+
-+rules:
-+  braces: enable
-+  brackets: enable
-+  colons: enable
-+  commas: enable
-+  comments:
-+    require-starting-space: true
-+    ignore-shebangs: true
-+    min-spaces-from-content: 1
-+  comments-indentation:
-+    ignore: |
-+      charts/nginx-ingress/values.yaml
-+      deployments/
-+  document-end: disable
-+  document-start: disable
-+  empty-lines: enable
-+  empty-values:
-+    ignore: |
-+      .github/workflows/
-+  float-values: disable
-+  hyphens: enable
-+  indentation:
-+    spaces: consistent
-+    indent-sequences: consistent
-+    check-multi-line-strings: false
-+  key-duplicates: enable
-+  key-ordering: disable
-+  line-length:
-+    max: 120
-+    allow-non-breakable-words: true
-+    allow-non-breakable-inline-mappings: true
-+    ignore: |
-+      .github/
-+      .goreleaser.yml
-+      charts/nginx-ingress/
-+  new-line-at-end-of-file: enable
-+  new-lines: enable
-+  octal-values: disable
-+  quoted-strings: disable
-+  trailing-spaces: enable
-+  truthy:
-+    ignore: |
-+      .github/workflows/
-```
-
-**File**: `charts/nginx-ingress/values.yaml` (modified, +5/-5)
-```diff
-@@ -52,7 +52,7 @@ controller:
-     ## Secret containing trusted CA certificate
-     # sslTrustedCertificateSecretName: ssl-trusted-cert
- 
--    # configMapName allows changing the name of the MGMT config map
-+    # configMapName allows changing the name of the MGMT config map
-     # the name should not include a namespace
-     # configMapName: ""
- 
-@@ -128,7 +128,7 @@ controller:
-         pullPolicy: IfNotPresent
-       securityContext:
-         allowPrivilegeEscalation: false
--        runAsUser: 101 #nginx
-+        runAsUser: 101 # nginx
-         runAsNonRoot: true
-         capabilities:
-           drop:
-@@ -174,7 +174,7 @@ controller:
-         pullPolicy: IfNotPresent
-       securityContext:
-         allowPrivilegeEscalation: false
--        runAsUser: 101 #nginx
-+        runAsUser: 101 # nginx
-         runAsNonRoot: true
-         capabilities:
-           drop:
-@@ -354,7 +354,7 @@ controller:
-     {} # Remove curly brackets before adding values
-     # allowPrivilegeEscalation: true
-     # readOnlyRootFilesystem: true
--    # runAsUser: 101 #nginx
-+    # runAsUser: 101 # nginx
-     # runAsNonRoot: true
-     # capabilities:
-     #   drop:
-@@ -445,7 +445,7 @@ controller:
-       storageClass: ""
-       ## Access modes for the nginx-cache volume
-       accessModes:
--      - "ReadWriteOnce"
-+        - "ReadWriteOnce"
- 
-   ## Extra containers for the Ingress Controller pods.
-   extraContainers: []
-```
-
----
-
-### Incident Patch 3: `a462d69b` (2026-11-12)
-**Commit Message**: Fix flaky JWT VSR and empty-host startup e2e tests (#11391)
-
-* Poll instead of reading once in flaky JWT VSR and empty-host e2e tests
-
-Wait for the 500 response and VSR Warning state after deleting the policy/secret, and for the 'but was not applied' event after NIC startup, rather than asserting on a single immediate read.
-
-* Reuse assert_vsr_status instead of a local polling helper
-
-* Improve host header handling in wait_and_assert_status_code function
-
-**File**: `tests/suite/test_empty_host_ingress_reload.py` (modified, +3/-0)
-```diff
-@@ -18,6 +18,7 @@
-     get_ingress_nginx_template_conf,
-     replace_ingress,
+ import pytest
++from kubernetes.client.rest import ApiException
+ from kubernetes.config.kube_config import KUBE_CONFIG_DEFAULT_LOCATION
+ from settings import (
+     BATCH_RELOAD_NUMBER,
+@@ -20,6 +21,7 @@
+     IC_SELECTOR,
+     are_all_pods_in_ready_state,
+     get_first_pod_name,
++    get_pod_list,
      wait_before_test,
-+    wait_for_event,
-     wait_until_all_pods_are_ready,
  )
  
-@@ -376,6 +377,8 @@ def test_default_server_survives_invalid_empty_host_ingress_on_startup(
-         wait_and_assert_status_code(404, f"{request_url}/", verify=False)
-         wait_and_assert_status_code(200, f"{health_url}/nginx-health")
+@@ -228,12 +230,45 @@ def pytest_collection_modifyitems(config, items) -> None:
+                 item.add_marker(multi_ns)
  
-+        # Events are written asynchronously, so poll instead of reading once.
-+        assert wait_for_event(kube_apis.v1, "but was not applied", test_namespace), "no 'but was not applied' event"
-         messages = " ".join(
-             event.message
-             for event in get_events_for_object(kube_apis.v1, test_namespace, invalid_empty_host_ingress_before_startup)
-```
-
-**File**: `tests/suite/test_jwt_policies_vsr.py` (modified, +7/-10)
-```diff
-@@ -1,6 +1,7 @@
- import pytest
- import requests
- from settings import TEST_DATA
-+from suite.utils.custom_assertions import assert_vsr_status, wait_and_assert_status_code
- from suite.utils.custom_resources_utils import read_custom_resource
- from suite.utils.policy_resources_utils import create_policy_from_yaml, delete_policy
- from suite.utils.resources_utils import create_secret_from_yaml, delete_secret, wait_before_test
-@@ -333,16 +334,14 @@ def test_jwt_policy_delete_secret(
-         print(resp1.status_code)
  
-         delete_secret(kube_apis.v1, secret, v_s_route_setup.route_m.namespace)
-+        wait_and_assert_status_code(500, f"{req_url}{v_s_route_setup.route_m.paths[0]}", headers=headers)
-         resp2 = requests.get(
-             f"{req_url}{v_s_route_setup.route_m.paths[0]}",
-             headers=headers,
-         )
-         print(resp2.status_code)
--        crd_info = read_custom_resource(
--            kube_apis.custom_objects,
--            v_s_route_setup.route_m.namespace,
--            "virtualserverroutes",
--            v_s_route_setup.route_m.name,
-+        crd_info = assert_vsr_status(
-+            kube_apis, v_s_route_setup.route_m.namespace, v_s_route_setup.route_m.name, "Warning"
-         )
-         delete_policy(kube_apis.custom_objects, pol_name, v_s_route_setup.route_m.namespace)
- 
-@@ -399,16 +398,14 @@ def test_jwt_policy_delete_policy(
-         print(resp1.status_code)
-         delete_policy(kube_apis.custom_objects, pol_name, v_s_route_setup.route_m.namespace)
- 
-+        wait_and_assert_status_code(500, f"{req_url}{v_s_route_setup.route_m.paths[0]}", headers=headers)
-         resp2 = requests.get(
-             f"{req_url}{v_s_route_setup.route_m.paths[0]}",
-             headers=headers,
-         )
-         print(resp2.status_code)
--        crd_info = read_custom_resource(
--            kube_apis.custom_objects,
--            v_s_route_setup.route_m.namespace,
--            "virtualserverroutes",
--            v_s_route_setup.route_m.name,
-+        crd_info = assert_vsr_status(
-+            kube_apis, v_s_route_setup.route_m.namespace, v_s_route_setup.route_m.name, "Warning"
-         )
-         delete_secret(kube_apis.v1, secret, v_s_route_setup.route_m.namespace)
- 
-```
-
-**File**: `tests/suite/utils/custom_assertions.py` (modified, +6/-3)
-```diff
-@@ -224,11 +224,14 @@ def wait_and_assert_status_code(code, req_url, host=None, **kwargs) -> None:
- 
-     :param  code: status_code
-     :param  req_url: request url
--    :param  host: optional host header
--    :param  kwargs: optional arguments passed to ``requests.get``
-+    :param  host: optional host header (overrides any "host" in ``headers``)
-+    :param  kwargs: optional arguments passed to ``requests.get``; a ``headers`` dict is
-+        merged with the host header rather than replaced
-     :return:
++def _container_state(state) -> str:
++    """One-line summary of a V1ContainerState."""
++    for name in ("running", "waiting", "terminated"):
++        detail = getattr(state, name, None) if state else None
++        if detail:
++            fields = {k: getattr(detail, k, None) for k in ("reason", "exit_code", "message")}
++            return f"{name} " + " ".join(f"{k}={v}" for k, v in fields.items() if v is not None)
++    return "unknown"
++
++
++def print_ic_pod_diagnostics(v1, namespace) -> None:
++    """Print state, logs (also of the previous container) and events of every IC pod."""
++    for pod in get_pod_list(v1, namespace, IC_SELECTOR):
++        name = pod.metadata.name
++        print(f"\nPod {name}: phase={pod.status.phase}")
++        for cs in pod.status.container_statuses or []:
++            print(
++                f"  container {cs.name}: ready={cs.ready} restarts={cs.restart_count} "
++                f"state=[{_container_state(cs.state)}] last_state=[{_container_state(cs.last_state)}]"
++            )
++            for previous in (False, True):
++                try:
++                    logs = v1.read_namespaced_pod_log(name, namespace, container=cs.name, previous=previous)
++                except ApiException as e:  # e.g. container waiting to start, or never restarted
++                    logs = f"<no logs: {e.reason}>"
++                print(f"  --- {'previous ' if previous else ''}logs of {cs.name} ---\n{logs}")
++        events = v1.list_namespaced_event(namespace, field_selector=f"involvedObject.name={name}").items
++        for ev in events:
++            print(f"  event {ev.type} {ev.reason}: {ev.message}")
++
++
+ @pytest.hookimpl(tryfirst=True, hookwrapper=True)
+ def pytest_runtest_makereport(item) -> None:
      """
--    headers = {} if host is None else {"host": host}
-+    headers = dict(kwargs.pop("headers", None) or {})
-+    if host is not None:
-+        headers["host"] = host
-     resp = None
-     last_error = None
-     # One initial request plus up to 31 retries (~31s of polling), matching the
+     Print out IC Pod logs on test failure.
+ 
+-    Only look at actual failing test calls, not setup/teardown.
++    Failing test calls print the first IC pod's logs. Failing setups print the state, logs and
++    events of all IC pods, because a fixture timing out on an IC pod that never became Ready
++    is otherwise invisible. Teardown is not looked at.
+     Only show the logs if commandline argument `--show-ic-logs` is set to 'yes'
+ 
+     :param item:
+@@ -249,6 +284,19 @@ def pytest_runtest_makereport(item) -> None:
+         print(f"\n::error file={file_path},line={line_no + 1},title=Test Failed: {item.nodeid}::{summary}")
+ 
+     # we only look at actual failing test calls, not setup/teardown
++    if rep.when == "setup" and rep.failed and item.config.getoption("--show-ic-logs") == "yes":
++        try:
++            prereq, apis = item.funcargs["ingress_controller_prerequisites"], item.funcargs["kube_apis"]
++        except KeyError:
++            pass  # setup failed before the IC prerequisites existed, nothing to show
++        else:
++            try:
++                print("\n::group::NGINX Ingress Controller Pod Diagnostics")
++                print_ic_pod_diagnostics(apis.v1, prereq.namespace)
++                print("::endgroup::")
++            except Exception as e:
++                print(f"\nFailed to retrieve NGINX Ingress Controller pod diagnostics: {e}")
++
+     if rep.when == "call" and rep.failed and item.config.getoption("--show-ic-logs") == "yes":
+         try:
+             pod_namespace = item.funcargs["ingress_controller_prerequisites"].namespace
+@@ -274,8 +322,47 @@ def pytest_runtest_makereport(item) -> None:
+         print("Make sure to remove resources from this test run manually using kubectl utility\n")
+ 
+ 
++# Test classes that left the shared nginx-config ConfigMap non-default, as {class nodeid: changed data}.
++LEAKED_CONFIGMAP = {}
++# The most recent leak seen, so a leak that persists across classes is reported once.
++LEAK_STATE = {"last": None}
++
++
++def leaked_configmap_data(live, default):
++    """Return the live ConfigMap data if it differs from the default, else None."""
++    live, default = live or {}, default or {}
++    return live if live != default else None
++
++
++@pytest.hookimpl(hookwrapper=True)
++def pytest_runtest_teardown(item, nextitem) -> None:
++    """
++    Report test classes that leave the shared nginx-config ConfigMap changed.
++
++    The ConfigMap lives for the whole session, so a leak breaks a later, unrelated test.
++    Checked at class boundaries, after class fixtures are torn down. Each distinct leak is
++    reported once, against the class that was running when it was first seen.
++    Only the ConfigMap is checked: every IC fixture recreates the Deployment, so replica
+```
+
+**File**: `tests/suite/FLAKY_RELOAD_REQUESTS.md` (removed, +0/-105)
+```diff
+@@ -1,105 +0,0 @@
+-# Fixing flaky e2e tests: connection drops during NGINX reloads
+-
+-## Symptom
+-
+-A test intermittently fails with:
+-
+-    requests.exceptions.ConnectionError:
+-      ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+-
+-Often accompanied in the IC logs by an access-log line with status `000`, and
+-around a config change (Ingress/Policy/namespace-label update) that triggers an
+-NGINX reload. With App Protect, the WAF "soft reset" recycles workers and can
+-take several seconds, widening the window where in-flight connections are closed.
+-
+-## Root cause
+-
+-The test sends an HTTP request that lands exactly while NGINX is reloading and
+-recycling worker processes. NGINX closes the connection, `requests` raises an
+-uncaught `ConnectionError`, and the test crashes instead of retrying. This is a
+-timing race, not a product bug -- a dropped connection during a reload is
+-expected and should be retried (the same way `ensure_response_from_backend` and
+-`wait_for_reload` already tolerate transients).
+-
+-## When this pattern applies
+-
+-Apply the fix to any e2e test that BOTH:
+-
+-1. Mutates config that causes a reload (apply/patch/delete of Ingress, VS/VSR,
+-   TransportServer, Policy, ConfigMap, or namespace label/watch changes), AND
+-2. Sends traffic (`requests.get/post/...`) shortly after, while a reload may be
+-   in progress -- especially inside a body/status polling loop.
+-
+-Do NOT apply it to tests that only send traffic against already-stable config
+-and never reload mid-traffic (e.g. `test_app_protect_watch_namespace.py`).
+-
+-## The fix
+-
+-Do not wrap the whole test in `@pytest.mark.flaky` -- that reruns the entire
+-expensive test and can mask real regressions. Instead, make the specific request
+-resilient.
+-
+-Use one of the shared helpers in `suite/utils/resources_utils.py`, all of which
+-catch `requests.exceptions.ConnectionError` while retrying:
+-
+-- `retry_get_until_body_contains(req_url, host, expected_body)` -- poll until a
+-  substring appears in the body.
+-- `retry_get_until_status_code(req_url, host, expected_status, session=..., **kwargs)`
+-  -- poll until a status code matches; supports an SNI/client-cert `session` and
+-  extra `requests.get` kwargs (`cert`, `verify`, `allow_redirects`, ...).
+-- `retry_get(req_url, host, **kwargs)` -- guard a single request whose assertion
+-  cannot be expressed as "body contains X" or "status == Y" (e.g. asserting a
+-  substring is absent, or an arbitrary status); retries only on `ConnectionError`.
+-
+-The shared helpers `wait_and_assert_status_code` (`suite/utils/custom_assertions.py`)
+-and `send_malicious_request_with_retry` (`suite/utils/ap_resources_utils.py`) also
+-tolerate `ConnectionError`, so their many callers are covered automatically.
+-
+-    ```python
+-    from suite.utils.resources_utils import retry_get_until_body_contains
+-
+-    resp = retry_get_until_body_contains(req_url, ingress_host, expected_body)
+-    assert expected_body in resp.text
+-    assert resp.status_code == 200
+-    ```
+-
+-Replace hand-rolled loops like:
+-
+-    ```python
+-    resp = requests.get(url, headers={"host": host}, verify=False)
+-    retry = 0
+-    while expected not in resp.text and retry <= 60:
+-        resp = requests.get(url, headers={"host": host}, verify=False)  # can raise ConnectionError
+-        retry += 1
+-        wait_before_test(1)
+-    ```
+-
+-with a single `retry_get_until_body_contains(...)` call.
+-
+-If a test needs a method/headers/body the helper doesn't cover, replicate its
+-core guarantee: catch `requests.exceptions.ConnectionError` inside the retry loop
+-and continue, rather than letting it propagate.
+-
+-Note: `requests.exceptions.SSLError` is a *subclass* of `ConnectionError`. When a
+-test relies on catching `SSLError` (e.g. mTLS client-cert tests), keep the
+-`except SSLError` handler **before** any `except ConnectionError` handler so the
+-SSL case is not swallowed.
+-
+-## Reference implementation
+-
+-See `test_app_protect_watch_namespace_label.py` and the
+-`retry_get_until_body_contains` helper in `suite/utils/resources_utils.py`.
+-For status-based and single-request variants, see `retry_get_until_status_code`
+-and `retry_get` in the same file, and the mTLS tests (`test_ingress_mtls*.py`)
+-for the SSLError-ordering pattern.
+-
+-## Checklist for the AI applying this
+-
+-- [ ] Confirm the test reloads config AND sends traffic that could overlap it.
+-- [ ] Replace unguarded `requests.*` retry loops with `retry_get_until_body_contains`
+-      (or add `except requests.exceptions.ConnectionError: continue` to the loop).
+-- [ ] Guard single pre-loop requests that immediately follow a config change too.
+-- [ ] Preserve existing assertions and the ~60s retry budget.
+-- [ ] Remove the now-unused `import requests` if no other usage remains in the file.
+-- [ ] Do NOT add `@pytest.mark.flaky`.
+-- [ ] Test-only change: no product code, codegen, or snapshot updates.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11409** (2026-11-12): Add comment explaining pull-requests permission in CI (@haywoodsh)
-- **PR #11407** (2026-11-12): Update actions/checkout action to v7 (release-2026-lts) (@renovate[bot])
-- **PR #11406** (2026-11-12): Update module golang.org/x/crypto to v0.59.0 (release-2026-lts) (@renovate[bot])
-- **PR #11405** (2026-11-12): Update github actions (release-2026-lts) (@renovate[bot])
-- **PR #11404** (2026-11-12): Update docker/dockerfile Docker tag to v1.29 (release-2026-lts) (@renovate[bot])
-- **PR #11403** (2026-11-12): Update module golang.org/x/crypto to v0.59.0 (release-5.7) (@renovate[bot])
+- **PR #11427** (2026-11-13): update versions for 5.8.0 release (@vepatel)
+- **PR #11426** (2026-11-13): Update version bump job condition to include both repositories (@pdabelf5)
+- **PR #11425** (2026-11-13): Enhance Renovate configuration for Python dependencies (@pdabelf5)
+- **PR #11424** (2026-11-13): [release-2026-lts] Cherry-pick new github actions  (@sean-breen)
+- **PR #11423** (2026-11-13): auth response headers implementation (@vepatel)
+- **PR #11418** (2026-11-13): Update azure/setup-helm action to v5.1.0 (release-2026-lts) (@renovate[bot])
 
 ---
 
@@ -2334,28 +1883,31 @@ Wait for the 500 response and VSR Warning state after deleting the policy/secret
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Render JWT claim authorization in the NGINX Plus VirtualServer template (#11227)
+## X. Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, r
 
 **RULE**:
-When implementing operations in `docs/developer/jwt-claim-validation-plan.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/smoke-tests/action.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba1960d9`: Render JWT claim authorization in the NGINX Plus VirtualServer template (#11227). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `afb4fa83`: Restore nightly regression signal: fix zone-sync ConfigMap leak, LTS checkout, run past first failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/developer/jwt-claim-validation-plan.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/smoke-tests/action.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  - **OIDC helper locations (`oidc.tmpl`):** the legacy OIDC include sits at server level, so `@do_oidc_flow`, the redirect URI (`/_codexch`), `/logout` and `/front_channel_logout` inherit the server's `auth_jwt` and `auth_jwt_require`. A login request carries no token, so the inherited check returns 401 and the login never starts. They emit `auth_jwt off;` when the VirtualServer has a server-level JWT policy (`OIDC.ServerJWTAuth`). A reset variable would not be enough, because the inherited `auth_jwt` alone also demands a bearer token. `/_logout` and `@oidc_error` use `return`, which runs before the access phase, and `/_jwks_uri`, `/_token`, `/_refresh`, `/_token_validation` are subrequests. `auth_jwt off` removes no protection: the entry location still validates the session token.
+  pytest-args:
+    description: Extra pytest arguments, e.g. --maxfail=100 to keep running after the first failure
+    required: false
+        ${{ inputs.pytest-args }} \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba1960d9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `afb4fa83` are properly handled with clean fallback behavior.

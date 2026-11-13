@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T21:59:18.749Z",
-  "total_cycles_completed": 9395,
-  "total_learnings_persisted": 9395,
-  "total_rules_promoted": 9113,
+  "last_updated": "2026-11-13T22:17:39.835Z",
+  "total_cycles_completed": 9398,
+  "total_learnings_persisted": 9398,
+  "total_rules_promoted": 9115,
   "history": [
-    {
-      "timestamp": "2026-11-13T09:17:35.639Z",
-      "repository": "SynaLinks/synalinks-skills",
-      "learningId": "learn-github-synalinks-synalinks-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T09:17:37.246Z",
-      "repository": "thinkingmachines/Inkling-2-Small",
-      "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T09:31:25.217Z",
-      "repository": "Michael-A-Kuykendall/shimmy",
-      "learningId": "learn-github-michael-a-kuykendall-shimmy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T09:31:37.550Z",
       "repository": "apple/foundationdb",
@@ -1403,6 +1382,27 @@
       "repository": "amazon/chronos-2",
       "learningId": "learn-huggingface-amazon-chronos-2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T22:17:31.427Z",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T22:17:32.220Z",
+      "repository": "vercel-labs/agent-desktop",
+      "learningId": "learn-github-vercel-labs-agent-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T22:17:39.835Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

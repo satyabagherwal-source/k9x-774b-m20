@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T21:59:58.624Z",
-  "total_records": 394,
+  "last_updated": "2026-11-13T22:18:21.260Z",
+  "total_records": 401,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 206,
+      "total": 211,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -239,7 +239,12 @@
         "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-amazon-chronos-2-core-invariants",
         "DOM-D-6F87F39B",
-        "domain_intelligence-research-knowledge-intelligence-hf-amazon-chronos-2-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-amazon-chronos-2-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria",
+        "DOM-D-9A51060D",
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-learnings-core-invariant"
       ]
     },
     "E": {
@@ -436,7 +441,7 @@
       ]
     },
     "K": {
-      "total": 9,
+      "total": 11,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -446,7 +451,9 @@
         "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants",
         "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants",
         "DOM-K-199063A7",
-        "DOM-K-30566771"
+        "DOM-K-30566771",
+        "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-learnings-core-invari"
       ]
     },
     "L": {
@@ -9568,6 +9575,102 @@
       "repository": "faridsafi-react-native-gifted-chat-learnings",
       "content_hash": "087271b38c479f9309b9da649dcb9e16b908b52fb51494a18e60493376439dd8",
       "created_at": "2026-11-13T21:59:58.624Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Comfy-Org/MiniMax-H3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-minimax-h3-research-knowledge-intelligence-comfy-org-minimax-h3-cor.md",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "content_hash": "5ecab12ed5724c8fae941d27eff680164d89cdf71ea97097119445a1a72f1d81",
+      "created_at": "2026-11-13T22:17:31.634Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: vercel-labs/agent-desktop Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-vercel-labs-agent-desktop-research-knowledge-intelligence-vercel-labs-agent-desk.md",
+      "repository": "vercel-labs/agent-desktop",
+      "content_hash": "7a22cda682cacc7e05fa5ad09a5036c9f1298beb4499e92e599f3d1acde12539",
+      "created_at": "2026-11-13T22:17:32.544Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: nginx/kubernetes-ingress Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-nginx-kubernetes-ingress-quality-verification-intelligence-nginx-kubernetes-ingr.md",
+      "repository": "nginx/kubernetes-ingress",
+      "content_hash": "907c2974e902e1f4b2d34770423a0207e7a88ecd79425bcbd238d46cfa214d4d",
+      "created_at": "2026-11-13T22:17:40.166Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: vercel-labs-agent-desktop-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-vercel-labs-agent-desktop-learnings-research-knowledge-intelligence-vercel-labs-.md",
+      "repository": "vercel-labs-agent-desktop-learnings",
+      "content_hash": "f25799dc1443d7055f9becfcff5c1fba2374df3e6835d1410a4055d0d595f7ec",
+      "created_at": "2026-11-13T22:17:43.691Z"
+    },
+    "DOM-D-9A51060D": {
+      "record_id": "DOM-D-9A51060D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Comfy-Org/MiniMax-H3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Comfy-Org/MiniMax-H3](https://huggingface.co/Comfy-Org/MiniMax-H3))  \n> **Source Version**: `hf-comfy-org`  \n> **License**: Open-Source  \n> **Synthesized",
+      "content_hash": "71acc84c1e70ab8414077fb67e245b9a69828ffa1bf50642a402255ca21a697c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "provenance": {
+        "source_uri": "project://hf-comfy-org-minimax-h3/hf-comfy-org-minimax-h3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T22:17:43.933Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-minimax-h3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-comfy-org-minimax-h3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T22:18:20.336Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-learnings-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-learnings-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-comfy-org-minimax-h3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-minimax-h3-learnings-research-knowledge-intelligence-hf-comfy-org-m.md",
+      "repository": "hf-comfy-org-minimax-h3-learnings",
+      "content_hash": "dd2a0a306e085dcc9316a9b085e37bb7b6e7203e3fbc788c658cfbd0a398425b",
+      "created_at": "2026-11-13T22:18:20.568Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-learnings-core-invari": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-learnings-core-invari",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-nginx-kubernetes-ingress-learnings-quality-verification-intelligence-nginx-kuber.md",
+      "repository": "nginx-kubernetes-ingress-learnings",
+      "content_hash": "0fae685d35dee345802f796af60672fb76405d81f526064485aee2e19380707e",
+      "created_at": "2026-11-13T22:18:21.260Z"
     }
   }
 }

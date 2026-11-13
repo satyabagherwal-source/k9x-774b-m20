@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T21:59:58.303Z",
+  "updated_at": "2026-11-13T22:18:20.921Z",
   "stats": {
-    "total_discovered": 2963,
-    "approved_pending_harvest": 2765,
+    "total_discovered": 2971,
+    "approved_pending_harvest": 2773,
     "harvested_count": 0,
     "rejected_count": 198,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2765,
+      "COMMUNITY_AND_EXPERT": 2773,
       "OFFICIAL_DOCUMENTATION": 106,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
@@ -63820,6 +63820,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
         "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-9E46D458613F": {
+      "id": "SRC-9E46D458613F",
+      "url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "title": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:18:20.368Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
+        "fileName": "hf-comfy-org-minimax-h3-learnings.md"
+      }
+    },
+    "SRC-2817D0C4D80F": {
+      "id": "SRC-2817D0C4D80F",
+      "url": "https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222816",
+      "title": "https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222816",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:18:20.756Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-3F7F6ED0BB4B": {
+      "id": "SRC-3F7F6ED0BB4B",
+      "url": "https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222786",
+      "title": "https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222786",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:18:20.783Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-43DE83C22A56": {
+      "id": "SRC-43DE83C22A56",
+      "url": "https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222925",
+      "title": "https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222925",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:18:20.809Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-EA77F51C6FF0": {
+      "id": "SRC-EA77F51C6FF0",
+      "url": "https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222805",
+      "title": "https://github.com/nginx/kubernetes-ingress/actions/runs/43356002027/job/131658222805",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:18:20.834Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-7BCA0A7D84D1": {
+      "id": "SRC-7BCA0A7D84D1",
+      "url": "https://github.com/nginx/kubernetes-ingress/actions/runs/43145244434/job/130941545511",
+      "title": "https://github.com/nginx/kubernetes-ingress/actions/runs/43145244434/job/130941545511",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:18:20.870Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-11605EDCBE4F": {
+      "id": "SRC-11605EDCBE4F",
+      "url": "https://github.com/nginx/kubernetes-ingress/actions/runs/43262340867/job/131345989101",
+      "title": "https://github.com/nginx/kubernetes-ingress/actions/runs/43262340867/job/131345989101",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:18:20.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-F5DAD4BCCE19": {
+      "id": "SRC-F5DAD4BCCE19",
+      "url": "https://github.com/nginx/kubernetes-ingress/acti",
+      "title": "https://github.com/nginx/kubernetes-ingress/acti",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T22:18:20.921Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
       }
     }
   }

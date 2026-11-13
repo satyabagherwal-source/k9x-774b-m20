@@ -9652,3 +9652,7 @@
 | `CYCLE-20261113-QYFI` | `2026-11-13T21:58:48.270Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8393` | Yes (`78a04f29...`) |
 | `CYCLE-20261113-RLXU` | `2026-11-13T21:59:18.738Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`0c2e170e...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:59:57.441Z` | `hf-amazon-chronos-2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6F87F39B` [Domain D] | Yes (`0b31585a...`) |
+| `CYCLE-20261113-F11Z` | `2026-11-13T22:17:31.415Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`aa0ce47f...`) |
+| `CYCLE-20261113-F1O2` | `2026-11-13T22:17:32.210Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8394` | Yes (`93d404a5...`) |
+| `CYCLE-20261113-F7JK` | `2026-11-13T22:17:39.824Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8395` | Yes (`d455c120...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T22:18:20.347Z` | `hf-comfy-org-minimax-h3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9A51060D` [Domain D] | Yes (`71acc84c...`) |
