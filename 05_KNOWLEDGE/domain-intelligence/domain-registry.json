@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T23:29:25.740Z",
-  "total_records": 424,
+  "last_updated": "2026-11-13T23:45:21.437Z",
+  "total_records": 430,
   "domains": {
     "A": {
       "total": 5,
@@ -15,14 +15,15 @@
       ]
     },
     "B": {
-      "total": 6,
+      "total": 7,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
         "domain_intelligence-product-intelligence-cilium-cilium-core-invariants",
         "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants",
         "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants",
-        "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants"
+        "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants",
+        "DOM-B-A33663AE"
       ]
     },
     "C": {
@@ -262,13 +263,16 @@
       ]
     },
     "F": {
-      "total": 5,
+      "total": 8,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
         "DOM-F-456EB881",
         "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants",
-        "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
+        "DOM-F-3F2EAC2E",
+        "domain_intelligence-design-intelligence-hf-openai-whisper-large-v3-learnings-core-invariants"
       ]
     },
     "G": {
@@ -480,11 +484,13 @@
       ]
     },
     "L": {
-      "total": 3,
+      "total": 5,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
-        "DOM-L-2A739777"
+        "DOM-L-2A739777",
+        "domain_intelligence-deployment-operations-intelligence-gardener-gardener-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-gardener-gardener-learnings-core-invariants"
       ]
     },
     "M": {
@@ -9719,8 +9725,8 @@
       "title": "Technical Construction Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bitterbot-ai-bitterbot-desktop-technical-construction-intelligence-bitterbot-ai-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "b8ef5f8aaa3e843dfa45ee3f0c3b99f1170ffa61e7e03a71f2233abbe6c6b4ab",
-      "created_at": "2026-11-13T22:31:00.510Z"
+      "content_hash": "e0b473f5e165fe633e1e2351ba87f508ff77f1b069d5b2820e899e099b485f8d",
+      "created_at": "2026-11-13T23:42:07.540Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
@@ -9737,8 +9743,8 @@
       "title": "Technical Construction Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bitterbot-ai-bitterbot-desktop-learnings-technical-construction-intelligence-bit.md",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
-      "content_hash": "3364020a0b7066eed7d37e02272b7a50581ef7388757d63ae020265fbcd1b5cb",
-      "created_at": "2026-11-13T22:31:04.143Z"
+      "content_hash": "7368689b878f398cd848f9e810fb1b312de14a7d1b953dda693b97a2154b11f8",
+      "created_at": "2026-11-13T23:45:21.437Z"
     },
     "DOM-D-62BFCC58": {
       "record_id": "DOM-D-62BFCC58",
@@ -10006,6 +10012,110 @@
       "repository": "ontos-ai-knowhere-learnings",
       "content_hash": "b178ead341794932f7f59642d02445a86ee86f8133f2850bdfd257b3eb70c4cc",
       "created_at": "2026-11-13T23:29:25.115Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-gardener-gardener-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-gardener-gardener-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
+      "repository": "gardener/gardener",
+      "content_hash": "68de3ffe27222ea9a910e8728d8ead1145f7755e4661d80d5090ccd8ec6f76db",
+      "created_at": "2026-11-13T23:42:00.882Z"
+    },
+    "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: openai/whisper-large-v3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-openai-whisper-large-v3-design-intelligence-openai-whisper-large-v3-core-inva.md",
+      "repository": "openai/whisper-large-v3",
+      "content_hash": "547eec11944c361d31f970089a60b39e1152be84bb388052e1fa80d1f1b4fd59",
+      "created_at": "2026-11-13T23:44:16.807Z"
+    },
+    "DOM-B-A33663AE": {
+      "record_id": "DOM-B-A33663AE",
+      "domain_letter": "B",
+      "domain_id": "product",
+      "domain_name": "Product Intelligence",
+      "secondary_domains": [],
+      "title": "128 Mel Bin Dimension Mismatch (BUG-WHISPER-V3-01)",
+      "content": "Audio processors must decouple default scalar parameters from model weights and dynamically validate input feature dimensions against the encoder's input weights during instantiation.",
+      "content_hash": "d271d0103f00d370464ed31b549f88543713b0455ccdcb99a28c366d4e417e06",
+      "summary": "`WhisperFeatureExtractor` hardcoded `feature_size = 80` as the default function signature parameter instead of extracting `num_mel_bins` fro -> Audio processors must decouple default scalar parameters from model weights and dynamically validate input feature dimensions against the en",
+      "provenance": {
+        "source_uri": "project://hf-openai-whisper-large-v3/hf-openai-whisper-large-v3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T23:44:19.872Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-whisper-large-v3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json` specifies `\"num_mel_bins\": 128` and `\"transformers_version\": \"4.36.0.dev0\"`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T23:44:48.361Z"
+    },
+    "DOM-F-3F2EAC2E": {
+      "record_id": "DOM-F-3F2EAC2E",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Hallucination Loops on Silence via Unbounded Timestamp Generation (BUG-WHISPER-V3-02)",
+      "content": "Autoregressive sequence models processing sensory signals must enforce strict monotonicity constraints on continuous coordinate tokens (such as timestamps) to prevent circular generative attractors.",
+      "content_hash": "ecc14b7599eac9c60e5b81caf8301324cf4b32896d28955835079e9a125d6754",
+      "summary": "When audio cross-attention lacks a distinct energy peak (silence or noise), attention entropy spikes across all heads. The decoder receives  -> Autoregressive sequence models processing sensory signals must enforce strict monotonicity constraints on continuous coordinate tokens (such",
+      "provenance": {
+        "source_uri": "project://hf-openai-whisper-large-v3/hf-openai-whisper-large-v3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T23:44:19.872Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-whisper-large-v3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`generation_config.json` configuring `alignment_heads` and suppress tokens; presence of `no_speech_threshold: 0.6` and `logprob_threshold: -1.0` in Whisper decode options."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T23:45:19.438Z"
+    },
+    "domain_intelligence-design-intelligence-hf-openai-whisper-large-v3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-hf-openai-whisper-large-v3-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: hf-openai-whisper-large-v3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-openai-whisper-large-v3-learnings-design-intelligence-hf-openai-whisper-large.md",
+      "repository": "hf-openai-whisper-large-v3-learnings",
+      "content_hash": "e3ddbbf4a84647bf4f92014797bb11b257bccac5dd18ba83999d6128d079fd78",
+      "created_at": "2026-11-13T23:45:19.909Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-gardener-gardener-learnings-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-gardener-gardener-learnings-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-learnings-deployment-operations-intelligence-gardener-gardener.md",
+      "repository": "gardener-gardener-learnings",
+      "content_hash": "16e7281a31b72a33b3f8381e37d2141a70f1506f1fdbd5d654f7217ba2b4ee84",
+      "created_at": "2026-11-13T23:45:20.841Z"
     }
   }
 }

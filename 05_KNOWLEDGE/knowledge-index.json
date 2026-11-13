@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-13T23:29:25.849Z",
-  "total_verified_learnings": 8432,
+  "last_updated": "2026-11-13T23:45:21.547Z",
+  "total_verified_learnings": 8434,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 16778,
+  "total_items": 16796,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217470,14 +217470,19 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "c62b5245",
-      "content_hash": "77a68b55cb4fe7ef91359e8357a933e0bc3db7ecca6592eee6606884996060e5",
+      "source_version": "3d57bd6a",
+      "content_hash": "0d6be646b5200a8c2914ef778d48da51880c4b6f8f6d5ce15b80cfdbe7151ad6",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
         {
           "number": 8397,
           "title": "stop @coinbase/agentkit sending analytics to Coinbase",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8406,
+          "title": "Empirical Invariant Guard in docker-publish.yml",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -217486,7 +217491,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T22:31:00.155Z",
+      "verified_at": "2026-11-13T23:42:07.059Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217528,10 +217533,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bitterbot-ai-bitterbot-desktop-technical-construction-intelligence-bitterbot-ai-.md",
       "title": "Technical Construction Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "c62b5245",
-      "content_hash": "b8ef5f8aaa3e843dfa45ee3f0c3b99f1170ffa61e7e03a71f2233abbe6c6b4ab",
+      "source_version": "3d57bd6a",
+      "content_hash": "e0b473f5e165fe633e1e2351ba87f508ff77f1b069d5b2820e899e099b485f8d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T22:31:00.510Z"
+      "persisted_at": "2026-11-13T23:42:07.540Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bitterbot-ai-bitterbot-desktop": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bitterbot-ai-bitterbot-desktop",
@@ -217541,9 +217546,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for bitterbot-ai-bitterbot-desktop-learnings",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "7de05f1a07500c06d9f64d16135ee263f9ff8531c6447609bd69751ff1a39ecf",
+      "content_hash": "7d5d99e2ea92e732f12fbb3feefdef54156730210f3b69a13373f64bf7263a2c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T22:31:04.226Z"
+      "persisted_at": "2026-11-13T23:45:21.547Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
@@ -217589,9 +217594,9 @@
       "title": "Technical Construction Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "3364020a0b7066eed7d37e02272b7a50581ef7388757d63ae020265fbcd1b5cb",
+      "content_hash": "7368689b878f398cd848f9e810fb1b312de14a7d1b953dda693b97a2154b11f8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T22:31:04.143Z"
+      "persisted_at": "2026-11-13T23:45:21.437Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-timm-mobilenetv3_small_100-lamb_in1k-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-timm-mobilenetv3_small_100-lamb_in1k-learning",
@@ -218327,6 +218332,277 @@
       "content_hash": "3f0d89e462ca351b3ad80d72865b750661f3a306ba661a4c814f9bb606059fd4",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T23:29:25.222Z"
+    },
+    "learn-github-gardener-gardener": {
+      "learning_id": "learn-github-gardener-gardener",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "gardener/gardener",
+      "repository": "gardener/gardener",
+      "slug": "gardener-gardener",
+      "platform": "github",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "00b6db8f",
+      "content_hash": "2eb75347f7602cfdc1211830314db921707241cef1f6a83ed4b53fa9ad747c63",
+      "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8405,
+          "title": "update envoy scanning hints",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T23:42:00.425Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8405": {
+      "learning_id": "rule-8405",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8405,
+      "title": "update envoy scanning hints",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "00b6db8f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-13T23:42:00.425Z"
+    },
+    "candidate_directive-update-envoy-scanning-hints": {
+      "item_id": "candidate_directive-update-envoy-scanning-hints",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JYVM-update-envoy-scanning-hints.md",
+      "title": "update envoy scanning hints",
+      "repository": "gardener-gardener-learnings",
+      "source_version": "HEAD",
+      "content_hash": "16e21111bfe9cb78be1186a94d24dd92893f0367858df80b36cca75e2b0a88b7",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-13T23:45:20.722Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-gardener-gardener-core-invariants": {
+      "item_id": "domain_intelligence-deployment-operations-intelligence-gardener-gardener-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
+      "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
+      "repository": "gardener/gardener",
+      "source_version": "00b6db8f",
+      "content_hash": "68de3ffe27222ea9a910e8728d8ead1145f7755e4661d80d5090ccd8ec6f76db",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-13T23:42:00.882Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/gardener-gardener-verification-protocol-empirical-defect-shield-for-gardener-gar.md",
+      "title": "Verification Protocol: Empirical Defect Shield for gardener/gardener",
+      "repository": "gardener/gardener",
+      "source_version": "00b6db8f",
+      "content_hash": "76484de8cdb45f63ce131d4c6e599b8db249972ad07facdf49e62571c987fb0b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T23:42:00.989Z"
+    },
+    "rule-8406": {
+      "learning_id": "rule-8406",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8406,
+      "title": "Empirical Invariant Guard in docker-publish.yml",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "3d57bd6a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-13T23:42:07.059Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-docker-publish-yml": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-docker-publish-yml",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JZC9-empirical-invariant-guard-in-docker-publish-yml.md",
+      "title": "Empirical Invariant Guard in docker-publish.yml",
+      "repository": "bitterbot-ai-bitterbot-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e36ea931ea41163ab793972efb2aa876dae5de16326f9ed778c3491d12dfdc2a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T23:45:21.335Z"
+    },
+    "learn-huggingface-openai-whisper-large-v3": {
+      "learning_id": "learn-huggingface-openai-whisper-large-v3",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "openai/whisper-large-v3",
+      "repository": "openai/whisper-large-v3",
+      "slug": "hf-openai-whisper-large-v3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openai/whisper-large-v3",
+      "source_version": "hf-openai-whisper-large-v3",
+      "content_hash": "e068d55c8bc4121f85281a36416c01039b7791f99680e7d2e99edfd6c9a6f740",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8407,
+          "title": "Invariant Audio Front-End Dimension Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8408,
+          "title": "Guarding Generation Sequences Against Immediate Non-Text Token Traps",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T23:44:16.262Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8407": {
+      "learning_id": "rule-8407",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8407,
+      "title": "Invariant Audio Front-End Dimension Verification",
+      "source_url": "https://huggingface.co/openai/whisper-large-v3",
+      "source_version": "hf-openai-whisper-large-v3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-13T23:44:16.262Z"
+    },
+    "rule-8408": {
+      "learning_id": "rule-8408",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8408,
+      "title": "Guarding Generation Sequences Against Immediate Non-Text Token Traps",
+      "source_url": "https://huggingface.co/openai/whisper-large-v3",
+      "source_version": "hf-openai-whisper-large-v3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-13T23:44:16.262Z"
+    },
+    "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-openai-whisper-large-v3-design-intelligence-openai-whisper-large-v3-core-inva.md",
+      "title": "Design Intelligence: openai/whisper-large-v3 Core Invariants",
+      "repository": "openai/whisper-large-v3",
+      "source_version": "hf-openai-whisper-large-v3",
+      "content_hash": "547eec11944c361d31f970089a60b39e1152be84bb388052e1fa80d1f1b4fd59",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-13T23:44:16.807Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-openai-whisper-large-v3": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-openai-whisper-large-v3",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-openai-whisper-large-v3-verification-protocol-empirical-defect-shield-for-ope.md",
+      "title": "Verification Protocol: Empirical Defect Shield for openai/whisper-large-v3",
+      "repository": "openai/whisper-large-v3",
+      "source_version": "hf-openai-whisper-large-v3",
+      "content_hash": "090945ab14d0c4d6a9c49e036bc096959ed02e721b031b34d0c1627911753447",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T23:44:16.928Z"
+    },
+    "candidate_directive-invariant-audio-front-end-dimension-verification": {
+      "item_id": "candidate_directive-invariant-audio-front-end-dimension-verification",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JY2F-invariant-audio-front-end-dimension-verification.md",
+      "title": "Invariant Audio Front-End Dimension Verification",
+      "repository": "hf-openai-whisper-large-v3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "09fad778e125d5c19044d9470f1ef6fda627f99f733f17e458ac94022cd54c27",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T23:45:19.673Z"
+    },
+    "candidate_directive-guarding-generation-sequences-against-immediate-non-text-token-traps": {
+      "item_id": "candidate_directive-guarding-generation-sequences-against-immediate-non-text-token-traps",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JY2G-guarding-generation-sequences-against-immediate-non-text-token-traps.md",
+      "title": "Guarding Generation Sequences Against Immediate Non-Text Token Traps",
+      "repository": "hf-openai-whisper-large-v3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b0c5bf9c97ee93ebcd82110ac69680c615d5c5a676e5443e61f1f09620e393c9",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-13T23:45:19.800Z"
+    },
+    "domain_intelligence-design-intelligence-hf-openai-whisper-large-v3-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-hf-openai-whisper-large-v3-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-openai-whisper-large-v3-learnings-design-intelligence-hf-openai-whisper-large.md",
+      "title": "Design Intelligence: hf-openai-whisper-large-v3-learnings Core Invariants",
+      "repository": "hf-openai-whisper-large-v3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e3ddbbf4a84647bf4f92014797bb11b257bccac5dd18ba83999d6128d079fd78",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-13T23:45:19.909Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-openai-whisper-large-v3-lea": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-openai-whisper-large-v3-lea",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-openai-whisper-large-v3-learnings-verification-protocol-empirical-defect-shie.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-openai-whisper-large-v3-learnings",
+      "repository": "hf-openai-whisper-large-v3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ee2b654c4089327613ba5337787cd7e58e9702583974f97c397ed82619b9b74d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T23:45:20.021Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-gardener-gardener-learnings-core-invariants": {
+      "item_id": "domain_intelligence-deployment-operations-intelligence-gardener-gardener-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-learnings-deployment-operations-intelligence-gardener-gardener.md",
+      "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
+      "repository": "gardener-gardener-learnings",
+      "source_version": "HEAD",
+      "content_hash": "16e7281a31b72a33b3f8381e37d2141a70f1506f1fdbd5d654f7217ba2b4ee84",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-13T23:45:20.841Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/gardener-gardener-learnings-verification-protocol-empirical-defect-shield-for-ga.md",
+      "title": "Verification Protocol: Empirical Defect Shield for gardener-gardener-learnings",
+      "repository": "gardener-gardener-learnings",
+      "source_version": "HEAD",
+      "content_hash": "99381db1a992a7ad1114f212c925dc45a72f4e66034284f34ac44852b5784516",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T23:45:20.955Z"
     }
   },
   "ai-builder-brain": {

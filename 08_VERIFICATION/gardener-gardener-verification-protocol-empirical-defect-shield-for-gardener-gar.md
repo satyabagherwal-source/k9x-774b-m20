@@ -4,45 +4,31 @@
 {
   "source_repository": "gardener/gardener",
   "source_url": "https://github.com/gardener/gardener",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "00b6db8f",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T23:42:00.769Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-gardener-gardener",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `00b6db8f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T23:42:00.769Z`  
+> **Learning ID**: `learn-github-gardener-gardener`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gardener/gardener` (Commit: `historical`)
+- **Target Repository**: `gardener/gardener` (Commit: `00b6db8f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
-> **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `2fd74173`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T14:56:28.991Z  
-> **Learning ID**: `learn-github-gardener-gardener`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): gardener/gardener
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T14:56:28.984Z  
+> **Harvest Timestamp**: 2026-11-13T23:41:59.516Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Homogeneous Kubernetes clusters at scale on any infrastructure using hosted control planes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3484 stars
+- **Stars / Engagement**: 3485 stars
 
 ---
 
@@ -751,17 +737,17 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16280** (2026-11-11): **Update dependency crate-ci/typos to v1.52.2**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [crate-ci/typos](https://redirect.github.com/crate-ci/typos) | patch | `v1.52.1` → `v1.52.2` |  ---  ### Release Notes  <details> <summary>crate-ci/typos</summary>  ### [`v1.52.2`](https://redirect.github.com/crate-ci/typos/releases/tag/v1.52.2)  [Compare Source](https://redirect.github.com/crate-ci/typos/compare/v1.52.1...v1.52.2)  #### \[1.52.2] - 2026-11-11  ##### Compatibility  - *(pypi)* Don't publish wheels for x86  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yMjIuNSIsInVwZGF0ZWRJblZlciI6IjQ0LjIyMi41IiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+- **Issue #16337** (2026-11-13): **Update dependency gardener/alpine-conntrack to v3.24.4**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [gardener/alpine-conntrack](https://redirect.github.com/gardener/alpine-conntrack) | patch | `3.24.2` → `3.24.4` |  ---  ### Release Notes  <details> <summary>gardener/alpine-conntrack</summary>  ### [`v3.24.4`](https://redirect.github.com/gardener/alpine-conntrack/releases/tag/3.24.4)  [Compare Source](https://redirect.github.com/gardener/alpine-conntrack/compare/3.24.2...3.24.4)  #### application/spdx+json  - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:69803d1b908c0f9851d489e0455e41b06ba9342b766d1b6ddd04ede2da27cf55` - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:71089ec8becb326c2d2196df5b79092710231183da852520403696007fcb6d38`  #### application/vnd.cyclonedx+json  - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:12805c093662513e86eb42df9df1a375c49a1f1be548c2aa963a6b0b913f8138` - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:1ae3fdb1bfdbe1bea6b17e0606cf2654446dd580f4e94ffa087edc80bcdad724`  #### Container (OCI) Images  - alpine-conntrack: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack:3.24.4`  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Au
   **Post-Mortem & Fix Analysis**:
   > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [rfranzke](https://github.com/rfranzke) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["rfranzke"]} -->
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [timebertt](https://github.com/timebertt) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["timebertt"]} -->
 
-- **Issue #16279** (2026-11-11): **Update go to v1.27.4**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [go](https://go.dev/) ([source](https://redirect.github.com/golang/go)) |  | minor | `1.26.10` → `1.27.4` | | [go](https://redirect.github.com/actions/go-versions) | uses-with | minor | `1.26` → `1.27` | | [golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) |  | minor | `1.26.10` → `1.27.4` | | [golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | stage | minor | `1.26.10` → `1.27.4` |  ---  ### Release Notes  <details> <summary>golang/go (go)</summary>  ### [`v1.27.1`](https://redirect.github.com/golang/go/compare/go1.27.0...go1.27.1)  ### [`v1.27.0`](https://redirect.github.com/golang/go/compare/go1.26.11...go1.27.0)  </details>  <details> <summary>actions/go-versions (go)</summary>  ### [`v1.27.4`](https://redirect.github.com/actions/go-versions/releases/tag/1.27.4-42945153609): 1.27.4  [Compare Source](https://redirect.github.com/actions/go-versions/compare/1.27.3-39437817176...1.27.4-42945153609)  Go 1.27.4  ### [`v1.27.3`](https://redirect.github.com/actions/go-versions/releases/tag/1.27.3-39437817176): 1.27.3  [Compare Source](https://redirect.github.com/actions/go-versions/compare/1.27.2-37875086547...1.27.3-39437817176)  Go 1.27.3  ### [`v1.27.2`](https://redirect.github.com/actions/go-versions/releases/tag/1.27.2-37875086547): 1.27.2  [Compare Source](https://redirect
+- **Issue #16334** (2026-11-13): **Update dependency credativ/vali to v2.2.39**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [credativ/vali](https://redirect.github.com/credativ/vali) | patch | `v2.2.38` → `v2.2.39` |  > [!TIP] > Updates to this image may depend on merging a pull request in the [ci-infra](https://redirect.github.com/gardener/ci-infra/pulls?q=sort%3Aupdated-desc+is%3Apr+is%3Aopen) repository. Usually, the PRs are auto-merged. However, there is no guarantee that the PRs will be merged in time for this update. If tests fail, please check that the the PR for your component is not stuck and trigger a retest.  ---  ### Release Notes  <details> <summary>credativ/vali</summary>  ### [`v2.2.39`](https://redirect.github.com/credativ/vali/releases/tag/v2.2.39)  [Compare Source](https://redirect.github.com/credativ/vali/compare/v2.2.38...v2.2.39)  This is release v2.2.39 of Vali.  Vali is a fork of Loki 2.2.1 under the Apache 2.0 License. It is currently limited to maintenance and security updates.  ##### Notable changes  - Upgrade Alpine to 3.24.4 - Upgrade Go to 1.27.4  ##### Installation  The components of Vali are currently distributed as container images.  - `ghcr.io/credativ/vali:v2.2.39`   <https://github.com/credativ/vali/pkgs/container/vali>  - `ghcr.io/credativ/valitail:v2.2.39`   <https://github.com/credativ/vali/pkgs/container/valitail>  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defi
   **Post-Mortem & Fix Analysis**:
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [scheererj](https://github.com/scheererj) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["scheererj"]} -->
-  > @renovate[bot]: The following tests **failed**, say `/retest` to rerun all failed tests or `/retest-required` to rerun all mandatory failed tests:  Test name | Commit | Details | Required | Rerun command --- | --- | --- | --- | --- pull-gardener-e2e-kind-ha-multi-node-upgrade | e9f070d7a8c1bd9f0ccd84073d3325615148cc8f | [link](https://prow.gardener.cloud/view/gs/gardener-prow/pr-logs/pull/gardener_gardener/16279/pull-gardener-e2e-kind-ha-multi-node-upgrade/2120352870556504064) | true | `/test pull-gardener-e2e-kind-ha-multi-node-upgrade` pull-gardener-unit | e9f070d7a8c1bd9f0ccd84073d3325615148cc8f | [link](https://prow.gardener.cloud/view/gs/gardener-prow/pr-logs/pull/gardener_gardener/16279/pull-gardener-unit/2120352887342108672) | true | `/test pull-gardener-unit` pull-gardener-e2e-kind-gardenadm-unmanaged-infra-external-gardener | e9f070d7a8c1bd9f0ccd84073d3325615148cc8f | [link](https://prow.gardener.cloud/view/gs/gardener-prow/pr-logs/pull/gardener_gardener/16279/pull-gardener-e2
+  > /label skip-review
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [oliver-goetz](https://github.com/oliver-goetz) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["oliver-goetz"]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -778,572 +764,457 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab429249` (2026-11-11)
-**Commit Message**: Fix Perses dashboard gauge percentage unit (#16252)
+### Incident Patch 1: `0fcc2eec` (2026-11-13)
+**Commit Message**: fix: update envoy scanning hints (#16309)
 
-* Fix Perses percentage gauges rendering on 0-1 scale
+Signed-off-by: Dominik Froehlich <[REDACTED_EMAIL]>
 
-The GaugeChart panels for '% of Clusters with Alerts' (seed and garden
-alerts) and 'Shoot Availability' had no format block, so Perses applied
-its default unit 'percent-decimal' (0-1 scale, max 1). Their queries
-already multiply by 100, producing a 0-100 value, which rendered against
-the wrong scale. Set unit 'percent' so the gauges display 0-100.
-
-Signed-off-by: Jeremy Rickards <[REDACTED_EMAIL]>
-
-* Set decimal unit on Shoot Availability count gauges
-
-The 'Total number of shoots' and 'Unavailable Shoots' GaugeChart panels
-had no format block, so Perses applied its default 'percent-decimal'
-unit to their raw count queries. Set unit 'decimal' so the counts render
-as plain numbers.
-
-Signed-off-by: Jeremy Rickards <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Jeremy Rickards <[REDACTED_EMAIL]>
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards/garden/garden-alerts.yaml` (modified, +2/-0)
+**File**: `imagevector/containers.yaml` (modified, +4/-4)
 ```diff
-@@ -140,6 +140,8 @@ spec:
-           kind: GaugeChart
-           spec:
-             calculation: last
-+            format:
-+              unit: percent
-         queries:
-           - kind: TimeSeriesQuery
-             spec:
-```
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards/garden/shoot-availability-dashboard.yaml` (modified, +6/-0)
-```diff
-@@ -35,6 +35,8 @@ spec:
-           kind: GaugeChart
-           spec:
-             calculation: last
-+            format:
-+              unit: percent
-         queries:
-           - kind: TimeSeriesQuery
-             spec:
-@@ -54,6 +56,8 @@ spec:
-           kind: GaugeChart
-           spec:
-             calculation: last
-+            format:
-+              unit: decimal
-         queries:
-           - kind: TimeSeriesQuery
-             spec:
-@@ -73,6 +77,8 @@ spec:
-           kind: GaugeChart
-           spec:
-             calculation: last
-+            format:
-+              unit: decimal
-         queries:
-           - kind: TimeSeriesQuery
-             spec:
-```
-
-**File**: `pkg/component/observability/monitoring/perses/dashboards/seed/alerts-dashboard.yaml` (modified, +2/-0)
-```diff
-@@ -169,6 +169,8 @@ spec:
-           kind: GaugeChart
-           spec:
-             calculation: last
-+            format:
-+              unit: percent
-         queries:
-           - kind: TimeSeriesQuery
-             spec:
+@@ -976,21 +976,21 @@ images:
+             teamname: 'gardener/gardener-core-networking-maintainers'
+       - name: 'cloud.gardener.cnudie/dso/scanning-hints/package-versions'
+         value:
+-          # https://www.envoyproxy.io/docs/envoy/v1.39.0/intro/arch_overview/security/external_deps
++          # https://www.envoyproxy.io/docs/envoy/v1.40.2/intro/arch_overview/security/external_deps
+           - name: 'v8'
+             version: '14.6.202.10'
+           - name: 'grpc'
+-            version: '1.81.1'
++            version: '1.83.0'
+           - name: 'luajit'
+             version: '871db2c'
+           - name: 'nghttp2'
+             version: '1.66.0'
+           - name: 'protobuf'
+             version: '35.1'
+           - name: 'fmt'
+-            version: '12.1.0'
++            version: '12.2.0'
+           - name: 'boringssl'
+-            version: '0.20260413.0'
++            version: '0.20260929.0'
+           # lua version is unclear. lua runtime is luajit.
+           # luajit is compatible with lua 5.1 but contains feature of lua 5.2 and 5.3
+           # https://luajit.org/extensions.html
 ```
 
 ---
 
-### Incident Patch 2: `d8608c78` (2026-11-09)
-**Commit Message**: [GEP-28] Increase spec timeout for joining nodes in gardenadm e2e test (#16264)
+### Incident Patch 2: `107b12dd` (2026-11-13)
+**Commit Message**: Drop resource dependency graph debug handler (#16315)
 
-Increase spec timeout for joining nodes in gardenadm e2e test
+* [admission-controller] Remove `enableDebugHandlers` config field
 
-`gardenadm join` waits for the node to become ready. On the new node, the CNI installation might race with the first
-sync of kube-proxy: if calico requests its token via the `kubernetes` Service before kube-proxy has synced its rules,
-the request only fails after calico's client timeout of 30s and the init container is restarted. This doesn't fit into
-the spec timeout of 1 minute, which is increased to 5 minutes.
+The field only gated the resource dependency graph debug handler, which is
+removed in a subsequent commit.
 
-See https://redirect.github.com/gardener/gardener/issues/16263
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
-Assisted-by: Claude
+* [make generate]
 
-Signed-off-by: Tim Ebert <[REDACTED_EMAIL]>
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
-**File**: `test/e2e/gardenadm/unmanagedinfra/gardenadm.go` (modified, +1/-1)
-```diff
-@@ -329,7 +329,7 @@ func itShouldResetOrJoinNode(command, message string) {
- 		Expect(err).NotTo(HaveOccurred())
- 
- 		Eventually(ctx, stdOut).Should(gbytes.Say(message))
--	}, SpecTimeout(time.Minute))
-+	}, SpecTimeout(5*time.Minute))
- }
- 
- func itShouldSeeJoinedNodeAndCheckHealth(shootClientSet func() kubernetes.Interface) {
-```
+* [admission-controller] Drop resource dependency graph debug handler
 
----
+The `/debug/resource-dependency-graph` handler served an unauthenticated HTML
+dump of the entire graph and could not render it on large landscapes anyway. It
+has been unused for years, so remove it together with its wiring.
 
-### Incident Patch 3: `eeac5d4e` (2026-11-11)
-**Commit Message**: Enable kube-api-linter `optionalorrequired` for `extensions/v1alpha1` and `config/operator/v1alpha1` (#16141)
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
-* Enable kube-api-linter optionalorrequired for extensions/v1alpha1 and config/operator/v1alpha1
+* Documentation
 
-Marks all fields of these API groups as explicitly +optional or +required and registers the groups for the optionalorrequired linter.
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
-
-* Fix additional optionalorrequired fields violations
-
-Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
-**File**: `.golangci.yaml.in` (modified, +1/-1)
+**File**: `docs/deployment/gardenlet_api_access.md` (modified, +0/-52)
 ```diff
-@@ -346,7 +346,7 @@ linters:
-       - linters:
-           - kubeapilinter
-         text: 'optionalorrequired:'
--        path-except: 'pkg/apis/(core/v1beta1|operations/v1alpha1|operator/v1alpha1|config/resourcemanager/v1alpha1|core/v1)/[^/]+$'
-+        path-except: 'pkg/apis/(config/operator/v1alpha1|config/resourcemanager/v1alpha1|core/v1|core/v1beta1|extensions/v1alpha1|operations/v1alpha1|operator/v1alpha1)/[^/]+$'
-       # optionalfields: Spec/Status and other struct fields on top-level API objects have established non-pointer
-       # conventions in Kubernetes APIs. Similarly, scalar fields (int64, string) with incomplete validation
-       # are intentionally kept as value types. Converting these to pointers would be API-breaking.
+@@ -145,58 +145,6 @@ The `SeedAuthorizer` registers the following metrics related to the mentioned gr
+ | `gardener_admission_controller_seed_authorizer_graph_update_duration_seconds` | Histogram of duration of resource dependency graph updates in seed authorizer, i.e., how long does it take to update the graph's vertices/edges when a resource is created, changed, or deleted. |
+ | `gardener_admission_controller_seed_authorizer_graph_path_check_duration_seconds` | Histogram of duration of checks whether a path exists in the resource dependency graph in seed authorizer. |
+ 
+-#### Debug Handler
+-
+-When the `.server.enableDebugHandlers` field in the `gardener-admission-controller`'s component configuration is set to `true`, then it serves a handler that can be used for debugging the resource dependency graph under `/debug/resource-dependency-graph`.
+-
+-🚨 Only use this setting for development purposes, as it enables unauthenticated users to view all data if they have access to the `gardener-admission-controller` component.
+-
+-The handler renders an HTML page displaying the current graph with a list of vertices and its associated incoming and outgoing edges to other vertices.
+-Depending on the size of the Gardener landscape (and consequently, the size of the graph), it might not be possible to render it in its entirety.
+-If there are more than 2000 vertices, then the default filtering will selected for `kind=Seed` to prevent overloading the output.
+-
+-_Example output_:
+-
+-```text
+--------------------------------------------------------------------------------
+-|
+-| # Seed:my-seed
+-|   <- (11)
+-|     BackupBucket:73972fe2-3d7e-4f61-a406-b8f9e670e6b7
+-|     BackupEntry:garden-my-project/shoot--dev--my-shoot--4656a460-1a69-4f00-9372-7452cbd38ee3
+-|     ControllerInstallation:dns-external-mxt8m
+-|     ControllerInstallation:extension-shoot-cert-service-4qw5j
+-|     ControllerInstallation:networking-calico-bgrb2
+-|     ControllerInstallation:os-gardenlinux-qvb5z
+-|     ControllerInstallation:provider-gcp-w4mvf
+-|     Secret:garden/backup
+-|     Shoot:garden-my-project/my-shoot
+-|
+--------------------------------------------------------------------------------
+-|
+-| # Shoot:garden-my-project/my-shoot
+-|   <- (5)
+-|     CloudProfile:gcp
+-|     Namespace:garden-my-project
+-|     Secret:garden-my-project/my-dns-secret
+-|     SecretBinding:garden-my-project/my-credentials
+-|     ShootState:garden-my-project/my-shoot
+-|   -> (1)
+-|     Seed:my-seed
+-|
+--------------------------------------------------------------------------------
+-|
+-| # ShootState:garden-my-project/my-shoot
+-|   -> (1)
+-|     Shoot:garden-my-project/my-shoot
+-|
+--------------------------------------------------------------------------------
+-
+-... (etc., similarly for the other resources)
+-```
+-
+-There are anchor links to easily jump from one resource to another, and the page provides means for filtering the results based on the `kind`, `namespace`, and/or `name`.
+-
+ #### Pitfalls
+ 
+ When there is a relevant update to an existing resource, i.e., when a reference to another resource is changed, then the corresponding vertex (along with all associated edges) is first deleted from the graph before it gets added again with the up-to-date edges.
 ```
 
-**File**: `docs/api-reference/extensions.md` (modified, +17/-0)
+**File**: `example/20-componentconfig-gardener-admission-controller.yaml` (modified, +0/-1)
 ```diff
-@@ -268,6 +268,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -551,6 +552,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -946,6 +948,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -1561,6 +1564,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -1978,6 +1982,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -2334,6 +2339,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -2602,6 +2608,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -2890,6 +2897,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -3601,6 +3609,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -4092,6 +4101,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -4475,6 +4485,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -4692,6 +4703,7 @@ string
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>Hosts are the registry hosts.<br />It corresponds to the host fields in the `hosts.toml` file, see https://github.com/containerd/containerd/blob/c51463010e0682f76dfdc10edc095e6596e2764b/docs/hosts.md#host-fields-in-the-toml-table-format for more information.</p>
- </td>
- </tr>
-@@ -5013,6 +5025,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -5203,6 +5216,7 @@ string array
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>FilePaths is a list of files the unit depends on. If any file changes a restart of the dependent unit will be<br />triggered. For each FilePath there must exist a File with matching Path in OperatingSystemConfig.Spec.Files.</p>
- </td>
- </tr>
-@@ -5463,6 +5477,7 @@ object (keys:string, values:string)
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>MachineImage contains logical information about the name and the version of the machie image that<br />should be used. The logical information must be mapped to the provider-specific information (e.g.,<br />AMIs, ...) by the provider itself.</p>
- </td>
- </tr>
-@@ -5867,6 +5882,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -5902,6 +5918,7 @@ NamedResourceReference array
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>MachineDeployments is a list of created machine deployments. It will be used to e.g. configure<br />the cluster-autoscaler properly.</p>
- </td>
- </tr>
+@@ -30,7 +30,6 @@ server:
+       name: gardener.cloud:system:seeds
+       apiGroup: rbac.authorization.k8s.io
+     operationMode: block
+-  enableDebugHandlers: true
+ debugging:
+   enableProfiling: false
+   enableContentionProfiling: false
 ```
 
-**File**: `pkg/apis/config/operator/v1alpha1/types.go` (modified, +23/-0)
+**File**: `pkg/admissioncontroller/webhook/add.go` (modified, +2/-2)
 ```diff
-@@ -19,17 +19,23 @@ type OperatorConfiguration struct {
+@@ -91,7 +91,7 @@ func AddToManager(
+ 		Logger:    mgr.GetLogger().WithName("webhook").WithName(seedauthorizer.HandlerName),
+ 		ClientSet: clientSet,
+ 	}
+-	if err := seedAuthorizerWebhook.AddToManager(ctx, mgr, cfg.Server.EnableDebugHandlers); err != nil {
++	if err := seedAuthorizerWebhook.AddToManager(ctx, mgr); err != nil {
+ 		return fmt.Errorf("failed adding %s webhook handler: %w", seedauthorizer.HandlerName, err)
+ 	}
  
- 	// RuntimeClientConnection specifies the kubeconfig file and the client connection settings for the proxy server to
- 	// use when communicating with the kube-apiserver of the runtime cluster.
-+	// +required
- 	RuntimeClientConnection componentbaseconfigv1alpha1.ClientConnectionConfiguration `json:"runtimeClientConnection"`
- 	// VirtualClientConnection specifies the kubeconfig file and the client connection settings for the proxy server to
- 	// use when communicating with the kube-apiserver of the virtual cluster.
-+	// +required
- 	VirtualClientConnection componentbaseconfigv1alpha1.ClientConnectionConfiguration `json:"virtualClientConnection"`
- 	// LeaderElection defines the configuration of leader election client.
-+	// +required
- 	LeaderElection componentbaseconfigv1alpha1.LeaderElectionConfiguration `json:"leaderElection"`
- 	// LogLevel is the level/severity for the logs. Must be one of [info,debug,error].
-+	// +required
- 	LogLevel string `json:"logLevel"`
- 	// LogFormat is the output format for the logs. Must be one of [text,json].
-+	// +required
- 	LogFormat string `json:"logFormat"`
- 	// Server defines the configuration of the HTTP server.
-+	// +required
- 	Server ServerConfiguration `json:"server"`
- 	// Debugging holds configuration for Debugging related features.
+@@ -106,7 +106,7 @@ func AddToManager(
+ 	if err := (&shootauthorizer.Webhook{
+ 		Logger:    mgr.GetLogger().WithName("webhook").WithName(shootauthorizer.HandlerName),
+ 		ClientSet: clientSet,
+-	}).AddToManager(ctx, mgr, cfg.Server.EnableDebugHandlers, seedAuthorizerWebhook.Authorizer); err != nil {
++	}).AddToManager(ctx, mgr, seedAuthorizerWebhook.Authorizer); err != nil {
+ 		return fmt.Errorf("failed adding %s webhook handler: %w", shootauthorizer.HandlerName, err)
+ 	}
+ 
+```
+
+**File**: `pkg/admissioncontroller/webhook/auth/seed/add.go` (modified, +1/-7)
+```diff
+@@ -8,7 +8,6 @@ import (
+ 	"context"
+ 
+ 	"k8s.io/utils/clock"
+-	"k8s.io/utils/ptr"
+ 	"sigs.k8s.io/controller-runtime/pkg/manager"
+ 
+ 	"github.com/gardener/gardener/pkg/utils/graph"
+@@ -23,7 +22,7 @@ const (
+ )
+ 
+ // AddToManager adds Handler to the given manager.
+-func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableDebugHandlers *bool) error {
++func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager) error {
+ 	if w.Authorizer == nil {
+ 		g := graph.New(mgr.GetLogger().WithName("seed-authorizer-graph"), mgr.GetClient(), false)
+ 		if err := g.Setup(ctx, mgr.GetCache()); err != nil {
+@@ -35,11 +34,6 @@ func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableD
+ 			g,
+ 			authorizerwebhook.NewWithSelectorsChecker(ctx, w.Logger, w.ClientSet, clock.RealClock{}),
+ 		)
+-
+-		if ptr.Deref(enableDebugHandlers, false) {
+-			w.Logger.Info("Registering debug handlers")
+-			mgr.GetWebhookServer().Register(graph.DebugHandlerPath, graph.NewDebugHandler(g))
+-		}
+ 	}
+ 
+ 	if w.Handler == nil {
+```
+
+**File**: `pkg/admissioncontroller/webhook/auth/shoot/add.go` (modified, +1/-7)
+```diff
+@@ -9,7 +9,6 @@ import (
+ 
+ 	auth "k8s.io/apiserver/pkg/authorization/authorizer"
+ 	"k8s.io/utils/clock"
+-	"k8s.io/utils/ptr"
+ 	"sigs.k8s.io/controller-runtime/pkg/manager"
+ 
+ 	"github.com/gardener/gardener/pkg/utils/graph"
+@@ -24,7 +23,7 @@ const (
+ )
+ 
+ // AddToManager adds Handler to the given manager.
+-func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableDebugHandlers *bool, seedAuthorizer auth.Authorizer) error {
++func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, seedAuthorizer auth.Authorizer) error {
+ 	if w.Handler == nil {
+ 		g := graph.New(mgr.GetLogger().WithName("shoot-authorizer-graph"), mgr.GetClient(), true)
+ 		if err := g.Setup(ctx, mgr.GetCache()); err != nil {
+@@ -41,11 +40,6 @@ func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableD
+ 				seedAuthorizer,
+ 			),
+ 		}
+-
+-		if ptr.Deref(enableDebugHandlers, false) {
+-			w.Logger.Info("Registering debug handlers")
+-			mgr.GetWebhookServer().Register(graph.DebugHandlerPath+"-shoot", graph.NewDebugHandler(g))
+-		}
+ 	}
+ 
+ 	mgr.GetWebhookServer().Register(WebhookPath, w.Handler)
+```
+
+**File**: `pkg/apis/config/admissioncontroller/v1alpha1/types.go` (modified, +0/-3)
+```diff
+@@ -57,9 +57,6 @@ type ServerConfiguration struct {
+ 	// ResourceAdmissionConfiguration is the configuration for the resource admission.
  	// +optional
-@@ -40,6 +46,7 @@ type OperatorConfiguration struct {
- 	// +optional
- 	FeatureGates map[string]bool `json:"featureGates,omitempty"`
- 	// Controllers defines the configuration of the controllers.
-+	// +required
- 	Controllers ControllerConfiguration `json:"controllers"`
- 	// NodeToleration contains optional settings for default tolerations.
- 	// +optional
-@@ -49,34 +56,47 @@ type OperatorConfiguration struct {
- // ConditionThreshold defines the threshold of the given condition type.
- type ConditionThreshold struct {
- 	// Type is the type of the condition to define the threshold for.
-+	// +required
- 	Type string `json:"type"`
- 	// Duration is the duration how long the condition can stay in the progressing state.
-+	// +required
- 	Duration metav1.Duration `json:"duration"`
+ 	ResourceAdmissionConfiguration *ResourceAdmissionConfiguration `json:"resourceAdmissionConfiguration,omitempty"`
+-	// EnableDebugHandlers determines whether the /debug/ handlers are enabled.
+-	// +optional
+-	EnableDebugHandlers *bool `json:"enableDebugHandlers,omitempty"`
  }
  
- // ControllerConfiguration defines the configuration of the controllers.
- type ControllerConfiguration struct {
- 	// Garden is the configuration for the garden controller.
-+	// +required
- 	Garden GardenControllerConfig `json:"garden"`
- 	// GardenCare is the configuration for the garden care controller
-+	// +required
- 	GardenCare GardenCareControllerConfiguration `json:"gardenCare"`
- 	// GardenletDeployer is the configuration for the gardenlet deployer controller.
-+	// +required
- 	GardenletDeployer GardenletDeployerControllerConfig `json:"gardenletDeployer"`
- 	// NetworkPolicy is the configuration for the NetworkPolicy controller.
-+	// +required
- 	NetworkPolicy NetworkPolicyControllerConfiguration `json:"networkPolicy"`
- 	// VPAEvictionRequirements is the configuration for the VPAEvictionrequirements controller.
-+	// +required
- 	VPAEvictionRequirements VPAEvictionRequirementsControllerConfiguration `json:"vpaEvictionRequirements"`
- 	// Extension defines the configuration of the extension controller.
-+	// +required
- 	Extension ExtensionControllerConfiguration `json:"extension"`
- 	// ExtensionCare is the configuration for the extension care controller
-+	// +required
- 	ExtensionCare ExtensionCareControllerConfiguration `json:"extensionCare"`
- 	// ExtensionReference is the configuration for the extension reference controller
-+	// +required
- 	ExtensionReference ExtensionReferenceControllerConfiguration `json:"extensionReference"`
- 	// ExtensionRequiredRuntime defines the configuration of the ExtensionRequiredRuntime controller.
-+	// +required
- 	ExtensionRequiredRuntime ExtensionRequiredRuntimeControllerConfiguration `json:"extensionRequiredRuntime"`
- 	// ExtensionRequiredVirtual defines the configuration of the ExtensionRequiredVirtual controller.
-+	// +required
- 	ExtensionRequiredVirtual ExtensionRequiredVirtualControllerConfiguration `json:"extensionRequiredVirtual"`
- 	// TokenRequestor is the configuration for the token-requestor controller.
-+	// +required
- 	TokenRequestor TokenRequestorControllerConfiguration `json:"tokenRequestor"`
- }
- 
-@@ -182,6 +202,7 @@ type TokenRequestorControllerConfiguration struct {
- // ServerConfiguration contains details for the HTTP(S) servers.
- type ServerConfiguration struct {
- 	// Webhooks is the configuration for the HTTPS webhook server.
-+	// +required
- 	Webhooks Server `json:"webhooks"`
- 	// HealthProbes is the configuration for serving the healthz and readyz endpoints.
- 	// +optional
-@@ -194,8 +215,10 @@ type ServerConfiguration struct {
- // Server contains information for HTTP(S) server configuration.
- type Server struct {
- 	// BindAddress is the IP address on which to listen for the specified port.
-+	// +required
- 	BindAddress string `json:"bindAddress"`
- 	// Port is the port on which to serve requests.
-+	// +required
- 	Port int32 `json:"port"`
+ // ResourceAdmissionConfiguration contains settings about arbitrary kinds and the size each resource should have at most.
+```
+
+**File**: `pkg/apis/config/admissioncontroller/v1alpha1/zz_generated.deepcopy.go` (modified, +0/-5)
+```diff
+@@ -181,11 +181,6 @@ func (in *ServerConfiguration) DeepCopyInto(out *ServerConfiguration) {
+ 		*out = new(ResourceAdmissionConfiguration)
+ 		(*in).DeepCopyInto(*out)
+ 	}
+-	if in.EnableDebugHandlers != nil {
+-		in, out := &in.EnableDebugHandlers, &out.EnableDebugHandlers
+-		*out = new(bool)
+-		**out = **in
+-	}
+ 	return
  }
  
 ```
 
-**File**: `pkg/apis/extensions/v1alpha1/types_backupbucket.go` (modified, +3/-0)
+**File**: `pkg/utils/graph/debug.go` (removed, +0/-179)
 ```diff
-@@ -32,6 +32,7 @@ type BackupBucket struct {
- 
- 	// Specification of the BackupBucket.
- 	// If the object's deletion timestamp is set, this field is immutable.
-+	// +required
- 	Spec BackupBucketSpec `json:"spec"`
- 	// +optional
- 	Status BackupBucketStatus `json:"status,omitempty"`
-@@ -65,8 +66,10 @@ type BackupBucketSpec struct {
- 	DefaultSpec `json:",inline"`
- 
- 	// Region is the region of this bucket. This field is immutable.
-+	// +required
- 	Region string `json:"region"`
- 	// SecretRef is a reference to a secret that contains the credentials to access object store.
-+	// +required
- 	SecretRef corev1.SecretReference `json:"secretRef"`
- }
- 
-```
-
-**File**: `pkg/apis/extensions/v1alpha1/types_backupentry.go` (modified, +4/-0)
-```diff
-@@ -34,6 +34,7 @@ type BackupEntry struct {
- 
- 	// Specification of the BackupEntry.
- 	// If the object's deletion timestamp is set, this field is immutable.
-+	// +required
- 	Spec BackupEntrySpec `json:"spec"`
- 	// +optional
- 	Status BackupEntryStatus `json:"status,omitempty"`
-@@ -73,10 +74,13 @@ type BackupEntrySpec struct {
- 	// +optional
- 	BackupBucketProviderStatus *runtime.RawExtension `json:"backupBucketProviderStatus,omitempty"`
- 	// Region is the region of this Entry. This field is immutable.
-+	// +required
- 	Region string `json:"region"`
- 	// BucketName is the name of backup bucket for this Backup Entry.
-+	// +required
- 	BucketName string `json:"bucketName"`
- 	// SecretRef is a reference to a secret that contains the credentials to access object store.
-+	// +required
- 	SecretRef corev1.SecretReference `json:"secretRef"`
- }
- 
-```
-
-**File**: `pkg/apis/extensions/v1alpha1/types_bastion.go` (modified, +8/-0)
-```diff
-@@ -32,6 +32,7 @@ type Bastion struct {
- 
- 	// Spec is the specification of this Bastion.
- 	// If the object's deletion timestamp is set, this field is immutable.
-+	// +required
- 	Spec BastionSpec `json:"spec"`
- 	// Status is the bastion's status.
- 	// +optional
-@@ -56,8 +57,10 @@ type BastionSpec struct {
- 	// UserData is the base64-encoded user data for the bastion instance. This should
- 	// contain code to provision the SSH key on the bastion instance.
- 	// This field is immutable.
-+	// +required
- 	UserData []byte `json:"userData"`
- 	// Ingress controls from where the created bastion host should be reachable.
-+	// +required
- 	Ingress []BastionIngressPolicy `json:"ingress"`
- 	// Image holds information about the machine image to use for the bastion.
- 	// +optional
-@@ -67,23 +70,28 @@ type BastionSpec struct {
- // BastionIngressPolicy represents an ingress policy for SSH bastion hosts.
- type BastionIngressPolicy struct {
- 	// IPBlock defines an IP block that is allowed to access the bastion.
-+	// +required
- 	IPBlock networkingv1.IPBlock `json:"ipBlock"`
- }
- 
- // BastionMachine contains information about the machine type and image.
- type BastionMachine struct {
- 	// Type is the machine type of the bastion.
-+	// +required
- 	Type string `json:"type"`
- 	// Image holds information about the machine image to use for the bastion.
-+	// +required
- 	Image BastionMachineImage `json:"image"`
- }
- 
- // BastionMachineImage defines the name and the version of the bastion's machine image in any environment. Has to be
- // defined in the respective CloudProfile.
- type BastionMachineImage struct {
- 	// Name is the name of the image.
-+	// +required
- 	Name string `json:"name"`
- 	// Version is the version of the image.
-+	// +required
- 	Version string `json:"version"`
- }
- 
-```
-
-**File**: `pkg/apis/extensions/v1alpha1/types_cluster.go` (modified, +5/-1)
-```diff
-@@ -21,9 +21,11 @@ const ClusterResource = "Cluster"
- 
- // Cluster is a specification for a Cluster resource.
- type Cluster struct {
--	metav1.TypeMeta   `json:",inline"`
-+	metav1.TypeMeta `json:",inline"`
-+	// +optional
- 	metav1.ObjectMeta `json:"metadata,omitempty"`
- 
-+	// +required
- 	Spec ClusterSpec `json:"spec"`
- }
- 
-@@ -45,6 +47,7 @@ type ClusterSpec struct {
- 	// by the shoot that has to be reconciled.
- 	// +kubebuilder:validation:XPreserveUnknownFields
- 	// +kubebuilder:pruning:PreserveUnknownFields
-+	// +required
- 	CloudProfile runtime.RawExtension `json:"cloudProfile"`
- 	// Seed is a raw extension field that contains the seed resource referenced by the shoot that
- 	// has to be reconciled. It is not set for self-hosted shoots (see GEP-28).
-@@ -55,5 +58,6 @@ type ClusterSpec struct {
- 	// Shoot is a raw extension field that contains the shoot resource that has to be reconciled.
- 	// +kubebuilder:validation:XPreserveUnknownFields
- 	// +kubebuilder:pruning:PreserveUnknownFields
-+	// +required
- 	Shoot runtime.RawExtension `json:"shoot"`
- }
-```
-
-**File**: `pkg/apis/extensions/v1alpha1/types_containerruntime.go` (modified, +5/-0)
-```diff
-@@ -37,6 +37,7 @@ type ContainerRuntime struct {
- 
- 	// Specification of the ContainerRuntime.
- 	// If the object's deletion timestamp is set, this field is immutable.
-+	// +required
- 	Spec ContainerRuntimeSpec `json:"spec"`
- 	// +optional
- 	Status ContainerRuntimeStatus `json:"status,omitempty"`
-@@ -69,18 +70,22 @@ type ContainerRuntimeSpec struct {
- 	DefaultSpec `json:",inline"`
- 
- 	// BinaryPath is the Worker's machine path where container runtime extensions should copy the binaries to.
-+	// +required
- 	BinaryPath string `json:"binaryPath"`
- 	// WorkerPool identifies the worker pool of the Shoot.
- 	// For each worker pool and type, Gardener deploys a ContainerRuntime CRD.
-+	// +required
- 	WorkerPool ContainerRuntimeWorkerPool `json:"workerPool"`
- }
- 
- // ContainerRuntimeWorkerPool identifies a Shoot worker pool by its name and selector.
- type ContainerRuntimeWorkerPool struct {
- 	// Name specifies the name of the worker pool the container runtime should be available for.
- 	// This field is immutable.
-+	// +required
- 	Name string `json:"name"`
- 	// Selector is the label selector used by the extension to match the nodes belonging to the worker pool.
-+	// +required
- 	Selector metav1.LabelSelector `json:"selector"`
- }
- 
+@@ -1,179 +0,0 @@
+-// SPDX-FileCopyrightText: Contributors to the Gardener project
+-//
+-// SPDX-License-Identifier: Apache-2.0
+-
+-package graph
+-
+-import (
+-	"fmt"
+-	"net/http"
+-	"net/url"
+-	"sort"
+-	"strings"
+-
+-	gonumgraph "gonum.org/v1/gonum/graph"
+-	"gonum.org/v1/gonum/graph/simple"
+-)
+-
+-// DebugHandlerPath is the HTTP handler path for this debug handler.
+-const DebugHandlerPath = "/debug/resource-dependency-graph"
+-
+-type handler struct {
+-	graph *simple.DirectedGraph
+-}
+-
+-// NewDebugHandler creates a new HTTP handler for debugging the resource dependency graph.
+-func NewDebugHandler(graph *graph) http.HandlerFunc {
+-	return (&handler{graph.graph}).Handle
+-}
+-
+-func (h *handler) Handle(w http.ResponseWriter, r *http.Request) {
+-	var (
+-		out strings.Builder
+-
+-		kind      = getQueryParameter(r.URL.Query(), "kind")
+-		namespace = getQueryParameter(r.URL.Query(), "namespace")
+-		name      = getQueryParameter(r.URL.Query(), "name")
+-
+-		nodesIterator = h.graph.Nodes()
+-		nodes         []*Vertex
+-	)
+-
+-	// On large landscapes, if there are many vertices then the entire graph cannot be rendered fast enough. Hence, we
+-	// apply some default filtering for the 'seed' kind.
+-	if kind == "" && namespace == "" && name == "" && nodesIterator.Len() > 2000 {
+-		kind = "Seed"
+-	}
+-
+-	// Filter for all relevant nodes and sort them.
+-	for nodesIterator.Next() {
+-		v := nodesIterator.Node().(*Vertex)
+-
+-		if (kind != "" && VertexTypes[v.Type].Kind != kind) ||
+-			(namespace != "" && v.Namespace != namespace) ||
+-			(name != "" && v.Name != name) {
+-			continue
+-		}
+-
+-		nodes = append(nodes, v)
+-	}
+-	sort.Sort(vertexSorter(nodes))
+-
+-	// Render filtering form.
+-	out.WriteString(`
+-<form action="` + DebugHandlerPath + `" method="GET">
+-  <select name="kind">`)
+-	fmt.Fprintf(&out, `<option value=""%s>&lt;all&gt;</option>`, func() string {
+-		if kind == "" {
+-			return " selected"
+-		}
+-		return ""
+-	}())
+-	for _, vt := range VertexTypes {
+-		fmt.Fprintf(&out, `<option value="%s"%s>%s</option>`, vt.Kind, func() string {
+-			if kind == vt.Kind {
+-				return " selected"
+-			}
+-			return ""
+-		}(), vt.Kind)
+-	}
+-	out.WriteString(`
+-  </select>
+-  <input type="test" name="namespace" value="` + namespace + `" />
+-  <input type="test" name="name" value="` + name + `" />
+-  <input type="submit" value="go" />
+-</form>` + separate(true))
+-
+-	// Iterate over each nodes, determine and sort their incoming and outgoing neighbors, and render the output.
+-	for i, v := range nodes {
+-		out.WriteString(indent(0, "# %s", link(v)))
+-
+-		for _, n := range []struct {
+-			prefix   string
+-			iterator gonumgraph.Nodes
+-		}{
+-			{"<- (incoming)", h.graph.To(v.ID())},
+-			{"-> (outgoing)", h.graph.From(v.ID())},
+-		} {
+-			var neighbors []*Vertex
+-			for n.iterator.Next() {
+-				neighbors = append(neighbors, n.iterator.Node().(*Vertex))
+-			}
+-			sort.Sort(vertexSorter(neighbors))
+-
+-			if len(neighbors) > 0 {
+-				out.WriteString(indent(1, "%s (%d)", n.prefix, len(neighbors)))
+-				for _, u := range neighbors {
+-					out.WriteString(indent(2, link(u)))
+-				}
+-			}
+-		}
+-
+-		out.WriteString(emptyNewline() + separate(i < len(nodes)-1))
+-	}
+-
+-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+-	fmt.Fprint(w, `<font size="2" face="Courier New">`+out.String()+`</font>`)
+-}
+-
+-func getQueryParameter(query url.Values, param string) string {
+-	var out string
+-	values, ok := query[param]
+-	if ok && len(values[0]) >= 1 {
+-		out = values[0]
+-	}
+-	return out
+-}
+-
+-type vertexSorter []*Vertex
+-
+-func (v vertexSorter) Len() int { return len(v) }
+-
+-func (v vertexSorter) Swap(i, j int) { v[i], v[j] = v[j], v[i] }
+-
+-func (v vertexSorter) Less(i, j int) bool {
+-	if VertexTypes[v[i].Type].Kind < VertexTypes[v[j].Type].Kind {
+-		return true
+-	} else if VertexTypes[v[i].Type].Kind > VertexTypes[v[j].Type].Kind {
+-		return false
+-	}
+-
+-	if v[i].Namespace < v[j].Namespace {
+-		return true
+-	} else if v[i].Namespace > v[j].Namespace {
+-		return false
+-	}
+-
+-	return v[i].Name < v[j].Name
+-}
+-
+-func emptyNewline() string {
+-	return "|<br />"
+-}
+-
+-func separate(withNewBeginning bool) string {
+-	result := "-------------------------------------------------------------------------------<br />"
+-	if withNewBeginning {
+-		result += emptyNewline()
+-	}
+-	return result
+-}
+-
+-func indent(level int, format string, a ...any) string {
+-	return fmt.Sprintf("| "+strings.Repeat("&nbsp;&nbsp;", level)+format+"<br />", a...)
+-}
+-
+-func link(v *Vertex) string {
+-	path := fmt.Sprintf("%s?kind=%s", DebugHandlerPath, VertexTypes[v.Type].Kind)
+-	out := fmt.Sprintf(`<a href="%s">%s</a>:`, path, VertexTypes[v.Type].Kind)
+-
+-	if v.Namespace != "" {
+-		path += "&namespace=" + v.Namespace
+-		out += fmt.Sprintf(`<a href="%s">%s</a>/`, path, v.Namespace)
+-	}
+-
+-	path += "&name=" + v.Name
+-	out += fmt.Sprintf(`<a href="%s">%s</a>`, path, v.Name)
+-
+-	return out
+-}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16280** (2026-11-11): Update dependency crate-ci/typos to v1.52.2 (@renovate[bot])
-- **PR #16279** (closed): Update go to v1.27.4 (@renovate[bot])
-- **PR #16278** (closed): Update go (minor) (@renovate[bot])
-- **PR #16273** (2026-11-10): Write `.spec.networking.nodes` via `gardener-apiserver` instead of `gardenlet` (@rfranzke)
-- **PR #16271** (2026-11-10): Update module github.com/andybalholm/brotli to v1.3.0 (@renovate[bot])
-- **PR #16270** (2026-11-10): Update dependency crate-ci/typos to v1.52.1 (@renovate[bot])
+- **PR #16337** (2026-11-13): Update dependency gardener/alpine-conntrack to v3.24.4 (@renovate[bot])
+- **PR #16334** (2026-11-13): Update dependency credativ/vali to v2.2.39 (@renovate[bot])
+- **PR #16331** (2026-11-13): Update golang.org/x/tools digest to 056b2d3 (@renovate[bot])
+- **PR #16323** (2026-11-13): Update golang.org/x/exp digest to d10d3b4 (@renovate[bot])
+- **PR #16321** (2026-11-13): Update Go toolchain to v1.27 (@LucaBernstein)
+- **PR #16315** (2026-11-13): Drop resource dependency graph debug handler (@rfranzke)
 
 ---
 
@@ -1363,32 +1234,37 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Perses dashboard gauge percentage unit (#16252)
+## X. update envoy scanning hints
 
 **RULE**:
-When implementing operations in `pkg/component/observability/monitoring/perses/dashboards/garden/garden-alerts.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `imagevector/containers.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab429249`: Perses dashboard gauge percentage unit (#16252). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0fcc2eec`: update envoy scanning hints. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/component/observability/monitoring/perses/dashboards/garden/garden-alerts.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `imagevector/containers.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-            format:
-              unit: percent
+          # https://www.envoyproxy.io/docs/envoy/v1.40.2/intro/arch_overview/security/external_deps
+            version: '1.83.0'
+            version: '12.2.0'
+            version: '0.20260929.0'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+          # https://www.envoyproxy.io/docs/envoy/v1.39.0/intro/arch_overview/security/external_deps
+            version: '1.81.1'
+            version: '12.1.0'
+            version: '0.20260413.0'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab429249` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0fcc2eec` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

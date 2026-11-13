@@ -9669,3 +9669,8 @@
 | `CYCLE-20261113-YGPW` | `2026-11-13T23:28:37.412Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`2c058189...`) |
 | `CYCLE-20261113-YS2P` | `2026-11-13T23:28:52.129Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8404` | Yes (`fcb34bc0...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T23:29:24.538Z` | `hf-meta-llama-meta-llama-3-8b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-44A35728` [Domain J] | Yes (`08e4d9bf...`) |
+| `CYCLE-20261113-FOG4` | `2026-11-13T23:42:00.580Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8405` | Yes (`2eb75347...`) |
+| `CYCLE-20261113-FTLH` | `2026-11-13T23:42:07.253Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8406` | Yes (`0d6be646...`) |
+| `CYCLE-20261113-IL9N` | `2026-11-13T23:44:16.427Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8407, Rule 8408` | Yes (`e068d55c...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T23:44:48.370Z` | `hf-openai-whisper-large-v3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-B-A33663AE` [Domain B] | Yes (`d271d010...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T23:45:19.455Z` | `hf-openai-whisper-large-v3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-3F2EAC2E` [Domain F] | Yes (`ecc14b75...`) |

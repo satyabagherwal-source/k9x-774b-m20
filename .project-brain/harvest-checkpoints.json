@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T23:28:52.141Z",
+  "last_updated": "2026-11-13T23:44:16.439Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1085,14 +1085,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-whisper-large-v3",
-      "content_hash": "b072865280454e73257e568cd62e4cf2097f36bf8463fd4ba4d2e032452cf655",
-      "verified_at": "2026-11-08T21:33:21.888Z",
+      "content_hash": "e068d55c8bc4121f85281a36416c01039b7791f99680e7d2e99edfd6c9a6f740",
+      "verified_at": "2026-11-13T23:44:16.438Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T21:33:21.888Z"
+      "last_updated": "2026-11-13T23:44:16.438Z"
     },
     "black-forest-labs/FLUX.1-schnell": {
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "77a68b55cb4fe7ef91359e8357a933e0bc3db7ecca6592eee6606884996060e5",
-      "verified_at": "2026-11-13T22:31:00.276Z",
+      "content_hash": "0d6be646b5200a8c2914ef778d48da51880c4b6f8f6d5ce15b80cfdbe7151ad6",
+      "verified_at": "2026-11-13T23:42:07.266Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T22:31:00.276Z"
+      "last_updated": "2026-11-13T23:42:07.266Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "f5e8cb4a2e0c04a7f5db3b797cf23ca047c89c0cf20507c9471e478bccc88d88",
-      "verified_at": "2026-11-13T00:43:28.325Z",
+      "content_hash": "2eb75347f7602cfdc1211830314db921707241cef1f6a83ed4b53fa9ad747c63",
+      "verified_at": "2026-11-13T23:42:00.592Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T00:43:28.325Z"
+      "last_updated": "2026-11-13T23:42:00.592Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",

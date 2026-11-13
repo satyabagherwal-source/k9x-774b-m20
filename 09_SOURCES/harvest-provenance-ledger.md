@@ -9702,3 +9702,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-13T23:28:37.416Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `f3874c83` | Multi-dimensional audit evidence | 2026-11-13T23:28:52.133Z |
 | `learn-dom-j-44a35728` | `project://hf-meta-llama-meta-llama-3-8b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | 2026-11-13T23:29:24.538Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `00b6db8f` | Multi-dimensional audit evidence | 2026-11-13T23:42:00.584Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `3d57bd6a` | Multi-dimensional audit evidence | 2026-11-13T23:42:07.257Z |
+| `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-13T23:44:16.430Z |
+| `learn-dom-b-a33663ae` | `project://hf-openai-whisper-large-v3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | 2026-11-13T23:44:48.370Z |
+| `learn-dom-f-3f2eac2e` | `project://hf-openai-whisper-large-v3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | 2026-11-13T23:45:19.455Z |

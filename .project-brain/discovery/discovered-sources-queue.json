@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T23:29:24.549Z",
+  "updated_at": "2026-11-13T23:45:20.526Z",
   "stats": {
-    "total_discovered": 2991,
-    "approved_pending_harvest": 2792,
+    "total_discovered": 3009,
+    "approved_pending_harvest": 2810,
     "harvested_count": 0,
     "rejected_count": 199,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2791,
+      "COMMUNITY_AND_EXPERT": 2809,
       "OFFICIAL_DOCUMENTATION": 106,
       "STANDARDS_AND_SPECIFICATIONS": 80,
       "ENGINEERING_BLOGS": 1,
@@ -64429,6 +64429,402 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md",
         "fileName": "hf-meta-llama-meta-llama-3-8b-learnings.md"
+      }
+    },
+    "SRC-3630FC138D59": {
+      "id": "SRC-3630FC138D59",
+      "url": "https://huggingface.co/openai/whisper-large-v3",
+      "title": "https://huggingface.co/openai/whisper-large-v3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:19.468Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
+        "fileName": "hf-openai-whisper-large-v3-learnings.md"
+      }
+    },
+    "SRC-9F5BA7544C2E": {
+      "id": "SRC-9F5BA7544C2E",
+      "url": "https://redirect.github.com/gardener/alpine-conntrack",
+      "title": "https://redirect.github.com/gardener/alpine-conntrack",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.177Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-FDFA9D2144A5": {
+      "id": "SRC-FDFA9D2144A5",
+      "url": "https://redirect.github.com/gardener/alpine-conntrack/releases/tag/3.24.4",
+      "title": "https://redirect.github.com/gardener/alpine-conntrack/releases/tag/3.24.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.197Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-BA5DD8064E13": {
+      "id": "SRC-BA5DD8064E13",
+      "url": "https://redirect.github.com/gardener/alpine-conntrack/compare/3.24.2...3.24.4",
+      "title": "https://redirect.github.com/gardener/alpine-conntrack/compare/3.24.2...3.24.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.217Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-D2295041073F": {
+      "id": "SRC-D2295041073F",
+      "url": "https://github.com/timebertt",
+      "title": "https://github.com/timebertt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.236Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-FDCC63389AF3": {
+      "id": "SRC-FDCC63389AF3",
+      "url": "https://gardener.cloud/docs/contribute",
+      "title": "https://gardener.cloud/docs/contribute",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.256Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-8A03FC1118C3": {
+      "id": "SRC-8A03FC1118C3",
+      "url": "https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener",
+      "title": "https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-D44DA3E6D25D": {
+      "id": "SRC-D44DA3E6D25D",
+      "url": "https://github.com/gardener/gardener/blob/master/OWNERS",
+      "title": "https://github.com/gardener/gardener/blob/master/OWNERS",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.308Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-6E7A7AF1AC6C": {
+      "id": "SRC-6E7A7AF1AC6C",
+      "url": "https://redirect.github.com/credativ/vali",
+      "title": "https://redirect.github.com/credativ/vali",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.327Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-754CC5B2412F": {
+      "id": "SRC-754CC5B2412F",
+      "url": "https://redirect.github.com/gardener/ci-infra/pulls?q=sort%3Aupdated-desc+is%3Apr+is%3Aopen",
+      "title": "https://redirect.github.com/gardener/ci-infra/pulls?q=sort%3Aupdated-desc+is%3Apr+is%3Aopen",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.346Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-60A644AE7618": {
+      "id": "SRC-60A644AE7618",
+      "url": "https://redirect.github.com/credativ/vali/releases/tag/v2.2.39",
+      "title": "https://redirect.github.com/credativ/vali/releases/tag/v2.2.39",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.366Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-D6A67934520C": {
+      "id": "SRC-D6A67934520C",
+      "url": "https://redirect.github.com/credativ/vali/compare/v2.2.38...v2.2.39",
+      "title": "https://redirect.github.com/credativ/vali/compare/v2.2.38...v2.2.39",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.399Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-2F566A842B43": {
+      "id": "SRC-2F566A842B43",
+      "url": "https://github.com/credativ/vali/pkgs/container/vali",
+      "title": "https://github.com/credativ/vali/pkgs/container/vali",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.417Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-2A5E611D0F70": {
+      "id": "SRC-2A5E611D0F70",
+      "url": "https://github.com/credativ/vali/pkgs/container/valitail",
+      "title": "https://github.com/credativ/vali/pkgs/container/valitail",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-679C8662B600": {
+      "id": "SRC-679C8662B600",
+      "url": "https://github.com/oliver-goetz",
+      "title": "https://github.com/oliver-goetz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.455Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-B77B04892C75": {
+      "id": "SRC-B77B04892C75",
+      "url": "https://www.envoyproxy.io/docs/envoy/v1.39.0/intro/arch_overview/security/external_deps",
+      "title": "https://www.envoyproxy.io/docs/envoy/v1.39.0/intro/arch_overview/security/external_deps",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.475Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-48B660F10E84": {
+      "id": "SRC-48B660F10E84",
+      "url": "https://www.envoyproxy.io/docs/envoy/v1.40.2/intro/arch_overview/security/external_deps",
+      "title": "https://www.envoyproxy.io/docs/envoy/v1.40.2/intro/arch_overview/security/external_deps",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.507Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-682DD4FEECBC": {
+      "id": "SRC-682DD4FEECBC",
+      "url": "https://luajit.org/extensions.html",
+      "title": "https://luajit.org/extensions.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T23:45:20.526Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
       }
     }
   }

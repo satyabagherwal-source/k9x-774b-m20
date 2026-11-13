@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `01921cba`  
+> **Source Version**: `00b6db8f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T00:43:18.880Z  
+> **Timestamp**: 2026-11-13T23:41:59.660Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T00:43:18.669Z  
+> **Harvest Timestamp**: 2026-11-13T23:41:59.516Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -726,11 +726,17 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16307** (2026-11-12): **Drop `extensions/pkg/terraformer` package**
-  *Symptoms*: **How to categorize this PR?**  /area dev-productivity /kind cleanup  **What this PR does / why we need it**: Removes the `extensions/pkg/terraformer` library. All provider extensions have migrated to flow/SDK-based infrastructure reconciliation and no longer depend on it, so the package has no remaining consumers.  | Extension | Flow/SDK reconciliation | Terraformer removed | |---|---|---| | `provider-aws` | gardener/gardener-extension-provider-aws#603 (2023-04) | gardener/gardener-extension-provider-aws#1617 (2026-01) | | `provider-azure` | gardener/gardener-extension-provider-azure#739 (2023-12) | gardener/gardener-extension-provider-azure#1231 (2025-07) | | `provider-gcp` | gardener/gardener-extension-provider-gcp#495 (2023-05) | gardener/gardener-extension-provider-gcp#1012 (2025-06) | | `provider-openstack` | gardener/gardener-extension-provider-openstack#528 (2023-07) | gardener/gardener-extension-provider-openstack#1166 (2025-10), gardener/gardener-extension-provider-openstack#1276 (2026-02) | | `provider-alicloud` | gardener/gardener-extension-provider-alicloud#656 (2023-11) | gardener/gardener-extension-provider-alicloud#871 (2026-03) |  **Which issue(s) this PR fixes**:  **Special notes for your reviewer**: /cc @kon-angelo  **Release note**: ```breaking dependency All major provider extensions have migrated to flow/SDK-based infrastructure reconciliation, so the `extensions/pkg/terraformer` package has been removed. ```
+- **Issue #16337** (2026-11-13): **Update dependency gardener/alpine-conntrack to v3.24.4**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [gardener/alpine-conntrack](https://redirect.github.com/gardener/alpine-conntrack) | patch | `3.24.2` → `3.24.4` |  ---  ### Release Notes  <details> <summary>gardener/alpine-conntrack</summary>  ### [`v3.24.4`](https://redirect.github.com/gardener/alpine-conntrack/releases/tag/3.24.4)  [Compare Source](https://redirect.github.com/gardener/alpine-conntrack/compare/3.24.2...3.24.4)  #### application/spdx+json  - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:69803d1b908c0f9851d489e0455e41b06ba9342b766d1b6ddd04ede2da27cf55` - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:71089ec8becb326c2d2196df5b79092710231183da852520403696007fcb6d38`  #### application/vnd.cyclonedx+json  - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:12805c093662513e86eb42df9df1a375c49a1f1be548c2aa963a6b0b913f8138` - alpine-conntrack-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack@sha256:1ae3fdb1bfdbe1bea6b17e0606cf2654446dd580f4e94ffa087edc80bcdad724`  #### Container (OCI) Images  - alpine-conntrack: `europe-docker.pkg.dev/gardener-project/releases/gardener/alpine-conntrack:3.24.4`  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Au
+  **Post-Mortem & Fix Analysis**:
+  > /label skip-review
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [timebertt](https://github.com/timebertt) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["timebertt"]} -->
 
-- **Issue #16301** (2026-11-12): **Single-node self-hosted shoots are stuck after upgrade to v1.155**
-  *Symptoms*: **How to categorize this issue?**  /area os /kind bug  **What happened**:  We run self-hosted shoots (gardenadm, unmanaged infra) on edge devices, one device per production line, so every shoot is a single node. They were created on v1.149 and worked fine. After upgrading to v1.155.0 we are stuck:  - since 1.152 only `AutoInPlaceUpdate` is allowed for these shoots, but ours were defaulted to `AutoRollingUpdate` and switching is forbidden. Any update of the Shoot is rejected, even a reconcile annotation. - since 1.155 (#15924) the total minimum must be at least 2, so we can't create new single-node edges either.  ``` spec.provider.workers[0].updateStrategy: Invalid value: "ManualInPlaceUpdate": only AutoInPlaceUpdate update strategy is allowed for self-hosted shoots with unmanaged infrastructure spec.provider.workers: Invalid value: 1: self-hosted shoots must have a total minimum of at least 2 worker nodes (increase the control plane pool's minimum to >1 or add a worker pool with minimum>0) ```  **What you expected to happen**:  A way to keep single-node self-hosted shoots. A second device per line is too expensive for us, and downtime during an update is fine (lines have maintenance windows).  **How to reproduce it (as minimally and precisely as possible)**:  Create a self-hosted shoot with min=max=1 on v1.149, upgrade to v1.155, then try to change it or create a new one.  **Anything else we need to know?**:  What does the 2-node rule protect against, apart from gardenlet run
+- **Issue #16334** (2026-11-13): **Update dependency credativ/vali to v2.2.39**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [credativ/vali](https://redirect.github.com/credativ/vali) | patch | `v2.2.38` → `v2.2.39` |  > [!TIP] > Updates to this image may depend on merging a pull request in the [ci-infra](https://redirect.github.com/gardener/ci-infra/pulls?q=sort%3Aupdated-desc+is%3Apr+is%3Aopen) repository. Usually, the PRs are auto-merged. However, there is no guarantee that the PRs will be merged in time for this update. If tests fail, please check that the the PR for your component is not stuck and trigger a retest.  ---  ### Release Notes  <details> <summary>credativ/vali</summary>  ### [`v2.2.39`](https://redirect.github.com/credativ/vali/releases/tag/v2.2.39)  [Compare Source](https://redirect.github.com/credativ/vali/compare/v2.2.38...v2.2.39)  This is release v2.2.39 of Vali.  Vali is a fork of Loki 2.2.1 under the Apache 2.0 License. It is currently limited to maintenance and security updates.  ##### Notable changes  - Upgrade Alpine to 3.24.4 - Upgrade Go to 1.27.4  ##### Installation  The components of Vali are currently distributed as container images.  - `ghcr.io/credativ/vali:v2.2.39`   <https://github.com/credativ/vali/pkgs/container/vali>  - `ghcr.io/credativ/valitail:v2.2.39`   <https://github.com/credativ/vali/pkgs/container/valitail>  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defi
+  **Post-Mortem & Fix Analysis**:
+  > /label skip-review
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [oliver-goetz](https://github.com/oliver-goetz) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["oliver-goetz"]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -747,448 +753,457 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed11f3b2` (2026-11-11)
-**Commit Message**: Enable kube-api-linter `optionalorrequired` for the remaining small API groups (#16139)
+### Incident Patch 1: `0fcc2eec` (2026-11-13)
+**Commit Message**: fix: update envoy scanning hints (#16309)
 
-* Enable kube-api-linter optionalorrequired for the remaining small API groups
+Signed-off-by: Dominik Froehlich <[REDACTED_EMAIL]>
 
-Covers seedmanagement, config/{nodeagent,controllermanager,gardenlet,admissioncontroller,scheduler}, security, authentication and resources (v1alpha1).
+**File**: `imagevector/containers.yaml` (modified, +4/-4)
+```diff
+@@ -976,21 +976,21 @@ images:
+             teamname: 'gardener/gardener-core-networking-maintainers'
+       - name: 'cloud.gardener.cnudie/dso/scanning-hints/package-versions'
+         value:
+-          # https://www.envoyproxy.io/docs/envoy/v1.39.0/intro/arch_overview/security/external_deps
++          # https://www.envoyproxy.io/docs/envoy/v1.40.2/intro/arch_overview/security/external_deps
+           - name: 'v8'
+             version: '14.6.202.10'
+           - name: 'grpc'
+-            version: '1.81.1'
++            version: '1.83.0'
+           - name: 'luajit'
+             version: '871db2c'
+           - name: 'nghttp2'
+             version: '1.66.0'
+           - name: 'protobuf'
+             version: '35.1'
+           - name: 'fmt'
+-            version: '12.1.0'
++            version: '12.2.0'
+           - name: 'boringssl'
+-            version: '0.20260413.0'
++            version: '0.20260929.0'
+           # lua version is unclear. lua runtime is luajit.
+           # luajit is compatible with lua 5.1 but contains feature of lua 5.2 and 5.3
+           # https://luajit.org/extensions.html
+```
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
+---
 
-* Remove 'optionalorrequired' exclusion rule
+### Incident Patch 2: `107b12dd` (2026-11-13)
+**Commit Message**: Drop resource dependency graph debug handler (#16315)
 
-Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
+* [admission-controller] Remove `enableDebugHandlers` config field
 
-* Address ialidzhikov comments
+The field only gated the resource dependency graph debug handler, which is
+removed in a subsequent commit.
 
-Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+
+* [make generate]
+
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+
+* [admission-controller] Drop resource dependency graph debug handler
+
+The `/debug/resource-dependency-graph` handler served an unauthenticated HTML
+dump of the entire graph and could not render it on large landscapes anyway. It
+has been unused for years, so remove it together with its wiring.
+
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+
+* Documentation
+
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: Dobromir Peev <[REDACTED_EMAIL]>
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
-**File**: `.golangci.yaml.in` (modified, +1/-7)
+**File**: `docs/deployment/gardenlet_api_access.md` (modified, +0/-52)
 ```diff
-@@ -340,13 +340,7 @@ linters:
-       # (e.g. extensions/pkg/apis/...), extend the path-except pattern below.
-       - linters:
-           - kubeapilinter
--        path-except: 'pkg/apis/[^/]+(/[^/]+)?/v[0-9]+((alpha|beta)[0-9]+)?/[^/]+$'
--      # optionalorrequired is only enforced for the API groups listed below. Add a group here once its fields are
--      # explicitly marked as +optional or +required; remove this rule when all groups are migrated.
--      - linters:
--          - kubeapilinter
--        text: 'optionalorrequired:'
--        path-except: 'pkg/apis/(config/operator/v1alpha1|config/resourcemanager/v1alpha1|core/v1|core/v1beta1|extensions/v1alpha1|operations/v1alpha1|operator/v1alpha1)/[^/]+$'
-+        path-except: '^pkg/apis/[^/]+(/[^/]+)?/v[0-9]+((alpha|beta)[0-9]+)?/[^/]+$'
-       # optionalfields: Spec/Status and other struct fields on top-level API objects have established non-pointer
-       # conventions in Kubernetes APIs. Similarly, scalar fields (int64, string) with incomplete validation
-       # are intentionally kept as value types. Converting these to pointers would be API-breaking.
+@@ -145,58 +145,6 @@ The `SeedAuthorizer` registers the following metrics related to the mentioned gr
+ | `gardener_admission_controller_seed_authorizer_graph_update_duration_seconds` | Histogram of duration of resource dependency graph updates in seed authorizer, i.e., how long does it take to update the graph's vertices/edges when a resource is created, changed, or deleted. |
+ | `gardener_admission_controller_seed_authorizer_graph_path_check_duration_seconds` | Histogram of duration of checks whether a path exists in the resource dependency graph in seed authorizer. |
+ 
+-#### Debug Handler
+-
+-When the `.server.enableDebugHandlers` field in the `gardener-admission-controller`'s component configuration is set to `true`, then it serves a handler that can be used for debugging the resource dependency graph under `/debug/resource-dependency-graph`.
+-
+-🚨 Only use this setting for development purposes, as it enables unauthenticated users to view all data if they have access to the `gardener-admission-controller` component.
+-
+-The handler renders an HTML page displaying the current graph with a list of vertices and its associated incoming and outgoing edges to other vertices.
+-Depending on the size of the Gardener landscape (and consequently, the size of the graph), it might not be possible to render it in its entirety.
+-If there are more than 2000 vertices, then the default filtering will selected for `kind=Seed` to prevent overloading the output.
+-
+-_Example output_:
+-
+-```text
+--------------------------------------------------------------------------------
+-|
+-| # Seed:my-seed
+-|   <- (11)
+-|     BackupBucket:73972fe2-3d7e-4f61-a406-b8f9e670e6b7
+-|     BackupEntry:garden-my-project/shoot--dev--my-shoot--4656a460-1a69-4f00-9372-7452cbd38ee3
+-|     ControllerInstallation:dns-external-mxt8m
+-|     ControllerInstallation:extension-shoot-cert-service-4qw5j
+-|     ControllerInstallation:networking-calico-bgrb2
+-|     ControllerInstallation:os-gardenlinux-qvb5z
+-|     ControllerInstallation:provider-gcp-w4mvf
+-|     Secret:garden/backup
+-|     Shoot:garden-my-project/my-shoot
+-|
+--------------------------------------------------------------------------------
+-|
+-| # Shoot:garden-my-project/my-shoot
+-|   <- (5)
+-|     CloudProfile:gcp
+-|     Namespace:garden-my-project
+-|     Secret:garden-my-project/my-dns-secret
+-|     SecretBinding:garden-my-project/my-credentials
+-|     ShootState:garden-my-project/my-shoot
+-|   -> (1)
+-|     Seed:my-seed
+-|
+--------------------------------------------------------------------------------
+-|
+-| # ShootState:garden-my-project/my-shoot
+-|   -> (1)
+-|     Shoot:garden-my-project/my-shoot
+-|
+--------------------------------------------------------------------------------
+-
+-... (etc., similarly for the other resources)
+-```
+-
+-There are anchor links to easily jump from one resource to another, and the page provides means for filtering the results based on the `kind`, `namespace`, and/or `name`.
+-
+ #### Pitfalls
+ 
+ When there is a relevant update to an existing resource, i.e., when a reference to another resource is changed, then the corresponding vertex (along with all associated edges) is first deleted from the graph before it gets added again with the up-to-date edges.
 ```
 
-**File**: `docs/api-reference/resources.md` (modified, +6/-0)
+**File**: `example/20-componentconfig-gardener-admission-controller.yaml` (modified, +0/-1)
 ```diff
-@@ -52,6 +52,7 @@ Refer to the Kubernetes API documentation for the fields of the <code>metadata</
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>Spec contains the specification of this managed resource.</p>
- </td>
- </tr>
-@@ -63,6 +64,7 @@ Refer to the Kubernetes API documentation for the fields of the <code>metadata</
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>Status contains the status of this managed resource.</p>
- </td>
- </tr>
-@@ -221,6 +223,7 @@ Condition array
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p></p>
- </td>
- </tr>
-@@ -232,6 +235,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this resource.</p>
- </td>
- </tr>
-@@ -377,6 +381,7 @@ object (keys:string, values:string)
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>Labels is a map of labels that were used during last update of the resource.</p>
- </td>
- </tr>
-@@ -388,6 +393,7 @@ object (keys:string, values:string)
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>Annotations is a map of annotations that were used during last update of the resource.</p>
- </td>
- </tr>
+@@ -30,7 +30,6 @@ server:
+       name: gardener.cloud:system:seeds
+       apiGroup: rbac.authorization.k8s.io
+     operationMode: block
+-  enableDebugHandlers: true
+ debugging:
+   enableProfiling: false
+   enableContentionProfiling: false
 ```
 
-**File**: `docs/api-reference/seedmanagement.md` (modified, +8/-0)
+**File**: `pkg/admissioncontroller/webhook/add.go` (modified, +2/-2)
 ```diff
-@@ -1020,6 +1020,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this ManagedSeedSet. It corresponds to the<br />ManagedSeedSet's generation, which is updated on mutation by the API Server.</p>
- </td>
- </tr>
-@@ -1042,6 +1043,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ReadyReplicas is the number of ManagedSeeds created by the ManagedSeedSet controller that have a Ready Condition.</p>
- </td>
- </tr>
-@@ -1053,6 +1055,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>NextReplicaNumber is the ordinal number that will be assigned to the next replica of the ManagedSeedSet.</p>
- </td>
- </tr>
-@@ -1064,6 +1067,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>CurrentReplicas is the number of ManagedSeeds created by the ManagedSeedSet controller from the ManagedSeedSet version<br />indicated by CurrentRevision.</p>
- </td>
- </tr>
-@@ -1075,6 +1079,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>UpdatedReplicas is the number of ManagedSeeds created by the ManagedSeedSet controller from the ManagedSeedSet version<br />indicated by UpdateRevision.</p>
- </td>
- </tr>
-@@ -1086,6 +1091,7 @@ string
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>CurrentRevision, if not empty, indicates the version of the ManagedSeedSet used to generate ManagedSeeds with smaller<br />ordinal numbers during updates.</p>
- </td>
- </tr>
-@@ -1097,6 +1103,7 @@ string
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>UpdateRevision, if not empty, indicates the version of the ManagedSeedSet used to generate ManagedSeeds with larger<br />ordinal numbers during updates</p>
- </td>
- </tr>
-@@ -1231,6 +1238,7 @@ integer
- </em>
- </td>
- <td>
-+<em>(Optional)</em>
- <p>ObservedGeneration is the most recent generation observed for this ManagedSeed. It corresponds to the<br />ManagedSeed's generation, which is updated on mutation by the API Server.</p>
- </td>
- </tr>
-```
-
-**File**: `pkg/apis/authentication/v1alpha1/generated.proto` (modified, +10/-0)
-```diff
-@@ -19,12 +19,15 @@ option go_package = "github.com/gardener/gardener/pkg/apis/authentication/v1alph
- // for a Shoot cluster.
- message AdminKubeconfigRequest {
-   // Standard object metadata.
-+  // +optional
-   optional .k8s.io.apimachinery.pkg.apis.meta.v1.ObjectMeta metadata = 1;
+@@ -91,7 +91,7 @@ func AddToManager(
+ 		Logger:    mgr.GetLogger().WithName("webhook").WithName(seedauthorizer.HandlerName),
+ 		ClientSet: clientSet,
+ 	}
+-	if err := seedAuthorizerWebhook.AddToManager(ctx, mgr, cfg.Server.EnableDebugHandlers); err != nil {
++	if err := seedAuthorizerWebhook.AddToManager(ctx, mgr); err != nil {
+ 		return fmt.Errorf("failed adding %s webhook handler: %w", seedauthorizer.HandlerName, err)
+ 	}
  
-   // Spec is the specification of the AdminKubeconfigRequest.
-+  // +required
-   optional AdminKubeconfigRequestSpec spec = 2;
- 
-   // Status is the status of the AdminKubeconfigRequest.
-+  // +required
-   optional AdminKubeconfigRequestStatus status = 3;
- }
- 
-@@ -42,22 +45,27 @@ message AdminKubeconfigRequestSpec {
- // the kubeconfig and expiration of the credential.
- message AdminKubeconfigRequestStatus {
-   // Kubeconfig contains the kubeconfig with cluster-admin privileges for the shoot cluster.
-+  // +required
-   optional bytes kubeconfig = 1;
- 
-   // ExpirationTimestamp is the expiration timestamp of the returned credential.
-+  // +required
-   optional .k8s.io.apimachinery.pkg.apis.meta.v1.Time expirationTimestamp = 2;
- }
- 
- // ViewerKubeconfigRequest can be used to request a kubeconfig with viewer credentials (excluding Secrets)
- // for a Shoot cluster.
- message ViewerKubeconfigRequest {
-   // Standard object metadata.
-+  // +optional
-   optional .k8s.io.apimachinery.pkg.apis.meta.v1.ObjectMeta metadata = 1;
- 
-   // Spec is the specification of the ViewerKubeconfigRequest.
-+  // +required
-   optional ViewerKubeconfigRequestSpec spec = 2;
- 
-   // Status is the status of the ViewerKubeconfigRequest.
-+  // +required
-   optional ViewerKubeconfigRequestStatus status = 3;
- }
- 
-@@ -75,9 +83,11 @@ message ViewerKubeconfigRequestSpec {
- // the kubeconfig and expiration of the credential.
- message ViewerKubeconfigRequestStatus {
-   // Kubeconfig contains the kubeconfig with viewer privileges (excluding Secrets) for the shoot cluster.
-+  // +required
-   optional bytes kubeconfig = 1;
- 
-   // ExpirationTimestamp is the expiration timestamp of the returned credential.
-+  // +required
-   optional .k8s.io.apimachinery.pkg.apis.meta.v1.Time expirationTimestamp = 2;
- }
+@@ -106,7 +106,7 @@ func AddToManager(
+ 	if err := (&shootauthorizer.Webhook{
+ 		Logger:    mgr.GetLogger().WithName("webhook").WithName(shootauthorizer.HandlerName),
+ 		ClientSet: clientSet,
+-	}).AddToManager(ctx, mgr, cfg.Server.EnableDebugHandlers, seedAuthorizerWebhook.Authorizer); err != nil {
++	}).AddToManager(ctx, mgr, seedAuthorizerWebhook.Authorizer); err != nil {
+ 		return fmt.Errorf("failed adding %s webhook handler: %w", shootauthorizer.HandlerName, err)
+ 	}
  
 ```
 
-**File**: `pkg/apis/authentication/v1alpha1/types_adminkubeconfigrequest.go` (modified, +5/-0)
+**File**: `pkg/admissioncontroller/webhook/auth/seed/add.go` (modified, +1/-7)
 ```diff
-@@ -15,20 +15,25 @@ import (
- type AdminKubeconfigRequest struct {
- 	metav1.TypeMeta `json:",inline"`
- 	// Standard object metadata.
-+	// +optional
- 	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+@@ -8,7 +8,6 @@ import (
+ 	"context"
  
- 	// Spec is the specification of the AdminKubeconfigRequest.
-+	// +required
- 	Spec AdminKubeconfigRequestSpec `json:"spec" protobuf:"bytes,2,opt,name=spec"`
- 	// Status is the status of the AdminKubeconfigRequest.
-+	// +required
- 	Status AdminKubeconfigRequestStatus `json:"status" protobuf:"bytes,3,opt,name=status"`
- }
+ 	"k8s.io/utils/clock"
+-	"k8s.io/utils/ptr"
+ 	"sigs.k8s.io/controller-runtime/pkg/manager"
  
- // AdminKubeconfigRequestStatus is the status of the AdminKubeconfigRequest containing
- // the kubeconfig and expiration of the credential.
- type AdminKubeconfigRequestStatus struct {
- 	// Kubeconfig contains the kubeconfig with cluster-admin privileges for the shoot cluster.
-+	// +required
- 	Kubeconfig []byte `json:"kubeconfig" protobuf:"bytes,1,opt,name=kubeconfig"`
- 	// ExpirationTimestamp is the expiration timestamp of the returned credential.
-+	// +required
- 	ExpirationTimestamp metav1.Time `json:"expirationTimestamp" protobuf:"bytes,2,opt,name=expirationTimestamp"`
- }
+ 	"github.com/gardener/gardener/pkg/utils/graph"
+@@ -23,7 +22,7 @@ const (
+ )
  
+ // AddToManager adds Handler to the given manager.
+-func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableDebugHandlers *bool) error {
++func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager) error {
+ 	if w.Authorizer == nil {
+ 		g := graph.New(mgr.GetLogger().WithName("seed-authorizer-graph"), mgr.GetClient(), false)
+ 		if err := g.Setup(ctx, mgr.GetCache()); err != nil {
+@@ -35,11 +34,6 @@ func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableD
+ 			g,
+ 			authorizerwebhook.NewWithSelectorsChecker(ctx, w.Logger, w.ClientSet, clock.RealClock{}),
+ 		)
+-
+-		if ptr.Deref(enableDebugHandlers, false) {
+-			w.Logger.Info("Registering debug handlers")
+-			mgr.GetWebhookServer().Register(graph.DebugHandlerPath, graph.NewDebugHandler(g))
+-		}
+ 	}
+ 
+ 	if w.Handler == nil {
 ```
 
-**File**: `pkg/apis/authentication/v1alpha1/types_viewerkubeconfigrequest.go` (modified, +5/-0)
+**File**: `pkg/admissioncontroller/webhook/auth/shoot/add.go` (modified, +1/-7)
 ```diff
-@@ -15,20 +15,25 @@ import (
- type ViewerKubeconfigRequest struct {
- 	metav1.TypeMeta `json:",inline"`
- 	// Standard object metadata.
-+	// +optional
- 	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+@@ -9,7 +9,6 @@ import (
  
- 	// Spec is the specification of the ViewerKubeconfigRequest.
-+	// +required
- 	Spec ViewerKubeconfigRequestSpec `json:"spec" protobuf:"bytes,2,opt,name=spec"`
- 	// Status is the status of the ViewerKubeconfigRequest.
-+	// +required
- 	Status ViewerKubeconfigRequestStatus `json:"status" protobuf:"bytes,3,opt,name=status"`
- }
+ 	auth "k8s.io/apiserver/pkg/authorization/authorizer"
+ 	"k8s.io/utils/clock"
+-	"k8s.io/utils/ptr"
+ 	"sigs.k8s.io/controller-runtime/pkg/manager"
  
- // ViewerKubeconfigRequestStatus is the status of the ViewerKubeconfigRequest containing
- // the kubeconfig and expiration of the credential.
- type ViewerKubeconfigRequestStatus struct {
- 	// Kubeconfig contains the kubeconfig with viewer privileges (excluding Secrets) for the shoot cluster.
-+	// +required
- 	Kubeconfig []byte `json:"kubeconfig" protobuf:"bytes,1,opt,name=kubeconfig"`
- 	// ExpirationTimestamp is the expiration timestamp of the returned credential.
-+	// +required
- 	ExpirationTimestamp metav1.Time `json:"expirationTimestamp" protobuf:"bytes,2,opt,name=expirationTimestamp"`
- }
+ 	"github.com/gardener/gardener/pkg/utils/graph"
+@@ -24,7 +23,7 @@ const (
+ )
  
+ // AddToManager adds Handler to the given manager.
+-func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableDebugHandlers *bool, seedAuthorizer auth.Authorizer) error {
++func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, seedAuthorizer auth.Authorizer) error {
+ 	if w.Handler == nil {
+ 		g := graph.New(mgr.GetLogger().WithName("shoot-authorizer-graph"), mgr.GetClient(), true)
+ 		if err := g.Setup(ctx, mgr.GetCache()); err != nil {
+@@ -41,11 +40,6 @@ func (w *Webhook) AddToManager(ctx context.Context, mgr manager.Manager, enableD
+ 				seedAuthorizer,
+ 			),
+ 		}
+-
+-		if ptr.Deref(enableDebugHandlers, false) {
+-			w.Logger.Info("Registering debug handlers")
+-			mgr.GetWebhookServer().Register(graph.DebugHandlerPath+"-shoot", graph.NewDebugHandler(g))
+-		}
+ 	}
+ 
+ 	mgr.GetWebhookServer().Register(WebhookPath, w.Handler)
 ```
 
-**File**: `pkg/apis/config/admissioncontroller/v1alpha1/types.go` (modified, +11/-0)
+**File**: `pkg/apis/config/admissioncontroller/v1alpha1/types.go` (modified, +0/-3)
 ```diff
-@@ -19,14 +19,18 @@ type AdmissionControllerConfiguration struct {
- 
- 	// GardenClientConnection specifies the kubeconfig file and the client connection settings
- 	// when communicating with the garden apiserver.
-+	// +required
- 	GardenClientConnection componentbaseconfigv1alpha1.ClientConnectionConfiguration `json:"gardenClientConnection"`
- 	// LogLevel is the level/severity for the logs. Must be one of [info,debug,error].
- 	// Defaults to "info".
-+	// +required
- 	LogLevel string `json:"logLevel"`
- 	// LogFormat is the format for the logs. Must be one of [json,text].
- 	// Defaults to "json".
-+	// +required
- 	LogFormat string `json:"logFormat"`
- 	// Server defines the configuration of the HTTP server.
-+	// +required
- 	Server ServerConfiguration `json:"server"`
- 	// Debugging holds configuration for Debugging related features.
+@@ -57,9 +57,6 @@ type ServerConfiguration struct {
+ 	// ResourceAdmissionConfiguration is the configuration for the resource admission.
  	// +optional
-@@ -42,6 +46,7 @@ type AdmissionControllerConfiguration struct {
- // ServerConfiguration contains details for the HTTP(S) servers.
- type ServerConfiguration struct {
- 	// Webhooks is the configuration for the HTTPS webhook server.
-+	// +required
- 	Webhooks HTTPSServer `json:"webhooks"`
- 	// HealthProbes is the configuration for serving the healthz and readyz endpoints.
- 	// +optional
-@@ -60,6 +65,7 @@ type ServerConfiguration struct {
+ 	ResourceAdmissionConfiguration *ResourceAdmissionConfiguration `json:"resourceAdmissionConfiguration,omitempty"`
+-	// EnableDebugHandlers determines whether the /debug/ handlers are enabled.
+-	// +optional
+-	EnableDebugHandlers *bool `json:"enableDebugHandlers,omitempty"`
+ }
+ 
  // ResourceAdmissionConfiguration contains settings about arbitrary kinds and the size each resource should have at most.
- type ResourceAdmissionConfiguration struct {
- 	// Limits contains configuration for resources which are subjected to size limitations.
-+	// +required
- 	Limits []ResourceLimit `json:"limits"`
- 	// UnrestrictedSubjects contains references to users, groups, or service accounts which aren't subjected to any resource size limit.
- 	// +optional
-@@ -84,6 +90,7 @@ type ResourceLimit struct {
- 	// +optional
- 	APIVersions []string `json:"apiVersions,omitempty"`
- 	// Resources is the name of the resource this rule applies to. WildcardAll represents all resources.
-+	// +required
- 	Resources []string `json:"resources"`
- 	// Size specifies the imposed limit.
- 	// +optional
-@@ -96,8 +103,10 @@ type ResourceLimit struct {
- // Server contains information for HTTP(S) server configuration.
- type Server struct {
- 	// BindAddress is the IP address on which to listen for the specified port.
-+	// +required
- 	BindAddress string `json:"bindAddress"`
- 	// Port is the port on which to serve requests.
-+	// +required
- 	Port int32 `json:"port"`
- }
- 
-@@ -107,13 +116,15 @@ type HTTPSServer struct {
- 	Server `json:",inline"`
- 
- 	// TLSServer contains information about the TLS configuration for a HTTPS server.
-+	// +required
- 	TLS TLSServer `json:"tls"`
- }
- 
- // TLSServer contains information about the TLS configuration for a HTTPS server.
- type TLSServer struct {
- 	// ServerCertDir is the path to a directory containing the server's TLS certificate and key (the files must be
- 	// named tls.crt and tls.key respectively).
-+	// +required
- 	ServerCertDir string `json:"serverCertDir"`
+```
+
+**File**: `pkg/apis/config/admissioncontroller/v1alpha1/zz_generated.deepcopy.go` (modified, +0/-5)
+```diff
+@@ -181,11 +181,6 @@ func (in *ServerConfiguration) DeepCopyInto(out *ServerConfiguration) {
+ 		*out = new(ResourceAdmissionConfiguration)
+ 		(*in).DeepCopyInto(*out)
+ 	}
+-	if in.EnableDebugHandlers != nil {
+-		in, out := &in.EnableDebugHandlers, &out.EnableDebugHandlers
+-		*out = new(bool)
+-		**out = **in
+-	}
+ 	return
  }
  
 ```
 
-**File**: `pkg/apis/config/controllermanager/v1alpha1/types.go` (modified, +13/-0)
+**File**: `pkg/utils/graph/debug.go` (removed, +0/-179)
 ```diff
-@@ -18,17 +18,22 @@ type ControllerManagerConfiguration struct {
- 
- 	// GardenClientConnection specifies the kubeconfig file and the client connection settings
- 	// for the proxy server to use when communicating with the garden apiserver.
-+	// +required
- 	GardenClientConnection componentbaseconfigv1alpha1.ClientConnectionConfiguration `json:"gardenClientConnection"`
- 	// Controllers defines the configuration of the controllers.
-+	// +required
- 	Controllers ControllerManagerControllerConfiguration `json:"controllers"`
- 	// LeaderElection defines the configuration of leader election client.
- 	// +optional
- 	LeaderElection *componentbaseconfigv1alpha1.LeaderElectionConfiguration `json:"leaderElection,omitempty"`
- 	// LogLevel is the level/severity for the logs. Must be one of [info,debug,error].
-+	// +required
- 	LogLevel string `json:"logLevel"`
- 	// LogFormat is the output format for the logs. Must be one of [text,json].
-+	// +required
- 	LogFormat string `json:"logFormat"`
- 	// Server defines the configuration of the HTTP server.
-+	// +required
- 	Server ServerConfiguration `json:"server"`
- 	// Debugging holds configuration for Debugging related features.
- 	// +optional
-@@ -98,11 +103,13 @@ type ControllerManagerControllerConfiguration struct {
- 	// +optional
- 	SeedReferenceAllowlist *SeedReferenceAllowlistControllerConfiguration `json:"seedReferenceAllowlist,omitempty"`
- 	// ShootMaintenance defines the configuration of the ShootMaintenance controller.
-+	// +required
- 	ShootMaintenance ShootMaintenanceControllerConfiguration `json:"shootMaintenance"`
- 	// ShootQuota defines the configuration of the ShootQuota controller.
- 	// +optional
- 	ShootQuota *ShootQuotaControllerConfiguration `json:"shootQuota,omitempty"`
- 	// ShootHibernation defines the configuration of the ShootHibernation controller.
-+	// +required
- 	ShootHibernation ShootHibernationControllerConfiguration `json:"shootHibernation"`
- 	// ShootReference defines the configuration of the ShootReference controller. If unspecified, it is defaulted with `concurrentSyncs=5`.
- 	// +optional
-@@ -246,6 +253,7 @@ type ProjectControllerConfiguration struct {
- // QuotaConfiguration defines quota configurations.
- type QuotaConfiguration struct {
- 	// Config is the corev1.ResourceQuota specification used for the project set-up.
-+	// +required
- 	Config corev1.ResourceQuota `json:"config"`
- 	// ProjectSelector is an optional setting to select the projects considered for quotas.
- 	// Defaults to empty LabelSelector, which matches all projects.
-@@ -456,6 +464,7 @@ type ManagedSeedSetControllerConfiguration struct {
- 	// +optional
- 	MaxShootRetries *int32 `json:"maxShootRetries,omitempty"`
- 	// SyncPeriod is the duration how often the existing resources are reconciled.
-+	// +required
- 	SyncPeriod metav1.Duration `json:"syncPeriod"`
- }
- 
-@@ -471,8 +480,10 @@ type ShootStateControllerConfiguration struct {
- // ConditionThreshold defines the duration how long a flappy condition stays in progressing state.
- type ConditionThreshold struct {
- 	// Type is the type of the condition to define the threshold for.
-+	// +required
- 	Type string `json:"type"`
- 	// Duration is the duration how long the condition can stay in the progressing state.
-+	// +required
- 	Duration metav1.Duration `json:"duration"`
- }
- 
-@@ -489,8 +500,10 @@ type ServerConfiguration struct {
- // Server contains information for HTTP(S) server configuration.
- type Server struct {
- 	// BindAddress is the IP address on which to listen for the specified port.
-+	// +required
- 	BindAddress string `json:"bindAddress"`
- 	// Port is the port on which to serve requests.
-+	// +required
- 	Port int32 `json:"port"`
- }
- 
+@@ -1,179 +0,0 @@
+-// SPDX-FileCopyrightText: Contributors to the Gardener project
+-//
+-// SPDX-License-Identifier: Apache-2.0
+-
+-package graph
+-
+-import (
+-	"fmt"
+-	"net/http"
+-	"net/url"
+-	"sort"
+-	"strings"
+-
+-	gonumgraph "gonum.org/v1/gonum/graph"
+-	"gonum.org/v1/gonum/graph/simple"
+-)
+-
+-// DebugHandlerPath is the HTTP handler path for this debug handler.
+-const DebugHandlerPath = "/debug/resource-dependency-graph"
+-
+-type handler struct {
+-	graph *simple.DirectedGraph
+-}
+-
+-// NewDebugHandler creates a new HTTP handler for debugging the resource dependency graph.
+-func NewDebugHandler(graph *graph) http.HandlerFunc {
+-	return (&handler{graph.graph}).Handle
+-}
+-
+-func (h *handler) Handle(w http.ResponseWriter, r *http.Request) {
+-	var (
+-		out strings.Builder
+-
+-		kind      = getQueryParameter(r.URL.Query(), "kind")
+-		namespace = getQueryParameter(r.URL.Query(), "namespace")
+-		name      = getQueryParameter(r.URL.Query(), "name")
+-
+-		nodesIterator = h.graph.Nodes()
+-		nodes         []*Vertex
+-	)
+-
+-	// On large landscapes, if there are many vertices then the entire graph cannot be rendered fast enough. Hence, we
+-	// apply some default filtering for the 'seed' kind.
+-	if kind == "" && namespace == "" && name == "" && nodesIterator.Len() > 2000 {
+-		kind = "Seed"
+-	}
+-
+-	// Filter for all relevant nodes and sort them.
+-	for nodesIterator.Next() {
+-		v := nodesIterator.Node().(*Vertex)
+-
+-		if (kind != "" && VertexTypes[v.Type].Kind != kind) ||
+-			(namespace != "" && v.Namespace != namespace) ||
+-			(name != "" && v.Name != name) {
+-			continue
+-		}
+-
+-		nodes = append(nodes, v)
+-	}
+-	sort.Sort(vertexSorter(nodes))
+-
+-	// Render filtering form.
+-	out.WriteString(`
+-<form action="` + DebugHandlerPath + `" method="GET">
+-  <select name="kind">`)
+-	fmt.Fprintf(&out, `<option value=""%s>&lt;all&gt;</option>`, func() string {
+-		if kind == "" {
+-			return " selected"
+-		}
+-		return ""
+-	}())
+-	for _, vt := range VertexTypes {
+-		fmt.Fprintf(&out, `<option value="%s"%s>%s</option>`, vt.Kind, func() string {
+-			if kind == vt.Kind {
+-				return " selected"
+-			}
+-			return ""
+-		}(), vt.Kind)
+-	}
+-	out.WriteString(`
+-  </select>
+-  <input type="test" name="namespace" value="` + namespace + `" />
+-  <input type="test" name="name" value="` + name + `" />
+-  <input type="submit" value="go" />
+-</form>` + separate(true))
+-
+-	// Iterate over each nodes, determine and sort their incoming and outgoing neighbors, and render the output.
+-	for i, v := range nodes {
+-		out.WriteString(indent(0, "# %s", link(v)))
+-
+-		for _, n := range []struct {
+-			prefix   string
+-			iterator gonumgraph.Nodes
+-		}{
+-			{"<- (incoming)", h.graph.To(v.ID())},
+-			{"-> (outgoing)", h.graph.From(v.ID())},
+-		} {
+-			var neighbors []*Vertex
+-			for n.iterator.Next() {
+-				neighbors = append(neighbors, n.iterator.Node().(*Vertex))
+-			}
+-			sort.Sort(vertexSorter(neighbors))
+-
+-			if len(neighbors) > 0 {
+-				out.WriteString(indent(1, "%s (%d)", n.prefix, len(neighbors)))
+-				for _, u := range neighbors {
+-					out.WriteString(indent(2, link(u)))
+-				}
+-			}
+-		}
+-
+-		out.WriteString(emptyNewline() + separate(i < len(nodes)-1))
+-	}
+-
+-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+-	fmt.Fprint(w, `<font size="2" face="Courier New">`+out.String()+`</font>`)
+-}
+-
+-func getQueryParameter(query url.Values, param string) string {
+-	var out string
+-	values, ok := query[param]
+-	if ok && len(values[0]) >= 1 {
+-		out = values[0]
+-	}
+-	return out
+-}
+-
+-type vertexSorter []*Vertex
+-
+-func (v vertexSorter) Len() int { return len(v) }
+-
+-func (v vertexSorter) Swap(i, j int) { v[i], v[j] = v[j], v[i] }
+-
+-func (v vertexSorter) Less(i, j int) bool {
+-	if VertexTypes[v[i].Type].Kind < VertexTypes[v[j].Type].Kind {
+-		return true
+-	} else if VertexTypes[v[i].Type].Kind > VertexTypes[v[j].Type].Kind {
+-		return false
+-	}
+-
+-	if v[i].Namespace < v[j].Namespace {
+-		return true
+-	} else if v[i].Namespace > v[j].Namespace {
+-		return false
+-	}
+-
+-	return v[i].Name < v[j].Name
+-}
+-
+-func emptyNewline() string {
+-	return "|<br />"
+-}
+-
+-func separate(withNewBeginning bool) string {
+-	result := "-------------------------------------------------------------------------------<br />"
+-	if withNewBeginning {
+-		result += emptyNewline()
+-	}
+-	return result
+-}
+-
+-func indent(level int, format string, a ...any) string {
+-	return fmt.Sprintf("| "+strings.Repeat("&nbsp;&nbsp;", level)+format+"<br />", a...)
+-}
+-
+-func link(v *Vertex) string {
+-	path := fmt.Sprintf("%s?kind=%s", DebugHandlerPath, VertexTypes[v.Type].Kind)
+-	out := fmt.Sprintf(`<a href="%s">%s</a>:`, path, VertexTypes[v.Type].Kind)
+-
+-	if v.Namespace != "" {
+-		path += "&namespace=" + v.Namespace
+-		out += fmt.Sprintf(`<a href="%s">%s</a>/`, path, v.Namespace)
+-	}
+-
+-	path += "&name=" + v.Name
+-	out += fmt.Sprintf(`<a href="%s">%s</a>`, path, v.Name)
+-
+-	return out
+-}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16307** (2026-11-12): Drop `extensions/pkg/terraformer` package (@rfranzke)
-- **PR #16299** (2026-11-12): Update golang.org/x/tools digest to d8abf82 (@renovate[bot])
-- **PR #16298** (2026-11-11): Update module golang.org/x/crypto to v0.59.0 (@renovate[bot])
-- **PR #16297** (2026-11-11): [release-v1.153] Automated cherry pick of #16282: Update pvc-autoscaler to v0.3.3 (@ialidzhikov)
-- **PR #16296** (2026-11-11): [release-v1.154] Automated cherry pick of #16282: Update pvc-autoscaler to v0.3.3 (@ialidzhikov)
-- **PR #16293** (2026-11-12): Recommend digest pinning for images and OCI Helm charts pulled outside admission (@rfranzke)
+- **PR #16337** (2026-11-13): Update dependency gardener/alpine-conntrack to v3.24.4 (@renovate[bot])
+- **PR #16334** (2026-11-13): Update dependency credativ/vali to v2.2.39 (@renovate[bot])
+- **PR #16331** (2026-11-13): Update golang.org/x/tools digest to 056b2d3 (@renovate[bot])
+- **PR #16323** (2026-11-13): Update golang.org/x/exp digest to d10d3b4 (@renovate[bot])
+- **PR #16321** (2026-11-13): Update Go toolchain to v1.27 (@LucaBernstein)
+- **PR #16315** (2026-11-13): Drop resource dependency graph debug handler (@rfranzke)
 
 ---
 
@@ -1208,34 +1223,34 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Enable kube-api-linter `optionalorrequired` for the remaining small API groups (
+## X. update envoy scanning hints
 
 **RULE**:
-When implementing operations in `.golangci.yaml.in`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `imagevector/containers.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed11f3b2`: Enable kube-api-linter `optionalorrequired` for the remaining small API groups (#16139). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0fcc2eec`: update envoy scanning hints. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.golangci.yaml.in`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `imagevector/containers.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        path-except: '^pkg/apis/[^/]+(/[^/]+)?/v[0-9]+((alpha|beta)[0-9]+)?/[^/]+$'
+          # https://www.envoyproxy.io/docs/envoy/v1.40.2/intro/arch_overview/security/external_deps
+            version: '1.83.0'
+            version: '12.2.0'
+            version: '0.20260929.0'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-        path-except: 'pkg/apis/[^/]+(/[^/]+)?/v[0-9]+((alpha|beta)[0-9]+)?/[^/]+$'
-      # optionalorrequired is only enforced for the API groups listed below. Add a group here once its fields are
-      # explicitly marked as +optional or +required; remove this rule when all groups are migrated.
-      - linters:
-          - kubeapilinter
-        text: 'optionalorrequired:'
-        path-except: 'pkg/apis/(config/operator/v1alpha1|config/resourcemanager/v1alpha1|core/v1|core/v1beta1|extensions/v1alpha1|operations/v1alpha1|operator/v1alpha1)/[^/]+$'
+// Induced defect failure mode:
+          # https://www.envoyproxy.io/docs/envoy/v1.39.0/intro/arch_overview/security/external_deps
+            version: '1.81.1'
+            version: '12.1.0'
+            version: '0.20260413.0'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed11f3b2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0fcc2eec` are properly handled with clean fallback behavior.

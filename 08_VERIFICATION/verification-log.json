@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-OJ3Z",
-    "timestamp": "2026-11-13T04:13:09.695Z",
-    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-    "contentHash": "1f3604121049bb9a2a7ccd4b2f6fb0f9572ef86423e0c055d1d2920f2d3c59de",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-OU85",
-    "timestamp": "2026-11-13T04:13:24.101Z",
-    "repository": "meta/folly",
-    "learningId": "learn-github-meta-folly",
-    "contentHash": "b077b63fab6f074dff6c57b21f659e7b2f23036a3403f8b3b1264a55033ed480",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-OVGU",
-    "timestamp": "2026-11-13T04:13:25.710Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "ebd571bb4392b7b18f62e14fdfe0e68e30c698ca5cd2bc2f9569b98016a240fa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-BIYR",
     "timestamp": "2026-11-13T04:31:02.595Z",
     "repository": "orcarouter/OrcaCyber-Nano-1.0",
@@ -7492,6 +7447,51 @@
     "contentHash": "fcb34bc0efbd06692340ffc7bdb8532882805213e01a8822f817364d03898b41",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-FOG4",
+    "timestamp": "2026-11-13T23:42:00.580Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "2eb75347f7602cfdc1211830314db921707241cef1f6a83ed4b53fa9ad747c63",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-FTLH",
+    "timestamp": "2026-11-13T23:42:07.253Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "0d6be646b5200a8c2914ef778d48da51880c4b6f8f6d5ce15b80cfdbe7151ad6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-IL9N",
+    "timestamp": "2026-11-13T23:44:16.427Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-openai-whisper-large-v3",
+    "contentHash": "e068d55c8bc4121f85281a36416c01039b7791f99680e7d2e99edfd6c9a6f740",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
