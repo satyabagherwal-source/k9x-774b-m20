@@ -6703,10 +6703,10 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "sourceVersion": "fdcdb1e5",
+    "sourceVersion": "e8491dea",
     "license": "Apache-2.0",
-    "contentHash": "3a3d97abe0803ffd6c1b3c14b9976f4d195fc54203e0a295f68303c565de65b6",
-    "lastHarvestedAt": "2026-11-07T17:48:03.429Z",
+    "contentHash": "9a4bfbadee74aed17076420373153c40633c624d3adae0e326badaabaf16b5fa",
+    "lastHarvestedAt": "2026-11-13T00:01:50.723Z",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller"
   },
   "qdrant-qdrant": {

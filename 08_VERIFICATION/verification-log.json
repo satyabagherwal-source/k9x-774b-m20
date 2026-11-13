@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-J6RQ",
-    "timestamp": "2026-11-09T14:18:11.078Z",
-    "repository": "gluesql/gluesql",
-    "learningId": "learn-github-gluesql-gluesql",
-    "contentHash": "06bea34f8cf571ba9e535dc15ce7c6a48c445080aa4fb00cf8bfeeec5bee56c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-5MWJ",
     "timestamp": "2026-11-09T14:35:38.419Z",
     "repository": "freenet/freenet-core",
@@ -7490,6 +7475,21 @@
     "repository": "nginx/kubernetes-ingress",
     "learningId": "learn-github-nginx-kubernetes-ingress",
     "contentHash": "ef574eabc189a7fc257d741766b32e159ca7272a2f166d3e6c4620b74ded62b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-PC3K",
+    "timestamp": "2026-11-13T00:01:50.720Z",
+    "repository": "kubernetes-sigs/aws-load-balancer-controller",
+    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+    "contentHash": "9a4bfbadee74aed17076420373153c40633c624d3adae0e326badaabaf16b5fa",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

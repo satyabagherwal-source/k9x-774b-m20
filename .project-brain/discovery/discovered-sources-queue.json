@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-12T23:55:11.815Z",
+  "updated_at": "2026-11-13T00:01:54.158Z",
   "stats": {
-    "total_discovered": 1863,
-    "approved_pending_harvest": 1716,
+    "total_discovered": 1864,
+    "approved_pending_harvest": 1717,
     "harvested_count": 0,
     "rejected_count": 147,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1724,
+      "COMMUNITY_AND_EXPERT": 1725,
       "OFFICIAL_DOCUMENTATION": 68,
       "STANDARDS_AND_SPECIFICATIONS": 67,
       "ENGINEERING_BLOGS": 1,
@@ -39974,6 +39974,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
         "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-79967557E4C2": {
+      "id": "SRC-79967557E4C2",
+      "url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "title": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T00:01:54.158Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
+        "fileName": "kubernetes-sigs-aws-load-balancer-controller-learnings.md"
       }
     }
   }

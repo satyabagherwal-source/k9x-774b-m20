@@ -9267,3 +9267,4 @@ Every entry in this ledger must capture:
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `d09e97c4` | Multi-dimensional audit evidence | 2026-11-12T23:54:54.624Z |
 | `learn-github-touchlab-kermit` | `https://github.com/touchlab/Kermit` | `141dc8dd` | Multi-dimensional audit evidence | 2026-11-12T23:55:04.610Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `f00b7006` | Multi-dimensional audit evidence | 2026-11-12T23:55:04.785Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `e8491dea` | Multi-dimensional audit evidence | 2026-11-13T00:01:50.723Z |

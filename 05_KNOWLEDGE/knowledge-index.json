@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-12T23:55:04.638Z",
+  "last_updated": "2026-11-13T00:01:50.608Z",
   "total_verified_learnings": 1260,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40288,14 +40288,19 @@
       "slug": "kubernetes-sigs-aws-load-balancer-controller",
       "platform": "github",
       "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "fdcdb1e5",
-      "content_hash": "3a3d97abe0803ffd6c1b3c14b9976f4d195fc54203e0a295f68303c565de65b6",
+      "source_version": "e8491dea",
+      "content_hash": "9a4bfbadee74aed17076420373153c40633c624d3adae0e326badaabaf16b5fa",
       "dossier_path": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "promoted_rules": [
         {
           "number": null,
           "title": "Merge pull request #4828 from BojanZelic-DD/add-match-conditions",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "Merge pull request #4950 from David-Uka/docs-fix-invalid-examples",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -40359,7 +40364,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-07T17:48:03.314Z",
+      "verified_at": "2026-11-13T00:01:50.583Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

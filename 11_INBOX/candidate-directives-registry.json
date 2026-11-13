@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-12T23:55:11.718Z",
+  "last_updated": "2026-11-13T00:01:54.204Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7617,6 +7617,33 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-4D3E5B-render-jwt-claim-authorization-in-the-ng.md",
       "staged_date": "2026-11-12"
+    },
+    {
+      "id": "CD-REV-872804",
+      "directive_title": "Merge pull request #4950 from David-Uka/docs-fix-invalid-examples",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kubernetes-sigs-aws-load-balancer-controller",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-872804-merge-pull-request-4950-from-david-uka-d.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-99996F",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-99996F-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-84699A",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-84699A-export-fix-consent-of-former-subscribers.md",
+      "staged_date": "2026-11-13"
     }
   ]
 }

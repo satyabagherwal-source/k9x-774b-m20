@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source**: github ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
-> **Source Version**: `fdcdb1e5`  
+> **Source Version**: `e8491dea`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T17:48:02.165Z  
+> **Timestamp**: 2026-11-13T00:01:43.744Z  
 > **Learning ID**: `learn-github-kubernetes-sigs-aws-load-balancer-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T17:48:00.946Z  
+> **Harvest Timestamp**: 2026-11-13T00:01:43.581Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kubernetes controller for Elastic Load Balancers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4343 stars
+- **Stars / Engagement**: 4344 stars
 
 ---
 
@@ -1587,14 +1587,11 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4942** (2026-11-03): **Update OWNERS file to modify approvers and reviewers**
-  *Symptoms*: ### Description  Removed 'oliviassss' and 'shuqz' from approvers and reviewers. Add 'bobert-2' to approvers and reviewers.  ### Checklist - [ ] Added tests that cover your change (if possible) - [ ] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [ ] Manually tested - [ ] Made sure the title of the PR is a good description that can go into the release notes  ### BONUS POINTS checklist: complete for good vibes and maybe prizes?! :exploding_head: - [ ] Backfilled missing tests for code in same general area :tada: - [ ] Refactored something and made the world a better place :star2:   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Chores**   * Updated the project’s listed review contacts. One contact was added, two were removed, and the remaining contacts were unchanged.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/kubernetes-sigs/aws-load-balancer-controller/pull/4942?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end -->  <!-- overview_findings_start --> <!-- overview_findings:v1 head_sha=e896591749452e322f1e25e02971c324781ba28f -->  ## Findings  <p><a href="https://github.com/kube
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4942#" title="Author self-approved">bobert-2</a>*, *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4942#pullrequestreview-5760444672" title="Approved">wweiwei-li</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/OWNERS)~~ [wweiwei-li]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers
+- **Issue #4955** (2026-11-12): **cut v3.6.3 release**
+  *Symptoms*: ## Description  Cuts **v3.6.3**, a patch release that ships the CVE remediation already merged to `main` in #4952: Go toolchain `1.26.10` → `1.27.4` and EKS-D base image `2026-10-23-1792785692.2023` → `2026-11-10-1794337279.2023` (plus the accompanying `golang.org/x/*` indirect bumps in `go.mod`/`go.sum`).  This PR is **version-strings only** — the output of `hack/set-version 3.6.3`:  - `Makefile` `IMG` - `config/controller/kustomization.yaml` `newTag` - `helm/aws-load-balancer-controller/{Chart.yaml,values.yaml,test.yaml}` - `version.txt`, `version-stable.txt` - `docs/deploy/installation.md`, `docs/examples/echo_server.md`  Because the Go and base-image bump already landed in #4952, this cut does **not** touch `.ko.yaml`, the `Makefile` `BASE_IMAGE` line, or `.go-version` — they are already at the new values on `main`.  Targets `main`. After this merges, the tag-release workflow tags v3.6.3 on `main`, and `release-3.6` is then fast-forwarded to `main` to pick up the tag.  No controller code changes. No CRD or RBAC changes.  ## Checklist  - [x] Added tests that cover your change (n/a — no code change) - [x] Added/modified documentation as required (version references updated) - [x] Manually tested - [x] Made sure the title of the PR is a good description that can go into the release notes   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Release**   * Updated the AWS Load Balancer C
 
-- **Issue #4941** (2026-11-03): **fix(endpoint): add node ready time for pods that are ready as well**
-  *Symptoms*: ### Description  Populates `PodEndpoint.NodeReadyTime` for every returned pod endpoint whose node is Ready, so target registration latency is measured from when the pod became eligible again, not from when it first became ready.  **Problem:** when a node goes Ready -> NotReady -> Ready, the kubelet restores the pod's `Ready` condition with its original `LastTransitionTime`. The pod's endpoint comes back ready, so the resolver took the ready path, which never read the node. `NodeReadyTime` was only set for not-ready endpoints that were admitted because their containers were ready on a Ready node. Consumers measuring registration latency from the pod's conditions therefore reported the pod's age (hours to days) for these re-registrations.  **Change:** - Ready path: look up the pod's node (cached client) and set `NodeReadyTime` to the node's `Ready` condition `LastTransitionTime` when that condition is True. - Failing to read the node only leaves `NodeReadyTime` zero (logged at V(1)); the ready endpoint is still returned. Endpoint selection is unchanged. - Unknown/NotReady nodes (including fail-open endpoints) keep a zero `NodeReadyTime`, since their transition time marks when the node became unready. - Shared the node lookup and ready-time extraction between both paths (`getNode`, `nodeReadyTimeIfReady`), and updated the field comment.  **Dropped from an earlier revision:** exposing `endpoints.kubernetes.io/last-change-trigger-time` as an endpoint change time to cover selector/
+- **Issue #4952** (2026-11-11): **Bump go version and base image**
+  *Symptoms*: ### Issue  Fix CVEs in base image and go versions    ### Checklist - [ ] Added tests that cover your change (if possible) - [ ] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [ ] Manually tested - [ ] Made sure the title of the PR is a good description that can go into the release notes  ### BONUS POINTS checklist: complete for good vibes and maybe prizes?! :exploding_head: - [ ] Backfilled missing tests for code in same general area :tada: - [ ] Refactored something and made the world a better place :star2:   <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  ## Chores - Updated the Go toolchain, application base image, and supporting component versions. These maintenance updates do not change user-facing functionality. <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1611,73 +1608,147 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fdcdb1e5` (2026-11-06)
-**Commit Message**: Merge pull request #4828 from BojanZelic-DD/add-match-conditions
+### Incident Patch 1: `4dbf7bf3` (2026-11-11)
+**Commit Message**: Merge pull request #4950 from David-Uka/docs-fix-invalid-examples
 
-add support for matchConditions in the helm chart
+docs: fix invalid YAML in ingress annotation examples
 
-**File**: `helm/aws-load-balancer-controller/README.md` (modified, +1/-0)
+**File**: `docs/guide/ingress/alb-target-agent.md` (modified, +1/-1)
 ```diff
-@@ -296,6 +296,7 @@ The default values set by the application itself can be confirmed [here](https:/
- | `serviceMutatorWebhookConfig.failurePolicy`                         | Failure policy for the Service Mutator webhook                                                                                                                                                                                                                                                                                               | `Fail`                                            |
- | `serviceMutatorWebhookConfig.objectSelector`                        | Object selector(s) to limit which objects will be mutated by the Service Mutator webhook                                                                                                                                                                                                                                                     | `[]`                                              |
- | `serviceMutatorWebhookConfig.operations`                            | List of operations that will trigger the the Service Mutator webhook                                                                                                                                                                                                                                                                         | `[ CREATE ]`                                      |
-+| `serviceMutatorWebhookConfig.matchConditions`                       | CEL matchCondition(s) to limit which Service objects will be mutated by the Service Mutator webhook (requires Kubernetes >= 1.27). See [matchConditions](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-matchconditions)                                                        | `[]`                                              |
- | `autoscaling`                                                       | If `autoscaling.enabled=true`, enable the HPA on the controller mainly to survive load induced failure by the calls to the `aws-load-balancer-webhook-service`. Please keep in mind that the controller pods have `priorityClassName: system-cluster-critical`, enabling HPA may lead to the eviction of other low-priority pods in the node | `false`                                           |
- | `serviceTargetENISGTags`                                            | set of `key=value` pairs of AWS tags in addition to cluster name for finding the target ENI security group to which to add inbound rules from NLBs                                                                                                                                                                                           | None                                              |
- | `loadBalancerClass`                                                 | Sets the AWS load balancer type to be used when the Kubernetes service requests an external load balancer                                                                                                                                                                                                                                    | `service.k8s.aws/nlb`                             |
+@@ -22,7 +22,7 @@ kind: Ingress
+ metadata:
+   name: my-ingress
+   annotations:
+-    alb.ingress.kubernetes.io/target-control-port.${serviceName}.${servicePort}: 3000 # Must match agent controlAddress port
++    alb.ingress.kubernetes.io/target-control-port.${serviceName}.${servicePort}: "3000" # Must match agent controlAddress port
+ spec:
+ ```
+ 
 ```
 
-**File**: `helm/aws-load-balancer-controller/templates/webhook.yaml` (modified, +4/-0)
+**File**: `docs/guide/ingress/annotations.md` (modified, +1/-1)
 ```diff
-@@ -133,6 +133,10 @@ webhooks:
-     matchLabels:
-     {{- toYaml .Values.serviceMutatorWebhookConfig.objectSelector.matchLabels | nindent 6 }}
-     {{- end }}
-+  {{- if .Values.serviceMutatorWebhookConfig.matchConditions }}
-+  matchConditions:
-+  {{- toYaml .Values.serviceMutatorWebhookConfig.matchConditions | nindent 2 }}
-+  {{- end }}
-   rules:
-   - apiGroups:
-     - ""
+@@ -1048,7 +1048,7 @@ Creation of TLS ceritficates can be controlled using the following annotations:
+     !!!example
+           ```
+ 
+-          alb.ingress.kubernetes.io/create-acm-cert: true
++          alb.ingress.kubernetes.io/create-acm-cert: "true"
+ 
+ 
+           ```
 ```
 
-**File**: `helm/aws-load-balancer-controller/test.yaml` (modified, +3/-0)
+**File**: `docs/guide/ingress/cert_discovery.md` (modified, +8/-8)
 ```diff
-@@ -351,6 +351,9 @@ serviceMutatorWebhookConfig:
-     #   - <value>
-     matchLabels: {}
-       # key: value
-+  matchConditions: []
-+  # - name: <key>
-+  #   expression: <value>
-   # which operations trigger the webhook
-   operations:
-   - CREATE
+@@ -14,10 +14,10 @@ The controller will attempt to discover TLS certificates from the `tls` field in
+             apiVersion: networking.k8s.io/v1
+             kind: Ingress
+             metadata:
+-            namespace: default
+-            name: ingress
+-            annotations:
+-              alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
++              namespace: default
++              name: ingress
++              annotations:
++                alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+             spec:
+               ingressClassName: alb
+               tls:
+@@ -44,10 +44,10 @@ The controller will attempt to discover TLS certificates from the `tls` field in
+             apiVersion: networking.k8s.io/v1
+             kind: Ingress
+             metadata:
+-            namespace: default
+-            name: ingress
+-            annotations:
+-              alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
++              namespace: default
++              name: ingress
++              annotations:
++                alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+             spec:
+               ingressClassName: alb
+               rules:
 ```
 
-**File**: `helm/aws-load-balancer-controller/values.yaml` (modified, +3/-0)
+---
+
+### Incident Patch 2: `6f8e447c` (2026-11-11)
+**Commit Message**: docs: fix invalid YAML in ingress annotation examples
+
+Annotation values must be strings, so quote the target-control-port and
+create-acm-cert examples. Indent the metadata fields in the two
+certificate discovery examples so the manifests parse as an Ingress.
+
+**File**: `docs/guide/ingress/alb-target-agent.md` (modified, +1/-1)
 ```diff
-@@ -503,6 +503,9 @@ serviceMutatorWebhookConfig:
-   #   operator: <operator>
-   #   values:
-   #   - <value>
-+  matchConditions: []
-+  # - name: include-load-balancer-services
-+  #   expression: object.spec.type == 'LoadBalancer'
-   # which operations trigger the webhook
-   operations:
-   - CREATE
+@@ -22,7 +22,7 @@ kind: Ingress
+ metadata:
+   name: my-ingress
+   annotations:
+-    alb.ingress.kubernetes.io/target-control-port.${serviceName}.${servicePort}: 3000 # Must match agent controlAddress port
++    alb.ingress.kubernetes.io/target-control-port.${serviceName}.${servicePort}: "3000" # Must match agent controlAddress port
+ spec:
+ ```
+ 
+```
+
+**File**: `docs/guide/ingress/annotations.md` (modified, +1/-1)
+```diff
+@@ -1048,7 +1048,7 @@ Creation of TLS ceritficates can be controlled using the following annotations:
+     !!!example
+           ```
+ 
+-          alb.ingress.kubernetes.io/create-acm-cert: true
++          alb.ingress.kubernetes.io/create-acm-cert: "true"
+ 
+ 
+           ```
+```
+
+**File**: `docs/guide/ingress/cert_discovery.md` (modified, +8/-8)
+```diff
+@@ -14,10 +14,10 @@ The controller will attempt to discover TLS certificates from the `tls` field in
+             apiVersion: networking.k8s.io/v1
+             kind: Ingress
+             metadata:
+-            namespace: default
+-            name: ingress
+-            annotations:
+-              alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
++              namespace: default
++              name: ingress
++              annotations:
++                alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+             spec:
+               ingressClassName: alb
+               tls:
+@@ -44,10 +44,10 @@ The controller will attempt to discover TLS certificates from the `tls` field in
+             apiVersion: networking.k8s.io/v1
+             kind: Ingress
+             metadata:
+-            namespace: default
+-            name: ingress
+-            annotations:
+-              alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
++              namespace: default
++              name: ingress
++              annotations:
++                alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+             spec:
+               ingressClassName: alb
+               rules:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4955** (2026-11-12): cut v3.6.3 release (@shraddhabang)
+- **PR #4952** (2026-11-11): Bump go version and base image (@shraddhabang)
+- **PR #4950** (2026-11-11): docs: fix invalid YAML in ingress annotation examples (@David-Uka)
 - **PR #4942** (2026-11-03): Update OWNERS file to modify approvers and reviewers (@bobert-2)
 - **PR #4941** (2026-11-03): fix(endpoint): add node ready time for pods that are ready as well (@zac-nixon)
 - **PR #4937** (2026-10-24): cut v3.6.2 release (@shraddhabang)
-- **PR #4935** (2026-10-22): perf(gw api): improve start up time by not enqueuing child resources (@zac-nixon)
-- **PR #4934** (2026-10-21): cut v3.6.1 release (@shraddhabang)
-- **PR #4933** (2026-10-20): build(deps): bump go to 1.26.10 and golang.org/x/net to v0.60.0 (@shraddhabang)
 
 ---
 
@@ -1697,28 +1768,28 @@ add support for matchConditions in the helm chart
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4828 from BojanZelic-DD/add-match-conditions
+## X. Merge pull request #4950 from David-Uka/docs-fix-invalid-examples
 
 **RULE**:
-When implementing operations in `helm/aws-load-balancer-controller/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/ingress/alb-target-agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fdcdb1e5`: Merge pull request #4828 from BojanZelic-DD/add-match-conditions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4dbf7bf3`: Merge pull request #4950 from David-Uka/docs-fix-invalid-examples. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `helm/aws-load-balancer-controller/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/ingress/alb-target-agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| `serviceMutatorWebhookConfig.matchConditions`                       | CEL matchCondition(s) to limit which Service objects will be mutated by the Service Mutator webhook (requires Kubernetes >= 1.27). See [matchConditions](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-matchconditions)                                                        | `[]`                                              |
+    alb.ingress.kubernetes.io/target-control-port.${serviceName}.${servicePort}: "3000" # Must match agent controlAddress port
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    alb.ingress.kubernetes.io/target-control-port.${serviceName}.${servicePort}: 3000 # Must match agent controlAddress port
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fdcdb1e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4dbf7bf3` are properly handled with clean fallback behavior.

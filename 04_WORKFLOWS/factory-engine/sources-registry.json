@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-12T23:55:11.402Z",
-    "lastVerified": "2026-11-12T23:55:11.402Z",
+    "lastChecked": "2026-11-13T00:01:54.070Z",
+    "lastVerified": "2026-11-13T00:01:54.070Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -465,8 +465,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T23:16:46.523Z",
-    "lastVerified": "2026-11-12T23:16:46.523Z",
+    "lastChecked": "2026-11-13T00:01:45.622Z",
+    "lastVerified": "2026-11-13T00:01:45.622Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -520,22 +520,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
-    "name": "aws-load-balancer-controller",
+    "name": "kubernetes-sigs/aws-load-balancer-controller",
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-11T13:52:13.709Z",
-    "lastVerified": "2026-11-11T13:52:13.709Z",
+    "lastChecked": "2026-11-13T00:01:43.581Z",
+    "lastVerified": "2026-11-13T00:01:43.581Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-    "contentHash": "3a3d97abe0803ffd6c1b3c14b9976f4d195fc54203e0a295f68303c565de65b6",
+    "contentHash": "9a4bfbadee74aed17076420373153c40633c624d3adae0e326badaabaf16b5fa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "fdcdb1e5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "smallstep-cli": {
     "name": "cli",
@@ -1009,8 +1008,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T13:33:06.987Z",
-    "lastVerified": "2026-11-12T13:33:06.987Z",
+    "lastChecked": "2026-11-13T00:01:40.606Z",
+    "lastVerified": "2026-11-13T00:01:40.606Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -3169,9 +3168,9 @@
   "pinecone-io-examples": {
     "name": "examples",
     "officialUrl": "https://github.com/pinecone-io/examples",
-    "lastChecked": "2026-11-11T11:33:37.207Z",
+    "lastChecked": "2026-11-13T00:01:43.182Z",
     "revisionIdentifier": "db002421",
-    "lastVerified": "2026-11-11T11:33:37.207Z"
+    "lastVerified": "2026-11-13T00:01:43.182Z"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
     "name": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -8271,9 +8270,9 @@
   "killercup-cargo-edit": {
     "name": "cargo-edit",
     "officialUrl": "https://github.com/killercup/cargo-edit",
-    "lastChecked": "2026-11-10T05:06:11.845Z",
+    "lastChecked": "2026-11-13T00:01:30.586Z",
     "revisionIdentifier": "5cf6c0ba",
-    "lastVerified": "2026-11-10T05:06:11.845Z"
+    "lastVerified": "2026-11-13T00:01:30.586Z"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -11011,9 +11010,9 @@
   "kevinnzou-compose-webview-multiplatform": {
     "name": "compose-webview-multiplatform",
     "officialUrl": "https://github.com/KevinnZou/compose-webview-multiplatform",
-    "lastChecked": "2026-11-08T17:49:20.067Z",
+    "lastChecked": "2026-11-13T00:01:35.582Z",
     "revisionIdentifier": "68e76907",
-    "lastVerified": "2026-11-08T17:49:20.067Z"
+    "lastVerified": "2026-11-13T00:01:35.582Z"
   },
   "agamm-pseo-next": {
     "name": "pseo-next",
@@ -12993,12 +12992,12 @@
     "lastVerified": "2026-11-09T06:38:52.164Z"
   },
   "fastify-fastify": {
-    "name": "fastify/fastify",
+    "name": "fastify",
     "officialUrl": "https://github.com/fastify/fastify",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-08T01:09:48.234Z",
-    "lastVerified": "2026-11-08T01:09:48.234Z",
+    "lastChecked": "2026-11-13T00:01:34.922Z",
+    "lastVerified": "2026-11-13T00:01:34.922Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fastify-fastify",
@@ -13007,7 +13006,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0b076ca5"
   },
   "kirillzyusko-react-native-keyboard-controller": {
     "name": "kirillzyusko/react-native-keyboard-controller",
