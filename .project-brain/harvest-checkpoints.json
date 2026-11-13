@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T20:07:25.639Z",
+  "last_updated": "2026-11-13T20:16:23.263Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -800,14 +800,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "56946dbb36db05c8aa9510825fb60076a49e0964d714486c2b03cbfbbab89601",
-      "verified_at": "2026-11-08T18:58:42.700Z",
+      "content_hash": "80c44fb7e171b3a32083a856be3d7f49745174382a94c447fa3ba1d1df0ac2c5",
+      "verified_at": "2026-11-13T20:16:15.366Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T18:58:42.700Z"
+      "last_updated": "2026-11-13T20:16:15.366Z"
     },
     "canberkkkkkk/ema-lightning": {
       "repository": "canberkkkkkk/ema-lightning",
@@ -3876,14 +3876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karakeep-app-karakeep",
-      "content_hash": "5881e85ebf4758741dfabc51fa3a1a3afcdb523a09f6aa76d8e0ab3d976b5f04",
-      "verified_at": "2026-11-09T11:31:10.127Z",
+      "content_hash": "f20023e860cf93bf0c820b3709409764f10c30425fe79c333c055ab38bed7a81",
+      "verified_at": "2026-11-13T20:16:23.262Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T11:31:10.127Z"
+      "last_updated": "2026-11-13T20:16:23.262Z"
     },
     "authzed/spicedb": {
       "repository": "authzed/spicedb",

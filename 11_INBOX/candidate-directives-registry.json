@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T20:08:04.304Z",
+  "last_updated": "2026-11-13T20:16:28.463Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4413,13 +4413,13 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-6OE0",
+      "id": "CD-3CXA",
       "directive_title": "export: Fix consent of former subscribers covering private channels.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-6OE0-export-fix-consent-of-former-subscribers-covering-private-channels.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-3CXA-export-fix-consent-of-former-subscribers-covering-private-channels.md",
       "status": "QUARANTINED_REJECT",
-      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-13",
       "domain_letter": "A"
     },
@@ -10140,6 +10140,46 @@
       "source_repo": "cilium-cilium",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C13517-datapath-iptables-scope-notrack-tunnel-r.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-392E",
+      "directive_title": "pin Node.js to 24.22.3 for the November 2026 security release",
+      "source_repo": "karakeep-app/karakeep",
+      "source_commit": "f7119ca0",
+      "staged_file": "11_INBOX/candidate-directives/CD-392E-pin-node-js-to-24-22-3-for-the-november-2026-security-release.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-13",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-7EF86F",
+      "directive_title": "Forensic Learning Record (Deep Inspection): DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7EF86F-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-3CHR",
+      "directive_title": "docker): pin Node.js to 24.22.3 for the November 2026 security release",
+      "source_repo": "karakeep-app-karakeep-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3CHR-docker-pin-node-js-to-24-22-3-for-the-november-2026-security-release.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-REV-EE4D0D",
+      "directive_title": "export: Fix consent of former subscribers covering private channels.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EE4D0D-export-fix-consent-of-former-subscribers.md",
       "staged_date": "2026-11-13"
     }
   ]

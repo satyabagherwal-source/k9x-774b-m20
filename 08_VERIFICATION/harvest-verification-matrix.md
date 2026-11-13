@@ -9603,3 +9603,5 @@
 | `CYCLE-20261113-ROTJ` | `2026-11-13T20:07:24.007Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8371` | Yes (`041e66a8...`) |
 | `CYCLE-20261113-RQ2H` | `2026-11-13T20:07:25.625Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8372` | Yes (`022ecaa2...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T20:08:02.979Z` | `hf-unsloth-qwen3.8-27b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-218A5260` [Domain D] | Yes (`8e54b810...`) |
+| `CYCLE-20261113-32T2` | `2026-11-13T20:16:15.350Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`80c44fb7...`) |
+| `CYCLE-20261113-38WH` | `2026-11-13T20:16:23.249Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8373` | Yes (`f20023e8...`) |

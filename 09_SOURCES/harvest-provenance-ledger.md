@@ -9636,3 +9636,5 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `edc81e6f` | Multi-dimensional audit evidence | 2026-11-13T20:07:24.011Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `acc33f63` | Multi-dimensional audit evidence | 2026-11-13T20:07:25.629Z |
 | `learn-dom-d-218a5260` | `project://hf-unsloth-qwen3.8-27b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | 2026-11-13T20:08:02.979Z |
+| `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-13T20:16:15.355Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `f7119ca0` | Multi-dimensional audit evidence | 2026-11-13T20:16:23.253Z |

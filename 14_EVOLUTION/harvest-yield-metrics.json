@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T20:07:25.635Z",
-  "total_cycles_completed": 9358,
-  "total_learnings_persisted": 9358,
-  "total_rules_promoted": 9091,
+  "last_updated": "2026-11-13T20:16:23.259Z",
+  "total_cycles_completed": 9360,
+  "total_learnings_persisted": 9360,
+  "total_rules_promoted": 9092,
   "history": [
-    {
-      "timestamp": "2026-11-13T06:20:48.782Z",
-      "repository": "StikDebug/StikDebug",
-      "learningId": "learn-github-stikdebug-stikdebug",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T06:20:51.778Z",
-      "repository": "kgateway-dev/kgateway",
-      "learningId": "learn-github-kgateway-dev-kgateway",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T06:33:13.211Z",
       "repository": "KRAFTON/Raon-1-mini-preview",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T20:07:25.635Z",
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:16:15.361Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T20:16:23.259Z",
+      "repository": "karakeep-app/karakeep",
+      "learningId": "learn-github-karakeep-app-karakeep",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

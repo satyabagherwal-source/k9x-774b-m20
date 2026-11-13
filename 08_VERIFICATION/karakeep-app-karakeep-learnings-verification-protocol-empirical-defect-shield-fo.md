@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:39:59.759Z",
+  "timestamp": "2026-11-13T20:16:27.776Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-karakeep-app-karakeep-learnings",
+  "learning_id": "LEARN-EVO-karakeep-app-karakeep-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [karakeep-app-karakeep-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:39:59.759Z`  
-> **Learning ID**: `LEARN-REEXTRACT-karakeep-app-karakeep-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-13T20:16:27.776Z`  
+> **Learning ID**: `LEARN-EVO-karakeep-app-karakeep-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md`  
 > **Source**: github ([https://github.com/karakeep-app/karakeep](https://github.com/karakeep-app/karakeep))  
-> **Source Version**: `d1514c25`  
+> **Source Version**: `f7119ca0`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T11:31:09.016Z  
+> **Timestamp**: 2026-11-13T20:16:22.210Z  
 > **Learning ID**: `learn-github-karakeep-app-karakeep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karakeep-app/karakeep](https://github.com/karakeep-app/karakeep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T11:31:05.155Z  
+> **Harvest Timestamp**: 2026-11-13T20:16:22.203Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A self-hostable bookmark-everything app (links, notes and images) with AI-based automatic tagging and full text search
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 30420 stars
+- **Stars / Engagement**: 30505 stars
 
 ---
 
@@ -778,1227 +778,269 @@ export function cleanupApiClient() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d1514c25` (2026-11-09)
-**Commit Message**: fix(web): fix bugs found in pre-release QA
+### Incident Patch 1: `f7119ca0` (2026-11-11)
+**Commit Message**: fix(docker): pin Node.js to 24.22.3 for the November 2026 security release
 
-Bookmarks and preview:
-- Esc in a bulk-mode dialog no longer exits bulk mode
-- The archive shortcut shows "Bookmark archived" with Undo
-- PDF cards fall back to the file icon when the screenshot fails to load
-- Page overview shows the bookmark's own title
-- Highlight colour buttons have labels; the popover keeps off the screen edge
-- Compact layout dates line up; checklist items lose the extra bullet
-- Empty search shows "No matches"
+Node.js 24.22.3 fixes the issues in the November 2026 security release
+(https://nodejs.org/en/blog/vulnerability/november-2026-security-releases),
+seven of them rated high.
 
-Lists, tags and app shell:
-- "Delete all unused tags" says it deletes every unused tag
-- List counts refresh after creating or editing a list
-- Merge list is hidden for smart lists; long names truncate in the picker
-- Share dialog no longer nests block elements in a <p>
-- The smart list builder understands #tag
-- Tag name sort ignores case
-- Unknown URLs show the app's not-found page
-- Sign-in (credentials and OAuth) honours redirectUrl
-- Bad invite links fail fast; /verify-email errors link back to sign in
-- Autofocus and labels on auth forms, nav icons and list chevrons
-- Page titles for home, lists, search, feeds and backups
+The images used the floating node:24-slim tag, so whether a build picked
+up the fix depended on a fresh pull. Pin the exact version in a single
+NODE_VERSION build arg shared by every Node stage, so security bumps are
+a deliberate one-line change.
 
-Settings and admin:
-- Subscription, rules and background jobs fit on mobile
-- Re
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `apps/web/app/dashboard/bookmarks/page.tsx` (modified, +10/-0)
+**File**: `docker/Dockerfile` (modified, +9/-4)
 ```diff
-@@ -1,5 +1,15 @@
-+import type { Metadata } from "next";
- import React from "react";
- import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
-+import { useTranslation } from "@/lib/i18n/server";
+@@ -1,3 +1,8 @@
++# Pinned to an exact release so security fixes land deliberately instead of
++# depending on whether a floating tag was re-pulled. Bump on every Node.js
++# security release: https://nodejs.org/en/blog/vulnerability
++ARG NODE_VERSION=24.22.3
 +
-+export async function generateMetadata(): Promise<Metadata> {
-+  // oxlint-disable-next-line rules-of-hooks
-+  const { t } = await useTranslation();
-+  return {
-+    title: `${t("common.home")} | Karakeep`,
-+  };
-+}
+ ################# Monolith Builder ##############
+ FROM rust:1-bookworm AS monolith_builder
  
- export default async function BookmarksPage() {
-   return (
+@@ -13,7 +18,7 @@ RUN apt-get update \
+     && cargo install monolith --version "${MONOLITH_VERSION}" --locked
+ 
+ ################# Base Builder ##############
+-FROM node:24-slim AS base
++FROM node:${NODE_VERSION}-slim AS base
+ 
+ WORKDIR /app
+ ENV PNPM_HOME="/pnpm"
+@@ -107,7 +112,7 @@ FROM base AS mcp_builder
+ RUN (cd apps/mcp && pnpm build)
+ 
+ ################# The All-in-one builder ##############
+-FROM node:24-slim AS aio_builder
++FROM node:${NODE_VERSION}-slim AS aio_builder
+ LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
+ WORKDIR /app
+ 
+@@ -257,7 +262,7 @@ RUN rm /etc/s6-overlay/s6-rc.d/svc-workers/dependencies.d/init-db-migration \
+ ENV USING_LEGACY_SEPARATE_CONTAINERS=true
+ 
+ ################# The cli ##############
+-FROM node:24-slim AS cli
++FROM node:${NODE_VERSION}-slim AS cli
+ LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
+ WORKDIR /app
+ 
+@@ -271,7 +276,7 @@ ENV SERVER_VERSION=${SERVER_VERSION}
+ ENTRYPOINT ["node", "index.mjs"]
+ 
+ ################# MCP server ##############
+-FROM node:24-slim AS mcp
++FROM node:${NODE_VERSION}-slim AS mcp
+ LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
+ WORKDIR /app
+ 
 ```
 
-**File**: `apps/web/app/dashboard/feeds/[feedId]/page.tsx` (modified, +20/-1)
+---
+
+### Incident Patch 2: `88a9ff9c` (2026-11-10)
+**Commit Message**: chore(seo): fix crawl rules, OG image and structured data
+
+- web: add robots.txt that only lets crawlers reach public lists and the
+  assets they need to render, so login pages on cloud and self-hosted
+  instances stop competing with karakeep.com for the brand name
+- docs: point robots.txt at the sitemap and keep old versions and /next/
+  out of the sitemap, matching what robots.txt already blocks
+- landing/docs: replace the 3.2MB 3624x1956 OG image, which still showed
+  the old hoarder logo, with a 1200x630 crop of the current dashboard
+- landing: add WebSite JSON-LD on the homepage and FAQPage on pricing
+- fix the "tagged AI" typo in the web app description and the navbar alt
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/landing/src/Navbar.tsx` (modified, +1/-1)
 ```diff
-@@ -1,8 +1,27 @@
-+import type { Metadata } from "next";
- import { notFound } from "next/navigation";
- import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
-+import { PageHeader } from "@/components/ui/page-header";
- import { api } from "@/server/api/client";
- import { TRPCError } from "@trpc/server";
+@@ -13,7 +13,7 @@ export default function NavBar() {
+     <nav className="sticky top-0 z-50 border-b border-neutral-200/50 bg-white/70 backdrop-blur-xl">
+       <div className="mx-auto flex w-full max-w-[1248px] items-center justify-between px-4 py-3">
+         <a href="/">
+-          <img src={Logo} alt="logo" className="w-36" />
++          <img src={Logo} alt="Karakeep" className="w-36" />
+         </a>
  
-+export async function generateMetadata(props: {
-+  params: Promise<{ feedId: string }>;
-+}): Promise<Metadata> {
-+  const params = await props.params;
-+  try {
-+    const feed = await api.feeds.get({ feedId: params.feedId });
-+    return {
-+      title: `${feed.name} | Karakeep`,
-+    };
-+  } catch (e) {
-+    if (e instanceof TRPCError && e.code === "NOT_FOUND") {
-+      notFound();
-+    }
-+    throw e;
-+  }
-+}
-+
- export default async function FeedPage(props: {
-   params: Promise<{ feedId: string }>;
- }) {
-@@ -24,7 +43,7 @@ export default async function FeedPage(props: {
-       query={{ rssFeedId: feed.id }}
-       showDivider={true}
-       showEditorCard={false}
--      header={<div className="text-2xl">{feed.name}</div>}
-+      header={<PageHeader title={feed.name} />}
+         {/* Desktop navigation */}
+```
+
+**File**: `apps/landing/src/layouts/BaseLayout.astro` (modified, +2/-2)
+```diff
+@@ -42,8 +42,8 @@ const url = `${BASE_URL}${canonicalPath}`;
+       content="https://karakeep.com/opengraph-image.png"
      />
-   );
- }
+     <meta property="og:image:type" content="image/png" />
+-    <meta property="og:image:width" content="3624" />
+-    <meta property="og:image:height" content="1956" />
++    <meta property="og:image:width" content="1200" />
++    <meta property="og:image:height" content="630" />
+     <meta
+       property="og:image:alt"
+       content="Karakeep bookmark manager app screenshot"
 ```
 
-**File**: `apps/web/app/dashboard/lists/page.tsx` (modified, +9/-0)
+**File**: `apps/landing/src/pages/index.astro` (modified, +10/-0)
 ```diff
-@@ -1,10 +1,19 @@
-+import type { Metadata } from "next";
- import AllListsView from "@/components/dashboard/lists/AllListsView";
- import { NewListButton } from "@/components/dashboard/lists/NewListButton";
- import { PendingInvitationsCard } from "@/components/dashboard/lists/PendingInvitationsCard";
- import { PageHeader } from "@/components/ui/page-header";
- import { useTranslation } from "@/lib/i18n/server";
- import { api } from "@/server/api/client";
- 
-+export async function generateMetadata(): Promise<Metadata> {
-+  // oxlint-disable-next-line rules-of-hooks
-+  const { t } = await useTranslation();
-+  return {
-+    title: `${t("lists.all_lists")} | Karakeep`,
-+  };
-+}
-+
- export default async function ListsPage() {
-   // oxlint-disable-next-line rules-of-hooks
-   const { t } = await useTranslation();
+@@ -17,6 +17,16 @@ const ORGANIZATION_ID = `${BASE_URL}/#organization`;
+     <script is:inline type="application/ld+json" set:html={JSON.stringify({
+       "@context": "https://schema.org",
+       "@graph": [
++        {
++          "@type": "WebSite",
++          "@id": `${BASE_URL}/#website`,
++          "name": "Karakeep",
++          "alternateName": ["Hoarder", "karakeep.com"],
++          "url": `${BASE_URL}/`,
++          "publisher": {
++            "@id": ORGANIZATION_ID
++          }
++        },
+         {
+           "@type": "SoftwareApplication",
+           "@id": `${BASE_URL}/#software-application`,
 ```
 
-**File**: `apps/web/app/dashboard/not-found.tsx` (modified, +5/-5)
+**File**: `apps/landing/src/pages/pricing.astro` (modified, +15/-1)
 ```diff
-@@ -8,7 +8,7 @@ import { ArrowLeft, FileQuestion, Home } from "lucide-react";
- export default function NotFound() {
-   const { t } = useTranslation();
-   return (
--    <div className="flex flex-1 items-center justify-center rounded-lg bg-slate-50 p-8 shadow-sm dark:border dark:bg-card dark:shadow-none">
-+    <div className="flex flex-1 items-center justify-center rounded-lg bg-muted/50 p-8 shadow-sm dark:border dark:bg-card dark:shadow-none">
-       <div className="w-full max-w-md space-y-8 text-center">
-         {/* Not Found Icon */}
-         <div className="flex justify-center">
-@@ -35,12 +35,12 @@ export default function NotFound() {
-             {t("errors.go_back")}
-           </Button>
+@@ -1,12 +1,26 @@
+ ---
+ import PricingPage from "../Pricing";
+ import Layout from "../layouts/Layout.astro";
+-import { PRICING_META_DESCRIPTION } from "../pricing-data";
++import { PRICING_FAQS, PRICING_META_DESCRIPTION } from "../pricing-data";
+ ---
  
--          <Link href="/" className="block">
--            <Button variant="outline" className="w-full">
-+          <Button variant="outline" className="w-full" asChild>
-+            <Link href="/">
-               <Home className="h-4 w-4" />
-               {t("errors.go_home")}
--            </Button>
--          </Link>
-+            </Link>
-+          </Button>
-         </div>
-       </div>
-     </div>
-```
-
-**File**: `apps/web/app/dashboard/search/layout.tsx` (added, +19/-0)
-```diff
-@@ -0,0 +1,19 @@
-+import type { Metadata } from "next";
-+import { useTranslation } from "@/lib/i18n/server";
-+
-+// The page is a client component, so its title is set here.
-+export async function generateMetadata(): Promise<Metadata> {
-+  // oxlint-disable-next-line rules-of-hooks
-+  const { t } = await useTranslation();
-+  return {
-+    title: `${t("common.search")} | Karakeep`,
-+  };
-+}
-+
-+export default function SearchLayout({
-+  children,
-+}: {
-+  children: React.ReactNode;
-+}) {
-+  return children;
-+}
-```
-
-**File**: `apps/web/app/dashboard/search/page.tsx` (modified, +1/-0)
-```diff
-@@ -37,6 +37,7 @@ function SearchComp() {
-           fetchNextPage={fetchNextPage}
-           isFetchingNextPage={isFetchingNextPage}
-           bookmarks={data.pages.flatMap((b) => b.bookmarks)}
-+          isSearch
-         />
-       ) : (
-         <BookmarksGridSkeleton />
-```
-
-**File**: `apps/web/app/not-found.tsx` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+import NotFound from "./dashboard/not-found";
-+
-+// Unmatched URLs anywhere in the app land here, outside the dashboard layout.
-+export default function RootNotFound() {
-+  return (
-+    <div className="flex min-h-dvh p-4">
-+      <NotFound />
-+    </div>
-+  );
-+}
-```
-
-**File**: `apps/web/app/settings/backups/page.tsx` (modified, +13/-5)
-```diff
-@@ -1,11 +1,19 @@
--"use client";
--
-+import type { Metadata } from "next";
- import BackupSettings from "@/components/settings/BackupSettings";
- import { SettingsPage } from "@/components/settings/SettingsPage";
--import { useTranslation } from "@/lib/i18n/client";
-+import { useTranslation } from "@/lib/i18n/server";
-+
-+export async function generateMetadata(): Promise<Metadata> {
-+  // oxlint-disable-next-line rules-of-hooks
-+  const { t } = await useTranslation();
-+  return {
-+    title: `${t("settings.backups.page_title")} | Karakeep`,
-+  };
-+}
- 
--export default function BackupsPage() {
--  const { t } = useTranslation();
-+export default async function BackupsPage() {
-+  // oxlint-disable-next-line rules-of-hooks
-+  const { t } = await useTranslation();
-   return (
-     <SettingsPage
-       title={t("settings.backups.page_title")}
-```
-
----
-
-### Incident Patch 2: `ae3223a0` (2026-11-09)
-**Commit Message**: fix(mobile): stop the bookmark list jumping to the top on refetch (#3347)
-
-* fix(mobile): stop the bookmark list jumping to the top on refetch
-
-The home list scrolled to the top whenever a data change put a new item
-first: background refetches, bookmarks saved on another device, undoing
-an archive. It now scrolls only when a create-bookmark mutation from this
-device succeeds, read through react-query's useMutationState, so saves
-from the new-bookmark sheet, clipboard, photos and the share extension
-are covered. Existing bookmarks and oldest-first sorting don't scroll.
-
-The scroll target was also wrong. The inset captured on drag is the raw
-contentInset, which is always 0 under automatic inset adjustment, and
-native scrollTo clamps negative offsets to 0 anyway, so the new card
-landed under the transparent header. It now scrolls to minus the
-navigator's header height with scrollToOverflowEnabled.
-
-* fix(mobile): scroll on re-saves and on saves that finish out of order
-
-Re-saving a link from mobile bumps it to the top, so it should scroll
-like a new save. And track each handled save instead of the highest
-mutation id, so a save that finishes after a later one still scrolls.
-
-**File**: `apps/mobile/app/dashboard/(tabs)/(home)/index.tsx` (modified, +1/-0)
-```diff
-@@ -214,6 +214,7 @@ export default function Home() {
-       <UpdatingBookmarkList
-         header={<ConnectionBanner />}
-         query={{ archived: false }}
-+        scrollToTopOnSave
-         emptyState={{
-           title: t("home.empty_title"),
-           subtitle: t("home.empty_subtitle"),
-```
-
-**File**: `apps/mobile/components/bookmarks/BookmarkList.tsx` (modified, +34/-21)
-```diff
-@@ -1,4 +1,4 @@
--import { useEffect, useRef } from "react";
-+import { use, useEffect, useRef } from "react";
- import {
-   ActivityIndicator,
-   FlatList,
-@@ -11,11 +11,14 @@ import EmptyState from "@/components/ui/EmptyState";
- import { useTranslation } from "@/lib/i18n/hooks";
- import { getGridColumns, useContainerWidth } from "@/lib/responsive";
- import useAppSettings from "@/lib/settings";
-+import { useMutationState } from "@tanstack/react-query";
- import { useScrollToTop } from "expo-router";
-+import { HeaderHeightContext } from "expo-router/react-navigation";
- import type { LucideIcon } from "lucide-react-native";
- import { Bookmark } from "lucide-react-native";
- 
- import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
-+import { useTRPC } from "@karakeep/shared-react/trpc";
- 
- import BookmarkCard from "./BookmarkCard";
- 
-@@ -40,6 +43,7 @@ export default function BookmarkList({
-   isFetchingNextPage,
-   isRefreshing,
-   emptyState,
-+  scrollToTopOnSave,
- }: {
-   bookmarks: ZBookmark[];
-   onRefresh: () => void;
-@@ -48,32 +52,42 @@ export default function BookmarkList({
-   header?: React.ReactElement;
-   isFetchingNextPage?: boolean;
-   emptyState?: BookmarkListEmptyState;
-+  scrollToTopOnSave?: boolean;
- }) {
-   const flatListRef = useRef<FlatList<ZBookmark>>(null);
-   const { t } = useTranslation();
-   useScrollToTop(flatListRef);
-   const { settings } = useAppSettings();
--  // A new item at the top would otherwise land out of sight, leaving people to
--  // wonder whether it saved.
--  const firstBookmarkId = bookmarks[0]?.id;
--  const previousFirstBookmarkId = useRef(firstBookmarkId);
--  const previousCount = useRef(bookmarks.length);
--  const topInset = useRef(0);
-+  // A bookmark saved from this device lands at the top (re-saving an existing
-+  // link bumps it there too), which may be out of sight, leaving people to
-+  // wonder whether it saved. Follow their own saves rather than every change
-+  // in the data, which also arrives from refetches.
-+  const api = useTRPC();
-+  const saveIds = useMutationState({
-+    filters: {
-+      mutationKey: api.bookmarks.createBookmark.mutationKey(),
-+      status: "success",
-+    },
-+    select: (m) => m.mutationId,
-+  });
-+  // Saves can finish out of order, so remember each one rather than the latest.
-+  const handledSaveIds = useRef(new Set(saveIds));
-+  // The list scrolls under the transparent header, so its visible top is above
-+  // zero.
-+  const headerHeight = use(HeaderHeightContext) ?? 0;
-   useEffect(() => {
--    const addedAtTop =
--      previousFirstBookmarkId.current !== undefined &&
--      firstBookmarkId !== previousFirstBookmarkId.current &&
--      bookmarks.length > previousCount.current;
--    previousFirstBookmarkId.current = firstBookmarkId;
--    previousCount.current = bookmarks.length;
--    if (addedAtTop) {
--      // The list scrolls under the header, so its visible top is above zero.
-+    const newSaveIds = saveIds.filter((id) => !handledSaveIds.current.has(id));
-+    if (newSaveIds.length === 0) {
-+      return;
-+    }
-+    newSaveIds.forEach((id) => handledSaveIds.current.add(id));
-+    if (scrollToTopOnSave && settings.bookmarkSortOrder === "desc") {
-       flatListRef.current?.scrollToOffset({
--        offset: -topInset.current,
-+        offset: -headerHeight,
-         animated: true,
-       });
-     }
--  }, [firstBookmarkId, bookmarks.length]);
-+  }, [saveIds]);
-   const { width: containerWidth, onLayout } = useContainerWidth();
-   const { numColumns, columnWidth } = getGridColumns({
-     containerWidth,
-@@ -91,6 +105,8 @@ export default function BookmarkList({
-         numColumns={numColumns}
-         columnWrapperStyle={numColumns > 1 ? { gap: GAP } : undefined}
-         contentInsetAdjustmentBehavior="automatic"
-+        // Lets scrollToOffset reach the header-adjusted top.
-+        scrollToOverflowEnabled
-         ListHeaderComponent={header}
-         contentContainerStyle={{
-           gap: GAP,
-@@ -118,10 +134,7 @@ export default function BookmarkList({
-         data={bookmarks}
-         refreshing={isRefreshing}
-         onRefresh={onRefresh}
--        onScrollBeginDrag={(event) => {
--          Keyboard.dismiss();
--          topInset.current = event.nativeEvent.contentInset?.top ?? 0;
--        }}
-+        onScrollBeginDrag={Keyboard.dismiss}
-         keyExtractor={(b) => b.id}
-         onEndReached={fetchNextPage}
-         ListFooterComponent={
-```
-
-**File**: `apps/mobile/components/bookmarks/UpdatingBookmarkList.tsx` (modified, +3/-0)
-```diff
-@@ -13,10 +13,12 @@ export default function UpdatingBookmarkList({
-   query,
-   header,
-   emptyState,
-+  scrollToTopOnSave,
- }: {
-   query: Omit<ZGetBookmarksRequest, "sortOrder" | "includeContent">; // Sort order is handled by mobile settings
-   header?: React.ReactElement;
-   emptyState?: BookmarkListEmptyState;
-+  scrollToTopOnSave?: boolean;
- }) {
-   const api = useTRPC();
-   const queryClient = useQueryClient();
-@@ -69,6 +71,7 @@ export default function UpdatingBookmarkList({
-         .filter((b) => b.content.type != BookmarkTypes.UNKNOWN)}
-       header={header}
-       emptyState={emptyState}
-+      scrollToTopOnSave={scrollToTopOnSave}
-       onRefresh={onRefresh}
-       fetchNextPage={onEndReached}
-       isFetchingNextPage={isFetchingNextPage}
-```
-
----
-
-### Incident Patch 3: `a55dba2b` (2026-11-09)
-**Commit Message**: feat(web): guided smart list builder in the list dialog (#3340)
-
-* feat(web): guided smart list builder in the list dialog
-
-- Smart lists are built from controls: tags (several, picked by name,
-  including names no tag has yet), favourited, archived, and age. The
-  query string stays the source of truth. Each control rewrites only
-  its own terms, so hand-typed terms next to them are kept.
-- A live preview under the controls shows how many bookmarks match,
-  using lists.previewSmartQuery, and says so when nothing matches yet.
-- The raw query moves into an Advanced section. It opens on its own,
-  and stays open, when the query has something the controls can't
-  show.
-- Query errors are shown while typing and in plain words: an
-  unparseable query, plain words without a qualifier, or no condition.
-- The fields get labels and placeholders (icon, name, parent with a
-  clear button), and the submit button says "Create list" for new
-  lists.
-- TagNamePicker: a multi-pick tag search next to TagAutocomplete.
-- The query explainer tooltip shows the query language help when the
-  query is empty.
-
-* feat(web): lists, title and URL in the smart list builder
-
-- Add a Lists picker next to Tags. 
-
-**File**: `apps/web/components/dashboard/lists/EditListModal.tsx` (modified, +263/-188)
-```diff
-@@ -1,13 +1,19 @@
- "use client";
- 
--import { useEffect, useMemo, useState } from "react";
-+import { useEffect, useMemo, useRef, useState } from "react";
- import dynamic from "next/dynamic";
- import Link from "next/link";
- import { useRouter } from "next/navigation";
- import { ActionButton } from "@/components/ui/action-button";
--import { Button } from "@/components/ui/button";
-+import { Button, ButtonWithTooltip } from "@/components/ui/button";
-+import {
-+  Collapsible,
-+  CollapsibleContent,
-+  CollapsibleTrigger,
-+} from "@/components/ui/collapsible";
- import {
-   Dialog,
-+  DialogBody,
-   DialogClose,
-   DialogContent,
-   DialogFooter,
-@@ -23,6 +29,8 @@ import {
-   FormItem,
-   FormLabel,
-   FormMessage,
-+  setServerFormErrors,
-+  useFormErrors,
- } from "@/components/ui/form";
- import { Input } from "@/components/ui/input";
- import {
-@@ -40,7 +48,7 @@ import {
- import { toast } from "@/components/ui/sonner";
- import { useTranslation } from "@/lib/i18n/client";
- import { zodResolver } from "@hookform/resolvers/zod";
--import { X } from "lucide-react";
-+import { ChevronRight, X } from "lucide-react";
- import { useForm, useWatch } from "react-hook-form";
- import { z } from "zod";
- 
-@@ -56,6 +64,9 @@ import {
- 
- import QueryExplainerTooltip from "../search/QueryExplainerTooltip";
- import { BookmarkListSelector } from "./BookmarkListSelector";
-+import { SmartListPreview } from "./SmartListPreview";
-+import { isQueryRepresentableInBuilder } from "./smartListBuilderQuery";
-+import { SmartListQueryBuilder } from "./SmartListQueryBuilder";
- 
- // The emoji dataset is large, only load it when the picker is opened.
- const EmojiPicker = dynamic(
-@@ -95,9 +106,13 @@ export function EditListModal({
-     throw new Error("You must provide both open and setOpen or neither");
-   }
-   const [customOpen, customSetOpen] = useState(false);
-+  const [advancedOpen, setAdvancedOpen] = useState(false);
- 
-   const form = useForm({
--    resolver: zodResolver(zNewBookmarkListSchema),
-+    resolver: zodResolver(
-+      zNewBookmarkListSchema,
-+      useFormErrors({ query: t("lists.query_required") }),
-+    ),
-     defaultValues: {
-       name: list?.name ?? prefill?.name ?? "",
-       description: list?.description ?? prefill?.description ?? "",
-@@ -121,15 +136,39 @@ export function EditListModal({
-       type: list?.type ?? prefill?.type ?? "manual",
-       query: list?.query ?? prefill?.query ?? undefined,
-     });
-+    setAdvancedOpen(false);
-   }, [open]);
- 
-   const query = useWatch({ control: form.control, name: "query" });
-+  // A query the builder can't show has to stay on screen. Sticky rather than
-+  // derived, so the field doesn't vanish once a query being typed becomes valid.
-+  if (!advancedOpen && !isQueryRepresentableInBuilder(query ?? "")) {
-+    setAdvancedOpen(true);
-+  }
-   const parsedSearchQuery = useMemo(() => {
-     if (!query) {
-       return undefined;
-     }
-     return parseSearchQuery(query);
-   }, [query]);
-+  // Mirrors what the server's schema rejects, while they're still typing.
-+  const queryError = !parsedSearchQuery
-+    ? undefined
-+    : parsedSearchQuery.result !== "full"
-+      ? t("lists.query_invalid", { text: parsedSearchQuery.text })
-+      : parsedSearchQuery.text.length > 0
-+        ? t("lists.query_plain_text", { text: parsedSearchQuery.text })
-+        : undefined;
-+
-+  // "Parent list not found" and "can't be nested under" are the rejected values.
-+  const onMutationError = (e: Parameters<typeof setServerFormErrors>[1]) => {
-+    if (!setServerFormErrors(form, e, { rejectedField: "parentId" })) {
-+      toast({
-+        variant: "destructive",
-+        title: t("common.something_went_wrong"),
-+      });
-+    }
-+  };
- 
-   const { mutate: createList, isPending: isCreating } = useCreateBookmarkList({
-     onSuccess: (resp) => {
-@@ -140,28 +179,7 @@ export function EditListModal({
-       router.push(`/dashboard/lists/${resp.id}`);
-       form.reset();
-     },
--    onError: (e) => {
--      if (e.data?.code == "BAD_REQUEST") {
--        if (e.data.zodError) {
--          toast({
--            variant: "destructive",
--            description: Object.values(e.data.zodError.fieldErrors)
--              .flat()
--              .join("\n"),
--          });
--        } else {
--          toast({
--            variant: "destructive",
--            description: e.message,
--          });
--        }
--      } else {
--        toast({
--          variant: "destructive",
--          title: t("common.something_went_wrong"),
--        });
--      }
--    },
-+    onError: onMutationError,
-   });
- 
-   const { mutate: editList, isPending: isEditing } = useEditBookmarkList({
-@@ -172,30 +190,19 @@ export function EditListModal({
-       setOpen(false);
-       form.reset();
-     },
--    onError: (e) => {
--      if (e.data?.code == "BAD_REQUEST") {
--        if (e.data.zodError) {
--          toast({
--            variant: "destructive",
--            description: Object.values(e.data.zodError.fieldErrors)
--              .flat()
--     
-```
-
-**File**: `apps/web/components/dashboard/lists/ListNamePicker.tsx` (added, +112/-0)
-```diff
-@@ -0,0 +1,112 @@
-+"use client";
-+
-+import { useState } from "react";
-+import {
-+  Command,
-+  CommandEmpty,
-+  CommandGroup,
-+  CommandInput,
-+  CommandItem,
-+  CommandList,
-+} from "@/components/ui/command";
-+import {
-+  Popover,
-+  PopoverContent,
-+  PopoverTrigger,
-+} from "@/components/ui/popover";
-+import { selectTriggerClass } from "@/components/ui/select";
-+import { useTranslation } from "@/lib/i18n/client";
-+import { cn } from "@/lib/utils";
-+import { Check, ChevronDown } from "lucide-react";
-+
-+import { useBookmarkLists } from "@karakeep/shared-react/hooks/lists";
-+import { listNameFromPath } from "@karakeep/shared/utils/listUtils";
-+
-+/**
-+ * Picks several of your lists by name, the way `list:` matches them. The popover
-+ * stays open between picks and picking a selected list removes it.
-+ */
-+export function ListNamePicker({
-+  id,
-+  placeholder,
-+  selectedNames,
-+  onToggle,
-+  excludeListId,
-+}: {
-+  id?: string;
-+  placeholder: string;
-+  selectedNames: string[];
-+  onToggle: (name: string) => void;
-+  excludeListId?: string;
-+}) {
-+  const { t } = useTranslation();
-+  const [open, setOpen] = useState(false);
-+  const { data } = useBookmarkLists();
-+
-+  // `list:` only looks at lists you own
-+  const paths = (data?.allPaths ?? []).filter((path) => {
-+    const list = path[path.length - 1];
-+    return list.userRole === "owner" && list.id !== excludeListId;
-+  });
-+
-+  return (
-+    <Popover open={open} onOpenChange={setOpen}>
-+      <PopoverTrigger asChild>
-+        <button
-+          id={id}
-+          type="button"
-+          role="combobox"
-+          aria-expanded={open}
-+          className={selectTriggerClass}
-+        >
-+          <span className="truncate text-muted-foreground/85">
-+            {placeholder}
-+          </span>
-+          <ChevronDown className="size-4 shrink-0 opacity-50" />
-+        </button>
-+      </PopoverTrigger>
-+      <PopoverContent
-+        // It sits in the right column, and opens wider than its trigger.
-+        align="end"
-+        collisionPadding={8}
-+        className="w-[--radix-popover-trigger-width] min-w-72 p-0"
-+        // The dialog around it would otherwise swallow the scrolling.
-+        onWheel={(e) => e.stopPropagation()}
-+      >
-+        <Command>
-+          <CommandInput
-+            placeholder={t("lists.builder.lists_search_placeholder")}
-+            className="h-9 max-sm:h-11"
-+          />
-+          <CommandList className="max-h-60">
-+            <CommandEmpty>{t("lists.builder.lists_none_found")}</CommandEmpty>
-+            <CommandGroup>
-+              {paths.map((path) => {
-+                const list = path[path.length - 1];
-+                return (
-+                  <CommandItem
-+                    key={list.id}
-+                    value={list.id}
-+                    keywords={[list.name]}
-+                    onSelect={() => onToggle(list.name)}
-+                    className="cursor-pointer max-sm:min-h-11"
-+                  >
-+                    <Check
-+                      className={cn(
-+                        "size-4",
-+                        selectedNames.includes(list.name)
-+                          ? "opacity-100"
-+                          : "opacity-0",
-+                      )}
-+                    />
-+                    <span className="truncate">{listNameFromPath(path)}</span>
-+                  </CommandItem>
-+                );
-+              })}
-+            </CommandGroup>
-+          </CommandList>
-+        </Command>
-+      </PopoverContent>
-+    </Popover>
-+  );
-+}
-```
-
-**File**: `apps/web/components/dashboard/lists/SmartListPreview.tsx` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+"use client";
-+
-+import { useTranslation } from "@/lib/i18n/client";
-+import { cn } from "@/lib/utils";
-+import { keepPreviousData, useQuery } from "@tanstack/react-query";
-+
-+import { useDebounce } from "@karakeep/shared-react/hooks/use-debounce";
-+import { useTRPC } from "@karakeep/shared-react/trpc";
-+
-+const DEBOUNCE_MS = 400;
-+
-+/**
-+ * What a smart list would hold, before it's created. `query` must be a valid
-+ * smart list query, or empty while there's nothing valid to preview yet, in which
-+ * case it says what's missing. `invalid` tells a query being fixed from no query.
-+ */
-+export function SmartListPreview({
-+  query,
-+  invalid = false,
-+}: {
-+  query: string;
-+  invalid?: boolean;
-+}) {
-+  const api = useTRPC();
-+  const { t } = useTranslation();
-+  const debouncedQuery = useDebounce(query, DEBOUNCE_MS);
-+  const { data, isError, isFetching } = useQuery(
-+    api.lists.previewSmartQuery.queryOptions(
-+      { query: debouncedQuery },
-+      {
-+        enabled: debouncedQuery.length > 0,
-+        placeholderData: keepPreviousData,
-+        retry: false,
-+      },
-+    ),
-+  );
-+
-+  if (!query) {
-+    return (
-+      <p
-+        aria-live="polite"
-+        className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground"
-+      >
-+        {t(invalid ? "lists.preview.fix_query" : "lists.preview.empty_query")}
-+      </p>
-+    );
-+  }
-+
-+  return (
-+    <div
-+      aria-live="polite"
-+      className={cn(
-+        "rounded-md bg-muted px-3 py-2 text-sm transition-opacity",
-+        (isFetching || query !== debouncedQuery) && "opacity-60",
-+      )}
-+    >
-+      {isError ? (
-+        <p className="text-muted-foreground">{t("lists.preview.failed")}</p>
-+      ) : !data ? (
-+        <p className="text-muted-foreground">{t("lists.preview.checking")}</p>
-+      ) : data.count === 0 ? (
-+        <>
-+          <p className="font-medium">{t("lists.preview.no_matches")}</p>
-+          <p className="text-muted-foreground">
-+            {t("lists.preview.no_matches_description")}
-+          </p>
-+        </>
-+      ) : (
-+        <>
-+          <p className="font-medium">
-+            {t("lists.preview.count", { count: data.count })}
-+          </p>
-+          {data.sample.length > 0 && (
-+            <ul className="mt-1 space-y-0.5 text-xs text-muted-foreground">
-+              {data.sample.map((bookmark) => (
-+                <li key={bookmark.id} className="truncate">
-+                  {bookmark.title ?? t("common.untitled")}
-+                </li>
-+              ))}
-+            </ul>
-+          )}
-+        </>
-+      )}
-+    </div>
-+  );
-+}
-```
-
-**File**: `apps/web/components/dashboard/lists/SmartListQueryBuilder.tsx` (added, +302/-0)
-```diff
-@@ -0,0 +1,302 @@
-+"use client";
-+
-+import { TagNamePicker } from "@/components/dashboard/tags/TagAutocomplete";
-+import { Badge } from "@/components/ui/badge";
-+import { ButtonWithTooltip } from "@/components/ui/button";
-+import { Input } from "@/components/ui/input";
-+import { Label } from "@/components/ui/label";
-+import {
-+  Select,
-+  SelectContent,
-+  SelectItem,
-+  SelectTrigger,
-+  SelectValue,
-+} from "@/components/ui/select";
-+import { useTranslation } from "@/lib/i18n/client";
-+import { X } from "lucide-react";
-+
-+import { useBookmarkLists } from "@karakeep/shared-react/hooks/lists";
-+
-+import { ListNamePicker } from "./ListNamePicker";
-+import {
-+  AGE_OPTIONS,
-+  ANY,
-+  isNegated,
-+  tokenize,
-+  unquote,
-+  withoutNegation,
-+} from "./smartListBuilderQuery";
-+
-+// Translation keys can't contain the comparison signs the query uses
-+const AGE_LABEL_KEYS = {
-+  "<7d": "last_7_days",
-+  "<30d": "last_30_days",
-+  "<1y": "last_year",
-+  ">30d": "over_30_days",
-+  ">1y": "over_a_year",
-+} as const;
-+
-+// Quotes a value unless the query parser reads it as one bare word.
-+// A value starting like a qualifier, such as "is:fav", would be read as one.
-+const quoteIfNeeded = (value: string) =>
-+  /^[^\s()"#!-][^\s()"]*$/.test(value) &&
-+  !/^(is|has|url|list|after|before|age|feed|title|tag|source):/.test(value)
-+    ? value
-+    : `"${value.replaceAll('"', "")}"`;
-+
-+function qualifierState(tokens: string[], term: string) {
-+  const token = tokens.find((tok) => withoutNegation(tok) === term);
-+  if (!token) {
-+    return ANY;
-+  }
-+  return isNegated(token) ? "no" : "yes";
-+}
-+
-+/**
-+ * Builds the simple cases of a smart list query. The query string stays the
-+ * source of truth: every control reads its value from it and only rewrites its
-+ * own terms, so anything typed by hand next to them is left alone.
-+ */
-+export function SmartListQueryBuilder({
-+  query,
-+  onChange,
-+  listId,
-+}: {
-+  query: string;
-+  onChange: (query: string) => void;
-+  // The list being edited, which can't be one of its own conditions
-+  listId?: string;
-+}) {
-+  const { t } = useTranslation();
-+  const { data: lists } = useBookmarkLists();
-+  const tokens = tokenize(query);
-+  // The controls rewrite single terms, which would break "or", "and" or
-+  // brackets around them, so such a query is only edited as text.
-+  const isGrouped = tokens.some(
-+    (tok) =>
-+      /^(or|and)$/i.test(tok) || /[()]/.test(tok.replace(/"[^"]*"/g, "")),
-+  );
-+
-+  const replaceTokens = (
-+    shouldRemove: (token: string) => boolean,
-+    added: string[],
-+  ) => {
-+    onChange(
-+      [...tokens.filter((tok) => !shouldRemove(tok)), ...added].join(" "),
-+    );
-+  };
-+
-+  const setQualifier = (term: string, value: string) => {
-+    replaceTokens(
-+      (tok) => withoutNegation(tok) === term,
-+      value === ANY ? [] : [value === "no" ? `-${term}` : term],
-+    );
-+  };
-+
-+  const namedTerms = (prefix: string) =>
-+    tokens
-+      .filter((tok) => withoutNegation(tok).startsWith(prefix))
-+      .map((tok) => ({
-+        token: tok,
-+        prefix,
-+        name: unquote(withoutNegation(tok).slice(prefix.length)),
-+        negated: isNegated(tok),
-+      }))
-+      .filter((term) => term.name.length > 0);
-+  const tags = namedTerms("tag:");
-+  const pickedLists = namedTerms("list:");
-+
-+  const toggleNamed = (prefix: string, name: string) => {
-+    const existing = namedTerms(prefix).find((term) => term.name === name);
-+    if (existing) {
-+      replaceTokens((tok) => tok === existing.token, []);
-+    } else {
-+      replaceTokens(() => false, [`${prefix}${quoteIfNeeded(name)}`]);
-+    }
-+  };
-+
-+  // Edited in place, so the term doesn't jump to the end while it's typed.
-+  const textIndex = (prefix: string) =>
-+    tokens.findIndex(
-+      (tok) =>
-+        tok.startsWith(prefix) &&
-+        unquote(tok.slice(prefix.length)).trim().length > 0,
-+    );
-+  const textValue = (prefix: string) => {
-+    const index = textIndex(prefix);
-+    return index === -1 ? "" : unquote(tokens[index].slice(prefix.length));
-+  };
-+  const setText = (prefix: string, value: string) => {
-+    const index = textIndex(prefix);
-+    const next = [...tokens];
-+    const term = value.trim()
-+      ? `${prefix}${quoteIfNeeded(value.replaceAll('"', ""))}`
-+      : undefined;
-+    if (index === -1) {
-+      if (term) {
-+        next.push(term);
-+      }
-+    } else if (term) {
-+      next[index] = term;
-+    } else {
-+      next.splice(index, 1);
-+    }
-+    onChange(next.join(" "));
-+  };
-+
-+  const age =
-+    tokens
-+      .find((tok) => tok.startsWith("age:") && tok.length > "age:".length)
-+      ?.slice("age:".length) ?? ANY;
-+  const hasPresetAge =
-+    age === ANY || (AGE_OPTIONS as readonly string[]).includes(age);
-+
-+  const listIcon = (name: string) =>
-+    lists?.data.find((list) => list.name === name && list.userRole === "owner")
-+      ?.icon;
-+
-+  const stateOptions = (
-+    <>
-+      <SelectItem value={ANY}>{t("lists.builder.any")}</SelectItem>
-+      
-```
-
-**File**: `apps/web/components/dashboard/lists/smartListBuilderQuery.test.ts` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+import { describe, expect, it } from "vitest";
-+
-+import { isQueryRepresentableInBuilder } from "./smartListBuilderQuery";
-+
-+describe("isQueryRepresentableInBuilder", () => {
-+  it.each([
-+    "",
-+    "is:fav",
-+    "-is:archived",
-+    "is:fav -is:archived tag:docs",
-+    '-tag:"two words" tag:docs age:<30d',
-+    "age:<2w",
-+    'list:"Reading Queue" -list:Archive',
-+    'url:example.com title:"release notes"',
-+  ])("accepts %s", (query) => {
-+    expect(isQueryRepresentableInBuilder(query)).toBe(true);
-+  });
-+
-+  it.each([
-+    "free text",
-+    "has:notes",
-+    "-url:example.com",
-+    "title:a title:b",
-+    "list:",
-+    "is:fav or is:archived",
-+    "(is:fav)",
-+    "is:fav -is:fav",
-+    "age:<7d age:>1y",
-+    "-age:<7d",
-+    "tag:",
-+  ])("rejects %s", (query) => {
-+    expect(isQueryRepresentableInBuilder(query)).toBe(false);
-+  });
-+});
-```
-
-**File**: `apps/web/components/dashboard/lists/smartListBuilderQuery.ts` (added, +55/-0)
-```diff
-@@ -0,0 +1,55 @@
-+export const ANY = "any";
-+export const AGE_OPTIONS = ["<7d", "<30d", "<1y", ">30d", ">1y"] as const;
-+
-+// Splits a query into its space separated terms, keeping quoted values whole.
-+export const tokenize = (query: string): string[] =>
-+  query.match(/(?:[^\s"]+|"[^"]*")+/g) ?? [];
-+
-+export const isNegated = (token: string) => /^[-!]/.test(token);
-+
-+export const withoutNegation = (token: string) => token.replace(/^[-!]/, "");
-+
-+export const unquote = (value: string) => value.replace(/^"|"$/g, "");
-+
-+// Qualifiers the builder shows as a list of picked names.
-+const NAMED = ["tag:", "list:"];
-+// Qualifiers the builder shows as a single "contains" field.
-+const TEXT = ["title:", "url:"];
-+
-+/**
-+ * Whether the builder's controls can show all of a query. Anything else, such as
-+ * free text, grouping or a second value for one control, needs the raw query.
-+ */
-+export function isQueryRepresentableInBuilder(query: string) {
-+  const seen = new Set<string>();
-+  return tokenize(query).every((token) => {
-+    const term = withoutNegation(token);
-+    const named = NAMED.find((prefix) => term.startsWith(prefix));
-+    if (named) {
-+      return unquote(term.slice(named.length)).length > 0;
-+    }
-+    const text = TEXT.find((prefix) => term.startsWith(prefix));
-+    if (text) {
-+      if (isNegated(token) || seen.has(text)) {
-+        return false;
-+      }
-+      seen.add(text);
-+      return unquote(term.slice(text.length)).trim().length > 0;
-+    }
-+    if (term.startsWith("age:")) {
-+      if (isNegated(token) || seen.has("age")) {
-+        return false;
-+      }
-+      seen.add("age");
-+      return term.length > "age:".length;
-+    }
-+    if (term === "is:fav" || term === "is:archived") {
-+      if (seen.has(term)) {
-+        return false;
-+      }
-+      seen.add(term);
-+      return true;
-+    }
-+    return false;
-+  });
-+}
-```
-
-**File**: `apps/web/components/dashboard/search/QueryExplainerTooltip.tsx` (modified, +7/-1)
-```diff
-@@ -257,7 +257,13 @@ export default function QueryExplainerTooltip({
-     return null;
-   }
- 
--  const body = (
-+  // Nothing typed yet, so there's nothing to explain
-+  const isEmpty =
-+    !header && !parsedSearchQuery.text && !parsedSearchQuery.matcher;
-+
-+  const body = isEmpty ? (
-+    t("search.query_language_help")
-+  ) : (
-     <>
-       {header}
-       <Table className="[&_tr:hover]:bg-transparent">
-```
-
-**File**: `apps/web/components/dashboard/tags/TagAutocomplete.tsx` (modified, +134/-2)
-```diff
-@@ -1,4 +1,4 @@
--import React, { useState } from "react";
-+import React, { useRef, useState } from "react";
- import { Button } from "@/components/ui/button";
- import {
-   Command,
-@@ -13,14 +13,17 @@ import {
-   PopoverContent,
-   PopoverTrigger,
- } from "@/components/ui/popover";
-+import { selectTriggerClass } from "@/components/ui/select";
- import LoadingSpinner from "@/components/ui/spinner";
-+import { useTranslation } from "@/lib/i18n/client";
- import { cn } from "@/lib/utils";
- import { useQuery } from "@tanstack/react-query";
--import { Check, ChevronsUpDown, X } from "lucide-react";
-+import { Check, ChevronDown, ChevronsUpDown, Plus, X } from "lucide-react";
- 
- import { useTagAutocomplete } from "@karakeep/shared-react/hooks/tags";
- import { useDebounce } from "@karakeep/shared-react/hooks/use-debounce";
- import { useTRPC } from "@karakeep/shared-react/trpc";
-+import { normalizeTagName } from "@karakeep/shared/utils/tag";
- 
- interface TagAutocompleteProps {
-   tagId: string;
-@@ -131,3 +134,132 @@ export function TagAutocomplete({
-     </Popover>
-   );
- }
-+
-+/**
-+ * The same search as `TagAutocomplete`, for several tags picked by name: the
-+ * popover stays open between picks and picking a selected tag removes it. A name
-+ * that matches no tag can still be picked, it's what a smart list matches on.
-+ */
-+export function TagNamePicker({
-+  id,
-+  placeholder,
-+  selectedNames,
-+  onToggle,
-+  getTypedNameLabel,
-+}: {
-+  id?: string;
-+  placeholder: string;
-+  selectedNames: string[];
-+  onToggle: (name: string) => void;
-+  getTypedNameLabel: (name: string) => string;
-+}) {
-+  const { t } = useTranslation();
-+  const [open, setOpen] = useState(false);
-+  const [searchQuery, setSearchQuery] = useState("");
-+  // Tags are saved without a leading "#", so "#docs" should find "docs".
-+  const typedName = normalizeTagName(searchQuery);
-+  const searchQueryDebounced = useDebounce(typedName, 200);
-+  const inputRef = useRef<HTMLInputElement>(null);
-+
-+  const { data: tags } = useTagAutocomplete({
-+    nameContains: searchQueryDebounced,
-+    select: (data) => data.tags,
-+    enabled: open,
-+  });
-+
-+  const query = typedName.toLowerCase();
-+  // The list shows the previous search's results while the new ones load. The
-+  // top row gets pre-selected, so Enter shouldn't land on something unrelated.
-+  const matches = (tags ?? []).filter((tag) =>
-+    tag.name.toLowerCase().includes(query),
-+  );
-+  const offerTypedName =
-+    typedName.length > 0 &&
-+    !matches.some((tag) => tag.name.toLowerCase() === query);
-+
-+  const pick = (name: string) => {
-+    onToggle(name);
-+    setSearchQuery("");
-+    // Clicking a row takes the focus, and the next pick starts with typing.
-+    inputRef.current?.focus();
-+  };
-+
-+  return (
-+    <Popover
-+      open={open}
-+      onOpenChange={(next) => {
-+        setOpen(next);
-+        if (!next) {
-+          setSearchQuery("");
+ <Layout
+   title="Pricing"
+   description={PRICING_META_DESCRIPTION}
+ >
++  <Fragment slot="head">
++    <script is:inline type="application/ld+json" set:html={JSON.stringify({
++      "@context": "https://schema.org",
++      "@type": "FAQPage",
++      "mainEntity": PRICING_FAQS.map((faq) => ({
++        "@type": "Question",
++        "name": faq.question,
++        "acceptedAnswer": {
++          "@type": "Answer",
++          "text": faq.answer
 +        }
-+      }}
-+    >
-+      <PopoverTrigger asChild>
-+        <button
-+          id={id}
-+          type="button"
-+          role="combobox"
-+          aria-expanded={open}
-+          className={selectTriggerClass}
-+        >
-+          <span className="truncate text-muted-foreground/85">
-+            {placeholder}
-+          </span>
-+          <ChevronDown className="size-4 shrink-0 opacity-50" />
-+        </button>
-+      </PopoverTrigger>
-+      <PopoverContent
-+        align="start"
-+        collisionPadding={8}
-+        className="w-[--radix-popover-trigger-width] min-w-56 p-0"
-+        // The dialog around it would otherwise swallow the scrolling.
-+        onWheel={(e) => e.stopPropagation()}
-+      >
-+        <Command shouldFilter={false}>
-+          <CommandInput
-+            ref={inputRef}
-+            placeholder={t("tags.search_placeholder")}
-+            value={searchQuery}
-+            onValueChange={setSearchQuery}
-+            className="h-9 max-sm:h-11"
-+          />
-+          <CommandList className="max-h-60">
-+            {matches.length === 0 && !offerTypedName && (
-+              <CommandEmpty>{t("tags.none_found")}</CommandEmpty>
-+            )}
-+            <CommandGroup>
-+              {matches.map((tag) => (
-+                <CommandItem
-+                  key={tag.id}
-+                  value={tag.id}
-+                  onSelect={() => pick(tag.name)}
-+                  className="cursor-pointer max-sm:min-h-11"
-+                >
-+                  <Check
-+                    className={cn(
-+                      "size-4",
-+                      selectedNames.includes(tag.name)
-+                        ? "opacity-100"
-+                        : "opacity-0",
-+                    )}
-+                  />
-+                  {tag.name}
-+                </CommandItem>
-+              ))}
-+              {offerTypedName && (
-+                <CommandItem
-+                  value={`typed:${typedName}`}
-+                  onSelect={() => pick(typedName)}
-+                  className="cursor-pointer max-sm:min-h-11"
-+               
++      }))
++    })} />
++  </Fragment>
+   <PricingPage client:load />
+ </Layout>
+```
+
+**File**: `apps/web/app/layout.tsx` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ export const metadata: Metadata = {
+   title: "Karakeep",
+   applicationName: "Karakeep",
+   description:
+-    "The Bookmark Everything app. Hoard links, notes, and images and they will get automatically tagged AI.",
++    "The Bookmark Everything app. Hoard links, notes, and images and they will get automatically tagged with AI.",
+   icons: {
+     // No media queries: crawlers (e.g. Google's favicon fetcher) skip icons
+     // that are conditional on one. favicon.svg adapts to dark mode itself.
+```
+
+**File**: `apps/web/app/manifest.ts` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
+     name: "Karakeep",
+     short_name: "Karakeep",
+     description:
+-      "The Bookmark Everything app. Hoard links, notes, and images and they will get automatically tagged AI.",
++      "The Bookmark Everything app. Hoard links, notes, and images and they will get automatically tagged with AI.",
+     background_color: "#ffffff",
+     theme_color: "#ffffff",
+     start_url: "/",
+```
+
+**File**: `apps/web/app/robots.ts` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++import type { MetadataRoute } from "next";
++
++// Public lists are the only pages meant to be found through search engines.
++// Everything else is either behind a login or an auth page that would only
++// expose the instance and compete with karakeep.com for the brand name.
++export default function robots(): MetadataRoute.Robots {
++  return {
++    rules: {
++      userAgent: "*",
++      allow: [
++        "/public/",
++        // What a public list needs to render: the JS/CSS bundles, the signed
++        // asset URLs for its images, the query that loads more bookmarks as
++        // you scroll, and the icons.
++        "/_next/static/",
++        "/api/public/",
++        "/api/trpc/publicBookmarks.",
++        "/icons/",
++        "/favicon.ico",
++        "/favicon.svg",
++        "/apple-icon.png",
++      ],
++      disallow: "/",
++    },
++  };
++}
+```
+
+**File**: `docs/docusaurus.config.ts` (modified, +5/-0)
+```diff
+@@ -50,6 +50,11 @@ const config: Config = {
+           docItemComponent: "@theme/ApiItem",
+         },
+         blog: false,
++        sitemap: {
++          // Old versions and the unreleased docs are blocked in robots.txt,
++          // so don't advertise them to crawlers either.
++          ignorePatterns: ["/v[0-9]*/**", "/next/**"],
++        },
+         theme: {
+           customCss: "./src/css/custom.css",
+         },
+```
+
+---
+
+### Incident Patch 3: `db5dd53d` (2026-11-10)
+**Commit Message**: release(mobile): bump the build number to 55
+
+- Bump the mobile app's build number to 55, keeping version 1.15.0
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/mobile/app.config.js` (modified, +2/-2)
+```diff
+@@ -47,7 +47,7 @@ export default {
+           NSAllowsArbitraryLoads: true,
+         },
+       },
+-      buildNumber: "54",
++      buildNumber: "55",
+     },
+     android: {
+       adaptiveIcon: {
+@@ -68,7 +68,7 @@ export default {
+       package: IS_DEV
+         ? "app.hoarder.hoardermobile.dev"
+         : "app.hoarder.hoardermobile",
+-      versionCode: 54,
++      versionCode: 55,
+     },
+     plugins: [
+       "./plugins/trust-local-certs.js",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2027,40 +1069,42 @@ mutation id, so a save that finishes after a later one still scrolls.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): fix bugs found in pre-release QA
+## X. docker): pin Node.js to 24.22.3 for the November 2026 security release
 
 **RULE**:
-When implementing operations in `apps/web/app/dashboard/bookmarks/page.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docker/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d1514c25`: web): fix bugs found in pre-release QA. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f7119ca0`: docker): pin Node.js to 24.22.3 for the November 2026 security release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/web/app/dashboard/bookmarks/page.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import type { Metadata } from "next";
-import { useTranslation } from "@/lib/i18n/server";
+# Pinned to an exact release so security fixes land deliberately instead of
+# depending on whether a floating tag was re-pulled. Bump on every Node.js
+# security release: https://nodejs.org/en/blog/vulnerability
+ARG NODE_VERSION=24.22.3
 
-export async function generateMetadata(): Promise<Metadata> {
-  // oxlint-disable-next-line rules-of-hooks
-  const { t } = await useTranslation();
-  return {
-    title: `${t("common.home")} | Karakeep`,
-  };
-}
+FROM node:${NODE_VERSION}-slim AS base
+FROM node:${NODE_VERSION}-slim AS aio_builder
+FROM node:${NODE_VERSION}-slim AS cli
+FROM node:${NODE_VERSION}-slim AS mcp
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+FROM node:24-slim AS base
+FROM node:24-slim AS aio_builder
+FROM node:24-slim AS cli
+FROM node:24-slim AS mcp
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d1514c25` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f7119ca0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

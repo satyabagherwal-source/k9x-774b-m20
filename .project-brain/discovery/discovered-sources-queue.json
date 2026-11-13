@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T20:08:04.110Z",
+  "updated_at": "2026-11-13T20:16:27.705Z",
   "stats": {
-    "total_discovered": 2852,
-    "approved_pending_harvest": 2667,
+    "total_discovered": 2861,
+    "approved_pending_harvest": 2676,
     "harvested_count": 0,
     "rejected_count": 185,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2662,
-      "OFFICIAL_DOCUMENTATION": 98,
+      "COMMUNITY_AND_EXPERT": 2669,
+      "OFFICIAL_DOCUMENTATION": 100,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
@@ -61469,6 +61469,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
         "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-73E1243414BD": {
+      "id": "SRC-73E1243414BD",
+      "url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "title": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:16:27.170Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
+        "fileName": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md"
+      }
+    },
+    "SRC-AAEA0027BAE2": {
+      "id": "SRC-AAEA0027BAE2",
+      "url": "https://github.com/karakeep-app/karakeep",
+      "title": "https://github.com/karakeep-app/karakeep",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:16:27.537Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+        "fileName": "karakeep-app-karakeep-learnings.md"
+      }
+    },
+    "SRC-4A0E34A95B16": {
+      "id": "SRC-4A0E34A95B16",
+      "url": "https://cloud.karakeep.com/",
+      "title": "https://cloud.karakeep.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:16:27.564Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+        "fileName": "karakeep-app-karakeep-learnings.md"
+      }
+    },
+    "SRC-E5E3583590BE": {
+      "id": "SRC-E5E3583590BE",
+      "url": "https://github.com/user-attachments/assets/d6c23bc8-192f-44cd-9e64-d77cb296852d",
+      "title": "https://github.com/user-attachments/assets/d6c23bc8-192f-44cd-9e64-d77cb296852d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:16:27.587Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+        "fileName": "karakeep-app-karakeep-learnings.md"
+      }
+    },
+    "SRC-86ED367BFB0F": {
+      "id": "SRC-86ED367BFB0F",
+      "url": "https://github.com/user-attachments/assets/04f32f54-4df5-46b5-a183-99cba951d030",
+      "title": "https://github.com/user-attachments/assets/04f32f54-4df5-46b5-a183-99cba951d030",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:16:27.610Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+        "fileName": "karakeep-app-karakeep-learnings.md"
+      }
+    },
+    "SRC-130D9BC72A1A": {
+      "id": "SRC-130D9BC72A1A",
+      "url": "https://nodejs.org/en/blog/vulnerability/november-2026-security-releases",
+      "title": "https://nodejs.org/en/blog/vulnerability/november-2026-security-releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:16:27.633Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+        "fileName": "karakeep-app-karakeep-learnings.md"
+      }
+    },
+    "SRC-DFB5544318FB": {
+      "id": "SRC-DFB5544318FB",
+      "url": "https://nodejs.org/en/blog/vulnerability",
+      "title": "https://nodejs.org/en/blog/vulnerability",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:16:27.655Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+        "fileName": "karakeep-app-karakeep-learnings.md"
+      }
+    },
+    "SRC-E40335B85188": {
+      "id": "SRC-E40335B85188",
+      "url": "https://karakeep.com/opengraph-image.png",
+      "title": "https://karakeep.com/opengraph-image.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:16:27.682Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+        "fileName": "karakeep-app-karakeep-learnings.md"
+      }
+    },
+    "SRC-5D26AC98A807": {
+      "id": "SRC-5D26AC98A807",
+      "url": "https://schema.org/",
+      "title": "https://schema.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T20:16:27.705Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+        "fileName": "karakeep-app-karakeep-learnings.md"
       }
     }
   }

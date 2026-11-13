@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-13T20:08:04.544Z",
-  "total_verified_learnings": 8383,
+  "last_updated": "2026-11-13T20:16:28.695Z",
+  "total_verified_learnings": 8385,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 16504,
+  "total_items": 16515,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112139,13 +112139,13 @@
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6OE0-export-fix-consent-of-former-subscribers-covering-private-channels.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3CXA-export-fix-consent-of-former-subscribers-covering-private-channels.md",
       "title": "export: Fix consent of former subscribers covering private channels.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f6afe1cd372199a574da73627ae4fcaf4764918e17ede84499566317e799e8bd",
+      "content_hash": "028c1163d653576626c2a991192a4681aad0c9d0fc8d015bc7e3c9b8b5a0721b",
       "domain_letter": "A",
-      "persisted_at": "2026-11-13T15:11:07.513Z"
+      "persisted_at": "2026-11-13T20:16:28.463Z"
     },
     "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8e82eca538539b57ccedec9fa7d64347d16e5b431a05fc0fb8a504aeebad7de",
+      "content_hash": "c688eaeeeab8d1ff84d63ea5209a9407f209656a1f46bff192f55137d9cff37f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T15:11:07.569Z"
+      "persisted_at": "2026-11-13T20:16:28.579Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "06495f20889a9060e084e96c7aae8a414099cc16e465e0a120c4e147cedede22",
+      "content_hash": "c607aa056e0a3a26214d2749c495cf4ac1210764399952e27e13a2d71c3f2945",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:11:07.626Z"
+      "persisted_at": "2026-11-13T20:16:28.695Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214042,6 +214042,176 @@
       "content_hash": "6d88d7145dae54281dc7f9c8c30a502c699cdfdd54b32ab11cfa36424f0d50ad",
       "domain_letter": "K",
       "persisted_at": "2026-11-13T20:08:03.958Z"
+    },
+    "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
+      "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "slug": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "content_hash": "80c44fb7e171b3a32083a856be3d7f49745174382a94c447fa3ba1d1df0ac2c5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T20:16:15.172Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-co.md",
+      "title": "Research & Knowledge Intelligence: DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF Core Invariants",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "content_hash": "13a629db26d4bb5ec1866e6eb38d8ae7fb09810941cec99ab2cb053319383a16",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T20:16:15.563Z"
+    },
+    "learn-github-karakeep-app-karakeep": {
+      "learning_id": "learn-github-karakeep-app-karakeep",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "karakeep-app/karakeep",
+      "repository": "karakeep-app/karakeep",
+      "slug": "karakeep-app-karakeep",
+      "platform": "github",
+      "source_url": "https://github.com/karakeep-app/karakeep",
+      "source_version": "f7119ca0",
+      "content_hash": "f20023e860cf93bf0c820b3709409764f10c30425fe79c333c055ab38bed7a81",
+      "dossier_path": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8373,
+          "title": "pin Node.js to 24.22.3 for the November 2026 security release",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-13T20:16:23.081Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8373": {
+      "learning_id": "rule-8373",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8373,
+      "title": "pin Node.js to 24.22.3 for the November 2026 security release",
+      "source_url": "https://github.com/karakeep-app/karakeep",
+      "source_version": "f7119ca0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-13T20:16:23.081Z"
+    },
+    "candidate_directive-pin-node-js-to-24-22-3-for-the-november-2026-security-release": {
+      "item_id": "candidate_directive-pin-node-js-to-24-22-3-for-the-november-2026-security-release",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-392E-pin-node-js-to-24-22-3-for-the-november-2026-security-release.md",
+      "title": "pin Node.js to 24.22.3 for the November 2026 security release",
+      "repository": "karakeep-app/karakeep",
+      "source_version": "f7119ca0",
+      "content_hash": "d095d76ac4a9bb711f09d19d79726fd59f288e1691e1ac7bdd10c138544a6383",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T20:16:23.464Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karakeep-app-karakeep-technical-construction-intelligence-karakeep-app-karakeep-.md",
+      "title": "Technical Construction Intelligence: karakeep-app/karakeep Core Invariants",
+      "repository": "karakeep-app/karakeep",
+      "source_version": "f7119ca0",
+      "content_hash": "6ed3aead8f3e6b3975026f5ae0461002c0a8a141511435a3f0d29a63c2b4a0b6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T20:16:23.580Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-karakeep-app-karakeep": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-karakeep-app-karakeep",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/karakeep-app-karakeep-verification-protocol-empirical-defect-shield-for-karakeep.md",
+      "title": "Verification Protocol: Empirical Defect Shield for karakeep-app/karakeep",
+      "repository": "karakeep-app/karakeep",
+      "source_version": "f7119ca0",
+      "content_hash": "e01c9be87d13293a44ea478c7b50735f668906be4b30346e398097ce04315495",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T20:16:23.696Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-co.md",
+      "title": "Research & Knowledge Intelligence: hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings Core Invariants",
+      "repository": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "58f36ba4c7acfabe68ffda40c9fc098a954ec825dfb2898c85de0cee6dfd4660",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-13T20:16:27.388Z"
+    },
+    "candidate_directive-docker-pin-node-js-to-24-22-3-for-the-november-2026-security-release": {
+      "item_id": "candidate_directive-docker-pin-node-js-to-24-22-3-for-the-november-2026-security-release",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3CHR-docker-pin-node-js-to-24-22-3-for-the-november-2026-security-release.md",
+      "title": "docker): pin Node.js to 24.22.3 for the November 2026 security release",
+      "repository": "karakeep-app-karakeep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5af0ad3f710282f53b47b960b47dbf795d475b62aa33e882a6fa097235790f56",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-13T20:16:27.903Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karakeep-app-karakeep-learnings-technical-construction-intelligence-karakeep-app.md",
+      "title": "Technical Construction Intelligence: karakeep-app-karakeep-learnings Core Invariants",
+      "repository": "karakeep-app-karakeep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f41ea576b333e7c4d9ced66d30b441ed71330206d45866053ac877043ed2c494",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-13T20:16:28.017Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-karakeep-app-karakeep-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-karakeep-app-karakeep-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/karakeep-app-karakeep-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for karakeep-app-karakeep-learnings",
+      "repository": "karakeep-app-karakeep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9bc5c58215b4fcd80ab4788d52f64b9c4243f45171155cb3f3deb375e0df54aa",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-13T20:16:28.133Z"
     }
   },
   "ai-builder-brain": {

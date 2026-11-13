@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-I2J2",
-    "timestamp": "2026-11-13T00:24:11.342Z",
-    "repository": "projectcontour/contour",
-    "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "f9c9d0577fd4803a09a0e1e241ac46f4820a78887641623f527267737a1e7e1c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-I4UN",
-    "timestamp": "2026-11-13T00:24:14.351Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "01a3a26f32ce3b4226c0a4e42e33c5329ad3faf45c3345080ecf67fd8458dea1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-R1A2",
     "timestamp": "2026-11-13T00:31:09.626Z",
     "repository": "h3js/h3",
@@ -7490,6 +7460,36 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "022ecaa20b10da9821709304df45bbcd184a82c666bd6608e465badc175a17c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-32T2",
+    "timestamp": "2026-11-13T20:16:15.350Z",
+    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+    "contentHash": "80c44fb7e171b3a32083a856be3d7f49745174382a94c447fa3ba1d1df0ac2c5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-38WH",
+    "timestamp": "2026-11-13T20:16:23.249Z",
+    "repository": "karakeep-app/karakeep",
+    "learningId": "learn-github-karakeep-app-karakeep",
+    "contentHash": "f20023e860cf93bf0c820b3709409764f10c30425fe79c333c055ab38bed7a81",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

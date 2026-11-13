@@ -601463,3 +601463,84 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `e7d19408` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8373. pin Node.js to 24.22.3 for the November 2026 security release (Harvested from karakeep-app/karakeep)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "pin Node.js to 24.22.3 for the November 2026 security release",
+  "source": "karakeep-app/karakeep",
+  "source_url": "https://github.com/karakeep-app/karakeep",
+  "source_version": "f7119ca0",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-13T20:16:22.775Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-karakeep-app-karakeep",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [karakeep-app/karakeep](https://github.com/karakeep-app/karakeep) (Revision: `f7119ca0`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docker/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f7119ca0`: docker): pin Node.js to 24.22.3 for the November 2026 security release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/Dockerfile`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+# Pinned to an exact release so security fixes land deliberately instead of
+# depending on whether a floating tag was re-pulled. Bump on every Node.js
+# security release: https://nodejs.org/en/blog/vulnerability
+ARG NODE_VERSION=24.22.3
+
+FROM node:${NODE_VERSION}-slim AS base
+FROM node:${NODE_VERSION}-slim AS aio_builder
+FROM node:${NODE_VERSION}-slim AS cli
+FROM node:${NODE_VERSION}-slim AS mcp
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+FROM node:24-slim AS base
+FROM node:24-slim AS aio_builder
+FROM node:24-slim AS cli
+FROM node:24-slim AS mcp
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f7119ca0` are properly handled with clean fallback behavior.

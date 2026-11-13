@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T20:08:04.418Z",
-  "total_records": 319,
+  "last_updated": "2026-11-13T20:16:28.579Z",
+  "total_records": 323,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 172,
+      "total": 174,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -205,7 +205,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-comfy-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-27b-gguf-core-invariants",
         "DOM-D-218A5260",
-        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-",
+        "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7"
       ]
     },
     "E": {
@@ -264,7 +266,7 @@
       ]
     },
     "H": {
-      "total": 68,
+      "total": 70,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -333,7 +335,9 @@
         "domain_intelligence-technical-construction-intelligence-telemt-telemt-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants",
         "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria"
       ]
     },
     "I": {
@@ -6134,8 +6138,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "f8e82eca538539b57ccedec9fa7d64347d16e5b431a05fc0fb8a504aeebad7de",
-      "created_at": "2026-11-13T15:11:07.569Z"
+      "content_hash": "c688eaeeeab8d1ff84d63ea5209a9407f209656a1f46bff192f55137d9cff37f",
+      "created_at": "2026-11-13T20:16:28.579Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -8422,6 +8426,42 @@
       "repository": "open-policy-agent-opa-learnings",
       "content_hash": "20e966b1c26d6766d61d3542af35c29c958289bafac4fcfaac75ed5e26ecbad7",
       "created_at": "2026-11-13T20:08:03.831Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-co.md",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "content_hash": "13a629db26d4bb5ec1866e6eb38d8ae7fb09810941cec99ab2cb053319383a16",
+      "created_at": "2026-11-13T20:16:15.563Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: karakeep-app/karakeep Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karakeep-app-karakeep-technical-construction-intelligence-karakeep-app-karakeep-.md",
+      "repository": "karakeep-app/karakeep",
+      "content_hash": "6ed3aead8f3e6b3975026f5ae0461002c0a8a141511435a3f0d29a63c2b4a0b6",
+      "created_at": "2026-11-13T20:16:23.580Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-co.md",
+      "repository": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings",
+      "content_hash": "58f36ba4c7acfabe68ffda40c9fc098a954ec825dfb2898c85de0cee6dfd4660",
+      "created_at": "2026-11-13T20:16:27.388Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: karakeep-app-karakeep-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karakeep-app-karakeep-learnings-technical-construction-intelligence-karakeep-app.md",
+      "repository": "karakeep-app-karakeep-learnings",
+      "content_hash": "f41ea576b333e7c4d9ced66d30b441ed71330206d45866053ac877043ed2c494",
+      "created_at": "2026-11-13T20:16:28.017Z"
     }
   }
 }
