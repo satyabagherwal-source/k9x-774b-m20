@@ -145,8 +145,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
     "sourceVersion": "hf-sentence-transformers-all-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "10a97d86c3cfa7fa7b5c5c0696ee255281b39308318bd687e2eacb2041dfe95a",
-    "lastHarvestedAt": "2026-11-08T08:05:11.175Z",
+    "contentHash": "dd739cfecd4f9bd6af950cd5c5c3379f7e3412ea256dbd042e57a8afb5b5dbb5",
+    "lastHarvestedAt": "2026-11-13T10:55:17.921Z",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "7016f77b",
+    "sourceVersion": "249d5f7d",
     "license": "MIT",
-    "contentHash": "7fffa3d52373a17722724855ecaeb1a4641eec84432eab1c361910cee2259e19",
-    "lastHarvestedAt": "2026-11-11T17:51:16.263Z",
+    "contentHash": "a7fb2a6d83fb552be369d41d9b6af602cca6279d2b8e77fe642005b8ffac9201",
+    "lastHarvestedAt": "2026-11-13T10:55:33.901Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {

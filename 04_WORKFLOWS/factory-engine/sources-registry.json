@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-13T10:26:54.242Z",
-    "lastVerified": "2026-11-13T10:26:54.242Z",
+    "lastChecked": "2026-11-13T10:55:38.461Z",
+    "lastVerified": "2026-11-13T10:55:38.461Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -329,12 +329,12 @@
     "lastVerified": "2026-11-12T23:41:26.540Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "microsoft/agent-governance-toolkit",
+    "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-13T04:31:14.297Z",
-    "lastVerified": "2026-11-13T04:31:14.297Z",
+    "lastChecked": "2026-11-13T10:55:25.041Z",
+    "lastVerified": "2026-11-13T10:55:25.041Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -343,7 +343,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c3596c83"
   },
   "pathwaycom-llm-app": {
     "name": "pathwaycom/serviette",
@@ -363,12 +364,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "synalinks-synalinks-skills": {
-    "name": "SynaLinks/synalinks-skills",
+    "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-13T09:17:19.670Z",
-    "lastVerified": "2026-11-13T09:17:19.670Z",
+    "lastChecked": "2026-11-13T10:55:29.897Z",
+    "lastVerified": "2026-11-13T10:55:29.897Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -377,7 +378,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c5c3a70d"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -391,13 +393,13 @@
     "officialUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T08:00:12.854Z",
-    "lastVerified": "2026-11-08T08:00:12.854Z",
+    "lastChecked": "2026-11-13T10:55:17.508Z",
+    "lastVerified": "2026-11-13T10:55:17.508Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-    "contentHash": "10a97d86c3cfa7fa7b5c5c0696ee255281b39308318bd687e2eacb2041dfe95a",
-    "promotedRulesCount": 2,
+    "contentHash": "dd739cfecd4f9bd6af950cd5c5c3379f7e3412ea256dbd042e57a8afb5b5dbb5",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -2265,14 +2267,14 @@
     "officialUrl": "https://github.com/fallow-rs/fallow",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-11T17:46:01.679Z",
-    "lastVerified": "2026-11-11T17:46:01.679Z",
+    "lastChecked": "2026-11-13T10:55:23.387Z",
+    "lastVerified": "2026-11-13T10:55:23.387Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "7fffa3d52373a17722724855ecaeb1a4641eec84432eab1c361910cee2259e19",
+    "contentHash": "a7fb2a6d83fb552be369d41d9b6af602cca6279d2b8e77fe642005b8ffac9201",
     "promotedRulesCount": 1,
-    "recentFixesCount": 12,
+    "recentFixesCount": 25,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4238,9 +4240,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-12T05:26:56.609Z",
+    "lastChecked": "2026-11-13T10:55:22.408Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-12T05:26:56.609Z"
+    "lastVerified": "2026-11-13T10:55:22.408Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -6381,12 +6383,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "apache-zookeeper": {
-    "name": "apache/zookeeper",
+    "name": "zookeeper",
     "officialUrl": "https://github.com/apache/zookeeper",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-12T03:48:40.861Z",
-    "lastVerified": "2026-11-12T03:48:40.861Z",
+    "lastChecked": "2026-11-13T10:55:27.572Z",
+    "lastVerified": "2026-11-13T10:55:27.572Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-zookeeper",
@@ -6395,7 +6397,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5dd643fb"
   },
   "kubearmor-kubearmor": {
     "name": "KubeArmor",
@@ -12189,9 +12192,9 @@
   "jaywcjlove-devhub": {
     "name": "DevHub",
     "officialUrl": "https://github.com/jaywcjlove/DevHub",
-    "lastChecked": "2026-11-09T01:19:18.651Z",
+    "lastChecked": "2026-11-13T10:55:19.888Z",
     "revisionIdentifier": "15d258ec",
-    "lastVerified": "2026-11-09T01:19:18.651Z"
+    "lastVerified": "2026-11-13T10:55:19.888Z"
   },
   "solidjs-solid": {
     "name": "solidjs/solid",

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261110-JR2Y",
-    "timestamp": "2026-11-10T05:14:25.114Z",
-    "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
-    "contentHash": "0d0447c552f48fca69249a15d12e545edc5d7086f530bdef831b8cba641edd4d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261110-TBOW",
-    "timestamp": "2026-11-10T05:21:51.728Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "86a55c7090fab300960f474ce3f977d3692ab9c248c0dec58e14a2e5f8dfb0b6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261110-TG0R",
     "timestamp": "2026-11-10T05:21:57.339Z",
     "repository": "gocd/gocd",
@@ -7490,6 +7460,36 @@
     "repository": "trinodb/trino",
     "learningId": "learn-github-trinodb-trino",
     "contentHash": "690743a6f4d6aa8c3b8d3898b0a950ec9feaa3ce4861442c27501326e23bafbb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-1OKD",
+    "timestamp": "2026-11-13T10:55:17.917Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "dd739cfecd4f9bd6af950cd5c5c3379f7e3412ea256dbd042e57a8afb5b5dbb5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-20WA",
+    "timestamp": "2026-11-13T10:55:33.898Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "a7fb2a6d83fb552be369d41d9b6af602cca6279d2b8e77fe642005b8ffac9201",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T10:27:09.453Z",
+  "updated_at": "2026-11-13T10:55:52.548Z",
   "stats": {
-    "total_discovered": 2323,
-    "approved_pending_harvest": 2160,
+    "total_discovered": 2324,
+    "approved_pending_harvest": 2161,
     "harvested_count": 0,
     "rejected_count": 163,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2150,
+      "COMMUNITY_AND_EXPERT": 2151,
       "OFFICIAL_DOCUMENTATION": 90,
       "STANDARDS_AND_SPECIFICATIONS": 73,
       "ENGINEERING_BLOGS": 1,
@@ -49984,6 +49984,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
         "fileName": "hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md"
+      }
+    },
+    "SRC-32E2DB27ECA9": {
+      "id": "SRC-32E2DB27ECA9",
+      "url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+      "title": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T10:55:52.548Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
+        "fileName": "hf-sentence-transformers-all-minilm-l6-v2-learnings.md"
       }
     }
   }

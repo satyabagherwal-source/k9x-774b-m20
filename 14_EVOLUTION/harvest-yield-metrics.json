@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T10:26:49.197Z",
-  "total_cycles_completed": 9206,
-  "total_learnings_persisted": 9206,
-  "total_rules_promoted": 8994,
+  "last_updated": "2026-11-13T10:55:33.921Z",
+  "total_cycles_completed": 9208,
+  "total_learnings_persisted": 9208,
+  "total_rules_promoted": 8995,
   "history": [
-    {
-      "timestamp": "2026-11-12T14:44:54.869Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T14:59:49.323Z",
-      "repository": "kcl-lang/kcl",
-      "learningId": "learn-github-kcl-lang-kcl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T14:59:50.302Z",
       "repository": "cypress-io/cypress",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T10:26:49.197Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T10:55:17.926Z",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T10:55:33.921Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

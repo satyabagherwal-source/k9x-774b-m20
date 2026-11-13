@@ -9430,3 +9430,6 @@
 | `CYCLE-20261113-0J7L` | `2026-11-13T10:26:24.705Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`1836a3ed...`) |
 | `CYCLE-20261113-1238` | `2026-11-13T10:26:49.172Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`690743a6...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T10:27:09.443Z` | `hf-abenzerps-qwen-image-2.1-uncensored-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F667641F` [Domain D] | Yes (`cf6ba494...`) |
+| `CYCLE-20261113-1OKD` | `2026-11-13T10:55:17.917Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`dd739cfe...`) |
+| `CYCLE-20261113-20WA` | `2026-11-13T10:55:33.898Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a7fb2a6d...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T10:55:52.540Z` | `hf-sentence-transformers-all-minilm-l6-v2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-57460E8B` [Domain D] | Yes (`4044e2e3...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T10:26:49.064Z",
+  "last_updated": "2026-11-13T10:55:33.799Z",
   "total_verified_learnings": 1263,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15127,8 +15127,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "7016f77b",
-      "content_hash": "7fffa3d52373a17722724855ecaeb1a4641eec84432eab1c361910cee2259e19",
+      "source_version": "249d5f7d",
+      "content_hash": "a7fb2a6d83fb552be369d41d9b6af602cca6279d2b8e77fe642005b8ffac9201",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -15150,6 +15150,11 @@
         {
           "number": null,
           "title": "mutation): add the opt-in nullish-fallback operator (#4507)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "scripts): wait for the GitHub rate-limit reset in the check wait (#4531)",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -15228,7 +15233,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T17:51:16.116Z",
+      "verified_at": "2026-11-13T10:55:33.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32848,7 +32853,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
       "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "10a97d86c3cfa7fa7b5c5c0696ee255281b39308318bd687e2eacb2041dfe95a",
+      "content_hash": "dd739cfecd4f9bd6af950cd5c5c3379f7e3412ea256dbd042e57a8afb5b5dbb5",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -33246,7 +33251,7 @@
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv42ove4",
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65"
       ],
-      "verified_at": "2026-11-08T08:05:11.011Z",
+      "verified_at": "2026-11-13T10:55:17.799Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
