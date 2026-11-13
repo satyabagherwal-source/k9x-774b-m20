@@ -9663,3 +9663,9 @@ Every entry in this ledger must capture:
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `7cc32d88` | Multi-dimensional audit evidence | 2026-11-13T21:07:17.701Z |
 | `learn-dom-d-81eb8074` | `project://hf-google-bert-bert-base-uncased` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | 2026-11-13T21:07:53.947Z |
 | `learn-dom-k-30566771` | `project://pubkey-rxdb` | `f0c90aa3` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md` | 2026-11-13T21:08:32.631Z |
+| `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-13T21:16:03.798Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `7a7d160e` | Multi-dimensional audit evidence | 2026-11-13T21:16:06.703Z |
+| `learn-github-infinitered-reactotron` | `https://github.com/infinitered/reactotron` | `acdd7c73` | Multi-dimensional audit evidence | 2026-11-13T21:16:10.986Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `8e974df2` | Multi-dimensional audit evidence | 2026-11-13T21:16:13.673Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `7d50d2d2` | Multi-dimensional audit evidence | 2026-11-13T21:16:18.125Z |
+| `learn-dom-d-86956ab2` | `project://hf-baai-bge-m3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | 2026-11-13T21:16:45.591Z |

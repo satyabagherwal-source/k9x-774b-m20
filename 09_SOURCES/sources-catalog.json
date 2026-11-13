@@ -735,8 +735,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-m3",
     "sourceVersion": "hf-baai-bge-m3",
     "license": "Open-Source",
-    "contentHash": "94753537632d13cb1069e2395f26220c4bf64628361ffc433fa23822841a6f23",
-    "lastHarvestedAt": "2026-11-08T20:13:20.215Z",
+    "contentHash": "fd73b4c7a675c3c30051a79610e39a7b378e3d2c44d8d2b48ce8d1a650cc6fd4",
+    "lastHarvestedAt": "2026-11-13T21:16:03.798Z",
     "learningId": "learn-huggingface-baai-bge-m3"
   },
   "hf-qwen-qwen3-0.6b": {
@@ -2963,10 +2963,10 @@
     "repository": "infinitered/reactotron",
     "platform": "github",
     "sourceUrl": "https://github.com/infinitered/reactotron",
-    "sourceVersion": "3e480ab0",
+    "sourceVersion": "acdd7c73",
     "license": "MIT",
-    "contentHash": "5594d195530fb4f9b5b16f7df0d7ac3bfa558f0a17f7e6ec22d34ba2e54f46ce",
-    "lastHarvestedAt": "2026-10-18T22:29:27.760Z",
+    "contentHash": "e40f6f518b0751218f3e783c0347d31a77560510f86f5295121f7fa05df9c52b",
+    "lastHarvestedAt": "2026-11-13T21:16:10.986Z",
     "learningId": "learn-github-infinitered-reactotron"
   },
   "beclab-olares": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "e1f6df0a",
+    "sourceVersion": "7a7d160e",
     "license": "Apache-2.0",
-    "contentHash": "a36ddf30b7a12fdfeae45501cad65413bf096d6ba0de02f7945887a6c9571ddf",
-    "lastHarvestedAt": "2026-11-12T09:55:07.681Z",
+    "contentHash": "56f26b3ef881aa6d8a9d392d5c991932024d9f84632241af82e228581851b58e",
+    "lastHarvestedAt": "2026-11-13T21:16:06.703Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "49c815a0",
+    "sourceVersion": "8e974df2",
     "license": "Apache-2.0",
-    "contentHash": "b7b4875fce60da0e95cb77cd6d6ee6252a822aa03e628e0e8d37ff910dccd0ac",
-    "lastHarvestedAt": "2026-11-11T11:39:43.464Z",
+    "contentHash": "abec00e578532cf5da361173590f9f2ebad8c3a593c978691261d91670e7f0df",
+    "lastHarvestedAt": "2026-11-13T21:16:13.673Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "6d24446a",
+    "sourceVersion": "7d50d2d2",
     "license": "Apache-2.0",
-    "contentHash": "ca61faadccdee55028c0c57fb2bee9907aa396e9f7f12bd0b5c1b4c3b1001f7b",
-    "lastHarvestedAt": "2026-11-12T21:49:31.009Z",
+    "contentHash": "395b32b2c2df240bb7d1f791d851e22c7803589d21a5c179ed772cc9461fc9f7",
+    "lastHarvestedAt": "2026-11-13T21:16:18.125Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {

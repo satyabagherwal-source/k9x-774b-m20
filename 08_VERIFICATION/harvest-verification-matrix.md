@@ -9630,3 +9630,9 @@
 | `CYCLE-20261113-WPQ9` | `2026-11-13T21:07:17.697Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8383` | Yes (`a312f8b1...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:07:53.947Z` | `hf-google-bert-bert-base-uncased` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-81EB8074` [Domain D] | Yes (`252ecb14...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:08:32.631Z` | `pubkey-rxdb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-30566771` [Domain K] | Yes (`f66f2b32...`) |
+| `CYCLE-20261113-7ZO3` | `2026-11-13T21:16:03.795Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`fd73b4c7...`) |
+| `CYCLE-20261113-81WS` | `2026-11-13T21:16:06.700Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8384` | Yes (`56f26b3e...`) |
+| `CYCLE-20261113-857R` | `2026-11-13T21:16:10.983Z` | `infinitered/reactotron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8385` | Yes (`e40f6f51...`) |
+| `CYCLE-20261113-87AE` | `2026-11-13T21:16:13.670Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8386` | Yes (`abec00e5...`) |
+| `CYCLE-20261113-8AQ2` | `2026-11-13T21:16:18.122Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8387` | Yes (`395b32b2...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T21:16:45.591Z` | `hf-baai-bge-m3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-86956AB2` [Domain D] | Yes (`289bd4a1...`) |

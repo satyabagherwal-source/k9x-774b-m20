@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T21:08:34.015Z",
+  "last_updated": "2026-11-13T21:16:46.145Z",
   "directives": [
     {
       "id": "CD-001",
@@ -10401,6 +10401,68 @@
       "source_repo": "k3s-io-k3s",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FAF86A-bump-gateway-api-to-1-7-0.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-8D79",
+      "directive_title": "docs(cuda-oxide-book): rewrite Tile Libraries chapter, fix SVG diagrams, and add",
+      "source_repo": "nvidia-cuda-rust-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8D79-docs-cuda-oxide-book-rewrite-tile-libraries-chapter-fix-svg-diagrams-and-add.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-8WCG",
+      "directive_title": "Add SEO description to docs landing page",
+      "source_repo": "infinitered-reactotron-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8WCG-add-seo-description-to-docs-landing-page.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-13",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-87E4",
+      "directive_title": "fix STACKIT example key and list Vultr SD in scrape_config",
+      "source_repo": "prometheus/prometheus",
+      "source_commit": "8e974df2",
+      "staged_file": "11_INBOX/candidate-directives/CD-87E4-fix-stackit-example-key-and-list-vultr-sd-in-scrape_config.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-13",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-8ATS",
+      "directive_title": "support Cargo 1.100 artifact layout in cleanup fixture",
+      "source_repo": "lancedb/lancedb",
+      "source_commit": "7d50d2d2",
+      "staged_file": "11_INBOX/candidate-directives/CD-8ATS-support-cargo-1-100-artifact-layout-in-cleanup-fixture.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-13",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-REV-061796",
+      "directive_title": "docs(cuda-oxide-book): rewrite Tile Libraries chapter, fix SVG diagrams, and add",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nvidia-cuda-rust",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-061796-docs-cuda-oxide-book-rewrite-tile-librar.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-C5A5A0",
+      "directive_title": "Add SEO description to docs landing page",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "infinitered-reactotron",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C5A5A0-add-seo-description-to-docs-landing-page.md",
       "staged_date": "2026-11-13"
     }
   ]

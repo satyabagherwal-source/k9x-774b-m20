@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T21:08:33.820Z",
+  "updated_at": "2026-11-13T21:16:46.014Z",
   "stats": {
-    "total_discovered": 2915,
-    "approved_pending_harvest": 2717,
+    "total_discovered": 2929,
+    "approved_pending_harvest": 2731,
     "harvested_count": 0,
     "rejected_count": 198,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2723,
-      "OFFICIAL_DOCUMENTATION": 100,
+      "COMMUNITY_AND_EXPERT": 2732,
+      "OFFICIAL_DOCUMENTATION": 105,
       "STANDARDS_AND_SPECIFICATIONS": 79,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
@@ -62764,6 +62764,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
         "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-6FC584A2DE3B": {
+      "id": "SRC-6FC584A2DE3B",
+      "url": "https://nvidia.github.io/cuda-rust/cutile",
+      "title": "https://nvidia.github.io/cuda-rust/cutile",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:21.130Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-A54D73963EEE": {
+      "id": "SRC-A54D73963EEE",
+      "url": "https://github.com/NVIDIA/cuda-rust/tree/main/cuda-oxide/crates/rustc-codegen-cuda/examples/tilelib_relu",
+      "title": "https://github.com/NVIDIA/cuda-rust/tree/main/cuda-oxide/crates/rustc-codegen-cuda/examples/tilelib_relu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:21.155Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-C256BEBEAF2C": {
+      "id": "SRC-C256BEBEAF2C",
+      "url": "https://nvidia.github.io/cuda-rust/cuda-oxide",
+      "title": "https://nvidia.github.io/cuda-rust/cuda-oxide",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:21.179Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-2EDA4773A3CE": {
+      "id": "SRC-2EDA4773A3CE",
+      "url": "https://huggingface.co/BAAI/bge-m3",
+      "title": "https://huggingface.co/BAAI/bge-m3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:45.600Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
+        "fileName": "hf-baai-bge-m3-learnings.md"
+      }
+    },
+    "SRC-2B21D408F880": {
+      "id": "SRC-2B21D408F880",
+      "url": "https://github.com/infinitered/reactotron",
+      "title": "https://github.com/infinitered/reactotron",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:45.853Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
+        "fileName": "infinitered-reactotron-learnings.md"
+      }
+    },
+    "SRC-37FA92B77A7A": {
+      "id": "SRC-37FA92B77A7A",
+      "url": "https://api.github.com/repos/$%7Brepo",
+      "title": "https://api.github.com/repos/$%7Brepo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:45.880Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
+        "fileName": "infinitered-reactotron-learnings.md"
+      }
+    },
+    "SRC-C200B16D2201": {
+      "id": "SRC-C200B16D2201",
+      "url": "https://reactnavigation.org/docs/navigating-without-navigation-prop",
+      "title": "https://reactnavigation.org/docs/navigating-without-navigation-prop",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:45.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
+        "fileName": "infinitered-reactotron-learnings.md"
+      }
+    },
+    "SRC-3184E20BE331": {
+      "id": "SRC-3184E20BE331",
+      "url": "https://docs.sentry.io/platforms/react-native",
+      "title": "https://docs.sentry.io/platforms/react-native",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:45.909Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
+        "fileName": "infinitered-reactotron-learnings.md"
+      }
+    },
+    "SRC-6B1F26557F0C": {
+      "id": "SRC-6B1F26557F0C",
+      "url": "https://docs.expo.dev/guides/using-sentry",
+      "title": "https://docs.expo.dev/guides/using-sentry",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:45.923Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
+        "fileName": "infinitered-reactotron-learnings.md"
+      }
+    },
+    "SRC-A0E3148A06E9": {
+      "id": "SRC-A0E3148A06E9",
+      "url": "https://rnfirebase.io/crashlytics/usage",
+      "title": "https://rnfirebase.io/crashlytics/usage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:45.944Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
+        "fileName": "infinitered-reactotron-learnings.md"
+      }
+    },
+    "SRC-B21711B3A4AF": {
+      "id": "SRC-B21711B3A4AF",
+      "url": "https://docs.bugsnag.com/platforms/react-native",
+      "title": "https://docs.bugsnag.com/platforms/react-native",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:45.971Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
+        "fileName": "infinitered-reactotron-learnings.md"
+      }
+    },
+    "SRC-3F2991BA9AAB": {
+      "id": "SRC-3F2991BA9AAB",
+      "url": "https://docs.bugsnag.com/platforms/react-native/expo",
+      "title": "https://docs.bugsnag.com/platforms/react-native/expo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:45.986Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
+        "fileName": "infinitered-reactotron-learnings.md"
+      }
+    },
+    "SRC-6F7B1A1420FC": {
+      "id": "SRC-6F7B1A1420FC",
+      "url": "https://docs.infinite.red/reactotron",
+      "title": "https://docs.infinite.red/reactotron",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:46.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
+        "fileName": "infinitered-reactotron-learnings.md"
+      }
+    },
+    "SRC-9E30D7DAA9CF": {
+      "id": "SRC-9E30D7DAA9CF",
+      "url": "https://x.test/?q=%EF%BF%BD%25A",
+      "title": "https://x.test/?q=%EF%BF%BD%25A",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T21:16:46.014Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/infinitered-reactotron-learnings.md",
+        "fileName": "infinitered-reactotron-learnings.md"
       }
     }
   }

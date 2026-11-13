@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `6d24446a`  
+> **Source Version**: `7d50d2d2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:49:17.467Z  
+> **Timestamp**: 2026-11-13T21:16:17.471Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:49:17.461Z  
+> **Harvest Timestamp**: 2026-11-13T21:16:17.466Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11886 stars
+- **Stars / Engagement**: 11894 stars
 
 ---
 
@@ -1233,11 +1233,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5005** (2026-11-12): **fix: prune Function outcomes for replaced fragments**
-  *Symptoms*: An input-preserving merge can fail freshness preservation after a successful data write: the replaced fragment loses its signature, but its known/failed-row records remain and fail sidecar validation. This affects tables with persisted Function outcome metadata.  Prune both outcome maps with the same live-fragment set used for signatures and row state. Outcomes on untouched fragments remain intact, and inserted rows remain pending fill. The regression performs a real mixed update/insert and reopens the resulting snapshot to check both output columns.  Native validation on Linux: the exact regression fails before the fix with `failure evidence names a fragment without a signature`. At `20b10d80408cb455d9e5827f5d7d36a117622dea`, all 24 discovered `table::freshness::tests::function_write_` cases pass, including the new real merge regression. Test lists, counts and logs were retained and SHA-256 verified. [Current-head CI passed both workspace Clippy configurations](https://github.com/lancedb/lancedb/actions/runs/43274052568/job/131377627811). A separate package-only, default-feature Clippy command reported dead-code errors in seven files unchanged from the base; that local failure is retained rather than represented as a pass. Other hosted gates are pending. This does not claim downstream Sophon integration or deployed acceptance. 
+- **Issue #5012** (2026-11-13): **fix(remote): preserve branches in cache prewarm requests**
+  *Symptoms*: Calling `prewarm_data` or `prewarm_index` on a checked-out remote branch currently targets main. Both methods omit the branch context, which can warm the wrong snapshot, miss a branch-only index, or fail when the branch's minimum read version is ahead of main. This PR carries the table handle's branch through the existing request helpers. Main requests retain their existing format, with no public API changes. 
 
-- **Issue #4997** (2026-11-12): **fix(ci): restore the unlocked Rust build cache once**
-  *Symptoms*: `build-no-lock` restores Rust build outputs twice: toolchain setup enables its own cache by default before Cargo.lock removal, then the workflow restores an explicit cache afterward. Both restore into the same Cargo and target paths; the implicit action also allows PR cache saves.  Disable only toolchain setup's implicit cache. The explicit restore remains after lock removal and retains its main-only save condition.  This configuration is inherited unchanged by #4996. Its [failed job](https://github.com/lancedb/lancedb/actions/runs/43229196192/job/131220088196) reported runner ENOSPC while the second cache action was active, before dependency installation or Cargo. Earlier hosted logs confirm two restores into overlapping paths, but the failed job's full logs are unavailable, so the exact disk peak and ENOSPC cause remain unproven.  A bounded probe using the resolved composite-action definitions verifies two restores before this change versus one afterward, preserves ordering and main-only saves, and confirms all other workflow configuration is unchanged. The [hosted run](https://github.com/lancedb/lancedb/actions/runs/43230840086/job/131225407007) confirms one successful 1.62 GB cache restore after lock removal and no PR cache save. It reached Cargo and linking without ENOSPC, but hit the inherited 30-minute deadline with the unchanged one-job driver. Free disk was 85 GiB before the build and 79 GiB at cancellation; these endpoint observations do not establish peak disk use 
+- **Issue #5010** (2026-11-13): **fix(ci): support Cargo 1.100 artifact layout in cleanup fixture**
+  *Symptoms*: Cargo 1.100 moves intermediate compiler artifacts into per-unit build directories and emits `build_script_build` instead of `build-script-build`. The unlocked-build fixture currently fails on its old rlib path before the SDK build starts, even though the library survives cleanup.  Discover compiler inputs recursively and accept both build-script names while preserving the library, generated-input, ordinary-executable, discarded-test, linker-failure and outside-target assertions. The standalone fixture reproduces the failure before this change and passes afterward on Rust/Cargo 1.100.0; it also passes on 1.97.0. Fault injection confirms missing libraries and other retained inputs still fail their assertions. Production cleanup and normal workflow coverage are unchanged. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1254,171 +1254,768 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec5e2cd6` (2026-11-12)
-**Commit Message**: ci: use two Cargo jobs for unlocked builds (#4996)
+### Incident Patch 1: `db098ba8` (2026-11-13)
+**Commit Message**: fix(ci): support Cargo 1.100 artifact layout in cleanup fixture (#5010)
 
-Fresh unlocked workspace builds can exhaust the 30-minute CI job while
-Cargo is restricted to one compiler/linker task. Allow two concurrent
-tasks while retaining fresh dependency resolution, all workspace
-features and targets, the existing profile and timeout, and immediate
-cleanup of completed test executables. The single-cache prerequisite
-#4997 is included by a normal merge; merge it first under normal review
-gates.
+Cargo 1.100 moves intermediate compiler artifacts into per-unit build
+directories and emits `build_script_build` instead of
+`build-script-build`. The unlocked-build fixture currently fails on its
+old rlib path before the SDK build starts, even though the library
+survives cleanup.
 
-The final combined candidate passed hosted build-no-lock on head
-`8a3cda494f79a414101db392986cd18a64e5d80d` (tested merge `8d56029`, run
-[43236975778](https://github.com/lancedb/lancedb/actions/runs/43236975778/job/131247077833)).
-The build step took 18m42s and the full job 19m58s, within the unchanged
-30-minute budget. Exactly one 1,624,797,998-byte cache restore
-completed; free disk samples before and after the build were 85 GiB and
-79 GiB. These are endpoint samples, not peak RAM/disk measurements or a
-controlled speedup comparison. This job compiles and links targets but
-does not execute their tests.
+Discover compiler inputs recursively and accept both build-script names
+while preserving the library, generated-input, ordinary-executable,
+discarded-test, linker-failure and outside-target assertions. The
+standalone fixture reproduces the failure before this change and passes
+afterward on Rust/Cargo 1.100.0; it also passes on 1.97.0. Fault
+injection confirms missing libraries and other retained inputs still
+fail their assertions. Production cleanup and normal workflow coverage
+are unchanged.
 
-Temporary diagnostics are removed. The three existing driver tests pass,
-and the combined workflow and driver 
-
-**File**: `ci/build_no_lock.py` (modified, +2/-1)
+**File**: `ci/tests/test_build_no_lock.py` (modified, +5/-3)
 ```diff
-@@ -54,6 +54,7 @@ def main() -> int:
-         ["cargo", "metadata", "--format-version=1", "--no-deps", "--all-features"],
-         stdout=subprocess.PIPE,
-         text=True,
-+        check=False,
-     )
-     if metadata.returncode:
-         return metadata.returncode
-@@ -68,7 +69,7 @@ def main() -> int:
-         "--tests",
-         # Bound simultaneous compiler/linker temporary outputs as well as retained files.
-         "--jobs",
--        "1",
-+        "2",
-         "--message-format=json,json-diagnostic-rendered-ansi",
-     ]
-     cleanup_failed = False
+@@ -88,9 +88,11 @@ def test_links_all_targets_and_retains_compiler_inputs(self):
+             self.assertTrue((target / "fixture_cli").is_file())
+             # Cargo guarantees this binary for test execution, not compile-time reads.
+             subprocess.run([str(target / "fixture_cli")], check=True)
+-            self.assertTrue(list((target / "deps").glob("libartifact_fixture*.rlib")))
+-            self.assertTrue(list((target / "build").glob("*/build-script-build")))
+-            self.assertTrue(list((target / "build").glob("*/out/generated.rs")))
++            # Cargo 1.100 nests compiler inputs in per-unit build directories and
++            # names the build-script executable build_script_build.
++            self.assertTrue(list(target.rglob("libartifact_fixture*.rlib")))
++            self.assertTrue(list((target / "build").rglob("build[-_]script[-_]build")))
++            self.assertTrue(list((target / "build").rglob("out/generated.rs")))
+ 
+     def test_link_failure_preserves_cargo_status_and_diagnostic(self):
+         with tempfile.TemporaryDirectory(prefix=".no-lock-", dir=SCRIPT.parent) as temp:
 ```
 
 ---
 
-### Incident Patch 2: `da40aa6c` (2026-11-12)
-**Commit Message**: test: isolate SQL reader timeout from submission latency (#5000)
+### Incident Patch 2: `7d50d2d2` (2026-11-13)
+**Commit Message**: chore(deps): bump Rust deps flagged by security scans (#5035)
 
-The reader timeout regression can fail on a busy runner while submitting
-its real loopback Flight exchange, before it ever calls `reader()`.
-Freeze Tokio time and inhibit automatic clock advancement during
-submission, then let the existing 200ms result timeout fire. Preserve
-the exact result-stage error through both describe APIs and a second
-reader, and verify that the timeout closes the server response stream.
+## Summary
 
-With a diagnostic-only 300ms wall-clock delay in request-header
-preparation, main fails with `SQL query submission timed out`; the
-repaired fixture passes the same scenario through the real Flight/reader
-path. The focused regression and all 54 adjacent SQL tests pass locally.
-Hosted Linux and macOS CLI tests and the complete PR CI pass on
-`fb96931be004166a479cc031aca4b1db05f4b78d`.
+Bumps the Rust dependencies flagged by Aikido that have a
+semver-compatible fix available. Supersedes #5009 (rustls in the docs
+lockfile is included here).
 
-**File**: `rust/lancedb/src/remote/sql_test.rs` (modified, +28/-7)
+Root `Cargo.lock`:
+
+| Crate | From | To |
+| --- | --- | --- |
+| mio | 1.2.0 | 1.2.5 |
+| smallvec | 1.15.1 | 1.16.5 |
+| thread_local | 1.1.9 | 1.1.10 |
+| tinyvec | 1.11.0 | 1.13.3 |
+| zerocopy / zerocopy-derive | 0.8.48 | 0.8.63 |
+| event-listener | 5.4.1 | 5.4.2 |
+| arrayvec | 0.7.6 | 0.7.8 |
+| wasm-bindgen (+ js-sys, web-sys) | 0.2.121 | 0.2.130 |
+| getrandom 0.4 | 0.4.2 | 0.4.3 (drops wasip3 → wasmparser 0.244) |
+| brotli | 3.5.0 | 9.1.1 (via `random_word` dev-dep 0.4.3 → 1.0.0) |
+
+`docs/web-tests/rs/Cargo.lock` gets the same crates plus rustls, hyper,
+h2, moka, bytes, crossbeam-epoch and anyhow. That crate is not a
+workspace member, so cargo refused to resolve it; it now has an empty
+`[workspace]` table.
+
+Still open, blocked upstream: quick-xml 0.41 (lance-io), rand 0.9
+(datafusion/lance/candle), heapless 0.8 (rstar via geo), paste,
+unsafe-libyaml (rattler_conda_types, lindera), fast-float/smartstring
+(polars 0.39), number_prefix (needs hf-hub 1.0 mig
+
+**File**: `Cargo.lock` (modified, +54/-228)
 ```diff
-@@ -607,7 +607,15 @@ impl FlightService for TestSqlService {
-             ));
-         }
-         if query == "SELECT exchange stall" {
--            return Ok(Response::new(futures::stream::pending().boxed()));
-+            let dropped = DropSignal(self.exchange_drops.clone());
-+            return Ok(Response::new(
-+                futures::stream::pending()
-+                    .map(move |message| {
-+                        let _dropped = &dropped;
-+                        message
-+                    })
-+                    .boxed(),
-+            ));
-         }
-         let rows =
-             parameters.ok_or_else(|| Status::invalid_argument("exchange without parameters"))?;
-@@ -990,13 +998,26 @@ async fn an_abandoned_reader_leaves_the_rows_for_the_next_one() {
- async fn a_reader_that_times_out_reports_the_failure() {
-     let mut client_config = ClientConfig::default();
-     client_config.timeout_config.timeout = Some(Duration::from_millis(200));
--    let (client, _shutdown) = start_sql_service(TestSqlService::default(), client_config).await;
+@@ -63,15 +63,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "alloc-no-stdlib"
+-version = "2.0.4"
++version = "3.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cc7bb162ec39d46ab1ca8c77bf72e890535becd1751bb45f64c597edb4c8c6b3"
++checksum = "c2fb6cfd47bf496ff64095c20eaba0c201404ee38714d4142fcfa1dc334fcc7a"
+ 
+ [[package]]
+ name = "alloc-stdlib"
+-version = "0.2.2"
++version = "0.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "94fb8275041c72129eb51b7d0322c29b8387a0386127718b096429201a5d6ece"
++checksum = "0b5c1865780388bfa186411ab5f247819487fc4864c6e9c3106611fa347586e1"
+ dependencies = [
+  "alloc-no-stdlib",
+ ]
+@@ -221,9 +221,9 @@ checksum = "76a2e8124351fda1ef8aaaa3bbd7ebbcb486bbcd4225aca0aa0d84bb2db8fecb"
+ 
+ [[package]]
+ name = "arrayvec"
+-version = "0.7.6"
++version = "0.7.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
++checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
+ 
+ [[package]]
+ name = "arrow"
+@@ -1474,9 +1474,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "brotli"
+-version = "3.5.0"
++version = "9.1.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d640d25bc63c50fb1f0b545ffd80207d2e10a4c965530809b40ba3386825c391"
++checksum = "627b7cfb0578f0eafce087a90fcd40add1231900b69e4d4de2d456260a4f5d81"
+ dependencies = [
+  "alloc-no-stdlib",
+  "alloc-stdlib",
+@@ -1485,9 +1485,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "brotli-decompressor"
+-version = "2.5.1"
++version = "6.3.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4e2e4afe60d7dd600fdd3de8d0f08c2b7ec039712e3b6137ff98b7004e82de4f"
++checksum = "75c74c9c51b9140663e196b5fb88bc94c334d7a497c8311cb759d8557874747f"
+ dependencies = [
+  "alloc-no-stdlib",
+  "alloc-stdlib",
+@@ -2261,7 +2261,7 @@ checksum = "9c035cb64cba03dad2fb921f3e218785e8cf9a41790da5eb3a1400f62fa2be11"
+ dependencies = [
+  "cpubits",
+  "ctutils",
+- "getrandom 0.4.2",
++ "getrandom 0.4.3",
+  "hybrid-array",
+  "num-traits",
+  "rand_core 0.10.1",
+@@ -2285,7 +2285,7 @@ version = "0.2.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "77727bb15fa921304124b128af125e7e3b968275d1b108b379190264f4423710"
+ dependencies = [
+- "getrandom 0.4.2",
++ "getrandom 0.4.3",
+  "hybrid-array",
+  "rand_core 0.10.1",
+ ]
+@@ -3504,11 +3504,10 @@ checksum = "40404c3f5f511ec4da6fe866ddf6a717c309fdbb69fbbad7b0f3edab8f2e835f"
+ 
+ [[package]]
+ name = "event-listener"
+-version = "5.4.1"
++version = "5.4.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e13b66accf52311f30a0db42147dadea9850cb48cd070028831ae5f5d4b856ab"
++checksum = "5a23add41df1562121a9393cb065eab5146a1242410f23a644851e90cfd669d2"
+ dependencies = [
+- "concurrent-queue",
+  "parking",
+  "pin-project-lite",
+ ]
+@@ -4248,17 +4247,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "getrandom"
+-version = "0.4.2"
++version = "0.4.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555"
++checksum = "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099"
+ dependencies = [
+  "cfg-if 1.0.4",
+  "js-sys",
+  "libc",
+  "r-efi 6.0.0",
+  "rand_core 0.10.1",
+- "wasip2",
+- "wasip3",
+  "wasm-bindgen",
+ ]
+ 
+@@ -4939,12 +4936,6 @@ version = "2.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e4a2c462a4d927d512f5f882a033ddd62f33a05bb9f230d98f736ac3dc85938f"
+ 
+-[[package]]
+-name = "id-arena"
+-version = "2.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954"
 -
--    let stalled = client
--        .execute(parameterized("SELECT exchange stall", parameter_row()))
--        .await
--        .unwrap();
-+    let service = TestSqlService::default();
-+    let drops = service.exchange_drops.clone();
-+    let (client, _shutdown) = start_sql_service(service, client_config).await;
+ [[package]]
+ name = "ident_case"
+ version = "1.0.1"
+@@ -5275,13 +5266,12 @@ dependencies = [
+ 
+ [[package]]
+ name = "js-sys"
+-version = "0.3.98"
++version = "0.3.107"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "67df7112613f8bfd9150013a0314e196f4800d3201ae742489d999db2f979f08"
++checksum = "8dc09d2154098bbf4ef54eab6b117a3c24cbbffe94046b16ee6d6d4510584d3a"
+ dependencies = [
+  "cfg-if 1.0.4",
+  "futures-util",
+- "once_cell",
+  "wasm-bindgen",
+ ]
+ 
+@@ -6243,12 +6233,6 @@ dependencies = [
+  "spin 0.9.9",
+ ]
+ 
+-[[package]]
+-name = "leb128fmt"
+-version = "0.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2"
+-
+ [[package]]
+ name = "lexical-core"
+ version = "1.0.6"
+@@ -6704,9 +6688,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "mio"
+-version = "1.2.0"
++version = "1.2.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "50b7e5b27aa02a74bac8c3f23f448f8d87ff11f92d3aac1a6ed369ee08cc56c1"
++checksum = "20521a903f02b0a573cd6840e9d0a5a0cc043d361fe924092cd70f8556cc9c4a"
+ dependencies = [
+  "libc",
+  "wasi 0.11.1+wasi-snapshot-preview1",
+@@ -8550,16 +8534,6 @@ d
+```
+
+**File**: `docs/web-tests/rs/Cargo.lock` (modified, +68/-233)
+```diff
+@@ -87,9 +87,9 @@ checksum = "940b3a0ca603d1eade50a4846a2afffd5ef57a9feac2c0e2ec2e14f9ead76000"
+ 
+ [[package]]
+ name = "anyhow"
+-version = "1.0.102"
++version = "1.0.104"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
++checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
+ 
+ [[package]]
+ name = "ar_archive_writer"
+@@ -129,9 +129,9 @@ checksum = "76a2e8124351fda1ef8aaaa3bbd7ebbcb486bbcd4225aca0aa0d84bb2db8fecb"
+ 
+ [[package]]
+ name = "arrayvec"
+-version = "0.7.6"
++version = "0.7.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
++checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
+ 
+ [[package]]
+ name = "arrow"
+@@ -683,9 +683,9 @@ checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
+ 
+ [[package]]
+ name = "bytes"
+-version = "1.11.1"
++version = "1.12.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1e748733b7cbc798e1434b6ac524f0c1ff2ab456fe201501e6497c8417a4fc33"
++checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
+ 
+ [[package]]
+ name = "cast"
+@@ -1019,9 +1019,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "crossbeam-epoch"
+-version = "0.9.18"
++version = "0.9.21"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5b82ac4a3c2ca9c3460964f020e1402edd5753411d7737aa39c3714ad1b5420e"
++checksum = "dc74980687109a3b14c72fd458107bf0baa1da1a1a805e178d15501ba9b86d9d"
+ dependencies = [
+  "crossbeam-utils",
+ ]
+@@ -1904,7 +1904,7 @@ dependencies = [
+  "libc",
+  "option-ext",
+  "redox_users",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -1993,7 +1993,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -2004,11 +2004,10 @@ checksum = "40404c3f5f511ec4da6fe866ddf6a717c309fdbb69fbbad7b0f3edab8f2e835f"
+ 
+ [[package]]
+ name = "event-listener"
+-version = "5.4.1"
++version = "5.4.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e13b66accf52311f30a0db42147dadea9850cb48cd070028831ae5f5d4b856ab"
++checksum = "5a23add41df1562121a9393cb065eab5146a1242410f23a644851e90cfd669d2"
+ dependencies = [
+- "concurrent-queue",
+  "parking",
+  "pin-project-lite",
+ ]
+@@ -2289,17 +2288,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "getrandom"
+-version = "0.4.2"
++version = "0.4.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555"
++checksum = "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099"
+ dependencies = [
+  "cfg-if",
+  "js-sys",
+  "libc",
+  "r-efi 6.0.0",
+  "rand_core 0.10.1",
+- "wasip2",
+- "wasip3",
+  "wasm-bindgen",
+ ]
+ 
+@@ -2317,9 +2314,9 @@ checksum = "0cc23270f6e1808e30a928bdc84dea0b9b4136a8bc82338574f23baf47bbd280"
+ 
+ [[package]]
+ name = "h2"
+-version = "0.4.12"
++version = "0.4.20"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f3c0b69cfcb4e1b9f1bf2f53f95f766e4661169728ec61cd3fe5a0166f2d1386"
++checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
+ dependencies = [
+  "atomic-waker",
+  "bytes",
+@@ -2475,9 +2472,9 @@ checksum = "135b12329e5e3ce057a9f972339ea52bc954fe1e9358ef27f95e89716fbc5424"
+ 
+ [[package]]
+ name = "hyper"
+-version = "1.8.1"
++version = "1.12.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2ab2d4f250c3d7b1c9fcdff1cece94ea4e2dfbec68614f7b87cb205f24ca9d11"
++checksum = "2c3e324da4c95177d6291d4c8730197c0d1822f8a9766814a4a44fa5ab797c9c"
+ dependencies = [
+  "atomic-waker",
+  "bytes",
+@@ -2490,7 +2487,6 @@ dependencies = [
+  "httpdate",
+  "itoa",
+  "pin-project-lite",
+- "pin-utils",
+  "smallvec",
+  "tokio",
+  "want",
+@@ -2699,12 +2695,6 @@ version = "2.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e4a2c462a4d927d512f5f882a033ddd62f33a05bb9f230d98f736ac3dc85938f"
+ 
+-[[package]]
+-name = "id-arena"
+-version = "2.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954"
+-
+ [[package]]
+ name = "ident_case"
+ version = "1.0.1"
+@@ -2808,7 +2798,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
+ dependencies = [
+  "hermit-abi",
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -2876,7 +2866,7 @@ dependencies = [
+  "portable-atomic",
+  "portable-atomic-util",
+  "serde_core",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -2917,11 +2907,12 @@ dependencies = [
+ 
+ [[package]]
+ name = "js-sys"
+-version = "0.3.83"
++version = "0.3.107"
+ source = "regist
+```
+
+**File**: `docs/web-tests/rs/Cargo.toml` (modified, +4/-0)
+```diff
+@@ -1,3 +1,7 @@
++# Standalone crate pinned to a published lancedb release, not part of the root
++# workspace. Without this, cargo commands here fail to resolve the workspace.
++[workspace]
 +
-+    // Real loopback I/O must finish before the clock can advance to the timeout.
-+    // A blocking task inhibits Tokio's automatic clock advance during submission.
-+    tokio::time::pause();
-+    let submission_client = client.clone();
-+    let stalled = tokio::task::spawn_blocking(move || {
-+        tokio::runtime::Handle::current().block_on(
-+            submission_client.execute(parameterized("SELECT exchange stall", parameter_row())),
-+        )
-+    })
-+    .await
-+    .unwrap()
-+    .unwrap();
-+    assert_eq!(drops.load(Ordering::SeqCst), 0);
-     assert_overall_timeout(stalled.reader().await, "result");
-+    tokio::time::resume();
-+    wait_for(&drops, 1, "a timed-out reader must end the call").await;
-     let Err(retried) = stalled.reader().await else {
-         panic!("the rows are gone, so a second reader cannot succeed");
-     };
+ [package]
+ name = "rs"
+ version = "0.1.0"
+```
+
+**File**: `rust/lancedb/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -118,7 +118,7 @@ lance-testing = { workspace = true }
+ # production remote feature so Python wheels do not resolve its Axum 0.7 stack.
+ lance-namespace-impls = { workspace = true, features = ["rest-adapter"] }
+ tempfile = { workspace = true }
+-random_word = { version = "0.4.3", features = ["en"] }
++random_word = { version = "1.0.0", features = ["en"] }
+ tokio = { workspace = true, features = ["io-util", "macros", "net", "test-util"] }
+ uuid = { workspace = true }
+ walkdir = "2"
 ```
 
 ---
 
-### Incident Patch 3: `a2a0d7f6` (2026-11-12)
-**Commit Message**: fix(ci): restore the unlocked Rust build cache once (#4997)
+### Incident Patch 3: `1765747f` (2026-11-13)
+**Commit Message**: fix: allow updates to Function input columns (#4985)
 
-`build-no-lock` restores Rust build outputs twice: toolchain setup
-enables its own cache by default before Cargo.lock removal, then the
-workflow restores an explicit cache afterward. Both restore into the
-same Cargo and target paths; the implicit action also allows PR cache
-saves.
+Updating an input column on a table with a Function binding currently
+fails before the write, although the write path already preserves
+freshness for bindings whose inputs are unchanged. Allow input updates
+through the normal update builder while retaining supported
+binding-metadata validation and the guard against writing computed or
+internal assignment outputs directly.
 
-Disable only toolchain setup's implicit cache. The explicit restore
-remains after lock removal and retains its main-only save condition.
+Lance rewrites only the matched rows. Their affected Function outputs
+keep their previous values and their changed input signatures make them
+eligible for refresh; unchanged fragments retain their freshness.
+Rewrites affecting only unrelated inputs keep the existing
+freshness-preservation path.
 
-This configuration is inherited unchanged by #4996. Its [failed
-job](https://github.com/lancedb/lancedb/actions/runs/43229196192/job/131220088196)
-reported runner ENOSPC while the second cache action was active, before
-dependency installation or Cargo. Earlier hosted logs confirm two
-restores into overlapping paths, but the failed job's full logs are
-unavailable, so the exact disk peak and ENOSPC cause remain unproven.
+For a table whose Function reads `title`, this update now succeeds while
+retaining the previous computed values until refresh:
 
-A bounded probe using the resolved composite-action definitions verifies
-two restores before this change versus one afterward, preserves ordering
-and main-only saves, and confirms all other workflow configuration is
-unchanged. The [hosted
-run](https://github.com/lancedb/lancedb/actions/runs/43
+```python
+table.update(where="id = 7", values={"title": "revised"})
+```
 
-**File**: `.github/workflows/rust.yml` (modified, +2/-0)
+Server consumers need this crate update before remote input updates gain
+the behavior.
+
+Adds regressions for a one-row input update, retained output values,
+freshness scope, independent binding preservation, and atomic rejection
+of mixed input/output writes. Local builds 
+
+**File**: `rust/lancedb/src/table/computed_columns.rs` (modified, +50/-4)
 ```diff
-@@ -154,6 +154,8 @@ jobs:
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-         with:
-           toolchain: "stable"
-+          # The explicit cache below runs after lock removal and only saves on main.
-+          cache: false
-       # Remove cargo.lock to force a fresh build
-       - name: Remove Cargo.lock
-         run: rm -f Cargo.lock
+@@ -1757,10 +1757,20 @@ pub(crate) fn ensure_not_written<'a>(
+     schema: &ArrowSchema,
+     written: impl IntoIterator<Item = &'a str>,
+ ) -> Result<()> {
+-    let declared: Vec<String> = computed_columns(schema)
++    ensure_supported_function_metadata(schema)?;
++    let mut declared: Vec<String> = computed_columns(schema)
+         .into_iter()
+         .map(|declaration| declaration.name)
+         .collect();
++    declared.extend(
++        function_bindings(schema)?
++            .into_iter()
++            .filter_map(|binding| {
++                binding
++                    .assignment()
++                    .map(|assignment| assignment.output_name.clone())
++            }),
++    );
+     for name in written {
+         if declared.iter().any(|declared| *declared == root(name)) {
+             return Err(Error::InvalidInput {
+@@ -2532,10 +2542,15 @@ pub(crate) mod test_support {
+             )])
+             .await
+             .unwrap();
+-        let inputs = ["title".to_string(), "body".to_string()];
++        let schema = dataset.schema();
+         let outputs = bindings
+             .iter()
+             .flat_map(|binding| {
++                let inputs = binding
++                    .inputs()
++                    .iter()
++                    .map(|input| input.field_path.clone())
++                    .collect::<Vec<_>>();
+                 let assignment = binding.assignment().map(|assignment| {
+                     (
+                         assignment.output_name.clone(),
+@@ -2547,9 +2562,9 @@ pub(crate) mod test_support {
+                     .iter()
+                     .map(|output| (output.output_name.clone(), output.output_ordinal))
+                     .chain(assignment)
+-                    .map(|(name, ordinal)| {
++                    .map(move |(name, ordinal)| {
+                         (
+-                            dataset.schema().field(&name).unwrap().id as u32,
++                            schema.field(&name).unwrap().id as u32,
+                             function_computed_column_metadata(
+                                 binding.binding_id(),
+                                 ordinal,
+@@ -4144,6 +4159,37 @@ mod tests {
+         ArrowSchema::new(fields)
+     }
+ 
++    #[test]
++    fn input_writes_preserve_the_assignment_column_guard() {
++        let mut raw: Value = serde_json::to_value(test_support::text_features_binding("")).unwrap();
++        raw["assignment"] = serde_json::json!({
++            "output_name": "__function_assignment_fb_01K3TEXT", "output_field_id": -1,
++        });
++        raw["outputs"][0]["nullable"] = Value::Bool(true);
++        raw["outputs"][1]["nullable"] = Value::Bool(true);
++        raw["output_schema"]["fields"].as_array_mut().unwrap().push(serde_json::json!({
++            "name": "__function_assignment_fb_01K3TEXT", "nullable": true, "type": {"type": "bool"},
++        }));
++        let binding: FunctionBinding = serde_json::from_value(raw).unwrap();
++        let schema = ArrowSchema::new_with_metadata(
++            valid_function_binding_schema(true, true, &binding)
++                .fields()
++                .to_vec(),
++            HashMap::from([(
++                FUNCTION_BINDINGS_META_KEY.into(),
++                function_bindings_metadata(&[binding]).unwrap(),
++            )]),
++        );
++        ensure_not_written(&schema, ["title", "body"]).unwrap();
++        for output in [
++            "search_text",
++            "search_token_count",
++            "__function_assignment_fb_01K3TEXT",
++        ] {
++            assert!(ensure_not_written(&schema, [output]).is_err(), "{output}");
++        }
++    }
++
+     #[test]
+     fn test_non_nullable_function_inputs_can_bind_to_nullable_parameters() {
+         let binding = FunctionBinding::from_json(include_str!(
+```
+
+**File**: `rust/lancedb/src/table/freshness.rs` (modified, +122/-0)
+```diff
+@@ -2646,6 +2646,8 @@ mod tests {
+     use lance_file::version::ConcreteFileVersion;
+     use lance_table::format::overlay::{DataOverlayFile, OverlayCoverage};
+ 
++    use crate::table::computed_columns::test_support::{stamp_bindings, text_features_binding};
++
+     const COLUMN: &str = "doubled";
+     const EXPRESSION: &str = "value * 2";
+ 
+@@ -3126,6 +3128,126 @@ mod tests {
+         }
+     }
+ 
++    #[tokio::test]
++    async fn input_update_dirties_only_the_updated_rows_and_retains_outputs() {
++        let table = fresh_function_table().await;
++        let result = table
++            .update()
++            .only_if("title = 'a'")
++            .column("body", "'changed'")
++            .execute()
++            .await
++            .unwrap();
++        assert_eq!(result.rows_updated, 1);
++        let dataset = table.as_native().unwrap().dataset.get().await.unwrap();
++        for output in ["search_text", "search_token_count"] {
++            let stale = function_plan(&dataset, output).await;
++            let mut dirty_rows = 0;
++            for fragment in dataset.get_fragments() {
++                if stale.needs_recompute(fragment.id() as u32) {
++                    let batch = fragment
++                        .scan()
++                        .project(&["title"])
++                        .unwrap()
++                        .try_into_batch()
++                        .await
++                        .unwrap();
++                    let titles = batch
++                        .column(0)
++                        .as_any()
++                        .downcast_ref::<arrow_array::StringArray>()
++                        .unwrap();
++                    assert!(titles.iter().all(|title| title == Some("a")), "{stale:?}");
++                    dirty_rows += batch.num_rows();
++                }
++            }
++            assert_eq!(dirty_rows, 1, "{stale:?}");
++        }
++        assert_eq!(table.count_rows(Some("title = 'a' AND body = 'changed' AND search_text = 'a x' AND search_token_count = 2".into())).await.unwrap(), 1);
++    }
++
++    #[tokio::test]
++    async fn input_update_keeps_an_independent_function_binding_fresh() {
++        let batch = arrow_array::record_batch!(
++            ("title", Utf8, ["a", "b", "c", "d"]),
++            ("body", Utf8, ["x", "y", "z", "w"]),
++            ("search_text", Utf8, ["a x", "b y", "c z", "d w"]),
++            ("search_token_count", Int64, [2, 2, 2, 2]),
++            ("search_text_other", Utf8, ["a a", "b b", "c c", "d d"]),
++            ("search_token_count_other", Int64, [2, 2, 2, 2])
++        )
++        .unwrap();
++        let table = crate::connect("memory://")
++            .execute()
++            .await
++            .unwrap()
++            .create_table("independent_functions", batch)
++            .write_options(crate::table::WriteOptions {
++                lance_write_params: Some(WriteParams {
++                    max_rows_per_file: 2,
++                    ..Default::default()
++                }),
++            })
++            .execute()
++            .await
++            .unwrap();
++        let mut other = serde_json::to_value(text_features_binding("_other")).unwrap();
++        other["inputs"][1]["field_path"] = serde_json::json!("title");
++        other["inputs"][1]["field_id"] = other["inputs"][0]["field_id"].clone();
++        let bindings = [
++            text_features_binding(""),
++            serde_json::from_value(other).unwrap(),
++        ];
++        stamp_bindings(&table, &bindings).await;
++        let native = table.as_native().unwrap();
++        let mut dataset = native.dataset.get().await.unwrap().as_ref().clone();
++        for binding in &bindings {
++            let paths = binding
++                .inputs()
++                .iter()
++                .map(|input| input.field_path.clone())
++                .collect::<Vec<_>>();
++            let inputs = fields_for_paths(dataset.schema(), &paths).unwrap();
++            let signatures = signatures_for(&dataset, &[0, 1], &inputs).unwrap();
++            for output in binding.outputs() {
++                write_signatures(
++                    &mut dataset,
++                    &output.output_name,
++                    binding.binding_id(),
++                    signatures.clone(),
++                )
++                .await
++                .unwrap();
++            }
++        }
++        native.dataset.update(dataset);
++        table
++            .update()
++            .only_if("title = 'a'")
++            .column("body", "'changed'")
++            .execute()
++            .await
++            .unwrap();
++        let dataset = native.dataset.get().await.unwrap();
++        assert!(
++            function_plan(&dataset, "search_text")
++                .await
++                .needs_recompute(2)
++        );
++        let other = &bindings[1];
++        let inputs = fields_for_paths(dataset.schema(), &["title".into()]).unwrap();
++        for output in other.outputs() {
++            let stale =
++                staleness_against(&dataset, &ou
+```
+
+**File**: `rust/lancedb/src/table/update.rs` (modified, +20/-13)
+```diff
+@@ -103,11 +103,6 @@ pub(crate) async fn execute_update(
+     // 1. Snapshot the current dataset
+     let dataset = table.dataset.get().await?;
+     crate::materialized_view::ensure_not_a_view(&table.name, &dataset.schema().metadata, "update")?;
+-    super::computed_columns::ensure_not_function_bound(
+-        &arrow_schema::Schema::from(dataset.schema()),
+-        "update",
+-        update.columns.iter().map(|(name, _)| name.as_str()),
+-    )?;
+     super::computed_columns::ensure_not_written(
+         &arrow_schema::Schema::from(dataset.schema()),
+         update.columns.iter().map(|(name, _)| name.as_str()),
+@@ -473,26 +468,38 @@ mod tests {
+         assert_eq!(0, tbl.count_rows(Some("i == 0".to_string())).await.unwrap());
+     }
+ 
+-    /// A Function binding protects only the columns it reads or writes; any
+-    /// other column updates as on a plain table.
+     #[tokio::test]
+-    async fn update_on_a_function_table_refuses_only_bound_columns() {
++    async fn update_allows_function_inputs_but_protects_outputs() {
+         let table = crate::table::computed_columns::test_support::bound_table().await;
+-        let result = table.update().column("spare", "7").execute().await.unwrap();
++        let result = table
++            .update()
++            .column("title", "'changed'")
++            .execute()
++            .await
++            .unwrap();
+         assert_eq!(result.rows_updated, 1);
+-        for column in ["title", "search_text"] {
++        assert_eq!(
++            table
++                .count_rows(Some("title = 'changed' AND search_text = 'a b'".into()))
++                .await
++                .unwrap(),
++            1
++        );
++        for column in ["search_text", "search_token_count"] {
++            let version = table.version().await.unwrap();
+             let err = table
+                 .update()
+-                .column(column, "'x'")
++                .column("title", "'must not commit'")
++                .column(column, "NULL")
+                 .execute()
+                 .await
+                 .unwrap_err();
+             assert!(
+                 matches!(&err, crate::Error::InvalidInput { message }
+-                    if message.contains(&format!("update of '{column}'"))
+-                        && message.contains("a Function binding reads or writes it")),
++                if message.contains("is computed") && message.contains("cannot be written directly")),
+                 "{column}: {err:?}"
+             );
++            assert_eq!(table.version().await.unwrap(), version);
+         }
+     }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5035** (2026-11-13): chore(deps): bump Rust deps flagged by security scans (@wjones127)
 - **PR #5023** (closed): docs: move the Blob range draft comment out of the TypeScript CodeBlock (@brendanclement)
+- **PR #5012** (2026-11-13): fix(remote): preserve branches in cache prewarm requests (@ChilePiquin)
 - **PR #5011** (2026-11-12): ci(java): publish beta releases to Fury instead of Maven Central (@wjones127)
-- **PR #5006** (closed): ci: capture remote fork hang evidence (MERGE HOLD) (@Xuanwo)
-- **PR #5005** (2026-11-12): fix: prune Function outcomes for replaced fragments (@Xuanwo)
-- **PR #5001** (closed): test(node): diagnose DynamoDB commit-log timeout (@Xuanwo)
-- **PR #5000** (2026-11-12): test: isolate SQL reader timeout from submission latency (@Xuanwo)
+- **PR #5010** (2026-11-13): fix(ci): support Cargo 1.100 artifact layout in cleanup fixture (@Xuanwo)
+- **PR #5009** (closed): chore(deps): bump rustls to 0.23.46 in docs web-tests (@wjones127)
 
 ---
 
@@ -1438,29 +2035,34 @@ run](https://github.com/lancedb/lancedb/actions/runs/43
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: use two Cargo jobs for unlocked builds (#4996)
+## X. ci): support Cargo 1.100 artifact layout in cleanup fixture
 
 **RULE**:
-When implementing operations in `ci/build_no_lock.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ci/tests/test_build_no_lock.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec5e2cd6`: ci: use two Cargo jobs for unlocked builds (#4996). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `db098ba8`: ci): support Cargo 1.100 artifact layout in cleanup fixture. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/build_no_lock.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/tests/test_build_no_lock.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        check=False,
-        "2",
+            # Cargo 1.100 nests compiler inputs in per-unit build directories and
+            # names the build-script executable build_script_build.
+            self.assertTrue(list(target.rglob("libartifact_fixture*.rlib")))
+            self.assertTrue(list((target / "build").rglob("build[-_]script[-_]build")))
+            self.assertTrue(list((target / "build").rglob("out/generated.rs")))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        "1",
+// Induced defect failure mode:
+            self.assertTrue(list((target / "deps").glob("libartifact_fixture*.rlib")))
+            self.assertTrue(list((target / "build").glob("*/build-script-build")))
+            self.assertTrue(list((target / "build").glob("*/out/generated.rs")))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec5e2cd6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `db098ba8` are properly handled with clean fallback behavior.

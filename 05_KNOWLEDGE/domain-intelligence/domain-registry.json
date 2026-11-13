@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T21:08:34.145Z",
-  "total_records": 361,
+  "last_updated": "2026-11-13T21:16:46.227Z",
+  "total_records": 370,
   "domains": {
     "A": {
       "total": 5,
@@ -32,7 +32,7 @@
       ]
     },
     "D": {
-      "total": 191,
+      "total": 194,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -224,7 +224,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c",
         "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
         "DOM-D-81EB8074",
-        "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-"
+        "domain_intelligence-research-knowledge-intelligence-hf-google-bert-bert-base-uncased-learnings-core-",
+        "domain_intelligence-research-knowledge-intelligence-baai-bge-m3-core-invariants",
+        "DOM-D-86956AB2",
+        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants"
       ]
     },
     "E": {
@@ -242,7 +245,7 @@
       ]
     },
     "G": {
-      "total": 44,
+      "total": 46,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -287,11 +290,13 @@
         "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-core-invariants",
         "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar",
         "domain_intelligence-architecture-intelligence-k3s-io-k3s-core-invariants",
-        "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
+        "domain_intelligence-architecture-intelligence-infinitered-reactotron-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 78,
+      "total": 80,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -370,11 +375,13 @@
         "DOM-H-169AAD95",
         "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants"
       ]
     },
     "I": {
-      "total": 14,
+      "total": 16,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -389,7 +396,9 @@
         "domain_intelligence-content-information-intelligence-temporalio-temporal-core-invariants",
         "domain_intelligence-content-information-intelligence-alibaba-zvec-core-invariants",
         "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
-        "domain_intelligence-content-information-intelligence-alibaba-zvec-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-alibaba-zvec-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-prometheus-prometheus-core-invariants",
+        "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants"
       ]
     },
     "J": {
@@ -9073,6 +9082,120 @@
       "repository": "k3s-io-k3s-learnings",
       "content_hash": "17838e29cb625eef6f04f861b866817152f2bc225eb98c8346625d04259f88a4",
       "created_at": "2026-11-13T21:08:34.145Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-baai-bge-m3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-m3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: BAAI/bge-m3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-m3-research-knowledge-intelligence-baai-bge-m3-core-invariants.md",
+      "repository": "BAAI/bge-m3",
+      "content_hash": "fa0c43662be6fcbf0c11bba26c3052069e999d2f9495110f7e58956cc5a6f549",
+      "created_at": "2026-11-13T21:16:03.930Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
+      "repository": "NVIDIA/cuda-rust",
+      "content_hash": "360a74d735d3d3cd74530b6391e889f958194931b02d934fdfd049a76b7db4fb",
+      "created_at": "2026-11-13T21:16:06.932Z"
+    },
+    "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: infinitered/reactotron Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infinitered-reactotron-architecture-intelligence-infinitered-reactotron-core-inv.md",
+      "repository": "infinitered/reactotron",
+      "content_hash": "65361a78baf28670fae41658847d930fa370ee105a39bcf4b18053dba6553f8f",
+      "created_at": "2026-11-13T21:16:11.196Z"
+    },
+    "domain_intelligence-content-information-intelligence-prometheus-prometheus-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-prometheus-prometheus-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: prometheus/prometheus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-content-information-intelligence-prometheus-prometheus-cor.md",
+      "repository": "prometheus/prometheus",
+      "content_hash": "b850c867e7db0365a6f8d3fc7a56447fdd98189ca899770c5d14ee794cc5ec70",
+      "created_at": "2026-11-13T21:16:13.877Z"
+    },
+    "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: lancedb/lancedb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-lancedb-lancedb-content-information-intelligence-lancedb-lancedb-core-invariants.md",
+      "repository": "lancedb/lancedb",
+      "content_hash": "99e40d0f43cb6ce907fffb54ef22662f1a91da5545381684164863dad93eeec1",
+      "created_at": "2026-11-13T21:16:18.325Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-learnings-technical-construction-intelligence-nvidia-cuda-rust-.md",
+      "repository": "nvidia-cuda-rust-learnings",
+      "content_hash": "9138a2bfb86640534ece744bf8b91f89bce50f05241ec1c0ca6cf72d4ae99570",
+      "created_at": "2026-11-13T21:16:21.426Z"
+    },
+    "DOM-D-86956AB2": {
+      "record_id": "DOM-D-86956AB2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): BAAI/bge-m3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/BAAI/bge-m3](https://huggingface.co/BAAI/bge-m3))  \n> **Source Version**: `hf-baai-bge-`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clone-structura",
+      "content_hash": "289bd4a114aead4bc2a96645bb821c390aae8dc341c125f32f0d5a5426e9c585",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/BA -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/BA",
+      "provenance": {
+        "source_uri": "project://hf-baai-bge-m3/hf-baai-bge-m3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T21:16:21.608Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baai-bge-m3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-baai-bge-m3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T21:16:45.574Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-m3-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-baai-bge-m3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-m3-learnings-research-knowledge-intelligence-hf-baai-bge-m3-learning.md",
+      "repository": "hf-baai-bge-m3-learnings",
+      "content_hash": "912683187a2799637053e38aa207c890f4645f544be4d095cdbedb0385f25bb2",
+      "created_at": "2026-11-13T21:16:45.736Z"
+    },
+    "domain_intelligence-architecture-intelligence-infinitered-reactotron-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: infinitered-reactotron-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infinitered-reactotron-learnings-architecture-intelligence-infinitered-reactotro.md",
+      "repository": "infinitered-reactotron-learnings",
+      "content_hash": "4e3d3fab7d266fbc06c8c711e7428236bffea776d79d179d6bfb23490d3c8801",
+      "created_at": "2026-11-13T21:16:46.227Z"
     }
   }
 }

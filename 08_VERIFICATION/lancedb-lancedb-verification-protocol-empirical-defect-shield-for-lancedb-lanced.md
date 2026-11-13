@@ -4,45 +4,31 @@
 {
   "source_repository": "lancedb/lancedb",
   "source_url": "https://github.com/lancedb/lancedb",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "7d50d2d2",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T21:16:18.260Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-lancedb-lancedb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `7d50d2d2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T21:16:18.260Z`  
+> **Learning ID**: `learn-github-lancedb-lancedb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `lancedb/lancedb` (Commit: `historical`)
+- **Target Repository**: `lancedb/lancedb` (Commit: `7d50d2d2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
-> **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `34e8b808`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T09:39:48.494Z  
-> **Learning ID**: `learn-github-lancedb-lancedb`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): lancedb/lancedb
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T09:39:48.485Z  
+> **Harvest Timestamp**: 2026-11-13T21:16:17.466Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11879 stars
+- **Stars / Engagement**: 11894 stars
 
 ---
 
@@ -1066,6 +1052,7 @@ use pyo3::{
     exceptions::{PyRuntimeError, PyValueError},
     pyfunction,
 };
+use rattler_conda_types::{MatchSpec, ParseStrictness};
 
 /// A wrapper around a rust builder
 ///
@@ -1116,6 +1103,13 @@ pub fn parse_distance_type(distance_type: impl AsRef<str>) -> PyResult<DistanceT
 pub fn validate_table_name(table_name: &str) -> PyResult<()> {
     lancedb::utils::validate_table_name(table_name)
         .map_err(|e| PyValueError::new_err(e.to_string()))
+}
+
+#[pyfunction(name = "_validate_conda_requirement")]
+pub fn validate_conda_requirement(requirement: &str) -> PyResult<()> {
+    MatchSpec::from_str(requirement, ParseStrictness::Lenient)
+        .map(|_| ())
+        .map_err(|error| PyValueError::new_err(error.to_string()))
 }
 
 /// Parse field references with the same identifier syntax as Lance writes.
@@ -1250,11 +1244,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4948** (2026-11-11): **fix: preserve function freshness across input-preserving writes**
-  *Symptoms*: Updating an unrelated column or merging rows with unchanged Function inputs rewrites fragment files, causing already computed outputs to be treated as stale. Preserve their freshness from the successful write transaction when the inputs and outputs are provably unchanged; keep changed or uncertain inputs eligible for recomputation.  Mixed update/insert writes keep a separate pending-fill proof so retained outputs can be reused while inserted NULL outputs still need computation. Partial refreshes under a new Function definition discard the previous definition’s completed and pending proofs. Preservation uses a version-fenced metadata commit, and an optional preservation failure does not turn a successful data write into an error.  Validation: 67 freshness tests pass, including the new partial-definition regression (confirmed failing before its fix), unrelated updates, identical/mixed merges, NULL/nested/blob inputs, dirty-state preservation, concurrency fences and sidecar retention. `cargo fmt --all` and `cargo clippy --quiet --locked --features remote --tests --examples` pass.  Compatibility: `StalenessPlan` adds a public `pending_fill` field, so direct Rust struct literals must be updated. Refresh consumers must handle pending-fill admission and publication before adopting this behavior; a dependency bump alone does not complete consumer integration. End-to-end consumer validation and deployment remain separate. No latency claim is made for this SDK-only change. 
+- **Issue #5012** (2026-11-13): **fix(remote): preserve branches in cache prewarm requests**
+  *Symptoms*: Calling `prewarm_data` or `prewarm_index` on a checked-out remote branch currently targets main. Both methods omit the branch context, which can warm the wrong snapshot, miss a branch-only index, or fail when the branch's minimum read version is ahead of main. This PR carries the table handle's branch through the existing request helpers. Main requests retain their existing format, with no public API changes. 
 
-- **Issue #4947** (2026-11-11): **fix(python): support legacy blob query bytes**
-  *Symptoms*: ## Summary  - Let local plain queries over row-addressable legacy v1 and v2 blob columns use `blob_mode="bytes"` without importing `pylance` through pandas, batch, or Arrow conversion. - Preserve aliases, filters, ordering, limits, null and empty payloads, empty result schemas, and the caller's `_rowid` choice. - Build the hidden row-id query separately so reusing an async builder for lazy reads or non-blob projections cannot retain an automatic `_rowid`. - Keep byte reads closed for blobs inside lists, remote or namespace pushdown, and query shapes whose result rows cannot be matched back to the source. Blob v2 lazy auto-row-id behavior is unchanged.  Fixes #4645  ## Validation  - 26 focused Python tests passed with the test subprocess blocking all `lance` imports. The persisted fixture writes and reopens a storage-v2.1 table, then covers sync and async pandas, batches, and Arrow conversion plus async builder reuse. - The existing unsupported vector and hybrid reranker regressions now assert the current eligibility diagnostic, and the legacy table-level Arrow regression now asserts successful bytes, schema, values, and hidden row IDs. Both focused tests passed. - The runtime receipt records no installed `pylance` distribution and no importable `lance` module. The Python-only change was verified with an existing compatible 0.42.0b9 extension; the relevant query and fetch APIs are unchanged between that source and this 0.42.0b10 base. - Ruff format and lint pass for every chan
+- **Issue #5010** (2026-11-13): **fix(ci): support Cargo 1.100 artifact layout in cleanup fixture**
+  *Symptoms*: Cargo 1.100 moves intermediate compiler artifacts into per-unit build directories and emits `build_script_build` instead of `build-script-build`. The unlocked-build fixture currently fails on its old rlib path before the SDK build starts, even though the library survives cleanup.  Discover compiler inputs recursively and accept both build-script names while preserving the library, generated-input, ordinary-executable, discarded-test, linker-failure and outside-target assertions. The standalone fixture reproduces the failure before this change and passes afterward on Rust/Cargo 1.100.0; it also passes on 1.97.0. Fault injection confirms missing libraries and other retained inputs still fail their assertions. Production cleanup and normal workflow coverage are unchanged. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1271,919 +1265,768 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34e8b808` (2026-11-11)
-**Commit Message**: fix: preserve function freshness across input-preserving writes (#4948)
+### Incident Patch 1: `db098ba8` (2026-11-13)
+**Commit Message**: fix(ci): support Cargo 1.100 artifact layout in cleanup fixture (#5010)
 
-Updating an unrelated column or merging rows with unchanged Function
-inputs rewrites fragment files, causing already computed outputs to be
-treated as stale. Preserve their freshness from the successful write
-transaction when the inputs and outputs are provably unchanged; keep
-changed or uncertain inputs eligible for recomputation.
+Cargo 1.100 moves intermediate compiler artifacts into per-unit build
+directories and emits `build_script_build` instead of
+`build-script-build`. The unlocked-build fixture currently fails on its
+old rlib path before the SDK build starts, even though the library
+survives cleanup.
 
-Mixed update/insert writes keep a separate pending-fill proof so
-retained outputs can be reused while inserted NULL outputs still need
-computation. Partial refreshes under a new Function definition discard
-the previous definition’s completed and pending proofs. Preservation
-uses a version-fenced metadata commit, and an optional preservation
-failure does not turn a successful data write into an error.
+Discover compiler inputs recursively and accept both build-script names
+while preserving the library, generated-input, ordinary-executable,
+discarded-test, linker-failure and outside-target assertions. The
+standalone fixture reproduces the failure before this change and passes
+afterward on Rust/Cargo 1.100.0; it also passes on 1.97.0. Fault
+injection confirms missing libraries and other retained inputs still
+fail their assertions. Production cleanup and normal workflow coverage
+are unchanged.
 
-Validation: 67 freshness tests pass, including the new
-partial-definition regression (confirmed failing before its fix),
-unrelated updates, identical/mixed merges, NULL/nested/blob inputs,
-dirty-state preservation, concurrency fences and sidecar retention.
-`cargo fmt --all` and `cargo clippy --quiet --locked --features remote
---tests --examples` pass.
-
-Compatibility: `StalenessPlan` a
-
-**File**: `rust/lancedb/src/table/computed_columns.rs` (modified, +5/-0)
+**File**: `ci/tests/test_build_no_lock.py` (modified, +5/-3)
 ```diff
-@@ -211,6 +211,11 @@ pub const FUNCTION_BINDINGS_VERSION: u32 = 1;
- /// declared before signatures existed.
- pub const SOURCE_SIGNATURE_META_KEY: &str = "computed_refresh.source_signature";
+@@ -88,9 +88,11 @@ def test_links_all_targets_and_retains_compiler_inputs(self):
+             self.assertTrue((target / "fixture_cli").is_file())
+             # Cargo guarantees this binary for test execution, not compile-time reads.
+             subprocess.run([str(target / "fixture_cli")], check=True)
+-            self.assertTrue(list((target / "deps").glob("libartifact_fixture*.rlib")))
+-            self.assertTrue(list((target / "build").glob("*/build-script-build")))
+-            self.assertTrue(list((target / "build").glob("*/out/generated.rs")))
++            # Cargo 1.100 nests compiler inputs in per-unit build directories and
++            # names the build-script executable build_script_build.
++            self.assertTrue(list(target.rglob("libartifact_fixture*.rlib")))
++            self.assertTrue(list((target / "build").rglob("build[-_]script[-_]build")))
++            self.assertTrue(list((target / "build").rglob("out/generated.rs")))
  
-+/// Signatures of input-preserving rewrites whose retained Function outputs
-+/// are current but whose inserted rows still need their first computation.
-+/// A sidecar reference keeps this separate from completed freshness stamps.
-+pub const PENDING_FILL_SIGNATURE_META_KEY: &str = "computed_refresh.pending_fill_signature";
-+
- /// Field metadata key holding the definition digest a column was last
- /// computed under. A change to it makes every row stale.
- pub const DEFINITION_VERSION_META_KEY: &str = "computed_refresh.definition_version";
-```
-
-**File**: `rust/lancedb/src/table/freshness.rs` (modified, +1066/-11)
-```diff
-@@ -25,10 +25,11 @@ use std::io::{Cursor, Read};
- use std::ops::Range;
- 
- use arrow_array::{Array, UInt64Array};
-+use arrow_schema::{DataType, Schema as ArrowSchema};
- use futures::TryStreamExt;
- use lance::Dataset;
- use lance::dataset::refs::Ref;
--use lance::dataset::transaction::Operation;
-+use lance::dataset::transaction::{Operation, UpdateMode};
- use lance_core::ROW_ADDR;
- use lance_core::datatypes::{Field as LanceField, Schema as LanceSchema};
- use lance_io::object_store::{ObjectStore, uri_to_url};
-@@ -40,7 +41,8 @@ use sha2::{Digest, Sha256};
- use uuid::Uuid;
- 
- use crate::table::computed_columns::{
--    DEFINITION_VERSION_META_KEY, RECORDED_AT_VERSION_META_KEY, SOURCE_SIGNATURE_META_KEY,
-+    DEFINITION_VERSION_META_KEY, FUNCTION_BINDINGS_META_KEY, PENDING_FILL_SIGNATURE_META_KEY,
-+    RECORDED_AT_VERSION_META_KEY, SOURCE_SIGNATURE_META_KEY, field_root, function_bindings,
- };
- use crate::{Error, Result};
- 
-@@ -738,12 +740,14 @@ async fn referenced_digests(dataset: &Dataset, into: &mut HashSet<String>) -> Re
-     for version in dataset.versions().await? {
-         let at = dataset.checkout_version(version.version).await?;
-         for field in at.schema().fields_pre_order() {
--            if let Some(digest) = field
--                .metadata
--                .get(SOURCE_SIGNATURE_META_KEY)
--                .and_then(|value| value.strip_prefix(SIDECAR_REF))
--            {
--                into.insert(digest.to_string());
-+            for key in [SOURCE_SIGNATURE_META_KEY, PENDING_FILL_SIGNATURE_META_KEY] {
-+                if let Some(digest) = field
-+                    .metadata
-+                    .get(key)
-+                    .and_then(|value| value.strip_prefix(SIDECAR_REF))
-+                {
-+                    into.insert(digest.to_string());
-+                }
-             }
-         }
-     }
-@@ -820,6 +824,10 @@ pub struct StalenessPlan {
-     pub dirty: HashSet<u32>,
-     /// Current-signature fragments with only some rows dirty.
-     pub row_dirty: RowStateMap,
-+    /// Retained values are current, but unassigned inserted rows need filling.
-+    /// These signatures become completed stamps only after a full null-fill.
-+    #[serde(default)]
-+    pub pending_fill: SignatureMap,
-     /// Fragments a compaction produced from fresh ones, at their current
-     /// signature: not dirty, and for the seal to record.
-     pub inherited: SignatureMap,
-@@ -1174,13 +1182,29 @@ pub async fn staleness_against(
-     let mut inherited = carried.inherited;
-     let mut dirty = carried.dirty_products;
-     let mut row_dirty = RowStateMap::new();
-+    let pending = match field_meta(dataset, column, PENDING_FILL_SIGNATURE_META_KEY) {
-+        Some(reference) if unrecorded => {
-+            let state = match reference.strip_prefix(SIDECAR_REF) {
-+                Some(digest) => read_sidecar(dataset, digest).await.ok(),
-+                None => None,
-+            };
-+            state
-+                .filter(|state| state.row_state.is_empty() && state.basis.is_empty())
-+                .map(|state| state.signatures)
-+                .unwrap_or_default()
-+        }
-+        _ => SignatureMap::new(),
-+    };
-+    let mut pending_fill = SignatureMap::new();
-     let mut live = HashSet::new();
-     let bases = Bases::of(dataset)?;
-     for fragment in dataset.get_fragments() {
-         let id = fragment.id() as u32;
-         live.insert(id);
-         let current = fragment_input_signature(&bases, fragment.metadata(), inputs)?;
--        if stored.get(&id).or_else(|| inherited.get(&id)) != Some(&current) {
-+        if !stored.contains_key(&id) && !dirty.contains(&id) && pending.get(&id) == Some(&current) {
-+            pending_fill.insert(id, current);
-+        } else if stored.get(&id).or_else(|| inherited.get(&id)) != Some(&current) {
-             dirty.insert(id);
-         } else if let Some(rows) = row_state.get(&id) {
-             row_dirty.insert(id, rows.clone());
-@@ -1192,6 +1216,7 @@ pub async fn staleness_against(
-         recompute_all: false,
-         dirty,
-         row_dirty,
-+        pending_fill,
-         inherited,
-     })
- }
-@@ -1263,18 +1288,302 @@ pub async fn record_freshness(
-     })
- }
- 
-+/// The source of a just-committed write whose retained Function values may
-+/// still be fresh. The fields must describe the actual write, including its
-+/// join keys; they must not be inferred from a later table snapshot.
-+pub enum FunctionWrite<'a> {
-+    /// Assignments executed by Lance's update builder.
-+    Update { columns: &'a [String] },
-+    /// The source schema and join columns executed by Lance's merge builder.
-+    Merge {
-+        source_schema: &'a ArrowSchema,
-+        on: &'a [String],
-+        /// The insertion count from the same committed merge result.
-+        num_inserted_rows: u64,
-+    },
-+}
-+
-+impl FunctionWrite<'_> {
-+    fn writes_root(&self, root: &str) -> Result<bool> {
-+        match self {
-+            Self::Update { columns } => columns.iter().try_fold(false, |found, colu
-```
-
-**File**: `rust/lancedb/src/table/merge.rs` (modified, +16/-1)
-```diff
-@@ -385,6 +385,8 @@ pub(crate) async fn execute_merge_insert(
-     }
- 
-     let dataset = table.dataset.get().await?;
-+    let source_schema = source.schema();
-+    let on = params.on.clone();
-     let mut builder = LanceMergeInsertBuilder::try_new(dataset.clone(), params.on)?;
-     match (
-         params.when_matched_update_all,
-@@ -432,8 +434,21 @@ pub(crate) async fn execute_merge_insert(
-         Either::Right(job.execute(source).map_err(|e| e.into()))
-     };
-     let (new_dataset, stats) = future.await?;
-+    let mut new_dataset = new_dataset.as_ref().clone();
-+    if let Err(error) = super::freshness::preserve_function_freshness(
-+        &mut new_dataset,
-+        super::freshness::FunctionWrite::Merge {
-+            source_schema: &source_schema,
-+            on: &on,
-+            num_inserted_rows: stats.num_inserted_rows,
-+        },
-+    )
-+    .await
-+    {
-+        log::warn!("merge committed but Function freshness could not be preserved: {error}");
-+    }
-     let version = new_dataset.manifest().version;
--    table.dataset.update(new_dataset.as_ref().clone());
-+    table.dataset.update(new_dataset);
-     Ok(MergeResult {
-         version,
-         num_updated_rows: stats.num_updated_rows,
-```
-
-**File**: `rust/lancedb/src/table/update.rs` (modified, +19/-2)
-```diff
-@@ -113,20 +113,37 @@ pub(crate) async fn execute_update(
-     }
- 
-     // 4. Apply the columns (SET clause)
-+    let written_columns = update
-+        .columns
-+        .iter()
-+        .map(|(column, _)| column.clone())
-+        .collect::<Vec<_>>();
-     for (column, value) in update.columns {
-         builder = builder.set(column, &value)?;
-     }
- 
-     // 5. Execute the operation (Write new files)
-     let operation = builder.build()?;
-     let res = operation.execute().await?;
-+    let mut new_dataset = res.new_dataset.as_ref().clone();
-+    if let Err(error) = super::freshness::preserve_function_freshness(
-+        &mut new_dataset,
-+        super::freshness::FunctionWrite::Update {
-+            columns: &written_columns,
-+        },
-+    )
-+    .await
-+    {
-+        log::warn!("update committed but Function freshness could not be preserved: {error}");
-+    }
- 
-     // 6. Update the table's view of the latest version
--    table.dataset.update(res.new_dataset.as_ref().clone());
-+    let version = new_dataset.version().version;
-+    table.dataset.update(new_dataset);
- 
-     Ok(UpdateResult {
-         rows_updated: res.rows_updated,
--        version: res.new_dataset.version().version,
-+        version,
-     })
- }
- 
+     def test_link_failure_preserves_cargo_status_and_diagnostic(self):
+         with tempfile.TemporaryDirectory(prefix=".no-lock-", dir=SCRIPT.parent) as temp:
 ```
 
 ---
 
-### Incident Patch 2: `1e5b6dee` (2026-11-11)
-**Commit Message**: fix(python): support legacy blob query bytes (#4947)
+### Incident Patch 2: `7d50d2d2` (2026-11-13)
+**Commit Message**: chore(deps): bump Rust deps flagged by security scans (#5035)
 
 ## Summary
 
-- Let local plain queries over row-addressable legacy v1 and v2 blob
-columns use `blob_mode="bytes"` without importing `pylance` through
-pandas, batch, or Arrow conversion.
-- Preserve aliases, filters, ordering, limits, null and empty payloads,
-empty result schemas, and the caller's `_rowid` choice.
-- Build the hidden row-id query separately so reusing an async builder
-for lazy reads or non-blob projections cannot retain an automatic
-`_rowid`.
-- Keep byte reads closed for blobs inside lists, remote or namespace
-pushdown, and query shapes whose result rows cannot be matched back to
-the source. Blob v2 lazy auto-row-id behavior is unchanged.
+Bumps the Rust dependencies flagged by Aikido that have a
+semver-compatible fix available. Supersedes #5009 (rustls in the docs
+lockfile is included here).
 
-Fixes #4645
+Root `Cargo.lock`:
 
-## Validation
+| Crate | From | To |
+| --- | --- | --- |
+| mio | 1.2.0 | 1.2.5 |
+| smallvec | 1.15.1 | 1.16.5 |
+| thread_local | 1.1.9 | 1.1.10 |
+| tinyvec | 1.11.0 | 1.13.3 |
+| zerocopy / zerocopy-derive | 0.8.48 | 0.8.63 |
+| event-listener | 5.4.1 | 5.4.2 |
+| arrayvec | 0.7.6 | 0.7.8 |
+| wasm-bindgen (+ js-sys, web-sys) | 0.2.121 | 0.2.130 |
+| getrandom 0.4 | 0.4.2 | 0.4.3 (drops wasip3 → wasmparser 0.244) |
+| brotli | 3.5.0 | 9.1.1 (via `random_word` dev-dep 0.4.3 → 1.0.0) |
 
-- 26 focused Python tests passed with the test subprocess blocking all
-`lance` imports. The persisted fixture writes and reopens a storage-v2.1
-table, then covers sync and async pandas, batches, and Arrow conversion
-plus async builder reuse.
-- The existing unsupported vector and hybrid reranker regressions now
-assert the current eligibility diagnostic, and the legacy table-level
-Arrow regression now asserts successful bytes, schema, values, and
-hidden r
+`docs/web-tests/rs/Cargo.lock` gets the same crates plus rustls, hyper,
+h2, moka, bytes, crossbeam-epoch and anyhow. That crate is not a
+workspace member, so cargo refused to resolve it; it now has an empty
+`[workspace]` table.
 
-**File**: `docs/web/basics/lance.mdx` (modified, +4/-3)
+Still open, blocked upstream: quick-xml 0.41 (lance-io), rand 0.9
+(datafusion/lance/candle), heapless 0.8 (rstar via geo), paste,
+unsafe-libyaml (rattler_conda_types, lindera), fast-float/smartstring
+(polars 0.39), number_prefix (needs hf-hub 1.0 mig
+
+**File**: `Cargo.lock` (modified, +54/-228)
 ```diff
-@@ -49,9 +49,10 @@ tbl = db.open_table("frames")  # opens /data/frames.lance; version=N pins a vers
- Use `lancedb` for search, retrieval, data curation, multimodal blob access and
- application code. Install `pylance` (`import lance`) only when building query
- engines or connectors, calling format-level fragment APIs directly, or
--converting plain-scan lazy or legacy blob columns with `to_pandas()` (see
--[Multimodal data and blobs](/management/table#multimodal) for `pylance`-free
--conversions).
-+converting plain-scan lazy blob handles with `to_pandas()`. Legacy plain-scan
-+byte conversions use LanceDB's native path without `pylance` (see
-+[Multimodal data and blobs](/management/table#multimodal) for conversion
-+boundaries).
+@@ -63,15 +63,15 @@ dependencies = [
  
- | `pylance` (`import lance`) | `lancedb` (`import lancedb`) |
- | --- | --- |
+ [[package]]
+ name = "alloc-no-stdlib"
+-version = "2.0.4"
++version = "3.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cc7bb162ec39d46ab1ca8c77bf72e890535becd1751bb45f64c597edb4c8c6b3"
++checksum = "c2fb6cfd47bf496ff64095c20eaba0c201404ee38714d4142fcfa1dc334fcc7a"
+ 
+ [[package]]
+ name = "alloc-stdlib"
+-version = "0.2.2"
++version = "0.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "94fb8275041c72129eb51b7d0322c29b8387a0386127718b096429201a5d6ece"
++checksum = "0b5c1865780388bfa186411ab5f247819487fc4864c6e9c3106611fa347586e1"
+ dependencies = [
+  "alloc-no-stdlib",
+ ]
+@@ -221,9 +221,9 @@ checksum = "76a2e8124351fda1ef8aaaa3bbd7ebbcb486bbcd4225aca0aa0d84bb2db8fecb"
+ 
+ [[package]]
+ name = "arrayvec"
+-version = "0.7.6"
++version = "0.7.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
++checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
+ 
+ [[package]]
+ name = "arrow"
+@@ -1474,9 +1474,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "brotli"
+-version = "3.5.0"
++version = "9.1.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d640d25bc63c50fb1f0b545ffd80207d2e10a4c965530809b40ba3386825c391"
++checksum = "627b7cfb0578f0eafce087a90fcd40add1231900b69e4d4de2d456260a4f5d81"
+ dependencies = [
+  "alloc-no-stdlib",
+  "alloc-stdlib",
+@@ -1485,9 +1485,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "brotli-decompressor"
+-version = "2.5.1"
++version = "6.3.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4e2e4afe60d7dd600fdd3de8d0f08c2b7ec039712e3b6137ff98b7004e82de4f"
++checksum = "75c74c9c51b9140663e196b5fb88bc94c334d7a497c8311cb759d8557874747f"
+ dependencies = [
+  "alloc-no-stdlib",
+  "alloc-stdlib",
+@@ -2261,7 +2261,7 @@ checksum = "9c035cb64cba03dad2fb921f3e218785e8cf9a41790da5eb3a1400f62fa2be11"
+ dependencies = [
+  "cpubits",
+  "ctutils",
+- "getrandom 0.4.2",
++ "getrandom 0.4.3",
+  "hybrid-array",
+  "num-traits",
+  "rand_core 0.10.1",
+@@ -2285,7 +2285,7 @@ version = "0.2.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "77727bb15fa921304124b128af125e7e3b968275d1b108b379190264f4423710"
+ dependencies = [
+- "getrandom 0.4.2",
++ "getrandom 0.4.3",
+  "hybrid-array",
+  "rand_core 0.10.1",
+ ]
+@@ -3504,11 +3504,10 @@ checksum = "40404c3f5f511ec4da6fe866ddf6a717c309fdbb69fbbad7b0f3edab8f2e835f"
+ 
+ [[package]]
+ name = "event-listener"
+-version = "5.4.1"
++version = "5.4.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e13b66accf52311f30a0db42147dadea9850cb48cd070028831ae5f5d4b856ab"
++checksum = "5a23add41df1562121a9393cb065eab5146a1242410f23a644851e90cfd669d2"
+ dependencies = [
+- "concurrent-queue",
+  "parking",
+  "pin-project-lite",
+ ]
+@@ -4248,17 +4247,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "getrandom"
+-version = "0.4.2"
++version = "0.4.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555"
++checksum = "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099"
+ dependencies = [
+  "cfg-if 1.0.4",
+  "js-sys",
+  "libc",
+  "r-efi 6.0.0",
+  "rand_core 0.10.1",
+- "wasip2",
+- "wasip3",
+  "wasm-bindgen",
+ ]
+ 
+@@ -4939,12 +4936,6 @@ version = "2.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e4a2c462a4d927d512f5f882a033ddd62f33a05bb9f230d98f736ac3dc85938f"
+ 
+-[[package]]
+-name = "id-arena"
+-version = "2.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954"
+-
+ [[package]]
+ name = "ident_case"
+ version = "1.0.1"
+@@ -5275,13 +5266,12 @@ dependencies = [
+ 
+ [[package]]
+ name = "js-sys"
+-version = "0.3.98"
++version = "0.3.107"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "67df7112613f8bfd9150013a0314e196f4800d3201ae742489d999db2f979f08"
++checksum = "8dc09d2154098bbf4ef54eab6b117a3c24cbbffe94046b16ee6d6d4510584d3a"
+ dependencies = [
+  "cfg-if 1.0.4",
+  "futures-util",
+- "once_cell",
+  "wasm-bindgen",
+ ]
+ 
+@@ -6243,12 +6233,6 @@ dependencies = [
+  "spin 0.9.9",
+ ]
+ 
+-[[package]]
+-name = "leb128fmt"
+-version = "0.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2"
+-
+ [[package]]
+ name = "lexical-core"
+ version = "1.0.6"
+@@ -6704,9 +6688,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "mio"
+-version = "1.2.0"
++version = "1.2.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "50b7e5b27aa02a74bac8c3f23f448f8d87ff11f92d3aac1a6ed369ee08cc56c1"
++checksum = "20521a903f02b0a573cd6840e9d0a5a0cc043d361fe924092cd70f8556cc9c4a"
+ dependencies = [
+  "libc",
+  "wasi 0.11.1+wasi-snapshot-preview1",
+@@ -8550,16 +8534,6 @@ d
 ```
 
-**File**: `docs/web/management/table.mdx` (modified, +20/-16)
+**File**: `docs/web-tests/rs/Cargo.lock` (modified, +68/-233)
 ```diff
-@@ -465,9 +465,11 @@ methods `to_pandas()`, `to_arrow()`, `to_list()`, and `to_batches()` accept a
+@@ -87,9 +87,9 @@ checksum = "940b3a0ca603d1eade50a4846a2afffd5ef57a9feac2c0e2ec2e14f9ead76000"
  
- For supported local v2 blob projections, `to_pandas(blob_mode="bytes")` and
- `to_pandas(blob_mode="descriptions")` use native Arrow conversion without
--pylance. Pandas conversions that need the Lance scanner, including plain-scan
--`"lazy"` handles and legacy blobs, still require pylance. `to_arrow()`,
--`to_list()`, `to_batches()`, and the fetch methods do not require pylance.
-+pylance. Eligible local plain scans also convert row-addressable legacy blob
-+bytes without pylance. Pandas conversions that need the Lance scanner,
-+including plain-scan `"lazy"` handles and scanner-only options, still require
-+pylance. `to_arrow()`, `to_list()`, `to_batches()`, and the fetch methods do
-+not require pylance for supported local queries.
+ [[package]]
+ name = "anyhow"
+-version = "1.0.102"
++version = "1.0.104"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
++checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
  
- `blob_mode="bytes"` requires a LanceDB Embedded table snapshot, so Enterprise
- and in-memory tables raise `NotImplementedError`. On an Enterprise table,
-@@ -531,28 +533,30 @@ PyArrow.
+ [[package]]
+ name = "ar_archive_writer"
+@@ -129,9 +129,9 @@ checksum = "76a2e8124351fda1ef8aaaa3bbd7ebbcb486bbcd4225aca0aa0d84bb2db8fecb"
  
- ###### Stream blob results {#multimodal-blob-batches}
+ [[package]]
+ name = "arrayvec"
+-version = "0.7.6"
++version = "0.7.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
++checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
  
--`to_batches(blob_mode="bytes")` fetches blob v2 payloads one batch at a time
--and returns them as Arrow `large_binary` values. Iterate over the reader and
--call `batch.to_pandas()` to convert each batch to a DataFrame without collecting
--all payloads at once.
-+`to_batches(blob_mode="bytes")` fetches row-addressable blob v2 payloads and
-+eligible local plain-scan legacy v1 payloads one batch at a time and returns
-+them as Arrow `large_binary` values. Iterate over the reader and call
-+`batch.to_pandas()` to convert each batch to a DataFrame without collecting all
-+payloads at once.
+ [[package]]
+ name = "arrow"
+@@ -683,9 +683,9 @@ checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
  
- For sync queries, call `query.to_batches(batch_size=64, blob_mode="bytes")`
- and iterate with `for`. For async queries, call
- `await query.to_batches(max_batch_length=64, blob_mode="bytes")` and iterate
- with `async for`. Sync full-text and hybrid queries do not support
- `to_batches()`.
+ [[package]]
+ name = "bytes"
+-version = "1.11.1"
++version = "1.12.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1e748733b7cbc798e1434b6ac524f0c1ff2ab456fe201501e6497c8417a4fc33"
++checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
  
--The default `"lazy"` mode returns descriptors and keeps automatic `_rowid`
--columns visible for manual fetches. `"descriptions"` returns the five-field
--descriptors. Both `"bytes"` and `"descriptions"` hide automatic row IDs;
--explicitly requested row IDs remain visible.
-+The default `"lazy"` mode returns blob v2 descriptors and keeps their automatic
-+`_rowid` columns visible for manual fetches. `"descriptions"` returns the
-+five-field descriptors. Both `"bytes"` and `"descriptions"` hide automatic row
-+IDs; explicitly requested row IDs remain visible.
+ [[package]]
+ name = "cast"
+@@ -1019,9 +1019,9 @@ dependencies = [
  
- Bytes mode has the same restrictions as `to_arrow(blob_mode="bytes")`,
--including no legacy blobs, blobs inside lists, Enterprise tables, or namespace
--`QueryTable` pushdown. If concurrent writers can overwrite the table, use a
--separate reader checked out to a fixed version before querying. Otherwise,
--an overwrite can invalidate the row IDs used to fetch bytes and raise
--`ValueError`.
-+including no blobs inside lists, Enterprise tables, namespace `QueryTable`
-+pushdown, or query shapes that cannot preserve their row results. Legacy v1
-+bytes are limited to eligible local plain scans. If concurrent writers can
-+overwrite the table, use a separate reader checked out to a fixed version
-+before querying. Otherwise, an overwrite can invalidate the row IDs used to
-+fetch bytes and raise `ValueError`.
+ [[package]]
+ name = "crossbeam-epoch"
+-version = "0.9.18"
++version = "0.9.21"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5b82ac4a3c2ca9c3460964f020e1402edd5753411d7737aa39c3714ad1b5420e"
++checksum = "dc74980687109a3b14c72fd458107bf0baa1da1a1a805e178d15501ba9b86d9d"
+ dependencies = [
+  "crossbeam-utils",
+ ]
+@@ -1904,7 +1904,7 @@ dependencies = [
+  "libc",
+  "option-ext",
+  "redox_users",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
  
- ###### Optional pandas examples {#multimodal-blob-pandas}
+ [[package]]
+@@ -1993,7 +1993,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
  
+ [[package]]
+@@ -2004,11 +2004,10 @@ checksum = "40404c3f5f511ec4da6fe866ddf6a717c309fdbb69fbbad7b0f3edab8f2e835f"
+ 
+ [[package]]
+ name = "event-listener"
+-version = "5.4.1"
++version = "5.4.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e13b66accf52311f30a0db42147dadea9850cb48cd070028831ae5f5d4b856ab"
++checksum = "5a23add41df1562121a9393cb065eab5146a1242410f23a644851e90cfd669d2"
+ dependencies = [
+- "concurrent-queue",
+  "parking",
+  "pin-project-lite",
+ ]
+@@ -2289,17 +2288,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "getrandom"
+-version = "0.4.2"
++version = "0.4.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555"
++checksum = "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099"
+ dependencies = [
+  "cfg-if",
+  "js-sys",
+  "libc",
+  "r-efi 6.0.0",
+  "rand_core 0.10.1",
+- "wasip2",
+- "wasip3",
+  "wasm-bindgen",
+ ]
+ 
+@@ -2317,9 +2314,9 @@ checksum = "0cc23270f6e1808e30a928bdc84dea0b9b4136a8bc82338574f23baf47bbd280"
+ 
+ [[package]]
+ name = "h2"
+-version = "0.4.12"
++version = "0.4.20"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f3c0b69cfcb4e1b9f1bf2f53f95f766e4661169728ec61cd3fe5a0166f2d1386"
++checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
+ dependencies = [
+  "atomic-waker",
+  "bytes",
+@@ -2475,9 +2472,9 @@ checksum = "135b12329e5e3ce057a9f972339ea52bc954fe1e9358ef27f95e89716fbc5424"
+ 
+ [[package]]
+ name = "hyper"
+-version = "1.8.1"
++version = "1.12.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2ab2d4f250c3d7b1c9fcdff1cece94ea4e2dfbec68614f7b87cb205f24ca9d11"
++checksum = "2c3e324da4c95177d6291d4c8730197c0d1822f8a9766814a4a44fa5ab797c9c"
+ dependencies = [
+  "atomic-waker",
+  "bytes",
+@@ -2490,7 +2487,6 @@ dependencies = [
+  "httpdate",
+  "itoa",
+  "pin-project-lite",
+- "pin-utils",
+  "smallvec",
+  "tokio",
+  "want",
+@@ -2699,12 +2695,6 @@ version = "2.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e4a2c462a4d927d512f5f882a033ddd62f33a05bb9f230d98f736ac3dc85938f"
+ 
+-[[package]]
+-name = "id-arena"
+-version = "2.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954"
+-
+ [[package]]
+ name = "ident_case"
+ version = "1.0.1"
+@@ -2808,7 +2798,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
+ dependencies = [
+  "hermit-abi",
+  "libc",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -2876,7 +2866,7 @@ dependencies = [
+  "portable-atomic",
+  "portable-atomic-util",
+  "serde_core",
+- "windows-sys 0.61.2",
++ "windows-sys 0.59.0",
+ ]
+ 
+ [[package]]
+@@ -2917,11 +2907,12 @@ dependencies = [
+ 
+ [[package]]
+ name = "js-sys"
+-version = "0.3.83"
++version = "0.3.107"
+ source = "regist
 ```
 
-**File**: `docs/web/quickstart.mdx` (modified, +3/-2)
+**File**: `docs/web-tests/rs/Cargo.toml` (modified, +4/-0)
 ```diff
-@@ -59,8 +59,9 @@ uv add --prerelease allow --index https://pypi.fury.io/lancedb/ lancedb
- 
- Most applications only need `lancedb`. Install the optional `pylance` extra and
- include the Lance preview index only when building query engines or connectors,
--calling format-level `lance` APIs directly, or converting plain-scan lazy or
--legacy blob columns with `to_pandas()`:
-+calling format-level `lance` APIs directly, or converting plain-scan lazy blob
-+handles with `to_pandas()`. Legacy plain-scan byte conversions use LanceDB's
-+native path and do not require `pylance`:
- 
- <CodeGroup>
- ```bash Python (pip) icon="terminal"
+@@ -1,3 +1,7 @@
++# Standalone crate pinned to a published lancedb release, not part of the root
++# workspace. Without this, cargo commands here fail to resolve the workspace.
++[workspace]
++
+ [package]
+ name = "rs"
+ version = "0.1.0"
 ```
 
-**File**: `python/python/lancedb/_blob.py` (modified, +30/-6)
+**File**: `rust/lancedb/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: Apache-2.0
- # SPDX-FileCopyrightText: Copyright The LanceDB Authors
- 
--"""Blob fetch API and v2 projection helpers."""
-+"""Blob fetch API and projection helpers."""
- 
- from __future__ import annotations
- 
-@@ -13,7 +13,11 @@
- import pyarrow as pa
- 
- from .expr import Expr
--from .schema import blob_column_paths, row_addressable_blob_v2_paths
-+from .schema import (
-+    blob_column_paths,
-+    row_addressable_blob_paths,
-+    row_addressable_blob_v2_paths,
-+)
- from .types import BlobMode, QueryProjection, QueryProjectionSpec
- 
- if TYPE_CHECKING:
-@@ -165,6 +169,25 @@ def blob_v2_projection_sources(
-     return _project_blob_paths(row_addressable_blob_v2_paths(schema), projection)
- 
- 
-+def blob_projection_sources(
-+    schema: pa.Schema,
-+    projection: QueryProjection,
-+    *,
-+    include_legacy: bool = False,
-+) -> dict[str, str]:
-+    """Map projected blob outputs to row-addressable source columns.
-+
-+    Legacy v1 columns are included only when the caller can safely fetch them
-+    through the same row-id path as v2.
-+    """
-+    paths = (
-+        row_addressable_blob_paths(schema)
-+        if include_legacy
-+        else row_addressable_blob_v2_paths(schema)
-+    )
-+    return _project_blob_paths(paths, projection)
-+
-+
- def reject_unfetchable_blob_columns(
-     schema: pa.Schema, projection: QueryProjection, blob_sources: dict[str, str]
- ) -> None:
-@@ -177,8 +200,9 @@ def reject_unfetchable_blob_columns(
-     if unfetchable:
-         raise ValueError(
-             f"blob_mode='bytes' cannot fetch blob columns {unfetchable}. Bytes are "
--            "fetched by row id, which covers blob v2 columns with one blob per "
--            "row but not legacy blob columns or blobs inside lists. Use "
-+            "fetched by row id for legacy and v2 columns in local plain scans, "
-+            "but not for blobs inside lists or query shapes whose result columns "
-+            "cannot be matched back to the source. Use "
-             "blob_mode='descriptions' or remove these columns from the projection."
-         )
- 
-@@ -269,7 +293,7 @@ def finalize_blob_query_table(
-     return stash_auto_row_ids(tbl, blob_paths)
- 
- 
--async def replace_v2_blob_columns_with_bytes(
-+async def replace_blob_columns_with_bytes(
-     tbl: pa.Table,
-     blob_sources: dict[str, str],
-     fetch_blobs: FetchBlobsAsync,
-@@ -289,7 +313,7 @@ async def replace_v2_blob_columns_with_bytes(
-     return tbl
- 
- 
--def replace_v2_blob_columns_with_bytes_sync(
-+def replace_blob_columns_with_bytes_sync(
-     tbl: pa.Table,
-     blob_sources: dict[str, str],
-     fetch_blobs: FetchBlobsSync,
-```
-
-**File**: `python/python/lancedb/query.py` (modified, +179/-75)
-```diff
-@@ -48,12 +48,13 @@
-     FetchBlobsAsync,
-     FetchBlobsSync,
-     blob_auto_row_id_for_scan,
-+    blob_projection_sources,
-     blob_v2_projection_sources,
-     finalize_blob_query_table,
-     reject_unfetchable_blob_columns,
-     reject_unmatched_blob_outputs,
--    replace_v2_blob_columns_with_bytes,
--    replace_v2_blob_columns_with_bytes_sync,
-+    replace_blob_columns_with_bytes,
-+    replace_blob_columns_with_bytes_sync,
-     strip_auto_row_ids,
-     validate_blob_mode,
- )
-@@ -245,6 +246,17 @@ def _query_is_plain_scan(query: Query) -> bool:
-     )
- 
- 
-+def _query_is_plain_blob_scan(query: Query) -> bool:
-+    """Whether native batch conversion can preserve this query's row result."""
-+    return (
-+        query.vector is None
-+        and query.full_text_query is None
-+        and query.take_offsets is None
-+        and query.take_row_ids is None
-+        and not query.postfilter
-+    )
-+
-+
- def _filter_to_sql(filter: Optional[Union[str, Expr]]) -> Optional[str]:
-     if filter is None:
-         return None
-@@ -421,7 +433,7 @@ def _finish_plain_scan_pandas(
- ) -> pd.DataFrame:
-     if blob_sources:
-         tbl = _scanner_to_table(scanner)
--        tbl = replace_v2_blob_columns_with_bytes_sync(tbl, blob_sources, fetch_blobs)
-+        tbl = replace_blob_columns_with_bytes_sync(tbl, blob_sources, fetch_blobs)
-         if strip_auto_row_id and "_rowid" in tbl.column_names:
-             tbl = tbl.drop_columns(["_rowid"])
-         if flatten is not None:
-@@ -475,7 +487,7 @@ async def _finish_plain_scan_pandas_async(
- ) -> pd.DataFrame:
-     if blob_sources:
-         tbl = _scanner_to_table(scanner)
--        tbl = await replace_v2_blob_columns_with_bytes(tbl, blob_sources, fetch_blobs)
-+        tbl = await replace_blob_columns_with_bytes(tbl, blob_sources, fetch_blobs)
-         if strip_auto_row_id and "_rowid" in tbl.column_names:
-             tbl = tbl.drop_columns(["_rowid"])
-         if flatten is not None:
-@@ -1281,10 +1293,10 @@ def to_pandas(
-         blob_mode: str, default "lazy"
-             Controls how blob columns are returned. Local blob v2 queries support
-             ``"bytes"`` and ``"descriptions"`` without pylance. Eligible local
--            plain scans use pylance's scanner for lazy blob handles in ``"lazy"``
--            mode and for legacy blob columns. Other local blob v2
--            queries return descriptors in ``"lazy"`` and ``"descriptions"``
--            modes, or payloads in ``"bytes"`` mode, through :meth:`to_arrow`.
-+            plain scans also support ``"bytes"`` for row-addressable legacy blob
-+            columns without pylance. Other local blob v2 queries return
-+            descriptors in ``"lazy"`` and ``"descriptions"`` modes, or payloads
-+            in ``"bytes"`` mode, through :meth:`to_arrow`.
-             LanceDB Enterprise blob queries support only ``"descriptions"`` until a
-             stable
-             table snapshot can bind the query and blob fetches.
-@@ -1352,8 +1364,8 @@ def to_arrow(
-         blob_mode: str, default "lazy"
-             ``"lazy"`` returns blob v2 descriptors that carry the row id
-             ``fetch_blobs`` reads. ``"descriptions"`` returns them without it.
--            ``"bytes"`` returns payload bytes and raises for legacy blob columns
--            and blobs inside lists.
-+            ``"bytes"`` returns payload bytes for supported row-addressable blob
-+            columns and raises for blobs inside lists.
-         """
-         raise NotImplementedError
- 
-@@ -1370,7 +1382,7 @@ def to_batches(
-         Execute the query and return the results as a pyarrow
-         [RecordBatchReader](https://arrow.apache.org/docs/python/generated/pyarrow.RecordBatchReader.html)
- 
--        For v2 blob projections, the default ``blob_mode="lazy"`` keeps the
-+        For blob v2 projections, the default ``blob_mode="lazy"`` keeps the
-         auto ``_rowid`` column visible so batch consumers can call
-         ``fetch_blobs``. The ``"bytes"`` and ``"descriptions"`` modes hide
-         automatic row ids.
-@@ -1390,10 +1402,11 @@ def to_batches(
-             The timeout also covers reading the batches, so consuming them
-             slowly can exceed it.
-         blob_mode: str, default "lazy"
--            ``"lazy"`` keeps blob descriptors and auto row ids for manual fetches.
--            ``"descriptions"`` omits auto row ids. ``"bytes"`` fetches blob v2
--            payloads one batch at a time, without requiring pylance. Bytes mode
--            has the same restrictions as :meth:`to_arrow`.
-+            ``"lazy"`` keeps blob v2 descriptors and auto row ids for manual
-+            fetches. ``"descriptions"`` omits auto row ids. ``"bytes"`` fetches
-+            supported row-addressable blob payloads one batch at a time, without
-+            requiring pylance. Bytes mode has the same restrictions as
-+            :meth:`to_arrow`.
- 
-         Examples
-         --------
-@@ -1599,20 +1612,41 @@ def _blob_auto_row_id_enabled(self) -> bool:
-     def _scan_nee
-```
-
-**File**: `python/python/lancedb/schema.py` (modified, +9/-0)
-```diff
-@@ -122,6 +122,15 @@ def blob_v2_column_paths(schema: pa.Schema) -> list[str]:
-     return [path for path, _ in _collect_blob_paths(schema, is_blob_v2_field)]
- 
- 
-+def row_addressable_blob_paths(schema: pa.Schema) -> list[str]:
-+    """Blob v1 and v2 paths with one blob addressable by table row id."""
-+    return [
-+        path
-+        for path, has_list_ancestor in _collect_blob_paths(schema, is_blob_like_field)
-+        if not has_list_ancestor
-+    ]
-+
-+
- def row_addressable_blob_v2_paths(schema: pa.Schema) -> list[str]:
-     """Blob v2 paths with one blob addressable by table row id.
- 
-```
-
-**File**: `python/python/lancedb/table.py` (modified, +12/-9)
-```diff
-@@ -1589,8 +1589,8 @@ def to_arrow(self, *, blob_mode: BlobMode = "lazy") -> pa.Table:
-         blob_mode: str, default "lazy"
-             ``"lazy"`` returns blob v2 descriptors that carry the row id
-             ``fetch_blobs`` reads. ``"descriptions"`` returns them without it.
--            ``"bytes"`` returns payload bytes and raises for legacy blob columns
--            and blobs inside lists.
-+            ``"bytes"`` returns payload bytes for supported row-addressable blob
-+            columns and raises for blobs inside lists.
- 
-         Returns
-         -------
-@@ -4160,7 +4160,7 @@ def to_pandas(self, blob_mode: BlobMode = "lazy", **kwargs) -> "pd.DataFrame":
-         ):
-             return self.to_arrow().to_pandas(**kwargs)
- 
--        if blob_mode == "bytes" and blob_v2_column_paths(self.schema):
-+        if blob_mode == "bytes" and schema_has_blob_field(self.schema):
-             return self.search().to_pandas(blob_mode=blob_mode, **kwargs)
- 
-         return self.to_lance().to_pandas(blob_mode=blob_mode, **kwargs)
-@@ -4173,8 +4173,8 @@ def to_arrow(self, *, blob_mode: BlobMode = "lazy") -> pa.Table:
-         blob_mode: str, default "lazy"
-             ``"lazy"`` returns blob v2 descriptors that carry the row id
-             ``fetch_blobs`` reads. ``"descriptions"`` returns them without it.
--            ``"bytes"`` returns payload bytes and raises for legacy blob columns
--            and blobs inside lists.
-+            ``"bytes"`` returns payload bytes for supported row-addressable blob
-+            columns and raises for blobs inside lists.
- 
-         Returns
-         -------
-@@ -6640,7 +6640,7 @@ async def to_pandas(self, blob_mode: BlobMode = "lazy", **kwargs) -> "pd.DataFra
- 
-         if blob_mode == "lazy" and get_uri_scheme(await self.uri()) == "memory":
-             return (await self.to_arrow()).to_pandas(**kwargs)
--        if blob_mode == "bytes" and blob_v2_column_paths(schema):
-+        if blob_mode == "bytes" and schema_has_blob_field(schema):
-             return await self.query().to_pandas(blob_mode=blob_mode, **kwargs)
-         return (await self.to_lance()).to_pandas(blob_mode=blob_mode, **kwargs)
- 
-@@ -6652,8 +6652,8 @@ async def to_arrow(self, *, blob_mode: BlobMode = "lazy") -> pa.Table:
-         blob_mode: str, default "lazy"
-             ``"lazy"`` returns blob v2 descriptors that carry the row id
-             ``fetch_blobs`` reads. ``"descriptions"`` returns them without it.
--            ``"bytes"`` returns payload bytes and raises for legacy blob columns
--            and blobs inside lists.
-+            ``"bytes"`` returns payload bytes for supported row-addressable blob
-+            columns and raises for blobs inside lists.
- 
-         Returns
-         -------
-@@ -7460,7 +7460,10 @@ def _sync_query_to_async(
-         if query.offset is not None:
-             async_query = async_query.offset(query.offset)
-         if query.columns:
--            async_query = async_query.select(query.columns)
-+            columns = query.columns
-+            if isinstance(columns, list) and columns and isinstance(columns[0], tuple):
-+                columns = dict(columns)
-+            async_query = async_query.select(columns)
-         if query.filter is not None:
-             async_query = async_query.where(query.filter)
-         if query.fast_search:
-```
-
-**File**: `python/python/tests/test_blob.py` (modified, +30/-3)
-```diff
-@@ -1651,16 +1651,41 @@ def test_bytes_mode_rejects_blobs_inside_lists():
- 
- 
- def test_row_addressable_paths_exclude_list_children():
--    from lancedb.schema import row_addressable_blob_v2_paths
-+    from lancedb.schema import (
-+        row_addressable_blob_paths,
-+        row_addressable_blob_v2_paths,
-+    )
- 
-     schema = pa.schema(
-         [
-             pa.field("id", pa.int64()),
--            pa.field("info", pa.struct([lancedb.blob("blob")])),
-+            pa.field(
-+                "info",
-+                pa.struct(
-+                    [
-+                        lancedb.blob("blob"),
-+                        pa.field(
-+                            "legacy",
-+                            pa.large_binary(),
-+                            metadata={"lance-encoding:blob": "true"},
-+                        ),
-+                    ]
-+                ),
-+            ),
-+            pa.field(
-+                "legacy",
-+                pa.large_binary(),
-+                metadata={"lance-encoding:blob": "true"},
-+            ),
-             pa.field("images", pa.list_(lancedb.blob("image"))),
-         ]
-     )
-     assert blob_v2_column_paths(schema) == ["info.blob", "images.image"]
-+    assert row_addressable_blob_paths(schema) == [
-+        "info.blob",
-+        "info.legacy",
-+        "legacy",
-+    ]
-     assert row_addressable_blob_v2_paths(schema) == ["info.blob"]
- 
- 
-@@ -2325,6 +2350,8 @@ async def fetch(column, row_ids):
-     if blob_mode != "lazy":
-         assert "_rowid" not in reader.schema.names
-         assert "_lance_row_id" not in str(reader.schema)
-+    else:
-+        assert "_rowid" in reader.schema.names
- 
- 
- class _KeepAllScoresReranker(Reranker):
-@@ -2368,7 +2395,7 @@ def test_bytes_mode_rejects_legacy_blob_after_reranker_drops_metadata(tmp_path):
-         .rerank(_KeepAllScoresReranker())
-     )
- 
--    with pytest.raises(ValueError, match=r"\['blob'\].*legacy blob columns"):
-+    with pytest.raises(ValueError, match=r"\['blob'\].*local plain scans"):
-         query.to_arrow(blob_mode="bytes")
- 
- 
+@@ -118,7 +118,7 @@ lance-testing = { workspace = true }
+ # production remote feature so Python wheels do not resolve its Axum 0.7 stack.
+ lance-namespace-impls = { workspace = true, features = ["rest-adapter"] }
+ tempfile = { workspace = true }
+-random_word = { version = "0.4.3", features = ["en"] }
++random_word = { version = "1.0.0", features = ["en"] }
+ tokio = { workspace = true, features = ["io-util", "macros", "net", "test-util"] }
+ uuid = { workspace = true }
+ walkdir = "2"
 ```
 
 ---
 
-### Incident Patch 3: `481e8229` (2026-11-10)
-**Commit Message**: fix(python): explain explicit blob reads and subset copies (#4940)
+### Incident Patch 3: `1765747f` (2026-11-13)
+**Commit Message**: fix: allow updates to Function input columns (#4985)
 
-Unsupported remote blob materialization errors now point to row-ID
-selection, fetch_blobs and fetch_blob_files. Document descriptor
-structs, fetched bytes and Function BlobReader inputs, and show a
-bounded subset-copy recipe that keeps the source unchanged between
-selection and fetching.
+Updating an input column on a table with a Function binding currently
+fails before the write, although the write path already preserves
+freshness for bindings whose inputs are unchanged. Allow input updates
+through the normal update builder while retaining supported
+binding-metadata validation and the guard against writing computed or
+internal assignment outputs directly.
 
-Adds guidance assertions and copy coverage preserving payloads, empty
-blobs and nulls.
+Lance rewrites only the matched rows. Their affected Function outputs
+keep their previous values and their changed input signatures make them
+eligible for refresh; unchanged fragments retain their freshness.
+Rewrites affecting only unrelated inputs keep the existing
+freshness-preservation path.
 
-No new blob materialization API is introduced.
+For a table whose Function reads `title`, this update now succeeds while
+retaining the previous computed values until refresh:
 
-Formatting applied; no local builds or tests were run. CI will execute
-the regression coverage.
-
-**File**: `docs/web/management/table.mdx` (modified, +45/-0)
-```diff
-@@ -477,6 +477,51 @@ the default `"lazy"` mode because it would open `BlobFile` handles. Query with
- `blob_mode="descriptions"`, then read bytes with `fetch_blobs` or
- `fetch_blob_files`.
- 
-+###### Copy a subset of blob rows {#multimodal-copy-subset}
-+
-+Blob query results describe the stored payload; they are not the bytes to
-+insert into another table. These APIs return different values:
-+
-+| Read path | Value |
-+| --- | --- |
-+| SQL or an Arrow query in `"descriptions"` mode | Descriptor struct identifying the stored blob. Treat it as opaque. |
-+| `table.fetch_blobs(column, row_ids)` | Arrow `large_binary` array; `.to_pylist()` gives `bytes` or `None` in the requested order. |
-+| A Function parameter annotated `lancedb.BlobReader` | Lazy, seekable reader over the input blob, available inside the Function. |
-+
-+For an Enterprise source table, select the rows and fetch their bytes explicitly.
-+The following example copies up to 100 rows from an existing `images` table with
-+an integer `id` and a blob `image` column. Keep the source unchanged during this
-+operation: selection and fetching are separate requests.
-+
-+```python
-+import lancedb
-+import pyarrow as pa
-+
-+source = db.open_table("images")
-+hits = (
-+    source.search()
-+    .where("id < 100")
-+    .select(["id"])
-+    .with_row_id(True)
-+    .limit(100)
-+    .to_arrow()
-+)
-+payloads = source.fetch_blobs("image", hits["_rowid"]).to_pylist()
-+subset = db.create_table(
-+    "image_subset",
-+    schema=pa.schema([pa.field("id", pa.int64()), lancedb.blob("image")]),
-+)
-+if hits.num_rows:
-+    subset.add([
-+        {"id": image_id, "image": payload}
-+        for image_id, payload in zip(hits["id"].to_pylist(), payloads, strict=True)
-+    ])
-+```
-+
-+Empty blobs remain `b""` and null blobs remain `None`. Fetch bounded batches
-+for larger subsets; `fetch_blobs` materializes all requested bytes in memory.
-+For incremental decoding, use `fetch_blob_files` instead.
-+
- `blob_mode="bytes"` materializes top-level and struct-nested blob columns. It
- raises `ValueError` when the selected columns include blobs
- inside a list. Select those columns with `blob_mode="descriptions"`, or leave
+```python
+table.update(where="id = 7", values={"title": "revised"})
 ```
 
-**File**: `python/python/lancedb/query.py` (modified, +8/-2)
+Server consumers need this crate update before remote input updates gain
+the behavior.
+
+Adds regressions for a one-row input update, retained output values,
+freshness scope, independent binding preservation, and atomic rejection
+of mixed input/output writes. Local builds 
+
+**File**: `rust/lancedb/src/table/computed_columns.rs` (modified, +50/-4)
 ```diff
-@@ -206,7 +206,10 @@ def _blob_bytes_without_snapshot_error() -> NotImplementedError:
-         "blob_mode='bytes' cannot safely materialize blob columns without a "
-         "stable table snapshot. LanceDB Enterprise and namespace QueryTable pushdown "
-         "run the query on a server, so the blob fetch could read another table "
--        "version. Use blob_mode='descriptions'."
-+        "version. Use blob_mode='descriptions' to inspect descriptors. To read "
-+        "payloads, select row IDs with with_row_id(True), then call "
-+        "table.fetch_blobs(column, row_ids) or table.fetch_blob_files(column, "
-+        "row_ids). Keep the source unchanged between selection and fetching."
-     )
+@@ -1757,10 +1757,20 @@ pub(crate) fn ensure_not_written<'a>(
+     schema: &ArrowSchema,
+     written: impl IntoIterator<Item = &'a str>,
+ ) -> Result<()> {
+-    let declared: Vec<String> = computed_columns(schema)
++    ensure_supported_function_metadata(schema)?;
++    let mut declared: Vec<String> = computed_columns(schema)
+         .into_iter()
+         .map(|declaration| declaration.name)
+         .collect();
++    declared.extend(
++        function_bindings(schema)?
++            .into_iter()
++            .filter_map(|binding| {
++                binding
++                    .assignment()
++                    .map(|assignment| assignment.output_name.clone())
++            }),
++    );
+     for name in written {
+         if declared.iter().any(|declared| *declared == root(name)) {
+             return Err(Error::InvalidInput {
+@@ -2532,10 +2542,15 @@ pub(crate) mod test_support {
+             )])
+             .await
+             .unwrap();
+-        let inputs = ["title".to_string(), "body".to_string()];
++        let schema = dataset.schema();
+         let outputs = bindings
+             .iter()
+             .flat_map(|binding| {
++                let inputs = binding
++                    .inputs()
++                    .iter()
++                    .map(|input| input.field_path.clone())
++                    .collect::<Vec<_>>();
+                 let assignment = binding.assignment().map(|assignment| {
+                     (
+                         assignment.output_name.clone(),
+@@ -2547,9 +2562,9 @@ pub(crate) mod test_support {
+                     .iter()
+                     .map(|output| (output.output_name.clone(), output.output_ordinal))
+                     .chain(assignment)
+-                    .map(|(name, ordinal)| {
++                    .map(move |(name, ordinal)| {
+                         (
+-                            dataset.schema().field(&name).unwrap().id as u32,
++                            schema.field(&name).unwrap().id as u32,
+                             function_computed_column_metadata(
+                                 binding.binding_id(),
+                                 ordinal,
+@@ -4144,6 +4159,37 @@ mod tests {
+         ArrowSchema::new(fields)
+     }
  
- 
-@@ -453,7 +456,10 @@ def _finish_remote_pandas(
-     raise NotImplementedError(
-         f"remote to_pandas(blob_mode={blob_mode!r}) cannot safely materialize "
-         "blob columns without a stable table snapshot; "
--        "use blob_mode='descriptions'"
-+        "use blob_mode='descriptions' to inspect descriptors. To read payloads, "
-+        "select row IDs with with_row_id(True), then call "
-+        "table.fetch_blobs(column, row_ids) or table.fetch_blob_files(column, "
-+        "row_ids). Keep the source unchanged between selection and fetching."
-     )
- 
- 
++    #[test]
++    fn input_writes_preserve_the_assignment_column_guard() {
++        let mut raw: Value = serde_json::to_value(test_support::text_features_binding("")).unwrap();
++        raw["assignment"] = serde_json::json!({
++            "output_name": "__function_assignment_fb_01K3TEXT", "output_field_id": -1,
++        });
++        raw["outputs"][0]["nullable"] = Value::Bool(true);
++        raw["outputs"][1]["nullable"] = Value::Bool(true);
++        raw["output_schema"]["fields"].as_array_mut().unwrap().push(serde_json::json!({
++            "name": "__function_assignment_fb_01K3TEXT", "nullable": true, "type": {"type": "bool"},
++        }));
++        let binding: FunctionBinding = serde_json::from_value(raw).unwrap();
++        let schema = ArrowSchema::new_with_metadata(
++            valid_function_binding_schema(true, true, &binding)
++                .fields()
++                .to_vec(),
++            HashMap::from([(
++                FUNCTION_BINDINGS_META_KEY.into(),
++                function_bindings_metadata(&[binding]).unwrap(),
++            )]),
++        );
++        ensure_not_written(&schema, ["title", "body"]).unwrap();
++        for output in [
++            "search_text",
++            "search_token_count",
++            "__function_assignment_fb_01K3TEXT",
++        ] {
++            assert!(ensure_not_written(&schema, [output]).is_err(), "{output}");
++        }
++    }
++
+     #[test]
+     fn test_non_nullable_function_inputs_can_bind_to_nullable_parameters() {
+         let binding = FunctionBinding::from_json(include_str!(
 ```
 
-**File**: `python/python/lancedb/table.py` (modified, +6/-0)
+**File**: `rust/lancedb/src/table/freshness.rs` (modified, +122/-0)
 ```diff
-@@ -2626,6 +2626,12 @@ def fetch_blobs(
-         bytes. The client splits requests automatically and reads an individual
-         larger blob through the Range route. This method still materializes all
-         bytes in memory; for large values use :meth:`fetch_blob_files`.
-+
-+        The returned Arrow ``large_binary`` array contains payload bytes, not
-+        SQL/query descriptor dictionaries. Use ``.to_pylist()`` to obtain
-+        Python ``bytes`` or ``None`` values for copying into a blob column.
-+        Select row IDs with ``search().with_row_id(True)`` first. Selection and
-+        fetching are separate requests: keep the source unchanged between them.
-         """
+@@ -2646,6 +2646,8 @@ mod tests {
+     use lance_file::version::ConcreteFileVersion;
+     use lance_table::format::overlay::{DataOverlayFile, OverlayCoverage};
  
-     @abstractmethod
++    use crate::table::computed_columns::test_support::{stamp_bindings, text_features_binding};
++
+     const COLUMN: &str = "doubled";
+     const EXPRESSION: &str = "value * 2";
+ 
+@@ -3126,6 +3128,126 @@ mod tests {
+         }
+     }
+ 
++    #[tokio::test]
++    async fn input_update_dirties_only_the_updated_rows_and_retains_outputs() {
++        let table = fresh_function_table().await;
++        let result = table
++            .update()
++            .only_if("title = 'a'")
++            .column("body", "'changed'")
++            .execute()
++            .await
++            .unwrap();
++        assert_eq!(result.rows_updated, 1);
++        let dataset = table.as_native().unwrap().dataset.get().await.unwrap();
++        for output in ["search_text", "search_token_count"] {
++            let stale = function_plan(&dataset, output).await;
++            let mut dirty_rows = 0;
++            for fragment in dataset.get_fragments() {
++                if stale.needs_recompute(fragment.id() as u32) {
++                    let batch = fragment
++                        .scan()
++                        .project(&["title"])
++                        .unwrap()
++                        .try_into_batch()
++                        .await
++                        .unwrap();
++                    let titles = batch
++                        .column(0)
++                        .as_any()
++                        .downcast_ref::<arrow_array::StringArray>()
++                        .unwrap();
++                    assert!(titles.iter().all(|title| title == Some("a")), "{stale:?}");
++                    dirty_rows += batch.num_rows();
++                }
++            }
++            assert_eq!(dirty_rows, 1, "{stale:?}");
++        }
++        assert_eq!(table.count_rows(Some("title = 'a' AND body = 'changed' AND search_text = 'a x' AND search_token_count = 2".into())).await.unwrap(), 1);
++    }
++
++    #[tokio::test]
++    async fn input_update_keeps_an_independent_function_binding_fresh() {
++        let batch = arrow_array::record_batch!(
++            ("title", Utf8, ["a", "b", "c", "d"]),
++            ("body", Utf8, ["x", "y", "z", "w"]),
++            ("search_text", Utf8, ["a x", "b y", "c z", "d w"]),
++            ("search_token_count", Int64, [2, 2, 2, 2]),
++            ("search_text_other", Utf8, ["a a", "b b", "c c", "d d"]),
++            ("search_token_count_other", Int64, [2, 2, 2, 2])
++        )
++        .unwrap();
++        let table = crate::connect("memory://")
++            .execute()
++            .await
++            .unwrap()
++            .create_table("independent_functions", batch)
++            .write_options(crate::table::WriteOptions {
++                lance_write_params: Some(WriteParams {
++                    max_rows_per_file: 2,
++                    ..Default::default()
++                }),
++            })
++            .execute()
++            .await
++            .unwrap();
++        let mut other = serde_json::to_value(text_features_binding("_other")).unwrap();
++        other["inputs"][1]["field_path"] = serde_json::json!("title");
++        other["inputs"][1]["field_id"] = other["inputs"][0]["field_id"].clone();
++        let bindings = [
++            text_features_binding(""),
++            serde_json::from_value(other).unwrap(),
++        ];
++        stamp_bindings(&table, &bindings).await;
++        let native = table.as_native().unwrap();
++        let mut dataset = native.dataset.get().await.unwrap().as_ref().clone();
++        for binding in &bindings {
++            let paths = binding
++                .inputs()
++                .iter()
++                .map(|input| input.field_path.clone())
++                .collect::<Vec<_>>();
++            let inputs = fields_for_paths(dataset.schema(), &paths).unwrap();
++            let signatures = signatures_for(&dataset, &[0, 1], &inputs).unwrap();
++            for output in binding.outputs() {
++                write_signatures(
++                    &mut dataset,
++                    &output.output_name,
++                    binding.binding_id(),
++                    signatures.clone(),
++                )
++                .await
++                .unwrap();
++            }
++        }
++        native.dataset.update(dataset);
++        table
++            .update()
++            .only_if("title = 'a'")
++            .column("body", "'changed'")
++            .execute()
++            .await
++            .unwrap();
++        let dataset = native.dataset.get().await.unwrap();
++        assert!(
++            function_plan(&dataset, "search_text")
++                .await
++                .needs_recompute(2)
++        );
++        let other = &bindings[1];
++        let inputs = fields_for_paths(dataset.schema(), &["title".into()]).unwrap();
++        for output in other.outputs() {
++            let stale =
++                staleness_against(&dataset, &ou
 ```
 
-**File**: `python/python/tests/test_blob.py` (modified, +33/-1)
+**File**: `rust/lancedb/src/table/update.rs` (modified, +20/-13)
 ```diff
-@@ -1070,8 +1070,10 @@ def test_bytes_mode_refused_under_namespace_query_pushdown(tmp_path):
-     )
-     table.add([{"id": 1, "image": b"one"}])
+@@ -103,11 +103,6 @@ pub(crate) async fn execute_update(
+     // 1. Snapshot the current dataset
+     let dataset = table.dataset.get().await?;
+     crate::materialized_view::ensure_not_a_view(&table.name, &dataset.schema().metadata, "update")?;
+-    super::computed_columns::ensure_not_function_bound(
+-        &arrow_schema::Schema::from(dataset.schema()),
+-        "update",
+-        update.columns.iter().map(|(name, _)| name.as_str()),
+-    )?;
+     super::computed_columns::ensure_not_written(
+         &arrow_schema::Schema::from(dataset.schema()),
+         update.columns.iter().map(|(name, _)| name.as_str()),
+@@ -473,26 +468,38 @@ mod tests {
+         assert_eq!(0, tbl.count_rows(Some("i == 0".to_string())).await.unwrap());
+     }
  
--    with pytest.raises(NotImplementedError, match="stable table snapshot"):
-+    with pytest.raises(NotImplementedError, match="stable table snapshot") as exc:
-         table.to_arrow(blob_mode="bytes")
-+    assert "fetch_blobs(column, row_ids)" in str(exc.value)
-+    assert "with_row_id(True)" in str(exc.value)
-     with pytest.raises(NotImplementedError, match="stable table snapshot"):
-         table.search().to_list(blob_mode="bytes")
-     with pytest.raises(NotImplementedError, match="stable table snapshot"):
-@@ -1103,6 +1105,36 @@ async def test_async_bytes_mode_refused_under_namespace_query_pushdown(tmp_path)
-         await table.query().to_batches(blob_mode="bytes")
- 
- 
-+def test_copy_blob_subset_preserves_payloads_nulls_and_empty_values(tmp_path):
-+    db = lancedb.connect(tmp_path)
-+    schema = pa.schema([pa.field("id", pa.int64()), lancedb.blob("image")])
-+    rows = [
-+        {"id": 1, "image": b"one"},
-+        {"id": 2, "image": b""},
-+        {"id": 3, "image": None},
-+        {"id": 4, "image": b"excluded"},
-+    ]
-+    source = db.create_table("source", data=rows, schema=schema)
-+    hits = (
-+        source.search()
-+        .where("id < 4")
-+        .select(["id"])
-+        .with_row_id(True)
-+        .limit(100)
-+        .to_arrow()
-+    )
-+    payloads = source.fetch_blobs("image", hits["_rowid"]).to_pylist()
-+    subset = db.create_table("subset", schema=schema)
-+    subset.add(
-+        [
-+            {"id": image_id, "image": payload}
-+            for image_id, payload in zip(hits["id"].to_pylist(), payloads, strict=True)
-+        ]
-+    )
-+    copied = subset.search().to_list(blob_mode="bytes")
-+    assert sorted(copied, key=lambda row: row["id"]) == rows[:3]
-+
-+
- def test_fetch_blobs_round_trip():
-     table = _blob_table(
-         "round_trip",
-```
-
-**File**: `python/python/tests/test_remote_db.py` (modified, +5/-1)
-```diff
-@@ -4958,8 +4958,12 @@ def fail_dataset(*args, **kwargs):
-             assert "_rowid" not in df.columns
-             assert df["image"][0]["size"] == 5
-         else:
--            with pytest.raises(NotImplementedError, match="stable table snapshot"):
-+            with pytest.raises(
-+                NotImplementedError, match="stable table snapshot"
-+            ) as exc:
-                 query.to_pandas(blob_mode=blob_mode)
-+            assert "fetch_blobs(column, row_ids)" in str(exc.value)
-+            assert "with_row_id(True)" in str(exc.value)
- 
- 
- @pytest.mark.asyncio
+-    /// A Function binding protects only the columns it reads or writes; any
+-    /// other column updates as on a plain table.
+     #[tokio::test]
+-    async fn update_on_a_function_table_refuses_only_bound_columns() {
++    async fn update_allows_function_inputs_but_protects_outputs() {
+         let table = crate::table::computed_columns::test_support::bound_table().await;
+-        let result = table.update().column("spare", "7").execute().await.unwrap();
++        let result = table
++            .update()
++            .column("title", "'changed'")
++            .execute()
++            .await
++            .unwrap();
+         assert_eq!(result.rows_updated, 1);
+-        for column in ["title", "search_text"] {
++        assert_eq!(
++            table
++                .count_rows(Some("title = 'changed' AND search_text = 'a b'".into()))
++                .await
++                .unwrap(),
++            1
++        );
++        for column in ["search_text", "search_token_count"] {
++            let version = table.version().await.unwrap();
+             let err = table
+                 .update()
+-                .column(column, "'x'")
++                .column("title", "'must not commit'")
++                .column(column, "NULL")
+                 .execute()
+                 .await
+                 .unwrap_err();
+             assert!(
+                 matches!(&err, crate::Error::InvalidInput { message }
+-                    if message.contains(&format!("update of '{column}'"))
+-                        && message.contains("a Function binding reads or writes it")),
++                if message.contains("is computed") && message.contains("cannot be written directly")),
+                 "{column}: {err:?}"
+             );
++            assert_eq!(table.version().await.unwrap(), version);
+         }
+     }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4956** (2026-11-11): feat: expose Function call concurrency limits (@Xuanwo)
-- **PR #4955** (closed): feat: expose Function call concurrency limits (@Xuanwo)
-- **PR #4953** (2026-11-11): feat: persist automatic Function refresh resource budgets (@Xuanwo)
-- **PR #4951** (2026-11-11): feat: expose Function refresh resource budgets in SDKs (@Xuanwo)
-- **PR #4949** (2026-11-11): feat: resolve latest Function versions (@Xuanwo)
-- **PR #4948** (2026-11-11): fix: preserve function freshness across input-preserving writes (@BubbleCal)
+- **PR #5035** (2026-11-13): chore(deps): bump Rust deps flagged by security scans (@wjones127)
+- **PR #5023** (closed): docs: move the Blob range draft comment out of the TypeScript CodeBlock (@brendanclement)
+- **PR #5012** (2026-11-13): fix(remote): preserve branches in cache prewarm requests (@ChilePiquin)
+- **PR #5011** (2026-11-12): ci(java): publish beta releases to Fury instead of Maven Central (@wjones127)
+- **PR #5010** (2026-11-13): fix(ci): support Cargo 1.100 artifact layout in cleanup fixture (@Xuanwo)
+- **PR #5009** (closed): chore(deps): bump rustls to 0.23.46 in docs web-tests (@wjones127)
 
 ---
 
@@ -2203,35 +2046,37 @@ the regression coverage.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. preserve function freshness across input-preserving writes (#4948)
+## X. ci): support Cargo 1.100 artifact layout in cleanup fixture
 
 **RULE**:
-When implementing operations in `rust/lancedb/src/table/computed_columns.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ci/tests/test_build_no_lock.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34e8b808`: preserve function freshness across input-preserving writes (#4948). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `db098ba8`: ci): support Cargo 1.100 artifact layout in cleanup fixture. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/lancedb/src/table/computed_columns.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/tests/test_build_no_lock.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Signatures of input-preserving rewrites whose retained Function outputs
-/// are current but whose inserted rows still need their first computation.
-/// A sidecar reference keeps this separate from completed freshness stamps.
-pub const PENDING_FILL_SIGNATURE_META_KEY: &str = "computed_refresh.pending_fill_signature";
-
+            # Cargo 1.100 nests compiler inputs in per-unit build directories and
+            # names the build-script executable build_script_build.
+            self.assertTrue(list(target.rglob("libartifact_fixture*.rlib")))
+            self.assertTrue(list((target / "build").rglob("build[-_]script[-_]build")))
+            self.assertTrue(list((target / "build").rglob("out/generated.rs")))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+            self.assertTrue(list((target / "deps").glob("libartifact_fixture*.rlib")))
+            self.assertTrue(list((target / "build").glob("*/build-script-build")))
+            self.assertTrue(list((target / "build").glob("*/out/generated.rs")))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34e8b808` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `db098ba8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T21:08:34.394Z",
+  "last_updated": "2026-11-13T21:16:46.389Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T20:37:26.959Z",
@@ -1003,7 +1003,7 @@
       "staged_for_review": 1
     },
     "nvidia-cuda-rust-learnings.md": {
-      "processed_at": "2026-11-12T09:55:37.951Z",
+      "processed_at": "2026-11-13T21:16:21.093Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2176,9 +2176,19 @@
       "processed_at": "2026-11-13T21:08:32.631Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-baai-bge-m3-learnings.md": {
+      "processed_at": "2026-11-13T21:16:45.591Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "infinitered-reactotron-learnings.md": {
+      "processed_at": "2026-11-13T21:16:45.845Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 684,
-  "total_canonical_promoted": 134,
-  "total_staged_for_review": 544
+  "total_dossiers_evaluated": 687,
+  "total_canonical_promoted": 135,
+  "total_staged_for_review": 546
 }

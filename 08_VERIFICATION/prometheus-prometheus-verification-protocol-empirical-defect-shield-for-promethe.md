@@ -4,45 +4,31 @@
 {
   "source_repository": "prometheus/prometheus",
   "source_url": "https://github.com/prometheus/prometheus",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "8e974df2",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-13T21:16:13.809Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-prometheus-prometheus",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [prometheus/prometheus](https://github.com/prometheus/prometheus) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [prometheus/prometheus](https://github.com/prometheus/prometheus) (Revision: `8e974df2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T21:16:13.809Z`  
+> **Learning ID**: `learn-github-prometheus-prometheus`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `prometheus/prometheus` (Commit: `historical`)
+- **Target Repository**: `prometheus/prometheus` (Commit: `8e974df2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
-> **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `49c815a0`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T11:39:34.197Z  
-> **Learning ID**: `learn-github-prometheus-prometheus`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): prometheus/prometheus
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T11:33:36.151Z  
+> **Harvest Timestamp**: 2026-11-13T21:16:13.020Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 67634 stars
+- **Stars / Engagement**: 67590 stars
 
 ---
 
@@ -1806,11 +1792,14 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20412** (2026-11-10): **tsdb: keep samples of series recreated while an eviction tombstone is pending**
-  *Symptoms*: ## Problem  When stale series compaction (`stale_series_compaction_threshold`) evicts a series from the head, a race with ingestion can make successfully committed samples disappear after a restart.  1. The compaction writes series `A` to a block and removes it from the head. 2. Before eviction writes `A`'s deletion marker (tombstone) to the WAL, ingestion receives another sample with the same labels. `A` is gone from the head, so this creates series `B` with a new reference. 3. `B`'s declaration and first sample reach the WAL before `A`'s tombstone. Further samples for `B` can arrive afterwards.  Everything works while Prometheus is running. The problem shows up on WAL replay: replay deduplicates series by labels, so `B` becomes an alias for `A`. `A`'s tombstone then deletes that shared identity, including `B`'s already replayed samples, and later samples for `B` are dropped as `Unknown series references`. `A`'s own data is safe in the block.  The invariant: deleting an evicted series must not discard samples committed to a newly created series with the same labels.  ## Fix  `gcSeries` now also returns the labels and the index hash of every series it removes (it already has both at hand, so nothing is hashed twice).  Before writing the tombstones, `truncateSeries` checks whether the labels of each evicted series now resolve to a different live series. If so, it skips that series' tombstone and lets its WAL records expire the normal way, through the existing WAL expiry cutoff
+- **Issue #20443** (2026-11-13): **ci: do not run govulncheck on forks**
+  *Symptoms*: Skip the govulncheck workflow on forks, matching the existing guard in stale.yml.  The workflow is synced to all repos and currently runs on every fork of every repo that has this workflow synced to.  ```release-notesa NONE ```
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"85594aa9b7ab0c726345d13a7ef072f8940be3d8","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-13T15:21:35.938118Z">2026-11-13T15:21:35.938118Z</relative-time> | `85594aa` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
+  > makes sense, thanks!
 
-- **Issue #20405** (2026-11-11): **docs: fix dead Marathon and DC/OS links**
-  *Symptoms*: #### Which issue(s) does the PR fix:  None. In the `marathon_sd_config` section, the Marathon link (`mesosphere.github.io/marathon`) returns 404, and `docs.mesosphere.com` now redirects every path to the Nutanix portal home page, so the two `auth_token` links no longer reach the DC/OS token docs. I pointed the Marathon link at the archived repository (`github.com/d2iq-archive/marathon`) and the two token links at the Wayback Machine copy of the DC/OS 1.11 IAM API page, which still has the "Passing an authentication token" section. If you'd rather not link to the archive, I can drop those two URL lines instead.  It also fixes the same dead DC/OS link in two comments in `discovery/marathon/marathon.go` (thanks @jamesconwaydev).  #### Release notes for end users (**ALL** commits must be considered).  ```release-notes NONE ```  
+- **Issue #20437** (2026-11-13): **rules: restrict automatic metadata inference to schema-preserving expressions**
+  *Symptoms*:  <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [FEATURE] API: Add `/api/v1/features` endpoint.  Re
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1827,270 +1816,47 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `49c815a0` (2026-11-11)
-**Commit Message**: Merge pull request #20398 from ayushbuilds-code/sanitize-builder-grow
+### Incident Patch 1: `740695f5` (2026-11-12)
+**Commit Message**: docs: fix STACKIT example key and list Vultr SD in scrape_config
 
-strutil: preallocate strings.Builder capacity in SanitizeFullLabelName
+The STACKIT OAuth2 example used `stackit_sd_config:`, which config.Load
+rejects; the scrape_config field is `stackit_sd_configs`. The
+scrape_config list of service discovery configurations also left out
+`vultr_sd_configs`, which the alerting list already includes.
 
-**File**: `util/strutil/strconv.go` (modified, +1/-0)
+Signed-off-by: Roshan Ramani <[REDACTED_EMAIL]>
+
+**File**: `docs/configuration/configuration.md` (modified, +5/-1)
 ```diff
-@@ -53,6 +53,7 @@ func SanitizeFullLabelName(name string) string {
- 		return "_"
- 	}
- 	var validSb strings.Builder
-+	validSb.Grow(len(name))
- 	for i, b := range name {
- 		if (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z') || b == '_' || (b >= '0' && b <= '9' && i > 0) {
- 			validSb.WriteRune(b)
-```
-
-**File**: `util/strutil/strconv_test.go` (modified, +21/-0)
-```diff
-@@ -226,3 +226,24 @@ func TestSanitizeFullLabelName(t *testing.T) {
- 		})
- 	}
- }
-+
-+func BenchmarkSanitizeFullLabelName(b *testing.B) {
-+	cases := []struct {
-+		name  string
-+		input string
-+	}{
-+		{"valid_short", "http_requests_total"},
-+		{"valid_long", "container_cpu_usage_seconds_total_with_extended_dimensions_and_namespaces"},
-+		{"needs_sanitizing_short", "123-invalid.metric.name"},
-+		{"needs_sanitizing_long", "http-service.cluster.local:8080/metrics@prod-us-west-2/system-metric"},
-+	}
-+
-+	for _, bc := range cases {
-+		b.Run(bc.name, func(b *testing.B) {
-+			b.ReportAllocs()
-+			for range b.N {
-+				_ = SanitizeFullLabelName(bc.input)
-+			}
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `62efd0b3` (2026-11-11)
-**Commit Message**: Merge pull request #20405 from donaldraph/docs/fix-marathon-links
-
-docs: fix dead Marathon and DC/OS links
-
-**File**: `discovery/marathon/marathon.go` (modified, +2/-2)
-```diff
-@@ -189,7 +189,7 @@ func newAuthTokenRoundTripper(token config.Secret, rt http.RoundTripper) (http.R
- }
+@@ -557,6 +557,10 @@ triton_sd_configs:
+ uyuni_sd_configs:
+   [ - <uyuni_sd_config> ... ]
  
- func (rt *authTokenRoundTripper) RoundTrip(request *http.Request) (*http.Response, error) {
--	// According to https://docs.mesosphere.com/1.11/security/oss/managing-authentication/
-+	// According to https://web.archive.org/web/20190720050610/https://docs.mesosphere.com/1.11/security/oss/managing-authentication/
- 	// DC/OS wants with "token=" a different Authorization header than implemented in httputil/client.go
- 	// so we set this explicitly here.
- 	request.Header.Set("Authorization", "token="+string(rt.authToken))
-@@ -219,7 +219,7 @@ func (rt *authTokenFileRoundTripper) RoundTrip(request *http.Request) (*http.Res
- 	}
- 	authToken := strings.TrimSpace(string(b))
- 
--	// According to https://docs.mesosphere.com/1.11/security/oss/managing-authentication/
-+	// According to https://web.archive.org/web/20190720050610/https://docs.mesosphere.com/1.11/security/oss/managing-authentication/
- 	// DC/OS wants with "token=" a different Authorization header than implemented in httputil/client.go
- 	// so we set this explicitly here.
- 	request.Header.Set("Authorization", "token="+authToken)
-```
-
-**File**: `docs/configuration/configuration.md` (modified, +3/-3)
-```diff
-@@ -2994,7 +2994,7 @@ The following meta labels are available on targets during [relabeling](#relabel_
- ### `<marathon_sd_config>`
- 
- Marathon SD configurations allow retrieving scrape targets using the
--[Marathon](https://mesosphere.github.io/marathon/) REST API. Prometheus
-+[Marathon](https://github.com/d2iq-archive/marathon) REST API. Prometheus
- will periodically check the REST endpoint for currently running tasks and
- create a target group for every app that has at least one healthy task.
- 
-@@ -3020,12 +3020,12 @@ servers:
- [ refresh_interval: <duration> | default = 30s ]
- 
- # Optional authentication information for token-based authentication
--# https://docs.mesosphere.com/1.11/security/ent/iam-api/#passing-an-authentication-token
-+# https://web.archive.org/web/20190718110036/https://docs.mesosphere.com/1.11/security/ent/iam-api/#passing-an-authentication-token
- # It is mutually exclusive with `auth_token_file` and other authentication mechanisms.
- [ auth_token: <secret> ]
- 
- # Optional authentication information for token-based authentication
--# https://docs.mesosphere.com/1.11/security/ent/iam-api/#passing-an-authentication-token
-+# https://web.archive.org/web/20190718110036/https://docs.mesosphere.com/1.11/security/ent/iam-api/#passing-an-authentication-token
- # It is mutually exclusive with `auth_token` and other authentication mechanisms.
- [ auth_token_file: <filename> ]
- 
-```
-
----
-
-### Incident Patch 3: `d7aa875a` (2026-11-11)
-**Commit Message**: Merge pull request #20307 from h8y3/fix-federate-nhcb-count
-
-web: keep federated NHCB count at least the sum of its buckets
-
-**File**: `web/federate.go` (modified, +17/-0)
-```diff
-@@ -370,6 +370,23 @@ func makeClassicHistogram(h *histogram.FloatHistogram) *dto.Histogram {
- 			CumulativeCountFloat: proto.Float64(cumulativeCount),
- 		}
- 	}
-+	// Add the overflow bucket beyond the last custom value, if any.
-+	for bucketAvailable && int(bucketIter.At().Index) < len(h.CustomValues) {
-+		bucketAvailable = bucketIter.Next()
-+	}
-+	if bucketAvailable {
-+		cumulativeCount += bucketIter.At().Count
-+	}
-+	// The count of a float histogram resulting from PromQL operations (e.g.
-+	// sum(rate(...))) is calculated independently from its buckets, so
-+	// floating point errors can make it marginally smaller than the sum of
-+	// the buckets. As the +Inf bucket is implied by the count, the resulting
-+	// classic histogram would not be cumulative, and converting it back into
-+	// an NHCB would yield a negative +Inf bucket. Use the sum of the buckets
-+	// as the count in that case.
-+	if cumulativeCount > h.Count {
-+		result.SampleCountFloat = proto.Float64(cumulativeCount)
-+	}
- 	// Note that we do not add the +Inf bucket explicitly. In the protobuf
- 	// exposition format, it is optional. For other exposition formats, the
- 	// code converting the protobuf created here into the actual exposition
-```
-
-**File**: `web/federate_test.go` (modified, +111/-0)
-```diff
-@@ -505,3 +505,114 @@ func TestFederationWithNativeHistograms(t *testing.T) {
- 	require.Equal(t, 4, metricFamilies)
- 	testutil.RequireEqual(t, expVec, actVec)
- }
++# List of Vultr service discovery configurations.
++vultr_sd_configs:
++  [ - <vultr_sd_config> ... ]
 +
-+// TestFederationNHCBCountBelowBucketSum checks that a float NHCB whose count is
-+// marginally below the sum of its buckets, as can result from floating point
-+// rounding in PromQL (e.g. sum(rate(...))), is federated as a valid classic
-+// histogram that converts back into an NHCB without negative buckets.
-+func TestFederationNHCBCountBelowBucketSum(t *testing.T) {
-+	db := teststorage.New(t).DB
-+	// 0.1 + 0.2 == 0.30000000000000004 > 0.3.
-+	fh := &histogram.FloatHistogram{
-+		CounterResetHint: histogram.GaugeType,
-+		Count:            0.3,
-+		Sum:              1,
-+		Schema:           histogram.CustomBucketsSchema,
-+		PositiveSpans:    []histogram.Span{{Offset: 0, Length: 2}},
-+		PositiveBuckets:  []float64{0.1, 0.2},
-+		CustomValues:     []float64{1, 2},
-+	}
-+	require.NoError(t, fh.Validate())
-+
-+	app := db.AppenderV2(context.Background())
-+	_, err := app.Append(0, labels.FromStrings("__name__", "test_metric"), 0, 100*60*1000, 0, nil, fh, storage.AOptions{})
-+	require.NoError(t, err)
-+	require.NoError(t, app.Commit())
-+
-+	h := &Handler{
-+		localStorage:  &dbAdapter{db},
-+		lookbackDelta: 5 * time.Minute,
-+		now:           func() model.Time { return 101 * 60 * 1000 },
-+		config:        &config.Config{GlobalConfig: config.GlobalConfig{}},
-+		options:       &Options{Parser: testParser},
-+	}
-+	req := httptest.NewRequest(http.MethodGet, "http://example.org/federate?match[]=test_metric", http.NoBody)
-+	req.Header.Add("Accept", `application/vnd.google.protobuf;proto=io.prometheus.client.MetricFamily;encoding=delimited`)
-+	res := httptest.NewRecorder()
-+	h.federation(res, req)
-+	require.Equal(t, http.StatusOK, res.Code)
-+
-+	body, err := io.ReadAll(res.Body)
-+	require.NoError(t, err)
-+	p := textparse.NewProtobufParser(body, false, false, true, false, labels.NewSymbolTable())
-+	var histograms int
-+	for {
-+		et, err := p.Next()
-+		if errors.Is(err, io.EOF) {
-+			break
-+		}
-+		require.NoError(t, err)
-+		if et != textparse.EntryHistogram {
-+			continue
-+		}
-+		histograms++
-+		_, _, _, got := p.Histogram()
-+		require.NotNil(t, got)
-+		require.NoError(t, got.Validate())
-+		require.InDelta(t, 0.3, got.Count, 1e-15)
-+	}
-+	require.Equal(t, 1, histograms)
-+}
-+
-+func TestMakeClassicHistogramCount(t *testing.T) {
-+	for name, tc := range map[string]struct {
-+		count     float64
-+		buckets   []float64
-+		spans     []histogram.Span
-+		wantCount float64 // Zero means the bucket sum, added at runtime.
-+	}{
-+		"count equals bucket sum": {
-+			count:     6,
-+			buckets:   []float64{3, 2, 1},
-+			spans:     []histogram.Span{{Offset: 0, Length: 3}},
-+			wantCount: 6,
-+		},
-+		"count above bucket sum is kept": {
-+			count:     7,
-+			buckets:   []float64{3, 2, 1},
-+			spans:     []histogram.Span{{Offset: 0, Length: 3}},
-+			wantCount: 7,
-+		},
-+		"count below bucket sum without +Inf bucket": {
-+			count:   0.3,
-+			buckets: []float64{0.1, 0.2},
-+			spans:   []histogram.Span{{Offset: 0, Length: 2}},
-+		},
-+		"count below bucket sum with +Inf bucket": {
-+			count:   0.6,
-+			buckets: []float64{0.1, 0.2, 0.3},
-+			spans:   []histogram.Span{{Offset: 0, Length: 1}, {Offset: 1, Length: 2}},
-+		},
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			fh := &histogram.FloatHistogram{
-+				Count:           tc.count,
-+				Schema:          histogram.CustomBucketsSchema,
-+				PositiveSpans:   tc.spans,
-+				PositiveBuckets: tc.buckets,
-+				CustomValues:    []float64{1, 2, 5},
-+			}
-+			require.NoError(t, fh.Validate())
-+			if tc.wantCount == 0 {
-+				for _, b := range tc.buckets {
-+					tc.wantCount += b
-+				}
-+				require.Greater(t, tc.wantCount, tc.count)
-+			}
-+			got := makeClassicHistogram(fh)
-+			require.Equal(t, tc.wantCount, got.GetSampleCountFloat())
-+			last := got.Bucket[len(got.Bucket)-1].GetCumulativeCountFloat()
-+			require.GreaterOrEqual(t, got.GetSampleCountFloat(), last)
-+		})
-+	}
-+}
+ # List of labeled statically configured targets for this job.
+ static_configs:
+   [ - <static_config> ... ]
+@@ -3334,7 +3338,7 @@ From a given Service Account json
+ properties can be mapped as:
+ 
+ ```yaml
+-stackit_sd_config:
++stackit_sd_configs:
+ - oauth2:
+     client_id: <credentials.sub>
+     client_certificate_key: <credentials.privateKey>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20412** (closed): tsdb: keep samples of series recreated while an eviction tombstone is pending (@duricanikolic)
-- **PR #20405** (2026-11-11): docs: fix dead Marathon and DC/OS links (@donaldraph)
-- **PR #20404** (2026-11-11): tsdb/chunkenc [PERF]: use the writeBitsFast implementation in writeBits (@g4lb)
-- **PR #20401** (2026-11-09): otlp: emit target_info when keep_identifying_resource_attributes is true and resource only has identifying attributes (@krajorama)
-- **PR #20400** (2026-11-10): otlptranslator: copy native histogram zero threshold from OTel (@krajorama)
-- **PR #20398** (2026-11-11): strutil: preallocate strings.Builder capacity in SanitizeFullLabelName (@ayushbuilds-code)
+- **PR #20443** (2026-11-13): ci: do not run govulncheck on forks (@electron0zero)
+- **PR #20437** (2026-11-13): rules: restrict automatic metadata inference to schema-preserving expressions (@roidelapluie)
+- **PR #20428** (2026-11-13): docs: fix STACKIT example key and list Vultr SD in scrape_config (@rawsun007)
+- **PR #20423** (closed): promtool: allow YAML merge keys to override values in rule unit tests (@cvas22)
+- **PR #20419** (2026-11-13): strutil: Speed up SanitizeFullLabelName (@bboreham)
+- **PR #20417** (2026-11-13): promtool: write valid OpenMetrics names and label values in dump-openmetrics (@0z5a)
 
 ---
 
@@ -2110,31 +1876,35 @@ web: keep federated NHCB count at least the sum of its buckets
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #20398 from ayushbuilds-code/sanitize-builder-grow
+## X. docs: fix STACKIT example key and list Vultr SD in scrape_config
 
 **RULE**:
-When implementing operations in `util/strutil/strconv.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/configuration/configuration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `49c815a0`: Merge pull request #20398 from ayushbuilds-code/sanitize-builder-grow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `740695f5`: docs: fix STACKIT example key and list Vultr SD in scrape_config. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `util/strutil/strconv.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/configuration/configuration.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	validSb.Grow(len(name))
+# List of Vultr service discovery configurations.
+vultr_sd_configs:
+  [ - <vultr_sd_config> ... ]
+
+stackit_sd_configs:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+stackit_sd_config:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `49c815a0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `740695f5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
