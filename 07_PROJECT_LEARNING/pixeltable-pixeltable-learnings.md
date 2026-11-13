@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `df52b4fe`  
+> **Source Version**: `506e2f7d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T17:46:13.826Z  
+> **Timestamp**: 2026-11-13T04:13:25.394Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T17:46:13.819Z  
+> **Harvest Timestamp**: 2026-11-13T04:13:25.389Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The backend agents build with - Multimodal database, orchestration, and serving in one file
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 1660 stars
+- **Stars / Engagement**: 1662 stars
 
 ---
 
@@ -1153,11 +1153,13 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1925** (2026-11-10): **PXT-1755: Pin generate_video's Interactions API call to v1beta (google-genai 3.0 defaults to v1)**
-  *Symptoms*: <!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Root cause  Scheduled nightly run https://github.com/pixeltable/pixeltable/actions/runs/42550768976 (tested release tag v0.7.24, `a9e0d7bd`) failed only in `isolated-nb-tests (3.11 and 3.13)`. The cookbook `docs/release/howto/cookbooks/video/video-generate-ai.ipynb` calls `gemini.generate_video(prompt, model='gemini-omni-1.1-flash', ...)` and raised `NotFoundError: Model 'gemini-omni-1.1-flash' not found` from `client.aio.interactions.create(...)`.  The notebook env installs `google-genai>=2.22`, which now resolves [google-genai 3.0.0](https://github.com/googleapis/python-genai/releases/tag/v3.0.0) (released 2026-11-05). That release changes the default Gemini Developer API version from `v1beta` to `v1`. The Interactions client posts to `/{api_version}/interactions`, so requests go to `/v1/interactions`, where Gemini Omni is not served (Google documents only `POST /v1beta/interactions`). The model id itself is valid (GA).  `interactions.create` already accepts `api_version` in google-genai 2.22 (the current min in `require_package('google.genai', min_version=[2, 22])`), 2.34, and 3.0, so the min version was not bumped.  ## Fix  In `pixeltable/functions/gemini.py::generate_video`, pass `api_version='v1beta'` to `client.aio.interactions.create(...)`. The client-wide API version in the `@env.register_client('gemini')` factory is unchanged, so the other Gemini UDFs keep the SDK default.  A repo-wide search found no other `interactions.` call
+- **Issue #1942** (2026-11-13): **Run 10 minutes of random-ops on pull requests**
+  *Symptoms*: ## Why  Random-ops runs only in the merge queue (30 minutes) and in the nightly stress-tests workflow, so concurrency bugs it would catch surface only after a PR is queued. A shorter run on every PR push finds them earlier.  ## What  - `tool/ci_tool.py`: the `pull_request` matrix gains `random-ops, ubuntu-24.04, 3.11`. It is the merge queue's random-ops config (minimal `--no-dev` install, 12 workers in read/write mode, then the file cache stress test) with a 600-second run instead of 1800. The duration is a new `random_ops_seconds` matrix field, default 1800, so the merge queue, scheduled and dispatch runs are unchanged. - `.github/workflows/pytest.yml`: the "Run stress tests" step reads `matrix.random-ops-seconds` instead of a hard-coded `1800`, and the header comment lists the new PR job.  Expected cost per PR push: about 11-12 minutes on one free ubuntu-24.04 runner (setup took about 1 minute and the file cache stress test 15 seconds in today's merge queue run). As in the merge queue, the job prints random-ops stats to the console but does not upload `random-ops.log` as an artifact.  ## Validation  - `ruff format --check`, `ruff check` and `mypy` on `tool/ci_tool.py` and `tests/tool/test_ci_tool.py` - `pytest tests/tool/test_ci_tool.py`: 18 passed - `python tool/ci_tool.py generate-matrix`: `pull_request` yields 8 entries, including random-ops at 600 seconds; `merge_group` yields 18, with random-ops at 1800 - This PR's own checks run the new job  🤖 Generated with [Claude 
+  **Post-Mortem & Fix Analysis**:
+  > subsumed by #1900 
 
-- **Issue #1924** (2026-11-10): **docs: replace retired Claude 3.x model IDs in docstrings, sample apps and tooling**
-  *Symptoms*: Replaces retired Claude 3.x model IDs in docstring examples and sample apps with a current one.  **Cause.** `pixeltable.functions.anthropic.messages` shows `claude-3-5-sonnet-20241022` in its docstring example (which also omits `max_tokens`, required by the signature), and the trading-insight and reddit-agentic-bot sample apps default to `claude-3-5-sonnet-20241022` / `claude-3-5-sonnet-latest`. Those models are retired, so copying the examples or running the sample apps fails at the API. The `openrouter` docstrings, `tool/perftest_providers.py` and the cookbook guidelines also reference retired Claude 3.x IDs.  **Fix.** The `anthropic.messages` docstring uses `claude-sonnet-5-5` with `max_tokens=1024`. Both sample-app configs use `claude-sonnet-4-6` rather than 5.5: the apps read `content[0].text`, which stays valid without extended thinking, and the trading app no longer passes `temperature`/`top_p`/`top_k` (rejected by newer models). OpenRouter docstrings use `anthropic/claude-sonnet-5.5`. `tool/perftest_providers.py` and `GUIDELINES_FOR_COOKBOOKS.md` move to `claude-haiku-4-5` / `anthropic.claude-haiku-4-5-20251001-v1:0` / `anthropic/claude-sonnet-5.5`.  **Test.** No runtime change in the library; `grep -rlnI "claude-3" . --exclude-dir=.git` lists 6 files before and none after. `ruff format --check` and `py_compile` pass on touched Python files.  --- This pull request was prepared with the assistance of an AI coding agent (Claude Code) and submitted by Alex Castillo, who 
+- **Issue #1940** (2026-11-12): **PXT-1768: Poll VLM Run generations instead of holding chat open**
+  *Symptoms*: <!-- CURSOR_AGENT_PR_BODY_BEGIN --> ## Summary  Stop holding one HTTP request open for an entire VLM Run `generate_*` job. Submit via `POST /v1/agent/execute` (`batch=true`) and poll `GET /v1/agent/executions/{id}` until completion. A connection drop after the request has left this process is a non-retried `ExternalServiceError`. Mock the gateway `capability_violation` test so it does not depend on which inputs the live gateway currently rejects.  Jira: [PXT-1768](https://pixeltable.atlassian.net/browse/PXT-1768) Failing run: https://github.com/pixeltable/pixeltable/actions/runs/42735604741  #1931 was closed as overengineered. This is the same two nightly failures with a smaller diff: one `execute()` poll loop, no per-call deadline state, and two mocked `generate_document` tests plus the gateway mock.  ## Root cause  1. `generate_document` `POST`ed `openai/chat/completions` and waited on that single request. The vendor front end (`via: 1.1 google`) now closes idle requests after ~5 minutes with `httpx.ReadError('')`. That was `PROVIDER_ERROR`, which the scheduler retried (another billed job). 2. `TestVlmrunGateway.test_errors` assumed the live gateway would reject a `document_url` part for `qwen/qwen3.5-0.8b`. It now accepts that input.  ## Fix  `generate_*` uses submit-then-poll, bounded by the existing `deadline()` / `VLMRUN_TIMEOUT`. Artifacts are fetched with `execution_id`. `chat_completions` is unchanged. Retryable poll GET failures stay in the poll loop so they do not 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1174,227 +1176,256 @@ def udf_source_files(bases: list[model.TableModelMeta]) -> set[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b7661983` (2026-11-10)
-**Commit Message**: Fix Iceberg replace cleanup after catalog swap failure (#1889)
+### Incident Patch 1: `11fbb87a` (2026-11-12)
+**Commit Message**: Fix import block spacing in CI planner tests (#1936)
 
-## Summary
-
-Fixes #1885.
-
-Preserve the fully written temporary Iceberg table if the
-`if_exists='replace'` catalog swap fails. The current implementation
-drops the old target and then renames the temporary table; its
-unconditional `finally` cleanup can delete the remaining export after
-either catalog operation fails.
-
-Track whether this invocation successfully created the temporary table
-and whether the non-transactional swap is in progress. Once the swap
-starts, leave the temporary identifier untouched on failure; after a
-successful rename, retain the existing cleanup behavior. The error
-message identifies the target and temporary identifier to inspect before
-retrying.
-
-This prevents the exporter from deleting the remaining temporary table
-after a swap failure; it does not make drop/rename atomic or restore the
-old target. A catalog operation may take effect before reporting
-failure, so the message asks callers to inspect both identifiers rather
-than assuming the temporary table still exists.
-
-## Tests
-
-- Add local SQLite `SqlCatalog` regression coverage for rename failure
-with and without an existing target.
-- Add a p
-
-**File**: `pixeltable/io/iceberg.py` (modified, +29/-10)
+**File**: `.github/scripts/test_plan_claude_ci_fix.py` (modified, +0/-1)
 ```diff
-@@ -47,7 +47,9 @@ def export_iceberg(
-         if_exists: Determines the behavior if the table already exists. Must be one of the following:
+@@ -11,7 +11,6 @@
  
-             - `'error'`: raise an error
--            - `'replace'`: drop the existing table and create a new one
-+            - `'replace'`: drop the existing table and create a new one. If the catalog swap fails, the new data
-+              may be kept for recovery in a table named `<table_name>__pxt_tmp_<suffix>`. When the target is absent
-+              or its status cannot be checked, the error message gives the exact temporary identifier to inspect.
-             - `'append'`: append to the existing table (source schema must be compatible)
-         schema_overrides: If specified, then for each (name, type) pair in `schema_overrides`, the column with
-             name `name` will be given type `type`, instead of being inferred from the Pixeltable schema. The keys in
-@@ -175,9 +177,12 @@ def export_iceberg(
-     # original untouched. Drop-then-rename is two catalog calls and not truly atomic; a crash
-     # between them leaves the original gone but the data preserved under the temp name.
-     temp_name = f'{table_name}__pxt_tmp_{uuid.uuid4().hex[:8]}'
-+    temp_created = False
-+    preserve_temp = False
+ import plan_claude_ci_fix as plan
  
-     try:
-         temp_tbl = catalog.create_table(temp_name, schema=arrow_schema)
-+        temp_created = True
-         fault_injection.process_fault(FaultLocation.IO_EXPORT_ICEBERG_WRITE_TEMP)
+-
+ RUN_9 = 'https://github.com/o/r/actions/runs/9'
  
-         with temp_tbl.transaction() as tx:
-@@ -186,20 +191,34 @@ def export_iceberg(
  
-         fault_injection.process_fault(FaultLocation.IO_EXPORT_ICEBERG_BEFORE_SWAP)
- 
-+        # Catalog drop/rename are not transactional. Preserve the completed export on failure
-+        # unless we can confirm that the target is available.
-+        preserve_temp = True
-         if existing_tbl is not None:
-             catalog.drop_table(table_name)
-         catalog.rename_table(temp_name, table_name)
-+        preserve_temp = False
- 
-     except excs.Error:
-         raise
-     except Exception as e:
--        raise excs.InternalError(
--            excs.ErrorCode.INTERNAL_ERROR, f'export_iceberg(): failed to write Iceberg table {table_name!r}: {e}'
--        ) from e
-+        if preserve_temp:
-+            try:
-+                preserve_temp = not catalog.table_exists(table_name)
-+            except Exception:
-+                # If the catalog is unavailable, keep the possible recovery copy.
-+                pass
-+        message = f'export_iceberg(): failed to write Iceberg table {table_name!r}: {e}'
-+        if preserve_temp:
-+            message += (
-+                f'; the catalog swap may be incomplete. Inspect {table_name!r} and temporary identifier '
-+                f'{temp_name!r} before retrying.'
-+            )
-+        raise excs.InternalError(excs.ErrorCode.INTERNAL_ERROR, message) from e
-     finally:
--        # Drop temp if it still exists; covers mid-stream errors and BaseException paths
--        # like KeyboardInterrupt. On success, rename consumed temp_name, so swallow NoSuchTableError.
--        try:
--            catalog.drop_table(temp_name)
--        except NoSuchTableError:
--            pass
-+        # Clean up only a temp table we know this call created and do not need for recovery.
-+        if temp_created and not preserve_temp:
-+            try:
-+                catalog.drop_table(temp_name)
-+            except NoSuchTableError:
-+                pass
 ```
 
-**File**: `tests/io/test_iceberg.py` (modified, +118/-2)
-```diff
-@@ -1,5 +1,5 @@
- import pathlib
--from typing import Any
-+from typing import TYPE_CHECKING, Any
- 
- import numpy as np
- import pyarrow as pa
-@@ -19,6 +19,9 @@
-     validate_update_status,
- )
- 
-+if TYPE_CHECKING:
-+    from pyiceberg.catalog import Catalog
-+
- 
- class TestIceberg:
-     @classmethod
-@@ -190,9 +193,11 @@ def test_if_exists(self, db_root: DatabaseRoot, tmp_path: pathlib.Path) -> None:
-         with pxt_raises(pxt.ErrorCode.PATH_ALREADY_EXISTS, match='already exists'):
-             pxt.io.export_iceberg(t, catalog, 'pxt.if_exists')
- 
--        # Replace: drops + recreates, ends with same row count
-+        # Replace: drops + recreates, ends with same row count and leaves no temp table.
-         pxt.io.export_iceberg(t.where(t.c_int < 3), catalog, 'pxt.if_exists', if_exists='replace')
-         assert catalog.load_table('pxt.if_exists').scan().to_arrow().num_rows == 3
-+        leftover = [name for _, name in catalog.list_tables('pxt') if name.startswith('if_exists__pxt_tmp_')]
-+        assert leftover == []
- 
-         # Append: doubles the row count
-         pxt.io.export_iceberg(t.where(t.c_int < 3), catalog, 'pxt.if_exists', if_exists='append')
-@@ -248,6 +253,117 @@ def test_failure_handling(self, db_root: DatabaseRoot, fault_injection: None, tm
-         fault.assert_count(1)
-         assert catalog.load_table('pxt.faults').scan().to_arrow().num_rows == 5
- 
-+    @pytest.mark.db_roots('local', reason='Uses a local SQLite Iceberg catalog and does not need a hosted database.')
-+    @pytest.mark.parametrize(
-+        ('target_exists', 'fail_stage', 'check_fails'),
-+        [
-+            (False, 'rename', False),
-+            (True, 'drop', False),
-+            (True, 'rename', False),
-+            (False, 'rename', True),
-+            (True, 'drop_before', True),
-+        ],
-+    )
-+    def test_replace_swap_failure_preserves_temp(
-+        self, db_root: DatabaseRoot, tmp_path: pathlib.Path, target_exists: bool, fail_stage: str, check_fails: bool
-+    ) -> None:
-+        """A failed catalog swap must not let cleanup remove the completed export."""
-+        skip_test_if_not_installed('pyiceberg')
-+        p = db_root.make_catalog_path
-+
-+        t = pxt.create_table(p('test_iceberg_swap_failure'), {'c_int': pxt.Int | None, 'c_string': pxt.String | None})
-+        expected_rows = [{'c_int': i, 'c_string': f'row_{i}'} for i in range(3)]
-+        t.insert(expected_rows)
-+
-+        catalog = TestIceberg._catalog(tmp_path)
-+        if target_exists:
-+            pxt.io.export_iceberg(t.where(t.c_int == 0), catalog, 'pxt.swap_failure')
-+            assert catalog.load_table('pxt.swap_failure').scan().to_arrow().num_rows == 1
-+
-+        class FailingCatalog:
-+            def __init__(self, inner: 'Catalog') -> None:
-+                self._inner = inner
-+
-+            def __getattr__(self, name: str) -> Any:
-+                return getattr(self._inner, name)
-+
-+            def drop_table(self, identifier: str, *args: Any, **kwargs: Any) -> Any:
-+                if fail_stage == 'drop_before' and identifier == 'pxt.swap_failure':
-+                    raise PermissionError('synthetic failure before dropping target')
-+                result = self._inner.drop_table(identifier, *args, **kwargs)
-+                if fail_stage == 'drop' and identifier == 'pxt.swap_failure':
-+                    raise OSError('synthetic failure after dropping target')
-+                return result
-+
-+            def table_exists(self, identifier: str) -> bool:
-+                if check_fails:
-+                    raise OSError('synthetic target lookup failure')
-+                return self._inner.table_exists(identifier)
-+
-+            def rename_table(self, *args: Any, **kwargs: Any) -> None:
-+                if fail_stage == 'rename':
-+                    raise OSError('synthetic rename failure')
-+                self._inner.rename_table(*args, **kwargs)
-+
-+        catalog_with_failure: Any = FailingCatalog(catalog)
-+        with pxt_raises(pxt.ErrorCode.INTERNAL_ERROR, match='failed to write') as failure:
-+            pxt.io.export_iceberg(t, catalog_with_failure, 'pxt.swap_failure', if_exists='replace')
-+
-+        from pyiceberg.exceptions import NoSuchTableError
-+
-+        if fail_stage == 'drop_before':
-+            assert catalog.load_table('pxt.swap_failure').scan().to_arrow().to_pylist() == expected_rows[:1]
-+        else:
-+            with pytest.raises(NoSuchTableError):
-+                catalog.load_table('pxt.swap_failure')
-+
-+        temp_names = [name for _, name in catalog.list_tables('pxt') if name.startswith('swap_failure__pxt_tmp_')]
-+        assert len(temp_names) == 1
-+        assert temp_names[0] in failure.value.message
-+        temp_rows = catalog.load_table(f'pxt.{temp_names[0]}').scan().to_arrow().to_pylist()
-+        assert sorted(temp_rows, key=lambda row: row['c_int']) == expected_rows
-+
-+    @pytest.mark.db_roots('local', reason='Uses a local SQLite Iceberg catalog and does not need a hosted database.')
+---
 
+### Incident Patch 2: `a002e949` (2026-11-12)
+**Commit Message**: [1.0] Remove deprecated Required type marker (#1918)
+
+Remove the deprecated `pxt.Required[T]` marker. Bare `T` already
+declares a non-nullable column; use `T | None` for nullable columns.
+Remove the marker's type-resolution branch and special mypy handling,
+and delete its obsolete test assertions. Standard-library
+`typing.Required` and `typing.NotRequired` continue to support TypedDict
+fields.
+
+UDFs pickled with `pxt.Required[...]` annotations by earlier versions no
+longer load.
+
+Backward compatibility is not a goal. This PR is part of the 1.0 API
+cleanup, so it may break existing user code without a deprecation path.
+
+Validation:
+- 30 existing type/array tests passed against local and proxy catalogs;
+cloud variants excluded.
+- Ruff lint, import sorting, formatting, and checks of all 102 notebooks
+passed.
+- The separate model-definition mypy check passed. Full mypy reports the
+same 28 installed dependency/stub errors as the baseline; the
+OpenTelemetry check reports one missing typing marker.
+
+Context:
+https://pixeltable.slack.com/archives/C06T5MVJBSB/p1793897457834769
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `pixeltable/__init__.py` (modified, +0/-1)
+```diff
+@@ -61,7 +61,6 @@
+     Image,
+     Int,
+     Json,
+-    Required,
+     String,
+     Timestamp,
+     Video,
+```
+
+**File**: `pixeltable/mypy/mypy_plugin.py` (modified, +0/-22)
+```diff
+@@ -53,8 +53,6 @@ def get_type_analyze_hook(self, fullname: str) -> Callable[[AnalyzeTypeContext],
+         if fullname in self.__FULLNAME_MAP:
+             subst_name = self.__FULLNAME_MAP[fullname]
+             return lambda ctx: self.adjust_pxt_type(ctx, subst_name)
+-        if fullname == _REQUIRED_FULLNAME:
+-            return adjust_required_type
+         return None
+ 
+     def get_base_class_hook(self, fullname: str) -> Callable[[ClassDefContext], None] | None:
+@@ -115,7 +113,6 @@ def plugin(version: str) -> type:
+ _PXTITERATOR_FULLNAME = f'{pxt.PxtIterator.__module__}.{pxt.PxtIterator.__name__}'
+ _FN_CALL_FULLNAME = f'{exprs.Expr.__module__}.{exprs.Expr.__name__}'
+ _PXT_TYPE_FULLNAME = f'{_PxtType.__module__}.{_PxtType.__name__}'
+-_REQUIRED_FULLNAME = f'{pxt.Required.__module__}.{pxt.Required.__name__}'
+ _TABLE_MODEL_META_FULLNAME = f'{TableModelMeta.__module__}.{TableModelMeta.__name__}'
+ 
+ 
+@@ -127,10 +124,6 @@ def make_pxt_type_subscriptable(ctx: ClassDefContext) -> None:
+     type-check (as `Any`) in value positions such as schema dicts, we synthesize a metaclass whose
+     `__getitem__(item) -> Any` mypy resolves the subscript through (only a *metaclass* `__getitem__` is honored for
+     `Class[...]`; `__class_getitem__` and instance/classmethod `__getitem__` are not).
+-
+-    `Required` additionally must appear non-generic: while generic, mypy parses its argument as a type, so
+-    `Required[Image[(300, 300)]]` fails ("Type expected within [...]") on the tuple before any hook runs. We clear
+-    its type variables here; `adjust_required_type` keeps `Required[...]` working in annotation positions.
+     """
+     info = ctx.cls.info
+     meta = ctx.api.basic_new_typeinfo('_PxtSubscriptMeta', ctx.api.named_type('builtins.type'), ctx.cls.line)
+@@ -152,21 +145,6 @@ def make_pxt_type_subscriptable(ctx: ClassDefContext) -> None:
+     meta_inst = Instance(meta, [])
+     info.metaclass_type = meta_inst
+     info.declared_metaclass = meta_inst
+-    if info.fullname == _REQUIRED_FULLNAME:
+-        info.type_vars = []
+-        info.defn.type_vars = []
+-        info.add_type_vars()
+-
+-
+-def adjust_required_type(ctx: AnalyzeTypeContext) -> Type:
+-    """
+-    In an annotation position, resolve `Required[T]` to `T` (the marker only signifies non-nullability, which has no
+-    bearing on mypy's view); a bare `Required` resolves to `Any`. This complements `make_pxt_type_subscriptable`,
+-    which makes `Required` non-generic (so mypy no longer interprets `Required[...]` natively).
+-    """
+-    if ctx.type.args:
+-        return ctx.api.analyze_type(ctx.type.args[0])
+-    return AnyType(TypeOfAny.special_form)
+ 
+ 
+ def create_model_base_class(ctx: DynamicClassDefContext) -> None:
+```
+
+**File**: `pixeltable/type_system.py` (modified, +1/-34)
+```diff
+@@ -11,7 +11,6 @@
+ import typing
+ import urllib.request
+ import uuid
+-import warnings
+ from pathlib import Path
+ from typing import Any, ClassVar, Iterable, Literal, Mapping, Sequence, Union, is_typeddict
+ 
+@@ -360,19 +359,6 @@ def from_python_type(
+                 )
+                 if underlying is not None:
+                     return underlying.copy(nullable=True)
+-        elif origin is Required:
+-            assert len(type_args) == 1
+-            warnings.warn(
+-                '`Required[T]` is deprecated and will be removed in a future version; use `T` instead. '
+-                'Bare types such as `pxt.Int` are now non-nullable by default; use `pxt.Int | None` for a '
+-                'nullable column.',
+-                excs.PixeltableDeprecationWarning,
+-                stacklevel=2,
+-            )
+-            underlying = cls.from_python_type(type_args[0], allow_builtin_types=allow_builtin_types)
+-            if underlying is None:
+-                return None
+-            return underlying.copy(nullable=False)
+         elif origin is typing.Required or origin is typing.NotRequired:
+             # Required[T]/NotRequired[T] mark a TypedDict field's key presence (recorded in __optional_keys__), so
+             # the field's value type is simply T
+@@ -384,7 +370,7 @@ def from_python_type(
+             if isinstance(parameters, ColumnType):
+                 return parameters.copy(nullable=False)
+         else:
+-            # It's something other than T | None, Required[T], or an explicitly annotated type.
++            # It's something other than T | None, a TypedDict field qualifier, or an explicitly annotated type.
+             # for non-generic types, get_origin returns None, so we use the type itself as the origin
+             origin = origin or t
+             if isinstance(origin, type):
+@@ -1926,9 +1912,6 @@ def validate_media(self, val: Any) -> None:
+         DocumentHandle.validate(val)
+ 
+ 
+-T = typing.TypeVar('T')
+-
+-
+ class _PxtType:
+     """
+     Base class for the Pixeltable type-hint family. Subclasses of this class are meant to be used as type hints, both
+@@ -1950,22 +1933,6 @@ def as_col_type(cls, nullable: bool) -> ColumnType:
+         raise NotImplementedError()
+ 
+ 
+-class Required(_PxtType, typing.Generic[T]):
+-    """
+-    Deprecated marker class to indicate that a column is non-nullable in a schema definition.
+-
+-    Bare types such as `pxt.Int` are non-nullable, so `Required[T]` is equivalent to `T`. Use `T | None` to declare a
+-    nullable column.
+-    """
+-
+-    @classmethod
+-    def as_col_type(cls, nullable: bool) -> ColumnType:
+-        raise excs.RequestError(
+-            excs.ErrorCode.INVALID_TYPE,
+-            'Bare `Required` is not a valid type; use `Required[T]` for some valid type `T`.',
+-        )
+-
+-
+ String = typing.Annotated[str, StringType(nullable=False)]
+ Int = typing.Annotated[int, IntType(nullable=False)]
+ Float = typing.Annotated[float, FloatType(nullable=False)]
+```
+
+**File**: `tests/serving/test_fastapi.py` (modified, +2/-2)
+```diff
+@@ -688,7 +688,7 @@ def test_add_insert_route_image(
+             orig_w, orig_h = img.size
+         pxt.create_dir(p('test_serve'))
+         # Unlike video.resize (which tolerates None width/height and preserves aspect ratio),
+-        # image.resize requires concrete ints - so width and height must be Required, and every
++        # image.resize requires concrete ints - so width and height must be non-nullable, and every
+         # insert (even the /rotate one, which doesn't care about them) has to supply them.
+         t = pxt.create_table(
+             p('test_serve/images'),
+@@ -834,7 +834,7 @@ def test_add_insert_route_audio(
+         # Use sample-16-bit.wav specifically so the mime type in upload mode is deterministic.
+         audio_path = next(f for f in get_audio_files() if f.endswith('sample-16-bit.wav'))
+         pxt.create_dir(p('test_serve'))
+-        # factor and end_time are Required because multiply_volume's `factor` param must be non-None
++        # factor and end_time are non-nullable because multiply_volume's `factor` param must be non-None
+         # on every insert (the `scaled` computed column runs on every row).
+         t = pxt.create_table(
+             p('test_serve/audios'),
+```
+
+**File**: `tests/test_types.py` (modified, +0/-7)
+```diff
+@@ -38,7 +38,6 @@
+     IntType,
+     Json,
+     JsonType,
+-    Required,
+     String,
+     StringType,
+     Timestamp,
+@@ -339,10 +338,6 @@ def test_from_python_type(self, init_env: None) -> None:
+             assert ColumnType.from_python_type(py_type | None) == nullable_pxt_type
+             assert ColumnType.from_python_type(None | py_type) == nullable_pxt_type  # noqa: RUF036
+ 
+-            # `Required[T]` is deprecated, but still resolves to a non-nullable `T`
+-            with pytest.warns(excs.PixeltableDeprecationWarning, match=r'`Required\[T\]` is deprecated'):
+-                assert ColumnType.from_python_type(Required[py_type]) == non_nullable_pxt_type
+-
+             assert str(non_nullable_pxt_type) == string
+             assert str(nullable_pxt_type) == f'{string} | None'
+ 
+@@ -657,8 +652,6 @@ def test_json_type_errors(self, init_env: None) -> None:
+     def test_type_errors(self, init_env: None) -> None:
+         from .module_with_future_annotations import make_unresolvable_typed_dict
+ 
+-        with pytest.raises(excs.RequestError, match='Bare `Required` is not a valid type'):
+-            ColumnType.from_python_type(Required)
+         with pxt_raises(
+             pxt.ErrorCode.INVALID_TYPE,
+             match=r"Cannot resolve the field types of TypedDict `Unresolvable`: name 'LocalFloat' is not defined",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1925** (closed): PXT-1755: Pin generate_video's Interactions API call to v1beta (google-genai 3.0 defaults to v1) (@pierrebrunelle)
-- **PR #1924** (2026-11-10): docs: replace retired Claude 3.x model IDs in docstrings, sample apps and tooling (@pcbeingused333)
-- **PR #1920** (2026-11-07): docs: make the README hero the homepage's slider, readable in any theme (@pierrebrunelle)
-- **PR #1915** (2026-11-07): Add VLM Run Gateway integration (OCR, VQA, segmentation, embeddings, transcription) (takes over #1893) (@aaron-siegel)
-- **PR #1914** (closed): Fix is_deterministic default when @pxt.udf() has keyword arguments (@sergey-mkhitaryan)
-- **PR #1913** (2026-11-07): Fix UDF and iterator issues found during #1907 review (@sergey-mkhitaryan)
+- **PR #1942** (closed): Run 10 minutes of random-ops on pull requests (@aaron-siegel)
+- **PR #1940** (closed): PXT-1768: Poll VLM Run generations instead of holding chat open (@pierrebrunelle)
+- **PR #1939** (closed): Create one table version per insert, regardless of batch count (@sergey-mkhitaryan)
+- **PR #1936** (2026-11-12): Fix import block spacing in CI planner tests (@sergey-mkhitaryan)
+- **PR #1931** (closed): PXT-1768: Poll VLM Run generations instead of holding chat open (@pierrebrunelle)
+- **PR #1930** (closed): PXT-1769: deselect test_db_migration on T4 and pin pytest-rerunfailures (@pierrebrunelle)
 
 ---
 
@@ -1408,65 +1439,3 @@ with and without an existing target.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Iceberg replace cleanup after catalog swap failure (#1889)
-
-**RULE**:
-When implementing operations in `pixeltable/io/iceberg.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `b7661983`: Iceberg replace cleanup after catalog swap failure (#1889). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/io/iceberg.py`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-            - `'replace'`: drop the existing table and create a new one. If the catalog swap fails, the new data
-              may be kept for recovery in a table named `<table_name>__pxt_tmp_<suffix>`. When the target is absent
-              or its status cannot be checked, the error message gives the exact temporary identifier to inspect.
-    temp_created = False
-    preserve_temp = False
-        temp_created = True
-        # Catalog drop/rename are not transactional. Preserve the completed export on failure
-        # unless we can confirm that the target is available.
-        preserve_temp = True
-        preserve_temp = False
-        if preserve_temp:
-            try:
-                preserve_temp = not catalog.table_exists(table_name)
-            except Exception:
-                # If the catalog is unavailable, keep the possible recovery copy.
-                pass
-        message = f'export_iceberg(): failed to write Iceberg table {table_name!r}: {e}'
-        if preserve_temp:
-            message += (
-                f'; the catalog swap may be incomplete. Inspect {table_name!r} and temporary identifier '
-                f'{temp_name!r} before retrying.'
-            )
-        
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-// Anti-pattern to NEVER write (induced failure mode):
-            - `'replace'`: drop the existing table and create a new one
-        raise excs.InternalError(
-            excs.ErrorCode.INTERNAL_ERROR, f'export_iceberg(): failed to write Iceberg table {table_name!r}: {e}'
-        ) from e
-        # Drop temp if it still exists; covers mid-stream errors and BaseException paths
-        # like KeyboardInterrupt. On success, rename consumed temp_name, so swallow NoSuchTableError.
-        try:
-            catalog.drop_table(temp_name)
-        except NoSuchTableError:
-            pass
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b7661983` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `4a2f75a6`  
+> **Source Version**: `05e29181`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:17:15.743Z  
+> **Timestamp**: 2026-11-13T04:13:14.468Z  
 > **Learning ID**: `learn-github-meta-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:17:15.736Z  
+> **Harvest Timestamp**: 2026-11-13T04:13:14.462Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30556 stars
+- **Stars / Engagement**: 30558 stars
 
 ---
 
@@ -2364,951 +2364,662 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86c6c973` (2026-11-10)
-**Commit Message**: Fix Arena large-block overruns and drop its Boost.Intrusive dependency
+### Incident Patch 1: `749133fd` (2026-11-12)
+**Commit Message**: Fix SIGFPE and 11x slowdown in folly::Random::randDouble
 
 Summary:
-On platforms where `max_align_t` is 8 bytes (Windows, Apple arm64), `Arena` sizes large blocks with too small a header, so large allocations can overrun the block. `LargeBlock`'s header is 16 bytes, larger than `Block`'s (8) and than its own alignment:
+Before this change, `folly::Random::randDouble(min, max)` delegates to
+`std::uniform_real_distribution`, which draws its canonical `[0, 1)` value from
+`std::generate_canonical`. That function computes
 
-- `allocateSlow()` checks overflow and `sizeLimit` with `Block`'s header, then recomputes a large block's size with `LargeBlock`'s, unchecked. A large allocation can exceed `sizeLimit` by 8 bytes, and `allocate(SIZE_MAX - 15)` wraps around to a zero-byte allocation, writes the block header past its end and returns a pointer beyond it, instead of throwing `std::bad_alloc`.
-- With a `maxAlign` above 8, a large block reserves `roundUp(sizeof(LargeBlock))` for its header and alignment padding, up to 8 bytes too few, so writing the whole allocation runs past the end of the block.
-
-Size each block with the header it uses, computed once and checked: `sizeof(Header) + max(maxAlign, alignof(Header)) - alignof(Header)`. That is unchanged where a header's size equals its alignment, as on Linux x86_64. `kLargeBlockOverhead` exposes the large header size, which `Siz
-
-**File**: `folly/memory/Arena-inl.h` (modified, +27/-15)
-```diff
-@@ -28,24 +28,26 @@ template <class Alloc>
- void* Arena<Alloc>::allocateSlow(size_t size) {
-   char* start;
- 
-+  const bool large = size > minBlockSize();
-   size_t allocSize;
-   if (!checked_add(
--          &allocSize, std::max(size, minBlockSize()), roundUp(sizeof(Block)))) {
-+          &allocSize,
-+          std::max(size, minBlockSize()),
-+          large ? headerSize<LargeBlock>() : headerSize<Block>())) {
-     throw_exception<std::bad_alloc>();
-   }
-   if (sizeLimit_ != kNoSizeLimit &&
-       allocSize > sizeLimit_ - totalAllocatedSize_) {
-     throw_exception<std::bad_alloc>();
-   }
- 
--  if (size > minBlockSize()) {
-+  if (large) {
-     // Allocate a large block for this chunk only; don't change ptr_ and end_,
-     // let them point into a normal block (or none, if they're null)
--    allocSize = roundUp(sizeof(LargeBlock)) + size;
-     void* mem = AllocTraits::allocate(alloc(), allocSize);
-     auto blk = new (mem) LargeBlock(allocSize);
-     start = align(blk->start());
--    largeBlocks_.push_back(*blk);
-+    append(firstLargeBlock_, lastLargeBlock_, blk, blk);
-   } else {
-     // Allocate a normal sized block and carve out size bytes from it
-     // Will allocate more than size bytes if convenient
-@@ -55,8 +57,8 @@ void* Arena<Alloc>::allocateSlow(size_t size) {
-     void* mem = AllocTraits::allocate(alloc(), allocSize);
-     auto blk = new (mem) Block();
-     start = align(blk->start());
--    blocks_.push_back(*blk);
--    currentBlock_ = blocks_.last();
-+    append(firstBlock_, lastBlock_, blk, blk);
-+    currentBlock_ = blk;
-     ptr_ = start + size;
-     end_ = static_cast<char*>(mem) + allocSize;
-     assert(ptr_ <= end_);
-@@ -71,16 +73,26 @@ void Arena<Alloc>::merge(Arena<Alloc>&& other) {
-   FOLLY_SAFE_CHECK(
-       blockGoodAllocSize() == other.blockGoodAllocSize(),
-       "cannot merge arenas of different minBlockSize");
--  const bool wasEmpty = blocks_.empty();
--  blocks_.splice_after(blocks_.before_begin(), other.blocks_);
--  other.blocks_.clear();
--  if (wasEmpty) {
--    // currentBlock_ is still before_begin(); leaving it there would let
--    // canReuseExistingBlock() bump-allocate into a merged block.
--    currentBlock_ = blocks_.last();
-+  // Put the other arena's blocks in front of ours, which keeps them out of
-+  // reach of canReuseExistingBlock(). Without blocks of our own, they are all
-+  // in use, so the last one becomes current.
-+  if (other.firstBlock_) {
-+    append(other.firstBlock_, other.lastBlock_, firstBlock_, lastBlock_);
-+    firstBlock_ = other.firstBlock_;
-+    lastBlock_ = other.lastBlock_;
-+    if (!currentBlock_) {
-+      currentBlock_ = lastBlock_;
-+    }
-   }
--  largeBlocks_.splice_after(largeBlocks_.before_begin(), other.largeBlocks_);
--  other.largeBlocks_.clear();
-+  append(
-+      other.firstLargeBlock_,
-+      other.lastLargeBlock_,
-+      firstLargeBlock_,
-+      lastLargeBlock_);
-+  firstLargeBlock_ = other.firstLargeBlock_;
-+  lastLargeBlock_ = other.lastLargeBlock_;
-+  other.firstBlock_ = other.lastBlock_ = other.currentBlock_ = nullptr;
-+  other.firstLargeBlock_ = other.lastLargeBlock_ = nullptr;
-   other.ptr_ = other.end_ = nullptr;
-   totalAllocatedSize_ += other.totalAllocatedSize_;
-   other.totalAllocatedSize_ = 0;
+```
+const long double __r = urng.max() - urng.min() + 1;
+const size_t __log2r  = std::log(__r) / std::log(2.0L);
+const size_t __m      = std::max<size_t>(1UL, (__b + __log2r - 1UL) / __log2r);
 ```
 
-**File**: `folly/memory/Arena.h` (modified, +44/-35)
+`__log2r` is 32 for `ThreadLocalPRNG`, so this looks like it should fold to a
+constant. It does under gcc. It does not under clang: LLVM declines to
+constant-fold libm calls on `long double` (x86_fp80), so `logl` is called twice
+at runtime and `__m` is computed with a real `divq`/`divl` by the result. Two
+consequences, both live in production today:
+
+**Crash surface.** If `logl` ever returns a wrong finite value, `__log2r`
+truncates to 0 and the divide traps `SIGFPE`. This is not theoretical — it took
+down `a2x_engine_retrieval_aal_pace_prodTier1` task 2490 and contributed to
+S704876:
+
+```
+Signal 8 (SIGFPE) (code: integer divide by zero)
+  @ GRTrafficOffloadManager::shouldUseCurrentBucket(...)
+    .../bits/random.tcc:3356
+`
+
+**File**: `folly/BUCK` (modified, +1/-0)
 ```diff
-@@ -17,13 +17,12 @@
+@@ -241,6 +241,7 @@ fb_dirsync_cpp_library(
+         ":traits",
+         "//folly/functional:invoke",
+         "//folly/lang:bits",
++        "//folly/random:uniform_real_distribution",
+         "//folly/random:xoshiro256pp",
+     ] + select({
+         "DEFAULT": [],
+```
+
+**File**: `folly/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -1025,6 +1025,7 @@ folly_add_library(
+     folly_functional_invoke
+     folly_lang_bits
+     folly_portability
++    folly_random_uniform_real_distribution
+     folly_random_xoshiro256pp
+     folly_traits
+ )
+```
+
+**File**: `folly/Random.h` (modified, +18/-9)
+```diff
+@@ -21,14 +21,18 @@
  #pragma once
- #define FOLLY_ARENA_H_
+ #define FOLLY_RANDOM_H_
  
-+#include <algorithm>
- #include <cassert>
- #include <limits>
- #include <stdexcept>
- #include <utility>
++#include <cassert>
++#include <cmath>
+ #include <cstdint>
++#include <limits>
+ #include <random>
+ #include <type_traits>
  
--#include <boost/intrusive/slist.hpp>
--
- #include <folly/Conv.h>
- #include <folly/Likely.h>
- #include <folly/Memory.h>
-@@ -67,7 +66,6 @@ class Arena {
-       size_t sizeLimit = kNoSizeLimit,
-       size_t maxAlign = kDefaultMaxAlign)
-       : allocAndSize_(alloc, minBlockSize),
--        currentBlock_(blocks_.last()),
-         ptr_(nullptr),
-         end_(nullptr),
-         totalAllocatedSize_(0),
-@@ -99,7 +97,7 @@ class Arena {
+ #include <folly/Portability.h>
+ #include <folly/Traits.h>
+ #include <folly/functional/Invoke.h>
+ #include <folly/lang/Bits.h>
++#include <folly/random/UniformRealDistribution.h>
+ #include <folly/random/xoshiro256pp.h>
+ 
+ #if defined(FOLLY_HAVE_EXTRANDOM_SFMT19937) && FOLLY_HAVE_EXTRANDOM_SFMT19937
+@@ -197,6 +201,7 @@ class Random {
+ 
+   /**
+    * Returns a secure double in [min, max), if min == max, returns min.
++   * Reversed bounds sample (max, min]. Bounds must be finite.
+    */
+   static double secureRandDouble(double min, double max) {
+     SecureRNG<uint64_t> srng;
+@@ -393,32 +398,36 @@ class Random {
+    */
+   template <class RNG = ThreadLocalPRNG, class /* EnableIf */ = ValidRNG<RNG>>
+   static double randDouble01(RNG&& rng) {
+-    // Assuming 64-bit IEEE754 doubles, numbers in the form k/2^53 can be
+-    // represented exactly, so we can sample uniformly in [0, 1) by sampling an
+-    // integer in [0, 2^53) and scaling accordingly. This is the highest
+-    // precision we can obtain if we want a symmetric output distribution.
+-    // See https://prng.di.unimi.it/#remarks for more details.
+-    static_assert(
+-        std::numeric_limits<double>::digits == 53, "Unsupported double type");
+-    return (rand64(std::forward<RNG>(rng)) >> 11) * 0x1.0p-53;
++    auto& engine = rng;
++    return detail::uniform_real_distribution_canonical<double>(engine);
+   }
+ 
+   /**
+    * Returns a double in [min, max), if min == max, returns min.
++   * Reversed bounds sample (max, min]. Bounds must be finite.
+    */
+   static double randDouble(double min, double max) {
+     return randDouble(min, max, ThreadLocalPRNG());
+   }
+ 
+   /**
+    * Returns a double in [min, max), if min == max, returns min.
++   * Reversed bounds sample (max, min]. Bounds must be finite.
+    */
+   template <class RNG = ThreadLocalPRNG, class /* EnableIf */ = ValidRNG<RNG>>
+   static double randDouble(double min, double max, RNG&& rng) {
+     if (std::fabs(max - min) < std::numeric_limits<double>::epsilon()) {
+       return min;
      }
- 
-     if (canReuseExistingBlock(size)) {
--      currentBlock_++;
-+      currentBlock_ = currentBlock_->next;
-       char* r = align(currentBlock_->start());
-       ptr_ = r + size;
-       end_ = currentBlock_->start() + blockGoodAllocSize() - sizeof(Block);
-@@ -124,10 +122,10 @@ class Arena {
-   void clear() {
-     bytesUsed_ = 0;
-     freeLargeBlocks(); // We don't reuse large blocks
--    if (blocks_.empty()) {
-+    if (!firstBlock_) {
-       return;
-     }
--    currentBlock_ = blocks_.begin();
-+    currentBlock_ = firstBlock_;
-     ptr_ = align(currentBlock_->start());
-     end_ = currentBlock_->start() + blockGoodAllocSize() - sizeof(Block);
-     assert(ptr_ <= end_);
-@@ -151,10 +149,8 @@ class Arena {
-  private:
-   using AllocTraits =
-       typename std::allocator_traits<Alloc>::template rebind_traits<char>;
--  using BlockLink = boost::intrusive::slist_member_hook<>;
--
-   struct alignas(max_align_v) Block {
--    BlockLink link;
-+    Block* next = nullptr;
- 
-     char* start() { return reinterpret_cast<char*>(this + 1); }
- 
-@@ -164,11 +160,11 @@ class Arena {
- 
-   constexpr size_t blockGoodAllocSize() {
-     return ArenaAllocatorTraits<Alloc>::goodSize(
--        alloc(), roundUp(sizeof(Block)) + minBlockSize());
-+        alloc(), headerSize<Block>() + minBlockSize());
-   }
- 
-   struct alignas(max_align_v) LargeBlock {
--    BlockLink link;
-+    LargeBlock* next = nullptr;
-     const size_t allocSize;
- 
-     char* start() { return reinterpret_cast<char*>(this + 1); }
-@@ -182,35 +178,39 @@ class Arena {
-       // We don't reuse large blocks
-       return false;
-     }
--    if (blocks_.empty() || currentBlock_ == blocks_.last()) {
--      // No regular blocks to reuse
--      return false;
--    }
--    return true;
-+    // No regular blocks to reuse past the current one
-+    return currentBlock_ != lastBlock_;
-   }
- 
-   void freeBlocks() {
--    blocks_.clear_and_dispose([this](Block* b) {
-+    for (Block* b = firstBlock_; b;) {
-+      Block* const next = b->next;
-       b->~Block();
-       AllocTraits::deallocate(
-           alloc(), reinterpret_cast<char*>(b), blockGoodAllocSize());
--    });
-+      b = next;
+-    return std::uniform_real_distribution<double>(min, max)(rng);
++    if (min > max || !std::isfinite(max - min)) {
++      assert(std::isfinite(min) && std::isfinite(max));
++      auto value = randDouble01(std::forward<RNG>(rng));
++      auto result = std::lerp(min, max, value);
++      auto inRange = min > max ? result > max : result < max;
++      return inRange ? result : std::nextafter(max, min);
 +    }
-+    firstBlock_ = lastBlock_ = currentBlock_ = nullptr;
++    auto& engine = rng;
++    return uniform_real_distribution<double>(min, max)(engine);
    }
+ };
  
-   void freeLargeBlocks() {
--    largeBlocks_.clear_and_dispose([this](LargeBlock* b) {
-+    for (LargeBlock* b = firstLargeBlock_; b;) {
-+      LargeBlock* const next = b->next;
-       auto size = b->allocSize;
-       totalAllocatedSize_ -= size;
-       b->~LargeBlock();
-       AllocTraits::deallocate(alloc(), reinterpret_cast<char*>(b), size);
--    });
-+      b = next;
-+    }
-+    firstLargeBlock_ = lastLargeBlock_ = nullptr;
-   }
- 
-  public:
-   static constexpr size_t kDefaultMinBlockSize = 4096 - sizeof(Block);
-   static constexpr size_t kNoSizeLimit = 0;
-   static constexpr size_t kDefaultMaxAlign = alignof(Block);
-   static constexpr size_t kBlockOverhead = sizeof(Block);
-+  static constexpr size_t kLargeBlockOverhead = sizeof(LargeBlock);
- 
-  private:
-   bool isAligned(uintptr_t address) const {
-@@ -232,19 +232,23 @@ class Arena {
- 
-   char* align(char* ptr) { return align_ceil(ptr, maxAlign_); }
- 
--  // cache_last<true> makes the list keep a pointer to the last element, so we
--  // have push_back() and constant time splice_after()
--  using BlockList = boost::intrusive::slist<
--      Block,
--      boost::intrusive::member_hook<Block, BlockLink, &Block::link>,
--      boost::intrusive::constant_time_size<false>,
--      boost::intrusive::cache_last<true>>;
-+  // A block header plus the most padding align() can add after it, since the
-+  // allocator only guarantees alignment for the header.
-+  template <typename Header>
-+  size_t headerSize() const {
-+    return sizeof(Header) + std::max(maxAlign_, alignof(Header)) -
-+        alignof(Header);
-+  }
- 
--  using LargeBlockList = boost::intrusive::slist<
--      LargeBlock,
--      boost::intrusive::member_hook<LargeBlock, BlockLink, &LargeBlock::link>,
--      boost::intrusive::constant_time_size<false>,
--      boost::intrusive::cache_last<true>>;
-+  // Appends the chain [first, last], if not empty, to the chain [head, tail].
-+  template <typename B>
-+  static void append(B*& head, B*& tail, B* first, B* last) {
-+    if (!first) {
-+      return;
-+    }
-+    (tail ? tail->next : head) = first;
-+    tail = last;
-+  }
- 
-   void* allocateSlow(size_t size);
- 
-@@ -262,9 +266,14 @@ class Arena {
-   con
 ```
 
-**File**: `folly/memory/BUCK` (modified, +0/-1)
+**File**: `folly/random/BUCK` (modified, +7/-0)
 ```diff
-@@ -26,7 +26,6 @@ fb_dirsync_cpp_library(
+@@ -44,6 +44,13 @@ fb_dirsync_cpp_library(
      ],
-     use_raw_headers = True,
-     exported_deps = [
--        "fbsource//third-party/boost:boost",
-         ":allocator",
-         ":malloc",
-         "//folly:conv",
-```
-
-**File**: `folly/memory/CMakeLists.txt` (modified, +0/-1)
-```diff
-@@ -32,7 +32,6 @@ folly_add_library(
-     Arena-inl.h
-     Arena.h
-   EXPORTED_DEPS
--    Boost::headers
-     folly_conv
-     folly_lang_align
-     folly_lang_checked_math
-```
-
-**File**: `folly/memory/test/ArenaTest.cpp` (modified, +67/-6)
-```diff
-@@ -22,6 +22,7 @@
+ )
  
- #include <glog/logging.h>
- 
-+#include <folly/Memory.h>
- #include <folly/Random.h>
- #include <folly/memory/Allocator.h>
- #include <folly/memory/MallctlHelper.h>
-@@ -86,11 +87,7 @@ TEST(Arena, SizeSanity) {
-   allocatedItems.insert(ptr);
-   minimum_size += 10 * requestedBlockSize;
-   maximum_size +=
--      goodMallocSize(10 * requestedBlockSize + SysArena::kBlockOverhead);
--#if defined(__APPLE__) && defined(FOLLY_AARCH64)
--  // expectation is a bit too small
--  maximum_size += 8;
--#endif
-+      goodMallocSize(10 * requestedBlockSize + SysArena::kLargeBlockOverhead);
-   EXPECT_GE(arena.totalSize(), minimum_size);
-   EXPECT_LE(arena.totalSize(), maximum_size);
-   VLOG(4) << minimum_size << " < " << arena.totalSize() << " < "
-@@ -263,6 +260,70 @@ TEST(Arena, ExtremeSize) {
-   EXPECT_THROW(alloc(arena, SIZE_MAX - 2), std::bad_alloc);
- }
- 
-+TEST(Arena, SizeLimitCoversLargeBlockHeader) {
-+  static const size_t size = 4096;
++fb_dirsync_cpp_library(
++    name = "uniform_real_distribution",
++    headers = ["UniformRealDistribution.h"],
++    apple_sdks = (IOS, APPLETVOS, MACOSX, WATCHOS),
++    use_raw_headers = True,
++)
 +
-+  for (size_t sizeLimit = size; sizeLimit < size + 64; ++sizeLimit) {
-+    SCOPED_TRACE(sizeLimit);
-+    SysArena arena(64, sizeLimit);
-+    try {
-+      void* ptr = alloc(arena, size);
-+      EXPECT_EQ(
-+          reinterpret_cast<uintptr_t>(ptr) % SysArena::kDefaultMaxAlign, 0);
-+    } catch (const std::bad_alloc&) {
-+      continue;
-+    }
-+    EXPECT_LE(arena.totalSize() - sizeof(SysArena), sizeLimit);
+ fb_dirsync_cpp_library(
+     name = "xoshiro256pp",
+     headers = [
+```
+
+**File**: `folly/random/CMakeLists.txt` (modified, +5/-0)
+```diff
+@@ -38,6 +38,11 @@ folly_add_library(
+     folly_random_seed_seq
+ )
+ 
++folly_add_library(
++  NAME uniform_real_distribution
++  HEADERS UniformRealDistribution.h
++)
++
+ folly_add_library(
+   NAME xoshiro256pp
+   HEADERS xoshiro256pp.h
+```
+
+**File**: `folly/random/UniformRealDistribution.h` (added, +174/-0)
+```diff
+@@ -0,0 +1,174 @@
++/*
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#pragma once
++
++#include <cassert>
++#include <cmath>
++#include <cstdint>
++#include <istream>
++#include <limits>
++#include <ostream>
++#include <random>
++#include <type_traits>
++
++namespace folly {
++namespace detail {
++
++template <typename UInt, typename RNG>
++UInt uniform_real_distribution_bits(RNG& rng) {
++  constexpr bool uniform =
++      RNG::min() == 0 && (RNG::max() & (RNG::max() + 1)) == 0;
++  if constexpr (uniform && RNG::max() >= std::numeric_limits<UInt>::max()) {
++    return static_cast<UInt>(rng());
++  } else if constexpr (
++      uniform && std::is_same_v<UInt, uint64_t> &&
++      RNG::max() >= std::numeric_limits<uint32_t>::max()) {
++    auto high = static_cast<uint64_t>(static_cast<uint32_t>(rng()));
++    auto low = static_cast<uint32_t>(rng());
++    return (high << 32) | low;
++  } else {
++    return std::uniform_int_distribution<UInt>()(rng);
 +  }
 +}
 +
-+TEST(Arena, LargeBlockSizeOverflow) {
-+  SysArena arena;
-+  // Adding the large block header to this size overflows.
-+  EXPECT_THROW(arena.allocate(SIZE_MAX - 15), std::bad_alloc);
++// Sample the exactly representable grid k / 2^Bits in [0, 1). Discarding
++// low bits avoids rounding the largest RNG outputs up to 1.
++template <
++    typename Real,
++    int Bits = std::numeric_limits<Real>::digits,
++    typename RNG>
++Real uniform_real_distribution_canonical(RNG& rng) {
++  static_assert(std::numeric_limits<Real>::radix == 2);
++  constexpr int bits = Bits < 64 ? Bits : 64;
++  using UInt = std::conditional_t<(bits <= 32), uint32_t, uint64_t>;
++  constexpr int shift = std::numeric_limits<UInt>::digits - bits;
++  constexpr Real scale = Real{0x1p-64} * (uint64_t{1} << (64 - bits));
++  auto randomBits = uniform_real_distribution_bits<UInt>(rng);
++  auto value = static_cast<Real>(randomBits >> shift) * scale;
++  if constexpr (Bits > 64) {
++    auto tail = uniform_real_distribution_canonical<Real, Bits - 64>(rng);
++    value += tail * Real{0x1p-64};
++  }
++  return value;
 +}
 +
-+namespace {
-+// Returns memory at a given offset past a 64-byte boundary, followed by guard
-+// bytes that must stay untouched.
-+struct OffsetAllocator {
-+  using value_type = char;
-+  template <typename T>
-+  struct rebind {
-+    using other = OffsetAllocator;
++} // namespace detail
++
++/**
++ * A uniform real distribution in [a, b), with the interface of
++ * std::uniform_real_distribution. Bounds must be finite and ordered, with a
++ * finite span b - a; equal bounds return that value without consuming the RNG.
++ *
++ * Canonical values use numeric_limits<RealType>::digits random bits, without
++ * the runtime logarithms some standard libraries use to count RNG draws.
++ * Seeded sequences need not match std::uniform_real_distribution.
++ */
++template <typename RealType = double>
++class uniform_real_distribution {
++  static_assert(std::is_floating_point_v<RealType>);
++
++ public:
++  using result_type = RealType;
++
++  class param_type {
++   public:
++    using distribution_type = uniform_real_distribution;
++
++    explicit param_type(RealType a = 0, RealType b = 1) : a_(a), b_(b) {
++      assert(std::isfinite(a) && std::isfinite(b) && a <= b);
++      assert(std::isfinite(b - a));
++    }
++
++    RealType a() const { return a_; }
++    RealType b() const { return b_; }
++
++    friend bool operator==(const param_type&, const param_type&) = default;
++
++   private:
++    RealType a_;
++    RealType b_;
 +  };
-+  static constexpr size_t kGuard = 64;
-+  size_t offset = 0;
 +
-+  char* allocate(size_t n) {
-+    auto p = static_cast<char*>(aligned_malloc(offset + n + kGuard, 64));
-+    memset(p + offset + n, 0x5a, kGuard);
-+    return p + offset;
++  explicit uniform_real_distribution(RealType a = 0, RealType b = 1)
++      : param_(a, b) {}
++
++  explicit uniform_real_distribution(const param_type& param) : param_(param) {}
++
++  void reset() {}
++
++  RealType a() const { return param_.a(); }
++  RealType b() const { return param_.b(); }
++  RealType min() const { return a(); }
++  RealType max() const { return b(); }
++  param_type param() const { return param_; }
++  void param(const param_type& param) { param_ = param; }
++
++  template <typename RNG>
++  result_type operator()(RNG& rng) const {
++    return (*this)(rng, param_);
 +  }
-+  void deallocate(char* p, size_t n) {
-+    for (size_t i = 0; i < kGuard; ++i) {
-+      EXPECT_EQ(p[n + i], 0x5a) << "overrun at " << i;
++
++  template <typename RNG>
++  result_type operator()(RNG& rng, const param_type& param) const {
++    if (param.a() == param.b()) {
++      return param.a();
 +    }
-+    aligned_free(p - offset);
++    auto value = detail::uniform_real_distribution_canonical<RealType>(rng);
++    auto result = std::lerp(param.a(), param.b(), value);
++    // Scaling can round up to the excluded upper endpoint.
++    return result < param.b() ? result : std::nextafter(param.b(), param.a());
 +  }
++
++  friend bool operator==(
++      const uniform_real_distribution&,
++      const uniform_real_distribution&) = default;
++
++  template <typename Char, typename Traits>
++  friend std::basic_ostream<Char, Traits>& operator<<(
++      std::basic_ostream<Char, Traits>& out,
++      const uniform_real_distribution& dist) {
++    auto flags = out.flags();
++    auto precision = 
+```
+
+**File**: `folly/random/test/BUCK` (modified, +9/-0)
+```diff
+@@ -42,6 +42,15 @@ fb_dirsync_cpp_unittest(
+     ],
+ )
+ 
++fb_dirsync_cpp_unittest(
++    name = "uniform_real_distribution_test",
++    srcs = ["UniformRealDistributionTest.cpp"],
++    deps = [
++        "//folly/portability:gtest",
++        "//folly/random:uniform_real_distribution",
++    ],
++)
++
+ fb_dirsync_cpp_unittest(
+     name = "xoshiro256pp_test",
+     srcs = ["Xoshiro256ppTest.cpp"],
+```
+
+**File**: `folly/random/test/UniformRealDistributionTest.cpp` (added, +253/-0)
+```diff
+@@ -0,0 +1,253 @@
++/*
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#include <folly/random/UniformRealDistribution.h>
++
++#include <array>
++#include <cmath>
++#include <cstdint>
++#include <limits>
++#include <random>
++#include <sstream>
++#include <type_traits>
++
++#include <folly/portability/GTest.h>
++
++namespace folly {
++namespace {
++
++template <typename UInt>
++struct ConstantRNG {
++  using result_type = UInt;
++
++  UInt value = 0;
++  unsigned calls = 0;
++
++  UInt operator()() {
++    ++calls;
++    return value;
++  }
++  static constexpr UInt min() { return 0; }
++  static constexpr UInt max() { return std::numeric_limits<UInt>::max(); }
 +};
-+} // namespace
 +
-+TEST(Arena, LargeBlockPaddingForCustomAlign) {
-+  // The allocator only guarantees the alignment of the block header, so a
-+  // large block's payload may need up to 64 - that alignment bytes of padding.
-+  for (size_t offset = 0; offset < 64; offset += max_align_v) {
-+    SCOPED_TRACE(offset);
-+    Arena<OffsetAllocator> arena(
-+        OffsetAllocator{offset}, 64, Arena<OffsetAllocator>::kNoSizeLimit, 64);
-+    for (size_t size : {128, 1024}) {
-+      void* ptr = arena.allocate(size);
-+      EXPECT_EQ(reinterpret_cast<uintptr_t>(ptr) % 64, 0);
-+      memset(ptr, 0xff, size);
-+    }
++struct SequenceRNG {
++  using result_type = uint32_t;
++
++  std::array<uint32_t, 4> values{0x80000000, 0, 0, 0};
++  unsigned calls = 0;
++
++  uint32_t operator()() { return values.at(calls++); }
++  static constexpr uint32_t min() { return 0; }
++  static constexpr uint32_t max() { return UINT32_MAX; }
++};
++
++template <typename Real>
++class UniformRealDistributionTest : public testing::Test {};
++
++using RealTypes = testing::Types<float, double, long double>;
++TYPED_TEST_SUITE(UniformRealDistributionTest, RealTypes);
++
++TYPED_TEST(UniformRealDistributionTest, Parameters) {
++  using Dist = uniform_real_distribution<TypeParam>;
++  using Param = typename Dist::param_type;
++  static_assert(std::is_same_v<typename Dist::result_type, TypeParam>);
++  static_assert(std::is_same_v<typename Param::distribution_type, Dist>);
++
++  Dist dist;
++  EXPECT_EQ(dist.a(), 0);
++  EXPECT_EQ(dist.b(), 1);
++  EXPECT_EQ(dist.min(), 0);
++  EXPECT_EQ(dist.max(), 1);
++  EXPECT_EQ(dist.param(), Param());
++
++  Param param(-5, 17);
++  dist.param(param);
++  EXPECT_EQ(dist, Dist(param));
++  EXPECT_EQ(dist, Dist(-5, 17));
++  EXPECT_NE(dist, Dist());
++  EXPECT_EQ(dist.min(), -5);
++  EXPECT_EQ(dist.max(), 17);
++  dist.reset();
++  EXPECT_EQ(dist.param(), param);
++
++  ConstantRNG<uint32_t> rng;
++  EXPECT_EQ(dist(rng, Param(2, 3)), 2);
++  EXPECT_EQ(dist.param(), param);
++}
++
++TYPED_TEST(UniformRealDistributionTest, FullWidthEngines) {
++  using Real = TypeParam;
++  uniform_real_distribution<Real> dist;
++  ConstantRNG<uint32_t> rng32;
++  EXPECT_EQ(dist(rng32), 0);
++  rng32.value = rng32.max();
++  EXPECT_EQ(dist(rng32), std::nextafter(Real{1}, Real{0}));
++  EXPECT_EQ(rng32.calls, 2 * ((std::numeric_limits<Real>::digits + 31) / 32));
++
++  ConstantRNG<uint64_t> rng64;
++  EXPECT_EQ(dist(rng64), 0);
++  rng64.value = rng64.max();
++  EXPECT_EQ(dist(rng64), std::nextafter(Real{1}, Real{0}));
++  EXPECT_EQ(rng64.calls, 2 * ((std::numeric_limits<Real>::digits + 63) / 64));
++}
++
++TYPED_TEST(UniformRealDistributionTest, WordOrderAndPrecision) {
++  using Real = TypeParam;
++  uniform_real_distribution<Real> dist;
++  SequenceRNG rng;
++  EXPECT_EQ(dist(rng), Real{0.5});
++  EXPECT_EQ(rng.calls, (std::numeric_limits<Real>::digits + 31) / 32);
++
++  SequenceRNG low;
++  constexpr int digits = std::numeric_limits<Real>::digits;
++  constexpr int words = (digits + 31) / 32;
++  low.values.fill(0);
++  low.values[words - 1] = uint32_t{1} << ((32 - digits % 32) % 32);
++  EXPECT_EQ(dist(low), std::ldexp(Real{1}, -digits));
++}
++
++TYPED_TEST(UniformRealDistributionTest, ExcludesUpperEndpoint) {
++  using Real = TypeParam;
++  ConstantRNG<uint32_t> rng{UINT32_MAX};
++  EXPECT_EQ(
++      uniform_real_distribution<Real>(1, 2)(rng),
++      std::nextafter(Real{2}, Real{1}));
++  EXPECT_EQ(
++      uniform_real_distribution<Real>(-2, -1)(rng),
++      std::nextafter(Real{-1}, Real{-2}));
++  auto adjacent = std::nextafter(Real{1}, Real{2});
++  EXPECT_EQ(uniform_real_distribution<Real>(1, adjacent)(rng), 1);
++  if constexpr (std::numeric_limits<Real>::has_denorm == std::denorm_present) {
++    EXPECT_EQ(
++        uniform_real_distribution<Real>(
++            0, std::numeric_limits<Real>::denorm_min())(rng),
++        0);
 +  }
 +}
 +
- TEST(Arena, MaxAlign) {
-   // Results are still aligned with nonstandard size and allocations
-   static const size_t blockSize = 123;
-@@ -381,7 +442,7 @@ TEST(Arena, MergeIntoUntouchedArena) {
-   auto* live = static_cast<char*>(alloc(src, 1));
-   *live = 'x';
- 
--  // dst has never allocated, so its currentBlock_ is still before_begin().
-+  // dst has never allocated, so it has no current block.
-   SysArena dst;
-   dst.merge(std::move(src));
- 
-```
-
-**File**: `folly/memory/test/BUCK` (modified, +1/-0)
-```diff
-@@ -9,6 +9,7 @@ fb_dirsync_cpp_unittest(
-     labels = ["oss-broken"],
-     deps = [
-         "fbsource//third-party/glog:glog",
-+        "//folly:memory",
-         "//folly:random",
-         "//folly/memory:allocator",
-         "//folly/memory:arena",
++TYPED_TEST(UniformRealDistributionTest, ExtremeFiniteBounds) {
++  using Real = TypeParam;
++  auto max = std::numeric_limits<Real>::max() / 2;
++  uniform_real_distribution<Real> dist(-max, max);
++  ConstantRNG<uint32_t> zero;
++  EXPECT_EQ(dist(zero), -max);
++  SequenceRNG half;
++  EXPECT_EQ(dist(half), 0);
++  ConstantRNG<uint32_t> high{UINT32_MAX};
++  auto value = dist(high);
++  EXPECT_TRUE(std::isfinite(value));
++  EXPECT_GT(value, 0);
++  EXPECT_LT(value, max);
++}
++
++TYPED_TEST(UniformRealDistributionTest, EqualBoundsDoNotConsumeEngine) {
++  ConstantRNG<uint32_t>
 ```
 
 ---
 
-### Incident Patch 2: `167dcc32` (2026-11-10)
-**Commit Message**: Build hsthrift and glean on CentOS 10
+### Incident Patch 2: `3abdf4c0` (2026-11-12)
+**Commit Message**: thread_local: Take the fork guard in the debug set check
 
 Summary:
-`oss-hsthrift-linux-getdeps` and `oss-glean-linux-getdeps` fail on CentOS 10, so Sandcastle's `centos9_runtime` rollout tag still holds them on CentOS 9. Two things break there.
+## The issue
+- In debug builds, `ThreadLocalPtr::get()` runs `DCHECK(te->cachedInSetMatchesElementsArray(id))`, which read-locks the per-id `ThreadEntrySet` without the shared `forkHandlerLock_` that every other set-lock path holds. If another thread is in that check when a process forks, the child inherits a read-locked `SharedMutex` with no owner, and `StaticMeta::onForkChild()` blocks forever on `set.wlock()`.
 
-`Build folly` fails to link `libfolly.so`. D124075105 maps Boost to EL 10's `boost-devel` and `boost-static`, and those static archives are not position-independent:
+## The fix
+- `cachedInSetMatchesElementsArray` now try-acquires `forkHandlerLock_` shared before taking the set lock, and skips the debug check if it can't. Non-debug builds are unchanged, since the function returns early there.
 
-```
-/bin/ld: /usr/lib64/libboost_regex.a(posix_api.o): relocation R_X86_64_PC32 against symbol `__libc_single_threaded@GLIBC_2.32' can not be used when making a shared object; recompile with -fPIC
-```
+Reviewed By: yfeldblum
 
-On CentOS 9 Boost has no system mapping, so getdeps builds it from source with `CMAKE_POSITION_INDEPENDENT_CODE=ON` and the link works.
+Differential Revision: D128543041
 
-Behind that, hsthrift's `fb-util` and glean both depend on Haskell's `regex-pcre`, which finds PCRE1 through `pkgconfig-depends: libpcre`. EL 10 dropped PCRE1: there is no `pcre-devel`, and nothing in CentOS Stream 10 or EPEL 10 provides `pkgconfig(libpcre)`. So cabal cannot resolve `regex-pcre` (the error in T292121259).
+fbshipit-source-id: 7a4573d02753eeb7185c63e8e1984ee82f37a9ab
 
-This diff:
-- Adds `shared_lib` to the manifest context, set from `--shared-lib`, so a manifest can select on it. getdeps already puts `shared_
-
-**File**: `tool/fbcode_builder/getdeps/buildopts.py` (modified, +1/-0)
+**File**: `folly/detail/ThreadLocalDetail.cpp` (modified, +6/-0)
 ```diff
-@@ -274,6 +274,7 @@ def get_context_generator(
-                 "distro_family": host_type.distro_family,
-                 "fb": "on" if self.facebook_internal else "off",
-                 "fbsource": "on" if self.fbsource_dir else "off",
-+                "shared_lib": "on" if self.shared_lib else "off",
-                 "test": "off",
-             }
-         )
-```
-
-**File**: `tool/fbcode_builder/getdeps/manifest.py` (modified, +1/-0)
-```diff
-@@ -984,6 +984,7 @@ class ManifestContext:
-         "distro_family",
-         "fb",
-         "fbsource",
-+        "shared_lib",
-         "test",
-     }
+@@ -192,6 +192,12 @@ bool ThreadEntry::cachedInSetMatchesElementsArray(uint32_t id) {
+     return true;
+   }
  
-```
-
-**File**: `tool/fbcode_builder/getdeps/test/builder_test.py` (modified, +1/-0)
-```diff
-@@ -44,6 +44,7 @@ def make_cmake_builder() -> CMakeBuilder:
-                 "distro_family": None,
-                 "fb": "off",
-                 "fbsource": "off",
-+                "shared_lib": "off",
-                 "test": "off",
-             }
-         ),
-```
-
-**File**: `tool/fbcode_builder/getdeps/test/fbcode_builder_layout_test.py` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ def test_shipit_mirror_uses_layout(self) -> None:
-                         "distro_family": None,
-                         "fb": "on",
-                         "fbsource": "on",
-+                        "shared_lib": "off",
-                         "test": "off",
-                     }
-                 ),
-```
-
-**File**: `tool/fbcode_builder/getdeps/test/features_test.py` (modified, +2/-0)
-```diff
-@@ -24,6 +24,7 @@ def _ctx_with_features(features: set[str] | None = None) -> ManifestContext:
-             "distro_family": None,
-             "fb": "off",
-             "fbsource": "off",
-+            "shared_lib": "off",
-             "test": "off",
-         }
-     )
-@@ -68,6 +69,7 @@ def _make_loader(manifests: dict[str, str]) -> ManifestLoader:
-             "distro_family": None,
-             "fb": "off",
-             "fbsource": "off",
-+            "shared_lib": "off",
-             "test": "off",
-         }
-     )
-```
-
-**File**: `tool/fbcode_builder/getdeps/test/manifest_test.py` (modified, +23/-0)
-```diff
-@@ -268,6 +268,29 @@ def test_shared_folly_link_inputs(self) -> None:
-             msg="source-built libaio installs libaio.so with version nodes",
-         )
- 
-+    def test_shared_lib_builds_boost_from_source(self) -> None:
-+        # EL 10's boost-static archives are not position-independent, so a
-+        # --shared-lib build cannot link them into a shared library.
-+        patch_loader(__name__)
-+        manifests = load_all_manifests(MagicMock(spec=BuildOptions))
-+        el10 = {
-+            "os": "linux",
-+            "distro": "centos_stream",
-+            "distro_vers": "10",
-+            "distro_family": "rhel",
-+            "fb": "off",
-+            "fbsource": "off",
-+            "test": "off",
-+        }
-+        boost = manifests["boost"]
-+        self.assertEqual(
-+            boost.get_section_as_args("rpms", {**el10, "shared_lib": "off"}),
-+            ["boost-devel", "boost-static"],
-+        )
-+        self.assertEqual(
-+            boost.get_section_as_args("rpms", {**el10, "shared_lib": "on"}), []
-+        )
-+
-     def test_mismatch_name(self) -> None:
-         with self.assertRaisesRegex(
-             Exception,
-```
-
-**File**: `tool/fbcode_builder/getdeps/test/vendor_test.py` (modified, +1/-0)
-```diff
-@@ -40,6 +40,7 @@ def make_ctx() -> ManifestContext:
-             "distro_family": None,
-             "fb": "off",
-             "fbsource": "off",
-+            "shared_lib": "off",
-             "test": "off",
-         }
-     )
-```
-
-**File**: `tool/fbcode_builder/manifests/boost` (modified, +4/-2)
-```diff
-@@ -60,8 +60,10 @@ boost169-serialization
- boost169-program-options
- 
- # EL 10 and later carry a new enough Boost under the same names (EL 8
--# needs the boost169 compat packages above).
--[rpms.any(distro=fedora,all(distro_family=rhel,not(any(distro_vers=8,distro_vers=9))))]
-+# needs the boost169 compat packages above). Their static archives are not
-+# position-independent and cannot be linked into a shared library, so
-+# --shared-lib builds Boost from source instead.
-+[rpms.all(shared_lib=off,any(distro=fedora,all(distro_family=rhel,not(any(distro_vers=8,distro_vers=9)))))]
- boost-devel
- boost-static
- 
++  // Without the fork guard, a fork() while this thread holds the set's read
++  // lock leaves the child's copy locked forever, hanging onForkChild().
++  std::shared_lock forkRlock(meta->forkHandlerLock_, std::try_to_lock);
++  if (!forkRlock) {
++    return true;
++  }
+   auto rlock = meta->allId2ThreadEntrySets_[id].tryRLock();
+   if (!rlock) {
+     // Try lock failed. Skip checking in this case. Avoids
 ```
 
 ---
 
-### Incident Patch 3: `f6cebb72` (2026-11-10)
-**Commit Message**: Revert D130307200: Fix Arena large-block overruns and drop its Boost.Intrusive dependency
+### Incident Patch 3: `b8fcc053` (2026-11-12)
+**Commit Message**: Detect Synchronized mutex levels with requires-expressions
 
-Differential Revision:
-D130307200
+Summary: Replace the three `kSynchronizedMutexIs*` partial specializations in `folly/Synchronized.h` with plain `requires` expressions. This drops the dummy first template parameter, so the test library's uses are updated too.
 
-Original commit changeset: a8ccd5e5fbf6
+Reviewed By: yfeldblum
 
-Original Phabricator Diff: D130307200
+Differential Revision: D131337181
 
-fbshipit-source-id: b45e285966942f886c0ca7d06991226679e7c866
+fbshipit-source-id: f326d1081abdbc36fedc732790f8caa3b373d823
 
-**File**: `folly/memory/Arena-inl.h` (modified, +15/-27)
+**File**: `folly/Synchronized.h` (modified, +12/-18)
 ```diff
-@@ -28,26 +28,24 @@ template <class Alloc>
- void* Arena<Alloc>::allocateSlow(size_t size) {
-   char* start;
+@@ -51,26 +51,20 @@ namespace folly {
  
--  const bool large = size > minBlockSize();
-   size_t allocSize;
-   if (!checked_add(
--          &allocSize,
--          std::max(size, minBlockSize()),
--          large ? headerSize<LargeBlock>() : headerSize<Block>())) {
-+          &allocSize, std::max(size, minBlockSize()), roundUp(sizeof(Block)))) {
-     throw_exception<std::bad_alloc>();
-   }
-   if (sizeLimit_ != kNoSizeLimit &&
-       allocSize > sizeLimit_ - totalAllocatedSize_) {
-     throw_exception<std::bad_alloc>();
-   }
+ namespace detail {
  
--  if (large) {
-+  if (size > minBlockSize()) {
-     // Allocate a large block for this chunk only; don't change ptr_ and end_,
-     // let them point into a normal block (or none, if they're null)
-+    allocSize = roundUp(sizeof(LargeBlock)) + size;
-     void* mem = AllocTraits::allocate(alloc(), allocSize);
-     auto blk = new (mem) LargeBlock(allocSize);
-     start = align(blk->start());
--    append(firstLargeBlock_, lastLargeBlock_, blk, blk);
-+    largeBlocks_.push_back(*blk);
-   } else {
-     // Allocate a normal sized block and carve out size bytes from it
-     // Will allocate more than size bytes if convenient
-@@ -57,8 +55,8 @@ void* Arena<Alloc>::allocateSlow(size_t size) {
-     void* mem = AllocTraits::allocate(alloc(), allocSize);
-     auto blk = new (mem) Block();
-     start = align(blk->start());
--    append(firstBlock_, lastBlock_, blk, blk);
--    currentBlock_ = blk;
-+    blocks_.push_back(*blk);
-+    currentBlock_ = blocks_.last();
-     ptr_ = start + size;
-     end_ = static_cast<char*>(mem) + allocSize;
-     assert(ptr_ <= end_);
-@@ -73,26 +71,16 @@ void Arena<Alloc>::merge(Arena<Alloc>&& other) {
-   FOLLY_SAFE_CHECK(
-       blockGoodAllocSize() == other.blockGoodAllocSize(),
-       "cannot merge arenas of different minBlockSize");
--  // Put the other arena's blocks in front of ours, which keeps them out of
--  // reach of canReuseExistingBlock(). Without blocks of our own, they are all
--  // in use, so the last one becomes current.
--  if (other.firstBlock_) {
--    append(other.firstBlock_, other.lastBlock_, firstBlock_, lastBlock_);
--    firstBlock_ = other.firstBlock_;
--    lastBlock_ = other.lastBlock_;
--    if (!currentBlock_) {
--      currentBlock_ = lastBlock_;
--    }
-+  const bool wasEmpty = blocks_.empty();
-+  blocks_.splice_after(blocks_.before_begin(), other.blocks_);
-+  other.blocks_.clear();
-+  if (wasEmpty) {
-+    // currentBlock_ is still before_begin(); leaving it there would let
-+    // canReuseExistingBlock() bump-allocate into a merged block.
-+    currentBlock_ = blocks_.last();
-   }
--  append(
--      other.firstLargeBlock_,
--      other.lastLargeBlock_,
--      firstLargeBlock_,
--      lastLargeBlock_);
--  firstLargeBlock_ = other.firstLargeBlock_;
--  lastLargeBlock_ = other.lastLargeBlock_;
--  other.firstBlock_ = other.lastBlock_ = other.currentBlock_ = nullptr;
--  other.firstLargeBlock_ = other.lastLargeBlock_ = nullptr;
-+  largeBlocks_.splice_after(largeBlocks_.before_begin(), other.largeBlocks_);
-+  other.largeBlocks_.clear();
-   other.ptr_ = other.end_ = nullptr;
-   totalAllocatedSize_ += other.totalAllocatedSize_;
-   other.totalAllocatedSize_ = 0;
-```
-
-**File**: `folly/memory/Arena.h` (modified, +35/-44)
-```diff
-@@ -17,12 +17,13 @@
- #pragma once
- #define FOLLY_ARENA_H_
+-template <typename, typename Mutex>
+-inline constexpr bool kSynchronizedMutexIsUnique = false;
+ template <typename Mutex>
+-inline constexpr bool kSynchronizedMutexIsUnique<
+-    decltype(void(std::declval<Mutex&>().lock())),
+-    Mutex> = true;
++inline constexpr bool kSynchronizedMutexIsUnique = requires(Mutex& mutex) {
++  mutex.lock();
++};
  
--#include <algorithm>
- #include <cassert>
- #include <limits>
- #include <stdexcept>
- #include <utility>
+-template <typename, typename Mutex>
+-inline constexpr bool kSynchronizedMutexIsShared = false;
+ template <typename Mutex>
+-inline constexpr bool kSynchronizedMutexIsShared<
+-    decltype(void(std::declval<Mutex&>().lock_shared())),
+-    Mutex> = true;
++inline constexpr bool kSynchronizedMutexIsShared = requires(Mutex& mutex) {
++  mutex.lock_shared();
++};
  
-+#include <boost/intrusive/slist.hpp>
-+
- #include <folly/Conv.h>
- #include <folly/Likely.h>
- #include <folly/Memory.h>
-@@ -66,6 +67,7 @@ class Arena {
-       size_t sizeLimit = kNoSizeLimit,
-       size_t maxAlign = kDefaultMaxAlign)
-       : allocAndSize_(alloc, minBlockSize),
-+        currentBlock_(blocks_.last()),
-         ptr_(nullptr),
-         end_(nullptr),
-         totalAllocatedSize_(0),
-@@ -97,7 +99,7 @@ class Arena {
-     }
+-template <typename, typename Mutex>
+-inline constexpr bool kSynchronizedMutexIsUpgrade = false;
+ template <typename Mutex>
+-inline constexpr bool kSynchronizedMutexIsUpgrade<
+-    decltype(void(std::declval<Mutex&>().lock_upgrade())),
+-    Mutex> = true;
++inline constexpr bool kSynchronizedMutexIsUpgrade = requires(Mutex& mutex) {
++  mutex.lock_upgrade();
++};
  
-     if (canReuseExistingBlock(size)) {
--      currentBlock_ = currentBlock_->next;
-+      currentBlock_++;
-       char* r = align(currentBlock_->start());
-       ptr_ = r + size;
-       end_ = currentBlock_->start() + blockGoodAllocSize() - sizeof(Block);
-@@ -122,10 +124,10 @@ class Arena {
-   void clear() {
-     bytesUsed_ = 0;
-     freeLargeBlocks(); // We don't reuse large blocks
--    if (!firstBlock_) {
-+    if (blocks_.empty()) {
-       return;
-     }
--    currentBlock_ = firstBlock_;
-+    currentBlock_ = blocks_.begin();
-     ptr_ = align(currentBlock_->start());
-     end_ = currentBlock_->start() + blockGoodAllocSize() - sizeof(Block);
-     assert(ptr_ <= end_);
-@@ -149,8 +151,10 @@ class Arena {
-  private:
-   using AllocTraits =
-       typename std::allocator_traits<Alloc>::template rebind_traits<char>;
-+  using BlockLink = boost::intrusive::slist_member_hook<>;
-+
-   struct alignas(max_align_v) Block {
--    Block* next = nullptr;
-+    BlockLink link;
+ /**
+  * An enum to describe the "level" of a mutex.  The supported levels are
+@@ -83,9 +77,9 @@ enum class SynchronizedMutexLevel { Unknown, Unique, Shared, Upgrade };
  
-     char* start() { return reinterpret_cast<char*>(this + 1); }
- 
-@@ -160,11 +164,11 @@ class Arena {
- 
-   constexpr size_t blockGoodAllocSize() {
-     return ArenaAllocatorTraits<Alloc>::goodSize(
--        alloc(), headerSize<Block>() + minBlockSize());
-+        alloc(), roundUp(sizeof(Block)) + minBlockSize());
-   }
- 
-   struct alignas(max_align_v) LargeBlock {
--    LargeBlock* next = nullptr;
-+    BlockLink link;
-     const size_t allocSize;
- 
-     char* start() { return reinterpret_cast<char*>(this + 1); }
-@@ -178,39 +182,35 @@ class Arena {
-       // We don't reuse large blocks
-       return false;
-     }
--    // No regular blocks to reuse past the current one
--    return currentBlock_ != lastBlock_;
-+    if (blocks_.empty() || currentBlock_ == blocks_.last()) {
-+      // No regular blocks to reuse
-+      return false;
-+    }
-+    return true;
-   }
- 
-   void freeBlocks() {
--    for (Block* b = firstBlock_; b;) {
--      Block* const next = b->next;
-+    blocks_.clear_and_dispose([this](Block* b) {
-       b->~Block();
-       AllocTraits::deallocate(
-           alloc(), reinterpret_cast<char*>(b), blockGoodAllocSize());
--      b = next;
--    }
--    firstBlock_ = lastBlock_ = currentBlock_ = nullptr;
-+    });
-   }
- 
-   void freeLargeBlocks() {
--    for (LargeBlock* b = firstLargeBlock_; b;) {
--      LargeBlock* const next = b->next;
-+    largeBlocks_.clear_and_dispose([this](LargeBlock* b) {
-       auto size = b->allocSize;
-       totalAllocatedSize_ -= size;
-       b->~LargeBlock();
-       AllocTraits::deallocate(alloc(), reinterpret_cast<char*>(b), size);
--      b = next;
--    }
--    firstLargeBlock_ = lastLargeBlock_ = nullptr;
-+    });
-   }
- 
-  public:
-   static constexpr size_t kDefaultMinBlockSize = 4096 - sizeof(Block);
-   static constexpr size_t kNoSizeLimit = 0;
-   static constexpr size_t kDefaultMaxAlign = alignof(Block);
-   static constexpr size_t kBlockOverhead = sizeof(Block);
--  static constexpr size_t kLargeBlockOverhead = sizeof(LargeBlock);
- 
-  private:
-   bool isAligned(uintptr_t address) const {
-@@ -232,23 +232,19 @@ class Arena {
- 
-   char* align(char* ptr) { return align_ceil(ptr, maxAlign_); }
- 
--  // A block header plus the most padding align() can add after it, since the
--  // allocator only guarantees alignment for the header.
--  template <typename Header>
--  size_t headerSize() const {
--    return sizeof(Header) + std::max(maxAlign_, alignof(Header)) -
--        alignof(Header);
--  }
-+  // cache_last<true> makes the list keep a pointer to the last element, so we
-+  // have push_back() and constant time splice_after()
-+  using BlockList = boost::intrusive::slist<
-+      Block,
-+      boost::intrusive::member_hook<Block, BlockLink, &Block::link>,
-+      boost::intrusive::constant_time_size<false>,
-+      boost::intrusive::cache_last<true>>;
- 
--  // Appends the chain [first, last], if not empty, to the chain [head, tail].
--  template <typename B>
--  static void append(B*& head, B*& tail, B* first, B* last) {
--    if (!first) {
--      return;
--    }
--    (tail ? tail->next : head) = first;
--    tail = last;
--  }
-+  using LargeBlockList = boost::intrusive::slist<
-+      LargeBlock,
-+      boost::intrusive::member_hook<LargeBlock, BlockLink, &LargeBlock::link>,
-+      boost::intrusive::constant_time_size<false>,
-+      boost::intrusive::cache_last<true>>;
- 
-   void* allocateSlow(size_t size);
- 
-@@ -266,14 +262,9 @@ class Arena {
-   con
-```
-
-**File**: `folly/memory/BUCK` (modified, +1/-0)
-```diff
-@@ -26,6 +26,7 @@ fb_dirsync_cpp_library(
-     ],
-     use_raw_headers = True,
-     exported_deps = [
-+        "fbsource//third-party/boost:boost",
-         ":allocator",
-         ":malloc",
-         "//folly:conv",
-```
-
-**File**: `folly/memory/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -32,6 +32,7 @@ folly_add_library(
-     Arena-inl.h
-     Arena.h
-   EXPORTED_DEPS
-+    Boost::headers
-     folly_conv
-     folly_lang_align
-     folly_lang_checked_math
-```
-
-**File**: `folly/memory/test/ArenaTest.cpp` (modified, +6/-67)
-```diff
-@@ -22,7 +22,6 @@
- 
- #include <glog/logging.h>
- 
--#include <folly/Memory.h>
- #include <folly/Random.h>
- #include <folly/memory/Allocator.h>
- #include <folly/memory/MallctlHelper.h>
-@@ -87,7 +86,11 @@ TEST(Arena, SizeSanity) {
-   allocatedItems.insert(ptr);
-   minimum_size += 10 * requestedBlockSize;
-   maximum_size +=
--      goodMallocSize(10 * requestedBlockSize + SysArena::kLargeBlockOverhead);
-+      goodMallocSize(10 * requestedBlockSize + SysArena::kBlockOverhead);
-+#if defined(__APPLE__) && defined(FOLLY_AARCH64)
-+  // expectation is a bit too small
-+  maximum_size += 8;
-+#endif
-   EXPECT_GE(arena.totalSize(), minimum_size);
-   EXPECT_LE(arena.totalSize(), maximum_size);
-   VLOG(4) << minimum_size << " < " << arena.totalSize() << " < "
-@@ -260,70 +263,6 @@ TEST(Arena, ExtremeSize) {
-   EXPECT_THROW(alloc(arena, SIZE_MAX - 2), std::bad_alloc);
- }
- 
--TEST(Arena, SizeLimitCoversLargeBlockHeader) {
--  static const size_t size = 4096;
--
--  for (size_t sizeLimit = size; sizeLimit < size + 64; ++sizeLimit) {
--    SCOPED_TRACE(sizeLimit);
--    SysArena arena(64, sizeLimit);
--    try {
--      void* ptr = alloc(arena, size);
--      EXPECT_EQ(
--          reinterpret_cast<uintptr_t>(ptr) % SysArena::kDefaultMaxAlign, 0);
--    } catch (const std::bad_alloc&) {
--      continue;
--    }
--    EXPECT_LE(arena.totalSize() - sizeof(SysArena), sizeLimit);
--  }
--}
--
--TEST(Arena, LargeBlockSizeOverflow) {
--  SysArena arena;
--  // Adding the large block header to this size overflows.
--  EXPECT_THROW(arena.allocate(SIZE_MAX - 15), std::bad_alloc);
--}
--
--namespace {
--// Returns memory at a given offset past a 64-byte boundary, followed by guard
--// bytes that must stay untouched.
--struct OffsetAllocator {
--  using value_type = char;
--  template <typename T>
--  struct rebind {
--    using other = OffsetAllocator;
--  };
--  static constexpr size_t kGuard = 64;
--  size_t offset = 0;
--
--  char* allocate(size_t n) {
--    auto p = static_cast<char*>(aligned_malloc(offset + n + kGuard, 64));
--    memset(p + offset + n, 0x5a, kGuard);
--    return p + offset;
--  }
--  void deallocate(char* p, size_t n) {
--    for (size_t i = 0; i < kGuard; ++i) {
--      EXPECT_EQ(p[n + i], 0x5a) << "overrun at " << i;
--    }
--    aligned_free(p - offset);
--  }
--};
--} // namespace
--
--TEST(Arena, LargeBlockPaddingForCustomAlign) {
--  // The allocator only guarantees the alignment of the block header, so a
--  // large block's payload may need up to 64 - that alignment bytes of padding.
--  for (size_t offset = 0; offset < 64; offset += max_align_v) {
--    SCOPED_TRACE(offset);
--    Arena<OffsetAllocator> arena(
--        OffsetAllocator{offset}, 64, Arena<OffsetAllocator>::kNoSizeLimit, 64);
--    for (size_t size : {128, 1024}) {
--      void* ptr = arena.allocate(size);
--      EXPECT_EQ(reinterpret_cast<uintptr_t>(ptr) % 64, 0);
--      memset(ptr, 0xff, size);
--    }
--  }
--}
--
- TEST(Arena, MaxAlign) {
-   // Results are still aligned with nonstandard size and allocations
-   static const size_t blockSize = 123;
-@@ -442,7 +381,7 @@ TEST(Arena, MergeIntoUntouchedArena) {
-   auto* live = static_cast<char*>(alloc(src, 1));
-   *live = 'x';
- 
--  // dst has never allocated, so it has no current block.
-+  // dst has never allocated, so its currentBlock_ is still before_begin().
-   SysArena dst;
-   dst.merge(std::move(src));
+ template <typename Mutex>
+ inline constexpr SynchronizedMutexLevel kSynchronizedMutexLevel =
+-    kSynchronizedMutexIsUpgrade<void, Mutex>  ? SynchronizedMutexLevel::Upgrade
+-    : kSynchronizedMutexIsShared<void, Mutex> ? SynchronizedMutexLevel::Shared
+-    : kSynchronizedMutexIsUnique<void, Mutex>
++    kSynchronizedMutexIsUpgrade<Mutex>  ? SynchronizedMutexLevel::Upgrade
++    : kSynchronizedMutexIsShared<Mutex> ? SynchronizedMutexLevel::Shared
++    : kSynchronizedMutexIsUnique<Mutex>
+     ? SynchronizedMutexLevel::Unique
+     : SynchronizedMutexLevel::Unknown;
  
 ```
 
-**File**: `folly/memory/test/BUCK` (modified, +0/-1)
+**File**: `folly/test/SynchronizedTestLib-inl.h` (modified, +6/-6)
 ```diff
-@@ -9,7 +9,6 @@ fb_dirsync_cpp_unittest(
-     labels = ["oss-broken"],
-     deps = [
-         "fbsource//third-party/glog:glog",
--        "//folly:memory",
-         "//folly:random",
-         "//folly/memory:allocator",
-         "//folly/memory:arena",
+@@ -103,7 +103,7 @@ void runParallel(size_t numThreads, const Function& function) {
+ 
+ // testBasic() version for shared lock types
+ template <class Mutex>
+-std::enable_if_t<folly::detail::kSynchronizedMutexIsShared<void, Mutex>>
++std::enable_if_t<folly::detail::kSynchronizedMutexIsShared<Mutex>>
+ testBasicImpl() {
+   folly::Synchronized<std::vector<int>, Mutex> obj;
+   const auto& constObj = obj;
+@@ -155,7 +155,7 @@ testBasicImpl() {
+ 
+ // testBasic() version for non-shared lock types
+ template <class Mutex>
+-std::enable_if_t<!folly::detail::kSynchronizedMutexIsShared<void, Mutex>>
++std::enable_if_t<!folly::detail::kSynchronizedMutexIsShared<Mutex>>
+ testBasicImpl() {
+   folly::Synchronized<std::vector<int>, Mutex> obj;
+   const auto& constObj = obj;
+@@ -200,7 +200,7 @@ void testBasic() {
+ 
+ // testWithLock() version for shared lock types
+ template <class Mutex>
+-std::enable_if_t<folly::detail::kSynchronizedMutexIsShared<void, Mutex>>
++std::enable_if_t<folly::detail::kSynchronizedMutexIsShared<Mutex>>
+ testWithLock() {
+   folly::Synchronized<std::vector<int>, Mutex> obj;
+   const auto& constObj = obj;
+@@ -291,7 +291,7 @@ testWithLock() {
+ 
+ // testWithLock() version for non-shared lock types
+ template <class Mutex>
+-std::enable_if_t<!folly::detail::kSynchronizedMutexIsShared<void, Mutex>>
++std::enable_if_t<!folly::detail::kSynchronizedMutexIsShared<Mutex>>
+ testWithLock() {
+   folly::Synchronized<std::vector<int>, Mutex> obj;
+ 
+@@ -372,7 +372,7 @@ void testUnlockCommon() {
+ 
+ // testUnlock() version for shared lock types
+ template <class Mutex>
+-std::enable_if_t<folly::detail::kSynchronizedMutexIsShared<void, Mutex>>
++std::enable_if_t<folly::detail::kSynchronizedMutexIsShared<Mutex>>
+ testUnlock() {
+   folly::Synchronized<int, Mutex> value{10};
+   {
+@@ -405,7 +405,7 @@ testUnlock() {
+ 
+ // testUnlock() version for non-shared lock types
+ template <class Mutex>
+-std::enable_if_t<!folly::detail::kSynchronizedMutexIsShared<void, Mutex>>
++std::enable_if_t<!folly::detail::kSynchronizedMutexIsShared<Mutex>>
+ testUnlock() {
+   folly::Synchronized<int, Mutex> value{10};
+   {
 ```
 
 #### Recent Merged Pull Requests:
@@ -3337,68 +3048,28 @@ fbshipit-source-id: b45e285966942f886c0ca7d06991226679e7c866
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Arena large-block overruns and drop its Boost.Intrusive dependency
+## X. SIGFPE and 11x slowdown in folly::Random::randDouble
 
 **RULE**:
-When implementing operations in `folly/memory/Arena-inl.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/BUCK`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86c6c973`: Arena large-block overruns and drop its Boost.Intrusive dependency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `749133fd`: SIGFPE and 11x slowdown in folly::Random::randDouble. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/memory/Arena-inl.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/BUCK`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  const bool large = size > minBlockSize();
-          &allocSize,
-          std::max(size, minBlockSize()),
-          large ? headerSize<LargeBlock>() : headerSize<Block>())) {
-  if (large) {
-    append(firstLargeBlock_, lastLargeBlock_, blk, blk);
-    append(firstBlock_, lastBlock_, blk, blk);
-    currentBlock_ = blk;
-  // Put the other arena's blocks in front of ours, which keeps them out of
-  // reach of canReuseExistingBlock(). Without blocks of our own, they are all
-  // in use, so the last one becomes current.
-  if (other.firstBlock_) {
-    append(other.firstBlock_, other.lastBlock_, firstBlock_, lastBlock_);
-    firstBlock_ = other.firstBlock_;
-    lastBlock_ = other.lastBlock_;
-    if (!currentBlock_) {
-      currentBlock_ = lastBlock_;
-    }
-  append(
-      other.firstLargeBlock_,
-      other.lastLargeBlock_,
-      firstLargeBlock_,
-      lastLargeBlock_);
-  firstLargeBlock_ = other.firstLargeBlock_;
-  lastLargeBlock_ = other.lastLargeBlock_;
-  other.firstBlock_ = other.lastBlock_ = other.currentBlock_ = nullptr;
-  other.firstLargeBlock_ = other.lastLargeBlock_ = nullptr;
+        "//folly/random:uniform_real_distribution",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-          &allocSize, std::max(size, minBlockSize()), roundUp(sizeof(Block)))) {
-  if (size > minBlockSize()) {
-    allocSize = roundUp(sizeof(LargeBlock)) + size;
-    largeBlocks_.push_back(*blk);
-    blocks_.push_back(*blk);
-    currentBlock_ = blocks_.last();
-  const bool wasEmpty = blocks_.empty();
-  blocks_.splice_after(blocks_.before_begin(), other.blocks_);
-  other.blocks_.clear();
-  if (wasEmpty) {
-    // currentBlock_ is still before_begin(); leaving it there would let
-    // canReuseExistingBlock() bump-allocate into a merged block.
-    currentBlock_ = blocks_.last();
-  largeBlocks_.splice_after(largeBlocks_.before_begin(), other.largeBlocks_);
-  other.largeBlocks_.clear();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86c6c973` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `749133fd` are properly handled with clean fallback behavior.

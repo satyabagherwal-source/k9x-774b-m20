@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T03:56:42.695Z",
+  "last_updated": "2026-11-13T04:13:28.698Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8075,6 +8075,15 @@
       "source_repo": "louis-cfm-coucou",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2540F3-windows-and-linux-show-the-relay-setting.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-087E87",
+      "directive_title": "SIGFPE and 11x slowdown in folly::Random::randDouble",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "facebook-folly",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-087E87-sigfpe-and-11x-slowdown-in-folly-random-.md",
       "staged_date": "2026-11-13"
     }
   ]

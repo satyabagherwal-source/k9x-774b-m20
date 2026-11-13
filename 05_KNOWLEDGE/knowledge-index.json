@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T03:56:21.177Z",
+  "last_updated": "2026-11-13T04:13:25.609Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -53007,8 +53007,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "df52b4fe",
-      "content_hash": "039f0bb677fd5da847981474126aa0e5caa9fad8eba707bc3e46adb196968a1d",
+      "source_version": "506e2f7d",
+      "content_hash": "ebd571bb4392b7b18f62e14fdfe0e68e30c698ca5cd2bc2f9569b98016a240fa",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -53073,7 +53073,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T17:46:24.677Z",
+      "verified_at": "2026-11-13T04:13:25.578Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -130577,7 +130577,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
       "source_version": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16",
-      "content_hash": "50a2eea29e6358285abe6c690207df367733135f6ee2e01478343406e661ceba",
+      "content_hash": "1f3604121049bb9a2a7ccd4b2f6fb0f9572ef86423e0c055d1d2920f2d3c59de",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
       "promoted_rules": [
@@ -130627,7 +130627,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:55:59.534Z",
+      "verified_at": "2026-11-13T04:13:09.554Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162578,8 +162578,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "4a2f75a6",
-      "content_hash": "5938d8cea6ca764e4b123bffae881521cf9c0e0683efc2e6a5578fa368dd79a7",
+      "source_version": "05e29181",
+      "content_hash": "b077b63fab6f074dff6c57b21f659e7b2f23036a3403f8b3b1264a55033ed480",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -162609,6 +162609,11 @@
           "status": "WITHHELD_REJECT"
         },
         {
+          "number": null,
+          "title": "SIGFPE and 11x slowdown in folly::Random::randDouble",
+          "status": "WITHHELD_REJECT"
+        },
+        {
           "number": 5437,
           "title": "distributed_mutex_interference_size_test build with GCC < 12",
           "status": "PROMOTED_AND_VERIFIED"
@@ -162634,7 +162639,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T10:17:30.690Z",
+      "verified_at": "2026-11-13T04:13:23.951Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

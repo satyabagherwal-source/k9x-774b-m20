@@ -9333,3 +9333,7 @@ Every entry in this ledger must capture:
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `dd619adc` | Multi-dimensional audit evidence | 2026-11-13T03:56:15.663Z |
 | `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `15cc178d` | Multi-dimensional audit evidence | 2026-11-13T03:56:21.331Z |
 | `learn-dom-d-fe04d8fe` | `project://hf-lodestones-kromoss` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md` | 2026-11-13T03:56:42.669Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-13T04:13:09.698Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `05e29181` | Multi-dimensional audit evidence | 2026-11-13T04:13:24.116Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `506e2f7d` | Multi-dimensional audit evidence | 2026-11-13T04:13:25.714Z |
+| `learn-dom-d-c22a41df` | `project://hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md` | 2026-11-13T04:13:41.898Z |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T03:56:42.817Z",
+  "updated_at": "2026-11-13T04:13:41.988Z",
   "stats": {
-    "total_discovered": 2152,
-    "approved_pending_harvest": 1996,
+    "total_discovered": 2163,
+    "approved_pending_harvest": 2006,
     "harvested_count": 0,
-    "rejected_count": 156,
+    "rejected_count": 157,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1985,
+      "COMMUNITY_AND_EXPERT": 1996,
       "OFFICIAL_DOCUMENTATION": 89,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
@@ -46270,6 +46270,241 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
         "fileName": "louis-cfm-coucou-learnings.md"
+      }
+    },
+    "SRC-417447FFA8AD": {
+      "id": "SRC-417447FFA8AD",
+      "url": "https://github.com/facebook/folly",
+      "title": "https://github.com/facebook/folly",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:13:28.709Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-69BB384A58B5": {
+      "id": "SRC-69BB384A58B5",
+      "url": "http://www.cs.tau.ac.il/~shanir/nir-pubs-web/Papers/OPODIS2006-BA.pdf",
+      "title": "http://www.cs.tau.ac.il/~shanir/nir-pubs-web/Papers/OPODIS2006-BA.pdf",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-13T04:13:28.732Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-6BB27293CCDD": {
+      "id": "SRC-6BB27293CCDD",
+      "url": "https://android.googlesource.com/platform/bionic/+/9349b9e51b/libc/include/bits/fortify/fcntl.h",
+      "title": "https://android.googlesource.com/platform/bionic/+/9349b9e51b/libc/include/bits/fortify/fcntl.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:13:28.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-A239E00E559A": {
+      "id": "SRC-A239E00E559A",
+      "url": "https://github.com/llvm/llvm-project/commit/0a0e411204a2baa520fd73a8d69b664f98b428ba",
+      "title": "https://github.com/llvm/llvm-project/commit/0a0e411204a2baa520fd73a8d69b664f98b428ba",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:13:28.762Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-724218EE44F1": {
+      "id": "SRC-724218EE44F1",
+      "url": "https://prng.di.unimi.it/",
+      "title": "https://prng.di.unimi.it/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:13:28.774Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-C2EBAA4B0594": {
+      "id": "SRC-C2EBAA4B0594",
+      "url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "title": "https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:13:41.905Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
+        "fileName": "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md"
+      }
+    },
+    "SRC-251962F9D5A9": {
+      "id": "SRC-251962F9D5A9",
+      "url": "https://github.com/pixeltable/pixeltable",
+      "title": "https://github.com/pixeltable/pixeltable",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:13:41.922Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-BA4C91E0269C": {
+      "id": "SRC-BA4C91E0269C",
+      "url": "https://pixeltable.atlassian.net/browse/PXT-1768",
+      "title": "https://pixeltable.atlassian.net/browse/PXT-1768",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:13:41.937Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-19335AAB0E64": {
+      "id": "SRC-19335AAB0E64",
+      "url": "https://github.com/pixeltable/pixeltable/actions/runs/42735604741",
+      "title": "https://github.com/pixeltable/pixeltable/actions/runs/42735604741",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:13:41.961Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-77CD537F3A73": {
+      "id": "SRC-77CD537F3A73",
+      "url": "https://github.com/o/r/actions/runs/9",
+      "title": "https://github.com/o/r/actions/runs/9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:13:41.975Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-10A065E6F9DB": {
+      "id": "SRC-10A065E6F9DB",
+      "url": "https://pixeltable.slack.com/archives/C06T5MVJBSB/p1793897457834769",
+      "title": "https://pixeltable.slack.com/archives/C06T5MVJBSB/p1793897457834769",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T04:13:41.988Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
+        "fileName": "pixeltable-pixeltable-learnings.md"
       }
     }
   }

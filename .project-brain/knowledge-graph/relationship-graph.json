@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T03:56:42.669Z",
+  "updated_at": "2026-11-13T04:13:41.897Z",
   "statistics": {
-    "total_nodes": 43,
+    "total_nodes": 44,
     "total_edges": 19,
     "domain_distribution": {
-      "D": 30,
+      "D": 31,
       "M": 1,
       "H": 7,
       "J": 2,
@@ -957,6 +957,28 @@
       ],
       "created_at": "2026-11-13T03:56:42.668Z",
       "updated_at": "2026-11-13T03:56:42.668Z"
+    },
+    "DOM-D-C22A41DF": {
+      "id": "DOM-D-C22A41DF",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md`  \n> **Source**: hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md`  \n> **Source**: hugging",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T04:13:28.782Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T04:13:41.897Z",
+      "updated_at": "2026-11-13T04:13:41.897Z"
     }
   },
   "edges": [

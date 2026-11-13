@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T03:56:21.339Z",
-  "total_cycles_completed": 9129,
-  "total_learnings_persisted": 9129,
-  "total_rules_promoted": 8949,
+  "last_updated": "2026-11-13T04:13:25.719Z",
+  "total_cycles_completed": 9132,
+  "total_learnings_persisted": 9132,
+  "total_rules_promoted": 8950,
   "history": [
-    {
-      "timestamp": "2026-11-12T07:15:23.818Z",
-      "repository": "NousResearch/Arete-27B",
-      "learningId": "learn-huggingface-nousresearch-arete-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T07:15:39.169Z",
-      "repository": "grpc/grpc-rust",
-      "learningId": "learn-github-grpc-grpc-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T07:37:46.476Z",
-      "repository": "PrunaAI/P-H3-Image",
-      "learningId": "learn-huggingface-prunaai-p-h3-image",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T07:38:00.631Z",
       "repository": "embassy-rs/embassy",
@@ -1403,6 +1382,27 @@
       "repository": "Louis-CFM/coucou",
       "learningId": "learn-github-louis-cfm-coucou",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T04:13:09.703Z",
+      "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T04:13:24.122Z",
+      "repository": "meta/folly",
+      "learningId": "learn-github-meta-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T04:13:25.719Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

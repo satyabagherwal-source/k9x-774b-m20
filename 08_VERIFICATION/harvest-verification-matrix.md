@@ -9324,3 +9324,7 @@
 | `CYCLE-20261113-2SO9` | `2026-11-13T03:56:15.657Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`e093b4e4...`) |
 | `CYCLE-20261113-2X1P` | `2026-11-13T03:56:21.325Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`9d9e473d...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T03:56:42.669Z` | `hf-lodestones-kromoss` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FE04D8FE` [Domain D] | Yes (`cee5cdef...`) |
+| `CYCLE-20261113-OJ3Z` | `2026-11-13T04:13:09.695Z` | `nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16-learnings.md` | Yes (`1f360412...`) |
+| `CYCLE-20261113-OU85` | `2026-11-13T04:13:24.101Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`b077b63f...`) |
+| `CYCLE-20261113-OVGU` | `2026-11-13T04:13:25.710Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md` | Yes (`ebd571bb...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T04:13:41.898Z` | `hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C22A41DF` [Domain D] | Yes (`8c9b143e...`) |
