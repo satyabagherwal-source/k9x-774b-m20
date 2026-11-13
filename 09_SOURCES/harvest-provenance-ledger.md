@@ -9390,3 +9390,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf` | `https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF` | `hf-huihui-` | Multi-dimensional audit evidence | 2026-11-13T07:17:54.295Z |
 | `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-13T07:17:56.722Z |
 | `learn-dom-d-abe6fcab` | `project://hf-huggingfacebio-carbon-x` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md` | 2026-11-13T07:18:15.856Z |
+| `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-11-13T07:25:26.779Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `0e0b0958` | Multi-dimensional audit evidence | 2026-11-13T07:25:49.344Z |
+| `learn-dom-d-263ecaa8` | `project://hf-nanbeige-nanbeige4.3-33b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md` | 2026-11-13T07:26:07.275Z |

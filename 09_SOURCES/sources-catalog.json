@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "fce8d5b9",
+    "sourceVersion": "0e0b0958",
     "license": "Apache-2.0",
-    "contentHash": "4a0631fff80a8fbe21d7b5a26e690d1afc78a3d7cfe533b3a2c72a467ae8c828",
-    "lastHarvestedAt": "2026-11-12T01:23:37.416Z",
+    "contentHash": "7c398043ce45bc2883e4f75bceeef97f613e4d2534bf5f759262cf01ff1389a5",
+    "lastHarvestedAt": "2026-11-13T07:25:49.344Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -10705,8 +10705,8 @@
     "sourceUrl": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
     "sourceVersion": "hf-nanbeige-nanbeige4.3-33b",
     "license": "Open-Source",
-    "contentHash": "d838f1bbb0addd66dcb745d9be6d2efba79c080a96a3f08c2664d71ba6b3ceec",
-    "lastHarvestedAt": "2026-11-08T06:05:13.967Z",
+    "contentHash": "abab0fd2cf661ba1c49e506ee07a556f68293c850bc8296f1d1a07be21ba4133",
+    "lastHarvestedAt": "2026-11-13T07:25:26.779Z",
     "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b"
   },
   "kajisho5-ffmpeg-skill": {

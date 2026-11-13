@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T07:17:56.730Z",
+  "last_updated": "2026-11-13T07:25:49.354Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "4a0631fff80a8fbe21d7b5a26e690d1afc78a3d7cfe533b3a2c72a467ae8c828",
-      "verified_at": "2026-11-12T01:23:37.425Z",
+      "content_hash": "7c398043ce45bc2883e4f75bceeef97f613e4d2534bf5f759262cf01ff1389a5",
+      "verified_at": "2026-11-13T07:25:49.353Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T01:23:37.425Z"
+      "last_updated": "2026-11-13T07:25:49.353Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",
@@ -16086,14 +16086,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nanbeige-nanbeige4-3-33b",
-      "content_hash": "d838f1bbb0addd66dcb745d9be6d2efba79c080a96a3f08c2664d71ba6b3ceec",
-      "verified_at": "2026-11-08T06:05:13.988Z",
+      "content_hash": "abab0fd2cf661ba1c49e506ee07a556f68293c850bc8296f1d1a07be21ba4133",
+      "verified_at": "2026-11-13T07:25:26.787Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T06:05:13.988Z"
+      "last_updated": "2026-11-13T07:25:26.787Z"
     },
     "kajisho5/ffmpeg-skill": {
       "repository": "kajisho5/ffmpeg-skill",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T07:17:56.727Z",
-  "total_cycles_completed": 9171,
-  "total_learnings_persisted": 9171,
-  "total_rules_promoted": 8972,
+  "last_updated": "2026-11-13T07:25:49.350Z",
+  "total_cycles_completed": 9173,
+  "total_learnings_persisted": 9173,
+  "total_rules_promoted": 8973,
   "history": [
-    {
-      "timestamp": "2026-11-12T11:01:13.812Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T11:18:20.352Z",
-      "repository": "microsoft/Mage-VL-Cowork",
-      "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T11:18:33.449Z",
       "repository": "vercel-labs/agent-desktop",
@@ -1403,6 +1389,20 @@
       "repository": "HuggingFaceBio/Carbon-X",
       "learningId": "learn-huggingface-huggingfacebio-carbon-x",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T07:25:26.784Z",
+      "repository": "Nanbeige/Nanbeige4.3-33B",
+      "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T07:25:49.350Z",
+      "repository": "gluesql/gluesql",
+      "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

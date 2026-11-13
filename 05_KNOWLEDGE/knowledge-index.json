@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T07:17:56.654Z",
+  "last_updated": "2026-11-13T07:25:49.185Z",
   "total_verified_learnings": 1262,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -17398,8 +17398,8 @@
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "fce8d5b9",
-      "content_hash": "4a0631fff80a8fbe21d7b5a26e690d1afc78a3d7cfe533b3a2c72a467ae8c828",
+      "source_version": "0e0b0958",
+      "content_hash": "7c398043ce45bc2883e4f75bceeef97f613e4d2534bf5f759262cf01ff1389a5",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "promoted_rules": [
@@ -17424,6 +17424,11 @@
           "status": "WITHHELD_REJECT"
         },
         {
+          "number": null,
+          "title": "Align NULL evaluation with common SQL semantics (#2076)",
+          "status": "WITHHELD_REJECT"
+        },
+        {
           "number": 6502,
           "title": "Plan custom functions before execution (#2053)",
           "status": "PROMOTED_AND_VERIFIED"
@@ -17444,7 +17449,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-12T01:23:37.292Z",
+      "verified_at": "2026-11-13T07:25:49.154Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -144849,7 +144854,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Nanbeige/Nanbeige4.3-33B",
       "source_version": "hf-nanbeige-nanbeige4.3-33b",
-      "content_hash": "d838f1bbb0addd66dcb745d9be6d2efba79c080a96a3f08c2664d71ba6b3ceec",
+      "content_hash": "abab0fd2cf661ba1c49e506ee07a556f68293c850bc8296f1d1a07be21ba4133",
       "dossier_path": "07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md",
       "promoted_rules": [
@@ -144869,7 +144874,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T06:05:13.836Z",
+      "verified_at": "2026-11-13T07:25:26.661Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

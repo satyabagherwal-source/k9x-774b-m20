@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T07:18:15.854Z",
-  "total_records": 104,
+  "last_updated": "2026-11-13T07:26:07.273Z",
+  "total_records": 105,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 62,
+      "total": 63,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -87,7 +87,8 @@
         "DOM-D-B83FE1C6",
         "DOM-D-64949094",
         "DOM-D-552AF493",
-        "DOM-D-ABE6FCAB"
+        "DOM-D-ABE6FCAB",
+        "DOM-D-263ECAA8"
       ]
     },
     "E": {
@@ -4301,6 +4302,48 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T07:18:15.852Z"
+    },
+    "DOM-D-263ECAA8": {
+      "record_id": "DOM-D-263ECAA8",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Nanbeige/Nanbeige4.3-33B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Nanbeige/Nanbeige4.3-33B](https://huggingface.co/Nanbeige/Nanbeige4.3-33B))  \n> **Source Version**: `hf-nanbeige-`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "10a5c4b3363e86572f50a0d584aa331bc7103061918f24187c98b36471eb785c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-nanbeige-nanbeige4.3-33b/hf-nanbeige-nanbeige4.3-33b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T07:25:54.015Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nanbeige-nanbeige4.3-33b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-nanbeige-nanbeige4.3-33b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T07:26:07.271Z"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T07:18:15.887Z",
+  "last_updated": "2026-11-13T07:26:07.320Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8363,6 +8363,24 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-02210A-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-B32D98",
+      "directive_title": "Align NULL evaluation with common SQL semantics (#2076)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gluesql-gluesql",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B32D98-align-null-evaluation-with-common-sql-se.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-56E4A2",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-56E4A2-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-13"
     }
   ]

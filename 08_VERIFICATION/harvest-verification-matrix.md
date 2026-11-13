@@ -9381,3 +9381,6 @@
 | `CYCLE-20261113-A41H` | `2026-11-13T07:17:54.293Z` | `huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings.md` | Yes (`e96b4b5e...`) |
 | `CYCLE-20261113-A5WV` | `2026-11-13T07:17:56.719Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md` | Yes (`4fc48690...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T07:18:15.856Z` | `hf-huggingfacebio-carbon-x` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-ABE6FCAB` [Domain D] | Yes (`1918f21b...`) |
+| `CYCLE-20261113-JT6F` | `2026-11-13T07:25:26.775Z` | `Nanbeige/Nanbeige4.3-33B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md` | Yes (`abab0fd2...`) |
+| `CYCLE-20261113-KAL9` | `2026-11-13T07:25:49.341Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`7c398043...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T07:26:07.275Z` | `hf-nanbeige-nanbeige4.3-33b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-263ECAA8` [Domain D] | Yes (`10a5c4b3...`) |
