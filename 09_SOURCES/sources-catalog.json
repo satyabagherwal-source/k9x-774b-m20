@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "a99f0e28",
+    "sourceVersion": "9395edd0",
     "license": "MPL-2.0",
-    "contentHash": "c8157f2b1df0dac673230fbd82148c4f1a0358afd461b9a3d981d75e00de5225",
-    "lastHarvestedAt": "2026-11-11T19:46:32.235Z",
+    "contentHash": "a8866ed67004dcfff840c2bc13c614265e78006156da17edee33935621a07baa",
+    "lastHarvestedAt": "2026-11-13T05:51:35.688Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -10575,8 +10575,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
     "sourceVersion": "hf-minimaxai-minimax-m3.1-flash",
     "license": "Open-Source",
-    "contentHash": "391d41bd305ab0a9525a67da663efc11be10ba648c25c343ffa65221e8ef6ea3",
-    "lastHarvestedAt": "2026-11-08T05:04:11.174Z",
+    "contentHash": "40caac05bfc42611dbe3bc0b8ed7da109700e55433cb68448742e5a2a12d7a80",
+    "lastHarvestedAt": "2026-11-13T05:51:20.959Z",
     "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash"
   },
   "nomadamas-cozyclay": {

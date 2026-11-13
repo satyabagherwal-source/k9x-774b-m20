@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T05:43:46.694Z",
-  "total_cycles_completed": 9151,
-  "total_learnings_persisted": 9151,
+  "last_updated": "2026-11-13T05:51:35.694Z",
+  "total_cycles_completed": 9153,
+  "total_learnings_persisted": 9153,
   "total_rules_promoted": 8962,
   "history": [
-    {
-      "timestamp": "2026-11-12T08:53:04.405Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-12T08:53:54.043Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-12T09:19:34.589Z",
       "repository": "ClickHouse/ClickHouse",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-13T05:43:46.694Z",
       "repository": "unsloth/flint-GGUF",
       "learningId": "learn-huggingface-unsloth-flint-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T05:51:20.965Z",
+      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-13T05:51:35.694Z",
+      "repository": "typedb/typedb",
+      "learningId": "learn-github-typedb-typedb",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

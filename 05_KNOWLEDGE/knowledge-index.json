@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T05:43:46.596Z",
+  "last_updated": "2026-11-13T05:51:35.574Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -65483,8 +65483,8 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "a99f0e28",
-      "content_hash": "c8157f2b1df0dac673230fbd82148c4f1a0358afd461b9a3d981d75e00de5225",
+      "source_version": "9395edd0",
+      "content_hash": "a8866ed67004dcfff840c2bc13c614265e78006156da17edee33935621a07baa",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
@@ -65559,7 +65559,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T19:46:32.076Z",
+      "verified_at": "2026-11-13T05:51:35.548Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -136705,7 +136705,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
       "source_version": "hf-minimaxai-minimax-m3.1-flash",
-      "content_hash": "391d41bd305ab0a9525a67da663efc11be10ba648c25c343ffa65221e8ef6ea3",
+      "content_hash": "40caac05bfc42611dbe3bc0b8ed7da109700e55433cb68448742e5a2a12d7a80",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md",
       "promoted_rules": [
@@ -136775,7 +136775,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T05:04:11.060Z",
+      "verified_at": "2026-11-13T05:51:20.811Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

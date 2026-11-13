@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T05:44:08.107Z",
-  "total_records": 97,
+  "last_updated": "2026-11-13T05:52:03.012Z",
+  "total_records": 99,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 56,
+      "total": 58,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -81,7 +81,9 @@
         "DOM-D-F419AB78",
         "DOM-D-5A5516B9",
         "DOM-D-F4EF37A7",
-        "DOM-D-6C43F0F5"
+        "DOM-D-6C43F0F5",
+        "DOM-D-7D4C4039",
+        "DOM-D-80F82307"
       ]
     },
     "E": {
@@ -4000,6 +4002,90 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T05:44:08.105Z"
+    },
+    "DOM-D-7D4C4039": {
+      "record_id": "DOM-D-7D4C4039",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): MiniMaxAI/MiniMax-M3.1-Flash",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash](https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash))  \n> **Source Version**: `hf-minimaxai`  \n> **License**: Open-",
+      "content_hash": "e06e9f6b91334d6e761b7488643dc4d0d0239615a074b2bced5c7c397c6651be",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md`  \n> **Source**: huggingface ([https://",
+      "provenance": {
+        "source_uri": "project://hf-minimaxai-minimax-m3.1-flash/hf-minimaxai-minimax-m3.1-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T05:51:38.355Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-minimaxai-minimax-m3.1-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-minimaxai-minimax-m3.1-flash"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T05:51:49.298Z"
+    },
+    "DOM-D-80F82307": {
+      "record_id": "DOM-D-80F82307",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): typedb/typedb",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  \n> **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  \n> **Source Version**: `9395edd0`  \n> **License**: MPL-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n>",
+      "content_hash": "2585d2bf7b0e0591c0f6200f7d370ff13977a03f6729e161928d7f8b443ed9e8",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  \n> **Source**: github ([https://github.com/typedb/typed -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  \n> **Source**: github ([https://github.com/typedb/typed",
+      "provenance": {
+        "source_uri": "project://typedb-typedb/typedb-typedb-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T05:51:49.335Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (typedb-typedb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of typedb-typedb"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T05:52:03.010Z"
     }
   }
 }

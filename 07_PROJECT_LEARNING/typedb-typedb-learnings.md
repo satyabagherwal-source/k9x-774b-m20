@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
-> **Source Version**: `a99f0e28`  
+> **Source Version**: `9395edd0`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T19:46:16.709Z  
+> **Timestamp**: 2026-11-13T05:51:35.326Z  
 > **Learning ID**: `learn-github-typedb-typedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T19:46:16.700Z  
+> **Harvest Timestamp**: 2026-11-13T05:51:35.321Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TypeDB: Built for systems, not records
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4511 stars
+- **Stars / Engagement**: 4513 stars
 
 ---
 
@@ -1827,11 +1827,11 @@ impl UserOperator for LocalUserOperator {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8055** (2026-11-10): **Prepare release 3.15.0-rc0**
-  *Symptoms*: ## Product change and motivation Bump version & update release notes 
+- **Issue #8060** (2026-11-12): **Fix TypeQL & protocol references in Cargo**
+  *Symptoms*: ## Implementation workspace_refs bit me
 
-- **Issue #8054** (2026-11-10): **Restore implicit unwraps in place of unsafe optional variable dereference in fetch for transition**
-  *Symptoms*: ## Product change and motivation Unsafe optional variable dereference in fetch don't error in transition versions, and work as before while printing a warning. 
+- **Issue #8057** (2026-11-11): **Sync cargo files to use latest typeql 3.15.0-rc0**
+  *Symptoms*: ## Product change and motivation Sync cargo files to use 3.15.0-rc0   ## Implementation Comment the lines that I forgot to -_- 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1848,254 +1848,21 @@ impl UserOperator for LocalUserOperator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a99f0e28` (2026-11-10)
-**Commit Message**: Prepare release 3.15.0-rc0 (#8055)
+### Incident Patch 1: `9395edd0` (2026-11-12)
+**Commit Message**: Fix TypeQL & protocol references in Cargo (#8060)
 
-## Product change and motivation
-Bump version & update release notes
+## Implementation
+workspace_refs bit me
 
-**File**: `MODULE.bazel` (modified, +6/-6)
-```diff
-@@ -113,8 +113,8 @@ workspace_refs(
-         "typeql+": "d07e949229b2551d59127d3bc3300cd38bdf33ff",
-     },
-     workspace_tag_dict = {
--#        "typedb_protocol+": "3.14.0",
--#        "typeql+": "3.14.0",
-+        "typedb_protocol+": "3.15.0-rc0",
-+        "typeql+": "3.15.0-rc0",
-     },
- )
- 
-@@ -125,13 +125,13 @@ native_artifact_files.artifact(
-     group_name = "typedb-console-{platform}",
-     artifact_name = "typedb-console-{platform}-{version}.{ext}",
-     archive_strip_prefix = "typedb-console-{platform}-{version}",
--    tag = "3.14.0",
-+    tag = "3.15.0-rc3",
- )
- native_artifact_files.artifact(
-     name = "typedb_loader_artifact",
-     group_name = "typedb-loader-{platform}",
-     artifact_name = "typedb-loader-{platform}-{version}.{ext}",
--    tag = "3.14.0",
-+    tag = "3.15.0-rc3",
- )
- use_repo(
-     native_artifact_files,
-@@ -179,14 +179,14 @@ bazel_dep(name = "typeql", version = "0.0.0")
- git_override(
-     module_name = "typeql",
-     remote = "https://github.com/typedb/typeql",
--    commit = "d07e949229b2551d59127d3bc3300cd38bdf33ff",
-+    tag = "3.15.0-rc0",
- )
- 
- bazel_dep(name = "typedb_protocol", version = "0.0.0")
- git_override(
-     module_name = "typedb_protocol",
-     remote = "https://github.com/typedb/typedb-protocol",
--    commit = "99e080bd0d599ae235607da4e4e69787e681cbe1",
-+    tag = "3.15.0-rc0",
- )
- 
- bazel_dep(name = "typedb_behaviour", version = "0.0.0")
-```
 
-**File**: `MODULE.bazel.lock` (modified, +36/-36)
-```diff
-@@ -8431,7 +8431,7 @@
-     "@@typedb_dependencies+//distribution/artifact:rules.bzl%native_artifact_files": {
-       "general": {
-         "bzlTransitiveDigest": "Kb5QWQrUc0s27j+2UawgVDIuZeaZUkqrRVUHDu0Ao8s=",
--        "usagesDigest": "MyRVKksLgSf6pnC9UV33m49P7oJ9RUt+P2cA0QdSKWY=",
-+        "usagesDigest": "pr1ZFc1JCaOXlXAgwheSrLGi1nXzwgiUKOrvI6yZI8I=",
-         "recordedFileInputs": {},
-         "recordedDirentsInputs": {},
-         "envVariables": {},
-@@ -8440,111 +8440,111 @@
-             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-             "attributes": {
-               "urls": [
--                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.14.0/typedb-console-linux-arm64-3.14.0.tar.gz"
-+                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.15.0-rc3/typedb-console-linux-arm64-3.15.0-rc3.tar.gz"
-               ],
--              "downloaded_file_path": "typedb-console-linux-arm64-3.14.0.tar.gz"
-+              "downloaded_file_path": "typedb-console-linux-arm64-3.15.0-rc3.tar.gz"
-             }
-           },
-           "typedb_console_artifact_linux-arm64-extracted": {
-             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-             "attributes": {
-               "urls": [
--                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.14.0/typedb-console-linux-arm64-3.14.0.tar.gz"
-+                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.15.0-rc3/typedb-console-linux-arm64-3.15.0-rc3.tar.gz"
-               ],
--              "strip_prefix": "typedb-console-linux-arm64-3.14.0",
-+              "strip_prefix": "typedb-console-linux-arm64-3.15.0-rc3",
-               "build_file_content": "\nfilegroup(\n    name = \"all_files\",\n    srcs = glob([\"**/*\"]),\n    visibility = [\"//visibility:public\"],\n)\n                        "
-             }
-           },
-           "typedb_console_artifact_linux-x86_64": {
-             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-             "attributes": {
-               "urls": [
--                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.14.0/typedb-console-linux-x86_64-3.14.0.tar.gz"
-+                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.15.0-rc3/typedb-console-linux-x86_64-3.15.0-rc3.tar.gz"
-               ],
--              "downloaded_file_path": "typedb-console-linux-x86_64-3.14.0.tar.gz"
-+              "downloaded_file_path": "typedb-console-linux-x86_64-3.15.0-rc3.tar.gz"
-             }
-           },
-           "typedb_console_artifact_linux-x86_64-extracted": {
-             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-             "attributes": {
-               "urls": [
--                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.14.0/typedb-console-linux-x86_64-3.14.0.tar.gz"
-+                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.15.0-rc3/typedb-console-linux-x86_64-3.15.0-rc3.tar.gz"
-               ],
--              "strip_prefix": "typedb-console-linux-x86_64-3.14.0",
-+              "strip_prefix": "typedb-console-linux-x86_64-3.15.0-rc3",
-               "build_file_content": "\nfilegroup(\n    name = \"all_files\",\n    srcs = glob([\"**/*\"]),\n    visibility = [\"//visibility:public\"],\n)\n                        "
-             }
-           },
-           "typedb_console_artifact_mac-arm64": {
-             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-             "attributes": {
-               "urls": [
--                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.14.0/typedb-console-mac-arm64-3.14.0.zip"
-+                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.15.0-rc3/typedb-console-mac-arm64-3.15.0-rc3.zip"
-               ],
--              "downloaded_file_path": "typedb-console-mac-arm64-3.14.0.zip"
-+              "downloaded_file_path": "typedb-console-mac-arm64-3.15.0-rc3.zip"
-             }
-           },
-           "typedb_console_artifact_mac-arm64-extracted": {
-             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-             "attributes": {
-               "urls": [
--                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.14.0/typedb-console-mac-arm64-3.14.0.zip"
-+                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.15.0-rc3/typedb-console-mac-arm64-3.15.0-rc3.zip"
-               ],
--              "strip_prefix": "typedb-console
-```
-
-**File**: `RELEASE_NOTES_LATEST.md` (modified, +82/-41)
-```diff
-@@ -1,81 +1,122 @@
- **Download from TypeDB Package Repository:**
- 
--[Distributions for 3.14.2](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.14.2)
-+[Distributions for 3.15.0-rc0](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.15.0-rc0)
- 
- **Pull the Docker image:**
- 
--```docker pull typedb/typedb:3.14.2```
-+```docker pull typedb/typedb:3.15.0-rc0```
- 
- 
- ## New Features
--
--
--## Bugs Fixed
--- **Don't let transaction services excessively hold query manager refs**
-+- **Implement optimized database import**
-   
--  Fix a server crash when a database is deleted right after a transaction on it commits or closes. The delete could panic with "Cannot get exclusive ownership of inner of Arc<QueryCache>", stopping the server.
-+  We introduce the possibility of **parallelized, read-free database imports**, when specific conditions are met. In test we achieve up to 100k relations/sec consistently up to billions of loaded relations.
-   
-+  This path utilizes an updated typedb-protocol (backwards compatible). Old import files/old servers fall back to the existing, slower import path. This protocol is designed for an upcoming data loader that reads from specifically shaped tables or CSV files, and for importing TypeDB exports rapidly.
-   
--- **Let the HTTP endpoint accept clients without a client certificate, matching gRPC**
-+  We combine existing guarantees that are implicit and not explicitly marked, with additional constraints.
-   
--  Sync up the client certificate validation rules between gRPC and HTTP when `ca-certificate` is set. Now, the HTTP endpoint accepts clients without a client certificate, following what the gRPC endpoint already does. Client certificates that clients present are still verified against the CA.
-+  _Existing implicit requirements_:
-+  - Entity or relation import messages _never re-uses global or type-label scoped IDs_ (therefore, every entity and relation is _complete and listed with all its components, exactly once_)
-+  - All attributes mentioned as owned in other entity or relation import messages are listed as _separate Attribute messages_
-+  - All references are correct (eg. any concept IDs refer to concepts that have their own import messages; attribute values that are referenced are imported)
-   
--  TypeDB drivers, Console, and Studio have no option to send a client certificate. When running a server like this:
--  ```
--  typedb server --server.encryption.enabled=true --server.encryption.certificate=server.pem \
--      --server.encryption.certificate-key=server-key.pem --server.encryption.ca-certificate=ca.pem
--  ```
-+  _Additional, optional guarantees, required for the optimized path_:
-+  1) When the data is imported in order of attributes, entities, then relations => This enables **parallelism** on import, since import items can never collide.
-+    a) Exception: hashed attributes _can_ collide when allocating a hash value, so we add a rarely used retry for isolation conflicts
-+    b) Exception: `plays` cardinality bounds. Expect slowdowns/failures when plays cardinality is set (future work: relax plays cardinality and revalidate once at the end)
-   
--  **Before:**
--  - Console and drivers successfully connect over gRPC.
--  - Studio, the HTTP drivers, and `curl --cacert ca.pem https://host:8000/v1/version` fail with `tlsv13 alert certificate required`.
-+  2) When guaranteed links to relation players by 'type-local ids' (which are u64), we can directly create the edges between the relation and the player without any reads into the importer mapping table. We skip creating the mapping table, mapping IDs, and existence checks when this is guaranteed and the AER order is guaranteed.
-   
--  **After:** both protocols accept them.
-+  3) When guaranteed that attribute ownerships link to attributes by value, rather than ID that has to be remapped, and that the AER order is guaranteed, we can skip recording new IDs for attributes whose ID is derivable from the value (in effect, any attribute that is not hashed). This skips the mapping table creation, mapping IDs, and attribute existence checks.
-   
--  Setting `ca-certificate` does not make client certificates mandatory on either endpoint: it only rejects clients that present a certificate the CA did not sign. Most databases either use the same allowance pattern or explicitly expose "force client certificate verification" in the server's config. We support what already works in gRPC.
-+  4) When attribute messages are guaranteed to be unique, we also never read on `put` of the attribute - it's a straight write without read.
-   
-+  In combination, we can freely **parallelize** and **avoid almost all reads during import**, skipping both mapping tables and reads on the write and commit path in transactions. **This is only as "safe" as the import data - dangling references will lead to a corrupt TypeDB dataset!**
-   
--- **Fix concurrent read queries within a 
-```
-
-**File**: `VERSION` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--3.14.2
-\ No newline at end of file
-+3.15.0-rc0
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 2: `6a80364e` (2026-11-10)
-**Commit Message**: Restore implicit unwraps in place of unsafe optional variable dereference in fetch for transition (#8054)
-
-## Product change and motivation
-Unsafe optional variable dereference in fetch don't error in transition versions, and work as before while printing a warning.
-
-**File**: `MODULE.bazel` (modified, +1/-1)
-```diff
-@@ -193,7 +193,7 @@ bazel_dep(name = "typedb_behaviour", version = "0.0.0")
- git_override(
-     module_name = "typedb_behaviour",
-     remote = "https://github.com/typedb/typedb-behaviour",
--    commit = "2c858c2333bd9c364742e3a83997e3a669402c5b",
-+    commit = "1ecfdfd9c6bffc47be65050da9039362208ce225",
- )
- 
- http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
-```
-
-**File**: `ir/translation/fetch.rs` (modified, +3/-2)
-```diff
-@@ -528,10 +528,11 @@ fn try_get_variable_check_optionality(
-         .get_variable(name)
-         .ok_or_else(|| Box::new(VariableNotAvailable { variable: name.to_owned(), declaration: variable.clone() }))?;
-     if !optionality_is_checked && context.variable_optionality(translated_variable) == VariableOptionality::Optional {
--        Err(Box::new(FetchRepresentationError::UnsafeOptionalVariableDereference {
-+        error::optional_usage_error!(Box::new(FetchRepresentationError::UnsafeOptionalVariableDereference {
-             variable: name.to_owned(),
-             source_span: variable.span(),
--        }))
-+        }));
-+        Ok(translated_variable)
-     } else {
-         Ok(translated_variable)
-     }
-```
 
 #### Recent Merged Pull Requests:
+- **PR #8060** (2026-11-12): Fix TypeQL & protocol references in Cargo (@krishnangovindraj)
+- **PR #8057** (2026-11-11): Sync cargo files to use latest typeql 3.15.0-rc0 (@krishnangovindraj)
+- **PR #8056** (2026-11-12): Verify length of WAL records (@dmitrii-ubskii)
 - **PR #8055** (2026-11-10): Prepare release 3.15.0-rc0 (@krishnangovindraj)
 - **PR #8054** (2026-11-10): Restore implicit unwraps in place of unsafe optional variable dereference in fetch for transition (@krishnangovindraj)
 - **PR #8053** (2026-11-06): Bump dependencies to merged commit (@krishnangovindraj)
-- **PR #8052** (2026-11-06): Make concept Bazel target public (@genovoselov)
-- **PR #8051** (2026-11-06): Bump behaviour for testing IsSet constraints in analyze responses (@krishnangovindraj)
-- **PR #8050** (2026-11-06): Fix serialization of deletes in commit record (@dmitrii-ubskii)
 
 ---
 
@@ -2109,44 +1876,3 @@ Unsafe optional variable dereference in fetch don't error in transition versions
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Prepare release 3.15.0-rc0 (#8055)
-
-**RULE**:
-When implementing operations in `MODULE.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `a99f0e28`: Prepare release 3.15.0-rc0 (#8055). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `MODULE.bazel`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-        "typedb_protocol+": "3.15.0-rc0",
-        "typeql+": "3.15.0-rc0",
-    tag = "3.15.0-rc3",
-    tag = "3.15.0-rc3",
-    tag = "3.15.0-rc0",
-    tag = "3.15.0-rc0",
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-#        "typedb_protocol+": "3.14.0",
-#        "typeql+": "3.14.0",
-    tag = "3.14.0",
-    tag = "3.14.0",
-    commit = "d07e949229b2551d59127d3bc3300cd38bdf33ff",
-    commit = "99e080bd0d599ae235607da4e4e69787e681cbe1",
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a99f0e28` are properly handled with clean fallback behavior.

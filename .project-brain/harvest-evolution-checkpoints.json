@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T05:44:08.254Z",
+  "last_updated": "2026-11-13T05:52:03.182Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T05:23:59.465Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-13T05:44:08.161Z",
+      "processed_at": "2026-11-13T05:52:03.048Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -558,9 +558,9 @@
       "staged_for_review": 1
     },
     "typedb-typedb-learnings.md": {
-      "processed_at": "2026-11-11T19:46:38.227Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-13T05:52:03.014Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "simonschubert-linuxcommandlibrary-learnings.md": {
       "processed_at": "2026-11-11T19:53:51.695Z",
@@ -1566,9 +1566,14 @@
       "processed_at": "2026-11-13T05:44:08.110Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-minimaxai-minimax-m3.1-flash-learnings.md": {
+      "processed_at": "2026-11-13T05:51:49.303Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 468,
-  "total_canonical_promoted": 64,
-  "total_staged_for_review": 401
+  "total_dossiers_evaluated": 471,
+  "total_canonical_promoted": 66,
+  "total_staged_for_review": 402
 }

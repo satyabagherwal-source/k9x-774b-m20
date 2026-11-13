@@ -9363,3 +9363,7 @@ Every entry in this ledger must capture:
 | `learn-dom-d-f4ef37a7` | `project://hf-comfy-org-z-image-turbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md` | 2026-11-13T05:23:59.453Z |
 | `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-13T05:43:46.689Z |
 | `learn-dom-d-6c43f0f5` | `project://hf-unsloth-flint-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md` | 2026-11-13T05:44:08.110Z |
+| `learn-huggingface-minimaxai-minimax-m3-1-flash` | `https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-13T05:51:20.959Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `9395edd0` | Multi-dimensional audit evidence | 2026-11-13T05:51:35.688Z |
+| `learn-dom-d-7d4c4039` | `project://hf-minimaxai-minimax-m3.1-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md` | 2026-11-13T05:51:49.303Z |
+| `learn-dom-d-80f82307` | `project://typedb-typedb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md` | 2026-11-13T05:52:03.014Z |

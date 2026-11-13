@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T05:44:08.160Z",
+  "last_updated": "2026-11-13T05:52:03.047Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8210,6 +8210,15 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D2618C-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-C99B78",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C99B78-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-13"
     }
   ]

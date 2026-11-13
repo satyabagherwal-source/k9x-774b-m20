@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-T4BV",
-    "timestamp": "2026-11-09T23:17:47.179Z",
-    "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
-    "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-    "contentHash": "503bc0f225bee856d7b4413b941c3d86fd403442a553235c72e89e7dc59dc192",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-T699",
-    "timestamp": "2026-11-09T23:17:49.677Z",
-    "repository": "Agent-Field/agentfield",
-    "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "1289b8bafa0e5a8ff0d67dda0c9126eb751fda86b5910d56fdc0a5c7070d2f4d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-T8T6",
     "timestamp": "2026-11-09T23:17:52.986Z",
     "repository": "freenet/freenet-core",
@@ -7490,6 +7460,36 @@
     "repository": "unsloth/flint-GGUF",
     "learningId": "learn-huggingface-unsloth-flint-gguf",
     "contentHash": "db2e3a5ac711b87b256d7d21ef335acb754b70695d0578089b5cb09d4fc027a5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-6SU2",
+    "timestamp": "2026-11-13T05:51:20.954Z",
+    "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+    "contentHash": "40caac05bfc42611dbe3bc0b8ed7da109700e55433cb68448742e5a2a12d7a80",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-7478",
+    "timestamp": "2026-11-13T05:51:35.684Z",
+    "repository": "typedb/typedb",
+    "learningId": "learn-github-typedb-typedb",
+    "contentHash": "a8866ed67004dcfff840c2bc13c614265e78006156da17edee33935621a07baa",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
