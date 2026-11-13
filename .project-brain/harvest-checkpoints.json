@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-13T03:18:41.331Z",
+  "last_updated": "2026-11-13T03:31:21.366Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "99da69b2f896418eaa68ffa554abcea950db32044217ca5ee500e2727433b6cc",
-      "verified_at": "2026-11-11T18:23:49.005Z",
+      "content_hash": "805988603f563738c987fcda77f21322d65cbf66e878e4ccb5dd2de09ff7cd07",
+      "verified_at": "2026-11-13T03:26:42.151Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T18:23:49.005Z"
+      "last_updated": "2026-11-13T03:26:42.151Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "627048d36f53c2212f12f1419dc779b18094ff3f0755e64c9ef1dcca56309eea",
-      "verified_at": "2026-11-11T09:49:13.088Z",
+      "content_hash": "452ef02699b6af4602a13281f1fa293e0e4d0d4acc3969b25064b514f9289a22",
+      "verified_at": "2026-11-13T03:26:24.578Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T09:49:13.088Z"
+      "last_updated": "2026-11-13T03:26:24.578Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",
@@ -15591,14 +15591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "7a5c7c064839f6a451842a18e4f68e26eed512532d84aebcaa3b41bee92ec28c",
-      "verified_at": "2026-11-08T03:28:24.683Z",
+      "content_hash": "79e075ec3f54f66f117b872ec257ec6c96c3c01ced088d6ae98652564946f088",
+      "verified_at": "2026-11-13T03:31:21.365Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T03:28:24.683Z"
+      "last_updated": "2026-11-13T03:31:21.365Z"
     },
     "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter": {
       "repository": "AhmadHassan-BTed/AutoSwarm-Shadow-Adapter",

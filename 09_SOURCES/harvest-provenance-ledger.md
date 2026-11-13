@@ -9319,3 +9319,8 @@ Every entry in this ledger must capture:
 | `learn-github-agentes-chat-agentes-chat` | `https://github.com/agentes-chat/agentes-chat` | `2556f336` | Multi-dimensional audit evidence | 2026-11-13T03:18:36.957Z |
 | `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-11-13T03:18:41.319Z |
 | `learn-dom-d-2c1c9237` | `project://hf-reflection-beam-1.0-501b-a23b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md` | 2026-11-13T03:19:04.435Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `9b4fe902` | Multi-dimensional audit evidence | 2026-11-13T03:26:24.568Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `5cb1e1e3` | Multi-dimensional audit evidence | 2026-11-13T03:26:42.142Z |
+| `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-13T03:31:21.354Z |
+| `learn-dom-d-b0538309` | `project://astral-sh-uv` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md` | 2026-11-13T03:31:39.884Z |
+| `learn-dom-d-27f43f41` | `project://hf-lodestones-moss-image-sft-8-steps-dmd` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md` | 2026-11-13T03:32:06.697Z |

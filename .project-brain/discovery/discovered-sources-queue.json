@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-13T03:19:04.444Z",
+  "updated_at": "2026-11-13T03:32:06.800Z",
   "stats": {
-    "total_discovered": 2119,
-    "approved_pending_harvest": 1963,
+    "total_discovered": 2132,
+    "approved_pending_harvest": 1976,
     "harvested_count": 0,
     "rejected_count": 156,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 1953,
-      "OFFICIAL_DOCUMENTATION": 88,
+      "COMMUNITY_AND_EXPERT": 1965,
+      "OFFICIAL_DOCUMENTATION": 89,
       "STANDARDS_AND_SPECIFICATIONS": 69,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 7,
@@ -45544,6 +45544,292 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md",
         "fileName": "hf-reflection-beam-1.0-501b-a23b-learnings.md"
+      }
+    },
+    "SRC-30E283A9B3F7": {
+      "id": "SRC-30E283A9B3F7",
+      "url": "https://github.com/astral-sh/uv",
+      "title": "https://github.com/astral-sh/uv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:31:39.897Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-693F7C8BAC59": {
+      "id": "SRC-693F7C8BAC59",
+      "url": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/os/schemas/sarif-schema-2.1.0.json",
+      "title": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/os/schemas/sarif-schema-2.1.0.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:31:39.916Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-86D8C73B030B": {
+      "id": "SRC-86D8C73B030B",
+      "url": "https://packaging.python.org/en/latest/specifications/project-status-markers",
+      "title": "https://packaging.python.org/en/latest/specifications/project-status-markers",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:31:39.934Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-67346D884C91": {
+      "id": "SRC-67346D884C91",
+      "url": "https://pypi.org/project/eccodeslib",
+      "title": "https://pypi.org/project/eccodeslib",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:31:39.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-68B9A2B8524F": {
+      "id": "SRC-68B9A2B8524F",
+      "url": "https://pypi.org/project/eccodes",
+      "title": "https://pypi.org/project/eccodes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:31:39.980Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-AF29BF5919D7": {
+      "id": "SRC-AF29BF5919D7",
+      "url": "https://github.com/ecmwf/eccodes-python/issues/150",
+      "title": "https://github.com/ecmwf/eccodes-python/issues/150",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:31:39.998Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-CE23F76B84F5": {
+      "id": "SRC-CE23F76B84F5",
+      "url": "https://pypi.org/pypi/eccodes/json",
+      "title": "https://pypi.org/pypi/eccodes/json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:31:40.016Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-50F9E840916B": {
+      "id": "SRC-50F9E840916B",
+      "url": "https://github.com/astral-sh/uv-dev/actions/runs/42849443139",
+      "title": "https://github.com/astral-sh/uv-dev/actions/runs/42849443139",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:31:40.033Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-217AD146E841": {
+      "id": "SRC-217AD146E841",
+      "url": "https://github.com/astral-sh/uv/actions/runs/42734649132/job/129570179294",
+      "title": "https://github.com/astral-sh/uv/actions/runs/42734649132/job/129570179294",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:31:40.051Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-B7EEAFCE1DC5": {
+      "id": "SRC-B7EEAFCE1DC5",
+      "url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "title": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:32:06.716Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
+        "fileName": "hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md"
+      }
+    },
+    "SRC-9F297BE6D0CA": {
+      "id": "SRC-9F297BE6D0CA",
+      "url": "https://github.com/siderolabs/extensions/pull/1349",
+      "title": "https://github.com/siderolabs/extensions/pull/1349",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:32:06.757Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
+      }
+    },
+    "SRC-E6101E1D0B76": {
+      "id": "SRC-E6101E1D0B76",
+      "url": "https://github.com/siderolabs/pkgs/pull/1748",
+      "title": "https://github.com/siderolabs/pkgs/pull/1748",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:32:06.775Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
+      }
+    },
+    "SRC-6FA9B812EAD6": {
+      "id": "SRC-6FA9B812EAD6",
+      "url": "https://github.com/siderolabs/pkgs/pull/1751",
+      "title": "https://github.com/siderolabs/pkgs/pull/1751",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-13T03:32:06.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
       }
     }
   }

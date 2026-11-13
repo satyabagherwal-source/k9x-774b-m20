@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "ca4d8fa9",
+    "sourceVersion": "5cb1e1e3",
     "license": "MPL-2.0",
-    "contentHash": "99da69b2f896418eaa68ffa554abcea950db32044217ca5ee500e2727433b6cc",
-    "lastHarvestedAt": "2026-11-11T18:23:48.997Z",
+    "contentHash": "805988603f563738c987fcda77f21322d65cbf66e878e4ccb5dd2de09ff7cd07",
+    "lastHarvestedAt": "2026-11-13T03:26:42.142Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "f45ea9bd",
+    "sourceVersion": "9b4fe902",
     "license": "Apache-2.0",
-    "contentHash": "627048d36f53c2212f12f1419dc779b18094ff3f0755e64c9ef1dcca56309eea",
-    "lastHarvestedAt": "2026-11-11T09:49:13.077Z",
+    "contentHash": "452ef02699b6af4602a13281f1fa293e0e4d0d4acc3969b25064b514f9289a22",
+    "lastHarvestedAt": "2026-11-13T03:26:24.568Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {
@@ -10385,8 +10385,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
     "sourceVersion": "hf-lodestones-moss-image-sft-8-steps-dmd",
     "license": "Open-Source",
-    "contentHash": "7a5c7c064839f6a451842a18e4f68e26eed512532d84aebcaa3b41bee92ec28c",
-    "lastHarvestedAt": "2026-11-08T03:28:24.676Z",
+    "contentHash": "79e075ec3f54f66f117b872ec257ec6c96c3c01ced088d6ae98652564946f088",
+    "lastHarvestedAt": "2026-11-13T03:31:21.354Z",
     "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd"
   },
   "ahmadhassan-bted-autoswarm-shadow-adapter": {

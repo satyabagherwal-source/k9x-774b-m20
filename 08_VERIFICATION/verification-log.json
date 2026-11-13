@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-W2SZ",
-    "timestamp": "2026-11-09T17:44:09.779Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "0f867f49d4d42ed18a07c7f82febfb7c7dc6faf6d002545732c2c165058311d7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-2GZG",
-    "timestamp": "2026-11-09T17:49:08.092Z",
-    "repository": "Edge0/Audio8-TTS-Realistic-Air",
-    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
-    "contentHash": "192dddb81799e3a03fb164c65c08241a0faa00e35af45e5b23094d405dfc7fab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-CO2F",
-    "timestamp": "2026-11-09T17:57:03.831Z",
-    "repository": "apache/pinot",
-    "learningId": "learn-github-apache-pinot",
-    "contentHash": "9ed37abde3a361feb02dc36e3927ae13f69970ef5befa82d77b3094d0728d7d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-CQZK",
     "timestamp": "2026-11-09T17:57:07.616Z",
     "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
@@ -7490,6 +7445,51 @@
     "repository": "reflection/Beam-1.0-501B-A23B",
     "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
     "contentHash": "e5ccac13b877a2199d55d318666affdaec7133e337efa12f2d63598b03ae92c4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-0ENO",
+    "timestamp": "2026-11-13T03:26:24.564Z",
+    "repository": "astral-sh/uv",
+    "learningId": "learn-github-astral-sh-uv",
+    "contentHash": "452ef02699b6af4602a13281f1fa293e0e4d0d4acc3969b25064b514f9289a22",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-0S7U",
+    "timestamp": "2026-11-13T03:26:42.138Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "805988603f563738c987fcda77f21322d65cbf66e878e4ccb5dd2de09ff7cd07",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261113-6RNQ",
+    "timestamp": "2026-11-13T03:31:21.350Z",
+    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+    "contentHash": "79e075ec3f54f66f117b872ec257ec6c96c3c01ced088d6ae98652564946f088",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

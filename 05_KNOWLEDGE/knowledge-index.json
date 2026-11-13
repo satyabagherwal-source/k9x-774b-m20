@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-13T03:18:41.207Z",
+  "last_updated": "2026-11-13T03:31:21.242Z",
   "total_verified_learnings": 1261,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4212,8 +4212,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "f45ea9bd",
-      "content_hash": "627048d36f53c2212f12f1419dc779b18094ff3f0755e64c9ef1dcca56309eea",
+      "source_version": "9b4fe902",
+      "content_hash": "452ef02699b6af4602a13281f1fa293e0e4d0d4acc3969b25064b514f9289a22",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -4323,7 +4323,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T09:49:12.910Z",
+      "verified_at": "2026-11-13T03:26:24.416Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58685,8 +58685,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "ca4d8fa9",
-      "content_hash": "99da69b2f896418eaa68ffa554abcea950db32044217ca5ee500e2727433b6cc",
+      "source_version": "5cb1e1e3",
+      "content_hash": "805988603f563738c987fcda77f21322d65cbf66e878e4ccb5dd2de09ff7cd07",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -58713,6 +58713,11 @@
         {
           "number": null,
           "title": "give the mdadm runtime map directory a dedicated SELinux type",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": null,
+          "title": "keep xfs.UnixRoot path resolution inside the root",
           "status": "WITHHELD_REJECT"
         },
         {
@@ -58791,7 +58796,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-11T18:23:48.853Z",
+      "verified_at": "2026-11-13T03:26:41.989Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125594,7 +125599,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
       "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "7a5c7c064839f6a451842a18e4f68e26eed512532d84aebcaa3b41bee92ec28c",
+      "content_hash": "79e075ec3f54f66f117b872ec257ec6c96c3c01ced088d6ae98652564946f088",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "promoted_rules": [
@@ -125659,7 +125664,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-08T03:28:24.531Z",
+      "verified_at": "2026-11-13T03:31:21.211Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

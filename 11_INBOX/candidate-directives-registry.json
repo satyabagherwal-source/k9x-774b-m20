@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-13T03:19:04.461Z",
+  "last_updated": "2026-11-13T03:32:06.732Z",
   "directives": [
     {
       "id": "CD-001",
@@ -8003,6 +8003,15 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-ACA043-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-13"
+    },
+    {
+      "id": "CD-REV-103024",
+      "directive_title": "keep xfs.UnixRoot path resolution inside the root",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "siderolabs-talos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-103024-keep-xfs-unixroot-path-resolution-inside.md",
       "staged_date": "2026-11-13"
     }
   ]

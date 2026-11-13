@@ -9310,3 +9310,8 @@
 | `CYCLE-20261113-QDUH` | `2026-11-13T03:18:36.953Z` | `agentes-chat/agentes-chat` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/agentes-chat-agentes-chat-learnings.md` | Yes (`0bdcdd7e...`) |
 | `CYCLE-20261113-QH7N` | `2026-11-13T03:18:41.315Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md` | Yes (`e5ccac13...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T03:19:04.435Z` | `hf-reflection-beam-1.0-501b-a23b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2C1C9237` [Domain D] | Yes (`7651e21a...`) |
+| `CYCLE-20261113-0ENO` | `2026-11-13T03:26:24.564Z` | `astral-sh/uv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/astral-sh-uv-learnings.md` | Yes (`452ef026...`) |
+| `CYCLE-20261113-0S7U` | `2026-11-13T03:26:42.138Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`80598860...`) |
+| `CYCLE-20261113-6RNQ` | `2026-11-13T03:31:21.350Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md` | Yes (`79e075ec...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T03:31:39.884Z` | `astral-sh-uv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B0538309` [Domain D] | Yes (`5969d47c...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T03:32:06.697Z` | `hf-lodestones-moss-image-sft-8-steps-dmd` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-27F43F41` [Domain D] | Yes (`3f303727...`) |

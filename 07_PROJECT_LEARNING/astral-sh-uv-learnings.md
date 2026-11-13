@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `f45ea9bd`  
+> **Source Version**: `9b4fe902`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T09:48:59.971Z  
+> **Timestamp**: 2026-11-13T03:26:24.201Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T09:48:58.937Z  
+> **Harvest Timestamp**: 2026-11-13T03:26:21.450Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 91933 stars
+- **Stars / Engagement**: 91961 stars
 
 ---
 
@@ -1496,11 +1496,14 @@ mod types;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #23222** (2026-11-12): **uv does not install requirement `eccodeslib` when `eccodes` is requested**
+  *Symptoms*: ### Summary  Contrary to pip, uv does not install [`eccodeslib`](https://pypi.org/project/eccodeslib/) when requesting [`eccodes`](https://pypi.org/project/eccodes/). A workaround is to request/add `eccodeslib` explicitly. But why is this necessary?   ### Platform  Darwin 25.6.0 arm64  ### Version  uv 0.11.28 (ebf0f43d7 2026-07-07 aarch64-apple-darwin)  ### Python version  Python 3.11.15
+  **Post-Mortem & Fix Analysis**:
+  > Maybe related: https://github.com/ecmwf/eccodes-python/issues/150
+  > eccodes does not depend on eccodeslib according to the metadata they publish on PyPI:   ```shell  curl -s https://pypi.org/pypi/eccodes/json |                   jq '.info.requires_dist' ```  shows  ``` [   "numpy",   "attrs",   "cffi",   "findlibs" ] ```  it's a bug with ecmwf packaging, and the referenced bug i think says so too.
+
 - **Issue #23209** (2026-11-10): **Restrict Unix plaintext credential store permissions**
   *Symptoms*: ## Summary  Fixes astral-sh/uv#23202.  Create the credentials directory with mode `0700` and its lock with mode `0600`. Write the TOML file atomically through a `0600` temporary file, following existing credential-file symlinks. On the next write, tighten the default credentials directory. An existing directory supplied via `UV_CREDENTIALS_DIR` can also hold unrelated files and keeps its permissions.  ## Test plan  The existing `auth::login_text_store` test checks all three modes after the first login, restores the legacy permissions, then checks that the second login repairs them. All 5,666 Linux tests passed. [CI run](https://github.com/astral-sh/uv-dev/actions/runs/42849443139)
-
-- **Issue #23149** (2026-11-10): **activate.bat sets wrong VIRTUAL_ENV when the path contains an apostrophe**
-  *Symptoms*: ### Summary  When the venv path contains an apostrophe, activate.bat writes VIRTUAL_ENV with bash-style escaping ('"'"'), so the venv doesn't actually activate in cmd.  ``` C:\Tools\it's a test> uv venv Using CPython 3.15.2 interpreter at: C:\Users\Lewis\AppData\Local\Python\pythoncore-3.15-64\python.exe Creating virtual environment at: .venv Activate with: .venv\Scripts\activate  C:\Tools\it's a test> .venv\Scripts\activate.bat  C:\Tools\it's a test> echo %VIRTUAL_ENV% C:\Tools\it'"'"'s a test\.venv ```  ### Platform  Windows 11 x86_64  ### Version  uv 0.13.7 (316c827e0 2026-11-03 x86_64-pc-windows-msvc)  ### Python version  3.15.2
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1517,189 +1520,37 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6b7f0a4e` (2026-11-09)
-**Commit Message**: Update Rust crate uuid to v1.28.0 (#23182)
-
-This PR contains the following updates:
-
-| Package | Type | Update | Change | Pending |
-|---|---|---|---|---|
-| [uuid](https://redirect.github.com/uuid-rs/uuid) |
-workspace.dependencies | minor | `1.27.0` → `1.28.0` | `1.29.2` (+2) |
-
----
-
-> [!WARNING]
-> Some dependencies could not be looked up. Check the [Dependency
-Dashboard](../issues/2658) for more information.
-
----
-
-### Release Notes
-
-<details>
-<summary>uuid-rs/uuid (uuid)</summary>
-
-###
-[`v1.28.0`](https://redirect.github.com/uuid-rs/uuid/releases/tag/v1.28.0)
-
-[Compare
-Source](https://redirect.github.com/uuid-rs/uuid/compare/v1.27.0...v1.28.0)
-
-#### What's Changed
-
-- Add optional serde format adapters by
-[@&#8203;RanaPriyansh](https://redirect.github.com/RanaPriyansh) in
-[#&#8203;916](https://redirect.github.com/uuid-rs/uuid/pull/916)
-- Prepare for 1.28.0 release by
-[@&#8203;KodrAus](https://redirect.github.com/KodrAus) in
-[#&#8203;918](https://redirect.github.com/uuid-rs/uuid/pull/918)
-
-#### New Contributors
-
-- [@&#8203;RanaPriyansh](https://redirect.github.com/RanaPriyansh) made
-their first contribution in
-[#&#8203;916](https://redirect.github.com/uuid-rs/uuid/pull/916)
-
-**Full C
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -5636,9 +5636,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
- 
- [[package]]
- name = "uuid"
--version = "1.27.0"
-+version = "1.28.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "97277d36b9c3ace13e58fa6e753f8b0bbbf302a18dd193240d70f9e29681059a"
-+checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
- dependencies = [
-  "getrandom 0.4.3",
-  "js-sys",
-```
-
----
-
-### Incident Patch 2: `cb44dfa2` (2026-11-10)
-**Commit Message**: fix: preserve apostrophes in Windows activation paths (#23152)
-
-Fixes #23149
-
-## Summary
-When a virtual environment path contains an apostrophe, the generated
-`activate.bat` script currently receives the POSIX single-quote escape
-sequence `'"'"'`. Batch files use double-quoted paths, so that sequence
-becomes part of `VIRTUAL_ENV` and activation points at the wrong
-directory.
-
-The Windows batch template now receives the plain normalized path, while
-POSIX activators keep their existing escaping. Regression coverage
-checks the generated batch script for apostrophe-containing paths on
-Unix and Windows.
-
-## Test Plan
-- `git diff --check`
-- Full Rust test suite is left to CI because this Windows worker does
-not have Cargo installed.
-
-Signed-off-by: 2301_80183707 <[REDACTED_EMAIL]>
-
-**File**: `crates/uv-virtualenv/src/virtualenv.rs` (modified, +3/-0)
-```diff
-@@ -496,6 +496,9 @@ pub(crate) fn create(
-                 r#"'"$(dirname -- "$(dirname -- "$(realpath -- "$SCRIPT_PATH")")")"'"#,
-             ),
-             (true, "activate.bat") => Cow::Borrowed(r"%~dp0.."),
-+            // Batch files use double-quoted paths, so POSIX single-quote escaping
-+            // would become part of the value (for example, around apostrophes).
-+            (false, "activate.bat") => Cow::Borrowed(location_string),
-             (true, "activate.fish") => {
-                 Cow::Borrowed(r"'(dirname -- (dirname -- (realpath -- (status -f))))'")
-             }
-```
-
-**File**: `crates/uv/tests/python/venv.rs` (modified, +24/-0)
-```diff
-@@ -2175,6 +2175,30 @@ fn create_venv_apostrophe() {
- 
-     let stdout = String::from_utf8_lossy(&output.stdout);
-     assert_eq!(stdout.trim(), venv_dir.to_string_lossy());
-+
-+    let activate_bat = fs_err::read_to_string(venv_dir.join("bin/activate.bat")).unwrap();
-+    assert!(activate_bat.contains(venv_dir.to_string_lossy().as_ref()));
-+    assert!(!activate_bat.contains("'\"'\"'"));
-+}
-+
-+/// Check that the Windows activate script preserves apostrophes in the venv path.
-+#[test]
-+#[cfg(windows)]
-+fn create_venv_apostrophe_bat() {
-+    let context = uv_test::test_context_with_versions!(&["3.12"]);
-+    let venv_dir = context.temp_dir.join("Testing's");
-+
-+    context
-+        .venv()
-+        .arg(&venv_dir)
-+        .arg("--python")
-+        .arg("3.12")
-+        .assert()
-+        .success();
-+
-+    let activate_bat = fs_err::read_to_string(venv_dir.join("Scripts/activate.bat")).unwrap();
-+    assert!(activate_bat.contains(venv_dir.to_string_lossy().as_ref()));
-+    assert!(!activate_bat.contains("'\"'\"'"));
- }
- 
- /// Emulate a ksh without ksh93's `${.sh.file}` parameter using a POSIX shell.
-```
-
----
-
-### Incident Patch 3: `da84b72a` (2026-11-10)
-**Commit Message**: Use the runner’s Buildx to publish Docker images (#23190)
+### Incident Patch 1: `27095522` (2026-11-12)
+**Commit Message**: Use the runner’s btrfs-progs in Linux tests (#23197)
 
 ## Summary
 
-We use the Buildx bundled with `ubuntu-latest` to publish Docker images.
-Depot builds the images, and the publish job only uses Buildx to inspect
-and tag the saved image index.
+Use the `mkfs.btrfs` already available on the Depot Ubuntu 24.04 runner.
+The [main CI
+run](https://github.com/astral-sh/uv/actions/runs/42734649132/job/129570179294#step:10:1)
+reports that `btrfs-progs` is already at the newest version when the job
+asks apt to install it. The job still creates and mounts the Btrfs
+filesystem used by the reflink tests.
 
-We read the digest of the tagged index from `imagetools create
---metadata-file` so we can attest exactly what we published. Buildx
-added that flag in v0.32.0, and the runner already includes v0.38.1.
-[Buildx release
-notes](https://github.com/docker/buildx/releases/tag/v0.32.0) · [Runner
-image
-inventory](https://github.com/actions/runner-images/blob/dbf2f009b5e1dcce57cf578ff4fdc1391a4d6d1b/images/ubuntu/Ubuntu2404-Readme.md#installed-software)
-
-Supersedes #23176.
-
-**File**: `.github/workflows/publish-docker-image.yml` (modified, +0/-7)
+**File**: `.github/workflows/test.yml` (modified, +0/-1)
 ```diff
-@@ -80,13 +80,6 @@ jobs:
+@@ -81,7 +81,6 @@ jobs:
  
-       - uses: depot/setup-action@91bc8495a33ebfc504ffc89e5674379ccf23c29c # v1.7.2
- 
--      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
--        with:
--          # Install a version that supports `imagetools create --metadata-file`
--          # (https://github.com/docker/buildx/issues/2407).
--          version: v0.37.2
--          cache-binary: false
--
-       - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-         if: ${{ !inputs.push-dev }}
-         with:
+       - name: "Create btrfs filesystem"
+         run: |
+-          sudo apt install -y btrfs-progs
+           truncate -s 1G /tmp/btrfs.img
+           mkfs.btrfs /tmp/btrfs.img
+           sudo mkdir /btrfs
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23228** (2026-11-12): Avoid multipart uploads for release artifacts (@zanieb)
+- **PR #23225** (2026-11-12): Bump version to 0.13.8 (@konstin)
 - **PR #23211** (2026-11-11): Sync latest Python releases, CPython 3.16.0a2 (@astral-automations-bot[bot])
 - **PR #23210** (2026-11-10): Flatten recursive extras introduced by scoped overrides (@BurntSushi)
 - **PR #23209** (2026-11-10): Restrict Unix plaintext credential store permissions (@astral-automations-bot[bot])
 - **PR #23208** (2026-11-10): Link issue artifacts to the workflow's run name (@woodruffw)
-- **PR #23205** (closed): Retry failed downloads in `create-python-mirror.py` (@malikmalikayesha)
-- **PR #23204** (closed): Quote Python requests in the `uv python install` hint (@malikmalikayesha)
 
 ---
 
@@ -1713,36 +1564,3 @@ Supersedes #23176.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Update Rust crate uuid to v1.28.0 (#23182)
-
-**RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `6b7f0a4e`: Update Rust crate uuid to v1.28.0 (#23182). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-version = "1.28.0"
-checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-version = "1.27.0"
-checksum = "97277d36b9c3ace13e58fa6e753f8b0bbbf302a18dd193240d70f9e29681059a"
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6b7f0a4e` are properly handled with clean fallback behavior.

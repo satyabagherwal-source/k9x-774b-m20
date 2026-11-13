@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `ca4d8fa9`  
+> **Source Version**: `5cb1e1e3`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:23:40.504Z  
+> **Timestamp**: 2026-11-13T03:26:30.289Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:23:40.308Z  
+> **Harvest Timestamp**: 2026-11-13T03:26:30.281Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11515 stars
+- **Stars / Engagement**: 11520 stars
 
 ---
 
@@ -244,12 +244,12 @@ import (
 	"github.com/siderolabs/go-procfs/procfs"
 
 	"github.com/siderolabs/talos/internal/app/internal/ctrhelper"
-	"github.com/siderolabs/talos/internal/app/lifecycle/internal/containerpid"
 	"github.com/siderolabs/talos/internal/app/lifecycle/internal/output"
 	"github.com/siderolabs/talos/internal/app/machined/pkg/system/pid"
 	containerdrunner "github.com/siderolabs/talos/internal/app/machined/pkg/system/runner/containerd"
 	"github.com/siderolabs/talos/internal/pkg/capability"
 	"github.com/siderolabs/talos/internal/pkg/cgroup"
+	"github.com/siderolabs/talos/internal/pkg/containerpid"
 	"github.com/siderolabs/talos/internal/pkg/environment"
 	"github.com/siderolabs/talos/internal/pkg/install"
 	"github.com/siderolabs/talos/internal/pkg/selinux"
@@ -404,13 +404,16 @@ func runInstallerContainer(ctx context.Context, pidRecorder pid.Recorder, rc *co
 		return fmt.Errorf("failed to start task: %w", err)
 	}
 
-	localPID, err := containerpid.NewResolver().Resolve(cgroupPath, task.Pid())
+	localPID, err := containerpid.ResolveTask(ctx, c8dClient, cgroupPath, task)
 
 	switch {
 	case errors.Is(err, containerpid.ErrGone):
 		// nothing left to record; the task exit status handled below carries the real failure
 		log.Printf("not recording installer PID: %v", err)
 	case err != nil:
+		// Unlike a service, the installer is not worth running without a recorded PID: its calls to
+		// machined would be denied, failing the install later with an error which points away from
+		// the cause. The deferred task delete kills it.
 		stdoutW.Close() //nolint:errcheck
 
 		return fmt.Errorf("failed to resolve installer PID: %w", err)
@@ -530,175 +533,7 @@ func buildInstallerArgs(disk, platform string, options *install.Options) []strin
 		constants.KernelParamNetIfnames,
 		constants.KernelParamEnforceModuleSigVerify,
 	} {
-		if c := procfs.ProcCmdline().Get(preservedArg).First(); c != nil {
-			args = append(args, "--extra-kernel-arg", fmt.Sprintf("%s=%s", preservedArg, *c))
-		}
-	}
-
-	return args
-}
-
-// buildSpecOpts constructs the OCI spec options for the installer contain
-```
-
-### Core Architecture Module: `internal/app/lifecycle/internal/containerpid/containerpid.go`
-```
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-// Package containerpid translates container PIDs reported by containerd into the PID
-// namespace of the calling process.
-package containerpid
-
-import (
-	"errors"
-	"fmt"
-	"io/fs"
-	"os"
-	"path/filepath"
-	"strconv"
-	"strings"
-	"syscall"
-
-	"github.com/siderolabs/talos/pkg/machinery/constants"
-)
-
-// ErrGone is returned by [Resolver.Resolve] when no process in the container cgroup matches
-// the PID containerd reported: the container init exited between the task start and the
-// lookup, and only its children (if any) are left behind.
-var ErrGone = errors.New("container process is gone")
-
-// Resolver resolves container init PIDs by reading cgroupfs and procfs.
-type Resolver struct {
-	cgroupMountPath string
-	procPath        string
-}
-
-// NewResolver initializes a resolver reading the default /sys/fs/cgroup and /proc mount points.
-func NewResolver() *Resolver {
-	return NewResolverWithPaths(constants.CgroupMountPath, "/proc")
-}
-
-// NewResolverWithPaths initializes a resolver reading non-default mount points.
-func NewResolverWithPaths(cgroupMountPath, procPath string) *Resolver {
-	return &Resolver{
-		cgroupMountPath: cgroupMountPath,
-		procPath:        procPath,
-	}
-}
-
-// Resolve translates the container init PID reported by containerd into the PID namespace
-// this process runs in.
-//
-// containerd resolves task PIDs in its own PID namespace. When the CRI containerd runs
-// under sandboxd it lives in the sandbox PID namespace, and so do the shim and the
-// container it creates — oci.WithHostNamespace(PIDNamespace) only inherits the runtime's
-// namespace, which is the sandbox one, not the root one. A PID namespace can only be
-// entered downwards, so the container cannot be placed back into the root namespace; the
-// translation has to happen here instead.
-//
-// cgroupfs renders PIDs in the PID namespace of the process reading it, so the cgroup of
-// the container (cgroupPath, relative to the cgroupfs mount point) lists PIDs directly
-// usable by the caller. The sandbox namespace is created with CLONE_NEWPID|CLONE_NEWNS only
-// (see sandboxd's beforeSandboxdExec), so no cgroup namespace is involved and the cgroup
-// path means the same thing on both sides.
-//
-// nsPID identifies the container init among the cgroup members: as the container shares the
-// runtime's PID namespace, the innermost NSpid of the process is exactly the PID containerd
-// reported. Without a sandbox the two namespaces coincide and this resolves to nsPID itself.
-//
-// If the container init is not (or no longer) in the cgroup, the error is [ErrGone].
-func (r *Resolver) Resolve(cgroupPath string, nsPID uint32) (int32, error) {
-	procsPath := filepath.Join(r.cgroupMountPath, cgroupPath, "cgroup.procs")
-
-	contents, err := os.ReadFile(procsPath)
-	if err != nil {
-		return 0, fmt.Errorf("failed to read %s: %w", procsPath, err)
-	}
-
-	for field := range strings.FieldsSeq(string(contents)) {
-		candidate, err := strconv.ParseInt(field, 10, 32)
-		if err != nil {
-			return 0, fmt.Errorf("failed to parse PID %q from %s: %w", field, procsPath, err)
-		}
-
-		innermost, err := r.readInnermostPID(int32(candidate))
-
-		switch {
-		case errors.Is(err, fs.ErrNotExist):
-			// the process exited between reading the cgroup and reading its status
-			continue
-		case err != nil:
-			return 0, err
-		}
-
-		if innermost == int32(nsPID) {
-			return int32(candidate), nil
-		}
-	}
-
-	return 0, fmt.Errorf("%w: no process with PID %d (as seen by containerd) found in %s", ErrGone, nsPID, procsPath)
-}
-
-// readInnermostPID returns the PID the process sees for itself, i.e. its PID in the
-// innermost PID namespace it belongs to.
-//
-// The pid argument is resolved in the caller's PID namespace, as usual for /proc.
-// The NSpid field of /proc/<pid>/status lists the process PID at every namespace level,
-// starting at the level of the reading process and descending to the namespace the process
-// itself lives in, so its last entry is the PID the process sees for itself. For a process
-// in the caller's own namespace there is a single entry and the result equals pid.
-//
-// If the process is gone, the returned error wraps [io/fs.ErrNotExist], so callers racing
-// against process exit can tell that apart from a malformed status file.
-func (r *Resolver) readInnermostPID(pid int32) (int32, error) {
-	statusPath := filepath.Join(r.procPath, strconv.Itoa(int(pid)), "status")
-
-	// /proc/<pid>/status is small enough to read in one go.
-	contents, err := os.ReadFile(statusPath)
-	if err != nil {
-		// a process which goes away mid-read reports ESRCH instead of ENOENT, normalize it
-		// so that callers have a single signal for "the process is gone"
-		if errors.Is(err, syscall.ESRCH) {
-			err = fmt.Errorf("%w: %w", fs.ErrNotExist, err)
-		}
-
-		return 0, err
-	}
-
-	innermost, err := parseInnermostPID(contents)
-	if err != nil {
-		return 0, fmt.Errorf("failed to parse %s: %w", statusPath, err)
-	}
-
-	return innermost, nil
-}
-
-// parseInnermostPID extracts the last NSpid entry from the contents of /proc/<pid>/status.
-func parseInnermostPID(contents []byte) (int32, error) {
-	for line := range strings.Lines(string(contents)) {
-		rest, ok := strings.CutPrefix(line, "NSpid:")
-		if !ok {
-			continue
-		}
-
-		fields := strings.Fields(rest)
-		if len(fields) == 0 {
-			return 0, errors.New("NSpid field is empty")
-		}
-
-		innermost, err := strconv.ParseInt(fields[len(fields)-1], 10, 32)
-		if err != nil {
-			return 0, fmt.Errorf("failed to parse NSpid entry %q: %w", fields[len(fields)-1], err)
-		}
-
-		return int32(innermost), nil
-	}
-
-	return 0, errors.New("no NSpid field found")
-}
-
+		if c := procfs.ProcCmdline().
 ```
 
 ### Core Architecture Module: `internal/app/lifecycle/internal/output/stream.go`
@@ -1942,17 +1777,348 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ```
 
+### Core Architecture Module: `internal/app/machined/pkg/controllers/k8s/render_config_static_pods.go`
+```
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+package k8s
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"maps"
+	"os"
+	"path/filepath"
+	"slices"
+	"strings"
+
+	"github.com/cosi-project/runtime/pkg/controller"
+	"github.com/cosi-project/runtime/pkg/safe"
+	"github.com/cosi-project/runtime/pkg/state"
+	"github.com/siderolabs/gen/optional"
+	"github.com/siderolabs/go-kubernetes/kubernetes/compatibility"
+	"go.uber.org/zap"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
+	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
+	apiserverv1 "k8s.io/apiserver/pkg/apis/apiserver/v1"
+	auditv1 "k8s.io/apiserver/pkg/apis/audit/v1"
+	"k8s.io/client-go/tools/clientcmd"
+
+	"github.com/siderolabs/talos/internal/pkg/selinux"
+	"github.com/siderolabs/talos/pkg/machinery/constants"
+	"github.com/siderolabs/talos/pkg/machinery/resources/k8s"
+)
+
+// kubeconfigExtension is the extension of the webhook kubeconfig files rendered for kube-apiserver.
+const kubeconfigExtension = ".kubeconfig"
+
+// authenticationTokenWebhookKubeconfigFilename is the name of the authentication token webhook kubeconfig file.
+const authenticationTokenWebhookKubeconfigFilename = "authentication-token-webhook" + kubeconfigExtension
+
+// authorizationWebhookKubeconfigFilename returns the name of the kubeconfig file for the authorization webhook.
+func authorizationWebhookKubeconfigFilename(authorizerName string) string {
+	return "authorization-webhook-" + authorizerName + kubeconfigExtension
+}
+
+// RenderConfigsStaticPodController manages k8s.ConfigsReady and renders configs for the control plane.
+type RenderConfigsStaticPodController struct{}
+
+// Name implements controller.Controller interface.
+func (ctrl *RenderConfigsStaticPodController) Name() string {
+	return "k8s.RenderConfigsStaticPodController"
+}
+
+// Inputs implements controller.Controller interface.
+func (ctrl *RenderConfigsStaticPodController) Inputs() []controller.Input {
+	return []controller.Input{
+		{
+			Namespace: k8s.ControlPlaneNamespaceName,
+			Type:      k8s.AdmissionControlConfigType,
+			Kind:      controller.InputWeak,
+		},
+		{
+			Namespace: k8s.ControlPlaneNamespaceName,
+			Type:      k8s.AuditPolicyConfigType,
+			Kind:      controller.InputWeak,
+		},
+		{
+			Namespace: k8s.ControlPlaneNamespaceName,
+			Type:      k8s.AuthorizationConfigType,
+			Kind:      controller.InputWeak,
+		},
+		{
+			Namespace: k8s.ControlPlaneNamespaceName,
+			Type:      k8s.AuthenticationConfigType,
+			Kind:      controller.InputWeak,
+		},
+		{
+			Namespace: k8s.ControlPlaneNamespaceName,
+			Type:      k8s.SchedulerConfigType,
+			ID:        optional.Some(k8s.FinalSchedulerConfigID),
+			Kind:      controller.InputWeak,
+		},
+	}
+}
+
+// Outputs implements controller.Controller interface.
+func (ctrl *RenderConfigsStaticPodController) Outputs() []controller.Output {
+	return []controller.Output{
+		{
+			Type: k8s.ConfigStatusType,
+			Kind: controller.OutputExclusive,
+		},
+	}
+}
+
+// Run implements controller.Controller interface.
+//
+//nolint:gocyclo,cyclop
+func (ctrl *RenderConfigsStaticPodController) Run(ctx context.Context, r controller.Runtime, _ *zap.Logger) error {
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-r.EventCh():
+		}
+
+		admissionRes, err := safe.ReaderGetByID[*k8s.AdmissionControlConfig](ctx, r, k8s.AdmissionControlConfigID)
+		if err != nil {
+			if state.IsNotFoundError(err) {
+				continue
+			}
+
+			return fmt.Errorf("error getting admission config resource: %w", err)
+		}
+
+		admissionConfig := admissionRes.TypedSpec()
+
+		auditRes, err := safe.ReaderGetByID[*k8s.AuditPolicyConfig](ctx, r, k8s.AuditPolicyConfigID)
+		if err != nil {
+			if state.IsNotFoundError(err) {
+				continue
+			}
+
+			return fmt.Errorf("error getting audit config resource: %w", err)
+		}
+
+		auditConfig := auditRes.TypedSpec()
+
+		authorizerConfigRes, err := safe.ReaderGetByID[*k8s.AuthorizationConfig](ctx, r, k8s.AuthorizationConfigID)
+		if err != nil {
+			if state.IsNotFoundError(err) {
+				continue
+			}
+
+			return fmt.Errorf("error getting authorization config resource: %w", err)
+		}
+
+		authorizerConfig := authorizerConfigRes.TypedSpec()
+
+		kubeAPIServerVersion := compatibility.VersionFromImageRef(authorizerConfig.Image)
+
+		// authentication config is optional, so we don't return an error if it is not found
+		authenticationConfigRes, err := safe.ReaderGetByID[*k8s.AuthenticationConfig](ctx, r, k8s.AuthenticationConfigID)
+		if err != nil && !state.IsNotFoundError(err) {
+			return fmt.Errorf("error getting authentication config resource: %w", err)
+		}
+
+		kubeSchedulerRes, err := safe.ReaderGetByID[*k8s.SchedulerConfig](ctx, r, k8s.FinalSchedulerConfigID)
+		if err != nil {
+			if state.IsNotFoundError(err) {
+				continue
+			}
+
+			return fmt.Errorf("error getting scheduler config resource: %w", err)
+		}
+
+		kubeSchedulerConfig := kubeSchedulerRes.TypedSpec()
+
+		type configFile struct {
+			filename string
+			f        func() (runtime.Object, error)
+		}
+
+		apiServerKubeconfigs, err := apiServerWebhookKubeconfigs(authorizerConfig, authenticationConfigRes)
+		if err != nil {
+			return err
+		}
+
+		apiServerConfigFiles := []configFile{
+			{
+				filename: "admission-control-config.yaml",
+				f:        admissionControlConfig(admissionConfig),
+			},
+			{
+				filename: "auditpolicy.yaml",
+				f:        auditPolicyConfig(auditConfig),
+			},
+			{
+				filename: "authorization-config.yaml",
+				f:        authorizationConfig(authorizerConfig, kubeAPIServerVersion),
+			},
+			{
+				filename: "authentication-config.yaml",
+				f:        authenticationConfig(authenticationConfigRes),
+			},
+		}
+
+		serializer := k8sjson.NewSerializerWithOptions(
+			k8sjson.DefaultMetaFactory, nil, nil,
+			k8sjson.SerializerOptions{
+				Yaml:   true,
+				Pretty: true,
+				Strict: true,
+			},
+		)
+
+		for _, pod := range []struct {
+			name         string
+			directory    string
+			selinuxLabel string
+			uid          int
+			gid          int
+			configs      []configFile
+			// kubeconfigs are webhook kubeconfigs (filename -> contents) to be rendered, if not nil,
+			// stale kubeconfigs not in the map are removed.
+			kubeconfigs map[string]string
+		}{
+			{
+				name:         "kube-apiserver",
+				directory:    constants.KubernetesAPIServerConfigDir,
+				selinuxLabel: constants.KubernetesAPIServerConfigDirSELinuxLabel,
+				uid:          constants.KubernetesAPIServerRunUser,
+				gid:          constants.KubernetesAPIServerRunGroup,
+				configs:      apiServerConfigFiles,
+				kubeconfigs:  apiServerKubeconfigs,
+			},
+			{
+				name:         "kube-scheduler",
+				directory:    constants.KubernetesSchedulerConfigDir,
+				selinuxLabel: constants.KubernetesSchedulerConfigDirSELinuxLabel,
+				uid:          constants.KubernetesSchedulerRunUser,
+				gid:          constants.KubernetesSchedulerRunGroup,
+				configs: []configFile{
+					{
+						filename: "scheduler-config.yaml",
+						f:        schedulerConfig(kubeSchedulerConfig),
+					},
+				},
+			},
+		} {
+			if err = os.MkdirAll(pod.directory, 0o755); err != nil {
+				return fmt.Errorf("error creating config directory for %q: %w", pod.name, err)
+			}
+
+			if err = selinux.SetLabel(pod.directory, pod.selinuxLabel); err != nil {
+				return err
+			}
+
+			// kubeconfigs are written first, as kube-apiserver checks that files referenced in the configuration exist
+			for _, filename := range slices.Sorted(maps.Keys(pod.kubeconfigs)) {
+				if err = writeStaticPodConfigFile(filepath.Join(pod.directory, filename), []byte(pod.kubeconfigs[filename]), pod.uid, pod.gid); err != nil {
+					return fmt.Errorf("error writing kubeconfig %q for %q: %w", filename, pod.name, err)
+				}
+			}
+
+			for _, configFile := range pod.configs {
+				var obj runtime.Object
+
+				obj, err = configFile.f()
+				if err != nil {
+					return fmt.Errorf("error generating configuration %q for %q: %w", configFile.filename, pod.name, err)
+				}
+
+				var buf bytes.Buffer
+
+				if err = serializer.Encode(obj, &buf); err != nil {
+					return fmt.Errorf("error marshaling configuration %q for %q: %w", configFile.filename, pod.name, err)
+				}
+
+				if err = writeStaticPodConfigFile(filepath.Join(pod.directory, configFile.filename), buf.Bytes(), pod.uid, pod.gid); err != nil {
+					return fmt.Errorf("error writing configuration %q for %q: %w", configFile.filename, pod.name, err)
+				}
+			}
+
+			if pod.kubeconfigs != nil {
+				if err = removeStaleKubeconfigs(pod.directory, pod.kubeconfigs); err != nil {
+					return fmt.Errorf("error removing stale kubeconfigs for %q: %w", pod.name, err)
+				}
+			}
+		}
+
+		if err = safe.WriterModify(ctx, r, k8s.NewConfigStatus(k8s.ControlPlaneNamespaceName, k8s.ConfigStatusStaticPodID), func(r *k8s.ConfigStatus) error {
+			r.TypedSpec().Ready = true
+			r.TypedSpec().Version = admissionRes.Metadata().Version().String() +
+				auditRes.Metadata().Version().String() +
+				authorizerConfigRes.Metadata().Version().String()
+
+			if authenticationConfigRes != nil {
+				r.TypedSpec().Version += authenticationConfigRes.Metadata().Version().String()
+			}
+
+			return nil
+		}); err != nil {
+			return err
+		}
+
+		r.ResetRestartBackoff()
+	}
+}
+
+func writeStaticPodConfigFile(path string, contents []byte, uid, gid int) error {
+	if err := os.WriteFile(path, contents, 0o400); err != nil {
+		return err
+	}
+
+	return os.Chown(path, uid, gid)
+}
+
+func removeStaleKubeconfigs(directory string, kubeconfigs map[string]string) error {
+	entries, err := os.ReadDir(directory)
+	if err != nil {
+		return err
+	}
+
+	for _, entry := range entries {
+		if !entry.Type().IsRegular() || !strings.HasSuffix(entry.Name(), kubeconfigExtension) {
+			continue
+		}
+
+		if _, ok := kubeconfigs[entry.Name()]; ok {
+			continue
+		}
+
+		if err = os.Remove(filepath.Join(directory, entry.Name())); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// apiServerWebhookKubeconfigs returns the webhook kubeconfigs to be rendered for kube-apiserver.
+func a
+```
+
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14933** (2026-11-11): **release(v1.14.6): prepare release**
-  *Symptoms*: This is the official v1.14.6 release. 
+- **Issue #14941** (2026-11-12): **fix: extend host namespace PID resolving to Talos containers**
+  *Symptoms*: Ensure that Talos containers PID is correctly resolved against the host PID namespace, which is specifically important for machined API access.  Extend the integration test to verify that not only connection is established, but machined authorizes the call.  Clean up the host PID resolving code overall across the code, as the PIDs of e.g. kubelet & etcd were incorrectly resolved in the status updates (but it was harmless).  This is only important with workload isolation feature being on. 
+  **Post-Mortem & Fix Analysis**:
+  > > The kernel we ship has SO_PEERPIDFD and pidfs, so this could be closed by taking the peer pidfd at handshake, a pidfd when recording the service PID, and comparing pidfs inodes (sandboxd already goes the pidfd route in hostPIDFromPidfd)  this seems valid, other are minor
+  > > > The kernel we ship has SO_PEERPIDFD and pidfs, so this could be closed by taking the peer pidfd at handshake, a pidfd when recording the service PID, and comparing pidfs inodes (sandboxd already goes the pidfd route in hostPIDFromPidfd) >  > this seems valid, other are minor  yes, I think this would be great hardening, but it's pre-existing, so I would rather do another PR to fix this.
 
-- **Issue #14926** (2026-11-11): **fix: set CPU weights for the remaining system cgroups**
-  *Symptoms*: system/extensions, system/debug and system/installer had no cpu.weight, so they ran at the kernel default of 100. On the millicore scale Talos uses for the other system services that is about 2.5 cores: under contention one extension service outweighed apid, the system containerd, trustd and udevd together.  Give each a 500 millicore weight, the same as apid. Create system/extensions at boot so it carries the weight before the first extension starts, and create the installer cgroup before runc joins it.
+- **Issue #14940** (2026-11-12): **feat: update runc 1.5.3, NVIDIA LTS and CNI plugins**
+  *Symptoms*: CNI plugins: 1.10.0  NVIDIA LTS: 620.x, and nonfree version dropped.  See https://github.com/siderolabs/extensions/pull/1349  Pulls in pkgs:  * https://github.com/siderolabs/pkgs/pull/1748 * https://github.com/siderolabs/pkgs/pull/1751 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1969,743 +2135,605 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a40aa8a` (2026-10-26)
-**Commit Message**: fix: give the mdadm runtime map directory a dedicated SELinux type
+### Incident Patch 1: `a8637940` (2026-11-12)
+**Commit Message**: fix: keep xfs.UnixRoot path resolution inside the root
 
-mdmonitor (init_t) or udev's incremental mdadm (udev_t) can each create
-/run/mdadm first. When init creates it, the directory stays run_t, and
-udev may only add entries to run_t, not remove them. mdadm replaces its
-map by renaming map.new over map and removing map.lock, and incremental
-assembly ignores a failed map update, so matching members of one array
-can end up assembled separately.
+UnixRoot resolved names with plain openat, mkdirat, unlinkat and
+renameat relative to the mount fd. Absolute symlinks and ".." were
+followed out of the root, so a symlink planted in a detached tmpfs
+could redirect a machined write to any host path.
 
-Label the directory mdadm_run_t through named type transitions from both
-creators, and grant only the directory and regular-file operations the
-map lifecycle needs. Generic /run stays add-only for udev, and other
-/run entries keep their existing types.
+Resolve names with openat2 and RESOLVE_BENEATH, and run mkdirat,
+unlinkat and renameat on the last element of a parent directory
+opened the same way. Remove now deletes a symlink itself instead of
+stat'ing its target, and RemoveAll no longer descends into a
+symlinked directory.
 
-Signed-off-by: Noel <[REDACTED_EMAIL]>
+Names that are not clean fail with EINVAL. With RESOLVE_BENEATH an
+inner ".." returns EAGAIN whenever any rename or mount on the node
+races the lookup, and cleaning the name instead would change what a
+".." after a symlink resolves to.
 
-**File**: `internal/pkg/selinux/policy/selinux/services/udev.cil` (modified, +16/-0)
+Reject EtcFileConfig paths that are not clean. A name such as
+"foo/../ssl/certs/bar" passed validation and was written into a
+Talos-managed directory.
+
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `pkg/machinery/config/types/runtime/etc_file.go` (modified, +2/-1)
 ```diff
-@@ -108,6 +108,22 @@
- (allow udev_t udev_run_t (fs_classes (rw)))
- (allow udev_t udev_socket_t (fs_classes (rw)))
- 
-+; mdmonitor in init_t and mdadm in udev_t can each create /run/mdadm.
-+; The named transitions leave unrelated /run entries on their existing types.
-+; Map, lock and temporary regular files inherit this directory's type.
-+(type mdadm_run_t)
-+(call system_f (mdadm_run_t))
-+(allow mdadm_run_t tmpfs_t (filesystem (associate)))
-+(typetransition init_t run_t dir "mdadm" mdadm_run_t)
-+(typetransition udev_t run_t dir "mdadm" mdadm_run_t)
-+
-+; Permit map replacement/unlink inside this directory, not generic /run.
-+; init_t already has system-file access; keep both callers' lifecycle explicit.
-+(allow init_t mdadm_run_t (dir (create getattr search open read write add_name remove_name)))
-+(allow init_t mdadm_run_t (file (create read write open getattr lock rename unlink)))
-+(allow udev_t mdadm_run_t (dir (create getattr search open read write add_name remove_name)))
-+(allow udev_t mdadm_run_t (file (create read write open getattr lock rename unlink)))
-+
- ; manage properties from rules
- (allow udev_t sysfs_t (fs_classes (rw)))
- 
-```
-
----
-
-### Incident Patch 2: `cdad69f1` (2026-11-09)
-**Commit Message**: fix(security): label STATE on disk with system_state_t
-
-STATE is only mounted detached, and detached mounts skipped SELinux
-labeling, so its files were unlabeled_t on disk. A privileged pod
-mounting the partition saw unlabeled_t, so any policy rule letting
-the CRI relabel unlabeled_t would hand STATE to a pod volume.
-
-Label the root of detached mounts through the mount fd, relabel the
-STATE content recursively, add neverallow rules keeping pods and the
-CRI away from system_state_t, and add integration tests for the labels
-and for the CRI relabel path through an emptyDir.
-
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/block/internal/mountops/mountops.go` (modified, +19/-0)
-```diff
-@@ -21,6 +21,7 @@ import (
- 	"github.com/siderolabs/talos/internal/pkg/selinux"
- 	"github.com/siderolabs/talos/pkg/machinery/resources/block"
- 	"github.com/siderolabs/talos/pkg/makefs"
-+	"github.com/siderolabs/talos/pkg/xfs"
- )
- 
- // CreateMountPoint creates the mount point directory if it doesn't exist.
-@@ -70,6 +71,24 @@ func setupMountPoint(target string, mode fs.FileMode, mountSpec block.MountSpec)
- 	return mount.FilterSelinuxLabelErrors(target, "", selinux.SetLabel(target, mountSpec.SelinuxLabel))
+@@ -168,7 +168,8 @@ var managedEtcPrefixes = []string{
  }
  
-+// LabelRoot sets the SELinux label of the mount spec on the root of a mounted filesystem.
-+//
-+// It is used for the detached mounts, which have no target path to label. With RecursiveRelabel, the content of the
-+// filesystem is labeled as well, even if the root is already labeled: every entry is checked, but only those with
-+// a different label are written. The label of the root says nothing about the content: Talos 1.9 to 1.11 mounted
-+// STATE attached and labeled only its root, leaving the files created before that unlabeled.
-+func LabelRoot(root xfs.Root, fstype block.FilesystemType, mountSpec block.MountSpec) error {
-+	var err error
-+
-+	if mountSpec.RecursiveRelabel {
-+		err = selinux.FSetLabelRecursive(root, ".", mountSpec.SelinuxLabel)
-+	} else {
-+		err = selinux.FSetLabel(root, ".", mountSpec.SelinuxLabel)
-+	}
-+
-+	return mount.FilterSelinuxLabelErrors(root.Source(), fstype.String(), err)
-+}
-+
- // RemoveMountPoint removes the mount point directory created by createMountPoint after unmount.
- //
- // os.Remove never removes a non-empty directory.
-```
-
-**File**: `internal/app/machined/pkg/controllers/block/internal/volumes/volumeconfig/system_volumes.go` (modified, +20/-18)
-```diff
-@@ -205,6 +205,24 @@ func GetOverlayVolumesTransformer(inContainer bool) func(configconfig.Config) ([
+ func validateEtcFilePath(path string) error {
+-	if !filepath.IsLocal(path) || strings.HasPrefix(path, ".") {
++	// a non-clean path such as "foo/../ssl/x" would slip past the managed prefix checks below
++	if !filepath.IsLocal(path) || strings.HasPrefix(path, ".") || path != filepath.Clean(path) {
+ 		return fmt.Errorf("user etc file %q must be a local path", path)
  	}
- }
  
-+// stateMountSpec is the mount spec of the STATE partition.
-+//
-+// STATE is only mounted detached, and the root of the filesystem gets the label on every read-write mount.
-+// The whole content is relabeled, so that a raw mount of the partition (e.g. from a privileged pod) shows
-+// system_state_t, not unlabeled_t files: no pod domain may read or relabel system_state_t.
-+func stateMountSpec() block.MountSpec {
-+	return block.MountSpec{
-+		TargetPath:       constants.StateMountPoint,
-+		SelinuxLabel:     constants.StateSelinuxLabel,
-+		FileMode:         0o700,
-+		UID:              0,
-+		GID:              0,
-+		Secure:           true,
-+		NoExec:           true,
-+		RecursiveRelabel: true,
-+	}
-+}
-+
- func manageStateNoConfig(encryptionMeta *runtime.MetaKey, isAgent bool) func(vc *block.VolumeConfig) error {
- 	match := celmatch.VolumePartitionLabelNonEmpty(constants.StatePartitionLabel)
- 	if isAgent { // mark as missing
-@@ -213,15 +231,7 @@ func manageStateNoConfig(encryptionMeta *runtime.MetaKey, isAgent bool) func(vc
- 
- 	return NewBuilder().
- 		WithType(block.VolumeTypePartition).
--		WithMount(block.MountSpec{
--			TargetPath:   constants.StateMountPoint,
--			SelinuxLabel: constants.StateSelinuxLabel,
--			FileMode:     0o700,
--			UID:          0,
--			GID:          0,
--			Secure:       true,
--			NoExec:       true,
--		}).WithLocator(match).
-+		WithMount(stateMountSpec()).WithLocator(match).
- 		WithFunc(func(spec *block.VolumeConfigSpec) error {
- 			if encryptionMeta != nil {
- 				encryptionFromMeta, err := volumes.UnmarshalEncryptionMeta([]byte(encryptionMeta.TypedSpec().Value))
-@@ -256,15 +266,7 @@ func manageStateConfigPresent(cfg configconfig.Config) func(vc *block.VolumeConf
- 
- 		return NewBuilder().
- 			WithType(block.VolumeTypePartition).
--			WithMount(block.MountSpec{
--				TargetPath:   constants.StateMountPoint,
--				SelinuxLabel: constants.StateSelinuxLabel,
--				FileMode:     0o700,
--				UID:          0,
--				GID:          0,
--				Secure:       true,
--				NoExec:       true,
--			}).
-+			WithMount(stateMountSpec()).
- 			WithProvisioning(block.ProvisioningSpec{
- 				Wave: block.WaveSystemDisk,
- 				DiskSelector: block.DiskSelector{
 ```
 
-**File**: `internal/app/machined/pkg/controllers/block/mount.go` (modified, +34/-5)
+**File**: `pkg/machinery/config/types/runtime/etc_file_test.go` (modified, +10/-0)
 ```diff
-@@ -604,6 +604,25 @@ func (ctrl *MountController) updateTargetSettings(
- 	return mount.FilterSelinuxLabelErrors(targetPath, fstype.String(), err)
+@@ -151,6 +151,16 @@ func TestEtcFileValidate(t *testing.T) {
+ 			configName:    "foo/../../bar",
+ 			expectedError: `user etc file "foo/../../bar" must be a local path`,
+ 		},
++		{
++			name:          "inner dot-dot into managed prefix",
++			configName:    "foo/../ssl/certs/bar",
++			expectedError: `user etc file "foo/../ssl/certs/bar" must be a local path`,
++		},
++		{
++			name:          "trailing slash",
++			configName:    "foo/",
++			expectedError: `user etc file "foo/" must be a local path`,
++		},
+ 		{
+ 			name:          "absolute path",
+ 			configName:    "/foo",
+```
+
+**File**: `pkg/xfs/root.go` (modified, +8/-20)
+```diff
+@@ -178,31 +178,19 @@ func Remove(root Root, name string) error {
  }
  
-+// shouldUpdateSettings reports whether the mount may change the metadata of the volume.
+ // RemoveAll is equivalent of os.RemoveAll acting on specified FileSystem.
+-func RemoveAll(root Root, name string) (err error) {
+-	var f fs.File
+-
+-	f, err = root.Open(name)
+-	if err != nil {
+-		if errors.Is(err, os.ErrNotExist) {
+-			return nil
+-		}
+-
+-		return err
+-	}
+-
+-	stat, err := f.Stat()
+-	if err != nil {
+-		return err
 +//
-+// Read-only volumes preserve their existing metadata, and external volume metadata is owned by the host.
-+func shouldUpdateSettings(mountRequest *block.MountRequest, volumeStatus *block.VolumeStatus) bool {
-+	return !mountRequest.TypedSpec().ReadOnly && volumeStatus.TypedSpec().Type != block.VolumeTypeExternal
-+}
-+
-+// labelDetachedRoot sets the SELinux label on the root of the filesystem of a detached mount, which has no target to label.
-+//
-+// A failure fails the mount, as it does for the target settings of an attached mount: the volume must not be used
-+// with a part of its content still unlabeled.
-+func labelDetachedRoot(mountRequest *block.MountRequest, volumeStatus *block.VolumeStatus, point *mount.Point) error {
-+	if !mountRequest.TypedSpec().Detached || !shouldUpdateSettings(mountRequest, volumeStatus) {
++// It removes a symlink itself and never descends into its target.
++func RemoveAll(root Root, name string) error {
++	err := root.Remove(name)
++	if err == nil || errors.Is(err, fs.ErrNotExist) {
 +		return nil
-+	}
-+
-+	return mountops.LabelRoot(point.Root(), volumeStatus.TypedSpec().Filesystem, volumeStatus.TypedSpec().MountSpec)
-+}
-+
- //nolint:gocyclo,cyclop
- func (ctrl *MountController) handleDiskMountOperation(
- 	ctx context.Context,
-@@ -624,11 +643,8 @@ func (ctrl *MountController) handleDiskMountOperation(
- 			fsOpts []fsopen.Option
- 		)
+ 	}
  
--		// Read-only volumes preserve their existing metadata, detached mounts have no target,
--		// and external volume metadata is owned by the host.
--		shouldUpdateTargetSettings := !mountRequest.TypedSpec().ReadOnly &&
--			!mountRequest.TypedSpec().Detached &&
--			volumeStatus.TypedSpec().Type != block.VolumeTypeExternal
-+		// Detached mounts have no target: only the SELinux label applies, see labelDetachedRoot.
-+		shouldUpdateTargetSettings := shouldUpdateSettings(mountRequest, volumeStatus) && !mountRequest.TypedSpec().Detached
+-	if err := f.Close(); err != nil {
++	// only a non-empty directory (ENOTEMPTY) needs its children removed first
++	if !errors.Is(err, fs.ErrExist) {
+ 		return err
+ 	}
  
- 		fsOpts = append(
- 			fsOpts,
-@@ -733,6 +749,12 @@ func (ctrl *MountController) handleDiskMountOperation(
- 			return fmt.Errorf("failed to mount %q: %w", mountRequest.Metadata().ID(), err)
- 		}
- 
-+		if err = labelDetachedRoot(mountRequest, volumeStatus, mountpoint); err != nil {
-+			manager.Unmount() //nolint:errcheck
-+
-+			return fmt.Errorf("failed to label the root of %q: %w", mountRequest.Metadata().ID(), err)
-+		}
-+
- 		if shouldUpdateTargetSettings {
- 			if err = ctrl.updateTargetSettings(mountTarget, volumeStatus.TypedSpec().Filesystem, volumeStatus.TypedSpec().MountSpec); err != nil {
- 				if manager.Unmount() == nil && mountPointCreated {
-@@ -785,6 +807,13 @@ func (ctrl *MountController) handleDiskMountOperation(
- 			return fmt.Errorf("failed to remount %q: %w", mountRequest.Metadata().ID(), err)
- 		}
- 
-+		// A detached mount which was first mounted read-only hasn't been labeled yet.
-+		//
-+		// On failure the mount stays read-only for the controller, so the next reconcile remounts and labels it again.
-+		if err = labelDetachedRoot(mountRequest, volumeStatus, mountCtx.point); err != nil {
-+			return fmt.Errorf("failed to label the root of %q: %w", mountRequest.Metadata().ID(), err)
-+		}
-+
- 		logger.Info(
- 			"volume remounted",
- 			zap.String("volume", volumeStatus.Metadata().ID()),
+-	if !stat.IsDir() {
+-		return root.Remove(name)
+-	}
+-
+ 	entries, err := ReadDir(root, name)
+ 	if err != nil {
+ 		return err
 ```
 
-**File**: `internal/integration/api/selinux.go` (modified, +238/-4)
+**File**: `pkg/xfs/root_linux.go` (modified, +88/-16)
 ```diff
-@@ -9,6 +9,7 @@ package api
+@@ -7,10 +7,13 @@
+ package xfs
+ 
  import (
- 	"bytes"
++	"cmp"
  	"context"
-+	"fmt"
- 	"io"
- 	"maps"
- 	"path/filepath"
-@@ -25,6 +26,7 @@ import (
- 	"github.com/stretchr/testify/assert"
- 	corev1 "k8s.io/api/core/v1"
- 	storagev1 "k8s.io/api/storage/v1"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
- 	apiresource "k8s.io/apimachinery/pkg/api/resource"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 
-@@ -829,9 +831,8 @@ func (suite *SELinuxSuite) TestNoMachineSocketAccess() {
- 
- // TestNoStateAccess verifies mounting STATE does not allow /system/state/config.yaml access.
- //
--// STATE carries no xattr labels and machined only mounts it transiently with context=system_state_t, so a
--// mount of the device from a pod shows its files as unlabeled_t, which no pod domain may read. The
--// system_state_t type itself is a neverallow for every pod domain, checked by secilc at compile time.
-+// machined labels the files of STATE system_state_t on disk, so a mount of the device from a pod shows them with
-+// this label, which no pod domain may read: the policy holds a neverallow for it, checked by secilc at compile time.
- func (suite *SELinuxSuite) TestNoStateAccess() {
- 	if !suite.SelinuxEnforcing {
- 		suite.T().Skip("skipping SELinux negative tests in permissive mode")
-@@ -843,10 +844,13 @@ func (suite *SELinuxSuite) TestNoStateAccess() {
- 	state, err := safe.StateGetByID[*block.VolumeStatus](nodeCtx, suite.Client.State(), "STATE")
- 	suite.Assert().NoError(err)
- 
-+	k8sNode, err := suite.GetK8sNodeByInternalIP(suite.ctx, node)
-+	suite.Require().NoError(err)
-+
- 	podDef, err := suite.NewPrivilegedPod("system-state-test")
- 	suite.Require().NoError(err)
- 
--	podDef = podDef.WithQuiet(true)
-+	podDef = podDef.WithQuiet(true).WithNodeName(k8sNode.Name)
- 
- 	suite.Require().NoError(podDef.Create(suite.ctx, 5*time.Minute))
- 
-@@ -870,6 +874,236 @@ func (suite *SELinuxSuite) TestNoStateAccess() {
- 	suite.Assert().Contains(stderr, "cat: can't open '/mnt/config.yaml': Permission denied")
- }
- 
-+// stateLabels returns the SELinux labels of every entry of STATE on the node, as they are on disk, by the path of
-+// the entry relative to the root of the partition.
-+//
-+// STATE is not mounted on the host, so a privileged pod mounts the partition under the kubelet directory, which
-+// propagates the mount to the host, and the labels are read with the Talos API: no pod domain may read the files,
-+// and the pod image has no tool to read the labels.
-+func (suite *SELinuxSuite) stateLabels(node string) map[string]string {
-+	nodeCtx := client.WithNode(suite.ctx, node)
-+
-+	state, err := safe.StateGetByID[*block.VolumeStatus](nodeCtx, suite.Client.State(), "STATE")
-+	suite.Require().NoError(err)
-+
-+	k8sNode, err := suite.GetK8sNodeByInternalIP(suite.ctx, node)
-+	suite.Require().NoError(err)
-+
-+	podDef, err := suite.NewPrivilegedPod("selinux-state-labels")
-+	suite.Require().NoError(err)
-+
-+	podDef = podDef.WithQuiet(true).WithNodeName(k8sNode.Name).
-+		WithHostVolumeMountPropagation(constants.KubeletDataPath, constants.KubeletDataPath, corev1.MountPropagationBidirectional)
-+
-+	suite.Require().NoError(podDef.Create(suite.ctx, 5*time.Minute))
-+
-+	defer podDef.Delete(suite.ctx) //nolint:errcheck
-+
-+	target := filepath.Join(constants.KubeletDataPath, podDef.Name())
-+
-+	_, stderr, err := podDef.Exec(suite.ctx, "mkdir "+target+" && mount "+state.TypedSpec().MountLocation+" "+target)
-+	suite.Require().NoError(err, stderr)
-+
-+	defer func() {
-+		// the mount outlives the pod on the host, so it has to go before the pod does
-+		_, stderr, err := podDef.Exec(suite.ctx, "umount "+target+" && rmdir "+target)
-+		suite.Assert().NoError(err, stderr)
-+	}()
-+
-+	stream, err := suite.Client.LS(nodeCtx, &machineapi.ListRequest{Root: target, Recurse: true, ReportXattrs: true})
-+	suite.Require().NoError(err)
-+
-+	labels := map[string]string{}
-+
-+	suite.Require().NoError(helpers.ReadGRPCStream(stream, func(info *machineapi.FileInfo, _ string, _ bool) error {
-+		suite.Require().Empty(info.Error, "failed to list %s", info.Name)
-+
-+		labels[info.RelativeName] = ""
-+
-+		for _, xattr := range info.Xattrs {
-+			if xattr.Name == "security.selinux" {
-+				labels[info.RelativeName] = string(bytes.Trim(xattr.Data, "\x00\n"))
-+			}
-+		}
-+
-+		return nil
-+	}))
-+
-+	return labels
-+}
-+
-+// TestStateLabels verifies machined labels STATE on disk: a raw mount of the partition shows system_state_t on every
-+// entry, which no pod domain may read or relabel, never unlabeled_t, the type of every file without a label.
-+func (suite *SELinuxSuite) TestStateLabels() {
-+	node := suite.RandomDiscoveredNodeInternalIP()
-+
-+	if pointer.SafeDeref(procfs.NewCmdline(suite.ReadCmdline(client.WithNode(suite.ctx, node))).Get(constants.KernelParamSELinux).First()) == "" {
-+		suite.T().Skip("skipping since SELinux is disabled")
-+	}
-+
-+	labels := suite.stateLabels(node)
-+
-+	suite.Assert().Contains(labels, ".")
-+	suite.Assert().Contains(labels, "config.yaml")
-+
-+	for name, label := range labels {
-+		suite.Assert().Equal(constan
-```
-
-**File**: `internal/integration/base/k8s.go` (modified, +10/-2)
-```diff
-@@ -244,6 +244,7 @@ type podInfo interface { //nolint:interfacebloat
- 	WithQuiet(quiet bool) podInfo
- 	WithNamespace(namespace string) podInfo
- 	WithHostVolumeMount(hostPath, mountPath string) podInfo
-+	WithHostVolumeMountPropagation(hostPath, mountPath string, propagation corev1.MountPropagationMode) podInfo
- 	WithSELinuxOptions(opts *corev1.SELinuxOptions) podInfo
- 	WithHostPID() podInfo
- 	WithPersistentVolumeClaim(claim, mountPath string) podInfo
-@@ -284,6 +285,12 @@ func (p *pod) WithNamespace(namespace string) podInfo {
- }
- 
- func (p *pod) WithHostVolumeMount(hostPath, mountPath string) podInfo {
-+	return p.WithHostVolumeMountPropagation(hostPath, mountPath, corev1.MountPropagationNone)
-+}
-+
-+// WithHostVolumeMountPropagation mounts the host path with the mount propagation: with the bidirectional one,
-+// which takes a privileged pod, the mounts the container makes under the path show up on the host.
-+func (p *pod) WithHostVolumeMountPropagation(hostPath, mountPath string, propagation corev1.MountPropagationMode) podInfo {
- 	name := filepath.Base(hostPath)
- 
- 	p.pod.Spec.Volumes = append(p.pod.Spec.Volumes, corev1.Volume{
-@@ -295,8 +302,9 @@ func (p *pod) WithHostVolumeMount(hostPath, mountPath string) podInfo {
- 	})
- 
- 	p.pod.Spec.Containers[0].VolumeMounts = append(p.pod.Spec.Containers[0].VolumeMounts, corev1.VolumeMount{
--		Name:      name,
--		MountPath: mountPath,
-+		Name:             name,
-+		MountPath:        mountPath,
-+		MountPropagation: &propagation,
- 	})
- 
- 	return p
-```
-
-**File**: `internal/pkg/selinux/policy/selinux/services/pods.cil` (modified, +25/-0)
-```diff
-@@ -55,3 +55,28 @@
- (typetransition pod_containerd_t pod_file_t process pod_privileged_t)
- (typealias spc_t)
- (typealiasactual spc_t pod_privileged_t)
-+
-+; STATE holds the machine configuration and its secrets, and machined labels its content system_state_t on disk.
-+; A privileged pod may mount the partition, so the rules below pin what the policy grants on system_state_t today,
-+; for every class of file: a new rule which grants more fails the build.
-+;
-+; A pod only gets what every domain has on every file: it may see the entries and their labels, never read, change or
-+; relabel them. Executing a file is granted on every type as well, but it takes the read permission to do it.
-+(neverallow pod_p system_state_t (file (not (getattr execute execute_no_trans))))
-+(neverallow pod_p system_state_t (dir (not (getattr search))))
-+(neverallow pod_p system_state_t (lnk_file (not (getattr))))
-+(neverallow pod_p system_state_t (chr_file (not (getattr))))
-+(neverallow pod_p system_state_t (blk_file (not (getattr))))
-+(neverallow pod_p system_state_t (sock_file (not (getattr))))
-+(neverallow pod_p system_state_t (fifo_file (not (getattr))))
-+(neverallow pod_p system_state_t (filesystem (all)))
-+; The CRI is a system service and reads any file, but it relabels the volumes of pods, so it may never change the files
-+; of STATE or take them out of system_state_t.
-+(neverallow pod_containerd_t system_state_t (file (not (execmod getattr lock map open read watch watch_mount watch_reads watch_sb watch_with_perm mounton))))
-+(neverallow pod_containerd_t system_state_t (dir (not (execmod getattr lock map open read watch watch_mount watch_reads watch_sb watch_with_perm search mounton))))
-+(neverallow pod_containerd_t system_state_t (lnk_file (not (execmod getattr lock map open read watch watch_mount watch_reads watch_sb watch_with_perm mounton))))
-+(neverallow pod_containerd_t system_state_t (chr_file (not (execmod getattr lock map open read watch watch_mount watch_reads watch_sb watch_with_perm mounton))))
-+(neverallow pod_containerd_t system_state_t (blk_file (not (execmod getattr lock map open read watch watch_mount watch_reads watch_sb watch_with_perm mounton))))
-+(neverallow pod_containerd_t system_state_t (sock_file (not (execmod getattr lock map open read watch watch_mount watch_reads watch_sb watch_with_perm mounton))))
-+(neverallow pod_containerd_t system_state_t (fifo_file (not (execmod getattr lock map open read watch watch_mount watch_reads watch_sb watch_with_perm mounton))))
-+(neverallow pod_containerd_t system_state_t (filesystem (relabelfrom relabelto quotamod)))
-```
-
-**File**: `internal/pkg/selinux/selinux.go` (modified, +55/-0)
-```diff
-@@ -8,10 +8,13 @@ package selinux
- import (
- 	"bytes"
- 	_ "embed"
 +	"errors"
-+	"io/fs"
- 	"log"
+ 	"fmt"
+ 	"io/fs"
  	"os"
- 	"path/filepath"
- 	"slices"
-+	"strconv"
- 	"sync"
++	"path/filepath"
+ 	"strings"
  
- 	"github.com/pkg/xattr"
-@@ -180,6 +183,58 @@ func FSetLabel(root xfs.Root, filename string, label string, excludeLabels ...st
- 	return nil
+ 	"golang.org/x/sys/unix"
+@@ -72,55 +75,124 @@ func (root *UnixRoot) Fd() (int, error) {
+ 	return root.mntfd, nil
  }
  
-+// FSetLabelRecursive sets label for directory and its content recursively using provided root.
-+// It does not perform the operation in case SELinux is disabled, provided label is empty or already set.
-+//
-+// Every entry is labeled, whatever its type, and symlinks are not followed. The walk stops on the first error.
-+func FSetLabelRecursive(root xfs.Root, dir string, label string, excludeLabels ...string) error {
-+	if label == "" || !IsEnabled() {
-+		return nil
-+	}
++// resolveBeneath keeps path resolution inside the root: absolute symlinks and
++// ".." leaving the root fail with EXDEV.
++const resolveBeneath = unix.RESOLVE_BENEATH | unix.RESOLVE_NO_MAGICLINKS
 +
-+	return fs.WalkDir(root, dir, func(path string, _ fs.DirEntry, err error) error {
-+		if err != nil {
-+			return err
-+		}
-+
-+		return fsetLabelNoOpen(root, path, label, excludeLabels...)
-+	})
-+}
-+
-+// fsetLabelNoOpen sets the label of an entry without opening it, so it works for symlinks, sockets, fifos and
-+// device nodes as well, and it takes a single descriptor to check and to set the label.
-+//
-+// The xattr syscalls refuse an O_PATH descriptor, but the path of the descriptor in /proc resolves to the entry
-+// itself, even if the entry is a symlink.
-+func fsetLabelNoOpen(root xfs.Root, filename string, label string, excludeLabels ...string) error {
-+	f, err := xfs.OpenFile(root, filename, unix.O_PATH|unix.O_NOFOLLOW, 0)
+ // Mkdir creates a new directory in the root filesystem with the specified name and permissions.
+ func (root *UnixRoot) Mkdir(name string, perm os.FileMode) error {
+-	return unix.Mkdirat(root.mntfd, strings.TrimLeft(name, "/"), uint32(perm))
++	dirfd, base, err := root.parent(name)
 +	if err != nil {
 +		return err
 +	}
-+	defer f.Close() //nolint:errcheck
 +
-+	procPath := "/proc/self/fd/" + strconv.FormatUint(uint64(f.Fd()), 10)
++	defer unix.Close(dirfd) //nolint:errcheck
 +
-+	current, err := xattr.Get(procPath, "security.selinux")
-+	if err != nil && !errors.Is(err, unix.ENODATA) {
++	return unix.Mkdirat(dirfd, base, uint32(perm))
+ }
+ 
+ // Open opens a file in the root filesystem with the specified name in read-only mode.
+ func (root *UnixRoot) Open(name string) (fs.File, error) {
+-	return root.OpenFile(strings.TrimLeft(name, "/"), unix.O_RDONLY, 0)
++	return root.OpenFile(name, unix.O_RDONLY, 0)
+ }
+ 
+ // OpenFile opens a file in the root filesystem with the specified name, flags, and permissions.
+ func (root *UnixRoot) OpenFile(name string, flags int, perm os.FileMode) (File, error) {
+-	fd, err := unix.Openat(root.mntfd, strings.TrimLeft(name, "/"), flags|unix.O_CLOEXEC, uint32(perm))
++	name, err := cleanName(name)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 
+-	return os.NewFile(uintptr(fd), strings.TrimLeft(name, "/")), nil
++	how := unix.OpenHow{
++		Flags:   uint64(flags | unix.O_CLOEXEC),
++		Resolve: resolveBeneath,
++	}
++
++	// openat2 rejects a mode unless the file may be created
++	if flags&unix.O_CREAT != 0 || flags&unix.O_TMPFILE == unix.O_TMPFILE {
++		how.Mode = uint64(perm.Perm())
++	}
++
++	fd, err := unix.Openat2(root.mntfd, name, &how)
++	if err != nil {
++		return nil, err
++	}
++
++	return os.NewFile(uintptr(fd), name), nil
+ }
+ 
+ // Remove removes a file or directory from the root filesystem.
++//
++// A symlink is removed itself, not its target.
+ func (root *UnixRoot) Remove(name string) error {
+-	flags := 0
+-
+-	info, err := root.stat(strings.TrimLeft(name, "/"))
++	dirfd, base, err := root.parent(name)
+ 	if err != nil {
+ 		return err
+ 	}
+ 
+-	if info.IsDir() {
+-		flags = unix.AT_REMOVEDIR
++	defer unix.Close(dirfd) //nolint:errcheck
++
++	err = unix.Unlinkat(dirfd, base, 0)
++	if errors.Is(err, unix.EISDIR) {
++		err = unix.Unlinkat(dirfd, base, unix.AT_REMOVEDIR)
+ 	}
+ 
+-	return unix.Unlinkat(root.mntfd, strings.TrimLeft(name, "/"), flags)
++	return err
+ }
+ 
+ // Rename renames a file or directory in the root filesystem from old to new.
+ func (root *UnixRoot) Rename(oldname, newname string) error {
+-	return unix.Renameat(root.mntfd, strings.TrimLeft(oldname, "/"), root.mntfd, strings.TrimLeft(newname, "/"))
++	olddirfd, oldbase, err := root.parent(oldname)
++	if err != nil {
 +		return err
 +	}
 +
-+	currentLabel := string(bytes.Trim(current, "\x00\n"))
++	defer unix.Close(olddirfd) //nolint:errcheck
 +
-+	// Skip extra FS transactions when labels are okay.
-+	if currentLabel == label {
-+		return nil
++	newdirfd, newbase, err := root.parent(newname)
++	if err != nil {
++		return err
 +	}
 +
-+	// Skip setting label if it's in excludeLabels.
-+	if currentLabel != "" && slices.Contains(excludeLabels, currentLabel) {
-+		return nil
++	defer unix.Close(newdirfd) //nolint:errcheck
++
++	return unix.Renameat(olddirfd, oldbase, newdirfd, newbase)
+ }
+ 
+-func (root *UnixRoot) stat(name string) (os.FileInfo, error) {
+-	f, err := root.Open(strings.TrimLeft(name, "/"))
++// parent opens the directory holding name beneath the root and returns it with
++// the last path element, which *at syscalls do not follow.
++func (root *UnixRoot) parent(name string) (int, string, error) {
++	name, err := cleanName(name)
+ 	if err != nil {
+-		return nil, err
++		return -1, "", err
 +	}
 +
-+	return xattr.Set(procPath, "security.selinux", []byte(label))
++	if !filepath.IsLocal(name) {
++		return -1, "", fmt.Errorf("%q escapes the root: %w", name, unix.EXDEV)
++	}
++
++	dir, base := filepath.Split(name)
++
++	dirfd, err := unix.Openat2(root.mntfd, cmp.Or(dir, "."), &unix.OpenHow{
++		Flags:   unix.O_PATH | unix.O_DIRECTORY | unix.O_CLOEXEC,
++		Resolve: resolveBeneath,
++	})
++	if err != nil {
++		return -1, "", err
++	}
++
++	return dirfd, base, nil
 +}
 +
- // SetLabelRecursive sets label for directory and its content recursively.
- // It does not perform the operation in case SELinux is disabled, provided label is empty or already set.
- func SetLabelRecursive(dir string, label string, excludeLabels ...string) error {
++// cleanName rejects names that are not clean: with RESOLVE_BENEATH, an inner ".."
++// fails with EAGAIN whenever any rename or mount on the system races the lookup.
++func cleanName(name string) (string, error) {
++	name = strings.TrimLeft(name, "/")
++	if name != filepath.Clean(name) {
++		return "", fmt.Errorf("%q is not a clean path: %w", name, unix.EINVAL)
+ 	}
+-	defer f.Close() //nolint:errcheck
+ 
+-	return f.Stat()
++	return name, nil
+ }
+ 
+ // Source returns the source of the underlying filesystem.
+```
+
+**File**: `pkg/xfs/root_linux_test.go` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++//go:build linux
++
++package xfs_test
++
++import (
++	"os"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"golang.org/x/sys/unix"
++
++	"github.com/siderolabs/talos/pkg/xfs"
++	"github.com/siderolabs/talos/pkg/xfs/fsopen"
++)
++
++func TestUnixRootConfined(t *testing.T) {
++	t.Parallel()
++
++	if uid := os.Getuid(); uid != 0 {
++		t.Skipf("skipping test, not running as root (uid %d)", uid)
++	}
++
++	root := &xfs.UnixRoot{FS: fsopen.New("tmpfs")}
++	require.NoError(t, root.OpenFS())
++
++	t.Cleanup(func() { root.Close() }) //nolint:errcheck
++
++	fd, err := root.Fd()
++	require.NoError(t, err)
++
++	require.NoError(t, xfs.MkdirAll(root, "dir", 0o755))
++	require.NoError(t, xfs.WriteFile(root, "dir/file", []byte("inside"), 0o644))
++
++	// the remove subtest gets its own symlinks, as parallel subtests run in any order
++	for name, target := range map[string]string{
++		"abs":       os.TempDir(),
++		"up":        "../..",
++		"inside":    "dir",
++		"rm-abs":    os.TempDir(),
++		"rm-inside": "dir",
++	} {
++		require.NoError(t, unix.Symlinkat(target, fd, name))
++	}
++
++	contents, err := xfs.ReadFile(root, "inside/file")
++	require.NoError(t, err)
++	assert.Equal(t, "inside", string(contents))
++
++	for _, name := range []string{"abs/escape", "up/escape", "../escape"} {
++		t.Run(name, func(t *testing.T) {
++			t.Parallel()
++
++			assert.ErrorIs(t, xfs.WriteFile(root, name, []byte("escape"), 0o644), unix.EXDEV)
++			assert.ErrorIs(t, root.Mkdir(name, 0o755), unix.EXDEV)
++			assert.ErrorIs(t, root.Remove(name), unix.EXDEV)
++			assert.ErrorIs(t, root.Rename("dir/file", name), unix.EXDEV)
++		})
++	}
++
++	for _, name := range []string{"dir/../dir/file", "dir/./file", "dir/"} {
++		t.Run(name, func(t *testing.T) {
++			t.Parallel()
++
++			_, err := xfs.ReadFile(root, name)
++			assert.ErrorIs(t, err, unix.EINVAL)
++			assert.ErrorIs(t, root.Remove(name), unix.EINVAL)
++		})
++	}
++
++	t.Run("remove symlink", func(t *testing.T) {
++		t.Parallel()
++
++		// a symlink is removed itself, its target stays
++		require.NoError(t, root.Remove("rm-abs"))
++		require.NoError(t, xfs.RemoveAll(root, "rm-inside"))
++
++		contents, err := xfs.ReadFile(root, "dir/file")
++		require.NoError(t, err)
++		assert.Equal(t, "inside", string(contents))
++	})
++}
 ```
 
 ---
 
-### Incident Patch 3: `7fcafd49` (2026-11-10)
-**Commit Message**: fix: keep container-held volume mounts secure
+### Incident Patch 2: `47d103d4` (2026-11-10)
+**Commit Message**: test: speed up container suite short mode
 
-The container mount controller requested its volume mounts without
-`secure` or `noexec`. Volume mount requests are merged by OR, so as long
-as the volume's own request was there the mount stayed secure, but once
-the container's request was the last one holding the volume, the mount
-attributes were reconciled down to it: nosuid, nodev and noexec were
-cleared on the live host mount.
+Cuts down the execution time of ContainersSuite integration tests in
+short mode. Exact duration will vary, but the current ballpark duration
+is ~60s (down from ~160s).
 
-That happens while a container still holds a volume whose config was
-removed in the same apply (until the container stops), and for the
-whole life of the container when the volume name is swapped to another
-volume kind.
+The time savings come mostly from reducing idle time in the test scenarios: shorter timeouts, faster polling, shorter restart delay, shorter sleep values in dummy test containers. We now also skip `TestStopTimeout/default` in short mode.
 
-Resolve the volume's own `mount.secure` setting along with its ID, and
-request the same security for the container's mount, as the volume's
-own mount request does. An explicit `secure: false` still opts out.
+Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
 
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/containers/mount.go` (modified, +5/-0)
+**File**: `internal/integration/api/containers.go` (modified, +67/-33)
 ```diff
-@@ -363,6 +363,11 @@ func (ctrl *MountController) reconcileContainer(
- 				// Detached must stay false: a detached mount is reachable only through a file
- 				// descriptor and never appears at its target, so there would be no path to bind.
- 				res.TypedSpec().Detached = false
-+				// The volume's own security, as its own mount request asks for: requests are merged, so
-+				// asking for less would weaken the mount whenever this request is the last one holding
-+				// it, such as after the volume config is removed or swapped while the container runs.
-+				res.TypedSpec().Secure = backing.Secure
-+				res.TypedSpec().NoExec = backing.Secure
+@@ -266,7 +266,14 @@ func (suite *ContainersSuite) TestRestartAfterTermination() {
+ 		suite.Run(test.name, func() {
+ 			ctx, name, _ := suite.setupContainer(test.name)
  
- 				return nil
- 			},
-```
-
-**File**: `internal/app/machined/pkg/controllers/containers/mount_test.go` (modified, +32/-0)
-```diff
-@@ -199,6 +199,9 @@ func (suite *MountSuite) TestRequestsAndResolvesUserVolume() {
- 		asrt.False(request.TypedSpec().ReadOnly)
- 		// Detached would give a file descriptor with no path to bind into the container.
- 		asrt.False(request.TypedSpec().Detached)
-+		// Secure, as the volume is by default.
-+		asrt.True(request.TypedSpec().Secure)
-+		asrt.True(request.TypedSpec().NoExec)
- 	})
+-			suite.applyContainers(ctx, suite.shellContainer(name, test.command))
++			// A short restart delay keeps the wait for the replacement short; the default delay is
++			// exercised by TestContainerStatus.
++			doc := suite.shellContainer(name, test.command)
++			doc.LifecycleConfig = &containercfg.ContainerLifecycle{
++				RestartConfig: &containercfg.ContainerRestart{RestartDelay: new(time.Second)},
++			}
++
++			suite.applyContainers(ctx, doc)
  
- 	// Until the volume is mounted there is no host path, so the container cannot start.
-@@ -241,6 +244,35 @@ func (suite *MountSuite) TestReadOnlyOptionIsRequested() {
- 		})
- }
- 
-+// TestVolumeSecurityIsRequested covers the request asking for what the volume itself asks for.
-+// Requests for a volume are merged, so a request asking for less would leave the mount less secure
-+// whenever it is the last one holding the volume.
-+func (suite *MountSuite) TestVolumeSecurityIsRequested() {
-+	insecureVolume := blockcfg.NewUserVolumeConfigV1Alpha1()
-+	insecureVolume.MetaName = testVolumeName
-+	insecureVolume.MountSpec.MountSecure = new(false)
-+
-+	suite.replaceVolumes(insecureVolume)
-+	suite.createSpec(suite.volumeMount())
-+
-+	ctest.AssertResource(suite, testRequestID, func(request *block.VolumeMountRequest, asrt *assert.Assertions) {
-+		asrt.False(request.TypedSpec().Secure)
-+		asrt.False(request.TypedSpec().NoExec)
-+	})
-+
-+	secureVolume := blockcfg.NewUserVolumeConfigV1Alpha1()
-+	secureVolume.MetaName = testVolumeName
-+	secureVolume.MountSpec.MountSecure = new(true)
-+
-+	suite.replaceVolumes(secureVolume)
-+
-+	// Followed for the same volume, without the request being replaced.
-+	ctest.AssertResource(suite, testRequestID, func(request *block.VolumeMountRequest, asrt *assert.Assertions) {
-+		asrt.True(request.TypedSpec().Secure)
-+		asrt.True(request.TypedSpec().NoExec)
-+	})
-+}
-+
- // TestResolvesExistingVolume covers a name declared by an ExistingVolumeConfig.
- func (suite *MountSuite) TestResolvesExistingVolume() {
- 	doc := blockcfg.NewExistingVolumeConfigV1Alpha1()
-```
-
-**File**: `internal/integration/api/containers.go` (modified, +30/-1)
-```diff
-@@ -11,6 +11,7 @@ import (
- 	"errors"
- 	"fmt"
- 	"io"
-+	"maps"
- 	"math/rand"
- 	"path/filepath"
- 	"slices"
-@@ -1965,8 +1966,17 @@ func (suite *ContainersSuite) TestVolumeHeldAcrossKindChange() {
- 				"the mount is not held for the container, finalizers: %v", status.Metadata().Finalizers())
- 		})
- 
-+	// The container's request is now the only one, the volume's own having gone with its config. The
-+	// mount must not be weakened by that: the status is written once the mount attributes are applied,
-+	// so from here on they are what the kernel has.
- 	rtestutils.AssertResource(ctx, suite.T(), suite.Client.State(), constants.UserVolumePrefix+volumeName,
--		func(*block.MountStatus, *assert.Assertions) {})
-+		func(status *block.MountStatus, asrt *assert.Assertions) {
-+			asrt.Equal([]string{requestID}, status.TypedSpec().Spec.RequesterIDs)
-+			asrt.True(status.TypedSpec().Spec.Secure, "the held mount is no longer secure")
-+			asrt.True(status.TypedSpec().Spec.NoExec, "the held mount is no longer noexec")
-+		})
-+
-+	suite.assertMountOptions(ctx, filepath.Join(constants.UserVolumeMountPoint, volumeName), "nosuid", "nodev", "noexec")
- 
- 	suite.T().Logf("removing container config %q", name)
- 
-@@ -2207,6 +2217,25 @@ func (suite *ContainersSuite) setupUserVolume(ctx context.Context, node, owner,
- 	return name
- }
- 
-+// assertMountOptions checks that the mount at mountPoint on the node carries each of the per-mount
-+// options, as the kernel reports them.
-+func (suite *ContainersSuite) assertMountOptions(ctx context.Context, mountPoint string, options ...string) {
-+	r, err := suite.Client.Read(ctx, "/proc/self/mountinfo")
-+	suite.Require().NoError(err)
-+
-+	defer r.Close() //nolint:errcheck
-+
-+	mounts, err := parseMountInfo(r)
-+	suite.Require().NoError(err)
-+
-+	idx := slices.IndexFunc(mounts, func(m mountInfo) bool { return m.mountPoint == mountPoint })
-+	suite.Require().NotEqual(-1, idx, "nothing is mounted at %q", mountPoint)
-+
-+	for _, option := range options {
-+		suite.Assert().True(mounts[idx].has(option), "mount %q is missing %s, has %v", mountPoint, option, slices.Sorted(maps.Keys(mounts[idx].options)))
-+	}
-+}
-+
- // newDirectoryUserVolume builds a directory-backed user volume document.
- func newDirectoryUserVolume(name string) *blockcfg.UserVolumeConfigV1Alpha1 {
- 	doc := blockcfg.NewUserVolumeConfigV1Alpha1()
-```
-
-**File**: `pkg/machinery/config/config/volume.go` (modified, +18/-3)
-```diff
-@@ -18,25 +18,40 @@ import (
- type BackingVolume struct {
- 	ID       string
- 	ReadOnly bool
-+	// Secure is the volume's own mount.secure setting, which the volume's mount request turns into
-+	// nosuid, nodev and noexec.
-+	//
-+	// Another requester of the volume should ask for the same: the mount is only as secure as what
-+	// its current requesters ask for, so a requester asking for less weakens the mount whenever it
-+	// is the only one left, such as while it still holds the volume after its config is removed.
-+	Secure bool
- }
- 
- // ResolveBackingVolume resolves a user, existing, or external volume by document name.
- func ResolveBackingVolume(cfg Config, name string) (BackingVolume, bool) {
- 	for _, volume := range cfg.UserVolumeConfigs() {
- 		if volume.Name() == name {
--			return BackingVolume{ID: constants.UserVolumePrefix + name}, true
-+			return BackingVolume{ID: constants.UserVolumePrefix + name, Secure: volume.Mount().Secure()}, true
- 		}
- 	}
- 
- 	for _, volume := range cfg.ExistingVolumeConfigs() {
- 		if volume.Name() == name {
--			return BackingVolume{ID: constants.ExistingVolumePrefix + name, ReadOnly: volume.Mount().ReadOnly()}, true
-+			return BackingVolume{
-+				ID:       constants.ExistingVolumePrefix + name,
-+				ReadOnly: volume.Mount().ReadOnly(),
-+				Secure:   volume.Mount().Secure(),
-+			}, true
- 		}
- 	}
- 
- 	for _, volume := range cfg.ExternalVolumeConfigs() {
- 		if volume.Name() == name {
--			return BackingVolume{ID: constants.ExternalVolumePrefix + name, ReadOnly: volume.Mount().ReadOnly()}, true
-+			return BackingVolume{
-+				ID:       constants.ExternalVolumePrefix + name,
-+				ReadOnly: volume.Mount().ReadOnly(),
-+				Secure:   volume.Mount().Secure(),
-+			}, true
- 		}
- 	}
- 
-```
-
-**File**: `pkg/machinery/config/config/volume_test.go` (modified, +6/-1)
-```diff
-@@ -26,6 +26,7 @@ func TestResolveBackingVolume(t *testing.T) {
- 		mount    string
- 		id       string
- 		readOnly bool
-+		insecure bool
+ 			firstID, first := suite.assertNewestInstance(ctx, name, "first exit",
+ 				func(status *containers.ContainerInstanceStatusSpec, asrt *assert.Assertions) bool {
+@@ -308,17 +315,25 @@ func (suite *ContainersSuite) TestStopTimeout() {
  	}{
- 		{kind: "UserVolumeConfig", name: "images", query: "images", id: "u-images"},
- 		{kind: "ExistingVolumeConfig", name: "images", query: "images", id: "e-images"},
-@@ -39,6 +40,9 @@ func TestResolveBackingVolume(t *testing.T) {
- 		{kind: "SwapVolumeConfig", name: "images", query: "images"},
- 		{kind: "ExistingVolumeConfig", name: "images", query: "images", mount: "mount:\n  readOnly: true\n", id: "e-images", readOnly: true},
- 		{kind: "ExternalVolumeConfig", name: "images", query: "images", mount: "mount:\n  readOnly: true\n", id: "x-images", readOnly: true},
-+		{kind: "UserVolumeConfig", name: "images", query: "images", mount: "mount:\n  secure: false\n", id: "u-images", insecure: true},
-+		{kind: "ExistingVolumeConfig", name: "images", query: "images", mount: "mount:\n  secure: false\n", id: "e-images", insecure: true},
-+		{kind: "ExternalVolumeConfig", name: "images", query: "images", mount: "mount:\n  secure: false\n", id: "x-images", insecure: true},
+ 		{name: "configured", stopTimeout: 2 * time.Second, minStop: 2 * time.Second, maxStop: constants.ContainerDefaultStopTimeout},
+ 		{name: "default", minStop: constants.ContainerDefaultStopTimeout},
+-		// a restarted container is started again 5s after it has exited
+-		{name: "restart", restart: true, stopTimeout: 2 * time.Second, minStop: 7 * time.Second, maxStop: constants.ContainerDefaultStopTimeout + 5*time.Second},
++		// a restarted container is started again one restart delay (1s here) after it has exited
++		{name: "restart", restart: true, stopTimeout: 2 * time.Second, minStop: 3 * time.Second, maxStop: constants.ContainerDefaultStopTimeout + time.Second},
  	} {
- 		t.Run(test.kind+"/"+test.name+"/"+test.query+"/"+test.mount, func(t *testing.T) {
- 			t.Parallel()
-@@ -48,7 +52,8 @@ func TestResolveBackingVolume(t *testing.T) {
+ 		suite.Run(test.name, func() {
++			if test.stopTimeout == 0 && testing.Short() {
++				suite.T().Skip("skipping the default stop timeout in short mode, it takes the whole default timeout")
++			}
++
+ 			ctx, name, _ := suite.setupContainer("stop-timeout-" + test.name)
  
- 			volume, found := config.ResolveBackingVolume(cfg, test.query)
- 			assert.Equal(t, test.id != "", found)
--			assert.Equal(t, config.BackingVolume{ID: test.id, ReadOnly: test.readOnly}, volume)
-+			// Secure unless the volume opts out, which is the default of every volume kind.
-+			assert.Equal(t, config.BackingVolume{ID: test.id, ReadOnly: test.readOnly, Secure: test.id != "" && !test.insecure}, volume)
- 		})
+ 			doc := suite.shellContainer(name, "date +start=%s; trap 'date +term=%s' TERM; while true; do sleep 1 & wait $!; done")
+ 			if test.stopTimeout != 0 {
+ 				doc.LifecycleConfig = &containercfg.ContainerLifecycle{StopTimeoutConfig: new(test.stopTimeout)}
+ 			}
+ 
++			if test.restart {
++				doc.LifecycleConfig.RestartConfig = &containercfg.ContainerRestart{RestartDelay: new(time.Second)}
++			}
++
+ 			suite.applyContainers(ctx, doc)
+ 
+ 			instanceID, _ := suite.assertContainerRunning(ctx, name, "initial start")
+@@ -335,22 +350,7 @@ func (suite *ContainersSuite) TestStopTimeout() {
+ 				suite.applyContainers(ctx, replaced)
+ 			}
+ 
+-			var term, restart int64
+-
+-			suite.Require().EventuallyWithT(func(collect *assert.CollectT) {
+-				log, err := suite.readContainerLog(ctx, name)
+-				if !assert.NoError(collect, err) {
+-					return
+-				}
+-
+-				starts, terms := logTimes(log, "start="), logTimes(log, "term=")
+-
+-				if assert.Len(collect, starts, 2, "not started again yet:\n%s", log) && assert.Len(collect, terms, 1, "no SIGTERM logged:\n%s", log) {
+-					term, restart = terms[0], starts[1]
+-				}
+-			}, containerStartTimeout, time.Second)
+-
+-			stopped := time.Duration(restart-term) * time.Second
++			stopped := suite.stopDuration(ctx, name)
+ 
+ 			suite.Assert().GreaterOrEqual(stopped, test.minStop)
+ 
+@@ -361,9 +361,33 @@ func (suite *ContainersSuite) TestStopTimeout() {
  	}
  }
+ 
++// stopDuration waits for the container to log one SIGTERM and a second start, and returns the
++// time between them.
++func (suite *ContainersSuite) stopDuration(ctx context.Context, name string) time.Duration {
++	var term, restart int64
++
++	suite.Require().EventuallyWithT(func(collect *assert.CollectT) {
++		log, err := suite.readContainerLog(ctx, name)
++		if !assert.NoError(collect, err) {
++			return
++		}
++
++		starts, terms := logTimes(log, "start="), logTimes(log, "term=")
++
++		if assert.Len(collect, starts, 2, "not started again yet:\n%s", log) && assert.Len(collect, terms, 1, "no SIGTERM logged:\n%s", log) {
++			term, restart = terms[0], starts[1]
++		}
++	}, containerStartTimeout, time.Second)
++
++	return time.Duration(restart-term) * time.Second
++}
++
+ // TestRestartPolicy verifies that a container which isn't restarted keeps its outcome, and that
+ // on-failure restarts a failing container up to maxRetries.
+ func (suite *ContainersSuite) TestRestartPolicy() {
++	// Short, so that waiting out a few restart delays to see nothing happen stays cheap.
++	const restartDelay = time.Second
++
+ 	for _, test := range []struct {
+ 		name     string
+ 		command  string
+@@ -375,24 +399,30 @@ func (suite *ContainersSuite) TestRestartPolicy() {
+ 		{
+ 			name:    "never",
+ 			command: "exit 0",
+-			restart: &containercfg.ContainerRestart{RestartPolicy: configcontainer.ContainerRestartPolicyNever},
+-			state:   containers.ContainerStateCompleted,
+-			runs:    1,
++			restart: &containercfg.ContainerRestart{
++				RestartPolicy: configcontainer.ContainerRestartPolicyNever,
++				RestartDelay:  new(restartDelay),
++			},
++			state: containers.ContainerStateCompleted,
++			runs:  1,
+ 		},
+ 		{
+ 			name:    "on-failure-success",
+ 			command: "exit 0",
+-			restart: &containercfg.ContainerRestar
+```
+
+---
+
+### Incident Patch 3: `b8f7d486` (2026-11-12)
+**Commit Message**: fix: reject ExtensionServiceConfig mount paths without a file name
+
+The config files controller flattens mountPath into one file name in
+the service config directory. Paths such as "/", "/." and "/.."
+flatten to "", "." or "..", which point at the service directory
+or its parent. Writing the file then fails with EISDIR and the
+controller retries forever.
+
+Reject these mount paths during validation.
+
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `pkg/machinery/config/types/runtime/extensions/service_config.go` (modified, +17/-2)
+```diff
+@@ -8,6 +8,7 @@ package extensions
+ 
+ import (
+ 	"fmt"
++	"strings"
+ 
+ 	"github.com/siderolabs/gen/xslices"
+ 
+@@ -153,14 +154,28 @@ func (e *ServiceConfigV1Alpha1) Validate(validation.RuntimeMode, ...validation.O
+ 			return nil, fmt.Errorf("extension content is required for extension %q", e.ServiceName)
+ 		}
+ 
+-		if file.ConfigFileMountPath == "" {
+-			return nil, fmt.Errorf("extension mount path is required for extension %q", e.ServiceName)
++		if err := validateMountPath(file.ConfigFileMountPath, e.ServiceName); err != nil {
++			return nil, err
+ 		}
+ 	}
+ 
+ 	return nil, nil
+ }
+ 
++func validateMountPath(path, serviceName string) error {
++	if path == "" {
++		return fmt.Errorf("extension mount path is required for extension %q", serviceName)
++	}
++
++	// the mount path is flattened into a single file name in the service config directory
++	switch strings.ReplaceAll(strings.TrimPrefix(path, "/"), "/", "-") {
++	case "", ".", "..":
++		return fmt.Errorf("extension mount path %q is invalid for extension %q", path, serviceName)
++	}
++
++	return nil
++}
++
+ // Name implements config.ExtensionServiceConfig interface.
+ func (e *ServiceConfigV1Alpha1) Name() string {
+ 	return e.ServiceName
+```
+
+**File**: `pkg/machinery/config/types/runtime/extensions/service_config_test.go` (modified, +32/-0)
+```diff
+@@ -132,6 +132,38 @@ func TestExtensionServiceConfigValidate(t *testing.T) {
+ 			},
+ 			expectedError: `no config files found for extension "foo"`,
+ 		},
++		{
++			name: "mount path dot-dot",
++			cfg: func() *extensions.ServiceConfigV1Alpha1 {
++				cfg := extensions.NewServicesConfigV1Alpha1()
++				cfg.ServiceName = "foo"
++				cfg.ServiceConfigFiles = []extensions.ConfigFile{
++					{
++						ConfigFileContent:   "bar",
++						ConfigFileMountPath: "/..",
++					},
++				}
++
++				return cfg
++			},
++			expectedError: `extension mount path "/.." is invalid for extension "foo"`,
++		},
++		{
++			name: "mount path root",
++			cfg: func() *extensions.ServiceConfigV1Alpha1 {
++				cfg := extensions.NewServicesConfigV1Alpha1()
++				cfg.ServiceName = "foo"
++				cfg.ServiceConfigFiles = []extensions.ConfigFile{
++					{
++						ConfigFileContent:   "bar",
++						ConfigFileMountPath: "/",
++					},
++				}
++
++				return cfg
++			},
++			expectedError: `extension mount path "/" is invalid for extension "foo"`,
++		},
+ 	} {
+ 		t.Run(test.name, func(t *testing.T) {
+ 			t.Parallel()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14933** (2026-11-11): release(v1.14.6): prepare release (@smira)
-- **PR #14926** (2026-11-11): fix: set CPU weights for the remaining system cgroups (@frezbo)
-- **PR #14925** (2026-11-11): feat: update Go to 1.27.4 and Linux to 7.3.4 (@smira)
-- **PR #14924** (2026-11-11): backports: v1.14.6 (@smira)
-- **PR #14917** (2026-11-11): fix: log lifecycle service actions to console (@smira)
-- **PR #14916** (2026-11-11): fix: don't zero the discovered volume partition offset (@smira)
+- **PR #14941** (2026-11-12): fix: extend host namespace PID resolving to Talos containers (@smira)
+- **PR #14940** (2026-11-12): feat: update runc 1.5.3, NVIDIA LTS and CNI plugins (@smira)
+- **PR #14939** (2026-11-12): fix(security): mount hardening (@frezbo)
+- **PR #14938** (2026-11-12): fix: reject ExtensionServiceConfig mount paths without a file name (@frezbo)
+- **PR #14937** (2026-11-12): fix: correct the schema examples URL in the cgroups command help (@immanuwell)
+- **PR #14935** (2026-11-12): feat: show io.weight, io.latency and io.max in the io cgroup preset (@frezbo)
 
 ---
 
@@ -2725,43 +2753,29 @@ Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. give the mdadm runtime map directory a dedicated SELinux type
+## X. keep xfs.UnixRoot path resolution inside the root
 
 **RULE**:
-When implementing operations in `internal/pkg/selinux/policy/selinux/services/udev.cil`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/machinery/config/types/runtime/etc_file.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a40aa8a`: give the mdadm runtime map directory a dedicated SELinux type. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a8637940`: keep xfs.UnixRoot path resolution inside the root. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/pkg/selinux/policy/selinux/services/udev.cil`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/machinery/config/types/runtime/etc_file.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-; mdmonitor in init_t and mdadm in udev_t can each create /run/mdadm.
-; The named transitions leave unrelated /run entries on their existing types.
-; Map, lock and temporary regular files inherit this directory's type.
-(type mdadm_run_t)
-(call system_f (mdadm_run_t))
-(allow mdadm_run_t tmpfs_t (filesystem (associate)))
-(typetransition init_t run_t dir "mdadm" mdadm_run_t)
-(typetransition udev_t run_t dir "mdadm" mdadm_run_t)
-
-; Permit map replacement/unlink inside this directory, not generic /run.
-; init_t already has system-file access; keep both callers' lifecycle explicit.
-(allow init_t mdadm_run_t (dir (create getattr search open read write add_name remove_name)))
-(allow init_t mdadm_run_t (file (create read write open getattr lock rename unlink)))
-(allow udev_t mdadm_run_t (dir (create getattr search open read write add_name remove_name)))
-(allow udev_t mdadm_run_t (file (create read write open getattr lock rename unlink)))
-
+	// a non-clean path such as "foo/../ssl/x" would slip past the managed prefix checks below
+	if !filepath.IsLocal(path) || strings.HasPrefix(path, ".") || path != filepath.Clean(path) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	if !filepath.IsLocal(path) || strings.HasPrefix(path, ".") {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a40aa8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a8637940` are properly handled with clean fallback behavior.

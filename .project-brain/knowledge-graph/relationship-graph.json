@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-13T03:19:04.435Z",
+  "updated_at": "2026-11-13T03:32:06.696Z",
   "statistics": {
-    "total_nodes": 40,
+    "total_nodes": 42,
     "total_edges": 18,
     "domain_distribution": {
-      "D": 27,
+      "D": 29,
       "M": 1,
       "H": 7,
       "J": 2,
@@ -890,6 +890,50 @@
       ],
       "created_at": "2026-11-13T03:19:04.434Z",
       "updated_at": "2026-11-13T03:19:04.434Z"
+    },
+    "DOM-D-B0538309": {
+      "id": "DOM-D-B0538309",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): astral-sh/uv",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  \n> **Source**: github ([https://github.com/astral-sh/uv] -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  \n> **Source**: github ([https://github.com/astral-sh/uv]",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://astral-sh-uv/astral-sh-uv-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T03:31:24.031Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (astral-sh-uv)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T03:31:39.883Z",
+      "updated_at": "2026-11-13T03:31:39.883Z"
+    },
+    "DOM-D-27F43F41": {
+      "id": "DOM-D-27F43F41",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md`  \n> **Source**: huggingface ( -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md`  \n> **Source**: huggingface (",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-lodestones-moss-image-sft-8-steps-dmd/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T03:31:40.062Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-lodestones-moss-image-sft-8-steps-dmd)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-13T03:32:06.696Z",
+      "updated_at": "2026-11-13T03:32:06.696Z"
     }
   },
   "edges": [

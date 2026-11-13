@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-13T03:19:04.433Z",
-  "total_records": 86,
+  "last_updated": "2026-11-13T03:32:06.694Z",
+  "total_records": 88,
   "domains": {
     "A": {
       "total": 1,
@@ -24,7 +24,7 @@
       ]
     },
     "D": {
-      "total": 45,
+      "total": 47,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -70,7 +70,9 @@
         "DOM-D-DABEAFCE",
         "DOM-D-FC7E335F",
         "DOM-D-8804A7F5",
-        "DOM-D-2C1C9237"
+        "DOM-D-2C1C9237",
+        "DOM-D-B0538309",
+        "DOM-D-27F43F41"
       ]
     },
     "E": {
@@ -3527,6 +3529,90 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-13T03:19:04.430Z"
+    },
+    "DOM-D-B0538309": {
+      "record_id": "DOM-D-B0538309",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): astral-sh/uv",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  \n> **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  \n> **Source Version**: `9b4fe902`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n>",
+      "content_hash": "5969d47ce2e7b368544bb010cd34cdc9f2eacb00fa0aa932a623b381aa9a8e45",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  \n> **Source**: github ([https://github.com/astral-sh/uv] -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  \n> **Source**: github ([https://github.com/astral-sh/uv]",
+      "provenance": {
+        "source_uri": "project://astral-sh-uv/astral-sh-uv-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T03:31:24.031Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (astral-sh-uv)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of astral-sh-uv"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T03:31:39.879Z"
+    },
+    "DOM-D-27F43F41": {
+      "record_id": "DOM-D-27F43F41",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd](https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd))  \n> **Source Version**: `hf-lodest",
+      "content_hash": "3f30372728e16ee87f9143564f8faed21a08ce163c1e828b78f5e2436272cf3b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md`  \n> **Source**: huggingface ( -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md`  \n> **Source**: huggingface (",
+      "provenance": {
+        "source_uri": "project://hf-lodestones-moss-image-sft-8-steps-dmd/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-13T03:31:40.062Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-lodestones-moss-image-sft-8-steps-dmd)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-lodestones-moss-image-sft-8-steps-dmd"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-13T03:32:06.692Z"
     }
   }
 }
