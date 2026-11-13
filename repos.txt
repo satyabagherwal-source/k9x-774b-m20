@@ -5038,3 +5038,7 @@ https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-11-13T09:16:53.959Z] ---
 # [HUGGINGFACE-AI-MODELS] thinkingmachines/Inkling-2-Small (1632 score) - Verified Hugging Face Model: thinkingmachines/Inkling-2-Small (162 likes, 12 dow
 https://huggingface.co/thinkingmachines/Inkling-2-Small
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-13T13:50:06.925Z] ---
+# [HIGH-PERF-SYSTEMS] tuist/tuist (3617 score) - Tuist builds infrastructure for faster, more reliable build and test workflows a
+https://github.com/tuist/tuist

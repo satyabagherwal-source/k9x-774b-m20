@@ -20992,5 +20992,20 @@
     "downloads": 12,
     "qualityScore": 1632,
     "discoveredAt": "2026-11-13T09:14:45.457Z"
+  },
+  {
+    "name": "tuist",
+    "fullName": "tuist/tuist",
+    "url": "https://github.com/tuist/tuist",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Tuist builds infrastructure for faster, more reliable build and test workflows across developers, CI, and coding agents. Shared cache, tests, and insights that sit alongside your existing CI.",
+    "stars": 5864,
+    "forks": 783,
+    "openIssues": 599,
+    "language": "Rust",
+    "qualityScore": 3617,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-13T13:47:29.470Z"
   }
 ]

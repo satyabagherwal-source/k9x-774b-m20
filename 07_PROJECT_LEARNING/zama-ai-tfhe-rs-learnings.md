@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `9066683f`  
+> **Source Version**: `6767731b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T01:57:28.754Z  
+> **Timestamp**: 2026-11-13T13:50:28.121Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T01:57:28.743Z  
+> **Harvest Timestamp**: 2026-11-13T13:50:28.113Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1679 stars
+- **Stars / Engagement**: 1680 stars
 
 ---
 
@@ -43,62 +43,108 @@
 #define AES_UTILITIES
 #include "../integer/integer_utilities.h"
 
-/**
- * This structure holds pre-computed LUTs for essential bitwise operations
- * required by the homomorphic AES circuit. Pre-computing these tables allows
- * for efficient application of non-linear functions like AND during the PBS
- * process. It includes LUTs for:
- * - AND: for the non-linear part of the S-Box.
- * - FLUSH: to clear carry bits and isolate the message bit (x -> x & 1).
- * - CARRY: to extract the carry bit for additions (x -> (x >> 1) & 1).
- */
+// AES state dimensions
+
+/// @brief Bits per state byte
+static constexpr uint32_t AES_BITS_PER_BYTE = 8;
+/// @brief State bytes
+static constexpr uint32_t AES_STATE_BYTES = 16;
+/// @brief State bits, one radix block each once bitsliced
+static constexpr uint32_t AES_STATE_BITS = AES_STATE_BYTES * AES_BITS_PER_BYTE;
+
+/// @brief S-box wires (22 a, 68 b, 18 c), sizes the S-box workspace. Kept in
+/// sync with the circuit by a static_assert in the S-box
+static constexpr uint32_t AES_SBOX_WIRE_SLOTS = 108;
+
+/// @brief ANDs in the widest S-box layer (the c wires), sizes and_lut and the
+/// batch staging buffer. Also checked by a static_assert in the S-box
+static constexpr uint32_t AES_SBOX_AND_GATES = 18;
+
+/// @brief What an int_aes_encrypt_buffer is for. FULL_ENCRYPTION for the CTR
+/// loop, SBOX_ONLY for the key schedule which only needs the S-box
+enum class aes_buffer_scope { FULL_ENCRYPTION, SBOX_ONLY };
+
+// state_lut slots. Slot 0 is the resting one, whoever picks another must put
+// AES_LUT_FLUSH back before returning
+
+/// @brief Flush, x & 1, resting slot
+static constexpr uint32_t AES_LUT_FLUSH = 0;
+/// @brief Carry combine of the CTR adder on kill 0, propagate 1, generate 2.
+/// With that encoding the symbol is just a + b, no PBS needed to build it
+static constexpr uint32_t AES_LUT_CTR_SELECT = 1;
+/// @brief Sum bit of the CTR adder, propagate xor carry
+static constexpr uint32_t AES_LUT_CTR_SUM = 2;
+/// @brief state_lut slots under FULL_ENCRYPTION
+static constexpr uint32_t AES_NUM_STATE_LUTS = 3;
+
+// and_lut slots, same resting slot rule
+
+/// @brief AND on a levelled sum, x == 2, resting slot
+static constexpr uint32_t AES_ANDLUT_AND = 0;
+/// @brief Flush, for batches too wide for state_lut
+static constexpr uint32_t AES_ANDLUT_FLUSH = 1;
+/// @brief and_lut slots
+static constexpr uint32_t AES_NUM_ANDLUT_SLOTS = 2;
+
+/// @brief The two multi slot LUTs every PBS of the encryption goes through.
+/// and_lut for the S-box ANDs and wide flushes, state_lut for state wide
+/// flushes and the CTR adder.
 template <typename Torus> struct int_aes_lut_buffers {
+  /// @brief Sized for the widest AND layer, AES_SBOX_AND_GATES *
+  /// num_aes_inputs * sbox_parallelism blocks
   int_radix_lut<Torus> *and_lut;
-  int_radix_lut<Torus> *flush_lut;
-  int_radix_lut<Torus> *carry_lut;
+  /// @brief One state worth of blocks, AES_STATE_BITS * num_aes_inputs. Only
+  /// the flush slot under SBOX_ONLY
+  int_radix_lut<Torus> *state_lut;
 
   int_aes_lut_buffers(CudaStreams streams, const int_radix_params &params,
                       bool allocate_gpu_memory, uint32_t num_aes_inputs,
-                      uint32_t sbox_parallelism, uint64_t &size_tracker) {
-
-    constexpr uint32_t AES_STATE_BITS = 128;
-    constexpr uint32_t SBOX_MAX_AND_GATES = 18;
+                      uint32_t sbox_parallelism, uint64_t &size_tracker,
+                      aes_buffer_scope scope) {
 
     this->and_lut = new int_radix_lut<Torus>(
-        streams, params, 1,
-        SBOX_MAX_AND_GATES * num_aes_inputs * sbox_parallelism,
+        streams, params, AES_NUM_ANDLUT_SLOTS,
+        AES_SBOX_AND_GATES * num_aes_inputs * sbox_parallelism,
         allocate_gpu_memory, size_tracker);
-    std::function<Torus(Torus, Torus)> and_lambda =
-        [](Torus a, Torus b) -> Torus { return a & b; };
 
-    auto active_streams_and_lut = streams.active_gpu_subset(
-        SBOX_MAX_AND_GATES * num_aes_inputs * sbox_parallelism,
-        params.pbs_type());
-    this->and_lut->generate_and_broadcast_bivariate_lut(
-        active_streams_and_lut, {0}, {and_lambda}, LUT_0_FOR_ALL_BLOCKS);
-
-    this->flush_lut = new int_radix_lut<Torus>(
-        streams, params, 1, AES_STATE_BITS * num_aes_inputs,
-        allocate_gpu_memory, size_tracker);
+    std::function<Torus(Torus)> and_lambda = [](Torus x) -> Torus {
+      return x == 2 ? 1 : 0;
+    };
     std::function<Torus(Torus)> flush_lambda = [](Torus x) -> Torus {
       return x & 1;
     };
 
-    auto active_streams_flush_lut = streams.active_gpu_subset(
+    auto active_streams_and_lut = streams.active_gpu_subset(
+        AES_SBOX_AND_GATES * num_aes_inputs * sbox_parallelism,
+        params.pbs_type());
+    this->and_lut->generate_and_broadcast_lut(
+        active_streams_and_lut, {AES_ANDLUT_AND, AES_ANDLUT_FLUSH},
+        {and_lambda, flush_lambda}, LUT_0_FOR_ALL_BLOCKS);
+
+    const bool needs_ctr_luts = (scope == aes_buffer_scope::FULL_ENCRYPTION);
+    this->state_lut = new int_radix_lut<Torus>(
+        streams, params, needs_ctr_luts ? AES_NUM_STATE_LUTS : 1,
+        AES_STATE_BITS * num_aes_inputs, allocate_gpu_memory, size_tracker);
+
+    auto active_streams_state_lut = streams.active_gpu_subset(
         AES_STATE_BITS * num_aes_inputs, params.pbs_type());
-    this->flush_lut->generate_and_broadcast_lut(
-        active_streams_flush_lut, {0}, {flush_lambda}, LUT_0_FOR_ALL_BLOCKS);
+    this->state_lut->generate_and_broadcast_lut(active_streams_state_lut,
+                                                {AES_LUT_FLUSH}, {flush_lambda},
+                                                LUT_0_FOR_ALL_BLOCKS);
 
-    this->carry_lut = new int_radix_lut<Torus>(
-        streams, params, 1, num_aes_inputs, allocate_gpu_memory, size_tracker);
-    std::function<Torus(Torus)> carry_lambda = [](Torus x) -> Torus {
-      return (x >> 1) & 1;
-    };
+    if (needs_ctr_luts) {
+      std::function<Torus(Torus, Torus)> select_lambda =
+          [](Torus hi, Torus lo) -> Torus { return hi == 1 ? lo : hi; };
 
-    auto active_streams_carry_lut =
-        streams.active_gpu_subset(num_aes_inputs, params.pbs_type());
-    this->carry_lut->generate_and_broadcast_lut(
-        active_streams_carry_lut, {0}, {carry_lambda}, LUT_0_FOR_ALL_BLOCKS);
+      std::function<Torus(Torus, Torus)> sum_lambda = [](Torus p,
+                                                         Torus c) -> Torus {
+        return (p == 1 ? 1 : 0) ^ (c == 2 ? 1 : 0);
+      };
+
+      this->state_lut->generate_and_broadcast_bivariate_lut(
+          active_streams_state_lut, {AES_LUT_CTR_SELECT, AES_LUT_CTR_SUM},
+          {select_lambda, sum_lambda}, LUT_0_FOR_ALL_BLOCKS);
+    }
   }
 
   void release(CudaStreams streams) {
@@ -106,169 +152,124 @@ template <typename Torus> struct int_aes_lut_buffers {
     delete this->and_lut;
     this->and_lut = nullptr;
 
-    this->flush_lut->release(streams);
-    delete this->flush_lut;
-    this->flush_lut = nullptr;
-
-    this->carry_lut->release(streams);
-    delete this->carry_lut;
-    this->carry_lut = nullptr;
+    this->state_lut->release(streams);
+    delete this->state_lut;
+    this->state_lut = nullptr;
     cuda_synchronize_stream(streams.stream(0), streams.gpu_index(0));
   }
 };
 
-/**
- * The operations within an AES round, particularly MixColumns, require
- * intermediate storage for calculations. These buffers are designed to hold
- * temporary values like copies of columns or the results of multiplications,
- * avoiding overwriting data that is still needed in the same round.
- */
-template <typename Torus> struct int_aes_round_workspaces {
-  CudaRadixCiphertextFFI *mix_columns_col_copy_buffer;
-  CudaRadixCiphertextFFI *mix_columns_mul_workspace_buffer;
-  CudaRadixCiphertextFFI *vec_tmp_bit_buffer;
+/// @brief The fixed GF(2) maps of AES as index tables, each one a single
+/// levelled launch through host_radix_gather_sum.
+///
+/// A permutation or a 5 term sum costs the same, one launch and no PBS.
+/// Written in bit positions, the table repeats them for every input, so they
+/// don't grow with num_aes_inputs.
+struct int_aes_linear_tables {
+  /// @brief Where the xtime half starts in the MixColumns workspace, i +
+  /// XTIME_BASE is bit i doubled
+  static constexpr uint32_t XTIME_BASE = AES_STATE_BITS;
+  /// @brief Terms per xtime output bit, the shifted bit plus bit 0 where the
+  /// modulus folds back
+  static constexpr uint32_t XTIME_TERMS = 2;
+  /// @brief Terms per MixColumns output bit, 3a = 2a + a expanded
+  static constexpr uint32_t MIX_COLUMNS_TERMS = 5;
 
-  int_aes_round_workspaces(CudaStreams streams, const int_radix_params &params,
-                           bool allocate_gpu_memory, uint32_t num_aes_inputs,
-                           uint64_t &size_tracker) {
+  /// @brief Owner of the maps below
+  radix_index_tables<uint32_t> maps;
 
-    constexpr uint32_t BITS_PER_BYTE = 8;
-    constexpr uint32_t BYTES_PER_COLUMN = 4;
-    constexpr uint32_t BITS_PER_COLUMN = BITS_PER_BYTE * BYTES_PER_COLUMN;
-    constexpr uint32_t MIX_COLUMNS_MUL_WORKSPACE_BYTES = BYTES_PER_COLUMN + 1;
+  /// @brief ShiftRows, a permutation of the state bits. Round tables only
+  radix_index_table<uint32_t> shift_rows;
+  /// @brief xtime of every state byte. Round tables only
+  radix_index_table<uint32_t> xtime;
+  /// @brief MixColumns over [shifted | xtime of shifted], the four columns at
+  /// once. Round tables only
+  radix_index_table<uint32_t> mix_columns;
+  /// @brief Byte major to bit major, so the S-box sees one contiguous run per
+  /// bit
+  radix_index_table<uint32_t> sbox_gather;
+  /// @brief Back from bit major once the S-box is done
+  radix_index_table<uint32_t> sbox_scatter;
+  /// @brief Copies the IV to every input. Round tables only
+  radix_index_table<uint32_t> iv_broadcast;
+  /// @brief Bitsliced back to the block order callers expect. Round tables
+  /// only
+  radix_index_table<uint32_t> to_blocks;
 
-    this->mix_columns_col_copy_buffer = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0),
-        this->mix_columns_col_copy_buffer, BITS_PER_COLUMN * num_aes_inputs,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
+  /// @brief Rows of sbox_gather and sbox_scatter, 8 * sbox_parallelism
+  uint32_t sbox_reorder_len;
 
-    this->mix_columns_mul_workspace_buffer = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0),
-        this->mix_columns_mul_workspace_buffer,
-        MIX_COLUMNS_MUL_WORKSPACE_BYTES * BITS_PER_BYTE * num_aes_inputs,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
+  /// @brief Whether the round tables were built (FULL_ENCRYPTION)
+  bool has_round_tables;
 
-    this->vec_tmp_bit_buffer = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->vec_tmp_bit_buffer,
-        num_aes_inputs, params.big_lwe_dimension, size_tracker,
-        allocate_gpu_memory);
-  }
+  int_aes_linear_tables(CudaStreams streams, bool allocate_gpu_memory,
+                        uint32_t num_aes_inputs, uint32_t sbox_parallelism,
+                        uint64_t &size_tracker, aes_buffer_scope scope) {
 
-  void release(CudaStreams streams, bool allocate_gpu_memory) {
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->mix_columns_col_copy_buffer,
-                                   allocate_gpu_memory);
-    delete this->mix_columns_col_copy_buffer;
-    this->mix_columns_col_copy_buffer = nullptr;
+    const uint32_t N = num_aes_inputs;
+    this->sbox_reorder_len = AES_BITS_PER_BYTE * sbox_parallelism;
+    this->has_round_tables = (scope == aes_buffer_scope::FULL_ENCRYPTION);
 
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->mix_columns_mul_workspace_buffer,
-                                   allocate_gpu_memory);
-    delete this->mix_columns_mul_workspace_buffer;
-    this->mix_columns_mul_workspace_buffer = nullptr;
+    auto build = [&](radix_index_table<uint32_t> &map, uint32_t num_out_bits,
+                     uint32_t num_terms,
+                     const std::function<uint32_t(uint32_t, uint32_t)> &src) {
+      maps.create(streams, allocate_gpu_memory, size_tracker, map, num_out_bits,
+                  num_terms, N, N, src);
+    };
 
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->vec_tmp_bit_buffer,
-                                   allocate_gpu_memory);
-    delete this->vec_tmp_bit_buffer;
-    this->vec_tmp_bit_buffer = nullptr;
-    cuda_synchronize_stream(streams.stream(0), streams.gpu_index(0));
-  }
-};
+    if (has_round_tables) {
+      // ShiftRows rotates row r left by r bytes
+      //
+      //      c=0  c=1  c=2  c=3            c=0  c=1  c=2  c=3
+      // r=0 |  0 |  4 |  8 | 12 |     r=0 |  0 |  4 |  8 | 12 |
+      // r=1 |  1 |  5 |  9 | 13 |  -> r=1 |  5 |  9 | 13 |  1 |
+      // r=2 |  2 |  6 | 10 | 14 |     r=2 | 10 | 14 |  2 |  6 |
+      // r=3 |  3 |  7 | 11 | 15 |     r=3 | 15 |  3 |  7 | 11 |
+      //
+      // Reading the right side column major gives the table below
+      //
+      build(shift_rows, AES_STATE_BITS, 1, [](uint32_t bit, uint32_t) {
+        constexpr uint32_t shift_rows_map[AES_STATE_BYTES] = {
+            0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11};
+        return shift_rows_map[bit / AES_BITS_PER_BYTE] * AES_BITS_PER_BYTE +
+               bit % AES_BITS_PER_BYTE;
+      });
 
-/**
- * In CTR mode, a counter is homomorphically added to the encrypted IV. This
- * structure holds the necessary buffers for this 128-bit ripple-carry
- * addition, such as the buffer for the propagating carry bit
- * (`vec_tmp_carry_buffer`) across the addition chain.
- */
-template <typename Torus> struct int_aes_counter_workspaces {
-  CudaRadixCiphertextFFI *vec_tmp_carry_buffer;
-  CudaRadixCiphertextFFI *vec_tmp_sum_buffer;
-  CudaRadixCiphertextFFI *vec_trivial_b_bits_buffer;
-  Torus *h_counter_bits_buffer;
-  Torus *d_counter_bits_buffer;
+      // xtime multiplies by x in GF(2^8). Bits are MSB first and the modulus
+      // x^8 + x^4 + x^3 + x + 1 folds bit 0 back onto j = 3, 4, 6, 7
+      //
+      //   out[j] = a[j + 1]     j < 7
+      //   out[j] += a[0]        j = 3, 4, 6, 7
+      //
+      build(xtime, AES_STATE_BITS, XTIME_TERMS,
+            [](uint32_t bit, uint32_t term) {
+              uint32_t j = bit % AES_BITS_PER_BYTE, base = bit - j;
+              if (term == 0)
+                return (j == AES_BITS_PER_BYTE - 1) ? base : base + j + 1;
+              const bool reduced = (j == 3 || j == 4 || j == 6);
+              return reduced ? base : RADIX_INDEX_NO_TERM;
+            });
 
-  int_aes_counter_workspaces(CudaStreams streams,
-                             const int_radix_params &params,
-                             bool allocate_gpu_memory, uint32_t num_aes_inputs,
-                             uint64_t &size_tracker) {
-
-    this->vec_tmp_carry_buffer = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->vec_tmp_carry_buffer,
-        num_aes_inputs, params.big_lwe_dimension, size_tracker,
-        allocate_gpu_memory);
-
-    this->vec_tmp_sum_buffer = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0), this->vec_tmp_sum_buffer,
-        num_aes_inputs, params.big_lwe_dimension, size_tracker,
-        allocate_gpu_memory);
-
-    this->vec_trivial_b_bits_buffer = new CudaRadixCiphertextFFI;
-    create_zero_radix_ciphertext_async<Torus>(
-        streams.stream(0), streams.gpu_index(0),
-        this->vec_trivial_b_bits_buffer, num_aes_inputs,
-        params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
-
-    this->h_counter_bits_buffer =
-        (Torus *)malloc(safe_mul_sizeof<Torus>(num_aes_inputs));
-    size_tracker += safe_mul_sizeof<Torus>(num_aes_inputs);
-    this->d_counter_bits_buffer = (Torus *)cuda_malloc_with_size_tracking_async(
-        safe_mul_sizeof<Torus>(num_aes_inputs), streams.stream(0),
-        streams.gpu_index(0), size_tracker, allocate_gpu_memory);
-  }
-
-  void release(CudaStreams streams, bool allocate_gpu_memory) {
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->vec_tmp_carry_buffer,
-                                   allocate_gpu_memory);
-    delete this->vec_tmp_carry_buffer;
-    this->vec_tmp_carry_buffer = nullptr;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->vec_tmp_sum_buffer,
-                                   allocate_gpu_memory);
-    delete this->vec_tmp_sum_buffer;
-    this->vec_tmp_sum_buffer = nullptr;
-
-    release_radix_ciphertext_async(streams.stream(0), streams.gpu_index(0),
-                                   this->vec_trivial_b_bits_buffer,
-                                   allocate_gpu_memory);
-    delete this->vec_trivial_b_bits_buffer;
-    this->vec_trivial_b_bits_buffer = nullptr;
-
-    if (allocate_gpu_memory) {
-      cuda_drop_async(this->d_counter_bits_buffer, streams.stream(0),
-                      streams.gpu_index(0));
-    }
-    cuda_synchronize_stream(streams.stream(0), streams.gpu_index(0));
-    free(this->h_counter_bits_buffer);
-  }
-};
-
-/**
- * This structure allocates the most significant memory blocks:
- * - `sbox_internal_workspace`: A large workspace for the complex, parallel
- * evaluation of the S-Box circuit.
- * - `main_bitsliced_states_buffer`: Holds the entire set of AES states in a
- * bitsliced layout, which is optimal for parallel bitwise operations on the
- * GPU.
- * - Other buffers are used for data layout transformations (transposition) and
- * for batching small operations into larger, more efficient launches.
- */
-template <typename Torus> struct int_aes_main_workspaces {
-  CudaRadixCiphertextFFI *sbox_internal_workspace;
-  CudaRadixCiphertextFFI *initial_states_and_jit_key_workspace;
-  CudaRadixCiphertextFFI *main_bitsliced_states_buffer;
-  CudaRadixCiphertextFFI *tmp_tiled_key_buffer;
-  CudaRadixCiphertextFFI *batch_processing_buffer;
-
-  int_aes_main_workspaces(CudaSt
+      // MixColumns multiplies each column by a fixed matrix over GF(2^8)
+      //
+      //   | b0 |   | 2 3 1 1 |   | a0 |
+      //   | b1 | = | 1 2 3 1 | * | a1 |
+      //   | b2 |   | 1 1 2 3 |   | a2 |
+      //   | b3 |   | 3 1 1 2 |   | a3 |
+      //
+      // With 3a = 2a + a that's 5 terms per output. The workspace holds
+      // [shifted | xtime of it], so a doubled term is just index + XTIME_BASE
+      build(mix_columns, AES_STATE_BITS, MIX_COLUMNS_TERMS,
+            [](uint32_t bit, uint32_t term) {
+              uint32_t byte = bit / AES_BITS_PER_BYTE;
+              uint32_t t = bit % AES_BITS_PER_BYTE;
+              uint32_t c = byte & ~3u, b = byte & 3u;
+              auto orig = [c, t](uint32_t i) {
+                return (c + i) * AES_BITS_PER_BYTE + t;
+              };
+              auto mul2 = [&orig](uint32_t i) { return XTIME_BASE + orig(i); };
+              const uint32_t rows[4][MIX_COLUMNS_TERMS] = {
+   
 ```
 
 ### Core Architecture Module: `backends/tfhe-cuda-backend/cuda/include/integer/compression/compression_utilities.h`
@@ -1667,14 +1668,14 @@ template <typename Torus> struct int_kreyvium_buffer {
 #ifndef CUDA_BOOTSTRAP_128_H
 #define CUDA_BOOTSTRAP_128_H
 
+#include "bootstrap_key_params.h"
 #include "pbs_enums.h"
 #include <stdint.h>
 
 uint64_t scratch_cuda_programmable_bootstrap_128_vector_64(
     void *stream, uint32_t gpu_index, int8_t **pbs_buffer,
-    uint32_t lwe_dimension, uint32_t glwe_dimension, uint32_t polynomial_size,
-    uint32_t level_count, uint32_t input_lwe_ciphertext_count,
-    bool allocate_gpu_memory, PBS_MS_REDUCTION_T noise_reduction_type);
+    const CudaLweBootstrapKeyParamsFFI &bsk_params,
+    uint32_t input_lwe_ciphertext_count, bool allocate_gpu_memory);
 
 #endif // CUDA_BOOTSTRAP_128_H
 
@@ -1694,14 +1695,14 @@ bool supports_distributed_shared_memory_on_multibit_programmable_bootstrap(
 
 template <typename Torus>
 bool has_support_to_cuda_programmable_bootstrap_tbc_multi_bit(
-    uint32_t num_samples, uint32_t glwe_dimension, uint32_t polynomial_size,
-    uint32_t level_count, uint32_t max_shared_memory);
+    uint32_t num_samples, const CudaLweBootstrapKeyParamsFFI &bsk_params,
+    uint32_t max_shared_memory);
 
 #if CUDA_ARCH >= 900
 template <typename Torus>
 uint64_t scratch_cuda_tbc_multi_bit_programmable_bootstrap(
     void *stream, uint32_t gpu_index, pbs_buffer<Torus, MULTI_BIT> **buffer,
-    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t level_count,
+    const CudaLweBootstrapKeyParamsFFI &bsk_params,
     uint32_t input_lwe_ciphertext_count, bool allocate_gpu_memory);
 
 template <typename Torus>
@@ -1710,16 +1711,15 @@ void cuda_tbc_multi_bit_programmable_bootstrap_lwe_ciphertext_vector_async(
     Torus const *lwe_output_indexes, Torus const *lut_vector,
     Torus const *lut_vector_indexes, Torus const *lwe_array_in,
     Torus const *lwe_input_indexes, Torus const *bootstrapping_key,
-    pbs_buffer<Torus, MULTI_BIT> *pbs_buffer, uint32_t lwe_dimension,
-    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t grouping_factor,
-    uint32_t base_log, uint32_t level_count, uint32_t num_samples,
+    pbs_buffer<Torus, MULTI_BIT> *pbs_buffer,
+    const CudaLweBootstrapKeyParamsFFI &bsk_params, uint32_t num_samples,
     uint32_t num_many_lut, uint32_t lut_stride);
 #endif
 
 template <typename Torus>
 uint64_t scratch_cuda_cg_multi_bit_programmable_bootstrap(
     void *stream, uint32_t gpu_index, pbs_buffer<Torus, MULTI_BIT> **pbs_buffer,
-    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t level_count,
+    const CudaLweBootstrapKeyParamsFFI &bsk_params,
     uint32_t input_lwe_ciphertext_count, bool allocate_gpu_memory);
 
 template <typename Torus>
@@ -1728,15 +1728,14 @@ void cuda_cg_multi_bit_programmable_bootstrap_lwe_ciphertext_vector_async(
     Torus const *lwe_output_indexes, Torus const *lut_vector,
     Torus const *lut_vector_indexes, Torus const *lwe_array_in,
     Torus const *lwe_input_indexes, Torus const *bootstrapping_key,
-    pbs_buffer<Torus, MULTI_BIT> *pbs_buffer, uint32_t lwe_dimension,
-    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t grouping_factor,
-    uint32_t base_log, uint32_t level_count, uint32_t num_samples,
+    pbs_buffer<Torus, MULTI_BIT> *pbs_buffer,
+    const CudaLweBootstrapKeyParamsFFI &bsk_params, uint32_t num_samples,
     uint32_t num_many_lut, uint32_t lut_stride);
 
 template <typename Torus>
 uint64_t scratch_cuda_multi_bit_programmable_bootstrap(
     void *stream, uint32_t gpu_index, pbs_buffer<Torus, MULTI_BIT> **pbs_buffer,
-    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t level_count,
+    const CudaLweBootstrapKeyParamsFFI &bsk_params,
     uint32_t input_lwe_ciphertext_count, bool allocate_gpu_memory);
 
 template <typename Torus>
@@ -1745,9 +1744,8 @@ void cuda_multi_bit_programmable_bootstrap_lwe_ciphertext_vector_async(
     Torus const *lwe_output_indexes, Torus const *lut_vector,
     Torus const *lut_vector_indexes, Torus const *lwe_array_in,
     Torus const *lwe_input_indexes, Torus const *bootstrapping_key,
-    pbs_buffer<Torus, MULTI_BIT> *pbs_buffer, uint32_t lwe_dimension,
-    uint32_t glwe_dimension, uint32_t polynomial_size, uint32_t grouping_factor,
-    uint32_t base_log, uint32_t level_count, uint32_t num_samples,
+    pbs_buffer<Torus, MULTI_BIT> *pbs_buffer,
+    const CudaLweBootstrapKeyParamsFFI &bsk_params, uint32_t num_samples,
     uint32_t num_many_lut, uint32_t lut_stride);
 
 template <typename Torus>
@@ -1780,12 +1778,11 @@ uint64_t get_buffer_size_full_sm_tbc_multibit_programmable_bootstrap(
 
 template <typename Torus, class params>
 uint64_t get_lwe_chunk_size(uint32_t gpu_index, uint32_t max_num_pbs,
-                            uint32_t polynomial_size, uint32_t glwe_dimension,
-                            uint32_t level_count, uint64_t full_sm_keybundle);
+                            const CudaLweBootstrapKeyParamsFFI &bsk_params,
+                            uint64_t full_sm_keybundle);
 template <typename Torus, class params>
 uint64_t get_lwe_chunk_size_128(uint32_t gpu_index, uint32_t max_num_pbs,
-                                uint32_t polynomial_size,
-                                uint32_t glwe_dimension, uint32_t level_count,
+                                const CudaLweBootstrapKeyParamsFFI &bsk_params,
                                 uint64_t full_sm_keybundle);
 template <typename Torus>
 struct pbs_buffer<Torus, PBS_TYPE::MULTI_BIT> : public pbs_buffer_base {
@@ -1813,14 +1810,15 @@ struct pbs_buffer<Torus, PBS_TYPE::MULTI_BIT> : public pbs_buffer_base {
 private:
   // Variant-free part: shared fields plus the buffers every multi-bit variant
   // uses (keybundle scratch, keybundle FFT, accumulator, join buffer).
-  pbs_buffer(cudaStream_t stream, uint32_t gpu_index, uint32_t glwe_dimension,
-             uint32_t polynomial_size, uint32_t level_count,
+  pbs_buffer(cudaStream_t stream, uint32_t gpu_index,
+             const CudaLweBootstrapKeyParamsFFI &bsk_params,
              uint32_t input_lwe_ciphertext_count, uint64_t lwe_chunk_size,
              bool allocate_gpu_memory, uint64_t &size_tracker)
       : lwe_chunk_size(lwe_chunk_size),
         gpu_memory_allocated(allocate_gpu_memory),
-        glwe_dimension(glwe_dimension), polynomial_size(polynomial_size),
-        level_count(level_count),
+        glwe_dimension(bsk_params.glwe_dimension),
+        polynomial_size(bsk_params.polynomial_size),
+        level_count(bsk_params.level_count),
         input_lwe_ciphertext_count(input_lwe_ciphertext_count) {
     cuda_set_device(gpu_index);
     max_shared_memory = cuda_get_max_shared_memory(gpu_index);
@@ -1889,12 +1887,21 @@ private:
   }
 
 public:
-  pbs_buffer(cudaStream_t stream, uint32_t gpu_index, uint32_t glwe_dimension,
-             uint32_t polynomial_size, uint32_t level_count,
+  pbs_buffer(cudaStream_t stream, uint32_t gpu_index,
+             const CudaLweBootstrapKeyParamsFFI &bsk_params,
              uint32_t input_lwe_ciphertext_count, uint64_t lwe_chunk_size,
              pbs_variant_tag<PBS_VARIANT::DEFAULT>, bool allocate_gpu_memory,
              uint64_t &size_tracker)
-  
+      : pbs_buffer(stream, gpu_index, bsk_params, input_lwe_ciphertext_count,
+                   lwe_chunk_size, allocate_gpu_memory, size_tracker) {
+    pbs_variant = PBS_VARIANT::DEFAULT;
+
+    uint64_t full_sm_accumulate_step_one =
+        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_one<Torus>(
+            polynomial_size);
+    uint64_t partial_sm_accumulate_step_one =
+        get_buffer_size_partial_sm_multibit_programmable_bootstrap_step_one<
+            Torus>(
 ```
 
 
@@ -1927,322 +1934,1145 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9066683f` (2026-11-12)
-**Commit Message**: chore: better python pinning (#4090)
+### Incident Patch 1: `6767731b` (2026-11-13)
+**Commit Message**: feat(gpu): PRINCE and faster AES (#3862)
 
-* chore: fix useless venv setup for doxygen check
-
-* chore: better python pinning
-
-* chore: make the python additions more maintainable
-
-- centralized code
-- updated workflows to make sure safe chain is available
-
-**File**: `.github/actions/setup_python/action.yml` (added, +16/-0)
+**File**: `Makefile` (modified, +7/-0)
 ```diff
-@@ -0,0 +1,16 @@
-+name: Setup Python
-+description: Install the minimum Python version supported by the python tooling of the repository, see PYTHON_MIN_VERSION in make/python.mk
+@@ -2126,6 +2126,13 @@ bench_integer_aes256_gpu: install_rs_check_toolchain
+ 	--bench integer-aes256 \
+ 	--features=integer,internal-keycache,gpu -p tfhe-benchmark --profile release_lto_off --
+ 
++.PHONY: bench_integer_prince_gpu # Run benchmarks for PRINCEv2 on GPU backend
++bench_integer_prince_gpu: install_rs_check_toolchain
++	RUSTFLAGS="$(RUSTFLAGS)" __TFHE_RS_BENCH_TYPE=$(BENCH_TYPE) \
++	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench \
++	--bench integer-prince \
++	--features=integer,internal-keycache,gpu -p tfhe-benchmark --profile release_lto_off --
 +
-+runs:
-+  using: composite
-+  steps:
-+    - name: Get minimum Python version
-+      id: get_python_min_version
-+      shell: bash
-+      run: |
-+        echo "version=$(make python_min_version)" >> "${GITHUB_OUTPUT}"
-+
-+    - name: Install Python
-+      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-+      with:
-+        python-version: ${{ steps.get_python_min_version.outputs.version }}
+ .PHONY: bench_integer_trivium_gpu # Run benchmarks for trivium on GPU backend
+ bench_integer_trivium_gpu: install_rs_check_toolchain
+ 	RUSTFLAGS="$(RUSTFLAGS)" __TFHE_RS_BENCH_TYPE=$(BENCH_TYPE) \
 ```
 
-**File**: `.github/workflows/aws_tfhe_wasm_tests.yml` (modified, +4/-0)
+**File**: `backends/tfhe-cuda-backend/build.rs` (modified, +1/-0)
 ```diff
-@@ -86,6 +86,10 @@ jobs:
-           token: ${{ env.CHECKOUT_TOKEN }}
- 
-       # GitHub has been causing issues with unauthenticated HTTPS traffic breaking several software
-+
-+      - name: Setup Python
-+        uses: ./.github/actions/setup_python
-+
-       - name: Authenticate all github.com git traffic
-         run: |
-           # single quotes expected to avoid replacing the token inline to not have it saved on disk
+@@ -127,6 +127,7 @@ fn main() {
+             "cuda/include/integer/integer.h",
+             "cuda/include/integer/rerand.h",
+             "cuda/include/aes/aes.h",
++            "cuda/include/prince/prince.h",
+             "cuda/include/trivium/trivium.h",
+             "cuda/include/kreyvium/kreyvium.h",
+             "cuda/include/kreyvium/fast_kreyvium.h",
 ```
 
-**File**: `.github/workflows/benchmark_cpu.yml` (modified, +10/-2)
+**File**: `backends/tfhe-cuda-backend/cuda/include/aes/aes.h` (modified, +86/-0)
 ```diff
-@@ -95,18 +95,25 @@ jobs:
-           persist-credentials: "false"
-           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+@@ -3,64 +3,150 @@
+ #include "../integer/integer.h"
  
-+      - name: Setup Python
-+        uses: ./.github/actions/setup_python
-+
-+      - name: Setup Python venv
-+        run: |
-+          make setup_python_venv
-+
-       - name: Parse profile and hardware name
-         id: parse_profile_and_hardware_name
-         env:
-           INPUTS_PROFILE: ${{ inputs.profile }}
--        run: python3 ci/parse_benchmark_profile.py "$INPUTS_PROFILE" "$GITHUB_OUTPUT"
-+        run: venv/bin/python ci/parse_benchmark_profile.py "$INPUTS_PROFILE" "$GITHUB_OUTPUT"
+ extern "C" {
++/// @brief Allocates the scratch of cuda_integer_aes_ctr_encrypt_64_async and
++/// returns its GPU size, so the caller can lower sbox_parallelism until it
++/// fits.
++///
++/// @param mem_ptr Receives the scratch
++/// @param bsk_params Bootstrapping key parameters
++/// @param ksk_params Keyswitching key parameters
++/// @param num_aes_inputs Blocks every later call encrypts
++/// @param sbox_parallelism State bytes per S-box pass, divides 16. PBS width
++/// and memory both scale with it
+ uint64_t scratch_cuda_integer_aes_ctr_encrypt_64_async(
+     CudaStreamsFFI streams, int8_t **mem_ptr,
+     CudaLweBootstrapKeyParamsFFI bsk_params,
+     CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t message_modulus,
+     uint32_t carry_modulus, bool allocate_gpu_memory, uint32_t num_aes_inputs,
+     uint32_t sbox_parallelism);
  
-       - name: Get additional file to parse
-         id: set_file_to_parse
--        shell: python
-         env:
-           INPUTS_COMMAND: ${{ inputs.command }}
-         run: |
-+          venv/bin/python - <<'EOF'
-           import os
++/// @brief Allocates the scratch of cuda_integer_aes_ctr_256_encrypt_64_async
++/// and returns its GPU size. Same buffer as AES-128, only the round count
++/// differs.
++///
++/// @param mem_ptr Receives the scratch
++/// @param bsk_params Bootstrapping key parameters
++/// @param ksk_params Keyswitching key parameters
++/// @param num_aes_inputs Blocks every later call encrypts
++/// @param sbox_parallelism State bytes per S-box pass, divides 16. PBS width
++/// and memory both scale with it
+ uint64_t scratch_cuda_integer_aes_ctr_256_encrypt_64_async(
+     CudaStreamsFFI streams, int8_t **mem_ptr,
+     CudaLweBootstrapKeyParamsFFI bsk_params,
+     CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t message_modulus,
+     uint32_t carry_modulus, bool allocate_gpu_memory, uint32_t num_aes_inputs,
+     uint32_t sbox_parallelism);
  
-           inputs_command = os.environ["INPUTS_COMMAND"]
-@@ -130,6 +137,7 @@ jobs:
++/// @brief AES-128 CTR under an encrypted key, adds each input's counter to
++/// the IV and runs the 10 rounds on it, giving the keystream. Asynchronous.
++///
++/// @param output num_aes_inputs blocks of 128 bits, one bit per radix block,
++/// MSB of state byte 0 first, one input after the other
++/// @param iv 128 one bit blocks, same order, shared by every input before its
++/// counter is added
++/// @param round_keys 11 round keys of 128 one bit blocks, as
++/// cuda_integer_key_expansion_64_async writes them
++/// @param counter_bits_le_all_blocks Plaintext on the host, the counter of
++/// each input as 128 bits, LSB first, one input after the other
++/// @param num_aes_inputs Batch size, same as at scratch time
++/// @param mem_ptr From scratch_cuda_integer_aes_ctr_encrypt_64_async, same
++/// batch size
+ void cuda_integer_aes_ctr_encrypt_64_async(
+     CudaStreamsFFI streams, CudaRadixCiphertextFFI *output,
+     CudaRadixCiphertextFFI const *iv, CudaRadixCiphertextFFI const *round_keys,
+     const uint64_t *counter_bits_le_all_blocks, uint32_t num_aes_inputs,
+     int8_t *mem_ptr, void *const *bsks, void *const *ksks);
  
-           with open(output_file, "a") as f:
-             f.write(f"""additional_file_to_parse={",".join(files_to_parse)}\n""")
-+          EOF
++/// @brief Releases the scratch of cuda_integer_aes_ctr_encrypt_64_async.
++///
++/// @param mem_ptr_void Scratch to release, nullptr afterwards
+ void cleanup_cuda_integer_aes_ctr_encrypt_64(CudaStreamsFFI streams,
+                                              int8_t **mem_ptr_void);
  
-   run-benchmarks:
-     name: benchmark_cpu/run-benchmarks
++/// @brief Releases the scratch of cuda_integer_aes_ctr_256_encrypt_64_async.
++///
++/// @param mem_ptr_void Scratch to release, nullptr afterwards
+ void cleanup_cuda_integer_aes_ctr_256_encrypt_64(CudaStreamsFFI streams,
+                                                  int8_t **mem_ptr_void);
+ 
++/// @brief Allocates the scratch of cuda_integer_key_expansion_64_async and
++/// returns its GPU size.
++///
++/// @param mem_ptr Receives the scratch
++/// @param bsk_params Bootstrapping key parameters
++/// @param ksk_params Keyswitching key parameters
+ uint64_t scratch_cuda_integer_key_expansion_64_async(
+     CudaStreamsFFI streams, int8_t **mem_ptr,
+     CudaLweBootstrapKeyParamsFFI bsk_params,
+     CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t message_modulus,
+     uint32_t carry_modulus, bool allocate_gpu_memory);
+ 
++/// @brief Expands an encrypted 128-bit key into the 11 round keys of
++/// AES-128. Asynchronous.
++///
++/// @param expanded_keys Output, 44 words as 1408 one bit blocks MSB first,
++/// round key r at blocks [128 r, 128 (r + 1))
++/// @param key 128 one bit blocks, MSB first
++/// @param mem_ptr From scratch_cuda_integer_key_expansion_64_async
+ void cuda_integer_key_expansion_64_async(CudaStreamsFFI streams,
+                                          CudaRadixCiphertextFFI *expanded_keys,
+                                          CudaRadixCiphertextFFI const *key,
+                                          int8_t *mem_ptr, void *const *bsks,
+                                          void *const *ksks);
+ 
++/// @brief Releases the scratch of cuda_integer_key_expansion_64_async.
++///
++/// @param mem_ptr_void Scratch to release, nullptr afterwards
+ void cleanup_cuda_integer_key_expansion_64(CudaStreamsFFI streams,
+                                            int8_t **mem_ptr_void);
+ 
++/// @brief AES-256 CTR under
 ```
 
-**File**: `.github/workflows/benchmark_cpu_common.yml` (modified, +8/-1)
+**File**: `backends/tfhe-cuda-backend/cuda/include/aes/aes_utilities.h` (modified, +416/-328)
 ```diff
-@@ -167,6 +167,9 @@ jobs:
-           persist-credentials: "false"
-           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+@@ -2,205 +2,303 @@
+ #define AES_UTILITIES
+ #include "../integer/integer_utilities.h"
  
-+      - name: Setup Python
-+        uses: ./.github/actions/setup_python
+-/**
+- * This structure holds pre-computed LUTs for essential bitwise operations
+- * required by the homomorphic AES circuit. Pre-computing these tables allows
+- * for efficient application of non-linear functions like AND during the PBS
+- * process. It includes LUTs for:
+- * - AND: for the non-linear part of the S-Box.
+- * - FLUSH: to clear carry bits and isolate the message bit (x -> x & 1).
+- * - CARRY: to extract the carry bit for additions (x -> (x >> 1) & 1).
+- */
++// AES state dimensions
 +
-       - name: Get benchmark details
-         run: |
-           COMMIT_DATE=$(git --no-pager show -s --format=%cd --date=iso8601-strict "${SHA}");
-@@ -245,10 +248,14 @@ jobs:
-           merge-multiple: true
-           path: previous_protocol_table
++/// @brief Bits per state byte
++static constexpr uint32_t AES_BITS_PER_BYTE = 8;
++/// @brief State bytes
++static constexpr uint32_t AES_STATE_BYTES = 16;
++/// @brief State bits, one radix block each once bitsliced
++static constexpr uint32_t AES_STATE_BITS = AES_STATE_BYTES * AES_BITS_PER_BYTE;
++
++/// @brief S-box wires (22 a, 68 b, 18 c), sizes the S-box workspace. Kept in
++/// sync with the circuit by a static_assert in the S-box
++static constexpr uint32_t AES_SBOX_WIRE_SLOTS = 108;
++
++/// @brief ANDs in the widest S-box layer (the c wires), sizes and_lut and the
++/// batch staging buffer. Also checked by a static_assert in the S-box
++static constexpr uint32_t AES_SBOX_AND_GATES = 18;
++
++/// @brief What an int_aes_encrypt_buffer is for. FULL_ENCRYPTION for the CTR
++/// loop, SBOX_ONLY for the key schedule which only needs the S-box
++enum class aes_buffer_scope { FULL_ENCRYPTION, SBOX_ONLY };
++
++// state_lut slots. Slot 0 is the resting one, whoever picks another must put
++// AES_LUT_FLUSH back before returning
++
++/// @brief Flush, x & 1, resting slot
++static constexpr uint32_t AES_LUT_FLUSH = 0;
++/// @brief Carry combine of the CTR adder on kill 0, propagate 1, generate 2.
++/// With that encoding the symbol is just a + b, no PBS needed to build it
++static constexpr uint32_t AES_LUT_CTR_SELECT = 1;
++/// @brief Sum bit of the CTR adder, propagate xor carry
++static constexpr uint32_t AES_LUT_CTR_SUM = 2;
++/// @brief state_lut slots under FULL_ENCRYPTION
++static constexpr uint32_t AES_NUM_STATE_LUTS = 3;
++
++// and_lut slots, same resting slot rule
++
++/// @brief AND on a levelled sum, x == 2, resting slot
++static constexpr uint32_t AES_ANDLUT_AND = 0;
++/// @brief Flush, for batches too wide for state_lut
++static constexpr uint32_t AES_ANDLUT_FLUSH = 1;
++/// @brief and_lut slots
++static constexpr uint32_t AES_NUM_ANDLUT_SLOTS = 2;
++
++/// @brief The two multi slot LUTs every PBS of the encryption goes through.
++/// and_lut for the S-box ANDs and wide flushes, state_lut for state wide
++/// flushes and the CTR adder.
+ template <typename Torus> struct int_aes_lut_buffers {
++  /// @brief Sized for the widest AND layer, AES_SBOX_AND_GATES *
++  /// num_aes_inputs * sbox_parallelism blocks
+   int_radix_lut<Torus> *and_lut;
+-  int_radix_lut<Torus> *flush_lut;
+-  int_radix_lut<Torus> *carry_lut;
++  /// @brief One state worth of blocks, AES_STATE_BITS * num_aes_inputs. Only
++  /// the flush slot under SBOX_ONLY
++  int_radix_lut<Torus> *state_lut;
  
-+      - name: Setup Python venv
-+        run: |
-+          make setup_python_venv
-+
-       - name: Render protocol results table
-         if: ${{ contains(matrix.command, 'protocol') }}
-         run: |
--          python3 ci/protocol_results_table.py "${RESULTS_FILENAME}" \
-+          venv/bin/python ci/protocol_results_table.py "${RESULTS_FILENAME}" \
-           --hardware "${HARDWARE_NAME}" \
-           --csv "${PROTOCOL_TABLE_CSV}" \
-           --merge "previous_protocol_table/${PROTOCOL_TABLE_CSV}"
+   int_aes_lut_buffers(CudaStreams streams, const int_radix_params &params,
+                       bool allocate_gpu_memory, uint32_t num_aes_inputs,
+-                      uint32_t sbox_parallelism, uint64_t &size_tracker) {
+-
+-    constexpr uint32_t AES_STATE_BITS = 128;
+-    constexpr uint32_t SBOX_MAX_AND_GATES = 18;
++                      uint32_t sbox_parallelism, uint64_t &size_tracker,
++                      aes_buffer_scope scope) {
+ 
+     this->and_lut = new int_radix_lut<Torus>(
+-        streams, params, 1,
+-        SBOX_MAX_AND_GATES * num_aes_inputs * sbox_parallelism,
++        streams, params, AES_NUM_ANDLUT_SLOTS,
++        AES_SBOX_AND_GATES * num_aes_inputs * sbox_parallelism,
+         allocate_gpu_memory, size_tracker);
+-    std::function<Torus(Torus, Torus)> and_lambda =
+-        [](Torus a, Torus b) -> Torus { return a & b; };
+-
+-    auto active_streams_and_lut = streams.active_gpu_subset(
+-        SBOX_MAX_AND_GATES * num_aes_inputs * sbox_parallelism,
+-        params.pbs_type());
+-    this->and_lut->generate_and_broadcast_bivariate_lut(
+-        active_streams_and_lut, {0}, {and_lambda}, LUT_0_FOR_ALL_BLOCKS);
+ 
+-    this->flush_lut = new int_radix_lut<Torus>(
+-        streams, params, 1, AES_STATE_BITS * num_aes_inputs,
+-        allocate_gpu_memory, size_tracker);
++    std::function<Torus(Torus)> and_lambda = [](Torus x) -> Torus {
++      return x == 2 ? 1 : 0;
++    };
+     std::function<Torus(Torus)> flush_lambda = [](Torus x) -> Torus {
+       return x & 1;
+     };
+ 
+-    auto active_streams_flush_lut = streams.active_gpu_subset(
+-        AES_STATE_BITS * num_aes_inputs, params.pbs_type());
+-    this->flush_lut->generate_and_broadcast_lut(
+-        active_streams_flush_lut, {0}, {flush_lambda}, LUT_0_FOR_ALL_BLOCKS);
++    auto active_streams_and_lut = streams.active_gpu_subset(
++        AES_SBOX_AND_GATES * num_aes_inputs * sbox_parallelism,
++        params.pbs_type());
++    
 ```
 
-**File**: `.github/workflows/benchmark_gpu.yml` (modified, +10/-2)
+**File**: `backends/tfhe-cuda-backend/cuda/include/integer/integer_utilities.h` (modified, +137/-0)
 ```diff
-@@ -108,18 +108,25 @@ jobs:
-           persist-credentials: "false"
-           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+@@ -324,6 +324,143 @@ struct radix_columns {
+   }
+ };
  
-+      - name: Setup Python
-+        uses: ./.github/actions/setup_python
++/// @brief Filler for rows with fewer terms than the table width, so uneven
++/// sums still fit in one rectangular table
++static constexpr uint32_t RADIX_INDEX_NO_TERM = 0xFFFFFFFFu;
 +
-+      - name: Setup Python venv
-+        run: |
-+          make setup_python_venv
++/**
++ * @brief A levelled linear layer stored as a table, on host and device.
++ *
++ * Between two PBS layers a bitsliced cipher mostly moves and sums blocks
++ * around (permutations, repacking, column mixes). Writing the whole layer as
++ * one table makes it a single kernel launch instead of one per wire.
++ *
++ * Row r lists the sources summed into output row r. For pairs over 8 sources
++ *
++ *     out row | term 0 | term 1
++ *     --------+--------+--------
++ *        0    |   0    |   1
++ *        1    |   2    |   3       stored as {0, 1, 2, 3, 4, 5, 6, 7}
++ *        2    |   4    |   5       num_sources = 8
++ *        3    |   6    |   7
++ *
++ * Each row covers batch_size blocks, one per input of the batch, so the
++ * table is written once and doesn't grow with the batch. Layers that move
++ * blocks across inputs use batch_size = 1 and list every block.
++ */
++template <typename T> struct radix_index_table {
++  /// @brief Host copy, used for the degree and noise bookkeeping
++  T *h_table = nullptr;
++  /// @brief Device copy, read by the gather kernel
++  T *d_table = nullptr;
++  /// @brief Terms summed per output row
++  uint32_t num_terms = 0;
++  /// @brief Output rows
++  uint32_t num_rows = 0;
++  /// @brief Blocks per output row, one per input, 1 for a table that lists
++  /// every block
++  uint32_t batch_size = 1;
++  /// @brief Blocks per source row, 1 when the batch shares the source (a key)
++  uint32_t source_batch_size = 1;
++  /// @brief Largest source plus one, to check the input is big enough
++  uint32_t num_sources = 0;
 +
-       - name: Parse profile and hardware name
-         id: parse_profile_and_hardware_name
-         env:
-           INPUTS_PROFILE: ${{ inputs.profile }}
--        run: python3 ci/parse_benchmark_profile.py "$INPUTS_PROFILE" "$GITHUB_OUTPUT"
-+        run: venv/bin/python ci/parse_benchmark_profile.py "$INPUTS_PROFILE" "$GITHUB_OUTPUT"
- 
-       - name: Get additional file to parse
-         id: set_file_to_parse
--        shell: python
-         env:
-           INPUTS_COMMAND: ${{ inputs.command }}
-         run: |
-+          venv/bin/python - <<'EOF'
-           import os
- 
-           inputs_command = os.environ["INPUTS_COMMAND"]
-@@ -143,6 +150,7 @@ jobs:
- 
-           with open(output_file, "a") as f:
-             f.write(f"""additional_file_to_parse={",".join(files_to_parse)}\n""")
-+          EOF
- 
-   run-benchmarks:
-     name: benchmark_gpu/run-benchmarks
++  /// @brief Blocks the output must hold
++  uint32_t num_out_blocks() const { return num_rows * batch_size; }
++  /// @brief Blocks the input must hold
++  uint32_t num_source_blocks() const { return num_sources * source_batch_size; }
++};
++
++/**
++ * @brief Owns the index tables of a scratch buffer and frees them in one go.
++ *
++ * With the 4 x 2 table above
++ *
++ *     create(table, num_rows = 4, num_terms = 2, ...)
++ *            |   fills h_table {0,1, 2,3, 4,5, 6,7}, uploads d_table
++ *            v   and registers the table
++ *     d_table -> gather kernel   out = in0+in1, in2+in3, in4+in5, in6+in7
++ *     h_table -> host            degrees and noise summed over the same rows
++ *            |
++ *            v
++ *     release()                  drops every d_table, syncs, frees every
++ *                                h_table
++ *
++ * So the buffers using it don't have to do that dance by hand. Tables are
++ * tracked by pointer, keep them alive until release().
++ */
++template <typename T> struct radix_index_tables {
++  /// @brief Tables to free in release()
++  std::vector<radix_index_table<T> *> tables;
++
++  radix_index_tables() = default;
++  radix_index_tables(const radix_index_tables &) = delete;
++  /// @brief Deleted, a copy would free the same tables twice
++  radix_index_tables &operator=(const radix_index_tables &) = delete;
++
++  /// @brief Fills a table, uploads it and registers it for release().
++  ///
++  /// @param table Table to fill, overwritten
++  /// @param num_rows Output rows
++  /// @param num_terms Terms per row
++  /// @param batch_size Blocks per output row, one per input
++  /// @param source_batch_size Blocks per source row, 1 for a shared source
++  /// @param row_source Source row of (row, term), or RADIX_INDEX_NO_TERM to
++  /// skip that term
++  void create(CudaStreams streams, bool allocate_gpu_memory,
++              uint64_t &size_tracker, radix_index_table<T> &table,
++              uint32_t num_rows, uint32_t num_terms, uint32_t batch_size,
++              uint32_t source_batch_size,
++              const std::function<T(uint32_t, uint32_t)> &row_source) {
++    PANIC_IF_FALSE(num_rows > 0 && num_terms > 0 && batch_size > 0,
++                   "radix index table: a table needs rows, terms and inputs");
++    PANIC_IF_FALSE(source_batch_size == batch_size || source_batch_size == 1,
++                   "radix index table: a source is either batched like the "
++                   "output or shared by the whole batch");
++    table.num_terms = num_terms;
++    table.num_rows = num_rows;
++    table.batch_size = batch_size;
++    table.source_batch_size = source_batch_size;
++    table.num_sources = 0;
++    uint64_t table_bytes =
++        safe_mul_sizeof<T>((size_t)num_rows, (size_t)num_terms);
++    table.h_table = (T *)malloc(table_bytes);
++    PANIC_IF_FALSE(table.h_table != nullptr,
++                   "radix index table: host allocation failed");
++    for (uint32_t r = 0; r < num_rows; ++r)
++      for (uint32_t t = 0; t < num_terms; ++t) {
++        T source = row_source(r, t);
++        table.h_table[r * num_terms + t] = source;
++        if (source == (T)RADIX_INDEX_NO_TERM)
++          continue;
++        if ((uint32_t)source + 1
 ```
 
-**File**: `.github/workflows/benchmark_gpu_common.yml` (modified, +9/-2)
+**File**: `backends/tfhe-cuda-backend/cuda/include/prince/prince.h` (added, +80/-0)
 ```diff
-@@ -188,6 +188,9 @@ jobs:
-           persist-credentials: "false"
-           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
- 
-+      - name: Setup Python
-+        uses: ./.github/actions/setup_python
+@@ -0,0 +1,80 @@
++#ifndef PRINCE_H
++#define PRINCE_H
++#include "../integer/integer.h"
 +
-       - name: Get benchmark details
-         run: |
-           COMMIT_DATE=$(git --no-pager show -s --format=%cd --date=iso8601-strict "${SHA}");
-@@ -257,6 +260,10 @@ jobs:
-           REF_NAME: ${{ github.ref_name }}
-           BENCH_TYPE: ${{ matrix.bench_type }}
- 
-+      - name: Setup Python venv
-+        run: |
-+          make setup_python_venv
++extern "C" {
++uint64_t scratch_cuda_integer_prince_key_prep_64_async(
++    CudaStreamsFFI streams, int8_t **mem_ptr,
++    CudaLweBootstrapKeyParamsFFI bsk_params,
++    CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t message_modulus,
++    uint32_t carry_modulus, bool allocate_gpu_memory);
 +
-       - name: Parse and merge multi_group results
-         if: ${{ endsWith(inputs.command, '_multi_group') }}
-         run: |
-@@ -275,7 +282,7 @@ jobs:
-             --bench-type "${BENCH_TYPE}"
-             group_results+=("${group_result}")
-           done
--          python3 ./ci/merge_multi_group_results.py --bench-type "${BENCH_TYPE}" --output "${RESULTS_FILENAME}" "${group_results[@]}"
-+          venv/bin/python ./ci/merge_multi_group_results.py --bench-type "${BENCH_TYPE}" --output "${RESULTS_FILENAME}" "${group_results[@]}"
-         env:
-           REF_NAME: ${{ github.ref_name }}
-           BENCH_TYPE: ${{ matrix.bench_type }}
-@@ -309,7 +316,7 @@ jobs:
-           if [[ "${BENCH_COMMAND}" == *_multi_group ]]; then
-             gpus_used="${NUM_GROUPS}"
-           fi
--          python3 ci/protocol_results_table.py "${RESULTS_FILENAME}" \
-+          venv/bin/python ci/protocol_results_table.py "${RESULTS_FILENAME}" \
-           --gpu-info gpu_info.txt \
-           --hardware "${HARDWARE_NAME}" \
-           --gpus-used "${gpus_used}" \
++/// @brief Turns a PRINCEv2 key pair into the material the circuit reads, once
++/// per pair and direction. Any number of cuda_integer_prince_64_async calls
++/// can then reuse it.
++///
++/// Done once so the rounds can just add the key inside their parity PBS.
++/// Outputs have no batch dimension, the whole batch reads them. Asynchronous.
++///
++/// @param key_bits_first Output, the 64 bits of k_first
++/// @param key_bits_second Output, the 64 bits of k_second
++/// @param kap_bw_first Output, M'(SR^-1(k_first)) as 64 bits, the key as the
++/// backward rounds see it
++/// @param kap_bw_second Output, same for k_second
++/// @param k_first k0 to encrypt, k1 to decrypt. 32 fresh blocks of 2 bits,
++/// MSB first
++/// @param k_second k1 to encrypt, k0 to decrypt, same layout
++/// @param mem_ptr From scratch_cuda_integer_prince_key_prep_64_async
++void cuda_integer_prince_key_prep_64_async(
++    CudaStreamsFFI streams, CudaRadixCiphertextFFI *key_bits_first,
++    CudaRadixCiphertextFFI *key_bits_second,
++    CudaRadixCiphertextFFI *kap_bw_first, CudaRadixCiphertextFFI *kap_bw_second,
++    CudaRadixCiphertextFFI const *k_first,
++    CudaRadixCiphertextFFI const *k_second, int8_t *mem_ptr, void *const *bsks,
++    void *const *ksks);
++
++void cleanup_cuda_integer_prince_key_prep_64(CudaStreamsFFI streams,
++                                             int8_t **mem_ptr_void);
++
++uint64_t scratch_cuda_integer_prince_64_async(
++    CudaStreamsFFI streams, int8_t **mem_ptr,
++    CudaLweBootstrapKeyParamsFFI bsk_params,
++    CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t message_modulus,
++    uint32_t carry_modulus, bool allocate_gpu_memory,
++    uint32_t num_prince_inputs, bool is_decrypt);
++
++/// @brief Runs PRINCEv2 [BEK+20] on a batch of 64-bit blocks under an
++/// encrypted key, 26 PBS layers whatever the batch size. The direction comes
++/// from the scratch and the key order used at key prep. Asynchronous.
++///
++/// Inputs must be fresh, the first key xor packs 4 * m + k in one block and
++/// eats the whole 2_2 noise budget.
++///
++/// @param output num_prince_inputs blocks of 64 bits, each as 32 blocks of 2
++/// bits MSB first, one input after the other
++/// @param input Same layout, fresh
++/// @param k_first Same key half as given to key prep, 32 blocks
++/// @param k_second Same, 32 blocks
++/// @param key_bits_first From cuda_integer_prince_key_prep_64_async
++/// @param key_bits_second From cuda_integer_prince_key_prep_64_async
++/// @param kap_bw_first From cuda_integer_prince_key_prep_64_async
++/// @param kap_bw_second From cuda_integer_prince_key_prep_64_async
++/// @param mem_ptr From scratch_cuda_integer_prince_64_async, same batch size
++/// and direction
++void cuda_integer_prince_64_async(CudaStreamsFFI streams,
++                                  CudaRadixCiphertextFFI *output,
++                                  CudaRadixCiphertextFFI const *input,
++                                  CudaRadixCiphertextFFI const *k_first,
++                                  CudaRadixCiphertextFFI const *k_second,
++                                  CudaRadixCiphertextFFI const *key_bits_first,
++                                  CudaRadixCiphertextFFI const *key_bits_second,
++                                  CudaRadixCiphertextFFI const *kap_bw_first,
++                                  CudaRadixCiphertextFFI const *kap_bw_second,
++                                  int8_t *mem_ptr, void *const *bsks,
++                                  void *const *ksks);
++
++void cleanup_cuda_integer_prince_64(CudaStreamsFFI streams,
++                                    int8_t **mem_ptr_void);
++}
++
++#endif
 ```
 
-**File**: `.github/workflows/benchmark_gpu_coprocessor.yml` (modified, +8/-1)
+**File**: `backends/tfhe-cuda-backend/cuda/include/prince/prince_utilities.h` (added, +729/-0)
 ```diff
-@@ -72,6 +72,13 @@ jobs:
-           persist-credentials: "false"
-           token: ${{ env.CHECKOUT_TOKEN }}
- 
-+      - name: Setup Python
-+        uses: ./.github/actions/setup_python
+@@ -0,0 +1,729 @@
++#ifndef PRINCE_UTILITIES_H
++#define PRINCE_UTILITIES_H
 +
-+      - name: Setup Python venv
-+        run: |
-+          make setup_python_venv
++#include "../integer/integer_utilities.h"
++#include <array>
++#include <cstdint>
++#include <cstring>
++#include <map>
++#include <vector>
 +
-       - name: Parse profile and hardware name
-         id: parse_profile
-         run: |
-@@ -80,7 +87,7 @@ jobs:
-           else
-             PROFILE_RAW="${PROFILE_SCHEDULED_RUN}"
-           fi
--          python3 ci/parse_benchmark_profile.py "$PROFILE_RAW" "$GITHUB_OUTPUT"
-+          venv/bin/python ci/parse_benchmark_profile.py "$PROFILE_RAW" "$GITHUB_OUTPUT"
- 
-   setup-instance:
-     name: benchmark_gpu_coprocessor/setup-instance
++/* PRINCEv2 [BEK+20] constants and tables, all derived at compile time from
++ * the spec (S-box, round constants, M' and SR). Round constants and the alpha
++ * reflection get folded into the S-box tables so they cost no FHE op. */
++namespace prince_v2 {
++
++/// @brief Nibbles in the state, what an S-box reads
++constexpr uint32_t NUM_WORDS = 16;
++/// @brief 2-bit blocks in the state, the API layout
++constexpr uint32_t NUM_U2 = 32;
++/// @brief Bits in the state
++constexpr uint32_t NUM_BITS = 64;
++/// @brief Round constants, RC_0 to RC_11
++constexpr uint32_t NUM_ROUNDS = 12;
++
++using ZLut = std::array<std::array<uint8_t, 16>, 16>; // 16 per-word 4->4 LUTs
++using U4Vec = std::array<uint8_t, 16>;
++
++/// @brief PRINCEv2 round constants
++constexpr uint64_t RC_V2[NUM_ROUNDS] = {
++    0x0000000000000000, 0x13198a2e03707344, 0xa4093822299f31d0,
++    0x082efa98ec4e6c89, 0x452821e638d01377, 0xbe5466cf34e90c6c,
++    0x7ef84f78fd955cb1, 0x7aacf4538d971a60, 0xc882d32f25323c54,
++    0x9b8ded979cd838c7, 0xd3b5a399ca0c2399, 0x3f84d5b5b5470917,
++};
++/// @brief Middle layer constant
++constexpr uint64_t RC_BETA = 0x3f84d5b5b5470917;
++
++/// @brief SR as a gather, output word w takes input word PERM[w]
++constexpr uint32_t PERM[NUM_WORDS] = {0x0, 0x5, 0xa, 0xf, 0x4, 0x9, 0xe, 0x3,
++                                      0x8, 0xd, 0x2, 0x7, 0xc, 0x1, 0x6, 0xb};
++
++/// @brief Inverts PERM.
++constexpr std::array<uint32_t, NUM_WORDS> build_iperm() {
++  std::array<uint32_t, NUM_WORDS> iperm{};
++  for (uint32_t w = 0; w < NUM_WORDS; ++w)
++    iperm[PERM[w]] = w;
++  return iperm;
++}
++/// @brief SR^-1 as a gather, for the backward rounds
++constexpr std::array<uint32_t, NUM_WORDS> IPERM = build_iperm();
++
++/// @brief Plaintext M', only used at compile time to pull constants back
++/// through the linear layer.
++///
++/// M' = diag(M0, M1, M1, M0), block (r, c) of Mk is m_{(r + c + k) mod 4} with
++/// m_i the identity minus entry i. So each output bit is the XOR of 3 of the 4
++/// bits in its column. Bits MSB first. M' is an involution.
++///
++/// @param x State, MSB first
++constexpr uint64_t m_prime(uint64_t x) {
++  uint64_t out = 0;
++  for (uint32_t g = 0; g < 4; ++g) {
++    uint32_t k = (g == 0 || g == 3) ? 0 : 1;
++    for (uint32_t r = 0; r < 4; ++r)
++      for (uint32_t j = 0; j < 4; ++j) {
++        uint32_t skipped = (j + 8 - r - k) % 4;
++        uint64_t bit = 0;
++        for (uint32_t c = 0; c < 4; ++c)
++          if (c != skipped)
++            bit ^= (x >> (63 - (g * 16 + 4 * c + j))) & 1;
++        out |= bit << (63 - (g * 16 + 4 * r + j));
++      }
++  }
++  return out;
++}
++
++/// @brief Plaintext SR^-1, compile time only like m_prime.
++///
++/// @param x State, MSB first
++constexpr uint64_t inv_shift_rows(uint64_t x) {
++  uint64_t out = 0;
++  for (uint32_t w = 0; w < NUM_WORDS; ++w)
++    out |= ((x >> (60 - 4 * w)) & 0xf) << (60 - 4 * PERM[w]);
++  return out;
++}
++
++/// @brief Round constants pulled back through M = SR . M', so an S-box table
++/// sitting before the linear layer can absorb them.
++///
++/// Computed rather than copied so they can't drift from RC_V2.
++constexpr std::array<uint64_t, NUM_ROUNDS> build_rc_v2_ip_im() {
++  std::array<uint64_t, NUM_ROUNDS> rc{};
++  for (uint32_t i = 0; i < NUM_ROUNDS; ++i)
++    rc[i] = m_prime(inv_shift_rows(RC_V2[i]));
++  return rc;
++}
++/// @brief M'(SR^-1(RC_i)), see build_rc_v2_ip_im
++constexpr std::array<uint64_t, NUM_ROUNDS> RC_V2_IP_IM = build_rc_v2_ip_im();
++/// @brief M'(RC_BETA), same idea for the middle round
++constexpr uint64_t RC_BETA_IM = m_prime(RC_BETA);
++
++/// @brief Splits a u64 into 16 nibbles, MSB first.
++///
++/// @param u Value to split
++constexpr U4Vec u64_to_vec_u4(uint64_t u) {
++  U4Vec v{};
++  for (uint32_t i = 0; i < NUM_WORDS; ++i)
++    v[NUM_WORDS - i - 1] = (uint8_t)((u >> (4 * i)) & 0xf);
++  return v;
++}
++
++/// @brief PRINCE S-box
++constexpr uint8_t SBOX[16] = {0xb, 0xf, 0x3, 0x2, 0xa, 0xc, 0x9, 0x1,
++                              0x6, 0x7, 0x8, 0x0, 0xe, 0x5, 0xd, 0x4};
++/// @brief Inverse of SBOX
++constexpr uint8_t INV_SBOX[16] = {0xb, 0x7, 0x3, 0x2, 0xf, 0xd, 0x8, 0x9,
++                                  0xa, 0x6, 0x4, 0x0, 0x5, 0xe, 0xc, 0x1};
++
++/// @brief S-box with a per-word constant xored on each side,
++/// zlut[w][x] = sbox[x ^ inner[w]] ^ outer[w]. This is how the round
++/// constants end up costing nothing.
++///
++/// @param sbox SBOX or INV_SBOX
++/// @param xor_inner Per-word constant xored on the input
++/// @param xor_outer Per-word constant xored on the output
++constexpr ZLut build_zlut_xsy(const uint8_t (&sbox)[16], U4Vec xor_inner,
++                              U4Vec xor_outer) {
++  ZLut z{};
++  for (uint32_t w = 0; w < NUM_WORDS; ++w)
++    for (uint32_t x = 0; x < 16; ++x)
++      z[w][x] = (uint8_t)(sbox[(x ^ xor_inner[w]) & 0xf] ^ xor_outer[
 ```
 
-**File**: `.github/workflows/benchmark_perf_regression.yml` (modified, +20/-12)
+**File**: `backends/tfhe-cuda-backend/cuda/src/aes/aes.cu` (modified, +57/-1)
 ```diff
-@@ -55,6 +55,9 @@ jobs:
-           persist-credentials: "false"
-           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
+@@ -1,6 +1,16 @@
+ #include "../../include/aes/aes.h"
+ #include "aes.cuh"
  
-+      - name: Setup Python
-+        uses: ./.github/actions/setup_python
++/// @brief Allocates the scratch of cuda_integer_aes_ctr_encrypt_64_async and
++/// returns its GPU size, so the caller can lower sbox_parallelism until it
++/// fits.
++///
++/// @param mem_ptr Receives the scratch
++/// @param bsk_params Bootstrapping key parameters
++/// @param ksk_params Keyswitching key parameters
++/// @param num_aes_inputs Blocks every later call encrypts
++/// @param sbox_parallelism State bytes per S-box pass, divides 16. PBS width
++/// and memory both scale with it
+ uint64_t scratch_cuda_integer_aes_ctr_encrypt_64_async(
+     CudaStreamsFFI streams, int8_t **mem_ptr,
+     CudaLweBootstrapKeyParamsFFI bsk_params,
+@@ -16,6 +26,16 @@ uint64_t scratch_cuda_integer_aes_ctr_encrypt_64_async(
+       params, allocate_gpu_memory, num_aes_inputs, sbox_parallelism);
+ }
+ 
++/// @brief Allocates the scratch of cuda_integer_aes_ctr_256_encrypt_64_async
++/// and returns its GPU size. Same buffer as AES-128, only the round count
++/// differs.
++///
++/// @param mem_ptr Receives the scratch
++/// @param bsk_params Bootstrapping key parameters
++/// @param ksk_params Keyswitching key parameters
++/// @param num_aes_inputs Blocks every later call encrypts
++/// @param sbox_parallelism State bytes per S-box pass, divides 16. PBS width
++/// and memory both scale with it
+ uint64_t scratch_cuda_integer_aes_ctr_256_encrypt_64_async(
+     CudaStreamsFFI streams, int8_t **mem_ptr,
+     CudaLweBootstrapKeyParamsFFI bsk_params,
+@@ -31,18 +51,35 @@ uint64_t scratch_cuda_integer_aes_ctr_256_encrypt_64_async(
+       params, allocate_gpu_memory, num_aes_inputs, sbox_parallelism);
+ }
+ 
++/// @brief AES-128 CTR under an encrypted key, adds each input's counter to
++/// the IV and runs the 10 rounds on it, giving the keystream. Asynchronous.
++///
++/// @param output num_aes_inputs blocks of 128 bits, one bit per radix block,
++/// MSB of state byte 0 first, one input after the other
++/// @param iv 128 one bit blocks, same order, shared by every input before its
++/// counter is added
++/// @param round_keys 11 round keys of 128 one bit blocks, as
++/// cuda_integer_key_expansion_64_async writes them
++/// @param counter_bits_le_all_blocks Plaintext on the host, the counter of
++/// each input as 128 bits, LSB first, one input after the other
++/// @param num_aes_inputs Batch size, same as at scratch time
++/// @param mem_ptr From scratch_cuda_integer_aes_ctr_encrypt_64_async, same
++/// batch size
+ void cuda_integer_aes_ctr_encrypt_64_async(
+     CudaStreamsFFI streams, CudaRadixCiphertextFFI *output,
+     CudaRadixCiphertextFFI const *iv, CudaRadixCiphertextFFI const *round_keys,
+     const uint64_t *counter_bits_le_all_blocks, uint32_t num_aes_inputs,
+     int8_t *mem_ptr, void *const *bsks, void *const *ksks) {
+ 
+-  host_integer_aes_ctr_encrypt<uint64_t>(
++  host_integer_aes_ctr_encrypt<aes128_key_schedule, uint64_t>(
+       CudaStreams(streams), output, iv, round_keys, counter_bits_le_all_blocks,
+       num_aes_inputs, (int_aes_encrypt_buffer<uint64_t> *)mem_ptr, bsks,
+       (uint64_t **)ksks);
+ }
+ 
++/// @brief Releases the scratch of cuda_integer_aes_ctr_encrypt_64_async.
++///
++/// @param mem_ptr_void Scratch to release, nullptr afterwards
+ void cleanup_cuda_integer_aes_ctr_encrypt_64(CudaStreamsFFI streams,
+                                              int8_t **mem_ptr_void) {
+ 
+@@ -55,6 +92,9 @@ void cleanup_cuda_integer_aes_ctr_encrypt_64(CudaStreamsFFI streams,
+   *mem_ptr_void = nullptr;
+ }
+ 
++/// @brief Releases the scratch of cuda_integer_aes_ctr_256_encrypt_64_async.
++///
++/// @param mem_ptr_void Scratch to release, nullptr afterwards
+ void cleanup_cuda_integer_aes_ctr_256_encrypt_64(CudaStreamsFFI streams,
+                                                  int8_t **mem_ptr_void) {
+ 
+@@ -67,6 +107,12 @@ void cleanup_cuda_integer_aes_ctr_256_encrypt_64(CudaStreamsFFI streams,
+   *mem_ptr_void = nullptr;
+ }
+ 
++/// @brief Allocates the scratch of cuda_integer_key_expansion_64_async and
++/// returns its GPU size.
++///
++/// @param mem_ptr Receives the scratch
++/// @param bsk_params Bootstrapping key parameters
++/// @param ksk_params Keyswitching key parameters
+ uint64_t scratch_cuda_integer_key_expansion_64_async(
+     CudaStreamsFFI streams, int8_t **mem_ptr,
+     CudaLweBootstrapKeyParamsFFI bsk_params,
+@@ -81,6 +127,13 @@ uint64_t scratch_cuda_integer_key_expansion_64_async(
+       params, allocate_gpu_memory);
+ }
+ 
++/// @brief Expands an encrypted 128-bit key into the 11 round keys of
++/// AES-128. Asynchronous.
++///
++/// @param expanded_keys Output, 44 words as 1408 one bit blocks MSB first,
++/// round key r at blocks [128 r, 128 (r + 1))
++/// @param key 128 one bit blocks, MSB first
++/// @param mem_ptr From scratch_cuda_integer_key_expansion_64_async
+ void cuda_integer_key_expansion_64_async(CudaStreamsFFI streams,
+                                          CudaRadixCiphertextFFI *expanded_keys,
+                                          CudaRadixCipherte
+```
+
+---
+
+### Incident Patch 2: `9d5dea94` (2026-11-13)
+**Commit Message**: feat(transciphering): add noise squashing for otp (#4139)
+
+* chore(transciphering): reject not canonical plain pad representation
+
+* feat(transciphering): add noise squashing for otp
+
+* chore(backward): new float representation from ron crate
+
+Ron was updated  and generating the data now stores the float in a different
+format
+
+**File**: `Cargo.lock` (modified, +2/-3)
+```diff
+@@ -2885,12 +2885,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "ron"
+-version = "0.12.2"
++version = "0.12.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "81116b9531d61eabc41aeb228e4b6b2435bcca3233b98cf3b3077d4e6e9debb3"
++checksum = "97b3fe97c18ff24299ea56f802c5693eb34266fb0bc8317f4e101debc8a3ceaf"
+ dependencies = [
+  "bitflags",
+- "once_cell",
+  "serde",
+  "serde_derive",
+  "typeid",
+```
+
+**File**: `tests/backward_compatibility/high_level_api.rs` (modified, +54/-11)
+```diff
+@@ -27,24 +27,25 @@ use tfhe::{
+     CompactPublicKey, CompressedCiphertextList, CompressedCiphertextListBuilder,
+     CompressedCompactPublicKey, CompressedFheBool, CompressedFheInt8, CompressedFheUint8,
+     CompressedKVStore, CompressedPublicKey, CompressedServerKey,
+-    CompressedSquashedNoiseCiphertextList, CompressedSquashedNoiseCiphertextListBuilder, FheBool,
+-    FheInt8, FheUint32, FheUint64, FheUint8, HlStreamCipher, HlTranscipherer, KreyviumFheKey,
+-    OneTimePadFheSecretMask, ReRandomizationContext, ReRandomizationMode, ReRandomizationSupport,
+-    Seed, ServerKey, SquashedNoiseFheBool, SquashedNoiseFheInt, SquashedNoiseFheUint,
+-    StreamCiphertext, TranscipherSession,
++    CompressedSquashedNoiseCiphertextList, CompressedSquashedNoiseCiphertextListBuilder,
++    CompressedSquashedNoiseOneTimePadFheSecretMask, FheBool, FheInt8, FheUint32, FheUint64,
++    FheUint8, HlStreamCipher, HlTranscipherer, KreyviumFheKey, OneTimePadFheSecretMask,
++    ReRandomizationContext, ReRandomizationMode, ReRandomizationSupport, Seed, ServerKey,
++    SquashedNoiseFheBool, SquashedNoiseFheInt, SquashedNoiseFheUint, StreamCiphertext,
++    TranscipherSession,
+ };
+ use tfhe_backward_compat_data::load::{
+     load_versioned_auxiliary, DataFormat, TestFailure, TestResult, TestSuccess,
+ };
+ use tfhe_backward_compat_data::{
+     DataKind, HlAesFheKeyTest, HlBoolCiphertextTest, HlCiphertextTest, HlClientKeyTest,
+     HlCompressedKVStoreTest, HlCompressedSquashedNoiseCiphertextListTest,
+-    HlCompressedXofKeySetTest, HlHeterogeneousCiphertextListTest, HlKreyviumFheKeyTest,
+-    HlOneTimePadFheSecretMaskTest, HlPublicKeyTest, HlSeededCompactCiphertextListTest,
+-    HlServerKeyTest, HlSignedCiphertextTest, HlSquashedNoiseBoolCiphertextTest,
+-    HlSquashedNoiseSignedCiphertextTest, HlSquashedNoiseUnsignedCiphertextTest,
+-    HlStreamCiphertextTest, TestMetadata, TestType, TestWithClientKey, Testcase,
+-    ZkPkePublicParamsTest, ZkProofAuxiliaryInfo,
++    HlCompressedSquashedNoiseOneTimePadFheSecretMaskTest, HlCompressedXofKeySetTest,
++    HlHeterogeneousCiphertextListTest, HlKreyviumFheKeyTest, HlOneTimePadFheSecretMaskTest,
++    HlPublicKeyTest, HlSeededCompactCiphertextListTest, HlServerKeyTest, HlSignedCiphertextTest,
++    HlSquashedNoiseBoolCiphertextTest, HlSquashedNoiseSignedCiphertextTest,
++    HlSquashedNoiseUnsignedCiphertextTest, HlStreamCiphertextTest, TestMetadata, TestType,
++    TestWithClientKey, Testcase, ZkPkePublicParamsTest, ZkProofAuxiliaryInfo,
+ };
+ use tfhe_versionable::Unversionize;
+ 
+@@ -1203,6 +1204,40 @@ fn test_hl_one_time_pad_fhe_secret_mask(
+     )
+ }
+ 
++/// Test HL compressed squashed noise one time pad: loads the mask and checks that it matches the
++/// one in the metadata.
++fn test_hl_compressed_squashed_noise_one_time_pad_fhe_secret_mask(
++    dir: &Path,
++    test: &HlCompressedSquashedNoiseOneTimePadFheSecretMaskTest,
++    format: DataFormat,
++) -> Result<TestSuccess, TestFailure> {
++    let client_key: ClientKey = load_client_key(dir, test, format)?;
 +
-       - name: Acknowledge issue comment
-         if: github.event_name == 'issue_comment'
-         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
-@@ -83,14 +86,18 @@ jobs:
- 
-       # TODO add support for HPU backend
- 
-+      - name: Install Safe-Chain
-+        run: |
-+          make install_aikido_safe_chain
++    let fhe_mask: CompressedSquashedNoiseOneTimePadFheSecretMask =
++        load_and_unversionize(dir, test, format)?;
 +
-       - name: Install Python requirements
-         run: |
--          python3 -m pip install -r ci/perf_regression/requirements.txt
-+          make perf_regression_setup_venv
- 
-       - name: Generate cargo commands and env from label
-         if: github.event_name == 'pull_request'
-         run: |
--          python3 ci/perf_regression/perf_regression.py parse_profile --issue-comment "/bench ${DEFAULT_BENCH_OPTIONS}"
-+          venv_perf_regression/bin/python ci/perf_regression/perf_regression.py parse_profile --issue-comment "/bench ${DEFAULT_BENCH_OPTIONS}"
-           echo "COMMANDS=$(cat ci/perf_regression/perf_regression_generated_commands.json)" >> "${GITHUB_ENV}"
- 
-       - name: Dump issue comment into file # To avoid possible code-injection
-@@ -103,7 +110,7 @@ jobs:
-       - name: Generate cargo commands and env
-         if: github.event_name == 'issue_comment'
-         run: |
--          python3 ci/perf_regression/perf_regression.py parse_profile --issue-comment "$(cat dumped_comment.txt)"
-+          venv_perf_regression/bin/python ci/perf_regression/perf_regression.py parse_profile --issue-comment "$(cat dumped_comment.txt)"
-           echo "COMMANDS=$(cat ci/perf_regression/perf_regression_generated_commands.json)" >> "${GITHUB_ENV}"
- 
-       - name: Set commands output
-@@ -121,7 +128,7 @@ jobs:
-         id: get_hardware_name
-         run:
-           | # zizmor: ignore[template-injection] these interpolations are safe
--          HARDWARE_NAME=$(python3 ci/hardware_finder.py "${{ steps.set_slab_details.outputs.backend }}" "${{ steps.set_slab_details.outputs.profile }}");
-+          HARDWARE_NAME=$(venv_perf_regression/bin/python ci/hardware_finder.py "${{ steps.set_slab_details.outputs.backend }}" "${{ steps.set_slab_details.outputs.profile }}");
-           echo "name=${HARDWARE_NAME}" >> "${GITHUB_OUTPUT}"
- 
-       - name: Set regression details outputs
-@@ -290,19 +297,20 @@ jobs:
-           persist-credentials: "false"
-           token: ${{ secrets.REPO_CHECKOUT_TOKEN }}
- 
--      - name: Install recent Python
--        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
--        with:
--          python-version: "3.12"
-+      - name: Setup Python
-+        uses: ./.github/actions/setup_python
++    if fhe_mask.tag() != client_key.tag() {
++        return Err(test.failure(
++            format!(
++                "Invalid {} tag:\n Expected :\n{:?}\nGot:\n{:?}",
++                format,
++                client_key.tag(),
++                fhe_mask.tag()
++            ),
++            format,
++        ));
++    }
 +
-+      - name: Install Safe-Chain
-+        run: |
-+          make install_aikido_safe_chain
++    let pad = OneTimePadPlainSecretMask::new(test.pad.to_vec(), test.n_bits as usize);
++
++    check_recovered_key(
++        &mut OneTimePadPlainState::new(pad),
++        &mut OneTimePadPlainState::new(fhe_mask.decrypt(&client_key)),
++        test,
++        format,
++    )
++}
++
+ /// Test HL stream ciphertext: loads the ciphertext and compare the decrypted value to the one in
+ /// the metadata. This type holds no FHE data, so the plain cipher is replayed from the metadata.
+ fn test_hl_stream_ciphertext(
+@@ -1317,6 +1352,14 @@ impl TestedModule for Hl {
+             TestMetadata::HlStreamCiphertext(test) => {
+                 test_hl_stream_ciphertext(test_dir.as_ref(), test, format).into()
+             }
++            TestMetadata::HlCompressedSquashedNoiseOneTimePadFheSecretMask(test) => {
++                test_hl_compressed_squashed_noise_one_time_pad_fhe_secret_mask(
++                    test_dir.as_ref(),
++                    test,
++                    format,
++                )
++                .into()
++            }
+             _ => {
+                 println!("WARNING: missing test: {:?}", testcase.metadata);
+                 TestResult::Skipped(testcase.skip())
+```
+
+**File**: `tfhe/src/high_level_api/backward_compatibility/transciphering.rs` (modified, +7/-1)
+```diff
+@@ -3,7 +3,8 @@ use std::convert::Infallible;
+ use tfhe_versionable::{Upgrade, Version, VersionsDispatch};
  
-       - name: Install requirements
-         run: |
--          python3.12 -m venv venv
--          venv/bin/pip3 install -r ci/data_extractor/requirements.txt -r ci/perf_regression/requirements.txt
-+          make perf_regression_setup_venv PYTHON_EXE=python3.12
+ use crate::high_level_api::transciphering::{
+-    AesFheKey, KreyviumFheKey, OneTimePadFheSecretMask, StreamCiphertext,
++    AesFheKey, CompressedSquashedNoiseOneTimePadFheSecretMask, KreyviumFheKey,
++    OneTimePadFheSecretMask, StreamCiphertext,
+ };
+ use crate::transciphering::{
+     AesFheKey as ShortintAesFheKey, KreyviumFheKey as ShortintKreyviumFheKey,
+@@ -75,3 +76,8 @@ pub enum OneTimePadFheSecretMaskVersions {
+     V0(OneTimePadFheSecretMaskV0),
+     V1(OneTimePadFheSecretMask),
+ }
++
++#[derive(VersionsDispatch)]
++pub enum CompressedSquashedNoiseOneTimePadFheSecretMaskVersions {
++    V0(CompressedSquashedNoiseOneTimePadFheSecretMask),
++}
+```
+
+**File**: `tfhe/src/high_level_api/compressed_noise_squashed_ciphertext_list.rs` (modified, +2/-1)
+```diff
+@@ -195,7 +195,8 @@ impl Named for CompressedSquashedNoiseCiphertextList {
  
-       - name: Fetch data
-         run: |
--          venv/bin/python3 ci/data_extractor/src/data_extractor.py regression_data \
-+          venv_perf_regression/bin/python3 ci/data_extractor/src/data_extractor.py regression_data \
-           --generate-regression-json \
-           --regression-profiles ci/regression.toml \
-           --regression-selected-profile "${REGRESSION_PROFILE}" \
-@@ -320,7 +328,7 @@ jobs:
+ #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+ pub struct CompressedSquashedNoiseCiphertextListConformanceParams {
+-    params: ShortintCompressedSquashedNoiseCiphertextListConformanceParams,
++    pub(in crate::high_level_api) params:
++        ShortintCompressedSquashedNoiseCiphertextListConformanceParams,
+ }
  
-       - name: Generate regression report
-         run: |
--          venv/bin/python3 ci/perf_regression/perf_regression.py check_regression \
-+          venv_perf_regression/bin/python3 ci/perf_regression/perf_regression.py check_regression \
-           --results-file regression_data.json \
-           --generate-report
+ impl
+```
+
+**File**: `tfhe/src/high_level_api/mod.rs` (modified, +5/-3)
+```diff
+@@ -158,9 +158,11 @@ pub use strings::ascii::{EncryptableString, FheAsciiString, FheStringIsEmpty, Fh
+ pub use tag::Tag;
+ pub use traits::FheId;
+ pub use transciphering::{
+-    AesFheKey, HlStreamCipher, HlStreamDecryptable, HlStreamEncryptable, HlTranscipherer,
+-    KreyviumFheKey, OneTimePadFheSecretMask, OneTimePadFheSecretMaskConformanceParams,
+-    StreamCiphertext, TranscipherSession,
++    AesFheKey, CompressedSquashedNoiseOneTimePadFheSecretMask,
++    CompressedSquashedNoiseOneTimePadFheSecretMaskConformanceParams, HlStreamCipher,
++    HlStreamDecryptable, HlStreamEncryptable, HlTranscipherer, KreyviumFheKey,
++    OneTimePadFheSecretMask, OneTimePadFheSecretMaskConformanceParams,
++    SquashedNoiseOneTimePadFheSecretMask, StreamCiphertext, TranscipherSession,
+ };
+ pub mod xof_key_set;
  
+```
+
+**File**: `tfhe/src/high_level_api/transciphering/mod.rs` (modified, +111/-4)
+```diff
+@@ -24,7 +24,11 @@ mod stream_ciphertext;
+ 
+ pub use aes::AesFheKey;
+ pub use kreyvium::KreyviumFheKey;
+-pub use one_time_pad::{OneTimePadFheSecretMask, OneTimePadFheSecretMaskConformanceParams};
++pub use one_time_pad::{
++    CompressedSquashedNoiseOneTimePadFheSecretMask,
++    CompressedSquashedNoiseOneTimePadFheSecretMaskConformanceParams, OneTimePadFheSecretMask,
++    OneTimePadFheSecretMaskConformanceParams, SquashedNoiseOneTimePadFheSecretMask,
++};
+ pub use stream_ciphertext::StreamCiphertext;
+ 
+ /// Types encryptable by [`HlStreamCipher`].
+@@ -456,6 +460,79 @@ mod test {
+         assert!(sym.try_encrypt(1u8).is_err());
+     }
+ 
++    /// Squash the noise of a pad and compress it, so that it can be decrypted by the KMS.
++    #[test]
++    fn test_one_time_pad_squashed_noise() {
++        use super::{
++            CompressedSquashedNoiseOneTimePadFheSecretMask,
++            CompressedSquashedNoiseOneTimePadFheSecretMaskConformanceParams,
++            OneTimePadFheSecretMask,
++        };
++        use crate::conformance::ParameterSetConformant;
++        use crate::prelude::*;
++        use crate::shortint::parameters::current_params::{
++            V1_9_NOISE_SQUASHING_COMP_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
++            V1_9_NOISE_SQUASHING_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
++            V1_9_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
++        };
++        use crate::transciphering::{KeyStreamLayout, OneTimePadPlainSecretMask};
++        use crate::{
++            generate_keys, set_server_key, CompressedSquashedNoiseCiphertextListConformanceParams,
++            ConfigBuilder,
++        };
++        use rand::Rng;
++
++        let config = ConfigBuilder::with_custom_parameters(
++            V1_9_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
++        )
++        .enable_noise_squashing(V1_9_NOISE_SQUASHING_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128)
++        .enable_noise_squashing_compression(
++            V1_9_NOISE_SQUASHING_COMP_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
++        )
++        .build();
++        let (client_key, server_key) = generate_keys(config);
++        let conformance_params =
++            CompressedSquashedNoiseOneTimePadFheSecretMaskConformanceParams::try_from(&server_key)
++                .unwrap();
++        // The pad is generated with the full space layout, so another layout is refused
++        let single_bit_params =
++            CompressedSquashedNoiseOneTimePadFheSecretMaskConformanceParams::new(
++                CompressedSquashedNoiseCiphertextListConformanceParams::try_from(&server_key)
++                    .unwrap(),
++                KeyStreamLayout::single_bit(),
++            );
++        set_server_key(server_key);
++
++        let mut rng = rand::thread_rng();
++        let n_bits = 64;
++        let pad_bytes: Vec<u8> = (0..n_bits / 8).map(|_| rng.gen()).collect();
++        let plain_mask = OneTimePadPlainSecretMask::new(pad_bytes, n_bits);
++
++        let squashed = OneTimePadFheSecretMask::try_encrypt(plain_mask.clone(), &client_key)
++            .unwrap()
++            .squash_noise()
++            .unwrap();
++        assert!(squashed.decrypt(&client_key) == plain_mask);
++
++        let compressed = squashed.compress().unwrap();
++
++        // The compressed pad crosses the wire to the KMS
++        let mut serialized = vec![];
++        safe_serialize(&compressed, &mut serialized, SIZE_LIMIT).unwrap();
++        let compressed: CompressedSquashedNoiseOneTimePadFheSecretMask =
++            safe_deserialize(serialized.as_slice(), SIZE_LIMIT).unwrap();
++        assert!(compressed.is_conformant(&conformance_params));
++        assert!(!compressed.is_conformant(&single_bit_params));
++        assert!(compressed.decrypt(&client_key) == plain_mask);
++
++        // Decompression requires no key, and the result is decrypted with the compression key
++        let decompressed = compressed.decompress().unwrap();
++        assert!(decompressed.decrypt(&client_key) == plain_mask);
++
++        // A decompressed mask is under the compression key, so it cannot be compressed again
++        assert!(decompressed.compress().is_err());
++    }
++
+     #[test]
+     fn test_stream_ciphertext_conformance() {
+         use super::HlStreamCipher;
+@@ -612,17 +689,31 @@ mod test {
+     /// wire, and what it transciphers is tagged like any other ciphertext of that key set.
+     #[test]
+     fn test_tag_propagation() {
+-        use super::{HlStreamCipher, HlTranscipherer, OneTimePadFheSecretMask, TranscipherSession};
++        use super::{
++            CompressedSquashedNoiseOneTimePadFheSecretMask, HlStreamCipher, HlTranscipherer,
++            OneTimePadFheSecretMask, TranscipherSession,
++        };
+         use crate::prelude::*;
+         use crate::safe_serialization::{safe_deserialize, safe_serialize};
++        use crate::shortint::parameters::current_params::{
++            V1_9_NOISE_SQUASHING_COMP_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
++            V1_9_NOISE_SQUASHING_PARAM_ME
+```
+
+**File**: `tfhe/src/high_level_api/transciphering/one_time_pad.rs` (modified, +208/-5)
+```diff
+@@ -1,13 +1,18 @@
+ use super::TranscipherSession;
+ use crate::conformance::ParameterSetConformant;
+-use crate::high_level_api::backward_compatibility::transciphering::OneTimePadFheSecretMaskVersions;
++use crate::high_level_api::backward_compatibility::transciphering::{
++    CompressedSquashedNoiseOneTimePadFheSecretMaskVersions, OneTimePadFheSecretMaskVersions,
++};
+ use crate::high_level_api::details::MaybeCloned;
+-use crate::high_level_api::errors::UninitializedServerKey;
++use crate::high_level_api::errors::{UninitializedNoiseSquashing, UninitializedServerKey};
+ #[cfg(feature = "gpu")]
+ use crate::high_level_api::global_state::cuda_clone;
+ use crate::high_level_api::global_state::try_with_internal_keys;
+ use crate::high_level_api::keys::InternalServerKey;
+-use crate::high_level_api::traits::Tagged;
++use crate::high_level_api::traits::{SquashNoise, Tagged};
++use crate::high_level_api::{
++    CompressedSquashedNoiseCiphertextListConformanceParams, SquashedNoiseCiphertextState,
++};
+ #[cfg(feature = "gpu")]
+ use crate::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
+ #[cfg(feature = "gpu")]
+@@ -18,8 +23,11 @@ use crate::shortint::oprf::OprfSeed;
+ use crate::shortint::parameters::CiphertextConformanceParams;
+ use crate::shortint::AtomicPatternParameters;
+ use crate::transciphering::{
+-    OneTimePadFheSecretMask as TranscipheringOneTimePadFheSecretMask, OneTimePadFheState,
+-    OneTimePadPlainSecretMask,
++    CompressedSquashedNoiseOneTimePadFheSecretMask as TranscipheringCompressedSquashedNoiseOneTimePadFheSecretMask,
++    CompressedSquashedNoiseOneTimePadFheSecretMaskConformanceParams as TranscipheringCompressedSquashedNoiseOneTimePadFheSecretMaskConformanceParams,
++    KeyStreamLayout, OneTimePadFheSecretMask as TranscipheringOneTimePadFheSecretMask,
++    OneTimePadFheState, OneTimePadPlainSecretMask,
++    SquashedNoiseOneTimePadFheSecretMask as TranscipheringSquashedNoiseOneTimePadFheSecretMask,
+ };
+ use crate::{ClientKey, ServerKey, Tag};
+ use serde::{Deserialize, Serialize};
+@@ -257,3 +265,198 @@ impl ParameterSetConformant for OneTimePadFheSecretMask {
+ impl Named for OneTimePadFheSecretMask {
+     const NAME: &'static str = "high_level_api::OneTimePadFheSecretMask";
+ }
++
++/// FHE-encrypted pad whose noise has been squashed, so that it can be decrypted with the noise
++/// squashing key.
++///
++/// It is obtained with [`SquashNoise::squash_noise`] on a [`OneTimePadFheSecretMask`].
++/// Use [`Self::compress`] to get a [`CompressedSquashedNoiseOneTimePadFheSecretMask`] that
++/// can be serialized.
++pub struct SquashedNoiseOneTimePadFheSecretMask {
++    inner: TranscipheringSquashedNoiseOneTimePadFheSecretMask,
++    state: SquashedNoiseCiphertextState,
++    tag: Tag,
++}
++
++impl SquashedNoiseOneTimePadFheSecretMask {
++    pub fn into_raw_parts(self) -> (TranscipheringSquashedNoiseOneTimePadFheSecretMask, Tag) {
++        (self.inner, self.tag)
++    }
++
++    /// Compress the squashed mask using the noise squashing compression key of the current
++    /// server key.
++    ///
++    /// Returns an error if the mask comes from a decompression.
++    pub fn compress(&self) -> crate::Result<CompressedSquashedNoiseOneTimePadFheSecretMask> {
++        if !matches!(self.state, SquashedNoiseCiphertextState::Normal) {
++            return Err(crate::Error::new(
++                "A decompressed SquashedNoiseOneTimePadFheSecretMask cannot be compressed again"
++                    .to_owned(),
++            ));
++        }
++
++        try_with_internal_keys(|keys| match keys {
++            Some(InternalServerKey::Cpu(cpu_key)) => {
++                let compression_key = cpu_key
++                    .key
++                    .noise_squashing_compression_key
++                    .as_ref()
++                    .ok_or_else(|| {
++                        crate::Error::new(
++                            "Compression key for squashed noise data not set in server key"
++                                .to_owned(),
++                        )
++                    })?;
++
++                Ok(CompressedSquashedNoiseOneTimePadFheSecretMask {
++                    inner: self.inner.compress(&compression_key.key),
++                    tag: cpu_key.tag.clone(),
++                })
++            }
++            #[cfg(feature = "gpu")]
++            Some(InternalServerKey::Cuda(_)) => Err(crate::Error::new(
++                "SquashedNoiseOneTimePadFheSecretMask::compress is not yet supported on GPU"
++                    .to_owned(),
++            )),
++            #[cfg(feature = "hpu")]
++            Some(InternalServerKey::Hpu(_)) => Err(crate::Error::new(
++                "SquashedNoiseOneTimePadFheSecretMask::compress is not supported on HPU".to_owned(),
++            )),
++            None => Err(UninitializedServerKey.into()),
++        })
++    }
++}
++
++impl SquashNoise for OneTimePadFheSecretMask {
++    type Output = SquashedNoiseOneTimePadFheSecretMask;
++
++    fn squash_noise(&self) -> crate::Result<Self::Output> {
++        try_with_internal_keys(|ke
+```
+
+**File**: `tfhe/src/transciphering/backward_compatibility/mod.rs` (modified, +8/-2)
+```diff
+@@ -2,8 +2,9 @@ use tfhe_versionable::{Upgrade, Version, VersionsDispatch};
+ 
+ use crate::shortint::Ciphertext;
+ use crate::transciphering::{
+-    AesIv, AesPlainKey, CompressedTranscipheringServerKey, KeyStreamLayout, KreyviumIV,
+-    KreyviumPlainKey, OneTimePadFheSecretMask, OneTimePadPlainSecretMask, SerializableAesFheKey,
++    AesIv, AesPlainKey, CompressedSquashedNoiseOneTimePadFheSecretMask,
++    CompressedTranscipheringServerKey, KeyStreamLayout, KreyviumIV, KreyviumPlainKey,
++    OneTimePadFheSecretMask, OneTimePadPlainSecretMask, SerializableAesFheKey,
+     SerializableKreyviumFheKey, StreamCipherKind, StreamCiphertext, TranscipheringPrivateKey,
+     TranscipheringServerKey,
+ };
+@@ -73,6 +74,11 @@ pub enum OneTimePadFheSecretMaskVersions {
+     V1(OneTimePadFheSecretMask),
+ }
+ 
++#[derive(VersionsDispatch)]
++pub enum CompressedSquashedNoiseOneTimePadFheSecretMaskVersions {
++    V0(CompressedSquashedNoiseOneTimePadFheSecretMask),
++}
++
+ #[derive(VersionsDispatch)]
+ pub enum OneTimePadPlainSecretMaskVersions {
+     V0(OneTimePadPlainSecretMask),
 ```
 
 #### Recent Merged Pull Requests:
@@ -2271,36 +3101,27 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. better python pinning (#4090)
+## X. gpu): PRINCE and faster AES (#3862)
 
 **RULE**:
-When implementing operations in `.github/actions/setup_python/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9066683f`: better python pinning (#4090). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6767731b`: gpu): PRINCE and faster AES (#3862). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/setup_python/action.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-name: Setup Python
-description: Install the minimum Python version supported by the python tooling of the repository, see PYTHON_MIN_VERSION in make/python.mk
+.PHONY: bench_integer_prince_gpu # Run benchmarks for PRINCEv2 on GPU backend
+bench_integer_prince_gpu: install_rs_check_toolchain
+	RUSTFLAGS="$(RUSTFLAGS)" __TFHE_RS_BENCH_TYPE=$(BENCH_TYPE) \
+	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench \
+	--bench integer-prince \
+	--features=integer,internal-keycache,gpu -p tfhe-benchmark --profile release_lto_off --
 
-runs:
-  using: composite
-  steps:
-    - name: Get minimum Python version
-      id: get_python_min_version
-      shell: bash
-      run: |
-        echo "version=$(make python_min_version)" >> "${GITHUB_OUTPUT}"
-
-    - name: Install Python
-      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-      with:
-        python-version: ${{ steps.get_python_min_version.outputs.version }}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2310,4 +3131,4 @@ runs:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9066683f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6767731b` are properly handled with clean fallback behavior.

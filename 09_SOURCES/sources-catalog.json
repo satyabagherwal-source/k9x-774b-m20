@@ -345,8 +345,8 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "f5ee0b70145d3894f7f9214b5f8cbdd975295f79d155367c17abb6f87ab985f0",
-    "lastHarvestedAt": "2026-11-08T14:12:19.221Z",
+    "contentHash": "a33b62bf3f2f16019a8485fda271d6a633e9c6d5c89b4dfb701795c796c586a2",
+    "lastHarvestedAt": "2026-11-13T13:50:15.446Z",
     "learningId": "learn-huggingface-lightricks-ltx-2-5"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "9066683f",
+    "sourceVersion": "6767731b",
     "license": "NOASSERTION",
-    "contentHash": "e28f8670f8da3808ed65373b204070315f53395a37d6d6d928087307c4dbd1c6",
-    "lastHarvestedAt": "2026-11-13T01:57:51.245Z",
+    "contentHash": "a944044c9d84b6647d62c8b1fca630d64e48cfe37d65df7f2cd113ce045baf19",
+    "lastHarvestedAt": "2026-11-13T13:50:43.881Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "482bbeb9",
+    "sourceVersion": "6cd398d5",
     "license": "Apache-2.0",
-    "contentHash": "ae8e3e7f483f58123a1a5df26f4c8650a5256ee0951d16bfe11f949222d2d1ac",
-    "lastHarvestedAt": "2026-11-12T09:25:49.127Z",
+    "contentHash": "013d168f1e5849cad8101ec6468ffe101a9c5d0c4c4e17ec7f6b9ca38ba28b3d",
+    "lastHarvestedAt": "2026-11-13T13:50:38.286Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "ed0a4eb9",
+    "sourceVersion": "08023735",
     "license": "Apache-2.0",
-    "contentHash": "1f852059955f4a3b98812afc98e6ba4327953694b1e7985bba7bccbbda268507",
-    "lastHarvestedAt": "2026-11-12T07:46:38.030Z",
+    "contentHash": "8cb0f4e2845a98daeede205ac11604aad813f2b903e98febaa5c5c5ac3b1bde8",
+    "lastHarvestedAt": "2026-11-13T13:50:46.537Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -10183,10 +10183,10 @@
     "repository": "sweetpad-dev/sweetpad",
     "platform": "github",
     "sourceUrl": "https://github.com/sweetpad-dev/sweetpad",
-    "sourceVersion": "7df9d947",
+    "sourceVersion": "a253d2c4",
     "license": "MIT",
-    "contentHash": "b882c39ef2d2ff65352cb895ebc7f92fd03be1f0e6e16616351b6a2dc981b25d",
-    "lastHarvestedAt": "2026-11-09T04:00:43.689Z",
+    "contentHash": "c02472f39e4c8a8a321e0b72740d0d84f76a7d2743ad71d2a5cbe92873107fc6",
+    "lastHarvestedAt": "2026-11-13T13:50:34.707Z",
     "learningId": "learn-github-sweetpad-dev-sweetpad"
   },
   "wcandillon-react-native-skia": {
@@ -12448,5 +12448,15 @@
     "contentHash": "845378fe300a1bc7082e0ed1793e7ab5c5b971692d0b0be7c4efded35cb1dce9",
     "lastHarvestedAt": "2026-11-13T09:17:37.239Z",
     "learningId": "learn-huggingface-thinkingmachines-inkling-2-small"
+  },
+  "tuist-tuist": {
+    "repository": "tuist/tuist",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tuist/tuist",
+    "sourceVersion": "98a0fcec",
+    "license": "NOASSERTION",
+    "contentHash": "a6963985aee561a30fd1550efe7e8a9e511dc088f889b90a5fc16f9e20a65947",
+    "lastHarvestedAt": "2026-11-13T13:50:18.662Z",
+    "learningId": "learn-github-tuist-tuist"
   }
 }

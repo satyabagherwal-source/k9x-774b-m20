@@ -9490,3 +9490,10 @@
 | `CYCLE-20261113-10OS` | `2026-11-13T13:42:44.668Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`6cf0648c...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:43:04.931Z` | `hf-nvidia-nemotron-3-diarization` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F5A07C9A` [Domain D] | Yes (`f483398b...`) |
 | `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:43:27.402Z` | `hashicorp-terraform` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B9912729` [Domain D] | Yes (`12892458...`) |
+| `CYCLE-20261113-AOIB` | `2026-11-13T13:50:15.443Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`a33b62bf...`) |
+| `CYCLE-20261113-AQZN` | `2026-11-13T13:50:18.659Z` | `tuist/tuist` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tuist-tuist-learnings.md` | Yes (`a6963985...`) |
+| `CYCLE-20261113-B3DA` | `2026-11-13T13:50:34.702Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`c02472f3...`) |
+| `CYCLE-20261113-B644` | `2026-11-13T13:50:38.261Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`013d168f...`) |
+| `CYCLE-20261113-BAG5` | `2026-11-13T13:50:43.877Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`a944044c...`) |
+| `CYCLE-20261113-BCHW` | `2026-11-13T13:50:46.532Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`8cb0f4e2...`) |
+| `CYCLE-2026-11-13-PROJ-EVOLVE` | `2026-11-13T13:51:05.141Z` | `hf-lightricks-ltx-2.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E7FD79E5` [Domain D] | Yes (`cea297ae...`) |

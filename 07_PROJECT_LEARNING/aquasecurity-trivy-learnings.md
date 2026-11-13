@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source**: github ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
-> **Source Version**: `482bbeb9`  
+> **Source Version**: `6cd398d5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T09:25:34.028Z  
+> **Timestamp**: 2026-11-13T13:50:24.958Z  
 > **Learning ID**: `learn-github-aquasecurity-trivy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T09:19:16.464Z  
+> **Harvest Timestamp**: 2026-11-13T13:50:24.954Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39253 stars
+- **Stars / Engagement**: 39286 stars
 
 ---
 
@@ -1002,942 +1002,708 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a2a154d7` (2026-11-11)
-**Commit Message**: fix(nodejs): read yarn.lock block fields by indent level (#11496)
+### Incident Patch 1: `6cd398d5` (2026-11-13)
+**Commit Message**: fix(oracle): add Oracle Linux 10 EOL date (#11601)
 
-**File**: `pkg/dependency/parser/nodejs/yarn/parse.go` (modified, +8/-2)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `docs/guide/coverage/os/index.md` (modified, +1/-1)
 ```diff
-@@ -197,18 +197,24 @@ func (p *Parser) parseBlock(block []byte, lineNum int) (lib Library, deps []stri
- 			continue
- 		}
- 
-+		// yarn v1 and Berry indent block fields by two spaces and nested keys by four or more
-+		indent := len(line) - len(strings.TrimLeft(line, " "))
- 		line = strings.TrimPrefix(strings.TrimSpace(line), "\"")
- 
- 		switch {
--		case strings.HasPrefix(line, "version"):
-+		case indent == 2 && strings.HasPrefix(line, "version"):
- 			if lib.Version, err = getVersion(line); err != nil {
- 				skipBlock = true
- 			}
- 			continue
--		case strings.HasPrefix(line, "dependencies:"):
-+		case indent == 2 && strings.HasPrefix(line, "dependencies:"):
- 			// start dependencies block
- 			deps = parseDependencies(scanner)
- 			continue
-+		case indent != 0:
-+			// only the block header holds package patterns, other fields and nested keys
-+			// such as the ones under dependenciesMeta or bin are skipped
-+			continue
- 		}
- 
- 		// try parse package patterns
+@@ -20,7 +20,7 @@ Trivy supports operating systems for
+ | [CentOS](centos.md)[^1]                        | 6, 7, 8                             | dnf/yum/rpm      |
+ | [AlmaLinux](alma.md)                           | 8, 9, 10                            | dnf/yum/rpm      |
+ | [Rocky Linux](rocky.md)                        | 8, 9, 10                            | dnf/yum/rpm      |
+-| [Oracle Linux](oracle.md)                      | 5, 6, 7, 8                          | dnf/yum/rpm      |
++| [Oracle Linux](oracle.md)                      | 5, 6, 7, 8, 9, 10                   | dnf/yum/rpm      |
+ | [Azure Linux (CBL-Mariner)](azure.md)          | 1.0, 2.0, 3.0                       | tdnf/dnf/yum/rpm |
+ | [Amazon Linux](amazon.md)                      | 1, 2, 2023                          | dnf/yum/rpm      |
+ | [openSUSE Leap](suse.md)                       | 42, 15                              | zypper/rpm       |
 ```
 
-**File**: `pkg/dependency/parser/nodejs/yarn/parse_test.go` (modified, +16/-0)
+**File**: `pkg/detector/ospkg/oracle/oracle.go` (modified, +8/-7)
 ```diff
-@@ -285,6 +285,22 @@ func TestParse(t *testing.T) {
- 			want:     yarnV2DepsWithProtocol,
- 			wantDeps: yarnV2DepsWithProtocolDeps,
- 		},
-+		{
-+			name:     "yarn v2 with dependenciesMeta",
-+			file:     "testdata/yarn_v2_with_dependencies_meta.lock",
-+			want:     yarnV2WithDependenciesMeta,
-+			wantDeps: yarnV2WithDependenciesMetaDeps,
-+		},
-+		{
-+			name: "yarn v2 with a package name that starts with version",
-+			file: "testdata/yarn_v2_with_version_name.lock",
-+			want: yarnV2WithVersionName,
-+		},
-+		{
-+			name: "yarn v2 with a bin name that starts with version",
-+			file: "testdata/yarn_v2_with_version_bin.lock",
-+			want: yarnV2WithVersionBin,
-+		},
- 		{
- 			name: "yarn with git dependency",
- 			file: "testdata/yarn_with_git.lock",
-```
-
-**File**: `pkg/dependency/parser/nodejs/yarn/parse_testcase.go` (modified, +35/-0)
-```diff
-@@ -151,6 +151,41 @@ var (
- 		{ID: "ms@2.1.2", Name: "ms", Version: "2.1.2", Locations: []ftypes.Location{{StartLine: 28, EndLine: 33}}},
+@@ -21,13 +21,14 @@ var (
+ 		// Source:
+ 		// https://www.oracle.com/a/ocom/docs/elsp-lifetime-069338.pdf
+ 		// https://community.oracle.com/docs/DOC-917964
+-		"3": time.Date(2011, 12, 31, 23, 59, 59, 0, time.UTC),
+-		"4": time.Date(2013, 12, 31, 23, 59, 59, 0, time.UTC),
+-		"5": time.Date(2017, 12, 31, 23, 59, 59, 0, time.UTC),
+-		"6": time.Date(2021, 3, 21, 23, 59, 59, 0, time.UTC),
+-		"7": time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC),
+-		"8": time.Date(2029, 7, 18, 23, 59, 59, 0, time.UTC),
+-		"9": time.Date(2032, 7, 18, 23, 59, 59, 0, time.UTC),
++		"3":  time.Date(2011, 12, 31, 23, 59, 59, 0, time.UTC),
++		"4":  time.Date(2013, 12, 31, 23, 59, 59, 0, time.UTC),
++		"5":  time.Date(2017, 12, 31, 23, 59, 59, 0, time.UTC),
++		"6":  time.Date(2021, 3, 21, 23, 59, 59, 0, time.UTC),
++		"7":  time.Date(2024, 12, 31, 23, 59, 59, 0, time.UTC),
++		"8":  time.Date(2029, 7, 18, 23, 59, 59, 0, time.UTC),
++		"9":  time.Date(2032, 7, 18, 23, 59, 59, 0, time.UTC),
++		"10": time.Date(2035, 6, 30, 23, 59, 59, 0, time.UTC),
  	}
- 
-+	// docker run --rm node@sha256:18a6d90fd60542269850c80ca03b29b1d9b14d6b221ac7ee8e35b0d33ef904bd sh -c '
-+	//   mkdir /app && cd /app
-+	//   corepack enable
-+	//   yarn init -2
-+	//   yarn add es-toolkit@1.47.0
-+	//   cat yarn.lock'
-+	// with a dependencies section and the ms block added by hand, as Berry
-+	// writes dependencies right before dependenciesMeta.
-+	yarnV2WithDependenciesMeta = []ftypes.Package{
-+		{ID: "es-toolkit@1.47.0", Name: "es-toolkit", Version: "1.47.0", Locations: []ftypes.Location{{StartLine: 16, EndLine: 30}}},
-+		{ID: "ms@2.1.2", Name: "ms", Version: "2.1.2", Locations: []ftypes.Location{{StartLine: 32, EndLine: 37}}},
-+	}
-+
-+	yarnV2WithDependenciesMetaDeps = []ftypes.Dependency{
-+		{
-+			ID:        "es-toolkit@1.47.0",
-+			DependsOn: []string{"ms@2.1.2"},
-+		},
-+	}
-+
-+	// docker run --rm node@sha256:18a6d90fd60542269850c80ca03b29b1d9b14d6b221ac7ee8e35b0d33ef904bd sh -c '
-+	//   mkdir /app && cd /app
-+	//   corepack enable
-+	//   yarn init -2
-+	//   yarn add versions@15.5.2
-+	//   cat yarn.lock'
-+	yarnV2WithVersionBin = []ftypes.Package{
-+		{ID: "versions@15.5.2", Name: "versions", Version: "15.5.2", Locations: []ftypes.Location{{StartLine: 16, EndLine: 23}}},
-+	}
-+
-+	// A package name that starts with "version" in the block header.
-+	yarnV2WithVersionName = []ftypes.Package{
-+		{ID: "version-compare@1.0.0", Name: "version-compare", Version: "1.0.0", Locations: []ftypes.Location{{StartLine: 8, EndLine: 12}}},
-+	}
-+
- 	yarnV2DepsWithProtocolDeps = []ftypes.Dependency{
- 		{
- 			ID:        "debug@4.3.4",
-```
-
-**File**: `pkg/dependency/parser/nodejs/yarn/testdata/yarn_v2_with_dependencies_meta.lock` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+# This file is generated by running "yarn install" inside your project.
-+# Manual changes might be lost - proceed with caution!
-+
-+__metadata:
-+  version: 10
-+  cacheKey: 10c0
-+
-+"app@workspace:.":
-+  version: 0.0.0-use.local
-+  resolution: "app@workspace:."
-+  dependencies:
-+    es-toolkit: "npm:1.47.0"
-+  languageName: unknown
-+  linkType: soft
-+
-+"es-toolkit@npm:1.47.0":
-+  version: 1.47.0
-+  resolution: "es-toolkit@npm:1.47.0"
-+  dependencies:
-+    ms: "npm:2.1.2"
-+  dependenciesMeta:
-+    "@trivago/prettier-plugin-sort-imports@4.3.0":
-+      unplugged: true
-+    prettier-plugin-sort-re-exports@0.0.1:
-+      unplugged: true
-+    vitepress-plugin-sandpack@1.1.4:
-+      unplugged: true
-+  checksum: 10c0/6edc9709fccc409fa4adddd318971d8a18335de9225f2dc99021aacba44fe66a2437a831923589c643865caab261a087bd974338294a60bb5a74932caa102901
-+  languageName: node
-+  linkType: hard
-+
-+"ms@npm:2.1.2":
-+  version: 2.1.2
-+  resolution: "ms@npm:2.1.2"
-+  checksum: 10c0/a437714e2f90dbf881b5191d35a6db792efbca5badf112f87b9e1c712aace4b4b9b742dd6537f3edf90fd6f684de897cec230abde57e87883766712ddda297cc
-+  languageName: node
-+  linkType: hard
-```
-
-**File**: `pkg/dependency/parser/nodejs/yarn/testdata/yarn_v2_with_version_bin.lock` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+# This file is generated by running "yarn install" inside your project.
-+# Manual changes might be lost - proceed with caution!
-+
-+__metadata:
-+  version: 10
-+  cacheKey: 10c0
-+
-+"app@workspace:.":
-+  version: 0.0.0-use.local
-+  resolution: "app@workspace:."
-+  dependencies:
-+    versions: "npm:15.5.2"
-+  languageName: unknown
-+  linkType: soft
-+
-+"versions@npm:15.5.2":
-+  version: 15.5.2
-+  resolution: "versions@npm:15.5.2"
-+  bin:
-+    versions: dist/index.js
-+  checksum: 10c0/108f4aef64e405e329e1ed9e1c387135a69bb7a3cd3307c017f66dc32ab504e217b5e8a78040e3ffc8fb67772a5ebf2b51e5d457871cec3725cacdd7a36b3089
-+  languageName: node
-+  linkType: hard
-```
-
-**File**: `pkg/dependency/parser/nodejs/yarn/testdata/yarn_v2_with_version_name.lock` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+# This file is generated by running "yarn install" inside your project.
-+# Manual changes might be lost - proceed with caution!
-+
-+__metadata:
-+  version: 10
-+  cacheKey: 10c0
-+
-+"version-compare@npm:^1.0.0":
-+  version: 1.0.0
-+  resolution: "version-compare@npm:1.0.0"
-+  languageName: node
-+  linkType: hard
-```
-
-**File**: `pkg/fanal/analyzer/language/nodejs/yarn/yarn.go` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ func init() {
- 	analyzer.RegisterPostAnalyzer(analyzer.TypeYarn, newYarnAnalyzer)
- }
- 
--const version = 2
-+const version = 3
- 
- // Taken from Yarn
- // cf. https://github.com/yarnpkg/yarn/blob/328fd596de935acc6c3e134741748fcc62ec3739/src/resolvers/exotics/registry-resolver.js#L12
-```
-
----
-
-### Incident Patch 2: `482bbeb9` (2026-11-12)
-**Commit Message**: fix(rust): retain direct dependencies declared without version (#11248)
-
-Signed-off-by: abdouladieng <[REDACTED_EMAIL]>
-Co-authored-by: DmitriyLewen <[REDACTED_EMAIL]>
-
-**File**: `pkg/fanal/analyzer/language/rust/cargo/cargo.go` (modified, +45/-15)
-```diff
-@@ -28,14 +28,15 @@ import (
- 	"github.com/aquasecurity/trivy/pkg/fanal/analyzer/language"
- 	"github.com/aquasecurity/trivy/pkg/fanal/types"
- 	"github.com/aquasecurity/trivy/pkg/log"
-+	"github.com/aquasecurity/trivy/pkg/set"
- 	"github.com/aquasecurity/trivy/pkg/utils/fsutils"
  )
  
- func init() {
- 	analyzer.RegisterPostAnalyzer(analyzer.TypeCargo, newCargoAnalyzer)
- }
- 
--const version = 1
-+const version = 2
- 
- var requiredFiles = []string{
- 	types.CargoLock,
-@@ -124,15 +125,33 @@ func (a cargoAnalyzer) removeDevDependencies(fsys fs.FS, dir string, app *types.
- 		return pkg.ID, pkg
- 	})
- 
-+	// IDs of packages that root and workspace packages depend on in Cargo.lock
-+	lockDeps := set.New[string]()
-+	for _, id := range append([]string{root}, workspaces...) {
-+		if pkg, ok := pkgIDs[id]; ok {
-+			lockDeps.Append(pkg.DependsOn...)
-+		}
-+	}
-+
- 	// Identify direct dependencies
- 	pkgs := make(map[string]types.Package)
--	for name, constraint := range directDeps {
-+	for _, dep := range directDeps {
- 		for _, pkg := range app.Packages {
--			if pkg.Name != name {
-+			if pkg.Name != dep.Name {
- 				continue
- 			}
- 
--			if match, err := a.matchVersion(pkg.Version, constraint); err != nil {
-+			// Root and workspace packages are not external dependencies
-+			if pkg.ID == root || slices.Contains(workspaces, pkg.ID) {
-+				continue
-+			}
-+
-+			// Without a version constraint (git/path), pick the candidate from Cargo.lock
-+			if dep.Constraint == "" && !lockDeps.Contains(pkg.ID) {
-+				continue
-+			}
-+
-+			if match, err := a.matchVersion(pkg.Version, dep.Constraint); err != nil {
- 				a.logger.Warn("Unable to match Cargo version", log.String("package", pkg.ID), log.Err(err))
- 				continue
- 			} else if match {
-@@ -165,7 +184,7 @@ func (a cargoAnalyzer) removeDevDependencies(fsys fs.FS, dir string, app *types.
- 		// Root/workspace package may include dev dependencies in lock file, so we need to remove them.
- 		pkg.DependsOn = lo.Filter(pkg.DependsOn, func(dep string, _ int) bool {
- 			_, ok := pkgs[dep]
--			return ok
-+			return ok || slices.Contains(workspaces, dep)
- 		})
- 		pkgs[pkgID] = pkg
- 	}
-@@ -212,9 +231,15 @@ type cargoTomlWorkspace struct {
- 
- type Dependencies map[string]any
- 
-+// cargoDependency is a dependency declared in Cargo.toml: the actual package name and its version constraint.
-+type cargoDependency struct {
-+	Name       string
-+	Constraint string
-+}
-+
- // parseRootCargoTOML parses top-level Cargo.toml and returns dependencies.
- // It also parses workspace members and their dependencies.
--func (a cargoAnalyzer) parseRootCargoTOML(fsys fs.FS, filePath string) (string, []string, map[string]string, error) {
-+func (a cargoAnalyzer) parseRootCargoTOML(fsys fs.FS, filePath string) (string, []string, map[string]cargoDependency, error) {
- 	rootPkg, dependencies, members, rootWorkspaceVersion, err := a.parseCargoTOML(fsys, filePath, "")
- 	if err != nil {
- 		return "", nil, nil, xerrors.Errorf("unable to parse %s: %w", filePath, err)
-@@ -253,22 +278,23 @@ func (a cargoAnalyzer) parseRootCargoTOML(fsys fs.FS, filePath string) (string,
- 		}
- 	}
- 
--	deps := make(map[string]string)
-+	deps := make(map[string]cargoDependency)
- 	for name, value := range dependencies {
- 		switch ver := value.(type) {
- 		case string:
- 			// e.g. regex = "1.5"
--			deps[name] = ver
-+			deps[name] = cargoDependency{Name: name, Constraint: ver}
- 		case map[string]any:
- 			// e.g. serde = { version = "1.0", features = ["derive"] }
--			for k, v := range ver {
--				if k == "version" {
--					if vv, ok := v.(string); ok {
--						deps[name] = vv
--					}
--					break
--				}
-+			// or tantivy-fst = { git = "..." } / local = { path = "..." } without a version
-+			constraint, _ := ver["version"].(string)
-+			// A renamed dependency (e.g. rc = { package = "rand_core" }) is keyed by its alias,
-+			// so several versions of the same crate can be declared side by side.
-+			pkgName, ok := ver["package"].(string)
-+			if !ok {
-+				pkgName = name
- 			}
-+			deps[name] = cargoDependency{Name: pkgName, Constraint: constraint}
- 		}
- 	}
- 
-@@ -295,6 +321,10 @@ func (a cargoAnalyzer) walkIndirectDependencies(pkg types.Package, pkgIDs, deps
- 
- // cf. https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html
- func (a cargoAnalyzer) matchVersion(currentVersion, constraint string) (bool, error) {
-+	if constraint == "" {
-+		return true, nil
-+	}
-+
- 	// `` == `^` - https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#caret-requirements
- 	// Add `^` for correct version comparison
- 	//   - 1.2.3 -> ^1.2.3
 ```
 
-**File**: `pkg/fanal/analyzer/language/rust/cargo/cargo_test.go` (modified, +233/-14)
+**File**: `pkg/detector/ospkg/oracle/oracle_test.go` (modified, +12/-0)
 ```diff
-@@ -495,7 +495,7 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
- 						FilePath: "Cargo.lock",
- 						Packages: types.Packages{
- 							{
--								ID:           "eeae9dc40f83d7dd",
-+								ID:           "35c3ea1485ef5aae",
- 								Relationship: types.RelationshipRoot,
- 								DependsOn: []string{
- 									"member@0.1.0",
-@@ -510,11 +510,13 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
- 								Locations: []types.Location{
- 									{
- 										StartLine: 30,
--										EndLine:   35,
-+										EndLine:   37,
- 									},
- 								},
- 								DependsOn: []string{
- 									"gdb-command@0.7.6",
-+									"member2@0.1.0",
-+									"rand_core@0.5.1",
- 								},
- 							},
- 							{
-@@ -524,12 +526,15 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
- 								Relationship: types.RelationshipWorkspace,
- 								Locations: []types.Location{
- 									{
--										StartLine: 37,
--										EndLine:   42,
-+										StartLine: 39,
-+										EndLine:   48,
- 									},
- 								},
- 								DependsOn: []string{
-+									"rand_core@0.4.3",
-+									"rand_core@0.6.4",
- 									"regex@1.10.2",
-+									"tantivy-fst@0.5.0",
- 								},
- 							},
- 							{
-@@ -549,15 +554,51 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
- 									"wait-timeout@0.2.0",
- 								},
- 							},
-+							{
-+								ID:           "rand_core@0.4.3",
-+								Name:         "rand_core",
-+								Version:      "0.4.3",
-+								Relationship: types.RelationshipDirect,
-+								Locations: []types.Location{
-+									{
-+										StartLine: 56,
-+										EndLine:   60,
-+									},
-+								},
-+							},
-+							{
-+								ID:           "rand_core@0.5.1",
-+								Name:         "rand_core",
-+								Version:      "0.5.1",
-+								Relationship: types.RelationshipDirect,
-+								Locations: []types.Location{
-+									{
-+										StartLine: 62,
-+										EndLine:   66,
-+									},
-+								},
-+							},
-+							{
-+								ID:           "rand_core@0.6.4",
-+								Name:         "rand_core",
-+								Version:      "0.6.4",
-+								Relationship: types.RelationshipDirect,
-+								Locations: []types.Location{
-+									{
-+										StartLine: 68,
-+										EndLine:   72,
-+									},
-+								},
-+							},
- 							{
- 								ID:           "regex@1.10.2",
- 								Name:         "regex",
- 								Version:      "1.10.2",
- 								Relationship: types.RelationshipDirect,
- 								Locations: []types.Location{
- 									{
--										StartLine: 50,
--										EndLine:   60,
-+										StartLine: 74,
-+										EndLine:   84,
- 									},
- 								},
- 								DependsOn: []string{
-@@ -567,6 +608,18 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
- 									"regex-syntax@0.8.2",
- 								},
- 							},
-+							{
-+								ID:           "tantivy-fst@0.5.0",
-+								Name:         "tantivy-fst",
-+								Version:      "0.5.0",
-+								Relationship: types.RelationshipDirect,
-+								Locations: []types.Location{
-+									{
-+										StartLine: 103,
-+										EndLine:   106,
-+									},
-+								},
-+							},
- 							{
- 								ID:           "aho-corasick@1.1.2",
- 								Name:         "aho-corasick",
-@@ -602,8 +655,8 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
- 								Relationship: types.RelationshipIndirect,
- 								Locations: []types.Location{
- 									{
--										StartLine: 44,
--										EndLine:   48,
-+										StartLine: 50,
-+										EndLine:   54,
- 									},
- 								},
- 							},
-@@ -615,8 +668,8 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
- 								Relationship: types.RelationshipIndirect,
- 								Locations: []types.Location{
- 									{
--										StartLine: 62,
--										EndLine:   71,
-+										StartLine: 86,
-+										EndLine:   95,
- 									},
- 								},
- 								DependsOn: []string{
-@@ -633,8 +686,8 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
- 								Relationship: types.RelationshipIndirect,
- 								Locations: []types.Location{
- 									{
--										StartLine: 73,
--										EndLine:   77,
-+										StartLine: 97,
-+										EndLine:   101,
- 									},
- 								},
- 							},
-@@ -646,8 +699,8 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
- 								Relationship: types.RelationshipIndirect,
- 								Locations: []types.Location{
- 									{
--										StartLine: 79,
--										EndLine:   86,
-+										StartLine: 114,
-+										EndLine:   121,
- 									},
- 								},
- 								DependsOn: []string{"libc@0.2.150"},
-@@ -829,6 +882,166 @@ func Test_cargoAnalyzer_Analyze(t *testing.T) {
- 				},
- 			},
+@@ -71,6 +71,18 @@ func TestScanner_IsSupportedVersion(t *testing.T) {
+ 			osVersion: "8",
+ 			expected:  false,
  		},
-+		{
-+			name: "dependencies declared without version (git and path)",
-+			file: "testdata/deps-without-version.txtar",
-+			want: &analyzer.AnalysisResult{
-+				Applications: []types.Application{
-+					{
-+						Type:     types.Cargo,
-+						FilePath: "Cargo.lock",
-+						Packages: types.Packages{
-+							{
-+								ID:           "app@0.1.0",
-+								Name:         "app",
-+								Version:      "0.1.0",
-+								Relationship: types.RelationshipRoot,
-+								Locations: []types.Loc
-```
-
-**File**: `pkg/fanal/analyzer/language/rust/cargo/testdata/deps-without-version.txtar` (added, +137/-0)
-```diff
-@@ -0,0 +1,137 @@
-+Test case: dependencies declared without an explicit version constraint (e.g. git and path dependencies).
-+
-+This test verifies that:
-+- Direct dependencies declared via git (tantivy-fst) or path (local) without a version constraint are recognized as RelationshipDirect
-+- When multiple versions of a crate exist in Cargo.lock (e.g. tantivy-fst 0.4.0 via dev-deps and tantivy-fst 0.5.0 via git direct dep), the one resolved for the root/workspace is retained
-+- A version of the same crate pulled transitively by a regular dependency (tantivy-fst 0.3.0 via fst-consumer) stays RelationshipIndirect and is not picked for the version-less direct dependency
-+- Their transitive dependencies (byteorder, regex-syntax, utf8-ranges, itoa, tantivy-fst 0.3.0) are retained as RelationshipIndirect
-+- Dev dependencies (pretty_assertions, diff, yansi, tantivy-fst 0.4.0) are excluded
-+
-+-- Cargo.lock --
-+# This file is automatically @generated by Cargo.
-+# It is not intended for manual editing.
-+version = 4
-+
-+[[package]]
-+name = "app"
-+version = "0.1.0"
-+dependencies = [
-+ "fst-consumer",
-+ "local",
-+ "log",
-+ "pretty_assertions",
-+ "tantivy-fst 0.5.0",
-+]
-+
-+[[package]]
-+name = "byteorder"
-+version = "1.5.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
-+
-+[[package]]
-+name = "diff"
-+version = "0.1.13"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "56254986775e3233ffa9c4d7d3faaf6d36a2c09d30b20687e9f88bc8bafc16c8"
-+
-+[[package]]
-+name = "fst-consumer"
-+version = "1.0.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "5d6b8a4b2e4f8c1d3a7e9b0c2d4f6a8b1c3e5f7a9b0d2c4e6f8a1b3c5d7e9f0a"
-+dependencies = [
-+ "tantivy-fst 0.3.0",
-+]
-+
-+[[package]]
-+name = "itoa"
-+version = "1.0.18"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
-+
-+[[package]]
-+name = "local"
-+version = "0.1.0"
-+dependencies = [
-+ "itoa",
-+]
-+
-+[[package]]
-+name = "log"
-+version = "0.4.34"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
-+
-+[[package]]
-+name = "pretty_assertions"
-+version = "1.4.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "3ae130e2f271fbc2ac3a40fb1d07180839cdbbe443c7a27e1e3c13c5cac0116d"
-+dependencies = [
-+ "diff",
-+ "tantivy-fst 0.4.0",
-+ "yansi",
-+]
-+
-+[[package]]
-+name = "regex-syntax"
-+version = "0.8.11"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
-+
-+[[package]]
-+name = "tantivy-fst"
-+version = "0.3.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7a3c1e5f9b2d4a6c8e0f1b3d5a7c9e2f4b6d8a0c1e3f5b7d9a2c4e6f8b0d1a3c"
-+
-+[[package]]
-+name = "tantivy-fst"
-+version = "0.4.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
-+
-+[[package]]
-+name = "tantivy-fst"
-+version = "0.5.0"
-+source = "git+https://github.com/paradedb/fst.git#11e89334c578f26f9fbafbd1122ffb220ebbdbbf"
-+dependencies = [
-+ "byteorder",
-+ "regex-syntax",
-+ "utf8-ranges",
-+]
-+
-+[[package]]
-+name = "utf8-ranges"
-+version = "1.0.5"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7fcfc827f90e53a02eaef5e535ee14266c1d569214c6aa70133a624d8a3164ba"
-+
-+[[package]]
-+name = "yansi"
-+version = "1.0.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "cfe53a6657fd280eaa890a3bc59152892ffa3e30101319d168b781ed6529b049"
-+-- Cargo.toml --
-+[package]
-+name = "app"
-+version = "0.1.0"
-+edition = "2021"
-+
-+[dependencies]
-+fst-consumer = "1"
-+log = "0.4"
-+tantivy-fst = { git = "https://github.com/paradedb/fst.git" }
-+local = { path = "local" }
-+
-+[dev-dependencies]
-+pretty_assertions = "1"
-+-- local/Cargo.toml --
-+[package]
-+name = "local"
-+version = "0.1.0"
-+edition = "2021"
-+
-+[dependencies]
-+itoa = "1"
-```
-
-**File**: `pkg/fanal/analyzer/language/rust/cargo/testdata/toml-workspace-members.txtar` (modified, +49/-4)
-```diff
-@@ -5,14 +5,15 @@ explicitly listed members in [workspace].members.
- 
- Structure:
- - Root Cargo.toml: defines members = ["member", "member2"]
--- member/Cargo.toml: depends on gdb-command
--- member2/Cargo.toml: uses { workspace = true } for regex dependency
-+- member/Cargo.toml: depends on gdb-command, member2 (via path with version) and rand_core 0.5 renamed via `package`
-+- member2/Cargo.toml: uses { workspace = true } for regex and tantivy-fst (git dependency without version), depends on rand_core 0.6 and rand_core 0.4 renamed via `package`, and has tempfile as dev-dependency
- 
- Expected behavior:
- - Virtual workspace root should have RelationshipRoot
--- member and member2 should have RelationshipWorkspace
--- gdb-command and regex should have RelationshipDirect
-+- member and member2 should have RelationshipWorkspace (with member -> member2 preserved)
-+- gdb-command, regex, tantivy-fst and all rand_core versions should have RelationshipDirect
- - Transitive dependencies should have RelationshipIndirect
-+- Dev dependencies of workspace members (tempfile) should be excluded
- 
- -- Cargo.lock --
- # This file is automatically @generated by Cargo.
-@@ -49,13 +50,19 @@ name = "member"
- version = "0.1.0"
- dependencies = [
-  "gdb-command",
-+ "member2",
-+ "rand_core 0.5.1",
- ]
- 
- [[package]]
- name = "member2"
- version = "0.1.0"
- dependencies = [
-+ "rand_core 0.4.3",
-+ "rand_core 0.6.4",
-  "regex",
-+ "tantivy-fst",
-+ "tempfile",
- ]
- 
- [[package]]
-@@ -64,6 +71,24 @@ version = "2.6.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "f665ee40bc4a3c5590afb1e9677db74a508659dfd71e126420da8274909a0167"
- 
-+[[package]]
-+name = "rand_core"
-+version = "0.4.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "0e5937858e6fd18cd595d558f90bb5de3b72ae23f9e3763af0e805949b04ef60"
-+
-+[[package]]
-+name = "rand_core"
-+version = "0.5.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "90bde5296fc891b0cef12a6d03ddccc162ce7b2aff54160af9338f8d40df6d19"
-+
-+[[package]]
-+name = "rand_core"
-+version = "0.6.4"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
-+
- [[package]]
- name = "regex"
- version = "1.10.2"
-@@ -93,6 +118,17 @@ version = "0.8.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
- 
-+[[package]]
-+name = "tantivy-fst"
-+version = "0.5.0"
-+source = "git+https://github.com/paradedb/fst.git#11e89334c578f26f9fbafbd1122ffb220ebbdbbf"
-+
-+[[package]]
-+name = "tempfile"
-+version = "3.10.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
-+
- [[package]]
- name = "wait-timeout"
- version = "0.2.0"
-@@ -112,6 +148,7 @@ members = ["member", "member2"]
- 
- [workspace.dependencies]
- regex = "1"
-+tantivy-fst = { git = "https://github.com/paradedb/fst.git" }
- -- member/Cargo.toml --
- [package]
- name = "member"
-@@ -120,11 +157,19 @@ edition = "2021"
- 
- [dependencies]
- gdb-command = "0.7"
-+member2 = { path = "../member2", version = "0.1.0" }
-+rand_core05 = { package = "rand_core", version = "0.5" }
- -- member2/Cargo.toml --
- [package]
- edition = "2021"
- name = "member2"
- version = "0.1.0"
- 
- [dependencies]
-+rand_core = "0.6"
-+rand_core04 = { package = "rand_core", version = "0.4" }
- regex = { workspace = true}
-+tantivy-fst = { workspace = true }
-+
-+[dev-dependencies]
-+tempfile = "3"
++		"oracle10": {
++			now:       time.Date(2035, 6, 30, 23, 59, 58, 0, time.UTC),
++			osFamily:  "oracle",
++			osVersion: "10.0",
++			expected:  true,
++		},
++		"oracle10-same-time": {
++			now:       time.Date(2035, 6, 30, 23, 59, 59, 0, time.UTC),
++			osFamily:  "oracle",
++			osVersion: "10.0",
++			expected:  false,
++		},
+ 		"latest": {
+ 			now:       time.Date(2019, 5, 31, 23, 59, 59, 0, time.UTC),
+ 			osFamily:  "oracle",
 ```
 
 ---
 
-### Incident Patch 3: `93e461b7` (2026-11-11)
-**Commit Message**: fix(nodejs): match npm link targets on a path boundary (#11495)
+### Incident Patch 2: `5c3eac0c` (2026-11-13)
+**Commit Message**: fix(nodejs): derive Bun package name and version from the identifier (#11071)
 
-**File**: `pkg/dependency/parser/nodejs/npm/parse.go` (modified, +4/-2)
+Co-authored-by: DmitriyLewen <[REDACTED_EMAIL]>
+
+**File**: `pkg/dependency/parser/nodejs/bun/parse.go` (modified, +208/-61)
 ```diff
-@@ -249,7 +249,9 @@ func (p *Parser) resolveLinks(packages map[string]Package) {
- 	// so we need to iterate over the cloned `packages` map, but change the original `packages` map.
- 	for pkgPath, pkg := range maps.Clone(packages) {
- 		for linkPath, link := range links {
--			if !strings.HasPrefix(pkgPath, string(link.Resolved)) {
-+			// "packages/ui" must not claim "packages/ui-kit"
-+			rest, ok := strings.CutPrefix(pkgPath, string(link.Resolved))
-+			if !ok || (rest != "" && !strings.HasPrefix(rest, "/")) {
- 				continue
- 			}
- 			// The target doesn't have the "resolved" field, so we need to copy it from the link.
-@@ -258,7 +260,7 @@ func (p *Parser) resolveLinks(packages map[string]Package) {
- 			}
+@@ -6,14 +6,17 @@ import (
+ 	"encoding/json/v2"
+ 	"fmt"
+ 	"io"
++	"slices"
+ 	"sort"
+ 	"strings"
  
- 			// Resolve the link package so all packages are located under "node_modules".
--			resolvedPath := strings.ReplaceAll(pkgPath, string(link.Resolved), linkPath)
-+			resolvedPath := linkPath + rest
- 			packages[resolvedPath] = pkg
+ 	"github.com/samber/lo"
+ 	"golang.org/x/xerrors"
  
- 			// Delete the target package
-```
-
-**File**: `pkg/dependency/parser/nodejs/npm/parse_test.go` (modified, +6/-0)
-```diff
-@@ -71,6 +71,12 @@ func TestParse(t *testing.T) {
- 			want:     npmV3WithoutRootDepsField,
- 			wantDeps: npmV3WithoutRootDepsFieldDeps,
- 		},
-+		{
-+			name:     "lock version v3 with workspace path that prefixes another",
-+			file:     "testdata/package-lock_v3_with_workspace_prefix.json",
-+			want:     npmV3WithWorkspacePrefixPkgs,
-+			wantDeps: nil,
-+		},
- 		{
- 			name:     "lock version v3 with broken link",
- 			file:     "testdata/package-lock_v3_broken_link.json",
-```
-
-**File**: `pkg/dependency/parser/nodejs/npm/parse_testcase.go` (modified, +50/-0)
-```diff
-@@ -1725,6 +1725,56 @@ var (
- 		},
++	"github.com/aquasecurity/go-version/pkg/semver"
+ 	"github.com/aquasecurity/trivy/pkg/dependency"
+ 	ftypes "github.com/aquasecurity/trivy/pkg/fanal/types"
++	"github.com/aquasecurity/trivy/pkg/log"
+ 	"github.com/aquasecurity/trivy/pkg/set"
+ 	xio "github.com/aquasecurity/trivy/pkg/x/io"
+ 	xjson "github.com/aquasecurity/trivy/pkg/x/json"
+@@ -40,10 +43,14 @@ type ParsedPackage struct {
+ 	xjson.Location
+ }
+ 
+-type Parser struct{}
++type Parser struct {
++	logger *log.Logger
++}
+ 
+ func NewParser() *Parser {
+-	return &Parser{}
++	return &Parser{
++		logger: log.WithPrefix("bun"),
++	}
+ }
+ 
+ func (p *ParsedPackage) UnmarshalJSON(data []byte) error {
+@@ -88,101 +95,241 @@ func (p *Parser) Parse(_ context.Context, r xio.ReadSeekerAt) ([]ftypes.Package,
+ 		return nil, nil, xerrors.Errorf("JSON decode error: %w", err)
  	}
  
-+	// docker run --rm node:19.7.0@sha256:51dd437f31812df71108b81385e2945071ec813d5815fa3403855669c8f3432b sh -c '
-+	//   mkdir /app && cd /app
-+	//   npm init -y
-+	//   npm init -y -w packages/ui
-+	//   npm init -y -w packages/ui-kit
-+	//   npm pkg set name=@acme/ui -w packages/ui
-+	//   npm pkg set name=@acme/design-system version=2.0.0 -w packages/ui-kit
-+	//   npm install
-+	//   cat package-lock.json'
-+	npmV3WithWorkspacePrefixPkgs = []ftypes.Package{
+-	pkgs := make(map[string]ftypes.Package, len(lockFile.Packages))
+-	deps := make(map[string][]string)
++	// pkgs and deps are keyed by the install path (the key in `packages`),
++	// e.g. "debug" or "send/debug" for a nested copy.
++	pkgs, depNames, wsPaths := p.parsePackages(lockFile)
++	deps := p.resolveDependencies(depNames, pkgs)
++	prodDirectDeps, devDirectDeps := resolveDirectDependencies(lockFile.Workspaces, wsPaths, pkgs)
+ 
+-	prodDirectDeps := set.New[string]()
+-	devDirectDeps := set.New[string]()
++	for pkgPath, pkg := range pkgs {
++		// A workspace member stays a workspace even when another workspace depends on it.
++		if pkg.Relationship == ftypes.RelationshipWorkspace {
++			continue
++		}
++		if prodDirectDeps.Contains(pkgPath) || devDirectDeps.Contains(pkgPath) {
++			pkg.Relationship = ftypes.RelationshipDirect
++			pkgs[pkgPath] = pkg
++		}
++	}
+ 
+-	for _, ws := range lockFile.Workspaces {
+-		prodDirectDeps.Append(lo.Keys(ws.Dependencies)...)
+-		prodDirectDeps.Append(lo.Keys(ws.PeerDependencies)...)
+-		prodDirectDeps.Append(lo.Keys(ws.OptionalDependencies)...)
+-		devDirectDeps.Append(lo.Keys(ws.DevDependencies)...)
++	for pkgPath := range prodDirectDeps.Iter() {
++		if pkgs[pkgPath].Relationship != ftypes.RelationshipDirect {
++			continue
++		}
++		walkProdPackages(pkgPath, pkgs, deps, set.New[string]())
+ 	}
+-	for pkgName, parsed := range lockFile.Packages {
+-		pkgVersion := strings.TrimPrefix(parsed.Identifier, pkgName+"@")
+-		if strings.HasPrefix(pkgVersion, "workspace") {
+-			pkgVersion = lockFile.Workspaces[pkgName].Version
++
++	pkgSlice, depSlice := mergePackages(pkgs, deps)
++	sort.Sort(ftypes.Packages(pkgSlice))
++	sort.Sort(ftypes.Dependencies(depSlice))
++	return pkgSlice, depSlice, nil
++}
++
++// parsePackages returns the packages and the names of their dependencies keyed by the install path,
++// and the install paths of the workspaces keyed by the workspace directory (the key in `workspaces`).
++func (p *Parser) parsePackages(lockFile LockFile) (map[string]ftypes.Package, map[string][]string, map[string]string) {
++	pkgs := make(map[string]ftypes.Package, len(lockFile.Packages))
++	depNames := make(map[string][]string)
++	// The root workspace has no entry in `packages`; its dependencies are installed at the top level.
++	wsPaths := map[string]string{"": ""}
++
++	for pkgPath, parsed := range lockFile.Packages {
++		// The map key is an install path, which for deduped/nested dependencies
++		// is "parent/child" (e.g. "glob/minimatch") rather than the package name.
++		// The name and version come from the identifier ("minimatch@9.0.5").
++		name, pkgVersion := splitIdentifier(parsed.Identifier)
++		if name == "" {
++			p.logger.Debug("Skip package with empty name", log.String("pkg_path", pkgPath))
++			continue
+ 		}
+-		pkgId := packageID(pkgName, pkgVersion)
+-		isDirect := prodDirectDeps.Contains(pkgName) || devDirectDeps.Contains(pkgName)
+ 
+ 		relationship := ftypes.RelationshipIndirect
+-		if _, ok := lockFile.Workspaces[pkgName]; ok {
++		// A workspace member is written as "<name>@workspace:<dir>",
++		// e.g. "a": ["a@workspace:packages/a"] for the workspace "packages/a".
++		if wsDir, ok := strings.CutPrefix(pkgVersion, "workspace:"); ok {
++			wsPaths[wsDir] = pkgPath
++			pkgVersion = lockFile.Workspaces[wsDir].Version
+ 			relationship = ftypes.RelationshipWorkspace
+-		} else if isDirect {
+-			relationship = ftypes.RelationshipDirect
++		}
++		if pkgVersion != "" {
++			if _, err := semver.Parse(pkgVersion); err != nil {
++				p.logger.Debug("Skip non-semver package version", log.String("pkg_path", pkgPath),
++					log.String("version", pkgVersion), log.Err(err))
++				pkgVersion = ""
++			}
+ 		}
+ 
+-		newPkg := ftypes.Package{
+-			ID:           pkgId,
+-			Name:         pkgName,
++		pkgs[pkgPath] = ftypes.Package{
++			ID:           packageID(name, pkgVersion),
++			Name:         name,
+ 			Version:      pkgVersion,
+ 			Relationship: relationship,
+-			Dev:          true, // Mark all dependencies as Dev. We will handle them later.
++			Dev:          lo.Ternary(relationship == ft
+```
+
+**File**: `pkg/dependency/parser/nodejs/bun/parse_test.go` (modified, +18/-0)
+```diff
+@@ -35,6 +35,24 @@ func TestParse(t *testing.T) {
+ 			want:     multipleWsPkgs,
+ 			wantDeps: multipleWsDeps,
+ 		},
 +		{
-+			ID:           "@acme/design-system@2.0.0",
-+			Name:         "@acme/design-system",
-+			Version:      "2.0.0",
++			name:     "nested, aliased and git packages",
++			file:     "testdata/bun_nested.lock",
++			want:     nestedPkgs,
++			wantDeps: nestedDeps,
++		},
++		{
++			name:     "nested scoped packages",
++			file:     "testdata/bun_nested_scoped.lock",
++			want:     nestedScopedPkgs,
++			wantDeps: nestedScopedDeps,
++		},
++		{
++			name:     "workspace with nested direct dependencies",
++			file:     "testdata/bun_workspace_nested.lock",
++			want:     workspaceNestedPkgs,
++			wantDeps: workspaceNestedDeps,
++		},
+ 	}
+ 
+ 	for _, tt := range tests {
+```
+
+**File**: `pkg/dependency/parser/nodejs/bun/parse_testcase.go` (modified, +942/-0)
+```diff
+@@ -157,4 +157,946 @@ var (
+ 	}
+ 
+ 	multipleWsDeps = []ftypes.Dependency(nil)
++
++	// testdata/bun_nested.lock is generated by bun 1.4.2.
++	nestedPkgs = []ftypes.Package{
++		{
++			ID:           "adm-zip",
++			Name:         "adm-zip",
++			Version:      "",
 +			Relationship: ftypes.RelationshipDirect,
-+			Licenses:     []string{"ISC"},
-+			ExternalReferences: []ftypes.ExternalRef{
++			Dev:          false,
++			Locations: ftypes.Locations{
 +				{
-+					Type: ftypes.RefOther,
-+					URL:  "packages/ui-kit",
++					StartLine: 19,
++					EndLine:   19,
 +				},
 +			},
-+			Locations: []ftypes.Location{
++		},
++		{
++			ID:           "debug@2.2.0",
++			Name:         "debug",
++			Version:      "2.2.0",
++			Relationship: ftypes.RelationshipDirect,
++			Dev:          false,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 21,
++					EndLine:   21,
++				},
++			},
++		},
++		{
++			ID:           "mkdirp@0.5.1",
++			Name:         "mkdirp",
++			Version:      "0.5.1",
++			Relationship: ftypes.RelationshipDirect,
++			Dev:          false,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 45,
++					EndLine:   45,
++				},
++			},
++		},
++		{
++			ID:           "ms@2.1.3",
++			Name:         "ms",
++			Version:      "2.1.3",
++			Relationship: ftypes.RelationshipDirect,
++			Dev:          false,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 43,
++					EndLine:   43,
++				},
++			},
++		},
++		{
++			ID:           "send@0.13.0",
++			Name:         "send",
++			Version:      "0.13.0",
++			Relationship: ftypes.RelationshipDirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 51,
++					EndLine:   51,
++				},
++			},
++		},
++		{
++			ID:           "depd@1.0.1",
++			Name:         "depd",
++			Version:      "1.0.1",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 23,
++					EndLine:   23,
++				},
++			},
++		},
++		{
++			ID:           "destroy@1.0.3",
++			Name:         "destroy",
++			Version:      "1.0.3",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 25,
++					EndLine:   25,
++				},
++			},
++		},
++		{
++			ID:           "ee-first@1.1.1",
++			Name:         "ee-first",
++			Version:      "1.1.1",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 27,
++					EndLine:   27,
++				},
++			},
++		},
++		{
++			ID:           "escape-html@1.0.2",
++			Name:         "escape-html",
++			Version:      "1.0.2",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
 +				{
 +					StartLine: 29,
++					EndLine:   29,
++				},
++			},
++		},
++		{
++			ID:           "etag@1.7.0",
++			Name:         "etag",
++			Version:      "1.7.0",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 31,
++					EndLine:   31,
++				},
++			},
++		},
++		{
++			ID:           "fresh@0.3.0",
++			Name:         "fresh",
++			Version:      "0.3.0",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 33,
 +					EndLine:   33,
 +				},
 +			},
 +		},
 +		{
-+			ID:           "@acme/ui@1.0.0",
-+			Name:         "@acme/ui",
-+			Version:      "1.0.0",
-+			Relationship: ftypes.RelationshipDirect,
-+			Licenses:     []string{"ISC"},
-+			ExternalReferences: []ftypes.ExternalRef{
++			ID:           "http-errors@1.3.1",
++			Name:         "http-errors",
++			Version:      "1.3.1",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
 +				{
-+					Type: ftypes.RefOther,
-+					URL:  "packages/ui",
-+				},
-+			},
-+			Locations: []ftypes.Location{
-+				{
-+					StartLine: 24,
-+					EndLine:   28,
++					StartLine: 35,
++					EndLine:   35,
 +				},
 +			},
 +		},
-+	}
-+
- 	npmV3WithoutRootDepsFieldDeps = []ftypes.Dependency{
- 		{
- 			ID:        "debug@2.6.9",
++		{
++			ID:           "inherits@2.0.4",
++			Name:         "inherits",
++			Version:      "2.0.4",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 37,
++					EndLine:   37,
++				},
++			},
++		},
++		{
++			ID:           "mime@1.3.4",
++			Name:         "mime",
++			Version:      "1.3.4",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 39,
++					EndLine:   39,
++				},
++			},
++		},
++		{
++			ID:           "minimist@0.0.8",
++			Name:         "minimist",
++			Version:      "0.0.8",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          false,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 41,
++					EndLine:   41,
++				},
++			},
++		},
++		{
++			ID:           "ms@0.7.1",
++			Name:         "ms",
++			Version:      "0.7.1",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          false,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 55,
++					EndLine:   55,
++				},
++				{
++					StartLine: 57,
++					EndLine:   57,
++				},
++			},
++		},
++		{
++			ID:           "on-finished@2.3.0",
++			Name:         "on-finished",
++			Version:      "2.3.0",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 47,
++					EndLine:   47,
++				},
++			},
++		},
++		{
++			ID:           "range-parser@1.0.3",
++			Name:         "range-parser",
++			Version:      "1.0.3",
++			Relationship: ftypes.RelationshipIndirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
++				{
++		
 ```
 
-**File**: `pkg/dependency/parser/nodejs/npm/testdata/package-lock_v3_with_workspace_prefix.json` (added, +35/-0)
+**File**: `pkg/dependency/parser/nodejs/bun/testdata/bun_nested.lock` (added, +59/-0)
 ```diff
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,59 @@
 +{
-+  "name": "app",
-+  "version": "1.0.0",
-+  "lockfileVersion": 3,
-+  "requires": true,
-+  "packages": {
++  "lockfileVersion": 2,
++  "configVersion": 1,
++  "workspaces": {
 +    "": {
 +      "name": "app",
-+      "version": "1.0.0",
-+      "license": "ISC",
-+      "workspaces": [
-+        "packages/ui",
-+        "packages/ui-kit"
-+      ]
++      "dependencies": {
++        "adm-zip": "git+https://git@github.com/cthackers/adm-zip.git#ff17ae85000b62b9d159e2520564902724d26c17",
++        "debug": "2.2.0",
++        "ms": "2.1.3",
++        "my-mkdirp": "npm:mkdirp@0.5.1",
++      },
++      "devDependencies": {
++        "send": "0.13.0",
++      },
 +    },
-+    "node_modules/@acme/design-system": {
-+      "resolved": "packages/ui-kit",
-+      "link": true
-+    },
-+    "node_modules/@acme/ui": {
-+      "resolved": "packages/ui",
-+      "link": true
-+    },
-+    "packages/ui": {
-+      "name": "@acme/ui",
-+      "version": "1.0.0",
-+      "license": "ISC"
-+    },
-+    "packages/ui-kit": {
-+      "name": "@acme/design-system",
-+      "version": "2.0.0",
-+      "license": "ISC"
-+    }
++  },
++  "packages": {
++    "adm-zip": ["adm-zip@git+https://git@github.com/cthackers/adm-zip.git#ff17ae85000b62b9d159e2520564902724d26c17", {}, "ff17ae85000b62b9d159e2520564902724d26c17"],
++
++    "debug": ["debug@2.2.0", "", { "dependencies": { "ms": "0.7.1" } }, "sha512-X0rGvJcskG1c3TgSCPqHJ0XJgwlcvOC7elJ5Y0hYuKBZoVqWpAMfLOeIh2UI/DCQ5ruodIjvsugZtjUYUw2pUw=="],
++
++    "depd": ["depd@1.0.1", "", {}, "sha512-OEWAMbCkK9IWQ8pfTvHBhCSqHgR+sk5pbiYqq0FqfARG4Cy+cRsCbITx6wh5pcsmfBPiJAcbd98tfdz5fnBbag=="],
++
++    "destroy": ["destroy@1.0.3", "", {}, "sha512-KB/AVLKRwZPOEo6/lxkDJ+Bv3jFRRrhmnRMPvpWwmIfUggpzGkQBqolyo8FRf833b/F5rzmy1uVN3fHBkjTxgw=="],
++
++    "ee-first": ["ee-first@1.1.1", "", {}, "sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow=="],
++
++    "escape-html": ["escape-html@1.0.2", "", {}, "sha512-J5ahyCRC4liskWVAfkmosNWfG0eHQxI0W+Ko7k3cZaYVMfgt05dwZ68vw6S/TZM1BPvuTv3kq6CRCb7WWtBUVA=="],
++
++    "etag": ["etag@1.7.0", "", {}, "sha512-Mbv5pNpLNPrm1b4rzZlZlfTRpdDr31oiD43N362sIyvSWVNu5Du33EcJGzvEV4YdYLuENB1HzND907cQkFmXNw=="],
++
++    "fresh": ["fresh@0.3.0", "", {}, "sha512-akx5WBKAwMSg36qoHTuMMVncHWctlaDGslJASDYAhoLrzDUDCjZlOngNa/iC6lPm9aA0qk8pN5KnpmbJHSIIQQ=="],
++
++    "http-errors": ["http-errors@1.3.1", "", { "dependencies": { "inherits": "~2.0.1", "statuses": "1" } }, "sha512-gMygNskMurDCWfoCdyh1gOeDfSbkAHXqz94QoPj5IHIUjC/BG8/xv7FSEUr7waR5RcAya4j58bft9Wu/wHNeXA=="],
++
++    "inherits": ["inherits@2.0.4", "", {}, "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="],
++
++    "mime": ["mime@1.3.4", "", { "bin": { "mime": "cli.js" } }, "sha512-sAaYXszED5ALBt665F0wMQCUXpGuZsGdopoqcHPdL39ZYdi7uHoZlhrfZfhv8WzivhBzr/oXwaj+yiK5wY8MXQ=="],
++
++    "minimist": ["minimist@0.0.8", "", {}, "sha512-miQKw5Hv4NS1Psg2517mV4e4dYNaO3++hjAvLOAzKqZ61rH8NS1SK+vbfBWZ5PY/Me/bEWhUwqMghEW5Fb9T7Q=="],
++
++    "ms": ["ms@2.1.3", "", {}, "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="],
++
++    "my-mkdirp": ["mkdirp@0.5.1", "", { "dependencies": { "minimist": "0.0.8" }, "bin": { "mkdirp": "bin/cmd.js" } }, "sha512-SknJC52obPfGQPnjIkXbmA6+5H15E+fR+E4iR2oQ3zzCLbd7/ONua69R/Gw7AgkTLsRG+r5fzksYwWe1AgTyWA=="],
++
++    "on-finished": ["on-finished@2.3.0", "", { "dependencies": { "ee-first": "1.1.1" } }, "sha512-ikqdkGAAyf/X/gPhXGvfgAytDZtDbr+bkNUJ0N9h5MI/dmdgCs3l6hoHrcUv41sRKew3jIwrp4qQDXiK99Utww=="],
++
++    "range-parser": ["range-parser@1.0.3", "", {}, "sha512-nDsRrtIxVUO5opg/A8T2S3ebULVIfuh8ECbh4w3N4mWxIiT3QILDJDUQayPqm2e8Q8NUa0RSUkGCfe33AfjR3Q=="],
++
++    "send": ["send@0.13.0", "", { "dependencies": { "debug": "~2.2.0", "depd": "~1.0.1", "destroy": "1.0.3", "escape-html": "1.0.2", "etag": "~1.7.0", "fresh": "0.3.0", "http-errors": "~1.3.1", "mime": "1.3.4", "ms": "0.7.1", "on-finished": "~2.3.0", "range-parser": "~1.0.2", "statuses": "~1.2.1" } }, "sha512-zck2y84i0SbUUiwq2l5gGPNVpCplL48og5xIhFjNjQa09003YCTy6Vb3rKfVuG8W8PWNUtUOntjQEBdwkJ9oBw=="],
++
++    "statuses": ["statuses@1.2.1", "", {}, "sha512-pVEuxHdSGrt8QmQ3LOZXLhSA6MP/iPqKzZeO6Squ7PNGkA/9MBsSfV0/L+bIxkoDmjF4tZcLpcVq/fkqoHvuKg=="],
++
++    "debug/ms": ["ms@0.7.1", "", {}, "sha512-lRLiIR9fSNpnP6TC4v8+4OU7oStC01esuNowdQ34L+Gk8e5Puoc88IqJ+XAY/B3Mn2ZKis8l8HX90oU8ivzUHg=="],
++
++    "send/ms": ["ms@0.7.1", "", {}, "sha512-lRLiIR9fSNpnP6TC4v8+4OU7oStC01esuNowdQ34L+Gk8e5Puoc88IqJ+XAY/B3Mn2ZKis8l8HX90oU8ivzUHg=="],
 +  }
 +}
 ```
 
+**File**: `pkg/dependency/parser/nodejs/bun/testdata/bun_nested_scoped.lock` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++{
++  "lockfileVersion": 2,
++  "configVersion": 1,
++  "workspaces": {
++    "": {
++      "name": "app",
++      "dependencies": {
++        "@noble/curves": "1.4.0",
++        "@noble/hashes": "1.4.0",
++        "ethereum-cryptography": "2.1.2",
++      },
++    },
++  },
++  "packages": {
++    "@noble/curves": ["@noble/curves@1.4.0", "", { "dependencies": { "@noble/hashes": "1.4.0" } }, "sha512-p+4cb332SFCrReJkCYe8Xzm0OWi4Jji5jVdIZRL/PmacmDkFNw6MrrV+gGpiPxLHbV+zKFRywUWbaseT+tZRXg=="],
++
++    "@noble/hashes": ["@noble/hashes@1.4.0", "", {}, "sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg=="],
++
++    "@scure/base": ["@scure/base@1.1.9", "", {}, "sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg=="],
++
++    "@scure/bip32": ["@scure/bip32@1.3.1", "", { "dependencies": { "@noble/curves": "~1.1.0", "@noble/hashes": "~1.3.1", "@scure/base": "~1.1.0" } }, "sha512-osvveYtyzdEVbt3OfwwXFr4P2iVBL5u1Q3q4ONBfDY/UpOuXmOlbgwc1xECEboY8wIays8Yt6onaWMUdUbfl0A=="],
++
++    "@scure/bip39": ["@scure/bip39@1.2.1", "", { "dependencies": { "@noble/hashes": "~1.3.0", "@scure/base": "~1.1.0" } }, "sha512-Z3/Fsz1yr904dduJD0NpiyRHhRYHdcnyh73FZWiV+/qhWi83wNJ3NWolYqCEN+ZWsUz2TWwajJggcRE9r1zUYg=="],
++
++    "ethereum-cryptography": ["ethereum-cryptography@2.1.2", "", { "dependencies": { "@noble/curves": "1.1.0", "@noble/hashes": "1.3.1", "@scure/bip32": "1.3.1", "@scure/bip39": "1.2.1" } }, "sha512-Z5Ba0T0ImZ8fqXrJbpHcbpAvIswRte2wGNR/KePnu8GbbvgJ47lMxT/ZZPG6i9Jaht4azPDop4HaM00J0J59ug=="],
++
++    "@scure/bip32/@noble/curves": ["@noble/curves@1.1.0", "", { "dependencies": { "@noble/hashes": "1.3.1" } }, "sha512-091oBExgENk/kGj3AZmtBDMpxQPDtxQABR2B9lb1JbVTs6ytdzZNwvhxQ4MWasRNEzlbEH8jCWFCwhF/Obj5AA=="],
++
++    "@scure/bip32/@noble/hashes": ["@noble/hashes@1.3.1", "", {}, "sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA=="],
++
++    "@scure/bip39/@noble/hashes": ["@noble/hashes@1.3.1", "", {}, "sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA=="],
++
++    "ethereum-cryptography/@noble/curves": ["@noble/curves@1.1.0", "", { "dependencies": { "@noble/hashes": "1.3.1" } }, "sha512-091oBExgENk/kGj3AZmtBDMpxQPDtxQABR2B9lb1JbVTs6ytdzZNwvhxQ4MWasRNEzlbEH8jCWFCwhF/Obj5AA=="],
++
++    "ethereum-cryptography/@noble/hashes": ["@noble/hashes@1.3.1", "", {}, "sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA=="],
++  }
++}
+```
+
+**File**: `pkg/dependency/parser/nodejs/bun/testdata/bun_workspace_nested.lock` (added, +104/-0)
+```diff
+@@ -0,0 +1,104 @@
++{
++  "lockfileVersion": 2,
++  "configVersion": 1,
++  "workspaces": {
++    "": {
++      "name": "buntest-ws",
++      "dependencies": {
++        "debug": "4.3.4",
++        "lodash": "4.17.21",
++        "minimist": "1.2.8",
++        "ms": "2.1.3",
++        "send": "0.13.2",
++      },
++    },
++    "packages/a": {
++      "name": "a",
++      "version": "1.0.0",
++      "dependencies": {
++        "debug": "2.6.9",
++        "lodash": "4.17.15",
++        "minimist": "0.0.8",
++        "ms": "0.7.1",
++        "send": "0.13.0",
++      },
++    },
++    "packages/b": {
++      "name": "b",
++      "version": "1.0.0",
++      "dependencies": {
++        "a": "workspace:*",
++      },
++      "devDependencies": {
++        "minimist": "0.0.10",
++      },
++    },
++  },
++  "packages": {
++    "a": ["a@workspace:packages/a"],
++
++    "b": ["b@workspace:packages/b"],
++
++    "debug": ["debug@4.3.4", "", { "dependencies": { "ms": "2.1.2" }, "peerDependencies": { "supports-color": "*" }, "optionalPeers": ["supports-color"] }, "sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ=="],
++
++    "depd": ["depd@1.1.2", "", {}, "sha512-7emPTl6Dpo6JRXOXjLRxck+FlLRX5847cLKEn00PLAgc3g2hTZZgr+e4c2v6QpSmLeFP3n5yUo7ft6avBK/5jQ=="],
++
++    "destroy": ["destroy@1.0.4", "", {}, "sha512-3NdhDuEXnfun/z7x9GOElY49LoqVHoGScmOKwmxhsS8N5Y+Z8KyPPDnaSzqWgYt/ji4mqwfTS34Htrk0zPIXVg=="],
++
++    "ee-first": ["ee-first@1.1.1", "", {}, "sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow=="],
++
++    "escape-html": ["escape-html@1.0.3", "", {}, "sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow=="],
++
++    "etag": ["etag@1.7.0", "", {}, "sha512-Mbv5pNpLNPrm1b4rzZlZlfTRpdDr31oiD43N362sIyvSWVNu5Du33EcJGzvEV4YdYLuENB1HzND907cQkFmXNw=="],
++
++    "fresh": ["fresh@0.3.0", "", {}, "sha512-akx5WBKAwMSg36qoHTuMMVncHWctlaDGslJASDYAhoLrzDUDCjZlOngNa/iC6lPm9aA0qk8pN5KnpmbJHSIIQQ=="],
++
++    "http-errors": ["http-errors@1.3.1", "", { "dependencies": { "inherits": "~2.0.1", "statuses": "1" } }, "sha512-gMygNskMurDCWfoCdyh1gOeDfSbkAHXqz94QoPj5IHIUjC/BG8/xv7FSEUr7waR5RcAya4j58bft9Wu/wHNeXA=="],
++
++    "inherits": ["inherits@2.0.4", "", {}, "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="],
++
++    "lodash": ["lodash@4.17.21", "", {}, "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="],
++
++    "mime": ["mime@1.3.4", "", { "bin": { "mime": "cli.js" } }, "sha512-sAaYXszED5ALBt665F0wMQCUXpGuZsGdopoqcHPdL39ZYdi7uHoZlhrfZfhv8WzivhBzr/oXwaj+yiK5wY8MXQ=="],
++
++    "minimist": ["minimist@1.2.8", "", {}, "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA=="],
++
++    "ms": ["ms@2.1.3", "", {}, "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="],
++
++    "on-finished": ["on-finished@2.3.0", "", { "dependencies": { "ee-first": "1.1.1" } }, "sha512-ikqdkGAAyf/X/gPhXGvfgAytDZtDbr+bkNUJ0N9h5MI/dmdgCs3l6hoHrcUv41sRKew3jIwrp4qQDXiK99Utww=="],
++
++    "range-parser": ["range-parser@1.0.3", "", {}, "sha512-nDsRrtIxVUO5opg/A8T2S3ebULVIfuh8ECbh4w3N4mWxIiT3QILDJDUQayPqm2e8Q8NUa0RSUkGCfe33AfjR3Q=="],
++
++    "send": ["send@0.13.2", "", { "dependencies": { "debug": "~2.2.0", "depd": "~1.1.0", "destroy": "~1.0.4", "escape-html": "~1.0.3", "etag": "~1.7.0", "fresh": "0.3.0", "http-errors": "~1.3.1", "mime": "1.3.4", "ms": "0.7.1", "on-finished": "~2.3.0", "range-parser": "~1.0.3", "statuses": "~1.2.1" } }, "sha512-cQ0rmXHrdO2Iof08igV2bG/yXWD106ANwBg6DkGQNT2Vsznbgq6T0oAIQboy1GoFsIuy51jCim26aA9tj3Z3Zg=="],
++
++    "statuses": ["statuses@1.2.1", "", {}, "sha512-pVEuxHdSGrt8QmQ3LOZXLhSA6MP/iPqKzZeO6Squ7PNGkA/9MBsSfV0/L+bIxkoDmjF4tZcLpcVq/fkqoHvuKg=="],
++
++    "a/debug": ["debug@2.6.9", "", { "dependencies": { "ms": "2.0.0" } }, "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA=="],
++
++    "a/lodash": ["lodash@4.17.15", "", {}, "sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A=="],
++
++    "a/minimist": ["minimist@0.0.8", "", {}, "sha512-miQKw5Hv4NS1Psg2517mV4e4dYNaO3++hjAvLOAzKqZ61rH8NS1SK+vbfBWZ5PY/Me/bEWhUwqMghEW5Fb9T7Q=="],
++
++    "a/ms": ["ms@0.7.1", "", {}, "sha512-lRLiIR9fSNpnP6TC4v8+4OU7oStC01esuNowdQ34L+Gk8e5Puoc88IqJ+XAY/B3Mn2ZKis8l8HX90oU8ivzUHg=="],
++
++    "a/send": ["send@0.13.0", "", { "dependencies": { "debug": "~2.2.0", "depd": "~1.0.1", "destroy": "1.0.3", "escape-html": "1.0.2", "etag": "~1.7.0", "fresh": "0.3.0", "http-errors": "~1.3.1", "mime": "1.3.4", "ms": "0.7.1", "on-finished": "~2.3.0", "range-parser": "~1.0.2", "statuses": "~1.2.1" } }, "sha512-zck2y84i0SbUUiwq2l5gGPNVpCplL48og5xIhFjNjQa09003YCTy6Vb3rKfVuG8W8PWNUtUOntjQEBdwkJ9oBw=="],
++
++    "b/minimist": ["minimist@0.0.10", "", {}, "sha512-iotkTvxc+TwOm5Ieim8VnSNvCDjCK9S8G3scJ50ZthspSxa7jx50jkhYduuAtAjvfDUwSgOwf8+If99AlOEhyw=="],
++
+
+```
+
+**File**: `pkg/fanal/analyzer/language/nodejs/bun/bun.go` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ func init() {
+ }
+ 
+ const (
+-	version = 1
++	version = 2
+ )
+ 
+ type bunLibraryAnalyzer struct {
+```
+
 #### Recent Merged Pull Requests:
 - **PR #11616** (closed): fix(swift): trim trailing slashes from the Package.resolved location (@mehdikarimi55)
+- **PR #11615** (2026-11-13): test(image): do not expect an exact compressed size in TestArtifact_InspectWithMaxImageSize (@vejeta)
+- **PR #11601** (2026-11-13): fix(oracle): add Oracle Linux 10 EOL date (@luiacuaniello)
 - **PR #11584** (2026-11-09): docs(python): add pylock.toml row to language coverage index (@delaysystem)
 - **PR #11583** (2026-11-09): docs(go): describe which go.mod directive sets the stdlib version (@wils0ns)
 - **PR #11582** (closed): fix(misconf): read ARM blob soft delete from nested blobServices (@anandhx)
-- **PR #11580** (2026-11-11): fix(swift): trim a trailing slash from a Package.resolved location (@wils0ns)
-- **PR #11573** (closed): fix(nodejs): parse Bun 1.4 four-element git entries in bun.lock (@anandhx)
 
 ---
 
@@ -1957,36 +1723,28 @@ Co-authored-by: DmitriyLewen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. nodejs): read yarn.lock block fields by indent level (#11496)
+## X. oracle): add Oracle Linux 10 EOL date (#11601)
 
 **RULE**:
-When implementing operations in `pkg/dependency/parser/nodejs/yarn/parse.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/coverage/os/index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a2a154d7`: nodejs): read yarn.lock block fields by indent level (#11496). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6cd398d5`: oracle): add Oracle Linux 10 EOL date (#11601). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/dependency/parser/nodejs/yarn/parse.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/coverage/os/index.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// yarn v1 and Berry indent block fields by two spaces and nested keys by four or more
-		indent := len(line) - len(strings.TrimLeft(line, " "))
-		case indent == 2 && strings.HasPrefix(line, "version"):
-		case indent == 2 && strings.HasPrefix(line, "dependencies:"):
-		case indent != 0:
-			// only the block header holds package patterns, other fields and nested keys
-			// such as the ones under dependenciesMeta or bin are skipped
-			continue
+| [Oracle Linux](oracle.md)                      | 5, 6, 7, 8, 9, 10                   | dnf/yum/rpm      |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		case strings.HasPrefix(line, "version"):
-		case strings.HasPrefix(line, "dependencies:"):
+| [Oracle Linux](oracle.md)                      | 5, 6, 7, 8                          | dnf/yum/rpm      |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a2a154d7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6cd398d5` are properly handled with clean fallback behavior.

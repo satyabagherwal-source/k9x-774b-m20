@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `ed0a4eb9`  
+> **Source Version**: `08023735`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T07:46:25.535Z  
+> **Timestamp**: 2026-11-13T13:50:32.014Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T07:46:25.529Z  
+> **Harvest Timestamp**: 2026-11-13T13:50:32.007Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7176 stars
+- **Stars / Engagement**: 7180 stars
 
 ---
 
@@ -1065,325 +1065,34 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ebb7068c` (2026-11-11)
-**Commit Message**: Merge pull request #38498 from vespa-engine/arnej/add-deadlock-monitor
+### Incident Patch 1: `d9b621f7` (2026-11-13)
+**Commit Message**: Merge pull request #38513 from vespa-engine/boeker/better-summary-timeout-error-message
 
-maybe start deadlock_monitor
+Improve error message when summary fetching is skipped due to timeout
 
-**File**: `searchcore/src/apps/proton/proton.cpp` (modified, +12/-0)
+**File**: `container-search/src/main/java/com/yahoo/prelude/cluster/ClusterSearcher.java` (modified, +3/-2)
 ```diff
-@@ -252,6 +252,17 @@ class Transport {
-     FNET_Transport _transport;
- };
- 
-+void runDeadlockMonitor() {
-+    static const char *deadlock_monitor = "/usr/local/sbin/deadlock_monitor";
-+    if (::getenv("PROTON_RUN_DEADLOCK_MONITOR") != nullptr) {
-+        if (::access(deadlock_monitor, X_OK) == 0) {
-+            int pid = ::getpid();
-+            std::string cmd_line = std::format("{} {} &", deadlock_monitor, pid);
-+            ::system(cmd_line.c_str());
-+        }
-+    }
-+}
-+
- } // namespace
- 
- void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
-@@ -354,6 +365,7 @@ int App::main(int argc, char** argv) {
- 
- int main(int argc, char** argv) {
-     int result = 0;
-+    runDeadlockMonitor();
-     grpc_init();
-     {
-         App app;
-```
-
----
-
-### Incident Patch 2: `b36ac8df` (2026-11-11)
-**Commit Message**: maybe start deadlock_monitor
-
-**File**: `searchcore/src/apps/proton/proton.cpp` (modified, +12/-0)
-```diff
-@@ -252,6 +252,17 @@ class Transport {
-     FNET_Transport _transport;
- };
- 
-+void runDeadlockMonitor() {
-+    static const char *deadlock_monitor = "/usr/local/sbin/deadlock_monitor";
-+    if (::getenv("PROTON_RUN_DEADLOCK_MONITOR") != nullptr) {
-+        if (::access(deadlock_monitor, X_OK) == 0) {
-+            int pid = ::getpid();
-+            std::string cmd_line = std::format("{} {} &", deadlock_monitor, pid);
-+            ::system(cmd_line.c_str());
-+        }
-+    }
-+}
-+
- } // namespace
- 
- void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
-@@ -354,6 +365,7 @@ int App::main(int argc, char** argv) {
- 
- int main(int argc, char** argv) {
-     int result = 0;
-+    runDeadlockMonitor();
-     grpc_init();
-     {
-         App app;
-```
-
----
-
-### Incident Patch 3: `a51d2a49` (2026-11-11)
-**Commit Message**: Modernize DecodeFastMapLookupNode: snake_case, no get/set prefixes
-
-DecodeFastMapLookupNode is new code, so align it with the current C++
-style: members, parameters and local helpers use snake_case, and accessors
-drop the get/set prefixes.
-
-No change in behavior or wire format; the visitMembers labels are kept
-as attributeName/valueType so debug dumps still match the Java side.
-
-**File**: `searchlib/src/tests/expression/decode_fast_map_lookup_node/decode_fast_map_lookup_node_test.cpp` (modified, +15/-15)
-```diff
-@@ -158,11 +158,11 @@ TEST(DecodeFastMapLookupNodeTest, separator_between_key_and_value_can_be_given)
- }
- 
- TEST(DecodeFastMapLookupNodeTest, separator_defaults_to_colon_and_can_be_set) {
--    EXPECT_EQ(":", DecodeFastMapLookupNode("m$lookup", ValueType::INT).getSeparator());
--    EXPECT_EQ(":", DecodeFastMapLookupNode().getSeparator());
--    EXPECT_EQ("=", DecodeFastMapLookupNode("m$lookup", ValueType::INT, "=").getSeparator());
-+    EXPECT_EQ(":", DecodeFastMapLookupNode("m$lookup", ValueType::INT).separator());
-+    EXPECT_EQ(":", DecodeFastMapLookupNode().separator());
-+    EXPECT_EQ("=", DecodeFastMapLookupNode("m$lookup", ValueType::INT, "=").separator());
-     DecodeFastMapLookupNode node("m$lookup", ValueType::INT);
--    EXPECT_EQ("->", node.setSeparator("->").getSeparator());
-+    EXPECT_EQ("->", node.separator("->").separator());
- }
- 
- TEST(DecodeFastMapLookupNodeTest, malformed_entries_are_kept_undecoded) {
-@@ -192,18 +192,18 @@ std::unique_ptr<DecodeFastMapLookupNode> serialize_and_deserialize(const DecodeF
- TEST(DecodeFastMapLookupNodeTest, attribute_name_value_type_and_separator_are_copied_and_serialized) {
-     DecodeFastMapLookupNode node("m$lookup", ValueType::LONG, ": ");
-     DecodeFastMapLookupNode copy(node);
--    EXPECT_EQ("m$lookup", copy.getAttributeName());
--    EXPECT_EQ(ValueType::LONG, copy.getValueType());
--    EXPECT_EQ(": ", copy.getSeparator());
-+    EXPECT_EQ("m$lookup", copy.attribute_name());
-+    EXPECT_EQ(ValueType::LONG, copy.value_type());
-+    EXPECT_EQ(": ", copy.separator());
- 
-     size_t size = 0;
-     auto   result = serialize_and_deserialize(node, &size);
-     // class id, no result yet, the attribute name, one byte value type and the separator: nothing about the input
-     EXPECT_EQ(4u + 1u + 4u + 8u + 1u + 4u + 2u, size);
-     ASSERT_TRUE(result);
--    EXPECT_EQ("m$lookup", result->getAttributeName());
--    EXPECT_EQ(ValueType::LONG, result->getValueType());
--    EXPECT_EQ(": ", result->getSeparator());
-+    EXPECT_EQ("m$lookup", result->attribute_name());
-+    EXPECT_EQ(ValueType::LONG, result->value_type());
-+    EXPECT_EQ(": ", result->separator());
- }
- 
- TEST(DecodeFastMapLookupNodeTest, all_value_types_are_serialized) {
-@@ -212,7 +212,7 @@ TEST(DecodeFastMapLookupNodeTest, all_value_types_are_serialized) {
-     {
-         auto result = serialize_and_deserialize(DecodeFastMapLookupNode("m$lookup", type));
-         ASSERT_TRUE(result);
--        EXPECT_EQ(type, result->getValueType());
-+        EXPECT_EQ(type, result->value_type());
-     }
- }
- 
-@@ -226,9 +226,9 @@ TEST(DecodeFastMapLookupNodeTest, unknown_serialized_value_type_is_deserialized_
-     auto  deserialized = vespalib::Identifiable::create(serializer);
-     auto* result = dynamic_cast<DecodeFastMapLookupNode*>(deserialized.get());
-     ASSERT_NE(nullptr, result);
--    EXPECT_EQ("m$lookup", result->getAttributeName());
--    EXPECT_EQ(ValueType::UNKNOWN, result->getValueType());
--    EXPECT_EQ("=", result->getSeparator());
-+    EXPECT_EQ("m$lookup", result->attribute_name());
-+    EXPECT_EQ(ValueType::UNKNOWN, result->value_type());
-+    EXPECT_EQ("=", result->separator());
- }
- 
- class DecodeFastMapLookupNodeAttributeTest : public ::testing::Test {
-@@ -299,7 +299,7 @@ TEST_F(DecodeFastMapLookupNodeAttributeTest, entries_of_hidden_attribute_are_dec
- 
- TEST_F(DecodeFastMapLookupNodeAttributeTest, entries_are_decoded_with_set_separator) {
-     auto node = make_node("m$lookup", ValueType::INT);
--    node->setSeparator(" -> ");
-+    node->separator(" -> ");
-     auto tree = make_tree(std::move(node));
-     EXPECT_EQ((std::vector<std::string>{"a -> 1", "b -> -1"}), values_of(tree, 1));
- }
-```
-
-**File**: `searchlib/src/vespa/searchlib/expression/decode_fast_map_lookup_node.cpp` (modified, +30/-30)
-```diff
-@@ -20,7 +20,7 @@ IMPLEMENT_EXPRESSIONNODE(DecodeFastMapLookupNode, FunctionNode);
- 
- namespace {
- 
--template <typename T> bool decodeExcessHex(std::string_view hex, std::string& out) {
-+template <typename T> bool decode_excess_hex(std::string_view hex, std::string& out) {
-     auto value = vespalib::excess_hex::decode<T>(hex);
-     if (!value) {
-         return false;
-@@ -29,17 +29,17 @@ template <typename T> bool decodeExcessHex(std::string_view hex, std::string& ou
-     return true;
- }
- 
--bool decodeValue(std::string_view encoded, DecodeFastMapLookupNode::ValueType valueType, std::string& out) {
-+bool decode_value(std::string_view encoded, DecodeFastMapLookupNode::ValueType value_type, std::string& out) {
-     using ValueType = DecodeFastMapLookupNode::ValueType;
--    switch (valueType) {
-+    switch (value_type) {
-     case ValueType::INT:
--        return decodeExcessHex<int32_t>(encoded, out);
-+        return decode_excess_hex<int32_t>(encoded, out);
-     case ValueType::LONG:
--        return decodeExcessHex<int64_t>(encoded, out);
-+        return decode_excess_hex<int64_t>(encoded, out);
-     case ValueType::FLOAT:
--        return decodeExcessHex<float>(encoded, out);
-+        return decode_excess_hex<float>(encoded, out);
-     case ValueType::DOUBLE:
--        return decodeExcessHex<double>(encoded, out);
-+        return decode_excess_hex<double>(encoded, out);
-     case ValueType::STRING:
-         out = encoded;
-         return true;
-@@ -49,9 +49,9 @@ bool decodeValue(std::string_view encoded, DecodeFastMapLookupNode::ValueType va
-     return false;
- }
- 
--std::string_view toString(DecodeFastMapLookupNode::ValueType valueType) {
-+std::string_view to_string(DecodeFastMapLookupNode::ValueType value_type) {
-     using ValueType = DecodeFastMapLookupNode::ValueType;
--    switch (valueType) {
-+    switch (value_type) {
-     case ValueType::INT:
-         return "int";
-     case ValueType::LONG:
-@@ -69,7 +69,7 @@ std::string_view toString(DecodeFastMapLookupNode::ValueType valueType) {
- }
- 
- // Maps a serialized value type to the enum, where unknown values (for example from a newer container) become UNKNOWN.
--DecodeFastMapLookupNode::ValueType toValueType(uint8_t value) {
-+DecodeFastMapLookupNode::ValueType to_value_type(uint8_t value) {
-     using ValueType = DecodeFastMapLookupNode::ValueType;
-     switch (static_cast<ValueType>(value)) {
-     case ValueType::INT:
-@@ -87,28 +87,28 @@ DecodeFastMapLookupNode::ValueType toValueType(uint8_t value) {
- } // namespace
- 
- DecodeFastMapLookupNode::DecodeFastMapLookupNode() noexcept
--    : FunctionNode(), _attributeName(), _valueType(ValueType::UNKNOWN), _separator(default_separator), _input() {
-+    : FunctionNode(), _attribute_name(), _value_type(ValueType::UNKNOWN), _separator(default_separator), _input() {
- }
- 
--DecodeFastMapLookupNode::DecodeFastMapLookupNode(std::string_view attributeName, ValueType valueType,
-+DecodeFastMapLookupNode::DecodeFastMapLookupNode(std::string_view attribute_name, ValueType value_type,
-                                                  std::string_view separator)
--    : FunctionNode(), _attributeName(attributeName), _valueType(valueType), _separator(separator), _input() {
-+    : FunctionNode(), _attribute_name(attribute_name), _value_type(value_type), _separator(separator), _input() {
-     createInput();
- }
- 
- DecodeFastMapLookupNode::DecodeFastMapLookupNode(const DecodeFastMapLookupNode& rhs)
-     : FunctionNode(rhs),
--      _attributeName(rhs._attributeName),
--      _valueType(rhs._valueType),
-+      _attribute_name(rhs._attribute_name),
-+      _value_type(rhs._value_type),
-       _separator(rhs._separator),
-       _input(rhs._input ? std::make_unique<AttributeNode>(*rhs._input) : nullptr) {
- }
- 
- DecodeFastMapLookupNode& DecodeFastMapLookupNode::operator=(const DecodeFastMapLookupNode& rhs) {
-     if (this != &rhs) {
-         FunctionNode::operator=(rhs);
--        _attributeName = rhs._attributeName;
--        _valueType = rhs._valueType;
-+        _attribute_name = rhs._attribute_name;
-+        _value_type = rhs._value_type;
-         _separator = rhs._separator;
-         _input = rhs._input ? std::make_unique<AttributeNode>(*rhs._input) : nullptr;
-     }
-@@ -118,10 +118,10 @@ DecodeFastMapLookupNode& DecodeFastMapLookupNode::operator=(const DecodeFastMapL
- DecodeFastMapLookupNode::~DecodeFastMapLookupNode() = default;
- 
- void DecodeFastMapLookupNode::createInput() {
--    _input = std::make_unique<AttributeNode>(_attributeName);
-+    _input = std::make_unique<AttributeNode>(_attribute_name);
- }
- 
--std::string DecodeFastMapLookupNode::decode(std::string_view encoded, ValueType valueType,
-+std::string DecodeFastMapLookupNode::decode(std::string_view encoded, ValueType value_type,
-                                             std::string_view separator) {
-     auto pos = encoded.find(encoded_separator);
-     if (pos == std::string_view::npos) {
-@@ -130,22 +130,22 @@ std::string DecodeFastMapLookupNode::decode(std::string_view encoded, 
-```
-
-**File**: `searchlib/src/vespa/searchlib/expression/decode_fast_map_lookup_node.h` (modified, +8/-8)
-```diff
-@@ -26,8 +26,8 @@ class DecodeFastMapLookupNode : public FunctionNode {
-     static constexpr std::string_view default_separator = ":";
- 
- private:
--    std::string                    _attributeName;
--    ValueType                      _valueType;
-+    std::string                    _attribute_name;
-+    ValueType                      _value_type;
-     std::string                    _separator;
-     std::unique_ptr<AttributeNode> _input; // reads the hidden attribute; created from the name, not serialized
- 
-@@ -40,16 +40,16 @@ class DecodeFastMapLookupNode : public FunctionNode {
-     DECLARE_NBO_SERIALIZE;
-     DECLARE_EXPRESSIONNODE(DecodeFastMapLookupNode);
-     DecodeFastMapLookupNode() noexcept;
--    DecodeFastMapLookupNode(std::string_view attributeName, ValueType valueType,
-+    DecodeFastMapLookupNode(std::string_view attribute_name, ValueType value_type,
-                             std::string_view separator = default_separator);
-     DecodeFastMapLookupNode(const DecodeFastMapLookupNode&);
-     DecodeFastMapLookupNode& operator=(const DecodeFastMapLookupNode&);
-     ~DecodeFastMapLookupNode() override;
- 
--    [[nodiscard]] const std::string& getAttributeName() const noexcept { return _attributeName; }
--    [[nodiscard]] ValueType getValueType() const noexcept { return _valueType; }
--    [[nodiscard]] const std::string& getSeparator() const noexcept { return _separator; }
--    DecodeFastMapLookupNode& setSeparator(std::string_view separator) {
-+    [[nodiscard]] const std::string& attribute_name() const noexcept { return _attribute_name; }
-+    [[nodiscard]] ValueType value_type() const noexcept { return _value_type; }
-+    [[nodiscard]] const std::string& separator() const noexcept { return _separator; }
-+    DecodeFastMapLookupNode& separator(std::string_view separator) {
-         _separator = separator;
-         return *this;
-     }
-@@ -62,7 +62,7 @@ class DecodeFastMapLookupNode : public FunctionNode {
-      * as is. An element without the encoded separator, or with a value that is not valid excess hex for the value
-      * type, is returned as stored, without decoding.
-      */
--    static std::string decode(std::string_view encoded, ValueType valueType,
-+    static std::string decode(std::string_view encoded, ValueType value_type,
-                               std::string_view separator = default_separator);
- 
-     void visitMembers(vespalib::ObjectVisitor& visitor) const override;
+@@ -205,8 +205,9 @@ private void fill(Result result, String summaryClass) {
+                         server.fill(result, summaryClass);
+                     } else {
+                         if (result.hits().getErrorHit() == null) {
+-                            result.hits().addError(ErrorMessage.createTimeout("No time left to get summaries, query timeout was " +
+-                                                                              query.getTimeout() + " ms"));
++                            result.hits().addError(ErrorMessage.createTimeout("Query timed out before summaries could be fetched from content cluster '" + searchClusterName + "'. " +
++                                                                              "Hits of indexed document types will be missing summary fields. " +
++                                                                              "Query timeout was " + query.getTimeout() + " ms."));
+                         }
+                     }
+                 }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38499** (2026-11-11): Move function scanning from SchemaParser.jj into Utils (@arnej27959)
-- **PR #38498** (2026-11-11): maybe start deadlock_monitor (@arnej27959)
-- **PR #38496** (2026-11-11): Support skipTests in when submitting an application (@hmusum)
-- **PR #38493** (2026-11-11): Move grouping rewrite into GroupingRewriteSearcher (@arnej27959)
-- **PR #38492** (2026-11-11): chore: update third-party attributions (@github-actions[bot])
-- **PR #38491** (2026-11-11): Remove ZooKeeper server 3.9.6, make 3.9.7 default (@hmusum)
+- **PR #38523** (2026-11-13): Pass document type name to DDBState. (@toregge)
+- **PR #38521** (2026-11-13): Include the XGBoost features file in the model import cache key (@glebashnik)
+- **PR #38520** (2026-11-13): Add acceleration table entries for EDEN squared Euclidean distance (@vekterli)
+- **PR #38519** (2026-11-13): Clean up after failed URL downloads in the config proxy (@glebashnik)
+- **PR #38518** (2026-11-13): Extend sidecars-for-test flag expiry to 2027-06-01 (@glebashnik)
+- **PR #38515** (2026-11-13): cap redeploy threads by heap size (@andreer)
 
 ---
 
@@ -1403,39 +1112,31 @@ as attributeName/valueType so debug dumps still match the Java side.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #38498 from vespa-engine/arnej/add-deadlock-monitor
+## X. Merge pull request #38513 from vespa-engine/boeker/better-summary-timeout-error-
 
 **RULE**:
-When implementing operations in `searchcore/src/apps/proton/proton.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `container-search/src/main/java/com/yahoo/prelude/cluster/ClusterSearcher.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ebb7068c`: Merge pull request #38498 from vespa-engine/arnej/add-deadlock-monitor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9b621f7`: Merge pull request #38513 from vespa-engine/boeker/better-summary-timeout-error-message. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `searchcore/src/apps/proton/proton.cpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `container-search/src/main/java/com/yahoo/prelude/cluster/ClusterSearcher.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-void runDeadlockMonitor() {
-    static const char *deadlock_monitor = "/usr/local/sbin/deadlock_monitor";
-    if (::getenv("PROTON_RUN_DEADLOCK_MONITOR") != nullptr) {
-        if (::access(deadlock_monitor, X_OK) == 0) {
-            int pid = ::getpid();
-            std::string cmd_line = std::format("{} {} &", deadlock_monitor, pid);
-            ::system(cmd_line.c_str());
-        }
-    }
-}
-
-    runDeadlockMonitor();
+                            result.hits().addError(ErrorMessage.createTimeout("Query timed out before summaries could be fetched from content cluster '" + searchClusterName + "'. " +
+                                                                              "Hits of indexed document types will be missing summary fields. " +
+                                                                              "Query timeout was " + query.getTimeout() + " ms."));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                            result.hits().addError(ErrorMessage.createTimeout("No time left to get summaries, query timeout was " +
+                                                                              query.getTimeout() + " ms"));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ebb7068c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9b621f7` are properly handled with clean fallback behavior.

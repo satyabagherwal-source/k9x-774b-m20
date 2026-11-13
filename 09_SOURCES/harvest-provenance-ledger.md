@@ -9499,3 +9499,10 @@ Every entry in this ledger must capture:
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `52391ebe` | Multi-dimensional audit evidence | 2026-11-13T13:42:44.685Z |
 | `learn-dom-d-f5a07c9a` | `project://hf-nvidia-nemotron-3-diarization` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | 2026-11-13T13:43:04.931Z |
 | `learn-dom-d-b9912729` | `project://hashicorp-terraform` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hashicorp-terraform-learnings.md` | 2026-11-13T13:43:27.402Z |
+| `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-11-13T13:50:15.446Z |
+| `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `98a0fcec` | Multi-dimensional audit evidence | 2026-11-13T13:50:18.662Z |
+| `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `a253d2c4` | Multi-dimensional audit evidence | 2026-11-13T13:50:34.707Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `6cd398d5` | Multi-dimensional audit evidence | 2026-11-13T13:50:38.286Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `6767731b` | Multi-dimensional audit evidence | 2026-11-13T13:50:43.881Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `08023735` | Multi-dimensional audit evidence | 2026-11-13T13:50:46.537Z |
+| `learn-dom-d-e7fd79e5` | `project://hf-lightricks-ltx-2.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | 2026-11-13T13:51:05.141Z |
