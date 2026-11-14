@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T02:38:24.403Z",
-  "total_records": 484,
+  "last_updated": "2026-11-14T02:46:29.409Z",
+  "total_records": 487,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 249,
+      "total": 251,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -283,7 +283,9 @@
         "DOM-D-3A6226D8",
         "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-in",
         "DOM-D-0D55DB0B",
-        "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-120b-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-120b-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-instruct-learnings"
       ]
     },
     "E": {
@@ -509,14 +511,15 @@
       ]
     },
     "J": {
-      "total": 6,
+      "total": 7,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
         "DOM-J-5650848D",
         "DOM-J-F84C9E58",
         "DOM-J-782C1A9D",
-        "DOM-J-44A35728"
+        "DOM-J-44A35728",
+        "DOM-J-B241A1ED"
       ]
     },
     "K": {
@@ -6254,8 +6257,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "8f29c7ac8d65afd6a7bcadce8b429106e67043cf2ec3c8dc11f07cd822a7c9b1",
-      "created_at": "2026-11-14T00:49:24.931Z"
+      "content_hash": "d9b115d85d1790bdf83492f5cdb084ed3be489d83b4bcb39a178c3a227eefb97",
+      "created_at": "2026-11-14T02:46:29.409Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -6299,8 +6302,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "1d0a605bcecca308a118d500359cd87f75466e7837b291549c62d6cf50963463",
-      "created_at": "2026-11-14T02:22:04.383Z"
+      "content_hash": "5efdb9d702458aee640a5b2c952f21b1127211e2a65f1faa1b2fa7e79f234d2c",
+      "created_at": "2026-11-14T02:46:28.894Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -11011,6 +11014,72 @@
       "repository": "nats-io-nats-server-learnings",
       "content_hash": "0bb05d9fcf9500b41ef054707cec0fd4eac8f859dde45d07ee2ac88ef97094fd",
       "created_at": "2026-11-14T02:38:24.403Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: meta-llama/Meta-Llama-3-8B-Instruct Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-instruct-research-knowledge-intelligence-meta-llam.md",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "content_hash": "6cd40ab316919865ce3deebb35c2176e30695d67eaee7e5913212552dbd90cdd",
+      "created_at": "2026-11-14T02:45:51.289Z"
+    },
+    "DOM-J-B241A1ED": {
+      "record_id": "DOM-J-B241A1ED",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        },
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): meta-llama/Meta-Llama-3-8B-Instruct",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct))  \n> **Source Version**: `hf-meta-llam`",
+      "content_hash": "392a83484fb33f027bfbe1374cd0f302429c23417569ca143e200ed77b18af63",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md`  \n> **Source**: huggingface ([h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md`  \n> **Source**: huggingface ([h",
+      "provenance": {
+        "source_uri": "project://hf-meta-llama-meta-llama-3-8b-instruct/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T02:46:03.172Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-meta-llama-meta-llama-3-8b-instruct)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-meta-llama-meta-llama-3-8b-instruct"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M",
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T02:46:28.305Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-instruct-learnings": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-instruct-learnings",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-meta-llama-meta-llama-3-8b-instruct-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-instruct-learnings-research-knowledge-intelligence.md",
+      "repository": "hf-meta-llama-meta-llama-3-8b-instruct-learnings",
+      "content_hash": "58b6f0f56d06a4f63d6853bc99397079f0163ee612549604aa439b9965dc5fb8",
+      "created_at": "2026-11-14T02:46:28.492Z"
     }
   }
 }

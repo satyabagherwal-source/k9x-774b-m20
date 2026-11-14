@@ -9743,3 +9743,5 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `6993500c` | Multi-dimensional audit evidence | 2026-11-14T02:37:06.878Z |
 | `learn-dom-d-3a6226d8` | `project://hf-meituan-longcat-longcat-2.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meituan-longcat-longcat-2.5-learnings.md` | 2026-11-14T02:37:44.784Z |
 | `learn-dom-d-0d55db0b` | `project://hf-openai-gpt-oss-120b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | 2026-11-14T02:38:23.554Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-14T02:45:51.140Z |
+| `learn-dom-j-b241a1ed` | `project://hf-meta-llama-meta-llama-3-8b-instruct` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | 2026-11-14T02:46:28.314Z |

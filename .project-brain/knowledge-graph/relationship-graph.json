@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T02:38:23.552Z",
+  "updated_at": "2026-11-14T02:46:28.312Z",
   "statistics": {
-    "total_nodes": 148,
-    "total_edges": 80,
+    "total_nodes": 149,
+    "total_edges": 82,
     "domain_distribution": {
       "D": 121,
       "M": 1,
       "H": 11,
-      "J": 4,
+      "J": 5,
       "K": 5,
       "L": 2,
       "G": 1,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 80
+      "CONSTRAINED_BY_ARCHITECTURE": 82
     }
   },
   "nodes": {
@@ -3312,6 +3312,30 @@
       ],
       "created_at": "2026-11-14T02:38:23.552Z",
       "updated_at": "2026-11-14T02:38:23.552Z"
+    },
+    "DOM-J-B241A1ED": {
+      "id": "DOM-J-B241A1ED",
+      "domain": "J",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): meta-llama/Meta-Llama-3-8B-Instruct",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md`  \n> **Source**: huggingface ([h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md`  \n> **Source**: huggingface ([h",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-meta-llama-meta-llama-3-8b-instruct/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T02:46:03.172Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-meta-llama-meta-llama-3-8b-instruct)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "J",
+        "Search & Distribution Intelligence",
+        "M",
+        "D"
+      ],
+      "created_at": "2026-11-14T02:46:28.312Z",
+      "updated_at": "2026-11-14T02:46:28.312Z"
     }
   },
   "edges": [
@@ -4114,6 +4138,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-0D55DB0B [D] with Domain M",
       "created_at": "2026-11-14T02:38:23.552Z"
+    },
+    {
+      "id": "EDGE-8A88F9CD00A8",
+      "sourceId": "DOM-J-B241A1ED",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-J-B241A1ED [J] with Domain M",
+      "created_at": "2026-11-14T02:46:28.312Z"
+    },
+    {
+      "id": "EDGE-863CDA2737BD",
+      "sourceId": "DOM-J-B241A1ED",
+      "targetId": "NODE-D-domain-bridge-d",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-J-B241A1ED [J] with Domain D",
+      "created_at": "2026-11-14T02:46:28.312Z"
     }
   ]
 }

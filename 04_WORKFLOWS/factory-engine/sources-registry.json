@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T02:37:10.106Z",
-    "lastVerified": "2026-11-14T02:37:10.106Z",
+    "lastChecked": "2026-11-14T02:46:03.095Z",
+    "lastVerified": "2026-11-14T02:46:03.095Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -368,8 +368,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-14T01:48:44.632Z",
-    "lastVerified": "2026-11-14T01:48:44.632Z",
+    "lastChecked": "2026-11-14T02:46:03.086Z",
+    "lastVerified": "2026-11-14T02:46:03.086Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -1840,9 +1840,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-13T03:10:34.099Z",
+    "lastChecked": "2026-11-14T02:45:55.587Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-13T03:10:34.099Z"
+    "lastVerified": "2026-11-14T02:45:55.587Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "tfhe-rs",
@@ -2043,12 +2043,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium/cilium",
+    "name": "cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T20:07:23.046Z",
-    "lastVerified": "2026-11-13T20:07:23.046Z",
+    "lastChecked": "2026-11-14T02:45:58.117Z",
+    "lastVerified": "2026-11-14T02:45:58.117Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -2057,7 +2057,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "edc81e6f"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -3511,8 +3512,8 @@
     "officialUrl": "https://github.com/RunanywhereAI/runanywhere-sdks",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-09T17:43:52.908Z",
-    "lastVerified": "2026-11-09T17:43:52.908Z",
+    "lastChecked": "2026-11-14T02:45:53.159Z",
+    "lastVerified": "2026-11-14T02:45:53.159Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-runanywhereai-runanywhere-sdks",
@@ -3719,9 +3720,9 @@
   "tensorchord-pgvecto.rs": {
     "name": "pgvecto.rs",
     "officialUrl": "https://github.com/tensorchord/pgvecto.rs",
-    "lastChecked": "2026-11-13T01:39:00.027Z",
+    "lastChecked": "2026-11-14T02:46:00.588Z",
     "revisionIdentifier": "2b290b34",
-    "lastVerified": "2026-11-13T01:39:00.027Z"
+    "lastVerified": "2026-11-14T02:46:00.588Z"
   },
   "sigoden-aichat": {
     "name": "aichat",
@@ -5184,13 +5185,13 @@
     "officialUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T23:12:28.348Z",
-    "lastVerified": "2026-11-08T23:12:28.348Z",
+    "lastChecked": "2026-11-14T02:45:50.665Z",
+    "lastVerified": "2026-11-14T02:45:50.665Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "6c7beec61d75bcf89d5c6d4fcb6eee9ca0de490d03ee2151a48dfb4306fe8070",
-    "promotedRulesCount": 3,
+    "contentHash": "70c42df2412388811314227de32f507c2a830900b96d209498cc6a89dd9625ee",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -7103,8 +7104,8 @@
     "officialUrl": "https://github.com/alexpasmantier/television",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T15:17:12.903Z",
-    "lastVerified": "2026-11-12T15:17:12.903Z",
+    "lastChecked": "2026-11-14T02:45:48.097Z",
+    "lastVerified": "2026-11-14T02:45:48.097Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-alexpasmantier-television",

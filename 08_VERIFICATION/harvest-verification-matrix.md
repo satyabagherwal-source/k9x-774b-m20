@@ -9710,3 +9710,5 @@
 | `CYCLE-20261114-OV5M` | `2026-11-14T02:37:06.874Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8421` | Yes (`2987ceee...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T02:37:44.784Z` | `hf-meituan-longcat-longcat-2.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3A6226D8` [Domain D] | Yes (`d20bf6ba...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T02:38:23.554Z` | `hf-openai-gpt-oss-120b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0D55DB0B` [Domain D] | Yes (`3ba95273...`) |
+| `CYCLE-20261114-03OG` | `2026-11-14T02:45:51.136Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`70c42df2...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T02:46:28.314Z` | `hf-meta-llama-meta-llama-3-8b-instruct` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-B241A1ED` [Domain J] | Yes (`392a8348...`) |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T02:38:23.567Z",
+  "updated_at": "2026-11-14T02:46:28.325Z",
   "stats": {
-    "total_discovered": 3066,
-    "approved_pending_harvest": 2865,
+    "total_discovered": 3067,
+    "approved_pending_harvest": 2866,
     "harvested_count": 0,
     "rejected_count": 201,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2862,
+      "COMMUNITY_AND_EXPERT": 2863,
       "OFFICIAL_DOCUMENTATION": 109,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -66065,6 +66065,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
         "fileName": "hf-openai-gpt-oss-120b-learnings.md"
+      }
+    },
+    "SRC-5586D7DE26A7": {
+      "id": "SRC-5586D7DE26A7",
+      "url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+      "title": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T02:46:28.325Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
+        "fileName": "hf-meta-llama-meta-llama-3-8b-instruct-learnings.md"
       }
     }
   }

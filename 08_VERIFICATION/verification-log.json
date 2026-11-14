@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-8JWT",
-    "timestamp": "2026-11-13T06:20:42.317Z",
-    "repository": "iii-hq/iii",
-    "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "27212f9b0afa4bd23247e0c29f6a4f1522803cdb250d26b4aa5fcc3a7f0f158c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-8OVO",
     "timestamp": "2026-11-13T06:20:48.756Z",
     "repository": "StikDebug/StikDebug",
@@ -7492,6 +7477,21 @@
     "contentHash": "2987ceee5ba9511baf33add2d3c0d82973294339ed7961776ea8c5dd7b80ac65",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-03OG",
+    "timestamp": "2026-11-14T02:45:51.136Z",
+    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+    "contentHash": "70c42df2412388811314227de32f507c2a830900b96d209498cc6a89dd9625ee",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
