@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T06:05:50.358Z",
-  "total_cycles_completed": 9472,
-  "total_learnings_persisted": 9472,
-  "total_rules_promoted": 9177,
+  "last_updated": "2026-11-14T06:28:22.315Z",
+  "total_cycles_completed": 9474,
+  "total_learnings_persisted": 9474,
+  "total_rules_promoted": 9181,
   "history": [
-    {
-      "timestamp": "2026-11-13T15:03:44.300Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T15:04:01.229Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T15:10:49.287Z",
       "repository": "SupersonicLabs/Julia-1",
@@ -1403,6 +1389,20 @@
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T06:23:35.969Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T06:28:22.315Z",
+      "repository": "openbmb/MiniCPM-OCR-1.0",
+      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

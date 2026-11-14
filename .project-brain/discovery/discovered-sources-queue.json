@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T06:06:26.356Z",
+  "updated_at": "2026-11-14T06:28:26.749Z",
   "stats": {
-    "total_discovered": 3167,
-    "approved_pending_harvest": 2964,
+    "total_discovered": 3169,
+    "approved_pending_harvest": 2966,
     "harvested_count": 0,
     "rejected_count": 203,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2956,
+      "COMMUNITY_AND_EXPERT": 2958,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -68273,6 +68273,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/founded-labs-react-native-reusables-learnings.md",
         "fileName": "founded-labs-react-native-reusables-learnings.md"
+      }
+    },
+    "SRC-DE32B7D6E688": {
+      "id": "SRC-DE32B7D6E688",
+      "url": "https://huggingface.co/hotchpotch/bekko-static-embedding-v1/tree/c18167b8f244c1bc6de21ce9b710bac8a29c4615/onnx",
+      "title": "https://huggingface.co/hotchpotch/bekko-static-embedding-v1/tree/c18167b8f244c1bc6de21ce9b710bac8a29c4615/onnx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T06:28:26.054Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-EE99048206EE": {
+      "id": "SRC-EE99048206EE",
+      "url": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
+      "title": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T06:28:26.749Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-ocr-1.0-learnings.md",
+        "fileName": "hf-openbmb-minicpm-ocr-1.0-learnings.md"
       }
     }
   }

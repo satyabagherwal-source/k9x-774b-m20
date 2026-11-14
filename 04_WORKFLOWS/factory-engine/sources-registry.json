@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T06:05:53.446Z",
-    "lastVerified": "2026-11-14T06:05:53.446Z",
+    "lastChecked": "2026-11-14T06:28:25.845Z",
+    "lastVerified": "2026-11-14T06:28:25.845Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -471,8 +471,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T05:04:02.508Z",
-    "lastVerified": "2026-11-14T05:04:02.508Z",
+    "lastChecked": "2026-11-14T06:23:43.107Z",
+    "lastVerified": "2026-11-14T06:23:43.107Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -756,9 +756,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-13T22:30:49.452Z",
+    "lastChecked": "2026-11-14T06:23:38.394Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-13T22:30:49.452Z"
+    "lastVerified": "2026-11-14T06:23:38.394Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant/qdrant",
@@ -2982,8 +2982,8 @@
     "officialUrl": "https://github.com/easegress-io/easegress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T05:51:25.317Z",
-    "lastVerified": "2026-11-13T05:51:25.317Z",
+    "lastChecked": "2026-11-14T06:23:35.688Z",
+    "lastVerified": "2026-11-14T06:23:35.689Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-easegress-io-easegress",
@@ -4333,9 +4333,9 @@
   "react-native-image-picker-react-native-image-picker": {
     "name": "react-native-image-picker",
     "officialUrl": "https://github.com/react-native-image-picker/react-native-image-picker",
-    "lastChecked": "2026-11-09T23:07:19.058Z",
+    "lastChecked": "2026-11-14T06:23:33.180Z",
     "revisionIdentifier": "61c0cd41",
-    "lastVerified": "2026-11-09T23:07:19.058Z"
+    "lastVerified": "2026-11-14T06:23:33.180Z"
   },
   "go-chassis-go-chassis": {
     "name": "go-chassis",
@@ -4640,9 +4640,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-11-13T04:43:08.406Z",
+    "lastChecked": "2026-11-14T06:23:40.653Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-11-13T04:43:08.406Z"
+    "lastVerified": "2026-11-14T06:23:40.653Z"
   },
   "aome510-spotify-player": {
     "name": "spotify-player",
@@ -6038,12 +6038,12 @@
     "officialUrl": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T01:12:31.973Z",
-    "lastVerified": "2026-11-09T01:12:31.973Z",
+    "lastChecked": "2026-11-14T06:23:30.793Z",
+    "lastVerified": "2026-11-14T06:23:30.793Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-    "contentHash": "00132066f66a5f7190b36f81bbe55c3bf77361f1e02ef00c98ca6cca4070a1fb",
+    "contentHash": "367415a8d88937d27a0e2b1223690a2ddacd8864bff99921b09b61db3530be31",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8000,14 +8000,14 @@
     "officialUrl": "https://github.com/zvec-ai/zvec-grep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T22:40:50.912Z",
-    "lastVerified": "2026-11-12T22:40:50.912Z",
+    "lastChecked": "2026-11-14T06:23:34.808Z",
+    "lastVerified": "2026-11-14T06:23:34.808Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "558ec964e6fdb9e4e32f1d0fa6139ab088ebeca56c07255281a79209049ee95d",
+    "contentHash": "c794c8f710d4e8893b167bb6627fc6e2836018fb018f60c672632e486b5c189b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

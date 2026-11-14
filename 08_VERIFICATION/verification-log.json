@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-JQI2",
-    "timestamp": "2026-11-13T09:17:21.770Z",
-    "repository": "TanStack/router",
-    "learningId": "learn-github-tanstack-router",
-    "contentHash": "5bd9d8c3106be9ec4541bb7e4758f925a7ce35efe6b500ece2d3eefb4d023578",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-JVE1",
-    "timestamp": "2026-11-13T09:17:28.105Z",
-    "repository": "fabio-rovai/open-ontologies",
-    "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "a6ad34f5b3ac10e5e1b9ce3e9ad9c04c65feb5c965fbf25da5dbd18fafc9df5e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-K170",
     "timestamp": "2026-11-13T09:17:35.628Z",
     "repository": "SynaLinks/synalinks-skills",
@@ -7492,6 +7462,36 @@
     "contentHash": "b430616fc8589cdf9a6c059b03ff0bb2702496ad42a60ce79a7754b58e187c27",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-S4K7",
+    "timestamp": "2026-11-14T06:23:35.959Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "c794c8f710d4e8893b167bb6627fc6e2836018fb018f60c672632e486b5c189b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-Y9I8",
+    "timestamp": "2026-11-14T06:28:22.304Z",
+    "repository": "openbmb/MiniCPM-OCR-1.0",
+    "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+    "contentHash": "367415a8d88937d27a0e2b1223690a2ddacd8864bff99921b09b61db3530be31",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

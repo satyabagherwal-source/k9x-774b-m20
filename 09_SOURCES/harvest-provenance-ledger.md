@@ -9798,3 +9798,5 @@ Every entry in this ledger must capture:
 | `learn-github-founded-labs-react-native-reusables` | `https://github.com/founded-labs/react-native-reusables` | `da1e1f22` | Multi-dimensional audit evidence | 2026-11-14T06:05:42.613Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `24cf8ef7` | Multi-dimensional audit evidence | 2026-11-14T06:05:50.353Z |
 | `learn-dom-d-683cd8f2` | `project://hf-fermionresearch-phonon-2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | 2026-11-14T06:06:25.851Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `2825dcfa` | Multi-dimensional audit evidence | 2026-11-14T06:23:35.964Z |
+| `learn-huggingface-openbmb-minicpm-ocr-1-0` | `https://huggingface.co/openbmb/MiniCPM-OCR-1.0` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-14T06:28:22.308Z |

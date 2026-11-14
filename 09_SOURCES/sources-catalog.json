@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "08120405",
+    "sourceVersion": "2825dcfa",
     "license": "Apache-2.0",
-    "contentHash": "558ec964e6fdb9e4e32f1d0fa6139ab088ebeca56c07255281a79209049ee95d",
-    "lastHarvestedAt": "2026-11-12T22:41:00.788Z",
+    "contentHash": "c794c8f710d4e8893b167bb6627fc6e2836018fb018f60c672632e486b5c189b",
+    "lastHarvestedAt": "2026-11-14T06:23:35.964Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {
@@ -11415,8 +11415,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-OCR-1.0",
     "sourceVersion": "hf-openbmb-minicpm-ocr-1.0",
     "license": "Open-Source",
-    "contentHash": "00132066f66a5f7190b36f81bbe55c3bf77361f1e02ef00c98ca6cca4070a1fb",
-    "lastHarvestedAt": "2026-11-09T01:12:41.055Z",
+    "contentHash": "367415a8d88937d27a0e2b1223690a2ddacd8864bff99921b09b61db3530be31",
+    "lastHarvestedAt": "2026-11-14T06:28:22.308Z",
     "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0"
   },
   "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b": {

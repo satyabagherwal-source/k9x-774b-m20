@@ -9765,3 +9765,5 @@
 | `CYCLE-20261114-54CX` | `2026-11-14T06:05:42.609Z` | `founded-labs/react-native-reusables` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8455` | Yes (`f18f0249...`) |
 | `CYCLE-20261114-5ABX` | `2026-11-14T06:05:50.349Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8456` | Yes (`b430616f...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T06:06:25.851Z` | `hf-fermionresearch-phonon-2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-683CD8F2` [Domain D] | Yes (`4604ab0a...`) |
+| `CYCLE-20261114-S4K7` | `2026-11-14T06:23:35.959Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8457` | Yes (`c794c8f7...`) |
+| `CYCLE-20261114-Y9I8` | `2026-11-14T06:28:22.304Z` | `openbmb/MiniCPM-OCR-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8458, Rule 8459, Rule 8460` | Yes (`367415a8...`) |

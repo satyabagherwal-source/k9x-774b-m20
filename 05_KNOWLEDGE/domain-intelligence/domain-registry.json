@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T06:06:27.363Z",
-  "total_records": 568,
+  "last_updated": "2026-11-14T06:28:27.966Z",
+  "total_records": 571,
   "domains": {
     "A": {
       "total": 5,
@@ -343,7 +343,7 @@
       ]
     },
     "G": {
-      "total": 81,
+      "total": 83,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -425,11 +425,13 @@
         "domain_intelligence-architecture-intelligence-restatedev-restate-core-invariants",
         "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-builderio-builder-core-invariants",
-        "domain_intelligence-architecture-intelligence-builderio-builder-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-builderio-builder-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-openbmb-minicpm-ocr-1-0-core-invariants",
+        "domain_intelligence-architecture-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 122,
+      "total": 123,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -552,7 +554,8 @@
         "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-core-inv",
         "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-core-invariants",
         "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning",
-        "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-learnings-core-inv"
+        "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-learnings-core-inv",
+        "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-core-invariants"
       ]
     },
     "I": {
@@ -6338,8 +6341,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "095750eb38f4fc682339bd5680fca193c889526fd12e599beee569fcdf559157",
-      "created_at": "2026-11-14T05:32:16.551Z"
+      "content_hash": "019437bcd9ede89680444ee98e497d4749da388a8c4b8cdee5732df38c40c58e",
+      "created_at": "2026-11-14T06:28:26.385Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -7301,8 +7304,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "43d2c5762bd58473a0e183fb97461e2faf20b4ae4d810363dc4c3042d636eced",
-      "created_at": "2026-11-14T04:06:55.069Z"
+      "content_hash": "f6bcc4bef3879366cf24eef4b09c7b07361ef171933d608e85f9dc5e0cbcfae3",
+      "created_at": "2026-11-14T06:28:27.966Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12434,6 +12437,33 @@
       "repository": "risingwavelabs-risingwave-learnings",
       "content_hash": "2b68c78b42733197a523e00118f8306c168fb0bcd38f75b7d88195fc8a66ac85",
       "created_at": "2026-11-14T06:06:27.363Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zvec-ai/zvec-grep Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-technical-construction-intelligence-zvec-ai-zvec-grep-core-inv.md",
+      "repository": "zvec-ai/zvec-grep",
+      "content_hash": "ce1ef56ee1d783e7269212d90119d3ffe7bd66e3b7ef4f198ba3c21dc36459a4",
+      "created_at": "2026-11-14T06:23:36.293Z"
+    },
+    "domain_intelligence-architecture-intelligence-openbmb-minicpm-ocr-1-0-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-openbmb-minicpm-ocr-1-0-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: openbmb/MiniCPM-OCR-1.0 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hf-openbmb-minicpm-ocr-1-0-architecture-intelligence-openbmb-minicpm-ocr-1-0-cor.md",
+      "repository": "openbmb/MiniCPM-OCR-1.0",
+      "content_hash": "90207b71804dc343df788238046b3b9c2d293cddf3f679dd086c3ebb52ab0093",
+      "created_at": "2026-11-14T06:28:22.770Z"
+    },
+    "domain_intelligence-architecture-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: hf-openbmb-minicpm-ocr-1.0-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hf-openbmb-minicpm-ocr-1-0-learnings-architecture-intelligence-hf-openbmb-minicp.md",
+      "repository": "hf-openbmb-minicpm-ocr-1.0-learnings",
+      "content_hash": "ac31fa6cf516febef975cab3315580d703442080cd1cc123923441caee462257",
+      "created_at": "2026-11-14T06:28:27.282Z"
     }
   }
 }

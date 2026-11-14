@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T06:05:50.362Z",
+  "last_updated": "2026-11-14T06:28:22.319Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10746,14 +10746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zvec-ai-zvec-grep",
-      "content_hash": "558ec964e6fdb9e4e32f1d0fa6139ab088ebeca56c07255281a79209049ee95d",
-      "verified_at": "2026-11-12T22:41:00.808Z",
+      "content_hash": "c794c8f710d4e8893b167bb6627fc6e2836018fb018f60c672632e486b5c189b",
+      "verified_at": "2026-11-14T06:23:35.973Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T22:41:00.808Z"
+      "last_updated": "2026-11-14T06:23:35.973Z"
     },
     "JetBrains/kotlinconf-app": {
       "repository": "JetBrains/kotlinconf-app",
@@ -17151,14 +17151,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-      "content_hash": "00132066f66a5f7190b36f81bbe55c3bf77361f1e02ef00c98ca6cca4070a1fb",
-      "verified_at": "2026-11-09T01:12:41.069Z",
+      "content_hash": "367415a8d88937d27a0e2b1223690a2ddacd8864bff99921b09b61db3530be31",
+      "verified_at": "2026-11-14T06:28:22.318Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:12:41.069Z"
+      "last_updated": "2026-11-14T06:28:22.318Z"
     },
     "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B": {
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",

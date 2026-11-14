@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T06:06:27.233Z",
+  "last_updated": "2026-11-14T06:28:27.851Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4833,11 +4833,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-WCM2",
+      "id": "CD-YDS6",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-WCM2-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-YDS6-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -11806,6 +11806,68 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-S4Q6",
+      "directive_title": "filter access events before queueing",
+      "source_repo": "zvec-ai/zvec-grep",
+      "source_commit": "2825dcfa",
+      "staged_file": "11_INBOX/candidate-directives/CD-S4Q6-filter-access-events-before-queueing.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-YCKB",
+      "directive_title": "watcher): filter access events before queueing",
+      "source_repo": "zvec-ai-zvec-grep-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YCKB-watcher-filter-access-events-before-queueing.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-42DF44",
+      "directive_title": "Intermediate Layer Injection Index Drift (`BUG-MINICPM-02`)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-openbmb-minicpm-ocr-1.0",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-42DF44-intermediate-layer-injection-index-drift.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-YD2R",
+      "directive_title": "Multi-EOS Token Termination & Disjunction Invariant",
+      "source_repo": "hf-openbmb-minicpm-ocr-1.0-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YD2R-multi-eos-token-termination-disjunction-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-YD2S",
+      "directive_title": "Spatial Token Grid Downsampling Preservation Invariant",
+      "source_repo": "hf-openbmb-minicpm-ocr-1.0-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YD2S-spatial-token-grid-downsampling-preservation-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-8037F5",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8037F5-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-14"
     }
   ]
 }
