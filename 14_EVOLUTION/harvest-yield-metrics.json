@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T16:43:18.393Z",
-  "total_cycles_completed": 9554,
-  "total_learnings_persisted": 9554,
+  "last_updated": "2026-11-14T17:03:23.156Z",
+  "total_cycles_completed": 9556,
+  "total_learnings_persisted": 9556,
   "total_rules_promoted": 9231,
   "history": [
-    {
-      "timestamp": "2026-11-13T20:07:10.636Z",
-      "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T20:07:20.381Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T20:07:24.017Z",
       "repository": "cilium/cilium",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-14T16:43:18.393Z",
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
       "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T17:03:05.938Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T17:03:23.156Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

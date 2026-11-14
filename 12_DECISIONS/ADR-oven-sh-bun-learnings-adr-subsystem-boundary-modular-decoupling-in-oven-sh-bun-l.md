@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:43:04.189Z",
+  "timestamp": "2026-11-14T17:03:54.104Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-oven-sh-bun-learnings",
+  "learning_id": "LEARN-EVO-oven-sh-bun-learnings",
   "canonical_classification": "architecture_decision"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [oven-sh-bun-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:43:04.189Z`  
-> **Learning ID**: `LEARN-REEXTRACT-oven-sh-bun-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T17:03:54.104Z`  
+> **Learning ID**: `LEARN-EVO-oven-sh-bun-learnings`
 
 
 ## Status
@@ -27,10 +27,10 @@ During deep inspection of oven-sh-bun-learnings, modular boundaries, performance
 ## Decision
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
-> **Source Version**: `89452d2a`  
+> **Source Version**: `9098897a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T09:39:36.962Z  
+> **Timestamp**: 2026-11-14T17:03:05.597Z  
 > **Learning ID**: `learn-github-oven-sh-bun`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -44,7 +44,7 @@ During deep inspection of oven-sh-bun-learnings, modular boundaries, performance
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T09:39:36.958Z  
+> **Harvest Timestamp**: 2026-11-14T17:03:05.496Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -54,7 +54,7 @@ During deep inspection of oven-sh-bun-learnings, modular boundaries, performance
 - **Description**: Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 96758 stars
+- **Stars / Engagement**: 96693 stars
 
 ---
 
@@ -1005,11 +1005,13 @@ struct us_poll_t {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #48765** (2026-11-12): **error: Unexpected token: /**
+  *Symptoms*: ### What version of Bun is running?  1.4.4+38afee6c8  ### What platform is your computer?  macos  ### What steps can reproduce the bug?  ``` echo "@supports (content:counter(line) / '') {}" > /tmp/bun-css-test.css bun build /tmp/bun-css-test.css --outdir /tmp/bun-css-test ```  ### What is the expected behavior?  _No response_  ### What do you see instead?  _No response_  ### Additional information  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > This is fixed on `main` by #47025 (commit 7942008688a, merged 2026-10-27). The fix is not in a release yet. Bun 1.4.4 (tag `bun-v1.4.4` = 38afee6c8, the version in the report) is from before that commit.  **Root cause:** `Parser::expect_no_error_token` in `src/css/css_parser.rs` returned right after it scanned a nested block (a function or a parenthesis group). Any token after the nested block in an `@supports` declaration condition then failed the "input is exhausted" check. `counter(line)` is the nested block here, and `/` is the token after it. The same failure hit `@supports (transform: translate(1px) rotate(1deg))` and `@import ... supports(...)`. #47025 removed that early return and added tests for it (`test/js/bun/css/css.test.ts`, "Tokens after a nested block"). See also #38552.  **Bun version:** `1.4.3` (release) and `1.4.4-debug` (main, 8aa496e1df5) on `linux x64`  **Attempt 1:** The report's steps on the released Bun 1.4.3 (same code path as 1.4.4). ```console $ echo "@suppo
+
 - **Issue #48450** (2026-11-10): **AOT regression since 1.4.4-canary.20261108.1: build plugin modules are added as entry points**
   *Symptoms*: ### What version of Bun is running?  1.4.4-canary.1+98cda0d8b  ### What platform is your computer?  Darwin 25.6.0 x86_64 i386  ### What steps can reproduce the bug?  This is a canary regression. The same project and the same source build on one canary and fail on the next. A standalone, framework-free reproduction repository is public: [TiBianMod/bun-aot-build-plugin-entry-point](https://github.com/TiBianMod/bun-aot-build-plugin-entry-point).  ```sh git clone https://github.com/TiBianMod/bun-aot-build-plugin-entry-point.git cd bun-aot-build-plugin-entry-point ./repro.sh ```  **1. Canary bisect**  | canary                    | revision                   | result         | | ------------------------- | -------------------------- | -------------- | | `1.4.4-canary.20261107.1` | `1.4.4-canary.1+7ca0042d3` | build succeeds | | `1.4.4-canary.20261108.1` | `1.4.4-canary.1+2596ac5`   | build fails    |  ```sh npx -y bun@1.4.4-canary.20261107.1 build.ts   # succeeds npx -y bun@1.4.4-canary.20261108.1 build.ts   # fails ```  Only one commit is between them: **#47942 — “AOT: the Bun side of the rewritten ahead-of-time compiler”**.  **2. Reproduction files**  A single entry point is passed to `Bun.build`. It loads a build plugin module through a helper that takes the module path as a parameter and calls `import(entry)`:  ```ts // entry.tsx import { load } from "./loader.js";  export const pluginFactory = load("./plugins/tsx.ts"); ```  ```ts // loader.ts export async function load(entry: 
-
-- **Issue #48349** (2026-11-09): **CSS: @counter-style output drops the separating space (@counter-stylethumbs)**
-  *Symptoms*: ### What happens  Bun's CSS output prints `@counter-style` with no space between the at-rule name and the style name, producing an at-rule named `@counter-stylethumbs` instead of `@counter-style thumbs`. Browsers do not recognize it, so the counter style is dropped and `list-style-type: thumbs` has nothing to resolve to. It happens with and without `minify`.  ### Version  - Bun 1.4.3 (`c6da4a4d3010e5553438c60f6bd76d981976867c`), Windows 11 10.0.26200 x64 - Bun 1.4.4 (`38afee6c84fcf48c0edb2466aa4b27d287a59c30`), same host — still present  ### Minimal repro  `input.css`:  ```css @counter-style thumbs{system:cyclic}.c{list-style-type:thumbs} ```  `repro.ts`:  ```ts const result = await Bun.build({   entrypoints: ["./input.css"],   outdir: "./out",   minify: true,   target: "browser", }); for (const output of result.outputs) console.log(await Bun.file(output.path).text()); ```  Actual output on both 1.4.3 and 1.4.4:  ```css @counter-stylethumbs{system:cyclic}.c{list-style-type:thumbs} ```  The same glued name is produced with `minify: false` (formatted):  ```css @counter-stylethumbs {   system: cyclic; } ```  Expected in both cases:  ```css @counter-style thumbs{system:cyclic}.c{list-style-type:thumbs} ```  The style name is part of the prelude, so the printer needs to emit the separating space after `@counter-style` (the same is true for any at-rule whose name can be adjacent to an identifier, but this is the observed one).  ### Related records  - #46692 — `css: print the space 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1026,1087 +1028,1052 @@ struct us_poll_t {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89452d2a` (2026-11-10)
-**Commit Message**: AOT: bun compile, build output, module mocks, fixes and new names (#48436)
+### Incident Patch 1: `4cf6d10b` (2026-11-14)
+**Commit Message**: event loop: give the uws loop its lifetime and share the mini loop (#48885)
 
-Bun's side of a round of work on the ahead-of-time compiler (`bun build --compile --aot` and `bun
-test --aot`, both experimental). The JavaScriptCore side is merged: oven-sh/WebKit#1025. This
-follows oven-sh/bun#48120.
+### What does this PR do?
 
-About 9,400 files, +53,000 -22,000. About 3,200 of the files only move. Most of the rest is tests.
+Gives the event loops under the VM the lifetime and the sharing they
+really have. Three commits, 55 `unsafe` blocks and 2 `unsafe impl`
+fewer.
 
-[skip size check], as in 607519ac.
+**The uws loop.** `Loop::get()` returned a raw pointer to a loop that
+lives as long as its thread runs, and every user dereferenced it again.
+It returns `&'static ThreadLoop`, and what keeps the loop (socket
+groups, UDP, QUIC, timers) asks for `'static`. `ThreadLoop` has the two
+methods that need uWS's `LoopData`, so they cannot be called on the loop
+of `spawnSync`.
 
-If you don't use `--aot`
+**The mini loop.** What a tick runs reaches the loop again and other
+threads post to it, yet `tick*` took `&mut self`. `MiniEventLoop` and
+`AnyEventLoop` take `&self`. Bundler and install workers no longer form
+a `&mut` to post or to wake. `AnyEventLoop::tick` is one turn, and
+`sleep_until` lends the manager to its callback instead of passing a raw
+pointer through a trampoline.
 
-- The transpiler's visit pass skips an empty list that it used to drain for every scope.
-  src/jsc/RuntimeTranspilerStore.rs counts the transpiler jobs that were scheduled and completed:
-  two additions per job.
+- **Became `unsafe`**, because they end a `'static` loop early:
+`free_thread_loop`, `close_thread_loop` and `SpawnSyncEventLoop::init`.
+Three other `unsafe fn` are gone.
+- **Still raw**: the libuv loo
 
-- x64: byte-sized atomic subtract, and, or, xor in WebAssembly whose result is unused stored a wrong
-  byte in the optimizing JIT; four encodings lacked a prefix. Hot JavaScript used the same encodings
-  on x64: `Atomics.sub`, `and`, `or` and `xor` on an `Int8Array` or `Uint8Array` with an unused
-  result stored a wrong byte. Fixed in the engine.
-
-- arm64 without LSE atomics: a compare-exchange that has to fail could store when its
-  store-exclusive was lost. Fixed in the engine.
-
-- From the engine: `new WebAssembly.Module(
-
-**File**: `.gitattributes` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -24,7 +24,7 @@
- *.patch text eol=lf
- # Every byte of an input of the formatter, and of what is expected for it, is part of the test.
- test/cli/format/own/cases/** -text
--test/aot/parallel/the-head-of-the-text-of-a-function-is-laid-as-bun-prints-it/** -text
-+test/aot/parallel/function-source-signature-formatting/** -text
- # Compared line by line with what a runner prints, which ends a line with \n on every system.
- test/cli/format/*/expected.txt text eol=lf
- test/cli/lint/conformance/expected*.txt text eol=lf
+@@ -643,7 +643,6 @@ dependencies = [
+  "bun_dispatch",
+  "bun_dotenv",
+  "bun_io",
+- "bun_paths",
+  "bun_ptr",
+  "bun_sys",
+  "bun_threading",
 ```
 
-**File**: `bench/compiler/run.ts` (modified, +11/-11)
+**File**: `src/bundler/DeferredBatchTask.rs` (modified, +1/-1)
 ```diff
-@@ -13,7 +13,7 @@
- // Every number comes from this script: the mean of all runs, none left out. CPU seconds and peak memory are the operating system's for the compiler's process and its children.
- // Instructions are counted where `perf` is there. Lines are physical lines of the files that the compiler is given; what it reads besides (declaration files, its own library, Go's standard library) stands in its own column.
- // Bun's compiler counts those lines in every build and prints the counts under `--explain=statistics`. Cargo and `bun build --compile` without `--aot` don't tell, so their cells are empty.
--// Below the table, the closing line of the last run of each `bun build --compile --aot` is printed as is: how many lines the compiler says it compiled, and how long it says that took.
-+// Below the table: the `compile` row of each `bun build --compile --aot`.
- // Not a test, and CI does not run it.
- import { spawnSync } from "bun";
- import { mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
-@@ -203,13 +203,13 @@ interface Measured {
-   cpu: number;
-   peakMB: number;
-   instructions?: number;
--  /** Only Bun's compiler prints one: `[1.31s] compile  app  compiled 10,123 lines in 1.23 s (8,230 lines/s)`. */
--  closingLine?: string;
-+  /** Bun's compiler only: `[1.31s] compile  app  126.4 MB  8.2k lines/s`. */
-+  compileRow?: string;
-   /** Only Bun's compiler counts them: the lines of declaration files and of its own library. */
-   linesReadBesides?: number;
- }
- 
--const closingLineOfBuild = /^.*\bcompiled [\d,]+ lines? in [\d,.]+ s \([\d,]+ lines\/s\)/m;
-+const compileRowOfBuild = /^ *\[[\d.]+m?s\] compile  .* lines\/s$/m;
- 
- function linesReadBesidesIn(stderr: string) {
-   const declarations = /^SourceLinesOfDeclarations (\d+)$/m.exec(stderr);
-@@ -243,7 +243,7 @@ function time(command: string[], cwd: string, env: Record<string, string>): Meas
-     cpu: Number(usage.cpuTime.total) / 1e6,
-     peakMB: usage.maxRSS / (1 << 20),
-     instructions: counted || undefined,
--    closingLine: closingLineOfBuild.exec(result.stdout.toString())?.[0].trim(),
-+    compileRow: compileRowOfBuild.exec(result.stdout.toString())?.[0].trim(),
-     linesReadBesides: linesReadBesidesIn(result.stderr.toString()),
-   };
- }
-@@ -334,7 +334,7 @@ try {
-         peakMB: mean(measured.map(run => run.peakMB)),
-         instructions: measured[0].instructions === undefined ? undefined : mean(measured.map(run => run.instructions!)),
-         executableBytes: statSync(builtIn(folder, scenario)).size,
--        closingLine: measured.at(-1)!.closingLine,
-+        compileRow: measured.at(-1)!.compileRow,
-         everyRun: measured,
-       };
-       results.push(row);
-@@ -419,10 +419,10 @@ for (const size of new Set(results.map(row => row.size))) {
-           : columns.map(([, width, text]) => text(row).padStart(width)).join("")),
-     );
- }
--const rowsWithClosingLine = results.filter(row => row.closingLine);
--if (rowsWithClosingLine.length) {
--  console.log("\nThe closing line of bun's build, in the last run");
--  for (const row of rowsWithClosingLine)
--    console.log(`${whole(row.size).padStart(9)}  ${row.scenario.padEnd(widest)}  ${row.closingLine}`);
-+const rowsWithCompileRow = results.filter(row => row.compileRow);
-+if (rowsWithCompileRow.length) {
-+  console.log("\nThe compile row of bun's build, in the last run");
-+  for (const row of rowsWithCompileRow)
-+    console.log(`${whole(row.size).padStart(9)}  ${row.scenario.padEnd(widest)}  ${row.compileRow}`);
- }
- if (option("json", "")) writeFileSync(option("json", ""), JSON.stringify(results, null, 2) + "\n");
-```
-
-**File**: `docs/compiler/aot.mdx` (modified, +31/-37)
-```diff
-@@ -18,41 +18,37 @@ There's no new syntax and nothing to annotate. TypeScript, JavaScript and npm pa
- 
- ## What to expect
- 
--Under `bun run`, and in an executable from [`bun build --compile`](/compiler/executables), your code starts in an interpreter and a JIT compiles the hot functions while the program runs. `bun compile` does that work at build time, and the executable has no JIT.
-+Under `bun run`, and in an executable from [`bun build --compile`](/compiler/executables), your code starts in an interpreter and a JIT compiles the hot functions while the program runs. `bun compile` does that work at build time. It follows the imports from your entry point, type checks your TypeScript, and works out which objects reach each variable and which function each call reaches. Then it generates machine code for every function the program can reach, npm packages included, and puts it into a copy of the Bun runtime. The executable has no JIT.
- 
- What you get:
- 
- - Your program starts faster. There's no source to parse and nothing to warm up.
--- It uses less memory. The process has no bytecode, no JIT-compiled code and no profiling data.
-+- A large application uses less memory, and a tiny program uses about as much as without AoT. The process has no bytecode, no JIT-compiled code and no profiling data.
- - Typed code runs faster. A property access is one load from a fixed offset, like a struct field in Go or Rust.
- - A small program's file is smaller, because it leaves out the `bun` command line and the JIT. In a large program, the machine code can outweigh that. [`--trim`](/compiler/size) removes the Bun APIs you don't use.
- 
- What it costs:
- 
--- The build takes longer. Bun type checks and compiles every function that the program can reach, and nothing is cached between builds.
--- Untyped code can run slower than under the JIT. A JIT watches the program run and learns which objects show up at each property access. The compiler has to prove that at build time. Where it can't, the code looks the property up at run time.
--- [A few things differ from `bun run`](/compiler/compatibility). Built-in objects such as `Array.prototype` are read-only, and code from a string (`eval`, `new Function`) runs in an interpreter.
--
--[`bun compile --explain`](/compiler/explain) lists the code that compiled to a slow path, worst first, with a fix for each.
-+- The build takes longer, and nothing is cached between builds.
-+- Untyped code can run slower than under the JIT. A JIT learns which objects show up at each property access by watching the program run. The compiler has to prove it at build time. Where it can't, the code looks the property up at run time. [`bun compile --explain`](/compiler/explain) lists that code, worst first, with a fix for each.
-+- [A few things differ from `bun run`](/compiler/compatibility).
- 
- ## When to stay with the JIT
- 
--- Peak throughput matters most, and your hot code is untyped JavaScript from npm.
-+- Your hot code is untyped JavaScript from npm.
- - You build on one platform and deploy to another. `bun compile` only builds for the platform it runs on, so run it in CI or in a container.
- - A library generates its hot code with `new Function`, as some validators and serializers do. [That code is interpreted](/compiler/compatibility#code-from-strings).
--- A dependency changes [built-in objects](/compiler/compatibility#built-in-objects-are-read-only). Assigning to `Array.prototype.push` throws a `TypeError`.
--- Your program spends its time in [WebAssembly](/compiler/compatibility#webassembly) that it downloads or decodes at run time. Only a `.wasm` file that you import is compiled.
--- You need breakpoints in the executable. [The inspector](/compiler/debugging#the-inspector) connects, but it can't pause compiled code.
-+- A dependency replaces methods of [built-in objects](/compiler/compatibility#built-in-objects-are-read-only). Assigning to `Array.prototype.push` throws a `TypeError`.
-+- Your program spends its time in [WebAssembly](/compiler/compatibility#webassembly) that it downloads or assembles at run time.
-+- You need [breakpoints](/compiler/debugging) in the executable.
- 
--If you aren't sure, build the same entry point both ways and measure. With `--no-aot`, the executable holds your JavaScript and runs it with the JIT.
-+If you aren't sure, build both ways and put both under the same load. With `--no-aot`, the executable holds your JavaScript and runs it with the JIT.
- 
- ```bash terminal icon="terminal"
- bun compile --no-aot ./server.ts --outfile server-jit
- bun compile ./server.ts --outfile server-aot
- ```
- 
--Put both under the same load, on routes that do what your application does in production. Run the load twice and keep the second result, so the JIT has warmed up. [Benchmarking](/project/benchmarking) covers the tools.
--
- ## Build an executable
- 
- <Tabs>
-@@ -73,6 +69,10 @@ Put both under the same load, on routes that do what your application does in pr
- 
- `bun compile` is short for `bun build --com
-```
-
-**File**: `docs/compiler/debugging.mdx` (modified, +108/-80)
-```diff
-@@ -1,7 +1,7 @@
- ---
- title: "Test and debug a compiled program"
- sidebarTitle: "Testing and debugging"
--description: "Stack traces, source maps, crash reports and profiles of an executable, and how to check your program before you build it"
-+description: "Stack traces, source maps, crash reports and profiles of an executable, and how to run your tests compiled"
- ---
- 
- <Warning>Ahead-of-time compilation is experimental.</Warning>
-@@ -30,45 +30,31 @@ RangeError: bad id -1
-       at /$bunfs/root/repo.ts:7:12
- ```
- 
--Stack traces have the file, line and column of your source code. You don't need a source map. The part after `/$bunfs/root/` is the path of the source file, relative to the directory where you ran the build. The executable doesn't hold the text of your files, so it prints no source excerpt above the message.
-+Stack traces have the file, line and column of your source code. You don't need a source map. The part after `/$bunfs/root/` is the path of the source file, relative to the folder of the entry point. An executable prints no source excerpt above the message.
- 
- ### Minified executables and external source maps
- 
- ```bash terminal icon="terminal"
--bun compile --minify --sourcemap=external ./repo.ts
-+bun compile --minify --sourcemap=external ./repo.ts && ./repo
- ```
- 
--`--minify` shortens the names of functions, classes and variables. `--sourcemap=external` moves what stack traces show (function names, paths, lines and columns) out of the executable and into `repo.map`, next to it. Every frame then points into `compiled.js`, as in `compiled.js:4:2`. That file doesn't exist. The line and column are a position in the map, and any source map library turns them back into your names, files and lines.
-+```txt
-+RangeError: bad id -1
-+      at <anonymous> (/$bunfs/root/compiled.js:4:2)
-+      at /$bunfs/root/compiled.js:1:4
-+```
- 
--Your program reads the names it read before: `--sourcemap=external` doesn't change `handler.name` or `error.constructor.name`. With `--minify` they are short, as in any minified build, and the map has them as you wrote them. The source text of functions moves out too, as with [`--no-compile-function-source`](/compiler/size): `handler.toString()` returns `function handler() { [native code] }`.
-+`--sourcemap=external` moves function names, paths, lines and columns out of the executable and into `repo.map`, next to it. Every frame then points into `compiled.js`. That file doesn't exist. The line and column are a position in the map, and any source map library turns them back into your names, files and lines. Keep the map of every build you deploy, and don't ship it.
- 
--Keep the map of every build you deploy, and don't ship it.
-+The source text of functions moves out too, as with [`--no-compile-function-source`](/compiler/size). `handler.toString()` returns `function handler() { [native code] }`. `handler.name` stays. `--minify` shortens it, as in any minified build.
- 
- ### Keep every name out of the executable
- 
- ```bash terminal icon="terminal"
- bun compile --obfuscate ./repo.ts
- ```
- 
--`--obfuscate` does what `--sourcemap=external` does, and the `name` of every function and class is `""`. That includes built-in functions that are written in JavaScript, such as `Array.prototype.map`. An error message names a variable by a single letter. Code that reads a name behaves differently: `this.name = new.target.name` sets an empty name, and a table keyed by `constructor.name` puts every class under one key. Property names, strings and the descriptions of symbols stay in the executable, because your program finds and prints them when it runs.
--
--### List the strings in an executable
--
--```bash terminal icon="terminal"
--bun build --aot-stored-strings ./dist/app > strings.bin
--```
--
--Before you ship, you may want to check that a name didn't end up in the executable. `strings` and `grep` are a poor fit for that. Compiled code stores its strings back to back and shares bytes between them, so two neighbors can spell a word that isn't in your program. This command prints every string that the compiled code stores, whole, as UTF-8, each followed by a zero byte. It reads an executable built for any platform, builds nothing, and takes no other flag.
--
--Standard error gets one line for each place in the file that holds such bytes: the strings, the source text that error messages quote, and the source text of functions.
--
--```txt
--image 0 | Text | offset 94617600 | length 18883161 | 1 bytes that no string covers
--image 0 | quoted text | offset 201326848 | length 412007 | 0 bytes that no string covers
--image 0 | function text | offset 201738855 | length 96110 | 0 bytes that no string covers
--```
--
--The exit code is 0 when the bytes that no string covers are all zero, 1 when one of them isn't, and 2 when the file holds no compiled code or comes from a Bun with another image format.
-+`--obfuscate` does what `--sourcemap=external` does, and the `name` of every function and class in your program is `"
-```
-
-**File**: `docs/compiler/executables.mdx` (modified, +10/-18)
-```diff
-@@ -459,7 +459,7 @@ BUN_OPTIONS="--heap-prof-md" ./myapp
- BUN_OPTIONS="--smol --cpu-prof-md" ./myapp
- ```
- 
--An executable built with `bun compile` only takes `--inspect` if you built it with [`--compile-inspector`](/compiler/debugging#the-inspector).
-+An executable built with `bun compile` only takes `--inspect` if you built it with [`--compile-inspector`](/compiler/debugging).
- 
- ---
- 
-@@ -572,7 +572,7 @@ Checked 63 installs across 64 packages (no changes) [5.00ms]
- 
- CLI tools built on top of Bun can use this to install packages, bundle dependencies, or run other files without downloading a separate binary or installing Bun.
- 
--An executable built with `bun compile` doesn't include the `bun` CLI, so `BUN_BE_BUN=1` doesn't work there.
-+An executable built with [`--trim`](#smaller-executables) doesn't include the `bun` CLI, so `BUN_BE_BUN=1` doesn't work there.
- 
- ---
- 
-@@ -712,7 +712,7 @@ When you add multiple entrypoints to a standalone executable, Bun bundles each o
- 
- We may eventually detect statically-known paths in `new Worker(path)` and bundle them automatically. For now, you need to list the worker file as an entrypoint, as in the earlier example.
- 
--If you use a relative path to a file not included in the standalone executable, Bun loads that path from disk relative to the process's current working directory, and errors if it doesn't exist. An executable built with `--aot` does that only with [`--aot-allow-code-from-disk`](/compiler/compatibility#dynamic-imports). With [`--disallow-code-generation-from-strings=strict`](/runtime/code-generation-from-strings#files-on-disk-are-not-part-of-the-program), Bun doesn't load it.
-+If you use a relative path to a file not included in the standalone executable, Bun loads that path from disk relative to the process's current working directory, and errors if it doesn't exist. An executable built with `--aot` does that only with [`--aot-allow-code-from-disk`](/compiler/compatibility). With [`--disallow-code-generation-from-strings=strict`](/runtime/code-generation-from-strings#files-on-disk-are-not-part-of-the-program), Bun doesn't load it.
- 
- ---
- 
-@@ -735,8 +735,6 @@ cd /home/me/Desktop
- ./hello
- ```
- 
--With `--aot`, a path is resolved the first time it is imported. After `process.chdir()`, `await import("./my.db", { with: { type: "sqlite" } })` returns the database that was opened first, not the one in the new directory.
--
- ---
- 
- ## Embed assets & files
-@@ -931,7 +929,7 @@ console.log(addon.hello());
- 
- If you're using `@mapbox/node-pre-gyp` or similar tools, require the `.node` file directly, or it won't bundle correctly.
- 
--Some addons load a shared library that ships beside them. The `.node` file of `sharp` needs `libvips` from a neighboring package. With `--aot`, embed the folder that holds both:
-+Some addons load a shared library that ships beside them, like `sharp` and `libvips`. With `--aot`, embed the folder that holds both:
- 
- ```bash terminal icon="terminal"
- bun build --compile --aot ./index.ts --asset node_modules/@img --outfile mycli
-@@ -975,21 +973,13 @@ const html = await Bun.file(path.join(publicDir, "index.html")).text();
- 
- Pass `--asset` multiple times to embed several directories (for example `--asset ./client --asset ./prerendered` for a SvelteKit build). Bun embeds only regular files; it skips symlinks and empty subdirectories inside the tree.
- 
--With `--aot`, the build also embeds the data files that a `require()` or `import()` with a path that isn't a constant may name, [where it can hold the whole folder](/compiler/compatibility). `fs.stat()` of such a file gives its size, one link, a number of its own and the times the file had when you built; they don't move later, and the owner is whoever runs the executable. A folder that comes into sight that way is also listed in the folder above it, whose own listing may still leave out what the executable doesn't hold. A file you embed with `--asset` has its size and no times.
--
--With `--aot`, your modules and the files you embed keep their places relative to one another. Next to `./dist/server/entry.mjs`, `--asset dist/client` is at `path.join(import.meta.dir, "../client")`, the same as under `bun run`.
--
--Without `--aot`, a single file is embedded under its base name: `--asset ./a/config.json` is at `/$bunfs/root/config.json`. With `--aot` it's at `/$bunfs/root/a/config.json`, and `/$bunfs/root/config.json` finds it too, so code written for either keeps working. Three things differ:
--
--- The base name only resolves. `fs.readdirSync()` and `Bun.embeddedFiles` list the file once, as `a/config.json`.
--- If a module, another embedded file or a directory is already at that path, the path keeps meaning that.
--- `--asset ./a/config.json --asset ./b/config.json` is an error without `--aot`, because both files would be `config.json`. With `--aot` it builds. Each file is at its own path and `/$bunfs/root/config.json` doesn't exist.
-+With `--aot`, your modules and the files you embed keep their place
-```
-
-**File**: `docs/compiler/explain.mdx` (modified, +44/-186)
-```diff
-@@ -34,35 +34,30 @@ bun compile ./main.ts --explain
- ```txt
- 11 | for (const item of items) total += item.price;
-                                         ^
--note: 1. unknown-object: An object from untyped code is used as this type here, so it can have any shape.
-+note: 1. unknown-object: The compiler doesn't know the shape of this object, so the access is a lookup or needs a shape check.
-    at main.ts:11:36
- 
- note: 1 of 1 untyped access
- note: 1 of these runs in a loop
--note: why (loose-type): The value comes from 'any', 'unknown', 'object', '{}', 'Function' or a bare type parameter.
--note: fix: build a new object of this type from it where it enters typed code.
-+note: fix: that depends on where the object comes from. See the table at the link below.
- note: https://bun.com/docs/compiler/explain#unknown-object
- ```
- 
--| Line                        | What it tells you                       |
--| --------------------------- | --------------------------------------- |
--| `1. unknown-object`         | The rank and the [cause](#causes)       |
--| `at`                        | The line that runs slower               |
--| `1 of 1 untyped access`     | How many accesses the fix speeds up     |
--| `1 untyped operator`        | Operators on a value of unknown type    |
--| `3 indirect calls`          | Calls where the callee isn't known      |
--| `1 of these runs in a loop` | How many are in loops, which rank first |
--| `types:`                    | The types that the cause slows down     |
--| `why`                       | How the value got past TypeScript       |
--| `fix:`                      | What to change                          |
-+| Line                        | What it tells you                          |
-+| --------------------------- | ------------------------------------------ |
-+| `1. unknown-object`         | The rank and the [cause](#causes)          |
-+| `at`                        | The line that runs slower                  |
-+| `1 of 1 untyped access`     | The entry's share of your untyped accesses |
-+| `1 untyped operator`        | Operators on a value of unknown type       |
-+| `1 indirect call`           | Calls where the callee isn't known         |
-+| `1 of these runs in a loop` | How many are in loops                      |
-+| `fix:`                      | What to change                             |
- 
- The location is the line that uses the untyped value, not the line where the value starts. Here that's the read of `item.price`, and the value comes from the `JSON.parse` four lines above it.
- 
--Entries whose operations are in loops come first, so five accesses in a loop rank above a hundred at startup. After that, entries are sorted by how many instructions types would save. Nothing is measured. A loop counts if the operation is inside it after inlining, and the count is `inLoops` in JSON.
-+Entries in loops come first, then the ones where types would save the most instructions. That's an estimate. Nothing is measured.
- 
--An access can have more than one cause, so a fix can uncover the next one.
--
--The report shows the first 20 entries, and `--explain=json` prints all of them.
-+The report shows the first 20 entries. `--explain=json` prints all of them.
- 
- ## What is counted
- 
-@@ -81,196 +76,59 @@ Dependencies: 3.1% of property accesses are one load: 210 free, 1,320 tested, 5,
- 
- Only `free` counts as typed. An access is `free` when the compiler knows every shape the object can have at that point, from your types or by tracking the object from where it's created. An `any` or a `.js` file doesn't break that by itself.
- 
--A property access is a read, a write, an `in` test or a `delete`. Method calls, array and `Map` operations, and calls like `console.log()` aren't counted. Properties of objects that Bun gives you, such as `req.params.id` or `process.env.PORT`, are counted and are always lookups. So a small server has a low percentage, which doesn't matter outside of hot code.
-+A property access is a read, a write, an `in` test or a `delete`. Array elements and `Map` operations aren't counted. Properties of objects that Bun gives you, such as `req.params.id` or `process.env.PORT`, are always lookups. So a small server has a low percentage, which doesn't matter outside of hot code.
- 
--Bun counts after optimization, so the total moves when you change code nearby. Watch the percentage.
-+Bun counts after optimization, so the total moves when you change code nearby.
- 
- ## Other reports
- 
--| Flag                    | Lists                                                                      |
--| ----------------------- | -------------------------------------------------------------------------- |
--| `--explain=json`        | Every entry, one JSON object per line                                      |
--| `--explain=guards`      | [Type guards that can fail](/compiler/debugging#find-the-guards-that-fail) |
--| `--explain=trim`        | [What `--trim` kept, and why](/compiler/size#see-what-the-compiler-fou
-```
-
-**File**: `docs/compiler/index.mdx` (modified, +4/-4)
-```diff
-@@ -28,14 +28,14 @@ Hello world!
- | Builds for           | Any platform, with `--target` | The platform you build on |
- | Status               | Stable                        | Experimental              |
- 
--`bun build --compile` runs nearly everything that `bun run` runs. With `bun compile`, which is short for `bun build --compile --aot`, your program starts faster and uses less memory, and [a few things differ from `bun run`](/compiler/compatibility).
-+`bun build --compile` runs nearly everything that `bun run` runs. With `bun compile`, which is short for `bun build --compile --aot`, your program starts faster, and [a few things differ from `bun run`](/compiler/compatibility). A large application uses less memory, and a tiny program uses about as much as without AoT.
- 
- ## Read next
- 
- - [Single-file executable](/compiler/executables): cross-compile, embed files, sign the executable.
- - [Bytecode caching](/compiler/bytecode): make an executable from `bun build --compile` start faster.
- - [Standalone HTML](/bundler/standalone-html): `--compile --target=browser` writes one `.html` file.
- - [Ahead-of-time compilation](/compiler/aot): what `bun compile` gets you, and when to stay with the JIT.
--- [Types](/compiler/types) and [typed percentage](/compiler/explain): how your types make compiled code faster.
--- [Compatibility](/compiler/compatibility) and [libraries](/compiler/libraries): what differs from `bun run`, and which packages it affects.
--- [Debugging](/compiler/debugging), [size](/compiler/size), [troubleshooting](/compiler/troubleshooting) and [how it works](/compiler/internals).
-+- [Types](/compiler/types) and [typed percentage](/compiler/explain): make compiled code faster.
-+- [Compatibility](/compiler/compatibility) and [libraries](/compiler/libraries): what differs from `bun run`.
-+- [Debugging](/compiler/debugging), [size](/compiler/size) and [troubleshooting](/compiler/troubleshooting).
-```
-
-**File**: `docs/compiler/internals.mdx` (removed, +0/-99)
-```diff
-@@ -1,99 +0,0 @@
-----
--title: "How bun compile works"
--sidebarTitle: "How it works"
--description: "What bun compile does with your code and your types, and what ends up in the executable"
-----
--
--<Warning>Ahead-of-time compilation is experimental.</Warning>
--
--`bun compile` type checks your whole program, compiles it to machine code at build time, and puts that code into a copy of the Bun runtime. The executable has no JIT, so nothing is compiled while your program runs.
--
--You don't need this page to [use `bun compile`](/compiler/aot). Read it if you want to know what to expect from the code it generates.
--
--## From source to executable
--
--1. Bun follows the imports from your entry point with the same resolver, loaders and plugins as `bun build`. npm packages are compiled along with your code. So are the `node:` and `bun:` modules you import, because much of `node:fs`, `node:http` and `node:stream` is written in TypeScript.
--2. It type checks your TypeScript with the checker behind [`bun check`](/runtime/check). A type error stops the build.
--3. It tracks values through the whole program. For each variable, parameter and property it works out which objects can end up there, and for each call, which functions it can reach.
--4. It optimizes each function and generates machine code with its own backend.
--5. It copies the `bun` that runs the build, leaves out the parts a compiled program can't use, and adds the machine code. You don't need a linker or a C toolchain.
--
--Your code is never bundled or printed back out as JavaScript, so stack traces point at your original source without a source map.
--
--## What types are used for
--
--```ts dot.ts icon="/icons/typescript.svg"
--interface Vec {
--  x: number;
--  y: number;
--}
--
--function dot(a: Vec, b: Vec) {
--  return a.x * b.x + a.y * b.y;
--}
--
--const unit: Vec = { x: 1, y: 0.5 };
--const input = JSON.parse(process.argv[2]);
--
--console.log(dot(unit, input));
--```
--
--```bash terminal icon="terminal"
--bun compile ./dot.ts && ./dot '{"x":2,"y":4}'
--```
--
--```txt
--4
--```
--
--`Vec` gets a fixed layout, like a struct in Go or Rust. `x` and `y` sit at fixed offsets. Your program creates `unit` itself, so the compiler knows it has that layout, and `a.x` is one load with no check in front of it.
--
--`input` comes from outside. TypeScript lets it through because `JSON.parse` returns `any`, but nothing proves it's a `Vec`. So `dot` checks `b` once, on entry. If the check passes, `b.x` is one load too. If it fails, the call goes to a second copy of `dot` that treats `b` as plain JavaScript and looks `x` up at run time. `a` stays typed in that copy.
--
--The same rule applies everywhere. A type is a fact about values your program creates. It's a guess about values your program receives, such as parsed data, the result of a function that only has a `.d.ts` file, or anything that went through `any` or `as`. A fact costs nothing at run time. A guess costs one check where the value arrives.
--
--The check compares layouts and doesn't look inside the object. `JSON.parse` makes ordinary objects, so `input` fails the check even when it has the right properties. To avoid that, [build a `Vec` from what you parse](/compiler/types#build-your-own-objects-from-what-you-parse).
--
--## When a type is wrong
--
--Types change how fast your program runs, never what it does. A value that doesn't match its type doesn't throw, and it isn't converted or copied. The code that touches it takes the slow path. [Types](/compiler/types#when-a-value-doesnt-match-its-type) has an example.
--
--Anything the compiler rejects that `bun run` accepts, it rejects at build time. The main exceptions are [read-only built-ins](#read-only-built-ins) and [an import of code that isn't in the executable](/compiler/compatibility#dynamic-imports). [Compatibility](/compiler/compatibility) has others.
--
--## Code without types
--
--JavaScript files, `any` and untyped packages are compiled to machine code like everything else. Code that the build saw never falls back to the interpreter. The compiler still tracks objects from where they're created, so a class in a `.js` file gets a fixed layout too.
--
--Where it can't tell which objects reach a property access, the compiled code looks the property up at run time. That works the same and runs slower. [`bun compile --explain`](/compiler/explain) lists those places and what causes them.
--
--## Code the build can't see
--
--Strings passed to `eval`, `new Function` and `node:vm` run in JavaScriptCore's interpreter, in the same process and on the same objects. There's no JIT above it, so a library that generates its hot code this way runs slower compiled.
--
--The compiler finds these calls at build time and assumes less about whatever they can reach. A read that it can't follow, like `globalThis[name]`, counts as one. If it finds none, it assumes it has seen all the code there is and turns `eval` off. See [Code from strings](/compiler/compatibility#code-from-strings).
--
--## Read-only built-ins
--
--Compile
-```
-
----
-
-### Incident Patch 2: `98cda0d8` (2026-11-10)
-**Commit Message**: AOT: Bun's side of the compiler's new optimizations, with fixes and tests (#48120)
-
-Bun's side of the ahead-of-time compiler rewrite (`bun build --compile --aot` and `bun test --aot`,
-both experimental). The JavaScriptCore side is merged: oven-sh/WebKit#1001, oven-sh/WebKit#1008 and
-oven-sh/WebKit#1021.
-
-About 31,000 files, +430,000 -34,000. Almost all of that is stored programs and stored test runs
-under test/aot. A stored program is a small program that CI compiles with `--aot`, runs, and
-compares with `bun run`. A stored test run does the same with `bun test --aot` and `bun test`.
-
-[skip size check], as in 607519ac: the binary is 3.5 to 5 MB over the size check's limit on all 12
-targets.
-
-If you don't use `--aot`
-
-- Built-in modules. Earlier AOT work edited files under src/js in place. Those files are back to
-  what main had before that work, or within a few lines of it. The versions that compiled programs
-  run now live beside them in src/js/ahead-of-time.
-
-- `util.inspect()` of an error that shares four or more stack frames with its `cause` prints them
-  once, like Node.
-
-- A run-time `onResolve` plugin is passed `kind`, `namespace` and `resolveDir`, as bun.d.ts
-  declares. It
-
-**File**: `.gitattributes` (modified, +1/-0)
-```diff
-@@ -24,6 +24,7 @@
- *.patch text eol=lf
- # Every byte of an input of the formatter, and of what is expected for it, is part of the test.
- test/cli/format/own/cases/** -text
-+test/aot/parallel/the-head-of-the-text-of-a-function-is-laid-as-bun-prints-it/** -text
- # Compared line by line with what a runner prints, which ends a line with \n on every system.
- test/cli/format/*/expected.txt text eol=lf
- test/cli/lint/conformance/expected*.txt text eol=lf
-```
-
-**File**: `.gitignore` (modified, +1/-0)
-```diff
-@@ -101,6 +101,7 @@ node_modules_*
- !test/aot/parallel/**/dist/
- !test/aot/ir/**/node_modules/
- !test/aot/parallel-test-runs/**/node_modules/
-+!test/aot/fuzz/**/node_modules/
- out
- out.*
- outcss
-```
-
-**File**: `bench/compiler/run.ts` (modified, +35/-30)
-```diff
-@@ -35,9 +35,11 @@ const perf = process.platform === "linux" ? which("perf") : null;
- interface Scenario {
-   name: string;
-   dress: string;
--  /** What has to be on the machine. */
--  needs?: string;
--  /** Run once before the timed command of every run, untimed. */
-+  /** What has to be on the machine, the formatter of the language too: a scenario that lacks one is left out, and a line says so. */
-+  needs?: string[];
-+  /** Below the folder of the scenario: removed before the timed command of every run, untimed. */
-+  removes?: string;
-+  /** Run behind the removal, before the timed command of every run, untimed. */
-   prepare?: (folder: string) => string[][];
-   command: (folder: string) => string[];
-   environment?: (folder: string) => Record<string, string>;
-@@ -118,37 +120,35 @@ const scenarios: Scenario[] = [
-   {
-     name: "go-cold",
-     dress: "go",
--    needs: "go",
--    prepare: folder => [["rm", "-rf", join(folder, ".cache")]],
-+    needs: ["go", "gofmt"],
-+    removes: ".cache",
-     command: () => ["go", "build", "-o", onThisSystem("app"), "."],
-     environment: folder => ({ GOCACHE: join(folder, ".cache"), GOFLAGS: "-mod=mod", GOTOOLCHAIN: "local" }),
-     executable: "app",
-   },
-   {
-     name: "go-std-warm",
-     dress: "go",
--    needs: "go",
--    prepare: folder => [
--      ["rm", "-rf", join(folder, ".cache")],
--      ["go", "build", "std"],
--    ],
-+    needs: ["go", "gofmt"],
-+    removes: ".cache",
-+    prepare: () => [["go", "build", "std"]],
-     command: () => ["go", "build", "-o", onThisSystem("app"), "."],
-     environment: folder => ({ GOCACHE: join(folder, ".cache"), GOFLAGS: "-mod=mod", GOTOOLCHAIN: "local" }),
-     executable: "app",
-   },
-   {
-     name: "cargo build",
-     dress: "rust",
--    needs: "cargo",
--    prepare: folder => [["rm", "-rf", join(folder, "target")]],
-+    needs: ["cargo", "rustfmt"],
-+    removes: "target",
-     command: () => ["cargo", "build", "--offline", "--quiet"],
-     executable: "target/debug/application",
-   },
-   {
-     name: "cargo build --release",
-     dress: "rust",
--    needs: "cargo",
--    prepare: folder => [["rm", "-rf", join(folder, "target")]],
-+    needs: ["cargo", "rustfmt"],
-+    removes: "target",
-     command: () => ["cargo", "build", "--offline", "--quiet", "--release"],
-     executable: "target/release/application",
-   },
-@@ -167,7 +167,8 @@ const shown = (command: string[]) => command.map(word => (word === bun ? "bun" :
- function printCommandsOf(chosen: Scenario[]) {
-   const widest = Math.max(...chosen.map(scenario => scenario.name.length), "scenario".length);
-   for (const scenario of chosen) {
--    const before = (scenario.prepare?.(".") ?? []).map(shown).join(" && ");
-+    const removal = scenario.removes ? [["rm", "-rf", scenario.removes]] : [];
-+    const before = [...removal, ...(scenario.prepare?.(".") ?? [])].map(shown).join(" && ");
-     console.log(
-       `${scenario.name.padEnd(widest)}  ${shown(scenario.command("."))}${before ? `   (before it, not timed: ${before})` : ""}`,
-     );
-@@ -265,8 +266,9 @@ try {
-     const features = Math.max(2, Math.round(size / linesOfFeature));
-     for (const scenario of scenarios) {
-       if (wanted && !wanted.split(",").includes(scenario.name)) continue;
--      if (scenario.needs && !which(scenario.needs)) {
--        console.error(`${scenario.name}: no ${scenario.needs} on this machine: left out`);
-+      const missing = scenario.needs?.find(tool => !which(tool));
-+      if (missing) {
-+        console.error(`${scenario.name}: no ${missing} on this machine: left out`);
-         continue;
-       }
-       const folder = join(root, `${size}-${scenario.name.replace(/[^a-z0-9]+/gi, "-")}`);
-@@ -281,21 +283,24 @@ try {
-       // A compiler that fails or takes over an hour at some size has a row that says so. Nothing is left out in silence.
-       let failure: string | undefined;
-       for (let run = 0; !failure && run < (has("check") ? 1 : runs); run++) {
--        for (const command of scenario.prepare?.(folder) ?? []) {
--          const prepared = spawnSync({
--            cmd: command,
--            cwd: folder,
--            env: { ...process.env, ...env },
--            stdout: "pipe",
--            stderr: "pipe",
--          });
--          if (prepared.exitCode !== 0)
--            throw new Error(`${command.join(" ")}: exit ${prepared.exitCode}\n${prepared.stderr}`);
--        }
-         try {
-+          if (scenario.removes) rmSync(join(folder, scenario.removes), { recursive: true, force: true });
-+          for (const command of scenario.prepare?.(folder) ?? []) {
-+            const prepared = spawnSync({
-+              cmd: command,
-+              cwd: folder,
-+              env: { ...process.env, ...env },
-+              stdout: "pipe",
-+              stderr: "pipe",
-+            });
-+            if (prepared.exitCode !== 0)
-+              throw new Error(`${command.join(" ")}: exit ${prepared.exitCode}\n${prepared.stderr}`);
-+          }
-           measured.push(time(sce
-```
-
-**File**: `docs/compiler/aot.mdx` (modified, +4/-2)
-```diff
-@@ -99,12 +99,14 @@ One error is different. TypeScript gives up on a type after 100 nested steps and
- 
- [`bun check --aot`](/runtime/check) reports every error that stops the build, and also the type errors in code that the build leaves out. It builds nothing. Bun checks each file with the nearest `tsconfig.json`, and reads that config's `files` and `include` for the globals they declare, even if nothing imports them. If you can't fix an error yet, you can [suppress it](/compiler/troubleshooting#the-build-stops-at-a-type-error).
- 
--The build only stops where `tsc` reports an error under your own `tsconfig.json`:
-+The build only stops where `tsc` reports an error under your own `tsconfig.json`. The compiler reads Bun's type declarations even if you haven't installed them, and it overrides a few options. So when it finds a type error, it runs [`bun check`](/runtime/check) on that file with your own settings, and only reports the error if `bun check` finds it at the same place. A build without type errors skips that step.
-+
-+For example:
- 
- - `"noCheck": true` turns type errors off for the build too. Syntax errors still stop it.
- - An entry point that `exclude` rules out isn't type checked, and neither are the files that only it imports. An example is a worker that has a `tsconfig.json` of its own.
- - If `@types/bun` is installed but `types` doesn't name it, the build still reads it, and an error that only comes from its declarations doesn't stop the build.
--- Without a `tsconfig.json`, the build uses [the options of `bun check`](/runtime/check#without-a-tsconfigjson) with TypeScript's default `lib`, which declares the DOM. `typeof window` and `HTMLElement` are not errors.
-+- Without a `tsconfig.json`, the build uses [the options of `bun check`](/runtime/check#without-a-tsconfigjson). `lib` is `ESNext`, as in the `tsconfig.json` that `bun init` writes, and Bun's own declarations cover `fetch`, `Response`, streams and the like. A name that only the DOM declares isn't an error, because `tsc`'s default `lib` declares it: `typeof window` and `HTMLElement` build. The compiler doesn't know the type of such a name, though, so it misses a wrong use of one: `const title: number = document.title` builds too.
- 
- A few options can't change from one file to the next, because a build has one type checker and the entry point's `tsconfig.json` sets it up: `strictNullChecks`, `strictFunctionTypes`, `strictBindCallApply`, `strictBuiltinIteratorReturn`, `exactOptionalPropertyTypes`, `lib` (or the `target` it defaults from), `allowJs`, `maxNodeModuleJsDepth`, `resolveJsonModule` and `allowArbitraryExtensions`. If a folder's `tsconfig.json` sets one of them differently, the build doesn't type check the files in that folder, and its last line counts them as compiled without types. It still reads their types, but takes each one as a [guess](/compiler/internals#what-types-are-used-for) that the compiled code checks. They behave the same. Run `bun check` in that folder to see their type errors. A package that [publishes its types](/compiler/libraries#publish-a-package-with-its-types) is the exception: it keeps them whatever your `tsconfig.json` says.
- 
-```
-
-**File**: `docs/compiler/debugging.mdx` (modified, +16/-6)
-```diff
-@@ -89,10 +89,14 @@ If the process crashes, Bun prints a report to stderr. It ends with the function
- bun test --aot
- ```
- 
--`bun test --aot` compiles your test files, your preloads and everything they import the way `bun compile` does, and runs the compiled code. The type checker, the optimizer's settings, the object model and the run time are those of an executable, so every [difference from `bun run`](/compiler/compatibility) shows up in your tests as it would there.
-+`bun test --aot` compiles your test files, your preloads and everything they import the way `bun compile` does, and runs the compiled code. The type checker, the optimizer's settings, the object model and the run time are those of an executable, so every [difference from `bun run`](/compiler/compatibility) shows up in your tests as it would there. That goes for the test files themselves: `fn[name](code)` in a test throws the [`EvalError`](/compiler/compatibility#code-from-strings) of an executable when nothing in the run writes `"constructor"`.
- 
- `--isolate`, `--parallel`, `--rerun-each` and `--coverage` work as in `bun test`. `--watch`, `--hot` and `--inspect` exit with an error.
- 
-+`--isolate=modules` runs like `--isolate`: every test file gets a global object of its own. In `bun test` the files share one, so a property that one file leaves on a built-in module, like `fs.mine = 1`, is still there in the next file. In a compiled run it's gone, and no error tells you.
-+
-+With `--isolate`, a test file can't `require()` another test file that imports from `vitest` and has two or more other imports. It throws `require() async module ... is unsupported`. `bun test` turns the imports of such a file into `await import()` while it's the file being run, and transpiles it a second time, without that, when another file loads it. A compiled run has the first form only. An `import` statement and `await import()` work.
-+
- `--shard=i/n` still runs every test file in exactly one shard, but splits the files differently from `bun test`. A compiled run builds everything its test files import before the first test starts. So test files that import the same code go into the same shard, and each part of your project is compiled on one machine instead of on all of them. What your preloads import is compiled in every shard. With `--timings` written by a compiled `--parallel` run, a shard that has more to compile gets fewer test files. Each machine works out the split for itself, from the files on disk and the timings and from nothing else, so every machine needs the same checkout and the same timings, and `--parallel` may differ between them. Each shard prints a hash of the whole split. It's the same on every shard. Where no other split is faster, you get the split of `bun test`.
- 
- ### What differs from an executable
-@@ -112,7 +116,7 @@ A test run differs from `bun compile` only where tests couldn't work otherwise.
- | `import()` and `require()` of a file that wasn't compiled load it from disk, and Bun interprets it, in a test file, a preload or a helper that only your tests import. In a file of your program they throw, as in the executable, and the run lists where when it ends.                                                                                            | They throw, unless it's built with `--aot-allow-code-from-disk`.                                                   | A module that a test writes, a fixture, a path from the environment                                                                                                  |
- | All of Bun's own JavaScript that such a file could reach is compiled in. Beside it, the first read of a built-in that's made on demand, like `Map.prototype`, is made where it's written if other code may have run before: one more operation, 19 to 29 bytes.                                                                                                     | Only what the program can reach of it is compiled in.                                                              | A file that's loaded from disk can use any built-in                                                                                                                  |
- | `process.mainModule` and `require.main` count as read, so the module objects of entry points written in CommonJS, with their `children` and `parent`, are kept.                                                                                                                                                                                                     | They're kept where the build finds a read.                                                                         | Code that a test loads from disk may read them, and the build doesn't see that code                                                                                  |
--| `import(path)` and `require(path)` find every compiled file, also where the path is put together when the test runs. They answer with the compiled f
-```
-
-**File**: `docs/compiler/executables.mdx` (modified, +2/-0)
-```diff
-@@ -975,6 +975,8 @@ const html = await Bun.file(path.join(publicDir, "index.html")).text();
- 
- Pass `--asset` multiple times to embed several directories (for example `--asset ./client --asset ./prerendered` for a SvelteKit build). Bun embeds only regular files; it skips symlinks and empty subdirectories inside the tree.
- 
-+With `--aot`, the build also embeds the data files that a `require()` or `import()` with a path that isn't a constant may name, [where it can hold the whole folder](/compiler/compatibility). `fs.stat()` of such a file gives its size, one link, a number of its own and the times the file had when you built; they don't move later, and the owner is whoever runs the executable. A folder that comes into sight that way is also listed in the folder above it, whose own listing may still leave out what the executable doesn't hold. A file you embed with `--asset` has its size and no times.
-+
- With `--aot`, your modules and the files you embed keep their places relative to one another. Next to `./dist/server/entry.mjs`, `--asset dist/client` is at `path.join(import.meta.dir, "../client")`, the same as under `bun run`.
- 
- Without `--aot`, a single file is embedded under its base name: `--asset ./a/config.json` is at `/$bunfs/root/config.json`. With `--aot` it's at `/$bunfs/root/a/config.json`, and `/$bunfs/root/config.json` finds it too, so code written for either keeps working. Three things differ:
-```
-
-**File**: `docs/compiler/index.mdx` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ Hello world!
- | Builds for           | Any platform, with `--target` | The platform you build on |
- | Status               | Stable                        | Experimental              |
- 
--`bun build --compile` runs everything that `bun run` runs. With `bun compile`, which is short for `bun build --compile --aot`, your program starts faster and uses less memory, and [a few things differ from `bun run`](/compiler/compatibility).
-+`bun build --compile` runs nearly everything that `bun run` runs. With `bun compile`, which is short for `bun build --compile --aot`, your program starts faster and uses less memory, and [a few things differ from `bun run`](/compiler/compatibility).
- 
- ## Read next
- 
-```
-
-**File**: `docs/compiler/internals.mdx` (modified, +3/-3)
-```diff
-@@ -58,7 +58,7 @@ The check compares layouts and doesn't look inside the object. `JSON.parse` make
- 
- Types change how fast your program runs, never what it does. A value that doesn't match its type doesn't throw, and it isn't converted or copied. The code that touches it takes the slow path. [Types](/compiler/types#when-a-value-doesnt-match-its-type) has an example.
- 
--Anything the compiler rejects that `bun run` accepts, it rejects at build time. The exceptions are [read-only built-ins](#read-only-built-ins) and [an import of code that isn't in the executable](/compiler/compatibility#dynamic-imports).
-+Anything the compiler rejects that `bun run` accepts, it rejects at build time. The main exceptions are [read-only built-ins](#read-only-built-ins) and [an import of code that isn't in the executable](/compiler/compatibility#dynamic-imports). [Compatibility](/compiler/compatibility) has others.
- 
- ## Code without types
- 
-@@ -74,15 +74,15 @@ The compiler finds these calls at build time and assumes less about whatever the
- 
- ## Read-only built-ins
- 
--Compiled code calls `Array.prototype.push` directly. A JIT can do that too, because it can throw the code away if something replaces `push`. Code in a file can't be thrown away. So Bun makes the assumption true, and replacing or deleting an existing member of a built-in object throws a `TypeError`.
-+Compiled code calls `Array.prototype.push` directly. A JIT can do that too, because it can throw the code away if something replaces `push`. Code in a file can't be thrown away. So Bun makes the assumption true, and replacing or deleting most existing members of a built-in object throws a `TypeError`.
- 
- Adding your own method to `Array.prototype` still works, and so does patching `console`, `process` or `fetch`. See [Built-in objects are read-only](/compiler/compatibility#built-in-objects-are-read-only).
- 
- ## What's in the executable
- 
- The file holds the machine code for your program and its packages, Bun's native APIs, the event loop, the garbage collector, and the interpreter for code from strings. It also holds function names and source positions for stack traces, and the source text of each function so that `fn.toString()` works.
- 
--It doesn't hold the JIT compilers, the `bun` command line, the bundler, the type checker or the compiler itself. Built-in modules that your program never imports aren't there either.
-+Unless your code passes `compile`, `check`, `dts`, `plugins` or a `target` that starts with `bun-` to `Bun.build`, or options that the compiler can't read, it doesn't hold the JIT compilers, the `bun` command line, the type checker or the compiler itself. Built-in modules that your program never imports aren't there either.
- 
- The machine code and its tables are read-only and mapped straight from the file, so processes and Workers share them. [Smaller executables](/compiler/size) covers what else you can remove.
- 
-```
-
----
-
-### Incident Patch 3: `cd40cef9` (2026-11-09)
-**Commit Message**: css: fix layer ordering bugs left after #47797 (#47882)
-
-Fixes four rare CSS bundling bugs left after #47797.
-
-**A layer could be declared too late.** Bun hoists an external `@import`
-out of a bare `layer` import. It then prints in an anonymous layer of
-its own.
-
-```css
-/* entry.css */
-@import "./a.css" layer;
-
-/* a.css */
-@import "https://example.com/ext.css" layer(w);
-@import "./g.css"; /* @layer v { ... } */
-@import "./f.css" layer(w);
-```
-
-Nothing kept the place of `w`, so `v` came first and the wrong rule
-could win. Bun now prints `@layer w;` at that place.
-
-**An `@import` behind an unknown at-rule could apply twice.** Bun
-hoisted it and also left it in the file body. Bun now removes it from
-the body.
-
-**An `@import` behind an unknown at-rule with a `url()` could use the
-wrong import record.** Bun now looks up each import by its own record.
-
-**An import that is not CSS could lose its layer.** `@import "./a.svg"
-layer(x)` did not declare `x`. A second import of the same file was
-taken for a cycle. An import that fails to load still declares its
-layer, so each one now does.
-
-**Visible changes.**
-- A bare `layer` import can print an extra statement, such as `@layer
-w;`.
-- An `@im
-
-**File**: `src/bundler/linker_context/findImportedFilesInCSSOrder.rs` (modified, +81/-41)
-```diff
-@@ -124,6 +124,31 @@ pub(crate) fn find_imported_files_in_css_order<'a>(
-             });
+@@ -72,7 +72,7 @@ impl DeferredBatchTask {
          }
+         let this: *mut Self = self;
+         let bv2 = self.get_bundle_v2();
+-        match bv2.any_loop_mut() {
++        match bv2.any_loop() {
+             // bake: the plugins run on the loop that runs the bundle; already there.
+             bun_event_loop::AnyEventLoop::Js { .. } => bv2.decrement_scan_counter(),
+             bun_event_loop::AnyEventLoop::Mini(mini) => {
+```
+
+**File**: `src/bundler/LinkerContext.rs` (modified, +4/-18)
+```diff
+@@ -258,25 +258,11 @@ impl<'a> LinkerContext<'a> {
+             .get()
+     }
  
-+        /// An import that loads no style sheet still adds its layer to the layer order.
-+        fn push_layers_of_unloaded_import(&mut self, wrapping_conditions: &Vec<ImportConditions>) {
-+            if wrapping_conditions.iter().any(|c| c.layer.is_some()) {
-+                self.push_entry(
-+                    CssImportOrderKind::Layers(Layers::Owned(Vec::new())),
-+                    wrapping_conditions,
-+                );
-+            }
-+        }
-+
-+        /// The external import is hoisted out of the anonymous layer that its
-+        /// neighbours share, so something else must hold the place of its sublayer.
-+        fn push_sublayer_of_external_import(&mut self, conditions: &Vec<ImportConditions>) {
-+            let names_a_sublayer = conditions
-+                .iter()
-+                .skip_while(|c| !c.has_anonymous_layer())
-+                .any(|c| c.layer.as_ref().is_some_and(|layer| layer.v.is_some()));
-+            if names_a_sublayer {
-+                self.push_entry(
-+                    CssImportOrderKind::Layers(Layers::Owned(Vec::new())),
-+                    conditions,
-+                );
-+            }
-+        }
-+
-         /// Every visit of a bare "layer" makes a new anonymous layer, also when it
-         /// is the same rule or its conditions look the same.
-         fn append_conditions(
-@@ -186,30 +211,26 @@ pub(crate) fn find_imported_files_in_css_order<'a>(
-             //
-             // So that's what we do here. See "StyleRuleImport::requestStyleSheet()" in
-             // WebKit for more information.
--            //
--            // An import that is not loaded still adds its layer to the layer order.
-             for visited_source_index in self.visited.slice() {
-                 if visited_source_index.get() == source_index.get() {
-                     debug!(
-                         "Skip file: {}={}",
-                         source_index.get(),
-                         self.input_file_pretty(source_index),
-                     );
--                    self.push_entry(
--                        CssImportOrderKind::Layers(Layers::Owned(Vec::new())),
--                        wrapping_conditions,
--                    );
-+                    self.push_layers_of_unloaded_import(wrapping_conditions);
-                     return;
-                 }
-             }
+-    /// Mutable projection of the `r#loop` BACKREF for `AnyEventLoop` dispatch
+-    /// (`enqueue_task_concurrent*`, `tick`). Centralises the raw `NonNull`
+-    /// deref so the three callers (`BundleV2::any_loop_mut`, `ParseTask` /
+-    /// `ServerComponentParseTask` completion) are safe.
+-    ///
+-    /// `&self` receiver (not `&mut self`): the loop storage is **disjoint**
+-    /// from `LinkerContext` (it lives in the `BundleThread` / runtime arena —
+-    /// see [`EventLoop`]), and worker-thread completions reach this through a
+-    /// `BackRef<BundleV2>` (`&` only).
++    /// The loop that runs this bundle pass. Other threads only post to it.
+     #[inline]
+-    #[allow(clippy::mut_from_ref)]
+-    pub(crate) fn any_loop_mut(&self) -> Option<&mut bun_event_loop::AnyEventLoop> {
+-        // SAFETY: BACKREF — set once in `BundleV2::init` from a loop that
+-        // outlives the bundle pass; the pointee is disjoint from `*self`.
+-        // Exclusivity: `Js { owner }.enqueue_task_concurrent` is `&self`
+-        // (MPSC), and `Mini.enqueue_task_concurrent_with_extra_ctx` only
+-        // pushes to an MPSC queue + writes the caller-owned intrusive task
+-        // node, so concurrent worker completions do not alias loop state.
+-        self.r#loop.map(|p| unsafe { &mut *p.as_ptr() })
++    pub(crate) fn any_loop(&self) -> Option<&bun_event_loop::AnyEventLoop> {
++        // SAFETY: BACKREF — set once in `BundleV2::init` from a loop that outlives the bundle pass.
++        self.r#loop.map(|p| unsafe { p.as_ref() })
+     }
  
--            self.visited.push(source_index);
+     /// Shared-read accessor for the bundler log.
+```
+
+**File**: `src/bundler/ParseTask.rs` (modified, +2/-2)
+```diff
+@@ -2876,7 +2876,7 @@ pub mod parse_worker {
+         drop(core::mem::take(&mut this.jsx));
+ 
+         // `worker.ctx` is a `BackRef<BundleV2>` (safe `Deref`); the BACKREF deref
+-        // of `linker.r#loop` is centralised in `LinkerContext::any_loop_mut`.
++        // of `linker.r#loop` is centralised in `LinkerContext::any_loop`.
+         //
+         // The loop is effectively non-optional — `BundleV2::init`
+         // always sets `linker.r#loop` before scheduling any ParseTask. Running
+@@ -2886,7 +2886,7 @@ pub mod parse_worker {
+         match worker
+             .ctx
+             .linker
+-            .any_loop_mut()
++            .any_loop()
+             .expect("BundleV2.linker.loop must be set before scheduling ParseTask")
+         {
+             bun_event_loop::AnyEventLoop::Js { .. } => {
+```
+
+**File**: `src/bundler/ServerComponentParseTask.rs` (modified, +2/-2)
+```diff
+@@ -105,7 +105,7 @@ fn task_callback_wrap(thread_pool_task: *mut ThreadPoolTask) {
+     let result = bun_core::heap::into_raw(result);
+ 
+     // `worker.ctx` is a `BackRef<BundleV2>` (safe `Deref`); the BACKREF deref
+-    // of `linker.r#loop` is centralised in `LinkerContext::any_loop_mut`.
++    // of `linker.r#loop` is centralised in `LinkerContext::any_loop`.
+     //
+     // The loop is effectively non-optional — `BundleV2::init`
+     // always sets `linker.r#loop` before scheduling any ServerComponentParseTask.
+@@ -115,7 +115,7 @@ fn task_callback_wrap(thread_pool_task: *mut ThreadPoolTask) {
+     match worker
+         .ctx
+         .linker
+-        .any_loop_mut()
++        .any_loop()
+         .expect("BundleV2.linker.loop must be set before scheduling ServerComponentParseTask")
+     {
+         bun_event_loop::AnyEventLoop::Js { .. } => {
+```
+
+**File**: `src/bundler/aot/page_bundles.rs` (modified, +2/-2)
+```diff
+@@ -53,15 +53,15 @@ fn create_page_outputs(
+         let mut page_log = Log::init();
+         let transpiler = create_page_transpiler(context, heap, &raw mut page_log);
+         let transpiler_pointer: *mut Transpiler<'_> = transpiler;
+-        let mut any_loop = AnyEventLoop::default();
++        let any_loop = AnyEventLoop::default();
+         let carrier = context.bundle();
+ 
+         let result = BundleV2::init(
+             // SAFETY: `transpiler_pointer` is the unique slot `heap.alloc` returned, and it lives in `heap`.
+             unsafe { &mut *transpiler_pointer },
+             None,
+             heap,
+-            Some(NonNull::from(&mut any_loop)),
++            Some(NonNull::from(&any_loop)),
+             false,
+             NonNull::new(carrier.graph.pool().worker_pool),
+             heap,
+```
+
+**File**: `src/bundler/aot/services.rs` (modified, +2/-2)
+```diff
+@@ -193,7 +193,7 @@ pub(crate) fn with_test_context<R>(
+     static OUTPUT: std::sync::Once = std::sync::Once::new();
+     OUTPUT.call_once(bun_core::output::stdio::init);
+     let mut log = Log::init();
+-    let mut event_loop = bun_event_loop::AnyEventLoop::default();
++    let event_loop = bun_event_loop::AnyEventLoop::default();
+     let arena = Arena::new();
+     let transform_options = crate::options::TransformOptions {
+         absolute_working_dir: Some(Box::from(&b"/project"[..])),
+@@ -209,7 +209,7 @@ pub(crate) fn with_test_context<R>(
+         transpiler,
+         None,
+         &arena,
+-        Some(NonNull::from(&mut event_loop)),
++        Some(NonNull::from(&event_loop)),
+         false,
+         None,
+         &arena,
+```
+
+**File**: `src/bundler/aot/testing.rs` (modified, +2/-2)
+```diff
+@@ -50,7 +50,7 @@ pub fn with_front_end_inputs<R>(
+ ) -> Option<R> {
+     // A build fills the loader it is handed, so each has its own, as in `Bun.build`.
+     let mut environment = Loader::init();
+-    let mut event_loop = bun_event_loop::AnyEventLoop::default();
++    let event_loop = bun_event_loop::AnyEventLoop::default();
+     let arena = Arena::new();
+     let transform_options = crate::options::TransformOptions {
+         absolute_working_dir: Some(Box::from(inputs.working_directory)),
+@@ -93,7 +93,7 @@ pub fn with_front_end_inputs<R>(
+         .opts
+         .root_dir
+         .clone_from(&transpiler.options.root_dir);
+-    let event_loop = Some(NonNull::from(&mut event_loop));
++    let event_loop = Some(NonNull::from(&event_loop));
+     let started = BundleV2::init_without_starting_threads(
+         transpiler, None, &arena, event_loop, false, None, &arena,
+     );
+```
+
+---
+
+### Incident Patch 2: `e67258f3` (2026-11-13)
+**Commit Message**: css: give the AST the lifetime of its arena (#48819)
+
+### What does this PR do?
+
+The CSS AST stored arena and source slices as `*const [u8]` or `&'static
+[u8]`, and most callers cast their arena to `'static`. It now carries
+the lifetime of the arena, from `Parser` up to `StyleSheet` and the
+bundler's chunk types, so the borrow checker proves in `src/css` what
+the `SAFETY` comments claimed. The bundler's worker tasks still fill
+that lifetime in with `'static` (`ParseTask`, `Worker::arena`), and
+`shared_block_edges` is one more user of that accessor.
+
+Removes 62 `unsafe` blocks, 3 `unsafe fn` and 2 `unsafe impl`. Three
+blocks are left in `src/css` (the `Log` pointer in `ParserOptions`).
+Most of the diff is `<'bump>`. By commit:
+
+1. **Dead code**: `dependencies.rs` and `Url.loc`
+(`analyze_dependencies` is never set),
+`CssModule.{exports_by_source_index, references}`,
+`ErrorLocation.filename` and the fields that fed it, three
+`MinifyErrorKind` variants.
+2. **Arena lifetime**: deletes `arena_str`, `src_str`, `arena_static`,
+`bump_static`, `decl_*_static`, `BasicParseError`, `HTMLImportManifest`,
+`EscapedJson`. `IdentOrRef` is an enum, not a pointer packed in a
+`u128`.
+3. **Import record
+
+**File**: `Cargo.lock` (modified, +0/-2)
+```diff
+@@ -558,7 +558,6 @@ dependencies = [
+  "bun_css_derive",
+  "bun_io",
+  "bun_paths",
+- "bun_ptr",
+  "bun_wyhash",
+  "strum",
+  "thiserror",
+@@ -583,7 +582,6 @@ dependencies = [
+  "bun_core",
+  "bun_css",
+  "bun_jsc",
+- "bun_ptr",
+ ]
+ 
+ [[package]]
+```
+
+**File**: `src/ast/lib.rs` (modified, +1/-8)
+```diff
+@@ -200,18 +200,11 @@ impl Ref {
+     /// Represents a null state without using an extra bit.
+     pub const NONE: Ref = Ref(0); // tag=Invalid, inner=0, src=0
+ 
+-    /// Raw 64-bit representation **including** user bits. For round-tripping
+-    /// through external pointer-packed storage (e.g. css `IdentOrRef`). Differs
+-    /// from [`Self::as_u64`], which masks user bits for hashing/equality.
++    /// Raw 64-bit representation **including** user bits, which [`Self::as_u64`] masks.
+     #[inline]
+     pub const fn to_raw_bits(self) -> u64 {
+         self.0
+     }
+-    /// Reconstruct from a value previously returned by [`Self::to_raw_bits`].
+-    #[inline]
+-    pub const fn from_raw_bits(bits: u64) -> Ref {
+-        Ref(bits)
+-    }
+ 
+     /// General constructor exposing all three packed fields. Prefer `init` for
+     /// the common source-contents/allocated-name case; this exists for callers
+```
+
+**File**: `src/bun_alloc/stack_fallback.rs` (modified, +16/-47)
+```diff
+@@ -1,64 +1,33 @@
+-// ── ArenaPtr ─────────────────────────────────────────────────────────────
+-//
+-// `*const MimallocArena` as an [`Allocator`]. Exists so callers can borrow a
+-// caller-owned `MimallocArena` without a lifetime parameter:
+-// `ASTMemoryAllocator` is published into raw thread-locals and may outlive any
+-// nameable `'a`, so `&'a MimallocArena` (which already implements `Allocator`)
+-// cannot be used directly. The caller guarantees the pointee outlives every
+-// allocation — same invariant the `ast_alloc` install/uninstall protocol
+-// already requires.
+-//
+-// `arena == null` routes to global `mi_malloc`/`mi_free`, matching
+-// [`crate::ast_alloc::AstAlloc`] when no AST scope is active.
 -
-+            // An asset, such as "./icon.svg", is not a style sheet.
-             let Some(repr): Option<&BundlerStyleSheet> =
-                 self.css_asts[source_index.get() as usize].as_deref()
-             else {
--                return; // Sanity check
-+                self.push_layers_of_unloaded_import(wrapping_conditions);
-+                return;
+ use core::alloc::{AllocError, Allocator, Layout};
+-use core::ptr::{self, NonNull};
++use core::ptr::NonNull;
+ 
+ use crate::{MimallocArena, alloc_result, mimalloc};
+ 
+-/// Borrowed `*const MimallocArena` as an [`Allocator`]. See section doc above.
++/// A borrowed arena, or the global heap, as an [`Allocator`].
+ #[derive(Clone, Copy)]
+-pub struct ArenaPtr {
+-    arena: *const MimallocArena,
++pub struct ArenaPtr<'a> {
++    arena: Option<&'a MimallocArena>,
+ }
+ 
+-impl ArenaPtr {
+-    /// Wrap a live `MimallocArena`. The caller guarantees `arena` is not moved,
+-    /// `reset()`, or dropped while any allocation made through this ref is
+-    /// live.
++impl<'a> ArenaPtr<'a> {
+     #[inline]
+-    pub const fn new(arena: *const MimallocArena) -> Self {
+-        Self { arena }
++    pub const fn new(arena: &'a MimallocArena) -> Self {
++        Self { arena: Some(arena) }
+     }
+-    /// Null arena → process-global `mi_malloc`/`mi_free`.
++    /// Process-global `mi_malloc`/`mi_free`.
+     #[inline]
+     pub const fn global() -> Self {
+-        Self { arena: ptr::null() }
+-    }
+-    /// Shared borrow of the wrapped arena, or `None` for the global path.
+-    ///
+-    /// Single backref-deref site for the `arena: *const MimallocArena` field;
+-    /// the [`Allocator`] impl below branches on the result instead of
+-    /// open-coding the null-check + raw-pointer deref at every method.
+-    #[inline]
+-    fn arena_ref(&self) -> Option<&MimallocArena> {
+-        // SAFETY: `arena` is either null (→ `None`) or, per [`ArenaPtr::new`]'s
+-        // contract, a live `MimallocArena` that is not moved/reset/dropped
+-        // while any allocation made through this ref is live — i.e. it
+-        // outlives `&self`. Backref invariant: pointee outlives holder.
+-        unsafe { self.arena.as_ref() }
++        Self { arena: None }
+     }
+ }
+ 
+-// SAFETY: when `arena` is non-null this forwards to `&MimallocArena: Allocator`
+-// (whose contract is documented on that impl); when null it is the global
+-// mimalloc path (`mi_malloc`/`mi_free`/`mi_realloc_aligned`), identical to
+-// `BunAllocator` / `AstAlloc`'s null branch. The caller upholds the
+-// non-dangling invariant on `arena` (see [`ArenaPtr::new`]).
+-unsafe impl Allocator for ArenaPtr {
++// SAFETY: `Some` forwards to `&MimallocArena: Allocator` (whose contract is
++// documented on that impl); `None` is the global mimalloc path
++// (`mi_malloc`/`mi_free`/`mi_realloc_aligned`).
++unsafe impl Allocator for ArenaPtr<'_> {
+     #[inline]
+     fn allocate(&self, layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
+-        match self.arena_ref() {
++        match self.arena {
+             Some(a) => a.allocate(layout),
+             None => {
+                 let p = mimalloc::mi_malloc_auto_align(layout.size(), layout.align());
+@@ -75,7 +44,7 @@ unsafe impl Allocator for ArenaPtr {
+         // so the `Some` arm is correct even if `ptr` was allocated under a
+         // different arena and later grown here.
+         unsafe {
+-            match self.arena_ref() {
++            match self.arena {
+                 Some(a) => a.deallocate(ptr, layout),
+                 None => mimalloc::mi_free(ptr.as_ptr().cast()),
+             }
+@@ -92,7 +61,7 @@ unsafe impl Allocator for ArenaPtr {
+         // SAFETY: `ptr` is a live mimalloc block returned by this allocator
+         // (caller contract); both arms forward it to the matching realloc.
+         unsafe {
+-            match self.arena_ref() {
++            match self.arena {
+                 Some(a) => a.grow(ptr, old, new),
+                 None => alloc_result(
+                     mimalloc::mi_realloc_aligned(ptr.as_ptr().cast(), new.size(), new.align()),
+```
+
+**File**: `src/bundler/Chunk.rs` (modified, +22/-33)
+```diff
+@@ -778,15 +778,12 @@ impl IntermediateOutput {
+                                 }
+ 
+                                 QueryKind::HtmlImport => {
+-                                    count += bun_core::fmt::count(format_args!(
+-                                        "{}",
+-                                        HTMLImportManifest::format_escaped_json(
+-                                            piece.query.index(),
+-                                            graph,
+-                                            chunks,
+-                                            linker_graph,
+-                                        )
+-                                    ));
++                                    count += HTMLImportManifest::count_escaped_json(
++                                        piece.query.index(),
++                                        graph,
++                                        linker_graph,
++                                        chunks,
++                                    );
+                                     continue;
+                                 }
+                                 QueryKind::None | QueryKind::ChunkId => unreachable!(),
+@@ -1345,7 +1342,7 @@ pub struct CssChunk<'a> {
+     ///
+     /// When we go through the `prepareCssAstsForChunk()` step, each import will
+     /// create a shallow copy of the file's AST (just dereferencing the pointer).
+-    pub(crate) asts: Box<[bun_css::BundlerStyleSheet]>,
++    pub(crate) asts: Box<[bun_css::BundlerStyleSheet<'a>]>,
+ }
+ 
+ impl Drop for CssChunk<'_> {
+@@ -1361,7 +1358,7 @@ impl Drop for CssChunk<'_> {
+ }
+ 
+ pub struct CssImportOrder<'a> {
+-    pub(crate) conditions: Vec<bun_css::ImportConditions>,
++    pub(crate) conditions: Vec<bun_css::ImportConditions<'a>>,
+     pub(crate) condition_import_records: Vec<ImportRecord<'a>>,
+ 
+     pub(crate) kind: CssImportOrderKind<'a>,
+@@ -1388,7 +1385,7 @@ pub enum CssImportOrderKind<'a> {
+     /// BUT, the imports may include layers.
+     /// We'll just print layer name declarations so that the original ordering is preserved.
+     #[strum(serialize = "layers")]
+-    Layers(Layers),
++    Layers(Layers<'a>),
+     #[strum(serialize = "external_path")]
+     ExternalPath(bun_fs::Path<'a>),
+     #[strum(serialize = "source_index")]
+@@ -1400,15 +1397,15 @@ pub enum CssImportOrderKind<'a> {
+ // is a hand-rolled Cow: a tag + raw pointer for the borrowed
+ // arm. LayerName payload allocations live in the arena, so dropping the owned
+ // arm is a shallow free and `to_owned` deep-clones element-wise.
+-pub enum Layers {
++pub enum Layers<'a> {
+     /// Borrowed from another `CssImportOrder`'s `Layers` or the parsed stylesheet.
+-    Borrowed(bun_ptr::BackRef<Vec<bun_css::LayerName>>),
+-    Owned(Vec<bun_css::LayerName>),
++    Borrowed(bun_ptr::BackRef<Vec<bun_css::LayerName<'a>>>),
++    Owned(Vec<bun_css::LayerName<'a>>),
+ }
+ 
+-impl Layers {
++impl<'a> Layers<'a> {
+     #[inline]
+-    pub(crate) fn inner(&self) -> &Vec<bun_css::LayerName> {
++    pub(crate) fn inner(&self) -> &Vec<bun_css::LayerName<'a>> {
+         match self {
+             Layers::Borrowed(p) => p.get(),
+             Layers::Owned(b) => b,
+@@ -1421,13 +1418,13 @@ impl Layers {
+     /// (see the lifetime note on `Chunk`); `BackRef` encapsulates that
+     /// invariant so `inner()`/`to_owned()` deref sites are safe.
+     #[inline]
+-    pub(crate) fn borrow(p: &Vec<bun_css::LayerName>) -> Self {
++    pub(crate) fn borrow(p: &Vec<bun_css::LayerName<'a>>) -> Self {
+         Layers::Borrowed(bun_ptr::BackRef::new(p))
+     }
+ 
+     /// If borrowed, deep-clone into an owned
+     /// list and return `&mut` to it; if already owned, return as-is.
+-    pub(crate) fn to_owned(&mut self) -> &mut Vec<bun_css::LayerName> {
++    pub(crate) fn to_owned(&mut self) -> &mut Vec<bun_css::LayerName<'a>> {
+         if let Layers::Borrowed(p) = *self {
+             *self = Layers::Owned(p.deep_clone_with(|l| l.clone()));
+         }
+@@ -1438,7 +1435,7 @@ impl Layers {
+     }
+ }
+ 
+-impl CssImportOrder<'_> {
++impl<'a> CssImportOrder<'a> {
+     pub(crate) fn hash<H: bun_core::Hasher + ?Sized>(&self, hasher: &mut H) {
+         // Not an identity: it leaves out the conditions. `css_chunk_key` compares on a hit.
+ 
+@@ -1472,27 +1469,19 @@ impl CssImportOrder<'_> {
+     }
+ 
+     #[cfg(debug_assertions)]
+-    pub(crate) fn fmt<'a, 'ctx>(
+-        &'a self,
+-        ctx: &'a LinkerContext<'ctx>,
+-    ) -> CssImportOrderDebug<'a, 'ctx> {
++    pub(crate) fn fmt<'r>(&'r self, ctx: &'r LinkerContext<'a>) -> CssImportOrderDebug<'r, 'a> {
+         CssImportOrderDebug { inner: self, ctx }
+     }
+ }
+ 
+ #[cfg(debug_assertions)]
+-pub(crate) struct CssImportOrderDebug<'a, 'ctx> {
+-    inner: &'a CssImportOrder<'a>,
+-    // Note: split lifetimes — `LinkerContext<'ctx>` is invariant over `'ctx`,
+-    // so coupling the borrow lifetime to the struct param (`&'a LinkerContext<'a>`)
+-    // forces every caller's `&CssImportOrder` and `&LinkerContext` to share one
+-    // region. The Display i
+```
+
+**File**: `src/bundler/HTMLImportManifest.rs` (modified, +9/-66)
+```diff
+@@ -34,13 +34,12 @@
+ //! that gets embedded directly into the JavaScript output.
+ 
+ use crate::mal_prelude::*;
+-use core::fmt;
+ 
+ use bun_ast::Source;
+ use bun_collections::AutoBitSet;
+ use bun_collections::VecExt;
+ use bun_core::strings;
+-use bun_io::{FmtAdapter, Write};
++use bun_io::Write;
+ use bun_js_printer::Encoding;
+ use bun_paths::resolve_path::{platform, platform_to_posix_in_place, relative_normalized};
+ use bun_resolver::fs::FileSystem;
+@@ -51,30 +50,6 @@ use crate::options::{Loader, OutputFile, OutputKind};
+ use crate::options_impl::LoaderExt as _;
+ use crate::{BundleV2, Chunk, LinkerGraph};
+ 
+-#[derive(Clone, Copy)]
+-pub struct HTMLImportManifest<'a> {
+-    pub(crate) index: u32,
+-    pub(crate) graph: &'a Graph<'a>,
+-    pub(crate) chunks: &'a [Chunk<'a>],
+-    pub(crate) linker_graph: &'a LinkerGraph<'a>,
+-}
+-
+-impl<'a> fmt::Display for HTMLImportManifest<'a> {
+-    fn fmt(&self, writer: &mut fmt::Formatter<'_>) -> fmt::Result {
+-        let mut adapter = FmtAdapter::new(writer);
+-        match write(
+-            self.index,
+-            self.graph,
+-            self.linker_graph,
+-            self.chunks,
+-            &mut adapter,
+-        ) {
+-            Ok(()) => Ok(()),
+-            Err(_) => Err(fmt::Error),
+-        }
+-    }
+-}
+-
+ fn write_entry_item<W: Write + ?Sized>(
+     writer: &mut W,
+     input: &[u8],
+@@ -142,31 +117,6 @@ pub(crate) fn write_escaped_json<W: Write + ?Sized>(
+     Ok(())
+ }
+ 
+-/// Newtype wrapper produced by [`HTMLImportManifest::format_escaped_json`].
+-pub struct EscapedJson<'a>(pub HTMLImportManifest<'a>);
+-
+-impl<'a> fmt::Display for EscapedJson<'a> {
+-    fn fmt(&self, writer: &mut fmt::Formatter<'_>) -> fmt::Result {
+-        let mut adapter = FmtAdapter::new(writer);
+-        match write_escaped_json(
+-            self.0.index,
+-            self.0.graph,
+-            self.0.linker_graph,
+-            self.0.chunks,
+-            &mut adapter,
+-        ) {
+-            Ok(()) => Ok(()),
+-            Err(_) => Err(fmt::Error),
+-        }
+-    }
+-}
+-
+-impl<'a> HTMLImportManifest<'a> {
+-    pub(crate) fn format_escaped_json(self) -> EscapedJson<'a> {
+-        EscapedJson(self)
+-    }
+-}
+-
+ pub(crate) fn write<W: Write + ?Sized>(
+     index: u32,
+     graph: &Graph,
+@@ -383,22 +333,15 @@ pub mod html_import_manifest {
+     use crate::Graph::Graph;
+     use crate::{LinkerGraph, chunk::Chunk};
+ 
+-    pub use super::{EscapedJson, HTMLImportManifest};
+-
+-    #[inline]
+-    pub(crate) fn format_escaped_json<'a>(
++    pub(crate) fn count_escaped_json(
+         index: u32,
+-        graph: &'a Graph,
+-        chunks: &'a [Chunk],
+-        linker_graph: &'a LinkerGraph,
+-    ) -> EscapedJson<'a> {
+-        super::HTMLImportManifest {
+-            index,
+-            graph,
+-            chunks,
+-            linker_graph,
+-        }
+-        .format_escaped_json()
++        graph: &Graph,
++        linker_graph: &LinkerGraph<'_>,
++        chunks: &[Chunk],
++    ) -> usize {
++        let mut counter = bun_io::DiscardingWriter::new();
++        let _ = super::write_escaped_json(index, graph, linker_graph, chunks, &mut counter);
++        counter.count
+     }
+ 
+     pub(crate) fn write_escaped_json(
+```
+
+**File**: `src/bundler/LinkerContext.rs` (modified, +1/-1)
+```diff
+@@ -2734,7 +2734,7 @@ pub(crate) struct TreeShakeCtx<'a, 'r> {
+     pub(crate) parts_live: &'r mut [bun_collections::AutoBitSet],
+     pub(crate) import_records: &'r [bun_ast::import_record::List<'a>],
+     pub(crate) entry_point_kinds: &'r [EntryPoint::Kind],
+-    pub(crate) css_reprs: &'r [crate::bundled_ast::CssCol],
++    pub(crate) css_reprs: &'r [crate::bundled_ast::CssCol<'a>],
+     pub(crate) worklist: Vec<TreeShakeWork>,
+ }
+ 
+```
+
+**File**: `src/bundler/bundle_v2.rs` (modified, +3/-3)
+```diff
+@@ -2067,10 +2067,10 @@ pub mod bv2_impl {
+         }
+     }
+ 
+-    pub(crate) struct ReachableFileVisitor<'a> {
++    pub(crate) struct ReachableFileVisitor<'a, 'bump> {
+         pub(crate) reachable: Vec<Index>,
+         pub(crate) visited: DynamicBitSet,
+-        pub(crate) all_import_records: &'a mut [import_record::List<'a>],
++        pub(crate) all_import_records: &'a mut [import_record::List<'bump>],
+         pub(crate) all_loaders: &'a [Loader],
+         pub(crate) all_urls_for_css: &'a [&'a [u8]],
+         pub(crate) redirects: &'a [u32],
+@@ -2102,7 +2102,7 @@ pub mod bv2_impl {
+         },
+     }
+ 
+-    impl<'a> ReachableFileVisitor<'a> {
++    impl ReachableFileVisitor<'_, '_> {
+         const MAX_REDIRECTS: usize = 64;
+ 
+         // Find all files reachable from all entry points. This order should be
+```
+
+**File**: `src/bundler/bundled_ast.rs` (modified, +5/-12)
+```diff
+@@ -13,19 +13,12 @@ pub use bun_css::BundlerStyleSheet;
+ 
+ /// Arena-owned handle to a parsed CSS stylesheet.
+ ///
+-/// The pointee lives in a per-file `Bump` whose ownership is held by
+-/// `Graph.heap` (bumps are `Pin<Box<Bump>>` owned by the
+-/// graph and outlive every `BundledAst` row by struct drop order). No `'arena`
+-/// lifetime is threaded — N files imply N distinct per-worker bumps with no
+-/// single common lifetime — so the invariant is enforced by drop order, not
+-/// the type system. `StoreRef`'s `Deref`/`DerefMut` encapsulate the single
+-/// documented `unsafe` deref justified by that invariant; callers use `&*r`
+-/// (or `Option::as_deref`) instead of open-coded `unsafe { &*ptr }`.
+-pub(crate) type CssAstRef = bun_ast::StoreRef<BundlerStyleSheet>;
++/// It lives in a `Worker.heap`, so `deinit_without_freeing_arena` drops it before the workers.
++pub(crate) type CssAstRef<'arena> = bun_ast::StoreRef<BundlerStyleSheet<'arena>>;
+ 
+ /// Element type of the `css` SoA column (`items_css()`). Exposed so bundler
+ /// call sites can name the column without re-spelling the pointer shape.
+-pub(crate) type CssCol = Option<CssAstRef>;
++pub(crate) type CssCol<'arena> = Option<CssAstRef<'arena>>;
+ 
+ use bun_ast::import_record;
+ use bun_core::strings;
+@@ -67,7 +60,7 @@ pub struct BundledAst<'arena> {
+     pub(crate) parts: part::List<'arena>,
+     // See `CssAstRef` doc for the arena drop-order invariant that backs the
+     // safe `Deref`.
+-    pub(crate) css: CssCol,
++    pub(crate) css: CssCol<'arena>,
+     pub(crate) url_for_css: &'arena [u8],
+     pub(crate) symbols: symbol::List<'arena>,
+     pub(crate) module_scope: Scope,
+@@ -115,7 +108,7 @@ bun_collections::multi_array_columns! {
+         hashbang: StoreStr,
+         export_default_alias_of_import: Ref,
+         parts: part::List<'arena>,
+-        css: CssCol,
++        css: CssCol<'arena>,
+         url_for_css: &'arena [u8],
+         symbols: symbol::List<'arena>,
+         module_scope: Scope,
+```
+
+---
+
+### Incident Patch 3: `33cf0a0a` (2026-11-13)
+**Commit Message**: event loop: share the loop instead of borrowing it exclusively (#48866)
+
+### What does this PR do?
+
+What a tick runs reaches the `EventLoop` again, and other threads post
+to it, yet its methods took `&mut self`. Safe code got that borrow from
+a `&VirtualMachine` (`event_loop_mut`, `event_loop_ref`), the rest
+dereferenced a raw pointer.
+
+Every method but `deinit` now takes `&self`, and
+`VirtualMachine::event_loop` returns `&EventLoop`. Removes 51 `unsafe`
+blocks and 3 `unsafe fn` (the new unit test adds 2 of each).
+
+- **Bug fix**: `&mut self` lets the optimizer keep fields across a
+callback. In release builds `DeferredTaskQueue::run` read the map's keys
+through a pointer loaded before the callback, which frees them if it
+posts a task and the map grows.
+- The enter guards borrow the loop, so `enter_scope` is safe.
+- A loop is made with its VM, so `virtual_machine` is not an `Option`.
+The pointer fields that safe methods trust are private, but for
+`imminent_gc_timer`.
+- Still `unsafe`: the task queues, borrowed in blocks in which no task
+runs.
+- Deleted: `event_loop_mut`, `event_loop_ref`, `event_loop_shared`, four
+`black_box` calls that hid the aliasing, `EventLoopSqlExt`,
+`ThreadSaf
+
+**File**: `scripts/rust-miri.ts` (modified, +1/-0)
+```diff
+@@ -48,6 +48,7 @@ const MIRI_CRATES = [
+   "bun_clap",
+   "bun_dispatch",
+   "bun_errno",
++  "bun_event_loop",
+   "bun_http_types",
+   "bun_md",
+   "bun_pod",
+```
+
+**File**: `src/event_loop/DeferredTaskQueue.rs` (modified, +62/-13)
+```diff
+@@ -35,6 +35,7 @@
+ //! buffer to its own fd or socket, so relative order within a pass has no correctness effect, and
+ //! anything a pass skips runs on the next one.
+ 
++use core::cell::UnsafeCell;
+ use core::ffi::c_void;
+ use core::ptr::NonNull;
+ 
+@@ -49,14 +50,17 @@ pub type DeferredRepeatingTask = unsafe extern "C" fn(*mut c_void) -> bool;
+ 
+ #[derive(Default)]
+ pub struct DeferredTaskQueue {
+-    pub(crate) map: ArrayHashMap<Option<NonNull<c_void>>, DeferredRepeatingTask>,
++    /// No borrow spans a callback, which reaches this queue again.
++    map: UnsafeCell<ArrayHashMap<Option<NonNull<c_void>>, DeferredRepeatingTask>>,
+ }
+ 
+ impl DeferredTaskQueue {
+-    pub fn post_task(&mut self, ctx: Option<NonNull<c_void>>, task: DeferredRepeatingTask) -> bool {
++    pub fn post_task(&self, ctx: Option<NonNull<c_void>>, task: DeferredRepeatingTask) -> bool {
++        // SAFETY: no callback runs in this borrow, and `run` holds none while it calls one.
++        let map = unsafe { &mut *self.map.get() };
+         // `ArrayHashMap` is currently aliased to std `HashMap`; the entry API
+         // gives insert-if-absent + report-existing semantics.
+-        match self.map.entry(ctx) {
++        match map.entry(ctx) {
+             bun_collections::hash_map::Entry::Occupied(_) => true,
+             bun_collections::hash_map::Entry::Vacant(v) => {
+                 v.insert(task);
+@@ -65,39 +69,84 @@ impl DeferredTaskQueue {
+         }
+     }
+ 
+-    pub fn unregister_task(&mut self, ctx: Option<NonNull<c_void>>) -> bool {
++    pub fn unregister_task(&self, ctx: Option<NonNull<c_void>>) -> bool {
+         // Order is irrelevant for this map's contract (see file doc), so
+         // swap-remove is fine and O(1).
+-        self.map.swap_remove(&ctx)
++        // SAFETY: no callback runs in this borrow, and `run` holds none while it calls one.
++        unsafe { &mut *self.map.get() }.swap_remove(&ctx)
+     }
+ 
+-    pub fn run(&mut self) {
++    pub fn run(&self) {
+         // Callbacks may re-entrantly mutate `self.map` (see the re-entrancy
+         // note in the file doc), so re-read `len()` every iteration and
+         // re-check slot `i` after each callback. `remaining` is a livelock bound.
+         let mut i: usize = 0;
+-        let mut remaining = self.map.len();
+-        while remaining > 0 && i < self.map.len() {
++        // SAFETY: the borrow ends before the callback below, after which `map` is borrowed anew.
++        let mut map = unsafe { &mut *self.map.get() };
++        let mut remaining = map.len();
++        while remaining > 0 && i < map.len() {
+             remaining -= 1;
+-            let key = self.map.keys()[i];
++            let key = map.keys()[i];
+             let Some(nn) = key else {
+-                self.map.swap_remove_at(i);
++                map.swap_remove_at(i);
+                 continue;
              };
-+            self.visited.push(source_index);
-             let top_level_rules = &repr.rules;
  
-             // Any pre-import layers come first.
-@@ -220,16 +241,11 @@ pub(crate) fn find_imported_files_in_css_order<'a>(
-                 );
+-            let task = self.map.values()[i];
++            let task = map.values()[i];
+             // SAFETY: `nn` is the live `*mut T` registered by the caller; the
+             // callback contract (`HasAutoFlusher::on_auto_flush`) is that
+             // `task` may be invoked with exactly that pointer until it returns
+             // `false` or is explicitly unregistered.
+             let keep = unsafe { task(nn.as_ptr()) };
++            // SAFETY: the callback has returned; the borrow ends before the next one.
++            map = unsafe { &mut *self.map.get() };
+             if !keep {
+                 // `key` may already be gone (callback unregistered it) or may
+                 // have moved; remove by key, not index.
+-                self.map.swap_remove(&key);
+-            } else if self.map.keys().get(i) == Some(&key) {
++                map.swap_remove(&key);
++            } else if map.keys().get(i) == Some(&key) {
+                 i += 1;
              }
- 
--            // `visited.pop()` happens at the end of this function; the early
--            // return above intentionally skips it.
--
-             // Iterate over the top-level "@import" rules
--            let mut import_record_idx: usize = 0;
-             for rule in top_level_rules.v.iter() {
-                 if let BundlerCssRule::Import(import_rule) = rule {
--                    // `defer import_record_idx += 1;` — increment at end of this arm
--                    let record =
--                        &self.all_import_records[source_index.get() as usize][import_record_idx];
-+                    let record = &self.all_import_records[source_index.get() as usize]
-+                        [import_rule.import_record_idx as usize];
- 
-                     // Follow internal dependencies
-                     if record.source_index.is_valid() {
-@@ -255,7 +271,6 @@ pub(crate) fn find_imported_files_in_css_order<'a>(
-                             if !followed {
-                                 return;
-                             }
--                            import_record_idx += 1;
-                             continue;
-                         }
-                         if !self.visit_import(
-@@ -266,7 +281,6 @@ pub(crate) fn find_imported_files_in_css_order<'a>(
-                         ) {
-                             return;
-                         }
--                        import_record_idx += 1;
-                         continue;
-                     }
- 
-@@ -282,12 +296,14 @@ pub(crate) fn find_imported_files_in_css_order<'a>(
-                                 fork_conditions(wrapping_conditions, self.arena);
-                             let all_import_records = shallow_clone_records(wrapping_import_records);
-                             self.append_conditions(&mut all_conditions, import_rule);
-+                            self.push_sublayer
+         }
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use core::cell::Cell;
++
++    #[derive(Default)]
++    struct Fixture {
++        queue: DeferredTaskQueue,
++        grow_calls: Cell<u32>,
++        calls: Box<[Cell<u32>; 32]>,
++    }
++
++    unsafe extern "C" fn count(ctx: *mut c_void) -> bool {
++        // SAFETY: posted with an element of `Fixture::calls`, which outlives `run`.
++        unsafe { &*ctx.cast::<Cell<u32>>() }.update(|n| n + 1);
++        false
++    }
++
++    unsafe extern "C" fn grow(ctx: *mut c_void) -> bool {
++        // SAFETY: posted with the `Fixture`, which outlives `run`.
++        let fixture = unsafe { &*ctx.cast::<Fixture>() };
++        fixture.grow_calls.update(|n| n + 1);
++        for calls in fixture.calls.iter() {
++            let ctx = NonNull::from(calls).cast();
++            fixture.queue.post_task(Some(ctx), count);
++        }
++        true
++    }
++
++    #[test]
++    fn a_task_that_grows_the_queue_does_not_take_the_turn_of_the_next() {
++        let fixture = Fixture::default();
++        let queue = &fixture.queue;
++        queue.post_task(Some(NonNull::from(&fixture).cast()), grow);
++     
 ```
 
-**File**: `src/bundler/linker_context/prepareCssAstsForChunk.rs` (modified, +12/-5)
+**File**: `src/event_loop/README.md` (modified, +7/-7)
 ```diff
-@@ -363,7 +363,14 @@ fn prepare_css_asts_for_chunk_impl(c: &LinkerContext, chunk: &mut Chunk, bump: &
-                                 }
-                             }
-                         }
--                        let dropped = prefix_end - layer_count;
-+                        // An "@import" behind an unknown at-rule is in the order too.
-+                        let is_import =
-+                            |rule: &&BundlerCssRule| matches!(rule, BundlerCssRule::Import(_));
-+                        let dropped = prefix_end - layer_count
-+                            + original_rules[prefix_end..]
-+                                .iter()
-+                                .filter(is_import)
-+                                .count();
+@@ -16,8 +16,8 @@ A tagged pointer union containing various async task types (file I/O, network re
  
-                         if dropped == 0 {
-                             // Prefix is all "@layer" (or empty). Nothing to
-@@ -374,10 +381,7 @@ fn prepare_css_asts_for_chunk_impl(c: &LinkerContext, chunk: &mut Chunk, bump: &
-                             // Preserve the "@layer" statements from the
-                             // prefix and append the remaining tail.
-                             let mut new_rules: ArenaVec<BundlerCssRule> =
--                                ArenaVec::with_capacity_in(
--                                    layer_count + (original_rules.len() - prefix_end),
--                                    bump,
--                                );
-+                                ArenaVec::with_capacity_in(original_rules.len() - dropped, bump);
-                             keep_layers = keep_leading_layers;
-                             for rule in &original_rules[0..prefix_end] {
-                                 keep_layers |= matches!(rule, BundlerCssRule::Import(_));
-@@ -392,6 +396,9 @@ fn prepare_css_asts_for_chunk_impl(c: &LinkerContext, chunk: &mut Chunk, bump: &
-                                 }
-                             }
-                             for rule in &original_rules[prefix_end..] {
-+                                if is_import(&rule) {
-+                                    continue;
-+                                }
-                                 // SAFETY: bitwise duplicate of a rule. The copy goes into
-                                 // an `arena_rule_list` slab installed in `css_chunk.asts[i]`,
-                                 // whose elements never run `Drop` (see `arena_rule_list` /
+ Two separate queues for `setImmediate()`:
+ 
+-- **`immediate_tasks`**: Tasks to run on the current tick
+-- **`next_immediate_tasks`**: Tasks to run on the next tick
++- **`immediate_tasks`**: What `setImmediate` pushes to, and the next tick takes
++- **`next_immediate_tasks`**: The empty buffer that replaces it then
+ 
+ This prevents infinite loops when `setImmediate` is called within a `setImmediate` callback.
+ 
+@@ -319,16 +319,16 @@ This is because:
+ The event loop uses a counter to track when to drain microtasks:
+ 
+ ```rust
+-pub fn enter(&mut self) {
+-    self.entered_event_loop_count += 1;
++pub fn enter(&self) {
++    self.entered_event_loop_count.update(|count| count + 1);
+ }
+ 
+-pub fn exit(&mut self) {
+-    let count = self.entered_event_loop_count;
++pub fn exit(&self) {
++    let count = self.entered_event_loop_count.get();
+     if count == 1 && !self.vm_ref().is_inside_deferred_task_queue.get() {
+         let _ = self.drain_microtasks();
+     }
+-    self.entered_event_loop_count -= 1;
++    self.entered_event_loop_count.update(|count| count - 1);
+ }
+ ```
+ 
 ```
 
-**File**: `test/bundler/esbuild/css.test.ts` (modified, +173/-0)
+**File**: `src/event_loop/SpawnSyncEventLoop.rs` (modified, +1/-1)
 ```diff
-@@ -2691,6 +2691,179 @@ describe("bundler", () => {
-       },
-       out: "@layer{@layer w;@layer v{.t{color:#00f}}}",
-     },
-+    // "v" comes first because the import that closes the cycle declares it.
-+    SublayerOfACycleInImportedFileOfAnonymousLayer: {
-+      files: {
-+        "/entry.css": `@import "./a.css" layer;`,
-+        "/a.css": /* css */ `
-+          @import "./b.css";
-+          @layer v { .t { color: red } }
-+          @layer c { .t { color: green } }
-+        `,
-+        "/b.css": /* css */ `
-+          @import "./entry.css" layer(v);
-+          @layer c { .u { color: blue } }
-+        `,
-+      },
-+      out: "@layer{@layer v;@layer c{.u{color:#00f}}@layer v{.t{color:red}}@layer c{.t{color:green}}}",
-+    },
-+    // The external import prints an anonymous layer of its own, so it does not declare "w" for its neighbours.
-+    SublayerOfAnExternalImportInAnonymousLayer: {
-+      files: {
-+        "/entry.css": `@import "./a.css" layer;`,
-+        "/a.css": /* css */ `
-+          @import "https://example.com/ext.css" layer(w);
-+          @import "./f.css" layer(w);
-+          @import "./g.css";
-+          @import "./f.css" layer(w);
-+        `,
-+        "/g.css": `@layer v { .t { color: blue } }`,
-+        "/f.css": `.t { color: red }`,
-+      },
-+      out: `@import "data:text/css,@import \\"https://example.com/ext.css\\" layer(w);" layer;@layer{@layer w;@layer v{.t{color:#00f}}@layer w{.t{color:red}}}`,
-+    },
-+    // The external import declares "w" ahead of "v", also with no other copy of "f.css".
-+    SublayerOfALoneExternalImportInAnonymousLayer: {
-+      files: {
-+        "/entry.css": `@import "./a.css" layer;`,
-+        "/a.css": /* css */ `
-+          @import "https://example.com/ext.css" layer(w);
-+          @import "./g.css";
-+          @import "./f.css" layer(w);
-+        `,
-+        "/g.css": `@layer v { .t { color: blue } }`,
-+        "/f.css": `.t { color: red }`,
-+      },
-+      out: `@import "data:text/css,@import \\"https://example.com/ext.css\\" layer(w);" layer;@layer{@layer w;@layer v{.t{color:#00f}}@layer w{.t{color:red}}}`,
-+    },
-+    // An import that does not load a style sheet still declares its layer, each time.
-+    LayersOfImportsOfAnAsset: {
-+      files: {
-+        "/entry.css": /* css */ `
-+          @import "./a.svg" layer(x);
-+          @import "./a.svg" layer(y);
-+          @import "./c.css" layer(y);
-+          @import "./b.css" layer(x);
-+        `,
-+        "/a.svg": `<svg/>`,
-+        "/b.css": `.t { color: red }`,
-+        "/c.css": `.t { color: blue }`,
-+      },
-+      out: "@layer x;@layer y{.t{color:#00f}}@layer x{.t{color:red}}",
-+    },
-+    // An asset under no layer adds nothing, so the statement stays ahead of the external import.
-+    ImportOfAnAssetAheadOfAStatement: {
-+      files: {
-+        "/entry.css": /* css */ `
-+          @import "./a.svg" screen;
-+          @import "./a.svg" screen;
-+          @import "./a.css";
-+        `,
-+        "/a.svg": `<svg/>`,
-+        "/a.css": /* css */ `
-+          @layer x;
-+          @import "https://example.com/e.css" layer(y);
-+        `,
-+      },
-+      out: `@layer x;@import "https://example.com/e.css" layer(y);`,
-+    },
-+    // Only "z" is out of its place, and nothing else declares it.
-+    ConditionalImportOfAnAssetAheadOfAStatement: {
-+      files: {
-+        "/entry.css": /* css */ `
-+          @import "./a.svg" layer(z) screen;
-+          @import "./a.css";
-+        `,
-+        "/a.svg": `<svg/>`,
-+        "/a.css": /* css */ `
-+          @layer x;
-+          @import "https://example.com/e.css" layer(y);
-+          .a { c: d }
-+        `,
-+      },
-+      out: `@layer x;@import "https://example.com/e.css" layer(y);@media screen{@layer z;}.a{c:d}`,
-+    },
-+    ConditionalImportOfACycleAheadOfAStatement: {
-+      files: {
-+        "/entry.css": /* css */ `
-+          @import "./entry.css" layer(z) screen;
-+          @import "./a.css";
-+        `,
-+        "/a.css": /* css */ `
-+          @layer x;
-+          @import "https://example.com/e.css" layer(y);
-+          .a { c: d }
-+        `,
-+      },
-+      out: `@layer x;@import "https://example.com/e.css" layer(y);@media screen{@layer z;}.a{c:d}`,
-+    },
-+    // Browsers accept an "@import" behind an unknown at-rule, and it applies once.
-+    ImportBehindAnUnknownAtRule: {
-+      files: {
-+        "/entry.css": /* css */ `
-+          @import "./a.css";
-+          @import "https://example.com/f.css";
-+        `,
-+        "/a.css": /* css */ `
-+          @layer first;
-+          @unknown x;
-+          @import "https://example.com/e.css";
-+          .a { c: d }
-+        `,
-+      },
-+      out: `@layer first;@import "https://example.com/e.css";@import "https://example.com/f.css";@unknown x;.a{c:d}`,
-+    },
-+    ImportOfAFileBehindAnUnknownAtRule: {
-+      files: {
-+        "/entry.css": /* css */ `
-+          @unknown x;
-+          @import "./b.css";
-+          .a { c: d }
-+        `,
-+        "/b.css": `.b { c: d }`,
-+      },
-+      out
+@@ -47,7 +47,7 @@ unsafe extern "Rust" {
+     /// on `uws_loop`. Returns erased `*mut jsc::EventLoop`.
+     safe fn __bun_spawn_sync_create_event_loop(vm: *mut (), uws_loop: *mut uws::Loop) -> *mut ();
+     safe fn __bun_spawn_sync_destroy_event_loop(el: *mut ());
+-    /// Re-bind `event_loop.{global, virtual_machine}` to `vm` (prepare path).
++    /// Re-bind `event_loop.global` to `vm`'s (prepare path).
+     safe fn __bun_spawn_sync_event_loop_set_vm(el: *mut (), vm: *mut ());
+     safe fn __bun_spawn_sync_event_loop_tick_tasks_only(el: *mut ());
+     #[cfg(windows)]
+```
+
+**File**: `src/js_parser_jsc/Macro.rs` (modified, +5/-6)
+```diff
+@@ -227,8 +227,8 @@ impl MacroContext {
+         // `vm` is the per-thread VM (BackRef invariant: outlives this guard).
+         // Enables macro mode now; disables on scope exit.
+         let _mode_guard = MacroModeGuard::new(vm);
+-        // SAFETY: `event_loop()` returns a self-pointer into `*vm`.
+-        unsafe { (*(*vm).event_loop()).ensure_waker() };
++        // SAFETY: `vm` is the live per-thread VM.
++        unsafe { &*vm }.event_loop().ensure_waker();
+ 
+         let javascript_object = self.javascript_object;
+         // Lazy-init the backing arena now that a macro is actually being
+@@ -457,8 +457,8 @@ impl Macro {
+         // exit (success, `?`, Rejected) so depth/state can't leak; the caller's
+         // own `MacroModeGuard` re-enables for the actual macro call.
+         let _init_guard = MacroModeGuard::new(vm);
+-        // SAFETY: `vm` is the per-thread VM; uniquely accessed here.
+-        unsafe { (*(*vm).event_loop()).ensure_waker() };
++        // SAFETY: `vm` is the live per-thread VM.
++        unsafe { &*vm }.event_loop().ensure_waker();
+         if is_new_vm {
+             // SAFETY: `vm` is the freshly-allocated per-thread VM.
+             unsafe { (*vm).transpiler.configure_defines()? };
+@@ -899,8 +899,7 @@ impl<'a> Run<'a> {
+                 let _ = self.macro_.vm();
+                 let vm = VirtualMachine::get();
+                 // The VM stopped before the macro's promise settled: throw its termination and unwind.
+-                vm.as_mut()
+-                    .wait_for_promise(promise)
++                vm.wait_for_promise(promise)
+                     .map_err(|stopped| MacroError::Js(stopped.throw(self.global)))?;
+ 
+                 let promise_result = promise.result(vm.jsc_vm());
+```
+
+**File**: `src/jsc/AbortSignal.rs` (modified, +0/-3)
+```diff
+@@ -382,9 +382,6 @@ impl Timeout {
+     fn dispatch(vm: *mut VirtualMachine, signal_ptr: *mut AbortSignal) {
+         let _ = vm;
+         let vm = VirtualMachine::get();
+-        // RAII guard `exit`s on
+-        // drop even if `signal` unwinds, and holds the raw VM-owned pointer so
+-        // borrowck doesn't see two live `&mut EventLoop` across re-entrant JS.
+         let _guard = vm.enter_event_loop_scope();
+         // `AbortSignal` is an `opaque_ffi!` ZST handle; `opaque_ref` is the
+         // centralised non-null deref proof. `signalAbort()` takes
+```
+
+**File**: `src/jsc/CppTask.rs` (modified, +1/-1)
+```diff
+@@ -88,7 +88,7 @@ extern "C" fn ConcurrentCppTask__createAndRun(
+ ) {
+     crate::mark_binding!();
+     let vm = global.bun_vm();
+-    vm.event_loop_shared().ref_keep_alive();
++    vm.event_loop().ref_keep_alive();
+     let ticket = vm.ticket();
+     WorkPool::schedule_new(ConcurrentCppTask {
+         cpp_task,
+```
+
+**File**: `src/jsc/Debugger.rs` (modified, +9/-9)
+```diff
+@@ -320,15 +320,15 @@ impl Debugger {
+             if wait == Wait::Off {
+                 break;
+             }
+-            this.event_loop_mut().tick();
++            this.event_loop().tick();
+             // Re-read after `tick()` — `Debugger__didConnect` may have flipped it.
+             let wait = match this.debugger.as_deref() {
+                 Some(d) => d.wait_for_connection,
+                 None => break,
+             };
+             match wait {
+                 Wait::Forever => {
+-                    this.event_loop_mut().auto_tick_active();
++                    this.event_loop().auto_tick_active();
+ 
+                     if bun_core::Environment::ENABLE_LOGS {
+                         bun_core::scoped_log!(
+@@ -440,7 +440,7 @@ impl Debugger {
+                 .map_err(|_| crate::CrateError::ThreadSpawnFailed)?;
+             // The `JoinHandle` is dropped here, detaching the thread.
+         }
+-        this_ref.event_loop_mut().ensure_waker();
++        this_ref.event_loop().ensure_waker();
+ 
+         // Re-borrow after `ensure_waker` (which may touch `*this`).
+         let dbg = this_ref.debugger_mut().unwrap();
+@@ -480,7 +480,7 @@ impl Debugger {
+         // `init` installs the freshly-boxed VM as this thread's singleton.
+         let vm = VirtualMachine::get().as_mut();
+         vm.is_main_thread = false;
+-        vm.event_loop_mut().ensure_waker();
++        vm.event_loop().ensure_waker();
+ 
+         extern "C" fn start_trampoline(ctx: *mut c_void) {
+             // SAFETY: `ctx` is `&mut slot` below; `hold_api_lock` calls this
+@@ -543,8 +543,8 @@ impl Debugger {
+         debuggee.wake();
+         // `vm.event_loop` may have flipped between `regular_event_loop` and
+         // `macro_event_loop` inside the re-entrant JS above;
+-        // `event_loop_mut()` re-reads the slot.
+-        this.event_loop_mut().tick();
++        // `event_loop()` re-reads the slot.
++        this.event_loop().tick();
+         debuggee.wake();
+ 
+         loop {
+@@ -553,9 +553,9 @@ impl Debugger {
+             // call `VirtualMachine::get()` without aliasing.
+             while this.is_event_loop_alive() {
+                 this.as_mut().tick();
+-                this.event_loop_mut().auto_tick_active();
++                this.event_loop().auto_tick_active();
+             }
+-            this.event_loop_mut().tick_possibly_forever();
++            this.event_loop().tick_possibly_forever();
+         }
+     }
+ }
+@@ -675,7 +675,7 @@ pub fn did_connect() {
+     if dbg.wait_for_connection != Wait::Off {
+         dbg.wait_for_connection = Wait::Off;
+         dbg.poll_ref.unref(get_vm_ctx(AllocatorType::Js));
+-        this.event_loop_mut().wakeup();
++        this.event_loop().wakeup();
+     }
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #48436** (2026-11-10): AOT: bun compile, build output, module mocks, fixes and new names (@Jarred-Sumner)
-- **PR #48428** (2026-11-10): Check vendored test suites out by commit (@dylan-conway)
-- **PR #48413** (2026-11-09): Extend existing checks to `bun run` bins and `data:` URL macros (@dylan-conway)
-- **PR #48371** (closed): Windows: a spawned child inherits only the handles its spawn names (@robobun)
-- **PR #48354** (closed): fix(aot): preserve runtime module formats for in-place imports (@vincentkoc)
-- **PR #48327** (closed): install: honor certfile and keyfile from .npmrc for registry client TLS (@robobun)
+- **PR #48943** (closed): DO NOT MERGE: the tests of #48914 without its libuv patch (@robobun)
+- **PR #48922** (closed): ci: regenerate the shard weights from measured runs, and rewrite test/expected-durations.json in place (@robobun)
+- **PR #48902** (closed): test(hot): probe for the windows 11 aarch64 timeout of the entry-point promise test (not for merge) (@robobun)
+- **PR #48893** (2026-11-14): spawn, io: share Process and KeepAlive instead of borrowing them exclusively (@dylan-conway)
+- **PR #48889** (2026-11-14): shell: environments and their strings are owned (@dylan-conway)
+- **PR #48888** (2026-11-14): tar: match npm more closely in npm mode (@dylan-conway)
 
 ---
 
@@ -2120,37 +2087,6 @@ w;`.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. AOT: bun compile, build output, module mocks, fixes and new names (#48436)
-
-**RULE**:
-When implementing operations in `.gitattributes`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oven-sh/bun. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `89452d2a`: AOT: bun compile, build output, module mocks, fixes and new names (#48436). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitattributes`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-test/aot/parallel/function-source-signature-formatting/** -text
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-test/aot/parallel/the-head-of-the-text-of-a-function-is-laid-as-bun-prints-it/** -text
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89452d2a` are properly handled with clean fallback behavior.
 
 
 ## Consequences

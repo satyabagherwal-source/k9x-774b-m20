@@ -9883,3 +9883,7 @@
 | `CYCLE-20261114-R1OQ` | `2026-11-14T16:38:37.130Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8508` | Yes (`dd857064...`) |
 | `CYCLE-20261114-X2PC` | `2026-11-14T16:43:18.384Z` | `autotrust/AutoTrust-Decider-Pro-Vision-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`3a005cb3...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T16:43:51.092Z` | `hf-autotrust-jev-27b-vl` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-65E545AD` [Domain D] | Yes (`8c3de9cf...`) |
+| `CYCLE-20261114-MJ0Q` | `2026-11-14T17:03:05.930Z` | `oven-sh/bun` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/oven-sh-bun-learnings.md` | Yes (`4109c8ee...`) |
+| `CYCLE-20261114-MWAZ` | `2026-11-14T17:03:23.147Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`cbb115a8...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T17:03:53.952Z` | `oven-sh-bun` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-23D3BE33` [Domain D] | Yes (`15a9213b...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T17:04:26.752Z` | `hf-autotrust-gev-26b-decide` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-02DACB51` [Domain D] | Yes (`c337ed51...`) |

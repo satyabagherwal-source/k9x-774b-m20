@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T16:43:51.804Z",
-  "total_records": 747,
+  "last_updated": "2026-11-14T17:04:27.370Z",
+  "total_records": 753,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 367,
+      "total": 371,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -404,7 +404,11 @@
         "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant",
         "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
         "DOM-D-65E545AD",
-        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant"
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant",
+        "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants",
+        "DOM-D-23D3BE33",
+        "DOM-D-02DACB51",
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar"
       ]
     },
     "E": {
@@ -556,7 +560,7 @@
       ]
     },
     "H": {
-      "total": 158,
+      "total": 160,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -715,7 +719,9 @@
         "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-core-invariants",
         "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants"
       ]
     },
     "I": {
@@ -6562,8 +6568,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "6da8f91fcb572ee9aaab4c1857c5d667c143c2f6cd6ce1e8a3125582aa18f64b",
-      "created_at": "2026-11-14T16:00:18.386Z"
+      "content_hash": "1377ba30718706f5d8271ae7364b6e74bec5450739d7cfba798daab68ce25e76",
+      "created_at": "2026-11-14T17:04:27.370Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -15388,6 +15394,126 @@
       "repository": "starrocks-starrocks-learnings",
       "content_hash": "445ecbcbb8a528ed05e7abcbb913495c41bdb2666bb17a53275028e5b6fa61e7",
       "created_at": "2026-11-14T16:43:51.804Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
+      "repository": "oven-sh/bun",
+      "content_hash": "cf9ef111dbd4cdb5dab954f9bebda643111668a29b59c55662a0e51f0e16ef82",
+      "created_at": "2026-11-14T17:03:06.103Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: autotrust/GEV-26B-Decide Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-research-knowledge-intelligence-autotrust-gev-26b-de.md",
+      "repository": "autotrust/GEV-26B-Decide",
+      "content_hash": "d3887ccdf661671fbe9279dbdcd160dc2488f972a73ca0eb3619bacf455cdb6a",
+      "created_at": "2026-11-14T17:03:23.314Z"
+    },
+    "DOM-D-23D3BE33": {
+      "record_id": "DOM-D-23D3BE33",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): oven-sh/bun",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  \n> **Source**: github ([https://github.com/oven-sh/bun](https://github.com/oven-sh/bun))  \n> **Source Version**: `9098897a`  \n> **License**: NOASSERTION  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **",
+      "content_hash": "15a9213bbcff2cbf2893bedc2e762d5e8ba4e64b215a9f14c832c50fd5904d5b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  \n> **Source**: github ([https://github.com/oven-sh/bun](h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oven-sh-bun-learnings.md`  \n> **Source**: github ([https://github.com/oven-sh/bun](h",
+      "provenance": {
+        "source_uri": "project://oven-sh-bun/oven-sh-bun-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T17:03:26.031Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (oven-sh-bun)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of oven-sh-bun"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T17:03:53.940Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-learnings-technical-construction-intelligence-oven-sh-bun-learnings-.md",
+      "repository": "oven-sh-bun-learnings",
+      "content_hash": "d11e3ca2c133c044e800947814a451a22ed8fb874a63b3881580dd0194e3ea07",
+      "created_at": "2026-11-14T17:03:54.240Z"
+    },
+    "DOM-D-02DACB51": {
+      "record_id": "DOM-D-02DACB51",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): autotrust/GEV-26B-Decide",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/autotrust/GEV-26B-Decide](https://huggingface.co/autotrust/GEV-26B-Decide))  \n> **Source Version**: `hf-autotrust`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "c337ed510c5f659b2d1ee93f97295f7f1694f841010dd7c286b0fcfb34e050f5",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-autotrust-gev-26b-decide/hf-autotrust-gev-26b-decide-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T17:03:54.467Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-autotrust-gev-26b-decide)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-autotrust-gev-26b-decide"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T17:04:26.742Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-autotrust-gev-26b-decide-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-learnings-research-knowledge-intelligence-hf-autotru.md",
+      "repository": "hf-autotrust-gev-26b-decide-learnings",
+      "content_hash": "1d84f3261ec78edf99176c5f45b05476b45e68368df47e5b4a1c063a924fc643",
+      "created_at": "2026-11-14T17:04:26.926Z"
     }
   }
 }

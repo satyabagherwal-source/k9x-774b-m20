@@ -9916,3 +9916,7 @@ Every entry in this ledger must capture:
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `72c16b08` | Multi-dimensional audit evidence | 2026-11-14T16:38:37.133Z |
 | `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-14T16:43:18.388Z |
 | `learn-dom-d-65e545ad` | `project://hf-autotrust-jev-27b-vl` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | 2026-11-14T16:43:51.092Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `9098897a` | Multi-dimensional audit evidence | 2026-11-14T17:03:05.934Z |
+| `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-14T17:03:23.151Z |
+| `learn-dom-d-23d3be33` | `project://oven-sh-bun` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md` | 2026-11-14T17:03:53.952Z |
+| `learn-dom-d-02dacb51` | `project://hf-autotrust-gev-26b-decide` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | 2026-11-14T17:04:26.752Z |

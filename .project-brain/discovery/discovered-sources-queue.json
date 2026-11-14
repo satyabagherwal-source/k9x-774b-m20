@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T16:43:51.103Z",
+  "updated_at": "2026-11-14T17:04:26.763Z",
   "stats": {
-    "total_discovered": 3339,
-    "approved_pending_harvest": 3134,
+    "total_discovered": 3340,
+    "approved_pending_harvest": 3135,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3116,
+      "COMMUNITY_AND_EXPERT": 3117,
       "OFFICIAL_DOCUMENTATION": 122,
       "STANDARDS_AND_SPECIFICATIONS": 87,
       "ENGINEERING_BLOGS": 1,
@@ -72043,6 +72043,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
         "fileName": "hf-autotrust-jev-27b-vl-learnings.md"
+      }
+    },
+    "SRC-82ED428159C7": {
+      "id": "SRC-82ED428159C7",
+      "url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+      "title": "https://huggingface.co/autotrust/GEV-26B-Decide",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T17:04:26.763Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
+        "fileName": "hf-autotrust-gev-26b-decide-learnings.md"
       }
     }
   }

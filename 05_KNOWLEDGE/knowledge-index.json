@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T16:43:51.918Z",
-  "total_verified_learnings": 8567,
+  "last_updated": "2026-11-14T17:04:27.485Z",
+  "total_verified_learnings": 8569,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17588,
+  "total_items": 17596,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "6da8f91fcb572ee9aaab4c1857c5d667c143c2f6cd6ce1e8a3125582aa18f64b",
+      "content_hash": "1377ba30718706f5d8271ae7364b6e74bec5450739d7cfba798daab68ce25e76",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T16:00:18.386Z"
+      "persisted_at": "2026-11-14T17:04:27.370Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ffd83aee1e8c9cdf3bbcaa351c89237673cbdb502a59bff97912f9bf2706f8d",
+      "content_hash": "7ad8aafd9ca679bb233f34552a39c17eb8bf22d8a0d846d4a45a3ea89f39c122",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T16:00:18.479Z"
+      "persisted_at": "2026-11-14T17:04:27.485Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214751,13 +214751,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DRW7-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-O9RP-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a01067f4ccce7f80e6a8f0c43dc40de11830523ad3097c90f579db16090d26b3",
+      "content_hash": "1508b01e99433a8ae5f24f631ff7aa8b272c15069ccbff623a0ed04059046be1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T16:00:18.308Z"
+      "persisted_at": "2026-11-14T17:04:27.269Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -230892,6 +230892,132 @@
       "content_hash": "cdf1de0fe401ea82eddba60f48888795aa724102d2e83efeff9aaf0d7638e206",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T16:43:51.918Z"
+    },
+    "learn-github-oven-sh-bun": {
+      "learning_id": "learn-github-oven-sh-bun",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "oven-sh/bun",
+      "repository": "oven-sh/bun",
+      "slug": "oven-sh-bun",
+      "platform": "github",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "9098897a",
+      "content_hash": "4109c8eec9e1dae92523781da57457f52c2d30477d0e515d0555fe9d1715ff69",
+      "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T17:03:05.789Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
+      "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
+      "repository": "oven-sh/bun",
+      "source_version": "9098897a",
+      "content_hash": "cf9ef111dbd4cdb5dab954f9bebda643111668a29b59c55662a0e51f0e16ef82",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T17:03:06.103Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-oven-sh-bun-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in oven-sh/bun",
+      "repository": "oven-sh/bun",
+      "source_version": "9098897a",
+      "content_hash": "75a8f077f74040579da41d82900f46ebef5d102e2e360819b02c58a7bc7efd4d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T17:03:06.206Z"
+    },
+    "learn-huggingface-autotrust-gev-26b-decide": {
+      "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "autotrust/GEV-26B-Decide",
+      "repository": "autotrust/GEV-26B-Decide",
+      "slug": "hf-autotrust-gev-26b-decide",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+      "source_version": "hf-autotrust-gev-26b-decide",
+      "content_hash": "cbb115a815af1a22c714344f3c010bbcfd86bdb0279479b3ee921181cce085dd",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T17:03:22.991Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-research-knowledge-intelligence-autotrust-gev-26b-de.md",
+      "title": "Research & Knowledge Intelligence: autotrust/GEV-26B-Decide Core Invariants",
+      "repository": "autotrust/GEV-26B-Decide",
+      "source_version": "hf-autotrust-gev-26b-decide",
+      "content_hash": "d3887ccdf661671fbe9279dbdcd160dc2488f972a73ca0eb3619bacf455cdb6a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T17:03:23.314Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-learnings-technical-construction-intelligence-oven-sh-bun-learnings-.md",
+      "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
+      "repository": "oven-sh-bun-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d11e3ca2c133c044e800947814a451a22ed8fb874a63b3881580dd0194e3ea07",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T17:03:54.240Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-oven-sh-bun-learnings-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-l.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in oven-sh-bun-learnings",
+      "repository": "oven-sh-bun-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f7bccde857312efc611e0fe407d51acf6a99efb83a2938a373510e4d6e4602c3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T17:03:54.350Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-learnings-research-knowledge-intelligence-hf-autotru.md",
+      "title": "Research & Knowledge Intelligence: hf-autotrust-gev-26b-decide-learnings Core Invariants",
+      "repository": "hf-autotrust-gev-26b-decide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1d84f3261ec78edf99176c5f45b05476b45e68368df47e5b4a1c063a924fc643",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T17:04:26.926Z"
     }
   },
   "ai-builder-brain": {

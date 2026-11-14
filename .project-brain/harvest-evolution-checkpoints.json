@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T16:43:52.027Z",
+  "last_updated": "2026-11-14T17:04:27.594Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-14T16:00:18.132Z",
+      "processed_at": "2026-11-14T17:04:27.051Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -78,9 +78,9 @@
       "staged_for_review": 1
     },
     "oven-sh-bun-learnings.md": {
-      "processed_at": "2026-11-13T03:10:56.511Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-14T17:03:53.952Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-webai-official-twil-8b-learnings.md": {
       "processed_at": "2026-11-11T09:41:14.925Z",
@@ -2666,9 +2666,14 @@
       "processed_at": "2026-11-14T16:43:51.093Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-autotrust-gev-26b-decide-learnings.md": {
+      "processed_at": "2026-11-14T17:04:26.752Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 867,
-  "total_canonical_promoted": 207,
-  "total_staged_for_review": 659
+  "total_dossiers_evaluated": 870,
+  "total_canonical_promoted": 209,
+  "total_staged_for_review": 660
 }
