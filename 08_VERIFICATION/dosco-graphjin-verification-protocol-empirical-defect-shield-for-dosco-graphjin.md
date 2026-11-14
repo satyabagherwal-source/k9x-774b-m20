@@ -4,55 +4,41 @@
 {
   "source_repository": "dosco/graphjin",
   "source_url": "https://github.com/dosco/graphjin",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "3fc0975a",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T13:29:08.665Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-dosco-graphjin",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dosco/graphjin](https://github.com/dosco/graphjin) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [dosco/graphjin](https://github.com/dosco/graphjin) (Revision: `3fc0975a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T13:29:08.665Z`  
+> **Learning ID**: `learn-github-dosco-graphjin`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dosco/graphjin` (Commit: `historical`)
+- **Target Repository**: `dosco/graphjin` (Commit: `3fc0975a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
-> **Source**: github ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
-> **Source Version**: `5914e90e`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T00:49:06.171Z  
-> **Learning ID**: `learn-github-dosco-graphjin`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): dosco/graphjin
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T00:49:04.518Z  
+> **Harvest Timestamp**: 2026-11-14T13:29:07.399Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `dosco/graphjin`
-- **Description**: One governed graph for AI agents — GraphQL + MCP over your databases, files, APIs, and code
+- **Description**: DeepORG (formerly GraphJin) — one governed AI agent for your whole organization: databases, APIs, files, and code over MCP
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3235 stars
+- **Stars / Engagement**: 3236 stars
 
 ---
 
@@ -2803,268 +2789,393 @@ func
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b31841a9` (2026-11-06)
-**Commit Message**: fix(mysql): accept limit and offset variables, capped at the configured limit
+### Incident Patch 1: `bc79e50b` (2026-11-13)
+**Commit Message**: fix(introspection): expose columns of Postgres functions returning table rows (#693)
 
-MySQL rejected limit: $var and offset: $var outright, and MariaDB
-compiled limit: $var but silently used the default limit. Render a
-placeholder instead. MySQL's LIMIT takes no expressions, so the cap that
-Postgres applies with LEAST($1, N) is applied when the value is bound:
-params carry a Max, larger values are lowered to it, null takes it, and
-non-integer or negative values are rejected. MySQL binds each placeholder
-separately, so every use keeps its own cap.
+Postgres functions that return rows of a table were not queryable through
+GraphJin. `RETURNS TABLE (LIKE users)` was discovered as a single output
+column named "like", so selecting any real column failed with
+"field 'id' is not a column or a function; available columns: like".
+`RETURNS SETOF users` and `RETURNS users` were discovered with no output
+columns at all and were not exposed.
 
-MySQL-family subscriptions read variables from a JSON_TABLE row, which
-LIMIT cannot reference, so they still refuse limit and offset variables
-with a clear error. SQLite now caps a variable limit with min() as well.
+Function discovery read row columns from information_schema.attributes,
+which only lists standalone composite types, never the row types of
+tables, views or materialized views. Read them from pg_attribute through
+the return type's typrelid instead. This covers tables, views,
+materialized views, foreign and partitioned tables and composite types,
+skips dropped columns, and reports column types with format_type like
+table discovery does. The single OUT parameter that holds the whole row
+is no longer reported as a column, because Postgres expands it into the
+row's columns. Enum and domain outputs keep their existing behaviour.
 
-Fixes #445
+Function output columns now also carry the array flag and honour the
+configured blocklist, s
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `core/args.go` (modified, +48/-0)
+**File**: `core/internal/introspection/sql/postgres_functions.sql` (modified, +30/-13)
 ```diff
-@@ -5,6 +5,8 @@ import (
- 	"context"
- 	"encoding/json"
- 	"fmt"
-+	"math"
-+	"strconv"
- 	"strings"
- 
- 	"github.com/dosco/graphjin/core/v3/internal/psql"
-@@ -183,6 +185,12 @@ func (gj *graphjinEngine) argList(c context.Context,
- 				return ar, argErr(p)
- 			}
+@@ -1,3 +1,16 @@
++WITH row_type_routines AS (
++	-- Functions whose result is a row type: RETURNS [SETOF] tbl, RETURNS [SETOF]
++	-- composite_type and RETURNS TABLE (LIKE tbl).
++	SELECT r.specific_name,
++		t.typrelid
++	FROM information_schema.routines r
++		JOIN pg_catalog.pg_namespace n ON n.nspname = r.type_udt_schema
++		JOIN pg_catalog.pg_type t ON t.typnamespace = n.oid
++		AND t.typname = r.type_udt_name
++	WHERE r.routine_type = 'FUNCTION'
++		AND r.data_type = 'USER-DEFINED'
++		AND t.typrelid != 0
++)
+ SELECT r.specific_name as func_id,
+ 	r.routine_schema as func_schema,
+ 	r.routine_name as func_name,
+@@ -18,6 +31,15 @@ FROM information_schema.routines r
+ 	)
+ WHERE r.routine_type = 'FUNCTION'
+ 	AND r.data_type != 'void'
++	-- The single OUT parameter of a row type function holds the whole row.
++	-- Postgres expands it into the row's columns, returned by the SELECT below.
++	AND NOT (
++		p.parameter_mode = 'OUT'
++		AND r.specific_name IN (
++			SELECT specific_name
++			FROM row_type_routines
++		)
++	)
+ 	AND r.specific_schema NOT IN (
+ 		'_graphjin',
+ 		'information_schema',
+@@ -31,25 +53,20 @@ SELECT r.specific_name as func_id,
+ 	r.routine_schema as func_schema,
+ 	r.routine_name as func_name,
+ 	'record' as data_type,
+-	a.ordinal_position as param_id,
+-	COALESCE(
+-		a.attribute_name,
+-		CAST(a.ordinal_position as CHAR(3))
+-	) as param_name,
+-	a.data_type as param_type,
++	f.attnum as param_id,
++	f.attname as param_name,
++	pg_catalog.format_type(f.atttypid, f.atttypmod) as param_type,
+ 	'OUT' as param_kind
+ FROM information_schema.routines r
+-	RIGHT JOIN information_schema.attributes a ON (
+-		r.data_type = 'USER-DEFINED'
+-		AND a.udt_schema = r.type_udt_schema
+-		AND a.udt_name = r.type_udt_name
+-	)
+-WHERE r.routine_type = 'FUNCTION'
++	JOIN row_type_routines rt ON rt.specific_name = r.specific_name
++	JOIN pg_catalog.pg_attribute f ON f.attrelid = rt.typrelid
++WHERE f.attnum > 0
++	AND f.attisdropped = false
+ 	AND r.specific_schema NOT IN (
+ 		'_graphjin',
+ 		'information_schema',
+ 		'performance_schema',
+ 		'pg_catalog',
+ 		'mysql',
+ 		'sys'
+-	);
+\ No newline at end of file
++	);
+```
+
+**File**: `core/internal/qcode/schema.go` (modified, +4/-3)
+```diff
+@@ -147,9 +147,10 @@ func parseTFieldsFunction(fn *sdata.DBFunction, fields []graph.TField) (
+ 			paramType += "(" + dir.TypeSuffix + ")"
  		}
-+
-+		if p.Max > 0 {
-+			if vl[i], err = capIntParam(p, vl[i]); err != nil {
-+				return ar, err
-+			}
-+		}
- 	}
- 	ar.values = vl
- 
-@@ -290,6 +298,46 @@ func parseVarVal(v json.RawMessage) interface{} {
- 	}
- }
- 
-+// capIntParam applies a bind-time cap the way LEAST(value, max) does on
-+// dialects that can express it in SQL: a null value takes the cap, and a
-+// larger value is lowered to it.
-+func capIntParam(p psql.Param, v interface{}) (interface{}, error) {
-+	max := int64(p.Max)
-+	var n int64
-+	switch v1 := v.(type) {
-+	case nil:
-+		return max, nil
-+	case int64:
-+		n = v1
-+	case int:
-+		n = int64(v1)
-+	case int32:
-+		n = int64(v1)
-+	case float64:
-+		if v1 != math.Trunc(v1) {
-+			return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
-+		}
-+		if v1 > float64(max) {
-+			return max, nil
-+		}
-+		n = int64(v1)
-+	case string:
-+		var err error
-+		if n, err = strconv.ParseInt(strings.TrimSpace(v1), 10, 64); err != nil {
-+			return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
-+		}
-+	default:
-+		return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
-+	}
-+	if n < 0 {
-+		return nil, fmt.Errorf("variable '%s' must not be negative", p.Name)
-+	}
-+	if n > max {
-+		n = max
-+	}
-+	return n, nil
-+}
-+
- func argErr(p psql.Param) error {
- 	return fmt.Errorf("required variable '%s' of type '%s' must be set", p.Name, p.Type)
- }
+ 		p := sdata.DBFuncParam{
+-			ID:   i,
+-			Name: f.Name,
+-			Type: paramType,
++			ID:    i,
++			Name:  f.Name,
++			Type:  paramType,
++			Array: f.List,
+ 		}
+ 		switch {
+ 		case dir.Input:
 ```
 
-**File**: `core/args_cap_test.go` (added, +40/-0)
+**File**: `core/internal/sdata/schema_test.go` (modified, +31/-0)
 ```diff
-@@ -0,0 +1,40 @@
-+package core
+@@ -88,3 +88,34 @@ func TestAddRemoteRelWithParentStillWorks(t *testing.T) {
+ 		t.Fatalf("row-join remote (parented) should still build: %v", err)
+ 	}
+ }
 +
-+import (
-+	"testing"
++func TestNewDBInfoFunctionOutputColumns(t *testing.T) {
++	fn := DBFunction{
++		Schema: "public",
++		Name:   "get_users",
++		Type:   "record",
++		Inputs: []DBFuncParam{{ID: 1, Name: "max_id", Type: "bigint"}},
++		Outputs: []DBFuncParam{
++			{ID: 1, Name: "id", Type: "bigint"},
++			{ID: 2, Name: "password", Type: "text"},
++			{ID: 3, Name: "tags", Type: "text[]", Array: true},
++		},
++	}
++	di := NewDBInfo("postgres", 140000, "public", "db", nil, []DBFunction{fn}, []string{"password"})
 +
-+	"github.com/dosco/graphjin/core/v3/internal/psql"
-+)
-+
-+func TestCapIntParam(t *testing.T) {
-+	p := psql.Param{Name: "limit", Type: "integer", Max: 20}
-+	for _, tc := range []struct {
-+		in      interface{}
-+		want    int64
-+		wantErr bool
-+	}{
-+		{int64(3), 3, false},
-+		{int64(20), 20, false},
-+		{int64(5000), 20, false},
-+		{3, 3, false},
-+		{float64(7), 7, false},
-+		{float64(1e30), 20, false},
-+		{"8", 8, false},
-+		{nil, 20, false},
-+		{int64(-1), 0, true},
-+		{float64(2.5), 0, true},
-+		{"ten", 0, true},
-+		{true, 0, true},
-+	} {
-+		got, err := capIntParam(p, tc.in)
-+		if tc.wantErr {
-+			if err == nil {
-+				t.Errorf("capIntParam(%v) = %v, want error", tc.in, got)
-+			}
-+			continue
-+		}
-+		if err != nil || got != tc.want {
-+			t.Errorf("capIntParam(%v) = %v, %v; want %d", tc.in, got, err, tc.want)
++	if len(di.Tables) != 1 || di.Tables[0].Type != "function" {
++		t.Fatalf("expected one function table, got %+v", di.Tables)
++	}
++	want := map[string]struct{ blocked, array bool }{
++		"id":       {},
++		"password": {blocked: true},
++		"tags":     {array: true},
++	}
++	for _, col := range di.Tables[0].Columns {
++		w := want[col.Name]
++		if col.Blocked != w.blocked || col.Array != w.array {
++			t.Errorf("column %s: blocked=%v array=%v, want blocked=%v array=%v",
++				col.Name, col.Blocked, col.Array, w.blocked, w.array)
 +		}
 +	}
 +}
 ```
 
-**File**: `core/internal/dialect/dialect.go` (modified, +3/-0)
+**File**: `core/internal/sdata/tables.go` (modified, +5/-3)
 ```diff
-@@ -13,6 +13,9 @@ type Param struct {
- 	IsArray     bool
- 	IsNotNull   bool
- 	WrapInArray bool
-+	// Max caps an integer value at bind time (0 means no cap). Used where the
-+	// SQL cannot express the cap itself, such as a MySQL LIMIT placeholder.
-+	Max int32
+@@ -125,9 +125,11 @@ func NewDBInfo(
+ 		var cols []DBColumn
+ 		for _, v := range f.Outputs {
+ 			cols = append(cols, DBColumn{
+-				ID:   int32(v.ID),
+-				Name: v.Name,
+-				Type: v.Type,
++				ID:      int32(v.ID),
++				Name:    v.Name,
++				Type:    v.Type,
++				Array:   v.Array,
++				Blocked: isInList(v.Name, blockList),
+ 			})
+ 		}
+ 		t := NewDBTable(f.Schema, f.Name, "function", cols)
+```
+
+**File**: `core/schema.go` (modified, +2/-2)
+```diff
+@@ -124,8 +124,8 @@ const schemaTemplate = `# dbinfo:{{if .Type}}{{ .Type }}{{else}}postgres{{end}},
+ {{- if ne .Name "" }}{{ .Name }}{{ else }}_arg{{ .ID }}{{ end }}:
+ {{- "\t"}}
+ {{- $var := .Type|dbtype }}
+-{{- (index $var 0)|pascal }}
+-{{- if .Array}}[]{{end}}
++{{- $type := (index $var 0)|pascal }}
++{{- if .Array}}[{{ $type }}]{{else}}{{ $type }}{{end}}
+ {{- "\t"}}
+ {{- if ne (index $var 1) ""}} @type_args(args: {{ (index $var 1) | printf "%q" }}){{end}}
+ {{- end -}}
+```
+
+**File**: `core/schema_test.go` (modified, +31/-0)
+```diff
+@@ -50,6 +50,37 @@ func TestCreateSchema(t *testing.T) {
+ 
  }
  
- type Context interface {
-```
-
-**File**: `core/internal/dialect/mysql.go` (modified, +5/-0)
-```diff
-@@ -145,6 +145,11 @@ func (d *MySQLDialect) RenderLimit(ctx Context, sel *qcode.Select) {
- 	case sel.Singular:
- 		ctx.WriteString(`1`)
- 
-+	case sel.Paging.LimitVar != "":
-+		// LIMIT takes only a literal or a placeholder, so the configured
-+		// limit that Postgres applies with LEAST() is applied at bind time.
-+		ctx.AddParam(Param{Name: sel.Paging.LimitVar, Type: "integer", Max: sel.Paging.Limit})
++func TestCreateSchemaFunctionArrayParams(t *testing.T) {
++	var buf bytes.Buffer
 +
- 	default:
- 		ctx.Write(fmt.Sprintf("%d", sel.Paging.Limit))
- 	}
-```
-
-**File**: `core/internal/dialect/sqlite.go` (modified, +3/-0)
-```diff
-@@ -59,7 +59,10 @@ func (d *SQLiteDialect) RenderLimit(ctx Context, sel *qcode.Select) {
- 
- 	ctx.WriteString(` LIMIT `)
- 	if sel.Paging.LimitVar != "" {
-+		// Cap the variable at the configured limit, as Postgres does.
-+		ctx.WriteString(`min(`)
- 		ctx.AddParam(Param{Name: sel.Paging.LimitVar, Type: "integer"})
-+		ctx.Write(fmt.Sprintf(", %d)", sel.Paging.Limit))
- 	} else {
- 		ctx.Write(fmt.Sprintf("%d", sel.Paging.Limit))
- 	}
-```
-
-**File**: `core/internal/psql/limit_variable_mysql_test.go` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+package psql_test
++	fn := sdata.DBFunction{
++		Schema:  "public",
++		Name:    "get_products",
++		Type:    "record",
++		Inputs:  []sdata.DBFuncParam{{ID: 1, Name: "ids", Type: "bigint[]", Array: true}},
++		Outputs: []sdata.DBFuncParam{{ID: 1, Name: "tags", Type: "text[]", Array: true}},
++	}
++	di := sdata.NewDBInfo("postgres", 140000, "public", "db", nil, []sdata.DBFunction{fn}, nil)
++	if err := writeSchema(di, &buf); err != nil {
++		t.Fatal(err)
++	}
 +
-+import (
-+	"strings"
-+	"testing"
-+)
-+
-+// Issue #445: MySQL rejected limit: $limit and MariaDB silently used the
-+// default limit. Both now bind a placeholder capped at the configured limit.
-+func TestMySQLFamilyLimitAndOffsetVariables(t *testing.T) {
-+	for _, db := range []string{"mysql", "mariadb"} {
-+		t.Run(db, func(t *testing.T) {
-+			qc, pc := newDialectCompilers(t, db)
-+			reqQC, err := qc.Compile([]byte(`query { products(limit: $limit, offset: $off) { id } }`), nil, "user", "")
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			md, sqlBytes, err := pc.CompileEx(reqQC)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if sql := string(sqlBytes); !strings.Contains(sql, "LIMIT ?, ?") {
-+				t.Fatalf("expected LIMIT ?, ? in:\n%s", sql)
-+			}
-+			var limitMax, offsetMax int32 = -1, -1
-+			for _, p := range md.Params() {
-+				switch p.Name {
-+				case "limit":
-+					limitMax = p.Max
-+				case "off":
-+					offsetMax = p.Max
-+				}
-+			}
-+			if limitMax != reqQC.Selects[0].Paging.Limit || limitMax <= 0 {
-+				t.Fatalf("limit param cap = %d, want the configured limit %d", limitMax, reqQC.Selects[0].Paging.Limit)
-+			}
-+			if offsetMax != 0 {
-+				t.Fatalf("offset param must not be capped, got %d", offsetMax)
-+			}
-+		})
++	ds, err := qcode.ParseSchema(buf.Bytes())
++	if err != nil {
++		t.Fatalf("parse exported schema: %v\n%s", err, buf.String())
++	}
++	if len(ds.Functions) != 1 {
++		t.Fatalf("expected one function, got %+v", ds.Functions)
++	}
++	got := ds.Functions[0]
++	if len(got.Inputs) != 1 || got.Inputs[0].Type != "bigint" || !got.Inputs[0].Array {
++		t.Errorf("input changed through schema export: %+v", got.Inputs)
++	}
++	if len(got.Outputs) != 1 || got.Outputs[0].Type != "text" || !got.Outputs[0].Array {
++		t.Errorf("output changed through schema export: %+v", got.Outputs)
 +	}
 +}
++
+ func TestWriteSchemaWithDatabase(t *testing.T) {
+ 	var buf bytes.Buffer
+ 
 ```
 
-**File**: `core/internal/psql/query.go` (modified, +2/-1)
+**File**: `tests/postgres.sql` (modified, +12/-0)
 ```diff
-@@ -20,7 +20,8 @@ type Param struct {
- 	Type        string
- 	IsArray     bool
- 	IsNotNull   bool
--	WrapInArray bool // For MySQL/MariaDB: wrap single JSON object in array for JSON_TABLE
-+	WrapInArray bool  // For MySQL/MariaDB: wrap single JSON object in array for JSON_TABLE
-+	Max         int32 // Cap an integer value at bind time; 0 means no cap
+@@ -268,6 +268,18 @@ SELECT EXISTS (
+     where p.product_id = id
+   );
+ $$ LANGUAGE SQL;
++CREATE OR REPLACE FUNCTION get_users_up_to(max_id bigint) RETURNS TABLE (LIKE users) AS $$
++SELECT u.*
++FROM users u
++WHERE u.id <= max_id $$ LANGUAGE SQL;
++CREATE OR REPLACE FUNCTION get_products_up_to(max_id bigint) RETURNS SETOF products AS $$
++SELECT p.*
++FROM products p
++WHERE p.id <= max_id $$ LANGUAGE SQL;
++CREATE OR REPLACE FUNCTION get_user_row(user_id bigint) RETURNS users AS $$
++SELECT u.*
++FROM users u
++WHERE u.id = user_id $$ LANGUAGE SQL;
+ -- graph relationships
+ CREATE TABLE graph_node (id TEXT PRIMARY KEY, label TEXT);
+ CREATE TABLE graph_edge (
+```
+
+**File**: `tests/query_pg_test.go` (modified, +118/-0)
+```diff
+@@ -329,6 +329,124 @@ func Example_queryWithFunctionReturingUserDefinedTypes() {
+ 	// Output: {"get_product":[{"id":1,"name":"Product 1"},{"id":2,"name":"Product 2"}]}
  }
  
- type Metadata struct {
-```
-
-**File**: `core/internal/psql/util.go` (modified, +1/-0)
-```diff
-@@ -149,6 +149,7 @@ func (c *compilerContext) AddParam(p dialect.Param) string {
- 		IsArray:     p.IsArray,
- 		IsNotNull:   p.IsNotNull,
- 		WrapInArray: p.WrapInArray,
-+		Max:         p.Max,
- 	}
- 	c.renderParam(pp)
- 	return ""
++func Example_queryWithFunctionReturningTableLike() {
++	// `RETURNS TABLE (LIKE users)` is Postgres syntax
++	if dbType != "postgres" {
++		fmt.Println(`{"get_users_up_to":[{"email":"user1@test.com","full_name":"User 1","id":1},{"email":"user2@test.com","full_name":"User 2","id":2}]}`)
++		return
++	}
++
++	gql := `query {
++		get_users_up_to(order_by: { id: asc }, args: { max_id: 2 }) {
++			id
++			full_name
++			email
++		}
++	}`
++
++	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true})
++	gj, err := core.NewGraphJin(conf, db)
++	if err != nil {
++		panic(err)
++	}
++	defer gj.Close()
++
++	res, err := gj.GraphQL(context.Background(), gql, nil, nil)
++	if err != nil {
++		fmt.Println(err)
++	} else {
++		printJSON(res.Data)
++	}
++	// Output: {"get_users_up_to":[{"email":"user1@test.com","full_name":"User 1","id":1},{"email":"user2@test.com","full_name":"User 2","id":2}]}
++}
++
++func Example_queryWithFunctionReturningSetofTable() {
++	// `RETURNS SETOF products` is Postgres syntax
++	if dbType != "postgres" {
++		fmt.Println(`{"get_products_up_to":[{"id":1,"name":"Product 1","tags":["Tag 1","Tag 2","Tag 3","Tag 4","Tag 5"]}]}`)
++		return
++	}
++
++	gql := `query {
++		get_products_up_to(where: { tags: { contains: ["Tag 1"] } }, order_by: { id: asc }, limit: 1, args: { max_id: 2 }) {
++			id
++			name
++			tags
++		}
++	}`
++
++	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true})
++	gj, err := core.NewGraphJin(conf, db)
++	if err != nil {
++		panic(err)
++	}
++	defer gj.Close()
++
++	res, err := gj.GraphQL(context.Background(), gql, nil, nil)
++	if err != nil {
++		fmt.Println(err)
++	} else {
++		printJSON(res.Data)
++	}
++	// Output: {"get_products_up_to":[{"id":1,"name":"Product 1","tags":["Tag 1","Tag 2","Tag 3","Tag 4","Tag 5"]}]}
++}
++
++func Example_queryWithFunctionReturningTableRow() {
++	// `RETURNS users` is Postgres syntax
++	if dbType != "postgres" {
++		fmt.Println(`{"get_user_row":[{"full_name":"User 3","id":3}]}`)
++		return
++	}
++
++	gql := `query {
++		get_user_row(args: { user_id: 3 }) {
++			id
++			full_name
++		}
++	}`
++
++	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true})
++	gj, err := core.NewGraphJin(conf, db)
++	if err != nil {
++		panic(err)
++	}
++	defer gj.Close()
++
++	res, err := gj.GraphQL(context.Background(), gql, nil, nil)
++	if err != nil {
++		fmt.Println(err)
++	} else {
++		printJSON(res.Data)
++	}
++	// Output: {"get_user_row":[{"full_name":"User 3","id":3}]}
++}
++
++func Example_queryWithFunctionReturningTableBlockedColumn() {
++	// `RETURNS TABLE (LIKE users)` is Postgres syntax
++	if dbType != "postgres" {
++		fmt.Println(`column: 'public.get_users_up_to.email' blocked`)
++		return
++	}
++
++	gql := `query {
++		get_users_up_to(args: { max_id: 2 }) {
++			id
++			email
++		}
++	}`
++
++	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true, Blocklist: []string{"email"}})
++	gj, err := core.NewGraphJin(conf, db)
++	if err != nil {
++		panic(err)
++	}
++	defer gj.Close()
++
++	_, err = gj.GraphQL(context.Background(), gql, nil, nil)
++	fmt.Println(err)
++	// Output: column: 'public.get_users_up_to.email' blocked
++}
++
+ func Example_queryWithFunctionAndDirectives() {
+ 	// Skip for MongoDB/Snowflake emulator: custom database functions not supported
+ 	if dbType == "mongodb" || dbType == "snowflake" {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #693** (2026-11-13): fix(introspection): expose columns of Postgres functions returning table rows (@officialasishkumar)
 - **PR #692** (2026-10-31): fix(discovery): aggregate SQLite index statistics per table (@rudycelekli)
 - **PR #691** (2026-11-06): fix(openapi): discover fields inherited through allOf response schemas (@rudycelekli)
 - **PR #690** (2026-10-31): fix(graph): require complete standalone argument values (@rudycelekli)
 - **PR #689** (2026-11-06): fix(graph): resolve fragments independently of definition order (@rudycelekli)
 - **PR #688** (2026-10-31): fix(graph): parse contextual keyword names (@rudycelekli)
-- **PR #687** (2026-10-31): fix(openapi): expand environment values in nested token request bodies (@rudycelekli)
 
 ---
 
@@ -3084,78 +3195,72 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mysql): accept limit and offset variables, capped at the configured limit
+## X. introspection): expose columns of Postgres functions returning table rows
 
 **RULE**:
-When implementing operations in `core/args.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/internal/introspection/sql/postgres_functions.sql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b31841a9`: mysql): accept limit and offset variables, capped at the configured limit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bc79e50b`: introspection): expose columns of Postgres functions returning table rows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/args.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/internal/introspection/sql/postgres_functions.sql`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"math"
-	"strconv"
-
-		if p.Max > 0 {
-			if vl[i], err = capIntParam(p, vl[i]); err != nil {
-				return ar, err
-			}
-		}
-// capIntParam applies a bind-time cap the way LEAST(value, max) does on
-// dialects that can express it in SQL: a null value takes the cap, and a
-// larger value is lowered to it.
-func capIntParam(p psql.Param, v interface{}) (interface{}, error) {
-	max := int64(p.Max)
-	var n int64
-	switch v1 := v.(type) {
-	case nil:
-		return max, nil
-	case int64:
-		n = v1
-	case int:
-		n = int64(v1)
-	case int32:
-		n = int64(v1)
-	case float64:
-		if v1 != math.Trunc(v1) {
-			return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
-		}
-		if v1 > float64(max) {
-			return max, nil
-		}
-		n = int64(v1)
-	case string:
-		var err error
-		if n, err = strconv.ParseInt(strings.TrimSpace(v1), 10, 64); err != nil {
-			return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
-		}
-	default:
-		return nil, fmt.Errorf("variable '%s' must be an integer", p.Name)
-	}
-	if n < 0 {
-		return nil, fmt.Errorf("variable '%s' must not be negative", p.Name)
-	}
-	if n > max {
-		n = max
-	}
-	return n, nil
-}
-
+WITH row_type_routines AS (
+	-- Functions whose result is a row type: RETURNS [SETOF] tbl, RETURNS [SETOF]
+	-- composite_type and RETURNS TABLE (LIKE tbl).
+	SELECT r.specific_name,
+		t.typrelid
+	FROM information_schema.routines r
+		JOIN pg_catalog.pg_namespace n ON n.nspname = r.type_udt_schema
+		JOIN pg_catalog.pg_type t ON t.typnamespace = n.oid
+		AND t.typname = r.type_udt_name
+	WHERE r.routine_type = 'FUNCTION'
+		AND r.data_type = 'USER-DEFINED'
+		AND t.typrelid != 0
+)
+	-- The single OUT parameter of a row type function holds the whole row.
+	-- Postgres expands it into the row's columns, returned by the SELECT below.
+	AND NOT (
+		p.parameter_mode = 'OUT'
+		AND r.specific_name IN (
+			SELECT specific_name
+			FROM row_type_routines
+		)
+	)
+	f.attnum as param_id,
+	f.attname as param_name,
+	pg_catalog.format_type(f.atttypid, f.atttypmod) as param_type,
+	JOIN row_type_routines rt ON rt.specific_name = r.specific_name
+	JOIN pg_catalog.pg_attribute f ON f.attrelid = rt.typrelid
+WHERE f.attnum > 0
+	AND f.attisdropped = false
+	);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+	a.ordinal_position as param_id,
+	COALESCE(
+		a.attribute_name,
+		CAST(a.ordinal_position as CHAR(3))
+	) as param_name,
+	a.data_type as param_type,
+	RIGHT JOIN information_schema.attributes a ON (
+		r.data_type = 'USER-DEFINED'
+		AND a.udt_schema = r.type_udt_schema
+		AND a.udt_name = r.type_udt_name
+	)
+WHERE r.routine_type = 'FUNCTION'
+	);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b31841a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bc79e50b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

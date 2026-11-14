@@ -9835,3 +9835,6 @@
 | `CYCLE-20261114-UZ39` | `2026-11-14T12:57:43.461Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3556` | Yes (`5ad6a3fb...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T12:58:14.378Z` | `hf-argmaxinc-whisperkit-coreml` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-53B3E45E` [Domain D] | Yes (`35bcc224...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T12:58:48.306Z` | `trufflesecurity-trufflehog` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8A33F79B` [Domain D] | Yes (`9c2e4bc5...`) |
+| `CYCLE-20261114-Z6VV` | `2026-11-14T13:28:59.803Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`e2ab85eb...`) |
+| `CYCLE-20261114-ZDJL` | `2026-11-14T13:29:08.433Z` | `dosco/graphjin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8489` | Yes (`a8f2e519...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T13:29:45.426Z` | `hf-qwen-qwen3-8b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-33F233D7` [Domain D] | Yes (`9d143328...`) |

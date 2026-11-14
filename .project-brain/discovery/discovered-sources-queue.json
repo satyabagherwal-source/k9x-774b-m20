@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T12:58:48.580Z",
+  "updated_at": "2026-11-14T13:29:45.868Z",
   "stats": {
-    "total_discovered": 3235,
-    "approved_pending_harvest": 3030,
+    "total_discovered": 3238,
+    "approved_pending_harvest": 3033,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3024,
+      "COMMUNITY_AND_EXPERT": 3027,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -69755,6 +69755,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
         "fileName": "trufflesecurity-trufflehog-learnings.md"
+      }
+    },
+    "SRC-3527D355EA6A": {
+      "id": "SRC-3527D355EA6A",
+      "url": "https://huggingface.co/Qwen/Qwen3-8B",
+      "title": "https://huggingface.co/Qwen/Qwen3-8B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T13:29:45.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
+        "fileName": "hf-qwen-qwen3-8b-learnings.md"
+      }
+    },
+    "SRC-50A51657A66A": {
+      "id": "SRC-50A51657A66A",
+      "url": "https://github.com/dosco/graphjin",
+      "title": "https://github.com/dosco/graphjin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T13:29:45.826Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-B38E4FD67BB8": {
+      "id": "SRC-B38E4FD67BB8",
+      "url": "https://graphjin.com/",
+      "title": "https://graphjin.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T13:29:45.868Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
       }
     }
   }

@@ -612108,3 +612108,114 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `9e6e2e23` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8489. expose columns of Postgres functions returning table rows (Harvested from dosco/graphjin)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "expose columns of Postgres functions returning table rows",
+  "source": "dosco/graphjin",
+  "source_url": "https://github.com/dosco/graphjin",
+  "source_version": "3fc0975a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-14T13:29:07.951Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dosco-graphjin",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dosco/graphjin](https://github.com/dosco/graphjin) (Revision: `3fc0975a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `core/internal/introspection/sql/postgres_functions.sql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `bc79e50b`: introspection): expose columns of Postgres functions returning table rows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/internal/introspection/sql/postgres_functions.sql`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+WITH row_type_routines AS (
+	-- Functions whose result is a row type: RETURNS [SETOF] tbl, RETURNS [SETOF]
+	-- composite_type and RETURNS TABLE (LIKE tbl).
+	SELECT r.specific_name,
+		t.typrelid
+	FROM information_schema.routines r
+		JOIN pg_catalog.pg_namespace n ON n.nspname = r.type_udt_schema
+		JOIN pg_catalog.pg_type t ON t.typnamespace = n.oid
+		AND t.typname = r.type_udt_name
+	WHERE r.routine_type = 'FUNCTION'
+		AND r.data_type = 'USER-DEFINED'
+		AND t.typrelid != 0
+)
+	-- The single OUT parameter of a row type function holds the whole row.
+	-- Postgres expands it into the row's columns, returned by the SELECT below.
+	AND NOT (
+		p.parameter_mode = 'OUT'
+		AND r.specific_name IN (
+			SELECT specific_name
+			FROM row_type_routines
+		)
+	)
+	f.attnum as param_id,
+	f.attname as param_name,
+	pg_catalog.format_type(f.atttypid, f.atttypmod) as param_type,
+	JOIN row_type_routines rt ON rt.specific_name = r.specific_name
+	JOIN pg_catalog.pg_attribute f ON f.attrelid = rt.typrelid
+WHERE f.attnum > 0
+	AND f.attisdropped = false
+	);
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	a.ordinal_position as param_id,
+	COALESCE(
+		a.attribute_name,
+		CAST(a.ordinal_position as CHAR(3))
+	) as param_name,
+	a.data_type as param_type,
+	RIGHT JOIN information_schema.attributes a ON (
+		r.data_type = 'USER-DEFINED'
+		AND a.udt_schema = r.type_udt_schema
+		AND a.udt_name = r.type_udt_name
+	)
+WHERE r.routine_type = 'FUNCTION'
+	);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `bc79e50b` are properly handled with clean fallback behavior.

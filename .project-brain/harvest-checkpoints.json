@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T12:57:43.473Z",
+  "last_updated": "2026-11-14T13:29:08.449Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1610,14 +1610,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
-      "content_hash": "0fdbfdc34a5f2292da0b34cb2d3c0e3f15ed82b5b3c174f4fa13a27fd07dd0b8",
-      "verified_at": "2026-11-09T03:50:06.739Z",
+      "content_hash": "e2ab85eb99f87c7cb7e6d06a8e333f2bf11747f7edfb5513efff42ca7db3c02b",
+      "verified_at": "2026-11-14T13:28:59.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T03:50:06.739Z"
+      "last_updated": "2026-11-14T13:28:59.818Z"
     },
     "google/vit-base-patch16-224": {
       "repository": "google/vit-base-patch16-224",
@@ -5661,14 +5661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-graphjin",
-      "content_hash": "eb3cda7286b88dcff98a1485333b36d3539e12c7af70244c2f0bc8e40ba27eda",
-      "verified_at": "2026-11-08T00:49:08.063Z",
+      "content_hash": "a8f2e5192cef221c735fc79cfa514ae0b7a2131779085265958c90a6f48e115d",
+      "verified_at": "2026-11-14T13:29:08.448Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T00:49:08.063Z"
+      "last_updated": "2026-11-14T13:29:08.448Z"
     },
     "gravitl/netmaker": {
       "repository": "gravitl/netmaker",

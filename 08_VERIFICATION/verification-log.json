@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-WMIX",
-    "timestamp": "2026-11-13T13:11:20.073Z",
-    "repository": "apache/incubator-pegasus",
-    "learningId": "learn-github-apache-incubator-pegasus",
-    "contentHash": "ac801a7cb05af2396369c4135aaa12e9572ff54b63c2d293291ee448abdb0b8b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-8BOC",
-    "timestamp": "2026-11-13T13:20:25.884Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "974320fd1c7d99aaf3e702380d2e0e0c48b5417541ad9f8d67e86029102b1931",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-8LTQ",
     "timestamp": "2026-11-13T13:20:39.038Z",
     "repository": "ClementTsang/bottom",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "5ad6a3fb093a824e03a87d8d0ae390eb8305dad382be63d4f294141791fb3ac6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-Z6VV",
+    "timestamp": "2026-11-14T13:28:59.803Z",
+    "repository": "Qwen/Qwen3-8B",
+    "learningId": "learn-huggingface-qwen-qwen3-8b",
+    "contentHash": "e2ab85eb99f87c7cb7e6d06a8e333f2bf11747f7edfb5513efff42ca7db3c02b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-ZDJL",
+    "timestamp": "2026-11-14T13:29:08.433Z",
+    "repository": "dosco/graphjin",
+    "learningId": "learn-github-dosco-graphjin",
+    "contentHash": "a8f2e5192cef221c735fc79cfa514ae0b7a2131779085265958c90a6f48e115d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

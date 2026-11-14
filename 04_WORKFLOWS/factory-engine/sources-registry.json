@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T12:57:46.473Z",
-    "lastVerified": "2026-11-14T12:57:46.473Z",
+    "lastChecked": "2026-11-14T13:29:11.568Z",
+    "lastVerified": "2026-11-14T13:29:11.568Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-14T11:29:10.940Z",
-    "lastVerified": "2026-11-14T11:29:10.940Z",
+    "lastChecked": "2026-11-14T13:29:11.282Z",
+    "lastVerified": "2026-11-14T13:29:11.282Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2353,12 +2353,12 @@
     "revisionIdentifier": "8152c961"
   },
   "tailscale-tailscale": {
-    "name": "tailscale/tailscale",
+    "name": "tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T03:32:24.749Z",
-    "lastVerified": "2026-11-14T03:32:24.749Z",
+    "lastChecked": "2026-11-14T13:29:06.168Z",
+    "lastVerified": "2026-11-14T13:29:06.168Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2367,7 +2367,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0d822c9d"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -4083,22 +4084,21 @@
     "lastVerified": "2026-11-14T05:03:52.481Z"
   },
   "dosco-graphjin": {
-    "name": "graphjin",
+    "name": "dosco/graphjin",
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T09:31:15.532Z",
-    "lastVerified": "2026-11-13T09:31:15.532Z",
+    "lastChecked": "2026-11-14T13:29:07.399Z",
+    "lastVerified": "2026-11-14T13:29:07.399Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-graphjin",
-    "contentHash": "eb3cda7286b88dcff98a1485333b36d3539e12c7af70244c2f0bc8e40ba27eda",
+    "contentHash": "a8f2e5192cef221c735fc79cfa514ae0b7a2131779085265958c90a6f48e115d",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5914e90e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "seekstorm-seekstorm": {
     "name": "SeekStorm",
@@ -5482,9 +5482,9 @@
   "react-native-modal-react-native-modal": {
     "name": "react-native-modal",
     "officialUrl": "https://github.com/react-native-modal/react-native-modal",
-    "lastChecked": "2026-11-10T04:44:21.194Z",
+    "lastChecked": "2026-11-14T13:29:01.228Z",
     "revisionIdentifier": "3e413c4c",
-    "lastVerified": "2026-11-10T04:44:21.194Z"
+    "lastVerified": "2026-11-14T13:29:01.228Z"
   },
   "saltstack-salt": {
     "name": "salt",
@@ -5772,8 +5772,8 @@
     "officialUrl": "https://github.com/sfu-db/connector-x",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T07:55:11.444Z",
-    "lastVerified": "2026-11-13T07:55:11.444Z",
+    "lastChecked": "2026-11-14T13:29:08.813Z",
+    "lastVerified": "2026-11-14T13:29:08.813Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sfu-db-connector-x",
@@ -7045,12 +7045,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T03:50:05.758Z",
-    "lastVerified": "2026-11-09T03:50:05.758Z",
+    "lastChecked": "2026-11-14T13:28:59.167Z",
+    "lastVerified": "2026-11-14T13:28:59.167Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "0fdbfdc34a5f2292da0b34cb2d3c0e3f15ed82b5b3c174f4fa13a27fd07dd0b8",
+    "contentHash": "e2ab85eb99f87c7cb7e6d06a8e333f2bf11747f7edfb5513efff42ca7db3c02b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8516,9 +8516,9 @@
   "atanunq-viu": {
     "name": "viu",
     "officialUrl": "https://github.com/atanunq/viu",
-    "lastChecked": "2026-11-13T00:43:05.595Z",
+    "lastChecked": "2026-11-14T13:28:56.316Z",
     "revisionIdentifier": "5733be5f",
-    "lastVerified": "2026-11-13T00:43:05.595Z"
+    "lastVerified": "2026-11-14T13:28:56.316Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "ConwayResearch/Underdog-Saluki-27B-1.0",

@@ -9868,3 +9868,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `41394de4` | Multi-dimensional audit evidence | 2026-11-14T12:57:43.464Z |
 | `learn-dom-d-53b3e45e` | `project://hf-argmaxinc-whisperkit-coreml` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | 2026-11-14T12:58:14.378Z |
 | `learn-dom-d-8a33f79b` | `project://trufflesecurity-trufflehog` | `72cae0fb` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | 2026-11-14T12:58:48.306Z |
+| `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-14T13:28:59.808Z |
+| `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `3fc0975a` | Multi-dimensional audit evidence | 2026-11-14T13:29:08.438Z |
+| `learn-dom-d-33f233d7` | `project://hf-qwen-qwen3-8b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | 2026-11-14T13:29:45.426Z |

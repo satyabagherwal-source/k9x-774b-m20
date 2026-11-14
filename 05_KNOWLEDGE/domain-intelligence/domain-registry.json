@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T12:58:49.646Z",
-  "total_records": 675,
+  "last_updated": "2026-11-14T13:29:46.893Z",
+  "total_records": 680,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 330,
+      "total": 335,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -367,7 +367,12 @@
         "domain_intelligence-research-knowledge-intelligence-argmaxinc-whisperkit-coreml-core-invariants",
         "DOM-D-53B3E45E",
         "domain_intelligence-research-knowledge-intelligence-hf-argmaxinc-whisperkit-coreml-learnings-core-in",
-        "DOM-D-8A33F79B"
+        "DOM-D-8A33F79B",
+        "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-core-invariants",
+        "DOM-D-33F233D7",
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8b-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-learnings-core-invariants"
       ]
     },
     "E": {
@@ -13466,8 +13471,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "cef6d8c9fb333f105d9e96bc3a4574189ed3a3332de57552740778797bb8e80f",
-      "created_at": "2026-11-14T09:53:26.458Z"
+      "content_hash": "77875e0abdfa9bdc890b0958539adac1264d4174e9e5a41f5c46821c392b5dce",
+      "created_at": "2026-11-14T13:29:46.893Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -14206,6 +14211,84 @@
       "repository": "nucleoidai-nucleoid-learnings",
       "content_hash": "e78270d05686dc105ee9e441c9009f4a3bd9404d5a141a045b71bdeb6374f4d0",
       "created_at": "2026-11-14T12:58:49.646Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3-8B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8b-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants.md",
+      "repository": "Qwen/Qwen3-8B",
+      "content_hash": "0c921a446efafc05a07c4648efdc9dc1081b4e55b5d826764eb3f1b640a2ad1d",
+      "created_at": "2026-11-14T13:29:00.001Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: dosco/graphjin Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-graphjin-core-invariants.md",
+      "repository": "dosco/graphjin",
+      "content_hash": "81b32dff5c36915f1cc476396622d7f87aa6c7d91c2c312b1fc31a4ac8311baf",
+      "created_at": "2026-11-14T13:29:08.782Z"
+    },
+    "DOM-D-33F233D7": {
+      "record_id": "DOM-D-33F233D7",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Qwen/Qwen3-8B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Qwen/Qwen3-8B](https://huggingface.co/Qwen/Qwen3-8B))  \n> **Source Version**: `hf-qwen-qwen`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clone-str",
+      "content_hash": "9d14332857bbf83670507fe0b7b08bfa7a669c993cc39bf890524af27e932e1d",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/",
+      "provenance": {
+        "source_uri": "project://hf-qwen-qwen3-8b/hf-qwen-qwen3-8b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T13:29:11.680Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-qwen-qwen3-8b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-qwen-qwen3-8b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T13:29:45.404Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-8b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-8b-lear.md",
+      "repository": "hf-qwen-qwen3-8b-learnings",
+      "content_hash": "b89fadc2f6c6129a591eba5bed56ecef28a3f0634ff9713901b826c266a9b669",
+      "created_at": "2026-11-14T13:29:45.663Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-graphjin-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-learnings-research-knowledge-intelligence-dosco-graphjin-learning.md",
+      "repository": "dosco-graphjin-learnings",
+      "content_hash": "7fa9e76fc35ed225c45a8e7fc271558caec13671e50e20ea7d12319d0baaf0bc",
+      "created_at": "2026-11-14T13:29:46.220Z"
     }
   }
 }

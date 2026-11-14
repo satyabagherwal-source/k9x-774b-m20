@@ -1225,8 +1225,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceVersion": "hf-qwen-qwen3-8b",
     "license": "Open-Source",
-    "contentHash": "0fdbfdc34a5f2292da0b34cb2d3c0e3f15ed82b5b3c174f4fa13a27fd07dd0b8",
-    "lastHarvestedAt": "2026-11-09T03:50:06.730Z",
+    "contentHash": "e2ab85eb99f87c7cb7e6d06a8e333f2bf11747f7edfb5513efff42ca7db3c02b",
+    "lastHarvestedAt": "2026-11-14T13:28:59.808Z",
     "learningId": "learn-huggingface-qwen-qwen3-8b"
   },
   "hf-google-vit-base-patch16-224": {
@@ -3693,10 +3693,10 @@
     "repository": "dosco/graphjin",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "5914e90e",
+    "sourceVersion": "3fc0975a",
     "license": "Apache-2.0",
-    "contentHash": "eb3cda7286b88dcff98a1485333b36d3539e12c7af70244c2f0bc8e40ba27eda",
-    "lastHarvestedAt": "2026-11-08T00:49:08.046Z",
+    "contentHash": "a8f2e5192cef221c735fc79cfa514ae0b7a2131779085265958c90a6f48e115d",
+    "lastHarvestedAt": "2026-11-14T13:29:08.438Z",
     "learningId": "learn-github-dosco-graphjin"
   },
   "gravitl-netmaker": {
