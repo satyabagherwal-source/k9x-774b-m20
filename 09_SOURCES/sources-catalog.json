@@ -665,8 +665,8 @@
     "sourceUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceVersion": "hf-google-embeddinggemma-2",
     "license": "Open-Source",
-    "contentHash": "605c2d537d47920bc57a506e1a9ad7f3cf45f05ff100123e5b7088d92d2b7a86",
-    "lastHarvestedAt": "2026-11-09T06:05:21.795Z",
+    "contentHash": "857ae9e371ea27abd2f4371d198d8b20fd52abfce1a083ef03c0a90648093bb6",
+    "lastHarvestedAt": "2026-11-14T17:24:44.468Z",
     "learningId": "learn-huggingface-google-embeddinggemma-2"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "45e1372f",
+    "sourceVersion": "d78be6c8",
     "license": "MIT",
-    "contentHash": "8bb0e7571a44df184df7b0193cc6fb5490d63c0d6a1f2dbdfb3d896ad590adc2",
-    "lastHarvestedAt": "2026-11-11T07:37:55.682Z",
+    "contentHash": "6c83fe52f31a89d5da10e3027928a771904ccf987413e3da1450d2a04f6bc4b1",
+    "lastHarvestedAt": "2026-11-14T17:24:51.817Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "9b4fe902",
+    "sourceVersion": "d5c3f174",
     "license": "Apache-2.0",
-    "contentHash": "452ef02699b6af4602a13281f1fa293e0e4d0d4acc3969b25064b514f9289a22",
-    "lastHarvestedAt": "2026-11-13T03:26:24.568Z",
+    "contentHash": "7a148fe4bbf963965d0cd44f9a882710eeb75b20cb17034a385b8f80d915b9e3",
+    "lastHarvestedAt": "2026-11-14T17:24:46.334Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "b09fec33",
+    "sourceVersion": "c31a588a",
     "license": "Apache-2.0",
-    "contentHash": "a37300ee698820d98dedb5a2c19668dc7f1be9f3edfdb964674fbf4bf79aaf29",
-    "lastHarvestedAt": "2026-11-13T11:55:45.272Z",
+    "contentHash": "c0e309c3bad79191411b62dc1985922f4a8bdd90e44bc2d9312d082c45d05dac",
+    "lastHarvestedAt": "2026-11-14T17:24:59.505Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

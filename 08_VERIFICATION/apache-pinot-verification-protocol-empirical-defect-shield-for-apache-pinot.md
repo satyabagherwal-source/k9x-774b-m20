@@ -4,45 +4,31 @@
 {
   "source_repository": "apache/pinot",
   "source_url": "https://github.com/apache/pinot",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "c31a588a",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T17:24:59.637Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-apache-pinot",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `c31a588a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T17:24:59.637Z`  
+> **Learning ID**: `learn-github-apache-pinot`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `apache/pinot` (Commit: `historical`)
+- **Target Repository**: `apache/pinot` (Commit: `c31a588a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
-> **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Source Version**: `18e46648`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T04:50:26.941Z  
-> **Learning ID**: `learn-github-apache-pinot`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): apache/pinot
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T04:50:26.930Z  
+> **Harvest Timestamp**: 2026-11-14T17:24:58.873Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Apache Pinot: a real-time analytics database for low-latency SQL and vector search, serving user-facing and agent-facing applications
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6171 stars
+- **Stars / Engagement**: 6177 stars
 
 ---
 
@@ -1997,15 +1983,13 @@ const syncTableSchemaData = (data, showFieldType) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20228** (2026-11-13): **Fix sketch accumulator initialization, tuple sizing, and KLL null handling**
+  *Symptoms*: Fix the tuple sketch failure exposed by #20227, related sketch lifecycle bugs, an underestimated tuple serialization bound, and KLL deserialization of null or unused rows.  - Require query configuration when constructing tuple, CPC, and Theta accumulators. Remove no-argument constructors, parameter setters, and repeated configuration restoration during merge and final-result extraction. Configuration fields and the accumulation threshold are final. - Seed deserialized accumulators directly with the received sketch, preserving its bytes even when the threshold is one. Return a single pending sketch before initializing a union; subsequent merges use the receiving query's configuration. Serialized formats are unchanged. - Correct the integer tuple sketch size bound to include the summary's mode byte and round nominal entries as DataSketches does. This prevents under-allocation in raw index writers. - Deserialize KLL BYTES only for included, non-null rows, once per row for MV group-by. Null placeholders and unused backing-array entries are no longer passed to DataSketches. - Simplify accumulator lifecycle comments, document thread safety, and remove the unsupported claim that tuple union supports Theta's ordered-sketch early-stop optimization.  The dependency stays at 9.0.0 so these fixes can merge independently of #20227.  Release note: tables using integer tuple sketch aggregation with `aggregateMetrics` reserve more space per tuple value in the real-time raw forward index. At 
+
 - **Issue #20218** (2026-11-11): **Fix port reuse in ServerTableSizeReaderTest**
   *Symptoms*: ServerTableSizeReaderTest chose the unavailable server's port before starting all mock HTTP servers. Since findUnusedPort() releases its socket, a later mock server could receive the same port, causing testServerSizesErrors to fail in HashBiMap.put() with a duplicate endpoint before invoking the reader.  Choose the unused port after all mock servers are bound so their endpoints remain distinct. This preserves the existing connection-refused coverage.  Observed in [Pinot Unit Test Set 2](https://github.com/apache/pinot/actions/runs/42871682370/job/130024242709) on #19448; the affected test is unchanged by that PR.  Validation (JDK 25): - ServerTableSizeReaderTest: both tests passed using `./mvnw -pl pinot-controller -am -Ppinot-fastdev -Dtest=ServerTableSizeReaderTest -Dsurefire.failIfNoSpecifiedTests=false -Dmaven.compiler.showDeprecation=true -Dmaven.compiler.showWarnings=true test`. - Controller `spotless:apply`, `checkstyle:check`, `license:format`, and `license:check` passed. 
   **Post-Mortem & Fix Analysis**:
   > ## [Codecov](https://app.codecov.io/gh/apache/pinot/pull/20218?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 70.51%. Comparing base ([`45feee7`](https://app.codecov.io/gh/apache/pinot/commit/45feee7d2d0932e94e19d2488d7a50aafcfdafd6?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)) to head ([`70283d5`](https://app.codecov.io/gh/apache/pinot/commit/70283d5b3d2ecae23df1b0b2d9ad69dd9048be15?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)).  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff              @@ ##             master   #20218      +/-   ## ================================
-
-- **Issue #20216** (2026-11-10): **Fix the Kafka 4.0 plugin test build after the Kafka 4.4 upgrade**
-  *Symptoms*: ## Summary  Since #20185 upgraded Kafka to 4.4.0, `master` fails to compile the Kafka 4.0 plugin tests:  ``` KafkaPartitionLevelConsumerDataLossCheckTest.java:[42,45] cannot find symbol   import static org.apache.kafka.common.record.RecordBatch.NO_TIMESTAMP; ```  Kafka 4.4 moved `RecordBatch` into `org.apache.kafka.common.record.internal`. Every CI job that builds the plugin fails at this step, including unit, integration, quickstart and compatibility, on `master` and on every open PR.  The test now uses the public `ConsumerRecord.NO_TIMESTAMP` constant, which has the same value (-1) and is not internal API. No other code references the moved class.  ## Testing  - `KafkaPartitionLevelConsumerDataLossCheckTest`: 7/7 pass, and the module's tests compile. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/apache/pinot/pull/20216?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 70.51%. Comparing base ([`72bc378`](https://app.codecov.io/gh/apache/pinot/commit/72bc378edc5bf109a6a2c852a86efbd95137278d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)) to head ([`74a6484`](https://app.codecov.io/gh/apache/pinot/commit/74a6484ac205b6e45aaff775ab626ba1cfef965f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=apache)). :warning: Report is 1 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@              Coverage Diff              @@ ##             master  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2022,747 +2006,207 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fd91422b` (2026-11-11)
-**Commit Message**: Evaluate user filters only on the rows that row-level security allows (#20183)
+### Incident Patch 1: `c31a588a` (2026-11-14)
+**Commit Message**: Fix controller authorization for logical table queries (#20167)
 
-* Evaluate user filters only on the rows that row-level security allows
-
-The broker ANDs the row-level security (RLS) filter into the WHERE clause, but
-AndDocIdSet does not always evaluate it first. A user expression could run on
-rows the RLS filter hides, so its errors, its scan stats and its side channels
-showed hidden values. It happened in three ways: ExpressionScanDocIdIterator
-evaluates blocks of 10k documents, a composite child under OR or NOT evaluates
-the whole segment, and the AND of deriveNulls has no restriction push-down.
-
-Server:
-- QueryContextConverterUtils reads the RLS filter from the
-  `rlsFilters-<rawTableName>` query option into QueryContext. A filter that
-  cannot be parsed fails the query.
-- InstancePlanMakerImplV2 optimizes the RLS filter with the table schema
-  (QueryOptimizer#optimizeFilter), as the WHERE copy is optimized, so a policy
-  such as `intCol = 2.0` works.
-- FilterPlanNode wraps the user filter in the new
-  RowLevelSecurityFilterOperator. It materializes the RLS bitmap once per
-  segment, bounds it by the plan's numDocs, ANDs it with the valid-doc
-  snapshot, and ANDs
-
-**File**: `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/BaseSingleStageBrokerRequestHandler.java` (modified, +23/-37)
+**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotQueryResource.java` (modified, +16/-5)
 ```diff
-@@ -593,12 +593,20 @@ protected BrokerResponse doHandleRequest(long requestId, String query, SqlNodeAn
-           serverPinotQuery.setQueryOptions(queryOptions);
-           try {
-             CalciteSqlParser.queryRewrite(serverPinotQuery, RlsFiltersRewriter.class);
-+            // compileRequest() optimized the query before the RLS filter was in its WHERE clause. Optimize it again,
-+            // as the server optimizes its copy of the RLS filter, so that both copies match the same rows.
-+            _queryOptimizer.optimize(serverPinotQuery, schema);
-             rlsFiltersApplied.set(true);
-             _brokerMetrics.addMeteredTableValue(rawTableName, BrokerMeter.RLS_FILTERS_APPLIED, 1);
-           } catch (Exception e) {
--            LOGGER.error(
--                "Unable to apply RLS filter: {}. Row-level security filtering will be disabled for this query.",
--                RlsFiltersRewriter.class.getName(), e);
-+            // Fail closed: the query must not run without its row-level security filter. Do not put the filter or
-+            // the parse error in the response, because they can show the RLS policy to the user.
-+            LOGGER.error("Unable to apply the RLS filter for request {} on table {}. Failing the query.", requestId,
-+                rawTableName, e);
-+            _brokerMetrics.addMeteredTableValue(rawTableName, BrokerMeter.QUERY_VALIDATION_EXCEPTIONS, 1);
-+            requestContext.setErrorCode(QueryErrorCode.QUERY_VALIDATION);
-+            return new BrokerResponseNative(QueryErrorCode.QUERY_VALIDATION,
-+                "Cannot apply the row-level security filter for table: " + rawTableName);
-           }
-         }
+@@ -710,12 +710,23 @@ private StreamingOutput getQueryResponse(String query, SqlNodeAndOptions sqlNode
+         throw QueryErrorCode.SQL_PARSING.asException(e);
        }
-@@ -640,7 +648,11 @@ protected BrokerResponse doHandleRequest(long requestId, String query, SqlNodeAn
-     /// Per-query opt-out (default true). A user — or the MV minion executor for its own
-     /// materialization query — sets `enableMaterializedViewRewrite=false` to force the base-table
-     /// path and avoid rewriting a materialization query back onto an MV.
--    if (_materializedViewHandler != null
-+    /// A query with a row-level security (RLS) filter is never rewritten. The server applies the RLS filter from the
-+    /// `rlsFilters-<rawTableName>` query option, so after a swap to the MV it would find no RLS filter for the MV
-+    /// table, and the user expressions would run on the rows that the RLS filter hides.
-+    // TODO: Support the MV rewrite under RLS (the MV can lack the columns of the RLS filter)
-+    if (_materializedViewHandler != null && !rlsFiltersApplied.get()
-         && QueryOptionsUtils.isMaterializedViewRewriteEnabled(serverPinotQuery.getQueryOptions())) {
-       MaterializedViewCompileOutcome outcome = applyMaterializedViewRewriteAtCompile(
-           requestId, serverPinotQuery, tableName, rawTableName, schema, _tableCache.isIgnoreCase());
-@@ -1118,6 +1130,9 @@ protected BrokerResponse doHandleRequest(long requestId, String query, SqlNodeAn
-         new QueryLogger.QueryLogParams(requestContext, tableName, brokerResponse,
-             QueryLogger.QueryLogParams.QueryEngine.SINGLE_STAGE, requesterIdentity, serverStats, workloadName),
-         queryWasLogged);
-+    if (rlsFiltersApplied.get()) {
-+      RlsResponseUtils.hideTableLayoutStats(brokerResponse);
-+    }
- 
-     return brokerResponse;
-   }
-@@ -1437,30 +1452,6 @@ private MaterializedViewCompileOutcome applyMaterializedViewRewriteAtCompile(lon
-         rewrittenServerQuery, rewrittenTableName, rewrittenRawTableName, rewrittenSchema, materializedViewContext);
-   }
- 
--  /// Apply row-level security filters to `serverPinotQuery`.  When the accessor returns RLS rules
--  /// for `rawTableName`, the rewriter appends them to the query's WHERE clause and stamps a
--  /// `rlsFilters-<rawTableName>` entry in `queryOptions` — the marker the caller later reads to
--  /// stamp `rlsFiltersApplied` on the broker response.
--  private void applyRlsFilters(long requestId, String query, PinotQuery serverPinotQuery, String rawTableName,
--      @Nullable RequesterIdentity requesterIdentity, AccessControl accessControl) {
--    TableRowColAccessResult rlsFilters = accessControl.getRowColFilters(requesterIdentity, rawTableName);
--    List<String> rowFilters = rlsFilters.getRLSFilters().orElse(null);
--    if (CollectionUtils.isEmpty(rowFilters)) {
--      return;
--    }
+     }
+-    String rawTableName = TableNameBuilder.extractRawTableName(tableName);
 -
--    Map<String, String> queryOptions =
--        serverPinotQuery.getQueryOptions() == null ? new HashMap<>() : serverPinotQuery.getQueryOptions();
--    String combinedFilters =
--        rowFilters.stream().map(filter -> "( " + filter + " )").collect(Collectors.joining(" AND "));
--    queryOptions.put(RlsUtils.buildRlsFilterKey(rawTableName), combinedFilters);
--    serverPinotQuery.setQueryOptions(queryOptions);
--    CalciteSqlParser.queryRewrite(serverPinotQuery, RlsFiltersRewriter.class);
--    _brokerMetrics.addMeteredTableValue(rawTableName, BrokerMeter.RLS_FILTERS_APPLIED, 1);
--    LOGGER.debug("Applied RLS filters for r
-```
-
-**File**: `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/MultiStageBrokerRequestHandler.java` (modified, +3/-0)
-```diff
-@@ -1124,6 +1124,9 @@ private BrokerResponse query(QueryEnvironment.CompiledQuery query, long requestI
-           new QueryLogger.QueryLogParams(requestContext, tableNames.toString(), brokerResponse,
-               QueryLogger.QueryLogParams.QueryEngine.MULTI_STAGE, requesterIdentity, null, workloadName),
-           queryWasLogged);
-+      if (rlsFiltersApplied) {
-+        RlsResponseUtils.hideTableLayoutStats(brokerResponse);
+-    // Validate data access
++    TableCache tableCache = _pinotHelixResourceManager.getTableCache();
++    String logicalTableName = tableCache.getActualLogicalTableName(tableName);
++    LogicalTableConfig logicalTableConfig =
++        logicalTableName != null ? tableCache.getLogicalTableConfig(logicalTableName) : null;
++    String rawTableName = TableNameBuilder.extractRawTableName(
++        logicalTableConfig != null ? logicalTableName : tableName);
++
++    // Authorize every physical table of a logical query, matching the broker's table-level check.
++    Set<String> tablesToAuthorize = logicalTableConfig != null
++        ? logicalTableConfig.getPhysicalTableConfigMap().keySet()
++        : Set.of(rawTableName);
+     AccessControl accessControl = _accessControlFactory.create();
+-    if (!accessControl.hasAccess(rawTableName, AccessType.READ, httpHeaders, Actions.Table.QUERY)) {
+-      throw QueryErrorCode.ACCESS_DENIED.asException();
++    for (String tableToAuthorize : tablesToAuthorize) {
++      if (!accessControl.hasAccess(TableNameBuilder.extractRawTableName(tableToAuthorize), AccessType.READ,
++          httpHeaders, Actions.Table.QUERY)) {
++        throw QueryErrorCode.ACCESS_DENIED.asException();
 +      }
+     }
  
-       return brokerResponse;
-     } finally {
+     // Get brokers for the resource table.
 ```
 
-**File**: `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/RlsResponseUtils.java` (added, +72/-0)
+**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/api/resources/PinotQueryResourceTest.java` (modified, +149/-1)
 ```diff
-@@ -0,0 +1,72 @@
-+/**
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *   http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing,
-+ * software distributed under the License is distributed on an
-+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+ * KIND, either express or implied.  See the License for the
-+ * specific language governing permissions and limitations
-+ * under the License.
-+ */
-+package org.apache.pinot.broker.requesthandler;
-+
-+import java.util.List;
-+import org.apache.pinot.common.response.BrokerResponse;
-+import org.apache.pinot.common.response.broker.BrokerResponseNative;
-+import org.apache.pinot.common.response.broker.BrokerResponseNativeV2;
-+import org.apache.pinot.common.response.broker.BrokerResponseNativeV2.StatKey;
-+
-+
-+/// Response handling for queries with a row-level security (RLS) filter.
-+///
-+/// Stateless and thread-safe.
-+public class RlsResponseUtils {
-+  /// The multi-stage stats that show the layout of the whole table.
-+  private static final List<StatKey> TABLE_LAYOUT_STAT_KEYS = List.of(StatKey.TOTAL_DOCS,
-+      StatKey.NUM_SEGMENTS_QUERIED, StatKey.NUM_SEGMENTS_PROCESSED, StatKey.NUM_SEGMENTS_MATCHED,
-+      StatKey.NUM_CONSUMING_SEGMENTS_QUERIED, StatKey.NUM_CONSUMING_SEGMENTS_PROCESSED,
-+      StatKey.NUM_CONSUMING_SEGMENTS_MATCHED, StatKey.NUM_SEGMENTS_PRUNED_BY_BROKER,
-+      StatKey.NUM_SEGMENTS_PRUNED_BY_SERVER, StatKey.NUM_SEGMENTS_PRUNED_INVALID, StatKey.NUM_SEGMENTS_PRUNED_BY_LIMIT,
-+      StatKey.NUM_SEGMENTS_PRUNED_BY_VALUE);
-+
-+  private RlsResponseUtils() {
+@@ -21,6 +21,7 @@
+ import com.fasterxml.jackson.databind.node.ObjectNode;
+ import java.io.ByteArrayOutputStream;
+ import java.util.ArrayList;
++import java.util.LinkedHashMap;
+ import java.util.List;
+ import java.util.Map;
+ import javax.annotation.Nullable;
+@@ -44,6 +45,8 @@
+ import org.apache.pinot.core.auth.Actions;
+ import org.apache.pinot.core.auth.TargetType;
+ import org.apache.pinot.core.query.executor.sql.SqlQueryExecutor;
++import org.apache.pinot.spi.data.LogicalTableConfig;
++import org.apache.pinot.spi.data.PhysicalTableConfig;
+ import org.apache.pinot.spi.data.Schema;
+ import org.apache.pinot.spi.env.PinotConfiguration;
+ import org.apache.pinot.spi.exception.QueryErrorCode;
+@@ -628,10 +631,15 @@ private void unauthenticatedAccessControl() {
+   /// Installs the controller's basic auth, as an operator configures it, with a single principal scoped to table `t`
+   /// (`BASIC_AUTH_PRINCIPAL` with `BASIC_AUTH_PASSWORD`) and the given comma-separated permissions.
+   private void tableScopedBasicAuth(String permissions) {
++    tableScopedBasicAuth(permissions, "t");
 +  }
 +
-+  /// Sets to 0 the stats that show the layout of the whole table: the total number of documents, and the number of
-+  /// segments queried, processed, matched and pruned. A table that holds only the rows of the tenant has a different
-+  /// layout, so these values cannot be emulated.
-+  ///
-+  /// A new server already leaves these stats out under RLS. The broker also hides them, for an old server.
-+  ///
-+  /// Call this after the broker logs the query, so that the broker query log keeps the real values.
-+  public static void hideTableLayoutStats(BrokerResponse brokerResponse) {
-+    if (brokerResponse instanceof BrokerResponseNative) {
-+      BrokerResponseNative response = (BrokerResponseNative) brokerResponse;
-+      response.setTotalDocs(0);
-+      response.setNumSegmentsQueried(0);
-+      response.setNumSegmentsProcessed(0);
-+      response.setNumSegmentsMatched(0);
-+      response.setNumConsumingSegmentsQueried(0);
-+      response.setNumConsumingSegmentsProcessed(0);
-+      response.setNumConsumingSegmentsMatched(0);
-+      response.setNumSegmentsPrunedByBroker(0);
-+      response.setNumSegmentsPrunedByServer(0);
-+      response.setNumSegmentsPrunedInvalid(0);
-+      response.setNumSegmentsPrunedByLimit(0);
-+      response.setNumSegmentsPrunedByValue(0);
-+    } else if (brokerResponse instanceof BrokerResponseNativeV2) {
-+      BrokerResponseNativeV2 response = (BrokerResponseNativeV2) brokerResponse;
-+      for (StatKey key : TABLE_LAYOUT_STAT_KEYS) {
-+        response.removeBrokerStat(key);
++  /// Installs basic auth with the given comma-separated permissions and table grants.
++  private void tableScopedBasicAuth(String permissions, String tables) {
+     String principal = BASIC_AUTH_PRINCIPALS_PREFIX + "." + BASIC_AUTH_PRINCIPAL;
+     BasicAuthAccessControlFactory factory = new BasicAuthAccessControlFactory();
+     factory.init(new PinotConfiguration(Map.of(BASIC_AUTH_PRINCIPALS_PREFIX, BASIC_AUTH_PRINCIPAL,
+-        principal + ".password", BASIC_AUTH_PASSWORD, principal + ".tables", "t",
++        principal + ".password", BASIC_AUTH_PASSWORD, principal + ".tables", tables,
+         principal + ".permissions", permissions)));
+     when(_accessControlFactory.create()).thenReturn(factory.create());
+   }
+@@ -778,6 +786,146 @@ public void testRejectedSqlOptionsFailBeforeRouting() {
+     Assert.assertTrue(response.contains("useMultistageEngine"), response);
+   }
+ 
++  @DataProvider
++  public Object[][] logicalTablePhysicalTables() {
++    return new Object[][]{
++        {Map.of("t_OFFLINE", new PhysicalTableConfig())},
++        {Map.of("t_REALTIME", new PhysicalTableConfig())},
++        {Map.of("t_OFFLINE", new PhysicalTableConfig(), "t_REALTIME", new PhysicalTableConfig())}
++    };
++  }
++
++  @Test(dataProvider = "logicalTablePhysicalTables")
++  public void testLogicalQueryAllowsReadAccessToPhysicalTables(Map<String, PhysicalTableConfig> physicalTables) {
++    tableScopedBasicAuth("read");
++    mockLogicalTable("lt", physicalTables);
++
++    String response = postSql("SELECT COUNT(*) FROM lt", null, basicAuthHeaders(BASIC_AUTH_PASSWORD));
++
++    // No broker is registered by this unit test. Reaching broker selection proves that the physical-table grant
++    // passed authorization even though the principal is not granted the logical name.
++    assertTrue(response.contains(String.valueOf(QueryErrorCode.BROKER_RESOURCE_MISSING.getId())), response);
++    verify(_resourceManager).getBrokerInstancesFor("lt");
++  }
++
++  @DataProvider
++  public Object[][] multiTableLogicalQueryPermissions() {
++    Object[][] permissionCases = {
++        {"table1,table2", true},
++        {"table1", false},
++        {"table2", false},
++        {"unrelated", false},
++        {"lt", false},
++        {"lt,table1", false},
++        {"lt,table2", false}
++    };
++    List<Object[]> cases = new ArrayList<>();
++    for (Map<String, PhysicalTableConfig> physicalTables : List.of(
++        Map.of("table1_OFFLINE", new PhysicalTableConfig(), "table2_OFFLINE", new PhysicalTableConfig()),
++        Map.of("table1_REALTIME", new PhysicalTableConfig(), "table2_REALTIME", new PhysicalTableConfig()),
++        Map.of("table1_OFFLINE", new PhysicalTableConfig(), "table2_REALTIME", new PhysicalTableConfig()))) {
++      for (Object[] permissionCase : permissionCases) {
++        cases.add(new Object[]{physicalTables, permissionCase[0], permissionCase[1]});
 +      }
 +    }
++
++    // Keep the order stable to test denials at the first, middle, and last physical table.
++    Map<String, PhysicalTableConfig> threePhysicalTables = new LinkedHashMap<>();
++    threePhysicalTables.put("table1_OFFLINE", new PhysicalTableConfig());
++    threePhysicalTables.put("table2_OFFLINE", new PhysicalTableConfig());
++    threePhysicalTables.put("table3_OFFLINE", new PhysicalTableConfig());
++    cases.add(new Object[]{threePhysicalTables, "table1,table2,table3", true});
++    cases.add(new Object[]{threePhysicalTables, "table2,table3", false});
++    cases.add(new Object[]{threePhysicalTables, "table1,table3", false});
++    cases.add(new Object[]{threePhysicalTables, "table1,table2", false});
++    return cases.toArray(Object[][]::new);
 +  }
-+}
-```
-
-**File**: `pinot-broker/src/test/java/org/apache/pinot/broker/requesthandler/BaseSingleStageBrokerRequestHandlerTest.java` (modified, +170/-15)
-```diff
-@@ -44,6 +44,7 @@
- import org.apache.pinot.broker.queryquota.QueryQuotaManager;
- import org.apache.pinot.broker.routing.manager.BrokerRoutingManager;
- import org.apache.pinot.common.config.provider.TableCache;
-+import org.apache.pinot.common.metrics.BrokerMeter;
- import org.apache.pinot.common.metrics.BrokerMetrics;
- import org.apache.pinot.common.request.BrokerRequest;
- import org.apache.pinot.common.request.Expression;
-@@ -92,6 +93,7 @@
- import org.apache.pinot.spi.utils.builder.TableNameBuilder;
- import org.apache.pinot.sql.FilterKind;
- import org.apache.pinot.sql.parsers.CalciteSqlParser;
-+import org.apache.pinot.sql.parsers.rewriter.RlsUtils;
- import org.apache.pinot.util.TestUtils;
- import org.mockito.Mockito;
- import org.slf4j.MDC;
-@@ -1036,17 +1038,10 @@ protected BrokerResponseNative processMaterializedViewSplitBrokerRequest(long re
-     };
-   }
- 
--  /// Bug: FULL_REWRITE overwrites tableName to the materialized view table name, so
--  /// accessControl.getRowColFilters(requesterIdentity, tableName) fetches RLS
--  /// policy for the materialized view table instead of the base table.
--  ///
--  /// Before fix: getRowColFilters is called with the materialized view table name
--  /// "mv_baseTable_OFFLINE".
--  ///
--  /// After fix: getRowColFilters is called with the original base table
--  /// name "baseTable_OFFLINE".
-+  /// A query with an RLS filter skips the MV rewrite: the broker looks up the RLS filter of the base table
-+  /// "baseTable_OFFLINE", and the query runs on the base table with that filter in its options.
-   @Test
--  public void testMaterializedViewFullRewriteRlsLookupUsesBaseTable()
-+  public void testMaterializedViewRewriteSkippedUnderRls()
-       throws Exception {
-     String baseOfflineTable = "baseTable_OFFLINE";
-     String materializedViewOfflineTable = "mv_baseTable_OFFLINE";
-@@ -1101,6 +1096,7 @@ public void testMaterializedViewFullRewriteRlsLookupUsesBaseTable()
-             new SegmentsToQuery(List.of("seg01"), List.of())));
-     when(routingManager.getRoutingTable(any(), Mockito.anyLong())).thenReturn(rt);
- 
-+    AtomicReference<BrokerRequest> capturedServerRequest = new AtomicReference<>();
-     QueryQuotaManager quotaManager = mock(QueryQuotaManager.class);
-     when(quotaManager.acquire(anyString())).thenReturn(true);
-     when(quotaManager.acquireDatabase(anyString())).thenReturn(true);
-@@ -1157,6 +1153,7 @@ protected BrokerResponseNative processBrokerRequest(long requestId,
-               BrokerRequest originalBrokerRequest, BrokerRequest serverBrokerRequest,
-               TableRouteInfo route, long timeoutMs, ServerStats serverStats,
-               RequestContext requestContext) {
-+            capturedServerRequest.set(serverBrokerRequest);
-             return BrokerResponseNative.empty();
-           }
- 
-@@ -1184,11 +1181,13 @@ protected BrokerResponseNative processMaterializedViewSplitBrokerRequest(long re
-         "RLS filter lookup must use base table '" + baseRawTable
-             + "' not materialized view table, but got: " + rlsTable);
-     Assert.assertTrue(response.getRLSFiltersApplied(), "response should report that RLS filters were applied");
--    PinotQuery rewriteInput = querySeenByMaterializedViewRewrite.get();
--    Assert.assertNotNull(rewriteInput, "MV rewrite should see the server query after RLS rewrite");
--    Assert.assertNotNull(rewriteInput.getFilterExpression(), "MV rewrite input must carry the base-table RLS filter");
--    Assert.assertTrue(rewriteInput.getFilterExpression().toString().contains("allowed"),
--        "MV rewrite input must include the RLS predicate, got: " + rewriteInput.getFilterExpression());
-+    /// The server applies the RLS filter from the `rlsFilters-<rawTableName>` query option, so a query with an RLS
-+    /// filter must not be rewritten onto the MV: it runs on the base table, with the option of the base table.
-+    Assert.assertNull(querySeenByMaterializedViewRewrite.get(), "A query with an RLS filter must skip the MV rewrite");
-+    PinotQuery serverQuery = capturedServerRequest.get().getPinotQuery();
-+    Assert.assertEquals(serverQuery.getDataSource().getTableName(), baseOfflineTable);
-+    Assert.assertEquals(serverQuery.getQueryOptions().get(RlsUtils.buildRlsFilterKey(baseRawTable)),
-+        "( ts = 'allowed' )");
-   }
- 
-   /// The split-mode time-boundary filter attach helpers moved to
-@@ -1335,6 +1334,162 @@ protected BrokerResponseNative processBrokerRequest(long requestId,
-         "combined filter must retain the original WHERE clause, got literals: " + literalValues);
-   }
- 
-+  /// The broker fails the query when it cannot apply the RLS filter, instead of running it without the filter.
-+  @Test
-+  public void testRlsRewriteFailureFailsTheQuery()
++
++  @Test(dataProvider = "multiTableLogicalQueryPermissions")
++  public void testLogicalQueryRequiresReadAccessToAllPhysicalTables(Map<String, PhysicalTableConfig> physicalTables,
++      String grantedTables, boolean allowed)
 +      throws Exception {
-+    AtomicReference<BrokerRequest> capturedServerRequest = new AtomicReference<>();
-+    BaseSingleStageBrokerRequestHandler handler =
-+        newRlsHandler("ts = = 'allowed'", capturedServerRequest, BrokerResponseNative.empty());
-+
-+    Br
-```
-
-**File**: `pinot-broker/src/test/java/org/apache/pinot/broker/requesthandler/RlsResponseUtilsTest.java` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+/**
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *   http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing,
-+ * software distributed under the License is distributed on an
-+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+ * KIND, either express or implied.  See the License for the
-+ * specific language governing permissions and limitations
-+ * under the License.
-+ */
-+package org.apache.pinot.broker.requesthandler;
-+
-+import org.apache.pinot.common.datatable.StatMap;
-+import org.apache.pinot.common.response.broker.BrokerResponseNativeV2;
-+import org.apache.pinot.common.response.broker.BrokerResponseNativeV2.StatKey;
-+import org.testng.annotations.Test;
-+
-+import static org.testng.Assert.assertEquals;
-+
-+
-+public class RlsResponseUtilsTest {
-+
-+  /// The multi-stage broker hides the stats that show the layout of the whole table.
-+  @Test
-+  public void testHideTableLayoutStatsMultiStage() {
-+    BrokerResponseNativeV2 response = new BrokerResponseNativeV2();
-+    StatMap<StatKey> stats = new StatMap<>(StatKey.class)
-+        .merge(StatKey.TOTAL_DOCS, 1000L)
-+        .merge(StatKey.NUM_SEGMENTS_QUERIED, 10)
-+        .merge(StatKey.NUM_SEGMENTS_PROCESSED, 8)
-+        .merge(StatKey.NUM_SEGMENTS_MATCHED, 5)
-+        .merge(StatKey.NUM_CONSUMING_SEGMENTS_QUERIED, 2)
-+        .merge(StatKey.NUM_SEGMENTS_PRUNED_BY_BROKER, 3)
-+        .merge(StatKey.NUM_SEGMENTS_PRUNED_BY_SERVER, 2)
-+        .merge(StatKey.NUM_DOCS_SCANNED, 42L);
-+    response.addBrokerStats(stats);
-+
-+    RlsResponseUtils.hideTableLayoutStats(response);
-+
-+    assertEquals(response.getTotalDocs(), 0L);
-+    assertEquals(response.getNumSegmentsQueried(), 0L);
-+    assertEquals(response.getNumSegmentsProcessed(), 0L);
-+    assertEquals(response.getNumSegmentsMatched(), 0L);
-+    assertEquals(response.getNumConsumingSegmentsQueried(), 0L);
-+    assertEquals(response.getNumSegmentsPrunedByBroker(), 0L);
-+    assertEquals(response.getNumSegmentsPrunedByServer(), 0L);
-+    // numDocsScanned only counts the rows of the tenant, so it stays
-+    assertEquals(response.getNumDocsScanned(), 42L);
-+  }
-+}
-```
-
-**File**: `pinot-broker/src/test/java/org/apache/pinot/broker/requesthandler/RowLevelSecurityExpressionOverrideTest.java` (added, +298/-0)
-```diff
-@@ -0,0 +1,298 @@
-+/**
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *   http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing,
-+ * software distributed under the License is distributed on an
-+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+ * KIND, either express or implied.  See the License for the
-+ * specific language governing permissions and limitations
-+ * under the License.
-+ */
-+package org.apache.pinot.broker.requesthandler;
-+
-+import java.io.File;
-+import java.nio.file.Files;
-+import java.util.ArrayList;
-+import java.util.List;
-+import java.util.Map;
-+import java.util.Set;
-+import java.util.concurrent.ExecutorService;
-+import java.util.concurrent.Executors;
-+import java.util.concurrent.atomic.AtomicReference;
-+import org.apache.commons.io.FileUtils;
-+import org.apache.commons.lang3.tuple.Pair;
-+import org.apache.helix.model.InstanceConfig;
-+import org.apache.pinot.broker.api.AccessControl;
-+import org.apache.pinot.broker.broker.AccessControlFactory;
-+import org.apache.pinot.broker.queryquota.QueryQuotaManager;
-+import org.apache.pinot.broker.routing.manager.BrokerRoutingManager;
-+import org.apache.pinot.common.config.provider.TableCache;
-+import org.apache.pinot.common.metrics.BrokerMetrics;
-+import org.apache.pinot.common.metrics.ServerMetrics;
-+import org.apache.pinot.common.request.BrokerRequest;
-+import org.apache.pinot.common.request.Expression;
-+import org.apache.pinot.common.request.InstanceRequest;
-+import org.apache.pinot.common.response.broker.BrokerResponseNative;
-+import org.apache.pinot.core.data.manager.InstanceDataManager;
-+import org.apache.pinot.core.operator.blocks.InstanceResponseBlock;
-+import org.apache.pinot.core.operator.blocks.results.AggregationResultsBlock;
-+import org.apache.pinot.core.query.executor.ServerQueryExecutorV1Impl;
-+import org.apache.pinot.core.query.request.ServerQueryRequest;
-+import org.apache.pinot.core.routing.RoutingTable;
-+import org.apache.pinot.core.routing.SegmentsToQuery;
-+import org.apache.pinot.core.routing.TableRouteInfo;
-+import org.apache.pinot.core.transport.ServerInstance;
-+import org.apache.pinot.segment.local.data.manager.SegmentDataManager;
-+import org.apache.pinot.segment.local.data.manager.TableDataManager;
-+import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentLoader;
-+import org.apache.pinot.segment.local.segment.creator.impl.SegmentIndexCreationDriverImpl;
-+import org.apache.pinot.segment.local.segment.index.loader.IndexLoadingConfig;
-+import org.apache.pinot.segment.local.segment.readers.GenericRowRecordReader;
-+import org.apache.pinot.segment.spi.ImmutableSegment;
-+import org.apache.pinot.segment.spi.IndexSegment;
-+import org.apache.pinot.segment.spi.SegmentContext;
-+import org.apache.pinot.segment.spi.creator.SegmentGeneratorConfig;
-+import org.apache.pinot.spi.accounting.ThreadAccountantUtils;
-+import org.apache.pinot.spi.auth.AuthorizationResult;
-+import org.apache.pinot.spi.auth.TableAuthorizationResult;
-+import org.apache.pinot.spi.auth.TableRowColAccessResult;
-+import org.apache.pinot.spi.auth.TableRowColAccessResultImpl;
-+import org.apache.pinot.spi.auth.broker.RequesterIdentity;
-+import org.apache.pinot.spi.config.table.FieldConfig;
-+import org.apache.pinot.spi.config.table.QueryConfig;
-+import org.apache.pinot.spi.config.table.TableConfig;
-+import org.apache.pinot.spi.config.table.TableType;
-+import org.apache.pinot.spi.data.FieldSpec.DataType;
-+import org.apache.pinot.spi.data.Schema;
-+import org.apache.pinot.spi.data.readers.GenericRow;
-+import org.apache.pinot.spi.env.PinotConfiguration;
-+import org.apache.pinot.spi.eventlistener.query.BrokerQueryEventListenerFactory;
-+import org.apache.pinot.spi.query.QueryThreadContext;
-+import org.apache.pinot.spi.trace.RequestContext;
-+import org.apache.pinot.spi.utils.CommonConstants.Broker;
-+import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
-+import org.apache.pinot.sql.parsers.CalciteSqlCompiler;
-+import org.apache.pinot.sql.parsers.CalciteSqlParser;
-+import org.apache.pinot.sql.parsers.rewriter.RlsUtils;
-+import org.testng.annotations.AfterClass;
-+import org.testng.annotations.BeforeClass;
-+import org.testng.annotations.Test;
-+
-+import static org.mockito.ArgumentMatchers.any;
-+import static org.mockito.ArgumentMatchers.anyList;
-+import static org.mockito.ArgumentMatchers.anyLong;
-+import static org.mockito.ArgumentMatchers.anyMap;
-+import static org.mockito.ArgumentMatchers.anyString;
-+import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.when;
-+import static org.testng.Assert.
-```
-
-**File**: `pinot-common/src/main/java/org/apache/pinot/common/datatable/StatMap.java` (modified, +6/-0)
-```diff
-@@ -93,6 +93,12 @@ public StatMap<K> merge(K key, int value) {
-     return this;
-   }
- 
-+  /// Removes the value of the given key, so that it reads as the default value and is not serialized.
-+  public StatMap<K> remove(K key) {
-+    _map.remove(key);
-+    return this;
-+  }
-+
-   public long getLong(K key) {
-     if (key.getType() == Type.INT) {
-       return getInt(key);
-```
-
-**File**: `pinot-common/src/main/java/org/apache/pinot/common/metrics/ServerTimer.java` (modified, +3/-1)
-```diff
-@@ -98,7 +98,9 @@ public enum ServerTimer implements AbstractMetrics.Timer {
-   // Ingestion metrics
-   INGESTION_DELAY_TRACKING_MS("milliseconds", false, "Time taken to run a trackIngestionDelay cycle"),
-   // The total time spent in processing the workload queries
--  WORKLOAD_TOTAL_QUERY_TIME_MS("millis", false);
-+  WORKLOAD_TOTAL_QUERY_TIME_MS("millis", false),
-+  RLS_FILTER_TIME_MS("milliseconds", false,
-+      "Time taken by a query to materialize the row-level security bitmap, summed over the queried segments");
- 
-   private final String _timerName;
-   private final boolean _global;
++    tableScope
 ```
 
 ---
 
-### Incident Patch 2: `8d90c47a` (2026-11-11)
-**Commit Message**: Fix subtask worker progress API failing on null worker key (#20210)
+### Incident Patch 2: `40b3c1b7` (2026-11-13)
+**Commit Message**: Spy a plain RetentionManager in the table-level hybrid retention test so subclass suites can reuse it (#20236)
 
-**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/helix/core/minion/PinotHelixTaskResourceManager.java` (modified, +3/-1)
+**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/helix/core/retention/RetentionManagerTest.java` (modified, +5/-2)
 ```diff
-@@ -911,7 +911,9 @@ Map<String, Object> getSubtaskOnWorkerProgress(String subtaskState, CompletionSe
-       String worker = entry.getKey();
-       String resp = entry.getValue();
-       LOGGER.debug("Got resp: {} from worker: {}", resp, worker);
--      minionWorkerIdSubtaskProgressMap.put(minionWorkerUrlToWorkerIdMap.get(worker),
-+      // Response keys are "<url>__<count>" when multiRequestPerServer is true
-+      minionWorkerIdSubtaskProgressMap.put(
-+          minionWorkerUrlToWorkerIdMap.get(StringUtils.substringBeforeLast(worker, "__")),
-           JsonUtils.stringToObject(resp, Map.class));
-     }
-     if (serviceResponse._failedResponseCount > 0) {
-```
-
-**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/helix/core/minion/PinotHelixTaskResourceManagerTest.java` (modified, +1/-1)
-```diff
-@@ -285,7 +285,7 @@ public void testGetSubtaskWithGivenStateProgress()
-       // Notice that for testing purpose, we map subtask names to empty strings. In reality, subtask names will be
-       // mapped to jsonized org.apache.pinot.minion.event.MinionEventObserver
-       httpResp._httpResponses.put(
--          String.format("%s/tasks/subtask/state/progress?subTaskState=IN_PROGRESS", workerEndpoint),
-+          String.format("%s/tasks/subtask/state/progress?subTaskState=IN_PROGRESS__1", workerEndpoint),
-           JsonUtils.objectToString(Map.of(subtaskIds[2 * i], "", subtaskIds[2 * i + 1], "")));
-     }
-     httpResp._failedResponseCount = 1;
+@@ -603,8 +603,11 @@ public void testTableLevelHybridRetentionStrategyOverridesClusterConfig(@Nullabl
+     ControllerConf conf = new ControllerConf();
+     conf.setProperty(ControllerConf.ENABLE_HYBRID_TABLE_RETENTION_STRATEGY, clusterLevel);
+ 
+-    RetentionManager retentionManager = spy(createSizeRetentionManager(realtimeTableConfig, List.of(), resourceManager,
+-        mock(ControllerMetrics.class), conf, mock(BrokerServiceHelper.class)));
++    // Spy a plain RetentionManager rather than going through createRetentionManager(...), so the package-private
++    // methods stubbed below stay interceptable when a subclass suite overrides that factory
++    stubSizeRetentionResourceManager(realtimeTableConfig, List.of(), resourceManager, conf);
++    RetentionManager retentionManager = spy(new RetentionManager(resourceManager, mock(LeadControllerManager.class),
++        conf, mock(ControllerMetrics.class), mock(BrokerServiceHelper.class)));
+ 
+     // Only the retention strategy selection is under test, so stub out both branches
+     doNothing().when(retentionManager).manageRetentionForHybridTable(any(), any());
 ```
 
 ---
 
-### Incident Patch 3: `2ea51e9d` (2026-11-10)
-**Commit Message**: Fix table-level segment metadata silently omitting segments when replication < servers (#20182)
+### Incident Patch 3: `75c2fdfc` (2026-11-13)
+**Commit Message**: Bump org.codehaus.mojo:build-helper-maven-plugin from 3.7.0 to 3.8.0 (#20255)
 
-* Fix table-level segment metadata silently omitting segments when replication < servers
+Bumps [org.codehaus.mojo:build-helper-maven-plugin](https://github.com/mojohaus/build-helper-maven-plugin) from 3.7.0 to 3.8.0.
+- [Release notes](https://github.com/mojohaus/build-helper-maven-plugin/releases)
+- [Commits](https://github.com/mojohaus/build-helper-maven-plugin/compare/3.7.0...3.8.0)
 
-The table-level path of TableMetadataReader#getSegmentsMetadata passed the
-server -> endpoint map from getDataInstanceAdminEndpoints straight to
-CompletionServiceHelper, which expects endpoint -> server. Each response's
-server lookup returned null, and with multiRequestPerServer=false every body
-was stored under the same null key, overwriting the previous one. The call
-reported no failures, so there was no fallback, and the API returned 200 with
-only the last server's segments (roughly replication/N of the table).
+---
+updated-dependencies:
+- dependency-name: org.codehaus.mojo:build-helper-maven-plugin
+  dependency-version: 3.8.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-Pass endpoints.inverse() as the legacy per-segment path already does, and
-rename the misleading endpointToInstance variable in
-getDataInstanceAdminEndpoints to instanceToEndpoint.
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Add TableMetadataReaderTest covering full, partial and no replication across
-multiple fake servers.
-
-* Fix 'Server: null' in error logs of PinotTableReloadStatusReporter and PinotTableRestletResource by passing the inverted endpoint map
-
-**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotTableRestletResource.java` (modified, +2/-2)
+**File**: `pom.xml` (modified, +1/-1)
 ```diff
-@@ -1428,7 +1428,7 @@ private JsonNode getAggregateIndexMetadataFromServer(String tableNameWithType)
-     BiMap<String, String> serverEndPoints =
-         _pinotHelixResourceManager.getDataInstanceAdminEndpoints(serverToSegments.keySet());
-     CompletionServiceHelper completionServiceHelper =
--        new CompletionServiceHelper(_executor, _connectionManager, serverEndPoints,
-+        new CompletionServiceHelper(_executor, _connectionManager, serverEndPoints.inverse(),
-             _pinotHelixResourceManager.getServerAdminAuthProvider());
- 
-     List<String> serverUrls = new ArrayList<>();
-@@ -1597,7 +1597,7 @@ private long validateSegmentStateForTable(String offlineTableName)
-     BiMap<String, String> serverEndPoints =
-         _pinotHelixResourceManager.getDataInstanceAdminEndpoints(serverToSegments.keySet());
-     CompletionServiceHelper completionServiceHelper =
--        new CompletionServiceHelper(_executor, _connectionManager, serverEndPoints,
-+        new CompletionServiceHelper(_executor, _connectionManager, serverEndPoints.inverse(),
-             _pinotHelixResourceManager.getServerAdminAuthProvider());
-     List<String> serverUrls = new ArrayList<>();
-     BiMap<String, String> endpointsToServers = serverEndPoints.inverse();
-```
-
-**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/helix/core/PinotHelixResourceManager.java` (modified, +3/-3)
-```diff
-@@ -4519,7 +4519,7 @@ public List<String> getOnlineInstanceList() {
-   /// server instances. With BiMap, both mappings are easily available
-   public BiMap<String, String> getDataInstanceAdminEndpoints(Set<String> instances)
-       throws InvalidConfigException {
--    BiMap<String, String> endpointToInstance = HashBiMap.create(instances.size());
-+    BiMap<String, String> instanceToEndpoint = HashBiMap.create(instances.size());
-     for (String instance : instances) {
-       String instanceAdminEndpoint;
-       try {
-@@ -4531,9 +4531,9 @@ public BiMap<String, String> getDataInstanceAdminEndpoints(Set<String> instances
-         LOGGER.error(errorMessage, e);
-         throw new InvalidConfigException(errorMessage);
-       }
--      endpointToInstance.put(instance, instanceAdminEndpoint);
-+      instanceToEndpoint.put(instance, instanceAdminEndpoint);
-     }
--    return endpointToInstance;
-+    return instanceToEndpoint;
-   }
- 
-   /// Returns the service identity provider used for outbound Server admin API requests.
-```
-
-**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/services/PinotTableReloadStatusReporter.java` (modified, +1/-1)
-```diff
-@@ -166,7 +166,7 @@ public PinotTableReloadStatusResponse getReloadJobStatus(String reloadJobId)
-     final List<String> serverUrls = getServerUrls(serverEndPoints, reloadJobMetadata, serverToSegments);
- 
-     final CompletionServiceHelper completionServiceHelper =
--        new CompletionServiceHelper(_executor, _connectionManager, serverEndPoints,
-+        new CompletionServiceHelper(_executor, _connectionManager, serverEndPoints.inverse(),
-             _pinotHelixResourceManager.getServerAdminAuthProvider());
-     final CompletionServiceHelper.CompletionServiceResponse serviceResponse =
-         completionServiceHelper.doMultiGetRequest(serverUrls, null, true, 10000);
-```
-
-**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/util/TableMetadataReader.java` (modified, +1/-1)
-```diff
-@@ -203,7 +203,7 @@ private JsonNode getSegmentsMetadataInternal(String tableNameWithType, @Nullable
-     try {
-       List<String> tableUrls = buildTableLevelUrls(serverToSegs, endpoints,
-           tableNameWithType, columns, segments, reader);
--      return fetchAndAggregateMetadata(tableUrls, endpoints, /*perSegmentJson=*/false,
-+      return fetchAndAggregateMetadata(tableUrls, endpoints.inverse(), /*perSegmentJson=*/false,
-           tableNameWithType, timeoutMs);
-     } catch (RuntimeException e) {
-       log.warn("Failed to fetch table metadata for table {} using new server endpoint, falling back to legacy "
-```
-
-**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/util/TableMetadataReaderTest.java` (added, +176/-0)
-```diff
-@@ -0,0 +1,176 @@
-+/**
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *   http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing,
-+ * software distributed under the License is distributed on an
-+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+ * KIND, either express or implied.  See the License for the
-+ * specific language governing permissions and limitations
-+ * under the License.
-+ */
-+package org.apache.pinot.controller.util;
-+
-+import com.fasterxml.jackson.databind.JsonNode;
-+import com.fasterxml.jackson.databind.node.ObjectNode;
-+import com.google.common.collect.BiMap;
-+import com.google.common.collect.HashBiMap;
-+import com.sun.net.httpserver.HttpServer;
-+import java.io.IOException;
-+import java.io.OutputStream;
-+import java.net.InetSocketAddress;
-+import java.nio.charset.StandardCharsets;
-+import java.util.ArrayList;
-+import java.util.HashSet;
-+import java.util.LinkedHashMap;
-+import java.util.List;
-+import java.util.Map;
-+import java.util.Set;
-+import java.util.concurrent.ExecutorService;
-+import java.util.concurrent.Executors;
-+import java.util.concurrent.atomic.AtomicInteger;
-+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
-+import org.apache.pinot.controller.helix.core.PinotHelixResourceManager;
-+import org.apache.pinot.spi.utils.JsonUtils;
-+import org.testng.annotations.AfterClass;
-+import org.testng.annotations.AfterMethod;
-+import org.testng.annotations.BeforeClass;
-+import org.testng.annotations.Test;
-+
-+import static org.mockito.ArgumentMatchers.anySet;
-+import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.when;
-+import static org.testng.Assert.assertEquals;
-+
-+
-+public class TableMetadataReaderTest {
-+  private static final String TABLE_NAME = "testTable_OFFLINE";
-+  private static final int TIMEOUT_MS = 10_000;
-+
-+  private final ExecutorService _executor = Executors.newFixedThreadPool(4);
-+  private final PoolingHttpClientConnectionManager _connectionManager = new PoolingHttpClientConnectionManager();
-+  private final List<HttpServer> _httpServers = new ArrayList<>();
-+  private final AtomicInteger _legacyRequestCount = new AtomicInteger();
-+
-+  @BeforeClass
-+  public void setUp() {
-+    _connectionManager.setDefaultMaxPerRoute(4);
-+  }
-+
-+  @AfterMethod
-+  public void stopServers() {
-+    _httpServers.forEach(server -> server.stop(0));
-+    _httpServers.clear();
-+    _legacyRequestCount.set(0);
-+  }
-+
-+  @AfterClass
-+  public void tearDown() {
-+    _executor.shutdownNow();
-+    _connectionManager.close();
-+  }
-+
-+  /// Every server holds every segment, so any single server's response is already complete.
-+  @Test
-+  public void testTableLevelMetadataWithFullReplication()
-+      throws Exception {
-+    Map<String, List<String>> serverToSegments = new LinkedHashMap<>();
-+    serverToSegments.put("server0", List.of("seg0", "seg1", "seg2"));
-+    serverToSegments.put("server1", List.of("seg0", "seg1", "seg2"));
-+    serverToSegments.put("server2", List.of("seg0", "seg1", "seg2"));
-+
-+    JsonNode metadata = getSegmentsMetadata(serverToSegments);
-+
-+    assertEquals(segmentNames(metadata), Set.of("seg0", "seg1", "seg2"));
-+    assertEquals(_legacyRequestCount.get(), 0);
-+  }
-+
-+  /// 4 servers with replication 2: each server holds only half of the segments, so every server's response is needed.
-+  @Test
-+  public void testTableLevelMetadataWithPartialReplication()
-+      throws Exception {
-+    Map<String, List<String>> serverToSegments = new LinkedHashMap<>();
-+    serverToSegments.put("server0", List.of("seg0", "seg1"));
-+    serverToSegments.put("server1", List.of("seg1", "seg2"));
-+    serverToSegments.put("server2", List.of("seg2", "seg3"));
-+    serverToSegments.put("server3", List.of("seg3", "seg0"));
-+
-+    JsonNode metadata = getSegmentsMetadata(serverToSegments);
-+
-+    assertEquals(segmentNames(metadata), Set.of("seg0", "seg1", "seg2", "seg3"));
-+    assertEquals(_legacyRequestCount.get(), 0);
-+  }
-+
-+  /// Each server holds a distinct segment, so dropping any server's response loses its segment.
-+  @Test
-+  public void testTableLevelMetadataWithoutReplication()
-+      throws Exception {
-+    Map<String, List<String>> serverToSegments = new LinkedHashMap<>();
-+    serverToSegments.put("server0", List.of("seg0"));
-+    serverToSegments.put("server1", List.of("seg1"));
-+    serverToSegments.put("server2", List.of("seg2"));
-+
-+    JsonNode metadata = getSegmentsMetadata(serverToSegments);
-+
-+    assertEquals(segmentNames(metadata), Set.of("seg0", "seg1", "seg2"));
-+    assertEquals(_lega
+@@ -2502,7 +2502,7 @@
+         <plugin>
+           <groupId>org.codehaus.mojo</groupId>
+           <artifactId>build-helper-maven-plugin</artifactId>
+-          <version>3.7.0</version>
++          <version>3.8.0</version>
+         </plugin>
+         <plugin>
+           <groupId>com.github.eirslett</groupId>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20226** (2026-11-11): Bump com.fasterxml.jackson:jackson-bom from 2.22.4 to 2.23.0 (@dependabot[bot])
-- **PR #20225** (2026-11-11): Bump at.yawk.lz4:lz4-java from 1.13.0 to 1.14.0 (@dependabot[bot])
-- **PR #20224** (2026-11-11): Bump parquet.version from 1.18.1 to 1.18.2 (@dependabot[bot])
-- **PR #20222** (2026-11-11): Remove legacy per-segment fallback from segments metadata API (@manakbisht)
-- **PR #20221** (2026-11-11): Revert "Reject time-based flush threshold for pauseless tables (#20168)" (@9aman)
-- **PR #20218** (2026-11-11): Fix port reuse in ServerTableSizeReaderTest (@Jackie-Jiang)
+- **PR #20259** (2026-11-13): Bump org.codehaus.mojo:exec-maven-plugin from 3.6.4 to 3.7.0 (@dependabot[bot])
+- **PR #20258** (2026-11-13): Bump org.codehaus.mojo:javacc-maven-plugin from 3.2.1 to 3.3.0 (@dependabot[bot])
+- **PR #20257** (2026-11-13): Bump software.amazon.awssdk:bom from 2.57.11 to 2.57.12 (@dependabot[bot])
+- **PR #20256** (2026-11-13): Bump com.mchange:mchange-commons-java from 0.7.0 to 0.7.1 (@dependabot[bot])
+- **PR #20255** (2026-11-13): Bump org.codehaus.mojo:build-helper-maven-plugin from 3.7.0 to 3.8.0 (@dependabot[bot])
+- **PR #20254** (2026-11-13): Bump org.codehaus.mojo:animal-sniffer-annotations from 1.29 to 1.29.1 (@dependabot[bot])
 
 ---
 
@@ -2782,62 +2226,50 @@ multiple fake servers.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Evaluate user filters only on the rows that row-level security allows (#20183)
+## X. controller authorization for logical table queries
 
 **RULE**:
-When implementing operations in `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/BaseSingleStageBrokerRequestHandler.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotQueryResource.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fd91422b`: Evaluate user filters only on the rows that row-level security allows (#20183). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c31a588a`: controller authorization for logical table queries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/BaseSingleStageBrokerRequestHandler.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotQueryResource.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-            // compileRequest() optimized the query before the RLS filter was in its WHERE clause. Optimize it again,
-            // as the server optimizes its copy of the RLS filter, so that both copies match the same rows.
-            _queryOptimizer.optimize(serverPinotQuery, schema);
-            // Fail closed: the query must not run without its row-level security filter. Do not put the filter or
-            // the parse error in the response, because they can show the RLS policy to the user.
-            LOGGER.error("Unable to apply the RLS filter for request {} on table {}. Failing the query.", requestId,
-                rawTableName, e);
-            _brokerMetrics.addMeteredTableValue(rawTableName, BrokerMeter.QUERY_VALIDATION_EXCEPTIONS, 1);
-            requestContext.setErrorCode(QueryErrorCode.QUERY_VALIDATION);
-            return new BrokerResponseNative(QueryErrorCode.QUERY_VALIDATION,
-                "Cannot apply the row-level security filter for table: " + rawTableName);
-    /// A query with a row-level security (RLS) filter is never rewritten. The server applies the RLS filter from the
-    /// `rlsFilters-<rawTableName>` query option, so after a swap to the MV it w
+    TableCache tableCache = _pinotHelixResourceManager.getTableCache();
+    String logicalTableName = tableCache.getActualLogicalTableName(tableName);
+    LogicalTableConfig logicalTableConfig =
+        logicalTableName != null ? tableCache.getLogicalTableConfig(logicalTableName) : null;
+    String rawTableName = TableNameBuilder.extractRawTableName(
+        logicalTableConfig != null ? logicalTableName : tableName);
+
+    // Authorize every physical table of a logical query, matching the broker's table-level check.
+    Set<String> tablesToAuthorize = logicalTableConfig != null
+        ? logicalTableConfig.getPhysicalTableConfigMap().keySet()
+        : Set.of(rawTableName);
+    for (String tableToAuthorize : tablesToAuthorize) {
+      if (!accessControl.hasAccess(TableNameBuilder.extractRawTableName(tableToAuthorize), AccessType.READ,
+          httpHeaders, Actions.Table.QUERY)) {
+        throw QueryErrorCode.ACCESS_DENIED.asException();
+      }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-            LOGGER.error(
-                "Unable to apply RLS filter: {}. Row-level security filtering will be disabled for this query.",
-                RlsFiltersRewriter.class.getName(), e);
-    if (_materializedViewHandler != null
-  /// Apply row-level security filters to `serverPinotQuery`.  When the accessor returns RLS rules
-  /// for `rawTableName`, the rewriter appends them to the query's WHERE clause and stamps a
-  /// `rlsFilters-<rawTableName>` entry in `queryOptions` — the marker the caller later reads to
-  /// stamp `rlsFiltersApplied` on the broker response.
-  private void applyRlsFilters(long requestId, String query, PinotQuery serverPinotQuery, String rawTableName,
-      @Nullable RequesterIdentity requesterIdentity, AccessControl accessControl) {
-    TableRowColAccessResult rlsFilters = accessControl.getRowColFilters(requesterIdentity, rawTableName);
-    List<String> rowFilters = rlsFilters.getRLSFilters().orElse(null);
-    if (CollectionUtils.isEmpty(rowFilters)) {
-      return;
-    }
+// Induced defect failure mode:
+    String rawTableName = TableNameBuilder.extractRawTableName(tableName);
 
-    Map<String, String> queryOptions =
-        serverPinotQuery.getQueryOptions() == null ? new HashMap<>() : serverPinotQuery.getQueryOptions();
-    String combinedFilters =
-    
+    // Validate data access
+    if (!accessControl.hasAccess(rawTableName, AccessType.READ, httpHeaders, Actions.Table.QUERY)) {
+      throw QueryErrorCode.ACCESS_DENIED.asException();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fd91422b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c31a588a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

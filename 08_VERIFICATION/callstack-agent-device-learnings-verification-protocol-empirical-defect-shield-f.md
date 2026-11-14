@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:11.529Z",
+  "timestamp": "2026-11-14T17:25:24.390Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-callstack-agent-device-learnings",
+  "learning_id": "LEARN-EVO-callstack-agent-device-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [callstack-agent-device-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:11.529Z`  
-> **Learning ID**: `LEARN-REEXTRACT-callstack-agent-device-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T17:25:24.390Z`  
+> **Learning ID**: `LEARN-EVO-callstack-agent-device-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source**: github ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
-> **Source Version**: `45e1372f`  
+> **Source Version**: `d78be6c8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T07:37:41.051Z  
+> **Timestamp**: 2026-11-14T17:24:51.185Z  
 > **Learning ID**: `learn-github-callstack-agent-device`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T07:37:41.040Z  
+> **Harvest Timestamp**: 2026-11-14T17:24:51.181Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Open source device layer for AI coding agents: a CLI, MCP server, and typed Node.js API to control mobile, web, TV, and desktop apps on devices and simulators, locally or in the cloud.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5327 stars
+- **Stars / Engagement**: 5392 stars
 
 ---
 
@@ -1774,13 +1774,11 @@ function representativesAreValid(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4334** (2026-11-10): **Durable handle asyncDispose lets a rejected cleanup escape without the normalized error**
-  *Symptoms*: Found while slimming ADR 0019 (#4330).  The durable resource contract says the idempotent `[Symbol.asyncDispose]` adapter resolves only for confirmed cleanup or already-missing outcomes, and otherwise rejects with a normalized `ownership-lost` or `cleanup-pending` error. That is ADR 0019 section 5, now stated in `packages/capture-kit/docs/durable-resource-recovery.md`.  Today the adapter turns a returned `cleanup-pending` outcome into the facet error. But when the cleanup operation itself rejects, the raw error escapes the shared adapter without normalization. Examples are the recovery handles in `packages/capture-kit/src/capture-admission/*-resource-recovery.ts`, which pass `params.dispose` straight through. So a raw throw can cross the seam where ADR 0010 expects a typed error.  Expected: the shared adapter normalizes a rejected cleanup into the typed `ownership-lost` or `cleanup-pending` error and keeps the cause. A regression test should pin this.  #4330 keeps the contract and links this issue as the known drift.
+- **Issue #4530** (2026-11-14): **Android: a view with a content description and no text reads the same as a view showing that text**
+  *Symptoms*: ## Purpose  On Android, a view that has a content description and no text is published exactly like a view whose text is that string. A caller cannot tell whether `label` is text on the screen, so a text check passes on an empty view.  ## Reproduction  Any view with a description and no text:  ```java TextView saved = new TextView(this); saved.setId(R.id.saved_task); saved.setContentDescription("saved_task"); // no text yet ```  `adb shell uiautomator dump` reports it as `text="" content-desc="saved_task"`.  ```sh agent-device get attrs 'id="dev.retest.bench.tasks:id/saved_task"' --json # "node": {"type":"android.widget.TextView","label":"saved_task","identifier":"dev.retest.bench.tasks:id/saved_task", ...} agent-device get text 'id="dev.retest.bench.tasks:id/saved_task"' --json # "text": "saved_task" ```  When the app then sets the view's text to `saved_task`, the node is the same, field for field. `snapshot --raw` gives the same answer as the regular snapshot.  ## Cause  `normalizeAndroidUiHierarchyNode` in `packages/platform-android/src/ui-hierarchy.ts` labels a node with `attrs.text || attrs.desc` and publishes `contentDescription` only when it differs from the label (#2912). When the description is the label, nothing on the node says so. `labelFacts` in `packages/provider-webdriver/src/webdriver-source.ts` follows the same rule.  ## Required behavior  A node labelled by its content description can be told apart from a node labelled by its text. `label` and `contentDescri
 
-- **Issue #4333** (2026-11-10): **Target annotation writer can emit a payload over the 4 KiB ceiling**
-  *Symptoms*: Found during the ADR 0012 slimming review (#4331).  `finalizeOversizedCandidate` (`packages/selectors/src/target-evidence.ts`) sets `verification: "unverifiable"` and drops `rect` when the serialized payload exceeds `TARGET_ANNOTATION_MAX_PAYLOAD_BYTES`. It does not measure again after the drop. The per-field 256-byte caps apply before JSON escaping, but the ceiling applies to the serialized JSON. So escape-heavy labels can leave a parent-only payload over 4 KiB, and the writer emits an annotation that the parser rejects.  Expected: after the rect drop, the writer measures again. If the payload is still over the ceiling, it degrades further or omits the annotation, so it never writes a payload that the writer/parser round-trip invariant rejects. A regression test with escape-heavy labels should pin this.  Not changed in #4331, which is docs-only. `packages/ad-script/docs/target-annotation.md` states the current behavior.
-  **Post-Mortem & Fix Analysis**:
-  > ## Apex Sentinel · Issue review  **Suggested label:** `bug`  The report identifies a concrete writer defect: finalizeOversizedCandidate drops rect without remeasuring the serialized JSON after escaping, so escape-heavy labels can still produce an over-4 KiB payload that the parser rejects. It names the file, function, invariant, and expected follow-up behavior.  ### Required sections - [ ] Steps to reproduce (missing) - [ ] Expected and actual behavior (missing) - [ ] Version or environment (missing)  <!-- apex-sentinel:issue-review -->
+- **Issue #4517** (2026-11-14): **Prepare Android reinstall materialization before uninstalling the app**
+  *Symptoms*: Umbrella: #4368. The user authorized Claude planning, assumption verification and completion workers, followed by correctness-preserving cleanup. Source authority: main ddbfc855661fa9d29b8c836057b7f5b099bcad44. No runtime proof is claimed. Preserve typed errors, existing command envelopes, #4050 full-unit fallback and meaningful integration/regression/native evidence. Do not merge, release, push tags, weaken assertions or retry failures blindly.  Purpose: Failed replacement materialization must not remove an installed Android app.  Current trigger: packages/platform-android/src/deployment/runtime.ts resolves the package and uninstalls before prepareArtifact. The replaceExisting path passes resolveIdentity:false; preparation extracts archives/checks installable shape but does not validate APK contents. A no-installable archive can fail after app removal.  Required behavior: Keep readiness and package resolution, then prepare before uninstall. Preparation failure or pre-uninstall cancellation must not uninstall or install. Preserve fresh-state semantics, native installation caps, installer hooks and whole-operation cache invalidation. Always clean a prepared artifact after later failure/success. Do not add an APK validator, change to adb install -r, broaden identity inspection or claim rollback. Corrupt APK content and bundletool/install failures that occur after successful preparation may still be destructive; this child only protects materialization failures.  Owned files: pa
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1797,1054 +1795,1450 @@ function representativesAreValid(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1244334d` (2026-11-11)
-**Commit Message**: fix(replay): escape recorded interpolation, run scripts off the event loop, harden Maestro and test flows (#4363)
+### Incident Patch 1: `15e298f2` (2026-11-13)
+**Commit Message**: fix(ios): confirm foldable rotation from the lit panel in either simulator set (#4343) (#4440)
 
-* fix(replay): escape recorded literal ${...} text in written scripts
+* fix(ios): rotate a foldable in a scoped simulator set
 
-Replay interpolates every written positional, flag and runtime string,
-so recorded text such as `type "cost ${amount}"` replayed as an
-unresolved or substituted variable. The session script writer now emits
-the `\${` escape the resolver already honours, keeping exact
-`--record-as` fill placeholders live.
+Dispatch through the fold helper and confirm from the lit panel's currentOrientation, choosing each picker value for the turn still needed because the guest applies picker events relatively. Map portrait-upside-down to the picker's pud wire spelling in the fold helper.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_016qAu53rMak1bXMuR5U2gF4
+* fix(ios): confirm the final scoped dispatch and keep picker angles private
 
-* fix(maestro): run runScript in a child process and enforce the 8 MiB HTTP cap
+* refactor(ios): split scoped rotation state out of the dispatch loop
 
-runScript ran `vm.runInNewContext` and a `spawnSync` per `http.post`
-inline in the daemon, blocking every session for up to 30 s per call
-and ignoring request cancellation. It now runs in a dedicated
-`run-script-child` process that the daemon awaits with the request
-signal; the synchronous script semantics stay inside that child.
+* fix(ios): use the measured outer-panel picker offset on iPhone Duo
 
-The HTTP child's response travelled over `spawnSync` stdout with Node's
-1 MiB default buffer, so bodies above ~1 MiB failed generically while
-the declared cap was 8 MiB,
+The outer panel reads the orientation-picker value itself (offset 0) and
+the inner panel reads it plus 90 degrees. Measured on iPhone Duo (iOS 27.3)
+against the panel table over 27 dispatches and five pose changes in both
+directions: the picker value survives a fold, and only the lit panel's
+offset changes. After a fold that left the picker at the upside-down
+value, which the outer panel's UI could not show, one dispatch of the
+target with the measured offset still landed it.
 
-**File**: `.fallowrc.json` (modified, +2/-0)
+The guest model in the tests now follows that measurement: one picker
+value
+
+**File**: `.changeset/foldable-scoped-rotation.md` (added, +9/-0)
 ```diff
-@@ -35,6 +35,8 @@
-     "packages/react-native/src/companion/companion-tunnel.ts",
-     "src/daemon.ts",
-     "packages/capture-kit/src/png-worker.ts",
-+    "packages/maestro/src/daemon-port/run-script-child.ts",
-+    "packages/maestro/src/daemon-port/run-script-http-child.ts",
-     "scripts/patch-xcuitest-runner-icon.ts",
-     "scripts/write-xcuitest-cache-metadata.ts",
-     "scripts/xcuitest-build-settings.ts",
+@@ -0,0 +1,9 @@
++---
++'agent-device': patch
++---
++
++Fix foldable iPhone simulator rotation in scoped sets and confirm the lit panel in both default and scoped sets. Rotation in both sets uses the fold helper, with no CoreDevice orientation polling. An already visible target dispatches nothing. Incomplete, unknown-power and multi-lit panel tables neither confirm nor dispatch. A target the panel never shows fails with `orientation-unverified`.
++
++Use the fixed iPhone Duo picker offsets measured in both sets (outer 0 degrees, inner +90 degrees), replacing runtime calibration. Inner landscape-left sends `portrait-upside-down`, mapped to the HID wire value `pud`; it remains unsupported as a user target. Delayed reads wait without resending the same picker value to the same panel.
++
++Unresolved guest reads inside the settle loop neither confirm nor dispatch and are retried. An unresolved final read fails with `orientation-panel-table-unavailable`. Multi-panel classification admits rotation without a model-name guard; a new multi-panel model needs its own picker mapping.
 ```
 
-**File**: `docs/adr/0017-parameterized-recorded-inputs.md` (modified, +1/-0)
+**File**: `apple/fold-helper/Fold.m` (modified, +8/-4)
 ```diff
-@@ -139,6 +139,7 @@ The map gets one entry for each parameterized fill, added only after the entry o
- The map is never serialized: not to the script, the session event log, or diagnostics.
- The map has no read API beyond the recorder that owns it.
- The map disappears with the session.
-+A placeholder that echo protection writes into a recorded result is a live script placeholder: the recorder lists its name in `SessionAction.livePlaceholders`, and the script writer escapes every other recorded `${`.
+@@ -106,14 +106,18 @@ static int runSet(NSString *argument) {
+   return dispatchEvents(^BOOL(CFTypeRef client) { return runFrames(client, frames); });
+ }
  
- This is not a reversal of the "no secret-to-name table" rule in the Mapping contract above.
- That rule rejects the retention of state to influence a *naming* decision.
+-// The orientation control has no upside-down value.
++// The upside-down picker value is spelled "pud" on the wire; "portrait-upside-down" is
++// ignored by the guest. It matters because each picker event rotates the display by
++// (new - previous) picker value: without a 180 value, one of the four display orientations
++// can never be landed (measured on iPhone Duo).
+ static int runRotate(NSString *orientation) {
+-  if (![@[@"portrait", @"landscape-left", @"landscape-right"] containsObject:orientation]) {
+-    fprintf(stderr, "Expected orientation portrait, landscape-left or landscape-right\n");
++  NSString *value = [orientation isEqualToString:@"portrait-upside-down"] ? @"pud" : orientation;
++  if (![@[@"portrait", @"landscape-left", @"landscape-right", @"pud"] containsObject:value]) {
++    fprintf(stderr, "Expected orientation portrait, landscape-left, landscape-right or portrait-upside-down\n");
+     return 2;
+   }
+   return dispatchEvents(^BOOL(CFTypeRef client) {
+-    return sendControl(client, @"orientation-picker-control", @"enum", orientation);
++    return sendControl(client, @"orientation-picker-control", @"enum", value);
+   });
+ }
+ 
 ```
 
-**File**: `packages/ad-replay/src/internal/__tests__/plan-digest.test.ts` (modified, +10/-6)
+**File**: `docs/adr/0025-foldable-apple-panels.md` (modified, +22/-16)
 ```diff
-@@ -20,7 +20,6 @@ function digestFor(
-   return computeReplayPlanDigest({
-     actions,
-     actionLines: actions.map((_, i) => i + 1),
--    actionSourcePaths: undefined,
-     metadata: {},
-     ...overrides,
-   });
-@@ -31,6 +30,15 @@ test('computeReplayPlanDigest is a 64-char lowercase hex SHA-256', () => {
-   assert.match(digest, /^[0-9a-f]{64}$/);
+@@ -58,6 +58,9 @@ It is the only reader of panel tables, and it selects the source.
+   For a simulator in a scoped set, the fold helper's `panels` mode is the screen authority.
+   It emits the same entry shape from the guest sources that `dtdeviceinfod` relays to CoreDevice: `CADisplay` and `BLSBacklight`.
+   The guest lists every integrated panel and omits only the facts it cannot read.
++  Fold pose and rotation lit-panel reads explicitly request the guest table in either simulator set.
++  Panel-count classification keeps the set-based source: CoreDevice in the default set, guest in a scoped set.
++  Rotation confirms the lit panel because CoreDevice orientation can match the picker while the visible panel shows another orientation.
+ - **Completeness.**
+   Both sources list one entry per integrated panel. A panel that the parser drops is not single-panel evidence.
+   If two or more integrated entries exist and not all parse, the device is multi-panel without a capture panel. Capture refuses with `capture-panel-unidentified`.
+@@ -104,7 +107,7 @@ It is the only reader of panel tables, and it selects the source.
+   `IOS_APPLE_DISPLAY_PROBE_TIMEOUT_MS` limits the probe to 5s, below the subsequent 20s screenshot deadline.
+   Thus, an unresponsive CoreDevice cannot consume the capture's own budget.
+   Measured cost is 0.16–0.26s, compared with 4.93s for the screenshot.
+-  The guest probe costs about 0.3s. `IOS_SCOPED_DISPLAY_PROBE_BUDGET_MS` limits it to 15s, including the first helper build.
++  The guest probe costs about 0.3s. `IOS_GUEST_DISPLAY_PROBE_BUDGET_MS` limits it to 15s, including the first helper build.
+ 
+ ## Why the default capture had to stop being implicit
+ 
+@@ -370,19 +373,27 @@ Rejected alternatives:
+ `XCUIDevice.orientation` has no effect on an iPhone Duo simulator, and the runner readback repeats the requested value.
+ `devicectl device orientation set` reports success and has no effect on a simulator that `simctl boot` started.
+ `orientation` therefore rotates a multi-panel simulator through the guest device-state control: the HID event that Device Hub's orientation menu sends (`orientation-picker-control`, type `enum`).
+-The control has no upside-down value, so `portrait-upside-down` is refused with `unsupported-foldable-orientation`.
+-Routing uses the `fold` admission and the panel table. A resolved panel count is a hardware fact, so the daemon probes each simulator once.
+-
+-The verdict comes from `devicectl device orientation get`, a process that never sent the HID event.
+-CoreDevice answers each query with the value that it sampled at the previous query, so the first read after a dispatch is discarded.
+-A rotation that no fresh read reports is refused with `orientation-unverified`.
+-A simulator in a scoped set is refused with `unsupported-device-scope` before dispatch, because no reader can verify its rotation.
++The picker accepts `pud` for upside-down dispatch, which the inner panel needs to show landscape-left.
++The user target `portrait-upside-down` remains refused with `unsupported-foldable-orientation`.
++Routing uses the `fold` admission and the set-based panel-count source. A resolved panel count is a hardware fact, so the daemon probes each simulator once.
++A supplied helper is a reuse handle; only an explicit guest-source request changes the default-set source.
++Thus, classifying a single-panel default-set simulator does not prepare the fold helper.
++
++The picker offsets were measured on iPhone Duo; a new multi-panel model needs its own mapping.
++In both simulator sets, the helper reads the guest panel table and dispatches the fixed picker value for the established lit panel.
++The table maps the outer panel at zero offset and the inner panel at +90 degrees.
++Only a fresh `currentOrientation` from an established lit panel confirms the requested visible orientation.
++An incomplete table, unknown-power sibling, or multiple lit panels cannot confirm or dispatch.
++A repeated visible target dispatches nothing; delayed reads wait without resending to the same panel.
++A target that never appears is refused with `orientation-unverified` in either set.
++An unresolved guest read inside the settle loop neither confirms nor dispatches; the loop retries it.
++An unresolved final read reports `orientation-panel-table-unavailable` and points to the inventory diagnostic.
+ 
+ Rejected alternatives:
+ 
+-- **The panel table's `orientation.currentDeviceOrientation`: rejected.** It is screen-relative. On the Duo inner panel, it is a quarter-turn from the device orientation.
+-- **A guest orientation read: rejected.** CoreMotion `CMDeviceOrientationManager` reports `Ambiguous`, and `BKSHIDServicesIsOrientationLockedWithOrientation` reports 0, after a rotation that CoreDevice and the screenshots confirm.
+-- **Dispatch without a verdict in a scoped set: rejected.** The runner path already reported a false success there.
++- **CoreDevice orientation readback: rejected.** Its picker sample can lag and can match th
+```
+
+**File**: `docs/agents/device-foldable.md` (modified, +7/-6)
+```diff
+@@ -1,11 +1,12 @@
+ # Foldable Apple verification
+ 
+-Before you change capture behavior on a multi-panel device, read ADR 0025.
+-To list the panels, run `xcrun devicectl device info displays --device <udid>`.
+-In a scoped set, run `xcrun simctl --set <set> spawn <udid> ~/.agent-device/fold-helper/<key>/fold-helper panels`.
++Before capture changes, read ADR 0025.
++For default-set capture, run `xcrun devicectl device info displays --device <udid>`.
++For scoped capture or rotation, run `xcrun simctl --set <set> spawn <udid> ~/.agent-device/fold-helper/<key>/fold-helper panels`.
++For default-set rotation, omit `--set <set>`.
+ 
+ - Panels: the list shows each integrated panel with `backlightState`. Only the lit panel permits capture.
+-  A capture of the dark panel exits 0 and writes an all-black PNG.
++  A dark-panel capture exits 0 with a black PNG.
+ - Input routing: after each pose change, verify a fresh control.
+   A successful synthesis acknowledgement does not prove a hit.
+   Examine the runner and simulator `testmanagerd`/BackBoard logs for display identity and delivery.
+@@ -14,13 +15,13 @@ In a scoped set, run `xcrun simctl --set <set> spawn <udid> ~/.agent-device/fold
+   The same helper reads the hinge back in `hinge` mode.
+   After a fold, take another snapshot. Folds invalidate refs and coordinates.
+   Verify locally with Device Hub stopped and the simulator booted through `simctl boot`.
+-  Test these items in the default set and with `--ios-simulator-device-set`:
++  Test both sets (`--ios-simulator-device-set`):
+   - All three poses.
+   - Capture of the active panel.
+   - An app interaction.
+   Until GHA supports the runtime, Duo coverage remains local.
+   After a fresh boot, a closed hinge can keep the inner panel lit for more than 30 seconds.
+-  The lit panel is evidence only. It cannot separate `half-open` from `open`.
++  Panel power cannot separate `half-open` from `open`.
+ - Touch overlays export at the captured track size.
+   The compositor checks its output size and non-black content against the raw capture.
+   If that check fails, `record stop` keeps the raw file. It reports `overlayWarning`.
+```
+
+**File**: `packages/command-surface/src/system/index.ts` (modified, +1/-1)
+```diff
+@@ -290,7 +290,7 @@ const backCommandDescription =
+ const homeCommandDescription =
+   'Send the selected device to its home screen. This leaves the app session open but moves the foreground away from the app.';
+ const orientationCommandDescription =
+-  'Set device orientation on iOS and Android. auto hands rotation back to the sensor on ADB-backed Android (local and Limrun); other backends refuse it. A foldable iPhone simulator (iPhone Duo) refuses portrait-upside-down, and refuses every rotation in a scoped simulator set.';
++  'Set device orientation on iOS and Android. auto hands rotation back to the sensor on ADB-backed Android (local and Limrun); other backends refuse it. In both default and scoped simulator sets, an iPhone Duo classified with more than one integrated panel refuses portrait-upside-down and rotates through the fold helper; it succeeds only when the lit panel shows the requested orientation, otherwise it fails with orientation-unverified, or orientation-panel-table-unavailable when the final guest panel table cannot be read. A simulator classified with one panel, or whose first classification read is unresolved, uses the standard runner rotation.';
+ const foldGuidance = {
+   hingeEvent: 'simulator HID hinge event',
+   permissions: 'Device Hub and host Accessibility permission are not required.',
+```
+
+**File**: `packages/platform-apple/src/core/__tests__/display-inventory.test.ts` (modified, +98/-2)
+```diff
+@@ -33,12 +33,15 @@ vi.mock('@agent-device/host-kit/host-file', async (importOriginal) => {
  });
  
-+test('computeReplayPlanDigest keeps the published digest for an unchanged plan', () => {
-+  const digest = computeReplayPlanDigest({
-+    actions: [action({ command: 'open', positionals: ['Demo'] }), action()],
-+    actionLines: [2, 3],
-+    metadata: { platform: 'ios' },
+ import {
++  appleLitPanel,
+   appleSimulatorDisplayArgvFragment,
++  establishedLitPanel,
+   buildInventory,
+   parseCoreDeviceDisplays,
+   readPanelPower,
+   resolveAppleCaptureDisplay,
+   queryAppleDisplayInventory,
++  panelContentRotation,
+   resolveAppleCaptureTarget,
+   type AppleDeviceDisplay,
+ } from '../display-inventory.ts';
+@@ -362,6 +365,75 @@ describe('resolveAppleCaptureDisplay', () => {
+   });
+ });
+ 
++describe('panelContentRotation', () => {
++  test('parses each panel content rotation and nothing else', () => {
++    assert.equal(panelContentRotation('rot0'), 'portrait');
++    assert.equal(panelContentRotation('rot90'), 'landscape-right');
++    assert.equal(panelContentRotation('rot180'), 'portrait-upside-down');
++    assert.equal(panelContentRotation('rot270'), 'landscape-left');
++    for (const value of ['unknown', 'constructor', 'rot45', '']) {
++      assert.equal(panelContentRotation(value), undefined);
++    }
 +  });
-+  assert.equal(digest, '0641236777b11822d90d446022965629ec99ac2ba1af2d5c637f06dd684fe695');
 +});
 +
- test('computeReplayPlanDigest is stable across repeated computation of the same plan', () => {
-   const actions = [action(), action({ command: 'open', positionals: ['Demo'] })];
-   assert.equal(digestFor(actions), digestFor(actions));
-@@ -54,15 +62,11 @@ test('computeReplayPlanDigest changes when the command changes', () => {
-   assert.notEqual(original, edited);
- });
- 
--test('computeReplayPlanDigest changes when source provenance (path/line) changes', () => {
-+test('computeReplayPlanDigest changes when the source line changes', () => {
-   const actions = [action()];
-   const original = digestFor(actions, { actionLines: [1] });
-   const movedLine = digestFor(actions, { actionLines: [5] });
-   assert.notEqual(original, movedLine);
--
--  const noSourcePath = digestFor(actions, { actionSourcePaths: undefined });
--  const withSourcePath = digestFor(actions, { actionSourcePaths: ['/tmp/include.ad'] });
--  assert.notEqual(noSourcePath, withSourcePath);
- });
- 
- test('computeReplayPlanDigest changes when platform-conditioned metadata changes', () => {
-```
-
-**File**: `packages/ad-replay/src/internal/__tests__/step-loop.test.ts` (modified, +0/-1)
-```diff
-@@ -41,7 +41,6 @@ function runRequest(
-     entryIndex: overrides.entryIndex ?? 0,
-     keepSession: overrides.keepSession,
-     actionLines: actions.map(() => 1),
--    actionSourcePaths: undefined,
-     resolvedPath: 'fixture.ad',
-     varSources: {},
-   };
-```
-
-**File**: `packages/ad-replay/src/internal/inspect.ts` (modified, +0/-3)
-```diff
-@@ -32,7 +32,6 @@ import { resolveReplayEntryIndex, type PendingRecordAndHeal } from './resume.ts'
- export type AdReplayManifest = Readonly<{
-   actions: SessionAction[];
-   actionLines: number[];
--  actionSourcePaths: (string | undefined)[] | undefined;
-   metadata: ReplayScriptMetadata;
-   /** SHA-256 digest of the canonical plan (`digestFlags` binds the same platform/target the replay invokes with). */
-   planDigest: string;
-@@ -83,7 +82,6 @@ export function inspectAdReplay(
-   const planDigest = computeReplayPlanDigest({
-     actions: parsed.actions,
-     actionLines: parsed.actionLines,
--    actionSourcePaths: parsed.actionSourcePaths,
-     metadata: {
-       platform:
-         digestFlags?.platform ?? resolveDeclaredScriptPlatform(parsed.actions) ?? metadata.platform,
-@@ -94,7 +92,6 @@ export function inspectAdReplay(
-   return {
-     actions: parsed.actions,
-     actionLines: parsed.actionLines,
--    actionSourcePaths: parsed.actionSourcePaths,
-     metadata,
-     planDigest,
-     resolveEntryIndex: (params) => resolveReplayEntryIndex(params, actionCount, planDigest),
-```
-
-**File**: `packages/ad-replay/src/internal/plan-digest.ts` (modified, +5/-12)
-```diff
-@@ -24,7 +24,6 @@ export type ReplayPlanDigestMetadata = {
- export function computeReplayPlanDigest(params: {
-   actions: SessionAction[];
-   actionLines: number[];
--  actionSourcePaths?: (string | undefined)[];
-   metadata: ReplayPlanDigestMetadata;
- }): string {
-   const canonical = buildCanonicalPlan(params);
-@@ -35,31 +34,25 @@ export function computeReplayPlanDigest(params: {
- function buildCanonicalPlan(params: {
-   actions: SessionAction[];
-   actionLines: number[];
--  actionSourcePaths?: (string | undefined)[];
-   metadata: ReplayPlanDigestMetadata;
- }): unknown {
--  const { actions, actionLines, actionSourcePaths, metadata } = params;
-+  const { actions, actionLines, metadata } = params;
-   return {
-     platform: metadata.platform ?? null,
-     target: metadata.target ?? null,
--    steps: actions.map((action, index) =>
--      canonicalizeAction(action, actionLines[index] ?? null, actionSourcePaths?.[index] ?? null),
--    ),
-+    steps: actions.map((action, index) => canonicalizeAction(action, actionLines[index] ?? null)),
-   };
- }
- 
--function canonicalizeAction(
--  action: SessionAction,
--  line: number | null,
--  sourcePath: string | null,
--): unknown {
-+function canonicalizeAction(action: SessionAction, line: number | null): unknown {
-   return {
-     command: action.command,
-     positionals: action.positionals ?? [],
-     flags: action.flags ?? {},
-     runtime: action.runtime ?? null,
-     targetEvidence: action.targetEvidence ?? null,
-     targetEvidences: action.targetEvidences ?? null,
--    source: { path: sourcePath, line },
-+    // Published digests hash `path: null`; dropping the key would invalidate every saved resume digest.
-+    source: { path: null, line },
-   };
- }
-```
-
-**File**: `packages/ad-replay/src/internal/runtime-port-types.ts` (modified, +1/-3)
-```diff
-@@ -348,9 +348,7 @@ export type AdReplayRunRequest = Readonly<{
-    * `loc`).
-    */
-   readonly actionLines: readonly number[];
--  /** Per-action resolved source path when it differs from `resolvedPath` (a `runFlow` include's own file), parallel to `actions`. */
--  readonly actionSourcePaths: readonly (string | undefined)[] | undefined;
--  /** The resolved `.ad` file path — the interpolation-location fallback when an action's own `actionSourcePaths` entry is absent. */
-+  /** The resolved `.ad` file path every step's interpolation-error location names. */
-   readonly resolvedPath: string;
-   /**
-    * `${VAR}` scope inputs — plain data the daemon reads from the request/
-```
-
-**File**: `packages/ad-replay/src/internal/step-loop.ts` (modified, +2/-2)
-```diff
-@@ -208,13 +208,13 @@ function mergeArtifactPaths(
-   return [...new Set([...ledger, ...failureArtifactPaths])];
- }
- 
--/** `resolveReplayAction`'s `loc` for one step — `actionSourcePaths[index]` when the step came from a `runFlow` include, else the top-level plan's own resolved path. */
-+/** `resolveReplayAction`'s `loc` for one step of the `.ad` plan. */
- function resolveActionLoc(
-   request: AdReplayRunRequest,
-   index: number,
- ): { file: string; line: number } {
-   return {
--    file: request.actionSourcePaths?.[index] ?? request.resolvedPath,
-+    file: request.resolvedPath,
-     line: request.actionLines[index] ?? 1,
-   };
- }
-```
-
----
-
-### Incident Patch 2: `7d478959` (2026-11-11)
-**Commit Message**: fix(capture): audit remediation for redaction, capture lifecycle, contract validation and snapshot performance (#4366)
-
-* fix(kernel,app-log): keep shared redaction references and validate app-log redact patterns
-
-Redaction tracked every visited object, so a shared non-cyclic reference
-was reported as [Circular]. Track only the ancestor path.
-
-AGENT_DEVICE_APP_LOG_REDACT_PATTERNS split on every comma and dropped
-patterns that did not compile. Split on top-level commas only and fail
-logs start with INVALID_ARGS (app_log_redact_pattern_invalid).
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_016qAu53rMak1bXMuR5U2gF4
-
-* fix(kernel): refuse overflowing and CGRectInfinite keyboard frames
-
-The inline keyboard frame guard claimed parity with isPositiveFiniteRect
-but skipped its overflow and CGRectInfinite refusals.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_016qAu53rMak1bXMuR5U2gF4
-
-* fix(capture-kit): keep typed scroll-edge capture failures
-
-captureScrollEdgeState wrapped every capture failure, including request
-cancellation and typed runner errors, in a generic COMMAND_FAILED, and
-
-**File**: `packages/capture-kit/src/alert-tree-driver.ts` (modified, +6/-2)
-```diff
-@@ -8,6 +8,7 @@ import {
-   type AlertPlatform,
-   ALERT_NOT_FOUND_REASON,
-   ALERT_POLL_INTERVAL_MS,
-+  ALERT_WAIT_TIMEOUT_REASON,
-   ALERT_WINDOW_EXPIRED_REASON,
-   type AlertStatusKind,
-   DEFAULT_ALERT_TIMEOUT_MS,
-@@ -18,7 +19,8 @@ import { AppError, createRequestCanceledError } from '@agent-device/kernel/error
- import { successText } from '@agent-device/kernel/success-text';
- 
- /**
-- * The one driver for every backend that reads alerts from a capture tree (Android ADB). A
-+ * The shared driver for backends that read alerts from a capture tree (today Android ADB; the
-+ * Apple backends ask their runner or helper instead). A
-  * backend supplies only its observation (`capture` + `findCandidate`), its acting policy
-  * (`choose`), and its press seam (`press`). It lives in the capture kit: an iOS provider
-  * must not depend on the Android package to poll a tree.
-@@ -144,7 +146,9 @@ export async function runTreeAlertAction<
-       // Both a quiet capture and one that stayed alert-shaped yet unresolvable mean no
-       // actionable alert ever resolved within the window; the timeout phrasing is the honest
-       // answer for either.
--      throw new AppError('COMMAND_FAILED', 'alert wait timed out');
-+      throw new AppError('COMMAND_FAILED', 'alert wait timed out', {
-+        reason: ALERT_WAIT_TIMEOUT_REASON,
-+      });
-     }
-     return {
-       kind: 'alertWait',
-```
-
-**File**: `packages/capture-kit/src/app-log-pid-monitor.ts` (modified, +16/-3)
-```diff
-@@ -102,9 +102,10 @@ async function pollActiveProcessPid(
- ): Promise<void> {
-   while (!input.stopped() && !wait.settled()) {
-     if (!(await waitForPidPoll(input, wait))) return;
--    const observedPid = await input.resolvePid();
-+    const observedPid = await resolvePidOrUnknown(input);
-     if (input.stopped()) return;
--    if (observedPid === scopedProcess.pid) continue;
-+    // An unanswered poll is inconclusive, so retain the stream and retry on the next tick.
-+    if (observedPid === undefined || observedPid === scopedProcess.pid) continue;
-     await scopedProcess.process.terminate();
-     return;
-   }
-@@ -146,7 +147,7 @@ async function pauseBeforeProcessRestart(input: PidScopedProcessMonitor): Promis
- async function startAndAdoptSubsequentProcess(
-   input: PidScopedProcessMonitor,
- ): Promise<SubsequentProcessStart> {
--  const pid = await input.resolvePid();
-+  const pid = await resolvePidOrUnknown(input);
-   if (input.stopped()) return { status: 'stopped' };
-   if (!pid) {
-     input.setState('recovering');
-@@ -160,6 +161,18 @@ async function startAndAdoptSubsequentProcess(
-   return { status: 'stopped' };
- }
- 
-+/**
-+ * A PID poll is a best-effort probe (one `pidof` under its own timeout). A failed poll is retried on
-+ * the next tick instead of ending capture for the rest of the session.
-+ */
-+async function resolvePidOrUnknown(input: PidScopedProcessMonitor): Promise<string | undefined> {
-+  try {
-+    return await input.resolvePid();
-+  } catch {
-+    return undefined;
-+  }
-+}
++describe('establishedLitPanel', () => {
++  beforeEach(() => {
++    mockReadHostTextFile.mockReset();
++    mockReadHostTextFile.mockResolvedValue('');
++  });
 +
- async function stopAdoptedProcess(
-   input: PidScopedProcessMonitor,
-   process: AppLogBackgroundProcess,
-```
-
-**File**: `packages/capture-kit/src/app-log-pid-process.test.ts` (modified, +55/-0)
-```diff
-@@ -231,3 +231,58 @@ async function testSleep(_milliseconds: number, signal?: AbortSignal): Promise<v
-     signal?.addEventListener('abort', onAbort, { once: true });
-   });
- }
-+
-+describe('PID-scoped app-log capture after a failed PID poll', () => {
-+  function startCapture(
-+    resolvePid: () => Promise<string>,
-+    start: () => Promise<AppLogBackgroundProcess>,
-+  ) {
-+    return createPidScopedAppLogProcess({
-+      host: hostFixture(outputFixture().sink),
-+      backend: 'android',
-+      outputPath: '/tmp/app.log',
-+      pidPath: '/tmp/app-log.pid',
-+      processStart: start,
-+      setupSignal: new AbortController().signal,
-+      resolvePid,
-+      command: (pid) => ({
-+        kind: 'host',
-+        request: { executable: 'adb', args: ['logcat', '--pid', pid] },
-+      }),
-+      cleanupFailureMessage: 'cleanup failed',
++  function duoTable(mapEntry: (entry: Record<string, unknown>) => Record<string, unknown>) {
++    return JSON.stringify({
++      result: { displays: IPHONE_DUO_CLOSED.result.displays.map(mapEntry) },
 +    });
 +  }
 +
-+  test('keeps the active stream and keeps polling after one rejected poll', async () => {
-+    const started =
-+      processFixture(deferred<{ stdout: string; stderr: string; exitCode: number }>());
-+    const resolvePid = vi
-+      .fn<() => Promise<string>>()
-+      .mockResolvedValueOnce('123')
-+      .mockRejectedValueOnce(new Error('adb shell pidof timed out'))
-+      .mockResolvedValue('123');
-+    const handle = await startCapture(resolvePid, async () => started.process);
-+
-+    await vi.waitFor(() => expect(resolvePid.mock.calls.length).toBeGreaterThanOrEqual(4));
-+    expect(started.dispose).not.toHaveBeenCalled();
-+    expect(started.terminate).not.toHaveBeenCalled();
-+    await expect(handle.finish()).resolves.toMatchObject({ status: 'completed' });
-+    expect(started.terminate).toHaveBeenCalledOnce();
++  test('a complete table with one lit panel establishes that panel for both selectors', () => {
++    const inventory = buildInventory([outerPanel, innerPanel]);
++    assert.equal(establishedLitPanel(inventory), outerPanel);
++    assert.deepEqual(appleLitPanel(inventory), { displayId: 1, widthPt: 466, heightPt: 678 });
 +  });
 +
-+  test('starts the stream once a rejected waiting poll is followed by a PID', async () => {
-+    const started =
-+      processFixture(deferred<{ stdout: string; stderr: string; exitCode: number }>());
-+    const resolvePid = vi
-+      .fn<() => Promise<string>>()
-+      .mockResolvedValueOnce('')
-+      .mockRejectedValueOnce(new Error('adb shell pidof timed out'))
-+      .mockResolvedValue('456');
-+    const start = vi.fn(async () => started.process);
-+    const handle = await startCapture(resolvePid, start);
++  test('two lit panels establish none', () => {
++    const inventory = buildInventory([outerPanel, { ...innerPanel, power: 'lit' }]);
++    assert.equal(establishedLitPanel(inventory), undefined);
++    assert.equal(appleLitPanel(inventory), undefined);
++  });
 +
-+    await vi.waitFor(() => expect(start).toHaveBeenCalledOnce());
-+    await handle.finish();
-+    expect(started.terminate).toHaveBeenCalledOnce();
++  test('a lit panel beside a panel of unknown power establishes none', () => {
++    // Unknown power may be showing content, so the lit panel is not the only one that may be lit.
++    const inventory = buildInventory([outerPanel, { ...innerPanel, power: 'unknown' }]);
++    assert.equal(establishedLitPanel(inventory), undefined);
++    assert.equal(appleLitPanel(inventory), undefined);
++  });
++
++  test('an incomplete table establishes no panel even when one parsed panel is the only lit one', async () => {
++    // Two activeOn integrated entries; the inner one has no geometry and does not parse.
++    mockReadHostTextFile.mockResolvedValue(
++      duoTable((entry) => {
++        const lit: Record<string, unknown> = { ...entry, backlightState: 'activeOn' };
++        if (entry.name !== 'LCD-1') return lit;
++        const { nativeSize: _nativeSize, ...withoutGeometry } = lit;
++        return withoutGeometry;
++      }),
++    );
++    const inventory = await queryAppleDisplayInventory(IOS_TEST_SIMULATOR, {});
++    assert.equal(inventory.multiScreen, true);
++    assert.equal(inventory.displays.filter((display) => display.power === 'lit').length, 1);
++    assert.equal(establishedLitPanel(inventory), undefined);
++    assert.equal(appleLitPanel(inventory), undefined);
++  });
++
++  test('a single-panel or unresolved table establishes no foldable panel', () => {
++    assert.equal(establishedLitPanel(buildInventory([outerPanel])), undefined);
++    assert.equal(
++      establishedLitPanel({ displays: [], multiScreen: false, ambiguous: false, unresolved: true }),
++      undefined,
++    );
 +  });
 +});
++
+ describe('resolveAppleCaptureTarget', () => {
+   beforeEach(() => {
+     mockRunXcrun.mockClear();
+@@ -678,7 +750,10 @@ describe('scoped simulator panel table', () => {
+     assert.equal(mockRunXcrun.mock.calls.length, 0);
+   });
+ 
+-  test('reads with the fold helper the caller already opened', async () => {
++  test.each([
++    ['scoped', scopedDuo],
++    ['default', { ...scopedDuo, simulatorSetPath: undefined }],
++  ] as const)('reads with the supplied fold helper in the %s set', async (_set, device) => {
+     vi.mocked(ensureFoldHelperBinary).mockClear();
+     const readPanelPayload = vi.fn(async () => ({
+       result: { displays: (JSON.parse(GUEST_PANELS_OPEN) as { displays: unknown[] }).displays },
+@@ -690,12 +765,33 @@ describe('scoped simulator panel table', () => {
+       readPanelPayload,
+     };
+ 
+-    const inventory = await queryAppleDisplayInventory(scopedDuo, { foldHelper });
++    const inventory = await queryAppleDisplayInventory(device, { source: 'guest', foldHelper });
+ 
+     assert.equal(inventory.activeDisplay?.name, 'LCD-1');
+     assert.equal(readPanelPayload.mock.calls.length, 1);
+     assert.equal(vi.mocked(ensureFoldHelperBinary).mock.calls.length, 0);
+     assert.equal(mockRunSimctlForDevice.mock.calls.length, 0);
++    assert.equal(mockRunXcrun.mock.calls.length, 0);
++  });
++
++  test('a helper handle alone keeps the def
 ```
 
-**File**: `packages/capture-kit/src/capture-admission/__tests__/durable-capture-resource-boundary-faults.test.ts` (modified, +1/-1)
+**File**: `packages/platform-apple/src/core/config.ts` (modified, +6/-9)
 ```diff
-@@ -138,7 +138,7 @@ test('retains recording evidence when exact-owner recovery resolves after its de
-     const recovery = resource.recoverAll({
-       sessionsDir: path.dirname(context.sessionStore.resolveSessionDir(context.sessionName)),
-       scope,
--      perRecordDeadlineMs: 25,
-+      acquisitionDeadlineMs: 25,
-       onDiagnostic: (diagnostic) => diagnostics.push(diagnostic),
-       acquireControl: async (_envelope, recoveryScope) => {
-         expect(recoveryScope.signal.aborted).toBe(false);
+@@ -31,10 +31,10 @@ export const IOS_SIMULATOR_SCREENSHOT_TIMEOUT_MS = 20_000;
+ // request-level daemon reset. Measured probe cost is ~0.2s.
+ export const IOS_APPLE_DISPLAY_PROBE_TIMEOUT_MS = 5_000;
+ /**
+- * A scoped simulator's panel table comes from a guest helper that the first read on a host also
++ * A guest panel table comes from a helper that the first read on a host also
+  * builds. This ceiling on the whole read, build included, stays below the capture's own budget.
+  */
+-export const IOS_SCOPED_DISPLAY_PROBE_BUDGET_MS = 15_000;
++export const IOS_GUEST_DISPLAY_PROBE_BUDGET_MS = 15_000;
+ /**
+  * One guest hinge read, before its sampling window: the fold helper waits at most 3s for its first
+  * CoreMotion sample, so this exec deadline only guards a wedged `simctl spawn`.
+@@ -55,14 +55,11 @@ export const IOS_FOLD_POSE_READ_INTERVAL_MS = 1_000;
+ /** Two consecutive reads this close together mean the hinge has stopped moving. */
+ export const IOS_FOLD_POSE_STABLE_DEGREES = 0.5;
+ /**
+- * How many fresh CoreDevice orientation reads a dispatched foldable rotation gets before it is
+- * refused. One read costs ~0.2s, and the iPhone Duo reported the new orientation on the first
+- * fresh read; the margin covers a loaded host. A read that times out counts as one that saw no
+- * orientation. With the routing probe, a cold fold-helper build, and the HID dispatch, the worst
+- * case stays inside the default 90s request envelope.
++ * Bounded lit-panel reads cover delayed HID effects and the two-lit interval after a fold.
++ * A fixed picker value is sent once per lit panel; the remaining reads only observe.
+  */
+-export const IOS_FOLDABLE_ORIENTATION_SETTLE_ATTEMPTS = 8;
+-export const IOS_FOLDABLE_ORIENTATION_READ_TIMEOUT_MS = 2_000;
++export const IOS_FOLDABLE_ORIENTATION_SETTLE_ATTEMPTS = 6;
++export const IOS_FOLDABLE_ORIENTATION_SETTLE_MS = 600;
+ 
+ // CoreSimulator can briefly stall while it services the scale lookup immediately
+ // after a keyboard transition. Keep this bounded below the full capture budget.
 ```
 
-**File**: `packages/capture-kit/src/capture-admission/app-log-resource-recovery.ts` (modified, +4/-4)
+**File**: `packages/platform-apple/src/core/device-orientation.ts` (removed, +0/-46)
 ```diff
-@@ -27,7 +27,7 @@ export function recoverAppLogResourcesAfterDaemonLock(params: {
-   sessionsDir: string;
-   gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>;
-   scope: PlatformRequestScope;
--  perRecordDeadlineMs?: number;
-+  acquisitionDeadlineMs?: number;
-   onDiagnostic?: (diagnostic: ResourceDiagnostic) => void;
- }): Promise<AppLogRecoverySummary> {
-   return appLogDurableResource.recoverAll({
-@@ -41,7 +41,7 @@ export function recoverAppLogResourceAfterDaemonLock(params: {
-   resourcePath: string;
-   gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>;
-   scope: PlatformRequestScope;
--  perRecordDeadlineMs?: number;
-+  acquisitionDeadlineMs?: number;
-   onDiagnostic?: (diagnostic: ResourceDiagnostic) => void;
- }) {
-   return appLogDurableResource.recoverOne(
-@@ -53,12 +53,12 @@ export function recoverAppLogResourceAfterDaemonLock(params: {
- function buildAppLogRecoveryParams(params: {
-   gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>;
-   scope: PlatformRequestScope;
--  perRecordDeadlineMs?: number;
-+  acquisitionDeadlineMs?: number;
-   onDiagnostic?: (diagnostic: ResourceDiagnostic) => void;
- }) {
-   return {
-     scope: params.scope,
--    perRecordDeadlineMs: params.perRecordDeadlineMs,
-+    acquisitionDeadlineMs: params.acquisitionDeadlineMs,
-     onDiagnostic: params.onDiagnostic,
-     acquireControl: async (
-       envelope: DurableResourceEnvelope<'app-log'>,
-```
-
-**File**: `packages/capture-kit/src/capture-admission/audio-probe-resource-recovery.ts` (modified, +2/-2)
-```diff
-@@ -23,14 +23,14 @@ export function recoverAudioProbeResourceAfterDaemonLock(params: {
-   resourcePath: string;
-   gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>;
-   scope: PlatformRequestScope;
--  perRecordDeadlineMs?: number;
-+  acquisitionDeadlineMs?: number;
-   onDiagnostic?: (diagnostic: ResourceDiagnostic) => void;
- }) {
-   return audioProbeDurableResource.recoverOne(
-     {
-       sessionsDir: params.sessionsDir,
-       scope: params.scope,
--      perRecordDeadlineMs: params.perRecordDeadlineMs,
-+      acquisitionDeadlineMs: params.acquisitionDeadlineMs,
-       onDiagnostic: params.onDiagnostic,
-       acquireControl: async (envelope, scope) =>
-         await acquireAudioProbeRecoveryControl(params.gateway, envelope, scope),
-```
-
-**File**: `packages/capture-kit/src/capture-admission/perf-capture-resource-recovery.ts` (modified, +2/-2)
-```diff
-@@ -24,14 +24,14 @@ export function recoverPerfCaptureResourceAfterDaemonLock(params: {
-   resourcePath: string;
-   gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>;
-   scope: PlatformRequestScope;
--  perRecordDeadlineMs?: number;
-+  acquisitionDeadlineMs?: number;
-   onDiagnostic?: (diagnostic: ResourceDiagnostic) => void;
- }) {
-   return perfCaptureDurableResource.recoverOne(
-     {
-       sessionsDir: params.sessionsDir,
-       scope: params.scope,
--      perRecordDeadlineMs: params.perRecordDeadlineMs,
-+      acquisitionDeadlineMs: params.acquisitionDeadlineMs,
-       onDiagnostic: params.onDiagnostic,
-       acquireControl: async (envelope, scope) =>
-         await acquirePerfCaptureRecoveryControl(params.gateway, envelope, scope),
-```
-
-**File**: `packages/capture-kit/src/capture-admission/screen-recording-resource-recovery.ts` (modified, +2/-2)
-```diff
-@@ -23,14 +23,14 @@ export function recoverScreenRecordingResourceAfterDaemonLock(params: {
-   resourcePath: string;
-   gateway: DeviceRuntimeGateway<PlatformRuntimeOperations>;
-   scope: PlatformRequestScope;
--  perRecordDeadlineMs?: number;
-+  acquisitionDeadlineMs?: number;
-   onDiagnostic?: (diagnostic: ResourceDiagnostic) => void;
- }) {
-   return screenRecordingDurableResource.recoverOne(
-     {
-       sessionsDir: params.sessionsDir,
-       scope: params.scope,
--      perRecordDeadlineMs: params.perRecordDeadlineMs,
-+      acquisitionDeadlineMs: params.acquisitionDeadlineMs,
-       onDiagnostic: params.onDiagnostic,
-       acquireControl: async (envelope, scope) =>
-         await acquireScreenRecordingRecoveryControl(params.gateway, envelope, scope),
+@@ -1,46 +0,0 @@
+-import type { DeviceRotation } from '@agent-device/contracts/device';
+-import type { DeviceInfo } from '@agent-device/kernel/device';
+-import { isCommandTimeoutError } from '@agent-device/host-kit/command';
+-
+-import { runIosDevicectlJsonRequest, type IosDevicectlJsonOutcome } from './devicectl.ts';
+-
+-/** CoreDevice `deviceOrientation` names, which are UIDeviceOrientation case names. */
+-const CORE_DEVICE_ORIENTATIONS: ReadonlyMap<unknown, DeviceRotation> = new Map<
+-  unknown,
+-  DeviceRotation
+->([
+-  ['portrait', 'portrait'],
+-  ['portraitUpsideDown', 'portrait-upside-down'],
+-  ['landscapeLeft', 'landscape-left'],
+-  ['landscapeRight', 'landscape-right'],
+-]);
+-
+-/**
+- * Reads the orientation of the device itself through `devicectl device orientation get`.
+- * The display table's `currentDeviceOrientation` is not a replacement: on the iPhone Duo inner
+- * panel, it is a quarter-turn from the device orientation.
+- *
+- * CoreDevice answers each query with the orientation it sampled at the previous query, so the
+- * first read after a change can be stale. A failed or timed-out read, face-up, and face-down
+- * return nothing.
+- */
+-export async function readAppleDeviceOrientation(
+-  device: DeviceInfo,
+-  options: { timeoutMs: number; signal?: AbortSignal },
+-): Promise<DeviceRotation | undefined> {
+-  let outcome: IosDevicectlJsonOutcome;
+-  try {
+-    outcome = await runIosDevicectlJsonRequest({
+-      jsonPrefix: 'agent-device-apple-orientation',
+-      args: ['devicectl', 'device', 'orientation', 'get', '--device', device.id],
+-      timeoutMs: options.timeoutMs,
+-      signal: options.signal,
+-    });
+-  } catch (error) {
+-    if (options.signal?.aborted || !isCommandTimeoutError(error)) throw error;
+-    return undefined;
+-  }
+-  if (!outcome.ok) return undefined;
+-  const payload = outcome.payload as { result?: { deviceOrientation?: unknown } } | null;
+-  return CORE_DEVICE_ORIENTATIONS.get(payload?.result?.deviceOrientation);
+-}
 ```
 
 ---
 
-### Incident Patch 3: `885cbffb` (2026-11-11)
-**Commit Message**: fix(host-kit): one async process-identity reader and one identity-checked stop escalation (#4359)
+### Incident Patch 2: `cc3b99b3` (2026-11-13)
+**Commit Message**: fix(ios): bound the idle wait of keyboard dismiss and keyboard enter (#4454)
 
-* fix(host-kit): read process identity off the event loop and unify stop escalation
+* fix(ios): bound the idle wait of keyboard dismiss and keyboard enter
 
-readProcessIdentities answers start time, command and zombie state for a
-set of pids from two concurrent ps reads (one CIM query on Windows), off
-the event loop. readProcessIdentityFacts is its one-pid form. The current
-process's own identity is memoized by readCurrentOwnerIdentity, because a
-process's start time never changes; nothing about another pid is cached.
+`keyboard dismiss` and `keyboard enter` tapped the keyboard's control with a
+plain XCUIElement.tap() outside withBoundedInteractionIdleTimeoutIfSupported,
+which `type`, `swipe` and taps already use. XCTest then waited for the app to
+idle with its own timeout. An app that keeps animating (Safari right after an
+iPhone Duo unfold) held the runner main thread past its 30 s watchdog: the
+command failed with "main thread execution timed out" and the next commands
+were refused until XCTest gave up.
 
-stopProcessAndConfirmExit is now the only TERM-then-KILL escalation. It
-takes an optional SIGINT opening signal, reports the last signal it sent
-on a stopped verdict, and re-proves the recorded command before SIGKILL.
-stopPidsWithEscalation is removed. The startup reaper, the Android
-emulator terminate, the app-log terminate and the web smoke cleanup now
-stop through it; the reaper reports unconfirmed and survived records
-instead of labelling both as ownership lost.
+Both commands now run inside the bounded wait with both quiescence waits
+skipped. dismissKeyboard still waits for the keyboard to go and the screen to
+settle on its own.
 
-Screen-recording and app-log identity reads use the async reader, and the
-recording kill ladder re-proves each marker before the next rung signals
-it.
+The host app's --agent-device-keyboard-busy fixture keeps a UIView animation
+in flight while its field has focus, until a backstop, and records whether its
+Done accessory and its return key landed while the app was still busy.
 
-Co-Authored-By: Claude O
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `docs/adr/0030-process-lock-exclusion.md` (modified, +16/-1)
+* fix(ios): require busy keyboard coverage and settle Return
+
+* docs(ios): restore Simulator keyboard
+
+**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunner/AgentDeviceRunnerAppFixtures.m` (modified, +91/-0)
 ```diff
-@@ -16,8 +16,12 @@ Mixed access with the legacy host-kit protocol is unsupported.
-   An unprovable owner record or an unremovable directory also leaves release unverified.
- - A claim identifies an acquisition.
-   A PID alone cannot authorize release.
--- Unknown owners and abandoned guards remain retained.
-+- Unknown owners remain retained.
-   Age never proves abandonment.
-+- A guard records its holder's pid, start time, and token.
-+  A contender removes a guard only when that holder is proven dead or its pid reused, by the same proof rule as a lock owner.
-+  An exclusive per-token reap marker admits one reaper, and the reaper removes the guard only if it still names that token.
-+  An unattributable guard, a legacy directory guard, and a live holder remain retained.
- - Before an upgrade, stop every legacy process that uses the shared state or cache paths.
-   While hardened users operate those paths, prevent legacy versions from returning.
-   Use one deployed version or separate environments.
-@@ -33,6 +37,13 @@ Guard expiry admits another process.
- The first process can then resume and overwrite or delete the replacement.
- Retention of an uncertain guard sacrifices automatic crash recovery to preserve exclusion.
+@@ -75,6 +75,9 @@ @interface AgentDeviceRunnerFixtureViewController () <UNUserNotificationCenterDe
+ @property(nonatomic, assign) BOOL alertFixtureStarted;
+ @property(nonatomic, strong) NSTimer *alertActivationBusyBackstop;
+ @property(nonatomic, strong) NSTimer *alertBannerRepost;
++@property(nonatomic, weak) UITextField *keyboardBusyField;
++@property(nonatomic, strong) UILabel *keyboardBusyAnswer;
++@property(nonatomic, strong) NSTimer *keyboardBusyBackstop;
+ @end
  
-+A holder proven dead cannot resume, so its guard is not uncertain.
-+Without a recorded holder, a holder killed inside its guarded step left a guard that blocked every contender until manual removal.
-+A token check alone cannot remove a file conditionally, because a second reaper could remove a successor's guard after the first reaper succeeds.
-+The exclusive reap marker closes that race: no other process can change the guard between the reaper's token check and its unlink.
-+If a reaper dies while it holds the marker, that guard stays retained.
-+A live holder whose guard stands longer than one second gets a process-table read; age only gates that read.
-+
- The guard is an exclusive file at the existing guard path.
- Legacy age-based `rmdir` cannot remove it.
- A new legacy reclaimer therefore cannot take a hardened publisher's guard.
-@@ -106,3 +117,7 @@ flowchart LR
-     O --> L
-     L --> F[Protected metadata and reports]
- ```
-+
-+## Decision history
-+
-+- 2026-11-10: A guard with a proven-dead holder became recoverable. Before this change, every abandoned guard stayed retained until manual removal, which contradicted automatic reclaim of provably dead owners.
-```
-
-**File**: `packages/daemon-contracts/src/device-claim-inspection.ts` (modified, +65/-10)
-```diff
-@@ -8,8 +8,10 @@ import {
- } from '@agent-device/kernel/device';
- import {
-   classifyOwnerLivenessFromObservation,
-+  type HostProcessIdentityObservation,
-   type OwnerLiveness,
-   readHostProcessIdentityObservations,
-+  readHostProcessIdentityObservationsAsync,
- } from '@agent-device/host-kit/process';
- 
- import { isSupersededDaemonOwner } from './daemon-registration.ts';
-@@ -34,22 +36,61 @@ export type DeviceClaimSelectors = {
-   serial?: string;
- };
- 
-+type OwnerObservations = ReadonlyMap<number, HostProcessIdentityObservation>;
-+
-+/**
-+ * Every matching claim, judged from one process-table snapshot. This one blocks for that snapshot,
-+ * which suits a one-shot CLI; a daemon path uses {@link inspectDeviceClaimsAsync}.
-+ */
- export function inspectDeviceClaims(
-   selectors: DeviceClaimSelectors,
-   env: EnvMap,
- ): InspectedDeviceClaim[] {
-+  const listed = readMatchingClaimFiles(selectors, env);
-+  if ('claims' in listed) return listed.claims;
-+  return classifyInspectedClaims(
-+    listed.parsed,
-+    readHostProcessIdentityObservations(claimOwnerPids(listed.parsed)),
-+  );
-+}
-+
-+/** {@link inspectDeviceClaims} with the snapshot taken off the event loop. */
-+export async function inspectDeviceClaimsAsync(
-+  selectors: DeviceClaimSelectors,
-+  env: EnvMap,
-+): Promise<InspectedDeviceClaim[]> {
-+  const listed = readMatchingClaimFiles(selectors, env);
-+  if ('claims' in listed) return listed.claims;
-+  return classifyInspectedClaims(
-+    listed.parsed,
-+    await readHostProcessIdentityObservationsAsync(claimOwnerPids(listed.parsed)),
-+  );
-+}
-+
-+function readMatchingClaimFiles(
-+  selectors: DeviceClaimSelectors,
-+  env: EnvMap,
-+): { parsed: InspectedDeviceClaim[] } | { claims: InspectedDeviceClaim[] } {
-   const root = resolveDeviceClaimRoot(env);
-   const listed = readClaimEntries(root);
--  if ('claims' in listed) return listed.claims;
-+  if ('claims' in listed) return listed;
-   const parsed = listed.entries
-     .filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
--    .map((entry) => readDeviceClaimFile(path.join(root, entry.name)))
-+    .map((entry) => readDeviceClaimEntry(path.join(root, entry.name)))
-     .filter((entry): entry is InspectedDeviceClaim => entry !== null)
-     .filter((entry) => matchesClaimSelectors(entry.claim, selectors));
--  const observations = readHostProcessIdentityObservations(
--    parsed.flatMap((entry) => (entry.claim ? [entry.claim.ownerPid] : [])),
--  );
--  return parsed.map((entry) =>
-+  return { parsed };
-+}
-+
-+function claimOwnerPids(entries: readonly InspectedDeviceClaim[]): number[] {
-+  return entries.flatMap((entry) => (entry.claim ? [entry.claim.ownerPid] : []));
-+}
-+
-+function classifyInspectedClaims(
-+  entries: readonly InspectedDeviceClaim[],
-+  observations: OwnerObservations,
-+): InspectedDeviceClaim[] {
-+  return entries.map((entry) =>
-     entry.claim
-       ? classifyInspectedClaim(entry, observations.get(entry.claim.ownerPid) ?? null)
-       : entry,
-@@ -98,14 +139,28 @@ function matchesClaimPlatform(claim: DeviceClaim, platform: PlatformSelector | u
-   );
+ // A one-time-code field that announces how many digits it holds instead of the digits, the way
+@@ -251,6 +254,57 @@ - (void)stopAlertActivationBusy {
+   self.alertActivationBusyBackstop = nil;
  }
  
--export function inspectDeviceClaimFile(filePath: string): InspectedDeviceClaim | null {
--  const entry = readDeviceClaimFile(filePath);
-+/** One claim file, judged off the event loop. */
-+export async function inspectDeviceClaimFile(
-+  filePath: string,
-+): Promise<InspectedDeviceClaim | null> {
-+  return await classifyDeviceClaimEntry(readDeviceClaimEntry(filePath));
++// The keyboard counterpart of the busy alert: the field starts the same never-ending UIView animation
++// when it takes focus, so XCTest sees work in flight for as long as the keyboard is up. Its Done
++// accessory and its return key record whether they landed while the app was still busy. The backstop
++// passed after `--agent-device-keyboard-busy` ends the busy state, so a command that waits for the app
++// to idle before it taps still finishes, and records "after busy" instead of outlasting the test.
++static NSTimeInterval AgentDeviceKeyboardBusyWindow(void) {
++  NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
++  NSUInteger flag = [arguments indexOfObject:@"--agent-device-keyboard-busy"];
++  return flag + 1 < arguments.count ? arguments[flag + 1].doubleValue : 0;
 +}
 +
-+/** Judges the owner of a claim file already read by {@link readDeviceClaimEntry}. */
-+export async function classifyDeviceClaimEntry(
-+  entry: InspectedDeviceClaim | null,
-+): Promise<InspectedDeviceClaim | null> {
-   if (!entry?.claim) return entry;
--  const observations = readHostProcessIdentityObservations([entry.claim.ownerPid]);
-+  const observations = await readHostProcessIdentityObservationsAsync([entry.claim.ownerPid]);
-   return classifyInspectedClaim(entry, observations.get(entry.claim.ownerPid) ?? null);
- }
- 
--function readDeviceClaimFile(filePath: string): InspectedDeviceClaim | null {
-+/**
-+ * One claim file, decoded and not judged: its `classification` is `unknown` until
-+ * {@link classifyDeviceClaimEntry} asks the host about the owner. A caller that compares only the
-+ * recorded owner token, pid, and start time needs no process-table read at all.
-+ */
-+export function readDeviceClaimEntry(filePath: string): InspectedDeviceClaim | null {
-   const fileName = path.basename(filePath);
-   try {
-     return inspectClaimContents(fileName, fs.readFileSync(filePath, 'utf8'));
-```
-
-**File**: `packages/daemon-contracts/src/device-claim-settlement.test.ts` (modified, +22/-0)
-```diff
-@@ -8,6 +8,7 @@ import {
-   acquireDeviceClaim as acquireProductionDeviceClaim,
-   acquireTransientDeviceClaim,
-   canonicalLocalDeviceKey,
-+  clearDeviceClaim,
-   inspectDeviceClaims,
-   inspectDeviceClaimAcquisition,
-   renewDeviceClaim,
-@@ -796,3 +797,24 @@ test('an owner that reopened its app after the reboot keeps the device', async (
-   assert.equal(foreign.conflict.classification, 'live');
-   assert.equal(storedClaim().session, 'cwd:/w:default');
- });
++- (void)startKeyboardBusy {
++  if (self.keyboardBusyBackstop != nil) {
++    return;
++  }
++  self.keyboardBusyBackstop = [NSTimer scheduledTimerWithTimeInterval:AgentDeviceKeyboardBusyWindow()
++                                                               target:self
++                                                             selector:@selector(stopKeyboardBusy)
++                                                             userInfo:nil
++                                                              repeats:NO];
++  [UIView animateWithDuration:0.4
++                          delay:0
++                        options:(UIViewAnimationOptionRepeat | UIViewAnimationOptionAutoreverse)
++                     animations:^{
++                       self.keyboardBusyAnswer.transform = CGAffineTransformMakeTranslation(0, 8);
++                     }
++                     completion:nil];
++}
 +
-+// Claim writes run on the daemon event loop every session shares. Acquiring a free device and
-+// clearing it again compares recorded owners only, so no owner is ever asked about.
-+test('acquiring and clearing a free device never blocks on the process table', async () => {
-+  const root = useClaimsRoot();
-+  const syncReads = vi.spyOn(hostProcess, 'readHostProcessIdentityObservations');
-+  const asyncReads = vi.spyOn(hostProcess, 'readHostProcessIdentityObservationsAsync');
++- (void)stopKeyboardBusy {
++  [self.keyboardBusyAnswer.layer removeAllAnimations];
++  self.keyboardBusyAnswer.transform = CGAffineTransformIdentity;
++  [self.keyboardBusyBackstop invalidate];
++  self.keyboardBusyBackstop = nil;
++}
 +
-+  const acquired = await acquireDeviceClaim({
-+    env: process.env,
-+    device,
-+    session: 'counted',
-+    workspace: '/worktrees/counted',
-+    stateDir: root,
-+  });
-+  if (acquired.status !== 'acquired') throw new Error('acquisition was refused');
-+  assert.equal(await clearDeviceClaim(acquired.ownership, process.env), 'deleted');
++- (void)recordKeyboardBusyAnswer:(NSString *)control {
++  self.keyboardBusyAnswer.text = [NSString
++      stringWithFormat:@"%@ %@", control, self.keyboardBusyBackstop != nil ? @"while busy" : @"after busy"];
++  [self stopKeyboardBusy];
++  [self.keyboardBusyField resignFirstResponder];
++}
 +
-+  assert.equal(syncReads.mock.calls.length, 0);
-+  assert.equal(asyncReads.mock.calls.length, 0);
-+});
-```
-
-**File**: `packages/daemon-contracts/src/device-claim-settlement.ts` (modified, +3/-1)
-```diff
-@@ -113,7 +113,9 @@ export async function inspectExistingClaimSettlement(params: {
-   observeDeviceBoot?: DeviceBootObservationService;
-   env: EnvMap;
- }): Promise<InspectedClaimSettlement> {
--  const existing = inspectDeviceClaimFile(resolveDeviceClaimPath(params.deviceKey, params.env));
-+  const existing = await inspectDeviceClaimFile(
-+    resolveDeviceClaimPath(params.deviceKey, params.env),
-+  );
-   if (!existing) return { status: 'available' };
-   if (
-     existing.claim &&
-```
-
-**File**: `packages/daemon-contracts/src/device-claims-app.test.ts` (modified, +3/-3)
-```diff
-@@ -381,7 +381,7 @@ test.each(['invalid-json', 'unknown'] as const)(
-     const file = await seedForeignMacClaim(root, { bundleId: 'com.example.one' });
-     if (failure === 'invalid-json') fs.writeFileSync(file, '{');
-     else
--      vi.spyOn(claimInspection, 'inspectDeviceClaims').mockReturnValue([
-+      vi.spyOn(claimInspection, 'inspectDeviceClaimsAsync').mockResolvedValue([
-         { fileName: path.basename(root), classification: 'unknown', error: 'EACCES' },
-       ]);
-     const before = fs.readFileSync(file, 'utf8');
-@@ -643,8 +643,8 @@ test('failed whole-Mac acquisition leaves its abandoned app fenced against forei
-   const own = entries.find((entry) => claimedApp(entry.claim) === 'com.example.one')!;
-   const foreign = entries.find((entry) => claimedApp(entry.claim) === 'com.example.two')!;
-   const orderedScan = vi
--    .spyOn(claimInspection, 'inspectDeviceClaims')
--    .mockReturnValue([own, foreign]);
-+    .spyOn(claimInspection, 'inspectDeviceClaimsAsync')
-+    .mockResolvedValue([own, foreign]);
-   const whole = await acquireDeviceClaim({
-     device: mac,
-     session: 'whole',
-```
-
-**File**: `packages/daemon-contracts/src/device-claims.ts` (modified, +37/-37)
-```diff
-@@ -17,9 +17,11 @@ import { emitDiagnostic } from '@agent-device/host-kit/diagnostics';
- import { ownerIdentityMatches, readCurrentOwnerIdentity } from '@agent-device/host-kit/process';
- 
- import {
-+  classifyDeviceClaimEntry,
-   deviceClaimOwnerCannotRelease,
-   inspectDeviceClaimFile,
--  inspectDeviceClaims,
-+  inspectDeviceClaimsAsync,
-+  readDeviceClaimEntry,
-   type DeviceClaimClassification,
-   type DeviceClaimSelectors,
-   type InspectedDeviceClaim,
-@@ -52,6 +54,7 @@ export {
-   deviceClaimOwnerCannotRelease,
-   deviceClaimRequiresStaleInspection,
-   inspectDeviceClaims,
-+  inspectDeviceClaimsAsync,
- } from './device-claim-inspection.ts';
- export type {
-   DeviceClaimClassification,
-@@ -94,12 +97,12 @@ type ClaimAcquisitionInspectionParams = {
-   observeDeviceBoot?: DeviceBootObservationService;
- };
- 
--function inspectTransientExactClaim(
-+async function inspectTransientExactClaim(
-   params: ClaimAcquisitionInspectionParams,
-   deviceKey: string,
-   owner: ReturnType<typeof readCurrentOwnerIdentity>,
--): InspectedClaimSettlement | undefined {
--  const existing = inspectDeviceClaimFile(resolveDeviceClaimPath(deviceKey, params.env));
-+): Promise<InspectedClaimSettlement | undefined> {
-+  const existing = await inspectDeviceClaimFile(resolveDeviceClaimPath(deviceKey, params.env));
-   const local =
-     existing &&
-     inspectTransientLocalClaim(existing, { ...params, coveredBySession: params.session }, owner);
-@@ -117,7 +120,7 @@ async function inspectExactClaimSettlement(
- ): Promise<InspectedClaimSettlement> {
-   const transient = params.command !== 'open';
-   if (transient && allowTransientCoverage) {
--    const local = inspectTransientExactClaim(params, deviceKey, owner);
-+    const local = await inspectTransientExactClaim(params, deviceKey, owner);
-     if (local) return local;
++- (void)keyboardBusyDonePressed {
++  [self recordKeyboardBusyAnswer:@"Done"];
++}
++
++- (void)keyboardBusyReturnPressed {
++  [self recordKeyboardBusyAnswer:@"Return"];
++}
++
+ // A banner from this app, shown over its own alert and re-posted before the previous one expires so
+ // one is on screen for as long as the first alert is unanswered. XCTest treats such a banner as an
+ // interruption of every event aimed at the app (#2546's late tap, from the banner side).
+@@ -652,6 +706,43 @@ - (void)viewDidLoad {
+     self.alertActivationBusyAnswer = busyAnswer;
    }
-   const acquirer = {
-@@ -129,19 +132,19 @@ async function inspectExactClaimSettlement(
-   return await inspectExistingClaimSettlement({ ...acquirer, device, deviceKey, owner });
- }
  
--function inspectOverlappingHostScopedClaims(
-+async function inspectOverlappingHostScopedClaims(
-   params: ClaimAcquisitionInspectionParams,
-   identity: DeviceIdentity,
-   owner: ReturnType<typeof readCurrentOwnerIdentity>,
--): InspectedClaimSettlement[] {
-+): Promise<InspectedClaimSettlement[]> {
-   const settlements: InspectedClaimSettlement[] = [];
--  for (const entry of inspectDeviceClaims({}, params.env)) {
-+  for (const entry of await inspectDeviceClaimsAsync({}, params.env)) {
-     if (!entry.claim) {
-       settlements.push({ status: 'conflict', conflict: entry });
-       continue;
-     }
-     if (!isClaimOfHostScopedDevice(identity, entry.claim)) continue;
--    const current = inspectDeviceClaimFile(
-+    const current = await inspectDeviceClaimFile(
-       resolveDeviceClaimPath(entry.claim.deviceKey, params.env),
++  if ([NSProcessInfo.processInfo.arguments containsObject:@"--agent-device-keyboard-busy"]) {
++    UITextField *field = [[UITextField alloc] init];
++    field.accessibilityIdentifier = @"agent-device-keyboard-busy-input";
++    field.placeholder = @"Busy while editing";
++    field.borderStyle = UITextBorderStyleRoundedRect;
++    UIToolbar *accessory = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
++    accessory.items = @[
++      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
++      [[UIBarButtonItem alloc] initWithTitle:@"Done"
++                                       style:UIBarButtonItemStyleDone
++                                      target:self
++                                      action:@selector(keyboardBusyDonePressed)],
++    ];
++    field.inputAccessoryView = accessory;
++    [field addTarget:self action:@selector(startKeyboardBusy) forControlEvents:UIControlEventEditingDidBegin];
++    [field addTarget:self
++                  action:@selector(keyboardBusyReturnPressed)
++        forControlEvents:UIControlEventEditingDidEndOnExit];
++    field.translatesAutoresizingMaskIntoConstraints = NO;
++    [self.view addSubview:field];
++    UILabel *answer = [[UILabel alloc] init];
++    answer.text = @"Unanswered";
++    answer.accessibilityIdentifier = @"agent-device-keyboard-busy-answer";
++    answer.translatesAutoresizingMaskIntoConstraints = NO;
++    [self.view addSubview:answer];
++    [NSLayoutConstraint activateConstraints:@[
++      [fiel
+```
+
+**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerTests+CommandExecution.swift` (modified, +14/-2)
+```diff
+@@ -587,7 +587,13 @@ extension RunnerTests {
+       }
+       return Response(ok: true, data: DataPayload(message: command.command.rawValue))
+     case .keyboardDismiss:
+-      let result = dismissKeyboard(app: activeApp)
++      var dismissal: (wasVisible: Bool, dismissed: Bool, visible: Bool, mechanism: RunnerKeyboardDismissMechanism?)?
++      withBoundedInteractionIdleTimeoutIfSupported(activeApp, waits: .bothSkipped) {
++        dismissal = dismissKeyboard(app: activeApp)
++      }
++      guard let result = dismissal else {
++        return Response(ok: false, error: ErrorPayload(message: "keyboardDismiss produced no result"))
++      }
+       if result.wasVisible && !result.dismissed {
+         return Response(
+           ok: false,
+@@ -610,7 +616,13 @@ extension RunnerTests {
+         )
+       )
+     case .keyboardReturn:
+-      let result = pressKeyboardReturn(app: activeApp)
++      var press: (wasVisible: Bool, pressed: Bool, visible: Bool)?
++      withBoundedInteractionIdleTimeoutIfSupported(activeApp, waits: .preEventSkipped) {
++        press = pressKeyboardReturn(app: activeApp)
++      }
++      guard let result = press else {
++        return Response(ok: false, error: ErrorPayload(message: "keyboardReturn produced no result"))
++      }
+       if !result.pressed {
+         return Response(
+           ok: false,
+```
+
+**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/UnitTests/RunnerTests+KeyboardTests.swift` (modified, +62/-0)
+```diff
+@@ -327,6 +327,68 @@ extension RunnerTests {
+   private func textEntryInputCount() -> Int {
+     app.textFields.count + app.secureTextFields.count + app.searchFields.count + app.textViews.count
+   }
++
++  // `keyboard dismiss` and `keyboard enter` tap a keyboard control. An app that never stops animating
++  // made that tap wait for XCTest's idle timeout, past the runner's main-thread watchdog, so the command
++  // failed with "main thread execution timed out" and the runner refused the next commands. The fixture
++  // keeps an animation in flight while its field has focus, until its backstop, and records whether
++  // each control landed while the app was still busy.
++  static let keyboardBusyBackstop: TimeInterval = 20
++
++  @MainActor
++  func testKeyboardDismissTapsItsDismissKeyWhileTheAppIsBusy() throws {
++    try withBusyKeyboardField {
++      let command = try runnerCommandFixture(#"{"command":"keyboardDismiss","commandId":"dismiss-busy"}"#)
++      let response = try execute(command: command)
++
++      XCTAssertTrue(response.ok, String(describing: response.error))
++      let answer = app.staticTexts["agent-device-keyboard-busy-answer"].label
++      XCTAssertEqual(answer, "Done while busy")
++      NSLog("AGENT_DEVICE_KEYBOARD_BUSY command=dismiss response.ok=%@ answer=%@", response.ok ? "true" : "false", answer)
++    }
++  }
++
++  @MainActor
++  func testKeyboardEnterPressesReturnWhileTheAppIsBusy() throws {
++    try withBusyKeyboardField {
++      let command = try runnerCommandFixture(#"{"command":"keyboardReturn","commandId":"return-busy"}"#)
++      let response = try execute(command: command)
++
++      XCTAssertTrue(response.ok, String(describing: response.error))
++      XCTAssertEqual(response.data?.wasVisible, true)
++      XCTAssertEqual(response.data?.visible, false)
++      let answer = app.staticTexts["agent-device-keyboard-busy-answer"].label
++      XCTAssertEqual(answer, "Return while busy")
++      NSLog("AGENT_DEVICE_KEYBOARD_BUSY command=enter response.ok=%@ visible=%@ answer=%@", response.ok ? "true" : "false", String(describing: response.data?.visible), answer)
++    }
++  }
++
++  @MainActor
++  private func withBusyKeyboardField(_ body: () throws -> Void) throws {
++    app.launchArguments = ["--agent-device-keyboard-busy", String(Self.keyboardBusyBackstop)]
++    app.launch()
++    defer {
++      invalidateCachedTarget(reason: "unit_test_cleanup")
++      app.terminate()
++    }
++    let field = app.textFields["agent-device-keyboard-busy-input"]
++    XCTAssertTrue(field.waitForFixtureExistence(timeout: appExistenceTimeout))
++    mainOwned.app = app
++    mainOwned.bundleId = "com.callstack.agentdevice.runner"
++    mainOwned.processIdentifier = try XCTUnwrap(Self.processIdentifier(of: app))
++    // Focus starts the busy animation, so this tap must not wait for the app to idle either.
++    withBoundedInteractionIdleTimeoutIfSupported(app, waits: .bothSkipped) { field.tap() }
++    let keyboardDeadline = Date().addingTimeInterval(5)
++    while !isKeyboardVisible(app: app) && Date() < keyboardDeadline {
++      sleepFor(0.2)
++    }
++    XCTAssertTrue(
++      isKeyboardVisible(app: app),
++      "Enable the simulator software keyboard before running the busy keyboard tests; see apple/runner/README.md"
++    )
++    XCTAssertEqual(app.staticTexts["agent-device-keyboard-busy-answer"].label, "Unanswered")
++    try body()
++  }
+ #endif
+ }
+ #endif
+```
+
+**File**: `apple/runner/README.md` (modified, +25/-0)
+```diff
+@@ -56,6 +56,31 @@ Protocol and maintenance references:
+ - `UnitTests/RunnerTests+<Source>Tests.swift`: the `AGENT_DEVICE_RUNNER_UNIT_TESTS` tests for each
+   source file. The packaged runner source omits this directory.
+ 
++### Busy keyboard regression tests
++
++Run the two `testKeyboard*WhileTheAppIsBusy` tests with the simulator software keyboard enabled.
++Before you boot a throwaway simulator, save the current hardware-keyboard preference:
++
++```sh
++keyboard_preference=$(defaults read com.apple.iphonesimulator ConnectHardwareKeyboard 2>/dev/null) || keyboard_preference=absent
++defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool NO
++```
++
++After the tests, restore the preference in the same shell, including when the tests fail.
++If the key was absent, delete it:
++
++```sh
++if [ "$keyboard_preference" = absent ]; then
++  defaults delete com.apple.iphonesimulator ConnectHardwareKeyboard
++else
++  defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool "$keyboard_preference"
++fi
++```
++
++If the software keyboard does not appear, the tests fail instead of skipping.
++The tests assert command success and the fixture's `Done while busy` or `Return while busy` label.
++The Return test also asserts the keyboard visibility reported after submission.
++
+ ## Snapshot Strategy
+ 
+ iOS snapshots have two explicit public capture modes:
+```
+
+---
+
+### Incident Patch 3: `e997f1cf` (2026-11-13)
+**Commit Message**: fix(android): restore screenshot demo permission state (#4477)
+
+* Restore Android screenshot demo permission
+
+* fix(android): preserve screenshot errors through cleanup
+
+* test(android): verify normalized screenshot permission restoration
+
+* fix(android): restore demo permission from its observed listing
+
+* test(android): retain capture failures when evidence cleanup fails
+
+**File**: `packages/platform-android/src/__tests__/screenshot.test.ts` (modified, +124/-0)
+```diff
+@@ -17,6 +17,7 @@ import { screenshotAndroid } from '../screenshot.ts';
+ import type { DeviceInfo } from '@agent-device/kernel/device';
+ import { runCmd } from '@agent-device/host-kit/command';
+ import { sleep } from '../adb.ts';
++import * as adbHost from '../adb-host.ts';
+ 
+ const VALID_PNG = Buffer.from(
+   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+b9xkAAAAASUVORK5CYII=',
+@@ -146,3 +147,126 @@ test('Android screenshots capture immediately by default and stabilize only when
      );
-     if (current) {
-@@ -179,7 +182,7 @@ export async function inspectDeviceClaimAcquisition(
-     hostDeviceId === undefined &&
-     canHostScopedDevices(params.device)
-   ) {
--    const local = inspectTransientExactClaim(params, deviceKey, owner);
-+    const local = await inspectTransientExactClaim(params, deviceKey, owner);
-     if (local) return [local];
-   }
-   const settlements: InspectedClaimSettlement[] = [];
-@@ -188,13 +191,13 @@ export async function inspectDeviceClaimAcquisition(
-     const hostKey = canonicalLocalDeviceKey(deviceClaimIdentity(host));
-     const hostSettlement = await inspectExactClaimSettlement(params, host, hostKey, owner, false);
-     if (hostSettlement.status === 'held') {
--      const held = inspectDeviceClaimFile(resolveDeviceClaimPath(hostKey, params.env));
-+      const held = await inspectDeviceClaimFile(resolveDeviceClaimPath(hostKey, params.env));
-       if (held) settlements.push({ status: 'conflict', conflict: held });
-     } else {
-       settlements.push(hostSettlement);
-     }
-   } else if (canHostScopedDevices(params.device)) {
--    settlements.push(...inspectOverlappingHostScopedClaims(params, identity, owner));
-+    settlements.push(...(await inspectOverlappingHostScopedClaims(params, identity, owner)));
-   }
-   settlements.push(await inspectExactClaimSettlement(params, params.device, deviceKey, owner));
-   return settlements;
-@@ -256,7 +259,7 @@ async function withAcquisitionLocks<Result extends TransientDeviceClaimResult>(
-     });
-     if (hostClaim.status === 'conflict') return hostClaim;
-     if (hostClaim.status === 'held') {
--      const held = inspectDeviceClaimFile(resolveDeviceClaimPath(hostKey, params.env));
-+      const held = await inspectDeviceClaimFile(resolveDeviceClaimPath(hostKey, params.env));
-       if (held) return { status: 'conflict', conflict: held };
-     }
-     const acquired = await withDeviceClaimLock(deviceKey, params.env, acquire);
-@@ -326,7 +329,7 @@ export async function acquireTransientDeviceClaim(params: {
-     transientCommand: params.command,
-   };
-   return await withAcquisitionLocks(lockParams, deviceKey, async () => {
--    c
-```
-
-**File**: `packages/daemon/src/sessions/session-lifecycle/internal/inventory.ts` (modified, +4/-4)
-```diff
-@@ -33,7 +33,7 @@ import {
- import { resolveAndroidSerialAllowlist } from '@agent-device/kernel/device-isolation';
- import {
-   deviceClaimOwnerCannotRelease,
--  inspectDeviceClaims,
-+  inspectDeviceClaimsAsync,
-   canonicalLocalDeviceKey,
-   deviceClaimIdentity,
-   isClaimOfHostScopedDevice,
-@@ -157,7 +157,7 @@ async function devicesInventoryResponse(
-   env: HostEnvironment['env'],
- ): Promise<DaemonResponse> {
-   try {
--    const claims = blockingClaims(env);
-+    const claims = await blockingClaims(env);
-     return {
-       ok: true,
-       data: {
-@@ -180,8 +180,8 @@ async function devicesInventoryResponse(
-   }
- }
- 
--function blockingClaims(env: HostEnvironment['env']): DeviceClaim[] {
--  return inspectDeviceClaims({}, env).flatMap((entry) =>
-+async function blockingClaims(env: HostEnvironment['env']): Promise<DeviceClaim[]> {
-+  return (await inspectDeviceClaimsAsync({}, env)).flatMap((entry) =>
-     entry.claim && !deviceClaimOwnerCannotRelease(entry.classification) ? [entry.claim] : [],
-   );
- }
-```
-
-**File**: `packages/host-kit/src/internal/host-process-liveness.test.ts` (modified, +62/-15)
-```diff
-@@ -16,16 +16,18 @@ import {
-   isProcessZombie,
-   readHostProcessIdentityObservations,
-   readHostProcessIdentityObservationsAsync,
-+  readProcessIdentities,
-   readProcessIdentityFacts,
- } from './host-process.ts';
- 
- function psReturns(stdout: string, exitCode = 0): void {
-   mockRunCmdSync.mockReturnValue({ stdout, stderr: '', exitCode });
- }
- 
--function psAnswersEachField(fields: Record<string, string>): void {
-+/** Answers the two batched identity reads: state and start time, and the command line. */
-+function psAnswersIdentity(rows: { identity?: string; command?: string }): void {
-   mockRunCmd.mockImplementation(async (_cmd: string, args: string[]) => {
--    const value = fields[args[3]!];
-+    const value = args[3] === 'pid=,command=' ? rows.command : rows.identity;
-     return { stdout: value ?? '', stderr: '', exitCode: value === undefined ? 1 : 0 };
    });
- }
-@@ -133,11 +135,10 @@ test('no pid to ask about means no process tool runs at all', async () => {
-   assert.equal(mockRunCmdSync.mock.calls.length, 0);
  });
- 
--test('the ownership read spends the budget its caller names on every field', async () => {
--  psAnswersEachField({
--    'lstart=': 'Mon Aug 10 20:00:00 2026',
--    'command=': '/bin/simctl io recordVideo out.mp4',
--    'state=': 'Ss',
-+test('the ownership read spends the budget its caller names on both batched reads', async () => {
-+  psAnswersIdentity({
-+    identity: '4242 Ss   Mon Aug 10 20:00:00 2026\n',
-+    command: '4242 /bin/simctl io recordVideo out.mp4\n',
-   });
- 
-   const facts = await readProcessIdentityFacts(4242, 5_000);
-@@ -147,12 +148,61 @@ test('the ownership read spends the budget its caller names on every field', asy
-     command: '/bin/simctl io recordVideo out.mp4',
-     zombie: false,
-   });
--  assert.equal(mockRunCmd.mock.calls.length, 3);
-+  assert.deepEqual(
-+    mockRunCmd.mock.calls.map((call) => call[1]),
-+    [
-+      ['-p', '4242', '-o', 'pid=,state=,lstart='],
-+      ['-p', '4242', '-o', 'pid=,command='],
-+    ],
-+  );
-   for (const call of mockRunCmd.mock.calls) {
-     assert.equal(call[2]?.timeoutMs, 5_000);
-   }
- });
- 
-+test('one identity read answers a whole fleet from two ps runs, on Linux and macOS output', async () => {
-+  // procps pads a one-digit day with a space; BSD ps on macOS prints the same lstart layout. The
-+  // command keeps its own spaces, and a pid the host did not list stays unknown.
-+  psAnswersIdentity({
-+    identity: [
-+      '  101 Ss   Mon Nov  9 10:00:00 2026',
-+      '  202 Z+   Tue Nov 10 08:30:00 2026',
-+      '',
-+    ].join('\n'),
-+    command: [
-+      '  101 /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --headless',
-+      '  202 [chrome] <defunct>',
-+      '',
-+    ].join('\n'),
++
++for (const initial of [undefined, '0', '1', 'custom=value'] as const) {
++  for (const outcome of ['success', 'capture failure', 'settle failure'] as const) {
++    test(`stabilized screenshot restores ${initial ?? 'absent'} after ${outcome}`, async () => {
++      let setting: string | undefined = initial;
++      const primary = new Error(outcome);
++      mockRunCmd.mockImplementation(async (_cmd, args) => {
++        if (args.includes('settings')) {
++          if (args.includes('list')) {
++            return {
++              exitCode: 0,
++              stdout: setting === undefined ? '' : `sysui_demo_allowed=${setting}\n`,
++              stderr: '',
++            };
++          }
++
++          if (args.includes('get')) return { exitCode: 0, stdout: `${setting}\n`, stderr: '' };
++          if (args.includes('delete')) setting = undefined;
++          if (args.includes('put')) setting = args.at(-1);
++        }
++        if (args.includes('exec-out')) {
++          if (outcome === 'capture failure') throw primary;
++          return { exitCode: 0, stdout: '', stderr: '', stdoutBuffer: VALID_PNG };
++        }
++        return { exitCode: 0, stdout: '', stderr: '' };
++      });
++      if (outcome === 'settle failure') mockSleep.mockRejectedValue(primary);
++      await withTempScreenshot('screenshot-restore-', async (outPath) => {
++        if (outcome === 'success') await screenshotAndroid(device, outPath, { stabilize: true });
++        else
++          await assert.rejects(
++            screenshotAndroid(device, outPath, { stabilize: true }),
++            (error) => error === primary,
++          );
++        assert.equal(setting, initial);
++      });
++    });
++  }
++}
++
++test('failed prior setting read does not mutate demo mode', async () => {
++  mockRunCmd.mockImplementation(async (_cmd, args) => {
++    if (args.includes('settings') && args.includes('list'))
++      return { exitCode: 1, stdout: '', stderr: 'read failed' };
++    throw new Error('unexpected command');
 +  });
-+
-+  const facts = await readProcessIdentities([101, 202, 303, 101]);
-+
-+  assert.deepEqual(
-+    [...facts.entries()],
-+    [
-+      [
-+        101,
-+        {
-+          startTime: 'Mon Nov  9 10:00:00 2026',
-+          command: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --headless',
-+          zombie: false,
-+        },
-+      ],
-+      [202, { startTime: 'Tue Nov 10 08:30:00 2026', command: '[chrome] <defunct>', zombie: true }],
-+      [303, { startTime: null, command: null, zombie: null }],
-+    ],
-+  );
-+  assert.deepEqual(
-+    mockRunCmd.mock.calls.map((call) => call[1]),
-+    [
-+      ['-p', '101,202,303', '-o', 'pid=,state=,lstart='],
-+      ['-p', '101,202,303', '-o', 'pid=,command='],
-+    ],
-+  );
-+  assert.equal(mockRunCmdSync.mock.calls.length, 0, 'the identity read never blocks the loop');
++  await withTempScreenshot('screenshot-read-failure-', async (outPath) => {
++    await assert.rejects(screenshotAndroid(device, outPath, { stabilize: true }), {
++      code: 'COMMAND_FAILED',
++    });
++    assert.equal(mockRunCmd.mock.calls.length, 1);
++  });
 +});
 +
- test('the ownership read reports an unanswered host as unknown, not as absence', async () => {
-   mockRunCmd.mockRejectedValue(new Error('/bin/ps timed out after 5000ms'));
- 
-@@ -164,20 +214,17 @@ test('the ownership read reports an unanswered host as unknown, not as absence',
++test('restoration failure surfaces after a successful capture', async () => {
++  mockRunCmd.mockImplementation(async (_cmd, args) => {
++    if (args.includes('settings') && args.includes('delete'))
++      return { exitCode: 1, stdout: '', stderr: 'restore failed' };
++    if (args.includes('exec-out'))
++      return { exitCode: 0, stdout: '', stderr: '', stdoutBuffer: VALID_PNG };
++    return { exitCode: 0, stdout: '', stderr: '' };
++  });
++  await withTempScreenshot('screenshot-restore-failure-', async (outPath) => {
++    await assert.rejects(screenshotAndroid(device, outPath, { stabilize: true }), {
++      code: 'COMMAND_FAILED',
++    });
++  });
++});
++
++test('restoration failure is diagnostic evidence when capture fails', async () => {
++  const primary = new Error('capture failed');
++  const cleanup = new Error('restore failed');
++  const diagnostic = vi.spyOn(adbHost.requireAndroidAdbHost(), 'emitDiagnostic');
++  mockRunCmd.mockImplementation(async (_cmd, args) => {
++    if (args.includes('settings') && args.includes('delete')) throw cleanup;
++    if (args.includes('exec-out')) throw primary;
++    return { exitCode: 0, stdout: '', stderr: '' };
++  });
++  try {
++    await withTempScreenshot('screenshot-both-fail-', async (outPath) => {
++      await assert.rejects(
++        screenshotAndroid(device, outPath, { stabilize: true }),
++        (error) => error === primary,
++      );
++      assert.equal(
++        diagnostic.mock.calls.some(
++          ([event]) => event.phase === 'android_screenshot_demo_setting_restore_failed',
++        ),
++        true,
++      );
++    });
++  } finally {
++    diagnostic.mockRestore();
++  }
++});
++
++test('restoration uses the exact listing value across CRLF without a secondary get', async () => {
++  let setting = '0';
++  mockRunCmd.mockImplementation(async (_cmd, args) => {
++    if (args.includes('settings')) {
++      if (args.includes('list'))
++        return {
++          exitCode: 0,
++          stdout: `sysui_demo_allowed_extra=1\r\nsysui_demo_allowed=${setting}\r\nother=2\r\n`,
++          stderr: '',
++        };
++      if (args.includes('get')) return { exitCode: 0, stdout: `${setting}\r\n`, stderr: '' };
++      if (args.includes('put')) s
+```
+
+**File**: `packages/platform-android/src/__tests__/snapshot-results.test.ts` (added, +563/-0)
+```diff
+@@ -0,0 +1,563 @@
++import { afterEach, beforeEach, test, vi } from 'vitest';
++import assert from 'node:assert/strict';
++
++vi.mock('@agent-device/host-kit/command', async (importOriginal) => {
++  const actual = await importOriginal<typeof import('@agent-device/host-kit/command')>();
++  return { ...actual, runCmd: vi.fn() };
++});
++vi.mock('../adb.ts', async (importOriginal) => {
++  const actual = await importOriginal<typeof import('../adb.ts')>();
++  return { ...actual, sleep: vi.fn() };
++});
++
++import { bindMissingAndroidHelperHost } from './test-utils/android-host-test-setup.ts';
++
++import { snapshotAndroid } from '../snapshot.ts';
++
++import { buildUiHierarchySnapshot, parseUiHierarchyTree } from '../ui-hierarchy.ts';
++
++import * as diagnosticsModule from '@agent-device/host-kit/diagnostics';
++import { AppError } from '@agent-device/kernel/errors';
++
++import { resetAndroidSnapshotHelperSessions } from '../snapshot-helper-session-lifecycle.ts';
++import { type AndroidAdbExecutor } from '../snapshot-helper.ts';
++
++import {
++  androidHelperInstrumentationOutput as helperOutput,
++  ANDROID_HELPER_INSTALLED_VERSION_PROBE as installedHelperProbe,
++} from './snapshot-helper-session.fixtures.ts';
++
++import {
++  mockSleep,
++  device,
++  helperArtifact,
++  snapshotAndroidWithHelper,
++  createHelperAdb,
++  androidSnapshotHelperAdb,
++  captureDiagnostics,
++  resetSnapshotTestState,
++} from './test-utils/android-snapshot-test-world.ts';
++
++beforeEach(resetSnapshotTestState);
++afterEach(async () => {
++  await resetAndroidSnapshotHelperSessions();
++});
++
++test('snapshotAndroid emits helper failure diagnostics', async () => {
++  const helperAdb: AndroidAdbExecutor = async (args) => {
++    if (args.includes('--show-versioncode')) {
++      return {
++        exitCode: 0,
++        stdout: 'package:com.callstack.agentdevice.snapshothelper versionCode:13004',
++        stderr: '',
++      };
++    }
++    if (args[0] === 'shell' && args[1] === 'am' && args[2] === 'force-stop')
++      return { exitCode: 0, stdout: '', stderr: '' };
++    return { exitCode: 1, stdout: '', stderr: 'helper unavailable' };
++  };
++
++  const diagnostics = await captureDiagnostics(
++    { session: 'snapshot-failure', requestId: 'req-2', command: 'snapshot', debug: true },
++    async () => {
++      await assert.rejects(
++        () => snapshotAndroid(device, { helperAdb, helperArtifact }),
++        (error: unknown) => {
++          assert(error instanceof AppError);
++          assert.equal(error.code, 'COMMAND_FAILED');
++          assert.match(error.message, /helper unavailable/);
++          return true;
++        },
++      );
++      return diagnosticsModule.flushDiagnosticsToSessionFile({ force: true })?.path ?? null;
++    },
++  );
++
++  assert.match(diagnostics, /android_snapshot_helper_failed/);
++  assert.match(diagnostics, /helper unavailable/);
++});
++
++test('snapshotAndroid emits unavailable diagnostics when helper artifact is missing', async () => {
++  bindMissingAndroidHelperHost();
++  const diagnostics = await captureDiagnostics(
++    {
++      session: 'snapshot-helper-missing',
++      requestId: 'req-missing',
++      command: 'snapshot',
++      debug: true,
++    },
++    async () => {
++      await assert.rejects(() => snapshotAndroid(device), /Android snapshot helper is unavailable/);
++      return diagnosticsModule.flushDiagnosticsToSessionFile({ force: true })?.path ?? null;
++    },
++  );
++
++  assert.match(diagnostics, /android_snapshot_helper_artifact_resolution/);
++  assert.match(diagnostics, /android_snapshot_helper_unavailable/);
++  assert.match(diagnostics, /artifact_not_found/);
++});
++
++test('snapshotAndroid gives an actionable hint when the helper artifact is missing on disk', async () => {
++  bindMissingAndroidHelperHost();
++  await assert.rejects(
++    () => snapshotAndroid(device),
++    (error) => {
++      assert.match((error as Error).message, /the bundled helper artifact was not found/);
++      const hint = String((error as { details?: Record<string, unknown> }).details?.hint);
++      assert.match(hint, /pnpm build:android/);
++      assert.match(hint, /prepack/);
++      assert.match(hint, /\.manifest\.json/);
++      assert.match(hint, /\.apk/);
++      // The npm package excludes *.idsig by design — the hint must never claim it is required.
++      assert.doesNotMatch(hint, /idsig/);
++      return true;
++    },
++  );
++});
++
++test('snapshotAndroid distinguishes a device-side install rejection from a missing build artifact', async () => {
++  const helperAdb: AndroidAdbExecutor = async (args) => {
++    if (args.includes('--show-versioncode')) {
++      // No installed package reported, so ensureAndroidSnapshotHelper treats the
++      // helper as missing and attempts a real install.
++      return { exitCode: 0, stdout: '', stderr: '' };
++    }
++    if (args[0] === 'install') {
++      return { exitCode: 1, stdout: '', stderr: 'Failure [INSTALL_FAILED_TEST_ONLY]' };
++    }
++    throw new Error(`unexpected adb args: ${args.join(' ')}`);
++  };
++
++  aw
+```
+
+**File**: `packages/platform-android/src/__tests__/snapshot.test.ts` (modified, +31/-629)
+```diff
+@@ -12,23 +12,17 @@ vi.mock('../adb.ts', async (importOriginal) => {
+   return { ...actual, sleep: vi.fn() };
  });
  
- test('the ownership read leaves the zombie question open when only the state is unreadable', async () => {
--  psAnswersEachField({
--    'lstart=': 'Mon Aug 10 20:00:00 2026',
--    'command=': '/bin/simctl io recordVideo out.mp4',
--  });
-+  psAnswersIdentity({ command: '4242 /bin/simctl io recordVideo out.mp4\n' });
+-import {
+-  bindMissingAndroidHelperHost,
+-  mkdtempForTest,
+-} from './test-utils/android-host-test-setup.ts';
++import { mkdtempForTest } from './test-utils/android-host-test-setup.ts';
+ import { screenshotAndroid } from '../screenshot.ts';
+ import { snapshotAndroid } from '../snapshot.ts';
+ import { readAndroidGestureViewport } from '../touch-executor.ts';
+-import { buildUiHierarchySnapshot, parseUiHierarchyTree } from '../ui-hierarchy.ts';
+-import type { DeviceInfo } from '@agent-device/kernel/device';
++
+ import * as diagnosticsModule from '@agent-device/host-kit/diagnostics';
+ import { AppError } from '@agent-device/kernel/errors';
+-import { runCmd } from '@agent-device/host-kit/command';
+-import { sleep } from '../adb.ts';
+-import { resetAndroidSnapshotHelperInstallCache } from '../snapshot-helper-install.ts';
++
+ import { resetAndroidSnapshotHelperSessions } from '../snapshot-helper-session-lifecycle.ts';
+ import { type AndroidAdbExecutor } from '../snapshot-helper.ts';
+-import { ANDROID_SNAPSHOT_HELPER_FIXTURE_ARTIFACT } from './test-utils/android-snapshot-helper.ts';
++
+ import {
+   androidHelperInstrumentationOutput as helperOutput,
+   createPersistentSnapshotHelperProvider,
+@@ -39,74 +33,20 @@ import {
+ } from './snapshot-helper-session.fixtures.ts';
+ import { withAndroidAdbProvider, type AndroidAdbProvider } from '../adb-executor.ts';
  
-   assert.deepEqual(await readProcessIdentityFacts(4242, 5_000), {
--    startTime: 'Mon Aug 10 20:00:00 2026',
-+    startTime: null,
-     command: '/bin/simctl io recordVideo out.mp4',
-     zombie: null,
+-const VALID_PNG = Buffer.from(
+-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+b9xkAAAAASUVORK5CYII=',
+-  'base64',
+-);
+-const mockRunCmd = vi.mocked(runCmd);
+-const mockSleep = vi.mocked(sleep);
+-
+-const device: DeviceInfo = {
+-  platform: 'android',
+-  id: 'emulator-5554',
+-  name: 'Pixel',
+-  kind: 'emulator',
+-  booted: true,
+-};
+-
+-const helperArtifact = ANDROID_SNAPSHOT_HELPER_FIXTURE_ARTIFACT;
+-
+-function snapshotAndroidWithHelper(
+-  helperAdb: AndroidAdbExecutor,
+-  options: Omit<
+-    NonNullable<Parameters<typeof snapshotAndroid>[1]>,
+-    'helperAdb' | 'helperArtifact'
+-  > = {},
+-) {
+-  return snapshotAndroid(device, {
+-    ...options,
+-    helperAdb,
+-    helperArtifact,
+-  });
+-}
+-
+-function createHelperAdb(
+-  handlers: Partial<Record<'instrument' | 'activity', AndroidAdbExecutor>>,
+-): AndroidAdbExecutor {
+-  return async (args, options) => {
+-    if (isHelperVersionProbe(args)) return installedHelperProbe;
+-    if (isHelperRuntimeReset(args)) {
+-      return { exitCode: 0, stdout: '', stderr: '' };
+-    }
+-    const operation = helperAdbOperation(args);
+-    const handler = operation ? handlers[operation] : undefined;
+-    if (handler) return await handler(args, options);
+-    throw new Error(`unexpected helper adb args: ${args.join(' ')}`);
+-  };
+-}
+-
+-function isHelperVersionProbe(args: readonly string[]): boolean {
+-  return args.includes('--show-versioncode');
+-}
+-
+-function helperAdbOperation(args: readonly string[]): 'instrument' | 'activity' | undefined {
+-  if (args.includes('instrument')) return 'instrument';
+-  return args.includes('dumpsys') && args.includes('activity') ? 'activity' : undefined;
+-}
+-
+-beforeEach(async () => {
+-  await resetAndroidSnapshotHelperSessions();
+-  resetAndroidSnapshotHelperInstallCache();
+-  mockRunCmd.mockReset();
+-  mockSleep.mockReset();
+-  mockSleep.mockResolvedValue(undefined);
+-  mockRunCmd.mockImplementation(async (_cmd, args) => {
+-    if (args.includes('exec-out')) {
+-      return { exitCode: 0, stdout: '', stderr: '', stdoutBuffer: VALID_PNG };
+-    }
+-    return { exitCode: 0, stdout: '', stderr: '' };
+-  });
+-});
++import {
++  VALID_PNG,
++  mockRunCmd,
++  mockSleep,
++  device,
++  helperArtifact,
++  snapshotAndroidWithHelper,
++  createHelperAdb,
++  isAndroidSdkVersionCommand,
++  captureDiagnostics,
++  resetSnapshotTestState,
++} from './test-utils/android-snapshot-test-world.ts';
++
++beforeEach(resetSnapshotTestState);
+ 
+ afterEach(async () => {
+   await resetAndroidSnapshotHelperSessions();
+@@ -119,7 +59,16 @@ test('screenshotAndroid waits for transient UI when stabilization is requested',
+     await screenshotAndroid(device, outPath, { stabilize: true });
+ 
+     // Demo mode is one setting and two broadcasts, all before the settle.
+-    assert.deepEqual(events, ['enable', 'enable', 'enable', 'settle:1000', 'capture', 'disable']);
++    assert.deepEqual(events, [
++      'read',
++      'enable',
++      'enable',
++      'enable',
++      'settle:1000',
++      'capture',
++      'disable',
++      'restore',
++    ]);
    });
  });
  
- test('the ownership read answers the zombie question from the state field', async () => {
--  psAnswersEachField({ 'lstart=': 'x', 'command=': 'y', 'state=': 'ZN' });
-+  psAnswersIdentity({ identity: '4242 ZN x\n', command: '4242 y\n' });
+@@ -221,7 +170,9 @@ function mockScreenshotEvents(events: string[]): void {
+       events.push('capture');
+       return { exitCode: 0, stdout: '', stderr: '', stdoutBuffer: VALID_PNG };
+     }
+-    if (!args.includes('dumpsys')) events.push(args.includes('exit') ? 'disable' : 'enable');
++    if (args.includes('list') && args.includes('settings')) events.push('read');
++    else if (args.includes('delete') && args.includes('settings')) eve
+```
+
+**File**: `packages/platform-android/src/__tests__/test-utils/android-snapshot-test-world.ts` (added, +119/-0)
+```diff
+@@ -0,0 +1,119 @@
++import { vi } from 'vitest';
++import assert from 'node:assert/strict';
++import { promises as fs } from 'node:fs';
++import { runCmd } from '@agent-device/host-kit/command';
++import type { DeviceInfo } from '@agent-device/kernel/device';
++import * as diagnosticsModule from '@agent-device/host-kit/diagnostics';
++import { sleep } from '../../adb.ts';
++import { snapshotAndroid } from '../../snapshot.ts';
++import { resetAndroidSnapshotHelperInstallCache } from '../../snapshot-helper-install.ts';
++import { resetAndroidSnapshotHelperSessions } from '../../snapshot-helper-session-lifecycle.ts';
++import type { AndroidAdbExecutor } from '../../snapshot-helper.ts';
++import { mkdtempForTest } from './android-host-test-setup.ts';
++import { ANDROID_SNAPSHOT_HELPER_FIXTURE_ARTIFACT } from './android-snapshot-helper.ts';
++import {
++  androidHelperInstrumentationOutput as helperOutput,
++  isAndroidHelperRuntimeForceStop as isHelperRuntimeReset,
++  ANDROID_HELPER_INSTALLED_VERSION_PROBE as installedHelperProbe,
++} from '../snapshot-helper-session.fixtures.ts';
++
++export const VALID_PNG = Buffer.from(
++  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+b9xkAAAAASUVORK5CYII=',
++  'base64',
++);
++
++export const mockRunCmd = vi.mocked(runCmd);
++
++export const mockSleep = vi.mocked(sleep);
++
++export const device: DeviceInfo = {
++  platform: 'android',
++  id: 'emulator-5554',
++  name: 'Pixel',
++  kind: 'emulator',
++  booted: true,
++};
++
++export const helperArtifact = ANDROID_SNAPSHOT_HELPER_FIXTURE_ARTIFACT;
++
++export function snapshotAndroidWithHelper(
++  helperAdb: AndroidAdbExecutor,
++  options: Omit<
++    NonNullable<Parameters<typeof snapshotAndroid>[1]>,
++    'helperAdb' | 'helperArtifact'
++  > = {},
++) {
++  return snapshotAndroid(device, {
++    ...options,
++    helperAdb,
++    helperArtifact,
++  });
++}
++
++export function createHelperAdb(
++  handlers: Partial<Record<'instrument' | 'activity', AndroidAdbExecutor>>,
++): AndroidAdbExecutor {
++  return async (args, options) => {
++    if (isHelperVersionProbe(args)) return installedHelperProbe;
++    if (isHelperRuntimeReset(args)) {
++      return { exitCode: 0, stdout: '', stderr: '' };
++    }
++    const operation = helperAdbOperation(args);
++    const handler = operation ? handlers[operation] : undefined;
++    if (handler) return await handler(args, options);
++    throw new Error(`unexpected helper adb args: ${args.join(' ')}`);
++  };
++}
++
++function isHelperVersionProbe(args: readonly string[]): boolean {
++  return args.includes('--show-versioncode');
++}
++
++function helperAdbOperation(args: readonly string[]): 'instrument' | 'activity' | undefined {
++  if (args.includes('instrument')) return 'instrument';
++  return args.includes('dumpsys') && args.includes('activity') ? 'activity' : undefined;
++}
++
++export function androidSnapshotHelperAdb(xml: string, activityDump?: string): AndroidAdbExecutor {
++  return createHelperAdb({
++    instrument: async () => ({ exitCode: 0, stdout: helperOutput(xml), stderr: '' }),
++    ...(activityDump === undefined
++      ? {}
++      : { activity: async () => ({ exitCode: 0, stdout: activityDump, stderr: '' }) }),
++  });
++}
++
++export function isAndroidSdkVersionCommand(args: readonly string[]): boolean {
++  return (
++    args.includes('shell') && args.includes('getprop') && args.includes('ro.build.version.sdk')
++  );
++}
++
++export async function captureDiagnostics(
++  scope: Parameters<typeof diagnosticsModule.withDiagnosticsScope>[0],
++  callback: () => Promise<string | null>,
++): Promise<string> {
++  const previousHome = process.env.HOME;
++  process.env.HOME = await mkdtempForTest('agent-device-android-diag-');
++  try {
++    const diagnosticsPath = await diagnosticsModule.withDiagnosticsScope(scope, callback);
++    assert.ok(diagnosticsPath);
++    return await fs.readFile(diagnosticsPath, 'utf8');
++  } finally {
++    process.env.HOME = previousHome;
++  }
++}
++
++export async function resetSnapshotTestState(): Promise<void> {
++  await resetAndroidSnapshotHelperSessions();
++  resetAndroidSnapshotHelperInstallCache();
++  mockRunCmd.mockReset();
++  mockSleep.mockReset();
++  mockSleep.mockResolvedValue(undefined);
++  mockRunCmd.mockImplementation(async (_cmd, args) => {
++    if (args.includes('exec-out')) {
++      return { exitCode: 0, stdout: '', stderr: '', stdoutBuffer: VALID_PNG };
++    }
++    return { exitCode: 0, stdout: '', stderr: '' };
++  });
++}
+```
+
+**File**: `packages/platform-android/src/screenshot.ts` (modified, +46/-7)
+```diff
+@@ -1,9 +1,10 @@
+ import type { ScreenshotCaptureFacts } from '@agent-device/contracts/interactor-types';
+-import { AppError } from '@agent-device/kernel/errors';
++import { AppError, normalizeError } from '@agent-device/kernel/errors';
+ import type { DeviceInfo } from '@agent-device/kernel/device';
+ import type { ShellWord } from '@agent-device/kernel/device-shell';
+ import { runAndroidExecOut, runAndroidShell, sleep } from './adb.ts';
+-import { requireAndroidAdbHost } from './adb-host.ts';
++import { emitAndroidAdbDiagnostic, requireAndroidAdbHost } from './adb-host.ts';
++import { androidAdbResultError } from './adb-executor.ts';
+ import { probeAndroidDisplayRotation } from './input-actions.ts';
  
-   assert.deepEqual(await readProcessIdentityFacts(4242), {
-     startTime: 'x',
-@@ -191,7 +238,7 @@ test('the ownership read answers the zombie question from the state field', asyn
- test('a host without /bin/ps reads identity through the NixOS system profile procps', async () => {
-   psInstalledAt(['/run/current-system/sw/bin/ps']);
-   psReturns('
+ // PNG file signature: 0x89 P N G \r \n 0x1A \n
+@@ -29,14 +30,52 @@ export async function screenshotAndroid(
+     return await captureAndroidScreenshotWithRotation(device, outPath);
+   }
+ 
+-  await enableAndroidDemoMode(device);
++  const listing = await runDemoSettingCommand(device, ['settings', 'list', 'global']);
++  const settingPrefix = 'sysui_demo_allowed=';
++  const previous = listing.stdout
++    .split(/\r?\n/)
++    .find((line) => line.startsWith(settingPrefix))
++    ?.slice(settingPrefix.length);
++
++  let capture: ScreenshotCaptureFacts;
+   try {
++    await enableAndroidDemoMode(device);
+     // Allow transient UI affordances like scrollbars to fade before capture.
+     await sleep(ANDROID_SCREENSHOT_SETTLE_DELAY_MS);
+-    return await captureAndroidScreenshotWithRotation(device, outPath);
+-  } finally {
+-    await disableAndroidDemoMode(device).catch(() => {});
++    capture = await captureAndroidScreenshotWithRotation(device, outPath);
++  } catch (error) {
++    await restoreAndroidDemoSetting(device, previous).catch((restoreError: unknown) => {
++      emitAndroidAdbDiagnostic({
++        level: 'error',
++        phase: 'android_screenshot_demo_setting_restore_failed',
++        data: { error: normalizeError(restoreError) },
++      });
++    });
++    throw error;
++  }
++  await restoreAndroidDemoSetting(device, previous);
++  return capture;
++}
++
++async function restoreAndroidDemoSetting(
++  device: DeviceInfo,
++  previous: string | undefined,
++): Promise<void> {
++  await disableAndroidDemoMode(device).catch(() => {});
++  await runDemoSettingCommand(
++    device,
++    previous === undefined
++      ? ['settings', 'delete', 'global', 'sysui_demo_allowed']
++      : ['settings', 'put', 'global', 'sysui_demo_allowed', previous],
++  );
++}
++
++async function runDemoSettingCommand(device: DeviceInfo, words: ShellWord[]) {
++  const result = await runAndroidShell(device, words, { allowFailure: true });
++  if (result.exitCode !== 0) {
++    throw androidAdbResultError('Android screenshot demo setting command failed', result);
+   }
++  return result;
+ }
+ 
+ /**
+@@ -46,7 +85,7 @@ export async function screenshotAndroid(
+ async function enableAndroidDemoMode(device: DeviceInfo): Promise<void> {
+   const shell = (words: ShellWord[]) => runAndroidShell(device, words, { allowFailure: true });
+ 
+-  await shell(['settings', 'put', 'global', 'sysui_demo_allowed', '1']);
++  await runDemoSettingCommand(device, ['settings', 'put', 'global', 'sysui_demo_allowed', '1']);
+ 
+   const broadcast = (extra: ShellWord[]) =>
+     shell(['am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', ...extra]);
+```
+
+**File**: `test/integration/android-emulator-e2e/live-capture-scenario.ts` (modified, +37/-0)
+```diff
+@@ -1,13 +1,50 @@
+ import assert from 'node:assert/strict';
+ import path from 'node:path';
++import fs from 'node:fs';
+ 
+ import { PUBLIC_COMMANDS } from '@agent-device/command-registry/catalog';
+ import { assertPngFile } from '../provider-scenarios/assertions.ts';
++import { assertScreenshotDemoPermissionRestoration } from './live-demo-permission-scenario.ts';
+ import { type LiveContext, runStep, verifyCommand } from './live-harness.ts';
+ 
+ const C = PUBLIC_COMMANDS;
+ 
+ export async function assertCaptureAndClose(context: LiveContext): Promise<void> {
++  await runStep(context, 'open Settings for native permission restoration', [
++    'open',
++    'com.android.settings',
++    '--no-test-ime',
++  ]);
++  const foreground = await runStep(context, 'verify Settings is foreground', ['appstate']);
++  assert.equal(foreground.json?.data?.package, 'com.android.settings');
++  const snapshot = await runStep(
++    context,
++    'verify candidate Android helper before normalized capture',
++    ['snapshot', '-i'],
++  );
++  const version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
++  assert.equal(snapshot.json?.data?.androidSnapshot?.backend, 'android-helper');
++  assert.equal(snapshot.json?.data?.androidSnapshot?.helperVersion, version);
++  fs.writeFileSync(
++    path.join(context.artifactDir, 'demo-permission-snapshot.json'),
++    JSON.stringify(snapshot.json, null, 2),
++  );
++  await assertScreenshotDemoPermissionRestoration({
++    serial: context.serial,
++    artifactDir: context.artifactDir,
++    captureScreenshot: async (filePath) => {
++      await runStep(context, 'capture normalized permission restoration evidence', [
++        'screenshot',
++        filePath,
++        '--normalize-status-bar',
++      ]);
++    },
++  });
++  await runStep(context, 'restore fixture after native permission restoration', [
++    'open',
++    context.appId,
++    '--no-test-ime',
++  ]);
+   const screenshotPath = path.join(context.artifactDir, 'fixture-smoke.png');
+   const screenshot = await runStep(context, 'capture fixture screenshot', [
+     'screenshot',
+```
+
+**File**: `test/integration/android-emulator-e2e/live-demo-permission-scenario.ts` (added, +93/-0)
+```diff
+@@ -0,0 +1,93 @@
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import path from 'node:path';
++
++import { runCmd } from '@agent-device/host-kit/command';
++import { deviceShellArgv } from '@agent-device/kernel/device-shell';
++import { assertPngFile } from '../provider-scenarios/assertions.ts';
++
++const DEMO_PERMISSION = 'sysui_demo_allowed';
++const DEMO_PERMISSION_PREFIX = `${DEMO_PERMISSION}=`;
++
++type PermissionCase = {
++  state: string;
++  before: string | null;
++  after?: string | null;
++  path: string;
++};
++
++export async function assertScreenshotDemoPermissionRestoration(options: {
++  serial: string;
++  artifactDir: string;
++  captureScreenshot: (filePath: string) => Promise<void>;
++}): Promise<void> {
++  const shell = async (words: string[]) => {
++    const result = await runCmd(
++      'adb',
++      deviceShellArgv('adb', 'shell', words, ['-s', options.serial]),
++      { timeoutMs: 5_000 },
++    );
++    return result.stdout;
++  };
++  const readPermission = async () => {
++    const rows = (await shell(['settings', 'list', 'global']))
++      .split(/\r?\n/)
++      .filter((row) => row.startsWith(DEMO_PERMISSION_PREFIX));
++    assert.ok(rows.length <= 1, 'the global permission must have at most one row');
++    return rows[0] ?? null;
++  };
++  const writePermission = async (value: string | undefined) => {
++    await shell(
++      value === undefined
++        ? ['settings', 'delete', 'global', DEMO_PERMISSION]
++        : ['settings', 'put', 'global', DEMO_PERMISSION, value],
++    );
++  };
++  const apiLevel = Number((await shell(['getprop', 'ro.build.version.sdk'])).trim());
++  assert.ok(Number.isInteger(apiLevel) && apiLevel > 0, 'Android must report its API level');
++  const initial = await readPermission();
++  const cases: PermissionCase[] = [];
++  const failures: unknown[] = [];
++  fs.mkdirSync(options.artifactDir, { recursive: true });
++  try {
++    for (const value of [undefined, '0', '1']) {
++      await writePermission(value);
++      const before = await readPermission();
++      assert.equal(before, value === undefined ? null : `${DEMO_PERMISSION_PREFIX}${value}`);
++      const item: PermissionCase = {
++        state: value ?? 'absent',
++        before,
++        path: path.join(options.artifactDir, `demo-permission-${value ?? 'absent'}.png`),
++      };
++      cases.push(item);
++      await options.captureScreenshot(item.path);
++      assertPngFile(item.path);
++      assert.ok(fs.statSync(item.path).size > 8, 'the capture must contain PNG image data');
++      item.after = await readPermission();
++      assert.equal(item.after, before, `normalized capture changed the ${item.state} permission`);
++    }
++  } catch (error) {
++    failures.push(error);
++  }
++  let restored: string | null | undefined;
++  try {
++    await writePermission(
++      initial === null ? undefined : initial.slice(DEMO_PERMISSION_PREFIX.length),
++    );
++    restored = await readPermission();
++    assert.equal(restored, initial, 'the native test must restore its initial global setting');
++  } catch (error) {
++    failures.push(error);
++  }
++  try {
++    fs.writeFileSync(
++      path.join(options.artifactDir, 'demo-permission-evidence.json'),
++      `${JSON.stringify({ serial: options.serial, apiLevel, initial, restored, cases }, null, 2)}\n`,
++    );
++  } catch (error) {
++    failures.push(error);
++  }
++  if (failures.length === 1) throw failures[0];
++  if (failures.length > 1)
++    throw new AggregateError(failures, 'Android screenshot evidence and cleanup failed');
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4400** (2026-11-11): ci: install the Android SDK through one setup-android-sdk action (@thymikee)
-- **PR #4398** (2026-11-11): fix(selectors): make only value rewrites live recorded placeholders (@thymikee)
-- **PR #4397** (2026-11-11): fix(maestro): run child entrypoints through symlinked paths (@thymikee)
-- **PR #4394** (2026-11-11): fix: review follow-ups (web text-entry hint, recorder echo names, mutation report on cancel) (@thymikee)
-- **PR #4393** (2026-11-11): refactor(apple): remove redundant cleanup platform state (@thymikee)
-- **PR #4392** (closed): test(daemon): split longpress script-writer tests to fix red main lint (@thymikee)
+- **PR #4549** (2026-11-14): test: isolate ps fixtures from host proc identity (@thymikee)
+- **PR #4546** (2026-11-14): ci: prepare 0.22 source version and push CI for nightly releases (@thymikee)
+- **PR #4538** (2026-11-14): test(maestro): keep optional-scroll continuation assertion visible (@thymikee)
+- **PR #4536** (2026-11-14): fix(ios): classify the keyboard dismiss refusal by what it dispatched (@thymikee)
+- **PR #4533** (2026-11-14): fix: prepare reinstall artifacts before removing apps (@thymikee)
+- **PR #4532** (2026-11-14): Give remote daemon unavailability a typed refusal reason (@thymikee)
 
 ---
 
@@ -2864,32 +3258,39 @@ Co-Authored-By: Claude O
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. replay): escape recorded interpolation, run scripts off the event loop, harden M
+## X. ios): confirm foldable rotation from the lit panel in either simulator set
 
 **RULE**:
-When implementing operations in `.fallowrc.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/foldable-scoped-rotation.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1244334d`: replay): escape recorded interpolation, run scripts off the event loop, harden Maestro and test flows (#4363). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `15e298f2`: ios): confirm foldable rotation from the lit panel in either simulator set. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.fallowrc.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/foldable-scoped-rotation.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "packages/maestro/src/daemon-port/run-script-child.ts",
-    "packages/maestro/src/daemon-port/run-script-http-child.ts",
+---
+'agent-device': patch
+---
+
+Fix foldable iPhone simulator rotation in scoped sets and confirm the lit panel in both default and scoped sets. Rotation in both sets uses the fold helper, with no CoreDevice orientation polling. An already visible target dispatches nothing. Incomplete, unknown-power and multi-lit panel tables neither confirm nor dispatch. A target the panel never shows fails with `orientation-unverified`.
+
+Use the fixed iPhone Duo picker offsets measured in both sets (outer 0 degrees, inner +90 degrees), replacing runtime calibration. Inner landscape-left sends `portrait-upside-down`, mapped to the HID wire value `pud`; it remains unsupported as a user target. Delayed reads wait without resending the same picker value to the same panel.
+
+Unresolved guest reads inside the settle loop neither confirm nor dispatch and are retried. An unresolved final read fails with `orientation-panel-table-unavailable`. Multi-panel classification admits rotation without a model-name guard; a new multi-panel model needs its own picker mapping.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1244334d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `15e298f2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

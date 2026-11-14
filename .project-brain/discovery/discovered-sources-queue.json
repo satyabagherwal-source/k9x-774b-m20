@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T17:04:26.763Z",
+  "updated_at": "2026-11-14T17:25:24.328Z",
   "stats": {
-    "total_discovered": 3340,
-    "approved_pending_harvest": 3135,
+    "total_discovered": 3342,
+    "approved_pending_harvest": 3137,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3117,
+      "COMMUNITY_AND_EXPERT": 3119,
       "OFFICIAL_DOCUMENTATION": 122,
       "STANDARDS_AND_SPECIFICATIONS": 87,
       "ENGINEERING_BLOGS": 1,
@@ -72065,6 +72065,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
         "fileName": "hf-autotrust-gev-26b-decide-learnings.md"
+      }
+    },
+    "SRC-4E50EFA7ABAA": {
+      "id": "SRC-4E50EFA7ABAA",
+      "url": "https://huggingface.co/google/embeddinggemma-2",
+      "title": "https://huggingface.co/google/embeddinggemma-2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T17:25:24.077Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
+        "fileName": "hf-google-embeddinggemma-2-learnings.md"
+      }
+    },
+    "SRC-05F748DBDDA7": {
+      "id": "SRC-05F748DBDDA7",
+      "url": "https://github.com/callstack/agent-device",
+      "title": "https://github.com/callstack/agent-device",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T17:25:24.328Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
       }
     }
   }

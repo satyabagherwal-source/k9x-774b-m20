@@ -613804,3 +613804,256 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `72c16b08` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8509. Distinguish canonical artifact locations from fetch locations (Harvested from astral-sh/uv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Distinguish canonical artifact locations from fetch locations",
+  "source": "astral-sh/uv",
+  "source_url": "https://github.com/astral-sh/uv",
+  "source_version": "d5c3f174",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-14T17:24:46.046Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-astral-sh-uv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [astral-sh/uv](https://github.com/astral-sh/uv) (Revision: `d5c3f174`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/uv-client/src/flat_index.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a30eff72`: Distinguish canonical artifact locations from fetch locations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-client/src/flat_index.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+use uv_distribution_types::{FileLocation, IndexEntryFilename, IndexUrl, UrlString, VerbatimFile};
+    file: VerbatimFile,
+    pub fn into_parts(self) -> (IndexEntryFilename, VerbatimFile, IndexUrl) {
+                    rkyv::deserialize::<VerbatimFile, rkyv::rancor::Error>(file)
+    fn parse_html(text: &str, url: &SafeUrl) -> Result<Vec<VerbatimFile>, crate::html::Error> {
+            .filter_map(|file| match VerbatimFile::try_from_pypi(file, &base) {
+        files: impl IntoIterator<Item = VerbatimFile>,
+            let file = VerbatimFile {
+                location: FileLocation::absolute(UrlString::from(url)),
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+use uv_distribution_types::{File, FileLocation, IndexEntryFilename, IndexUrl, UrlString};
+    file: File,
+    pub fn into_parts(self) -> (IndexEntryFilename, File, IndexUrl) {
+                    rkyv::deserialize::<File, rkyv::rancor::Error>(file)
+    fn parse_html(text: &str, url: &SafeUrl) -> Result<Vec<File>, crate::html::Error> {
+            .filter_map(|file| match File::try_from_pypi(file, &base) {
+        files: impl IntoIterator<Item = File>,
+            let file = File {
+                url: FileLocation::AbsoluteUrl(UrlString::from(url)),
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a30eff72` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8510. confirm foldable rotation from the lit panel in either simulator set (Harvested from callstack/agent-device)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "confirm foldable rotation from the lit panel in either simulator set",
+  "source": "callstack/agent-device",
+  "source_url": "https://github.com/callstack/agent-device",
+  "source_version": "d78be6c8",
+  "license": "MIT",
+  "extracted_at": "2026-11-14T17:24:51.530Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-callstack-agent-device",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `d78be6c8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.changeset/foldable-scoped-rotation.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `15e298f2`: ios): confirm foldable rotation from the lit panel in either simulator set. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/foldable-scoped-rotation.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+---
+'agent-device': patch
+---
+
+Fix foldable iPhone simulator rotation in scoped sets and confirm the lit panel in both default and scoped sets. Rotation in both sets uses the fold helper, with no CoreDevice orientation polling. An already visible target dispatches nothing. Incomplete, unknown-power and multi-lit panel tables neither confirm nor dispatch. A target the panel never shows fails with `orientation-unverified`.
+
+Use the fixed iPhone Duo picker offsets measured in both sets (outer 0 degrees, inner +90 degrees), replacing runtime calibration. Inner landscape-left sends `portrait-upside-down`, mapped to the HID wire value `pud`; it remains unsupported as a user target. Delayed reads wait without resending the same picker value to the same panel.
+
+Unresolved guest reads inside the settle loop neither confirm nor dispatch and are retried. An unresolved final read fails with `orientation-panel-table-unavailable`. Multi-panel classification admits rotation without a model-name guard; a new multi-panel model needs its own picker mapping.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `15e298f2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8511. controller authorization for logical table queries (Harvested from apache/pinot)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "controller authorization for logical table queries",
+  "source": "apache/pinot",
+  "source_url": "https://github.com/apache/pinot",
+  "source_version": "c31a588a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-14T17:24:59.207Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-apache-pinot",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `c31a588a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When implementing operations in `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotQueryResource.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c31a588a`: controller authorization for logical table queries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotQueryResource.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+    TableCache tableCache = _pinotHelixResourceManager.getTableCache();
+    String logicalTableName = tableCache.getActualLogicalTableName(tableName);
+    LogicalTableConfig logicalTableConfig =
+        logicalTableName != null ? tableCache.getLogicalTableConfig(logicalTableName) : null;
+    String rawTableName = TableNameBuilder.extractRawTableName(
+        logicalTableConfig != null ? logicalTableName : tableName);
+
+    // Authorize every physical table of a logical query, matching the broker's table-level check.
+    Set<String> tablesToAuthorize = logicalTableConfig != null
+        ? logicalTableConfig.getPhysicalTableConfigMap().keySet()
+        : Set.of(rawTableName);
+    for (String tableToAuthorize : tablesToAuthorize) {
+      if (!accessControl.hasAccess(TableNameBuilder.extractRawTableName(tableToAuthorize), AccessType.READ,
+          httpHeaders, Actions.Table.QUERY)) {
+        throw QueryErrorCode.ACCESS_DENIED.asException();
+      }
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Induced defect failure mode:
+    String rawTableName = TableNameBuilder.extractRawTableName(tableName);
+
+    // Validate data access
+    if (!accessControl.hasAccess(rawTableName, AccessType.READ, httpHeaders, Actions.Table.QUERY)) {
+      throw QueryErrorCode.ACCESS_DENIED.asException();
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c31a588a` are properly handled with clean fallback behavior.

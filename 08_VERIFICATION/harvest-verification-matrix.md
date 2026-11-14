@@ -9887,3 +9887,8 @@
 | `CYCLE-20261114-MWAZ` | `2026-11-14T17:03:23.147Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`cbb115a8...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T17:03:53.952Z` | `oven-sh-bun` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-23D3BE33` [Domain D] | Yes (`15a9213b...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T17:04:26.752Z` | `hf-autotrust-gev-26b-decide` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-02DACB51` [Domain D] | Yes (`c337ed51...`) |
+| `CYCLE-20261114-ECZ5` | `2026-11-14T17:24:44.465Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`857ae9e3...`) |
+| `CYCLE-20261114-EEEZ` | `2026-11-14T17:24:46.331Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8509` | Yes (`7a148fe4...`) |
+| `CYCLE-20261114-EINA` | `2026-11-14T17:24:51.814Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8510` | Yes (`6c83fe52...`) |
+| `CYCLE-20261114-EOKU` | `2026-11-14T17:24:59.502Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8511` | Yes (`c0e309c3...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T17:25:24.066Z` | `hf-google-embeddinggemma-2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CCF89F8A` [Domain D] | Yes (`4202ea71...`) |

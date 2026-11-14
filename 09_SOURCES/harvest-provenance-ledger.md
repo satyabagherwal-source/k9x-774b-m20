@@ -9920,3 +9920,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-14T17:03:23.151Z |
 | `learn-dom-d-23d3be33` | `project://oven-sh-bun` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md` | 2026-11-14T17:03:53.952Z |
 | `learn-dom-d-02dacb51` | `project://hf-autotrust-gev-26b-decide` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | 2026-11-14T17:04:26.752Z |
+| `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-14T17:24:44.468Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `d5c3f174` | Multi-dimensional audit evidence | 2026-11-14T17:24:46.334Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `d78be6c8` | Multi-dimensional audit evidence | 2026-11-14T17:24:51.817Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `c31a588a` | Multi-dimensional audit evidence | 2026-11-14T17:24:59.505Z |
+| `learn-dom-d-ccf89f8a` | `project://hf-google-embeddinggemma-2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | 2026-11-14T17:25:24.066Z |

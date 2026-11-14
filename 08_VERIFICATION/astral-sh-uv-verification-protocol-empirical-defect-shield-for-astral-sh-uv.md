@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for astral/sh/uv
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for astral-sh/uv
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "astral/sh/uv",
-  "source_url": "https://github.com/astral/sh/uv",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "astral-sh/uv",
+  "source_url": "https://github.com/astral-sh/uv",
+  "source_version": "d5c3f174",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T17:24:46.474Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-astral-sh-uv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [astral/sh/uv](https://github.com/astral/sh/uv) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [astral-sh/uv](https://github.com/astral-sh/uv) (Revision: `d5c3f174`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T17:24:46.474Z`  
+> **Learning ID**: `learn-github-astral-sh-uv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `astral/sh/uv` (Commit: `historical`)
+- **Target Repository**: `astral-sh/uv` (Commit: `d5c3f174`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
-> **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `f45ea9bd`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T09:48:59.971Z  
-> **Learning ID**: `learn-github-astral-sh-uv`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): astral-sh/uv
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T09:48:58.937Z  
+> **Harvest Timestamp**: 2026-11-14T17:24:45.701Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 91933 stars
+- **Stars / Engagement**: 91996 stars
 
 ---
 
@@ -1521,11 +1507,14 @@ mod types;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23209** (2026-11-10): **Restrict Unix plaintext credential store permissions**
-  *Symptoms*: ## Summary  Fixes astral-sh/uv#23202.  Create the credentials directory with mode `0700` and its lock with mode `0600`. Write the TOML file atomically through a `0600` temporary file, following existing credential-file symlinks. On the next write, tighten the default credentials directory. An existing directory supplied via `UV_CREDENTIALS_DIR` can also hold unrelated files and keeps its permissions.  ## Test plan  The existing `auth::login_text_store` test checks all three modes after the first login, restores the legacy permissions, then checks that the second login repairs them. All 5,666 Linux tests passed. [CI run](https://github.com/astral-sh/uv-dev/actions/runs/42849443139)
+- **Issue #23222** (2026-11-12): **uv does not install requirement `eccodeslib` when `eccodes` is requested**
+  *Symptoms*: ### Summary  Contrary to pip, uv does not install [`eccodeslib`](https://pypi.org/project/eccodeslib/) when requesting [`eccodes`](https://pypi.org/project/eccodes/). A workaround is to request/add `eccodeslib` explicitly. But why is this necessary?   ### Platform  Darwin 25.6.0 arm64  ### Version  uv 0.11.28 (ebf0f43d7 2026-07-07 aarch64-apple-darwin)  ### Python version  Python 3.11.15
+  **Post-Mortem & Fix Analysis**:
+  > Maybe related: https://github.com/ecmwf/eccodes-python/issues/150
+  > eccodes does not depend on eccodeslib according to the metadata they publish on PyPI:   ```shell  curl -s https://pypi.org/pypi/eccodes/json |                   jq '.info.requires_dist' ```  shows  ``` [   "numpy",   "attrs",   "cffi",   "findlibs" ] ```  it's a bug with ecmwf packaging, and the referenced bug i think says so too.
 
-- **Issue #23149** (2026-11-10): **activate.bat sets wrong VIRTUAL_ENV when the path contains an apostrophe**
-  *Symptoms*: ### Summary  When the venv path contains an apostrophe, activate.bat writes VIRTUAL_ENV with bash-style escaping ('"'"'), so the venv doesn't actually activate in cmd.  ``` C:\Tools\it's a test> uv venv Using CPython 3.15.2 interpreter at: C:\Users\Lewis\AppData\Local\Python\pythoncore-3.15-64\python.exe Creating virtual environment at: .venv Activate with: .venv\Scripts\activate  C:\Tools\it's a test> .venv\Scripts\activate.bat  C:\Tools\it's a test> echo %VIRTUAL_ENV% C:\Tools\it'"'"'s a test\.venv ```  ### Platform  Windows 11 x86_64  ### Version  uv 0.13.7 (316c827e0 2026-11-03 x86_64-pc-windows-msvc)  ### Python version  3.15.2
+- **Issue #23213** (2026-11-13): **Be more consistent in musl interpreter discovery errors**
+  *Symptoms*: More the failure path for non-ASCII characters into the parsing itself, instead of failing in the subcommand.  This was split out from discovering the ld interpreter filename too, which adds new error paths.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1542,189 +1531,568 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6b7f0a4e` (2026-11-09)
-**Commit Message**: Update Rust crate uuid to v1.28.0 (#23182)
-
-This PR contains the following updates:
-
-| Package | Type | Update | Change | Pending |
-|---|---|---|---|---|
-| [uuid](https://redirect.github.com/uuid-rs/uuid) |
-workspace.dependencies | minor | `1.27.0` → `1.28.0` | `1.29.2` (+2) |
-
----
-
-> [!WARNING]
-> Some dependencies could not be looked up. Check the [Dependency
-Dashboard](../issues/2658) for more information.
-
----
-
-### Release Notes
-
-<details>
-<summary>uuid-rs/uuid (uuid)</summary>
-
-###
-[`v1.28.0`](https://redirect.github.com/uuid-rs/uuid/releases/tag/v1.28.0)
-
-[Compare
-Source](https://redirect.github.com/uuid-rs/uuid/compare/v1.27.0...v1.28.0)
-
-#### What's Changed
-
-- Add optional serde format adapters by
-[@&#8203;RanaPriyansh](https://redirect.github.com/RanaPriyansh) in
-[#&#8203;916](https://redirect.github.com/uuid-rs/uuid/pull/916)
-- Prepare for 1.28.0 release by
-[@&#8203;KodrAus](https://redirect.github.com/KodrAus) in
-[#&#8203;918](https://redirect.github.com/uuid-rs/uuid/pull/918)
-
-#### New Contributors
-
-- [@&#8203;RanaPriyansh](https://redirect.github.com/RanaPriyansh) made
-their first contribution in
-[#&#8203;916](https://redirect.github.com/uuid-rs/uuid/pull/916)
-
-**Full C
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -5636,9 +5636,9 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
- 
- [[package]]
- name = "uuid"
--version = "1.27.0"
-+version = "1.28.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "97277d36b9c3ace13e58fa6e753f8b0bbbf302a18dd193240d70f9e29681059a"
-+checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
- dependencies = [
-  "getrandom 0.4.3",
-  "js-sys",
-```
-
----
-
-### Incident Patch 2: `cb44dfa2` (2026-11-10)
-**Commit Message**: fix: preserve apostrophes in Windows activation paths (#23152)
-
-Fixes #23149
+### Incident Patch 1: `a30eff72` (2026-11-13)
+**Commit Message**: Distinguish canonical artifact locations from fetch locations (#22774)
 
 ## Summary
-When a virtual environment path contains an apostrophe, the generated
-`activate.bat` script currently receives the POSIX single-quote escape
-sequence `'"'"'`. Batch files use double-quoted paths, so that sequence
-becomes part of `VIRTUAL_ENV` and activation points at the wrong
-directory.
 
-The Windows batch template now receives the plain normalized path, while
-POSIX activators keep their existing escaping. Regression coverage
-checks the generated batch script for apostrophe-containing paths on
-Unix and Windows.
+Future proxy routing can rewrite an index's artifact URLs for downloads,
+while artifact identity and lockfiles need the original locations.
+
+Distinguish index-supplied `VerbatimFile` values from canonical `File`
+values using a provenance marker on `FileLocation`. Index responses
+retain verbatim locations until the resolver marks them canonical.
+`File` defaults to a canonical location, and among these file and
+location types only the canonical forms implement `Identifier`. This
+prepares for proxy routing without enabling it. Marking a location
+canonical does not parse or rewrite its URL.
 
 ## Test Plan
-- `git diff --check`
-- Full Rust test suite is left to CI because this Windows worker does
-not have Cargo installed.
 
-Signed-off-by: 2301_80183707 <[REDACTED_EMAIL]>
+Verified that old and new cached archives can be read in both directions
+and produce identical bytes for the tested records on macOS arm64.
 
-**File**: `crates/uv-virtualenv/src/virtualenv.rs` (modified, +3/-0)
+---------
+
+Co-authored-by: Zanie Blue <[REDACTED_EMAIL]>
+
+**File**: `crates/uv-client/src/flat_index.rs` (modified, +9/-9)
 ```diff
-@@ -496,6 +496,9 @@ pub(crate) fn create(
-                 r#"'"$(dirname -- "$(dirname -- "$(realpath -- "$SCRIPT_PATH")")")"'"#,
-             ),
-             (true, "activate.bat") => Cow::Borrowed(r"%~dp0.."),
-+            // Batch files use double-quoted paths, so POSIX single-quote escaping
-+            // would become part of the value (for example, around apostrophes).
-+            (false, "activate.bat") => Cow::Borrowed(location_string),
-             (true, "activate.fish") => {
-                 Cow::Borrowed(r"'(dirname -- (dirname -- (realpath -- (status -f))))'")
-             }
-```
-
-**File**: `crates/uv/tests/python/venv.rs` (modified, +24/-0)
-```diff
-@@ -2175,6 +2175,30 @@ fn create_venv_apostrophe() {
+@@ -6,7 +6,7 @@ use tracing::{Instrument, debug, info_span, warn};
  
-     let stdout = String::from_utf8_lossy(&output.stdout);
-     assert_eq!(stdout.trim(), venv_dir.to_string_lossy());
-+
-+    let activate_bat = fs_err::read_to_string(venv_dir.join("bin/activate.bat")).unwrap();
-+    assert!(activate_bat.contains(venv_dir.to_string_lossy().as_ref()));
-+    assert!(!activate_bat.contains("'\"'\"'"));
-+}
-+
-+/// Check that the Windows activate script preserves apostrophes in the venv path.
-+#[test]
-+#[cfg(windows)]
-+fn create_venv_apostrophe_bat() {
-+    let context = uv_test::test_context_with_versions!(&["3.12"]);
-+    let venv_dir = context.temp_dir.join("Testing's");
-+
-+    context
-+        .venv()
-+        .arg(&venv_dir)
-+        .arg("--python")
-+        .arg("3.12")
-+        .assert()
-+        .success();
-+
-+    let activate_bat = fs_err::read_to_string(venv_dir.join("Scripts/activate.bat")).unwrap();
-+    assert!(activate_bat.contains(venv_dir.to_string_lossy().as_ref()));
-+    assert!(!activate_bat.contains("'\"'\"'"));
+ use uv_cache::{Cache, CacheBucket};
+ use uv_cache_key::cache_digest;
+-use uv_distribution_types::{File, FileLocation, IndexEntryFilename, IndexUrl, UrlString};
++use uv_distribution_types::{FileLocation, IndexEntryFilename, IndexUrl, UrlString, VerbatimFile};
+ use uv_pypi_types::HashDigests;
+ use uv_redacted::SafeUrl;
+ use uv_small_str::SmallString;
+@@ -53,7 +53,7 @@ pub enum FindLinksDirectoryError {
+ #[derive(Debug, Clone)]
+ pub struct FlatIndexEntry {
+     filename: IndexEntryFilename,
+-    file: File,
++    file: VerbatimFile,
+     index: IndexUrl,
  }
  
- /// Emulate a ksh without ksh93's `${.sh.file}` parameter using a POSIX shell.
+@@ -64,7 +64,7 @@ impl FlatIndexEntry {
+     }
+ 
+     /// Convert the entry into its component parts.
+-    pub fn into_parts(self) -> (IndexEntryFilename, File, IndexUrl) {
++    pub fn into_parts(self) -> (IndexEntryFilename, VerbatimFile, IndexUrl) {
+         (self.filename, self.file, self.index)
+     }
+ }
+@@ -253,7 +253,7 @@ impl<'a> FlatIndexClient<'a> {
+         match response {
+             Ok(files) => {
+                 let files = files.iter().map(|file| {
+-                    rkyv::deserialize::<File, rkyv::rancor::Error>(file)
++                    rkyv::deserialize::<VerbatimFile, rkyv::rancor::Error>(file)
+                         .expect("archived version always deserializes")
+                 });
+                 Ok(Self::entries_from_files(files, flat_index))
+@@ -280,7 +280,7 @@ impl<'a> FlatIndexClient<'a> {
+     }
+ 
+     /// Parse distributions from a flat HTML index.
+-    fn parse_html(text: &str, url: &SafeUrl) -> Result<Vec<File>, crate::html::Error> {
++    fn parse_html(text: &str, url: &SafeUrl) -> Result<Vec<VerbatimFile>, crate::html::Error> {
+         let SimpleDetailHTML {
+             project_status: _,
+             base,
+@@ -290,7 +290,7 @@ impl<'a> FlatIndexClient<'a> {
+         let base = SmallString::from(base.as_str());
+         Ok(files
+             .into_iter()
+-            .filter_map(|file| match File::try_from_pypi(file, &base) {
++            .filter_map(|file| match VerbatimFile::try_from_pypi(file, &base) {
+                 Ok(file) => Some(file),
+                 Err(err) => {
+                     // Ignore files with unparsable version specifiers.
+@@ -303,7 +303,7 @@ impl<'a> FlatIndexClient<'a> {
+ 
+     /// Convert distribution files into entries for a flat index.
+     fn entries_from_files(
+-        files: impl IntoIterator<Item = File>,
++        files: impl IntoIterator<Item = VerbatimFile>,
+         flat_index: &IndexUrl,
+     ) -> FlatIndexEntries {
+         let entries = files
+@@ -362,14 +362,14 @@ impl<'a> FlatIndexClient<'a> {
+             // SAFETY: The index path is itself constructed from a URL.
+             let url = SafeUrl::from_file_path(entry.path()).unwrap();
+ 
+-            let file = File {
++            let file = VerbatimFile {
+                 dist_info_metadata: None,
+                 filename: filename.into(),
+                 hashes: HashDigests::empty(),
+                 requires_python: None,
+                 size: None,
+                 upload_time_utc_ms: None,
+-                url: FileLocation::AbsoluteUrl(UrlString::from(url)),
++                location: FileLocation::absolute(UrlString::from(url)),
+                 yanked: None,
+             };
+ 
 ```
 
----
-
-### Incident Patch 3: `da84b72a` (2026-11-10)
-**Commit Message**: Use the runner’s Buildx to publish Docker images (#23190)
-
-## Summary
-
-We use the Buildx bundled with `ubuntu-latest` to publish Docker images.
-Depot builds the images, and the publish job only uses Buildx to inspect
-and tag the saved image index.
-
-We read the digest of the tagged index from `imagetools create
---metadata-file` so we can attest exactly what we published. Buildx
-added that flag in v0.32.0, and the runner already includes v0.38.1.
-[Buildx release
-notes](https://github.com/docker/buildx/releases/tag/v0.32.0) · [Runner
-image
-inventory](https://github.com/actions/runner-images/blob/dbf2f009b5e1dcce57cf578ff4fdc1391a4d6d1b/images/ubuntu/Ubuntu2404-Readme.md#installed-software)
-
-Supersedes #23176.
-
-**File**: `.github/workflows/publish-docker-image.yml` (modified, +0/-7)
+**File**: `crates/uv-client/src/registry_client.rs` (modified, +30/-21)
 ```diff
-@@ -80,13 +80,6 @@ jobs:
+@@ -24,9 +24,9 @@ use uv_configuration::IndexStrategy;
+ use uv_configuration::KeyringProviderType;
+ use uv_distribution_filename::{DistFilename, WheelFilename};
+ use uv_distribution_types::{
+-    BuiltDist, DirectUrlBuiltDist, File, FileLocation, IndexCapabilities, IndexEntryFilename,
++    BuiltDist, DirectUrlBuiltDist, FileLocation, IndexCapabilities, IndexEntryFilename,
+     IndexFormat, IndexLocations, IndexMetadataRef, IndexStatusCodeDecision,
+-    IndexStatusCodeStrategy, IndexUrl, Name, RegistryBuiltWheel, VariantsJsonContent,
++    IndexStatusCodeStrategy, IndexUrl, Name, RegistryBuiltWheel, VariantsJsonContent, VerbatimFile,
+ };
+ use uv_extract::hash::Hasher;
+ use uv_git::{GIT_LFS, GitError, GitHttpSettings, GitResolver, Reporter};
+@@ -948,10 +948,10 @@ impl RegistryClient {
+     pub async fn fetch_variants_json(
+         &self,
+         package_name: &PackageName,
+-        file: &File,
++        file: &VerbatimFile,
+         index: &IndexUrl,
+     ) -> Result<Vec<u8>, Error> {
+-        let url = file.url.to_url().map_err(ErrorKind::InvalidUrl)?;
++        let url = file.location.to_url().map_err(ErrorKind::InvalidUrl)?;
  
-       - uses: depot/setup-action@91bc8495a33ebfc504ffc89e5674379ccf23c29c # v1.7.2
+         if url.scheme() == "file" {
+             let path = url
+@@ -1045,7 +1045,11 @@ impl RegistryClient {
  
--      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
--        with:
--          # Install a version that supports `imagetools create --metadata-file`
--          # (https://github.com/docker/buildx/issues/2407).
--          version: v0.37.2
--          cache-binary: false
--
-       - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-         if: ${{ !inputs.push-dev }}
-         with:
+                 let wheel = wheels.best_wheel();
+ 
+-                let url = wheel.file.url.to_url().map_err(ErrorKind::InvalidUrl)?;
++                let url = wheel
++                    .file
++                    .location
++                    .to_url()
++                    .map_err(ErrorKind::InvalidUrl)?;
+                 let location = if url.scheme() == "file" {
+                     let path = url
+                         .to_file_path()
+@@ -1574,7 +1578,7 @@ pub struct VersionFiles {
+ }
+ 
+ impl VersionFiles {
+-    fn push(&mut self, filename: &IndexEntryFilename, file: File) {
++    fn push(&mut self, filename: &IndexEntryFilename, file: VerbatimFile) {
+         let file = CachedFile::from(file);
+         match filename {
+             IndexEntryFilename::DistFilename(DistFilename::WheelFilename(_)) => {
+@@ -1587,12 +1591,15 @@ impl VersionFiles {
+         }
+     }
+ 
+-    pub fn all(self, package_name: &PackageName) -> impl Iterator<Item = (DistFilename, File)> {
++    pub fn all(
++        self,
++        package_name: &PackageName,
++    ) -> impl Iterator<Item = (DistFilename, VerbatimFile)> {
+         self.source_dists
+             .into_iter()
+             .chain(self.wheels)
+             .filter_map(|file| {
+-                let file = File::from(file);
++                let file = VerbatimFile::from(file);
+                 let filename = DistFilename::try_from_filename(&file.filename, package_name)?;
+                 Some((filename, file))
+             })
+@@ -1601,13 +1608,13 @@ impl VersionFiles {
+     pub fn all_entries(
+         self,
+         package_name: &PackageName,
+-    ) -> impl Iterator<Item = (IndexEntryFilename, File)> {
++    ) -> impl Iterator<Item = (IndexEntryFilename, VerbatimFile)> {
+         self.source_dists
+             .into_iter()
+             .chain(self.wheels)
+             .chain(self.variant_jsons)
+             .filter_map(|file| {
+-                let file = File::from(file);
++                let file = VerbatimFile::from(file);
+                 let filename = IndexEntryFilename::try_from_filename(&file.filename, package_name)?;
+                 Some((filename, file))
+             })
+@@ -1617,7 +1624,7 @@ impl VersionFiles {
+ /// A compact, cache-local representation of a registry file from the Simple API.
+ ///
+ /// Filenames recoverable from the URL and false `yanked` markers are omitted, while optional
+-/// scalar values use presence bits. Converting back to [`File`] restores equivalent Simple API
++/// scalar values use presence bits. Converting back to [`VerbatimFile`] restores equivalent Simple API
+ /// metadata.
+ #[derive(Debug, rkyv::Archive, rkyv::Deserialize, rkyv::Serialize)]
+ #[rkyv(derive(Debug))]
+@@ -1660,10 +1667,10 @@ impl CachedFile {
+     }
+ }
+ 
+-impl From<File> for CachedFile {
+-    fn from(file: File) -> Self {
+-        let filename =
+-            (file.url.raw_filename() != file.filename.as_ref()).then(|| Box::new(file.filename));
++impl From<VerbatimFile> for CachedFile {
++    fn from(file: VerbatimFile) -> Self {
++        let filename = (file.location.raw_filename() != file.filename.as_ref())
++            .then(|| Box::new(file.filename));
+         let has_size = file.size.is_some();
+         let has_upload_time = file.upload_time_utc_ms.is_some();
+         let dist_info_metadata = file.dist_info_metadata.is_some();
+@@ -1682,13 +1689,13 @@ impl From<File> for CachedFile {
+             upload_time_utc_ms: file.upload_time_utc_ms.unwrap_or_default(),
+             has_size,
+             has_upload_time,
+-            url: file.url,
++            url: file.location,
+             yanked: file.yanked.filter(|yanked| yanked.is_yanked()),
+         }
+     }
+ }
+ 
+-impl From<CachedFile> for File {
++impl From<CachedFile> for Verbat
+```
+
+**File**: `crates/uv-distribution-types/src/file.rs` (modified, +114/-21)
+```diff
+@@ -1,9 +1,11 @@
+ use std::borrow::Cow;
+ use std::fmt::{self, Display, Formatter};
++use std::marker::PhantomData;
+ use std::str::FromStr;
+ use std::sync::Arc;
+ 
+ use jiff::Timestamp;
++use rkyv::Archived;
+ use serde::{Deserialize, Serialize};
+ 
+ use uv_pep440::{VersionSpecifiers, VersionSpecifiersParseError};
+@@ -12,17 +14,19 @@ use uv_pypi_types::{CoreMetadata, HashDigests, Yanked};
+ use uv_redacted::{SafeUrl, SafeUrlError};
+ use uv_small_str::SmallString;
+ 
+-/// Error converting [`uv_pypi_types::PypiFile`] to [`File`].
++/// Error converting [`uv_pypi_types::PypiFile`] to [`VerbatimFile`].
+ #[derive(Debug, thiserror::Error)]
+ pub enum FileConversionError {
+     #[error("Failed to parse `requires-python`: `{0}`")]
+     RequiresPython(String, #[source] VersionSpecifiersParseError),
+ }
+ 
+-/// Internal analog to [`uv_pypi_types::PypiFile`].
++/// Internal analog to [`uv_pypi_types::PypiFile`], with a canonical location by default.
++///
++/// Use [`VerbatimFile`] for locations as supplied by an index.
+ #[derive(Debug, Clone, PartialEq, Eq, Hash, rkyv::Archive, rkyv::Deserialize, rkyv::Serialize)]
+-#[rkyv(derive(Debug))]
+-pub struct File {
++#[rkyv(archive_bounds(Location::Archived: core::fmt::Debug), derive(Debug))]
++pub struct File<Location = CanonicalFileLocation> {
+     /// Hashes for separately available metadata, or an empty list when no hashes were provided.
+     pub dist_info_metadata: Option<HashDigests>,
+     pub filename: SmallString,
+@@ -34,11 +38,11 @@ pub struct File {
+     // comparisons in testing, we just store it as a UTC timestamp in
+     // milliseconds.
+     pub upload_time_utc_ms: Option<i64>,
+-    pub url: FileLocation,
++    pub location: Location,
+     pub yanked: Option<Box<Yanked>>,
+ }
+ 
+-impl File {
++impl VerbatimFile {
+     /// `TryFrom` instead of `From` to filter out files with invalid requires python version specifiers
+     pub fn try_from_pypi(
+         file: uv_pypi_types::PypiFile,
+@@ -54,11 +58,24 @@ impl File {
+                 .map_err(|err| FileConversionError::RequiresPython(err.line().clone(), err))?,
+             size: file.size,
+             upload_time_utc_ms: file.upload_time.map(Timestamp::as_millisecond),
+-            url: FileLocation::new(file.url, base),
++            location: FileLocation::new(file.url, base),
+             yanked: file.yanked,
+         })
+     }
+ 
++    /// Assume the location advertised for this file is its canonical location.
++    ///
++    /// Use this when the location came directly from the index uv would record in the lockfile.
++    /// A proxy for that index may advertise a different URL for the same file.
++    pub fn assume_canonical(self) -> File {
++        self.map_location(|location| match location {
++            FileLocation::RelativeUrl(base, path, _) => CanonicalFileLocation::relative(base, path),
++            FileLocation::AbsoluteUrl(url, _) => {
++                CanonicalFileLocation::AbsoluteUrl(url, PhantomData)
++            }
++        })
++    }
++
+     fn dist_info_metadata(metadata: Option<CoreMetadata>) -> Option<HashDigests> {
+         match metadata? {
+             CoreMetadata::Bool(false) => None,
+@@ -68,14 +85,78 @@ impl File {
+     }
+ }
+ 
+-/// While a registry file is generally a remote URL, it can also be a file if it comes from a directory flat indexes.
++impl<Location> File<Location> {
++    /// Replace the file location while preserving the artifact metadata.
++    fn map_location<Mapped>(self, map: impl FnOnce(Location) -> Mapped) -> File<Mapped> {
++        File {
++            dist_info_metadata: self.dist_info_metadata,
++            filename: self.filename,
++            hashes: self.hashes,
++            requires_python: self.requires_python,
++            size: self.size,
++            upload_time_utc_ms: self.upload_time_utc_ms,
++            location: map(self.location),
++            yanked: self.yanked,
++        }
++    }
++}
++
++/// Provenance markers for [`FileLocation`].
++pub mod provenance {
++    /// The location an index returns for downloading an artifact.
++    ///
++    /// A proxy index may return a different location from the one the canonical index reports.
++    /// A verbatim location must not be used for artifact identity.
++    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
++    pub struct Verbatim;
++
++    /// An artifact's original location, suitable for artifact identity and lockfiles.
++    ///
++    /// This location is independent of any proxy URL rewriting used for downloads.
++    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
++    pub struct Canonical;
++}
++
++/// An artifact location suitable for identity and lockfiles.
++///
++/// This is the artifact's original location, independent of any proxy URL rewriting used to fetch it.
++/// Marking a [`FileLocation`] as canonical does not parse, normalize, or rewrite its URL.
++pub type CanonicalFileLocation = FileLocation<provenance::Canonical>;
++
++impl FileLocation<provenance::Canonical> {
++    /// Use the canonical artifact URL recorded in a lockfile.
++    pub
+```
+
+**File**: `crates/uv-distribution-types/src/lib.rs` (modified, +8/-8)
+```diff
+@@ -1202,7 +1202,7 @@ impl DistributionMetadata for Dist {
+     }
+ }
+ 
+-impl RemoteSource for File {
++impl<Url> RemoteSource for File<Url> {
+     fn filename(&self) -> Result<Cow<'_, str>, Error> {
+         Ok(Cow::Borrowed(&self.filename))
+     }
+@@ -1468,15 +1468,15 @@ impl Identifier for File {
+             .first()
+             .cloned()
+             .map(DistributionId::Digest)
+-            .unwrap_or_else(|| self.url.distribution_id())
++            .unwrap_or_else(|| self.location.distribution_id())
+     }
+ 
+     fn resource_id(&self) -> ResourceId {
+         self.hashes
+             .first()
+             .cloned()
+             .map(ResourceId::Digest)
+-            .unwrap_or_else(|| self.url.resource_id())
++            .unwrap_or_else(|| self.location.resource_id())
+     }
+ }
+ 
+@@ -1490,22 +1490,22 @@ impl Identifier for Path {
+     }
+ }
+ 
+-impl Identifier for FileLocation {
++impl Identifier for CanonicalFileLocation {
+     fn distribution_id(&self) -> DistributionId {
+         match self {
+-            Self::RelativeUrl(base, url) => {
++            Self::RelativeUrl(base, url, _) => {
+                 DistributionId::RelativeUrl(base.to_string(), url.to_string())
+             }
+-            Self::AbsoluteUrl(url) => DistributionId::AbsoluteUrl(url.to_string()),
++            Self::AbsoluteUrl(url, _) => DistributionId::AbsoluteUrl(url.to_string()),
+         }
+     }
+ 
+     fn resource_id(&self) -> ResourceId {
+         match self {
+-            Self::RelativeUrl(base, url) => {
++            Self::RelativeUrl(base, url, _) => {
+                 ResourceId::RelativeUrl(base.to_string(), url.to_string())
+             }
+-            Self::AbsoluteUrl(url) => ResourceId::AbsoluteUrl(url.to_string()),
++            Self::AbsoluteUrl(url, _) => ResourceId::AbsoluteUrl(url.to_string()),
+         }
+     }
+ }
+```
+
+**File**: `crates/uv-distribution/src/distribution_database.rs` (modified, +1/-1)
+```diff
+@@ -348,7 +348,7 @@ impl<'a, Context: BuildContext> DistributionDatabase<'a, Context> {
+         match dist {
+             BuiltDist::Registry(wheels) => {
+                 let wheel = wheels.best_wheel();
+-                let url = wheel.file.url.to_url()?;
++                let url = wheel.file.location.to_url()?;
+                 let size = wheel.file.size;
+ 
+                 // Create a cache entry for the wheel.
+```
+
+**File**: `crates/uv-distribution/src/source/mod.rs` (modified, +2/-2)
+```diff
+@@ -298,7 +298,7 @@ impl<'a, T: BuildContext> SourceDistributionBuilder<'a, T> {
+                         .join(dist.version.to_string()),
+                 );
+ 
+-                let url = dist.file.url.to_url()?;
++                let url = dist.file.location.to_url()?;
+ 
+                 // If the URL is a file URL, use the local path directly.
+                 if url.scheme() == "file" {
+@@ -461,7 +461,7 @@ impl<'a, T: BuildContext> SourceDistributionBuilder<'a, T> {
+                         .join(dist.version.to_string()),
+                 );
+ 
+-                let url = dist.file.url.to_url()?;
++                let url = dist.file.location.to_url()?;
+ 
+                 // If the URL is a file URL, use the local path directly.
+                 if url.scheme() == "file" {
+```
+
+**File**: `crates/uv-installer/src/preparer.rs` (modified, +1/-1)
+```diff
+@@ -107,7 +107,7 @@ impl<'a, Context: BuildContext> Preparer<'a, Context> {
+         Ok(wheels)
+     }
+     /// Download, build, and unzip a single wheel.
+-    #[instrument(skip_all, fields(name = % dist, size = ? dist.size(), url = dist.file().map(| file | file.url.to_string()).unwrap_or_default()))]
++    #[instrument(skip_all, fields(name = % dist, size = ? dist.size(), url = dist.file().map(| file | file.location.to_string()).unwrap_or_default()))]
+     async fn get_wheel(
+         &self,
+         dist: Dist,
+```
+
+**File**: `crates/uv-lock/src/lock/export/pylock_toml.rs` (modified, +14/-10)
+```diff
+@@ -24,8 +24,8 @@ use uv_distribution_filename::{
+     SourceDistFilenameError, WheelFilename, WheelFilenameError,
+ };
+ use uv_distribution_types::{
+-    BuiltDist, DirectUrlBuiltDist, DirectUrlSourceDist, DirectorySourceDist, Dist, Edge,
+-    FileLocation, FirstParty, GitDirectorySourceDist, IndexUrl, Name, Node, PathBuiltDist,
++    BuiltDist, CanonicalFileLocation, DirectUrlBuiltDist, DirectUrlSourceDist, DirectorySourceDist,
++    Dist, Edge, FirstParty, GitDirectorySourceDist, IndexUrl, Name, Node, PathBuiltDist,
+     PathSourceDist, RegistryBuiltDist, RegistryBuiltWheel, RegistrySourceDist, RemoteSource,
+     RequiresPython, Resolution, ResolvedDist, SourceDist, ToUrlError, UrlString,
+ };
+@@ -567,7 +567,7 @@ impl<'lock> PylockToml {
+                         if let Some(sdist) = dist.sdist.as_ref() {
+                             let url = sdist
+                                 .file
+-                                .url
++                                .location
+                                 .to_url()
+                                 .map_err(PylockTomlErrorKind::ToUrl)?;
+                             package.sdist = Some(PylockTomlSdist {
+@@ -663,7 +663,11 @@ impl<'lock> PylockToml {
+                     let no_build = build_options.no_build_package(&dist.name);
+ 
+                     if !no_build {
+-                        let url = dist.file.url.to_url().map_err(PylockTomlErrorKind::ToUrl)?;
++                        let url = dist
++                            .file
++                            .location
++                            .to_url()
++                            .map_err(PylockTomlErrorKind::ToUrl)?;
+                         package.sdist = Some(PylockTomlSdist {
+                             // Optional "when the last component of path/ url would be the same value".
+                             name: if url
+@@ -748,7 +752,7 @@ impl<'lock> PylockToml {
+             .map(|wheel| {
+                 let url = wheel
+                     .file
+-                    .url
++                    .location
+                     .to_url()
+                     .map_err(PylockTomlErrorKind::ToUrl)?;
+                 Ok(PylockTomlWheel {
+@@ -769,7 +773,7 @@ impl<'lock> PylockToml {
+                     url: Some(
+                         wheel
+                             .file
+-                            .url
++                            .location
+                             .to_url()
+                             .map_err(PylockTomlErrorKind::ToUrl)?
+                             .with_policy(Raw),
+@@ -851,7 +855,7 @@ impl<'lock> PylockToml {
+                             .map(|wheel| {
+                                 let url = wheel
+                                     .file
+-                                    .url
++                                    .location
+                                     .to_url()
+                                     .map_err(PylockTomlErrorKind::ToUrl)?;
+                                 Ok(PylockTomlWheel {
+@@ -1006,7 +1010,7 @@ impl<'lock> PylockToml {
+                 Some(SourceDist::Registry(sdist)) => {
+                     let url = sdist
+                         .file
+-                        .url
++                        .location
+                         .to_url()
+                         .map_err(PylockTomlErrorKind::ToUrl)?;
+                     Some(PylockTomlSdist {
+@@ -1712,7 +1716,7 @@ impl PylockTomlWheel {
+             requires_python: None,
+             size: self.size,
+             upload_time_utc_ms: self.upload_time.map(Timestamp::as_millisecond),
+-            url: FileLocation::AbsoluteUrl(file_url),
++            location: CanonicalFileLocation::from_lockfile(file_url),
+             yanked: None,
+         });
+ 
+@@ -1872,7 +1876,7 @@ impl PylockTomlSdist {
+             requires_python: None,
+             size: self.size,
+             upload_time_utc_ms: self.upload_time.map(Timestamp::as_millisecond),
+-            url: FileLocation::AbsoluteUrl(file_url),
++            location: CanonicalFileLocation::from_lockfile(file_url),
+             yanked: None,
+         });
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23237** (2026-11-13): Add BurntSushi to code quality review allowlist (@BurntSushi)
+- **PR #23236** (2026-11-13): Add an HTTP/2 keep-alive preview feature (@astral-automations-bot[bot])
+- **PR #23228** (2026-11-12): Avoid multipart uploads for release artifacts (@zanieb)
+- **PR #23225** (2026-11-12): Bump version to 0.13.8 (@konstin)
+- **PR #23213** (2026-11-13): Be more consistent in musl interpreter discovery errors (@konstin)
 - **PR #23211** (2026-11-11): Sync latest Python releases, CPython 3.16.0a2 (@astral-automations-bot[bot])
-- **PR #23210** (2026-11-10): Flatten recursive extras introduced by scoped overrides (@BurntSushi)
-- **PR #23209** (2026-11-10): Restrict Unix plaintext credential store permissions (@astral-automations-bot[bot])
-- **PR #23208** (2026-11-10): Link issue artifacts to the workflow's run name (@woodruffw)
-- **PR #23205** (closed): Retry failed downloads in `create-python-mirror.py` (@malikmalikayesha)
-- **PR #23204** (closed): Quote Python requests in the `uv python install` hint (@malikmalikayesha)
 
 ---
 
@@ -1744,33 +2112,47 @@ Supersedes #23176.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Rust crate uuid to v1.28.0 (#23182)
+## X. Distinguish canonical artifact locations from fetch locations
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/uv-client/src/flat_index.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6b7f0a4e`: Update Rust crate uuid to v1.28.0 (#23182). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a30eff72`: Distinguish canonical artifact locations from fetch locations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-client/src/flat_index.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.28.0"
-checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
+use uv_distribution_types::{FileLocation, IndexEntryFilename, IndexUrl, UrlString, VerbatimFile};
+    file: VerbatimFile,
+    pub fn into_parts(self) -> (IndexEntryFilename, VerbatimFile, IndexUrl) {
+                    rkyv::deserialize::<VerbatimFile, rkyv::rancor::Error>(file)
+    fn parse_html(text: &str, url: &SafeUrl) -> Result<Vec<VerbatimFile>, crate::html::Error> {
+            .filter_map(|file| match VerbatimFile::try_from_pypi(file, &base) {
+        files: impl IntoIterator<Item = VerbatimFile>,
+            let file = VerbatimFile {
+                location: FileLocation::absolute(UrlString::from(url)),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-version = "1.27.0"
-checksum = "97277d36b9c3ace13e58fa6e753f8b0bbbf302a18dd193240d70f9e29681059a"
+// Induced defect failure mode:
+use uv_distribution_types::{File, FileLocation, IndexEntryFilename, IndexUrl, UrlString};
+    file: File,
+    pub fn into_parts(self) -> (IndexEntryFilename, File, IndexUrl) {
+                    rkyv::deserialize::<File, rkyv::rancor::Error>(file)
+    fn parse_html(text: &str, url: &SafeUrl) -> Result<Vec<File>, crate::html::Error> {
+            .filter_map(|file| match File::try_from_pypi(file, &base) {
+        files: impl IntoIterator<Item = File>,
+            let file = File {
+                url: FileLocation::AbsoluteUrl(UrlString::from(url)),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6b7f0a4e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a30eff72` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

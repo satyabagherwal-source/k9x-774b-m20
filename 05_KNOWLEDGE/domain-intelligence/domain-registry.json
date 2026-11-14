@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T17:04:27.370Z",
-  "total_records": 753,
+  "last_updated": "2026-11-14T17:25:24.555Z",
+  "total_records": 761,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 371,
+      "total": 374,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -408,7 +408,10 @@
         "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants",
         "DOM-D-23D3BE33",
         "DOM-D-02DACB51",
-        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-google-embeddinggemma-2-core-invariants",
+        "DOM-D-CCF89F8A",
+        "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari"
       ]
     },
     "E": {
@@ -441,7 +444,7 @@
       ]
     },
     "G": {
-      "total": 114,
+      "total": 116,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -556,11 +559,13 @@
         "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-oxc-project-oxc-core-invariants",
         "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants",
-        "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-astral-sh-uv-core-invariants",
+        "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 160,
+      "total": 162,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -721,11 +726,13 @@
         "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-callstack-agent-device-learnings-core-invari"
       ]
     },
     "I": {
-      "total": 25,
+      "total": 26,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -751,7 +758,8 @@
         "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-peerdb-io-peerdb-core-invariants",
         "domain_intelligence-content-information-intelligence-zed-industries-zed-core-invariants",
-        "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants"
       ]
     },
     "J": {
@@ -15514,6 +15522,111 @@
       "repository": "hf-autotrust-gev-26b-decide-learnings",
       "content_hash": "1d84f3261ec78edf99176c5f45b05476b45e68368df47e5b4a1c063a924fc643",
       "created_at": "2026-11-14T17:04:26.926Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-google-embeddinggemma-2-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-google-embeddinggemma-2-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: google/embeddinggemma-2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-embeddinggemma-2-research-knowledge-intelligence-google-embeddinggemma.md",
+      "repository": "google/embeddinggemma-2",
+      "content_hash": "d54eaa0c75ecdd49180e46ce9066e8ef0e7ed6df4c8838503758dd1b2f059dbf",
+      "created_at": "2026-11-14T17:24:44.592Z"
+    },
+    "domain_intelligence-architecture-intelligence-astral-sh-uv-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
+      "repository": "astral-sh/uv",
+      "content_hash": "0bb37cb608ee6ce96bc4e2032fec94800247893fd067c154480f3b0a0d36563c",
+      "created_at": "2026-11-14T17:24:46.552Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: callstack/agent-device Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-technical-construction-intelligence-callstack-agent-devic.md",
+      "repository": "callstack/agent-device",
+      "content_hash": "a8a6a92bce80b18b8dfc44162e98b2648e3d7cd6b25250382c24cb870de38820",
+      "created_at": "2026-11-14T17:24:52.040Z"
+    },
+    "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: apache/pinot Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
+      "repository": "apache/pinot",
+      "content_hash": "9f494ba012f434e341ad4cd44d50bb220d796a443f3e21752e9b5042447dd309",
+      "created_at": "2026-11-14T17:24:59.705Z"
+    },
+    "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-learnings-architecture-intelligence-astral-sh-uv-learnings-core-inv.md",
+      "repository": "astral-sh-uv-learnings",
+      "content_hash": "8515f93cdfd305c23020f3f9f32f7f871adc7a08339f073df3b0f2d8e65d5aed",
+      "created_at": "2026-11-14T17:25:02.752Z"
+    },
+    "DOM-D-CCF89F8A": {
+      "record_id": "DOM-D-CCF89F8A",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): google/embeddinggemma-2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/google/embeddinggemma-2](https://huggingface.co/google/embeddinggemma-2))  \n> **Source Version**: `hf-google-em`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "4202ea716df1837dc20d668199e6b41f933714327ebf05d13a5f496446abf0e3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-google-embeddinggemma-2/hf-google-embeddinggemma-2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T17:25:02.932Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-embeddinggemma-2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-google-embeddinggemma-2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T17:25:24.056Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-google-embeddinggemma-2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-embeddinggemma-2-learnings-research-knowledge-intelligence-hf-google-e.md",
+      "repository": "hf-google-embeddinggemma-2-learnings",
+      "content_hash": "18cdba672ad6c28e13d759b63f965e9467bd7499abef14b1c089140cf79125db",
+      "created_at": "2026-11-14T17:25:24.215Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-callstack-agent-device-learnings-core-invari": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-callstack-agent-device-learnings-core-invari",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: callstack-agent-device-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-learnings-technical-construction-intelligence-callstack-a.md",
+      "repository": "callstack-agent-device-learnings",
+      "content_hash": "a43485127efb2de3e8a8167b3395ffbbb937c85f49af4fd3332d5a58796ba5d7",
+      "created_at": "2026-11-14T17:25:24.555Z"
     }
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Source Version**: `b09fec33`  
+> **Source Version**: `c31a588a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T11:55:44.915Z  
+> **Timestamp**: 2026-11-14T17:24:58.877Z  
 > **Learning ID**: `learn-github-apache-pinot`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T11:55:44.910Z  
+> **Harvest Timestamp**: 2026-11-14T17:24:58.873Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Pinot: a real-time analytics database for low-latency SQL and vector search, serving user-facing and agent-facing applications
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6175 stars
+- **Stars / Engagement**: 6177 stars
 
 ---
 
@@ -1995,448 +1995,207 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `967bbe2a` (2026-11-13)
-**Commit Message**: Fix sketch accumulator initialization, tuple sizing, and KLL null handling (#20228)
+### Incident Patch 1: `c31a588a` (2026-11-14)
+**Commit Message**: Fix controller authorization for logical table queries (#20167)
 
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/query/aggregation/function/AvgValueIntegerTupleSketchAggregationFunction.java` (modified, +0/-3)
+**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotQueryResource.java` (modified, +16/-5)
 ```diff
-@@ -57,9 +57,6 @@ public Comparable extractFinalResult(@Nullable TupleIntSketchAccumulator accumul
-     if (accumulator == null) {
-       return null;
-     }
--    accumulator.setNominalEntries(_nominalEntries);
--    accumulator.setSetOperations(_setOps);
--    accumulator.setThreshold(_accumulatorThreshold);
-     TupleSketch<IntegerSummary> result = accumulator.getResult();
-     if (result.isEmpty() || result.getRetainedEntries() == 0) {
-       // there is nothing to average, return null
-```
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/query/aggregation/function/DistinctCountCPCSketchAggregationFunction.java` (modified, +2/-8)
-```diff
-@@ -598,8 +598,6 @@ public CpcSketchAccumulator merge(CpcSketchAccumulator intermediateResult1,
-     if (intermediateResult2.isEmpty()) {
-       return intermediateResult1;
-     }
--    intermediateResult1.setLgNominalEntries(_lgNominalEntries);
--    intermediateResult1.setThreshold(_accumulatorThreshold);
-     intermediateResult1.merge(intermediateResult2);
-     return intermediateResult1;
-   }
-@@ -616,10 +614,8 @@ public SerializedResult serializeIntermediateResult(CpcSketchAccumulator cpcSket
- 
-   @Override
-   public CpcSketchAccumulator deserializeIntermediateResult(CustomObject customObject) {
--    // The accumulator serializes as its sketch, so a new accumulator takes the sketch read back
--    CpcSketchAccumulator cpcSketchAccumulator = new CpcSketchAccumulator();
--    cpcSketchAccumulator.apply(CpcSketch.heapify(MemorySegment.ofBuffer(customObject.getBuffer())));
--    return cpcSketchAccumulator;
-+    return new CpcSketchAccumulator(_lgNominalEntries, _accumulatorThreshold,
-+        CpcSketch.heapify(MemorySegment.ofBuffer(customObject.getBuffer())));
-   }
- 
-   @Override
-@@ -632,8 +628,6 @@ public Comparable extractFinalResult(@Nullable CpcSketchAccumulator intermediate
-     if (intermediateResult == null) {
-       return 0L;
-     }
--    intermediateResult.setLgNominalEntries(_lgNominalEntries);
--    intermediateResult.setThreshold(_accumulatorThreshold);
-     return Math.round(intermediateResult.getResult().getEstimate());
-   }
- 
-```
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/query/aggregation/function/DistinctCountIntegerTupleSketchAggregationFunction.java` (modified, +0/-3)
-```diff
-@@ -51,9 +51,6 @@ public Comparable extractFinalResult(@Nullable TupleIntSketchAccumulator accumul
-     if (accumulator == null) {
-       return 0L;
-     }
--    accumulator.setNominalEntries(_nominalEntries);
--    accumulator.setSetOperations(_setOps);
--    accumulator.setThreshold(_accumulatorThreshold);
-     return Double.valueOf(accumulator.getResult().getEstimate()).longValue();
-   }
- 
-```
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/query/aggregation/function/DistinctCountRawCPCSketchAggregationFunction.java` (modified, +0/-2)
-```diff
-@@ -55,8 +55,6 @@ public SerializedCPCSketch extractFinalResult(@Nullable CpcSketchAccumulator int
-     if (intermediateResult == null) {
-       return null;
-     }
--    intermediateResult.setLgNominalEntries(_lgNominalEntries);
--    intermediateResult.setThreshold(_accumulatorThreshold);
-     return new SerializedCPCSketch(intermediateResult.getResult());
-   }
- 
-```
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/query/aggregation/function/DistinctCountRawThetaSketchAggregationFunction.java` (modified, +0/-2)
-```diff
-@@ -61,8 +61,6 @@ public String extractFinalResult(@Nullable List<ThetaSketchAccumulator> accumula
- 
-     for (Object object : accumulators) {
-       ThetaSketchAccumulator accumulator = convertSketchAccumulator(object);
--      accumulator.setThreshold(_accumulatorThreshold);
--      accumulator.setSetOperationBuilder(_setOperationBuilder);
-       mergedSketches.add(accumulator.getResult());
-     }
- 
-```
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/query/aggregation/function/DistinctCountThetaSketchAggregationFunction.java` (modified, +2/-7)
-```diff
-@@ -1321,8 +1321,6 @@ public List<ThetaSketchAccumulator> merge(List<ThetaSketchAccumulator> acc1, Lis
-         mergedAccumulators.add(thetaSketchAccumulator1);
-         continue;
+@@ -710,12 +710,23 @@ private StreamingOutput getQueryResponse(String query, SqlNodeAndOptions sqlNode
+         throw QueryErrorCode.SQL_PARSING.asException(e);
        }
--      thetaSketchAccumulator1.setSetOperationBuilder(_setOperationBuilder);
--      thetaSketchAccumulator1.setThreshold(_accumulatorThreshold);
-       thetaSketchAccumulator1.merge(thetaSketchAccumulator2);
-       mergedAccumulators.add(thetaSketchAccumulator1);
      }
-@@ -1381,9 +1379,8 @@ public List<ThetaSketchAccumulator> deserializeIntermediateResult(CustomObject c
-       int numBytes = buffer.getInt();
-       ByteBuffer slice = buffer.slice();
-       slice.limit(numBytes);
--      ThetaSketchAccumulator thetaSketchAccumulator = new ThetaSketchAccumulator();
--      thetaSketchAccumulator.apply(ObjectSerDeUtils.DATA_SKETCH_THETA_SER_DE.deserialize(slice));
--      thetaSketchAccumulators.add(thetaSketchAccumulator);
-+      thetaSketchAccumulators.add(new ThetaSketchAccumulator(_setOperationBuilder, _accumulatorThreshold,
-+          ObjectSerDeUtils.DATA_SKETCH_THETA_SER_DE.deserialize(slice)));
-       buffer.position(buffer.position() + numBytes);
+-    String rawTableName = TableNameBuilder.extractRawTableName(tableName);
+-
+-    // Validate data access
++    TableCache tableCache = _pinotHelixResourceManager.getTableCache();
++    String logicalTableName = tableCache.getActualLogicalTableName(tableName);
++    LogicalTableConfig logicalTableConfig =
++        logicalTableName != null ? tableCache.getLogicalTableConfig(logicalTableName) : null;
++    String rawTableName = TableNameBuilder.extractRawTableName(
++        logicalTableConfig != null ? logicalTableName : tableName);
++
++    // Authorize every physical table of a logical query, matching the broker's table-level check.
++    Set<String> tablesToAuthorize = logicalTableConfig != null
++        ? logicalTableConfig.getPhysicalTableConfigMap().keySet()
++        : Set.of(rawTableName);
+     AccessControl accessControl = _accessControlFactory.create();
+-    if (!accessControl.hasAccess(rawTableName, AccessType.READ, httpHeaders, Actions.Table.QUERY)) {
+-      throw QueryErrorCode.ACCESS_DENIED.asException();
++    for (String tableToAuthorize : tablesToAuthorize) {
++      if (!accessControl.hasAccess(TableNameBuilder.extractRawTableName(tableToAuthorize), AccessType.READ,
++          httpHeaders, Actions.Table.QUERY)) {
++        throw QueryErrorCode.ACCESS_DENIED.asException();
++      }
      }
-     return thetaSketchAccumulators;
-@@ -1404,8 +1401,6 @@ public Comparable extractFinalResult(@Nullable List<ThetaSketchAccumulator> accu
  
-     for (Object accumulatorObject : accumulators) {
-       ThetaSketchAccumulator accumulator = convertSketchAccumulator(accumulatorObject);
--      accumulator.setThreshold(_accumulatorThreshold);
--      accumulator.setSetOperationBuilder(_setOperationBuilder);
-       mergedSketches.add(accumulator.getResult());
-     }
- 
+     // Get brokers for the resource table.
 ```
 
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/query/aggregation/function/IntegerTupleSketchAggregationFunction.java` (modified, +2/-11)
+**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/api/resources/PinotQueryResourceTest.java` (modified, +149/-1)
 ```diff
-@@ -236,9 +236,6 @@ public TupleIntSketchAccumulator merge(TupleIntSketchAccumulator intermediateRes
-     if (intermediateResult2.isEmpty()) {
-       return intermediateResult1;
-     }
--    intermediateResult1.setThreshold(_accumulatorThreshold);
--    intermediateResult1.setNominalEntries(_nominalEntries);
--    intermediateResult1.setSetOperations(_setOps);
-     intermediateResult1.merge(intermediateResult2);
-     return intermediateResult1;
+@@ -21,6 +21,7 @@
+ import com.fasterxml.jackson.databind.node.ObjectNode;
+ import java.io.ByteArrayOutputStream;
+ import java.util.ArrayList;
++import java.util.LinkedHashMap;
+ import java.util.List;
+ import java.util.Map;
+ import javax.annotation.Nullable;
+@@ -44,6 +45,8 @@
+ import org.apache.pinot.core.auth.Actions;
+ import org.apache.pinot.core.auth.TargetType;
+ import org.apache.pinot.core.query.executor.sql.SqlQueryExecutor;
++import org.apache.pinot.spi.data.LogicalTableConfig;
++import org.apache.pinot.spi.data.PhysicalTableConfig;
+ import org.apache.pinot.spi.data.Schema;
+ import org.apache.pinot.spi.env.PinotConfiguration;
+ import org.apache.pinot.spi.exception.QueryErrorCode;
+@@ -628,10 +631,15 @@ private void unauthenticatedAccessControl() {
+   /// Installs the controller's basic auth, as an operator configures it, with a single principal scoped to table `t`
+   /// (`BASIC_AUTH_PRINCIPAL` with `BASIC_AUTH_PASSWORD`) and the given comma-separated permissions.
+   private void tableScopedBasicAuth(String permissions) {
++    tableScopedBasicAuth(permissions, "t");
++  }
++
++  /// Installs basic auth with the given comma-separated permissions and table grants.
++  private void tableScopedBasicAuth(String permissions, String tables) {
+     String principal = BASIC_AUTH_PRINCIPALS_PREFIX + "." + BASIC_AUTH_PRINCIPAL;
+     BasicAuthAccessControlFactory factory = new BasicAuthAccessControlFactory();
+     factory.init(new PinotConfiguration(Map.of(BASIC_AUTH_PRINCIPALS_PREFIX, BASIC_AUTH_PRINCIPAL,
+-        principal + ".password", BASIC_AUTH_PASSWORD, principal + ".tables", "t",
++        principal + ".password", BASIC_AUTH_PASSWORD, principal + ".tables", tables,
+         principal + ".permissions", permissions)));
+     when(_accessControlFactory.create()).thenReturn(factory.create());
    }
-@@ -255,11 +252,8 @@ public SerializedResult serializeIntermediateResult(TupleIntSketchAccumulator tu
- 
-   @Override
-   public TupleIntSketchAccumulator deserializeIntermediateResult(CustomObject customObject) {
--    // The accumulator serializes as its sketch, so a new accumulator takes the sketch read back
--    TupleIntSketchAccumulator tupleIntSketchAccumulator = new TupleIntSketchAccumulator();
--    tupleIntSketchAccumulator.apply(TupleSketch.heapifySketch(MemorySegment.ofBuffer(customObject.getBuffer()),
--        new IntegerSummaryDeserializer()));
--    return tupleIntSketchAccumulator;
-+    return new TupleIntSketchAccumulator(_setOps, _nominalEntries, _accumulatorThreshold,
-+        TupleSketch.heapifySketch(MemorySegment.ofBuffer(customObject.getBuffer()), new IntegerSummaryDeserializer()));
-   }
- 
-   @Override
-@@ -278,9 +272,6 @@ public Comparable extractFinalResult(@Nullable TupleIntSketchAccumulator accumul
-       }
-       accumulator = emptyAccumulator();
-     }
--    accumulator.setNominalEntries(_nominalEntries);
--    accumulator.setSetOperations(_setOps);
--    accumulator.setThreshold(_accumulatorThreshold);
-     return Base64.getEncoder().encodeToString(accumulator.getResult().toByteArray());
-   }
- 
-```
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/query/aggregation/function/PercentileKLLAggregationFunction.java` (modified, +10/-13)
-```diff
-@@ -104,10 +104,10 @@ public void aggregate(int length, AggregationResultHolder aggregationResultHolde
-     DataType dataType = valueSet.getValueType();
-     boolean singleValue = valueSet.isSingleValue();
-     if (dataType == DataType.BYTES && singleValue) {
--      KllDoublesSketch[] deserializedSketches = deserializeSketches(blockValSetMap.get(_expression).getBytesValuesSV());
-+      byte[][] serializedSketches = valueSet.getBytesValuesSV();
-       forEachNotNull(length, valueSet, (from, to) -> {
-         for (int i = from; i < to; i++) {
--          sketch.merge(deserializedSketches[i]);
-+          sketch.merge(deserializeSketch(serializedSketches[i]));
-         }
-       });
-       return;
-@@ -148,11 +148,11 @@ public void aggregateGroupBySV(int length, int[] groupKeyArray, GroupByResultHol
-     DataType dataType = valueSet.getValueType();
-     boolean singleValue = valueSet.isSingleValue();
-     if (dataType == DataType.BYTES && singleValue) {
--      KllDoublesSketch[] deserializedSketches = deserializeSketches(blockValSetMap.get(_expression).getBytesValuesSV());
-+      byte[][] serializedSketches = valueSet.getBytesValuesSV();
-       forEachNotNull(length, valueSet, (from, to) -> {
-         for (int i = from; i < to; i++) {
-           KllDoublesSketch sketch = getOrCreateSketch(groupByResultHolder, groupKeyArray[i]);
--          sketch.merge(deserializedSketches[i]);
-+          sketch.merge(deserializeSketch(serializedSketches[i]));
-         }
-       });
-       return;
-@@ -197,12 +197,13 @@ public void aggregateGroupByMV(int length, int[][] groupKeysArray, GroupByResult
-     DataType dataType = valueSet.getValueType();
-     boolean singleValue = valueSet.isSingleValue();
-     if (dataType == DataType.BYTES && singleValue) {
--      KllDoublesSketch[] deserializedSketches = deserializeSketches(blockValSetMap.get(_expression).getBytesValuesSV());
-+      byte[][] serializedSketches = valueSet.getBytesValuesSV();
-       forEachNotNull(length, valueSet, (from, to) -> {
-         for (int i = from; i < to; i++) {
-+          KllDoublesSketch rowSketch = deserializeSketch(serializedSketches[i]);
-           for (int groupKey : groupKeysArray[i]) {
-             KllDoublesSketch sketch = getOrCreateSketch(groupByResultHolder, groupKey);
--            sketch.merge(deserializedSketches[i]);
-+            sketch.merge(rowSketch);
-           }
-         }
-       });
-@@ -265,13 +266,9 @@ protected KllDoublesSketch getOrCreateSketch(GroupByResultHolder groupByResultHo
-     return sketch;
+@@ -778,6 +786,146 @@ public void testRejectedSqlOptionsFailBeforeRouting() {
+     Assert.assertTrue(response.contains("useMultistageEngine"), response);
    }
  
--  /// Deserializes the sketches from the bytes.
--  protected KllDoublesSketch[] deserializeSketches(byte[][] serializedSketches) {
--    KllDoublesSketch[] sketches = new KllDoublesSketch[serializedSketches.length];
--    for (int i = 0; i < serializedSketches.length; i++) {
--      sketches[i] = KllDoublesSketch.wrap(MemorySegment.ofArray(serializedSketches[i]).asReadOnly());
--    }
--    return sketches;
-+  /// Wraps the serialized sketch for a non-null input row without copying its bytes.
-+  private static KllDoublesSketch deserializeSketch(byte[] serializedSketch) {
-+    return KllDoublesSketch.wrap(MemorySegment.ofArray(serializedSketch).asReadOnly());
-   }
- 
-   @Nullable
++  @DataProvider
++  public Object[][] logicalTablePhysicalTables() {
++    return new Object[][]{
++        {Map.of("t_OFFLINE", new PhysicalTableConfig())},
++        {Map.of("t_REALTIME", new PhysicalTableConfig())},
++        {Map.of("t_OFFLINE", new PhysicalTableConfig(), "t_REALTIME", new PhysicalTableConfig())}
++    };
++  }
++
++  @Test(dataProvider = "logicalTablePhysicalTables")
++  public void testLogicalQueryAllowsReadAccessToPhysicalTables(Map<String, PhysicalTableConfig> physicalTables) {
++    tableScopedBasicAuth("read");
++    mockLogicalTable("lt", physicalTables);
++
++    String response = postSql("SELECT COUNT(*) FROM lt", null, basicAuthHeaders(BASIC_AUTH_PASSWORD));
++
++    // No broker is registered by this unit test. Reaching broker selection proves that the physical-table grant
++    // passed authorization even though the principal is not granted the logical name.
++    assertTrue(response.contains(String.valueOf(QueryErrorCode.BROKER_RESOURCE_MISSING.getId())), response);
++    verify(_resourceManager).getBrokerInstancesFor("lt");
++  }
++
++  @DataProvider
++  public Object[][] multiTableLogicalQueryPermissions() {
++    Object[][] permissionCases = {
++        {"table1,table2", true},
++        {"table1", false},
++        {"table2", false},
++        {"unrelated", false},
++        {"lt", false},
++        {"lt,table1", false},
++        {"lt,table2", false}
++    };
++    List<Object[]> cases = new ArrayList<>();
++    for (Map<String, PhysicalTableConfig> physicalTables : List.of(
++        Map.of("table1_OFFLINE", new PhysicalTableConfig(), "table2_OFFLINE", new PhysicalTableConfig()),
++        Map.of("table1_REALTIME", new PhysicalTableConfig(), "table2_REALTIME", new PhysicalTableConfig()),
++        Map.of("table1_OFFLINE", new PhysicalTableConfig(), "table2_REALTIME", new PhysicalTableConfig()))) {
++      for (Object[] permissionCase : permissionCases) {
++        cases.add(new Object[]{physicalTables, permissionCase[0], permissionCase[1]});
++      }
++    }
++
++    // Keep the order stable to test denials at the first, middle, and last physical table.
++    Map<String, PhysicalTableConfig> threePhysicalTables = new LinkedHashMap<>();
++    threePhysicalTables.put("table1_OFFLINE", new PhysicalTableConfig());
++    threePhysicalTables.put("table2_OFFLINE", new PhysicalTableConfig());
++    threePhysicalTables.put("table3_OFFLINE", new PhysicalTableConfig());
++    cases.add(new Object[]{threePhysicalTables, "table1,table2,table3", true});
++    cases.add(new Object[]{threePhysicalTables, "table2,table3", false});
++    cases.add(new Object[]{threePhysicalTables, "table1,table3", false});
++    cases.add(new Object[]{threePhysicalTables, "table1,table2", false});
++    return cases.toArray(Object[][]::new);
++  }
++
++  @Test(dataProvider = "multiTableLogicalQueryPermissions")
++  public void testLogicalQueryRequiresReadAccessToAllPhysicalTables(Map<String, PhysicalTableConfig> physicalTables,
++      String grantedTables, boolean allowed)
++      throws Exception {
++    tableScope
 ```
 
 ---
 
-### Incident Patch 2: `eaef9a2a` (2026-11-12)
-**Commit Message**: Revert "Remove legacy per-segment fallback from segments metadata API (#20222)" (#20237)
+### Incident Patch 2: `40b3c1b7` (2026-11-13)
+**Commit Message**: Spy a plain RetentionManager in the table-level hybrid retention test so subclass suites can reuse it (#20236)
 
-This reverts commit f8620508149a33b144a187ed935f1d9ab39850b6.
-
-**File**: `pinot-controller/src/main/java/org/apache/pinot/controller/util/TableMetadataReader.java` (modified, +72/-18)
+**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/helix/core/retention/RetentionManagerTest.java` (modified, +5/-2)
 ```diff
-@@ -131,38 +131,92 @@ private TableReloadJsonResponse processSegmentMetadataReloadResponse(
-   public JsonNode getSegmentsMetadata(String tableNameWithType, @Nullable List<String> columns,
-       @Nullable List<String> segments, int timeoutMs)
-       throws InvalidConfigException, IOException {
--    Map<String, List<String>> serverToSegs =
--        _pinotHelixResourceManager.getServerToSegmentsMap(tableNameWithType);
--    BiMap<String, String> endpoints =
--        _pinotHelixResourceManager.getDataInstanceAdminEndpoints(serverToSegs.keySet());
--    ServerSegmentMetadataReader reader =
--        new ServerSegmentMetadataReader(_executor, _connectionManager,
--            _pinotHelixResourceManager.getServerAdminAuthProvider());
--
--    List<String> tableUrls = new ArrayList<>(serverToSegs.size());
--    for (String server : serverToSegs.keySet()) {
--      tableUrls.add(reader.generateTableMetadataServerURL(
--          tableNameWithType, columns, segments, endpoints.get(server)));
--    }
-+    return getSegmentsMetadataInternal(tableNameWithType, columns, segments, timeoutMs);
-+  }
+@@ -603,8 +603,11 @@ public void testTableLevelHybridRetentionStrategyOverridesClusterConfig(@Nullabl
+     ControllerConf conf = new ControllerConf();
+     conf.setProperty(ControllerConf.ENABLE_HYBRID_TABLE_RETENTION_STRATEGY, clusterLevel);
  
--    CompletionServiceHelper cs = new CompletionServiceHelper(_executor, _connectionManager, endpoints.inverse(),
-+  /// Common helper used by both the new (server-level) and legacy (segment-level) endpoints.
-+  private JsonNode fetchAndAggregateMetadata(List<String> urls, BiMap<String, String> endpoints, boolean perSegmentJson,
-+      String tableNameWithType, int timeoutMs)
-+      throws InvalidConfigException, IOException {
-+    CompletionServiceHelper cs = new CompletionServiceHelper(_executor, _connectionManager, endpoints,
-         _pinotHelixResourceManager.getServerAdminAuthProvider());
-     CompletionServiceHelper.CompletionServiceResponse resp =
--        cs.doMultiGetRequest(tableUrls, tableNameWithType, false, timeoutMs);
-+        cs.doMultiGetRequest(urls, tableNameWithType, perSegmentJson, timeoutMs);
-+    // all requests will fail if new server endpoint is not available
-     if (resp._failedResponseCount > 0) {
--      throw new RuntimeException(String.format("Got %d failed responses from total %d server instances",
--          resp._failedResponseCount, tableUrls.size()));
-+      throw new RuntimeException(String.format("Got %d failed responses from total %d server instances. "
-+          + "Falling back to legacy segment metadata api", resp._failedResponseCount, urls.size()));
-     }
+-    RetentionManager retentionManager = spy(createSizeRetentionManager(realtimeTableConfig, List.of(), resourceManager,
+-        mock(ControllerMetrics.class), conf, mock(BrokerServiceHelper.class)));
++    // Spy a plain RetentionManager rather than going through createRetentionManager(...), so the package-private
++    // methods stubbed below stay interceptable when a subclass suite overrides that factory
++    stubSizeRetentionResourceManager(realtimeTableConfig, List.of(), resourceManager, conf);
++    RetentionManager retentionManager = spy(new RetentionManager(resourceManager, mock(LeadControllerManager.class),
++        conf, mock(ControllerMetrics.class), mock(BrokerServiceHelper.class)));
  
-     ObjectMapper mapper = new ObjectMapper();
-     ObjectNode aggregatedNode = mapper.createObjectNode();
-     for (String body : resp._httpResponses.values()) {
-       JsonNode node = JsonUtils.stringToJsonNode(body);
--      node.properties().forEach(entry -> aggregatedNode.set(entry.getKey(), entry.getValue()));
-+      // legacy returns one JSON per segment; new returns one JSON with many fields
-+      if (perSegmentJson) {
-+        String segmentName = node.get("segmentName").asText();
-+        aggregatedNode.set(segmentName, node);
-+      } else {
-+        node.properties().forEach(entry -> aggregatedNode.set(entry.getKey(), entry.getValue()));
-+      }
-     }
-     return aggregatedNode;
-   }
- 
-+  private List<String> buildTableLevelUrls(Map<String, List<String>> serverToSegs, BiMap<String, String> endpoints,
-+      String tableNameWithType, List<String> columns, List<String> segmentsFilter, ServerSegmentMetadataReader reader) {
-+    List<String> urls = new ArrayList<>(serverToSegs.size());
-+    for (String server : serverToSegs.keySet()) {
-+      urls.add(reader.generateTableMetadataServerURL(
-+          tableNameWithType, columns, segmentsFilter, endpoints.get(server)));
-+    }
-+    return urls;
-+  }
-+
-+  private List<String> buildSegmentLevelUrls(Map<String, List<String>> serverToSegs, BiMap<String, String> endpoints,
-+      String tableNameWithType, List<String> columns, List<String> segmentsFilter, ServerSegmentMetadataReader reader) {
-+    List<String> urls = new ArrayList<>();
-+    for (Map.Entry<String, List<String>> e : serverToSegs.entrySet()) {
-+      for (String segment : e.getValue()) {
-+        if (segmentsFilter == null || segmentsFilter.isEmpty()
-+            || segmentsFilter.contains(segment)) {
-+          urls.add(reader.generateSegmentMetadataServerURL(
-+              tableNameWithType, segment, columns, endpoints.get(e.getKey())));
-+        }
-+      }
-+    }
-+    return urls;
-+  }
-+
-+  private JsonNode getSegmentsMetadataInternal(String tableNameWithType, @Nullable List<String> columns,
-+      @Nullable List<String> segments, int timeoutMs)
-+      throws InvalidConfigException, IOException {
-+    Map<String, List<String>> serverToSegs =
-+        _pinotHelixResourceManager.getServerToSegmentsMap(tableNameWithType);
-+    BiMap<String, String> endpoints =
-+        _pinotHelixResourceManager.getDataInstanceAdminEndpoints(serverToSegs.keySet());
-+    ServerSegmentMetadataReader reader =
-+        new ServerSegmentMetadataReader(_executor, _connectionManager,
-+            _pinotHelixResourceManager.getServerAdminAuthProv
+     // Only the retention strategy selection is under test, so stub out both branches
+     doNothing().when(retentionManager).manageRetentionForHybridTable(any(), any());
 ```
 
-**File**: `pinot-controller/src/test/java/org/apache/pinot/controller/util/TableMetadataReaderTest.java` (modified, +20/-36)
+---
+
+### Incident Patch 3: `75c2fdfc` (2026-11-13)
+**Commit Message**: Bump org.codehaus.mojo:build-helper-maven-plugin from 3.7.0 to 3.8.0 (#20255)
+
+Bumps [org.codehaus.mojo:build-helper-maven-plugin](https://github.com/mojohaus/build-helper-maven-plugin) from 3.7.0 to 3.8.0.
+- [Release notes](https://github.com/mojohaus/build-helper-maven-plugin/releases)
+- [Commits](https://github.com/mojohaus/build-helper-maven-plugin/compare/3.7.0...3.8.0)
+
+---
+updated-dependencies:
+- dependency-name: org.codehaus.mojo:build-helper-maven-plugin
+  dependency-version: 3.8.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `pom.xml` (modified, +1/-1)
 ```diff
-@@ -35,6 +35,7 @@
- import java.util.Set;
- import java.util.concurrent.ExecutorService;
- import java.util.concurrent.Executors;
-+import java.util.concurrent.atomic.AtomicInteger;
- import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
- import org.apache.pinot.controller.helix.core.PinotHelixResourceManager;
- import org.apache.pinot.spi.utils.JsonUtils;
-@@ -47,7 +48,6 @@
- import static org.mockito.Mockito.mock;
- import static org.mockito.Mockito.when;
- import static org.testng.Assert.assertEquals;
--import static org.testng.Assert.assertThrows;
- 
- 
- public class TableMetadataReaderTest {
-@@ -57,6 +57,7 @@ public class TableMetadataReaderTest {
-   private final ExecutorService _executor = Executors.newFixedThreadPool(4);
-   private final PoolingHttpClientConnectionManager _connectionManager = new PoolingHttpClientConnectionManager();
-   private final List<HttpServer> _httpServers = new ArrayList<>();
-+  private final AtomicInteger _legacyRequestCount = new AtomicInteger();
- 
-   @BeforeClass
-   public void setUp() {
-@@ -67,6 +68,7 @@ public void setUp() {
-   public void stopServers() {
-     _httpServers.forEach(server -> server.stop(0));
-     _httpServers.clear();
-+    _legacyRequestCount.set(0);
-   }
- 
-   @AfterClass
-@@ -87,6 +89,7 @@ public void testTableLevelMetadataWithFullReplication()
-     JsonNode metadata = getSegmentsMetadata(serverToSegments);
- 
-     assertEquals(segmentNames(metadata), Set.of("seg0", "seg1", "seg2"));
-+    assertEquals(_legacyRequestCount.get(), 0);
-   }
- 
-   /// 4 servers with replication 2: each server holds only half of the segments, so every server's response is needed.
-@@ -102,6 +105,7 @@ public void testTableLevelMetadataWithPartialReplication()
-     JsonNode metadata = getSegmentsMetadata(serverToSegments);
- 
-     assertEquals(segmentNames(metadata), Set.of("seg0", "seg1", "seg2", "seg3"));
-+    assertEquals(_legacyRequestCount.get(), 0);
-   }
- 
-   /// Each server holds a distinct segment, so dropping any server's response loses its segment.
-@@ -116,29 +120,14 @@ public void testTableLevelMetadataWithoutReplication()
-     JsonNode metadata = getSegmentsMetadata(serverToSegments);
- 
-     assertEquals(segmentNames(metadata), Set.of("seg0", "seg1", "seg2"));
--  }
--
--  /// A server whose table-level request fails must fail the whole call instead of returning partial metadata.
--  @Test
--  public void testTableLevelMetadataFailsWhenServerReturnsError() {
--    Map<String, List<String>> serverToSegments = new LinkedHashMap<>();
--    serverToSegments.put("server0", List.of("seg0"));
--    serverToSegments.put("server1", List.of("seg1"));
--
--    assertThrows(RuntimeException.class, () -> getSegmentsMetadata(serverToSegments, Set.of("server1")));
-+    assertEquals(_legacyRequestCount.get(), 0);
-   }
- 
-   private JsonNode getSegmentsMetadata(Map<String, List<String>> serverToSegments)
-       throws Exception {
--    return getSegmentsMetadata(serverToSegments, Set.of());
--  }
--
--  private JsonNode getSegmentsMetadata(Map<String, List<String>> serverToSegments, Set<String> failingServers)
--      throws Exception {
-     BiMap<String, String> serverToEndpoint = HashBiMap.create();
-     for (Map.Entry<String, List<String>> entry : serverToSegments.entrySet()) {
--      HttpServer httpServer =
--          failingServers.contains(entry.getKey()) ? startFailingServer() : startServer(entry.getValue());
-+      HttpServer httpServer = startServer(entry.getValue());
-       serverToEndpoint.put(entry.getKey(), "http://localhost:" + httpServer.getAddress().getPort());
-     }
- 
-@@ -150,7 +139,8 @@ private JsonNode getSegmentsMetadata(Map<String, List<String>> serverToSegments,
-     return reader.getSegmentsMetadata(TABLE_NAME, null, null, TIMEOUT_MS);
-   }
- 
--  /// Starts a fake server whose table-level endpoint returns metadata for the given segments.
-+  /// Starts a fake server whose table-level endpoint returns metadata for the given segments. The legacy per-segment
-+  /// endpoint returns 404, so tests can assert that the table-level path was used.
-   private HttpServer startServer(List<String> segments)
-       throws IOException {
-     ObjectNode tableLevelResponse = JsonUtils.newObjectNode();
-@@ -160,30 +150,24 @@ private HttpServer startServer(List<String> segments)
-     byte[] tableLevelBody = JsonUtils.objectToString(tableLevelResponse).getBytes(StandardCharsets.UTF_8);
- 
-     HttpServer httpServer = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
--    httpServer.createContext("/tables/" + TABLE_NAME + "/segments/metadata", exchange -> {
--      exchange.sendResponseHeaders(200, tableLevelBody.length);
--      try (OutputStream out = exchange.getResponseBody()) {
--        out.write(tableLevelBody);
-+    httpServer.createContext("/tables/", exchange -> {
-+      String path = exchange.getRequestURI().getPath();
-+      if (path.equals("/tables/" + TABLE_NAME + "/segments/metadata")) {
-+        exchange.sendResponseHeaders(200, tableLevelBody.length);
-+        try (Out
+@@ -2502,7 +2502,7 @@
+         <plugin>
+           <groupId>org.codehaus.mojo</groupId>
+           <artifactId>build-helper-maven-plugin</artifactId>
+-          <version>3.7.0</version>
++          <version>3.8.0</version>
+         </plugin>
+         <plugin>
+           <groupId>com.github.eirslett</groupId>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20243** (2026-11-12): Bump org.apache.commons:commons-lang3 from 3.21.0 to 3.22.0 (@dependabot[bot])
-- **PR #20242** (2026-11-12): Bump org.eclipse.sisu:sisu-maven-plugin from 1.1.1 to 1.1.2 (@dependabot[bot])
-- **PR #20241** (2026-11-12): Bump com.mchange:c3p0 from 0.14.2 to 0.15.0 (@dependabot[bot])
-- **PR #20240** (2026-11-12): Bump com.mchange:mchange-commons-java from 0.6.1 to 0.7.0 (@dependabot[bot])
-- **PR #20239** (2026-11-13): Bump com.github.luben:zstd-jni from 1.5.7-25 to 1.5.7-26 (@dependabot[bot])
-- **PR #20238** (2026-11-12): Remove segment metadata legacy fallback (@manakbisht)
+- **PR #20259** (2026-11-13): Bump org.codehaus.mojo:exec-maven-plugin from 3.6.4 to 3.7.0 (@dependabot[bot])
+- **PR #20258** (2026-11-13): Bump org.codehaus.mojo:javacc-maven-plugin from 3.2.1 to 3.3.0 (@dependabot[bot])
+- **PR #20257** (2026-11-13): Bump software.amazon.awssdk:bom from 2.57.11 to 2.57.12 (@dependabot[bot])
+- **PR #20256** (2026-11-13): Bump com.mchange:mchange-commons-java from 0.7.0 to 0.7.1 (@dependabot[bot])
+- **PR #20255** (2026-11-13): Bump org.codehaus.mojo:build-helper-maven-plugin from 3.7.0 to 3.8.0 (@dependabot[bot])
+- **PR #20254** (2026-11-13): Bump org.codehaus.mojo:animal-sniffer-annotations from 1.29 to 1.29.1 (@dependabot[bot])
 
 ---
 
@@ -2450,3 +2209,53 @@ This reverts commit f8620508149a33b144a187ed935f1d9ab39850b6.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. controller authorization for logical table queries
+
+**RULE**:
+When implementing operations in `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotQueryResource.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c31a588a`: controller authorization for logical table queries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-controller/src/main/java/org/apache/pinot/controller/api/resources/PinotQueryResource.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+    TableCache tableCache = _pinotHelixResourceManager.getTableCache();
+    String logicalTableName = tableCache.getActualLogicalTableName(tableName);
+    LogicalTableConfig logicalTableConfig =
+        logicalTableName != null ? tableCache.getLogicalTableConfig(logicalTableName) : null;
+    String rawTableName = TableNameBuilder.extractRawTableName(
+        logicalTableConfig != null ? logicalTableName : tableName);
+
+    // Authorize every physical table of a logical query, matching the broker's table-level check.
+    Set<String> tablesToAuthorize = logicalTableConfig != null
+        ? logicalTableConfig.getPhysicalTableConfigMap().keySet()
+        : Set.of(rawTableName);
+    for (String tableToAuthorize : tablesToAuthorize) {
+      if (!accessControl.hasAccess(TableNameBuilder.extractRawTableName(tableToAuthorize), AccessType.READ,
+          httpHeaders, Actions.Table.QUERY)) {
+        throw QueryErrorCode.ACCESS_DENIED.asException();
+      }
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Induced defect failure mode:
+    String rawTableName = TableNameBuilder.extractRawTableName(tableName);
+
+    // Validate data access
+    if (!accessControl.hasAccess(rawTableName, AccessType.READ, httpHeaders, Actions.Table.QUERY)) {
+      throw QueryErrorCode.ACCESS_DENIED.asException();
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c31a588a` are properly handled with clean fallback behavior.

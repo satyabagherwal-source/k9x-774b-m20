@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T17:04:27.594Z",
+  "last_updated": "2026-11-14T17:25:24.809Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T17:04:27.051Z",
@@ -53,9 +53,9 @@
       "staged_for_review": 1
     },
     "callstack-agent-device-learnings.md": {
-      "processed_at": "2026-11-11T07:38:16.423Z",
+      "processed_at": "2026-11-14T17:25:24.308Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "oxc-project-oxc-learnings.md": {
       "processed_at": "2026-11-14T15:49:46.740Z",
@@ -93,9 +93,9 @@
       "staged_for_review": 1
     },
     "astral-sh-uv-learnings.md": {
-      "processed_at": "2026-11-13T03:31:39.884Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-14T17:25:02.475Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "argoproj-argo-workflows-learnings.md": {
       "processed_at": "2026-11-13T19:19:47.343Z",
@@ -2671,9 +2671,14 @@
       "processed_at": "2026-11-14T17:04:26.752Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-google-embeddinggemma-2-learnings.md": {
+      "processed_at": "2026-11-14T17:25:24.066Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 870,
-  "total_canonical_promoted": 209,
-  "total_staged_for_review": 660
+  "total_dossiers_evaluated": 873,
+  "total_canonical_promoted": 210,
+  "total_staged_for_review": 662
 }

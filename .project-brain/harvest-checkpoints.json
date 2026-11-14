@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T17:03:23.160Z",
+  "last_updated": "2026-11-14T17:24:59.512Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -830,14 +830,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-embeddinggemma-2",
-      "content_hash": "605c2d537d47920bc57a506e1a9ad7f3cf45f05ff100123e5b7088d92d2b7a86",
-      "verified_at": "2026-11-09T06:05:21.815Z",
+      "content_hash": "857ae9e371ea27abd2f4371d198d8b20fd52abfce1a083ef03c0a90648093bb6",
+      "verified_at": "2026-11-14T17:24:44.474Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T06:05:21.815Z"
+      "last_updated": "2026-11-14T17:24:44.474Z"
     },
     "unsloth/embeddinggemma-2-GGUF": {
       "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "8bb0e7571a44df184df7b0193cc6fb5490d63c0d6a1f2dbdfb3d896ad590adc2",
-      "verified_at": "2026-11-11T07:37:55.705Z",
+      "content_hash": "6c83fe52f31a89d5da10e3027928a771904ccf987413e3da1450d2a04f6bc4b1",
+      "verified_at": "2026-11-14T17:24:51.824Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T07:37:55.705Z"
+      "last_updated": "2026-11-14T17:24:51.824Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "452ef02699b6af4602a13281f1fa293e0e4d0d4acc3969b25064b514f9289a22",
-      "verified_at": "2026-11-13T03:26:24.578Z",
+      "content_hash": "7a148fe4bbf963965d0cd44f9a882710eeb75b20cb17034a385b8f80d915b9e3",
+      "verified_at": "2026-11-14T17:24:46.340Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T03:26:24.578Z"
+      "last_updated": "2026-11-14T17:24:46.340Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",
@@ -18006,14 +18006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-pinot",
-      "content_hash": "a37300ee698820d98dedb5a2c19668dc7f1be9f3edfdb964674fbf4bf79aaf29",
-      "verified_at": "2026-11-13T11:55:45.282Z",
+      "content_hash": "c0e309c3bad79191411b62dc1985922f4a8bdd90e44bc2d9312d082c45d05dac",
+      "verified_at": "2026-11-14T17:24:59.512Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T11:55:45.282Z"
+      "last_updated": "2026-11-14T17:24:59.512Z"
     },
     "N1nEmAn/sapper-v2": {
       "repository": "N1nEmAn/sapper-v2",
