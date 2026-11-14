@@ -39,20 +39,20 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T19:20:53.995Z",
-    "lastVerified": "2026-11-14T19:20:53.995Z",
+    "lastChecked": "2026-11-14T19:33:50.463Z",
+    "lastVerified": "2026-11-14T19:33:50.463Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "rtk-ai-rtk": {
-    "name": "rtk-ai/rtk",
+    "name": "rtk",
     "officialUrl": "https://github.com/rtk-ai/rtk",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T05:15:45.003Z",
-    "lastVerified": "2026-11-13T05:15:45.003Z",
+    "lastChecked": "2026-11-14T19:33:35.491Z",
+    "lastVerified": "2026-11-14T19:33:35.491Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rtk-ai-rtk",
@@ -61,7 +61,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2a786dca"
   },
   "hf-convaiinnovations-laya": {
     "name": "convaiinnovations/laya",
@@ -252,12 +253,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T18:26:36.424Z",
-    "lastVerified": "2026-11-14T18:26:36.424Z",
+    "lastChecked": "2026-11-14T19:33:50.452Z",
+    "lastVerified": "2026-11-14T19:33:50.452Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -266,7 +267,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f8229156"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1763,9 +1765,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-14T10:30:10.086Z",
+    "lastChecked": "2026-11-14T19:33:45.441Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-14T10:30:10.086Z"
+    "lastVerified": "2026-11-14T19:33:45.441Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -5493,8 +5495,8 @@
     "officialUrl": "https://github.com/saltstack/salt",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-13T14:55:34.749Z",
-    "lastVerified": "2026-11-13T14:55:34.749Z",
+    "lastChecked": "2026-11-14T19:33:43.010Z",
+    "lastVerified": "2026-11-14T19:33:43.010Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-saltstack-salt",
@@ -6943,9 +6945,9 @@
   "resocoder-flutter-tdd-clean-architecture-course": {
     "name": "flutter-tdd-clean-architecture-course",
     "officialUrl": "https://github.com/ResoCoder/flutter-tdd-clean-architecture-course",
-    "lastChecked": "2026-11-11T09:59:53.857Z",
+    "lastChecked": "2026-11-14T19:33:40.520Z",
     "revisionIdentifier": "6c515614",
-    "lastVerified": "2026-11-11T09:59:53.857Z"
+    "lastVerified": "2026-11-14T19:33:40.520Z"
   },
   "someengineering-fixinventory": {
     "name": "fixinventory",
@@ -7185,12 +7187,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "apache-incubator-pegasus": {
-    "name": "apache/incubator-pegasus",
+    "name": "incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-13T13:11:08.063Z",
-    "lastVerified": "2026-11-13T13:11:08.063Z",
+    "lastChecked": "2026-11-14T19:33:47.938Z",
+    "lastVerified": "2026-11-14T19:33:47.938Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-incubator-pegasus",
@@ -7199,7 +7201,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "31da6f5e"
   },
   "dalance-procs": {
     "name": "procs",
@@ -8441,12 +8444,12 @@
     "officialUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T07:43:34.373Z",
-    "lastVerified": "2026-11-09T07:43:34.373Z",
+    "lastChecked": "2026-11-14T19:33:38.082Z",
+    "lastVerified": "2026-11-14T19:33:38.082Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-    "contentHash": "2f4fe74f933fffd70c3c29df4f55847ec88dbf8249e004f62bf0201b817b98ae",
+    "contentHash": "2a34e8119edf3deb3e4da9ac8077980b4b7a2cde7d1c12f6e8a466adae4b5d72",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T19:21:24.660Z",
-  "total_records": 808,
+  "last_updated": "2026-11-14T19:33:51.798Z",
+  "total_records": 810,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 394,
+      "total": 396,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -431,7 +431,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
         "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants",
         "DOM-D-CC7591B7",
-        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core"
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core",
+        "domain_intelligence-research-knowledge-intelligence-sc117-qwen3-8-flash-next-gsq-rco-abliterated-ggu",
+        "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-"
       ]
     },
     "E": {
@@ -6623,8 +6625,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "f16845f3a8638fe40187717c55f653ae78e382a395b4fece9197e5ec5c39ffbf",
-      "created_at": "2026-11-14T18:35:11.823Z"
+      "content_hash": "0596877e0d9c777f8a7e75c2fd6c5af0f0413eec33a81bc138635e9648d74a81",
+      "created_at": "2026-11-14T19:33:51.798Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7541,8 +7543,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "0cb967dc41832f14ad952da8734d2be912472002fea33442867c464ff2af2691",
-      "created_at": "2026-11-14T14:40:20.435Z"
+      "content_hash": "f4864d592999b3b22d2575dfeb3838cf096e303506b4a4eb850da0cd16f29254",
+      "created_at": "2026-11-14T19:33:51.303Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -16295,6 +16297,24 @@
       "repository": "ytsaurus-ytsaurus-learnings",
       "content_hash": "8167a87b76e643f9ce8a72dd6feae7aa39af9ae1c15346dab2eb25411d26d890",
       "created_at": "2026-11-14T19:21:24.660Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sc117-qwen3-8-flash-next-gsq-rco-abliterated-ggu": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sc117-qwen3-8-flash-next-gsq-rco-abliterated-ggu",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-research-knowledge-intellig.md",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "content_hash": "e8e91d4a68f3f263a0b4c50441d506e9b20c4bd5b8479d007b3bae38376b896d",
+      "created_at": "2026-11-14T19:33:38.764Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-learnings-research-knowledg.md",
+      "repository": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings",
+      "content_hash": "6dfd84e9fc510259945c5068ad63e5866a4a4d9120b2ce2de5dbc332acaa2d59",
+      "created_at": "2026-11-14T19:33:50.749Z"
     }
   }
 }

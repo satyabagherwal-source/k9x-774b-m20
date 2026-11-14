@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-YUUR",
-    "timestamp": "2026-11-09T13:34:22.899Z",
-    "repository": "streetwriters/notesnook",
-    "learningId": "learn-github-streetwriters-notesnook",
-    "contentHash": "4aa21afa16b360c6f1278ae73ef54367472c6e1d635dc680b0c72fb03dca7e3a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-YYJ5",
     "timestamp": "2026-11-09T13:34:27.665Z",
     "repository": "fishaudio/drama-3",
@@ -7492,6 +7477,21 @@
     "contentHash": "b7689485e0227050f56d09ef0ff5c9b6935227832452393a67982828fc9f46c3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-04NY",
+    "timestamp": "2026-11-14T19:33:38.590Z",
+    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+    "contentHash": "2a34e8119edf3deb3e4da9ac8077980b4b7a2cde7d1c12f6e8a466adae4b5d72",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

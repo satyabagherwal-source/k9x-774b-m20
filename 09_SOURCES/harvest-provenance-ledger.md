@@ -9954,3 +9954,4 @@ Every entry in this ledger must capture:
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `97d0b4f2` | Multi-dimensional audit evidence | 2026-11-14T19:20:45.800Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `349c6541` | Multi-dimensional audit evidence | 2026-11-14T19:20:50.978Z |
 | `learn-dom-d-cc7591b7` | `project://hf-autotrust-gev-26b-decide-nvfp4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | 2026-11-14T19:21:23.060Z |
+| `learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-11-14T19:33:38.594Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T19:21:24.542Z",
+  "last_updated": "2026-11-14T19:33:51.696Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-IXRX",
+      "id": "CD-0EDH",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-IXRX-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0EDH-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -10262,11 +10262,11 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-WYR0",
+      "id": "CD-0ERW",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-WYR0-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0ERW-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -13335,6 +13335,33 @@
       "source_repo": "ytsaurus-ytsaurus",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-63DE53-worker-stack-introspection-and-gwm-leade.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-74C554",
+      "directive_title": "Forensic Learning Record (Deep Inspection): SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-74C554-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-BA603E",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BA603E-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-0FECBF",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0FECBF-puppet-fix-postgresql-failing-to-start-o.md",
       "staged_date": "2026-11-14"
     }
   ]
