@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T00:26:27.085Z",
+  "last_updated": "2026-11-14T00:37:03.359Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7427,14 +7427,14 @@
       "staged_date": "2026-11-12"
     },
     {
-      "id": "CD-V4AX",
+      "id": "CD-EGVM",
       "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-V4AX-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-EGVM-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
       "status": "QUARANTINED_REJECT",
-      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records; DIRECTIVE_OPPOSITION: Contradicts canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant): Opposing directive on 'write': candidate forbids action ('never write') while canonical Rule CANON-003 prescribes it ('always write'); CONTRADICTORY_CLAIM: Directly opposes canonical rule RULE-CANON-003 (Atomic Persistence File Staging Invariant)",
-      "date_staged": "2026-11-13",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
       "domain_letter": "H"
     },
     {
@@ -10971,6 +10971,37 @@
       "source_repo": "invertase-react-native-firebase",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2F8647-messaging-ios-refresh-the-podfile-lock-c.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-DNVY",
+      "directive_title": "Set controller instance ID in environment",
+      "source_repo": "flux-iac/tofu-controller",
+      "source_commit": "e938178a",
+      "staged_file": "11_INBOX/candidate-directives/CD-DNVY-set-controller-instance-id-in-environment.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-EGCV",
+      "directive_title": "runner): Set controller instance ID in environment",
+      "source_repo": "flux-iac-tofu-controller-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EGCV-runner-set-controller-instance-id-in-environment.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-A11AC4",
+      "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A11AC4-engine-restore-text-fallback-for-unknown.md",
       "staged_date": "2026-11-14"
     }
   ]

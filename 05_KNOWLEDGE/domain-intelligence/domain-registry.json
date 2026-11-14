@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T00:26:27.206Z",
-  "total_records": 443,
+  "last_updated": "2026-11-14T00:37:03.475Z",
+  "total_records": 448,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 225,
+      "total": 228,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -259,7 +259,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-lfm3-1-7b-uncensored-gguf-learning",
         "domain_intelligence-research-knowledge-intelligence-ricursiveai-ripple-65b-preview-core-invariants",
         "DOM-D-BCB68B52",
-        "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core"
+        "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core",
+        "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants",
+        "DOM-D-C4A2A37A",
+        "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-co"
       ]
     },
     "E": {
@@ -284,7 +287,7 @@
       ]
     },
     "G": {
-      "total": 59,
+      "total": 61,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -344,7 +347,9 @@
         "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-core-invariants",
         "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
-        "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-core-invariants",
+        "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-learnings-core-invariants"
       ]
     },
     "H": {
@@ -6213,8 +6218,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "bcbcd326ef7daf859e42e5296b2fca046a7e1cd4030035edb357a0d71e16a393",
-      "created_at": "2026-11-13T18:18:05.682Z"
+      "content_hash": "d9f7da8103f572e29cc5ab6257aa858b38b5c2b5870071f19aa381b4343abbc8",
+      "created_at": "2026-11-14T00:37:03.475Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -10337,6 +10342,84 @@
       "repository": "invertase-react-native-firebase-learnings",
       "content_hash": "d395c3f2ef13597d970fa72bfe191d6d9fe467440b4f7e69bd89f248485f8ed5",
       "created_at": "2026-11-14T00:26:27.206Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: black-forest-labs/FLUX.1-schnell Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-schnell-research-knowledge-intelligence-black-forest.md",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "content_hash": "9d3917e90ab45ccfc6d776586518d5b3fb7fd070e46344199b956975631dba0d",
+      "created_at": "2026-11-14T00:36:15.229Z"
+    },
+    "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: flux-iac/tofu-controller Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flux-iac-tofu-controller-architecture-intelligence-flux-iac-tofu-controller-core.md",
+      "repository": "flux-iac/tofu-controller",
+      "content_hash": "731252da739e462b2c1fbc4b52c2f8d95fcff437eb4f0975afea5ee90502c3d1",
+      "created_at": "2026-11-14T00:36:25.888Z"
+    },
+    "DOM-D-C4A2A37A": {
+      "record_id": "DOM-D-C4A2A37A",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): black-forest-labs/FLUX.1-schnell",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/black-forest-labs/FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell))  \n> **Source Version**: `hf-black-for`  \n> **Lice",
+      "content_hash": "073cfbb112407a473055195c40c08e745e88e7643844b2fe65eec487efb02138",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md`  \n> **Source**: huggingface ([http -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md`  \n> **Source**: huggingface ([http",
+      "provenance": {
+        "source_uri": "project://hf-black-forest-labs-flux.1-schnell/hf-black-forest-labs-flux.1-schnell-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T00:36:28.768Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-black-forest-labs-flux.1-schnell)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-black-forest-labs-flux.1-schnell"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T00:37:02.049Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-co": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-co",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux.1-schnell-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-schnell-learnings-research-knowledge-intelligence-hf.md",
+      "repository": "hf-black-forest-labs-flux.1-schnell-learnings",
+      "content_hash": "86e8ce1178eed323139e33bf910b6ba6f56a9427d4e57a46353e19e0f4eebb6a",
+      "created_at": "2026-11-14T00:37:02.289Z"
+    },
+    "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: flux-iac-tofu-controller-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flux-iac-tofu-controller-learnings-architecture-intelligence-flux-iac-tofu-contr.md",
+      "repository": "flux-iac-tofu-controller-learnings",
+      "content_hash": "b641d36a83035151fecdab57296ad21caa386ae66ae17e06f239da1959b7d268",
+      "created_at": "2026-11-14T00:37:02.800Z"
     }
   }
 }

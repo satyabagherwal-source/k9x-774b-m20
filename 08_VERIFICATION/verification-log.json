@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-028O",
-    "timestamp": "2026-11-13T04:50:07.320Z",
-    "repository": "XHToken/Spark-X2.6-4B",
-    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-    "contentHash": "0eab085bcc89e35488d81961e15771764d7f11c0f6884b804c51865ddfedfc13",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-09ZS",
-    "timestamp": "2026-11-13T04:50:17.368Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "37009f43a30ef0a16c4d27401dee14190b2b7413b3e80a9213018b60e97bfdd0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-MFU1",
     "timestamp": "2026-11-13T05:07:31.369Z",
     "repository": "InternScience/Sage-A1.5",
@@ -7490,6 +7460,36 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "69ccf0417d267af116c6449252a9869ec23f747b8c4022f131b18375f30eebcf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-DFLN",
+    "timestamp": "2026-11-14T00:36:15.035Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "dda6575189700e3ea703601af8c0a0dc71894b637d3a4730d40a80272d1837f4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-DNQE",
+    "timestamp": "2026-11-14T00:36:25.574Z",
+    "repository": "flux-iac/tofu-controller",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "5908209035e79c2c41505b8954504a97f7330c6ca5c1393b10fae4148fc5cc68",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

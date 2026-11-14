@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T00:26:27.464Z",
+  "last_updated": "2026-11-14T00:37:03.849Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T21:28:54.085Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-13T18:18:05.394Z",
+      "processed_at": "2026-11-14T00:37:03.057Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -388,7 +388,7 @@
       "staged_for_review": 1
     },
     "flux-iac-tofu-controller-learnings.md": {
-      "processed_at": "2026-11-11T16:12:24.238Z",
+      "processed_at": "2026-11-14T00:37:02.427Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2281,9 +2281,14 @@
       "processed_at": "2026-11-14T00:26:26.593Z",
       "promoted_canonical": 1,
       "staged_for_review": 1
+    },
+    "hf-black-forest-labs-flux.1-schnell-learnings.md": {
+      "processed_at": "2026-11-14T00:37:02.061Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 723,
-  "total_canonical_promoted": 148,
-  "total_staged_for_review": 570
+  "total_dossiers_evaluated": 726,
+  "total_canonical_promoted": 149,
+  "total_staged_for_review": 572
 }

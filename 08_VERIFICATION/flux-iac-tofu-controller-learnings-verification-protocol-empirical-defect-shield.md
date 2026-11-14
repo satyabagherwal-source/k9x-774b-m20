@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:35:51.972Z",
+  "timestamp": "2026-11-14T00:37:02.564Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-flux-iac-tofu-controller-learnings",
+  "learning_id": "LEARN-EVO-flux-iac-tofu-controller-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [flux-iac-tofu-controller-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:35:51.972Z`  
-> **Learning ID**: `LEARN-REEXTRACT-flux-iac-tofu-controller-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T00:37:02.564Z`  
+> **Learning ID**: `LEARN-EVO-flux-iac-tofu-controller-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source**: github ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
-> **Source Version**: `a875a4ba`  
+> **Source Version**: `e938178a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T16:05:05.533Z  
+> **Timestamp**: 2026-11-14T00:36:24.600Z  
 > **Learning ID**: `learn-github-flux-iac-tofu-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T16:05:05.493Z  
+> **Harvest Timestamp**: 2026-11-14T00:36:24.594Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A GitOps OpenTofu and Terraform controller for Flux
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 1723 stars
+- **Stars / Engagement**: 1724 stars
 
 ---
 
@@ -847,7 +847,7 @@ const Suffix = "__type"
 
 ```
 
-### Core Architecture Module: `api/v1alpha1/condition_types.go`
+### Core Architecture Module: `api/v1alpha2/action.go`
 ```
 /*
 Copyright 2021.
@@ -865,7 +865,92 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1alpha1
+package v1alpha2
+
+// Action describes the stage of the reconcile loop an event reports on. It is
+// sent as the action of notification-controller events. Kubernetes core/v1
+// Events have no action field and do not record it.
+type Action string
+
+// String returns the string representation of the Action.
+func (a Action) String() string {
+	return string(a)
+}
+
+const (
+	// ActionReconcile denotes the overall outcome of the reconcile loop.
+	ActionReconcile Action = "Reconcile"
+
+	// ActionResolveSource resolves the source reference and fetches its
+	// artifact.
+	ActionResolveSource Action = "ResolveSource"
+
+	// ActionCheckDependencies verifies that every Terraform object referenced
+	// by spec.dependsOn is ready before reconciliation proceeds.
+	ActionCheckDependencies Action = "CheckDependencies"
+
+	// ActionProvisionRunner creates the runner Pod for the Terraform object.
+	ActionProvisionRunner Action = "ProvisionRunner"
+
+	// ActionPlan runs terraform plan.
+	ActionPlan Action = "Plan"
+
+	// ActionApply runs terraform apply.
+	ActionApply Action = "Apply"
+
+	// ActionDestroy runs terraform destroy.
+	ActionDestroy Action = "Destroy"
+
+	// ActionDriftDetection checks the live infrastructure for drift from the
+	// Terraform state.
+	ActionDriftDetection Action = "DriftDetection"
+
+	// ActionHealthCheck runs the health checks in spec.healthChecks.
+	ActionHealthCheck Action = "HealthCheck"
+
+	// ActionWriteOutputs writes the Terraform outputs to a Secret.
+	ActionWriteOutputs Action = "WriteOutputs"
+
+	// ActionFinalizeSecrets finalizes the runner's secrets when the Terraform
+	// object is deleted.
+	ActionFinalizeSecrets Action = "FinalizeSecrets"
+)
+
+```
+
+### Core Architecture Module: `api/v1alpha2/condition_types.go`
+```
+/*
+Copyright 2021.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package v1alpha2
+
+import "github.com/fluxcd/pkg/apis/meta"
+
+// OwnedConditions are the Condition Types that the Terraform Resource owns
+var OwnedConditions = []string{
+	meta.ReconcilingCondition,
+	meta.ReadyCondition,
+	meta.StalledCondition,
+	ConditionTypeApply,
+	ConditionTypePlan,
+	ConditionTypeHealthCheck,
+	ConditionTypeOutput,
+	ConditionTypeStateLocked,
+}
 
 // These constants are the Condition Types that the Terraform Resource works with
 const (
@@ -877,9 +962,25 @@ const (
 )
 
 const (
+	// AccessDeniedReason represents the fact that access to
+	// a resource was denied by an ACL assertion.
+	AccessDeniedReason = "AccessDenied"
+
+	// RunnerQuotaExhaustedReason is the event reason emitted when a runner pod
+	// cannot be created because the namespace resource quota is exhausted.
+	RunnerQuotaExhaustedReason = "RunnerQuotaExhausted"
+
+	// RunnerFailedReason represents the fact that the runner could not be
+	// made ready: the TLS secret, the runner pod or the gRPC connection failed.
+	RunnerFailedReason = "RunnerFailed"
+
 	// ArtifactFailedReason represents the fact that the artifact download
 	// for the Teraform failed.
 	ArtifactFailedReason = "ArtifactFailed"
+
+	// RetryLimitReachedReason represents the fact that the Terraform
+	// reached the maximum number of retries.
+	RetryLimitReachedReason = "RetryLimitReached"
 
 	// DeletionBlockedByDependantsReason represents the fact that the
 	// Terraform resource could not be deleted because there are
@@ -910,6 +1011,10 @@ const (
 	// outputs for the Terraform resource status failed.
 	OutputsWritingFailedReason = "OutputsWritingFailed"
 
+	// OutputsWrittenReason represents the fact that the outputs of the
+	// Terraform resource were written successfully.
+	OutputsWrittenReason = "TerraformOutputsWritten"
+
 	// PlannedNoChangesReason represents the fact that Terraform
 	// planned no changes during reconciliation.
 	PlannedNoChangesReason = "TerraformPlannedNoChanges"
@@ -929,6 +1034,24 @@ const (
 	// TFExecApplySucceedReason represents the fact that the execution
 	// of 'terraform apply' succeeded.
 	TFExecApplySucceedReason = "TerraformAppliedSucceed"
+
+	// TFExecDestroyFailedReason represents the fact that the execution
+	// of 'terraform destroy' failed.
+	TFExecDestroyFailedReason = "TFExecDestroyFailed"
+
+	// TFExecDestroySucceedReason represents the fact that the execution
+	// of 'terraform destroy' succeeded.
+	TFExecDestroySucceedReason = "TerraformDestroySucceed"
+
+	// DestroySkippedReason represents the fact that destroyResourcesOnDeletion
+	// is set but the Terraform object is suspended, so it is deleted without
+	// destroying its resources.
+	DestroySkippedReason = "DestroySkipped"
+
+	// FinalizeSecretsFailedReason represents the fact that the runner failed
+	// to finalize the Terraform object's secrets during deletion. Deletion
+	// proceeds.
+	FinalizeSecretsFailedReason = "FinalizeSecretsFailed"
 
 	// TFExecForceUnlockReason represents the fact that the controller
 	// is attempting to force unlock the Terraform state.
@@ -954,6 +1077,10 @@ const (
 	// of 'terraform plan' failed.
 	TFExecPlanFailedReason = "TFExecPlanFailed"
 
+	// TFExecPlanSucceedReason represents the fact that the execution
+	// of 'terraform plan' succeeded.
+	TFExecPlanSucceedReason = "TerraformPlanSucceed"
+
 	// TemplateGenerationFailedReason represents the fact that
 	// the generation of the Terraform .tf template failed.
 	TemplateGenerationFailedReason = "TemplateGenerationFailed"
@@ -965,31 +1092,11 @@ const (
 	// WorkspaceSelectFailedReason represents the fact that selecting
 	// a Terraform workspace failed.
 	WorkspaceSelectFailedReason = "SelectWorkspaceFailed"
+
+	// ReconciliationFailureReason represents the fact that
+	// the reconciliation of the Terraform resource failed.
+	ReconciliationFailureReason = "ReconciliationFailed"
 )
-
-```
-
-### Core Architecture Module: `api/v1alpha1/doc.go`
-```
-/*
-Copyright 2021.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-// +kubebuilder:object:generate=true
-// +groupName=infra.contrib.fluxcd.io
-package v1alpha1
 
 ```
 
@@ -999,11 +1106,11 @@ package v1alpha1
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1938** (2026-11-10): **chore(deps): bump golang.org/x/net to v0.62.0**
-  *Symptoms*: The `Scan` workflow fails on pull requests with one HIGH finding: `golang.org/x/net` v0.61.0, CVE-2026-78661 (denial of service via crafted HTML input in `x/net/html`), fixed in v0.62.0.  Closes #1937  This change bumps `golang.org/x/net` from v0.61.0 to v0.62.0, an indirect dependency, in the root, `api/` and `tfctl/` modules. Only the `x/net` line changes in each `go.mod`; `go mod tidy` pulls in nothing else.  Test plan:  - `go build ./...` succeeds in the root, `api/` and `tfctl/` modules, and `make fmt vet` is clean - `make test-internal` passes - `trivy fs --scanners vuln --severity HIGH,CRITICAL` on each `go.mod` no longer reports `golang.org/x/net` - the `Scan` workflow on this PR is the check that confirms the image scan is green  Notes:  - `tfctl`'s `TestShowPlan` fails in my environment because it cannot install a Terraform binary; it fails the same way without this change. - Trivy on the root `go.mod` still lists two HIGH findings in `github.com/docker/docker` with no fixed version. They are not part of the image scan finding this PR addresses. 
+- **Issue #1944** (2026-11-13): **Remove unused tf-runner.cache-encryption secret**
+  *Symptoms*: ## Summary The chart creates a `kubernetes.io/service-account-token` secret for the `tf-runner` SA in every allowed namespace. It never expires, and is not consumed: it was the encryption key for workspace BLOB caching (ADR-0003), a feature that never shipped. The ADR is deprecated and the `CreateWorkspaceBlob` RPC it describes was removed in #1917.  
 
-- **Issue #1937** (2026-11-10): **Trivy scan fails on golang.org/x/net v0.61.0 (CVE-2026-78661)**
-  *Symptoms*: ### Problem  The `Scan` workflow (Trivy, controller image) fails on pull requests with a single HIGH finding:  | Library | Vulnerability | Severity | Installed | Fixed | |---|---|---|---|---| | `golang.org/x/net` | CVE-2026-78661 (denial of service via crafted HTML input in `x/net/html`) | HIGH | v0.61.0 | v0.62.0 |  Trivy reports it against the `tofu-controller` Go binary, and the job exits with code 1. Example run, on a PR that does not touch `go.mod` or `go.sum`: https://github.com/flux-iac/tofu-controller/actions/runs/42815216815  ### What I checked  - `golang.org/x/net v0.61.0` is an indirect dependency on `main` in all three modules: the root `go.mod`, `api/go.mod` and `tfctl/go.mod`. - The last scheduled `Scan` run on `main` (2026-11-04) passed, so the advisory was most likely published after that. I have not re-run Trivy against `main` itself. - The `Scan` workflow is also failing on the open Dependabot PRs #1932 and #1933, which do not bump `x/net`. I have not checked whether that is the same finding.  ### Proposal  Bump `golang.org/x/net` to v0.62.0 or later in the root, `api/` and `tfctl/` modules, so `Scan` passes again for every open PR.  For reference, earlier Trivy findings were handled either by bumping the dependency (#1813) or by a temporary ignore (#1738).  ### Impact  Until this is fixed, `Scan` is red on every PR against `main`, which hides real findings introduced by a PR and blocks merging when the check is required. 
+- **Issue #1943** (2026-11-13): **feat(runner): Set controller instance ID in environment**
+  *Symptoms*: ## Summary  Expose the current Terraform/OpenTofu runner instance ID as the environment variable `TOFU_CONTROLLER_INSTANCE_ID`.  The variable is set when the runner instance is created and preserved when its environment is updated. User-configured environment variables cannot override it.  ## Use cases  - **Log correlation:** Custom scripts and external tools invoked by Terraform/OpenTofu can include the instance ID in their logs, allowing those logs to be correlated with the controller's `instance-id` log field. - **Troubleshooting:** Distinguish executions from different runner instances when investigating failures or concurrent reconciliations. - **Execution tracing:** Attach the instance ID to requests or diagnostic artifacts produced by external programs, where supported.  For example, a script invoked through `local-exec` can include the ID in its output:      echo "Running deployment for controller instance: ${TOFU_CONTROLLER_INSTANCE_ID}"  This is a process environment variable, not a Terraform input variable. It does not automatically become available as `var.TOFU_CONTROLLER_INSTANCE_ID`.  The ID identifies the runner instance; it is not a unique ID for each individual plan or apply command.  ## Changes  - Set `TOFU_CONTROLLER_INSTANCE_ID` when creating a Terraform/OpenTofu runner instance. - Reapply the instance ID after merging configured environment variables in `SetEnv`. - Keep the environment scoped to the Terraform/OpenTofu subprocesses rather than modifying th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1020,440 +1127,645 @@ package v1alpha1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a875a4ba` (2026-11-11)
-**Commit Message**: feat: add topologySpreadConstraints to runner pods (#1936)
+### Incident Patch 1: `e938178a` (2026-11-13)
+**Commit Message**: feat(runner): Set controller instance ID in environment (#1943)
 
-* feat: add topologySpreadConstraints to runner pods
-
-runnerPodTemplate.spec exposes nodeSelector, affinity and tolerations,
-but nothing that caps how many runner pods share a node. During a
-reconcile burst the scheduler can pack runners onto a few nodes, and a
-cluster autoscaler has no Pending pods to react to.
-
-Add an optional topologySpreadConstraints field to the v1alpha2
-RunnerPodSpec, and a --runner-topology-spread-constraints manager flag
-(with a runner.topologySpreadConstraints Helm value) that sets a
-controller-wide default. A non-empty list on the Terraform object
-replaces the default; the two are not merged. The flag is parsed and
-validated at startup, so an invalid value fails fast. With neither set,
-runner pods are unchanged.
-
-Refs #1935
-
-Signed-off-by: AdonisPD <[REDACTED_EMAIL]>
-
-* refactor: drop controller-wide runner topology spread flag
-
-Per review on #1936, keep only the per-object
-runnerPodTemplate.spec.topologySpreadConstraints field. Remove the
---runner-topology-spread-constraints manager flag, the
-runner.topologySpreadConstraints Helm value and the parser; runner pods
-now take the constraints straigh
-
-**File**: `api/v1alpha2/reference_types.go` (modified, +4/-0)
+**File**: `runner/session_handlers.go` (modified, +1/-0)
 ```diff
-@@ -191,6 +191,10 @@ type RunnerPodSpec struct {
- 	// +optional
- 	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
+@@ -50,6 +50,7 @@ func (r *TerraformRunnerServer) SetEnv(ctx context.Context, req *SetEnvRequest)
  
-+	// Set the TopologySpreadConstraints for the Runner Pod
-+	// +optional
-+	TopologySpreadConstraints []corev1.TopologySpreadConstraint `json:"topologySpreadConstraints,omitempty"`
-+
- 	// Set Volume Mounts for the Runner Pod
- 	// +optional
- 	VolumeMounts []corev1.VolumeMount `json:"volumeMounts,omitempty"`
-```
-
-**File**: `api/v1alpha2/zz_generated.deepcopy.go` (modified, +7/-0)
-```diff
-@@ -356,6 +356,13 @@ func (in *RunnerPodSpec) DeepCopyInto(out *RunnerPodSpec) {
- 			(*in)[i].DeepCopyInto(&(*out)[i])
- 		}
+ 	envs := utils.EnvMap(os.Environ())
+ 	maps.Copy(envs, req.Envs)
++	envs["TOFU_CONTROLLER_INSTANCE_ID"] = sessionFrom(ctx).id
+ 	if err := sessionFrom(ctx).tf.SetEnv(envs); err != nil {
+ 		return nil, err
  	}
-+	if in.TopologySpreadConstraints != nil {
-+		in, out := &in.TopologySpreadConstraints, &out.TopologySpreadConstraints
-+		*out = make([]corev1.TopologySpreadConstraint, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
-+	}
- 	if in.VolumeMounts != nil {
- 		in, out := &in.VolumeMounts, &out.VolumeMounts
- 		*out = make([]corev1.VolumeMount, len(*in))
-```
-
-**File**: `charts/tofu-controller/crds/crds.yaml` (modified, +175/-0)
-```diff
-@@ -9153,6 +9153,181 @@ spec:
-                               type: string
-                           type: object
-                         type: array
-+                      topologySpreadConstraints:
-+                        description: Set the TopologySpreadConstraints for the Runner
-+                          Pod
-+                        items:
-+                          description: TopologySpreadConstraint specifies how to spread
-+                            matching pods among the given topology.
-+                          properties:
-+                            labelSelector:
-+                              description: |-
-+                                LabelSelector is used to find matching pods.
-+                                Pods that match this label selector are counted to determine the number of pods
-+                                in their corresponding topology domain.
-+                              properties:
-+                                matchExpressions:
-+                                  description: matchExpressions is a list of label
-+                                    selector requirements. The requirements are ANDed.
-+                                  items:
-+                                    description: |-
-+                                      A label selector requirement is a selector that contains values, a key, and an operator that
-+                                      relates the key and values.
-+                                    properties:
-+                                      key:
-+                                        description: key is the label key that the
-+                                          selector applies to.
-+                                        type: string
-+                                      operator:
-+                                        description: |-
-+                                          operator represents a key's relationship to a set of values.
-+                                          Valid operators are In, NotIn, Exists and DoesNotExist.
-+                                        type: string
-+                                      values:
-+                                        description: |-
-+                                          values is an array of string values. If the operator is In or NotIn,
-+                                          the values array must be non-empty. If the operator is Exists or DoesNotExist,
-+                                          the values array must be empty. This array is replaced during a strategic
-+                                          merge patch.
-+                                        items:
-+                                          type: string
-+                                        type: array
-+                                        x-kubernetes-list-type: atomic
-+                                    required:
-+                                    - key
-+                                    - operator
-+                                    type: object
-+                                  type: array
-+                                  x-kubernetes-list-type: atomic
-+                                matchLabels:
-+                                  additionalProperties:
-+                                    type: string
-+                                  description: |-
-+                                    matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
-+                                    map is equivalent to an element of matchExpressions, whose key field is "key", the
-+                                    operator is "In", and the values array contains only "value". The requirements are ANDed.
-+                                  type: object
-+                              type: object
-+                              x-kubernetes-map-type: atomic
-+                            matchLabelKeys:
-+                              description: |-
-+                                MatchLabelKeys is a set of pod label keys to select the pods over which
-+                                spreading will be calculated. The keys are used to lookup values from the
-+                                incoming pod labels, those key-value labels are ANDed with labelSelector
-+                                to select the group of existing pods over which spreading will be calculated
-+                                for the incoming pod. The same key is forbidden to exist in both MatchLabelKeys and LabelSelector.
-+                                MatchLabelKeys cannot be set when LabelSelector isn't set.
-+                                Keys that don't exist in the incoming pod labels will
-+                                be ignored. A null or empty list means only match against labelSelector.
-+
-+                                This is a beta field and requires the MatchLabelKeysInPodTopologySpread feature gate to be enabled (enabled by default).
-+                    
-```
-
-**File**: `config/crd/bases/infra.contrib.fluxcd.io_terraforms.yaml` (modified, +175/-0)
-```diff
-@@ -9153,6 +9153,181 @@ spec:
-                               type: string
-                           type: object
-                         type: array
-+                      topologySpreadConstraints:
-+                        description: Set the TopologySpreadConstraints for the Runner
-+                          Pod
-+                        items:
-+                          description: TopologySpreadConstraint specifies how to spread
-+                            matching pods among the given topology.
-+                          properties:
-+                            labelSelector:
-+                              description: |-
-+                                LabelSelector is used to find matching pods.
-+                                Pods that match this label selector are counted to determine the number of pods
-+                                in their corresponding topology domain.
-+                              properties:
-+                                matchExpressions:
-+                                  description: matchExpressions is a list of label
-+                                    selector requirements. The requirements are ANDed.
-+                                  items:
-+                                    description: |-
-+                                      A label selector requirement is a selector that contains values, a key, and an operator that
-+                                      relates the key and values.
-+                                    properties:
-+                                      key:
-+                                        description: key is the label key that the
-+                                          selector applies to.
-+                                        type: string
-+                                      operator:
-+                                        description: |-
-+                                          operator represents a key's relationship to a set of values.
-+                                          Valid operators are In, NotIn, Exists and DoesNotExist.
-+                                        type: string
-+                                      values:
-+                                        description: |-
-+                                          values is an array of string values. If the operator is In or NotIn,
-+                                          the values array must be non-empty. If the operator is Exists or DoesNotExist,
-+                                          the values array must be empty. This array is replaced during a strategic
-+                                          merge patch.
-+                                        items:
-+                                          type: string
-+                                        type: array
-+                                        x-kubernetes-list-type: atomic
-+                                    required:
-+                                    - key
-+                                    - operator
-+                                    type: object
-+                                  type: array
-+                                  x-kubernetes-list-type: atomic
-+                                matchLabels:
-+                                  additionalProperties:
-+                                    type: string
-+                                  description: |-
-+                                    matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
-+                                    map is equivalent to an element of matchExpressions, whose key field is "key", the
-+                                    operator is "In", and the values array contains only "value". The requirements are ANDed.
-+                                  type: object
-+                              type: object
-+                              x-kubernetes-map-type: atomic
-+                            matchLabelKeys:
-+                              description: |-
-+                                MatchLabelKeys is a set of pod label keys to select the pods over which
-+                                spreading will be calculated. The keys are used to lookup values from the
-+                                incoming pod labels, those key-value labels are ANDed with labelSelector
-+                                to select the group of existing pods over which spreading will be calculated
-+                                for the incoming pod. The same key is forbidden to exist in both MatchLabelKeys and LabelSelector.
-+                                MatchLabelKeys cannot be set when LabelSelector isn't set.
-+                                Keys that don't exist in the incoming pod labels will
-+                                be ignored. A null or empty list means only match against labelSelector.
-+
-+                                This is a beta field and requires the MatchLabelKeysInPodTopologySpread feature gate to be enabled (enabled by default).
-+                    
-```
-
-**File**: `controllers/runner_pod.go` (modified, +8/-7)
-```diff
-@@ -292,13 +292,14 @@ func (r *TerraformReconciler) runnerPodSpec(terraform *infrav1.Terraform, tlsSec
- 				Resources:       resources,
- 			},
- 		},
--		Volumes:            podVolumes,
--		ServiceAccountName: serviceAccountName,
--		NodeSelector:       terraform.Spec.RunnerPodTemplate.Spec.NodeSelector,
--		Affinity:           terraform.Spec.RunnerPodTemplate.Spec.Affinity,
--		Tolerations:        terraform.Spec.RunnerPodTemplate.Spec.Tolerations,
--		HostAliases:        terraform.Spec.RunnerPodTemplate.Spec.HostAliases,
--		PriorityClassName:  terraform.Spec.RunnerPodTemplate.Spec.PriorityClassName,
-+		Volumes:                   podVolumes,
-+		ServiceAccountName:        serviceAccountName,
-+		NodeSelector:              terraform.Spec.RunnerPodTemplate.Spec.NodeSelector,
-+		Affinity:                  terraform.Spec.RunnerPodTemplate.Spec.Affinity,
-+		Tolerations:               terraform.Spec.RunnerPodTemplate.Spec.Tolerations,
-+		TopologySpreadConstraints: terraform.Spec.RunnerPodTemplate.Spec.TopologySpreadConstraints,
-+		HostAliases:               terraform.Spec.RunnerPodTemplate.Spec.HostAliases,
-+		PriorityClassName:         terraform.Spec.RunnerPodTemplate.Spec.PriorityClassName,
- 	}
- 
- 	if r.UsePodSubdomainResolution {
-```
-
-**File**: `controllers/tc000363_runner_topology_spread_test.go` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+package controllers
-+
-+import (
-+	"testing"
-+
-+	infrav1 "github.com/flux-iac/tofu-controller/api/v1alpha2"
-+	. "github.com/onsi/gomega"
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/utils/ptr"
-+)
-+
-+// +kubebuilder:docs-gen:collapse=Imports
-+
-+func Test_000363_runner_topology_spread_test(t *testing.T) {
-+	Spec("This spec describes how topologySpreadConstraints reach the runner pod.")
-+
-+	newConstraint := func(maxSkew int32) corev1.TopologySpreadConstraint {
-+		return corev1.TopologySpreadConstraint{
-+			MaxSkew:            maxSkew,
-+			MinDomains:         ptr.To(int32(100)),
-+			TopologyKey:        "kubernetes.io/hostname",
-+			WhenUnsatisfiable:  corev1.DoNotSchedule,
-+			NodeAffinityPolicy: ptr.To(corev1.NodeInclusionPolicyHonor),
-+			NodeTaintsPolicy:   ptr.To(corev1.NodeInclusionPolicyHonor),
-+			LabelSelector: &metav1.LabelSelector{
-+				MatchLabels: map[string]string{"app.kubernetes.io/created-by": "tofu-controller"},
-+			},
-+		}
-+	}
-+
-+	newTerraform := func(constraints []corev1.TopologySpreadConstraint) *infrav1.Terraform {
-+		return &infrav1.Terraform{
-+			ObjectMeta: metav1.ObjectMeta{Name: "topology-spread-test", Namespace: "flux-system"},
-+			Spec: infrav1.TerraformSpec{
-+				RunnerPodTemplate: infrav1.RunnerPodTemplate{
-+					Spec: infrav1.RunnerPodSpec{TopologySpreadConstraints: constraints},
-+				},
-+			},
-+		}
-+	}
-+
-+	newReconciler := func() *TerraformReconciler {
-+		return &TerraformReconciler{RunnerGRPCPort: 30000}
-+	}
-+
-+	t.Run("CR value is copied into the runner pod", func(t *testing.T) {
-+		g := NewWithT(t)
-+		Given("a Terraform resource with topologySpreadConstraints")
-+		crValue := []corev1.TopologySpreadConstraint{newConstraint(10)}
-+
-+		spec := newReconciler().runnerPodSpec(newTerraform(crValue), "runner.tls-123")
-+
-+		By("checking the runner pod carries the CR value")
-+		g.Expect(spec.TopologySpreadConstraints).To(Equal(crValue))
-+	})
-+
-+	t.Run("no constraints are set when nothing is configured", func(t *testing.T) {
-+		g := NewWithT(t)
-+		Given("a Terraform resource without constraints")
-+
-+		spec := newReconciler().runnerPodSpec(newTerraform(nil), "runner.tls-123")
-+
-+		By("checking the runner pod has no constraints")
-+		g.Expect(spec.TopologySpreadConstraints).To(BeNil())
-+	})
-+}
-```
-
-**File**: `docs/References/terraform.md` (modified, +1/-0)
-```diff
-@@ -266,6 +266,7 @@ _Appears in:_
- | `nodeSelector` _object (keys:string, values:string)_ | Set the NodeSelector for the Runner Pod |  | Optional: \{\} <br /> |
- | `affinity` _[Affinity](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#affinity-v1-core)_ | Set the Affinity for the Runner Pod |  | Optional: \{\} <br /> |
- | `tolerations` _[Toleration](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#toleration-v1-core) array_ | Set the Tolerations for the Runner Pod |  | Optional: \{\} <br /> |
-+| `topologySpreadConstraints` _[TopologySpreadConstraint](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#topologyspreadconstraint-v1-core) array_ | Set the TopologySpreadConstraints for the Runner Pod |  | Optional: \{\} <br /> |
- | `volumeMounts` _[VolumeMount](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#volumemount-v1-core) array_ | Set Volume Mounts for the Runner Pod |  | Optional: \{\} <br /> |
- | `volumes` _[Volume](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#volume-v1-core) array_ | Set Volumes for the Runner Pod |  | Optional: \{\} <br /> |
- | `initContainers` _[Container](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#container-v1-core) array_ | Set up Init Containers for the Runner |  | Optional: \{\} <br /> |
 ```
 
 ---
 
-### Incident Patch 2: `605175f1` (2026-11-10)
-**Commit Message**: chore(deps): bump golang.org/x/net to v0.62.0 (#1938)
+### Incident Patch 2: `8d40c559` (2026-11-13)
+**Commit Message**: feat!: remove the deprecated v1alpha1 Terraform API (#1941)
 
-The Trivy scan of the controller image fails on golang.org/x/net
-v0.61.0 (CVE-2026-78661, denial of service via crafted HTML input in
-x/net/html), which is fixed in v0.62.0.
+v1alpha1 has been deprecated since v0.15.0 (April 2023). Keeping it
+served lets outdated clients, such as an old tfctl, write through it.
+That leaves a v1alpha1 managedFields entry, which then breaks
+server-side apply of the object, for example by a Flux Kustomization.
 
-Bump the indirect dependency in the root, api and tfctl modules. No
-other dependency changes.
+Remove api/v1alpha1 and its PROJECT entry, and regenerate the CRD so it
+only defines v1alpha2. Move test fixtures and docs to v1alpha2.
 
-Closes #1937
+Document the steps operators must take before upgrading: move manifests
+to v1alpha2, reset stale v1alpha1 managedFields, and clear v1alpha1
+from the CRD's status.storedVersions, which Kubernetes otherwise uses
+to reject the CRD update.
 
-Signed-off-by: AdonisPD <[REDACTED_EMAIL]>
+BREAKING CHANGE: the infra.contrib.fluxcd.io/v1alpha1 API and the
+github.com/flux-iac/tofu-controller/api/v1alpha1 Go package are removed.
 
-**File**: `api/go.mod` (modified, +1/-1)
+Closes #1940
+
+**File**: `PROJECT` (modified, +0/-9)
 ```diff
-@@ -52,7 +52,7 @@ require (
- 	github.com/x448/float16 v0.8.4 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
--	golang.org/x/net v0.61.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/term v0.47.0 // indirect
+@@ -4,15 +4,6 @@ layout:
+ projectName: test-terraform-controller
+ repo: github.com/flux-iac/tofu-controller
+ resources:
+-- api:
+-    crdVersion: v1
+-    namespaced: true
+-  controller: true
+-  domain: contrib.fluxcd.io
+-  group: infra
+-  kind: Terraform
+-  path: github.com/flux-iac/tofu-controller/api/v1alpha1
+-  version: v1alpha1
+ - api:
+     crdVersion: v1
+     namespaced: true
 ```
 
-**File**: `api/go.sum` (modified, +2/-2)
+**File**: `api/v1alpha1/cloud_spec_test.go` (removed, +0/-36)
 ```diff
-@@ -122,8 +122,8 @@ go.yaml.in/yaml/v3 v3.0.5 h1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw=
- go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
- golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
- golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
- golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
- golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+@@ -1,36 +0,0 @@
+-package v1alpha1
+-
+-import (
+-	. "github.com/onsi/gomega"
+-	"strings"
+-	"testing"
+-)
+-
+-// CloudSpec defines the desired state of Terraform Cloud
+-func TestCloudSpec(t *testing.T) {
+-	g := NewGomegaWithT(t)
+-	cloudSpec := &CloudSpec{
+-		Organization: "test-org",
+-		Workspaces: &CloudWorkspacesSpec{
+-			Name: "dev",
+-			Tags: []string{"test-tag", "test-tag-2"},
+-		},
+-		Hostname: "app.terraform.io",
+-		Token:    "test-token",
+-	}
+-
+-	fixture := strings.TrimLeft(`
+-terraform {
+-  cloud {
+-    organization = "test-org"
+-    workspaces {
+-      name = "dev"
+-      tags = ["test-tag", "test-tag-2"]
+-    }
+-    hostname = "app.terraform.io"
+-    token = "test-token"
+-  }
+-}
+-`, "\n")
+-	g.Expect(cloudSpec.ToHCL()).To(Equal(fixture))
+-}
 ```
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `api/v1alpha1/condition_types.go` (removed, +0/-117)
 ```diff
-@@ -227,7 +227,7 @@ require (
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.61.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
- 	golang.org/x/sync v0.24.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
+@@ -1,117 +0,0 @@
+-/*
+-Copyright 2021.
+-
+-Licensed under the Apache License, Version 2.0 (the "License");
+-you may not use this file except in compliance with the License.
+-You may obtain a copy of the License at
+-
+-    http://www.apache.org/licenses/LICENSE-2.0
+-
+-Unless required by applicable law or agreed to in writing, software
+-distributed under the License is distributed on an "AS IS" BASIS,
+-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-See the License for the specific language governing permissions and
+-limitations under the License.
+-*/
+-
+-package v1alpha1
+-
+-// These constants are the Condition Types that the Terraform Resource works with
+-const (
+-	ConditionTypeApply       = "Apply"
+-	ConditionTypeHealthCheck = "HealthCheck"
+-	ConditionTypeOutput      = "Output"
+-	ConditionTypePlan        = "Plan"
+-	ConditionTypeStateLocked = "StateLocked"
+-)
+-
+-const (
+-	// ArtifactFailedReason represents the fact that the artifact download
+-	// for the Teraform failed.
+-	ArtifactFailedReason = "ArtifactFailed"
+-
+-	// DeletionBlockedByDependantsReason represents the fact that the
+-	// Terraform resource could not be deleted because there are
+-	// still resources depending on it.
+-	DeletionBlockedByDependants = "DeletionBlockedByDependantsReason"
+-
+-	// DependencyNotReadyReason represents the fact that
+-	// one of the dependencies is not ready.
+-	DependencyNotReadyReason = "DependencyNotReady"
+-
+-	// DriftDetectedReason represents the fact that drift was
+-	// detected during Terraform reconciliation.
+-	DriftDetectedReason = "DriftDetected"
+-
+-	// DriftDetectionFailedReason represents the fact that
+-	// drift detection failed during reconciliation.
+-	DriftDetectionFailedReason = "DriftDetectionFailed"
+-
+-	// HealthChecksPassedReason represents the fact that one or more
+-	// health checks failed during reconciliation.
+-	HealthChecksFailedReason = "HealthChecksFailed"
+-
+-	// NoDriftReason represents the fact that during reconcilliation
+-	// no drift was detected.
+-	NoDriftReason = "NoDrift"
+-
+-	// OutputsWritingFailedReason represents the fact that writing
+-	// outputs for the Terraform resource status failed.
+-	OutputsWritingFailedReason = "OutputsWritingFailed"
+-
+-	// PlannedNoChangesReason represents the fact that Terraform
+-	// planned no changes during reconciliation.
+-	PlannedNoChangesReason = "TerraformPlannedNoChanges"
+-
+-	// PlannedWithChangesReason represents the fact that Terraform
+-	// planned changes during reconciliation.
+-	PlannedWithChangesReason = "TerraformPlannedWithChanges"
+-
+-	// PostPlanningWebhookFailedReason represents the fact that
+-	// the post-planning webhook failed during reconciliation.
+-	PostPlanningWebhookFailedReason = "PostPlanningWebhookFailed"
+-
+-	// TFExecApplyFailedReason represents the fact that the execution
+-	// of 'terraform apply' failed.
+-	TFExecApplyFailedReason = "TFExecApplyFailed"
+-
+-	// TFExecApplySucceedReason represents the fact that the execution
+-	// of 'terraform apply' succeeded.
+-	TFExecApplySucceedReason = "TerraformAppliedSucceed"
+-
+-	// TFExecForceUnlockReason represents the fact that the controller
+-	// is attempting to force unlock the Terraform state.
+-	TFExecForceUnlockReason = "ForceUnlock"
+-
+-	// TFExecInitFailedReason represents the fact that the an error
+-	// occured while initializing Terraform.
+-	TFExecInitFailedReason = "TFExecInitFailed"
+-
+-	// TFExecLockHeldReason represents the fact that the Terraform
+-	// state lock is held by another process.
+-	TFExecLockHeldReason = "LockHeld"
+-
+-	// TFExecNewFailedReason represents the fact that the creation
+-	// of the Terraform process failed.
+-	TFExecNewFailedReason = "TFExecNewFailed"
+-
+-	// TFExecOutputFailedReason represents the fact that the execution
+-	// of 'terraform output' failed.
+-	TFExecOutputFailedReason = "TFExecOutputFailed"
+-
+-	// TFExecPlanFailedReason represents the fact that the execution
+-	// of 'terraform plan' failed.
+-	TFExecPlanFailedReason = "TFExecPlanFailed"
+-
+-	// TemplateGenerationFailedReason represents the fact that
+-	// the generation of the Terraform .tf template failed.
+-	TemplateGenerationFailedReason = "TemplateGenerationFailed"
+-
+-	// VarsGenerationFailedReason represents the fact that
+-	// the generation of the Terraform variables failed.
+-	VarsGenerationFailedReason = "VarsGenerationFailed"
+-
+-	// WorkspaceSelectFailedReason represents the fact that selecting
+-	// a Terraform workspace failed.
+-	WorkspaceSelectFailedReason = "SelectWorkspaceFailed"
+-)
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `api/v1alpha1/doc.go` (removed, +0/-19)
 ```diff
-@@ -543,8 +543,8 @@ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn
- golang.org/x/net v0.0.0-20190502183928-7f726cade0ab/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
- golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
- golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -1,19 +0,0 @@
+-/*
+-Copyright 2021.
+-
+-Licensed under the Apache License, Version 2.0 (the "License");
+-you may not use this file except in compliance with the License.
+-You may obtain a copy of the License at
+-
+-    http://www.apache.org/licenses/LICENSE-2.0
+-
+-Unless required by applicable law or agreed to in writing, software
+-distributed under the License is distributed on an "AS IS" BASIS,
+-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-See the License for the specific language governing permissions and
+-limitations under the License.
+-*/
+-
+-// +kubebuilder:object:generate=true
+-// +groupName=infra.contrib.fluxcd.io
+-package v1alpha1
 ```
 
-**File**: `tfctl/go.mod` (modified, +1/-1)
+**File**: `api/v1alpha1/groupversion_info.go` (removed, +0/-36)
 ```diff
-@@ -103,7 +103,7 @@ require (
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.61.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
- 	golang.org/x/sync v0.24.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
+@@ -1,36 +0,0 @@
+-/*
+-Copyright 2021.
+-
+-Licensed under the Apache License, Version 2.0 (the "License");
+-you may not use this file except in compliance with the License.
+-You may obtain a copy of the License at
+-
+-    http://www.apache.org/licenses/LICENSE-2.0
+-
+-Unless required by applicable law or agreed to in writing, software
+-distributed under the License is distributed on an "AS IS" BASIS,
+-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-See the License for the specific language governing permissions and
+-limitations under the License.
+-*/
+-
+-// Package v1alpha1 contains API Schema definitions for the infra v1alpha1 API group
+-//+kubebuilder:object:generate=true
+-//+groupName=infra.contrib.fluxcd.io
+-package v1alpha1
+-
+-import (
+-	"k8s.io/apimachinery/pkg/runtime/schema"
+-	"sigs.k8s.io/controller-runtime/pkg/scheme"
+-)
+-
+-var (
+-	// GroupVersion is group version used to register these objects
+-	GroupVersion = schema.GroupVersion{Group: "infra.contrib.fluxcd.io", Version: "v1alpha1"}
+-
+-	// SchemeBuilder is used to add go types to the GroupVersionKind scheme
+-	SchemeBuilder = &scheme.Builder{GroupVersion: GroupVersion}
+-
+-	// AddToScheme adds the types in this group-version to the given scheme.
+-	AddToScheme = SchemeBuilder.AddToScheme
+-)
 ```
 
-**File**: `tfctl/go.sum` (modified, +2/-2)
+**File**: `api/v1alpha1/inventory_types.go` (removed, +0/-35)
 ```diff
-@@ -266,8 +266,8 @@ golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
- golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
- golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
- golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
- golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+@@ -1,35 +0,0 @@
+-/*
+-Copyright 2021.
+-
+-Licensed under the Apache License, Version 2.0 (the "License");
+-you may not use this file except in compliance with the License.
+-You may obtain a copy of the License at
+-
+-    http://www.apache.org/licenses/LICENSE-2.0
+-
+-Unless required by applicable law or agreed to in writing, software
+-distributed under the License is distributed on an "AS IS" BASIS,
+-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-See the License for the specific language governing permissions and
+-limitations under the License.
+-*/
+-
+-package v1alpha1
+-
+-// ResourceInventory contains a list of Kubernetes resource object references that have been applied by a Kustomization.
+-type ResourceInventory struct {
+-	// Entries of Kubernetes resource object references.
+-	Entries []ResourceRef `json:"entries"`
+-}
+-
+-// ResourceRef contains the information necessary to locate a resource within a cluster.
+-type ResourceRef struct {
+-	// Terraform resource's name.
+-	Name string `json:"n"`
+-
+-	// Type is Terraform resource's type
+-	Type string `json:"t"`
+-
+-	// ID is the resource identifier. This is cloud-specific. For example, ARN is an ID on AWS.
+-	Identifier string `json:"id"`
+-}
+```
+
+**File**: `api/v1alpha1/reference_types.go` (removed, +0/-219)
+```diff
+@@ -1,219 +0,0 @@
+-package v1alpha1
+-
+-import (
+-	"fmt"
+-	"time"
+-
+-	"github.com/fluxcd/pkg/apis/meta"
+-
+-	corev1 "k8s.io/api/core/v1"
+-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+-)
+-
+-// CrossNamespaceSourceReference contains enough information to let you locate the
+-// typed Kubernetes resource object at cluster level.
+-type CrossNamespaceSourceReference struct {
+-	// API version of the referent.
+-	// +optional
+-	APIVersion string `json:"apiVersion,omitempty"`
+-
+-	// Kind of the referent.
+-	// +kubebuilder:validation:Enum=GitRepository;Bucket;OCIRepository
+-	// +required
+-	Kind string `json:"kind"`
+-
+-	// Name of the referent.
+-	// +required
+-	Name string `json:"name"`
+-
+-	// Namespace of the referent, defaults to the namespace of the Kubernetes resource object that contains the reference.
+-	// +optional
+-	Namespace string `json:"namespace,omitempty"`
+-}
+-
+-func (s *CrossNamespaceSourceReference) String() string {
+-	if s.Namespace != "" {
+-		return fmt.Sprintf("%s/%s/%s", s.Kind, s.Namespace, s.Name)
+-	}
+-	return fmt.Sprintf("%s/%s", s.Kind, s.Name)
+-}
+-
+-type FileMapping struct {
+-	// Reference to a Secret that contains the file content
+-	SecretRef meta.SecretKeyReference `json:"secretRef"`
+-	// Location can be either user's home directory or the Terraform workspace
+-	// +kubebuilder:validation:Enum=home;workspace
+-	// +required
+-	Location string `json:"location"`
+-	// Path of the file - relative to the "location"
+-	// +kubebuilder:validation:Pattern=`^(.?[/_a-zA-Z0-9]{1,})*$`
+-	// +required
+-	Path string `json:"path"`
+-}
+-
+-type BackendConfigsReference struct {
+-	// Kind of the values referent, valid values are ('Secret', 'ConfigMap').
+-	// +kubebuilder:validation:Enum=Secret;ConfigMap
+-	// +required
+-	Kind string `json:"kind"`
+-
+-	// Name of the configs referent. Should reside in the same namespace as the
+-	// referring resource.
+-	// +kubebuilder:validation:MinLength=1
+-	// +kubebuilder:validation:MaxLength=253
+-	// +required
+-	Name string `json:"name"`
+-
+-	// Keys is the data key where a specific value can be found at. Defaults to all keys.
+-	// +optional
+-	Keys []string `json:"keys,omitempty"`
+-
+-	// Optional marks this BackendConfigsReference as optional. When set, a not found error
+-	// for the values reference is ignored, but any Key or
+-	// transient error will still result in a reconciliation failure.
+-	// +optional
+-	Optional bool `json:"optional,omitempty"`
+-}
+-
+-// VarsReference contain a reference of a Secret or a ConfigMap to generate
+-// variables for Terraform resources based on its data, selectively by varsKey.
+-type VarsReference struct {
+-	// Kind of the values referent, valid values are ('Secret', 'ConfigMap').
+-	// +kubebuilder:validation:Enum=Secret;ConfigMap
+-	// +required
+-	Kind string `json:"kind"`
+-
+-	// Name of the values referent. Should reside in the same namespace as the
+-	// referring resource.
+-	// +kubebuilder:validation:MinLength=1
+-	// +kubebuilder:validation:MaxLength=253
+-	// +required
+-	Name string `json:"name"`
+-
+-	// VarsKeys is the data key at which a specific value can be found. Defaults to all keys.
+-	// +optional
+-	VarsKeys []string `json:"varsKeys,omitempty"`
+-
+-	// Optional marks this VarsReference as optional. When set, a not found error
+-	// for the values reference is ignored, but any VarsKey or
+-	// transient error will still result in a reconciliation failure.
+-	// +optional
+-	Optional bool `json:"optional,omitempty"`
+-}
+-
+-// HealthCheck contains configuration needed to perform a health check after
+-// terraform is applied.
+-type HealthCheck struct {
+-	// Name of the health check.
+-	// +kubebuilder:validation:MinLength=1
+-	// +kubebuilder:validation:MaxLength=253
+-	// +required
+-	Name string `json:"name"`
+-
+-	// Type of the health check, valid values are ('tcp', 'http').
+-	// If tcp is specified, address is required.
+-	// If http is specified, url is required.
+-	// +kubebuilder:validation:Enum=tcp;http
+-	// +required
+-	Type string `json:"type"`
+-
+-	// URL to perform http health check on. Required when http type is specified.
+-	// Go template can be used to reference values from the terraform output
+-	// (e.g. https://example.org, {{.output_url}}).
+-	// +optional
+-	URL string `json:"url,omitempty"`
+-
+-	// Address to perform tcp health check on. Required when tcp type is specified.
+-	// Go template can be used to reference values from the terraform output
+-	// (e.g. 127.0.0.1:8080, {{.address}}:{{.port}}).
+-	// +optional
+-	Address string `json:"address,omitempty"`
+-
+-	// The timeout period at which the connection should timeout if unable to
+-	// complete the request.
+-	// When not specified, default 20s timeout is used.
+-	// +kubebuilder:default="20s"
+-	// +optional
+-	Timeout *metav1.Duration `json:"timeout,omitempty"`
+-}
+-
+-type RunnerPodTemplate struct {
+-
+-	// +optional
+-	Metadata RunnerPodMetadata `json:"metadata,omitempty"`
+-
+-	// +optional
+-	Spec RunnerPodSpec `json:"spec,omitempty"`
+-}
+-
+-type RunnerPodMetadata struct {
+-
+-	// Labels to add to
+```
+
+**File**: `api/v1alpha1/terraform_types.go` (removed, +0/-894)
+```diff
+@@ -1,894 +0,0 @@
+-/*
+-Copyright 2021.
+-
+-Licensed under the Apache License, Version 2.0 (the "License");
+-you may not use this file except in compliance with the License.
+-You may obtain a copy of the License at
+-
+-    http://www.apache.org/licenses/LICENSE-2.0
+-
+-Unless required by applicable law or agreed to in writing, software
+-distributed under the License is distributed on an "AS IS" BASIS,
+-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-See the License for the specific language governing permissions and
+-limitations under the License.
+-*/
+-
+-package v1alpha1
+-
+-import (
+-	"bytes"
+-	"fmt"
+-	"strings"
+-	"time"
+-	"unicode/utf8"
+-
+-	"github.com/fluxcd/pkg/apis/meta"
+-	sourcev1 "github.com/fluxcd/source-controller/api/v1"
+-	corev1 "k8s.io/api/core/v1"
+-	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+-	apimeta "k8s.io/apimachinery/pkg/api/meta"
+-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+-	"k8s.io/apimachinery/pkg/runtime"
+-	"k8s.io/apimachinery/pkg/runtime/serializer"
+-)
+-
+-const (
+-	CACertSecretName = "tf-controller.tls"
+-	// RunnerTLSSecretName is the name of the secret containing a TLS cert that will be written to
+-	// the namespace in which a terraform runner is created
+-	RunnerTLSSecretName     = "terraform-runner.tls"
+-	RunnerLabel             = "infra.contrib.fluxcd.io/terraform"
+-	GitRepositoryIndexKey   = ".metadata.gitRepository"
+-	BucketIndexKey          = ".metadata.bucket"
+-	OCIRepositoryIndexKey   = ".metadata.ociRepository"
+-	BreakTheGlassAnnotation = "break-the-glass.tf-controller/requestedAt"
+-)
+-
+-type ReadInputsFromSecretSpec struct {
+-	// +required
+-	Name string `json:"name"`
+-
+-	// +required
+-	As string `json:"as"`
+-}
+-
+-// WriteOutputsToSecretSpec defines where to store outputs, and which outputs to be stored.
+-type WriteOutputsToSecretSpec struct {
+-	// Name is the name of the Secret to be written
+-	// +required
+-	Name string `json:"name"`
+-
+-	// Outputs contain the selected names of outputs to be written
+-	// to the secret. Empty array means writing all outputs, which is default.
+-	// +optional
+-	Outputs []string `json:"outputs,omitempty"`
+-}
+-
+-type Variable struct {
+-	// Name is the name of the variable
+-	// +required
+-	Name string `json:"name"`
+-
+-	// +optional
+-	Value *apiextensionsv1.JSON `json:"value,omitempty"`
+-
+-	// +optional
+-	ValueFrom *corev1.EnvVarSource `json:"valueFrom,omitempty"`
+-}
+-
+-// TerraformSpec defines the desired state of Terraform
+-type TerraformSpec struct {
+-
+-	// ApprovePlan specifies name of a plan wanted to approve.
+-	// If its value is "auto", the controller will automatically approve every plan.
+-	// +optional
+-	ApprovePlan string `json:"approvePlan,omitempty"`
+-
+-	// Destroy produces a destroy plan. Applying the plan will destroy all resources.
+-	// +optional
+-	Destroy bool `json:"destroy,omitempty"`
+-
+-	// +optional
+-	BackendConfig *BackendConfigSpec `json:"backendConfig,omitempty"`
+-
+-	// +optional
+-	BackendConfigsFrom []BackendConfigsReference `json:"backendConfigsFrom,omitempty"`
+-
+-	// +optional
+-	Cloud *CloudSpec `json:"cloud,omitempty"`
+-
+-	// +optional
+-	// +kubebuilder:default:=default
+-	Workspace string `json:"workspace,omitempty"`
+-
+-	// List of input variables to set for the Terraform program.
+-	// +optional
+-	Vars []Variable `json:"vars,omitempty"`
+-
+-	// List of references to a Secret or a ConfigMap to generate variables for
+-	// Terraform resources based on its data, selectively by varsKey. Values of the later
+-	// Secret / ConfigMap with the same keys will override those of the former.
+-	// +optional
+-	VarsFrom []VarsReference `json:"varsFrom,omitempty"`
+-
+-	// Values map to the Terraform variable "values", which is an object of arbitrary values.
+-	// It is a convenient way to pass values to Terraform resources without having to define
+-	// a variable for each value. To use this feature, your Terraform file must define the variable "values".
+-	// +optional
+-	Values *apiextensionsv1.JSON `json:"values,omitempty"`
+-
+-	// List of all configuration files to be created in initialization.
+-	// +optional
+-	FileMappings []FileMapping `json:"fileMappings,omitempty"`
+-
+-	// The interval at which to reconcile the Terraform.
+-	// +required
+-	Interval metav1.Duration `json:"interval"`
+-
+-	// The interval at which to retry a previously failed reconciliation.
+-	// The default value is 15 when not specified.
+-	// +optional
+-	RetryInterval *metav1.Duration `json:"retryInterval,omitempty"`
+-
+-	// Path to the directory containing Terraform (.tf) files.
+-	// Defaults to 'None', which translates to the root path of the SourceRef.
+-	// +optional
+-	Path string `json:"path,omitempty"`
+-
+-	// SourceRef is the reference of the source where the Terraform files are stored.
+-	// +required
+-	SourceRef CrossNamespaceSourceReference `json:"sourceRef"`
+-
+-	// Suspend is to tell the controller to suspend subsequent TF executions,
+-	// it does not apply to already started executions. Defaults to false.
+-	// 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1944** (2026-11-13): Remove unused tf-runner.cache-encryption secret (@Wieneo)
+- **PR #1943** (2026-11-13): feat(runner): Set controller instance ID in environment (@cgroschupp)
+- **PR #1942** (2026-11-13): chore(deps): bump the gh-minor group across 1 directory with 16 updates (@dependabot[bot])
+- **PR #1941** (2026-11-13): feat!: remove the deprecated v1alpha1 Terraform API (@alexandermarston)
 - **PR #1938** (2026-11-10): chore(deps): bump golang.org/x/net to v0.62.0 (@adonispd)
 - **PR #1936** (2026-11-11): feat: add topologySpreadConstraints to runner pods (@adonispd)
-- **PR #1928** (closed): chore(deps): bump the go-patch group across 3 directories with 13 updates (@dependabot[bot])
-- **PR #1927** (closed): chore(deps): bump the gh-patch group across 1 directory with 2 updates (@dependabot[bot])
-- **PR #1925** (closed): chore(deps): bump the go-minor group across 3 directories with 10 updates (@dependabot[bot])
-- **PR #1923** (2026-10-27): fix: stop a pass hanging on a runner that never started (@alexandermarston)
 
 ---
 
@@ -1473,34 +1785,31 @@ Signed-off-by: AdonisPD <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add topologySpreadConstraints to runner pods (#1936)
+## X. runner): Set controller instance ID in environment
 
 **RULE**:
-When implementing operations in `api/v1alpha2/reference_types.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `runner/session_handlers.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a875a4ba`: add topologySpreadConstraints to runner pods (#1936). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e938178a`: runner): Set controller instance ID in environment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v1alpha2/reference_types.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `runner/session_handlers.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Set the TopologySpreadConstraints for the Runner Pod
-	// +optional
-	TopologySpreadConstraints []corev1.TopologySpreadConstraint `json:"topologySpreadConstraints,omitempty"`
-
+	envs["TOFU_CONTROLLER_INSTANCE_ID"] = sessionFrom(ctx).id
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a875a4ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e938178a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -9717,3 +9717,6 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `3e505b65` | Multi-dimensional audit evidence | 2026-11-14T00:25:13.006Z |
 | `learn-dom-d-bcb68b52` | `project://hf-ricursiveai-ripple-65b-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md` | 2026-11-14T00:25:49.428Z |
 | `learn-dom-h-e98bdd0e` | `project://invertase-react-native-firebase` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md` | 2026-11-14T00:26:26.593Z |
+| `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-14T00:36:15.039Z |
+| `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `e938178a` | Multi-dimensional audit evidence | 2026-11-14T00:36:25.578Z |
+| `learn-dom-d-c4a2a37a` | `project://hf-black-forest-labs-flux.1-schnell` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | 2026-11-14T00:37:02.061Z |

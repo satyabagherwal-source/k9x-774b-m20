@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T00:26:26.840Z",
+  "updated_at": "2026-11-14T00:37:02.439Z",
   "stats": {
-    "total_discovered": 3028,
-    "approved_pending_harvest": 2828,
+    "total_discovered": 3030,
+    "approved_pending_harvest": 2830,
     "harvested_count": 0,
     "rejected_count": 200,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2828,
+      "COMMUNITY_AND_EXPERT": 2830,
       "OFFICIAL_DOCUMENTATION": 106,
       "STANDARDS_AND_SPECIFICATIONS": 80,
       "ENGINEERING_BLOGS": 1,
@@ -65236,6 +65236,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
         "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-4143CF1471F6": {
+      "id": "SRC-4143CF1471F6",
+      "url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "title": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T00:37:02.076Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+        "fileName": "hf-black-forest-labs-flux.1-schnell-learnings.md"
+      }
+    },
+    "SRC-58DFCE367322": {
+      "id": "SRC-58DFCE367322",
+      "url": "https://github.com/flux-iac/tofu-controller",
+      "title": "https://github.com/flux-iac/tofu-controller",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T00:37:02.439Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+        "fileName": "flux-iac-tofu-controller-learnings.md"
       }
     }
   }

@@ -855,8 +855,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
     "sourceVersion": "hf-black-forest-labs-flux.1-schnell",
     "license": "Open-Source",
-    "contentHash": "599e77dbebe3bdf68edd8b915ee57ca5dc5cb51d2377543972a2c862e9bbb7d4",
-    "lastHarvestedAt": "2026-11-08T22:12:53.250Z",
+    "contentHash": "dda6575189700e3ea703601af8c0a0dc71894b637d3a4730d40a80272d1837f4",
+    "lastHarvestedAt": "2026-11-14T00:36:15.039Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell"
   },
   "hf-minimaxai-minimax-h3": {
@@ -7043,10 +7043,10 @@
     "repository": "flux-iac/tofu-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/flux-iac/tofu-controller",
-    "sourceVersion": "a875a4ba",
+    "sourceVersion": "e938178a",
     "license": "Apache-2.0",
-    "contentHash": "62d8f0e262c56f36e88b54154965e1b7d18d7e246ba11d7ff633a391eee73733",
-    "lastHarvestedAt": "2026-11-11T16:06:52.811Z",
+    "contentHash": "5908209035e79c2c41505b8954504a97f7330c6ca5c1393b10fae4148fc5cc68",
+    "lastHarvestedAt": "2026-11-14T00:36:25.578Z",
     "learningId": "learn-github-flux-iac-tofu-controller"
   },
   "clockworklabs-spacetimedb": {

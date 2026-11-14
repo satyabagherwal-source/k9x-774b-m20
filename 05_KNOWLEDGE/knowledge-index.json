@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T00:26:27.337Z",
-  "total_verified_learnings": 8440,
+  "last_updated": "2026-11-14T00:37:03.726Z",
+  "total_verified_learnings": 8442,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 16826,
+  "total_items": 16837,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112007,13 +112007,13 @@
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-V4AX-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EGVM-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
       "title": "engine): restore text fallback for unknown file extensions (#394)",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8e1945f05b9643d0ac234e4666d7bb81c5c78ff4a987788992e0c52597e605a",
+      "content_hash": "a72498892a36bf817596b53794f559829c16ce7b0fd362355cfcea5af6527464",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:18:05.587Z"
+      "persisted_at": "2026-11-14T00:37:03.359Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -112023,9 +112023,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "bcbcd326ef7daf859e42e5296b2fca046a7e1cd4030035edb357a0d71e16a393",
+      "content_hash": "d9f7da8103f572e29cc5ab6257aa858b38b5c2b5870071f19aa381b4343abbc8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:18:05.682Z"
+      "persisted_at": "2026-11-14T00:37:03.475Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112035,9 +112035,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1eec7a4d28342d1863231ec254699490cc96d2a34d6b2b53d8e18a0431c5ffc5",
+      "content_hash": "fec69c3af482f0ff46ffa2adbc9fee1d6d2acbebcfa9b9aa7bbe188c2f5e4772",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:18:05.759Z"
+      "persisted_at": "2026-11-14T00:37:03.604Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112047,9 +112047,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c3a032ca60004d14b81f379ae8a3adf0c25a52e1075883d141aeaa3eb1b9a61",
+      "content_hash": "405c27f07a59eb05a8e016f19f3de28c0577714f143fb9eb6c4d1c5bf158c8fd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:18:05.835Z"
+      "persisted_at": "2026-11-14T00:37:03.726Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -219077,6 +219077,176 @@
       "content_hash": "d395c3f2ef13597d970fa72bfe191d6d9fe467440b4f7e69bd89f248485f8ed5",
       "domain_letter": "H",
       "persisted_at": "2026-11-14T00:26:27.206Z"
+    },
+    "learn-huggingface-black-forest-labs-flux-1-schnell": {
+      "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "black-forest-labs/FLUX.1-schnell",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "slug": "hf-black-forest-labs-flux.1-schnell",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "content_hash": "dda6575189700e3ea703601af8c0a0dc71894b637d3a4730d40a80272d1837f4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T00:36:14.877Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-schnell-research-knowledge-intelligence-black-forest.md",
+      "title": "Research & Knowledge Intelligence: black-forest-labs/FLUX.1-schnell Core Invariants",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "content_hash": "9d3917e90ab45ccfc6d776586518d5b3fb7fd070e46344199b956975631dba0d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T00:36:15.229Z"
+    },
+    "learn-github-flux-iac-tofu-controller": {
+      "learning_id": "learn-github-flux-iac-tofu-controller",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "flux-iac/tofu-controller",
+      "repository": "flux-iac/tofu-controller",
+      "slug": "flux-iac-tofu-controller",
+      "platform": "github",
+      "source_url": "https://github.com/flux-iac/tofu-controller",
+      "source_version": "e938178a",
+      "content_hash": "5908209035e79c2c41505b8954504a97f7330c6ca5c1393b10fae4148fc5cc68",
+      "dossier_path": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8412,
+          "title": "Set controller instance ID in environment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T00:36:25.414Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8412": {
+      "learning_id": "rule-8412",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8412,
+      "title": "Set controller instance ID in environment",
+      "source_url": "https://github.com/flux-iac/tofu-controller",
+      "source_version": "e938178a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T00:36:25.414Z"
+    },
+    "candidate_directive-set-controller-instance-id-in-environment": {
+      "item_id": "candidate_directive-set-controller-instance-id-in-environment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DNVY-set-controller-instance-id-in-environment.md",
+      "title": "Set controller instance ID in environment",
+      "repository": "flux-iac/tofu-controller",
+      "source_version": "e938178a",
+      "content_hash": "63d24599d2aec60fe9d94fa7b2e40a3f7d11d56553a33aa45b99a462c910825d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T00:36:25.777Z"
+    },
+    "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flux-iac-tofu-controller-architecture-intelligence-flux-iac-tofu-controller-core.md",
+      "title": "Architecture Intelligence: flux-iac/tofu-controller Core Invariants",
+      "repository": "flux-iac/tofu-controller",
+      "source_version": "e938178a",
+      "content_hash": "731252da739e462b2c1fbc4b52c2f8d95fcff437eb4f0975afea5ee90502c3d1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T00:36:25.888Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-flux-iac-tofu-controller": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-flux-iac-tofu-controller",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/flux-iac-tofu-controller-verification-protocol-empirical-defect-shield-for-flux-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for flux-iac/tofu-controller",
+      "repository": "flux-iac/tofu-controller",
+      "source_version": "e938178a",
+      "content_hash": "5fe911c565db479f1a460b1084ee1111ad6e4cfec525164cff7cd67142815272",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T00:36:26.004Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-co": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-schnell-learnings-research-knowledge-intelligence-hf.md",
+      "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux.1-schnell-learnings Core Invariants",
+      "repository": "hf-black-forest-labs-flux.1-schnell-learnings",
+      "source_version": "HEAD",
+      "content_hash": "86e8ce1178eed323139e33bf910b6ba6f56a9427d4e57a46353e19e0f4eebb6a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T00:37:02.289Z"
+    },
+    "candidate_directive-runner-set-controller-instance-id-in-environment": {
+      "item_id": "candidate_directive-runner-set-controller-instance-id-in-environment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EGCV-runner-set-controller-instance-id-in-environment.md",
+      "title": "runner): Set controller instance ID in environment",
+      "repository": "flux-iac-tofu-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c5ae6692277fc56305ed7a5ab518c6355ec268b1935bf330b4d6fdc4770caed0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T00:37:02.672Z"
+    },
+    "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flux-iac-tofu-controller-learnings-architecture-intelligence-flux-iac-tofu-contr.md",
+      "title": "Architecture Intelligence: flux-iac-tofu-controller-learnings Core Invariants",
+      "repository": "flux-iac-tofu-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b641d36a83035151fecdab57296ad21caa386ae66ae17e06f239da1959b7d268",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T00:37:02.800Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-flux-iac-tofu-controller-learn": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-flux-iac-tofu-controller-learn",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/flux-iac-tofu-controller-learnings-verification-protocol-empirical-defect-shield.md",
+      "title": "Verification Protocol: Empirical Defect Shield for flux-iac-tofu-controller-learnings",
+      "repository": "flux-iac-tofu-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7853aa2b136ea404cec58e4490b5b906da92564fc1c736a9346c3513dd2a2121",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T00:37:02.928Z"
     }
   },
   "ai-builder-brain": {

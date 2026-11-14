@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T00:26:26.592Z",
+  "updated_at": "2026-11-14T00:37:02.059Z",
   "statistics": {
-    "total_nodes": 140,
+    "total_nodes": 141,
     "total_edges": 75,
     "domain_distribution": {
-      "D": 113,
+      "D": 114,
       "M": 1,
       "H": 11,
       "J": 4,
@@ -3131,6 +3131,28 @@
       ],
       "created_at": "2026-11-14T00:26:26.592Z",
       "updated_at": "2026-11-14T00:26:26.592Z"
+    },
+    "DOM-D-C4A2A37A": {
+      "id": "DOM-D-C4A2A37A",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): black-forest-labs/FLUX.1-schnell",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md`  \n> **Source**: huggingface ([http -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md`  \n> **Source**: huggingface ([http",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-black-forest-labs-flux.1-schnell/hf-black-forest-labs-flux.1-schnell-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T00:36:28.768Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-black-forest-labs-flux.1-schnell)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T00:37:02.059Z",
+      "updated_at": "2026-11-14T00:37:02.059Z"
     }
   },
   "edges": [
