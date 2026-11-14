@@ -1215,8 +1215,8 @@
     "sourceUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceVersion": "hf-argmaxinc-whisperkit-coreml",
     "license": "Open-Source",
-    "contentHash": "956cf1c4746fdcc7117d763feae4fa1ab25da174b31e0346ede4fa2f803116d2",
-    "lastHarvestedAt": "2026-11-09T03:42:38.771Z",
+    "contentHash": "fcf117ebda5172f8ce1b3424857d184876c972103a33bceae9ba3d5820d6deb4",
+    "lastHarvestedAt": "2026-11-14T12:57:27.307Z",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml"
   },
   "hf-qwen-qwen3-8b": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "120db05d",
+    "sourceVersion": "41394de4",
     "license": "Apache-2.0",
-    "contentHash": "4f4cd7f38124f76537d32c2468a0053f2de7f81181c43394d1f9aaf60f22bf3d",
-    "lastHarvestedAt": "2026-11-14T11:04:37.985Z",
+    "contentHash": "5ad6a3fb093a824e03a87d8d0ae390eb8305dad382be63d4f294141791fb3ac6",
+    "lastHarvestedAt": "2026-11-14T12:57:43.464Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "32e87f4f",
+    "sourceVersion": "72cae0fb",
     "license": "AGPL-3.0",
-    "contentHash": "956b2c00e671b988aea8550f12c96a049a4efa3eabca82cd48070d0a67b149d4",
-    "lastHarvestedAt": "2026-11-14T03:10:36.099Z",
+    "contentHash": "ba09d283c837a42b98e42da1762cf5d9ac759a4b6de722e7961574e9d1ac13e4",
+    "lastHarvestedAt": "2026-11-14T12:57:37.751Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {

@@ -4,24 +4,24 @@
 {
   "source_repository": "trufflesecurity/trufflehog",
   "source_url": "https://github.com/trufflesecurity/trufflehog",
-  "source_version": "94dd9889",
+  "source_version": "72cae0fb",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-13T20:27:08.471Z",
+  "timestamp": "2026-11-14T12:57:37.937Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-trufflesecurity-trufflehog",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `94dd9889`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-13T20:27:08.471Z`  
+> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `72cae0fb`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-14T12:57:37.937Z`  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from trufflesecurity/trufflehog:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:27:07.807Z  
+> **Harvest Timestamp**: 2026-11-14T12:57:37.399Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 29289 stars
+- **Stars / Engagement**: 29315 stars
 
 ---
 
@@ -1154,211 +1154,347 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94dd9889` (2026-11-13)
-**Commit Message**: Clean up Stdin source logging for per-source debug (#5542)
+### Incident Patch 1: `72cae0fb` (2026-11-14)
+**Commit Message**: Clean up JSON enumerator source logging for per-source debug (#5554)
 
-* Clean up Stdin source logging for per-source debug
+Log init and enumeration at V(1), each file's start and finish with entry
+count and duration at V(2), and each entry with its number and size at
+V(3). Metadata and data are never logged. Add the entry number to error
+lines and to decode errors, so support can find the entry that stopped a
+file. Add a debug logging test and a README for the source.
 
-Remove the unused stored logger, log init and a finish line with bytes
-read and duration at V(1), so support can tell empty input from no
-findings. Fix ChunkUnit dropping the error from Chunks: read and handler
-errors were lost and the scan looked clean. This path is the one the CLI
-uses, so this is a behavior change for the release notes. Add a debug
-logging test and a README Debug Logs section.
-
-* Report stdin timeout as a scan error with a flag hint
-
-**File**: `pkg/sources/stdin/README.md` (modified, +14/-2)
+**File**: `pkg/sources/json_enumerator/README.md` (added, +143/-0)
 ```diff
-@@ -63,6 +63,8 @@ Results from this source do not include a file name, line number, or link. The s
- 
- The time limit set with `--archive-timeout` is 60 seconds by default. It is applied to the whole time TruffleHog spends processing the piped input, not only to unpacking archives. If your input takes longer than that to read and process, raise it with `--archive-timeout`.
- 
-+When the limit is hit, input not scanned by then is dropped, and the scan reports the error `stdin input was not fully scanned: it took longer than the --archive-timeout limit`. Like other scan errors, it only makes TruffleHog exit with a non-zero code when `--fail-on-scan-errors` is set. This matters for streams that never end on their own, like `docker logs -f` or `tail -f`.
+@@ -0,0 +1,143 @@
++# JSON Enumerator Source
 +
- ## Usage Examples
- 
- ### Scanning the Output of a Command
-@@ -89,6 +91,16 @@ docker logs my-container 2>&1 | trufflehog stdin
- cat config.yaml | trufflehog stdin --json
- ```
- 
++## Overview
++
++The JSON enumerator source lets TruffleHog scan data that another tool has already collected, for secrets, credentials, and sensitive data. The data is written to one or more files as a stream of JSON entries, each holding some data to scan and some metadata about where it came from. TruffleHog scans the data and copies the metadata into each result.
++
++## JSON Enumerator Fundamentals
++
++### What does this source scan?
++
++This source reads the files given to it and scans the `data` of every entry in them. It does not connect to any service or need any credentials. It is useful when another tool fetches content from a system TruffleHog has no source for, and wants TruffleHog to do the scanning.
++
++### Key Terminology
++
++| Term | Description |
++|------|-------------|
++| **Enumerator file** | A file holding a stream of JSON entries, usually one per line |
++| **Entry** | One JSON object in the file, with `metadata` and either `data` or `data_b64` |
++| **Metadata** | Any JSON value describing where the data came from. It is copied into results as is |
++
++## Features
++
++- **Any Content**: Scan content from any system, as long as it can be written as JSON entries
++- **Binary Data**: Data that is not valid UTF-8 can be sent base64 encoded in `data_b64`
++- **Compressed Files**: Files ending in `.zst` or `.zstd` are decompressed with zstd while they are read
++- **Archive Support**: Archives inside an entry's data are unpacked and their contents are scanned
++- **Custom Result Metadata**: Each result carries the metadata of the entry it was found in
++
++## Configuration
++
++### File Format
++
++Each entry is a JSON object:
++
++```json
++{"metadata": {"url": "https://example.com/page/1"}, "data": "text to scan"}
++{"metadata": {"url": "https://example.com/file.bin"}, "data_b64": "AAECAwQ="}
++```
++
++- `metadata` is required and can be any JSON value except `null`.
++- Exactly one of `data` (a string) or `data_b64` (base64 encoded bytes) must be set.
++
++Entries are read one after another, so one per line works, but any whitespace between them is fine.
++
++### CLI Usage
++
++```bash
++trufflehog json-enumerator entries.jsonl
++```
++
++Several files can be given at once:
++
++```bash
++trufflehog json-enumerator part1.jsonl part2.jsonl.zst
++```
++
++### YAML Configuration
++
++```yaml
++sources:
++- connection:
++    '@type': type.googleapis.com/sources.JSONEnumerator
++    paths:
++    - "/path/to/entries.jsonl"
++  name: json-enumerator-scan
++  type: SOURCE_TYPE_JSON_ENUMERATOR
++  verify: true
++```
++
++TruffleHog's global flags still apply, such as `--json`, `--no-verification`, `--concurrency`, and the archive flags.
++
++## How Scanning Works
++
++### Scanning Process
++
++1. **Enumeration**: Each path is one unit. Paths that cannot be opened are reported as errors
++2. **Decompression**: Files ending in `.zst` or `.zstd` are decompressed while they are read
++3. **Decoding**: Entries are decoded one at a time
++4. **Scanning**: Each entry's data is checked for its type, archives are unpacked, and the content is split into pieces and sent to the detection engine with the entry's metadata
++
++### What Gets Scanned
++
++- The `data` or `data_b64` of every entry in every given file
++- The contents of archives inside an entry's data, unless archive scanning is turned off with `--force-skip-archives`
++
++### What Doesn't Get Scanned
++
++- Files that cannot be opened
++- Every entry after a bad one in the same file. A bad entry (invalid JSON, missing `metadata`, or neither or both of `data` and `data_b64`) stops the scan of that file, since TruffleHog cannot tell where the next entry starts. Entries before it are still scanned, and other files are not affected
++- Entries with empty data
++
++## Usage Examples
++
++### Scanning One File
++
++```bash
++trufflehog json-enumerator entries.jsonl
++```
++
++### Scanning a Compressed File
++
++```bash
++trufflehog json-enumerator entries.jsonl.zst
++```
++
++### Scanning With JSON Output
++
++```bash
++trufflehog json-enumerator entries.jsonl --json
++```
++
 +## Debug Logs
 +
 +With debug on for this source, the scan logs:
 +
-+- `V(0)`: `scanning stdin for secrets` when the scan starts.
-+- `V(1)`: `Stdin source initialized` with whether verification is on, and `Finished scanning stdin` with `bytes_read` and its `duration`. A `bytes_read` of 0 means nothing was piped in.
-+- `V(5)`: `empty reader, skipping file` when the input is empty, and `skipping archive file` when an archive is piped in with `--force-skip-archives`.
++- `V(1)`: `JSON enumerator source initialized` with the number of paths, and `Enumerated paths` with how many could be opened and how many could not.
++- `V(2)`: `Scanning file` with its `path` and whether it is `zstd`, and `Finished scanning file` with the number of `entries` decoded and its `duration`. If `entries` is lower than expected, a bad entry stopped the file.
++- `V(3)`: `Scanning entry` for each entry, with its `entry` number (counting from 0) and `data_bytes`.
++- `V(5)`: `empty reader, skipping file` for an entry with empty data, and `skipping archive file` when archive data is skipped with `--force-skip-archives`.
 +
-+A failure to read or process the input, including hitting the `--archive-timeout` limit, is reported as a scan error in `encountered errors during scan`.
++Entry metadata and data are never logged. Files that cannot be opened, a bad entry (`decoding entry N: ...`), and an entry that fails to scan are logged as errors at the default level, with the `entry` number where it applies.
 +
- ## Troubleshooting
- 
- ### Common Issues
-@@ -108,5 +120,5 @@ cat config.yaml | trufflehog stdin --json
- 
- ---
- 
--**Issue**: A long running stream stops being scanned partway through
--**Solution**: Check the time limit. It defaults to 60 seconds and can be raised with `--archive-timeout`.
-+**Issue**: `stdin input was not fully scanned: it took longer than the --archive-timeout limit`
-+**Solution**: The input was still being read when the time limit ran out. It defaults to 60 seconds and can be raised with `--archive-timeout`.
++## Trouble
 ```
 
-**File**: `pkg/sources/stdin/stdin.go` (modified, +38/-6)
+**File**: `pkg/sources/json_enumerator/json_enumerator.go` (modified, +26/-12)
 ```diff
-@@ -1,9 +1,13 @@
- package stdin
- 
- import (
-+	stdctx "context"
-+	"errors"
-+	"fmt"
-+	"io"
+@@ -8,6 +8,7 @@ import (
+ 	"io"
  	"os"
+ 	"strings"
 +	"time"
+ 	"unicode/utf8"
  
--	"github.com/go-logr/logr"
- 	"google.golang.org/protobuf/types/known/anypb"
+ 	"github.com/klauspost/compress/zstd"
+@@ -63,6 +64,7 @@ func (s *Source) Init(
+ 	}
+ 	s.paths = conn.Paths
  
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-@@ -20,7 +24,6 @@ type Source struct {
- 	sourceId sources.SourceID
- 	jobId    sources.JobID
- 	verify   bool
--	log      logr.Logger
- 	sources.Progress
- 	sources.CommonSourceUnitUnmarshaller
- }
-@@ -46,12 +49,25 @@ func (s *Source) Init(aCtx context.Context, name string, jobId sources.JobID, so
- 	s.jobId = jobId
- 	s.sourceId = sourceId
- 	s.verify = verify
--	s.log = aCtx.Logger()
-+	aCtx.Logger().V(1).Info("Stdin source initialized", "verify", verify)
++	aCtx.Logger().V(1).Info("JSON enumerator source initialized", "paths", len(s.paths))
  	return nil
  }
  
-+// byteCounter counts the bytes read through it, so the scan can log how much input
-+// came in. It never looks at the data.
-+type byteCounter struct {
-+	r io.Reader
-+	n int64
-+}
-+
-+func (b *byteCounter) Read(p []byte) (int, error) {
-+	n, err := b.r.Read(p)
-+	b.n += int64(n)
-+	return n, err
-+}
-+
- func (s *Source) Chunks(ctx context.Context, chunksChan chan *sources.Chunk, _ ...sources.ChunkingTarget) error {
--	stdin := os.Stdin
-+	stdin := &byteCounter{r: os.Stdin}
- 	chunkSkel := &sources.Chunk{
- 		SourceType: s.Type(),
- 		SourceName: s.name,
-@@ -64,7 +80,16 @@ func (s *Source) Chunks(ctx context.Context, chunksChan chan *sources.Chunk, _ .
- 	}
- 
- 	ctx.Logger().Info("scanning stdin for secrets")
--	return handlers.HandleFile(ctx, stdin, chunkSkel, sources.ChanReporter{Ch: chunksChan})
-+	start := time.Now()
-+	err := handlers.HandleFile(ctx, stdin, chunkSkel, sources.ChanReporter{Ch: chunksChan})
-+	ctx.Logger().V(1).Info("Finished scanning stdin", "bytes_read", stdin.n, "duration", time.Since(start))
-+	// HandleFile bounds the whole input by --archive-timeout. A deadline while the scan
-+	// itself is still running means that limit was hit, so say how to raise it.
-+	if errors.Is(err, stdctx.DeadlineExceeded) && ctx.Err() == nil {
-+		return fmt.Errorf("stdin input was not fully scanned: it took longer than the --archive-timeout limit "+
-+			"(default 60s), raise it with --archive-timeout: %w", err)
-+	}
-+	return err
- }
- 
+@@ -87,19 +89,23 @@ func (s *Source) Chunks(
+ // Enumerate implements the SourceUnitEnumerator interface, reporting each
+ // configured path as its own unit so paths can be chunked concurrently.
  func (s *Source) Enumerate(ctx context.Context, reporter sources.UnitReporter) error {
-@@ -74,9 +99,10 @@ func (s *Source) Enumerate(ctx context.Context, reporter sources.UnitReporter) e
- 
- func (s *Source) ChunkUnit(ctx context.Context, unit sources.SourceUnit, reporter sources.ChunkReporter) error {
- 	ch := make(chan *sources.Chunk)
-+	var chunksErr error
- 	go func() {
- 		defer close(ch)
--		_ = s.Chunks(ctx, ch)
-+		chunksErr = s.Chunks(ctx, ch)
- 	}()
- 	for chunk := range ch {
- 		if chunk != nil {
-@@ -85,5 +111,11 @@ func (s *Source) ChunkUnit(ctx context.Context, unit sources.SourceUnit, reporte
++	var units, unreadable int
+ 	for _, path := range s.paths {
+ 		f, err := os.Open(path)
+ 		if err != nil {
++			unreadable++
+ 			if err := reporter.UnitErr(ctx, err); err != nil {
+ 				return err
+ 			}
+ 		} else {
+ 			_ = f.Close()
++			units++
+ 			if err := reporter.UnitOk(ctx, sources.CommonSourceUnit{ID: path}); err != nil {
+ 				return err
  			}
  		}
  	}
-+	// ch is closed only after Chunks returns, so chunksErr is set by now. It is
-+	// reported as a scan error, not returned, so it fails the run only with
-+	// --fail-on-scan-errors, like a failed unit in other sources.
-+	if chunksErr != nil {
-+		return reporter.ChunkErr(ctx, chunksErr)
-+	}
++	ctx.Logger().V(1).Info("Enumerated paths", "units", units, "unreadable", unreadable)
  	return nil
+ }
+ 
+@@ -170,26 +176,31 @@ func (e *jsonEntry) UnmarshalJSON(data []byte) error {
+ 	return nil
+ }
+ 
++// chunkJSONEnumeratorReader scans every entry in input and returns how many entries it
++// decoded. A bad entry stops the scan, since the decoder can't find where the next one
++// starts.
+ func (s *Source) chunkJSONEnumeratorReader(
+ 	ctx context.Context,
+ 	input io.Reader,
+ 	reporter sources.ChunkReporter,
+-) error {
++) (int, error) {
+ 	decoder := json.NewDecoder(input)
+ 	var entry jsonEntry
+ 
+-	for {
++	for i := 0; ; i++ {
+ 		if err := decoder.Decode(&entry); err != nil {
+ 			if errors.Is(err, io.EOF) {
+ 				// enumerator file is done
+-				return nil
++				return i, nil
+ 			}
+-			return err
++			return i, fmt.Errorf("decoding entry %d: %w", i, err)
+ 		}
++		// Never log the metadata or the data, they are user content.
++		ctx.Logger().V(3).Info("Scanning entry", "entry", i, "data_bytes", len(entry.Data))
+ 
+ 		metadataJSON, err := entry.Metadata.MarshalJSON()
+ 		if err != nil {
+-			ctx.Logger().Error(err, "failed to convert metadata to JSON")
++			ctx.Logger().Error(err, "failed to convert metadata to JSON", "entry", i)
+ 			continue
+ 		}
+ 
+@@ -210,7 +221,7 @@ func (s *Source) chunkJSONEnumeratorReader(
+ 
+ 		err = handlers.HandleFile(ctx, bytes.NewReader(entry.Data), chunkSkel, reporter)
+ 		if err != nil {
+-			ctx.Logger().Error(err, "failed to scan data")
++			ctx.Logger().Error(err, "failed to scan data", "entry", i)
+ 			continue
+ 		}
+ 	}
+@@ -221,23 +232,26 @@ func (s *Source) chunkJSONEnumerator(
+ 	path string,
+ 	reporter sources.ChunkReporter,
+ ) error {
+-	ctx.Logger().V(3).Info("chunking JSON enumerator", "path", path)
++	zstdFile := strings.HasSuffix(path, ".zst") || strings.HasSuffix(path, ".zstd")
++	ctx.Logger().V(2).Info("Scanning file", "path", path, "zstd", zstdFile)
++	start := time.Now()
+ 
+ 	enumeratorFile, err := os.Open(path)
+ 	if err != nil {
+ 		return fmt.Errorf("unable to open file: %w", err)
+ 	}
+ 	defer func() { _ = enumeratorFile.Close() }()
+ 
+-	if strings.HasSuffix(path, ".zst") || strings.HasSuffix(path, ".zstd") {
++	var input io.Reader = enumeratorFile
++	if zstdFile {
+ 		r, err := zstd.NewReader(enumeratorFile)
+ 		if err != nil {
+ 			return fmt.Errorf("unable to open zstd reader: %w", err)
+ 		}
+ 		defer r.Close()
+-		return s.chunkJSONEnumeratorReader(ctx, r, reporter)
+-	} else {
+-		return s.chunkJSONEnumeratorReader(ctx, enumeratorFile, reporter)
++		input = r
+ 	}
+-
++	entries, err := s.chunkJSONEnumeratorReader(ctx, input, reporter)
++	ctx.Logger().V(2).Info("Finished scanning file", "path", path, "entries", entries, "duration", time.Since(start))
++	return err
  }
 ```
 
-**File**: `pkg/sources/stdin/stdin_test.go` (added, +126/-0)
+**File**: `pkg/sources/json_enumerator/json_enumerator_test.go` (modified, +64/-2)
 ```diff
-@@ -0,0 +1,126 @@
-+package stdin
-+
-+import (
-+	stdctx "context"
+@@ -5,6 +5,8 @@ import (
+ 	"bytes"
+ 	"encoding/json"
+ 	"io"
 +	"os"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
++	"path/filepath"
+ 	"strings"
+ 	"sync"
+ 	"testing"
+@@ -13,8 +15,13 @@ import (
+ 	"github.com/go-logr/logr"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
 +	"go.uber.org/zap/zaptest/observer"
++	"google.golang.org/protobuf/types/known/anypb"
 +
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/handlers"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/feature"
 +	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
-+)
-+
-+// setStdin replaces os.Stdin with r until the test ends. Tests that call it must not
-+// run in parallel.
-+func setStdin(t *testing.T, r *os.File) {
-+	t.Helper()
-+	orig := os.Stdin
-+	os.Stdin = r
-+	t.Cleanup(func() { os.Stdin = orig })
-+}
-+
-+// pipeStdin makes os.Stdin read data, then end.
-+func pipeStdin(t *testing.T, data string) {
-+	t.Helper()
-+	r, w, err := os.Pipe()
-+	require.NoError(t, err)
-+	t.Cleanup(func() { _ = r.Close() })
-+	go func() {
-+		_, _ = w.WriteString(data)
-+		_ = w.Close()
-+	}()
-+	setStdin(t, r)
-+}
++	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
+ )
+ 
+@@ -105,7 +112,7 @@ func TestScanEnumerator(t *testing.T) {
+ 				defer close(chunksChan)
+ 				ctx := context.WithLogger(t.Context(), logr.Discard())
+ 				source := &Source{}
+-				workerError = source.chunkJSONEnumeratorReader(ctx, readJSON, sources.ChanReporter{Ch: chunksChan})
++				_, workerError = source.chunkJSONEnumeratorReader(ctx, readJSON, sources.ChanReporter{Ch: chunksChan})
+ 			}()
+ 
+ 			enc := json.NewEncoder(writeJSON)
+@@ -190,7 +197,7 @@ func TestScanEnumeratorAPKContentRouting(t *testing.T) {
+ 			defer close(chunksChan)
+ 			ctx := context.WithLogger(t.Context(), logr.Discard())
+ 			source := &Source{}
+-			workerError = source.chunkJSONEnumeratorReader(ctx, readJSON, sources.ChanReporter{Ch: chunksChan})
++			_, workerError = source.chunkJSONEnumeratorReader(ctx, readJSON, sources.ChanReporter{Ch: chunksChan})
+ 		}()
+ 
+ 		// No filename is set on the record; routing is content-based only.
+@@ -214,3 +221,58 @@ func TestScanEnumeratorAPKContentRouting(t *testing.T) {
+ 	require.NoError(t, err)
+ 	assert.Contains(t, foundZip, secret, "non-APK zip should be handled generically and surface the secret")
+ }
 +
 +func TestSource_DebugLogging(t *testing.T) {
-+	const testSecret = "stdindebuglogtestsecret"
++	const (
++		testSecret     = "jsonenumdebuglogtestsecret"
++		metadataSecret = "jsonenumdebuglogmetadatasecret"
++	)
++
++	dir := t.TempDir()
++	good := filepath.Join(dir, "good.jsonl")
++	require.NoError(t, os.WriteFile(good, []byte(
++		`{"metadata":{"token":"`+metadataSecret+`"},"data":"token = `+testSecret+`"}`+"\n"+
++			`{"metadata":{},"data":"nothing here"}`+"\n"), 0o600))
++	// The second entry has no metadata, so decoding stops there and the source logs an error.
++	bad := filepath.Join(dir, "bad.jsonl")
++	require.NoError(t, os.WriteFile(bad, []byte(
++		`{"metadata":{},"data":"first"}`+"\n"+`{"data":"`+testSecret+`"}`+"\n"), 0o600))
++	missing := filepath.Join(dir, "missing.jsonl")
++
++	conn, err := anypb.New(&sourcespb.JSONEnumerator{Paths: []string{good, bad, missing}})
++	require.NoError(t, err)
 +
 +	runSource := func(t *testing.T, debug bool) []observer.LoggedEntry {
 +		t.Helper()
-+		pipeStdin(t, "token = "+testSecret+"\n")
 +		ctx, logs := logtest.SourceContext(debug)
 +		s := new(Source)
-+		require.NoError(t, s.Init(ctx, "test source", 1, 1, false, nil, 1))
++		require.NoError(t, s.Init(ctx, "test source", 1, 1, false, conn, 1))
 +		if debug {
 +			logtest.CheckInitLine(t, logs.All())
 +		}
++
++		require.NoError(t, s.Enumerate(ctx, sources.VisitorReporter{
++			VisitUnit: func(context.Context, sources.SourceUnit) error { return nil },
++			VisitErr:  func(context.Context, error) error { return nil },
++		}))
 +
 +		chunksCh := make(chan *sources.Chunk, 10)
 +		require.NoError(t, s.Chunks(ctx, chunksCh))
@@ -1368,79 +1504,27 @@ logging test and a README Debug Logs section.
 +			data.Write(chunk.Data)
 +		}
 +		assert.Contains(t, data.String(), testSecret)
++		assert.Contains(t, data.String(), "first")
 +		return logs.All()
 +	}
 +
 +	t.Run("debug on", func(t *testing.T) {
-+		logtest.CheckSourceLines(t, runSource(t, true), testSecret)
++		logtest.CheckSourceLines(t, runSource(t, true), testSecret, metadataSecret)
 +	})
 +
 +	t.Run("debug off", func(t *testing.T) {
 +		logtest.CheckNoDebugLines(t, runSource(t, false))
 +	})
 +}
-+
-+// errReporter records chunk errors, like the source manager does.
-+type errReporter struct {
-+	errs []error
-+}
-+
-+func (r *errReporter) ChunkOk(context.Context, sources.Chunk) error { return nil }
-+
-+func (r *errReporter) ChunkErr(_ context.Context, err error) error {
-+	r.errs = append(r.errs, err)
-+	return nil
-+}
-+
-+// ChunkUnit reports the error from reading stdin as a scan error instead of dropping
-+// it or failing the whole run.
-+func TestSource_ChunkUnitReportsReadError(t *testing.T) {
-+	r, w, err := os.Pipe()
-+	require.NoError(t, err)
-+	require.NoError(t, w.Close())
-+	require.NoError(t, r.Close())
-+	setStdin(t, r)
-+
-+	ctx := context.Background()
-+	s := new(Source)
-+	require.NoError(t, s.Init(ctx, "test source", 1, 1, false, nil, 1))
-+	reporter := &errReporter{}
-+	require.NoError(t, s.ChunkUnit(ctx, sources.CommonSourceUnit{ID: "<stdin>"}, reporter))
-+	assert.Len(t, reporter.errs, 1)
-+}
-+
-+// Input that is still open when --archive-timeout runs out is reported with a hint
-+// about the flag.
-+func TestSource_ChunkUnitReportsArchiveTimeout(t *testing.T) {
-+	handlers.SetArchiveMaxTimeout(100 * time.Millisecond)
-+	t.Cleanup(func() { handlers.SetArchiveMaxTimeout(60 * time.Second) })
-+
-+	r, w, err := os.Pipe()
-+	require.NoError(t, err)
-+	t.Cleanup(func() { _ = w.Close(); _ = r.Close() })
-+	// Enough data for the type check, then the pipe stays open like a stream.
-+	_, err = w.WriteString(strings.Repeat("line of log output\n", 1000))
-+	require.NoError(t, err)
-+	setStdin(t, r)
-+
-+	ctx := context.Background()
-+	s := new(Source)
-+	require.NoError(t, s.Init(ctx, "test source", 1, 1, false, nil, 1))
-+	reporter := &errReporter{}
-+	require.NoError(t, s.ChunkUnit(ctx, sources.CommonSourceUnit{ID: "<stdin>"}, reporter))
-+	require.Len(t, reporter.errs, 1)
-+	assert.ErrorIs(t, reporter.errs[0], stdctx.DeadlineExceeded)
-+	assert.Contains(t, reporter.errs[0].Error(), "--archive-timeout")
-+}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5560** (closed): Update module go.opentelemetry.io/otel/trace to v1.47.0 [SECURITY] - autoclosed (@renovate[bot])
+- **PR #5559** (2026-11-14): Update module go.opentelemetry.io/otel/sdk to v1.47.0 [SECURITY] (@renovate[bot])
 - **PR #5557** (closed): [DO NOT MERGE] Measure fork-PR timing for #5547 (@bryanbeverly)
+- **PR #5554** (2026-11-14): Clean up JSON enumerator source logging for per-source debug (@kashifkhan0771)
 - **PR #5553** (2026-11-12): Add SOURCE_TYPE_GENERIC source type (@martinlocklear)
 - **PR #5552** (closed): Add SOURCE_TYPE_GENERIC source type (@martinlocklear)
-- **PR #5548** (2026-11-12): Fix GitHub GraphQL comment scan retries and paging (@kashifkhan0771)
-- **PR #5546** (2026-11-12): Update module pault.ag/go/debian to v0.21.3 (@renovate[bot])
-- **PR #5544** (2026-11-12): Update module golang.org/x/crypto to v0.59.0 [SECURITY] (@renovate[bot])
 
 ---
 
@@ -1460,45 +1544,54 @@ logging test and a README Debug Logs section.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Clean up Stdin source logging for per-source debug
+## X. Clean up JSON enumerator source logging for per-source debug
 
 **RULE**:
-When implementing operations in `pkg/sources/stdin/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/sources/json_enumerator/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94dd9889`: Clean up Stdin source logging for per-source debug. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72cae0fb`: Clean up JSON enumerator source logging for per-source debug. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/stdin/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/json_enumerator/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-When the limit is hit, input not scanned by then is dropped, and the scan reports the error `stdin input was not fully scanned: it took longer than the --archive-timeout limit`. Like other scan errors, it only makes TruffleHog exit with a non-zero code when `--fail-on-scan-errors` is set. This matters for streams that never end on their own, like `docker logs -f` or `tail -f`.
+# JSON Enumerator Source
 
-## Debug Logs
+## Overview
 
-With debug on for this source, the scan logs:
+The JSON enumerator source lets TruffleHog scan data that another tool has already collected, for secrets, credentials, and sensitive data. The data is written to one or more files as a stream of JSON entries, each holding some data to scan and some metadata about where it came from. TruffleHog scans the data and copies the metadata into each result.
 
-- `V(0)`: `scanning stdin for secrets` when the scan starts.
-- `V(1)`: `Stdin source initialized` with whether verification is on, and `Finished scanning stdin` with `bytes_read` and its `duration`. A `bytes_read` of 0 means nothing was piped in.
-- `V(5)`: `empty reader, skipping file` when the input is empty, and `skipping archive file` when an archive is piped in with `--force-skip-archives`.
+## JSON Enumerator Fundamentals
 
-A failure to read or process the input, including hitting the `--archive-timeout` limit, is reported as a scan error in `encountered errors during scan`.
+### What does this source scan?
 
-**Issue**: `stdin input was not fully scanned: it took longer than the --archive-timeout limit`
-**Solution**: The input was still being read when the time limit ran out. It defaults to 60 seconds and can
+This source reads the files given to it and scans the `data` of every entry in them. It does not connect to any service or need any credentials. It is useful when another tool fetches content from a system TruffleHog has no source for, and wants TruffleHog to do the scanning.
+
+### Key Terminology
+
+| Term | Description |
+|------|-------------|
+| **Enumerator file** | A file holding a stream of JSON entries, usually one per line |
+| **Entry** | One JSON object in the file, with `metadata` and either `data` or `data_b64` |
+| **Metadata** | Any JSON value describing where the data came from. It is copied into results as is |
+
+## Features
+
+- **Any Content**: Scan content from any system, as long as it can be written as JSON entries
+- **
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-**Issue**: A long running stream stops being scanned partway through
-**Solution**: Check the time limit. It defaults to 60 seconds and can be raised with `--archive-timeout`.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94dd9889` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72cae0fb` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

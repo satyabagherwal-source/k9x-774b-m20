@@ -9830,3 +9830,8 @@
 | `CYCLE-20261114-0I8G` | `2026-11-14T12:34:01.936Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8487` | Yes (`d9bafbfd...`) |
 | `CYCLE-20261114-0JBL` | `2026-11-14T12:34:03.345Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8488` | Yes (`8623fa0e...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T12:34:36.271Z` | `hf-intfloat-multilingual-e5-small` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C580DAE3` [Domain D] | Yes (`3f274a40...`) |
+| `CYCLE-20261114-UMMF` | `2026-11-14T12:57:27.303Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`fcf117eb...`) |
+| `CYCLE-20261114-UUOJ` | `2026-11-14T12:57:37.747Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | Yes (`ba09d283...`) |
+| `CYCLE-20261114-UZ39` | `2026-11-14T12:57:43.461Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3556` | Yes (`5ad6a3fb...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T12:58:14.378Z` | `hf-argmaxinc-whisperkit-coreml` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-53B3E45E` [Domain D] | Yes (`35bcc224...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T12:58:48.306Z` | `trufflesecurity-trufflehog` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8A33F79B` [Domain D] | Yes (`9c2e4bc5...`) |

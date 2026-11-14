@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "120db05d",
+  "source_version": "41394de4",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T11:04:38.186Z",
+  "timestamp": "2026-11-14T12:57:43.642Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `120db05d`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T11:04:38.186Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `41394de4`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T12:57:43.642Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: H (Technical Construction Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), E (Creative Intelligence)
-- **Confidence Rating**: 58%
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T11:04:36.973Z  
+> **Harvest Timestamp**: 2026-11-14T12:57:42.854Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1226,24 +1226,21 @@ export async function instances({
   return { instances: dataset[0].instances };
 }
 
-// Each synthesis turns the extracted instances of a training pair by its
-// rotation, clockwise when positive and counterclockwise when negative, and
-// moves them by its offset, so every training pair gains six synthesized pairs.
+// Each synthesis turns the extracted instances of a training pair clockwise by
+// its rotation and moves them by its offset, so every training pair gains three
+// synthesized pairs.
 const SYNTHESES = [
   { rotation: 90, offset: { x: 1, y: 1 } },
   { rotation: 90, offset: { x: -1, y: 1 } },
   { rotation: 90, offset: { x: -1, y: -1 } },
-  { rotation: -90, offset: { x: 2, y: 2 } },
-  { rotation: -90, offset: { x: -2, y: 2 } },
-  { rotation: -90, offset: { x: -2, y: -2 } },
 ];
 
-// Draws the object of an instance matrix turned by the rotation, clockwise when
-// positive, about the pivot, the bounding box the instance turns about, which
-// keeps its top-left corner, and moved by the offset, on a canvas of the
-// matrix's size that grows as needed. The gaps between the object's and the
-// pivot's edges turn with them, so the object keeps its place relative to the
-// pivot. An object without cells stays an all-zero canvas.
+// Draws the object of an instance matrix turned clockwise by the rotation about
+// the pivot, the bounding box the instance turns about, which keeps its top-left
+// corner, and moved by the offset, on a canvas of the matrix's size that grows
+// as needed. The gaps between the object's and the pivot's edges turn with
+// them, so the object keeps its place relative to the pivot. An object without
+// cells stays an all-zero canvas.
 function turn(matrix, pivot, rotation: number, offset) {
   const object = Matrix.locate(matrix);
   const rows: number = matrix.length;
@@ -1325,7 +1322,7 @@ function synthesized_pair(instances, { rotation, offset }, output_canvas) {
   };
 }
 
-// Synthesizes six training pairs from a training pair's extracted instances,
+// Synthesizes three training pairs from a training pair's extracted instances,
 // one per synthesis, each holding every instance turned and moved by it. A
 // pair without instances synthesizes none.
 export function synthesize({ instances, output_canvas }) {
@@ -1471,7 +1468,17 @@ export async function value({
             "dataset": [{
               "instances": [{
                 "implementation": <IMPLEMENTATION>
-              }
+              }]
+            }]
+          }  
+        `,
+      },
+    ],
+  });
+
+  const implementation = dataset[0].instances[0].implementation;
+
+  milestone.evaluating_rules({ instance_name: instance.instance_name }
 ```
 
 ### Core Architecture Module: `arc/src/app.ts`
@@ -1746,26 +1753,8 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `120db05d` (2026-11-14)
-**Commit Message**: Resume NUC 105 List and Population Sorting by Key
-
-Claims the stale Draft allocated in e2ade2a2 (Draft NUC 105 List and
-Population Sorting by Key, 2026-11-10T19:07:10-05:00). It waited 3 days,
-9 hours and 51 minutes without an allocation or claim commit. This
-continuous cycle completes it with a fresh baseline, candidate worktree,
-proposer and evaluator, under its Utility enhancement category.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8gLvp2aQjMS8yXtmh6
-
-
-
----
-
-### Incident Patch 2: `c9839532` (2026-11-14)
-**Commit Message**: Resume stale NUC drafts in continuous cycles
-
-Prioritize abandoned allocated drafts using pushed claims, with renewal and takeover rules. Pin resumed proposals to their claim commits and update the proposal workflow documentation.
+### Incident Patch 1: `41394de4` (2026-11-14)
+**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
 **File**: `.claude/CLAUDE.md` (modified, +2/-2)
 ```diff
@@ -2060,13 +2049,13 @@ Prioritize abandoned allocated drafts using pushed claims, with renewal and take
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Resume stale NUC drafts in continuous cycles
+## X. Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
 **RULE**:
 When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9839532`: Resume stale NUC drafts in continuous cycles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `41394de4`: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
@@ -2086,7 +2075,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9839532` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `41394de4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

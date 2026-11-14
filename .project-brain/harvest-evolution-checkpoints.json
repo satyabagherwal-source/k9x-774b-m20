@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T12:34:37.276Z",
+  "last_updated": "2026-11-14T12:58:49.878Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T11:34:37.198Z",
@@ -103,7 +103,7 @@
       "staged_for_review": 1
     },
     "trufflesecurity-trufflehog-learnings.md": {
-      "processed_at": "2026-11-13T20:28:20.767Z",
+      "processed_at": "2026-11-14T12:58:48.306Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-12T22:33:58.293Z",
+      "processed_at": "2026-11-14T12:58:49.217Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2576,9 +2576,14 @@
       "processed_at": "2026-11-14T12:34:36.271Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-argmaxinc-whisperkit-coreml-learnings.md": {
+      "processed_at": "2026-11-14T12:58:14.379Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 828,
-  "total_canonical_promoted": 191,
-  "total_staged_for_review": 636
+  "total_dossiers_evaluated": 831,
+  "total_canonical_promoted": 193,
+  "total_staged_for_review": 637
 }

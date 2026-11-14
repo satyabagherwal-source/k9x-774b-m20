@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T12:34:36.937Z",
-  "total_records": 670,
+  "last_updated": "2026-11-14T12:58:49.646Z",
+  "total_records": 675,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 326,
+      "total": 330,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -363,7 +363,11 @@
         "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-26b-a4b-it-learnings-core-inva",
         "domain_intelligence-research-knowledge-intelligence-intfloat-multilingual-e5-small-core-invariants",
         "DOM-D-C580DAE3",
-        "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core"
+        "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core",
+        "domain_intelligence-research-knowledge-intelligence-argmaxinc-whisperkit-coreml-core-invariants",
+        "DOM-D-53B3E45E",
+        "domain_intelligence-research-knowledge-intelligence-hf-argmaxinc-whisperkit-coreml-learnings-core-in",
+        "DOM-D-8A33F79B"
       ]
     },
     "E": {
@@ -395,7 +399,7 @@
       ]
     },
     "G": {
-      "total": 101,
+      "total": 102,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -497,7 +501,8 @@
         "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants",
         "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-core-invariants",
         "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
-        "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8825,8 +8830,8 @@
       "title": "Research & Knowledge Intelligence: trufflesecurity/trufflehog Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-trufflesecurity-trufflehog-research-knowledge-intelligence-trufflesecurity-truff.md",
       "repository": "trufflesecurity/trufflehog",
-      "content_hash": "1c4ab1a7c6bf8103846f5eb6a1f125d69f2aad7cef792461ee8070fdf0fc06ac",
-      "created_at": "2026-11-13T20:27:08.594Z"
+      "content_hash": "c8fbe54ca013dbe527901bf1e566399533a4ab36ed29a2a94a9c2c336237c6a3",
+      "created_at": "2026-11-14T12:57:38.046Z"
     },
     "domain_intelligence-architecture-intelligence-linkerd-linkerd2-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-linkerd-linkerd2-core-invariants",
@@ -8945,8 +8950,8 @@
       "title": "Research & Knowledge Intelligence: trufflesecurity-trufflehog-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-trufflesecurity-trufflehog-learnings-research-knowledge-intelligence-trufflesecu.md",
       "repository": "trufflesecurity-trufflehog-learnings",
-      "content_hash": "1f9d651231227d2a4533bf680ba2f788d9d7dd10b8f93668e5539ad0a3a64801",
-      "created_at": "2026-11-13T20:28:21.312Z"
+      "content_hash": "6b86d35d2d082c36b2d730c945232f206dac2efe75c88c7d4c7f92d0d2cecf25",
+      "created_at": "2026-11-14T12:58:48.976Z"
     },
     "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-flash-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-flash-core-invariants",
@@ -13749,8 +13754,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "ab9a35728f2062d00602eead014bc78c3cc9f33f182738655c26b9e211cbdb07",
-      "created_at": "2026-11-14T11:04:38.306Z"
+      "content_hash": "9d206430708c425f3d64e2040d8b28e569260fb9695b21efdc39061eea0ae29e",
+      "created_at": "2026-11-14T12:57:43.743Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -14090,6 +14095,117 @@
       "repository": "koderover-zadig-learnings",
       "content_hash": "f7264e96d7cb2aa0d017fff1af3dde947705bda6d0d2048ef22e81f73c3bf5b5",
       "created_at": "2026-11-14T12:34:36.937Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-argmaxinc-whisperkit-coreml-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-argmaxinc-whisperkit-coreml-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: argmaxinc/whisperkit-coreml Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-argmaxinc-whisperkit-coreml-research-knowledge-intelligence-argmaxinc-whisper.md",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "content_hash": "b05b1633acbaa60ec8bb31213502710eb11001654fcfe5ce42b3dd0bc6a890bb",
+      "created_at": "2026-11-14T12:57:27.468Z"
+    },
+    "DOM-D-53B3E45E": {
+      "record_id": "DOM-D-53B3E45E",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): argmaxinc/whisperkit-coreml",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml))  \n> **Source Version**: `hf-argmaxinc`  \n> **License**: Open-Sou",
+      "content_hash": "35bcc224963825e5b418890d4af44bd61f7322d3f2ff8c88168fa0f3b31bc793",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "provenance": {
+        "source_uri": "project://hf-argmaxinc-whisperkit-coreml/hf-argmaxinc-whisperkit-coreml-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T12:57:46.566Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-argmaxinc-whisperkit-coreml)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-argmaxinc-whisperkit-coreml"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T12:58:14.367Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-argmaxinc-whisperkit-coreml-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-argmaxinc-whisperkit-coreml-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-argmaxinc-whisperkit-coreml-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-argmaxinc-whisperkit-coreml-learnings-research-knowledge-intelligence-hf-argm.md",
+      "repository": "hf-argmaxinc-whisperkit-coreml-learnings",
+      "content_hash": "5a426f305d3a92f112d1d58c93e8ed276d3917f22da41eca5de6439c32deec42",
+      "created_at": "2026-11-14T12:58:14.577Z"
+    },
+    "DOM-D-8A33F79B": {
+      "record_id": "DOM-D-8A33F79B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Clean up JSON enumerator source logging for per-source debug",
+      "content": "When implementing operations in `pkg/sources/json_enumerator/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "9c2e4bc5ee77f23107e8db54f46ed3f03550880a9e048e45b5f5d91e6a234c01",
+      "summary": "Prevents defects observed in production commit `72cae0fb`: Clean up JSON enumerator source logging for per-source debug. Unvalidated executi -> When implementing operations in `pkg/sources/json_enumerator/README.md`, engineers MUST enforce rigorous boundary validation, safe state tra",
+      "provenance": {
+        "source_uri": "project://trufflesecurity-trufflehog/trufflesecurity-trufflehog-learnings.md",
+        "source_version": "72cae0fb",
+        "observed_at": "2026-11-14T12:57:37.404Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (trufflesecurity-trufflehog)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of trufflesecurity-trufflehog"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T12:58:48.296Z"
+    },
+    "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "content_hash": "e78270d05686dc105ee9e441c9009f4a3bd9404d5a141a045b71bdeb6374f4d0",
+      "created_at": "2026-11-14T12:58:49.646Z"
     }
   }
 }

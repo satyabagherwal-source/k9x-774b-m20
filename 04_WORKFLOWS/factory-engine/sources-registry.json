@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T12:34:06.360Z",
-    "lastVerified": "2026-11-14T12:34:06.360Z",
+    "lastChecked": "2026-11-14T12:57:46.473Z",
+    "lastVerified": "2026-11-14T12:57:46.473Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -471,12 +471,12 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T11:04:36.973Z",
-    "lastVerified": "2026-11-14T11:04:36.973Z",
+    "lastChecked": "2026-11-14T12:57:42.854Z",
+    "lastVerified": "2026-11-14T12:57:42.854Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "4f4cd7f38124f76537d32c2468a0053f2de7f81181c43394d1f9aaf60f22bf3d",
+    "contentHash": "5ad6a3fb093a824e03a87d8d0ae390eb8305dad382be63d4f294141791fb3ac6",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -2254,14 +2254,14 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T03:10:35.074Z",
-    "lastVerified": "2026-11-14T03:10:35.074Z",
+    "lastChecked": "2026-11-14T12:57:37.399Z",
+    "lastVerified": "2026-11-14T12:57:37.399Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "956b2c00e671b988aea8550f12c96a049a4efa3eabca82cd48070d0a67b149d4",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "ba09d283c837a42b98e42da1762cf5d9ac759a4b6de722e7961574e9d1ac13e4",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5417,9 +5417,9 @@
   "crazycodeboy-react-native-splash-screen": {
     "name": "react-native-splash-screen",
     "officialUrl": "https://github.com/crazycodeboy/react-native-splash-screen",
-    "lastChecked": "2026-11-10T04:36:48.045Z",
+    "lastChecked": "2026-11-14T12:57:28.800Z",
     "revisionIdentifier": "b4719762",
-    "lastVerified": "2026-11-10T04:36:48.045Z"
+    "lastVerified": "2026-11-14T12:57:28.800Z"
   },
   "pulumi-pulumi": {
     "name": "pulumi/pulumi",
@@ -5705,9 +5705,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-13T07:47:07.401Z",
+    "lastChecked": "2026-11-14T12:57:36.277Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-13T07:47:07.401Z"
+    "lastVerified": "2026-11-14T12:57:36.277Z"
   },
   "datadog-glommio": {
     "name": "glommio",
@@ -6989,12 +6989,12 @@
     "officialUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T03:42:37.493Z",
-    "lastVerified": "2026-11-09T03:42:37.493Z",
+    "lastChecked": "2026-11-14T12:57:26.705Z",
+    "lastVerified": "2026-11-14T12:57:26.705Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-    "contentHash": "956cf1c4746fdcc7117d763feae4fa1ab25da174b31e0346ede4fa2f803116d2",
+    "contentHash": "fcf117ebda5172f8ce1b3424857d184876c972103a33bceae9ba3d5820d6deb4",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8475,9 +8475,9 @@
   "pamburus-hl": {
     "name": "hl",
     "officialUrl": "https://github.com/pamburus/hl",
-    "lastChecked": "2026-11-13T00:30:45.139Z",
+    "lastChecked": "2026-11-14T12:57:23.731Z",
     "revisionIdentifier": "3aae7bc7",
-    "lastVerified": "2026-11-13T00:30:45.139Z"
+    "lastVerified": "2026-11-14T12:57:23.731Z"
   },
   "hf-qwen-qwen3-4b": {
     "name": "Qwen/Qwen3-4B",
@@ -9807,12 +9807,12 @@
     "lastVerified": "2026-11-12T05:26:54.061Z"
   },
   "fabio-rovai-open-ontologies": {
-    "name": "fabio-rovai/open-ontologies",
+    "name": "open-ontologies",
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T09:17:12.703Z",
-    "lastVerified": "2026-11-13T09:17:12.703Z",
+    "lastChecked": "2026-11-14T12:57:31.232Z",
+    "lastVerified": "2026-11-14T12:57:31.232Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
@@ -9821,7 +9821,8 @@
     "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fa06a2f6"
   },
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",

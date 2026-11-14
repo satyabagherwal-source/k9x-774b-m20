@@ -9863,3 +9863,8 @@ Every entry in this ledger must capture:
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `1174b8c7` | Multi-dimensional audit evidence | 2026-11-14T12:34:01.939Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `9e6e2e23` | Multi-dimensional audit evidence | 2026-11-14T12:34:03.348Z |
 | `learn-dom-d-c580dae3` | `project://hf-intfloat-multilingual-e5-small` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | 2026-11-14T12:34:36.271Z |
+| `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-11-14T12:57:27.307Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `72cae0fb` | Multi-dimensional audit evidence | 2026-11-14T12:57:37.751Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `41394de4` | Multi-dimensional audit evidence | 2026-11-14T12:57:43.464Z |
+| `learn-dom-d-53b3e45e` | `project://hf-argmaxinc-whisperkit-coreml` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | 2026-11-14T12:58:14.378Z |
+| `learn-dom-d-8a33f79b` | `project://trufflesecurity-trufflehog` | `72cae0fb` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | 2026-11-14T12:58:48.306Z |

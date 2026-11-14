@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T12:34:36.269Z",
+  "updated_at": "2026-11-14T12:58:48.305Z",
   "statistics": {
-    "total_nodes": 187,
-    "total_edges": 99,
+    "total_nodes": 189,
+    "total_edges": 100,
     "domain_distribution": {
-      "D": 144,
+      "D": 146,
       "M": 1,
       "H": 17,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 99
+      "CONSTRAINED_BY_ARCHITECTURE": 100
     }
   },
   "nodes": {
@@ -4189,6 +4189,51 @@
       ],
       "created_at": "2026-11-14T12:34:36.269Z",
       "updated_at": "2026-11-14T12:34:36.269Z"
+    },
+    "DOM-D-53B3E45E": {
+      "id": "DOM-D-53B3E45E",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): argmaxinc/whisperkit-coreml",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-argmaxinc-whisperkit-coreml/hf-argmaxinc-whisperkit-coreml-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T12:57:46.566Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-argmaxinc-whisperkit-coreml)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T12:58:14.377Z",
+      "updated_at": "2026-11-14T12:58:14.377Z"
+    },
+    "DOM-D-8A33F79B": {
+      "id": "DOM-D-8A33F79B",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Clean up JSON enumerator source logging for per-source debug",
+      "summary": "Prevents defects observed in production commit `72cae0fb`: Clean up JSON enumerator source logging for per-source debug. Unvalidated executi -> When implementing operations in `pkg/sources/json_enumerator/README.md`, engineers MUST enforce rigorous boundary validation, safe state tra",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://trufflesecurity-trufflehog/trufflesecurity-trufflehog-learnings.md",
+        "source_version": "72cae0fb",
+        "observed_at": "2026-11-14T12:57:37.404Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (trufflesecurity-trufflehog)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-14T12:58:48.305Z",
+      "updated_at": "2026-11-14T12:58:48.305Z"
     }
   },
   "edges": [
@@ -5181,6 +5226,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-5A7FBD90 [D] with Domain M",
       "created_at": "2026-11-14T12:04:52.998Z"
+    },
+    {
+      "id": "EDGE-465307DA9069",
+      "sourceId": "DOM-D-8A33F79B",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-8A33F79B [D] with Domain G",
+      "created_at": "2026-11-14T12:58:48.305Z"
     }
   ]
 }

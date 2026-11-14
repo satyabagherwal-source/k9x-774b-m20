@@ -4,22 +4,22 @@
 {
   "source_repository": "trufflesecurity/trufflehog",
   "source_url": "https://github.com/trufflesecurity/trufflehog",
-  "source_version": "32e87f4f",
+  "source_version": "72cae0fb",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-14T03:10:36.325Z",
+  "timestamp": "2026-11-14T12:57:37.937Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-trufflesecurity-trufflehog",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `32e87f4f`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-14T03:10:36.325Z`  
+> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `72cae0fb`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-14T12:57:37.937Z`  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `trufflesecurity/trufflehog` (Commit: `32e87f4f`)
+- **Target Repository**: `trufflesecurity/trufflehog` (Commit: `72cae0fb`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:10:35.074Z  
+> **Harvest Timestamp**: 2026-11-14T12:57:37.399Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 29299 stars
+- **Stars / Engagement**: 29315 stars
 
 ---
 
@@ -1151,365 +1151,377 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4cb316c` (2026-11-13)
-**Commit Message**: Add metrics and a follow-up log for detectors that ignore their timeout (#5550)
+### Incident Patch 1: `72cae0fb` (2026-11-14)
+**Commit Message**: Clean up JSON enumerator source logging for per-source debug (#5554)
 
-Detectors run on a fixed pool of workers. When a detector keeps
-working after its context timeout, it holds one of those workers, and
-enough held workers stall every source at once. Until now the only
-signal was one log line: it names the detector, but nothing counts
-the overruns, times them, or shows how many workers are held.
+Log init and enumeration at V(1), each file's start and finish with entry
+count and duration at V(2), and each entry with its number and size at
+V(3). Metadata and data are never logged. Add the entry number to error
+lines and to decode errors, so support can find the entry that stopped a
+file. Add a debug logging test and a README for the source.
 
-Three metrics close that gap: a counter for overruns, a gauge of
-workers currently held, and a histogram of how long the held calls
-ran. The gauge and counter use the same detector-name label as the
-existing metrics, so the set of label values stays bounded. The
-histogram's buckets start at 10 seconds and reach about 85 minutes,
-because the existing duration histogram's buckets stop near 3 seconds
-and lose every overrun into its largest bucket.
-
-The gauge is counted up by the timeout's callback and counted down
-when the detector finishes. Those two moments happen in different
-goroutines, so the code pairs them through a channel: the callback
-closes the channel after counting up, and the return path waits for
-that close before counting down. That ordering keeps the gauge from
-dr
-
-**File**: `pkg/engine/engine.go` (modified, +34/-8)
+**File**: `pkg/sources/json_enumerator/README.md` (added, +143/-0)
 ```diff
-@@ -1252,20 +1252,46 @@ func (e *Engine) detectChunk(ctx context.Context, data detectableChunk) {
- 		detectBytesPerMatch.Observe(float64(len(matchBytes)))
- 
- 		ctx, cancel := context.WithTimeout(ctx, detectionTimeout)
-+		// The callback and the deferred release below hand the worker off through fired. t.Stop() returning false
-+		// means the callback started, not that it finished counting, so the release waits for the channel to close
-+		// before it decrements the gauge. The release is deferred inside the closure that owns the FromData call,
-+		// so it runs on normal return and on panic unwind alike (the common.Recover at the top of detectChunk
-+		// catches panics) and a panic inside FromData cannot leave the gauge high. The overrun histogram and the
-+		// return log stay on the normal-return path only: a panicked call never returns, so it has no duration to
-+		// record.
-+		fired := make(chan struct{})
- 		t := time.AfterFunc(detectionTimeout+1*time.Second, func() {
-+			detectorTimeoutIgnoredTotal.WithLabelValues(detectorNameStr).Inc()
-+			detectorWorkersOverTimeout.WithLabelValues(detectorNameStr).Inc()
-+			close(fired) // before the log: a slow log sink must not extend the worker hold
- 			ctx.Logger().Error(nil, "a detector ignored the context timeout")
- 		})
- 		// detectorExecutionDuration covers one detector run, which is this single FromData call, so it is timed here
- 		// regardless of printAvgDetectorTime.
- 		matchStart := time.Now()
--		results, err := e.verificationCache.FromData(
--			ctx,
--			data.detector.Detector,
--			data.verify,
--			data.chunk.SecretID != 0,
--			matchBytes)
--		matchElapsed := time.Since(matchStart)
--		t.Stop()
-+		var timerFired bool
-+		results, matchElapsed, err := func() (results []detectors.Result, matchElapsed time.Duration, err error) {
-+			defer func() {
-+				timerFired = !t.Stop()
-+				if timerFired {
-+					<-fired
-+					detectorWorkersOverTimeout.WithLabelValues(detectorNameStr).Dec()
-+				}
-+			}()
-+			results, err = e.verificationCache.FromData(
-+				ctx,
-+				data.detector.Detector,
-+				data.verify,
-+				data.chunk.SecretID != 0,
-+				matchBytes)
-+			matchElapsed = time.Since(matchStart)
-+			return results, matchElapsed, err
-+		}()
-+		if timerFired {
-+			detectorOverrunDuration.WithLabelValues(detectorNameStr).Observe(matchElapsed.Seconds())
-+			ctx.Logger().V(2).Info("detector returned after overrunning the context timeout",
-+				"duration", matchElapsed.String())
-+		}
- 		cancel()
- 		if err != nil {
- 			ctx.Logger().Error(err, "error finding results in chunk")
+@@ -0,0 +1,143 @@
++# JSON Enumerator Source
++
++## Overview
++
++The JSON enumerator source lets TruffleHog scan data that another tool has already collected, for secrets, credentials, and sensitive data. The data is written to one or more files as a stream of JSON entries, each holding some data to scan and some metadata about where it came from. TruffleHog scans the data and copies the metadata into each result.
++
++## JSON Enumerator Fundamentals
++
++### What does this source scan?
++
++This source reads the files given to it and scans the `data` of every entry in them. It does not connect to any service or need any credentials. It is useful when another tool fetches content from a system TruffleHog has no source for, and wants TruffleHog to do the scanning.
++
++### Key Terminology
++
++| Term | Description |
++|------|-------------|
++| **Enumerator file** | A file holding a stream of JSON entries, usually one per line |
++| **Entry** | One JSON object in the file, with `metadata` and either `data` or `data_b64` |
++| **Metadata** | Any JSON value describing where the data came from. It is copied into results as is |
++
++## Features
++
++- **Any Content**: Scan content from any system, as long as it can be written as JSON entries
++- **Binary Data**: Data that is not valid UTF-8 can be sent base64 encoded in `data_b64`
++- **Compressed Files**: Files ending in `.zst` or `.zstd` are decompressed with zstd while they are read
++- **Archive Support**: Archives inside an entry's data are unpacked and their contents are scanned
++- **Custom Result Metadata**: Each result carries the metadata of the entry it was found in
++
++## Configuration
++
++### File Format
++
++Each entry is a JSON object:
++
++```json
++{"metadata": {"url": "https://example.com/page/1"}, "data": "text to scan"}
++{"metadata": {"url": "https://example.com/file.bin"}, "data_b64": "AAECAwQ="}
++```
++
++- `metadata` is required and can be any JSON value except `null`.
++- Exactly one of `data` (a string) or `data_b64` (base64 encoded bytes) must be set.
++
++Entries are read one after another, so one per line works, but any whitespace between them is fine.
++
++### CLI Usage
++
++```bash
++trufflehog json-enumerator entries.jsonl
++```
++
++Several files can be given at once:
++
++```bash
++trufflehog json-enumerator part1.jsonl part2.jsonl.zst
++```
++
++### YAML Configuration
++
++```yaml
++sources:
++- connection:
++    '@type': type.googleapis.com/sources.JSONEnumerator
++    paths:
++    - "/path/to/entries.jsonl"
++  name: json-enumerator-scan
++  type: SOURCE_TYPE_JSON_ENUMERATOR
++  verify: true
++```
++
++TruffleHog's global flags still apply, such as `--json`, `--no-verification`, `--concurrency`, and the archive flags.
++
++## How Scanning Works
++
++### Scanning Process
++
++1. **Enumeration**: Each path is one unit. Paths that cannot be opened are reported as errors
++2. **Decompression**: Files ending in `.zst` or `.zstd` are decompressed while they are read
++3. **Decoding**: Entries are decoded one at a time
++4. **Scanning**: Each entry's data is checked for its type, archives are unpacked, and the content is split into pieces and sent to the detection engine with the entry's metadata
++
++### What Gets Scanned
++
++- The `data` or `data_b64` of every entry in every given file
++- The contents of archives inside an entry's data, unless archive scanning is turned off with `--force-skip-archives`
++
++### What Doesn't Get Scanned
++
++- Files that cannot be opened
++- Every entry after a bad one in the same file. A bad entry (invalid JSON, missing `metadata`, or neither or both of `data` and `data_b64`) stops the scan of that file, since TruffleHog cannot tell where the next entry starts. Entries before it are still scanned, and other files are not affected
++- Entries with empty data
++
++## Usage Examples
++
++### Scanning One File
++
++```bash
++trufflehog json-enumerator entries.jsonl
++```
++
++### Scanning a Compressed File
++
++```bash
++trufflehog json-enumerator entries.jsonl.zst
++```
++
++### Scanning With JSON Output
++
++```bash
++trufflehog json-enumerator entries.jsonl --json
++```
++
++## Debug Logs
++
++With debug on for this source, the scan logs:
++
++- `V(1)`: `JSON enumerator source initialized` with the number of paths, and `Enumerated paths` with how many could be opened and how many could not.
++- `V(2)`: `Scanning file` with its `path` and whether it is `zstd`, and `Finished scanning file` with the number of `entries` decoded and its `duration`. If `entries` is lower than expected, a bad entry stopped the file.
++- `V(3)`: `Scanning entry` for each entry, with its `entry` number (counting from 0) and `data_bytes`.
++- `V(5)`: `empty reader, skipping file` for an entry with empty data, and `skipping archive file` when archive data is skipped with `--force-skip-archives`.
++
++Entry metadata and data are never logged. Files that cannot be opened, a bad entry (`decoding entry N: ...`), and an entry that fails to scan are logged as errors at the default level, with the `entry` number where it applies.
++
++## Trouble
 ```
 
-**File**: `pkg/engine/engine_overrun_test.go` (added, +252/-0)
+**File**: `pkg/sources/json_enumerator/json_enumerator.go` (modified, +26/-12)
 ```diff
-@@ -0,0 +1,252 @@
-+package engine
-+
-+import (
-+	aCtx "context"
-+	"fmt"
-+	"os"
-+	"sync"
-+	"testing"
+@@ -8,6 +8,7 @@ import (
+ 	"io"
+ 	"os"
+ 	"strings"
 +	"time"
-+
-+	"github.com/go-logr/logr"
-+	"github.com/prometheus/client_golang/prometheus/testutil"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/decoders"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/detector_typepb"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
-+)
-+
-+// Fakes and log capture for the timeout-overrun metrics in detectChunk. The overrun test changes the
-+// package-global detectionTimeout, so neither test here may use t.Parallel(), and the overrun test must restore the
-+// previous value before returning.
-+
-+const (
-+	slowOverrunKeyword   = "slowoverruntest"
-+	fastNoOverrunKeyword = "fastnooverruntest"
-+)
-+
-+// slowOverrunDetector ignores its context on purpose: it sleeps past the detection timeout plus the one-second
-+// grace, which is the behavior the overrun metrics exist to observe. With the test's 10ms timeout the timer fires
-+// at about 1.01s and the sleep ends at 2s, so the callback always runs while FromData is still sleeping, with
-+// about a second of margin for CI scheduling jitter.
-+type slowOverrunDetector struct{}
-+
-+var _ detectors.Detector = (*slowOverrunDetector)(nil)
-+var _ detectors.Versioner = (*slowOverrunDetector)(nil)
-+
-+func (f slowOverrunDetector) FromData(_ aCtx.Context, _ bool, _ []byte) ([]detectors.Result, error) {
-+	time.Sleep(2 * time.Second)
-+	return nil, nil
-+}
-+
-+func (f slowOverrunDetector) Keywords() []string { return []string{slowOverrunKeyword} }
-+
-+func (f slowOverrunDetector) Type() detector_typepb.DetectorType {
-+	return detector_typepb.DetectorType_Test
-+}
-+
-+func (f slowOverrunDetector) Version() int { return 1 }
-+
-+func (f slowOverrunDetector) Description() string { return "slow detector for overrun tests" }
-+
-+// fastNoOverrunDetector returns immediately and stays well inside the default detection timeout.
-+type fastNoOverrunDetector struct{}
-+
-+var _ detectors.Detector = (*fastNoOverrunDetector)(nil)
-+var _ detectors.Versioner = (*fastNoOverrunDetector)(nil)
-+
-+func (f fastNoOverrunDetector) FromData(_ aCtx.Context, _ bool, _ []byte) ([]detectors.Result, error) {
-+	return nil, nil
-+}
-+
-+func (f fastNoOverrunDetector) Keywords() []string { return []string{fastNoOverrunKeyword} }
-+
-+func (f fastNoOverrunDetector) Type() detector_typepb.DetectorType {
-+	return detector_typepb.DetectorType_TestingBot
-+}
-+
-+func (f fastNoOverrunDetector) Version() int { return 1 }
-+
-+func (f fastNoOverrunDetector) Description() string { return "fast detector for overrun tests" }
-+
-+// logRecord is one entry captured by capturingLogSink.
-+type logRecord struct {
-+	msg   string
-+	level int
-+	isErr bool
-+	kv    []any
-+}
-+
-+// hasField reports whether the entry carries a key of the given name.
-+func (r logRecord) hasField(key string) bool {
-+	for i := 0; i+1 < len(r.kv); i += 2 {
-+		if r.kv[i] == key {
-+			return true
-+		}
-+	}
-+	return false
-+}
-+
-+// capturingLogSink records every entry a context logger emits so tests can assert on specific log lines. It
-+// reports every level as enabled and ignores the WithName/WithValues decorations, which the assertions do not
-+// need.
-+type capturingLogSink struct {
-+	mu      sync.Mutex
-+	records []logRecord
-+}
-+
-+func (s *capturingLogSink) Init(_ logr.RuntimeInfo) {}
-+
-+func (s *capturingLogSink) Enabled(_ int) bool { return true }
-+
-+func (s *capturingLogSink) WithName(_ string) logr.LogSink { return s }
-+
-+func (s *capturingLogSink) WithValues(_ ...any) logr.LogSink { return s }
-+
-+func (s *capturingLogSink) Info(level int, msg string, keysAndValues ...any) {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	s.records = append(s.records, logRecord{msg: msg, level: level, kv: keysAndValues})
-+}
-+
-+func (s *capturingLogSink) Error(_ error, msg string, keysAndValues ...any) {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	s.records = append(s.records, logRecord{msg: msg, isErr: true, kv: keysAndValues})
-+}
-+
-+// find returns the first entry captured with the given message.
-+func (s *capturingLogSink) find(msg string) (logRecord, bool) {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	for _, r := range s.records {
-+		if r.msg == msg {
-+			return r, true
-+		}
-+	}
-+	return logRecord{}, false
-+}
-+
-+// TestEngine_DetectorOverrunsTimeout drives the overrun path end to end: a detector that keeps running past the
-+// detection timeout plus its one-second grace trips the timer callback (counter up, gauge up, Error log), and its
-+// return path brings the gauge back down, records the overrun duration, and logs the total hold time at V(2).
-+func TestEngine_DetectorOverrunsTimeout(t *testing.T) {
-+	previousTimeout := detectionTimeout
-+	SetDetectorTimeout(10 * time.Millisecond)
-+	defer SetDetectorTimeout(previousTimeout)
-+
-+	sink := &capturingLogSink{}
-+	ctx, cancel
-```
-
-**File**: `pkg/engine/metrics.go` (modified, +37/-0)
-```diff
-@@ -35,6 +35,43 @@ var (
- 		[]string{"detector_name"},
- 	)
+ 	"unicode/utf8"
  
-+	// Timeout-overrun metrics. The overrun timer in detectChunk arms at the detection timeout plus a one-second
-+	// grace, so these count calls that ran past that grace deadline, not merely past the bare timeout. The
-+	// histogram buckets start at 10 seconds because the execution-duration histogram above tops out near 3
-+	// seconds and would drop every overrun into +Inf. That floor assumes the default 10 s detection timeout:
-+	// SetDetectorTimeout is exported, and a smaller value lets overruns finish below 10 s, where they all land in
-+	// the first bucket with no resolution between them.
-+	detectorTimeoutIgnoredTotal = promauto.NewCounterVec(
-+		prometheus.CounterOpts{
-+			Namespace: common.MetricsNamespace,
-+			Subsystem: common.MetricsSubsystem,
-+			Name:      "detector_timeout_ignored_total",
-+			Help:      "Total number of FromData calls whose overrun timer fired.",
-+		},
-+		[]string{"detector_name"},
-+	)
-+
-+	detectorWorkersOverTimeout = promauto.NewGaugeVec(
-+		prometheus.GaugeOpts{
-+			Namespace: common.MetricsNamespace,
-+			Subsystem: common.MetricsSubsystem,
-+			Name:      "detector_workers_over_timeout",
-+			Help:      "Workers currently inside a FromData call that kept running past the detection timeout plus its one-second grace.",
-+		},
-+		[]string{"detector_name"},
-+	)
-+
-+	detectorOverrunDuration = promauto.NewHistogramVec(
-+		prometheus.HistogramOpts{
-+			Namespace: common.MetricsNamespace,
-+			Subsystem: common.MetricsSubsystem,
-+			Name:      "detector_overrun_duration_seconds",
-+			Help:      "Duration in seconds of FromData calls that overran the detection timeout grace (total call duration, not just the overhang).",
-+			Buckets:   prometheus.ExponentialBuckets(10, 2, 10),
-+		},
-+		[]string{"detector_name"},
-+	)
-+
- 	jobBytesScanned = promauto.NewCounterVec(prometheus.CounterOpts{
- 		Namespace: common.MetricsNamespace,
- 		Subsystem: common.MetricsSubsystem,
+ 	"github.com/klauspost/compress/zstd"
+@@ -63,6 +64,7 @@ func (s *Source) Init(
+ 	}
+ 	s.paths = conn.Paths
+ 
++	aCtx.Logger().V(1).Info("JSON enumerator source initialized", "paths", len(s.paths))
+ 	return nil
+ }
+ 
+@@ -87,19 +89,23 @@ func (s *Source) Chunks(
+ // Enumerate implements the SourceUnitEnumerator interface, reporting each
+ // configured path as its own unit so paths can be chunked concurrently.
+ func (s *Source) Enumerate(ctx context.Context, reporter sources.UnitReporter) error {
++	var units, unreadable int
+ 	for _, path := range s.paths {
+ 		f, err := os.Open(path)
+ 		if err != nil {
++			unreadable++
+ 			if err := reporter.UnitErr(ctx, err); err != nil {
+ 				return err
+ 			}
+ 		} else {
+ 			_ = f.Close()
++			units++
+ 			if err := reporter.UnitOk(ctx, sources.CommonSourceUnit{ID: path}); err != nil {
+ 				return err
+ 			}
+ 		}
+ 	}
++	ctx.Logger().V(1).Info("Enumerated paths", "units", units, "unreadable", unreadable)
+ 	return nil
+ }
+ 
+@@ -170,26 +176,31 @@ func (e *jsonEntry) UnmarshalJSON(data []byte) error {
+ 	return nil
+ }
+ 
++// chunkJSONEnumeratorReader scans every entry in input and returns how many entries it
++// decoded. A bad entry stops the scan, since the decoder can't find where the next one
++// starts.
+ func (s *Source) chunkJSONEnumeratorReader(
+ 	ctx context.Context,
+ 	input io.Reader,
+ 	reporter sources.ChunkReporter,
+-) error {
++) (int, error) {
+ 	decoder := json.NewDecoder(input)
+ 	var entry jsonEntry
+ 
+-	for {
++	for i := 0; ; i++ {
+ 		if err := decoder.Decode(&entry); err != nil {
+ 			if errors.Is(err, io.EOF) {
+ 				// enumerator file is done
+-				return nil
++				return i, nil
+ 			}
+-			return err
++			return i, fmt.Errorf("decoding entry %d: %w", i, err)
+ 		}
++		// Never log the metadata or the data, they are user content.
++		ctx.Logger().V(3).Info("Scanning entry", "entry", i, "data_bytes", len(entry.Data))
+ 
+ 		metadataJSON, err := entry.Metadata.MarshalJSON()
+ 		if err != nil {
+-			ctx.Logger().Error(err, "failed to convert metadata to JSON")
++			ctx.Logger().Error(err, "failed to convert metadata to JSON", "entry", i)
+ 			continue
+ 		}
+ 
+@@ -210,7 +221,7 @@ func (s *Source) chunkJSONEnumeratorReader(
+ 
+ 		err = handlers.HandleFile(ctx, bytes.NewReader(entry.Data), chunkSkel, reporter)
+ 		if err != nil {
+-			ctx.Logger().Error(err, "failed to scan data")
++			ctx.Logger().Error(err, "failed to scan data", "entry", i)
+ 			continue
+ 		}
+ 	}
+@@ -221,23 +232,26 @@ func (s *Source) chunkJSONEnumerator(
+ 	path string,
+ 	reporter sources.ChunkReporter,
+ ) error {
+-	ctx.Logger().V(3).Info("chunking JSON enumerator", "path", path)
++	zstdFile := strings.HasSuffix(path, ".zst") || strings.HasSuffix(path, ".zstd")
++	ctx.Logger().V(2).Info("Scanning file", "path", path, "zstd", zstdFile)
++	start := time.Now()
+ 
+ 	enumeratorFile, err := os.Open(path)
+ 	if err != nil {
+ 		return fmt.Errorf("unable to open file: %w", err)
+ 	}
+ 	defer func() { _ = enumeratorFile.Close() }()
+ 
+-	if strings.HasSuffix(path, ".zst") || strings.HasSuffix(path, ".zstd") {
++	var input io.Reader = enumeratorFile
++	if zstdFile {
+ 		r, err := zstd.NewReader(enumeratorFile)
+ 		if err != nil {
+ 			return fmt.Errorf("unable to open zstd reader: %w", err)
+ 		}
+ 		defer r.Close()
+-		return s.chunkJSONEnumeratorReader(ctx, r, reporter)
+-	} else {
+-		return s.chunkJSONEnumeratorReader(ctx, enumeratorFile, reporter)
++		input = r
+ 	}
+-
++	entries, err := s.chunkJSONEnumeratorReader(ctx, input, reporter)
++	ctx.Logger().V(2).Info("Finished scanning file", "path", path, "entries", entries, "duration", time.Since(start))
++	return err
+ }
 ```
 
----
-
-### Incident Patch 2: `32e87f4f` (2026-11-14)
-**Commit Message**: Update module go.opentelemetry.io/otel/sdk to v1.47.0 [SECURITY] (#5559)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +6/-5)
+**File**: `pkg/sources/json_enumerator/json_enumerator_test.go` (modified, +64/-2)
 ```diff
-@@ -302,12 +302,13 @@ require (
- 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.62.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
-```
-
-**File**: `go.sum` (modified, +14/-12)
-```diff
-@@ -746,24 +746,26 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
- go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.62.0/go.mod h1:ru6KHrNtNHxM4nD/vd6QrLVWgKhxPYgblq4VAtNawTQ=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 h1:CqXxU8VOmDefoh0+ztfGaymYbhdB/tT3zs79QaZTNGY=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0/go.mod h1:BuhAPThV8PBHBvg8ZzZ/Ok3idOdhWIodywz2xEcRbJo=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.33.0 h1:wpMfgF8E1rkrT1Z6meFh1NDtownE9Ii3n3X2GJYjsaU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.33.0/go.mod h1:wAy0T/dUbs468uOlkT31xjvqQgEVXv58BRFWEgn5v/0=
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0 h1:rixTyDGXFxRy1xzhKrotaHy3/KXdPhlWARrCgK+eqUY=
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0/go.mod h1:dowW6UsM9MKbJq5JTz2AMVp3/5iW5I/TStsk8S+CfHw=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
--go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDRbe9deYpM=
-+go.opentelemetry.io/otel/metric/x v0.69.0/go.mod h1:uVvsMPMFFyj/HUQfrUnH3JjnOQ1dwFDorgFLRBasM0k=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.uber.org/atomic v1.7.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
+@@ -5,6 +5,8 @@ import (
+ 	"bytes"
+ 	"encoding/json"
+ 	"io"
++	"os"
++	"path/filepath"
+ 	"strings"
+ 	"sync"
+ 	"testing"
+@@ -13,8 +15,13 @@ import (
+ 	"github.com/go-logr/logr"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
++	"go.uber.org/zap/zaptest/observer"
++	"google.golang.org/protobuf/types/known/anypb"
++
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/feature"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
++	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/sources"
+ )
+ 
+@@ -105,7 +112,7 @@ func TestScanEnumerator(t *testing.T) {
+ 				defer close(chunksChan)
+ 				ctx := context.WithLogger(t.Context(), logr.Discard())
+ 				source := &Source{}
+-				workerError = source.chunkJSONEnumeratorReader(ctx, readJSON, sources.ChanReporter{Ch: chunksChan})
++				_, workerError = source.chunkJSONEnumeratorReader(ctx, readJSON, sources.ChanReporter{Ch: chunksChan})
+ 			}()
+ 
+ 			enc := json.NewEncoder(writeJSON)
+@@ -190,7 +197,7 @@ func TestScanEnumeratorAPKContentRouting(t *testing.T) {
+ 			defer close(chunksChan)
+ 			ctx := context.WithLogger(t.Context(), logr.Discard())
+ 			source := &Source{}
+-			workerError = source.chunkJSONEnumeratorReader(ctx, readJSON, sources.ChanReporter{Ch: chunksChan})
++			_, workerError = source.chunkJSONEnumeratorReader(ctx, readJSON, sources.ChanReporter{Ch: chunksChan})
+ 		}()
+ 
+ 		// No filename is set on the record; routing is content-based only.
+@@ -214,3 +221,58 @@ func TestScanEnumeratorAPKContentRouting(t *testing.T) {
+ 	require.NoError(t, err)
+ 	assert.Contains(t, foundZip, secret, "non-APK zip should be handled generically and surface the secret")
+ }
++
++func TestSource_DebugLogging(t *testing.T) {
++	const (
++		testSecret     = "jsonenumdebuglogtestsecret"
++		metadataSecret = "jsonenumdebuglogmetadatasecret"
++	)
++
++	dir := t.TempDir()
++	good := filepath.Join(dir, "good.jsonl")
++	require.NoError(t, os.WriteFile(good, []byte(
++		`{"metadata":{"token":"`+metadataSecret+`"},"data":"token = `+testSecret+`"}`+"\n"+
++			`{"metadata":{},"data":"nothing here"}`+"\n"), 0o600))
++	// The second entry has no metadata, so decoding stops there and the source logs an error.
++	bad := filepath.Join(dir, "bad.jsonl")
++	require.NoError(t, os.WriteFile(bad, []byte(
++		`{"metadata":{},"data":"first"}`+"\n"+`{"data":"`+testSecret+`"}`+"\n"), 0o600))
++	missing := filepath.Join(dir, "missing.jsonl")
++
++	conn, err := anypb.New(&sourcespb.JSONEnumerator{Paths: []string{good, bad, missing}})
++	require.NoError(t, err)
++
++	runSource := func(t *testing.T, debug bool) []observer.LoggedEntry {
++		t.Helper()
++		ctx, logs := logtest.SourceContext(debug)
++		s := new(Source)
++		require.NoError(t, s.Init(ctx, "test source", 1, 1, false, conn, 1))
++		if debug {
++			logtest.CheckInitLine(t, logs.All())
++		}
++
++		require.NoError(t, s.Enumerate(ctx, sources.VisitorReporter{
++			VisitUnit: func(context.Context, sources.SourceUnit) error { return nil },
++			VisitErr:  func(context.Context, error) error { return nil },
++		}))
++
++		chunksCh := make(chan *sources.Chunk, 10)
++		require.NoError(t, s.Chunks(ctx, chunksCh))
++		close(chunksCh)
++		var data strings.Builder
++		for chunk := range chunksCh {
++			data.Write(chunk.Data)
++		}
++		assert.Contains(t, data.String(), testSecret)
++		assert.Contains(t, data.String(), "first")
++		return logs.All()
++	}
++
++	t.Run("debug on", func(t *testing.T) {
++		logtest.CheckSourceLines(t, runSource(t, true), testSecret, metadataSecret)
++	})
++
++	t.Run("debug off", func(t *testing.T) {
++		logtest.CheckNoDebugLines(t, runSource(t, false))
++	})
++}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5560** (closed): Update module go.opentelemetry.io/otel/trace to v1.47.0 [SECURITY] - autoclosed (@renovate[bot])
 - **PR #5559** (2026-11-14): Update module go.opentelemetry.io/otel/sdk to v1.47.0 [SECURITY] (@renovate[bot])
 - **PR #5557** (closed): [DO NOT MERGE] Measure fork-PR timing for #5547 (@bryanbeverly)
+- **PR #5554** (2026-11-14): Clean up JSON enumerator source logging for per-source debug (@kashifkhan0771)
 - **PR #5553** (2026-11-12): Add SOURCE_TYPE_GENERIC source type (@martinlocklear)
 - **PR #5552** (closed): Add SOURCE_TYPE_GENERIC source type (@martinlocklear)
-- **PR #5550** (2026-11-13): Add metrics and a follow-up log for detectors that ignore their timeout (@martinlocklear)
 
 ---
 
@@ -1529,56 +1541,54 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add metrics and a follow-up log for detectors that ignore their timeout
+## X. Clean up JSON enumerator source logging for per-source debug
 
 **RULE**:
-When implementing operations in `pkg/engine/engine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/sources/json_enumerator/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4cb316c`: Add metrics and a follow-up log for detectors that ignore their timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `72cae0fb`: Clean up JSON enumerator source logging for per-source debug. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/engine/engine.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sources/json_enumerator/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// The callback and the deferred release below hand the worker off through fired. t.Stop() returning false
-		// means the callback started, not that it finished counting, so the release waits for the channel to close
-		// before it decrements the gauge. The release is deferred inside the closure that owns the FromData call,
-		// so it runs on normal return and on panic unwind alike (the common.Recover at the top of detectChunk
-		// catches panics) and a panic inside FromData cannot leave the gauge high. The overrun histogram and the
-		// return log stay on the normal-return path only: a panicked call never returns, so it has no duration to
-		// record.
-		fired := make(chan struct{})
-			detectorTimeoutIgnoredTotal.WithLabelValues(detectorNameStr).Inc()
-			detectorWorkersOverTimeout.WithLabelValues(detectorNameStr).Inc()
-			close(fired) // before the log: a slow log sink must not extend the worker hold
-		var timerFired bool
-		results, matchElapsed, err := func() (results []detectors.Result, matchElapsed time.Duration, err error) {
-			defer func() {
-				timerFired = !t.Stop()
-				if timerFired {
-					<-fired
-					detectorWorkersOverTimeout.WithLabelValues(detectorNameStr).Dec()
-				
+# JSON Enumerator Source
+
+## Overview
+
+The JSON enumerator source lets TruffleHog scan data that another tool has already collected, for secrets, credentials, and sensitive data. The data is written to one or more files as a stream of JSON entries, each holding some data to scan and some metadata about where it came from. TruffleHog scans the data and copies the metadata into each result.
+
+## JSON Enumerator Fundamentals
+
+### What does this source scan?
+
+This source reads the files given to it and scans the `data` of every entry in them. It does not connect to any service or need any credentials. It is useful when another tool fetches content from a system TruffleHog has no source for, and wants TruffleHog to do the scanning.
+
+### Key Terminology
+
+| Term | Description |
+|------|-------------|
+| **Enumerator file** | A file holding a stream of JSON entries, usually one per line |
+| **Entry** | One JSON object in the file, with `metadata` and either `data` or `data_b64` |
+| **Metadata** | Any JSON value describing where the data came from. It is copied into results as is |
+
+## Features
+
+- **Any Content**: Scan content from any system, as long as it can be written as JSON entries
+- **
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		results, err := e.verificationCache.FromData(
-			ctx,
-			data.detector.Detector,
-			data.verify,
-			data.chunk.SecretID != 0,
-			matchBytes)
-		matchElapsed := time.Since(matchStart)
-		t.Stop()
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4cb316c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `72cae0fb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
