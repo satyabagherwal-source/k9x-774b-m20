@@ -4,17 +4,17 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "f8229156",
+  "source_version": "a3c23355",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-14T18:26:37.338Z",
+  "timestamp": "2026-11-14T20:32:39.328Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `f8229156`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-14T18:26:37.338Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `a3c23355`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-14T20:32:39.328Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T18:26:36.424Z  
+> **Harvest Timestamp**: 2026-11-14T20:32:38.594Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2215,176 +2215,72 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8229156` (2026-11-14)
-**Commit Message**: chore: clippy::redundant_clone
+### Incident Patch 1: `a3c23355` (2026-11-14)
+**Commit Message**: deps: update lock file
 
-Drop clones of values that are dropped right after (apply, profile, stats,
-viz, mcp_skills_gen), and borrow read_conf instead of cloning it in moarstats.
-The dcat_validate.rs clone stays: `path` is used after the match.
+Refresh the lockfile to jiff 0.2.44, jiff-core 0.1.6, jiff-tzdb 0.1.10, and redis 1.8.2.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/cmd/apply.rs` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +10/-10)
 ```diff
-@@ -1203,7 +1203,7 @@ fn summarize_run<R: std::io::Read, W: std::io::Write>(
-                 && !cs.content.starts_with("<ERROR:")
-             {
-                 cache
--                    .cache_set(cache_key.clone(), cs.clone())
-+                    .cache_set(cache_key, cs.clone())
-                     .map_err(|e| CliError::Other(format!("Disk cache error: {e:?}")))?;
-             }
-             cs
-```
-
-**File**: `src/cmd/moarstats.rs` (modified, +4/-4)
-```diff
-@@ -5033,7 +5033,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     if args.flag_advanced || args.flag_bivariate {
-         // index the RESOLVED path - an index beside the compressed source is useless,
-         // since the data actually read is the converted temp
--        let rconfig = read_conf.clone();
-+        let rconfig = &read_conf;
-         let indexed_result = rconfig.indexed()?;
+@@ -4131,9 +4131,9 @@ dependencies = [
  
-         if indexed_result.is_none() && !rconfig.is_stdin() {
-@@ -5047,7 +5047,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-                  to enable parallel processing..."
-             );
+ [[package]]
+ name = "jiff"
+-version = "0.2.43"
++version = "0.2.44"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
++checksum = "ac63a5a611e9d720726d6ab6ee2ee19e6f620503554ea5d303c7cb294ff40c12"
+ dependencies = [
+  "jiff-core",
+  "jiff-static",
+@@ -4148,18 +4148,18 @@ dependencies = [
  
--            match util::create_index_for_file(read_input_path, &rconfig) {
-+            match util::create_index_for_file(read_input_path, rconfig) {
-                 Ok(()) => {
-                     log::info!("Index created successfully for statistics computation.");
-                 },
-@@ -6135,12 +6135,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         // Get record count to check for all-unique fields (cardinality == rowcount)
-         let record_count: Option<u64> = {
-             // the resolved Config, so the count is of the DATA, not the compressed container
--            let rconfig = read_conf.clone();
-+            let rconfig = &read_conf;
-             if let Ok(Some(idx)) = rconfig.indexed() {
-                 Some(idx.count())
-             } else if !rconfig.is_stdin() {
-                 // Fall back to counting rows if no index
--                util::count_rows(&rconfig).ok()
-+                util::count_rows(rconfig).ok()
-             } else {
-                 None // Can't get count from stdin
-             }
-```
-
-**File**: `src/cmd/profile.rs` (modified, +3/-3)
-```diff
-@@ -744,7 +744,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-                 },
-             }
-         } else {
--            describegpt_json.clone()
-+            describegpt_json
-         };
-         let llm_ctx = match llm_json.as_ref() {
-             Some(dg) => {
-@@ -790,7 +790,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         // robust bbox, duplicate rows, ...) need the backend during the
-         // projection pass too, not only during spec evaluation. The
-         // guard clears it on every exit path.
--        let _sql_guard = formula_helpers::SqlBackendGuard::install(sql_backend.clone());
-+        let _sql_guard = formula_helpers::SqlBackendGuard::install(sql_backend);
-         // Always project in Dataset mode first, so the discovery merge
-         // applies to the Dataset's top-level keys before the Catalog
-         // envelope is wrapped around them (Roborev #2490 finding #1).
-@@ -817,7 +817,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         let merged_dcat = if args.flag_catalog {
-             let (catalog_block, cat_warnings) =
-                 projection::wrap_in_catalog_envelope(&profile, merged_dataset, &projection_ctx)?;
--            let prefix = dataset_prefix.clone();
-+            let prefix = dataset_prefix;
-             inferred_snapshot.extend(inferred_values(&dataset_block, &inferred_paths, &prefix));
-             // Catalog-envelope fields that came from a `fallback`.
-             let catalog_inferred = projection::take_inferred_paths();
-```
-
-**File**: `src/cmd/profile/locate.rs` (modified, +1/-1)
-```diff
-@@ -731,7 +731,7 @@ fn county_column_regions(
-             && table.name_for_geoid(&name).is_some()
-             && state_fips.as_deref().is_none_or(|f| name.starts_with(f))
-         {
--            Some(name.clone())
-+            Some(name)
-         } else {
-             match table.resolve(&name, state_fips.as_deref()) {
-                 CountyLookup::Resolved(geoid) => Some(geoid),
-```
-
-**File**: `src/cmd/stats.rs` (modified, +11/-12)
-```diff
-@@ -2024,18 +2024,17 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         // recompute the stats even if the args are the same.
-         if stats_file.exists() && !args.flag_force {
-             let stats_args_json_file = stats_file.with_extension("csv.json");
--            let existing_stats_args_json_str =
--                match fs::read_to_string(stats_args_json_file.clone()) {
--                    Ok(s) => s,
--                    Err(e) => {
--                        log::warn!(
--                            "Could not read {path_file_stem}.stats.csv.json: {e:?}, recomputing..."
--                        );
--                        // remove stats cache files silently even if they don't exists
--                        remove_stats_cache_pair(&stats_file);
--                        String::new()
--                    },
--                };
-+            let existing_stats_args_json_str = match fs::read_to_string(stats_args_json_file) {
-+                Ok(s) => s,
-+                Err(e) => {
-+                    log::warn!(
-+                        "Could not read {path_file_stem}.stats.csv.json: {e:?}, recomputing..."
-+                    );
-+                    // remove stats cache files silently even if they don't exists
-+                    remove_stats_cache_pair(&stats_file);
-+                    String::new()
-+                },
-+            };
+ [[package]]
+ name = "jiff-core"
+-version = "0.1.5"
++version = "0.1.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
++checksum = "48e9635854583b49ce3c6c43a071f70b0a49e79ad3c261c7b3aa76b2280416d2"
+ dependencies = [
+  "log",
+ ]
  
-             if !existing_stats_args_json_str.is_empty() {
-                 let time_saved: u64;
-```
-
-**File**: `src/cmd/viz.rs` (modified, +2/-2)
-```diff
-@@ -11227,7 +11227,7 @@ fn choropleth_geocoded_locations(
-                 rejected_units += value;
-                 if exemplars.len() < 3 {
-                     let where_found = if r.admin1_name.is_empty() {
--                        r.country_name.clone()
-+                        r.country_name
-                     } else {
-                         format!("{}, {}", r.admin1_name, r.iso2)
-                     };
-@@ -27070,7 +27070,7 @@ fn render_dict_page_html(
-     // (viz.title.data_schematic) — prefixing it again would read "Data Schematic — x.csv —
-     // Data Schematic", so the brand prefix is reserved for custom titles that lack it.
-     let doc_title = if title.contains(dict_page_title.as_ref()) {
--        title.to_string()
-+        title
-     } else {
-         format!("{dict_page_title} — {title}")
-     };
-```
-
-**File**: `src/mcp_skills_gen.rs` (modified, +1/-1)
-```diff
-@@ -684,7 +684,7 @@ impl UsageParser {
-                     args_map.insert(
-                         arg_name.clone(),
-                         Argument {
--                            name: arg_name.clone(),
-+                            name: arg_name,
-                             arg_type,
-                             required,
-                             description,
+ [[package]]
+ name = "jiff-static"
+-version = "0.2.43"
++version = "0.2.44"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
++checksum = "9f9c27796c21cc8b33ce490f148d53fe41d679b887885bf0ef8f662cdb9b35c0"
+ dependencies = [
+  "jiff-core",
+  "proc-macro2",
+@@ -4169,9 +4169,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "jiff-tzdb"
+-version = "0.1.9"
++version = "0.1.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
++checksum = "0980fca2cc272465bd60e82397607ba9f33add9e48defd77923301bbd03808f2"
+ 
+ [[package]]
+ name = "jiff-tzdb-platform"
+@@ -7676,9 +7676,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "redis"
+-version = "1.8.1"
++version = "1.8.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "db7f3d75b5a3301746bff39a767bf4c5c42506b08513527308b3875bfb64a031"
++checksum = "4bef8fa589dd53a8a379a7856de1365d0a1be50c6b8aebb5c01c1ec441a2c509"
+ dependencies = [
+  "ahash",
+  "arcstr",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2413,31 +2309,49 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clippy::redundant_clone
+## X. deps: update lock file
 
 **RULE**:
-When implementing operations in `src/cmd/apply.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f8229156`: clippy::redundant_clone. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3c23355`: deps: update lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/apply.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                    .cache_set(cache_key, cs.clone())
+version = "0.2.44"
+checksum = "ac63a5a611e9d720726d6ab6ee2ee19e6f620503554ea5d303c7cb294ff40c12"
+version = "0.1.6"
+checksum = "48e9635854583b49ce3c6c43a071f70b0a49e79ad3c261c7b3aa76b2280416d2"
+version = "0.2.44"
+checksum = "9f9c27796c21cc8b33ce490f148d53fe41d679b887885bf0ef8f662cdb9b35c0"
+version = "0.1.10"
+checksum = "0980fca2cc272465bd60e82397607ba9f33add9e48defd77923301bbd03808f2"
+version = "1.8.2"
+checksum = "4bef8fa589dd53a8a379a7856de1365d0a1be50c6b8aebb5c01c1ec441a2c509"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                    .cache_set(cache_key.clone(), cs.clone())
+version = "0.2.43"
+checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
+version = "0.1.5"
+checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
+version = "0.2.43"
+checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
+version = "0.1.9"
+checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
+version = "1.8.1"
+checksum = "db7f3d75b5a3301746bff39a767bf4c5c42506b08513527308b3875bfb64a031"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f8229156` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3c23355` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

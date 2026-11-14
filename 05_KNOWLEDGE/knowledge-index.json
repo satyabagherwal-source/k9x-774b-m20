@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T20:09:45.517Z",
-  "total_verified_learnings": 8599,
+  "last_updated": "2026-11-14T20:36:24.251Z",
+  "total_verified_learnings": 8602,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17768,
+  "total_items": 17796,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112094,10 +112094,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "f8229156",
-      "content_hash": "b5ebc08e31260f7abef40888024a985ae5c97d114d087923b26808332b363a96",
+      "source_version": "a3c23355",
+      "content_hash": "bd52445e16d74cf41307e3a5f2245e5315e0a30553780d58cfdf880646400562",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T18:26:37.596Z"
+      "persisted_at": "2026-11-14T20:32:39.529Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -218661,8 +218661,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "f8229156",
-      "content_hash": "57be43664ac49a77f4a8b672af17832866bbc6cff146fd41aea1d79430ca7e08",
+      "source_version": "a3c23355",
+      "content_hash": "b2657f28e0b881f1f599e73ba5a63e8a7bbeb3f563ca610ecb82793f6ca1ad78",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218688,7 +218688,7 @@
         },
         {
           "number": "EXISTING",
-          "title": "redundant_clone",
+          "title": "update lock file",
           "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
@@ -218697,7 +218697,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T18:26:36.941Z",
+      "verified_at": "2026-11-14T20:32:39.011Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219527,10 +219527,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "f8229156",
-      "content_hash": "37cc78362f358c90ee3cb3cf9ef6f524d5f235f9a2fbe1c1ec75740986b57c9c",
+      "source_version": "a3c23355",
+      "content_hash": "ce26e9ecfa47dd9157043d0cb1090adc26365b0be2937d472b4b7b2d7ba463af",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T18:26:37.468Z"
+      "persisted_at": "2026-11-14T20:32:39.429Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -233688,6 +233688,418 @@
       "content_hash": "1b3e6ba15ffcf40a68a823d00adb798b0709516baab131ac161b342cb5f0e207",
       "domain_letter": "D",
       "persisted_at": "2026-11-14T20:09:44.477Z"
+    },
+    "learn-github-sqldelight-sqldelight": {
+      "learning_id": "learn-github-sqldelight-sqldelight",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sqldelight/sqldelight",
+      "repository": "sqldelight/sqldelight",
+      "slug": "sqldelight-sqldelight",
+      "platform": "github",
+      "source_url": "https://github.com/sqldelight/sqldelight",
+      "source_version": "25cc64a6",
+      "content_hash": "e8558f709349d6bb4bbf8d8d27d98b87112bad933cf4b75451c39fa7867a4533",
+      "dossier_path": "07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8528,
+          "title": "is column same instance must check the source table",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T20:32:29.639Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8528": {
+      "learning_id": "rule-8528",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8528,
+      "title": "is column same instance must check the source table",
+      "source_url": "https://github.com/sqldelight/sqldelight",
+      "source_version": "25cc64a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T20:32:29.639Z"
+    },
+    "candidate_directive-is-column-same-instance-must-check-the-source-table": {
+      "item_id": "candidate_directive-is-column-same-instance-must-check-the-source-table",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8TKJ-is-column-same-instance-must-check-the-source-table.md",
+      "title": "is column same instance must check the source table",
+      "repository": "sqldelight-sqldelight-learnings",
+      "source_version": "HEAD",
+      "content_hash": "221f885be9fbaa5b6199d05c22cb015123a7fced0bccc3be59ee807c6ded5af5",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T20:36:23.347Z"
+    },
+    "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqldelight-sqldelight-architecture-intelligence-sqldelight-sqldelight-core-invar.md",
+      "title": "Architecture Intelligence: sqldelight/sqldelight Core Invariants",
+      "repository": "sqldelight/sqldelight",
+      "source_version": "25cc64a6",
+      "content_hash": "3f48a9e141169046be5800248394416cb824c99602126f54318a48a55d8aba41",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T20:32:30.020Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sqldelight-sqldelight": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sqldelight-sqldelight",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sqldelight-sqldelight-verification-protocol-empirical-defect-shield-for-sqldelig.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sqldelight/sqldelight",
+      "repository": "sqldelight/sqldelight",
+      "source_version": "25cc64a6",
+      "content_hash": "40433a5926b08d66fab23188b313c2a9bc41dd6c6f8f865a160ca16575d1f5ae",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T20:32:30.126Z"
+    },
+    "learn-github-vespa-engine-vespa": {
+      "learning_id": "learn-github-vespa-engine-vespa",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "vespa-engine/vespa",
+      "repository": "vespa-engine/vespa",
+      "slug": "vespa-engine-vespa",
+      "platform": "github",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "1f5abdb0",
+      "content_hash": "a98cc0a7023ddf123e164393f84d3354f45ddb86339a93440510fdef590b3b54",
+      "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8529,
+          "title": "Empirical Invariant Guard in Gemfile.lock",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T20:32:38.085Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8529": {
+      "learning_id": "rule-8529",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8529,
+      "title": "Empirical Invariant Guard in Gemfile.lock",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "1f5abdb0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T20:32:38.085Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-gemfile-lock": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-gemfile-lock",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8U06-empirical-invariant-guard-in-gemfile-lock.md",
+      "title": "Empirical Invariant Guard in Gemfile.lock",
+      "repository": "vespa-engine-vespa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "85b9011bd344ad06c159a5f5e7b10d3552a25050a5b8e02bae3d37706ebecc89",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T20:36:23.923Z"
+    },
+    "domain_intelligence-architecture-intelligence-vespa-engine-vespa-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-vespa-engine-vespa-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
+      "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
+      "repository": "vespa-engine/vespa",
+      "source_version": "1f5abdb0",
+      "content_hash": "f89a9f1b6c96e3015e2a78e7bc5a4a7f0503603682e68c7cdadf7232261faf8e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T20:32:38.497Z"
+    },
+    "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/vespa-engine-vespa-agent-contract-vespa-engine-vespa-autonomous-specialist-perso.md",
+      "title": "Agent Contract: vespa-engine/vespa Autonomous Specialist Persona",
+      "repository": "vespa-engine/vespa",
+      "source_version": "1f5abdb0",
+      "content_hash": "fd07853db23d04a066bb7c1b86ab1ef7035d31a0ad58b411d711cfcfce6530e5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T20:32:38.595Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/vespa-engine-vespa-verification-protocol-empirical-defect-shield-for-vespa-engin.md",
+      "title": "Verification Protocol: Empirical Defect Shield for vespa-engine/vespa",
+      "repository": "vespa-engine/vespa",
+      "source_version": "1f5abdb0",
+      "content_hash": "32bdff21e928ef058457349909af6f7b8b7477b7c2ed937ae6a6e9ee6535e903",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T20:32:38.692Z"
+    },
+    "candidate_directive-update-lock-file": {
+      "item_id": "candidate_directive-update-lock-file",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-40PR-update-lock-file.md",
+      "title": "update lock file",
+      "repository": "dathere/qsv",
+      "source_version": "a3c23355",
+      "content_hash": "6c2f90f1e2909963e4cf96c5f670499542233ffe83bf366a3da98f0231474b07",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T20:32:39.331Z"
+    },
+    "learn-huggingface-qwen-qwen-image-2-1-turbo": {
+      "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Qwen/Qwen-Image-2.1-Turbo",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "slug": "hf-qwen-qwen-image-2.1-turbo",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "content_hash": "5d545727d66c6e7c19bf9dbc74210115a4e2f1bf676f1e6d7bc30d6a4f419451",
+      "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8530,
+          "title": "Invariant Embedding of Distilled Sampling Sigmas in Model Metadata",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8531,
+          "title": "Mandatory CFG-1 Bypass and Prefix KV-Cache Segregation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T20:35:49.068Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8530": {
+      "learning_id": "rule-8530",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8530,
+      "title": "Invariant Embedding of Distilled Sampling Sigmas in Model Metadata",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T20:35:49.068Z"
+    },
+    "rule-8531": {
+      "learning_id": "rule-8531",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8531,
+      "title": "Mandatory CFG-1 Bypass and Prefix KV-Cache Segregation",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T20:35:49.068Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-qwen-qwen-image-2-1-turbo-technical-construction-intelligence-qwen-qwen-image.md",
+      "title": "Technical Construction Intelligence: Qwen/Qwen-Image-2.1-Turbo Core Invariants",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "content_hash": "e007520d1fc06bcee9429efb4a6285db7fceac171e022e916e0d68c66c0ec569",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T20:35:49.522Z"
+    },
+    "agent_contract-agent-contract-qwen-qwen-image-2-1-turbo-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-qwen-qwen-image-2-1-turbo-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/hf-qwen-qwen-image-2-1-turbo-agent-contract-qwen-qwen-image-2-1-turbo-autonomous.md",
+      "title": "Agent Contract: Qwen/Qwen-Image-2.1-Turbo Autonomous Specialist Persona",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "content_hash": "cbdb96adcae9cb030a7282143e588d26309872878079cda0efe1773d62b57872",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T20:35:49.618Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-qwen-qwen-image-2-1-turbo": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-qwen-qwen-image-2-1-turbo",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-qwen-qwen-image-2-1-turbo-verification-protocol-empirical-defect-shield-for-q.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Qwen/Qwen-Image-2.1-Turbo",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "content_hash": "dfd0d3065c1ec338dda15bea251704c882449ae4a4290e542c883bf6318b8d01",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T20:35:49.707Z"
+    },
+    "candidate_directive-invariant-embedding-of-distilled-sampling-sigmas-in-model-metadata": {
+      "item_id": "candidate_directive-invariant-embedding-of-distilled-sampling-sigmas-in-model-metadata",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8SW5-invariant-embedding-of-distilled-sampling-sigmas-in-model-metadata.md",
+      "title": "Invariant Embedding of Distilled Sampling Sigmas in Model Metadata",
+      "repository": "hf-qwen-qwen-image-2.1-turbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "653d098c260eb230fb55797ddf94a99b0f83ed506eda4b5a85bd7f027a5d1602",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T20:36:22.471Z"
+    },
+    "candidate_directive-mandatory-cfg-1-bypass-and-prefix-kv-cache-segregation": {
+      "item_id": "candidate_directive-mandatory-cfg-1-bypass-and-prefix-kv-cache-segregation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8SW6-mandatory-cfg-1-bypass-and-prefix-kv-cache-segregation.md",
+      "title": "Mandatory CFG-1 Bypass and Prefix KV-Cache Segregation",
+      "repository": "hf-qwen-qwen-image-2.1-turbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "913852f6b48b2c2d9c6ae12ed0146579641980414a44fb2da0314d742ee7996b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T20:36:22.582Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-qwen-qwen-image-2-1-turbo-learnings-technical-construction-intelligence-hf-qw.md",
+      "title": "Technical Construction Intelligence: hf-qwen-qwen-image-2.1-turbo-learnings Core Invariants",
+      "repository": "hf-qwen-qwen-image-2.1-turbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "047aee5f1f1f7e6934e19d003ca3b332005840d26ab6edaa4dec155dd31b3857",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T20:36:22.694Z"
+    },
+    "agent_contract-agent-contract-hf-qwen-qwen-image-2-1-turbo-learnings-autonomous-specialist-pers": {
+      "item_id": "agent_contract-agent-contract-hf-qwen-qwen-image-2-1-turbo-learnings-autonomous-specialist-pers",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/hf-qwen-qwen-image-2-1-turbo-learnings-agent-contract-hf-qwen-qwen-image-2-1-tur.md",
+      "title": "Agent Contract: hf-qwen-qwen-image-2.1-turbo-learnings Autonomous Specialist Persona",
+      "repository": "hf-qwen-qwen-image-2.1-turbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2177c4fa5bc621102f9368e4ca6084e2974ff3db347dd3fa05a1e8b685af716f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T20:36:22.808Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-qwen-qwen-image-2-1-turbo-l": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-qwen-qwen-image-2-1-turbo-l",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-qwen-qwen-image-2-1-turbo-learnings-verification-protocol-empirical-defect-sh.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-qwen-qwen-image-2.1-turbo-learnings",
+      "repository": "hf-qwen-qwen-image-2.1-turbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "50ea0ce045f067ba825c3938a1d3be91c125c2b0ae2fb766a3594cb1a9311c94",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T20:36:22.917Z"
+    },
+    "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqldelight-sqldelight-learnings-architecture-intelligence-sqldelight-sqldelight-.md",
+      "title": "Architecture Intelligence: sqldelight-sqldelight-learnings Core Invariants",
+      "repository": "sqldelight-sqldelight-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d97177192f622c0872ce29727b84d59ac8d6dadfc8169e55ff9fbcafd9047f5d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T20:36:23.462Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sqldelight-sqldelight-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sqldelight-sqldelight-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sqldelight-sqldelight-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sqldelight-sqldelight-learnings",
+      "repository": "sqldelight-sqldelight-learnings",
+      "source_version": "HEAD",
+      "content_hash": "146425e74970e9490ceb1b474ef20f6efa876ebcda49e0f87e734263a9863f04",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T20:36:23.576Z"
+    },
+    "domain_intelligence-architecture-intelligence-vespa-engine-vespa-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-vespa-engine-vespa-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-learnings-architecture-intelligence-vespa-engine-vespa-learni.md",
+      "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
+      "repository": "vespa-engine-vespa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ac075e329b4705e4a91298beb5a25ece9882791d586efff19fabcd4a0ce8f607",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T20:36:24.027Z"
+    },
+    "agent_contract-agent-contract-vespa-engine-vespa-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-vespa-engine-vespa-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/vespa-engine-vespa-learnings-agent-contract-vespa-engine-vespa-learnings-autonom.md",
+      "title": "Agent Contract: vespa-engine-vespa-learnings Autonomous Specialist Persona",
+      "repository": "vespa-engine-vespa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bdcf0a36da7b7e0ad61c0cc97fb996847937e7c1d7bf97bdd9c79c9e29f0e6e0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T20:36:24.141Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/vespa-engine-vespa-learnings-verification-protocol-empirical-defect-shield-for-v.md",
+      "title": "Verification Protocol: Empirical Defect Shield for vespa-engine-vespa-learnings",
+      "repository": "vespa-engine-vespa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "127e45c91782e3b5cb9406cc5b973fcf4c898730bcb168b144a40f1d72a2d1ec",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T20:36:24.251Z"
     }
   },
   "ai-builder-brain": {

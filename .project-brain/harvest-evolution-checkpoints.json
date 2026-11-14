@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T20:09:45.610Z",
+  "last_updated": "2026-11-14T20:36:24.359Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T20:09:45.155Z",
@@ -173,7 +173,7 @@
       "staged_for_review": 1
     },
     "sqldelight-sqldelight-learnings.md": {
-      "processed_at": "2026-11-11T10:35:34.161Z",
+      "processed_at": "2026-11-14T20:36:23.033Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -933,7 +933,7 @@
       "staged_for_review": 1
     },
     "vespa-engine-vespa-learnings.md": {
-      "processed_at": "2026-11-12T07:46:43.605Z",
+      "processed_at": "2026-11-14T20:36:23.689Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2741,9 +2741,14 @@
       "processed_at": "2026-11-14T20:09:44.302Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-qwen-qwen-image-2.1-turbo-learnings.md": {
+      "processed_at": "2026-11-14T20:36:22.265Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 906,
-  "total_canonical_promoted": 218,
-  "total_staged_for_review": 687
+  "total_dossiers_evaluated": 909,
+  "total_canonical_promoted": 219,
+  "total_staged_for_review": 690
 }

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T20:09:44.210Z",
-    "lastVerified": "2026-11-14T20:09:44.210Z",
+    "lastChecked": "2026-11-14T20:35:52.477Z",
+    "lastVerified": "2026-11-14T20:35:52.477Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -254,22 +254,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T19:33:50.452Z",
-    "lastVerified": "2026-11-14T19:33:50.452Z",
+    "lastChecked": "2026-11-14T20:32:38.594Z",
+    "lastVerified": "2026-11-14T20:32:38.594Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "57be43664ac49a77f4a8b672af17832866bbc6cff146fd41aea1d79430ca7e08",
+    "contentHash": "b2657f28e0b881f1f599e73ba5a63e8a7bbeb3f563ca610ecb82793f6ca1ad78",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f8229156"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -488,9 +487,9 @@
   "tabbyml-tabby": {
     "name": "tabby",
     "officialUrl": "https://github.com/TabbyML/tabby",
-    "lastChecked": "2026-11-13T06:06:33.891Z",
+    "lastChecked": "2026-11-14T20:32:20.393Z",
     "revisionIdentifier": "21b29048",
-    "lastVerified": "2026-11-13T06:06:33.891Z"
+    "lastVerified": "2026-11-14T20:32:20.393Z"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
     "name": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -2149,12 +2148,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T12:34:02.491Z",
-    "lastVerified": "2026-11-14T12:34:02.491Z",
+    "lastChecked": "2026-11-14T20:32:30.568Z",
+    "lastVerified": "2026-11-14T20:32:30.568Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -2163,7 +2162,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9e6e2e23"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -5758,12 +5758,12 @@
     "revisionIdentifier": "fbc666cf"
   },
   "crossplane-crossplane": {
-    "name": "crossplane/crossplane",
+    "name": "crossplane",
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T15:29:32.057Z",
-    "lastVerified": "2026-11-13T15:29:32.057Z",
+    "lastChecked": "2026-11-14T20:32:27.882Z",
+    "lastVerified": "2026-11-14T20:32:27.882Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
@@ -5772,7 +5772,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "786343a3"
   },
   "sfu-db-connector-x": {
     "name": "connector-x",
@@ -7246,14 +7247,14 @@
     "officialUrl": "https://github.com/sqldelight/sqldelight",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-11T10:35:00.620Z",
-    "lastVerified": "2026-11-11T10:35:00.620Z",
+    "lastChecked": "2026-11-14T20:32:28.871Z",
+    "lastVerified": "2026-11-14T20:32:28.871Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqldelight-sqldelight",
-    "contentHash": "8ce858e905ff14a2a2e8e73d57a6b675b6c38f3c25ab49f86708f7c919d7c69c",
+    "contentHash": "e8558f709349d6bb4bbf8d8d27d98b87112bad933cf4b75451c39fa7867a4533",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7457,14 +7458,14 @@
     "officialUrl": "https://github.com/vespa-engine/vespa",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-13T13:50:32.007Z",
-    "lastVerified": "2026-11-13T13:50:32.007Z",
+    "lastChecked": "2026-11-14T20:32:37.413Z",
+    "lastVerified": "2026-11-14T20:32:37.413Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "8cb0f4e2845a98daeede205ac11604aad813f2b903e98febaa5c5c5ac3b1bde8",
+    "contentHash": "a98cc0a7023ddf123e164393f84d3354f45ddb86339a93440510fdef590b3b54",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8587,13 +8588,13 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T09:09:50.820Z",
-    "lastVerified": "2026-11-09T09:09:50.820Z",
+    "lastChecked": "2026-11-14T20:32:22.884Z",
+    "lastVerified": "2026-11-14T20:32:22.884Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-    "contentHash": "aa5b6c46b12c7cfad91aaa1b68dd30a52cb59d0ec4cdfc041ea5ab75e9a57ff3",
-    "promotedRulesCount": 3,
+    "contentHash": "5d545727d66c6e7c19bf9dbc74210115a4e2f1bf676f1e6d7bc30d6a4f419451",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

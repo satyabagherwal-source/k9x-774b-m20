@@ -375,8 +375,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "aa5b6c46b12c7cfad91aaa1b68dd30a52cb59d0ec4cdfc041ea5ab75e9a57ff3",
-    "lastHarvestedAt": "2026-11-09T09:16:27.359Z",
+    "contentHash": "5d545727d66c6e7c19bf9dbc74210115a4e2f1bf676f1e6d7bc30d6a4f419451",
+    "lastHarvestedAt": "2026-11-14T20:35:49.208Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "f8229156",
+    "sourceVersion": "a3c23355",
     "license": "NOASSERTION",
-    "contentHash": "57be43664ac49a77f4a8b672af17832866bbc6cff146fd41aea1d79430ca7e08",
-    "lastHarvestedAt": "2026-11-14T18:26:37.119Z",
+    "contentHash": "b2657f28e0b881f1f599e73ba5a63e8a7bbeb3f563ca610ecb82793f6ca1ad78",
+    "lastHarvestedAt": "2026-11-14T20:32:39.155Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "08023735",
+    "sourceVersion": "1f5abdb0",
     "license": "Apache-2.0",
-    "contentHash": "8cb0f4e2845a98daeede205ac11604aad813f2b903e98febaa5c5c5ac3b1bde8",
-    "lastHarvestedAt": "2026-11-13T13:50:46.537Z",
+    "contentHash": "a98cc0a7023ddf123e164393f84d3354f45ddb86339a93440510fdef590b3b54",
+    "lastHarvestedAt": "2026-11-14T20:32:38.228Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -6693,10 +6693,10 @@
     "repository": "sqldelight/sqldelight",
     "platform": "github",
     "sourceUrl": "https://github.com/sqldelight/sqldelight",
-    "sourceVersion": "21ce991b",
+    "sourceVersion": "25cc64a6",
     "license": "Apache-2.0",
-    "contentHash": "8ce858e905ff14a2a2e8e73d57a6b675b6c38f3c25ab49f86708f7c919d7c69c",
-    "lastHarvestedAt": "2026-11-11T10:35:17.386Z",
+    "contentHash": "e8558f709349d6bb4bbf8d8d27d98b87112bad933cf4b75451c39fa7867a4533",
+    "lastHarvestedAt": "2026-11-14T20:32:29.778Z",
     "learningId": "learn-github-sqldelight-sqldelight"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {

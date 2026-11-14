@@ -9961,3 +9961,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-14T19:59:28.144Z |
 | `learn-dom-d-e0561fd8` | `project://hf-conwayresearch-underdog-saluki-27b-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | 2026-11-14T20:00:03.524Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-14T20:09:32.648Z |
+| `learn-github-sqldelight-sqldelight` | `https://github.com/sqldelight/sqldelight` | `25cc64a6` | Multi-dimensional audit evidence | 2026-11-14T20:32:29.778Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `1f5abdb0` | Multi-dimensional audit evidence | 2026-11-14T20:32:38.228Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a3c23355` | Multi-dimensional audit evidence | 2026-11-14T20:32:39.155Z |
+| `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-14T20:35:49.208Z |
+| `learn-dom-h-ade4819d` | `project://hf-qwen-qwen-image-2.1-turbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | 2026-11-14T20:36:22.260Z |

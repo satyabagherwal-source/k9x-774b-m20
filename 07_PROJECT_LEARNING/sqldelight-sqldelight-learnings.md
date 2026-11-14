@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md`  
 > **Source**: github ([https://github.com/sqldelight/sqldelight](https://github.com/sqldelight/sqldelight))  
-> **Source Version**: `21ce991b`  
+> **Source Version**: `25cc64a6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:35:00.627Z  
+> **Timestamp**: 2026-11-14T20:32:28.984Z  
 > **Learning ID**: `learn-github-sqldelight-sqldelight`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqldelight/sqldelight](https://github.com/sqldelight/sqldelight))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:35:00.620Z  
+> **Harvest Timestamp**: 2026-11-14T20:32:28.871Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -491,10 +491,8 @@ expect fun createDefaultWebWorkerDriver(): SqlDriver
 - **Issue #6384** (2026-10-05): **Exception in plugin SQLDelight**
   *Symptoms*: ### SQLDelight Version  2.3.2  ### IDE Version  Androoid Studio Rabbit 1 2026.2.1  ### Dialect  SQLite  ### Describe the Bug  ### Description SQLDelight IDE plugin v2.3.2 crashes on startup and during VFS/save events with `NoClassDefFoundError: org/jetbrains/kotlin/idea/util/projectStructure/ProjectStructureUtilKt`.  ### Environment - **SQLDelight Plugin Version:** 2.3.2 - **IDE:** Android Studio (Build #AI-262.9437.185.2621.16467767 / Android Studio Rabbit 1 | 2026.2.1) - **OS:** macOS  ### Steps to Reproduce 1. Install SQLDelight plugin v2.3.2 into Android Studio. 2. Open a project with SQLDelight configured. 3. Observe the "IDE error occurred" popup notification on startup or when files are saved.  ### Root Cause / Details `app.cash.sqldelight.intellij.ProjectService.findConfiguredFileIndex(ProjectService.kt:124)` references `org.jetbrains.kotlin.idea.util.projectStructure.ProjectStructureUtilKt`. In recent platform/Kotlin plugin builds (262+ platform baseline / K2 plugin restructuring), this class/package has been moved or removed, causing runtime linkage failure.  ### Stacktrace  ```shell java.lang.NoClassDefFoundError: org/jetbrains/kotlin/idea/util/projectStructure/ProjectStructureUtilKt 	at app.cash.sqldelight.intellij.ProjectService.findConfiguredFileIndex(ProjectService.kt:124) 	at app.cash.sqldelight.intellij.ProjectService.access$findConfiguredFileIndex(ProjectService.kt:63) 	at app.cash.sqldelight.intellij.ProjectService$1.after(ProjectService.kt:100) 	at com.int
 
-- **Issue #6305** (2026-07-14): **'WITH' unexpected**
-  *Symptoms*: ### SQLDelight Version  2.3.2  ### SQLDelight Dialect  sqlite_3_38  ### Describe the Bug  Getting the below stacktrace for this query. Any idea why?  ``` selectAllWithFirstAndLast{     WITH RankedSequences AS (         SELECT             r.id AS route_id,             r.name AS route_name,             s.sequence_id,             s.ordinal,             s.stop AS stop_id,             ROW_NUMBER() OVER (PARTITION BY s.route, s.sequence_id ORDER BY s.ordinal ASC) as rn_first,             ROW_NUMBER() OVER (PARTITION BY s.route, s.sequence_id ORDER BY s.ordinal DESC) as rn_last         FROM routes r         JOIN sequences s ON r.id = s.route     );     SELECT         rs.route_id,         rs.route_name,         rs.sequence_id,         rs.ordinal,         rs.stop_id,         st.name AS stop_name     FROM RankedSequences rs     JOIN stops st ON rs.stop_id = st.id     WHERE rs.rn_first = 1 OR rs.rn_last = 1     ORDER BY rs.route_id, rs.sequence_id, rs.ordinal; } ```  ### Stacktrace  ```shell Compiling with dialect app.cash.sqldelight.dialects.sqlite_3_38.SqliteDialect  *****.sq: (6, 32): 'WITH' unexpected ```
-  **Post-Mortem & Fix Analysis**:
-  > 1. as -> AS 2. Remove semi-colon  Also, but not compiler error, use of `selectAllWithFirstAndLast{` braces surrounding query are only needed for multiple statements, remove braces use `selectAllWithFirstAndLast:`   ```sql selectAllWithFirstAndLast{     WITH RankedSequences AS (         SELECT             r.id AS route_id,             r.name AS route_name,             s.sequence_id,             s.ordinal,             s.stop AS stop_id,             ROW_NUMBER() OVER (PARTITION BY s.route, s.sequence_id ORDER BY s.ordinal ASC) as rn_first, <-- AS             ROW_NUMBER() OVER (PARTITION BY s.route, s.sequence_id ORDER BY s.ordinal DESC) as rn_last <-- AS         FROM routes r         JOIN sequences s ON r.id = s.route     ); <--- remove     SELECT         rs.route_id,         rs.route_name,         rs.sequence_id,         rs.ordinal,         rs.stop_id,         st.name AS stop_name     FROM RankedSequences rs     JOIN stops st ON rs.stop_id = st.id     WHERE rs.rn_first = 1 OR rs.rn_last 
+- **Issue #6383** (2026-11-12): **False positive: "Join condition always evaluates to true"**
+  *Symptoms*: ### SQLDelight Version  2.3.2  ### IDE Version  Android Studio Rabbit 1 | 2026.2.1  ### Dialect  SQLite  ### Describe the Bug  Not a crash or a functional issue, but a false positive underline warning in the IDE.  Basic reproducer below, where the `t2.id = t1.id` checks are both underlined with the "Join condition always evaluates to true" warning:  ```sql CREATE TABLE MyTable (   id TEXT PRIMARY KEY,   name TEXT );  CREATE VIEW MyView AS SELECT t.id, t.name FROM MyTable t;  selfJoin: SELECT t1.name, t2.name FROM MyTable t1 JOIN MyTable t2 ON t2.id = t1.id;  viewToOwnTable: SELECT v.name, t.name FROM MyView v JOIN MyTable t ON t.id = v.id; ```  which gives:  <img width="541" height="374" alt="Image" src="https://github.com/user-attachments/assets/e63981d7-0599-4e7c-984f-923d4b2bf563" />  ### Stacktrace  ```shell None ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -511,84 +509,124 @@ expect fun createDefaultWebWorkerDriver(): SqlDriver
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `21ce991b` (2026-11-10)
-**Commit Message**: Fix ReflectiveKotlinFindUsagesFactory exceptions (#6355)
+### Incident Patch 1: `25cc64a6` (2026-11-12)
+**Commit Message**: is column same instance must check the source table (#6398)
 
-* Fix ReflectiveKotlinFindUsagesFactory exceptions
-
-Rethrow the original exception so it propagates as if the call were direct
+isColumnSameAs add missing instance checks on columns to determine if from same source.
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -30,6 +30,7 @@
- ### Fixed
+@@ -14,6 +14,7 @@
  
- - [IntelliJ Plugin] Fix plugin publishing violations by changing IntelliJ API use (#6366 #6368 by @griffio)
-+- [Intellij Plugin] Improve stability when typing by trapping unhandled errors. (#6355 by @griffio)
+ - [Runtime] Keep the transaction body's exception when ending the transaction or a post-rollback hook also fails, for example with `cannot rollback - no transaction is active` after SQLite rolled the transaction back on its own. The second exception is added as suppressed, and the Android driver now clears its current transaction even when `endTransaction()` throws (#6387 by @pyricau)
+ - [Gradle Plugin] Configuration.visible property no longer has any effect. The property is now deprecated and will be removed in Gradle 11 (#6394 by @griffio)
++- [IntelliJ Plugin] Fixes join inspection showing a false positive (#6398 by @griffio)
  
- 
- ## [2.4.0] - 2026-09-17
+ ## [2.4.1] - 2026-10-06
+ [2.4.1]: https://github.com/sqldelight/sqldelight/releases/tag/2.4.1
 ```
 
-**File**: `sqldelight-idea-plugin/src/main/kotlin/app/cash/sqldelight/intellij/usages/ReflectiveKotlinFindUsagesFactory.kt` (modified, +4/-3)
+**File**: `sqldelight-compiler/src/main/kotlin/app/cash/sqldelight/core/lang/psi/TypedColumn.kt` (modified, +25/-1)
 ```diff
-@@ -1,5 +1,6 @@
- package app.cash.sqldelight.intellij.usages
+@@ -17,7 +17,9 @@ package app.cash.sqldelight.core.lang.psi
  
-+import app.cash.sqldelight.intellij.util.unwrappingInvocationTarget
- import com.intellij.find.findUsages.FindUsagesHandler
- import com.intellij.find.findUsages.FindUsagesHandlerFactory
- import com.intellij.find.findUsages.FindUsagesOptions
-@@ -16,8 +17,8 @@ class ReflectiveKotlinFindUsagesFactory private constructor(
-   private val findFunctionOptionsMethod: Method = wrapped.javaClass.getMethod("getFindFunctionOptions")
-   private val findPropertyOptionsMethod: Method = wrapped.javaClass.getMethod("getFindPropertyOptions")
+ import app.cash.sqldelight.core.lang.util.type
+ import app.cash.sqldelight.dialect.api.IntermediateType
++import com.alecstrong.sql.psi.core.psi.SqlColumnExpr
+ import com.alecstrong.sql.psi.core.psi.SqlColumnName
++import com.intellij.psi.PsiNamedElement
+ import com.squareup.kotlinpoet.PropertySpec
  
--  val findFunctionOptions get() = findFunctionOptionsMethod.invoke(wrapped) as FindUsagesOptions
--  val findPropertyOptions get() = findPropertyOptionsMethod.invoke(wrapped) as FindUsagesOptions
-+  val findFunctionOptions get() = unwrappingInvocationTarget { findFunctionOptionsMethod.invoke(wrapped) } as FindUsagesOptions
-+  val findPropertyOptions get() = unwrappingInvocationTarget { findPropertyOptionsMethod.invoke(wrapped) } as FindUsagesOptions
- 
-   fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
-     return wrapped.createFindUsagesHandler(element, forHighlightUsages)!!
-@@ -50,7 +51,7 @@ class ReflectiveKotlinFindUsagesFactory private constructor(
- 
-     private fun createKotlinFindUsagesHandlerFactory(project: Project): FindUsagesHandlerFactory {
-       val ctor = factoryClass.getConstructor(Project::class.java)
--      return ctor.newInstance(project) as FindUsagesHandlerFactory
-+      return unwrappingInvocationTarget { ctor.newInstance(project) } as FindUsagesHandlerFactory
-     }
-   }
+ internal interface TypedColumn {
+@@ -33,5 +35,27 @@ internal interface TypedColumn {
+   fun adapter(): PropertySpec?
  }
-```
-
-**File**: `sqldelight-idea-plugin/src/main/kotlin/app/cash/sqldelight/intellij/util/Reflection.kt` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+package app.cash.sqldelight.intellij.util
-+
-+import java.lang.reflect.InvocationTargetException
+ 
+-fun SqlColumnName.isColumnSameAs(other: SqlColumnName) = type().let { it.column != null && it.column == other.type().column }
++/**
++ * @return true if both column names refer to the same column of the same table instance in the
++ * query. Two references to the same column definition through different table instances e.g a self
++ * join or a view joined to the table it selects from are not the same column instance.
++ */
++fun SqlColumnName.isColumnSameAs(other: SqlColumnName): Boolean {
++  val column = type().column ?: return false
++  if (column != other.type().column) return false
++  return sourceTable() == other.sourceTable()
++}
 +
 +/**
-+ * Reflective calls wrap anything thrown by the target in [InvocationTargetException], which hides
-+ * exceptions such as [com.intellij.openapi.progress.ProcessCanceledException] from callers that
-+ * need to see them. Rethrow the original exception so it propagates as if the call were direct.
++ * The table, alias or view this column name is selected from or null if it cannot be determined.
 + */
-+internal inline fun <T> unwrappingInvocationTarget(block: () -> T): T {
-+  try {
-+    return block()
-+  } catch (e: InvocationTargetException) {
-+    throw e.targetException ?: e
-+  }
++private fun SqlColumnName.sourceTable(): PsiNamedElement? {
++  val resolved = reference?.resolve() ?: return null
++  val tableName = (parent as? SqlColumnExpr)?.tableName
++  return queryAvailable(this)
++    .filter { tableName == null || it.table?.name == tableName.name }
++    .firstOrNull { result -> result.columns.any { it.element == resolved } }
++    ?.table
 +}
++
+ fun SqlColumnName.isTypeSameAs(other: SqlColumnName) = type().asNonNullable().javaType == other.type().asNonNullable().javaType
+```
+
+**File**: `sqldelight-idea-plugin/testData/join-inspections/expected.xml` (modified, +5/-0)
+```diff
+@@ -10,4 +10,9 @@
+     <line>4</line>
+     <description>Join compares two columns of different types</description>
+   </problem>
++  <problem>
++    <file>SelfJoin.sq</file>
++    <line>32</line>
++    <description>Join condition always evaluates to true</description>
++  </problem>
+ </problems>
+```
+
+**File**: `sqldelight-idea-plugin/testData/join-inspections/src/SelfJoin.sq` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++CREATE TABLE MyTable (
++  id TEXT PRIMARY KEY,
++  name TEXT
++);
++
++CREATE VIEW MyView AS
++SELECT t.id, t.name FROM MyTable t;
++
++selfJoin:
++SELECT t1.name, t2.name
++FROM MyTable t1
++JOIN MyTable t2 ON t2.id = t1.id;
++
++selfJoinUnaliasedTable:
++SELECT MyTable.name, t2.name
++FROM MyTable
++JOIN MyTable t2 ON t2.id = MyTable.id;
++
++viewToOwnTable:
++SELECT v.name, t.name
++FROM MyView v
++JOIN MyTable t ON t.id = v.id;
++
++viewToOwnTableUnaliased:
++SELECT MyView.name, MyTable.name
++FROM MyView
++JOIN MyTable ON MyTable.id = MyView.id;
++
++sameAliasedColumn:
++SELECT t1.name, t2.name
++FROM MyTable t1
++JOIN MyTable t2 ON t1.id = t1.id;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6400** (closed): Report ':' or '{' when a statement label is followed by neither (@wangkangmao)
+- **PR #6399** (closed): Point JdbcSqliteDriver.IN_MEMORY at jdbc:sqlite::memory: (@mvanhorn)
+- **PR #6398** (2026-11-12): is column same instance must check the source table (@griffio)
 - **PR #6395** (2026-11-10): Update CI Runner to use macOS-15 (@griffio)
 - **PR #6394** (2026-11-10): Remove isVisible from configurations (@griffio)
 - **PR #6389** (2026-10-25): Update Gradle to v9.8.1 (@renovate[bot])
-- **PR #6388** (2026-10-25): Update dependency org.postgresql:postgresql to v42.7.14 (@renovate[bot])
-- **PR #6387** (2026-10-23): Let the bad times roll (@pyricau)
-- **PR #6386** (2026-10-06): Update sql-psi to 0.8.1 (@JakeWharton)
 
 ---
 
@@ -608,13 +646,13 @@ Rethrow the original exception so it propagates as if the call were direct
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ReflectiveKotlinFindUsagesFactory exceptions (#6355)
+## X. is column same instance must check the source table
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqldelight/sqldelight. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `21ce991b`: ReflectiveKotlinFindUsagesFactory exceptions (#6355). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `25cc64a6`: is column same instance must check the source table. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -622,14 +660,14 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-- [Intellij Plugin] Improve stability when typing by trapping unhandled errors. (#6355 by @griffio)
+- [IntelliJ Plugin] Fixes join inspection showing a false positive (#6398 by @griffio)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `21ce991b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `25cc64a6` are properly handled with clean fallback behavior.

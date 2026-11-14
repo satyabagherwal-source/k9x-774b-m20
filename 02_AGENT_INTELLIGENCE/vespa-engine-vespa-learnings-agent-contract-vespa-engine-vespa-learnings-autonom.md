@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:46:23.054Z",
+  "timestamp": "2026-11-14T20:36:23.815Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-vespa-engine-vespa-learnings",
+  "learning_id": "LEARN-EVO-vespa-engine-vespa-learnings",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [vespa-engine-vespa-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:46:23.054Z`  
-> **Learning ID**: `LEARN-REEXTRACT-vespa-engine-vespa-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T20:36:23.815Z`  
+> **Learning ID**: `LEARN-EVO-vespa-engine-vespa-learnings`
 
 
 ## 1. Agent Role & Persona Contract
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `ed0a4eb9`  
+> **Source Version**: `1f5abdb0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T07:46:25.535Z  
+> **Timestamp**: 2026-11-14T20:32:37.417Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T07:46:25.529Z  
+> **Harvest Timestamp**: 2026-11-14T20:32:37.413Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7176 stars
+- **Stars / Engagement**: 7180 stars
 
 ---
 
@@ -1091,325 +1091,464 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ebb7068c` (2026-11-11)
-**Commit Message**: Merge pull request #38498 from vespa-engine/arnej/add-deadlock-monitor
+### Incident Patch 1: `f0ca7822` (2026-11-14)
+**Commit Message**: Merge pull request #38516 from vespa-engine/fix/cve-deps-2026-11-13
 
-maybe start deadlock_monitor
+Bump addressable to 2.9.2 (4 Mend HIGH CVEs)
 
-**File**: `searchcore/src/apps/proton/proton.cpp` (modified, +12/-0)
+**File**: `Gemfile.lock` (modified, +17/-23)
 ```diff
-@@ -252,6 +252,17 @@ class Transport {
-     FNET_Transport _transport;
- };
- 
-+void runDeadlockMonitor() {
-+    static const char *deadlock_monitor = "/usr/local/sbin/deadlock_monitor";
-+    if (::getenv("PROTON_RUN_DEADLOCK_MONITOR") != nullptr) {
-+        if (::access(deadlock_monitor, X_OK) == 0) {
-+            int pid = ::getpid();
-+            std::string cmd_line = std::format("{} {} &", deadlock_monitor, pid);
-+            ::system(cmd_line.c_str());
-+        }
-+    }
-+}
-+
- } // namespace
- 
- void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
-@@ -354,6 +365,7 @@ int App::main(int argc, char** argv) {
- 
- int main(int argc, char** argv) {
-     int result = 0;
-+    runDeadlockMonitor();
-     grpc_init();
-     {
-         App app;
+@@ -1,44 +1,42 @@
+ GEM
+   remote: https://rubygems.org/
+   specs:
+-    Ascii85 (1.1.1)
+-    addressable (2.9.0)
++    Ascii85 (2.0.1)
++    addressable (2.9.2)
+       public_suffix (>= 2.0.2, < 8.0)
+-    afm (0.2.2)
+-    async (2.39.0)
++    afm (1.0.1)
++    async (2.46.0)
+       console (~> 1.29)
+       fiber-annotation
+-      io-event (~> 1.11)
+-      metrics (~> 0.12)
+-      traces (~> 0.18)
++      io-event (~> 1.21)
+     base64 (0.3.0)
+     benchmark (0.5.0)
+     bigdecimal (4.1.3)
+     colorator (1.1.0)
+     concurrent-ruby (1.3.8)
+-    console (1.35.1)
++    console (1.38.0)
+       fiber-annotation
+       fiber-local (~> 1.1)
+       json
+-    csv (3.3.6)
++    csv (3.3.7)
+     em-websocket (0.5.3)
+       eventmachine (>= 0.12.9)
+       http_parser.rb (~> 0)
+-    ethon (0.18.0)
++    ethon (0.19.2)
+       ffi (>= 1.15.0)
+       logger
+     eventmachine (1.2.7)
+     ffi (1.17.4-x86_64-linux-gnu)
+     fiber-annotation (0.2.0)
+     fiber-local (1.1.0)
+       fiber-storage
+-    fiber-storage (0.1.2)
++    fiber-storage (1.0.1)
+     forwardable-extended (2.6.0)
+     google-protobuf (4.36.2-x86_64-linux-gnu)
+       bigdecimal
+       rake (~> 13.3)
+     hashery (2.1.2)
+-    html-proofer (5.2.2)
++    html-proofer (5.2.3)
+       addressable (~> 2.3)
+       async (~> 2.1)
+       benchmark (~> 0.5)
+@@ -51,7 +49,7 @@ GEM
+     http_parser.rb (0.8.1)
+     i18n (1.15.2)
+       concurrent-ruby (~> 1.0)
+-    io-event (1.16.4)
++    io-event (1.22.3)
+     jekyll (4.4.1)
+       addressable (~> 2.4)
+       base64 (~> 0.2)
+@@ -77,7 +75,7 @@ GEM
+       jekyll (>= 3.3, < 5.0)
+     jekyll-sass-converter (3.1.0)
+       sass-embedded (~> 1.75)
+-    jekyll-seo-tag (2.8.0)
++    jekyll-seo-tag (2.9.1)
+       jekyll (>= 3.8, < 5.0)
+     jekyll-watch (2.2.1)
+       listen (~> 3.0)
+@@ -93,20 +91,18 @@ GEM
+       rb-inotify (~> 0.9, >= 0.9.10)
+     logger (1.7.0)
+     mercenary (0.4.0)
+-    metrics (0.15.0)
+     minima (2.5.2)
+       jekyll (>= 3.5, < 5.0)
+       jekyll-feed (~> 0.9)
+       jekyll-seo-tag (~> 2.1)
+-    nokogiri (1.19.4-x86_64-linux-gnu)
++    nokogiri (1.19.7-x86_64-linux-gnu)
+       racc (~> 1.4)
+     pathutil (0.16.2)
+       forwardable-extended (~> 2.6)
+-    pdf-reader (2.15.1)
++    pdf-reader (2.16.0)
+       Ascii85 (>= 1.0, < 3.0, != 2.0.0)
+       afm (>= 0.2.1, < 2)
+       hashery (~> 2.0)
+-      ruby-rc4
+       ttfunk
+     public_suffix (7.0.5)
+     racc (1.8.1)
+@@ -117,16 +113,14 @@ GEM
+       ffi (~> 1.0)
+     rexml (3.4.4)
+     rouge (4.7.0)
+-    ruby-rc4 (0.1.5)
+     safe_yaml (1.0.5)
+-    sass-embedded (1.105.1-x86_64-linux-gnu)
++    sass-embedded (1.108.2-x86_64-linux-gnu)
+       google-protobuf (~> 4.31)
+     terminal-table (3.0.2)
+       unicode-display_width (>= 1.1.1, < 3)
+-    traces (0.18.2)
+     ttfunk (1.7.0)
+-    typhoeus (1.6.0)
+-      ethon (>= 0.18.0)
++    typhoeus (1.7.1)
++      ethon (>= 0.19.1, < 0.20.0)
+     unicode-display_width (2.6.0)
+     webrick (1.9.2)
+     yell (2.2.2)
 ```
 
 ---
 
-### Incident Patch 2: `b36ac8df` (2026-11-11)
-**Commit Message**: maybe start deadlock_monitor
+### Incident Patch 2: `77e5b309` (2026-11-14)
+**Commit Message**: fix(deps): update jackson monorepo
 
-**File**: `searchcore/src/apps/proton/proton.cpp` (modified, +12/-0)
+**File**: `dependency-versions/pom.xml` (modified, +2/-2)
 ```diff
-@@ -252,6 +252,17 @@ class Transport {
-     FNET_Transport _transport;
- };
+@@ -38,8 +38,8 @@
+         <guava.vespa.version>33.7.2-jre</guava.vespa.version>
+         <guice.vespa.version>6.0.0</guice.vespa.version>
+         <j2objc-annotations.vespa.version>3.1</j2objc-annotations.vespa.version>
+-        <jackson2.vespa.version>2.22.4</jackson2.vespa.version>
+-        <jackson-annotations.vespa.version>2.22</jackson-annotations.vespa.version>
++        <jackson2.vespa.version>2.23.0</jackson2.vespa.version>
++        <jackson-annotations.vespa.version>2.23</jackson-annotations.vespa.version>
+         <jackson-databind.vespa.version>${jackson2.vespa.version}</jackson-databind.vespa.version>
+         <jakarta.inject.vespa.version>2.0.1</jakarta.inject.vespa.version>
+         <javax.activation-api.vespa.version>1.2.0</javax.activation-api.vespa.version>
+```
+
+**File**: `integration/logstash-plugins/logstash-output-vespa/build.gradle` (modified, +5/-5)
+```diff
+@@ -59,10 +59,10 @@ dependencies {
  
-+void runDeadlockMonitor() {
-+    static const char *deadlock_monitor = "/usr/local/sbin/deadlock_monitor";
-+    if (::getenv("PROTON_RUN_DEADLOCK_MONITOR") != nullptr) {
-+        if (::access(deadlock_monitor, X_OK) == 0) {
-+            int pid = ::getpid();
-+            std::string cmd_line = std::format("{} {} &", deadlock_monitor, pid);
-+            ::system(cmd_line.c_str());
-+        }
-+    }
-+}
-+
- } // namespace
+     implementation("com.yahoo.vespa:vespa-feed-client:${VESPA_VERSION}")
  
- void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
-@@ -354,6 +365,7 @@ int App::main(int argc, char** argv) {
+-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.22.4'
+-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.4'
+-    implementation 'com.fasterxml.jackson.core:jackson-core:2.22.4'
+-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.22'
++    implementation 'com.fasterxml.jackson.core:jackson-databind:2.23.0'
++    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.23.0'
++    implementation 'com.fasterxml.jackson.core:jackson-core:2.23.0'
++    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.23'
  
- int main(int argc, char** argv) {
-     int result = 0;
-+    runDeadlockMonitor();
-     grpc_init();
-     {
-         App app;
+     implementation "org.yaml:snakeyaml:${snakeYamlVersion}"
+ 
+@@ -73,7 +73,7 @@ dependencies {
+     testImplementation 'org.mockito:mockito-core:5.24.0'
+     testImplementation("com.yahoo.vespa:vespa-feed-client:${VESPA_VERSION}")
+     testImplementation fileTree(dir: LOGSTASH_CORE_PATH, include: "**/logstash-core.jar")
+-    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.4'
++    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.23.0'
+ }
+ 
+ clean {
 ```
 
 ---
 
-### Incident Patch 3: `a51d2a49` (2026-11-11)
-**Commit Message**: Modernize DecodeFastMapLookupNode: snake_case, no get/set prefixes
+### Incident Patch 3: `a5a6d3cf` (2026-11-13)
+**Commit Message**: Merge pull request #38528 from vespa-engine/toregge/add-trace-spans-for-document-db-init-and-shutdown
 
-DecodeFastMapLookupNode is new code, so align it with the current C++
-style: members, parameters and local helpers use snake_case, and accessors
-drop the get/set prefixes.
+Add trace spans for document db init and shutdown.
 
-No change in behavior or wire format; the visitMembers labels are kept
-as attributeName/valueType so debug dumps still match the Java side.
-
-**File**: `searchlib/src/tests/expression/decode_fast_map_lookup_node/decode_fast_map_lookup_node_test.cpp` (modified, +15/-15)
+**File**: `searchcore/src/apps/proton/proton.cpp` (modified, +7/-0)
 ```diff
-@@ -158,11 +158,11 @@ TEST(DecodeFastMapLookupNodeTest, separator_between_key_and_value_can_be_given)
- }
+@@ -291,13 +291,15 @@ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
+         {
+             ExitOnSignal exit_on_signal;
+             span->AddEvent("Starting proton");
++            auto scope = tracer->WithActiveSpan(span);
+             proton.init(configSnapshot);
+         }
+         std::string file_distributor_connection_spec = configSnapshot->getFiledistributorrpcConfig().connectionspec;
+         std::unique_ptr<ProtonServiceLayerProcess> spiProton;
  
- TEST(DecodeFastMapLookupNodeTest, separator_defaults_to_colon_and_can_be_set) {
--    EXPECT_EQ(":", DecodeFastMapLookupNode("m$lookup", ValueType::INT).getSeparator());
--    EXPECT_EQ(":", DecodeFastMapLookupNode().getSeparator());
--    EXPECT_EQ("=", DecodeFastMapLookupNode("m$lookup", ValueType::INT, "=").getSeparator());
-+    EXPECT_EQ(":", DecodeFastMapLookupNode("m$lookup", ValueType::INT).separator());
-+    EXPECT_EQ(":", DecodeFastMapLookupNode().separator());
-+    EXPECT_EQ("=", DecodeFastMapLookupNode("m$lookup", ValueType::INT, "=").separator());
-     DecodeFastMapLookupNode node("m$lookup", ValueType::INT);
--    EXPECT_EQ("->", node.setSeparator("->").getSeparator());
-+    EXPECT_EQ("->", node.separator("->").separator());
- }
- 
- TEST(DecodeFastMapLookupNodeTest, malformed_entries_are_kept_undecoded) {
-@@ -192,18 +192,18 @@ std::unique_ptr<DecodeFastMapLookupNode> serialize_and_deserialize(const DecodeF
- TEST(DecodeFastMapLookupNodeTest, attribute_name_value_type_and_separator_are_copied_and_serialized) {
-     DecodeFastMapLookupNode node("m$lookup", ValueType::LONG, ": ");
-     DecodeFastMapLookupNode copy(node);
--    EXPECT_EQ("m$lookup", copy.getAttributeName());
--    EXPECT_EQ(ValueType::LONG, copy.getValueType());
--    EXPECT_EQ(": ", copy.getSeparator());
-+    EXPECT_EQ("m$lookup", copy.attribute_name());
-+    EXPECT_EQ(ValueType::LONG, copy.value_type());
-+    EXPECT_EQ(": ", copy.separator());
- 
-     size_t size = 0;
-     auto   result = serialize_and_deserialize(node, &size);
-     // class id, no result yet, the attribute name, one byte value type and the separator: nothing about the input
-     EXPECT_EQ(4u + 1u + 4u + 8u + 1u + 4u + 2u, size);
-     ASSERT_TRUE(result);
--    EXPECT_EQ("m$lookup", result->getAttributeName());
--    EXPECT_EQ(ValueType::LONG, result->getValueType());
--    EXPECT_EQ(": ", result->getSeparator());
-+    EXPECT_EQ("m$lookup", result->attribute_name());
-+    EXPECT_EQ(ValueType::LONG, result->value_type());
-+    EXPECT_EQ(": ", result->separator());
- }
- 
- TEST(DecodeFastMapLookupNodeTest, all_value_types_are_serialized) {
-@@ -212,7 +212,7 @@ TEST(DecodeFastMapLookupNodeTest, all_value_types_are_serialized) {
-     {
-         auto result = serialize_and_deserialize(DecodeFastMapLookupNode("m$lookup", type));
-         ASSERT_TRUE(result);
--        EXPECT_EQ(type, result->getValueType());
-+        EXPECT_EQ(type, result->value_type());
+         if (!params.serviceidentity.empty()) {
+             span->AddEvent("Starting service layer");
++            auto scope = tracer->WithActiveSpan(span);
+             spiProton = std::make_unique<ProtonServiceLayerProcess>(
+                 identityUri.createWithNewId(params.serviceidentity), proton, transport,
+                 file_distributor_connection_spec, configSnapshot->getHwInfo());
+@@ -311,6 +313,7 @@ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
+         configSnapshot.reset();
+         span->AddEvent("Started proton");
+         span->End();
++        span.reset();
+         EV_STARTED("proton");
+         while (!(SIG::INT.check() || SIG::TERM.check() || (spiProton && spiProton->getNode().attemptedStopped()))) {
+             std::this_thread::sleep_for(1000ms);
+@@ -319,6 +322,8 @@ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
+                 spiProton->updateConfig();
+             }
+         }
++        span = tracer->StartSpan("Proton process stopping");
++        auto scope = tracer->WithActiveSpan(span);
+         // Ensure metric manager and state server are shut down before we start tearing
+         // down any service layer components that they may end up transitively using.
+         protonUP->shutdown_config_fetching_and_state_exposing_components_once();
+@@ -328,6 +333,8 @@ void App::startAndRun(FNET_Transport& transport, int argc, char** argv) {
+             EV_STOPPING("servicelayer", "clean shutdown");
+         }
+         protonUP.reset();
++        span->End();
++        span.reset();
+         EV_STOPPING("proton", "clean shutdown");
      }
  }
- 
-@@ -226,9 +226,9 @@ TEST(DecodeFastMapLookupNodeTest, unknown_serialized_value_type_is_deserialized_
-     auto  deserialized = vespalib::Identifiable::create(serializer);
-     auto* result = dynamic_cast<DecodeFastMapLookupNode*>(deserialized.get());
-     ASSERT_NE(nullptr, result);
--    EXPECT_EQ("m$lookup", result->getAttributeName());
--    EXPECT_EQ(ValueType::UNKNOWN, result->getValueType());
--    EXPECT_EQ("=", result->getSeparator());
-+    EXPECT_EQ("m$lookup", result->attribute_name());
-+    EXPECT_EQ(ValueType::UNKNOWN, result->value_type());
-+    EXPECT_EQ("=", result->separator());
- }
- 
- class DecodeFastMapLookupNodeAttributeTest : public ::testing::Test {
-@@ -299,7 +299,7 @@ TEST_F(DecodeFastMapLookupNodeAttributeTest, entries_of_hidden_attribute_are_dec
- 
- TEST_F(DecodeFastMapLookupNodeAttributeTest, entries_are_decoded_with_set_separator) {
-     auto node = make_node("m$lookup", ValueType::INT);
--    node->setSeparator(" -> ");
-+    node->separator(" -> ");
-     auto tree = make_tree(std::move(node));
-     EXPECT_EQ((std::vector<std::string>{"a -> 1", "b -> -1"}), values_of(tree, 1));
- }
 ```
 
-**File**: `searchlib/src/vespa/searchlib/expression/decode_fast_map_lookup_node.cpp` (modified, +30/-30)
+**File**: `searchcore/src/vespa/searchcore/proton/server/ddbstate.cpp` (modified, +61/-1)
 ```diff
-@@ -20,7 +20,7 @@ IMPLEMENT_EXPRESSIONNODE(DecodeFastMapLookupNode, FunctionNode);
+@@ -4,12 +4,27 @@
  
- namespace {
+ #include <vespa/check_require.h>
  
--template <typename T> bool decodeExcessHex(std::string_view hex, std::string& out) {
-+template <typename T> bool decode_excess_hex(std::string_view hex, std::string& out) {
-     auto value = vespalib::excess_hex::decode<T>(hex);
-     if (!value) {
++#include <opentelemetry/trace/provider.h>
++
+ #include <vespa/log/logf.h>
+ 
+ LOG_SETUP(".proton.server.ddbstate");
+ 
++using opentelemetry::trace::Provider;
++using opentelemetry::trace::SpanKind;
++using opentelemetry::trace::StartSpanOptions;
++
+ namespace proton {
+ 
++namespace {
++
++[[nodiscard]] std::shared_ptr<opentelemetry::trace::Tracer> get_tracer() {
++    auto provider = Provider::GetTracerProvider();
++    return provider->GetTracer("proton");
++}
++
++} // namespace
++
+ std::vector<std::string> DDBState::_stateNames = {
+     "CONSTRUCT",
+     "LOAD",
+@@ -33,16 +48,45 @@ DDBState::DDBState(const DocTypeName& doc_type_name)
+       _load_time(),
+       _online_time(),
+       _replay_time(),
+-      _doc_type_name(doc_type_name) {
++      _doc_type_name(doc_type_name),
++      _multistate_span(),
++      _state_span() {
+ }
+ 
+ DDBState::~DDBState() = default;
+ 
++void DDBState::end_multistate_span() {
++    if (_multistate_span) {
++        _multistate_span->End();
++        _multistate_span.reset();
++    }
++}
++
++void DDBState::end_state_span() {
++    if (_state_span) {
++        _state_span->End();
++        _state_span.reset();
++    }
++}
++
+ void DDBState::set_state(State state) {
+     auto old_state = getState();
++    if (state == old_state) {
++        return;
++    }
++    end_state_span();
+     _state.store(state, std::memory_order_release);
+     LOGF(info, "Switched document type {} ddb state from {} to {}", _doc_type_name.getName(),
+          getStateString(old_state), getStateString(state));
++    if (!_multistate_span) {
++        return;
++    }
++    auto             tracer = get_tracer();
++    StartSpanOptions options;
++    options.kind = SpanKind::kInternal;
++    options.parent = _multistate_span->GetContext();
++    _state_span = tracer->StartSpan(
++        std::format("Document type {} ddb state {}", _doc_type_name.getName(), getStateString(state)), options);
+ }
+ 
+ bool DDBState::enterLoadState() {
+@@ -51,6 +95,12 @@ bool DDBState::enterLoadState() {
          return false;
-@@ -29,17 +29,17 @@ template <typename T> bool decodeExcessHex(std::string_view hex, std::string& ou
+     }
+     CHECK(getState() == State::CONSTRUCT);
++    auto             tracer = get_tracer();
++    auto             parent_span = tracer->GetCurrentSpan();
++    StartSpanOptions options;
++    options.kind = SpanKind::kInternal;
++    options.parent = parent_span->GetContext();
++    _multistate_span = tracer->StartSpan(std::format("Document type {} init", _doc_type_name.getName()), options);
+     _load_time = std::chrono::system_clock::now();
+     set_state(State::LOAD);
+     return true;
+@@ -118,6 +168,8 @@ bool DDBState::enterOnlineState() {
+     CHECK(getState() == State::REPROCESS);
+     _online_time = std::chrono::system_clock::now();
+     set_state(State::ONLINE);
++    end_state_span();
++    end_multistate_span();
+     _cond.notify_all();
      return true;
  }
- 
--bool decodeValue(std::string_view encoded, DecodeFastMapLookupNode::ValueType valueType, std::string& out) {
-+bool decode_value(std::string_view encoded, DecodeFastMapLookupNode::ValueType value_type, std::string& out) {
-     using ValueType = DecodeFastMapLookupNode::ValueType;
--    switch (valueType) {
-+    switch (value_type) {
-     case ValueType::INT:
--        return decodeExcessHex<int32_t>(encoded, out);
-+        return decode_excess_hex<int32_t>(encoded, out);
-     case ValueType::LONG:
--        return decodeExcessHex<int64_t>(encoded, out);
-+        return decode_excess_hex<int64_t>(encoded, out);
-     case ValueType::FLOAT:
--        return decodeExcessHex<float>(encoded, out);
-+        return decode_excess_hex<float>(encoded, out);
-     case ValueType::DOUBLE:
--        return decodeExcessHex<double>(encoded, out);
-+        return decode_excess_hex<double>(encoded, out);
-     case ValueType::STRING:
-         out = encoded;
-         return true;
-@@ -49,9 +49,9 @@ bool decodeValue(std::string_view encoded, DecodeFastMapLookupNode::ValueType va
-     return false;
- }
- 
--std::string_view toString(DecodeFastMapLookupNode::ValueType valueType) {
-+std::string_view to_string(DecodeFastMapLookupNode::ValueType value_type) {
-     using ValueType = DecodeFastMapLookupNode::ValueType;
--    switch (valueType) {
-+    switch (value_type) {
-     case ValueType::INT:
-         return "int";
-     case ValueType::LONG:
-@@ -69,7 +69,7 @@ std::string_view toString(DecodeFastMapLookupNode::ValueType valueType) {
- }
- 
- // Maps a serialized value type to the enum, where unknown values (for example from a newer container) become UNKNOWN.
--DecodeFastMapLookupNode::ValueType toValueType(uint8_t value) {
-+DecodeFastMapLookupNode::ValueType to_value_type(uint8_t value) {
-     using ValueType = DecodeFastMapLookupNode::ValueType;
-     switch (static_cast<ValueType>(value)) {
-     case ValueType::INT:
-@@ -87,28 +87,28 @@ DecodeFastMapLookupNode::ValueType toValueType(uint8_t value) {
- } // namespace
- 
- DecodeFastMapLookupNode::DecodeFastMapLookupNode() noexcept
--    : FunctionNode(), _attributeName(), _valueType(ValueType::UNKNOWN), _separator(default_separator), _input() {
-+    : FunctionNode(), _attribute_name(), _value_type(ValueType::UNKNOWN), _separator(default_separator), _input() {
- }
- 
--DecodeFastMapLookupNode::DecodeFastMapLookupNode(std::string_view attributeName, ValueType valueType,
-+DecodeFastMapLookupNode::DecodeFastMapLookupNode(std::string_view attribute_name, ValueType value_type,
-                                                  std::string_view separator)
--    : FunctionNode(), _attributeName(attributeName), _valueType(valueType), _separator(separator), _input() {
-+    : FunctionNode(), _attribute_name(attribute_name), _value_type(value_type), _separator(separator), _input() {
-     createInput();
- }
- 
- DecodeFastMapLookupNode::DecodeFastMapLookupNode(const DecodeFastMapLookupNode& rhs)
-     : FunctionNode(rhs),
--      _attributeName(rhs._attributeName),
--      _valueType(rhs._valueType),
-+      _attribute_name(rhs._attribute_name),
-+      _value_type(rhs._value_type),
-       _separator(rhs._separator),
-       _input(rhs._input ? std::make_unique<AttributeNode>(*rhs._input) : nullptr) {
- }
- 
- DecodeFastMapLookupNode& DecodeFastMapLookupNode::operator=(const DecodeFastMapLookupNode& rhs) {
-     if (this != &rhs) {
-         FunctionNode::operator=(rhs);
--        _attributeName = rhs._attributeName;
--        _valueType = rhs._valueType;
-+        _attribute_name = rhs._attribute_name;
-+        _value_type = rhs._value_type;
-         _separator = rhs._separator;
-         _input = rhs._input ? std::make_unique<AttributeNode>(*rhs._input) : nullptr;
+@@ -128,6 +180,12 @@ void DDBState::enterShutdownState() {
+     if (getClosed()) {
+         return;
      }
-@@ -118,10 +118,10 @@ DecodeFastMapLookupNode& DecodeFastMapLookupNode::operator=(const DecodeFastMapL
- DecodeFastMapLookupNode::~DecodeFastMapLookupNode() = default;
- 
- void DecodeFastMapLookupNode::createInput() {
--    _input = std::make_unique<AttributeNode>(_attributeName);
-+    _input = std::make_unique<AttributeNode>(_attribute_name);
++    auto             tracer = get_tracer();
++    auto             parent_span = tracer->GetCurrentSpan();
++    StartSpanOptions options;
++    options.kind = SpanKind::kInternal;
++    options.parent = parent_span->GetContext();
++    _multistate_span = tracer->StartSpan(std::format("Document type {} shutdown", _doc_type_name.getName()), options);
+     set_state(State::SHUTDOWN);
+     _cond.notify_all();
+ }
+@@ -139,6 +197,8 @@ void DDBState::enterDeadState() {
+     }
+     CHECK(getState() == State::SHUTDOWN);
+     set_state(State::DEAD);
++    end_state_span();
++    end_multistate_span();
+     _cond.notify_all();
  }
  
--std::string DecodeFastMapLookupNode::decode(std::string_view encoded, ValueType valueType,
-+std::string DecodeFastMapLookupNode::decode(std::string_view encoded, ValueType value_type,
-                                             std::string_view separator) {
-     auto pos = encoded.find(encoded_separator);
-     if (pos == std::string_view::npos) {
-@@ -130,22 +130,22 @@ std::string DecodeFastMapLookupNode::decode(std::string_view encoded, 
 ```
 
-**File**: `searchlib/src/vespa/searchlib/expression/decode_fast_map_lookup_node.h` (modified, +8/-8)
+**File**: `searchcore/src/vespa/searchcore/proton/server/ddbstate.h` (modified, +7/-1)
 ```diff
-@@ -26,8 +26,8 @@ class DecodeFastMapLookupNode : public FunctionNode {
-     static constexpr std::string_view default_separator = ":";
+@@ -3,6 +3,8 @@
  
- private:
--    std::string                    _attributeName;
--    ValueType                      _valueType;
-+    std::string                    _attribute_name;
-+    ValueType                      _value_type;
-     std::string                    _separator;
-     std::unique_ptr<AttributeNode> _input; // reads the hidden attribute; created from the name, not serialized
+ #include <vespa/searchcore/proton/common/doctypename.h>
  
-@@ -40,16 +40,16 @@ class DecodeFastMapLookupNode : public FunctionNode {
-     DECLARE_NBO_SERIALIZE;
-     DECLARE_EXPRESSIONNODE(DecodeFastMapLookupNode);
-     DecodeFastMapLookupNode() noexcept;
--    DecodeFastMapLookupNode(std::string_view attributeName, ValueType valueType,
-+    DecodeFastMapLookupNode(std::string_view attribute_name, ValueType value_type,
-                             std::string_view separator = default_separator);
-     DecodeFastMapLookupNode(const DecodeFastMapLookupNode&);
-     DecodeFastMapLookupNode& operator=(const DecodeFastMapLookupNode&);
-     ~DecodeFastMapLookupNode() override;
++#include <opentelemetry/trace/span.h>
++
+ #include <atomic>
+ #include <condition_variable>
+ #include <mutex>
+@@ -51,11 +53,15 @@ class DDBState {
+     std::atomic<time_point> _online_time;
+     std::atomic<time_point> _replay_time;
  
--    [[nodiscard]] const std::string& getAttributeName() const noexcept { return _attributeName; }
--    [[nodiscard]] ValueType getValueType() const noexcept { return _valueType; }
--    [[nodiscard]] const std::string& getSeparator() const noexcept { return _separator; }
--    DecodeFastMapLookupNode& setSeparator(std::string_view separator) {
-+    [[nodiscard]] const std::string& attribute_name() const noexcept { return _attribute_name; }
-+    [[nodiscard]] ValueType value_type() const noexcept { return _value_type; }
-+    [[nodiscard]] const std::string& separator() const noexcept { return _separator; }
-+    DecodeFastMapLookupNode& separator(std::string_view separator) {
-         _separator = separator;
-         return *this;
+-    DocTypeName _doc_type_name;
++    DocTypeName                                 _doc_type_name;
++    std::shared_ptr<opentelemetry::trace::Span> _multistate_span; // Init states or shutdown states
++    std::shared_ptr<opentelemetry::trace::Span> _state_span;
+ 
+     static std::vector<std::string> _stateNames;
+     static std::vector<std::string> _configStateNames;
+ 
++    void end_multistate_span();
++    void end_state_span();
+     void set_state(State state);
+ 
+ public:
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/server/proton.cpp` (modified, +10/-1)
+```diff
+@@ -69,6 +69,7 @@
+ #ifdef __linux__
+ #include <malloc.h>
+ #endif
++#include <opentelemetry/trace/provider.h>
+ 
+ #include <sstream>
+ 
+@@ -78,6 +79,7 @@ LOG_SETUP(".proton.server.proton");
+ using CpuCategory = vespalib::CpuUsage::Category;
+ 
+ using document::DocumentTypeRepo;
++using opentelemetry::trace::Provider;
+ using proton::flushengine::PrepareRestartCostsConfig;
+ using proton::flushengine::SetStrategyResult;
+ using search::DiskSpaceCalculator;
+@@ -637,8 +639,15 @@ void Proton::closeDocumentDBs(vespalib::ThreadStackExecutorBase& executor) {
+     for (const auto& entry : _documentDBMap) {
+         docTypes.push_back(entry.first);
      }
-@@ -62,7 +62,7 @@ class DecodeFastMapLookupNode : public FunctionNode {
-      * as is. An element without the encoded separator, or with a value that is not valid excess hex for the value
-      * type, is returned as stored, without decoding.
-      */
--    static std::string decode(std::string_view encoded, ValueType valueType,
-+    static std::string decode(std::string_view encoded, ValueType value_type,
-                               std::string_view separator = default_separator);
++    auto provider = Provider::GetTracerProvider();
++    auto tracer = provider->GetTracer("proton");
++    auto parent_span = tracer->GetCurrentSpan();
+     for (const auto& docTypeName : docTypes) {
+-        executor.execute(makeLambdaTask([this, docTypeName]() { removeDocumentDB(docTypeName); }));
++        executor.execute(makeLambdaTask([this, docTypeName, parent_span, tracer]() {
++            auto parent_span_copy = parent_span;
++            auto scope = tracer->WithActiveSpan(parent_span_copy);
++            removeDocumentDB(docTypeName);
++        }));
+     }
+     executor.sync();
+ }
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/server/proton_configurer.cpp` (modified, +11/-0)
+```diff
+@@ -18,11 +18,15 @@
+ #include <vespa/vespalib/util/retain_guard.h>
+ #include <vespa/vespalib/util/threadstackexecutorbase.h>
  
-     void visitMembers(vespalib::ObjectVisitor& visitor) const override;
++#include <opentelemetry/trace/provider.h>
++
+ #include <future>
+ 
+ #include <vespa/log/log.h>
+ LOG_SETUP(".proton.server.proton_configurer");
+ 
++using opentelemetry::trace::Provider;
++
+ using vespa::config::search::core::ProtonConfig;
+ using vespalib::makeLambdaTask;
+ 
+@@ -113,7 +117,14 @@ void ProtonConfigurer::performReconfigure() {
+     // called by proton executor thread
+     CHECK(_executor.isCurrentThread());
+     auto configSnapshot(getPendingConfigSnapshot());
++    auto provider = Provider::GetTracerProvider();
++    auto tracer = provider->GetTracer("proton");
++    auto span = tracer->StartSpan("reconfigure");
++    span->AddEvent("Start reconfigure");
++    auto scope = tracer->WithActiveSpan(span);
+     applyConfig(configSnapshot, InitializeThreads(), false);
++    span->AddEvent("Done reconfigure");
++    span->End();
+ }
+ 
+ bool ProtonConfigurer::skipConfig(const ProtonConfigSnapshot* configSnapshot, bool initialConfig) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38499** (2026-11-11): Move function scanning from SchemaParser.jj into Utils (@arnej27959)
-- **PR #38498** (2026-11-11): maybe start deadlock_monitor (@arnej27959)
-- **PR #38496** (2026-11-11): Support skipTests in when submitting an application (@hmusum)
-- **PR #38493** (2026-11-11): Move grouping rewrite into GroupingRewriteSearcher (@arnej27959)
-- **PR #38492** (2026-11-11): chore: update third-party attributions (@github-actions[bot])
-- **PR #38491** (2026-11-11): Remove ZooKeeper server 3.9.6, make 3.9.7 default (@hmusum)
+- **PR #38531** (2026-11-14): fix(deps): update jackson monorepo (@renovate[bot])
+- **PR #38530** (2026-11-14): chore: update third-party attributions (@github-actions[bot])
+- **PR #38529** (2026-11-14): Place early provision (@hakonhall)
+- **PR #38528** (2026-11-13): Add trace spans for document db init and shutdown. (@toregge)
+- **PR #38525** (2026-11-14): Support index settings in struct-field blocks for struct field indexes (@arnej27959)
+- **PR #38524** (2026-11-13): Fix code style. (@toregge)
 
 ---
 
@@ -1429,42 +1568,69 @@ as attributeName/valueType so debug dumps still match the Java side.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #38498 from vespa-engine/arnej/add-deadlock-monitor
+## X. Empirical Invariant Guard in Gemfile.lock
 
 **RULE**:
-When implementing operations in `searchcore/src/apps/proton/proton.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Gemfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ebb7068c`: Merge pull request #38498 from vespa-engine/arnej/add-deadlock-monitor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f0ca7822`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `searchcore/src/apps/proton/proton.cpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `Gemfile.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-void runDeadlockMonitor() {
-    static const char *deadlock_monitor = "/usr/local/sbin/deadlock_monitor";
-    if (::getenv("PROTON_RUN_DEADLOCK_MONITOR") != nullptr) {
-        if (::access(deadlock_monitor, X_OK) == 0) {
-            int pid = ::getpid();
-            std::string cmd_line = std::format("{} {} &", deadlock_monitor, pid);
-            ::system(cmd_line.c_str());
-        }
-    }
-}
-
-    runDeadlockMonitor();
+    Ascii85 (2.0.1)
+    addressable (2.9.2)
+    afm (1.0.1)
+    async (2.46.0)
+      io-event (~> 1.21)
+    console (1.38.0)
+    csv (3.3.7)
+    ethon (0.19.2)
+    fiber-storage (1.0.1)
+    html-proofer (5.2.3)
+    io-event (1.22.3)
+    jekyll-seo-tag (2.9.1)
+    nokogiri (1.19.7-x86_64-linux-gnu)
+    pdf-reader (2.16.0)
+    sass-embedded (1.108.2-x86_64-linux-gnu)
+    typhoeus (1.7.1)
+      ethon (>= 0.19.1, < 0.20.0)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    Ascii85 (1.1.1)
+    addressable (2.9.0)
+    afm (0.2.2)
+    async (2.39.0)
+      io-event (~> 1.11)
+      metrics (~> 0.12)
+      traces (~> 0.18)
+    console (1.35.1)
+    csv (3.3.6)
+    ethon (0.18.0)
+    fiber-storage (0.1.2)
+    html-proofer (5.2.2)
+    io-event (1.16.4)
+    jekyll-seo-tag (2.8.0)
+    metrics (0.15.0)
+    nokogiri (1.19.4-x86_64-linux-gnu)
+    pdf-reader (2.15.1)
+      ruby-rc4
+    ruby-rc4 (0.1.5)
+    sass-embedded (1.105.1-x86_64-linux-gnu)
+    traces (0.18.2)
+    typhoeus (1.6.0)
+      ethon (>= 0.18.0)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ebb7068c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f0ca7822` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

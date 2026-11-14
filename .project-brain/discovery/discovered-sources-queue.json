@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T20:09:44.316Z",
+  "updated_at": "2026-11-14T20:36:23.750Z",
   "stats": {
-    "total_discovered": 3400,
-    "approved_pending_harvest": 3194,
+    "total_discovered": 3408,
+    "approved_pending_harvest": 3202,
     "harvested_count": 0,
     "rejected_count": 206,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3174,
+      "COMMUNITY_AND_EXPERT": 3182,
       "OFFICIAL_DOCUMENTATION": 123,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -73378,6 +73378,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
         "fileName": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md"
+      }
+    },
+    "SRC-167C7EFA09E6": {
+      "id": "SRC-167C7EFA09E6",
+      "url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+      "title": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T20:36:22.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
+        "fileName": "hf-qwen-qwen-image-2.1-turbo-learnings.md"
+      }
+    },
+    "SRC-8CB21F213FE0": {
+      "id": "SRC-8CB21F213FE0",
+      "url": "https://github.com/sqldelight/sqldelight",
+      "title": "https://github.com/sqldelight/sqldelight",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T20:36:23.044Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
+        "fileName": "sqldelight-sqldelight-learnings.md"
+      }
+    },
+    "SRC-B8D8F239FABA": {
+      "id": "SRC-B8D8F239FABA",
+      "url": "https://github.com/cashapp/sqldelight/issues/1471",
+      "title": "https://github.com/cashapp/sqldelight/issues/1471",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T20:36:23.079Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
+        "fileName": "sqldelight-sqldelight-learnings.md"
+      }
+    },
+    "SRC-E8546F85C3AB": {
+      "id": "SRC-E8546F85C3AB",
+      "url": "https://youtrack.jetbrains.com/issue/KT-48997",
+      "title": "https://youtrack.jetbrains.com/issue/KT-48997",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T20:36:23.100Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
+        "fileName": "sqldelight-sqldelight-learnings.md"
+      }
+    },
+    "SRC-0101E44916D0": {
+      "id": "SRC-0101E44916D0",
+      "url": "https://github.com/ryanclark/karma-webpack/issues/498",
+      "title": "https://github.com/ryanclark/karma-webpack/issues/498",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T20:36:23.122Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
+        "fileName": "sqldelight-sqldelight-learnings.md"
+      }
+    },
+    "SRC-DBB53CAAD5F0": {
+      "id": "SRC-DBB53CAAD5F0",
+      "url": "https://github.com/user-attachments/assets/e63981d7-0599-4e7c-984f-923d4b2bf563",
+      "title": "https://github.com/user-attachments/assets/e63981d7-0599-4e7c-984f-923d4b2bf563",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T20:36:23.143Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
+        "fileName": "sqldelight-sqldelight-learnings.md"
+      }
+    },
+    "SRC-A10DC82A02FE": {
+      "id": "SRC-A10DC82A02FE",
+      "url": "https://github.com/sqldelight/sqldelight/releases/tag/2.4.1",
+      "title": "https://github.com/sqldelight/sqldelight/releases/tag/2.4.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T20:36:23.175Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
+        "fileName": "sqldelight-sqldelight-learnings.md"
+      }
+    },
+    "SRC-11E71A88CF52": {
+      "id": "SRC-11E71A88CF52",
+      "url": "https://rubygems.org/",
+      "title": "https://rubygems.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T20:36:23.750Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
       }
     }
   }

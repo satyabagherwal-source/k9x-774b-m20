@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T20:09:32.652Z",
-  "total_cycles_completed": 9588,
-  "total_learnings_persisted": 9588,
-  "total_rules_promoted": 9251,
+  "last_updated": "2026-11-14T20:35:49.213Z",
+  "total_cycles_completed": 9592,
+  "total_learnings_persisted": 9592,
+  "total_rules_promoted": 9256,
   "history": [
-    {
-      "timestamp": "2026-11-13T21:45:12.715Z",
-      "repository": "callstack/react-native-paper",
-      "learningId": "learn-github-callstack-react-native-paper",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T21:45:20.698Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T21:50:21.313Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-google-t5-t5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T21:58:35.579Z",
-      "repository": "Xudong-Huang/may",
-      "learningId": "learn-github-xudong-huang-may",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T21:58:39.457Z",
       "repository": "FaridSafi/react-native-gifted-chat",
@@ -1403,6 +1375,34 @@
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
       "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T20:32:29.783Z",
+      "repository": "sqldelight/sqldelight",
+      "learningId": "learn-github-sqldelight-sqldelight",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T20:32:38.233Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T20:32:39.160Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T20:35:49.213Z",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

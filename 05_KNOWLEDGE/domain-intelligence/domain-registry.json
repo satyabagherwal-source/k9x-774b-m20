@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T20:09:45.417Z",
-  "total_records": 821,
+  "last_updated": "2026-11-14T20:36:24.027Z",
+  "total_records": 828,
   "domains": {
     "A": {
       "total": 6,
@@ -474,7 +474,7 @@
       ]
     },
     "G": {
-      "total": 128,
+      "total": 132,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -603,11 +603,15 @@
         "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants",
         "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants",
-        "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-core-invariants",
+        "domain_intelligence-architecture-intelligence-vespa-engine-vespa-core-invariants",
+        "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-vespa-engine-vespa-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 174,
+      "total": 177,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -782,7 +786,10 @@
         "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-core-invariants",
         "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-zleap-ai-sag-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-zleap-ai-sag-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
+        "DOM-H-ADE4819D",
+        "domain_intelligence-technical-construction-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-"
       ]
     },
     "I": {
@@ -10878,8 +10885,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "37cc78362f358c90ee3cb3cf9ef6f524d5f235f9a2fbe1c1ec75740986b57c9c",
-      "created_at": "2026-11-14T18:26:37.468Z"
+      "content_hash": "ce26e9ecfa47dd9157043d0cb1090adc26365b0be2937d472b4b7b2d7ba463af",
+      "created_at": "2026-11-14T20:32:39.429Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -16491,6 +16498,94 @@
       "repository": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings",
       "content_hash": "1b3e6ba15ffcf40a68a823d00adb798b0709516baab131ac161b342cb5f0e207",
       "created_at": "2026-11-14T20:09:44.477Z"
+    },
+    "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: sqldelight/sqldelight Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqldelight-sqldelight-architecture-intelligence-sqldelight-sqldelight-core-invar.md",
+      "repository": "sqldelight/sqldelight",
+      "content_hash": "3f48a9e141169046be5800248394416cb824c99602126f54318a48a55d8aba41",
+      "created_at": "2026-11-14T20:32:30.020Z"
+    },
+    "domain_intelligence-architecture-intelligence-vespa-engine-vespa-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-vespa-engine-vespa-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
+      "repository": "vespa-engine/vespa",
+      "content_hash": "f89a9f1b6c96e3015e2a78e7bc5a4a7f0503603682e68c7cdadf7232261faf8e",
+      "created_at": "2026-11-14T20:32:38.497Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Qwen/Qwen-Image-2.1-Turbo Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-qwen-qwen-image-2-1-turbo-technical-construction-intelligence-qwen-qwen-image.md",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "content_hash": "e007520d1fc06bcee9429efb4a6285db7fceac171e022e916e0d68c66c0ec569",
+      "created_at": "2026-11-14T20:35:49.522Z"
+    },
+    "DOM-H-ADE4819D": {
+      "record_id": "DOM-H-ADE4819D",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Diffusers Scheduler Sigmas Configuration Omission (BUG-QWEN-01)",
+      "content": "Model checkpoints that encode structural distillation artifacts (such as custom sigmas) must have direct representation in config manifests and first-class pipeline execution paths.",
+      "content_hash": "78fcc11d8b60d5a3d2b90cd45349499240fd74d0460b66d597b4467ccfb56909",
+      "summary": "`FlowMatchEulerDiscreteScheduler` expected either `num_inference_steps` or explicit `timesteps`. Passing a custom `sigmas` vector was unhand -> Model checkpoints that encode structural distillation artifacts (such as custom sigmas) must have direct representation in config manifests ",
+      "provenance": {
+        "source_uri": "project://hf-qwen-qwen-image-2.1-turbo/hf-qwen-qwen-image-2.1-turbo-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T20:35:52.587Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-qwen-qwen-image-2.1-turbo)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "README specification explicitly cites:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T20:36:22.248Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-qwen-qwen-image-2.1-turbo-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-qwen-qwen-image-2-1-turbo-learnings-technical-construction-intelligence-hf-qw.md",
+      "repository": "hf-qwen-qwen-image-2.1-turbo-learnings",
+      "content_hash": "047aee5f1f1f7e6934e19d003ca3b332005840d26ab6edaa4dec155dd31b3857",
+      "created_at": "2026-11-14T20:36:22.694Z"
+    },
+    "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: sqldelight-sqldelight-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqldelight-sqldelight-learnings-architecture-intelligence-sqldelight-sqldelight-.md",
+      "repository": "sqldelight-sqldelight-learnings",
+      "content_hash": "d97177192f622c0872ce29727b84d59ac8d6dadfc8169e55ff9fbcafd9047f5d",
+      "created_at": "2026-11-14T20:36:23.462Z"
+    },
+    "domain_intelligence-architecture-intelligence-vespa-engine-vespa-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-vespa-engine-vespa-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-learnings-architecture-intelligence-vespa-engine-vespa-learni.md",
+      "repository": "vespa-engine-vespa-learnings",
+      "content_hash": "ac075e329b4705e4a91298beb5a25ece9882791d586efff19fabcd4a0ce8f607",
+      "created_at": "2026-11-14T20:36:24.027Z"
     }
   }
 }

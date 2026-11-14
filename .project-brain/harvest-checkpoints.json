@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T20:09:32.655Z",
+  "last_updated": "2026-11-14T20:35:49.217Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1820,14 +1820,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "content_hash": "aa5b6c46b12c7cfad91aaa1b68dd30a52cb59d0ec4cdfc041ea5ab75e9a57ff3",
-      "verified_at": "2026-11-09T09:16:27.369Z",
+      "content_hash": "5d545727d66c6e7c19bf9dbc74210115a4e2f1bf676f1e6d7bc30d6a4f419451",
+      "verified_at": "2026-11-14T20:35:49.216Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T09:16:27.369Z"
+      "last_updated": "2026-11-14T20:35:49.216Z"
     },
     "Phocinae/Phocinae-Largha-150M-v1": {
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "57be43664ac49a77f4a8b672af17832866bbc6cff146fd41aea1d79430ca7e08",
-      "verified_at": "2026-11-14T18:26:37.129Z",
+      "content_hash": "b2657f28e0b881f1f599e73ba5a63e8a7bbeb3f563ca610ecb82793f6ca1ad78",
+      "verified_at": "2026-11-14T20:32:39.163Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T18:26:37.129Z"
+      "last_updated": "2026-11-14T20:32:39.163Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "8cb0f4e2845a98daeede205ac11604aad813f2b903e98febaa5c5c5ac3b1bde8",
-      "verified_at": "2026-11-13T13:50:46.564Z",
+      "content_hash": "a98cc0a7023ddf123e164393f84d3354f45ddb86339a93440510fdef590b3b54",
+      "verified_at": "2026-11-14T20:32:38.236Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:50:46.564Z"
+      "last_updated": "2026-11-14T20:32:38.236Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -10101,14 +10101,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqldelight-sqldelight",
-      "content_hash": "8ce858e905ff14a2a2e8e73d57a6b675b6c38f3c25ab49f86708f7c919d7c69c",
-      "verified_at": "2026-11-11T10:35:17.401Z",
+      "content_hash": "e8558f709349d6bb4bbf8d8d27d98b87112bad933cf4b75451c39fa7867a4533",
+      "verified_at": "2026-11-14T20:32:29.786Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:35:17.401Z"
+      "last_updated": "2026-11-14T20:32:29.786Z"
     },
     "kubernetes-sigs/aws-load-balancer-controller": {
       "repository": "kubernetes-sigs/aws-load-balancer-controller",

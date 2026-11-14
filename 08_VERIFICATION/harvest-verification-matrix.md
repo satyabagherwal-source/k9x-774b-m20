@@ -9928,3 +9928,8 @@
 | `CYCLE-20261114-XCB0` | `2026-11-14T19:59:28.140Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`9bd3f605...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T20:00:03.524Z` | `hf-conwayresearch-underdog-saluki-27b-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E0561FD8` [Domain D] | Yes (`efac8eac...`) |
 | `CYCLE-20261114-AAQS` | `2026-11-14T20:09:32.644Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md` | Yes (`7a965ea2...`) |
+| `CYCLE-20261114-3TCE` | `2026-11-14T20:32:29.774Z` | `sqldelight/sqldelight` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8528` | Yes (`e8558f70...`) |
+| `CYCLE-20261114-3ZV4` | `2026-11-14T20:32:38.224Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8529` | Yes (`a98cc0a7...`) |
+| `CYCLE-20261114-40KW` | `2026-11-14T20:32:39.152Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`b2657f28...`) |
+| `CYCLE-20261114-8385` | `2026-11-14T20:35:49.205Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8530, Rule 8531` | Yes (`5d545727...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T20:36:22.260Z` | `hf-qwen-qwen-image-2.1-turbo` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-ADE4819D` [Domain H] | Yes (`78fcc11d...`) |
