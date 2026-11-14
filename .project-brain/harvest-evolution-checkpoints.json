@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T06:57:54.997Z",
+  "last_updated": "2026-11-14T07:20:03.849Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T05:32:15.509Z",
@@ -638,9 +638,9 @@
       "staged_for_review": 1
     },
     "kgateway-dev-kgateway-learnings.md": {
-      "processed_at": "2026-11-12T01:23:58.087Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-14T07:20:03.215Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "gitoxidelabs-gitoxide-learnings.md": {
       "processed_at": "2026-11-13T14:06:18.652Z",
@@ -1303,9 +1303,9 @@
       "staged_for_review": 1
     },
     "matthart1983-netwatch-learnings.md": {
-      "processed_at": "2026-11-12T22:48:56.171Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-14T07:18:39.877Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "mikepenz-multiplatform-markdown-renderer-learnings.md": {
       "processed_at": "2026-11-12T22:48:56.259Z",
@@ -2461,9 +2461,14 @@
       "processed_at": "2026-11-14T06:57:54.473Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md": {
+      "processed_at": "2026-11-14T07:19:17.742Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 786,
-  "total_canonical_promoted": 173,
+  "total_dossiers_evaluated": 789,
+  "total_canonical_promoted": 176,
   "total_staged_for_review": 610
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T06:57:54.753Z",
+  "last_updated": "2026-11-14T07:20:03.450Z",
   "directives": [
     {
       "id": "CD-001",
@@ -11888,6 +11888,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EFA6C7--drop-an-e2e-reply-that-comes-after-its-.md",
       "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-PYGX",
+      "directive_title": "fix the unit-test binary crashing at startup on Rust 1.100",
+      "source_repo": "matthart1983/netwatch",
+      "source_commit": "23f3b29a",
+      "staged_file": "11_INBOX/candidate-directives/CD-PYGX-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-SQCM",
+      "directive_title": "test(e2e): pre-pull suite images in parallel and poll every 100ms",
+      "source_repo": "kgateway-dev-kgateway-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SQCM-test-e2e-pre-pull-suite-images-in-parallel-and-poll-every-100ms.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-Q8WI",
+      "directive_title": "build(deps): Bump libz-sys from 1.1.31 to 1.1.33",
+      "source_repo": "MaterializeInc/materialize",
+      "source_commit": "ab4e4edb",
+      "staged_file": "11_INBOX/candidate-directives/CD-Q8WI-build-deps-bump-libz-sys-from-1-1-31-to-1-1-33.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-QYDN",
+      "directive_title": "windows: fix the unit-test binary crashing at startup on Rust 1.100",
+      "source_repo": "matthart1983-netwatch-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QYDN-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
     }
   ]
 }

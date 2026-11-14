@@ -2,23 +2,23 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T06:57:54.157Z",
+  "updated_at": "2026-11-14T07:20:03.213Z",
   "statistics": {
-    "total_nodes": 169,
-    "total_edges": 92,
+    "total_nodes": 172,
+    "total_edges": 93,
     "domain_distribution": {
-      "D": 131,
+      "D": 132,
       "M": 1,
       "H": 14,
       "J": 8,
-      "K": 8,
+      "K": 10,
       "L": 2,
       "G": 1,
       "F": 3,
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 92
+      "CONSTRAINED_BY_ARCHITECTURE": 93
     }
   },
   "nodes": {
@@ -3786,6 +3786,73 @@
       ],
       "created_at": "2026-11-14T06:57:54.157Z",
       "updated_at": "2026-11-14T06:57:54.157Z"
+    },
+    "DOM-K-C3DCBF34": {
+      "id": "DOM-K-C3DCBF34",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "windows: fix the unit-test binary crashing at startup on Rust 1.100",
+      "summary": "Prevents defects observed in production commit `3fa31b8b`: windows: fix the unit-test binary crashing at startup on Rust 1.100. Unvalidated  -> When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/conc",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://matthart1983-netwatch/matthart1983-netwatch-learnings.md",
+        "source_version": "23f3b29a",
+        "observed_at": "2026-11-14T07:17:52.901Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (matthart1983-netwatch)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-14T07:18:39.875Z",
+      "updated_at": "2026-11-14T07:18:39.875Z"
+    },
+    "DOM-D-4E8F92EB": {
+      "id": "DOM-D-4E8F92EB",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md`  \n> **Source**: huggingface ( -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md`  \n> **Source**: huggingface (",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-pablodawson-minimax-h3-360-orbit-lora/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T07:18:40.982Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-pablodawson-minimax-h3-360-orbit-lora)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T07:19:17.740Z",
+      "updated_at": "2026-11-14T07:19:17.740Z"
+    },
+    "DOM-K-2852CE47": {
+      "id": "DOM-K-2852CE47",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "test(e2e): pre-pull suite images in parallel and poll every 100ms",
+      "summary": "Prevents defects observed in production commit `ba3b23fa`: test(e2e): pre-pull suite images in parallel and poll every 100ms. Unvalidated ex -> When implementing operations in `test/e2e/tests/base/base_suite.go`, engineers MUST enforce rigorous boundary validation, safe state transit",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://kgateway-dev-kgateway/kgateway-dev-kgateway-learnings.md",
+        "source_version": "74f2e098",
+        "observed_at": "2026-11-14T07:17:59.948Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kgateway-dev-kgateway)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-14T07:20:03.213Z",
+      "updated_at": "2026-11-14T07:20:03.213Z"
     }
   },
   "edges": [
@@ -4708,6 +4775,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-AF708B11 [D] with Domain M",
       "created_at": "2026-11-14T06:57:26.851Z"
+    },
+    {
+      "id": "EDGE-8C7DD0FA2E19",
+      "sourceId": "DOM-K-2852CE47",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-K-2852CE47 [K] with Domain G",
+      "created_at": "2026-11-14T07:20:03.213Z"
     }
   ]
 }

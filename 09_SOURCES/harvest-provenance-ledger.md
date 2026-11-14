@@ -9805,3 +9805,10 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `c72569b3` | Multi-dimensional audit evidence | 2026-11-14T06:57:00.938Z |
 | `learn-dom-d-af708b11` | `project://hf-edge0-edge0-145b-nvfp4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-edge0-145b-nvfp4-learnings.md` | 2026-11-14T06:57:26.852Z |
 | `learn-dom-d-302f93c6` | `project://hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | 2026-11-14T06:57:54.158Z |
+| `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-11-14T07:17:51.498Z |
+| `learn-github-matthart1983-netwatch` | `https://github.com/matthart1983/netwatch` | `23f3b29a` | Multi-dimensional audit evidence | 2026-11-14T07:17:53.803Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `74f2e098` | Multi-dimensional audit evidence | 2026-11-14T07:18:00.845Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `ab4e4edb` | Multi-dimensional audit evidence | 2026-11-14T07:18:07.342Z |
+| `learn-dom-k-c3dcbf34` | `project://matthart1983-netwatch` | `23f3b29a` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md` | 2026-11-14T07:18:39.877Z |
+| `learn-dom-d-4e8f92eb` | `project://hf-pablodawson-minimax-h3-360-orbit-lora` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | 2026-11-14T07:19:17.741Z |
+| `learn-dom-k-2852ce47` | `project://kgateway-dev-kgateway` | `74f2e098` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md` | 2026-11-14T07:20:03.214Z |

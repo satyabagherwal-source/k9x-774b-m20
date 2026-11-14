@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `e598bd4c`  
+> **Source Version**: `ab4e4edb`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T05:07:46.498Z  
+> **Timestamp**: 2026-11-14T07:18:06.454Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T05:07:46.490Z  
+> **Harvest Timestamp**: 2026-11-14T07:18:06.448Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6402 stars
+- **Stars / Engagement**: 6404 stars
 
 ---
 
@@ -1081,11 +1081,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40692** (2026-11-13): **release: bump to version v26.52.0-dev.0 and create its doc file**
-  *Symptoms*: Opened and merged by the Cut release workflow in MaterializeInc/release: auto_cut_release.py's bump of main to the next development version and the next release's doc file.
+- **Issue #40709** (2026-11-13): **[mz-deploy] release mz-deploy 0.8**
+  *Symptoms*: 
 
-- **Issue #40684** (2026-11-12): **expr: Make empty array_fill results zero-dimensional**
-  *Symptoms*: When the requested dimensions contained a zero, `array_fill` returned a one-dimensional array of length zero. PostgreSQL returns a zero-dimensional empty array. Both print as `{}`, but the result compared unequal to `'{}'`, reported a lower bound of 1, and nested into `{{},{}}` under `ARRAY[...]`. An empty dimension array also raised an array size error instead of returning `{}`.  The fix only changes results that have no elements. The function registry snapshot changes for `array_fill`'s body only. The current `LIR_VERSION` has not shipped, so the snapshot is regenerated in place. Regression cases are added to `test/sqllogictest/array_fill.slt`.  Closes: [CPU-334](https://linear.app/materializeinc/issue/CPU-334)  Release notes: This release will make `array_fill` return a zero-dimensional empty array when the result has no elements, matching PostgreSQL.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+- **Issue #40708** (2026-11-13): **sql: rename the failpoints session variable to unsafe_failpoints**
+  *Symptoms*: Any user could set the `failpoints` session variable in production. One `SET failpoints = 'group_commit_before_apply_write=panic'` crashes environmentd, and the same value as a role default (`ALTER ROLE ... SET failpoints`) keeps it crash-looping. The variable is now `unsafe_failpoints`, and the `unsafe_` prefix makes it visible only in unsafe mode, like the other `unsafe_` variables.  - **Role defaults saved under the old name:** the boot migration that drops role defaults for unknown variables removes them before anything parses their value, and parsing is what configures a failpoint.   - Checked on CI images: with `ALTER ROLE materialize SET failpoints = 'group_commit_before_apply_write=panic'`, the v26.50.0 emulator crashes on every boot (exit 134). This PR's image boots on the same volume, logs `removing invalid role vars`, and leaves `mz_role_parameters` empty. - **Tests:** the second commit renames the variable in every test and test tool that sets failpoints; all of them run in unsafe mode. The terraform suite runs testdrive files against self-managed deployments, which don't run in unsafe mode, so it no longer runs `failpoints.td`. - **Docs:** the user docs no longer list the variable, and the developer docs use the new name.  Fixes [SQL-353](https://linear.app/materializeinc/issue/SQL-353).  🤖 Generated with [Claude Code](https://claude.com/claude-code)  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1102,310 +1102,482 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dfa514ea` (2026-11-12)
-**Commit Message**: docs: fix loader completeness gap in transactional downstream updates pattern (#40490)
+### Incident Patch 1: `ab4e4edb` (2026-11-14)
+**Commit Message**: build(deps): Bump libz-sys from 1.1.31 to 1.1.33 (#40681)
 
-## Summary
+See CVE-2026-85091
 
-Materialize writes each batch of sink data records and its progress
-record in one Kafka transaction, so they become visible in Kafka
-atomically. Downstream loaders such as the Snowflake Kafka connector
-load each topic partition through its own channel and flush
-independently, so a progress record can land in the warehouse before
-every data record below its frontier has landed. The pattern's frontier
-join therefore could expose a timestamp with rows missing, and its
-closing claim that every row belongs to a fully loaded timestamp was
-false.
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -5796,9 +5796,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "libz-sys"
+-version = "1.1.31"
++version = "1.1.33"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
++checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
+ dependencies = [
+  "cc",
+  "libc",
+```
+
+---
+
+### Incident Patch 2: `03fdcc85` (2026-11-13)
+**Commit Message**: adapter: retire linearize reads on group commit to fix residual starvation (#37512)
+
+Follow-up to #37316. In the coordinator's biased select, both the branch
+that enqueues a pending strict serializable read and the re-check branch
+sit below `cmd_rx`. A sustained write flood starves retirement, even
+while the same flood advances the oracle past the read's timestamp. The
+read stays pending until the flood drains. Repro and evidence in
+https://github.com/MaterializeInc/materialize/pull/37316#discussion_r3542436439.
+
+Reordering only relocates the victim. Instead, the
+`Message::GroupCommitApplied` handler, which arrives on the top-priority
+internal channel after the committer applies `write_ts` to the oracle,
+retires pending local-timeline reads at or below `write_ts` without an
+oracle round trip. The enqueue branch moves above `cmd_rx`. This is safe
+because only the sequencer sends to that channel, after taking a command
+off `cmd_rx`. The re-check branch stays below `cmd_rx` for other
+timelines and idle periods.
+
+Rebuilt on current main: the earlier version hooked
+`Message::AdvanceTimelines`, which group commit no longer emits since
+#37363.
+
+Adds def-'s `LinearizeReadStarvation` parall
+
+**File**: `misc/python/materialize/parallel_benchmark/scenarios.py` (modified, +92/-0)
+```diff
+@@ -263,6 +263,98 @@ def __init__(self, c: Composition, conn_infos: dict[str, PgConnInfo]):
+         )
+ 
+ 
++class LinearizeReadStarvation(Scenario):
++    """
++    Real-time-recency strict serializable reads under a sustained write flood.
++    Guards against the flood starving retirement of pending linearize reads.
++    """
++
++    def __init__(self, c: Composition, conn_infos: dict[str, PgConnInfo]):
++        self.init(
++            [
++                TdPhase("""
++                    > DROP SECRET IF EXISTS pgpass CASCADE
++                    > CREATE SECRET pgpass AS 'postgres'
++                    > CREATE CONNECTION pg TO POSTGRES (
++                        HOST postgres,
++                        DATABASE postgres,
++                        USER postgres,
++                        PASSWORD SECRET pgpass
++                      )
++
++                    $ postgres-execute connection=postgres://postgres:postgres@postgres
++                    DROP PUBLICATION IF EXISTS mz_linearize_starvation;
++                    DROP TABLE IF EXISTS lin_src CASCADE;
++                    ALTER USER postgres WITH replication;
++                    CREATE TABLE lin_src (f1 INTEGER);
++                    ALTER TABLE lin_src REPLICA IDENTITY FULL;
++                    CREATE PUBLICATION mz_linearize_starvation FOR ALL TABLES;
++
++                    > CREATE SOURCE lin_source
++                      FROM POSTGRES CONNECTION pg (PUBLICATION 'mz_linearize_starvation')
++
++                    > CREATE TABLE lin_src FROM SOURCE lin_source (REFERENCE lin_src)
++
++                    > CREATE MATERIALIZED VIEW lin_mv AS
++                      SELECT COUNT(*) FROM lin_src
++
++                    > CREATE DEFAULT INDEX ON lin_mv
++
++                    # Native table for the coordinator command flood. Writing to it
++                    # advances the same EpochMilliseconds oracle the reads wait on.
++                    > CREATE TABLE lin_flood (f1 INTEGER)
++                    """),
++                LoadPhase(
++                    duration=120,
++                    actions=[
++                        # Keep the Postgres source frontier advancing so real-time
++                        # recency keeps pushing the reads ahead of the oracle.
++                        OpenLoop(
++                            action=StandaloneQuery(
++                                "INSERT INTO lin_src VALUES (1)",
++                                conn_infos["postgres"],
++                            ),
++                            dist=Periodic(per_second=100),
++                            report_regressions=False,
++                        ),
++                    ]
++                    + [
++                        # Sustained write flood. Its group commits advance the oracle
++                        # on the high-priority branch, and its commands keep cmd_rx
++                        # saturated well past the command batch size.
++                        ClosedLoop(
++                            action=ReuseConnQuery(
++                                "INSERT INTO lin_flood VALUES (1)",
++                                conn_infos["materialized"],
++                                strict_serializable=False,
++                            ),
++                            report_regressions=False,
++                        )
++                        for _ in range(1024)
++                    ]
++                    + [
++                        # Real-time-recency strict serializable reads. These become
++                        # pending linearize reads whose retirement the flood starves.
++                        ClosedLoop(
++                            action=ReuseConnQuery(
++                                "SET REAL_TIME_RECENCY TO TRUE; SELECT * FROM lin_mv",
++                                conn_infos["materialized"],
++                                strict_serializable=True,
++                            ),
++                            report_regressions=False,
++                        )
++                        for _ in range(8)
++                    ],
++                ),
++            ],
++            guarantees={
++                "SET REAL_TIME_RECENCY TO TRUE; SELECT * FROM lin_mv (reuse connection)": {
++                    "p99": 5000,
++                },
++            },
++        )
++
++
+ class MySQLReadReplica(Scenario):
+     def __init__(self, c: Composition, conn_infos: dict[str, PgConnInfo]):
+         self.init(
+```
+
+**File**: `src/adapter/src/coord.rs` (modified, +52/-12)
+```diff
+@@ -1275,6 +1275,16 @@ impl PendingReadTxn {
+         self.timestamp_context.timestamp_to_linearize()
+     }
+ 
++    /// Returns whether the oracle of `timeline` having applied `applied_ts` linearizes this read.
++    fn linearized_by(&self, timeline: &Timeline, applied_ts: &Timestamp) -> bool {
++        match self.timestamp_to_linearize() {
++            None => true,
++            Some((read_timeline, chosen_ts)) => {
++                read_timeline == timeline && chosen_ts <= applied_ts
++            }
++        }
++    }
++
+     /// Finishes an already-linearized ordinary read, or returns it unchanged.
+     fn try_finish_read(self, metrics: &Metrics) -> Option<Self> {
+         if self.timestamp_to_linearize().is_some() {
+@@ -4014,21 +4024,11 @@ impl Coordinator {
+                         };
+                         messages.push(Message::GroupCommitInitiate(span, Some(permit)));
+                     },
+-                    // `recv_many()` on `UnboundedReceiver` is cancellation safe:
+-                    // https://docs.rs/tokio/1.38.0/tokio/sync/mpsc/struct.UnboundedReceiver.html#cancel-safety-1
+-                    // Receive a batch of commands.
+-                    count = cmd_rx.recv_many(&mut cmd_messages, MESSAGE_BATCH) => {
+-                        if count == 0 {
+-                            break;
+-                        } else {
+-                            messages.extend(cmd_messages.drain(..).map(
+-                                |(otel_ctx, cmd)| Message::Command(otel_ctx, cmd),
+-                            ));
+-                        }
+-                    },
+                     // `recv()` on `UnboundedReceiver` is cancellation safe:
+                     // https://docs.rs/tokio/1.38.0/tokio/sync/mpsc/struct.UnboundedReceiver.html#cancel-safety
+                     // Receive a single command.
++                    // Above `cmd_rx` so a command flood cannot starve it. Only the sequencer
++                    // sends here.
+                     Some(pending_read_txn) = strict_serializable_reads_rx.recv() => {
+                         let mut pending_read_txns = vec![pending_read_txn];
+                         while let Ok(pending_read_txn) = strict_serializable_reads_rx.try_recv() {
+@@ -4045,6 +4045,18 @@ impl Coordinator {
+                         }
+                         messages.push(Message::LinearizeReads);
+                     }
++                    // `recv_many()` on `UnboundedReceiver` is cancellation safe:
++                    // https://docs.rs/tokio/1.38.0/tokio/sync/mpsc/struct.UnboundedReceiver.html#cancel-safety-1
++                    // Receive a batch of commands.
++                    count = cmd_rx.recv_many(&mut cmd_messages, MESSAGE_BATCH) => {
++                        if count == 0 {
++                            break;
++                        } else {
++                            messages.extend(cmd_messages.drain(..).map(
++                                |(otel_ctx, cmd)| Message::Command(otel_ctx, cmd),
++                            ));
++                        }
++                    },
+                     // `tick()` on `Interval` is cancel-safe:
+                     // https://docs.rs/tokio/1.19.2/tokio/time/struct.Interval.html#cancel-safety
+                     // Receive a single command.
+@@ -5797,6 +5809,34 @@ mod execute_context_tests {
+         assert_eq!(metrics.linearize_read_fast_path.get(), 1);
+     }
+ 
++    #[mz_ore::test(tokio::test)]
++    async fn test_applied_write_linearizes_local_reads_up_to_it() {
++        let local = Timeline::EpochMilliseconds;
++        let applied_ts = Timestamp::from(100u64);
++        for (context, expected) in [
++            (TimestampContext::NoTimestamp, true),
++            (timestamp_context(100, Some(100)), true),
++            (timestamp_context(99, Some(50)), true),
++            (timestamp_context(100, Some(50)), true),
++            (timestamp_context(101, Some(50)), false),
++            (
++                TimestampContext::TimelineTimestamp {
++                    timeline: Timeline::User("other".into()),
++                    chosen_ts: 99.into(),
++                    oracle_ts: Some(50.into()),
++                },
++                false,
++            ),
++        ] {
++            let (pending, _client_rx) = pending_read(context.clone());
++            assert_eq!(
++                pending.linearized_by(&local, &applied_ts),
++                expected,
++                "{context:?}"
++            );
++        }
++    }
++
+     #[mz_ore::test(tokio::test)]
+     async fn test_queued_read_preserves_requeue_metric() {
+         let metrics = Metrics::register_into(&MetricsRegistry::new());
+```
+
+**File**: `src/adapter/src/coord/message_handler.rs` (modified, +20/-1)
+```diff
+@@ -27,11 +27,12 @@ use mz_ore::option::OptionExt;
+ use mz_ore::tracing::OpenTelemetryContext;
+ use mz_ore::{soft_assert_or_log, soft_panic_or_log, task};
+ use mz_persist_client::usage::ShardsUsageReferenced;
+-use mz_repr::{Datum, Diff, Row};
++use mz_repr::{Datum, Diff, Row, Timestamp};
+ use mz_sql::ast::Statement;
+ use mz_sql::pure::PurifiedStatement;
+ use mz_storage_client::controller::IntrospectionType;
+ use mz_storage_types::StorageDiff;
++use mz_storage_types::sources::Timeline;
+ use opentelemetry::trace::TraceContextExt;
+ use rand::{RngExt, SeedableRng, rngs};
+ use serde_json::json;
+@@ -139,6 +140,7 @@ impl Coordinator {
+                 // The committer applied `write_ts` to the oracle, so the read ts is at least
+                 // that and we can downgrade the local read holds without an oracle round trip.
+                 self.downgrade_local_read_holds(write_ts);
++                self.retire_local_reads_linearized_by(write_ts);
+                 self.advance_custom_timelines().boxed_local().await;
+                 for result in internal_results {
+                     result.send(crate::coord::appends::WriteResult::Success {
+@@ -1108,6 +1110,23 @@ impl Coordinator {
+         }
+     }
+ 
++    /// Retires pending local-timeline reads at or below `applied_ts`.
++    fn retire_local_reads_linearized_by(&mut self, applied_ts: Timestamp) {
++        if self.pending_linearize_read_txns.is_empty() {
++            return;
++        }
++        let now = Instant::now();
++        let (ready_txns, pending_txns) = std::mem::take(&mut self.pending_linearize_read_txns)
++            .into_iter()
++            .partition::<BTreeMap<_, _>, _>(|(_conn_id, read_txn)| {
++                read_txn.linearized_by(&Timeline::EpochMilliseconds, &applied_ts)
++            });
++        self.pending_linearize_read_txns = pending_txns;
++        for ready_txn in ready_txns.into_values() {
++            ready_txn.finish_with_metrics(&self.metrics, now);
++        }
++    }
++
+     #[mz_ore::instrument(level = "debug")]
+     /// Linearizes sending the results of a read transaction by,
+     ///   1. Holding back any results that were executed at some point in the future, until the
+```
+
+---
+
+### Incident Patch 3: `b67a45ca` (2026-11-13)
+**Commit Message**: ci: use Buildkite OIDC for macOS tarball uploads (#40673)
+
+## Motivation
+
+The macOS deploy steps currently upload to the binaries bucket with
+credentials from the agent's environment. This moves them to short-lived
+credentials obtained per job through Buildkite's OIDC integration. That
+way the macOS agents need no AWS configuration of their own, which
+simplifies setting them up.
 
 ## Changes
 
-- Restructured the page into two parts, per review:
-- "Step 3. Build a trusted frontier table": a `trusted_frontier` table
-plus the checks an external routine runs before advancing it (sample
-high watermark after the progress record is visible, wait for the LSO to
-reach it, account for transaction markers and aborted ranges, compare to
-the loader's committed offsets).
-- "Step 4. Create a view of committed changes": the single-table view
-now gates on `trusted_frontier`, not `raw_progress`.
-- New "Step 5. Join changes from multiple sinks
+- `TarballUploader` builds its S3 client in one place. When
+`MZ_BINARIES_UPLOAD_ROLE_ARN` is set, it runs `buildkite-agent oidc
+request-token --audience sts.amazonaws.com` and exchanges the token
+through `AssumeRoleWithWebIdentity`. Otherwise it uses the default
+credential chain as before. The token is requested lazily, right before
+the first upload, because the cargo build that precedes it can take
+longer than the token's lifetime.
+- The `deploy-mz`, `deploy-mz-deploy` and `deploy-mz-debug` macOS steps
+set `MZ_BINARIES_UPLOAD_ROLE_ARN`.
+- The `deploy-mz` macOS step gets a step key, `deploy_mz-macos-aarch64`,
+matching the other deploy pipelines.
 
-**File**: `doc/user/content/export-data/patterns/transactional-downstream-updates-kafka.md` (modified, +144/-41)
+Linux deploys are unchanged.
+
+## Rollout
+
+The IAM role must exist before this merges. Until then the macOS uploads
+would fail at `AssumeRoleWithWebIde
+
+**File**: `ci/deploy_mz-debug/pipeline.template.yml` (modified, +2/-0)
 ```diff
-@@ -17,7 +17,8 @@ destination:
+@@ -34,6 +34,8 @@ steps:
+     command: bin/pyactivate -m ci.deploy_mz-debug.macos
+     agents:
+       queue: mac-aarch64
++    env:
++      MZ_BINARIES_UPLOAD_ROLE_ARN: arn:aws:iam::834237029485:role/buildkite-macos-deploy
+     timeout_in_minutes: 30
+     concurrency: 1
+     concurrency_group: deploy-mz-debug/macos/aarch64
+```
+
+**File**: `ci/deploy_mz-deploy/pipeline.template.yml` (modified, +2/-0)
+```diff
+@@ -34,6 +34,8 @@ steps:
+     command: bin/pyactivate -m ci.deploy_mz-deploy.macos
+     agents:
+       queue: mac-aarch64
++    env:
++      MZ_BINARIES_UPLOAD_ROLE_ARN: arn:aws:iam::834237029485:role/buildkite-macos-deploy
+     timeout_in_minutes: 30
+     concurrency: 1
+     concurrency_group: deploy-mz-deploy/macos/aarch64
+```
+
+**File**: `ci/deploy_mz/pipeline.template.yml` (modified, +4/-1)
+```diff
+@@ -42,9 +42,12 @@ steps:
+     concurrency: 1
+     concurrency_group: deploy-mz/docker
  
- 1. Create a Kafka sink in Materialize.
- 1. Load the sink's data topic and progress topic into Snowflake.
--1. Create a Snowflake view that exposes only committed changes.
-+1. Build a table of trusted frontiers that Snowflake has fully loaded.
-+1. Create Snowflake views that expose only changes below the trusted frontier.
+-  - command: bin/pyactivate -m ci.deploy_mz.macos
++  - id: deploy_mz-macos-aarch64
++    command: bin/pyactivate -m ci.deploy_mz.macos
+     agents:
+       queue: mac-aarch64
++    env:
++      MZ_BINARIES_UPLOAD_ROLE_ARN: arn:aws:iam::834237029485:role/buildkite-macos-deploy
+     timeout_in_minutes: 30
+     concurrency: 1
+     concurrency_group: deploy-mz/macos/aarch64
+```
+
+**File**: `ci/tarball_uploader.py` (modified, +47/-2)
+```diff
+@@ -10,10 +10,12 @@
+ # This file contains a class that can be used to upload a tarball to the materialize-binaries S3 bucket.
  
- The same approach works for any destination that stores Kafka headers and
- message keys alongside the message value.
-@@ -37,14 +38,25 @@ the two topics and hide any row that is not yet covered by a progress record.
- | Progress topic | Message key | `mz-sink-` followed by the sink's ID, for example `mz-sink-u123`. |
- | Progress topic | Message value | JSON of the form `{"frontier":[1792700001000],"version":1}`. |
+ import os
++import subprocess
+ import tarfile
+ import tempfile
+ import time
+ from pathlib import Path
++from typing import Any
  
-+All sinks on a Kafka connection share one progress topic, and each sink's
-+records are keyed by `mz-sink-<sink_id>`. Joining on the `materialize-sink-id`
-+header is what ties each data message to its own sink's frontier.
+ import boto3
+ import humanize
+@@ -23,12 +25,55 @@
+ 
+ BINARIES_BUCKET = "materialize-binaries"
+ 
++# When set, uploads use short-lived credentials for this role, obtained by
++# exchanging the job's Buildkite OIDC token, rather than the ambient AWS
++# credentials.
++UPLOAD_ROLE_ARN_ENV = "MZ_BINARIES_UPLOAD_ROLE_ARN"
 +
-+{{< warning >}}
-+This pattern parses progress records. Their format is not yet a documented,
-+stable interface and may change in a future release. Ignore any fields you
-+don't recognize when you parse them.
-+{{< /warning >}}
 +
- The `frontier` is exclusive: the sink has committed every change with a
--timestamp less than the frontier. To expose only committed data:
-+timestamp less than the frontier. The pattern has two parts:
++def _s3_client() -> Any:
++    role_arn = os.environ.get(UPLOAD_ROLE_ARN_ENV)
++    if not role_arn:
++        return boto3.client("s3")
++
++    # Requested immediately before use: OIDC tokens are short-lived and the
++    # build that precedes the upload can outlast one.
++    token = subprocess.check_output(
++        [
++            "buildkite-agent",
++            "oidc",
++            "request-token",
++            "--audience",
++            "sts.amazonaws.com",
++        ],
++        text=True,
++    ).strip()
++    session = boto3.Session()
++    creds = session.client("sts").assume_role_with_web_identity(
++        RoleArn=role_arn,
++        RoleSessionName=f"buildkite-{os.environ['BUILDKITE_JOB_ID']}"[:64],
++        WebIdentityToken=token,
++        DurationSeconds=3600,
++    )["Credentials"]
++    return boto3.client(
++        "s3",
++        aws_access_key_id=creds["AccessKeyId"],
++        aws_secret_access_key=creds["SecretAccessKey"],
++        aws_session_token=creds["SessionToken"],
++    )
++
  
--1. Match each data message to the progress records whose key equals
--   `'mz-sink-' || <materialize-sink-id header>`.
--1. Take the latest frontier for that sink.
--1. Keep the data messages where `materialize-timestamp` is less than that
--   frontier.
-+1. **Build a trusted frontier.** For each sink, record a frontier only once
-+   the loader has confirmed that every data message below it has landed in
-+   the destination. The latest frontier in the progress topic is only a
-+   candidate; see [Step 3](#step-3-build-a-trusted-frontier-table).
-+1. **Gate views on the trusted frontier.** Keep the data messages whose
-+   `materialize-timestamp` is less than the trusted frontier for their sink.
+ class TarballUploader:
+     def __init__(self, package_name: str, version: TypedVersionBase):
+         self.package_name = package_name
+         self.version = version
+         self.version_str = f"v{version.str_without_prefix()}"
++        self._s3: Any = None
++
++    def _client(self) -> Any:
++        if self._s3 is None:
++            self._s3 = _s3_client()
++        return self._s3
  
- ## Before you begin
+     def _create_tardir(self, name: str) -> tarfile.TarInfo:
+         """Takes a dir path and creates a TarInfo. Sets the
+@@ -46,7 +91,7 @@ def _sanitize_tarinfo(self, tarinfo: tarfile.TarInfo) -> tarfile.TarInfo:
  
-@@ -108,14 +120,16 @@ timestamp less than the frontier. To expose only committed data:
- ## Step 2. Load both topics into Snowflake
- 
- Configure the Snowflake connector to load the data topic into a table named
--`raw_orders` and the progress topic into a table named `raw_progress`. For
--example:
-+`raw_orders` and the progress topic into a table named `raw_progress`. This
-+guide uses version 3 of the connector with Snowpipe Streaming, which loads
-+each partition through its own channel. For example:
- 
- ```json
- {
-   "name": "materialize_orders",
-   "config": {
-     "connector.class": "com.snowflake.kafka.connector.SnowflakeSinkConnector",
-+    "snowflake.ingestion.method": "SNOWPIPE_STREAMING",
-     "topics": "orders,<sink_progress_topic>",
-     "snowflake.topic2table.map": "orders:raw_orders,<sink_progress_topic>:raw_progress",
-     "snowflake.url.name": "<account>.snowflakecomputing.com:443",
-@@ -124,7 +138,8 @@ example:
-     "snowflake.database.name": "<database>",
-     "snowflake.schema.name": "<schema>",
-     "key.converter": "org.apache.kafka.connect.storage.StringConverter",
--    "value.converter": "com.snowflake.kafka.connector.records.SnowflakeJsonConverter",
-+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-+    "value.converter.schemas.enable": "false",
-     "consumer.override.isolation.level": "read_committed"
-   }
- }
-@@ -137,8 +152,12 @@ Each Snowflake table gets two columns:
- - `RECORD_METADATA`: the message metadata, as a `VARIANT`. The message key is
-   in `RECORD_METADATA:key` and the headers are in `RECORD_METADATA:headers`.
- 
--Two settings in this configuration matter for the pattern:
-+These settings in this configuration matter for the pattern:
- 
-+- `snowflake.ingestion.method` must be `SNOWPIPE_STREAMING`. Each channel
-+  then records an offset token, which [Step 3](#step-3-build-a-trusted-frontier-table)
-+  relies on. Snowpipe Streaming does not support the Snowflake converters, so
-+  this example uses `JsonConverter` for values.
- - `key.converter` must be `org.apache.kafka.connect.storage.StringConverter`.
-   Otherwise, the connector does not keep the progress topic's message key, and
-   you can't tell which sink a progress record belongs to.
-@@ -147,46 +166,129 @@ Two settings in this configuration matter for the pattern:
-   Connect worker must allow client configuration overrides
-   (`connector.client.config.override.policy`). Alternatively, set
-   `consumer.isolation.level=read_committed` in the worker configuration.
-+  This setting only excludes aborted transactions. It does not order the
-+  connector's flushes across partitions; see [Step 3](#step-3-build-a-trusted-frontier-table).
-+- `errors.tolerance` and `behavior.on.null.values` must keep their defaults,
-+  `none` and `DEFAULT`. With other values, the connector can skip a message
-+  but still a
-```
-
----
-
-### Incident Patch 2: `19081e30` (2026-11-11)
-**Commit Message**: Bump Node to the November 2026 security releases (#40669)
-
-### Motivation
-
-Node released [security
-fixes](https://nodejs.org/en/blog/vulnerability/november-2026-security-releases)
-on 2026-11-11: 22.23.5, 24.22.3 and 26.13.1. The CVEs are in Node's
-HTTP/2 and HTTPS/TLS servers, zlib, proxy error messages and the
-permission model. Nothing we ship runs Node as a server, since the
-Console is served as static files by Vercel or nginx. This moves the
-build, CI, test and local development pins to the patched releases.
-
-### Description
-
-| Pin | Used by | Before | After |
-|---|---|---|---|
-| `node:26-alpine` digest | Console image builder stages | 26.13.0 |
-26.13.1 |
-| `node:26-trixie-slim` digest | ci-builder, Playwright | 26.13.0 |
-26.13.1 |
-| `node:22-slim` digest | Azurite | 22.23.4 | 22.23.5 |
-| `volta.node` in `console/package.json` | local development | 26.10.0 |
-26.13.1 |
-| `NODE_VERSION` in `misc/scratch/provision.bash` | scratch machines |
-24.16.0 | 24.22.3 |
-
-Each digest is the multi-arch index the floating tag points to, with the
-patched `NODE_VERSION` in its amd64 and arm64 images. Renovate's weekly
-Docker group would bring the digests too, but nothing updates the Volta
-pin or 
-
-**File**: `ci/builder/Dockerfile` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
- # the Business Source License, use of this software will be governed
- # by the Apache License, Version 2.0.
- 
--FROM node:26-trixie-slim@sha256:5adad64f9a1fca2d51972caa65983634c8a774eb300d72b20f7f2a0f60368072 AS node
-+FROM node:26-trixie-slim@sha256:e6bedef217677b276c591795e169840edd9096dbf13f29df8ef8d1856b8820bc AS node
- 
- # Node 25 dropped corepack from the distribution, but the console pins its
- # package manager through `packageManager` in console/package.json and CI drives
-```
-
-**File**: `console/Dockerfile` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@
- 
- # Pinned by rolling tag + multi-arch index digest so Renovate refreshes the
- # digest for security fixes.
--FROM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS builder
-+FROM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS builder
- 
- WORKDIR /app
- 
-```
-
-**File**: `console/misc/docker/Dockerfile` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@
- # the Business Source License, use of this software will be governed
- # by the Apache License, Version 2.0.
- 
--FROM node:26-alpine@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS builder
-+FROM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5 AS builder
- 
- WORKDIR /app
- 
-```
-
-**File**: `console/package.json` (modified, +1/-1)
-```diff
-@@ -212,7 +212,7 @@
-     "defaults"
-   ],
-   "volta": {
--    "node": "26.10.0",
-+    "node": "26.13.1",
-     "yarn": "4.14.1"
-   },
-   "packageManager": "yarn@4.14.1",
-```
-
-**File**: `misc/scratch/provision.bash` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ ARCH_GO=$(echo "$ARCH" | sed -e "s/aarch64/arm64/" -e "s/x86_64/amd64/")
- # line until moby#51845 is fixed (Docker 29 is unstable).
- DOCKER_VERSION=28.5.2
- DOCKER_COMPOSE_VERSION=5.0.1
--NODE_VERSION=24.16.0
-+NODE_VERSION=24.22.3
- NODE_ARCH=$(echo "$ARCH" | sed -e "s/aarch64/arm64/" -e "s/x86_64/x64/")
- 
- # Everything runs in parallel — no serial APT bottleneck.
-```
-
-**File**: `test/azurite/Dockerfile` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@
- # CA bundle for apt's HTTPS transport, before ca-certificates is installed.
- FROM gcr.io/distroless/cc-debian13:debug-nonroot@sha256:c69d16acb50ae6ee26adfb0645467b507753c0eb91c389afad87914cd2ecf6de AS ca-certs
- 
--FROM node:22-slim@sha256:5ec23b7c622b00547753bc6ffd78085dd868a68aeb41c8e0a1418f033e13d96d
-+FROM node:22-slim@sha256:18052396bf1d0c6e0a8c58181b5c1457da19409efbd5032a3f4d86974e74d13c
- 
- # Fetch apt sources over HTTPS only.
- COPY --from=ca-certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-```
-
-**File**: `test/playwright/Dockerfile` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@
- # Pinned by rolling tag + multi-arch index digest so Renovate refreshes the
- # digest for security fixes. mzbuild only rebuilds when this directory changes,
- # so an unpinned tag kept serving whatever Node it resolved to at the last edit.
--FROM node:26-trixie-slim@sha256:5adad64f9a1fca2d51972caa65983634c8a774eb300d72b20f7f2a0f60368072
-+FROM node:26-trixie-slim@sha256:e6bedef217677b276c591795e169840edd9096dbf13f29df8ef8d1856b8820bc
- 
- COPY package.json /tmp/playwright-package.json
- RUN playwright_version=$(node -p 'require("/tmp/playwright-package.json").devDependencies["@playwright/test"]') \
-```
-
----
-
-### Incident Patch 3: `4c61185d` (2026-11-11)
-**Commit Message**: console: require Node 22.22.2, 24.15.0 or 26 (#40650)
-
-### Motivation
-
-`console/package.json` declares `"node": ">=20.12.2"`, but the installed
-dependency tree no longer runs there. Checking every installed package's
-`engines.node` against candidate versions:
-
-| Node | Packages whose `engines.node` rejects it |
-|---|---|
-| 20.12.2 | 60 (jsdom's CSS packages, …) |
-| 20.19.0 | 18 (`@mswjs/interceptors` 0.45, `@rolldown/plugin-babel`,
-`@testing-library/jest-dom` 7, `eslint-plugin-unicorn` 79, …) |
-| 22.12.0 | 25 (`@eslint/*` needs 22.13, …) |
-| 22.18.0 | 7 (`node-gyp` 13, `which` 7, `abbrev` 5, `nopt` 10,
-`lint-staged` 17, `undici` 8.12, …) |
-| 24.11.0 | 5 (`node-gyp` 13 and its helpers) |
-| 22.22.2, 24.15.0, 26.0.0 | none |
-
-msw 3 (#39684) and kysely 0.29 (#40550) both deferred this change to
-#39683, which is still open.
-
-### Description
-
-`engines.node` becomes `^22.22.2 || ^24.15.0 || >=26.0.0`, the
-intersection of every installed package's range. Volta (26.10.0),
-`console/Dockerfile` and CI already run Node 26. It is the same range as
-#39683, so that PR merges cleanly on this line.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**File**: `console/package.json` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
-   "private": true,
-   "type": "module",
-   "engines": {
--    "node": ">=20.12.2"
-+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
-   },
-   "scripts": {
-     "start": "vite",
+     def _upload_redirect(self, key: str, to: str) -> None:
+         with tempfile.NamedTemporaryFile() as empty:
+-            boto3.client("s3").upload_fileobj(
++            self._client().upload_fileobj(
+                 Fileobj=empty,
+                 Bucket=BINARIES_BUCKET,
+                 Key=key,
+@@ -56,7 +101,7 @@ def _upload_redirect(self, key: str, to: str) -> None:
+     def _upload_tarball(self, tarball: Path, platform: str) -> None:
+         """Uploads the tarball (.tar) to the S3 bucket."""
+         s3_object = f"{self.package_name}-{self.version_str}-{platform}.tar.gz"
+-        boto3.client("s3").upload_file(
++        self._client().upload_file(
+             Filename=str(tarball),
+             Bucket=BINARIES_BUCKET,
+             Key=s3_object,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40709** (2026-11-13): [mz-deploy] release mz-deploy 0.8 (@sjwiesman)
+- **PR #40708** (2026-11-13): sql: rename the failpoints session variable to unsafe_failpoints (@ggevay)
+- **PR #40697** (closed): storage: render upsert v2 on swapless replicas whose buffer pool spills to file (@antiguru)
 - **PR #40692** (2026-11-13): release: bump to version v26.52.0-dev.0 and create its doc file (@materialize-bot)
-- **PR #40684** (2026-11-12): expr: Make empty array_fill results zero-dimensional (@antiguru)
-- **PR #40682** (2026-11-12): ci: Annotate failed steps outside mzcompose and cloudtest (@def-)
-- **PR #40679** (2026-11-12): ci: Tag optimized dev images separately from release builds (@def-)
-- **PR #40676** (closed): ci: Prevent spec-sheet from benchmarking the wrong build profile (@aljoscha)
-- **PR #40672** (2026-11-12): deps: bump rust-postgres fork (@def-)
+- **PR #40687** (2026-11-13): doc: condense the user-defined functions page into a table (@maheshwarip)
+- **PR #40686** (2026-11-13): storage: Add a FAILOVER option for PostgreSQL sources (@peterdukelarsen)
 
 ---
 
@@ -1425,58 +1597,30 @@ intersection of every installed package's range. Volta (26.10.0),
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: fix loader completeness gap in transactional downstream updates pattern (#
+## X. build(deps): Bump libz-sys from 1.1.31 to 1.1.33
 
 **RULE**:
-When implementing operations in `doc/user/content/export-data/patterns/transactional-downstream-updates-kafka.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dfa514ea`: docs: fix loader completeness gap in transactional downstream updates pattern (#40490). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ab4e4edb`: build(deps): Bump libz-sys from 1.1.31 to 1.1.33. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `doc/user/content/export-data/patterns/transactional-downstream-updates-kafka.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-1. Build a table of trusted frontiers that Snowflake has fully loaded.
-1. Create Snowflake views that expose only changes below the trusted frontier.
-All sinks on a Kafka connection share one progress topic, and each sink's
-records are keyed by `mz-sink-<sink_id>`. Joining on the `materialize-sink-id`
-header is what ties each data message to its own sink's frontier.
-
-{{< warning >}}
-This pattern parses progress records. Their format is not yet a documented,
-stable interface and may change in a future release. Ignore any fields you
-don't recognize when you parse them.
-{{< /warning >}}
-
-timestamp less than the frontier. The pattern has two parts:
-1. **Build a trusted frontier.** For each sink, record a frontier only once
-   the loader has confirmed that every data message below it has landed in
-   the destination. The latest frontier in the progress topic is only a
-   candidate; see [Step 3](#step-3-build-a-trusted-frontier-table).
-1. **Gate views on the trusted frontier.** Keep the data messages whose
-   `materialize-timestamp` is less than the trusted frontier for their sink.
-`raw_orders` and the progress topic into a table named `raw_progress`. This
-guide uses version 3 of the con
+version = "1.1.33"
+checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-1. Create a Snowflake view that exposes only committed changes.
-timestamp less than the frontier. To expose only committed data:
-1. Match each data message to the progress records whose key equals
-   `'mz-sink-' || <materialize-sink-id header>`.
-1. Take the latest frontier for that sink.
-1. Keep the data messages where `materialize-timestamp` is less than that
-   frontier.
-`raw_orders` and the progress topic into a table named `raw_progress`. For
-example:
-    "value.converter": "com.snowflake.kafka.connector.records.SnowflakeJsonConverter",
-Two settings in this configuration matter for the pattern:
+// Induced defect failure mode:
+version = "1.1.31"
+checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dfa514ea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ab4e4edb` are properly handled with clean fallback behavior.

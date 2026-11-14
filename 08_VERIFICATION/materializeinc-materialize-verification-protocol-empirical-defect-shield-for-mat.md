@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for materializeinc/materialize
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for MaterializeInc/materialize
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "materializeinc/materialize",
-  "source_url": "https://github.com/materializeinc/materialize",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "MaterializeInc/materialize",
+  "source_url": "https://github.com/MaterializeInc/materialize",
+  "source_version": "ab4e4edb",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-14T07:18:07.507Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-materializeinc-materialize",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [materializeinc/materialize](https://github.com/materializeinc/materialize) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `ab4e4edb`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-14T07:18:07.507Z`  
+> **Learning ID**: `learn-github-materializeinc-materialize`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `materializeinc/materialize` (Commit: `historical`)
+- **Target Repository**: `MaterializeInc/materialize` (Commit: `ab4e4edb`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
-> **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `a859dade`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:35:46.900Z  
-> **Learning ID**: `learn-github-materializeinc-materialize`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): MaterializeInc/materialize
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:35:46.894Z  
+> **Harvest Timestamp**: 2026-11-14T07:18:06.448Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6399 stars
+- **Stars / Engagement**: 6404 stars
 
 ---
 
@@ -1106,11 +1092,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40660** (2026-11-11): **ci: Nightly fixes (2026-11-11)**
-  *Symptoms*: Based on https://buildkite.com/materialize/nightly/builds/18717  Test run: https://buildkite.com/materialize/nightly/builds/18721 (edit: green) & https://buildkite.com/materialize/nightly/builds/18722
+- **Issue #40709** (2026-11-13): **[mz-deploy] release mz-deploy 0.8**
+  *Symptoms*: 
 
-- **Issue #40659** (2026-11-11): **AGENTS.md: drop skills section, resolve ambiguous guidance**
-  *Symptoms*: ### Motivation  Agent harnesses already present the skill descriptions to the agent along with the AGENTS.md, and I like being able to, say, disable certain skills, depending what I'm working on. For example, to not have the agent run the commit verification on every commit it does. If anything about the skills needs fixing, it should be fixed in the skill description.  Then, this also cleans up some contradictory or redundant parts in the guidance.  ### Description  **Remove the Skills section.** Agent runtimes already list every skill with its `name` and `description` from the `SKILL.md` frontmatter, and those descriptions carry the triggers ("run tests", "cargo fmt", "commit", "why is CI red"). The section repeated that list for four of the skills. It also said `bin/lint` is the entry point and "NOT a bare `cargo clippy`", while the `mz-commit` and `mz-run` skills both prescribe `cargo clippy --all-targets -- -D warnings`.  One thing this gives up: the section told agents to load `mz-test` before running any test "even mid-task", while the skill descriptions are phrased as user requests. If agents start skipping the skill for tests they run on their own initiative, the fix is a sentence in that skill's description.  **Resolve guidance that contradicted itself or a skill.**  * Checks: the bullet named `bin/fmt` and `cargo check` as what to run before reporting success and before committing. `mz-commit` asks for `bin/fmt`, `bin/lint`, and clippy before a commit. The bullet n
+- **Issue #40708** (2026-11-13): **sql: rename the failpoints session variable to unsafe_failpoints**
+  *Symptoms*: Any user could set the `failpoints` session variable in production. One `SET failpoints = 'group_commit_before_apply_write=panic'` crashes environmentd, and the same value as a role default (`ALTER ROLE ... SET failpoints`) keeps it crash-looping. The variable is now `unsafe_failpoints`, and the `unsafe_` prefix makes it visible only in unsafe mode, like the other `unsafe_` variables.  - **Role defaults saved under the old name:** the boot migration that drops role defaults for unknown variables removes them before anything parses their value, and parsing is what configures a failpoint.   - Checked on CI images: with `ALTER ROLE materialize SET failpoints = 'group_commit_before_apply_write=panic'`, the v26.50.0 emulator crashes on every boot (exit 134). This PR's image boots on the same volume, logs `removing invalid role vars`, and leaves `mz_role_parameters` empty. - **Tests:** the second commit renames the variable in every test and test tool that sets failpoints; all of them run in unsafe mode. The terraform suite runs testdrive files against self-managed deployments, which don't run in unsafe mode, so it no longer runs `failpoints.td`. - **Docs:** the user docs no longer list the variable, and the developer docs use the new name.  Fixes [SQL-353](https://linear.app/materializeinc/issue/SQL-353).  🤖 Generated with [Claude Code](https://claude.com/claude-code)  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1127,716 +1113,482 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d2bad1a0` (2026-11-10)
-**Commit Message**: storage: rate limit gauge regression error logs (#40589)
+### Incident Patch 1: `ab4e4edb` (2026-11-14)
+**Commit Message**: build(deps): Bump libz-sys from 1.1.31 to 1.1.33 (#40681)
 
-### Motivation
+See CVE-2026-85091
 
-A regressed source statistics gauge logs an error on every statistics
-update until the source restarts, which drains the Sentry budget.
-Closes: [SS-570](https://linear.app/materializeinc/issue/SS-570)
-
-### Description
-
-Each `Total` and `Boolean` gauge now logs its first regression at error
-level and later ones at warn level, erroring again at most once every 15
-minutes.
-
-### Verification
-
-A unit test checks that a second regression within the interval does not
-reset the error timestamp.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
----------
-
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `src/storage-client/src/statistics.rs` (modified, +152/-65)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -18,7 +18,7 @@
+@@ -5796,9 +5796,9 @@ dependencies = [
  
- use std::sync::LazyLock;
- use std::sync::atomic::{AtomicU64, Ordering};
--use std::time::Instant;
-+use std::time::{Duration, Instant};
+ [[package]]
+ name = "libz-sys"
+-version = "1.1.31"
++version = "1.1.33"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
++checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
+ dependencies = [
+  "cc",
+  "libc",
+```
+
+---
+
+### Incident Patch 2: `03fdcc85` (2026-11-13)
+**Commit Message**: adapter: retire linearize reads on group commit to fix residual starvation (#37512)
+
+Follow-up to #37316. In the coordinator's biased select, both the branch
+that enqueues a pending strict serializable read and the re-check branch
+sit below `cmd_rx`. A sustained write flood starves retirement, even
+while the same flood advances the oracle past the read's timestamp. The
+read stays pending until the flood drains. Repro and evidence in
+https://github.com/MaterializeInc/materialize/pull/37316#discussion_r3542436439.
+
+Reordering only relocates the victim. Instead, the
+`Message::GroupCommitApplied` handler, which arrives on the top-priority
+internal channel after the committer applies `write_ts` to the oracle,
+retires pending local-timeline reads at or below `write_ts` without an
+oracle round trip. The enqueue branch moves above `cmd_rx`. This is safe
+because only the sequencer sends to that channel, after taking a command
+off `cmd_rx`. The re-check branch stays below `cmd_rx` for other
+timelines and idle periods.
+
+Rebuilt on current main: the earlier version hooked
+`Message::AdvanceTimelines`, which group commit no longer emits since
+#37363.
+
+Adds def-'s `LinearizeReadStarvation` parall
+
+**File**: `misc/python/materialize/parallel_benchmark/scenarios.py` (modified, +92/-0)
+```diff
+@@ -263,6 +263,98 @@ def __init__(self, c: Composition, conn_infos: dict[str, PgConnInfo]):
+         )
  
- use mz_controller_types::ReplicaId;
- use serde::{Deserialize, Serialize};
-@@ -140,7 +140,9 @@ pub trait StorageMetric {
-         Self: Sized + 'a;
  
-     /// Incorporate this value with another.
--    fn incorporate(&mut self, other: Self, field_name: &'static str);
-+    ///
-+    /// `id` and `field_name` identify the metric in regression logs.
-+    fn incorporate(&mut self, other: Self, id: GlobalId, field_name: &'static str);
- }
- 
- /// A counter that never resets.
-@@ -157,7 +159,7 @@ impl StorageMetric for Counter {
-         Self(values.into_iter().map(|c| c.0).sum())
-     }
- 
--    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-+    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-         // Always add the new value to the existing one.
-         self.0 += other.0
-     }
-@@ -198,7 +200,7 @@ impl StorageMetric for ResettingLatency {
-         Self(Some(max))
-     }
- 
--    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-+    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-         // Reset to the new value.
-         self.0 = other.0;
-     }
-@@ -233,7 +235,7 @@ impl StorageMetric for ResettingNullableTotal {
-         Self(Some(sum))
-     }
- 
--    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-+    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-         match (&mut self.0, other.0) {
-             (None, other) => {
-                 self.0 = other;
-@@ -273,7 +275,7 @@ impl StorageMetric for ResettingTotal {
-         Self(values.into_iter().map(|c| c.0).sum())
-     }
- 
--    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-+    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-         // Reset the pre-existing value.
-         self.0 = other.0;
-     }
-@@ -291,9 +293,43 @@ impl ResettingTotal {
-     }
- }
- 
-+/// Throttles the `error!` log for gauge regressions.
-+///
-+/// A regressed gauge keeps regressing on every statistics update, every few
-+/// seconds, until the source restarts. Only the first regression in each
-+/// interval is logged at `error!`, which reaches Sentry, the rest at `warn!`.
-+#[derive(Clone, Debug, Default)]
-+struct RegressionLog {
-+    last_error: Option<Instant>,
-+}
++class LinearizeReadStarvation(Scenario):
++    """
++    Real-time-recency strict serializable reads under a sustained write flood.
++    Guards against the flood starving retirement of pending linearize reads.
++    """
 +
-+impl RegressionLog {
-+    const ERROR_INTERVAL: Duration = Duration::from_secs(15 * 60);
++    def __init__(self, c: Composition, conn_infos: dict[str, PgConnInfo]):
++        self.init(
++            [
++                TdPhase("""
++                    > DROP SECRET IF EXISTS pgpass CASCADE
++                    > CREATE SECRET pgpass AS 'postgres'
++                    > CREATE CONNECTION pg TO POSTGRES (
++                        HOST postgres,
++                        DATABASE postgres,
++                        USER postgres,
++                        PASSWORD SECRET pgpass
++                      )
 +
-+    fn log(&mut self, message: std::fmt::Arguments<'_>) {
-+        let now = Instant::now();
-+        match self.last_error {
-+            Some(last) if now.duration_since(last) < Self::ERROR_INTERVAL => {
-+                tracing::warn!("{message}")
-+            }
-+            _ => {
-+                self.last_error = Some(now);
-+                tracing::error!("{message}")
++                    $ postgres-execute connection=postgres://postgres:postgres@postgres
++                    DROP PUBLICATION IF EXISTS mz_linearize_starvation;
++                    DROP TABLE IF EXISTS lin_src CASCADE;
++                    ALTER USER postgres WITH replication;
++                    CREATE TABLE lin_src (f1 INTEGER);
++                    ALTER TABLE lin_src REPLICA IDENTITY FULL;
++                    CREATE PUBLICATION mz_linearize_starvation FOR ALL TABLES;
++
++                    > CREATE SOURCE lin_source
++                      FROM POSTGRES CONNECTION pg (PUBLICATION 'mz_linearize_starvation')
++
++                    > CREATE TABLE lin_src FROM SOURCE lin_source (REFERENCE lin_src)
++
++                    > CREATE MATERIALIZED VIEW lin_mv AS
++                      SELECT COUNT(*) FROM lin_src
++
++                    > CREATE DEFAULT INDEX ON lin_mv
++
++                    # Native table for the coordinator command flood. Writing to it
++                    # advances the same EpochMilliseconds oracle the reads wait on.
++                    > CREATE TABLE lin_flood (f1 INTEGER)
++                    """),
++                LoadPhase(
++                    duration=120,
++                    actions=[
++                        # Keep the Postgres source frontier advancing so real-time
++                        # recency keeps pushing the reads ahead of the oracle.
++                        OpenLoop(
++                            action=StandaloneQuery(
++                                "INSERT INTO lin_src VALUES (1)",
++                                conn_infos["postgres"],
++                            ),
++                            dist=Periodic(per_second=100),
++                            report_regressions=False,
++                        ),
++                    ]
++                    + [
++                        # Sustained write flood. Its group commits advance the oracle
++                        # on the high-priority branch, and its commands keep cmd_rx
++                        # saturated well past the command batch size.
++                        ClosedLoop(
++                            action=ReuseConnQuery(
++                                "INSERT INTO lin_flood VALUES (1)",
++                                conn_infos["materialized"],
++                                strict_serializable=False,
++                            ),
++                            report_regressions=False,
++                        )
++                        for _ in range(1024)
++                    ]
++                    + [
++                        # Real-time-recency strict serializable reads. These become
++                        # pending linearize reads whose retirement the flood starves.
++                        ClosedLoop(
++                            action=ReuseConnQuery(
++                                "SET REAL_TIME_RECENCY TO TRUE; SELECT * FROM lin_mv",
++                                conn_infos["materialized"],
++                                strict_serializable=True,
++                            ),
++                            report_regressions=False,
++                        )
++                        for _ in range(8)
++                    ],
++                ),
++            ],
++            guarantees={
++                "SET REAL_TIME_RECENCY TO TRUE; SELECT * FROM lin_mv (reuse connection)": {
++                    "p99": 5000,
++                },
++            },
++        )
++
++
+ class MySQLReadReplica(Scenario):
+     def __init__(self, c: Composition, conn_infos: dict[str, PgConnInfo]):
+         self.init(
+```
+
+**File**: `src/adapter/src/coord.rs` (modified, +52/-12)
+```diff
+@@ -1275,6 +1275,16 @@ impl PendingReadTxn {
+         self.timestamp_context.timestamp_to_linearize()
+     }
+ 
++    /// Returns whether the oracle of `timeline` having applied `applied_ts` linearizes this read.
++    fn linearized_by(&self, timeline: &Timeline, applied_ts: &Timestamp) -> bool {
++        match self.timestamp_to_linearize() {
++            None => true,
++            Some((read_timeline, chosen_ts)) => {
++                read_timeline == timeline && chosen_ts <= applied_ts
 +            }
 +        }
 +    }
-+}
 +
-+// The throttle state is bookkeeping, not part of the gauge's value.
-+impl PartialEq for RegressionLog {
-+    fn eq(&self, _other: &Self) -> bool {
-+        true
+     /// Finishes an already-linearized ordinary read, or returns it unchanged.
+     fn try_finish_read(self, metrics: &Metrics) -> Option<Self> {
+         if self.timestamp_to_linearize().is_some() {
+@@ -4014,21 +4024,11 @@ impl Coordinator {
+                         };
+                         messages.push(Message::GroupCommitInitiate(span, Some(permit)));
+                     },
+-                    // `recv_many()` on `UnboundedReceiver` is cancellation safe:
+-                    // https://docs.rs/tokio/1.38.0/tokio/sync/mpsc/struct.UnboundedReceiver.html#cancel-safety-1
+-                    // Receive a batch of commands.
+-                    count = cmd_rx.recv_many(&mut cmd_messages, MESSAGE_BATCH) => {
+-                        if count == 0 {
+-                            break;
+-                        } else {
+-                            messages.extend(cmd_messages.drain(..).map(
+-                                |(otel_ctx, cmd)| Message::Command(otel_ctx, cmd),
+-                            ));
+-                        }
+-                    },
+                     // `recv()` on `UnboundedReceiver` is cancellation safe:
+                     // https://docs.rs/tokio/1.38.0/tokio/sync/mpsc/struct.UnboundedReceiver.html#cancel-safety
+                     // Receive a single command.
++                    // Above `cmd_rx` so a command flood cannot starve it. Only the sequencer
++                    // sends here.
+                     Some(pending_read_txn) = strict_serializable_reads_rx.recv() => {
+                         let mut pending_read_txns = vec![pending_read_txn];
+                         while let Ok(pending_read_txn) = strict_serializable_reads_rx.try_recv() {
+@@ -4045,6 +4045,18 @@ impl Coordinator {
+                         }
+                         messages.push(Message::LinearizeReads);
+                     }
++                    // `recv_many()` on `UnboundedReceiver` is cancellation safe:
++                    // https://docs.rs/tokio/1.38.0/tokio/sync/mpsc/struct.UnboundedReceiver.html#cancel-safety-1
++                    // Receive a batch of commands.
++                    count = cmd_rx.recv_many(&mut cmd_messages, MESSAGE_BATCH) => {
++                        if count == 0 {
++                            break;
++                        } else {
++                            messages.extend(cmd_messages.drain(..).map(
++                                |(otel_ctx, cmd)| Message::Command(otel_ctx, cmd),
++                            ));
++                        }
++                    },
+                     // `tick()` on `Interval` is cancel-safe:
+                     // https://docs.rs/tokio/1.19.2/tokio/time/struct.Interval.html#cancel-safety
+                     // Receive a single command.
+@@ -5797,6 +5809,34 @@ mod execute_context_tests {
+         assert_eq!(metrics.linearize_read_fast_path.get(), 1);
+     }
+ 
++    #[mz_ore::test(tokio::test)]
++    async fn test_applied_write_linearizes_local_reads_up_to_it() {
++        let local = Timeline::EpochMilliseconds;
++        let applied_ts = Timestamp::from(100u64);
++        for (context, expected) in [
++            (TimestampContext::NoTimestamp, true),
++            (timestamp_context(100, Some(100)), true),
++            (timestamp_context(99, Some(50)), true),
++            (timestamp_context(100, Some(50)), true),
++            (timestamp_context(101, Some(50)), false),
++            (
++                TimestampContext::TimelineTimestamp {
++                    timeline: Timeline::User("other".into()),
++                    chosen_ts: 99.into(),
++                    oracle_ts: Some(50.into()),
++                },
++                false,
++            ),
++        ] {
++            let (pending, _client_rx) = pending_read(context.clone());
++            assert_eq!(
++                pending.linearized_by(&local, &applied_ts),
++                expected,
++                "{context:?}"
++            );
++        }
 +    }
-+}
 +
- /// A boolean gauge that is never reset.
- #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Default)]
--pub struct Boolean(bool);
-+pub struct Boolean(bool, #[serde(skip)] RegressionLog);
- 
- impl StorageMetric for Boolean {
-     fn summarize<'a, I>(values: I) -> Self
-@@ -302,18 +338,21 @@ impl StorageMetric for Boolean {
-         Self: Sized + 'a,
-     {
-         // All workers must be true for this gauge to be true.
--        Self(values.into_iter().fold(true, |base, new| base & new.0))
-+        Self(
-+            values.into_iter().fold(true, |base, new| base & new.0),
-+            RegressionLog::default(),
-+        )
-     }
- 
--    fn incorporate(&mut self, other: Self, field_name: &'static str) {
-+    fn incorporate(&mut self, other: Self, id: GlobalId, field_name: &'static str) {
-         // A boolean regressing to `false` is a bug.
-         //
-         // Clippy's suggestion here is not good!
-         #[allow(clippy::bool_comparison)]
-         if other.0 < self.0 {
--            tracing::error!(
--                "boolean gauge for field {field_name} erroneously regressed from true to false",
--            );
-+            self.1.log(format_args!(
-+                "boolean gauge for field {field_name} of {id} erroneously regressed from true to false",
-+            ));
-             return;
+     #[mz_ore::test(tokio::test)]
+     async fn test_queued_read_preserves_requeue_metric() {
+         let metrics = Metrics::register_into(&MetricsRegistry::new());
+```
+
+**File**: `src/adapter/src/coord/message_handler.rs` (modified, +20/-1)
+```diff
+@@ -27,11 +27,12 @@ use mz_ore::option::OptionExt;
+ use mz_ore::tracing::OpenTelemetryContext;
+ use mz_ore::{soft_assert_or_log, soft_panic_or_log, task};
+ use mz_persist_client::usage::ShardsUsageReferenced;
+-use mz_repr::{Datum, Diff, Row};
++use mz_repr::{Datum, Diff, Row, Timestamp};
+ use mz_sql::ast::Statement;
+ use mz_sql::pure::PurifiedStatement;
+ use mz_storage_client::controller::IntrospectionType;
+ use mz_storage_types::StorageDiff;
++use mz_storage_types::sources::Timeline;
+ use opentelemetry::trace::TraceContextExt;
+ use rand::{RngExt, SeedableRng, rngs};
+ use serde_json::json;
+@@ -139,6 +140,7 @@ impl Coordinator {
+                 // The committer applied `write_ts` to the oracle, so the read ts is at least
+                 // that and we can downgrade the local read holds without an oracle round trip.
+                 self.downgrade_local_read_holds(write_ts);
++                self.retire_local_reads_linearized_by(write_ts);
+                 self.advance_custom_timelines().boxed_local().await;
+                 for result in internal_results {
+                     result.send(crate::coord::appends::WriteResult::Success {
+@@ -1108,6 +1110,23 @@ impl Coordinator {
          }
-         self.0 = other.0;
-@@ -322,7 +361,7 @@ impl StorageMetric for Boolean {
- 
- impl From<bool> for Boolean {
-     fn from(f: bool) -> Self {
--        Boolean(f)
-+        Boolean(f, RegressionLog::default())
      }
- }
  
-@@ -336,13 +375,16 @@ pub struct Total {
-     #[serde(skip)]
-     regressions:
-         Option<mz_ore::metrics::DeleteOnDropCounter<prometheus::core::AtomicU64, Vec<String>>>,
-+    #[serde(skip)]
-+    regression_log: RegressionLog,
- }
- 
- impl From<Option<u64>> for Total
++    /// Retires pending local-timeline reads at or below `applied_ts`.
++    fn retire_local_reads_linearized_by(&mut self, applied_ts: Timestamp) {
++        if self.pending_linearize_read_txns.is_empty() {
++            return;
++        }
++        let now = Instant::now();
++        let (ready_txns, pending_txns) = std::mem::take(&mut self.pending_linearize_read_txns)
++            .into_iter()
++            .partition::<BTreeMap<_, _>, _>(|(_conn_id, read_txn)| {
++                read_txn.linearized_by(&Timeline::EpochMilliseconds, &applied_ts)
++            });
++        self.pending_linearize_read_txns = pending_txns;
++        for ready_txn in ready_txns.into_values() {
++            ready_txn.finish_with_metrics(&self.metrics, now);
++        }
++    }
++
+     #[mz_ore::instrument(level = "debug")]
+     /// Linearizes sending the results of a read transaction by,
+     ///   1. Holding back any results that were executed at some point in the future, until the
 ```
 
 ---
 
-### Incident Patch 2: `a859dade` (2026-11-11)
-**Commit Message**: AGENTS.md: drop skills section, resolve ambiguous guidance (#40659)
+### Incident Patch 3: `b67a45ca` (2026-11-13)
+**Commit Message**: ci: use Buildkite OIDC for macOS tarball uploads (#40673)
 
-### Motivation
+## Motivation
 
-Agent harnesses already present the skill descriptions to the agent
-along with the AGENTS.md, and I like being able to, say, disable certain
-skills, depending what I'm working on. For example, to not have the
-agent run the commit verification on every commit it does. If anything
-about the skills needs fixing, it should be fixed in the skill
-description.
+The macOS deploy steps currently upload to the binaries bucket with
+credentials from the agent's environment. This moves them to short-lived
+credentials obtained per job through Buildkite's OIDC integration. That
+way the macOS agents need no AWS configuration of their own, which
+simplifies setting them up.
 
-Then, this also cleans up some contradictory or redundant parts in the
-guidance.
+## Changes
 
-### Description
+- `TarballUploader` builds its S3 client in one place. When
+`MZ_BINARIES_UPLOAD_ROLE_ARN` is set, it runs `buildkite-agent oidc
+request-token --audience sts.amazonaws.com` and exchanges the token
+through `AssumeRoleWithWebIdentity`. Otherwise it uses the default
+credential chain as before. The token is requested lazily, right before
+the first upload, because the cargo build that precedes it can take
+longer than the token's lifetime.
+- The `deploy-mz`, `deploy-mz-deploy` and `deploy-mz-debug` macOS steps
+set `MZ_BINARIES_UPLOAD_ROLE_ARN`.
+- The `deploy-mz` macOS step gets a step key, `deploy_mz-macos-aarch64`,
+matching the other deploy pipelines.
 
-**Remove the Skills section.** Agent runtimes already list every skill
-with its `name` and `description` from the `SKILL.md` frontmatter, and
-those descriptions carry the triggers ("run tests", "cargo fmt",
-"commit", "why is CI red"). The section repeated that list for four of
-the skills. It also said `bin/lint` is the entry point and "NOT a bare
-`cargo clippy`", while the `mz-commit` and `mz-run` skills both
-prescribe `cargo clippy --all-targets -- -D warnings`.
+Linux deploys are unchanged.
 
-One thing this gives up: the section told agents to load `mz-test`
-before running any test "even mid-task", while the skill descriptions
-are phrased as user requests. If agents start skippin
+## Rollout
 
-**File**: `AGENTS.md` (modified, +21/-39)
+The IAM role must exist before this merges. Until then the macOS uploads
+would fail at `AssumeRoleWithWebIde
+
+**File**: `ci/deploy_mz-debug/pipeline.template.yml` (modified, +2/-0)
 ```diff
-@@ -1,22 +1,6 @@
- # Materialize
- 
--## Skills
--
--Canonical agent skills in `.agents/skills/`. `.claude/skills` is compat symlink
--for Claude Code. Check `mz-*` skill before tasks — encodes project conventions,
--saves time.
--
--Use the `mz-test` skill before running ANY tests, even mid-task — the canonical
--commands aren't the obvious ones (e.g. `bin/sqllogictest --optimized`, not
--`cargo build --bin sqllogictest`).
--
--Use the `mz-run` skill before building, running, formatting, or linting. `bin/fmt` and `bin/lint` are the canonical entry points, NOT `cargo fmt`, `rustfmt`, or a bare `cargo clippy`. `bin/environmentd`, not `cargo build --bin environmentd`.
--
--Use the `mz-commit` skill before `git commit`, `git push`, or `gh pr create`.
--
--Use the `mz-debug-ci` skill before the first `bk` or `gh pr checks` command, or when handed a Buildkite URL.
--
--## Code navigation
-+## Repository layout
- 
- `console/` is the web Console. It was moved in from the standalone
- `MaterializeInc/console` repository, which is now archived and stale.
-@@ -45,33 +29,33 @@ authors to squash on merge or to keep every intermediate commit green.
-   static snapshot. When you feel tempted to reduce scope or take a shortcut,
-   flag it to the user and workshop an alternative together rather than silently
-   downgrading the design.
--* When making code changes, run cheap checkers/linters and formatters before
--  reporting success and/or committing changes. For Rust, these would be
--  `bin/fmt` and `cargo check`.
-+* Before reporting success on a code change, run the cheap formatters and
-+  checkers. For Rust, these are `bin/fmt` and `cargo check`. Before committing,
-+  run the pre-commit checklist in the `mz-commit` skill.
- * When debugging CI or lint failures, start by reproducing the exact failing
-   command locally and reading its output. Do not run generic checks (clippy,
-   fmt, grep) in a shotgun approach.
--* We value simplicity and clear abstractions. We especially care about
--  designing the interfaces or boundaries between components well. This includes
--  components, traits, interfaces, modules, and crates.
-+* We value simplicity and clear abstractions. Simplicity means fewer concepts
-+  and moving parts, not less capability. Take the most care over the boundaries
-+  between components: the interfaces that traits, modules, and crates expose.
- * Avoid em-dashes for structuring sentences in any prose: code comments, specs,
-   design docs, all of it. Restructure with full stops and commas instead. The
-   same goes for semicolons, though one is fine where splitting would mangle the
-   sentence.
--* Our guidance applies both when writing new code or designs, or when we notice
--  deviations in code or architecture that we are working on. At the same time,
--  we want to keep our changes minimal so it's good to call out deviations and
--  then we can decide together what to do about it.
-+* Apply this guidance to the code and designs you write. When existing code
-+  you are working on deviates from it, do not fix it in passing. Keep the
-+  change minimal, call out the deviation, and let the user decide what to do
-+  about it.
- * Never put a side effect inside `debug_assert!` (or `debug_assert_eq!`, etc.).
-   The macro body compiles out whenever debug-assertions are off, which includes
--  `[profile.optimized]` (what `bin/environmentd` and mzcompose use) and
--  `[profile.release]`. Only `[profile.ci]` turns them on. A side effect written
--  there, for example `debug_assert!(map.insert(k, v).is_none())`, runs under
--  `cargo test` but silently vanishes in optimized and release builds, leaving
--  the logic it powered inert and profiler-blind. Bind the effect to a `let`
--  outside the assert, then assert on the bound value. Clippy's
--  `debug_assert_with_mut_call` catches `&mut self` receivers but not `&self` or
--  free-function side effects.
-+  `[profile.optimized]` (what `bin/environmentd --optimized` and mzcompose use)
-+  and `[profile.release]`. Only the dev profile and `[profile.ci]` turn them on.
-+  A side effect written there, for example
-+  `debug_assert!(map.insert(k, v).is_none())`, runs under `cargo test` but
-+  silently vanishes in optimized and release builds, leaving the logic it
-+  powered inert and profiler-blind. Bind the effect to a `let` outside the
-+  assert, then assert on the bound value. Clippy's `debug_assert_with_mut_call`
-+  catches `&mut self` receivers but not `&self` or free-function side effects.
- * Never write vendor, customer, or account names into durable or user-facing
-   surfaces: committed code, comments, column comments, docs, specs, commit
-   messages, PR bodies, or test fixtures. Anything persisted to disk gets shared,
-@@ -91,8 +75,6 @@ authors to squash on merge or to keep every intermediate commit green.
- 
- ## Code comments
- 
--Specifics for code comments and documentation:
--
- Spend comments on the non-obvious: concurrency and async hazards (races,
- lease/handle expiry, values that must not be held across an awa
+@@ -34,6 +34,8 @@ steps:
+     command: bin/pyactivate -m ci.deploy_mz-debug.macos
+     agents:
+       queue: mac-aarch64
++    env:
++      MZ_BINARIES_UPLOAD_ROLE_ARN: arn:aws:iam::834237029485:role/buildkite-macos-deploy
+     timeout_in_minutes: 30
+     concurrency: 1
+     concurrency_group: deploy-mz-debug/macos/aarch64
 ```
 
----
-
-### Incident Patch 3: `31efe6cd` (2026-11-11)
-**Commit Message**: adapter: Drop the frontend_ prefix from peek sequencing and read-then-write names (#39677)
-
-With the coordinator's peek sequencing and read-then-write paths gone,
-the `frontend_` prefix no longer tells two implementations apart in
-these names. Renames only, no behavior change.
-
-Best reviewed commit by commit:
-1. **Module.** `frontend_peek.rs` becomes `peek_sequencing.rs`. Pure
-rename (`git show -M`).
-2. **Peek sequencing names.** `try_frontend_peek(_inner)` becomes
-`try_peek(_inner)`, `frontend_determine_timestamp` becomes
-`determine_timestamp`,
-`Command::RegisterFrontendPeek`/`UnregisterFrontendPeek` and their
-handlers become `RegisterPeek`/`UnregisterPeek` and
-`handle_(un)register_peek`, and the MCP test case for SELECT becomes
-`select_not_vulnerable`. The debug span and the debug logs that name
-these functions follow.
-3. **Peek metric label values.**
-- `mz_slow_message_handling{message_kind}`: `register-frontend-peek` and
-`unregister-frontend-peek` become `register-peek` and `unregister-peek`.
-- `mz_catalog_snapshot_seconds{context}` and
-`mz_catalog_snapshot_cache{context}`: `try_frontend_peek` becomes
-`try_peek`.
-- No Grafana alert rule or shared dashboard selects these values 
-
-**File**: `src/adapter/src/client.rs` (modified, +32/-33)
+**File**: `ci/deploy_mz-deploy/pipeline.template.yml` (modified, +2/-0)
 ```diff
-@@ -64,8 +64,7 @@ use crate::coord::read_then_write::DependencyPolicy;
- use crate::coord::{Coordinator, ExecuteContextGuard};
- use crate::error::AdapterError;
- use crate::frontend_read_then_write::{
--    FrontendWriteAttemptState, FrontendWriteCancellation, contains_mz_now,
--    validate_selection_dependencies,
-+    WriteAttemptState, WriteCancellation, contains_mz_now, validate_selection_dependencies,
- };
- use crate::metrics::Metrics;
- use crate::notice::ExecutionTimeKind;
-@@ -839,8 +838,8 @@ impl SessionClient {
-         cancel_future: impl Future<Output = ()> + Send + Clone,
-     ) -> Result<ExecuteResponse, AdapterError> {
-         // Unroll SQL `EXECUTE <prepared> (...)` so the inner statement
--        // flows through `try_frontend_peek` /
--        // `try_frontend_read_then_write` below, rather than being
-+        // flows through `try_peek` /
-+        // `try_read_then_write` below, rather than being
-         // re-dispatched via `Command::Execute` from the coordinator's
-         // `Plan::Execute` handler. Without this, a prepared statement
-         // would route differently from the same statement issued
-@@ -855,7 +854,7 @@ impl SessionClient {
-         // Attempt peek sequencing in the session task.
-         // If unsupported, fall back to the Coordinator path.
-         let peek_result = self
--            .try_frontend_peek(&portal_name, logging, cancel_future.clone())
-+            .try_peek(&portal_name, logging, cancel_future.clone())
-             .await?;
-         if let Some(resp) = peek_result {
-             debug!("frontend peek succeeded");
-@@ -865,7 +864,7 @@ impl SessionClient {
- 
-         // Attempt read-then-write sequencing in the session task.
-         let rtw_result = self
--            .try_frontend_read_then_write_with_cancel(&portal_name, logging, cancel_future.clone())
-+            .try_read_then_write_with_cancel(&portal_name, logging, cancel_future.clone())
-             .await?;
-         if let Some(resp) = rtw_result {
-             debug!("frontend read-then-write succeeded");
-@@ -891,8 +890,8 @@ impl SessionClient {
-     /// If the named portal binds a SQL `EXECUTE <prepared>`, resolve the
-     /// prepared statement, install a fresh portal for the inner statement
-     /// (carrying the EXECUTE's actual parameter values), and return that
--    /// portal's name so the caller can run `try_frontend_peek` /
--    /// `try_frontend_read_then_write` against it.
-+    /// portal's name so the caller can run `try_peek` /
-+    /// `try_read_then_write` against it.
-     ///
-     /// Only ever unrolls one level: the parser rejects
-     /// `PREPARE foo AS EXECUTE bar` (matching Postgres), so the inner
-@@ -910,8 +909,8 @@ impl SessionClient {
-             let session = self.session.as_ref().expect("SessionClient invariant");
-             let portal = match session.get_portal_unverified(&portal_name) {
-                 Some(p) => p,
--                // No portal: let `try_frontend_peek` /
--                // `try_frontend_read_then_write` surface the
-+                // No portal: let `try_peek` /
-+                // `try_read_then_write` surface the
-                 // standard "missing portal" error.
-                 None => return Ok(portal_name),
-             };
-@@ -1402,8 +1401,8 @@ impl SessionClient {
-                 | Command::ExecuteCopyTo { .. }
-                 | Command::ExecuteSideEffectingFunc { .. }
-                 | Command::LookupConnection { .. }
--                | Command::RegisterFrontendPeek { .. }
--                | Command::UnregisterFrontendPeek { .. }
-+                | Command::RegisterPeek { .. }
-+                | Command::UnregisterPeek { .. }
-                 | Command::ExplainTimestamp { .. }
-                 | Command::FrontendStatementLogging(..)
-                 | Command::InjectAuditEvents { .. }
-@@ -1488,15 +1487,15 @@ impl SessionClient {
-     /// Returns `Ok(Some(response))` if we handled the peek, or `Ok(None)` if the statement is
-     /// not one that the frontend peek sequencing handles, in which case the Coordinator sequences
-     /// it. If it returns an error, it should be returned to the user.
--    pub(crate) async fn try_frontend_peek(
-+    pub(crate) async fn try_peek(
-         &mut self,
-         portal_name: &str,
-         logging: &mut ExecutionLogging,
-         connection_closed: impl Future<Output = ()> + Send,
-     ) -> Result<Option<ExecuteResponse>, AdapterError> {
-         let session = self.session.as_mut().expect("SessionClient invariant");
-         self.peek_client
--            .try_frontend_peek(portal_name, session, logging, connection_closed)
-+            .try_peek(portal_name, session, logging, connection_closed)
-             .await
-     }
- 
-@@ -1507,7 +1506,7 @@ impl SessionClient {
-     /// the peek path is tested against it. Everything expensive, including the
-     /// coordinator round-trip that registers the connection cancel watch, sits
-     /// behind it.
--    fn frontend_read_then_write_applies(&self, portal_name: &st
+@@ -34,6 +34,8 @@ steps:
+     command: bin/pyactivate -m ci.deploy_mz-deploy.macos
+     agents:
+       queue: mac-aarch64
++    env:
++      MZ_BINARIES_UPLOAD_ROLE_ARN: arn:aws:iam::834237029485:role/buildkite-macos-deploy
+     timeout_in_minutes: 30
+     concurrency: 1
+     concurrency_group: deploy-mz-deploy/macos/aarch64
 ```
 
-**File**: `src/adapter/src/command.rs` (modified, +6/-6)
+**File**: `ci/deploy_mz/pipeline.template.yml` (modified, +4/-1)
 ```diff
-@@ -356,7 +356,7 @@ pub enum Command {
-     /// Register a pending peek initiated by frontend sequencing. This is needed for:
-     /// - statement logging
-     /// - query cancellation
--    RegisterFrontendPeek {
-+    RegisterPeek {
-         uuid: Uuid,
-         conn_id: ConnectionId,
-         cluster_id: mz_controller_types::ClusterId,
-@@ -376,7 +376,7 @@ pub enum Command {
-     /// coordinator, so the frontend must not log the end itself. If a
-     /// concurrent teardown (e.g. a `DROP CLUSTER`) already retired the peek
-     /// and logged its end, this is a no-op.
--    UnregisterFrontendPeek {
-+    UnregisterPeek {
-         uuid: Uuid,
-         reason: StatementEndedExecutionReason,
-         tx: oneshot::Sender<()>,
-@@ -503,8 +503,8 @@ impl Command {
-             | Command::ExecuteCopyTo { .. }
-             | Command::ExecuteSideEffectingFunc { .. }
-             | Command::LookupConnection { .. }
--            | Command::RegisterFrontendPeek { .. }
--            | Command::UnregisterFrontendPeek { .. }
-+            | Command::RegisterPeek { .. }
-+            | Command::UnregisterPeek { .. }
-             | Command::ExplainTimestamp { .. }
-             | Command::FrontendStatementLogging(..)
-             | Command::InjectAuditEvents { .. }
-@@ -548,8 +548,8 @@ impl Command {
-             | Command::ExecuteCopyTo { .. }
-             | Command::ExecuteSideEffectingFunc { .. }
-             | Command::LookupConnection { .. }
--            | Command::RegisterFrontendPeek { .. }
--            | Command::UnregisterFrontendPeek { .. }
-+            | Command::RegisterPeek { .. }
-+            | Command::UnregisterPeek { .. }
-             | Command::ExplainTimestamp { .. }
-             | Command::FrontendStatementLogging(..)
-             | Command::InjectAuditEvents { .. }
+@@ -42,9 +42,12 @@ steps:
+     concurrency: 1
+     concurrency_group: deploy-mz/docker
+ 
+-  - command: bin/pyactivate -m ci.deploy_mz.macos
++  - id: deploy_mz-macos-aarch64
++    command: bin/pyactivate -m ci.deploy_mz.macos
+     agents:
+       queue: mac-aarch64
++    env:
++      MZ_BINARIES_UPLOAD_ROLE_ARN: arn:aws:iam::834237029485:role/buildkite-macos-deploy
+     timeout_in_minutes: 30
+     concurrency: 1
+     concurrency_group: deploy-mz/macos/aarch64
 ```
 
-**File**: `src/adapter/src/coord.rs` (modified, +2/-2)
+**File**: `ci/tarball_uploader.py` (modified, +47/-2)
 ```diff
-@@ -517,8 +517,8 @@ impl Message {
-                 Command::ExecuteCopyTo { .. } => "execute-copy-to",
-                 Command::ExecuteSideEffectingFunc { .. } => "execute-side-effecting-func",
-                 Command::LookupConnection { .. } => "lookup-connection",
--                Command::RegisterFrontendPeek { .. } => "register-frontend-peek",
--                Command::UnregisterFrontendPeek { .. } => "unregister-frontend-peek",
-+                Command::RegisterPeek { .. } => "register-peek",
-+                Command::UnregisterPeek { .. } => "unregister-peek",
-                 Command::ExplainTimestamp { .. } => "explain-timestamp",
-                 Command::FrontendStatementLogging(..) => "frontend-statement-logging",
-                 Command::StartCopyFromStdin { .. } => "start-copy-from-stdin",
-```
-
-**File**: `src/adapter/src/coord/command_handler.rs` (modified, +7/-7)
-```diff
-@@ -558,7 +558,7 @@ impl Coordinator {
-                             });
-                     let _ = tx.send(conn);
-                 }
--                Command::RegisterFrontendPeek {
-+                Command::RegisterPeek {
-                     uuid,
-                     conn_id,
-                     cluster_id,
-@@ -567,7 +567,7 @@ impl Coordinator {
-                     watch_set,
-                     tx,
-                 } => {
--                    self.handle_register_frontend_peek(
-+                    self.handle_register_peek(
-                         uuid,
-                         conn_id,
-                         cluster_id,
-@@ -577,8 +577,8 @@ impl Coordinator {
-                         tx,
-                     );
-                 }
--                Command::UnregisterFrontendPeek { uuid, reason, tx } => {
--                    self.handle_unregister_frontend_peek(uuid, reason, tx);
-+                Command::UnregisterPeek { uuid, reason, tx } => {
-+                    self.handle_unregister_peek(uuid, reason, tx);
-                 }
-                 Command::ExplainTimestamp {
-                     conn_id,
-@@ -2276,7 +2276,7 @@ impl Coordinator {
+@@ -10,10 +10,12 @@
+ # This file contains a class that can be used to upload a tarball to the materialize-binaries S3 bucket.
  
-     /// Handle registration of a frontend peek, for statement logging and query cancellation
-     /// handling.
--    fn handle_register_frontend_peek(
-+    fn handle_register_peek(
-         &mut self,
-         uuid: Uuid,
-         conn_id: ConnectionId,
-@@ -2320,9 +2320,9 @@ impl Coordinator {
-         let _ = tx.send(Ok(()));
-     }
+ import os
++import subprocess
+ import tarfile
+ import tempfile
+ import time
+ from pathlib import Path
++from typing import Any
  
--    /// Handles [`Command::UnregisterFrontendPeek`]; see its documentation for
-+    /// Handles [`Command::UnregisterPeek`]; see its documentation for
-     /// the end-of-execution ownership contract.
--    fn handle_unregister_frontend_peek(
-+    fn handle_unregister_peek(
-         &mut self,
-         uuid: Uuid,
-         reason: StatementEndedExecutionReason,
-```
-
-**File**: `src/adapter/src/coord/sequencer.rs` (modified, +2/-2)
-```diff
-@@ -361,8 +361,8 @@ impl Coordinator {
-                     let result = self.sequence_explain_schema(plan);
-                     ctx.retire(result);
-                 }
--                // `SessionClient::execute_attempts` unrolls SQL `EXECUTE`, and `try_frontend_peek` and
--                // `try_frontend_read_then_write` take over every statement that plans to one of the
-+                // `SessionClient::execute_attempts` unrolls SQL `EXECUTE`, and `try_peek` and
-+                // `try_read_then_write` take over every statement that plans to one of the
-                 // others.
-                 // TODO(SQL-760): Drop the manual soft panic once internal errors soft-panic
-                 // centrally.
-```
-
-**File**: `src/adapter/src/frontend_read_then_write.rs` (modified, +24/-24)
-```diff
-@@ -26,7 +26,7 @@
- //! ## Whether the write reads persisted state
- //!
- //! Two predicates answer that one question, and they have to agree. Before
--//! anything runs, `SessionClient::try_frontend_read_then_write` decides it
-+//! anything runs, `SessionClient::try_read_then_write` decides it
- //! syntactically, from `depends_on()` on the planned selection, because inside
- //! a transaction a read-dependent write has to be refused while refusing is
- //! still possible. Once the dataflow runs, the subscribe answers it
-@@ -74,7 +74,7 @@
- //! committed on its own has no business claiming it.
- //!
- //! Disagreement is caught on both sides, and only one side can still refuse.
--//! `frontend_read_then_write` re-checks the syntactic predicate before running a
-+//! `PeekClient::read_then_write` re-checks the syntactic predicate before running a
- //! dataflow, which catches a caller that skipped the gate. If the syntactic
- //! predicate were laxer than the dynamic one, that check would pass and a write
- //! meant for staging would commit on its own, so the loop asserts wherever the
-@@ -162,23 +162,23 @@ use crate::{PeekClient, PeekResponseUnary, TimelineContext, optimize};
+ import boto3
+ import humanize
+@@ -23,12 +25,55 @@
  
- /// Reason a frontend write attempt is being torn down early.
- #[derive(Clone, Copy)]
--pub(crate) enum FrontendWriteCancellation {
-+pub(crate) enum WriteCancellation {
-     Canceled,
-     StatementTimeout,
- }
+ BINARIES_BUCKET = "materialize-binaries"
  
--impl From<FrontendWriteCancellation> for AdapterError {
--    fn from(cancellation: FrontendWriteCancellation) -> Self {
-+impl From<WriteCancellation> for AdapterError {
-+    fn from(cancellation: WriteCancellation) -> Self {
-         match cancellation {
--            FrontendWriteCancellation::Canceled => AdapterError::Canceled,
--            FrontendWriteCancellation::StatementTimeout => AdapterError::StatementTimeout,
-+            WriteCancellation::Canceled => AdapterError::Canceled,
-+            WriteCancellation::StatementTimeout => AdapterError::StatementTimeout,
-         }
-     }
- }
++# When set, uploads use short-lived credentials for this role, obtained by
++# exchanging the job's Buildkite OIDC token, rather than the ambient AWS
++# credentials.
++UPLOAD_ROLE_ARN_ENV = "MZ_BINARIES_UPLOAD_ROLE_ARN"
++
++
++def _s3_client() -> Any:
++    role_arn = os.environ.get(UPLOAD_ROLE_ARN_ENV)
++    if not role_arn:
++        return boto3.client("s3")
++
++    # Requested immediately before use: OIDC tokens are short-lived and the
++    # build that precedes the upload can outlast one.
++    token = subprocess.check_output(
++        [
++            "buildkite-agent",
++            "oidc",
++            "request-token",
++            "--audience",
++            "sts.amazonaws.com",
++        ],
++        text=True,
++    ).strip()
++    session = boto3.Session()
++    creds = session.client("sts").assume_role_with_web_identity(
++        RoleArn=role_arn,
++        RoleSessionName=f"buildkite-{os.environ['BUILDKITE_JOB_ID']}"[:64],
++        WebIdentityToken=token,
++        DurationSeconds=3600,
++    )["Credentials"]
++    return boto3.client(
++        "s3",
++        aws_access_key_id=creds["AccessKeyId"],
++        aws_secret_access_key=creds["SecretAccessKey"],
++        aws_session_token=creds["SessionToken"],
++    )
++
  
- /// State shared between an in-flight frontend write attempt and its
- /// cancellation wrapper,
--/// `SessionClient::try_frontend_read_then_write_with_cancel`.
-+/// `SessionClient::try_read_then_write_with_cancel`.
- ///
- /// The contract: `write_submitted` is true from just before the
- /// `AttemptWrite` command is sent until the attempt resolves as definitively
-@@ -189,13 +189,13 @@ impl From<FrontendWriteCancellation> for AdapterError {
- /// The wrapper and the attempt it wraps are polled by the same task, so the
- /// mutex and the atomic are here to satisfy `Send`, not to arbitrate between
- /// concurrent writers. There is one writer for each field.
--pub(crate) struct FrontendWriteAttemptState {
-+pub(crate) struct WriteAttemptState {
-     write_submitted: AtomicBool,
-     /// Set at most once, by the cancellation wrapper.
--    cancellation: Mutex<Option<FrontendWriteCancellation>>,
-+    cancellation: Mutex<Option<WriteCancellation>>,
- }
+ class TarballUploader:
+     def __init__(self, package_name: str, version: TypedVersionBase):
+         self.package_name = package_name
+         self.version = version
+         self.version_str = f"v{version.str_without_prefix()}"
++        self._s3: Any = None
++
++    def _client(self) -> Any:
++        if self._s3 is None:
++            self._s3 = _s3_client()
++        return self._s3
  
--impl FrontendWriteAttemptState {
-+impl WriteAttemptState {
-     pub(crate) fn new() -> Self {
-         Self {
-             write_submitted: AtomicBool::new(false),
-@@ -223,7 +223,7 @@ impl FrontendWriteAttemptState {
+     def _create_tardir(self, name: str) -> tarfile.TarInfo:
+         """Takes a dir path and creates a TarInfo. Sets the
+@@ -46,7 +91,7 @@ def _sanitize_tarinfo(self, tarinfo: tarfile.TarInfo) -> tarfile.TarInfo:
  
-     /// Records why the attempt is being torn down. The first reason recorded
-     /// is the one the attempt reports.
--    pub(crate) fn request(&self, cancellation: FrontendWriteCancellation) {
-+    pub(crate) fn request(&self, cancellation: WriteCancellation) {
-         self.cancellation
-             .lock()
-             .expect("cancellation lock poisoned")
-@@ -350,7 +350,7 @@ enum WriteOutcome {
- fn classify_write_result(
-     result: WriteResult,
-     target_id: CatalogItemId,
--    attempt_state: &FrontendWriteAttemptState,
-+    attempt_state: &WriteAttemptState,
- ) -> WriteOutcome {
-     match result {
-         WriteResult::Success { timestamp } => WriteOutcome::Committed(timestamp),
-@@ -694,20 +694,20 @@ impl Drop for SubscribeHandle {
- }
- 
- impl PeekClient {
--    /// Execute a read-then-write operation using frontend sequencing.
-+    /// Executes a read-then-write for a statement of `session`.
-     ///
-     /// The caller owns the end-of-execution logging for
-     /// `statement_logging_id` and verified and planned the portal against
-     /// `catalog`, which stays in force through optimization and write-target
-     /// generation capture.
--    pub(crate) async fn frontend_read_then_write(
-+    pub(crate) async fn session_read_then_write(
-         &mut self,
-         session: &mut Session,
-         plan: plan::ReadThenWritePlan,
-         target_cluster: TargetCluster,
-         catalog: &Arc<Catalog>,
-         statement_logging_id: Option<StatementLoggingId>,
--        attempt_state: Arc<FrontendWriteAttemptState>,
-+        attempt_state: Arc<WriteAttemptState>,
-     ) -> Result<ExecuteResponse, AdapterError> {
-         self.read_then_write(
-             session,
-@@ -755,7 +755,7 @@ impl PeekClient {
-             None,
-             // Nothing cancels a background write, so this state only 
-```
-
-**File**: `src/adapter/src/lib.rs` (modified, +1/-1)
-```diff
-@@ -42,11 +42,11 @@ mod command;
- mod coord;
- mod error;
- mod explain;
--mod frontend_peek;
- mod frontend_read_then_write;
- mod frontend_transaction;
- mod notice;
- mod optimize;
-+mod peek_sequencing;
- mod util;
- 
- pub mod catalog;
-```
-
-**File**: `src/adapter/src/peek_client.rs` (modified, +2/-2)
-```diff
-@@ -542,7 +542,7 @@ impl PeekClient {
-         //
-         // Warning: If we fail to actually issue the peek after this point, then we need to
-         // unregister it to avoid an orphaned registration.
--        self.call_coordinator(|tx| Command::RegisterFrontendPeek {
-+        self.call_coordinator(|tx| Command::RegisterPeek {
-             uuid,
-             conn_id: conn_id.clone(),
-             cluster_id: compute_instance,
-@@ -593,7 +593,7 @@ impl PeekClient {
-             // a concurrent teardown already retired the peek, the end is
-             // already logged and the unregistration is a no-op.
-             let _ = self
--                .call_coordinator(|tx| Command::UnregisterFrontendPeek {
-+                .call_coordinator(|tx| Command::UnregisterPeek {
-                     uuid,
-                     reason: statement_logging::StatementEndedExecutionReason::Errored {
-                         error: err.to_string(),
+     def _upload_redirect(self, key: str, to: str) -> None:
+         with tempfile.NamedTemporaryFile() as empty:
+-            boto3.client("s3").upload_fileobj(
++            self._client().upload_fileobj(
+                 Fileobj=empty,
+                 Bucket=BINARIES_BUCKET,
+                 Key=key,
+@@ -56,7 +101,7 @@ def _upload_redirect(self, key: str, to: str) -> None:
+     def _upload_tarball(self, tarball: Path, platform: str) -> None:
+         """Uploads the tarball (.tar) to the S3 bucket."""
+         s3_object = f"{self.package_name}-{self.version_str}-{platform}.tar.gz"
+-        boto3.client("s3").upload_file(
++        self._client().upload_file(
+             Filename=str(tarball),
+             Bucket=BINARIES_BUCKET,
+             Key=s3_object,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40660** (2026-11-11): ci: Nightly fixes (2026-11-11) (@def-)
-- **PR #40659** (2026-11-11): AGENTS.md: drop skills section, resolve ambiguous guidance (@aljoscha)
-- **PR #40649** (closed): renovate: hold breaking 0.x console updates for review (@leedqin)
-- **PR #40644** (closed): storage: cap the error text in source and sink status rows (@leedqin)
-- **PR #40643** (2026-11-11): storage: name the mismatched field in the Iceberg schema error (@leedqin)
-- **PR #40642** (2026-11-10): ci: Move "Catalog command read-only admission" test to non-dedicated-cpu agent (@def-)
+- **PR #40709** (2026-11-13): [mz-deploy] release mz-deploy 0.8 (@sjwiesman)
+- **PR #40708** (2026-11-13): sql: rename the failpoints session variable to unsafe_failpoints (@ggevay)
+- **PR #40697** (closed): storage: render upsert v2 on swapless replicas whose buffer pool spills to file (@antiguru)
+- **PR #40692** (2026-11-13): release: bump to version v26.52.0-dev.0 and create its doc file (@materialize-bot)
+- **PR #40687** (2026-11-13): doc: condense the user-defined functions page into a table (@maheshwarip)
+- **PR #40686** (2026-11-13): storage: Add a FAILOVER option for PostgreSQL sources (@peterdukelarsen)
 
 ---
 
@@ -1856,67 +1608,33 @@ these functions follow.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. storage: rate limit gauge regression error logs (#40589)
+## X. build(deps): Bump libz-sys from 1.1.31 to 1.1.33
 
 **RULE**:
-When implementing operations in `src/storage-client/src/statistics.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d2bad1a0`: storage: rate limit gauge regression error logs (#40589). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ab4e4edb`: build(deps): Bump libz-sys from 1.1.31 to 1.1.33. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage-client/src/statistics.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::time::{Duration, Instant};
-    ///
-    /// `id` and `field_name` identify the metric in regression logs.
-    fn incorporate(&mut self, other: Self, id: GlobalId, field_name: &'static str);
-    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-    fn incorporate(&mut self, other: Self, _id: GlobalId, _field_name: &'static str) {
-/// Throttles the `error!` log for gauge regressions.
-///
-/// A regressed gauge keeps regressing on every statistics update, every few
-/// seconds, until the source restarts. Only the first regression in each
-/// interval is logged at `error!`, which reaches Sentry, the rest at `warn!`.
-#[derive(Clone, Debug, Default)]
-struct RegressionLog {
-    last_error: Option<Instant>,
-}
-
-impl RegressionLog {
-    const ERROR_INTERVAL: Duration = Duration::from_secs(15 * 60);
-
-    fn log(&mut self, message: std::fmt::Arguments<'_>) {
-        let now = Instant::now();
-        match self.last_error {
-            Some(last) if now.duration_since(last) < Self::ER
+version = "1.1.33"
+checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-use std::time::Instant;
-    fn incorporate(&mut self, other: Self, field_name: &'static str);
-    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-    fn incorporate(&mut self, other: Self, _field_name: &'static str) {
-pub struct Boolean(bool);
-        Self(values.into_iter().fold(true, |base, new| base & new.0))
-    fn incorporate(&mut self, other: Self, field_name: &'static str) {
-            tracing::error!(
-                "boolean gauge for field {field_name} erroneously regressed from true to false",
-            );
-        Boolean(f)
+// Induced defect failure mode:
+version = "1.1.31"
+checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d2bad1a0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ab4e4edb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

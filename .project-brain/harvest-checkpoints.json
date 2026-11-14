@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T06:57:00.945Z",
+  "last_updated": "2026-11-14T07:18:07.351Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1400,14 +1400,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "ba2c1b442438e2b33d4c24114d30835a734f1f4c05f9282dd556f83af420cd3a",
-      "verified_at": "2026-11-09T01:26:21.944Z",
+      "content_hash": "1b16d2f3a7636c37c60a2fc103fd26172c537f724b3feda47c735e5831dfb41d",
+      "verified_at": "2026-11-14T07:17:51.506Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T01:26:21.944Z"
+      "last_updated": "2026-11-14T07:17:51.506Z"
     },
     "Venastine-Research/Xing4.0-29B-A4B-GGUF": {
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "59c5e3c427f223782736c0bc7c125e1690dd2c63168d5f3c83c0191fafdf464a",
-      "verified_at": "2026-11-13T06:20:51.781Z",
+      "content_hash": "46a129a2a73a2736f4bfc1f7c8b17e89ec19fa2e673440b81518ae8680edfd71",
+      "verified_at": "2026-11-14T07:18:00.854Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T06:20:51.781Z"
+      "last_updated": "2026-11-14T07:18:00.854Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "b732636e00141f8128bf8dd7a4f3f7f43c2307200742ad6286e922f234c4361c",
-      "verified_at": "2026-11-13T05:08:01.638Z",
+      "content_hash": "bee7228afd9a4b35229b950d1fad5f36502711143899b80297b72267e573a23d",
+      "verified_at": "2026-11-14T07:18:07.351Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T05:08:01.638Z"
+      "last_updated": "2026-11-14T07:18:07.351Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -17931,14 +17931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matthart1983-netwatch",
-      "content_hash": "afc65f8a161932f4efc1efc8734981cd668a8622fc7c0e790103c5d464096d93",
-      "verified_at": "2026-11-12T22:48:20.800Z",
+      "content_hash": "f0abc3d128ffb1614d01dfeb597cf9805db99adfbc03c76c9bf4e70b9cf397d7",
+      "verified_at": "2026-11-14T07:17:53.812Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T22:48:20.800Z"
+      "last_updated": "2026-11-14T07:17:53.812Z"
     },
     "PrunaAI/P-H3-Image-Comfy": {
       "repository": "PrunaAI/P-H3-Image-Comfy",

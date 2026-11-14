@@ -9772,3 +9772,10 @@
 | `CYCLE-20261114-Z3LZ` | `2026-11-14T06:57:00.935Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8346` | Yes (`fbfa20ea...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T06:57:26.852Z` | `hf-edge0-edge0-145b-nvfp4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AF708B11` [Domain D] | Yes (`01e6370d...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T06:57:54.158Z` | `hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-302F93C6` [Domain D] | Yes (`f81c5c7a...`) |
+| `CYCLE-20261114-PWJP` | `2026-11-14T07:17:51.493Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | Yes (`1b16d2f3...`) |
+| `CYCLE-20261114-PYBQ` | `2026-11-14T07:17:53.798Z` | `matthart1983/netwatch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8461` | Yes (`f0abc3d1...`) |
+| `CYCLE-20261114-Q3RD` | `2026-11-14T07:18:00.841Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8462` | Yes (`46a129a2...`) |
+| `CYCLE-20261114-Q8RT` | `2026-11-14T07:18:07.337Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8463` | Yes (`bee7228a...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T07:18:39.877Z` | `matthart1983-netwatch` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-C3DCBF34` [Domain K] | Yes (`c994897a...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T07:19:17.741Z` | `hf-pablodawson-minimax-h3-360-orbit-lora` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4E8F92EB` [Domain D] | Yes (`29665813...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T07:20:03.214Z` | `kgateway-dev-kgateway` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-2852CE47` [Domain K] | Yes (`1ac01437...`) |

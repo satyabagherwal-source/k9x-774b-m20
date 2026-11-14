@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T06:57:54.587Z",
+  "updated_at": "2026-11-14T07:19:17.753Z",
   "stats": {
-    "total_discovered": 3173,
-    "approved_pending_harvest": 2970,
+    "total_discovered": 3185,
+    "approved_pending_harvest": 2982,
     "harvested_count": 0,
     "rejected_count": 203,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2962,
+      "COMMUNITY_AND_EXPERT": 2974,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -68405,6 +68405,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
         "fileName": "shopify-react-native-skia-learnings.md"
+      }
+    },
+    "SRC-5C0C40F0DD1C": {
+      "id": "SRC-5C0C40F0DD1C",
+      "url": "https://github.com/taiki-e/install-action/compare/86f7a0ffb25f40114606501a311ebcfaf882ea32...c509219cf42fba86913069efd0ade2458c59337b",
+      "title": "https://github.com/taiki-e/install-action/compare/86f7a0ffb25f40114606501a311ebcfaf882ea32...c509219cf42fba86913069efd0ade2458c59337b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:18:39.998Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-18224AF4BBAD": {
+      "id": "SRC-18224AF4BBAD",
+      "url": "https://cyclonedx.org/bom",
+      "title": "https://cyclonedx.org/bom",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:18:40.035Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-D59DCF9F53DD": {
+      "id": "SRC-D59DCF9F53DD",
+      "url": "https://github.com/algesten/ureq",
+      "title": "https://github.com/algesten/ureq",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:18:40.057Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-51DC6487A91D": {
+      "id": "SRC-51DC6487A91D",
+      "url": "https://github.com/toml-rs/toml",
+      "title": "https://github.com/toml-rs/toml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:18:40.079Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-839AAE91F5DA": {
+      "id": "SRC-839AAE91F5DA",
+      "url": "https://github.com/vorner/signal-hook",
+      "title": "https://github.com/vorner/signal-hook",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:18:40.101Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-B598734A7706": {
+      "id": "SRC-B598734A7706",
+      "url": "https://github.com/algesten/ureq/blob/main/CHANGELOG.md",
+      "title": "https://github.com/algesten/ureq/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:18:40.123Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-92F488CD96B5": {
+      "id": "SRC-92F488CD96B5",
+      "url": "https://github.com/algesten/ureq/compare/3.5.0...3.5.1",
+      "title": "https://github.com/algesten/ureq/compare/3.5.0...3.5.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:18:40.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-52D34F49EC46": {
+      "id": "SRC-52D34F49EC46",
+      "url": "https://github.com/toml-rs/toml/compare/toml-v1.1.8...toml-v1.2.0",
+      "title": "https://github.com/toml-rs/toml/compare/toml-v1.1.8...toml-v1.2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:18:40.177Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-D8C20C8ACDFA": {
+      "id": "SRC-D8C20C8ACDFA",
+      "url": "https://github.com/toml-rs/toml/compare/v0.25.17...v0.25.18",
+      "title": "https://github.com/toml-rs/toml/compare/v0.25.17...v0.25.18",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:18:40.199Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-FADFE777A844": {
+      "id": "SRC-FADFE777A844",
+      "url": "https://github.com/vorner/signal-hook/blob/master/CHANGELOG.md",
+      "title": "https://github.com/vorner/signal-hook/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:18:40.271Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-FA8B1F5F168C": {
+      "id": "SRC-FA8B1F5F168C",
+      "url": "https://github.com/vorner/signal-hook/compare/v0.4.5...v0.4.6",
+      "title": "https://github.com/vorner/signal-hook/compare/v0.4.5...v0.4.6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:18:40.293Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
+        "fileName": "matthart1983-netwatch-learnings.md"
+      }
+    },
+    "SRC-5DB980E0D383": {
+      "id": "SRC-5DB980E0D383",
+      "url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "title": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:19:17.753Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
+        "fileName": "hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md"
       }
     }
   }

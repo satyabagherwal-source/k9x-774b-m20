@@ -1065,8 +1065,8 @@
     "sourceUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceVersion": "hf-pablodawson-minimax-h3-360-orbit-lora",
     "license": "Open-Source",
-    "contentHash": "ba2c1b442438e2b33d4c24114d30835a734f1f4c05f9282dd556f83af420cd3a",
-    "lastHarvestedAt": "2026-11-09T01:26:21.935Z",
+    "contentHash": "1b16d2f3a7636c37c60a2fc103fd26172c537f724b3feda47c735e5831dfb41d",
+    "lastHarvestedAt": "2026-11-14T07:17:51.498Z",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "74fb6231",
+    "sourceVersion": "74f2e098",
     "license": "Apache-2.0",
-    "contentHash": "59c5e3c427f223782736c0bc7c125e1690dd2c63168d5f3c83c0191fafdf464a",
-    "lastHarvestedAt": "2026-11-13T06:20:51.771Z",
+    "contentHash": "46a129a2a73a2736f4bfc1f7c8b17e89ec19fa2e673440b81518ae8680edfd71",
+    "lastHarvestedAt": "2026-11-14T07:18:00.845Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "e598bd4c",
+    "sourceVersion": "ab4e4edb",
     "license": "NOASSERTION",
-    "contentHash": "b732636e00141f8128bf8dd7a4f3f7f43c2307200742ad6286e922f234c4361c",
-    "lastHarvestedAt": "2026-11-13T05:08:01.615Z",
+    "contentHash": "bee7228afd9a4b35229b950d1fad5f36502711143899b80297b72267e573a23d",
+    "lastHarvestedAt": "2026-11-14T07:18:07.342Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -11913,10 +11913,10 @@
     "repository": "matthart1983/netwatch",
     "platform": "github",
     "sourceUrl": "https://github.com/matthart1983/netwatch",
-    "sourceVersion": "fbcac803",
+    "sourceVersion": "23f3b29a",
     "license": "MIT",
-    "contentHash": "afc65f8a161932f4efc1efc8734981cd668a8622fc7c0e790103c5d464096d93",
-    "lastHarvestedAt": "2026-11-12T22:48:20.784Z",
+    "contentHash": "f0abc3d128ffb1614d01dfeb597cf9805db99adfbc03c76c9bf4e70b9cf397d7",
+    "lastHarvestedAt": "2026-11-14T07:17:53.803Z",
     "learningId": "learn-github-matthart1983-netwatch"
   },
   "hf-prunaai-p-h3-image-comfy": {

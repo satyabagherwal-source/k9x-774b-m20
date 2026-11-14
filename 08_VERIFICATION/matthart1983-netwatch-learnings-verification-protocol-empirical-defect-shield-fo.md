@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:41:15.514Z",
+  "timestamp": "2026-11-14T07:18:40.389Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-matthart1983-netwatch-learnings",
+  "learning_id": "LEARN-EVO-matthart1983-netwatch-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [matthart1983-netwatch-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:41:15.514Z`  
-> **Learning ID**: `LEARN-REEXTRACT-matthart1983-netwatch-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T07:18:40.389Z`  
+> **Learning ID**: `LEARN-EVO-matthart1983-netwatch-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md`  
 > **Source**: github ([https://github.com/matthart1983/netwatch](https://github.com/matthart1983/netwatch))  
-> **Source Version**: `81275065`  
+> **Source Version**: `23f3b29a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T19:07:04.901Z  
+> **Timestamp**: 2026-11-14T07:17:52.901Z  
 > **Learning ID**: `learn-github-matthart1983-netwatch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matthart1983/netwatch](https://github.com/matthart1983/netwatch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T19:07:04.367Z  
+> **Harvest Timestamp**: 2026-11-14T07:17:52.892Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Network diagnostics in your terminal. Inspect traffic, connections and network behaviour. Built with Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3584 stars
+- **Stars / Engagement**: 3594 stars
 
 ---
 
@@ -168,6 +168,9 @@ fn sample_time(
         Some(times.kernel)
     } else if rule.starts_with("egress.") {
         Some(times.egress)
+    } else if rule == "dns.slow_resolver" {
+        // Judged on a closed window of probe cycles, not on each cycle.
+        Some(times.health.dns_window)
     } else if rule.starts_with("dns.") {
         Some(times.health.dns)
     } else if rule.starts_with("gateway.") {
@@ -308,9 +311,7 @@ pub fn parse_ts(s: &str) -> Option<DateTime<Local>> {
 
 /// Whether a mute that ends at `until`, a stamp like [`parse_ts`] reads, is
 /// over at `now`. The stamp carries no offset, so in the hour a clock goes
-/// back it names two instants, and [`parse_ts`] returns neither. This takes
-/// the later: at worst the mute lasts an hour longer, where returning neither
-/// ended it on the next tick. A stamp that does not parse has e
+/// back it names two instants, and [`parse_ts`] returns neither.
 ```
 
 ### Core Architecture Module: `src/remote/queue.rs`
@@ -930,6 +931,9 @@ pub struct AppCaches {
     /// Rolling RX rate history per (process, pid) for the Process drill-in
     /// chart. Updated each connection-collector tick.
     pub top_proc_rx_history: HashMap<(String, Option<u32>), VecDeque<u64>>,
+    /// The same for TX, so the drill-in draws both directions as the
+    /// Interfaces and Stats charts do.
+    pub top_proc_tx_history: HashMap<(String, Option<u32>), VecDeque<u64>>,
     /// Recent interface up/down/IP-changed events surfaced on the Timeline tab.
     /// Populated when info_tick detects a delta from the previous snapshot.
     pub iface_events: VecDeque<IfaceChangeEvent>,
@@ -1025,10 +1029,15 @@ pub struct AppUiState {
     pub scroll: UiScrollState,
     pub sort_states: HashMap<Tab, TabSortState>,
     pub sort_picker: SortPickerState,
+    /// The `:` command palette.
+    pub palette: crate::ui::palette::PaletteState,
 
     pub paused: bool,
     pub last_area: Rect,
     pub selected_interface: Option<usize>,
+    /// The tabs `↵` drilled through to reach this one, oldest first. `esc`
+    /// steps back along it; switching tabs any other way forgets it.
+    pub drill_path: Vec<crate::app::Tab>,
 
     // ── Chip-row filter selections ──
     pub interface_filter: InterfaceFilter,
@@ -1090,16 +1099,7 @@ pub struct AppUiState {
     /// Dashboard throughput graph on a log scale. Off by default: linear is
     /// the honest default for a rate. It exists because autoscaling to peak
     /// means one 200 KB/s spike flattens an hour of 2 KB/s into the zero line,
-    /// and the shape of that hour is the thing worth seeing.
-    pub dashboard_log_scale: bool,
-
-    // ── Packet-tab specifics ──
-    pub packet_follow: bool,
-    /// Show only packets the expert classifier flagged `Warn` or `Error`.
-    /// A display filter, not a capture one — nothing stops being captured.
-    pub packet_expert_only: bool,
-    /// When true, the detail pane grows to fill most of the visible
-    /// area (and the packet list shrinks). Toggled with `d`. U
+    /// and the shap
 ```
 
 ### Core Architecture Module: `examples/diagnose_active_live.rs`
@@ -2008,147 +2008,214 @@ fn main() -> Result<()> {
 
 ```
 
-### Core Architecture Module: `examples/diagnose_soak.rs`
+### Core Architecture Module: `examples/diagnose_quiet_soak.rs`
 ```
-//! Live workstation stability accounting, with isolated state. No injected faults.
-use anyhow::{ensure, Context, Result};
+//! The false-alert soak: netwatch left running on an ordinary network, with
+//! every tick recorded, and the accounting over what it recorded.
+//!
+//! ```sh
+//! diagnose_quiet_soak record <dir> [--hours N] [--config FILE]
+//! diagnose_quiet_soak report [--current-defaults] [--json] <dir>...
+//! ```
+//!
+//! `record` keeps all its state under `<dir>` and touches nothing of the
+//! user's netwatch. It can be stopped (Ctrl-C, SIGTERM) and started again on
+//! the same directory: baselines carry over and the recordings add up.
+//!
+//! A rule is only tested while it has input. With the default config the
+//! `target.*` rules have no target and the `path.*` rules have no trace, and
+//! `report` shows them as never evaluated. `--config FILE` starts the soak
+//! from a netwatch `config.toml` that sets `[[diagnose_targets]]` and
+//! `[diagnose_probes] trace_refresh_secs`; it is copied in on the first run
+//! and the copy is what later runs use. Run
+//! `tests/soak/witness.py <dir>` beside it for the independent log `report`
+//! judges opens against. See `tests/soak/README.md`.
+use anyhow::{bail, ensure, Context, Result};
 use netwatch::{
     app::App,
     config::NetwatchConfig,
+    diagnose::soak::{self, HostInput},
     runtime::bootstrap::{self, SessionKind},
 };
 use std::{
-    collections::BTreeSet,
     path::{Path, PathBuf},
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    },
     time::{Duration, Instant},
 };
-fn bytes(path: &Path) -> u64 {
-    std::fs::read_dir(path)
-        .into_iter()
-        .flatten()
-        .flatten()
-        .map(|e| {
-            let p = e.path();
-            if p.is_dir() {
-                bytes(&p)
-            } else {
-                e.metadata().map(|m| m.len()).unwrap_or(0)
-            }
-        })
-        .sum()
-}
-fn state_bytes(root: &Path) -> u64 {
-    ["config", "state", "cache", "data"]
-        .iter()
-        .map(|dir| bytes(&root.join(dir).join("netwatch")))
-        .sum()
-}
+
 fn main() -> Result<()> {
-    let root = PathBuf::from(
-        std::env::args()
-            .nth(1)
-            .context("new scratch directory required")?,
-    );
-    let seconds = std::env::args()
-        .nth(2)
-        .context("duration seconds required")?
-        .parse::<u64>()?
-        .clamp(60, 3600);
-    ensure!(!root.exists(), "scratch directory must be new");
-    for (key, dir) in [
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    match args.first().map(String::as_str) {
+        Some("record") => record(&args[1..]),
+        Some("report") => report(&args[1..]),
+        _ => bail!(
+            "usage: diagnose_quiet_soak record <dir> [--hours N] [--config FILE]\n       \
+             diagnose_quiet_soak report [--current-defaults] [--json] <dir>..."
+        ),
+    }
+}
+
+fn record(args: &[String]) -> Result<()> {
+    let mut dir = None;
+    let mut hours: Option<f64> = None;
+    let mut config: Option<PathBuf> = None;
+    let mut it = args.iter();
+    while let Some(arg) = it.next() {
+        match arg.as_str() {
+            "--hours" => {
+                hours = Some(
+                    it.next()
+                        .context("--hours needs a number")?
+                        .parse()
+                        .context("--hours needs a number")?,
+                )
+            }
+            "--config" => config = Some(PathBuf::from(it.next().context("--config needs a file")?)),
+            other if dir.is_none() => dir = Some(PathBuf::from(other)),
+            other => bail!("unexpected argument {other}"),
+        }
+    }
+    let dir = dir.context("a soak directory is required")?;
+    // Read before the environment moves, so a relative path means what the
+    // caller meant.
+    let config = config
+        .map(|p| std::fs::read_to_string(&p).with_context(|| format!("{}", p.display())))
+        .transpose()?;
+    for (key, sub) in [
         ("XDG_CONFIG_HOME", "config"),
         ("XDG_CACHE_HOME", "cache"),
         ("XDG_DATA_HOME", "data"),
         ("XDG_STATE_HOME", "state"),
     ] {
-        let p = root.join(dir);
+        let p = dir.join(sub);
         std::fs::create_dir_all(&p)?;
         std::env::set_var(key, p);
     }
-    let mut cfg = NetwatchConfig {
-        insights_enabled: false,
-        diagnose_record_episodes: true,
-        ..Default::default()
+
+    let stop = Arc::new(AtomicBool::new(false));
+    #[cfg(unix)]
+    for signal in [signal_hook::consts::SIGINT, signal_hook::consts::SIGTERM] {
+        signal_hook::flag::register(signal, stop.clone())?;
+    }
+
+    let own = NetwatchConfig::path().context("no config directory")?;
+    if !own.exists() {
+        if let Some(text) = &config {
+            std::fs::create_dir_all(own.parent().context("config path has a parent")?)?;
+            std::fs::write(&own, text)?;
+        }
+    } else if config.is_some() {
+        eprintln!(
+            "{} exists from an earlier run and is used; --config is ignored",
+            own.display()
+        );
+    }
+    let mut cfg = if own.exists() {
+        NetwatchConfig::load().map_err(|e| anyhow::anyhow!("{}: {e}", own.display()))?
+    } else {
+        NetwatchConfig::default()
     };
+    cfg.insights_enabled = false;
+    cfg.diagnose_record_episodes = true;
     cfg.save()?;
+    eprintln!(
+        "{} target(s) · periodic trace {}",
+        cfg.diagnose_targets.len(),
+        cfg.diagnose_probes
+            .trace_refresh_secs
+            .map_or_else(|| "off".to_string(), |s| format!("every {s}s"))
+    );
     let mut app = App::prepare_with_config(cfg);
+    app.diagnose.soak = true;
+    ensure!(
+        app.diagnose.episode_dir.is_some(),
+        "no state directory to record into"
+    );
     bootstrap::start(
         &mut app,
         SessionKind::Daemon,
         netwatch::sandbox::Mode::from_config("on"),
     )?;
     bootstrap::prime_collectors(&mut app);
+
     let start = Instant::now();
-    let mut last = start;
-    let mut sampled = 0.0;
-    let mut ticks = 0;
-    let mut max_tick: f64 = 0.0;
-    let mut max_rss = 0;
-    let mut max_threads = 0;
-    let mut identities = BTreeSet::new();
-    let mut max_ready = 0;
-    while start.elapsed().as_secs() < seconds {
-        let tick = Instant::now();
+    let limit = hours.map(|h| Duration::from_secs_f64(h * 3_600.0));
+    let mut ticks: u64 = 0;
+    let mut opens: u64 = 0;
+    let mut was_open = std::collections::BTreeSet::new();
+    eprintln!("recording into {} · stop with Ctrl-C", dir.display());
+    while !stop.load(Ordering::Relaxed) && limit.is_none_or(|l| start.elapsed() < l) {
         app.tick();
-        max_tick = max_tick.max(tick.elapsed().as_secs_f64());
-        let now = Instant::now();
-        let gap = now.duration_since(last).as_secs_f64();
-        if gap <= 5.0 {
-            sampled += gap;
-        }
-        last = now;
         ticks += 1;
-        max_ready = max_ready.max(
-            app.diagnose
-                .engine
-                .coverage()
-                .rules
-                .iter()
-                .filter(|r| r.status == netwatch::diagnose::coverage::Availability::Available)
-                .count(),
-        );
-        for i in app
+        let now_open: std::collections::BTreeSet<String> = app
             .diagnose
             .engine
-            .issues()
-            .iter()
-            .filter(|i| i.state.is_open())
-        {
-            identities.insert(format!("{}|{}", i.rule, i.subject.label()));
+            .primary()
+            .into_iter()
+            .map(netwatch::diagnose::episode::issue_key)
+            .collect();
+        for key in now_open.difference(&was_open) {
+            opens += 1;
+            eprintln!(
+                "{} · opened {key}",
+                chrono::Local::now().format("%Y-%m-%d %H:%M:%S")
+            );
         }
-        if let Ok(status) = std::fs::read_to_string("/proc/self/status") {
-            for line in status.lines() {
-                if let Some(v) = line
-                    .split_whitespace()
-                    .nth(1)
-                    .and_then(|s| s.parse::<u64>().ok())
-                {
-                    if line.starts_with("VmRSS:") {
-                        max_rss = max_rss.max(v);
-                    }
-                    if line.starts_with("Threads:") {
-                        max_threads = max_threads.max(v);
-                    }
-                }
-            }
+        was_open = now_open;
+        if ticks.is_multiple_of(3_600) {
+            eprintln!(
+                "{:.1} h · {ticks} ticks · {opens} open(s) so far",
+                start.elapsed().as_secs_f64() / 3_600.0
+            );
         }
-        if ticks % 60 == 0 {
-            println!("{}s: {ticks} samples, {sampled:.1}s observed, RSS {max_rss} KiB, threads {max_threads}, state {} bytes",start.elapsed().as_secs(),state_bytes(&root));
-        }
-        std::thread::sleep(Duration::from_millis(1000));
+        std::thread::sleep(Duration::from_secs(1));
     }
+    // Writes the recording in progress, so a stop loses nothing.
     app.shutdown_diagnose();
     app.packet_collector.stop_capture();
-    let summary = serde_json::json!({"wall_seconds":start.elapsed().as_secs_f64(),"monitored_seconds":sampled,"ticks":ticks,"longest_tick_seconds":max_tick,"max_rss_kib":max_rss,"max_threads":max_threads,"state_bytes":state_bytes(&root),"max_available_checks":max_ready,"observed_issue_keys":identities});
-    std::fs::write(
-        root.join("state/netwatch/soak-summary.json"),
-        serde_json::to_vec_pretty(&summary)?,
-    )?;
-    println!("{summary}");
-    ensure!(sampled > seconds as f64 * 0.9, "insufficient measured time");
-    ensure!(max_tick < 5.0, "collector stalled app tick");
-    ensure!(max_threads < 100, "unexpected worker growth");
-    ensure!(state_bytes(&root) < 20_000_000, "unexpected state growth");
+    eprintln!(
+        "stopped after {:.2} h · {ticks} ticks · {opens} open(s)",
+        start.elapsed().as_secs_f64() / 3_600.0
+    );
+    Ok(())
+}
+
+fn host_label(dir: &Path) -> String {
+    dir.file_name()
+        .map(|n| n.to_string_lossy().into_owned())
+        .unwrap_or_else(|| dir.display().to_string())
+}
+
+fn report(args: &[String]) -> Result<()> {
+    let mut current_defaults = false;
+    let mut json = false;
+    let mut dirs = Vec::new();
+    for arg in args {
+        match arg.as_str() {
+            "--current-defaults" => current_defaults = true,
+            "--json" => json = true,
+            other => dirs.push(PathBuf::from(other)),
+        }
+    }
+    ensure!(!dirs.is_empty(), "at least one soak directory is required");
+    let mut hosts = Vec::new();
+    for dir in &dirs {
+        ensure!(dir.is_dir(), "{} is not a directory", dir.display());
+        let (host, errors) = HostInput::load(dir, &host_label(dir));
+        for e in errors {
+            eprintln!("skipped {e}");
+        }
+        hosts.push(host);
+    }
+    let report = soak::summarise(&hosts, current_defaults);
+    if json {
+        println!("{}", serde_json::to_string_pretty(&report)?);
+    } else {
+        print!("{}", report.text());
+    }
     Ok(())
 }
 
@@ -2183,405 +2250,371 @@ fn main() -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc4b48fe` (2026-11-07)
-**Commit Message**: fix(sandbox): accept a denied TCP Fast Open send in the gap test (#196)
+### Incident Patch 1: `3fa31b8b` (2026-11-14)
+**Commit Message**: windows: fix the unit-test binary crashing at startup on Rust 1.100 (#205)
 
-Linux 7.2 checks a MSG_FASTOPEN send against Landlock's connect rules
-(33cb713db016, "landlock: Fix TCP Fast Open connection bypass", Cc
-stable). parser_layer_leaves_fast_open_and_autobind_open expected the
-send to get out, so on a fixed kernel it failed with EACCES and stopped
-the Nix build, which runs the test suite.
+* windows: bind WaitOnAddress to its own DLL so the unit tests run on Rust 1.100
 
-The test, renamed parser_layer_leaves_autobind_open_and_fast_open_to_the_kernel,
-now passes when the send is denied and nothing reaches the listener, or
-when it goes out and the data arrives. The autobind check is unchanged.
-The threat model and the SandboxReport doc scope the Fast Open gap to
-kernels without the fix; Landlock has no erratum for it, so the report
-does not claim it either way.
+Every unit test aborted at startup on Windows (0xc0000005) once CI's
+stable toolchain moved from 1.99.1 to 1.100.0.
 
-Fixes #192
+pcap depends on windows-sys 0.36, whose windows.lib maps WaitOnAddress and
+WakeByAddressAll to vertdll.dll, the VBS enclave runtime. In the unit-test
+binary that library follows the standard library on the link line, so
+std's references were resolved from it, the process loaded vertdll.dll,
+and the first thread park crashed inside it.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+The crate now references both functions from its own object against
+synchronization.lib, which defines them before std's references are
+searched for. Checked on a Windows runner: the binary no longer imports
+vertdll.dll and tests run. The release binary never had the import.
 
-**File**: `CHANGELOG.md` (modified, +9/-0)
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* windows: mark the extern block unsafe, as clippy on 1.100 asks
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* windows: allow the extern declarations under the crate's unsafe_code lint
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+--------
+
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -2,6 +2,15 @@
- 
- All notable changes to NetWatch will be documented in this file.
- 
-+## [Unreleased]
-+
-+### Fixed
-+- **The Nix build passes its tests on Linux 7.2.** A sandbox test expected a TCP Fast Open
-+  send from a parser thread to get past the Landlock network deny. Linux 7.2 closes that gap,
-+  and kernels with the stable backport may too, so the test failed and the build stopped
-+  (#192). The test now accepts a denied send, as long as nothing reaches the listener, and
-+  the threat model scopes the Fast Open gap to kernels without the fix.
-+
- ## [1.0.0-rc.1] - 2026-11-07
- 
- ### Added
-```
-
-**File**: `docs/THREAT-MODEL.md` (modified, +9/-6)
-```diff
-@@ -212,12 +212,15 @@ write: /dev/null
-    opened earlier, the filtered ones included, because threads share descriptors
-    (item 1); a test holds a UDP socket opened before the filter to that
-    ([filter tests](../src/sandbox/seccomp.rs#L1)). On a thread with socket(2) open,
--   two TCP calls get past the deny. A TCP Fast Open send (`sendto` or
--   `sendmsg` with `MSG_FASTOPEN`) opens a connection and delivers its data
--   without connect(2), and listen(2) on an unbound socket takes an ephemeral port
--   on every address without bind(2). Both work from a parser thread on Linux 7.1,
--   and a test fails if that changes
--   ([gap tests](../src/sandbox/linux.rs#L1122)). Accepting on a listener bound
-+   two TCP calls get past the deny. listen(2) on an unbound socket takes an
-+   ephemeral port on every address without bind(2); that works from a parser
-+   thread on Linux 7.1, and a test fails if it changes. A TCP Fast Open send
-+   (`sendto` or `sendmsg` with `MSG_FASTOPEN`) opens a connection and delivers
-+   its data without connect(2) on kernels before 7.2. Linux 7.2 checks it
-+   against the connect rules, and the fix is marked for stable kernels, so an
-+   older kernel may have it too. Landlock has no erratum for it, so netwatch
-+   cannot tell which kernels do, and the report does not claim it; the test
-+   accepts either result ([gap tests](../src/sandbox/linux.rs#L1122)). Accepting on a listener bound
-    before entry is not mediated either, which is how the metrics threads serve.
-    Main, the network workers and the proc broker have no network restriction,
-    and a parser running injected code can reach them through shared memory
-```
-
-**File**: `src/sandbox/linux.rs` (modified, +18/-7)
-```diff
-@@ -1429,11 +1429,16 @@ mod tests {
-     }
- 
-     #[test]
--    fn parser_layer_leaves_fast_open_and_autobind_open() {
--        // Landlock checks connect(2) and bind(2). A TCP Fast Open sendto
--        // connects without the first, and listen(2) on an unbound socket
--        // takes an ephemeral port on every address without the second. The
--        // threat model says so; this fails if that changes under it.
-+    fn parser_layer_leaves_autobind_open_and_fast_open_to_the_kernel() {
-+        // Landlock checks connect(2) and bind(2). listen(2) on an unbound
-+        // socket takes an ephemeral port on every address without the second;
-+        // the threat model says so, and this fails if that changes under it.
-+        // A TCP Fast Open sendto connects without the first on kernels before
-+        // Linux 7.2, which checks it against the connect rules (33cb713db016,
-+        // "landlock: Fix TCP Fast Open connection bypass", also marked for
-+        // stable). Either the send is denied and nothing arrives, or it goes
-+        // out. Landlock has no erratum for the fix, so nothing can tell which
-+        // ahead of time (#192).
-         use nix::sys::socket::{
-             listen, sendto, socket, AddressFamily, Backlog, MsgFlags, SockFlag, SockType,
-             SockaddrIn,
-@@ -1489,9 +1494,15 @@ mod tests {
-         .join()
-         .unwrap();
- 
--        if let Some(sent) = sent {
-+        outside.set_nonblocking(true).unwrap();
-+        if sent == Some(Err(nix::errno::Errno::EACCES)) {
-+            std::thread::sleep(std::time::Duration::from_millis(100));
-+            match outside.accept() {
-+                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {}
-+                other => panic!("a denied Fast Open send reached the listener: {other:?}"),
-+            }
-+        } else if let Some(sent) = sent {
-             assert_eq!(sent, Ok(9));
--            outside.set_nonblocking(true).unwrap();
-             let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
-             let mut accepted = loop {
-                 match outside.accept() {
-```
-
-**File**: `src/sandbox/mod.rs` (modified, +4/-4)
-```diff
-@@ -203,10 +203,10 @@ pub struct PlatformReport {
-     /// when the layer could not be built to ask.
-     pub landlock_availability: Option<&'static str>,
-     /// Linux: connect(2) and bind(2) on TCP sockets denied on this thread by
--    /// its parser or capture layer. The network stays reachable: UDP, MPTCP,
--    /// a TCP Fast Open send and listen(2) on an unbound socket all get past
--    /// it (docs/THREAT-MODEL.md, item 4). Main and the network workers leave
--    /// this false.
-+    /// its parser or capture layer. The network stays reachable: UDP, MPTCP
-+    /// and listen(2) on an unbound socket get past it, and so does a TCP Fast
-+    /// Open send on kernels without the Linux 7.2 fix (docs/THREAT-MODEL.md,
-+    /// item 4). Main and the network workers leave this false.
-     pub landlock_network_blocked: bool,
-     /// Linux: the layer this thread's role stacks on the filesystem one,
-     /// "parser" or "capture", whether or not the kernel enforced it. `None`
-```
-
----
-
-### Incident Patch 2: `81275065` (2026-11-08)
-**Commit Message**: fix(memory): turn transparent huge pages off at startup on Linux (#198)
-
-mimalloc 3 calls madvise(MADV_HUGEPAGE) on its arenas. With THP on
-`madvise` (Fedora, Ubuntu) or `always`, the kernel kept whole 2 MiB
-pages resident after a capture burst, and khugepaged (max_ptes_none 511)
-collapsed ranges mimalloc had released back into huge pages. RSS sat
-80 to 100 MiB above the live heap and rose with each burst, which is the
-flood soak's cycle-to-cycle growth that blocked 1.0.0.
-
-Evidence, three cycles of two-minute steps on the reference machine,
-with a driver that also counted live heap bytes:
-- THP on: RSS after udp-churn 57.7 / 117.2 / 128.5 MiB, live heap
-  11.7 / 18.0 / 21.5, AnonHugePages up to 102 MiB off-peak; mtu-tcp
-  peaks 355.1 / 357.9 / 360.3; 114.5 MiB after the paced steps.
-- MIMALLOC_ALLOW_THP=0: the same step 34.5 / 40.4 / 44.2 MiB, a steady
-  ~23 MiB above the live heap; peaks 327.5 / 334.4 / 335.9; 40.5 after.
-The live heap grows 6.3 then 3.5 MiB as the capped tables fill and drops
-back to 15 MiB once their entries expire, so nothing leaks.
-
-platform::disable_transparent_huge_pages() sets PR_SET_THP_DISABLE. main
-calls it first, and the flood soak driver does too so i
-
-**File**: `CHANGELOG.md` (modified, +7/-0)
-```diff
-@@ -19,6 +19,13 @@ All notable changes to NetWatch will be documented in this file.
-   and kernels with the stable backport may too, so the test failed and the build stopped
-   (#192). The test now accepts a denied send, as long as nothing reaches the listener, and
-   the threat model scopes the Fast Open gap to kernels without the fix.
-+- **Memory no longer creeps up after capture bursts on Linux.** mimalloc asks for transparent
-+  huge pages on its arenas, so after a burst the kernel kept whole 2 MiB pages resident and
-+  khugepaged collapsed released ranges back into them. RSS sat 80 to 100 MiB above the bytes
-+  live on the heap and rose a little with each burst, which is what failed the flood soak's
-+  plateau gate. netwatch now turns transparent huge pages off for itself at startup
-+  (`PR_SET_THP_DISABLE`). In a three-cycle soak with two-minute steps, RSS after the cycles
-+  fell from 115 to 41 MiB, and the peak under a full stream budget from 360 to 336 MiB.
- 
- ## [1.0.0-rc.1] - 2026-11-07
- 
-```
-
-**File**: `Cargo.toml` (modified, +3/-0)
-```diff
-@@ -205,6 +205,9 @@ nix = { version = "0.31", features = ["term", "signal"] }
- [target.'cfg(target_os = "linux")'.dependencies]
- landlock = "0.4.7"
- caps = "0.5"
-+# prctl(PR_SET_THP_DISABLE) at startup (platform::disable_transparent_huge_pages).
-+# The same nix as above, so nothing new is compiled.
-+nix = { version = "0.31", features = ["process"] }
- 
- [target.'cfg(windows)'.dependencies]
- windows-sys = { version = "0.61", features = [
-```
-
-**File**: `docs/PERFORMANCE.md` (modified, +2/-0)
-```diff
-@@ -39,6 +39,8 @@ The four runs dispatched together read +17.8 to +20.4, v0.40.0 among them. One c
- 
- One local run of `main` with a third cycle points the wrong way. Its peaks, all in the `mtu-tcp` phase, were 375.7 MiB in cycle 2 and 393.7 MiB in cycle 3, 18 MiB higher. Every other scenario except `bulk` also peaked about 8 to 20 MiB higher in cycle 3. Cycle 1 doesn't count: the machine suspended in the middle of it. That is one run, and runs vary by 7 MiB, but it reads as growth that continues after warm-up. Before 1.0.0, the soak is to compare a third cycle with the second, a 24-hour run is to show whether memory keeps climbing, and the growth is to be found or ruled out. A climb blocks 1.0.0.
- 
-+The growth was transparent huge pages, not a leak. A driver that also counted the bytes live on the heap ran three cycles of two-minute steps on the reference machine, once with huge pages and once without (`MIMALLOC_ALLOW_THP=0`), the two side by side. With them, RSS after `udp-churn` read 57.7, 117.2 and 128.5 MiB in the three cycles while the live heap read 11.7, 18.0 and 21.5 MiB, and outside the `mtu-tcp` peaks up to 102 MiB of RSS was huge pages. mimalloc asks for them on its arenas, and khugepaged collapses ranges it has released back into whole 2 MiB pages. Without them the same step read 34.5, 40.4 and 44.2 MiB, about 23 MiB above the live heap each time, and the `mtu-tcp` peaks were 327.5, 334.4 and 335.9 MiB. The live heap rises a few MiB per cycle as the capped tables fill (6.3, then 3.5), and falls back to 15 MiB in the paced steps once their entries expire. netwatch now turns huge pages off for itself at startup. The tables above are from before that change, and the next full soak replaces them.
-+
- ## Flood soak
- 
- Each run floods a veth pair in a private network namespace for an hour: two cycles of six scenarios, then paced rates, then ten minutes of the real daemon. A Python AF_PACKET generator sends the traffic, so the soak needs no extra packages. It offers up to about 1.5 million packets a second on the reference machine and about 350,000 on the runner. The harness can use tcpreplay for the replay scenario if asked.
-```
-
-**File**: `examples/flood_soak.rs` (modified, +2/-0)
-```diff
-@@ -142,6 +142,8 @@ fn parse() -> Result<Options> {
- }
- 
- fn main() -> Result<()> {
-+    // As `main` does, so RSS reads as the binary's.
-+    netwatch::platform::disable_transparent_huge_pages();
-     let opts = parse()?;
-     match &opts.replay {
-         Some(dir) => replay(dir, opts.seconds),
-```
-
-**File**: `src/main.rs` (modified, +2/-0)
-```diff
-@@ -15,6 +15,8 @@ use std::mem::ManuallyDrop;
- static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
- 
- fn main() -> Result<()> {
-+    // Before the collectors allocate: see the function for the RSS it saves.
-+    netwatch::platform::disable_transparent_huge_pages();
-     let args: Vec<String> = std::env::args().skip(1).collect();
-     let options = match netwatch::cli::parse(&args)? {
-         netwatch::cli::Command::Help => {
-```
-
-**File**: `src/platform/mod.rs` (modified, +33/-0)
-```diff
-@@ -28,6 +28,24 @@ pub mod socket_table;
- #[cfg(target_os = "windows")]
- pub mod windows;
- 
-+/// Turns transparent huge pages off for this process on Linux, and does
-+/// nothing elsewhere. `main` calls it first, and the flood soak's driver does
-+/// the same so its RSS reads as the binary's.
-+///
-+/// mimalloc asks for huge pages on its arenas (`madvise(MADV_HUGEPAGE)`). With
-+/// THP set to `madvise` or `always`, the kernel backs every 2 MiB of an arena
-+/// netwatch has touched, and khugepaged collapses ranges mimalloc had released
-+/// back into huge pages. After a capture burst that left RSS 80 to 100 MiB
-+/// above the bytes live on the heap, and a little higher each time the burst
-+/// came back: the flood soak's cycle-to-cycle growth. Without huge pages RSS
-+/// stays about 23 MiB above the live heap. The flag also covers the children
-+/// netwatch starts, which is harmless for `ss` and `ip`. A kernel without the
-+/// prctl (before 3.15) keeps huge pages.
-+pub fn disable_transparent_huge_pages() {
-+    #[cfg(target_os = "linux")]
-+    let _ = nix::sys::prctl::set_thp_disable(true);
-+}
-+
- /// The command the capture error and the Dashboard banner give for capture
- /// without root on Linux. CAP_BPF and CAP_PERFMON are for eBPF attribution
- /// (`sandbox/mod.rs`). It restricts the binary to a group before granting it,
-@@ -791,3 +809,18 @@ stat() { case ${3#"$PWD"/} in usr/* | local/* | store/* | profile/*) echo root ;
-         }
-     }
- }
-+
-+#[cfg(all(test, target_os = "linux"))]
-+mod huge_page_tests {
-+    /// The kernel reports the flag back, and `THP_enabled` in
-+    /// `/proc/self/status` reads 0, as it would for the binary.
-+    #[test]
-+    fn transparent_huge_pages_are_off_after_the_call() {
-+        super::disable_transparent_huge_pages();
-+        assert_eq!(nix::sys::prctl::get_thp_disable(), Ok(true));
-+        let status = std::fs::read_to_string("/proc/self/status").unwrap();
-+        if let Some(line) = status.lines().find(|l| l.starts_with("THP_enabled:")) {
-+            assert_eq!(line.split_whitespace().nth(1), Some("0"), "{line}");
-+        }
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `f30ae2e6` (2026-11-07)
-**Commit Message**: fix(release): name pre-release packages as GitHub serves them, and keep :latest off them (#191)
-
-* fix(release): name pre-release packages as GitHub serves them
-
-GitHub turns a `~` in an asset's name into `.`, so 1.0.0-rc.1's SHA256SUMS
-listed netwatch_1.0.0~rc.1-1_amd64.deb while the release served
-netwatch_1.0.0.rc.1-1_amd64.deb, and `sha256sum -c` could not find the four
-packages. The release job now renames them before the sums and
-attestations. install-check's rpm job asks for the served name.
-
-rc.1's SHA256SUMS was replaced by hand with the corrected names; the hashes
-are unchanged.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(release): keep :latest off a pre-release's container image
-
-contains(tag, '-') && '' || format(':latest') yields :latest whatever the
-tag: '' is falsy, so && '' falls through to ||. 1.0.0-rc.1 took :latest
-from 0.40.0. The non-empty value now sits in the && branch.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/install-check.yml` (modified, +5/-3)
-```diff
-@@ -148,9 +148,11 @@ jobs:
-     steps:
-       - run: |
-           set -euo pipefail
--          rpm_version=$(tr - '~' <<< "${VERSION}")
--          curl -fsSLO "https://github.com/${REPO}/releases/download/${TAG}/netwatch-${rpm_version}-1.x86_64.rpm"
--          dnf install -y "./netwatch-${rpm_version}-1.x86_64.rpm"
-+          # The package's version is 1.0.0~rc.1, but GitHub serves a `~` in an
-+          # asset's name as `.`.
-+          rpm_file="netwatch-$(tr - . <<< "${VERSION}")-1.x86_64.rpm"
-+          curl -fsSLO "https://github.com/${REPO}/releases/download/${TAG}/${rpm_file}"
-+          dnf install -y "./${rpm_file}"
-           out=$(netwatch --version)
-           echo "$out"
-           grep -qF "${VERSION}" <<< "$out" ||
-```
-
-**File**: `.github/workflows/release.yml` (modified, +16/-1)
-```diff
-@@ -439,6 +439,17 @@ jobs:
-             scripts/static-asset-names.sh
-           fi
- 
-+      # GitHub replaces a `~` in an asset's name with `.`, so a pre-release's
-+      # packages (netwatch_1.0.0~rc.1-1_amd64.deb) were served under names
-+      # SHA256SUMS did not list, and `sha256sum -c` could not find them
-+      # (1.0.0-rc.1). Renamed first, the sums, the attestations and the
-+      # release all use the name GitHub serves. The version inside each
-+      # package keeps its tilde.
-+      - name: Name pre-release packages as GitHub serves them
-+        run: |
-+          shopt -s nullglob
-+          for f in *~*; do mv -v "$f" "${f//\~/.}"; done
-+
-       # Every shipped binary must carry the dependency list `cargo auditable`
-       # embeds. A build step that lost the wrapper still links fine, so
-       # check the artifacts rather than trust the build.
-@@ -574,9 +585,13 @@ jobs:
-           context: packaging/docker
-           platforms: linux/amd64,linux/arm64
-           push: true
-+          # `cond && x || y` is the expression language's only conditional,
-+          # and it yields y whenever x is falsy. The old form put '' in x, so
-+          # it always yielded :latest, and 1.0.0-rc.1 took :latest from
-+          # 0.40.0. The non-empty value goes in x.
-           tags: |
-             ghcr.io/${{ github.repository }}:${{ env.RELEASE_TAG }}
--            ${{ contains(env.RELEASE_TAG, '-') && '' || format('ghcr.io/{0}:latest', github.repository) }}
-+            ${{ !contains(env.RELEASE_TAG, '-') && format('ghcr.io/{0}:latest', github.repository) || '' }}
- 
-       # The image's provenance, pushed to GHCR next to it. Verified with:
-       #   gh attestation verify oci://ghcr.io/matthart1983/netwatch:vX.Y.Z -R matthart1983/netwatch
-```
-
-**File**: `CHANGELOG.md` (modified, +9/-0)
-```diff
-@@ -5,6 +5,15 @@ All notable changes to NetWatch will be documented in this file.
- ## [Unreleased]
+@@ -116,6 +116,11 @@ All notable changes to NetWatch will be documented in this file.
+ ## [1.0.0-rc.3] - 2026-11-10
  
  ### Fixed
-+- **A pre-release's `SHA256SUMS` names its packages as GitHub serves them.** GitHub turns
-+  a `~` in an asset's name into `.`, so 1.0.0-rc.1's sums listed `netwatch_1.0.0~rc.1-1_amd64.deb`
-+  while the release served `netwatch_1.0.0.rc.1-1_amd64.deb`, and `sha256sum -c` could not
-+  find the four packages. The release workflow renames them before the sums are taken.
-+  1.0.0-rc.1's `SHA256SUMS` was replaced with the corrected names; the hashes are unchanged.
-+- **A pre-release no longer takes the container image's `:latest`.** The release workflow's
-+  condition always added `:latest`, so 1.0.0-rc.1 replaced 0.40.0 there, and
-+  `docker run ghcr.io/matthart1983/netwatch` pulled the candidate. `:latest` was put back on
-+  0.40.0 by re-running 0.40.0's own container job.
- - **The Nix build passes its tests on Linux 7.2.** A sandbox test expected a TCP Fast Open
-   send from a parser thread to get past the Landlock network deny. Linux 7.2 closes that gap,
-   and kernels with the stable backport may too, so the test failed and the build stopped
++- **Windows: `cargo test` no longer crashes on Rust 1.100.** Every unit test aborted at
++  startup with an access violation. `pcap`'s Windows dependency ships an import library
++  that maps `WaitOnAddress` and `WakeByAddressAll` to `vertdll.dll`, and from Rust 1.100
++  the standard library's own calls were bound to it in the unit-test binary. The crate now
++  binds both to the correct DLL itself. Release binaries were never affected.
+ - **The capture fix line no longer changes your working directory when netwatch isn't on
+   `PATH`.** The line the capture error, the Dashboard banner and `netwatch doctor` give on Linux
+   starts `b=$(readlink -f "$(which netwatch)")`. GNU `readlink -f ""` fails and stopped the
 ```
 
-**File**: `docs/PACKAGING.md` (modified, +1/-1)
+**File**: `src/lib.rs` (modified, +41/-0)
 ```diff
-@@ -103,7 +103,7 @@ What each channel does with a hyphenated tag:
- | GitHub release | published, marked pre-release; `/releases/latest` stays on the last release |
- | crates.io | published; `cargo install` and `cargo binstall` take it only when asked for by version |
- | GHCR | `:v1.0.0-rc.1`, never `:latest` |
--| `.deb` / `.rpm` assets | `1.0.0~rc.1-1`, which both sort below `1.0.0` |
-+| `.deb` / `.rpm` assets | version `1.0.0~rc.1-1`, which both sort below `1.0.0`; the file names say `1.0.0.rc.1`, since GitHub serves no `~` in an asset's name |
- | apt repository, COPR | skipped: each has one channel that users upgrade from |
- | Homebrew, Scoop, conda-forge | not picked up; they follow releases |
+@@ -82,3 +82,44 @@ mod tests {
+         assert_eq!(hello_world(), "Hello, World!");
+     }
+ }
++
++/// Binds `WaitOnAddress` and `WakeByAddressAll` to the DLL they live in,
++/// before the linker can take them from somewhere else.
++///
++/// `pcap` depends on `windows-sys` 0.36, which links `windows.lib`: one
++/// import library for the whole Win32 API. It maps these two functions to
++/// `vertdll.dll`, the runtime for code inside a VBS enclave, which exports
++/// functions of the same names. From Rust 1.100 the standard library's own
++/// references to them are resolved by the first library link.exe finds them
++/// in, searching onward from the standard library, and in the unit-test
++/// binary that is `windows.lib`. The process then loaded `vertdll.dll` and
++/// died with an access violation the first time a thread parked: every unit
++/// test, on its first channel receive.
++///
++/// A reference from one of this crate's own objects is resolved first, and
++/// against the library named here. Once the symbols are defined, the
++/// standard library's references need no search. The release binary was
++/// never affected; this keeps `cargo test` working on Windows.
++#[cfg(all(windows, target_env = "msvc"))]
++// Declares two Win32 functions and never calls them.
++#[allow(unsafe_code)]
++mod wait_on_address {
++    use core::ffi::c_void;
++
++    #[link(name = "synchronization")]
++    unsafe extern "system" {
++        fn WaitOnAddress(
++            address: *const c_void,
++            compare_address: *const c_void,
++            address_size: usize,
++            milliseconds: u32,
++        ) -> i32;
++        fn WakeByAddressAll(address: *const c_void);
++    }
++
++    #[used]
++    static WAIT: unsafe extern "system" fn(*const c_void, *const c_void, usize, u32) -> i32 =
++        WaitOnAddress;
++    #[used]
++    static WAKE: unsafe extern "system" fn(*const c_void) = WakeByAddressAll;
++}
+```
+
+---
+
+### Incident Patch 2: `e5829ea8` (2026-11-14)
+**Commit Message**: build(deps): bump taiki-e/install-action (#195)
+
+Bumps the actions group with 1 update: [taiki-e/install-action](https://github.com/taiki-e/install-action).
+
+
+Updates `taiki-e/install-action` from 2.88.0 to 2.90.1
+- [Release notes](https://github.com/taiki-e/install-action/releases)
+- [Changelog](https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/taiki-e/install-action/compare/86f7a0ffb25f40114606501a311ebcfaf882ea32...c509219cf42fba86913069efd0ade2458c59337b)
+
+---
+updated-dependencies:
+- dependency-name: taiki-e/install-action
+  dependency-version: 2.90.1
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: actions
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+```diff
+@@ -66,7 +66,7 @@ jobs:
+         run: ./scripts/windows-smoke.ps1 target\release\netwatch.exe
  
+       - name: Install cargo-nextest
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-nextest
+ 
+```
+
+**File**: `.github/workflows/geoip-live.yml` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@ jobs:
+           ./scripts/npcap-sdk.ps1
+ 
+       - name: Install cargo-nextest
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-nextest
+ 
+```
+
+**File**: `.github/workflows/install-check.yml` (modified, +1/-1)
+```diff
+@@ -235,7 +235,7 @@ jobs:
+       VERSION: ${{ needs.resolve.outputs.version }}
+       GITHUB_TOKEN: ${{ github.token }}
+     steps:
+-      - uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++      - uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-binstall
+       - run: |
+```
+
+**File**: `.github/workflows/perf.yml` (modified, +1/-1)
+```diff
+@@ -60,7 +60,7 @@ jobs:
+         run: sudo apt-get update && sudo apt-get install -y libpcap-dev
+ 
+       - name: Install cargo-nextest
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-nextest
+ 
+```
+
+**File**: `.github/workflows/release.yml` (modified, +4/-4)
+```diff
+@@ -135,7 +135,7 @@ jobs:
+       # check an installed netwatch without the SBOM beside it.
+       - name: Install cargo-auditable
+         if: matrix.target != 'armv5te-unknown-linux-gnueabi'
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-auditable@0.7.7
+ 
+@@ -292,7 +292,7 @@ jobs:
+       # runner is x86_64 and would corrupt the aarch64 binary.
+       - name: Install packaging tools
+         if: contains(matrix.target, 'linux-musl')
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-deb,cargo-generate-rpm
+ 
+@@ -454,7 +454,7 @@ jobs:
+       # embeds. A build step that lost the wrapper still links fine, so
+       # check the artifacts rather than trust the build.
+       - name: Install rust-audit-info
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: rust-audit-info@0.5.4
+       - name: Check every binary is auditable
+@@ -501,7 +501,7 @@ jobs:
+       #   gh attestation verify netwatch-linux-x86_64.tar.gz -R matthart1983/netwatch \
+       #     --predicate-type https://cyclonedx.org/bom
+       - name: Install cargo-cyclonedx
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-cyclonedx
+       - name: Generate the SBOM
+```
+
+---
+
+### Incident Patch 3: `0e94cd46` (2026-11-14)
+**Commit Message**: build(deps): bump the cargo-minor group with 4 updates (#193)
+
+Bumps the cargo-minor group with 4 updates: [ureq](https://github.com/algesten/ureq), [toml](https://github.com/toml-rs/toml), [toml_edit](https://github.com/toml-rs/toml) and [signal-hook](https://github.com/vorner/signal-hook).
+
+
+Updates `ureq` from 3.5.0 to 3.5.1
+- [Changelog](https://github.com/algesten/ureq/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/algesten/ureq/compare/3.5.0...3.5.1)
+
+Updates `toml` from 1.1.8+spec-1.1.0 to 1.2.0+spec-1.1.0
+- [Commits](https://github.com/toml-rs/toml/compare/toml-v1.1.8...toml-v1.2.0)
+
+Updates `toml_edit` from 0.25.17+spec-1.1.0 to 0.25.18+spec-1.1.0
+- [Commits](https://github.com/toml-rs/toml/compare/v0.25.17...v0.25.18)
+
+Updates `signal-hook` from 0.4.5 to 0.4.6
+- [Changelog](https://github.com/vorner/signal-hook/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/vorner/signal-hook/compare/v0.4.5...v0.4.6)
+
+---
+updated-dependencies:
+- dependency-name: ureq
+  dependency-version: 3.5.1
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: cargo-minor
+- dependency-name: toml
+  dependency-version: 1.2.0+spec-1.1.0
+  de
+
+**File**: `Cargo.lock` (modified, +16/-16)
+```diff
+@@ -633,7 +633,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -1363,7 +1363,7 @@ dependencies = [
+  "serde",
+  "serde_ignored",
+  "serde_json",
+- "signal-hook 0.4.5",
++ "signal-hook 0.4.6",
+  "socket2",
+  "tls-parser",
+  "tokio",
+@@ -2070,7 +2070,7 @@ dependencies = [
+  "errno 0.3.14",
+  "libc",
+  "linux-raw-sys",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -2232,9 +2232,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "signal-hook"
+-version = "0.4.5"
++version = "0.4.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b29ffa27d3d59a049bb328258de100f8012848d1b08d444e08bbc02ac468435e"
++checksum = "49f7447afd772ca79ad17ae0a3972a6b0df0cb4b80990fd82707593e9e012a74"
+ dependencies = [
+  "libc",
+  "signal-hook-registry",
+@@ -2257,7 +2257,7 @@ version = "1.4.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b"
+ dependencies = [
+- "errno 0.2.8",
++ "errno 0.3.14",
+  "libc",
+ ]
+ 
+@@ -2612,9 +2612,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml"
+-version = "1.1.8+spec-1.1.0"
++version = "1.2.0+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
++checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
+ dependencies = [
+  "indexmap",
+  "serde_core",
+@@ -2636,9 +2636,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml_edit"
+-version = "0.25.17+spec-1.1.0"
++version = "0.25.18+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e3641d5bbb5349a79e1020a242d251efbc546ad8048d133958323ce9c40a9c9c"
++checksum = "1ec6e78bd70db9420d8d212fa9dc97f116448a1ceff5d00eabb991d407e21396"
+ dependencies = [
+  "indexmap",
+  "toml_datetime",
+@@ -2658,9 +2658,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml_writer"
+-version = "1.1.3+spec-1.1.0"
++version = "1.2.0+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
++checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
+ 
+ [[package]]
+ name = "tracing"
+@@ -2785,9 +2785,9 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
+ 
+ [[package]]
+ name = "ureq"
+-version = "3.5.0"
++version = "3.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b"
++checksum = "e7be76686bdf7198002062423ca0d8cf9b75a27c8e1de804513b97e97b555d9d"
+ dependencies = [
+  "base64 0.23.1",
+  "cookie_store",
+@@ -2805,9 +2805,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "ureq-proto"
+-version = "0.6.5"
++version = "0.7.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "841583fc36089d7d59419568ae157f43a5a03a2e5a81ba87c77d1596ef46e922"
++checksum = "622dce33c252115466d83f63e9744a18f12b4406aae51a01c15ad8fcf1185eb3"
+ dependencies = [
+  "base64 0.23.1",
+  "http",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #198** (2026-11-08): fix(memory): turn transparent huge pages off at startup on Linux (@matthart1983)
-- **PR #196** (2026-11-07): fix(sandbox): accept a denied TCP Fast Open send in the gap test (#192) (@matthart1983)
-- **PR #191** (2026-11-07): fix(release): name pre-release packages as GitHub serves them, and keep :latest off them (@matthart1983)
-- **PR #190** (2026-11-07): docs(performance): record the plateau gate exception for 1.0.0-rc.1 (@matthart1983)
-- **PR #189** (2026-11-07): Record the light demo in the paper theme (@matthart1983)
-- **PR #188** (2026-11-07): README: light-terminal demo at the top; re-record the dark demo on 0.40.0 (@matthart1983)
+- **PR #207** (2026-11-14): build(deps): bump jsonschema from 0.20.0 to 0.60.2 (@matthart1983)
+- **PR #206** (2026-11-14): Packet filters take CIDR ranges and != (@matthart1983)
+- **PR #205** (2026-11-14): windows: fix the unit-test binary crashing at startup on Rust 1.100 (@matthart1983)
+- **PR #204** (2026-11-14): TUI: layouts that fit every size, a command palette, and one look across tabs (@matthart1983)
+- **PR #203** (2026-11-14): Diagnose: rule maturity, earned verdicts, and the tools to prove them (@matthart1983)
+- **PR #201** (2026-11-11): README: lead with what netwatch does and show Diagnose closing an issue (@matthart1983)
 
 ---
 
@@ -2601,13 +2634,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sandbox): accept a denied TCP Fast Open send in the gap test (#196)
+## X. windows: fix the unit-test binary crashing at startup on Rust 1.100
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matthart1983/netwatch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc4b48fe`: sandbox): accept a denied TCP Fast Open send in the gap test (#196). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3fa31b8b`: windows: fix the unit-test binary crashing at startup on Rust 1.100. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2615,25 +2648,21 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [Unreleased]
-
-### Fixed
-- **The Nix build passes its tests on Linux 7.2.** A sandbox test expected a TCP Fast Open
-  send from a parser thread to get past the Landlock network deny. Linux 7.2 closes that gap,
-  and kernels with the stable backport may too, so the test failed and the build stopped
-  (#192). The test now accepts a denied send, as long as nothing reaches the listener, and
-  the threat model scopes the Fast Open gap to kernels without the fix.
-
+- **Windows: `cargo test` no longer crashes on Rust 1.100.** Every unit test aborted at
+  startup with an access violation. `pcap`'s Windows dependency ships an import library
+  that maps `WaitOnAddress` and `WakeByAddressAll` to `vertdll.dll`, and from Rust 1.100
+  the standard library's own calls were bound to it in the unit-test binary. The crate now
+  binds both to the correct DLL itself. Release binaries were never affected.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc4b48fe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3fa31b8b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

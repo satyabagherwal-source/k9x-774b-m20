@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for kgateway/dev/kgateway
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for kgateway-dev/kgateway
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "kgateway/dev/kgateway",
-  "source_url": "https://github.com/kgateway/dev/kgateway",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "kgateway-dev/kgateway",
+  "source_url": "https://github.com/kgateway-dev/kgateway",
+  "source_version": "74f2e098",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T07:18:01.026Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-kgateway-dev-kgateway",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kgateway/dev/kgateway](https://github.com/kgateway/dev/kgateway) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway) (Revision: `74f2e098`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T07:18:01.026Z`  
+> **Learning ID**: `learn-github-kgateway-dev-kgateway`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `kgateway/dev/kgateway` (Commit: `historical`)
+- **Target Repository**: `kgateway-dev/kgateway` (Commit: `74f2e098`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
-> **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `42846c40`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T01:23:18.781Z  
-> **Learning ID**: `learn-github-kgateway-dev-kgateway`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): kgateway-dev/kgateway
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T01:23:18.775Z  
+> **Harvest Timestamp**: 2026-11-14T07:17:59.943Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The Cloud-Native API Gateway and AI Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5737 stars
+- **Stars / Engagement**: 5736 stars
 
 ---
 
@@ -1145,11 +1131,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15024** (2026-11-11): **envoy_modules: build from the dependency stage with --locked**
-  *Symptoms*: # Description  Speeds up and tightens the Envoy dynamic module Docker build:  - **Stage 2 continues from `rust_build_deps`.** Previously it started a fresh image, reinstalled clang, and copied `/usr/local/cargo`, `/usr/local/rustup` and `/build/target` into new layers. Those copies duplicated the largest layers in the build and in the `mode=max` registry cache. - **`--locked` on `cargo fetch` and `cargo zigbuild`.** A `Cargo.lock` that is out of date with `Cargo.toml` now fails the build instead of being re-resolved inside the image. - **Removed dead `$?` checks** in `generate-dockerfile.sh`; `set -euo pipefail` already exits first.  `Dockerfile` is regenerated from the template.  # Change Type  /kind cleanup  # Changelog  ```release-note NONE ``` 
+- **Issue #15042** (2026-11-13): **test(e2e): check ConsistentlyObjectsNotExist objects in one window**
+  *Symptoms*: # Description  **Motivation:** `TestKgateway/Deployer/TestSelfManagedGateway` takes ~31s on every run (cluster-one and cluster-ipv6), but its Gateway is Accepted within about a second. The other 30s is `ConsistentlyObjectsNotExist`, which ran a separate 10s `Consistently` for each of the three objects (Deployment, Service, ServiceAccount), one after another.  **What changed:** `ConsistentlyObjectsNotExist` now checks every object on each 1s poll within a single 10s window. Each object is still confirmed absent for the full 10s, so coverage is unchanged, and the test should drop to ~11s. This is the helper's only caller.  Failure messages now name the object's Go type (e.g. `*v1.Deployment`), since typed objects usually carry an empty GVK and the old message printed a blank kind.  **Related issues:** part of #12981  # Change Type  /kind test  # Changelog  ```release-note NONE ```  # Additional Notes  Build, vet and lint pass with `-tags e2e`. Not run locally against a cluster; this PR's e2e run should show `TestSelfManagedGateway` at ~11s and the Deployer suite ~20s shorter. 
 
-- **Issue #15023** (2026-11-11): **[2.4] docs: correct HTTP/2 initial window size defaults**
-  *Symptoms*: # Description  Envoy defaults `initial_stream_window_size` to 16 MiB and `initial_connection_window_size` to 24 MiB. 256 MiB is the legacy default, used only when the `envoy.reloadable_features.safe_http2_options` runtime guard is disabled; every Envoy version kgateway ships enables it, and Envoy 1.40 removes the legacy path. kgateway leaves both fields unset when they are not configured, so Envoy's defaults apply to both `BackendConfigPolicy` and `ListenerPolicy`.  # Change Type  /kind documentation  # Changelog  ```release-note NONE ```  # Additional Notes  - Envoy constants: [`http_option_limits.h`](https://github.com/envoyproxy/envoy/blob/v1.39.6/source/common/http/http_option_limits.h) and their use in [`utility.cc`](https://github.com/envoyproxy/envoy/blob/v1.39.6/source/common/http/utility.cc). - I verified this on a live kgateway v2.4.7 proxy (Envoy 1.38.7). The cluster had `http2_protocol_options: {}`, and `/runtime` showed no overrides. - The CRD descriptions were checked against `controller-gen` + `crdbounds` output. - Backport of #15021 to v2.4.x. 
+- **Issue #15041** (2026-11-13): **test(e2e): pre-pull suite images in parallel and poll every 100ms**
+  *Symptoms*: # Description  **Motivation:** suites pre-pull their images through a helper pod before applying manifests. The pulls ran one image at a time and checked the pod every 2s, so every pull reported as 4.0s or 6.0s, however long it really took. In #15040's CI run that was 42 pulls and 175s across the shards, with up to 9 pulls on one shard (cluster-four).  **What changed:** - A suite's images are pulled in parallel. - Each puller pod is checked every 100ms instead of every 2s. - A failed pull is returned as an error and fails the suite on the test goroutine once all pulls finish (calling `FailNow` from another goroutine isn't allowed). - The 5-minute timeout and the retrying of transient API errors are unchanged. The timeout error now includes the pod's last phase and the last API error.  **Related issues:** part of #12981  # Change Type  /kind test  # Changelog  ```release-note NONE ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1166,621 +1152,121 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `53ad7a5e` (2026-11-11)
-**Commit Message**: envoy_modules: build from the dependency stage with --locked (#15024)
+### Incident Patch 1: `ba3b23fa` (2026-11-13)
+**Commit Message**: test(e2e): pre-pull suite images in parallel and poll every 100ms (#15041)
 
-Signed-off-by: David L. Chandler <[REDACTED_EMAIL]>
+Signed-off-by: omar <[REDACTED_EMAIL]>
 
-**File**: `internal/envoy_modules/Dockerfile` (modified, +7/-15)
+**File**: `test/e2e/tests/base/base_suite.go` (modified, +39/-13)
 ```diff
-@@ -44,8 +44,8 @@ RUN rustup target add ${RUST_BUILD_ARCH}-unknown-linux-gnu
- # source code, so it never re-compiles the real lib.
- # The following section is generated by internal/envoy_modules/generate-dockerfile.sh when the make
- # target is run. Do not edit by hand.
--RUN cargo fetch \
--    && cargo zigbuild --target ${RUST_BUILD_ARCH}-unknown-linux-gnu \
-+RUN cargo fetch --locked \
-+    && cargo zigbuild --locked --target ${RUST_BUILD_ARCH}-unknown-linux-gnu \
-     && find /build/target \( -name librust_module.so \
-         -o -name 'librustformation_filter-*.rlib' \
-         -o -name 'libhttp_acl_filter-*.rlib' \
-@@ -54,24 +54,16 @@ RUN cargo fetch \
-         -o -name 'libacl-*.rlib' \
-     \) -type f -delete
+@@ -17,7 +17,6 @@ import (
+ 	"time"
  
--# Stage 2: build envoy dynamic module
--FROM --platform=$TARGETPLATFORM ${CARGO_ZBUILD_IMAGE} AS rust_builder
--WORKDIR /build
--RUN sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list 2>/dev/null || true \
--    && sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list.d/ubuntu.sources 2>/dev/null || true \
--    && apt-get -o Acquire::Retries=5 update \
--    && apt-get -o Acquire::Retries=5 install --no-install-recommends -y clang
--
--# Copy cached cargo, rustup toolchain, and build target from rust_build_deps
--COPY --from=rust_build_deps /usr/local/cargo /usr/local/cargo
--COPY --from=rust_build_deps /usr/local/rustup /usr/local/rustup
--COPY --from=rust_build_deps /build/target /build/target
-+# Stage 2: build envoy dynamic module. Continue from the dependency stage so
-+# BuildKit does not reinstall clang or copy cargo, rustup, and target into new
-+# layers before compiling the real source.
-+FROM rust_build_deps AS rust_builder
+ 	"github.com/Masterminds/semver/v3"
+-	"github.com/onsi/gomega"
+ 	"github.com/stretchr/testify/suite"
+ 	"istio.io/istio/pkg/test/util/assert"
+ 	"istio.io/istio/pkg/test/util/yml"
+@@ -30,6 +29,7 @@ import (
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
++	"k8s.io/apimachinery/pkg/util/wait"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
  
- # Copy the source code and build the module.
- ARG ENVOY_MODULES_DIR=.
- COPY ${ENVOY_MODULES_DIR} .
- ARG RUST_BUILD_ARCH=x86_64 # set this to "aarch64" for local arm build
--RUN cargo zigbuild --target ${RUST_BUILD_ARCH}-unknown-linux-gnu
-+RUN cargo zigbuild --locked --target ${RUST_BUILD_ARCH}-unknown-linux-gnu
+@@ -510,23 +510,39 @@ func (s *BaseTestingSuite) prePullImages(testCase *TestCase) {
+ 		return
+ 	}
  
- RUN cp /build/target/${RUST_BUILD_ARCH}-unknown-linux-gnu/debug/librust_module.so /build/librust_module.so
+-	// Create temporary pods to pull images
++	// Pull the images in parallel: each pull is mostly waiting on the node, and a suite can need
++	// several (redis and ratelimit, keycloak and httpbin). Failures are reported back here, on the
++	// test goroutine, because FailNow must not be called from another goroutine.
++	var wg sync.WaitGroup
++	errs := make([]error, 0, len(images))
++	var errsMu sync.Mutex
+ 	for image := range images {
+-		s.pullImage(image)
++		wg.Go(func() {
++			if err := s.pullImage(image); err != nil {
++				errsMu.Lock()
++				errs = append(errs, err)
++				errsMu.Unlock()
++			}
++		})
+ 	}
++	wg.Wait()
++	s.Require().NoError(errors.Join(errs...), "pre-pull images")
+ }
  
-```
-
-**File**: `internal/envoy_modules/Dockerfile.tmpl` (modified, +5/-13)
-```diff
-@@ -28,24 +28,16 @@ RUN rustup target add ${RUST_BUILD_ARCH}-unknown-linux-gnu
- # target is run. Do not edit by hand.
- # __CRATE_CACHE_BUST_RUN__
+ // pullImage creates a temporary pod to pull the given image with a long timeout.
+ // Images this process already pulled to the cluster are skipped. The pod gets
+ // a generated name so concurrent pulls, including from other test processes
+ // against the same cluster, never share or delete each other's puller pod.
+-func (s *BaseTestingSuite) pullImage(image string) {
++//
++// It is safe to call from several goroutines: it reports a failed pull as an error instead of
++// failing the test, and only logs otherwise.
++func (s *BaseTestingSuite) pullImage(image string) error {
+ 	cluster := s.TestInstallation.ClusterContext
+ 	entry := pulledImages.entry(cluster.KubeContext, image)
+ 	entry.mu.Lock()
+ 	defer entry.mu.Unlock()
+ 	if entry.pulled {
+-		return
++		return nil
+ 	}
  
--# Stage 2: build envoy dynamic module
--FROM --platform=$TARGETPLATFORM ${CARGO_ZBUILD_IMAGE} AS rust_builder
--WORKDIR /build
--RUN sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list 2>/dev/null || true \
--    && sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list.d/ubuntu.sources 2>/dev/null || true \
--    && apt-get -o Acquire::Retries=5 update \
--    && apt-get -o Acquire::Retries=5 install --no-install-recommends -y clang
--
--# Copy cached cargo, rustup toolchain, and build target from rust_build_deps
--COPY --from=rust_build_deps /usr/local/cargo /usr/local/cargo
--COPY --from=rust_build_deps /usr/local/rustup /usr/local/rustup
--COPY --from=rust_build_deps /build/target /build/target
-+# Stage 2: build envoy dynamic module. Continue from the dependency stage so
-+# BuildKit does not reinstall clang or copy cargo, rustup, and target into new
-+# layers before compiling the real source.
-+FROM rust_build_deps AS rust_builder
+ 	start := time.Now()
+@@ -547,20 +563,30 @@ func (s *BaseTestingSuite) pullImage(image string) {
+ 	}, metav1.CreateOptions{})
+ 	if err != nil {
+ 		s.T().Logf("Warning: failed to create image puller pod for %s: %v", image, err)
+-		return
++		return nil
+ 	}
+ 	podName := pullerPod.Name
+ 	defer func() { _ = pods.Delete(s.Ctx, podName, metav1.DeleteOptions{}) }()
  
- # Copy the source code and build the module.
- ARG ENVOY_MODULES_DIR=.
- COPY ${ENVOY_MODULES_DIR} .
- ARG RUST_BUILD_ARCH=x86_64 # set this to "aarch64" for local arm build
--RUN cargo zigbuild --target ${RUST_BUILD_ARCH}-unknown-linux-gnu
-+RUN cargo zigbuild --locked --target ${RUST_BUILD_ARCH}-unknown-linux-gnu
+-	// Wait for the pod to complete (image pulled) with a long timeout (5 minutes)
+-	s.TestInstallation.AssertionsT(s.T()).Gomega.Eventually(func(g gomega.Gomega) {
+-		pod, err := pods.Get(s.Ctx, podName, metav1.GetOptions{})
+-		g.Expect(err).NotTo(gomega.HaveOccurred())
+-		// Pod should be Succeeded (completed) or Running (image pulled, command ran)
+-		g.Expect(pod.Status.Phase).To(gomega.BeElementOf(corev1.PodSucceeded, corev1.PodRunning, corev1.PodFailed))
+-	}).WithTimeout(5*time.Minute).WithPolling(2*time.Second).Should(gomega.Succeed(), "waiting for image %s to be pulled", image)
++	// Wait for the pod to start or finish, which means the image is on the node. Pulls usually
++	// take a second or two, so poll often: a coarse interval rounds every pull up to it.
++	var phase corev1.PodPhase
++	var lastGetErr error
++	err = wait.PollUntilContextTimeout(s.Ctx, 100*time.Millisecond, 5*time.Minute, true, func(ctx context.Context) (bool, error) {
++		pod, getErr := pods.Get(ctx, podName, metav1.GetOptions{})
++		// Retry transient API errors until the timeout, as before; the last one goes in the error.
++		lastGetErr = getErr
++		if getErr == nil {
++			phase = pod.Status.Phase
++		}
++		return phase == corev1.PodSucceeded || phase == corev1.PodRunning || phase == corev1.PodFailed, nil
++	})
++	if err != nil {
++		return fmt.Errorf("waiting for image %s to be pulled (pod phase %q): %w", image, phase, errors.Join(err, lastGetErr))
++	}
+ 	entry.pulled = true
+ 	s.T().Logf("Pre-pulled image %s in %s", image, time.Since(start).Round(time.Millisecond))
++	return nil
+ }
  
- RUN cp /build/target/${RUST_BUILD_ARCH}-unknown-linux-gnu/debug/librust_module.so /build/librust_module.so
- 
-```
-
-**File**: `internal/envoy_modules/generate-dockerfile.sh` (modified, +2/-14)
-```diff
-@@ -79,8 +79,8 @@ trap 'rm -rf "$TMPDIR_GENERATED"' EXIT
- 
- # Section 3: RUN cargo fetch && cargo zigbuild && find ... -delete
- {
--    printf 'RUN cargo fetch \\\n'
--    printf '    && cargo zigbuild --target ${RUST_BUILD_ARCH}-unknown-linux-gnu \\\n'
-+    printf 'RUN cargo fetch --locked \\\n'
-+    printf '    && cargo zigbuild --locked --target ${RUST_BUILD_ARCH}-unknown-linux-gnu \\\n'
-     printf '    && find /build/target \\( '
-     first=true
-     for member in $members; do
-@@ -106,10 +106,6 @@ cat << EOF > "$temp_output"
- # This file is generated by internal/envoy_modules/generate-dockerfile.sh when the 'generate-all' make target is run.
- # DO NOT EDIT BY HAND! Edit ${TEMPLATE} instead.
- EOF
--if [ $? != 0 ]; then
--    echo "failed to create tempfile $temp_output"
--    exit 1
--fi
- # Replace markers in the template using sed's r (read file) command.
- sed \
-     -e "/^# __CRATE_DUMMY_SETUP__$/r $TMPDIR_GENERATED/crate_dummy_setup" \
-@@ -119,13 +115,5 @@ sed \
-     -e "/^# __CRATE_CACHE_BUST_RUN__$/r $TMPDIR_GENERATED/crate_cache_bust_run" \
-     -e "/^# __CRATE_CACHE_BUST_RUN__$/d" \
-     "$TEMPLATE" >> "$temp_output"
--if [ $? != 0 ]; then
--    echo "failed to generate Dockerfile from $TEMPLATE"
--    exit 1
--fi
- 
- mv "$temp_output" "$OUTPUT"
--if [ $? != 0 ]; then
--    echo "failed to move $temp_output to $OUTPUT"
--    exit 1
--fi
-```
-
----
-
-### Incident Patch 2: `2f678804` (2026-11-11)
-**Commit Message**: fix(trafficpolicy): allow retry.perTryTimeout with timeouts.request 0s (#15016)
-
-Signed-off-by: Duncan Doyle <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `api/tests/testdata/trafficpolicy.yaml` (modified, +44/-2)
-```diff
-@@ -172,8 +172,8 @@ spec:
-     attempts: 2
-     perTryTimeout: 2s
- ---
--# TrafficPolicy: retry.perTryTimeout must be less than timeouts.request
--_err: retry.perTryTimeout must be less than timeouts.request
-+# TrafficPolicy: retry.perTryTimeout cannot be longer than timeouts.request
-+_err: retry.perTryTimeout cannot be longer than timeouts.request
- apiVersion: gateway.kgateway.dev/v1alpha1
- kind: TrafficPolicy
- metadata:
-@@ -190,6 +190,48 @@ spec:
-     request: 5s
-     streamIdle: 60s
- ---
-+# TrafficPolicy: retry.perTryTimeout may equal timeouts.request
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: TrafficPolicy
-+metadata:
-+  name: retry-pertrytimeout-equal-to-timeouts-request
-+spec:
-+  retry:
-+    retryOn:
-+    - gateway-error
-+    attempts: 2
-+    perTryTimeout: 5s
-+  timeouts:
-+    request: 5s
-+---
-+# TrafficPolicy: retry.perTryTimeout with timeouts.request disabled (0s)
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: TrafficPolicy
-+metadata:
-+  name: retry-pertrytimeout-with-timeouts-request-0s
-+spec:
-+  retry:
-+    retryOn:
-+    - gateway-error
-+    attempts: 3
-+    perTryTimeout: 2s
-+  timeouts:
-+    request: 0s
-+---
-+# TrafficPolicy: retry.perTryTimeout with timeouts.request disabled (0ms)
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: TrafficPolicy
-+metadata:
-+  name: retry-pertrytimeout-with-timeouts-request-0ms
-+spec:
-+  retry:
-+    retryOn:
-+    - gateway-error
-+    attempts: 3
-+    perTryTimeout: 2s
-+  timeouts:
-+    request: 0ms
-+---
- # TrafficPolicy: retry.perTryTimeout must be at least 1ms
- _err: perTryTimeout must be at least 1ms
- apiVersion: gateway.kgateway.dev/v1alpha1
-```
-
-**File**: `api/v1alpha1/kgateway/retries.go` (modified, +1/-2)
-```diff
-@@ -30,8 +30,7 @@ type Retry struct {
- 	Attempts int32 `json:"attempts,omitempty"` //nolint:kubeapilinter
- 
- 	// PerTryTimeout specifies the timeout per retry attempt (including the initial attempt).
--	// If a global timeout is configured on a route, this timeout must be less than the global
--	// route timeout.
-+	// It cannot be longer than the route's request timeout, unless that timeout is 0s (disabled).
- 	// It is specified as a sequence of decimal numbers, each with optional fraction and a unit suffix, such as "1s" or "500ms".
- 	// +optional
- 	//
-```
-
-**File**: `api/v1alpha1/kgateway/traffic_policy_types.go` (modified, +1/-1)
-```diff
-@@ -46,7 +46,7 @@ type TrafficPolicyList struct {
- // +kubebuilder:validation:XValidation:rule="!has(self.statPrefix) || ((!has(self.targetRefs) || self.targetRefs.all(r, r.kind == 'HTTPRoute' || r.kind == 'GRPCRoute')) && (!has(self.targetSelectors) || self.targetSelectors.all(r, r.kind == 'HTTPRoute' || r.kind == 'GRPCRoute')))",message="statPrefix can only be used when targeting HTTPRoute or GRPCRoute resources"
- // +kubebuilder:validation:XValidation:rule="!has(self.httpUpgrade) || ((!has(self.targetRefs) || self.targetRefs.all(r, r.kind == 'Gateway' || r.kind == 'HTTPRoute' || r.kind.endsWith('ListenerSet'))) && (!has(self.targetSelectors) || self.targetSelectors.all(r, r.kind == 'Gateway' || r.kind == 'HTTPRoute' || r.kind.endsWith('ListenerSet'))))",message="httpUpgrade can only be used when targeting Gateway, HTTPRoute, or ListenerSet resources"
- // +kubebuilder:validation:XValidation:rule="!has(self.httpUpgrade) || self.httpUpgrade.all(x, self.httpUpgrade.exists_one(y, y.type.lowerAscii() == x.type.lowerAscii()))",message="httpUpgrade types must be unique ignoring ASCII case"
--// +kubebuilder:validation:XValidation:rule="has(self.retry) && has(self.timeouts) ? (has(self.retry.perTryTimeout) && has(self.timeouts.request) ? duration(self.retry.perTryTimeout) < duration(self.timeouts.request) : true) : true",message="retry.perTryTimeout must be less than timeouts.request"
-+// +kubebuilder:validation:XValidation:rule="!(has(self.retry) && has(self.retry.perTryTimeout) && has(self.timeouts) && has(self.timeouts.request) && duration(self.timeouts.request) != duration('0s') && duration(self.retry.perTryTimeout) > duration(self.timeouts.request))",message="retry.perTryTimeout cannot be longer than timeouts.request unless timeouts.request is 0s"
- // +kubebuilder:validation:XValidation:rule="!has(self.buffer) || has(self.buffer.disable) || !has(self.httpUpgrade) || self.httpUpgrade.size() == 0",message="buffer cannot be used together with httpUpgrade unless buffering is disabled"
- type TrafficPolicySpec struct {
- 	// TargetRefs specifies the target resources by reference to attach the policy to.
-```
-
-**File**: `install/helm/kgateway-crds/templates/gateway.kgateway.dev_trafficpolicies.yaml` (modified, +6/-6)
-```diff
-@@ -2154,8 +2154,7 @@ spec:
-                   perTryTimeout:
-                     description: |-
-                       PerTryTimeout specifies the timeout per retry attempt (including the initial attempt).
--                      If a global timeout is configured on a route, this timeout must be less than the global
--                      route timeout.
-+                      It cannot be longer than the route's request timeout, unless that timeout is 0s (disabled).
-                       It is specified as a sequence of decimal numbers, each with optional fraction and a unit suffix, such as "1s" or "500ms".
-                     maxLength: 32
-                     type: string
-@@ -2846,10 +2845,11 @@ spec:
-             - message: httpUpgrade types must be unique ignoring ASCII case
-               rule: '!has(self.httpUpgrade) || self.httpUpgrade.all(x, self.httpUpgrade.exists_one(y,
-                 y.type.lowerAscii() == x.type.lowerAscii()))'
--            - message: retry.perTryTimeout must be less than timeouts.request
--              rule: 'has(self.retry) && has(self.timeouts) ? (has(self.retry.perTryTimeout)
--                && has(self.timeouts.request) ? duration(self.retry.perTryTimeout)
--                < duration(self.timeouts.request) : true) : true'
-+            - message: retry.perTryTimeout cannot be longer than timeouts.request
-+                unless timeouts.request is 0s
-+              rule: '!(has(self.retry) && has(self.retry.perTryTimeout) && has(self.timeouts)
-+                && has(self.timeouts.request) && duration(self.timeouts.request) !=
-+                duration(''0s'') && duration(self.retry.perTryTimeout) > duration(self.timeouts.request))'
-             - message: buffer cannot be used together with httpUpgrade unless buffering
-                 is disabled
-               rule: '!has(self.buffer) || has(self.buffer.disable) || !has(self.httpUpgrade)
-```
-
-**File**: `pkg/kgateway/translator/gateway/testutils/inputs/traffic-policy/timeout-retry.yaml` (modified, +32/-1)
-```diff
-@@ -201,4 +201,35 @@ spec:
-     - 409
-     backoffBaseInterval: 2s
-   timeouts:
--    request: 2s      
-\ No newline at end of file
-+    request: 2s      
-+---
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: HTTPRoute
-+metadata:
-+  name: example-route-retry-no-request-timeout
-+spec:
-+  parentRefs:
-+  - name: example-gateway
-+  hostnames:
-+  - "example-retry-no-request-timeout.com"
-+  rules:
-+  - backendRefs:
-+    - name: example-svc
-+      port: 80
-+---
-+apiVersion: gateway.kgateway.dev/v1alpha1
-+kind: TrafficPolicy
-+metadata:
-+  name: example-route-retry-no-request-timeout
-+spec:
-+  targetRefs:
-+  - group: gateway.networking.k8s.io
-+    kind: HTTPRoute
-+    name: example-route-retry-no-request-timeout
-+  retry:
-+    retryOn:
-+    - gateway-error
-+    attempts: 3
-+    perTryTimeout: 2s
-+  timeouts:
-+    request: 0s
-```
-
-**File**: `pkg/kgateway/translator/gateway/testutils/outputs/traffic-policy/timeout-retry.yaml` (modified, +72/-1)
-```diff
-@@ -125,6 +125,35 @@ Routes:
-             baseInterval: 0.010s
-           retryOn: gateway-error,reset,retriable-status-codes
-         timeout: 10s
-+  - domains:
-+    - example-retry-no-request-timeout.com
-+    metadata:
-+      filterMetadata:
-+        merge.TrafficPolicy.gateway.kgateway.dev:
-+          retry:
-+          - gateway.kgateway.dev/TrafficPolicy/default/example-gateway-retry-and-timeout
-+    name: listener~80~example-retry-no-request-timeout_com
-+    routes:
-+    - match:
-+        prefix: /
-+      metadata:
-+        filterMetadata:
-+          merge.TrafficPolicy.gateway.kgateway.dev:
-+            retry:
-+            - gateway.kgateway.dev/TrafficPolicy/default/example-route-retry-no-request-timeout
-+            timeouts:
-+            - gateway.kgateway.dev/TrafficPolicy/default/example-route-retry-no-request-timeout
-+      name: listener~80~example-retry-no-request-timeout_com-route-0-httproute-example-route-retry-no-request-timeout-default-0-0-matcher-0
-+      route:
-+        cluster: kube_default_example-svc_80
-+        clusterNotFoundResponseCode: INTERNAL_SERVER_ERROR
-+        retryPolicy:
-+          numRetries: 3
-+          perTryTimeout: 2s
-+          retryBackOff:
-+            baseInterval: 0.025s
-+          retryOn: gateway-error
-+        timeout: 0s
-   - domains:
-     - example-retry.com
-     metadata:
-@@ -201,7 +230,7 @@ Statuses:
-         status: "True"
-         type: ResolvedRefs
-       listeners:
--      - attachedRoutes: 5
-+      - attachedRoutes: 6
-         conditions:
-         - lastTransitionTime: null
-           message: Successfully accepted Listener
-@@ -300,6 +329,29 @@ Statuses:
-           group: ""
-           kind: ""
-           name: example-gateway
-+    default/example-route-retry-no-request-timeout:
-+      parents:
-+      - conditions:
-+        - lastTransitionTime: null
-+          message: Successfully accepted Route
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: null
-+          message: Successfully resolved all references
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-+        - lastTransitionTime: null
-+          message: Successfully programmed Route
-+          reason: Programmed
-+          status: "True"
-+          type: kgateway.dev/Programmed
-+        controllerName: kgateway
-+        parentRef:
-+          group: ""
-+          kind: ""
-+          name: example-gateway
-     default/example-route-timeout:
-       parents:
-       - conditions:
-@@ -404,6 +456,25 @@ Statuses:
-           status: "True"
-           type: Attached
-         controllerName: kgateway.dev/kgateway
-+    TrafficPolicy/default/example-route-retry-no-request-timeout:
-+      ancestors:
-+      - ancestorRef:
-+          group: gateway.networking.k8s.io
-+          kind: Gateway
-+          name: example-gateway
-+          namespace: default
-+        conditions:
-+        - lastTransitionTime: null
-+          message: Policy accepted
-+          reason: Valid
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: null
-+          message: Attached to all targets
-+          reason: Attached
-+          status: "True"
-+          type: Attached
-+        controllerName: kgateway.dev/kgateway
-     TrafficPolicy/default/example-route-timeout:
-       ancestors:
-       - ancestorRef:
-```
-
----
-
-### Incident Patch 3: `a49ab582` (2026-11-10)
-**Commit Message**: test(e2e): speed up e2e by overlapping setup with image builds (#15007)
-
-Signed-off-by: David L. Chandler <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/README.md` (modified, +1/-0)
-```diff
-@@ -29,6 +29,7 @@ Uses the upstream [Kubernetes Gateway API Conformance suite](https://github.com/
- 
- ### [Kubernetes End-to-End Tests](./e2e.yaml)
- Runs the suite of [Kubernetes End-To-End Tests](/test/e2e).
-+Shard runner preparation, test compilation, and cluster creation run alongside the shared image build. Each shard waits for the image build in the same workflow run to upload its images before downloading and loading them; a build that fails or is cancelled first fails the waiting shards.
- 
- ## Scheduled Workflows
- 
-```
-
-**File**: `.github/workflows/e2e.yaml` (modified, +30/-14)
-```diff
-@@ -43,9 +43,11 @@ jobs:
-           compression-level: 0
-   end_to_end_tests:
-     name: End-to-End (${{ matrix.test.cluster-name }})
--    needs: build_e2e_images
-+    # Prepare runners, compile tests and create clusters alongside the image build.
-     runs-on: ubuntu-22.04
--    timeout-minutes: 60
-+    # The image build wait now counts against this budget, so allow for a slow
-+    # build on top of the 60 minutes the shard itself used to get.
-+    timeout-minutes: 90
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -168,21 +170,13 @@ jobs:
-         with:
-           path: ${{ matrix.version-files.file }}
-           log-variables: true
--      - name: Download shared e2e images
--        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
--        with:
--          name: e2e-shared-images
--          path: _output/e2e-images
--      - name: Load shared e2e images
--        shell: bash
--        run: docker load --input _output/e2e-images/shared-images.tar
-       - id: setup-kind-cluster
-         name: Setup KinD Cluster
-         if: ${{ steps.dotenv.outputs.cluster_type != 'k3d' }}
-         uses: ./.github/actions/setup-kind-cluster
-         env:
-           SKIP_DOCKER: "true"
--          LOAD_DOCKER_IMAGES: "true"
-+          LOAD_DOCKER_IMAGES: "false"
-         with:
-           cluster-name: ${{ matrix.test.cluster-name }}
-           kind-node-version: ${{ steps.dotenv.outputs.node_version }}
-@@ -197,20 +191,42 @@ jobs:
-         uses: ./.github/actions/setup-k3d-cluster
-         env:
-           SKIP_DOCKER: "true"
--          LOAD_DOCKER_IMAGES: "true"
-+          LOAD_DOCKER_IMAGES: "false"
-         with:
-           cluster-name: ${{ matrix.test.cluster-name }}
-           node-version: ${{ steps.dotenv.outputs.node_version }}
-           kubectl-version: ${{ steps.dotenv.outputs.kubectl_version }}
-           istio-version: ${{ steps.dotenv.outputs.istio_version }}
-           localstack: ${{ matrix.test.localstack }}
-           github-token: ${{ github.token }}
--      - name: Load shared extproc server
-+      # Job-level needs would delay all cluster preparation until images finish.
-+      # Wait here instead, checking the latest build execution in this run.
-+      - name: Wait for shared e2e image build
-+        # Backstop for a hung API call; the script's own 45-minute deadline reports first.
-+        timeout-minutes: 50
-+        shell: bash
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          # Poll faster in the upstream repo, which has a larger API rate limit than forks.
-+          IS_FORK: ${{ github.event.repository.fork }}
-+          # Keep in sync with the build_e2e_images job and its upload step.
-+          BUILD_JOB_NAME: Build End-to-End Images
-+          UPLOAD_STEP_NAME: Upload shared e2e images
-+        run: bash hack/ci/wait-for-e2e-images.sh
-+      - name: Download shared e2e images
-+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-+        with:
-+          name: e2e-shared-images
-+          path: _output/e2e-images
-+      - name: Load shared e2e images
-+        shell: bash
-+        run: docker load --input _output/e2e-images/shared-images.tar
-+      - name: Load shared images into cluster
-         shell: bash
-         env:
-           CLUSTER_NAME: ${{ matrix.test.cluster-name }}
-           CLUSTER_TYPE: ${{ steps.dotenv.outputs.cluster_type || 'kind' }}
--        run: make cluster-load-extproc-server
-+        run: make cluster-load cluster-load-extproc-server
-       - name: Disable ordered ADS escape hatch
-         if: ${{ matrix.test.ordered-ads == 'false' }}
-         shell: bash
-```
-
-**File**: `Makefile` (modified, +8/-0)
-```diff
-@@ -437,6 +437,14 @@ E2E_SHARED_IMAGE_TAGS = \
- 	$(IMAGE_REGISTRY)/$(DUMMY_IDP_IMAGE_REPO):$(DUMMY_IDP_VERSION) \
- 	$(IMAGE_REGISTRY)/$(EXTPROC_SERVER_IMAGE_REPO):$(EXTPROC_SERVER_VERSION)
- 
-+# Load prebuilt kgateway images into the kind or k3d cluster named by CLUSTER_NAME.
-+.PHONY: cluster-load
-+ifeq ($(CLUSTER_TYPE),k3d)
-+cluster-load: k3d-load
-+else
-+cluster-load: kind-load
-+endif
-+
- .PHONY: cluster-load-extproc-server
- ifeq ($(CLUSTER_TYPE),k3d)
- cluster-load-extproc-server: k3d-load-extproc-server
-```
-
-**File**: `hack/ci/wait-for-e2e-images.sh` (added, +78/-0)
-```diff
-@@ -0,0 +1,78 @@
-+#!/usr/bin/env bash
-+
-+# Wait at the point images are needed, allowing cluster setup to overlap their build.
-+set -euo pipefail
-+
-+: "${GITHUB_REPOSITORY:?}"
-+: "${GITHUB_RUN_ID:?}"
-+# The image build job's name, and the name of its step that uploads the image archive.
-+: "${BUILD_JOB_NAME:?}"
-+: "${UPLOAD_STEP_NAME:?}"
-+
-+# GITHUB_TOKEN requests per hour per repository are shared by every shard of
-+# every concurrent run. kgateway-dev is on GitHub Enterprise (15,000 per hour),
-+# which can afford a short interval: about 240 requests per run, and about 5s
-+# of average lag after the upload. Forks may be on plans limited to 1,000 per
-+# hour, so they poll gently. IS_FORK is unset outside the workflow; treat that
-+# like a fork.
-+if [[ "${IS_FORK:-}" == "false" ]]; then
-+  poll_interval=10
-+else
-+  poll_interval=30
-+fi
-+# Ride out transient API failures (5xx, rate limiting) for about ten minutes.
-+max_api_errors=$((600 / poll_interval))
-+# The build job exists from the start of the run, so a job missing for about a
-+# minute means BUILD_JOB_NAME no longer matches the workflow.
-+max_missing=$((60 / poll_interval))
-+
-+api_errors=0
-+missing=0
-+# The workflow step has a slightly longer timeout as a second bound on API calls.
-+deadline=$((SECONDS + 2700))
-+while (( SECONDS < deadline )); do
-+  # Inspect the latest execution of the build job in this run. This also supports
-+  # rerunning only failed shards, which reuse the successful build and its artifact.
-+  # The artifact can be downloaded as soon as its upload step succeeds, about a
-+  # minute before the job's post-job cache saves finish, so that is enough.
-+  if ! state=$(gh api --paginate \
-+    "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?filter=latest&per_page=100" \
-+    --jq '.jobs[] | select(.name == env.BUILD_JOB_NAME)
-+      | if any(.steps[]?; .name == env.UPLOAD_STEP_NAME and .conclusion == "success") then "success"
-+        elif .status == "completed" then .conclusion
-+        else .status end'); then
-+    api_errors=$((api_errors + 1))
-+    if (( api_errors >= max_api_errors )); then
-+      echo "Giving up after $api_errors consecutive GitHub API failures." >&2
-+      exit 1
-+    fi
-+    sleep "$poll_interval"
-+    continue
-+  fi
-+  api_errors=0
-+  state=${state%%$'\n'*}
-+  case "$state" in
-+    success)
-+      echo "Shared e2e images uploaded."
-+      exit 0
-+      ;;
-+    "")
-+      missing=$((missing + 1))
-+      if (( missing >= max_missing )); then
-+        echo "No job named '$BUILD_JOB_NAME' in run $GITHUB_RUN_ID." >&2
-+        exit 1
-+      fi
-+      ;;
-+    queued|in_progress|waiting|pending|requested)
-+      missing=0
-+      ;;
-+    *)
-+      echo "Shared e2e image build did not succeed: $state" >&2
-+      exit 1
-+      ;;
-+  esac
-+  sleep "$poll_interval"
-+done
-+
-+echo "Timed out waiting for shared e2e image build." >&2
-+exit 1
+ func imagePullerPodName(image string) string {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15024** (2026-11-11): envoy_modules: build from the dependency stage with --locked (@chandler-solo)
-- **PR #15023** (2026-11-11): [2.4] docs: correct HTTP/2 initial window size defaults (@davidxia)
-- **PR #15022** (2026-11-11): [2.5] docs: correct HTTP/2 initial window size defaults (@davidxia)
-- **PR #15021** (2026-11-11): docs: correct HTTP/2 initial window size defaults (@davidxia)
-- **PR #15016** (2026-11-11): fix(trafficpolicy): allow retry.perTryTimeout with timeouts.request 0s (@DuncanDoyle)
-- **PR #15007** (2026-11-10): test(e2e): speed up e2e by overlapping setup with image builds (@chandler-solo)
+- **PR #15042** (2026-11-13): test(e2e): check ConsistentlyObjectsNotExist objects in one window (@puertomontt)
+- **PR #15041** (2026-11-13): test(e2e): pre-pull suite images in parallel and poll every 100ms (@puertomontt)
+- **PR #15040** (2026-11-13): test(e2e): wait for terminating base namespaces at setup, not teardown (@puertomontt)
+- **PR #15039** (closed): [2.4] fix(trafficpolicy): allow retry.perTryTimeout with timeouts.request 0s (#15016) (@DuncanDoyle)
+- **PR #15038** (2026-11-13): [2.5] fix(trafficpolicy): allow retry.perTryTimeout with timeouts.request 0s (#15016) (@DuncanDoyle)
+- **PR #15037** (2026-11-12): docs(api): document BackendConfigPolicy tls.secretRef data keys (@puertomontt)
 
 ---
 
@@ -1800,51 +1286,70 @@ Signed-off-by: David L. Chandler <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. envoy_modules: build from the dependency stage with --locked (#15024)
+## X. test(e2e): pre-pull suite images in parallel and poll every 100ms
 
 **RULE**:
-When implementing operations in `internal/envoy_modules/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `test/e2e/tests/base/base_suite.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `53ad7a5e`: envoy_modules: build from the dependency stage with --locked (#15024). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba3b23fa`: test(e2e): pre-pull suite images in parallel and poll every 100ms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/envoy_modules/Dockerfile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/e2e/tests/base/base_suite.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-RUN cargo fetch --locked \
-    && cargo zigbuild --locked --target ${RUST_BUILD_ARCH}-unknown-linux-gnu \
-# Stage 2: build envoy dynamic module. Continue from the dependency stage so
-# BuildKit does not reinstall clang or copy cargo, rustup, and target into new
-# layers before compiling the real source.
-FROM rust_build_deps AS rust_builder
-RUN cargo zigbuild --locked --target ${RUST_BUILD_ARCH}-unknown-linux-gnu
+	"k8s.io/apimachinery/pkg/util/wait"
+	// Pull the images in parallel: each pull is mostly waiting on the node, and a suite can need
+	// several (redis and ratelimit, keycloak and httpbin). Failures are reported back here, on the
+	// test goroutine, because FailNow must not be called from another goroutine.
+	var wg sync.WaitGroup
+	errs := make([]error, 0, len(images))
+	var errsMu sync.Mutex
+		wg.Go(func() {
+			if err := s.pullImage(image); err != nil {
+				errsMu.Lock()
+				errs = append(errs, err)
+				errsMu.Unlock()
+			}
+		})
+	wg.Wait()
+	s.Require().NoError(errors.Join(errs...), "pre-pull images")
+//
+// It is safe to call from several goroutines: it reports a failed pull as an error instead of
+// failing the test, and only logs otherwise.
+func (s *BaseTestingSuite) pullImage(image string) error {
+		return nil
+		return nil
+	// Wait for the pod to start or finish, which means the image is on the node. Pulls usually
+	// take a second or two, so poll often: a coarse interval rounds every pull up to it.
+	var phase corev1.PodPhase
+	var lastGetErr error
+	err = wait.PollUntilContextTimeout(s.Ctx, 100*time.Millisecond, 5*time.Minute, true, func(ctx context.Context) (bool, error) {
+		pod, g
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-RUN cargo fetch \
-    && cargo zigbuild --target ${RUST_BUILD_ARCH}-unknown-linux-gnu \
-# Stage 2: build envoy dynamic module
-FROM --platform=$TARGETPLATFORM ${CARGO_ZBUILD_IMAGE} AS rust_builder
-WORKDIR /build
-RUN sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list 2>/dev/null || true \
-    && sed -i 's|http://archive.ubuntu.com|http://azure.archive.ubuntu.com|g; s|http://security.ubuntu.com|http://azure.archive.ubuntu.com|g' /etc/apt/sources.list.d/ubuntu.sources 2>/dev/null || true \
-    && apt-get -o Acquire::Retries=5 update \
-    && apt-get -o Acquire::Retries=5 install --no-install-recommends -y clang
-
-# Copy cached cargo, rustup toolchain, and build target from rust_build_deps
-COPY --from=rust_build_deps /usr/local/cargo /usr/local/cargo
-COPY --from=rust_build_deps /usr/local/rustup /usr/local/rustup
-COPY --from=rust_build_deps /build/target /build/target
-RUN cargo zigbuild --target ${RUST_BUILD_ARCH}-unknown-linux-gnu
+// Induced defect failure mode:
+	"github.com/onsi/gomega"
+	// Create temporary pods to pull images
+		s.pullImage(image)
+func (s *BaseTestingSuite) pullImage(image string) {
+		return
+		return
+	// Wait for the pod to complete (image pulled) with a long timeout (5 minutes)
+	s.TestInstallation.AssertionsT(s.T()).Gomega.Eventually(func(g gomega.Gomega) {
+		pod, err := pods.Get(s.Ctx, podName, metav1.GetOptions{})
+		g.Expect(err).NotTo(gomega.HaveOccurred())
+		// Pod should be Succeeded (completed) or Running (image pulled, command ran)
+		g.Expect(pod.Status.Phase).To(gomega.BeElementOf(corev1.PodSucceeded, corev1.PodRunning, corev1.PodFailed))
+	}).WithTimeout(5*time.Minute).WithPolling(2*time.Second).Should(gomega.Succeed(), "waiting for image %s to be pulled", image)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `53ad7a5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba3b23fa` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

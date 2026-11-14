@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md`  
 > **Source**: github ([https://github.com/matthart1983/netwatch](https://github.com/matthart1983/netwatch))  
-> **Source Version**: `fbcac803`  
+> **Source Version**: `23f3b29a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T22:48:20.403Z  
+> **Timestamp**: 2026-11-14T07:17:52.901Z  
 > **Learning ID**: `learn-github-matthart1983-netwatch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matthart1983/netwatch](https://github.com/matthart1983/netwatch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T22:48:20.248Z  
+> **Harvest Timestamp**: 2026-11-14T07:17:52.892Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Network diagnostics in your terminal. Inspect traffic, connections and network behaviour. Built with Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3592 stars
+- **Stars / Engagement**: 3594 stars
 
 ---
 
@@ -143,6 +143,9 @@ fn sample_time(
         Some(times.kernel)
     } else if rule.starts_with("egress.") {
         Some(times.egress)
+    } else if rule == "dns.slow_resolver" {
+        // Judged on a closed window of probe cycles, not on each cycle.
+        Some(times.health.dns_window)
     } else if rule.starts_with("dns.") {
         Some(times.health.dns)
     } else if rule.starts_with("gateway.") {
@@ -283,9 +286,7 @@ pub fn parse_ts(s: &str) -> Option<DateTime<Local>> {
 
 /// Whether a mute that ends at `until`, a stamp like [`parse_ts`] reads, is
 /// over at `now`. The stamp carries no offset, so in the hour a clock goes
-/// back it names two instants, and [`parse_ts`] returns neither. This takes
-/// the later: at worst the mute lasts an hour longer, where returning neither
-/// ended it on the next tick. A stamp that does not parse has e
+/// back it names two instants, and [`parse_ts`] returns neither.
 ```
 
 ### Core Architecture Module: `src/remote/queue.rs`
@@ -905,6 +906,9 @@ pub struct AppCaches {
     /// Rolling RX rate history per (process, pid) for the Process drill-in
     /// chart. Updated each connection-collector tick.
     pub top_proc_rx_history: HashMap<(String, Option<u32>), VecDeque<u64>>,
+    /// The same for TX, so the drill-in draws both directions as the
+    /// Interfaces and Stats charts do.
+    pub top_proc_tx_history: HashMap<(String, Option<u32>), VecDeque<u64>>,
     /// Recent interface up/down/IP-changed events surfaced on the Timeline tab.
     /// Populated when info_tick detects a delta from the previous snapshot.
     pub iface_events: VecDeque<IfaceChangeEvent>,
@@ -1000,10 +1004,15 @@ pub struct AppUiState {
     pub scroll: UiScrollState,
     pub sort_states: HashMap<Tab, TabSortState>,
     pub sort_picker: SortPickerState,
+    /// The `:` command palette.
+    pub palette: crate::ui::palette::PaletteState,
 
     pub paused: bool,
     pub last_area: Rect,
     pub selected_interface: Option<usize>,
+    /// The tabs `↵` drilled through to reach this one, oldest first. `esc`
+    /// steps back along it; switching tabs any other way forgets it.
+    pub drill_path: Vec<crate::app::Tab>,
 
     // ── Chip-row filter selections ──
     pub interface_filter: InterfaceFilter,
@@ -1065,16 +1074,7 @@ pub struct AppUiState {
     /// Dashboard throughput graph on a log scale. Off by default: linear is
     /// the honest default for a rate. It exists because autoscaling to peak
     /// means one 200 KB/s spike flattens an hour of 2 KB/s into the zero line,
-    /// and the shape of that hour is the thing worth seeing.
-    pub dashboard_log_scale: bool,
-
-    // ── Packet-tab specifics ──
-    pub packet_follow: bool,
-    /// Show only packets the expert classifier flagged `Warn` or `Error`.
-    /// A display filter, not a capture one — nothing stops being captured.
-    pub packet_expert_only: bool,
-    /// When true, the detail pane grows to fill most of the visible
-    /// area (and the packet list shrinks). Toggled with `d`. U
+    /// and the shap
 ```
 
 ### Core Architecture Module: `examples/diagnose_active_live.rs`
@@ -1983,147 +1983,214 @@ fn main() -> Result<()> {
 
 ```
 
-### Core Architecture Module: `examples/diagnose_soak.rs`
+### Core Architecture Module: `examples/diagnose_quiet_soak.rs`
 ```
-//! Live workstation stability accounting, with isolated state. No injected faults.
-use anyhow::{ensure, Context, Result};
+//! The false-alert soak: netwatch left running on an ordinary network, with
+//! every tick recorded, and the accounting over what it recorded.
+//!
+//! ```sh
+//! diagnose_quiet_soak record <dir> [--hours N] [--config FILE]
+//! diagnose_quiet_soak report [--current-defaults] [--json] <dir>...
+//! ```
+//!
+//! `record` keeps all its state under `<dir>` and touches nothing of the
+//! user's netwatch. It can be stopped (Ctrl-C, SIGTERM) and started again on
+//! the same directory: baselines carry over and the recordings add up.
+//!
+//! A rule is only tested while it has input. With the default config the
+//! `target.*` rules have no target and the `path.*` rules have no trace, and
+//! `report` shows them as never evaluated. `--config FILE` starts the soak
+//! from a netwatch `config.toml` that sets `[[diagnose_targets]]` and
+//! `[diagnose_probes] trace_refresh_secs`; it is copied in on the first run
+//! and the copy is what later runs use. Run
+//! `tests/soak/witness.py <dir>` beside it for the independent log `report`
+//! judges opens against. See `tests/soak/README.md`.
+use anyhow::{bail, ensure, Context, Result};
 use netwatch::{
     app::App,
     config::NetwatchConfig,
+    diagnose::soak::{self, HostInput},
     runtime::bootstrap::{self, SessionKind},
 };
 use std::{
-    collections::BTreeSet,
     path::{Path, PathBuf},
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    },
     time::{Duration, Instant},
 };
-fn bytes(path: &Path) -> u64 {
-    std::fs::read_dir(path)
-        .into_iter()
-        .flatten()
-        .flatten()
-        .map(|e| {
-            let p = e.path();
-            if p.is_dir() {
-                bytes(&p)
-            } else {
-                e.metadata().map(|m| m.len()).unwrap_or(0)
-            }
-        })
-        .sum()
-}
-fn state_bytes(root: &Path) -> u64 {
-    ["config", "state", "cache", "data"]
-        .iter()
-        .map(|dir| bytes(&root.join(dir).join("netwatch")))
-        .sum()
-}
+
 fn main() -> Result<()> {
-    let root = PathBuf::from(
-        std::env::args()
-            .nth(1)
-            .context("new scratch directory required")?,
-    );
-    let seconds = std::env::args()
-        .nth(2)
-        .context("duration seconds required")?
-        .parse::<u64>()?
-        .clamp(60, 3600);
-    ensure!(!root.exists(), "scratch directory must be new");
-    for (key, dir) in [
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    match args.first().map(String::as_str) {
+        Some("record") => record(&args[1..]),
+        Some("report") => report(&args[1..]),
+        _ => bail!(
+            "usage: diagnose_quiet_soak record <dir> [--hours N] [--config FILE]\n       \
+             diagnose_quiet_soak report [--current-defaults] [--json] <dir>..."
+        ),
+    }
+}
+
+fn record(args: &[String]) -> Result<()> {
+    let mut dir = None;
+    let mut hours: Option<f64> = None;
+    let mut config: Option<PathBuf> = None;
+    let mut it = args.iter();
+    while let Some(arg) = it.next() {
+        match arg.as_str() {
+            "--hours" => {
+                hours = Some(
+                    it.next()
+                        .context("--hours needs a number")?
+                        .parse()
+                        .context("--hours needs a number")?,
+                )
+            }
+            "--config" => config = Some(PathBuf::from(it.next().context("--config needs a file")?)),
+            other if dir.is_none() => dir = Some(PathBuf::from(other)),
+            other => bail!("unexpected argument {other}"),
+        }
+    }
+    let dir = dir.context("a soak directory is required")?;
+    // Read before the environment moves, so a relative path means what the
+    // caller meant.
+    let config = config
+        .map(|p| std::fs::read_to_string(&p).with_context(|| format!("{}", p.display())))
+        .transpose()?;
+    for (key, sub) in [
         ("XDG_CONFIG_HOME", "config"),
         ("XDG_CACHE_HOME", "cache"),
         ("XDG_DATA_HOME", "data"),
         ("XDG_STATE_HOME", "state"),
     ] {
-        let p = root.join(dir);
+        let p = dir.join(sub);
         std::fs::create_dir_all(&p)?;
         std::env::set_var(key, p);
     }
-    let mut cfg = NetwatchConfig {
-        insights_enabled: false,
-        diagnose_record_episodes: true,
-        ..Default::default()
+
+    let stop = Arc::new(AtomicBool::new(false));
+    #[cfg(unix)]
+    for signal in [signal_hook::consts::SIGINT, signal_hook::consts::SIGTERM] {
+        signal_hook::flag::register(signal, stop.clone())?;
+    }
+
+    let own = NetwatchConfig::path().context("no config directory")?;
+    if !own.exists() {
+        if let Some(text) = &config {
+            std::fs::create_dir_all(own.parent().context("config path has a parent")?)?;
+            std::fs::write(&own, text)?;
+        }
+    } else if config.is_some() {
+        eprintln!(
+            "{} exists from an earlier run and is used; --config is ignored",
+            own.display()
+        );
+    }
+    let mut cfg = if own.exists() {
+        NetwatchConfig::load().map_err(|e| anyhow::anyhow!("{}: {e}", own.display()))?
+    } else {
+        NetwatchConfig::default()
     };
+    cfg.insights_enabled = false;
+    cfg.diagnose_record_episodes = true;
     cfg.save()?;
+    eprintln!(
+        "{} target(s) · periodic trace {}",
+        cfg.diagnose_targets.len(),
+        cfg.diagnose_probes
+            .trace_refresh_secs
+            .map_or_else(|| "off".to_string(), |s| format!("every {s}s"))
+    );
     let mut app = App::prepare_with_config(cfg);
+    app.diagnose.soak = true;
+    ensure!(
+        app.diagnose.episode_dir.is_some(),
+        "no state directory to record into"
+    );
     bootstrap::start(
         &mut app,
         SessionKind::Daemon,
         netwatch::sandbox::Mode::from_config("on"),
     )?;
     bootstrap::prime_collectors(&mut app);
+
     let start = Instant::now();
-    let mut last = start;
-    let mut sampled = 0.0;
-    let mut ticks = 0;
-    let mut max_tick: f64 = 0.0;
-    let mut max_rss = 0;
-    let mut max_threads = 0;
-    let mut identities = BTreeSet::new();
-    let mut max_ready = 0;
-    while start.elapsed().as_secs() < seconds {
-        let tick = Instant::now();
+    let limit = hours.map(|h| Duration::from_secs_f64(h * 3_600.0));
+    let mut ticks: u64 = 0;
+    let mut opens: u64 = 0;
+    let mut was_open = std::collections::BTreeSet::new();
+    eprintln!("recording into {} · stop with Ctrl-C", dir.display());
+    while !stop.load(Ordering::Relaxed) && limit.is_none_or(|l| start.elapsed() < l) {
         app.tick();
-        max_tick = max_tick.max(tick.elapsed().as_secs_f64());
-        let now = Instant::now();
-        let gap = now.duration_since(last).as_secs_f64();
-        if gap <= 5.0 {
-            sampled += gap;
-        }
-        last = now;
         ticks += 1;
-        max_ready = max_ready.max(
-            app.diagnose
-                .engine
-                .coverage()
-                .rules
-                .iter()
-                .filter(|r| r.status == netwatch::diagnose::coverage::Availability::Available)
-                .count(),
-        );
-        for i in app
+        let now_open: std::collections::BTreeSet<String> = app
             .diagnose
             .engine
-            .issues()
-            .iter()
-            .filter(|i| i.state.is_open())
-        {
-            identities.insert(format!("{}|{}", i.rule, i.subject.label()));
+            .primary()
+            .into_iter()
+            .map(netwatch::diagnose::episode::issue_key)
+            .collect();
+        for key in now_open.difference(&was_open) {
+            opens += 1;
+            eprintln!(
+                "{} · opened {key}",
+                chrono::Local::now().format("%Y-%m-%d %H:%M:%S")
+            );
         }
-        if let Ok(status) = std::fs::read_to_string("/proc/self/status") {
-            for line in status.lines() {
-                if let Some(v) = line
-                    .split_whitespace()
-                    .nth(1)
-                    .and_then(|s| s.parse::<u64>().ok())
-                {
-                    if line.starts_with("VmRSS:") {
-                        max_rss = max_rss.max(v);
-                    }
-                    if line.starts_with("Threads:") {
-                        max_threads = max_threads.max(v);
-                    }
-                }
-            }
+        was_open = now_open;
+        if ticks.is_multiple_of(3_600) {
+            eprintln!(
+                "{:.1} h · {ticks} ticks · {opens} open(s) so far",
+                start.elapsed().as_secs_f64() / 3_600.0
+            );
         }
-        if ticks % 60 == 0 {
-            println!("{}s: {ticks} samples, {sampled:.1}s observed, RSS {max_rss} KiB, threads {max_threads}, state {} bytes",start.elapsed().as_secs(),state_bytes(&root));
-        }
-        std::thread::sleep(Duration::from_millis(1000));
+        std::thread::sleep(Duration::from_secs(1));
     }
+    // Writes the recording in progress, so a stop loses nothing.
     app.shutdown_diagnose();
     app.packet_collector.stop_capture();
-    let summary = serde_json::json!({"wall_seconds":start.elapsed().as_secs_f64(),"monitored_seconds":sampled,"ticks":ticks,"longest_tick_seconds":max_tick,"max_rss_kib":max_rss,"max_threads":max_threads,"state_bytes":state_bytes(&root),"max_available_checks":max_ready,"observed_issue_keys":identities});
-    std::fs::write(
-        root.join("state/netwatch/soak-summary.json"),
-        serde_json::to_vec_pretty(&summary)?,
-    )?;
-    println!("{summary}");
-    ensure!(sampled > seconds as f64 * 0.9, "insufficient measured time");
-    ensure!(max_tick < 5.0, "collector stalled app tick");
-    ensure!(max_threads < 100, "unexpected worker growth");
-    ensure!(state_bytes(&root) < 20_000_000, "unexpected state growth");
+    eprintln!(
+        "stopped after {:.2} h · {ticks} ticks · {opens} open(s)",
+        start.elapsed().as_secs_f64() / 3_600.0
+    );
+    Ok(())
+}
+
+fn host_label(dir: &Path) -> String {
+    dir.file_name()
+        .map(|n| n.to_string_lossy().into_owned())
+        .unwrap_or_else(|| dir.display().to_string())
+}
+
+fn report(args: &[String]) -> Result<()> {
+    let mut current_defaults = false;
+    let mut json = false;
+    let mut dirs = Vec::new();
+    for arg in args {
+        match arg.as_str() {
+            "--current-defaults" => current_defaults = true,
+            "--json" => json = true,
+            other => dirs.push(PathBuf::from(other)),
+        }
+    }
+    ensure!(!dirs.is_empty(), "at least one soak directory is required");
+    let mut hosts = Vec::new();
+    for dir in &dirs {
+        ensure!(dir.is_dir(), "{} is not a directory", dir.display());
+        let (host, errors) = HostInput::load(dir, &host_label(dir));
+        for e in errors {
+            eprintln!("skipped {e}");
+        }
+        hosts.push(host);
+    }
+    let report = soak::summarise(&hosts, current_defaults);
+    if json {
+        println!("{}", serde_json::to_string_pretty(&report)?);
+    } else {
+        print!("{}", report.text());
+    }
     Ok(())
 }
 
@@ -2158,293 +2225,371 @@ fn main() -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `20f2f638` (2026-11-10)
-**Commit Message**: fix(platform): stop the capture fix line when netwatch isn't on PATH (#199)
+### Incident Patch 1: `3fa31b8b` (2026-11-14)
+**Commit Message**: windows: fix the unit-test binary crashing at startup on Rust 1.100 (#205)
 
-The Linux capture fix line starts b=$(readlink -f "$(which netwatch)").
-GNU readlink -f "" fails, which stopped the && chain, but uutils
-coreutils 0.10 (Ubuntu 26.04) prints the working directory and exits 0.
-The chain then ran sudo chown root:netwatch, chmod 0750 and setcap on
-that directory: pasted from ~, it handed the home directory to root.
-GitHub's ubuntu-latest moved to 26.04 and the capture fix test caught
-it on the 1.0.0-rc.2 tag, so the release guard stopped before anything
-was published.
+* windows: bind WaitOnAddress to its own DLL so the unit tests run on Rust 1.100
 
-A [ -f "$b" ] step now stops the chain unless it found a file. The test
-gains a readlink that answers like uutils, so any host catches a
-regression, and runs the chain from a scratch directory: the sudo
-shim's chmod is real, and a regression had locked the checkout the
-tests ran in. REFERENCE.md carries the same line.
+Every unit test aborted at startup on Windows (0xc0000005) once CI's
+stable toolchain moved from 1.99.1 to 1.100.0.
 
-Checked on ubuntu:26.04: the old line, from /root, chowns and chmods
-/root; the new one exits 1 without calling sudo.
+pcap depends on windows-sys 0.36, whose windows.lib maps WaitOnAddress and
+WakeByAddressAll to vertdll.dll, the VBS enclave runtime. In the unit-test
+binary that library follows the standard library on the link line, so
+std's references were resolved from it, the process loaded vertdll.dll,
+and the first thread park crashed inside it.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+The crate now references both functions from its own object against
+synchronization.lib, which defines them before std's references are
+searched for. Checked on a Windows runner: the binary no longer imports
+vertdll.dll and tests run. The release binary never had the import.
 
-**File**: `CHANGELOG.md` (modified, +13/-0)
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* windows: mark the extern block unsafe, as clippy on 1.100 asks
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* windows: allow the extern declarations under the crate's unsafe_code lint
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+--------
+
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -2,6 +2,19 @@
- 
- All notable changes to NetWatch will be documented in this file.
- 
-+## [Unreleased]
-+
-+### Fixed
-+- **The capture fix line no longer changes your working directory when netwatch isn't on
-+  `PATH`.** The line the capture error, the Dashboard banner and `netwatch doctor` give on Linux
-+  starts `b=$(readlink -f "$(which netwatch)")`. GNU `readlink -f ""` fails and stopped the
-+  chain there, but uutils coreutils, which Ubuntu 26.04 ships, prints the working directory
-+  and succeeds. The line then ran `sudo chown root:netwatch`, `chmod 0750` and `setcap` on
-+  that directory, so pasted from your home directory it handed your home to root. A new
-+  `[ -f "$b" ]` step stops the chain unless it found a file. CI caught it when GitHub's
-+  `ubuntu-latest` moved to 26.04, which stopped the 1.0.0-rc.2 release before anything was
-+  published.
-+
- ## [1.0.0-rc.2] - 2026-11-10
+@@ -116,6 +116,11 @@ All notable changes to NetWatch will be documented in this file.
+ ## [1.0.0-rc.3] - 2026-11-10
  
  ### Fixed
-```
-
-**File**: `docs/REFERENCE.md` (modified, +3/-2)
-```diff
-@@ -1050,12 +1050,13 @@ draw it whole, or, when the terminal has too few rows or columns, point to docto
- section instead:
- 
- ```bash
--b=$(readlink -f "$(which netwatch)") && sudo groupadd -f netwatch && sudo usermod -aG netwatch "$USER" && sudo chown root:netwatch "$b" && sudo chmod 0750 "$b" && sudo setcap 'cap_net_raw,cap_bpf,cap_perfmon+eip' "$b" && echo 'Log in again to join the group: netwatch cannot start until you do'
-+b=$(readlink -f "$(which netwatch)") && [ -f "$b" ] && sudo groupadd -f netwatch && sudo usermod -aG netwatch "$USER" && sudo chown root:netwatch "$b" && sudo chmod 0750 "$b" && sudo setcap 'cap_net_raw,cap_bpf,cap_perfmon+eip' "$b" && echo 'Log in again to join the group: netwatch cannot start until you do'
- ```
- 
- As it says, log in again before the next `netwatch`. `usermod` does not change a session already
- running, so until then the group restriction keeps this session out too: `netwatch` gets
--permission denied, and pasting the line again stops at `which`, which no longer finds it.
-+permission denied, and pasting the line again stops before `sudo`, because `which` no longer
-+finds it.
- 
- The [systemd unit](../packaging/systemd/netwatch.service) needs none of this: it grants the
- capabilities to its own service user.
-```
-
-**File**: `src/platform/mod.rs` (modified, +33/-4)
-```diff
-@@ -55,16 +55,21 @@ pub fn disable_transparent_huge_pages() {
- /// It finds the binary once, first. Once `chmod` has taken it away from an
- /// account not yet in the group, another `which netwatch` finds a different
- /// netwatch further down `PATH`, or none, and `setcap` would grant that one.
-+/// `[ -f "$b" ]` stops the chain when `which` found none. GNU `readlink -f ""`
-+/// fails, but uutils coreutils (Ubuntu 26.04) prints the working directory and
-+/// succeeds, so without it the chain went on to `chown` and `chmod` that
-+/// directory, the home directory when pasted there.
- /// Each `&&` stops the chain before a binary is granted anything unrestricted,
- /// such as where a Nix store refuses the `chown`. REFERENCE.md has the longer
- /// recipe that copies a binary like that one.
- ///
- /// `usermod` does not change the groups of a session already running, and
- /// `chmod` has just taken execute away from it. Until a new login the next
--/// `netwatch` gets permission denied, and pasting this again stops at `which`,
--/// so the last step says so. It is a step and not a note after the command, so
--/// the two cannot be separated, and it fits one row of 80 columns.
--pub const LINUX_CAPTURE_FIX: &str = r#"b=$(readlink -f "$(which netwatch)") && sudo groupadd -f netwatch && sudo usermod -aG netwatch "$USER" && sudo chown root:netwatch "$b" && sudo chmod 0750 "$b" && sudo setcap 'cap_net_raw,cap_bpf,cap_perfmon+eip' "$b" && echo 'Log in again to join the group: netwatch cannot start until you do'"#;
-+/// `netwatch` gets permission denied, and pasting this again stops before
-+/// `sudo`, as `which` finds nothing, so the last step says so. It is a step
-+/// and not a note after the command, so the two cannot be separated, and it
-+/// fits one row of 80 columns.
-+pub const LINUX_CAPTURE_FIX: &str = r#"b=$(readlink -f "$(which netwatch)") && [ -f "$b" ] && sudo groupadd -f netwatch && sudo usermod -aG netwatch "$USER" && sudo chown root:netwatch "$b" && sudo chmod 0750 "$b" && sudo setcap 'cap_net_raw,cap_bpf,cap_perfmon+eip' "$b" && echo 'Log in again to join the group: netwatch cannot start until you do'"#;
- 
- /// A message ending in a chain of commands, as the refused-capture error does
- /// on Linux: what comes before the chain, and each command with its `&&`. A
-@@ -565,6 +570,11 @@ mod capture_fix_tests {
-         let root = scratch.0.as_path();
-         let tools = root.join("tools");
-         std::fs::create_dir_all(&tools).unwrap();
-+        // The chain runs from here. The `sudo` shim's chmod is real, so a chain
-+        // that takes its working directory for the binary locks this one, not
-+        // the checkout the tests run in.
-+        let cwd = root.join("cwd");
-+        std::fs::create_dir(&cwd).unwrap();
-         let dirs: Vec<_> = std::env::var_os("PATH")
-             .map(|path| std::env::split_paths(&path).collect())
-             .unwrap_or_default();
-@@ -604,6 +614,7 @@ sudo() {
-             let out = std::process::Command::new("/bin/sh")
-                 .arg("-c")
-                 .arg(format!("{SHIMS}{LINUX_CAPTURE_FIX}"))
-+                .current_dir(&cwd)
-                 .env_clear()
-                 .env("PATH", format!("{path}:{}", tools.display()))
-                 .env("USER", "user")
-@@ -637,6 +648,24 @@ sudo() {
-         // and running it would be permission denied.
-         std::fs::remove_file(root.join("second").join("netwatch")).unwrap();
-         assert_eq!(run(), "");
-+
-+        // uutils coreutils 0.10 (Ubuntu 26.04) answers `readlink -f ""` with
-+        // the working directory and exit 0, where GNU fails. Finding no
-+        // netwatch must still change nothing, so the command's directory
-+        // doesn't become root's.
-+        let readlink = tools.join("readlink");
-+        let real = std::fs::read_link(&readlink).unwrap();
-+        std::fs::remove_file(&readlink).unwrap();
-+        std::fs::write(
-+            &readlink,
-+            format!(
-+                "#!/bin/sh\n[ \"$1\" = -f ] && [ -z \"$2\" ] && {{ pwd; exit 0; }}\nexec {} \"$@\"\n",
-+                real.display()
-+            ),
-+        )
-+        .unwrap();
-+        std::fs::set_permissions(&readlink, std::fs::Permissions::from_mode(0o755)).unwrap();
-+        assert_eq!(run(), "");
-     }
- 
-     /// What the banner and doctor show is this constant, so both say it too.
-```
-
----
-
-### Incident Patch 2: `be49d0ad` (2026-11-10)
-**Commit Message**: release: netwatch v1.0.0-rc.3 — the third 1.0 release candidate: the capture fix line stops when netwatch isn't on PATH instead of changing the working directory on Ubuntu 26.04, with rc.2's fixes, as rc.2 was never released
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- 
- All notable changes to NetWatch will be documented in this file.
- 
--## [Unreleased]
-+## [1.0.0-rc.3] - 2026-11-10
- 
- ### Fixed
++- **Windows: `cargo test` no longer crashes on Rust 1.100.** Every unit test aborted at
++  startup with an access violation. `pcap`'s Windows dependency ships an import library
++  that maps `WaitOnAddress` and `WakeByAddressAll` to `vertdll.dll`, and from Rust 1.100
++  the standard library's own calls were bound to it in the unit-test binary. The crate now
++  binds both to the correct DLL itself. Release binaries were never affected.
  - **The capture fix line no longer changes your working directory when netwatch isn't on
+   `PATH`.** The line the capture error, the Dashboard banner and `netwatch doctor` give on Linux
+   starts `b=$(readlink -f "$(which netwatch)")`. GNU `readlink -f ""` fails and stopped the
 ```
 
-**File**: `Cargo.lock` (modified, +1/-1)
+**File**: `src/lib.rs` (modified, +41/-0)
 ```diff
-@@ -1339,7 +1339,7 @@ dependencies = [
- 
- [[package]]
- name = "netwatch-tui"
--version = "1.0.0-rc.2"
-+version = "1.0.0-rc.3"
- dependencies = [
-  "anyhow",
-  "brotli",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "netwatch-tui"
--version = "1.0.0-rc.2"
-+version = "1.0.0-rc.3"
- edition = "2021"
- # Minimum supported Rust version, checked by CI's msrv job. Raised only in a
- # minor release, and named in the changelog when it is. Today's floor is
-```
-
-**File**: `packaging/rpm/netwatch.spec` (modified, +5/-2)
-```diff
-@@ -12,9 +12,9 @@
- # below 1.0.0 and allows, where it allows no hyphen). scripts/release.sh writes
- # both. `spec_version_matches_the_crate` in tests/packaging.rs fails the build
- # if they drift.
--%global upstream 1.0.0-rc.2
-+%global upstream 1.0.0-rc.3
- Name:           netwatch
--Version:        1.0.0~rc.2
-+Version:        1.0.0~rc.3
- Release:        1%{?dist}
- Summary:        Real-time network diagnostics in your terminal
- 
-@@ -100,6 +100,9 @@ MSG
- %{_unitdir}/%{name}.service
- 
- %changelog
-+* Tue Nov 10 2026 Matt Hartley <matthew.t.hartley@gmail.com> - 1.0.0~rc.3-1
-+- the third 1.0 release candidate: the capture fix line stops when netwatch isn't on PATH instead of changing the working directory on Ubuntu 26.04, with rc.2's fixes, as rc.2 was never released
+@@ -82,3 +82,44 @@ mod tests {
+         assert_eq!(hello_world(), "Hello, World!");
+     }
+ }
 +
- * Tue Nov 10 2026 Matt Hartley <matthew.t.hartley@gmail.com> - 1.0.0~rc.2-1
- - the second 1.0 release candidate: memory that holds flat under a flood with transparent huge pages off, the Nix build passing on Linux 7.2, and pre-release packages named as GitHub serves them
- 
++/// Binds `WaitOnAddress` and `WakeByAddressAll` to the DLL they live in,
++/// before the linker can take them from somewhere else.
++///
++/// `pcap` depends on `windows-sys` 0.36, which links `windows.lib`: one
++/// import library for the whole Win32 API. It maps these two functions to
++/// `vertdll.dll`, the runtime for code inside a VBS enclave, which exports
++/// functions of the same names. From Rust 1.100 the standard library's own
++/// references to them are resolved by the first library link.exe finds them
++/// in, searching onward from the standard library, and in the unit-test
++/// binary that is `windows.lib`. The process then loaded `vertdll.dll` and
++/// died with an access violation the first time a thread parked: every unit
++/// test, on its first channel receive.
++///
++/// A reference from one of this crate's own objects is resolved first, and
++/// against the library named here. Once the symbols are defined, the
++/// standard library's references need no search. The release binary was
++/// never affected; this keeps `cargo test` working on Windows.
++#[cfg(all(windows, target_env = "msvc"))]
++// Declares two Win32 functions and never calls them.
++#[allow(unsafe_code)]
++mod wait_on_address {
++    use core::ffi::c_void;
++
++    #[link(name = "synchronization")]
++    unsafe extern "system" {
++        fn WaitOnAddress(
++            address: *const c_void,
++            compare_address: *const c_void,
++            address_size: usize,
++            milliseconds: u32,
++        ) -> i32;
++        fn WakeByAddressAll(address: *const c_void);
++    }
++
++    #[used]
++    static WAIT: unsafe extern "system" fn(*const c_void, *const c_void, usize, u32) -> i32 =
++        WaitOnAddress;
++    #[used]
++    static WAKE: unsafe extern "system" fn(*const c_void) = WakeByAddressAll;
++}
 ```
 
 ---
 
-### Incident Patch 3: `c85bc393` (2026-11-10)
-**Commit Message**: release: netwatch v1.0.0-rc.2 — the second 1.0 release candidate: memory that holds flat under a flood with transparent huge pages off, the Nix build passing on Linux 7.2, and pre-release packages named as GitHub serves them
+### Incident Patch 2: `e5829ea8` (2026-11-14)
+**Commit Message**: build(deps): bump taiki-e/install-action (#195)
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+Bumps the actions group with 1 update: [taiki-e/install-action](https://github.com/taiki-e/install-action).
+
+
+Updates `taiki-e/install-action` from 2.88.0 to 2.90.1
+- [Release notes](https://github.com/taiki-e/install-action/releases)
+- [Changelog](https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/taiki-e/install-action/compare/86f7a0ffb25f40114606501a311ebcfaf882ea32...c509219cf42fba86913069efd0ade2458c59337b)
+
+---
+updated-dependencies:
+- dependency-name: taiki-e/install-action
+  dependency-version: 2.90.1
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: actions
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,7 @@
+@@ -66,7 +66,7 @@ jobs:
+         run: ./scripts/windows-smoke.ps1 target\release\netwatch.exe
  
- All notable changes to NetWatch will be documented in this file.
+       - name: Install cargo-nextest
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-nextest
  
--## [Unreleased]
-+## [1.0.0-rc.2] - 2026-11-10
- 
- ### Fixed
- - **A pre-release's `SHA256SUMS` names its packages as GitHub serves them.** GitHub turns
 ```
 
-**File**: `Cargo.lock` (modified, +1/-1)
+**File**: `.github/workflows/geoip-live.yml` (modified, +1/-1)
 ```diff
-@@ -1339,7 +1339,7 @@ dependencies = [
+@@ -39,7 +39,7 @@ jobs:
+           ./scripts/npcap-sdk.ps1
+ 
+       - name: Install cargo-nextest
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-nextest
+ 
+```
+
+**File**: `.github/workflows/install-check.yml` (modified, +1/-1)
+```diff
+@@ -235,7 +235,7 @@ jobs:
+       VERSION: ${{ needs.resolve.outputs.version }}
+       GITHUB_TOKEN: ${{ github.token }}
+     steps:
+-      - uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++      - uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-binstall
+       - run: |
+```
+
+**File**: `.github/workflows/perf.yml` (modified, +1/-1)
+```diff
+@@ -60,7 +60,7 @@ jobs:
+         run: sudo apt-get update && sudo apt-get install -y libpcap-dev
+ 
+       - name: Install cargo-nextest
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-nextest
+ 
+```
+
+**File**: `.github/workflows/release.yml` (modified, +4/-4)
+```diff
+@@ -135,7 +135,7 @@ jobs:
+       # check an installed netwatch without the SBOM beside it.
+       - name: Install cargo-auditable
+         if: matrix.target != 'armv5te-unknown-linux-gnueabi'
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-auditable@0.7.7
+ 
+@@ -292,7 +292,7 @@ jobs:
+       # runner is x86_64 and would corrupt the aarch64 binary.
+       - name: Install packaging tools
+         if: contains(matrix.target, 'linux-musl')
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-deb,cargo-generate-rpm
+ 
+@@ -454,7 +454,7 @@ jobs:
+       # embeds. A build step that lost the wrapper still links fine, so
+       # check the artifacts rather than trust the build.
+       - name: Install rust-audit-info
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: rust-audit-info@0.5.4
+       - name: Check every binary is auditable
+@@ -501,7 +501,7 @@ jobs:
+       #   gh attestation verify netwatch-linux-x86_64.tar.gz -R matthart1983/netwatch \
+       #     --predicate-type https://cyclonedx.org/bom
+       - name: Install cargo-cyclonedx
+-        uses: taiki-e/install-action@86f7a0ffb25f40114606501a311ebcfaf882ea32 # v2.88.0
++        uses: taiki-e/install-action@c509219cf42fba86913069efd0ade2458c59337b # v2.90.1
+         with:
+           tool: cargo-cyclonedx
+       - name: Generate the SBOM
+```
+
+---
+
+### Incident Patch 3: `0e94cd46` (2026-11-14)
+**Commit Message**: build(deps): bump the cargo-minor group with 4 updates (#193)
+
+Bumps the cargo-minor group with 4 updates: [ureq](https://github.com/algesten/ureq), [toml](https://github.com/toml-rs/toml), [toml_edit](https://github.com/toml-rs/toml) and [signal-hook](https://github.com/vorner/signal-hook).
+
+
+Updates `ureq` from 3.5.0 to 3.5.1
+- [Changelog](https://github.com/algesten/ureq/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/algesten/ureq/compare/3.5.0...3.5.1)
+
+Updates `toml` from 1.1.8+spec-1.1.0 to 1.2.0+spec-1.1.0
+- [Commits](https://github.com/toml-rs/toml/compare/toml-v1.1.8...toml-v1.2.0)
+
+Updates `toml_edit` from 0.25.17+spec-1.1.0 to 0.25.18+spec-1.1.0
+- [Commits](https://github.com/toml-rs/toml/compare/v0.25.17...v0.25.18)
+
+Updates `signal-hook` from 0.4.5 to 0.4.6
+- [Changelog](https://github.com/vorner/signal-hook/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/vorner/signal-hook/compare/v0.4.5...v0.4.6)
+
+---
+updated-dependencies:
+- dependency-name: ureq
+  dependency-version: 3.5.1
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: cargo-minor
+- dependency-name: toml
+  dependency-version: 1.2.0+spec-1.1.0
+  de
+
+**File**: `Cargo.lock` (modified, +16/-16)
+```diff
+@@ -633,7 +633,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
  
  [[package]]
- name = "netwatch-tui"
--version = "1.0.0-rc.1"
-+version = "1.0.0-rc.2"
+@@ -1363,7 +1363,7 @@ dependencies = [
+  "serde",
+  "serde_ignored",
+  "serde_json",
+- "signal-hook 0.4.5",
++ "signal-hook 0.4.6",
+  "socket2",
+  "tls-parser",
+  "tokio",
+@@ -2070,7 +2070,7 @@ dependencies = [
+  "errno 0.3.14",
+  "libc",
+  "linux-raw-sys",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -2232,9 +2232,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "signal-hook"
+-version = "0.4.5"
++version = "0.4.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b29ffa27d3d59a049bb328258de100f8012848d1b08d444e08bbc02ac468435e"
++checksum = "49f7447afd772ca79ad17ae0a3972a6b0df0cb4b80990fd82707593e9e012a74"
  dependencies = [
-  "anyhow",
-  "brotli",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "netwatch-tui"
--version = "1.0.0-rc.1"
-+version = "1.0.0-rc.2"
- edition = "2021"
- # Minimum supported Rust version, checked by CI's msrv job. Raised only in a
- # minor release, and named in the changelog when it is. Today's floor is
-```
-
-**File**: `packaging/rpm/netwatch.spec` (modified, +5/-2)
-```diff
-@@ -12,9 +12,9 @@
- # below 1.0.0 and allows, where it allows no hyphen). scripts/release.sh writes
- # both. `spec_version_matches_the_crate` in tests/packaging.rs fails the build
- # if they drift.
--%global upstream 1.0.0-rc.1
-+%global upstream 1.0.0-rc.2
- Name:           netwatch
--Version:        1.0.0~rc.1
-+Version:        1.0.0~rc.2
- Release:        1%{?dist}
- Summary:        Real-time network diagnostics in your terminal
+  "libc",
+  "signal-hook-registry",
+@@ -2257,7 +2257,7 @@ version = "1.4.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b"
+ dependencies = [
+- "errno 0.2.8",
++ "errno 0.3.14",
+  "libc",
+ ]
  
-@@ -100,6 +100,9 @@ MSG
- %{_unitdir}/%{name}.service
+@@ -2612,9 +2612,9 @@ dependencies = [
  
- %changelog
-+* Tue Nov 10 2026 Matt Hartley <matthew.t.hartley@gmail.com> - 1.0.0~rc.2-1
-+- the second 1.0 release candidate: memory that holds flat under a flood with transparent huge pages off, the Nix build passing on Linux 7.2, and pre-release packages named as GitHub serves them
-+
- * Sat Nov 07 2026 Matt Hartley <matthew.t.hartley@gmail.com> - 1.0.0~rc.1-1
- - the first 1.0 release candidate: an ISP outage report (netwatch uptime --md) behind a second internet target, the daemon's flow log (experimental), readable paper graphs, and release candidates in the release path
+ [[package]]
+ name = "toml"
+-version = "1.1.8+spec-1.1.0"
++version = "1.2.0+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
++checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
+ dependencies = [
+  "indexmap",
+  "serde_core",
+@@ -2636,9 +2636,9 @@ dependencies = [
  
+ [[package]]
+ name = "toml_edit"
+-version = "0.25.17+spec-1.1.0"
++version = "0.25.18+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e3641d5bbb5349a79e1020a242d251efbc546ad8048d133958323ce9c40a9c9c"
++checksum = "1ec6e78bd70db9420d8d212fa9dc97f116448a1ceff5d00eabb991d407e21396"
+ dependencies = [
+  "indexmap",
+  "toml_datetime",
+@@ -2658,9 +2658,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml_writer"
+-version = "1.1.3+spec-1.1.0"
++version = "1.2.0+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
++checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
+ 
+ [[package]]
+ name = "tracing"
+@@ -2785,9 +2785,9 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
+ 
+ [[package]]
+ name = "ureq"
+-version = "3.5.0"
++version = "3.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b"
++checksum = "e7be76686bdf7198002062423ca0d8cf9b75a27c8e1de804513b97e97b555d9d"
+ dependencies = [
+  "base64 0.23.1",
+  "cookie_store",
+@@ -2805,9 +2805,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "ureq-proto"
+-version = "0.6.5"
++version = "0.7.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "841583fc36089d7d59419568ae157f43a5a03a2e5a81ba87c77d1596ef46e922"
++checksum = "622dce33c252115466d83f63e9744a18f12b4406aae51a01c15ad8fcf1185eb3"
+ dependencies = [
+  "base64 0.23.1",
+  "http",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #207** (2026-11-14): build(deps): bump jsonschema from 0.20.0 to 0.60.2 (@matthart1983)
+- **PR #206** (2026-11-14): Packet filters take CIDR ranges and != (@matthart1983)
+- **PR #205** (2026-11-14): windows: fix the unit-test binary crashing at startup on Rust 1.100 (@matthart1983)
+- **PR #204** (2026-11-14): TUI: layouts that fit every size, a command palette, and one look across tabs (@matthart1983)
+- **PR #203** (2026-11-14): Diagnose: rule maturity, earned verdicts, and the tools to prove them (@matthart1983)
 - **PR #201** (2026-11-11): README: lead with what netwatch does and show Diagnose closing an issue (@matthart1983)
-- **PR #199** (2026-11-10): fix(platform): stop the capture fix line when netwatch isn't on PATH (@matthart1983)
-- **PR #198** (2026-11-08): fix(memory): turn transparent huge pages off at startup on Linux (@matthart1983)
-- **PR #196** (2026-11-07): fix(sandbox): accept a denied TCP Fast Open send in the gap test (#192) (@matthart1983)
-- **PR #191** (2026-11-07): fix(release): name pre-release packages as GitHub serves them, and keep :latest off them (@matthart1983)
-- **PR #190** (2026-11-07): docs(performance): record the plateau gate exception for 1.0.0-rc.1 (@matthart1983)
 
 ---
 
@@ -2464,13 +2609,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. platform): stop the capture fix line when netwatch isn't on PATH (#199)
+## X. windows: fix the unit-test binary crashing at startup on Rust 1.100
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matthart1983/netwatch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `20f2f638`: platform): stop the capture fix line when netwatch isn't on PATH (#199). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3fa31b8b`: windows: fix the unit-test binary crashing at startup on Rust 1.100. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2478,26 +2623,18 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [Unreleased]
-
-### Fixed
-- **The capture fix line no longer changes your working directory when netwatch isn't on
-  `PATH`.** The line the capture error, the Dashboard banner and `netwatch doctor` give on Linux
-  starts `b=$(readlink -f "$(which netwatch)")`. GNU `readlink -f ""` fails and stopped the
-  chain there, but uutils coreutils, which Ubuntu 26.04 ships, prints the working directory
-  and succeeds. The line then ran `sudo chown root:netwatch`, `chmod 0750` and `setcap` on
-  that directory, so pasted from your home directory it handed your home to root. A new
-  `[ -f "$b" ]` step stops the chain unless it found a file. CI caught it when GitHub's
-  `ubuntu-latest` moved to 26.04, which stopped the 1.0.0-rc.2 release before anything was
-  published.
-
+- **Windows: `cargo test` no longer crashes on Rust 1.100.** Every unit test aborted at
+  startup with an access violation. `pcap`'s Windows dependency ships an import library
+  that maps `WaitOnAddress` and `WakeByAddressAll` to `vertdll.dll`, and from Rust 1.100
+  the standard library's own calls were bound to it in the unit-test binary. The crate now
+  binds both to the correct DLL itself. Release binaries were never affected.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `20f2f638` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3fa31b8b` are properly handled with clean fallback behavior.
