@@ -45,8 +45,8 @@
     "sourceUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
     "sourceVersion": "hf-lilylilith-qi_2.1_anyangle",
     "license": "Open-Source",
-    "contentHash": "9becab61803834d99bc4ebc5cad9aa569b5fef7d69da05154345dba0f5361eea",
-    "lastHarvestedAt": "2026-11-09T04:49:29.591Z",
+    "contentHash": "e3a8951752a7b06470178298093b3b7fbd36a3a91445a999c581754a4eb0cd34",
+    "lastHarvestedAt": "2026-11-14T15:25:36.808Z",
     "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle"
   },
   "hf-baai-bge-large-en-v1.5": {
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "c8939518",
+    "sourceVersion": "678070ab",
     "license": "MIT",
-    "contentHash": "b926ded77a84b3341b3bc66fcb56019d724b45fb81c5932c8220221c385c0794",
-    "lastHarvestedAt": "2026-11-13T21:36:41.237Z",
+    "contentHash": "469afe900402c0bae14be8431d34d4721d1ae30e942c9b349d590ccc32b3529e",
+    "lastHarvestedAt": "2026-11-14T15:25:47.579Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "66c65979",
+    "sourceVersion": "bf64ce35",
     "license": "Apache-2.0",
-    "contentHash": "9e8e7be5847bdbdd4dde950cddc78f3bda5e7250c32e31bc4f2ab1de57e79a82",
-    "lastHarvestedAt": "2026-11-13T09:31:37.543Z",
+    "contentHash": "31188ca886a93b9de907de236b206bbda2eb9e212203dc472065096dd0f96037",
+    "lastHarvestedAt": "2026-11-14T15:25:50.552Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "e7c8297c",
+    "sourceVersion": "e3ab04d5",
     "license": "Apache-2.0",
-    "contentHash": "83e9c8248f962dd1e3c9f2af6eeb9328ef98994ad992e2b16d94321e21abac21",
-    "lastHarvestedAt": "2026-11-13T01:57:37.769Z",
+    "contentHash": "e812066f94fe7095c4d5e74e324dc34945aec2079bbcdc025483d91e6fd98c83",
+    "lastHarvestedAt": "2026-11-14T15:25:38.988Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

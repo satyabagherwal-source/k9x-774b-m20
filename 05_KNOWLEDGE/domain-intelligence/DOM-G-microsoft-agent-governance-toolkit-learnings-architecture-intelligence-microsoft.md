@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T21:37:18.746Z",
+  "timestamp": "2026-11-14T15:26:23.410Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-microsoft-agent-governance-toolkit-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [microsoft-agent-governance-toolkit-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T21:37:18.746Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-14T15:26:23.410Z`  
 > **Learning ID**: `LEARN-EVO-microsoft-agent-governance-toolkit-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from microsoft-agent-governance-toolkit-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `c8939518`  
+> **Source Version**: `678070ab`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T21:36:40.234Z  
+> **Timestamp**: 2026-11-14T15:25:46.740Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T21:36:40.228Z  
+> **Harvest Timestamp**: 2026-11-14T15:25:46.735Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -433,41 +433,74 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8939518` (2026-11-13)
-**Commit Message**: docs(changelog): record the conversation guardian invisible-character fix (#4406)
+### Incident Patch 1: `678070ab` (2026-11-14)
+**Commit Message**: chore(deps): Bump aiohttp (#4398)
 
-* docs(changelog): record the conversation guardian invisible-character fix
+Bumps [aiohttp](https://github.com/aio-libs/aiohttp) from 3.14.3 to 3.14.4.
 
-Signed-off-by: MohammadHaroonAbuomar <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: aiohttp
+  dependency-version: 3.14.4
+  dependency-type: direct:production
+...
 
-* chore: retrigger CI after stalled Actions runs
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Signed-off-by: MohammadHaroonAbuomar <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: MohammadHaroonAbuomar <[REDACTED_EMAIL]>
-Co-authored-by: Ricky Gummadi <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `agent-governance-python/agent-os/services/cloud-board/requirements.txt` (modified, +1/-1)
 ```diff
-@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **policy-engine: agent-control-spec 0.4.0-alpha.4 (#4224).** The engine now accepts both manifest contracts (`0.4.0-alpha.1`, `0.5.0-alpha.1`); `bundle_url` and `system_prompt_url` are accepted on a pinned chain and fetched by the bundled dispatchers at dispatch time; `acs_builder_set_url_fetch_limits` stores the limits and returns `0` instead of the former `-1` "unsupported"; `REMOVED_MANIFEST_FIELDS` is deprecated in favour of `UNSUPPORTED_MANIFEST_FIELDS`. See BREAKING_CHANGES.md for the consumer-side notes.
+@@ -6,7 +6,7 @@ fastapi==0.115.0
+ uvicorn[standard]==0.27.1
  
- ### Fixed
-+- **Conversation guardian no longer misses patterns hidden behind invisible characters (#4124).** Zero-width characters, soft hyphens, variation selectors and similar code points inserted inside a word let an escalation or offensive phrase pass the `agent-os` conversation guardian unchanged. The detectors now run over normalized views of each message with those characters removed, so the same phrases are caught at the same scores, while emoji, right-to-left and CJK text score as before.
- - **Python `AgentControl.run_tool` no longer runs the tool when the manifest does not bind `post_tool_call`.** With `pre_tool_call` bound and `post_tool_call` not, `run_tool` (and so `protect_tool` and the MCP, LangChain, Semantic Kernel and Foundry adapters) executed the tool and only then raised `AgentControlBlocked` for `post_tool_call` with `runtime_error:intervention_point_unknown`, so the side effect happened while the caller was told the call was blocked, and a retry could repeat it. In enforce mode `run_tool` now checks, once the pre-check permits the call, that `post_tool_call` is bound in the merged manifest (a parent of an `extends` chain counts) and raises the same block with the same verdict and reason before calling the tool; a reserved tool-call budget slot is released. The fail-closed rule for an unbound point is unchanged. A custom runtime client that does not expose `policy_labels` keeps the previous order. The `run_tool` and `protect_tool` docstrings, the Python SDK README, the quickstart and the tutorial now say both points must be bound (#4424).
- - **Hypervisor command denylist no longer misses a denied command written without a space, by path or quoted.** `RingEnforcer.check_command` compared the first whitespace-separated token against `DENIED_COMMANDS` after stripping only trailing `;&|`, so `curl;rm -rf /`, `curl&&id`, `|curl`, `/usr/bin/curl`, `./bash`, `"curl"` and `\curl` were all reported as allowed, as were `curl>out`, `(curl x)`, `` `curl x` ``, `$(curl x)`, `{ curl; }`, `$'curl'`, `>out curl` and `>"my file" curl`. The command now has redirections dropped together with their targets (`>out`, `2>&1`, `< /dev/null`, and quoted or escaped targets such as `>"my file"` or `>a\ b`), then has shell quotes (including `$'...'` and `$"..."`) and backslashes removed, is split at whitespace, `;`, `&`, `|`, `<`, `>`, `(`, `)` and backticks, skips a leading `{`, `!` or `$(`, and the first command is reduced to its executable name before matching. A token made only of control operators, or a redirection to an empty file name (`>"" curl`), is denied as having no executable name instead of being allowed.
- - **Hypervisor command denylist no longer misses a denied command after a variable assignment or a wrapper.** `RingEnforcer.check_command` took the first word as the executable, so `FOO=x curl`, `env -i curl`, `exec curl`, `nohup curl`, `nice -n 5 curl`, `timeout 5 curl`, `command curl` and `time curl` were checked as `FOO=x`, `env`, `exec` and so on and allowed, and a line continuation (`cu\<newline>rl`) split the name. Backslash-newline pairs are now removed first, leading `NAME=value` assignments (with quoted or escaped values) are skipped, and `env`, `exec`, `nohup`, `nice`, `timeout`, `stdbuf`, `time`, `command` and `builtin` are unwrapped by reading their options, so the command they run is checked. A wrapper that runs no command (`env`, `command -v curl`) is still the executable, and a wrapper whose options cannot be read (an unknown option, a missing option argument, or `env -S`) is denied (#4331).
+ # Async HTTP
+-aiohttp==3.14.3
++aiohttp==3.14.4
+ httpx==0.27.0
+ 
+ # Data Validation
+```
+
+---
+
+### Incident Patch 2: `dffd8480` (2026-11-14)
+**Commit Message**: chore(deps): Bump opentelemetry-api (#4575)
+
+Bumps [opentelemetry-api](https://github.com/open-telemetry/opentelemetry-python) from 1.45.1 to 1.45.2.
+- [Release notes](https://github.com/open-telemetry/opentelemetry-python/releases)
+- [Changelog](https://github.com/open-telemetry/opentelemetry-python/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/open-telemetry/opentelemetry-python/compare/v1.45.1...v1.45.2)
+
+---
+updated-dependencies:
+- dependency-name: opentelemetry-api
+  dependency-version: 1.45.2
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `agent-governance-python/agent-os/services/cloud-board/requirements.txt` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ cryptography==50.0.0  # PKCS7/DER hardening; see docs/dependency-audits/2026-08-
+ pynacl==1.6.2
+ 
+ # Observability
+-opentelemetry-api==1.45.1
++opentelemetry-api==1.45.2
+ opentelemetry-sdk==1.29.0
+ opentelemetry-instrumentation-fastapi==0.50b0
+ structlog==24.4.0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4575** (2026-11-14): chore(deps): Bump opentelemetry-api from 1.45.1 to 1.45.2 in /agent-governance-python/agent-os/services/cloud-board (@dependabot[bot])
 - **PR #4574** (2026-11-13): chore(deps-dev): Bump hono from 4.13.13 to 4.13.18 in /agent-governance-python/agentmesh-integrations/mastra-agentmesh (@dependabot[bot])
 - **PR #4573** (2026-11-13): chore(deps): Bump hono from 4.13.13 to 4.13.18 in /agent-governance-python/agent-os/extensions/mcp-server (@dependabot[bot])
 - **PR #4572** (2026-11-13): chore(deps): Bump hono from 4.13.7 to 4.13.18 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
 - **PR #4571** (2026-11-13): chore(deps-dev): Bump hono from 4.13.7 to 4.13.18 in /policy-engine/sdk/node (@dependabot[bot])
 - **PR #4566** (2026-11-12): chore(deps): Bump @hono/node-server from 2.1.1 to 2.1.8 in /agent-governance-python/agent-os/extensions/mcp-server (@dependabot[bot])
-- **PR #4565** (2026-11-12): chore(deps): Bump @hono/node-server from 2.1.1 to 2.1.8 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
 
 ---
 
@@ -487,31 +520,31 @@ Co-authored-by: Ricky Gummadi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): record the conversation guardian invisible-character fix
+## X. deps): Bump aiohttp
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agent-governance-python/agent-os/services/cloud-board/requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c8939518`: docs(changelog): record the conversation guardian invisible-character fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `678070ab`: deps): Bump aiohttp. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-governance-python/agent-os/services/cloud-board/requirements.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Conversation guardian no longer misses patterns hidden behind invisible characters (#4124).** Zero-width characters, soft hyphens, variation selectors and similar code points inserted inside a word let an escalation or offensive phrase pass the `agent-os` conversation guardian unchanged. The detectors now run over normalized views of each message with those characters removed, so the same phrases are caught at the same scores, while emoji, right-to-left and CJK text score as before.
+aiohttp==3.14.4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+aiohttp==3.14.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8939518` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `678070ab` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

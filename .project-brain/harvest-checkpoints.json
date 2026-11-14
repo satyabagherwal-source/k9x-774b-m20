@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T15:08:40.308Z",
+  "last_updated": "2026-11-14T15:25:50.562Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1700,14 +1700,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "content_hash": "9becab61803834d99bc4ebc5cad9aa569b5fef7d69da05154345dba0f5361eea",
-      "verified_at": "2026-11-09T04:49:29.600Z",
+      "content_hash": "e3a8951752a7b06470178298093b3b7fbd36a3a91445a999c581754a4eb0cd34",
+      "verified_at": "2026-11-14T15:25:36.817Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:49:29.600Z"
+      "last_updated": "2026-11-14T15:25:36.817Z"
     },
     "BAAI/bge-large-en-v1.5": {
       "repository": "BAAI/bge-large-en-v1.5",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "b926ded77a84b3341b3bc66fcb56019d724b45fb81c5932c8220221c385c0794",
-      "verified_at": "2026-11-13T21:36:41.247Z",
+      "content_hash": "469afe900402c0bae14be8431d34d4721d1ae30e942c9b349d590ccc32b3529e",
+      "verified_at": "2026-11-14T15:25:47.588Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:36:41.247Z"
+      "last_updated": "2026-11-14T15:25:47.588Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "9e8e7be5847bdbdd4dde950cddc78f3bda5e7250c32e31bc4f2ab1de57e79a82",
-      "verified_at": "2026-11-13T09:31:37.564Z",
+      "content_hash": "31188ca886a93b9de907de236b206bbda2eb9e212203dc472065096dd0f96037",
+      "verified_at": "2026-11-14T15:25:50.561Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T09:31:37.564Z"
+      "last_updated": "2026-11-14T15:25:50.561Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -11511,14 +11511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-biomejs-biome",
-      "content_hash": "83e9c8248f962dd1e3c9f2af6eeb9328ef98994ad992e2b16d94321e21abac21",
-      "verified_at": "2026-11-13T01:57:37.814Z",
+      "content_hash": "e812066f94fe7095c4d5e74e324dc34945aec2079bbcdc025483d91e6fd98c83",
+      "verified_at": "2026-11-14T15:25:38.997Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T01:57:37.814Z"
+      "last_updated": "2026-11-14T15:25:38.997Z"
     },
     "msasikanth/twine": {
       "repository": "msasikanth/twine",

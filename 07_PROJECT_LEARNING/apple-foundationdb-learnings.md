@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `66c65979`  
+> **Source Version**: `bf64ce35`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T09:31:23.850Z  
+> **Timestamp**: 2026-11-14T15:25:49.711Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T09:31:23.842Z  
+> **Harvest Timestamp**: 2026-11-14T15:25:49.706Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16858 stars
+- **Stars / Engagement**: 16860 stars
 
 ---
 
@@ -1957,50 +1957,399 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3dc2d504` (2026-11-13)
-**Commit Message**: Merge pull request #14531 from kumarnitin15/fix-expire-bulkdump-test
+### Incident Patch 1: `b9f084af` (2026-11-13)
+**Commit Message**: Trace restore start/done and a ValidateBackup coverage summary, and time the phases of the tester's liveness ping (#14427)
 
-Use one size bound for bulkdump manifests in expire and restore
+* Trace restore start/done and a ValidateBackup coverage summary
 
-**File**: `fdbclient/BackupContainerFileSystem.cpp` (modified, +8/-5)
+Diagnosing slow or failed backup/restore Perf v2 runs required reading server-side
+events by hand: a run showed no marker of when the restore itself began and ended,
+and the client had no figure for how much live data a passing ValidateBackup audit
+covered (the key and byte totals exist only in the storage servers'
+SSAuditRestoreComplete events).
+
+RestoreBackup now traces RestoreBackupStart (tag, in-place or prefixed, range count,
+prefixes, snapshot size) and RestoreBackupDone (duration) around the restore call.
+ValidateBackup traces ValidateBackupSummary after a passing audit (range counts, the
+wait/restore/audit durations, snapshot size and an estimate of the live data size
+from the storage metrics) and reports the estimate as the PerfMetric
+"Validated live data estimate (MB)". The estimate is read only outside simulation
+(option reportRangeSize), so simulation behaviour is unchanged; a failed estimate is
+logged at SevWarn and does not fail the workload.
+
+Testing:
+- Syntax-compiled ValidateBac
+
+**File**: `fdbserver/tester/TesterServer.cpp` (modified, +70/-17)
 ```diff
-@@ -61,6 +61,9 @@ class BackupContainerFileSystemImpl {
- 		       e.code() == error_code_bulkload_manifest_decode_error;
+@@ -201,30 +201,71 @@ Future<Void> databaseWarmer(Database cx) {
+ 
+ namespace {
+ 
+-// Tries indefinitely to commit a simple, self conflicting transaction
+-Future<Void> pingDatabase(Database cx) {
++// Progress of one liveness ping. Owned by the caller so that it can still be read after the ping's timeout cancels it.
++struct PingState {
++	int attempts = 0;
++	const char* phase = "grv";
++	double attemptStart = 0;
++	// Durations of the phases of the latest attempt.
++	double grvSeconds = 0;
++	double readSeconds = 0;
++	double commitSeconds = 0;
++	Key key;
++};
++
++// The storage servers the client's location cache holds for `key`; empty until the key's location has been looked up.
++// It does no I/O, so it answers even while the cluster is not.
++std::string cachedStorageAddresses(Database cx, KeyRef key) {
++	std::string list;
++	Optional<KeyRangeLocationInfo> location = cx->getCachedLocation(key);
++	if (location.present()) {
++		for (int i = 0; i < location.get().locations->size(); ++i) {
++			list += (i ? "," : "") + location.get().locations->getInterface(i).address().toString();
++		}
++	}
++	return list;
++}
++
++// Tries indefinitely to commit a simple, self conflicting transaction. The phases are timed separately, and a ping
++// error also traces which storage servers hold its key, so a failed ping shows where it stalled.
++Future<Void> pingDatabase(Database cx, PingState* state) {
+ 	Transaction tr(cx);
+ 	while (true) {
+-		bool needsErrorHandling = false;
+ 		Error caughtError;
++		state->phase = "grv";
++		state->key = Key(StringRef("/Liveness/" + deterministicRandom()->randomUniqueID().toString()));
++		state->attemptStart = now();
++		state->grvSeconds = state->readSeconds = state->commitSeconds = 0;
++		++state->attempts;
+ 
+ 		try {
+ 			tr.setOption(FDBTransactionOptions::PRIORITY_SYSTEM_IMMEDIATE);
+ 			tr.setOption(FDBTransactionOptions::LOCK_AWARE);
+-			Optional<Value> v =
+-			    co_await tr.get(StringRef("/Liveness/" + deterministicRandom()->randomUniqueID().toString()));
++			co_await tr.getReadVersion();
++			double afterGrv = now();
++			state->grvSeconds = afterGrv - state->attemptStart;
++			state->phase = "read";
++			Optional<Value> v = co_await tr.get(state->key);
++			double afterRead = now();
++			state->readSeconds = afterRead - afterGrv;
++			state->phase = "commit";
+ 			tr.makeSelfConflicting();
+ 			co_await tr.commit();
++			state->commitSeconds = now() - afterRead;
+ 			co_return;
+ 		} catch (Error& e) {
+-			TraceEvent("PingingDatabaseTransactionError").error(e);
++			TraceEvent("PingingDatabaseTransactionError")
++			    .error(e)
++			    .detail("Phase", state->phase)
++			    .detail("Key", state->key)
++			    .detail("Attempt", state->attempts)
++			    .detail("AttemptSeconds", now() - state->attemptStart)
++			    .detail("StorageAddresses", cachedStorageAddresses(cx, state->key));
+ 			caughtError = e;
+-			needsErrorHandling = true;
+-		}
+-
+-		if (needsErrorHandling) {
+-			co_await tr.onError(caughtError);
+ 		}
++		// A stall in the back-off is not a stall of the phase that failed.
++		state->phase = "retry";
++		co_await tr.onError(caughtError);
+ 	}
+ }
+ 
+@@ -233,22 +274,34 @@ Future<Void> pingDatabase(Database cx) {
+ Future<Void> testDatabaseLiveness(Database cx, double databasePingDelay, std::string context, double startDelay) {
+ 	co_await delay(startDelay);
+ 	while (true) {
+-		Error caughtError;
++		PingState ping;
+ 
+ 		try {
+ 			double start = now();
+ 			auto traceMsg = "PingingDatabaseLiveness_" + context;
+ 			TraceEvent(traceMsg.c_str()).log();
+-			co_await timeoutError(pingDatabase(cx), databasePingDelay);
++			co_await timeoutError(pingDatabase(cx, &ping), databasePingDelay);
+ 			double pingTime = now() - start;
+ 			ASSERT(pingTime > 0);
+-			TraceEvent(("PingingDatabaseLivenessDone_" + context).c_str()).detail("TimeTaken", pingTime);
++			TraceEvent(("PingingDatabaseLivenessDone_" + context).c_str())
++			    .detail("TimeTaken", pingTime)
++			    .detail("Attempts", ping.attempts)
++			    .detail("GrvSeconds", ping.grvSeconds)
++			    .detail("ReadSeconds", ping.readSeconds)
++			    .detail("CommitSeconds", ping.commitSeconds);
+ 			co_await delay(databasePingDelay - pingTime);
+ 		} catch (Error& e) {
+ 			if (e.code() != error_code_actor_cancelled) {
+-				TraceEvent(SevError, ("PingingDatabaseLivenessError_" + context).c_str())
+-				    .error(e)
+-				    .detail("PingDelay", databasePingDelay);
++				// The event keeps the pointer to its type name until it is logged, past the end of this statement.
++				std::string errorType = "PingingDatabaseLivenessError_" + context;
++				TraceEvent event(SevError, errorType.c_str());
++				event.error(e).detail("PingDelay", databasePingDelay);
++				if (ping.attempts > 0) {
++					event.detail("Phase", ping.phase)
++					    .detail("Attempts", ping.attempts)
++					    .detail("AttemptSeconds", now() - ping.attemptStart)
++					    .detail("StorageAddresses", cachedStorageAddresses(cx, ping.key));
++				}
+ 			}
+ 			throw;
+ 		}
+```
+
+**File**: `fdbserver/workloads/RestoreBackup.cpp` (modified, +8/-0)
+```diff
+@@ -209,6 +209,13 @@ struct RestoreBackupWorkload : TestWorkload {
+ 		}
+ 
+ 		LockDB lockDB(inPlace);
++		TraceEvent("RestoreBackupStart")
++		    .detail("Tag", tag)
++		    .detail("InPlace", inPlace)
++		    .detail("RangeCount", ranges.size())
++		    .detail("AddPrefix", addPrefix)
++		    .detail("RemovePrefix", removePrefix)
++		    .detail("SnapshotMB", snapshotMB.orDefault(-1));
+ 		double restoreStart = now();
+ 		BackupSteps::RestoreSpec spec;
+ 		spec.tag = tag;
+@@ -220,6 +227,7 @@ struct RestoreBackupWorkload : TestWorkload {
+ 		spec.encryptionKeyFileName = encryptionKeyFileName;
+ 		co_await BackupSteps::restoreBackup(cx, &backupAgent, version, spec);
+ 		restoreDuration = now() - restoreStart;
++		TraceEvent("RestoreBackupDone").detail("Tag", tag).detail("DurationSeconds", restoreDuration.get());
  	}
  
-+	// A bulkdump snapshot manifest holds only the job ID and a single key range, so it is far smaller than this.
-+	static constexpr int64_t kMaxBulkDumpManifestSize = 1 << 20;
+ 	Future<Void> setup(Database const& cx) override { return Void(); }
+```
+
+**File**: `fdbserver/workloads/ValidateBackup.cpp` (modified, +40/-0)
+```diff
+@@ -60,6 +60,10 @@ struct ValidateBackupWorkload : TestWorkload {
+ 	ValidationTimings timings;
+ 	Optional<double> snapshotMB;
+ 	Optional<int> validatedRangeCount;
++	// The estimate reads storage metrics from the storage servers, so it is skipped in simulation by default.
++	bool reportRangeSize;
++	int64_t liveRangeBytes = 0;
++	bool liveRangeBytesKnown = false;
+ 	int auditedRangeCount = 0;
+ 	bool passed = false;
+ 
+@@ -73,6 +77,22 @@ struct ValidateBackupWorkload : TestWorkload {
+ 		validateRanges = BackupRangeSpec::readOptionalRanges(options, "validateRanges"_sr, "validateRangePrefix"_sr);
+ 		clearValidationData = getOption(options, "clearValidationData"_sr, true);
+ 		settleSeconds = getOption(options, "settleSeconds"_sr, 0.0);
++		reportRangeSize = getOption(options, "reportRangeSize"_sr, !g_network->isSimulated());
++	}
 +
- 	// Returns the bulkdump job id recorded in a keyspace snapshot, or empty if the snapshot has none or
- 	// cannot be read. The job id is only in the snapshot's JSON body -- the filename carries the snapshot
- 	// type but not the id -- and it is what locates the SST tree under bulkdump_data/<jobId>/.
-@@ -74,21 +77,21 @@ class BackupContainerFileSystemImpl {
++	// The client gets no key or byte totals from a ValidateRestore audit. This adds the size of the live range, which
++	// the audit covered, to a total that bounds what was validated; it is not the audit's own count.
++	Future<Void> addLiveRangeEstimate(Database cx, KeyRange range) {
++		try {
++			StorageMetrics metrics = co_await cx->getStorageMetrics(range, -1);
++			liveRangeBytes += metrics.bytes;
++			liveRangeBytesKnown = true;
++		} catch (Error& e) {
++			if (e.code() == error_code_actor_cancelled) {
++				throw;
++			}
++			TraceEvent(SevWarn, "ValidateBackupRangeSizeFailed").error(e).detail("Range", range);
++		}
+ 	}
+ 
+ 	// Waits until data distribution has no queued or in-flight work and the storage queues are small, or
+@@ -195,12 +215,29 @@ struct ValidateBackupWorkload : TestWorkload {
+ 			    .detail("Range", audit.range)
+ 			    .detail("Phase", static_cast<int>(audit.getPhase()));
+ 		}
++		if (reportRangeSize) {
++			std::vector<Future<Void>> estimates;
++			estimates.reserve(audits.size());
++			for (const auto& audit : audits) {
++				estimates.push_back(addLiveRangeEstimate(cx, audit.range));
++			}
++			co_await waitForAll(estimates);
++		}
+ 		if (!anyData) {
+ 			TraceEvent(SevWarnAlways, "ValidateBackupNothingAudited")
+ 			    .detail("Tag", tag)
+ 			    .detail("Audits", audits.size());
+ 			throw audit_storage_failed();
+ 		}
++		TraceEvent("ValidateBackupSummary")
++		    .detail("Tag", tag)
++		    .detail("ValidatedRanges", validatedRangeCount.orDefault(0))
++		    .detail("AuditedRanges", auditedRangeCount)
++		    .detail("WaitForRestorableSeconds", waitForRestorableSeconds.orDefault(-1))
++		    .detail("RestoreSeconds", timings.restoreSeconds)
++		    .detail("AuditSeconds", timings.auditSeconds)
++		    .detail("SnapshotMB", snapshotMB.orDefault(-1))
++		    .detail("LiveRangeEstimatedMB", liveRangeBytesKnown ? liveRangeBytes / 1e6 : -1.0);
+ 
+ 		if (clearValidationData && settleSeconds > 0) {
+ 			co_await waitToSettle(cx);
+@@ -230,6 +267,9 @@ struct ValidateBackupWorkload : TestWorkload {
+ 		if (snapshotMB.present()) {
+ 			m.emplace_back("Validated snapshot size (MB)", snapshotMB.get(), Averaged::False);
+ 		}
++		if (liveRangeBytesKnown) {
++			m.emplace_back("Validated live data estimate (MB)", liveRangeBytes / 1e6, Averaged::False);
++		}
+ 		m.emplace_back("Validation passed", passed ? 1 : 0, Averaged::False);
+ 	}
+ };
+```
+
+---
+
+### Incident Patch 2: `4b4b6256` (2026-11-13)
+**Commit Message**: flow/Net2: don't count TLS handshake timeouts and disconnects toward throttling (#14424)
+
+**File**: `flow/Knobs.cpp` (modified, +1/-0)
+```diff
+@@ -149,6 +149,7 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
+ 	init( TLS_CLIENT_CONNECTION_THROTTLE_TIMEOUT,             11.0 );
+ 	init( TLS_SERVER_CONNECTION_THROTTLE_ATTEMPTS,               1 );
+ 	init( TLS_CLIENT_CONNECTION_THROTTLE_ATTEMPTS,               1 );
++	init( TLS_THROTTLE_IGNORE_TIMEOUTS_AND_DISCONNECTS,      false );
+ 	init( TLS_CLIENT_HANDSHAKE_THREADS,                          0 );
+ 	init( TLS_SERVER_HANDSHAKE_THREADS,                         64 );
+ 	init( TLS_HANDSHAKE_THREAD_STACKSIZE,                64 * 1024 );
+```
+
+**File**: `flow/Net2.cpp` (modified, +64/-18)
+```diff
+@@ -381,6 +381,7 @@ class BindPromise {
+ 	std::variant<const char*, AuditedEvent> errContext;
+ 	UID errID;
+ 	NetworkAddress peerAddr;
++	boost::system::error_code* errorOut = nullptr;
+ 
+ public:
+ 	BindPromise(const char* errContext, UID errID, NetworkAddress peerAddr)
+@@ -389,15 +390,21 @@ class BindPromise {
+ 	  : errContext(auditedEvent), errID(errID), peerAddr(peerAddr) {}
+ 	BindPromise(BindPromise const& r) = default;
+ 	BindPromise(BindPromise&& r) noexcept
+-	  : p(std::move(r.p)), errContext(r.errContext), errID(r.errID), peerAddr(r.peerAddr) {}
++	  : p(std::move(r.p)), errContext(r.errContext), errID(r.errID), peerAddr(r.peerAddr), errorOut(r.errorOut) {}
+ 
+ 	Future<Void> getFuture() const { return p.getFuture(); }
+ 
+ 	NetworkAddress getPeerAddr() const { return peerAddr; }
+ 
++	// `*out` receives the error, if any, before the future is set. `out` must outlive the operation.
++	void setErrorOut(boost::system::error_code* out) { errorOut = out; }
++
+ 	void operator()(const boost::system::error_code& error, size_t bytesWritten = 0) {
  		try {
- 			Reference<IAsyncFile> f = co_await bc->readFile(snapshot.fileName);
- 			int64_t size = co_await f->size();
--			if (restoring && size > (1 << 20)) {
-+			if (restoring && size > kMaxBulkDumpManifestSize) {
- 				// A bulkdump descriptor contains only the job ID and a single key range.
- 				throw restore_corrupted_data();
+ 			if (error) {
++				if (errorOut) {
++					*errorOut = error;
++				}
+ 				// Log the error...
+ 				{
+ 					std::optional<TraceEvent> traceEvent;
+@@ -861,13 +868,18 @@ struct SSLHandshakerThread final : IThreadPoolReceiver {
+ 		ssl_socket::handshake_type type;
+ 		boost::system::error_code err;
+ 		NetworkAddress peerAddr;
++		// If set, receives `err` before `done` is set. Owned by the connection, which outlives the handshake.
++		boost::system::error_code* errorOut = nullptr;
+ 	};
+ 
+ 	void action(Handshake& h) {
+ 		try {
+ 			if (h.socket.next_layer().non_blocking(false, h.err).failed() ||
+ 			    h.socket.handshake(h.type, h.err).failed() ||
+ 			    h.socket.next_layer().non_blocking(true, h.err).failed()) {
++				if (h.errorOut) {
++					*h.errorOut = h.err;
++				}
+ 				TraceEvent(SevWarn,
+ 				           h.type == ssl_socket::handshake_type::client ? "N2_ConnectHandshakeError"_audit
+ 				                                                        : "N2_AcceptHandshakeError"_audit)
+@@ -894,6 +906,16 @@ struct SSLHandshakerThread final : IThreadPoolReceiver {
+ 	}
+ };
+ 
++// Whether `error` is how a TLS handshake ends when overload on either end makes it time out or the peer give up: a
++// handshake worker's deadline (timed_out), a worker job cancelled by closeSocket() (operation_aborted), or the
++// connection closing.
++static bool isTimeoutOrDisconnect(const boost::system::error_code& error) {
++	return error == boost::asio::error::timed_out || error == boost::asio::error::operation_aborted ||
++	       error == boost::asio::error::eof || error == boost::asio::ssl::error::stream_truncated ||
++	       error == boost::asio::error::connection_reset || error == boost::asio::error::connection_aborted ||
++	       error == boost::asio::error::broken_pipe;
++}
++
+ class SSLConnection final : public IConnection, ReferenceCounted<SSLConnection> {
+ public:
+ 	void addref() override { ReferenceCounted<SSLConnection>::addref(); }
+@@ -995,6 +1017,7 @@ class SSLConnection final : public IConnection, ReferenceCounted<SSLConnection>
+ 				auto handshake =
+ 				    new SSLHandshakerThread::Handshake(self->ssl_sock, boost::asio::ssl::stream_base::server);
+ 				handshake->setPeerAddr(self->getPeerAddress());
++				handshake->errorOut = &self->handshakeError;
+ 				onHandshook = handshake->done.getFuture();
+ 				N2::g_net2->sslHandshakerPool->post(handshake);
+ 			} else {
+@@ -1003,6 +1026,7 @@ class SSLConnection final : public IConnection, ReferenceCounted<SSLConnection>
+ 				    SimpleCounter<int64_t>::makeCounter("/Net2/TLS/ServerTLSHandshakesOnMainThread");
+ 				countServerTLSHandshakesOnMainThread->increment(1);
+ 				BindPromise p("N2_AcceptHandshakeError"_audit, self->id, self->getPeerAddress());
++				p.setErrorOut(&self->handshakeError);
+ 				onHandshook = p.getFuture();
+ 				self->ssl_sock.async_handshake(boost::asio::ssl::stream_base::server, std::move(p));
  			}
- 			// A bulkdump manifest has an empty "files" array and so is a few hundred bytes, while a
- 			// rangefile manifest lists every range file and can reach hundreds of megabytes. Size is the
- 			// only cheap discriminator available: the snapshot filename carries the type suffix solely in
- 			// 'both' mode, so a plain bulkdump snapshot is indistinguishable from a rangefile one by name.
--			// Refusing to read anything over a chunk keeps expire from pulling in a huge manifest just to
--			// discover it has no job id.
--			if (!restoring && size > CLIENT_KNOBS->BACKUP_MANIFEST_CHUNK_SIZE) {
-+			// Refusing to read anything over kMaxBulkDumpManifestSize keeps expire from pulling in a huge
-+			// manifest just to discover it has no job id.
-+			if (!restoring && size > kMaxBulkDumpManifestSize) {
- 				TraceEvent("BackupContainerExpireSkipLargeSnapshotManifest")
- 				    .detail("Snapshot", snapshot.fileName)
- 				    .detail("Size", size)
--				    .detail("Limit", CLIENT_KNOBS->BACKUP_MANIFEST_CHUNK_SIZE);
-+				    .detail("Limit", kMaxBulkDumpManifestSize);
- 				co_return std::string();
+@@ -1048,6 +1072,7 @@ class SSLConnection final : public IConnection, ReferenceCounted<SSLConnection>
+ 
+ 		Promise<Void> connected;
+ 		doAcceptHandshake(Uncancellable(), self, connected);
++		bool timedOut = false;
+ 		try {
+ 			auto res = co_await timeout(connected.getFuture(), FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
+ 			if (res.present()) {
+@@ -1058,17 +1083,12 @@ class SSLConnection final : public IConnection, ReferenceCounted<SSLConnection>
+ 				static SimpleCounter<int64_t>* countServerTLSHandshakesTimedout =
+ 				    SimpleCounter<int64_t>::makeCounter("/Net2/TLS/ServerTLSHandshakesTimedout");
+ 				countServerTLSHandshakesTimedout->increment(1);
++				timedOut = true;
+ 				throw connection_failed();
  			}
- 			auto buf = std::make_shared<std::string>(size, '\0');
+ 		} catch (Error& e) {
+ 			if (e.code() != error_code_actor_cancelled) {
+-				auto iter(g_network->networkInfo.serverTLSConnectionThrottler.find(peerIP));
+-				if (iter != g_network->networkInfo.serverTLSConnectionThrottler.end()) {
+-					iter->second.first++;
+-				} else {
+-					g_network->networkInfo.serverTLSConnectionThrottler[
+```
+
+**File**: `flow/include/flow/Knobs.h` (modified, +3/-0)
+```diff
+@@ -225,6 +225,9 @@ class FlowKnobs : public KnobsImpl<FlowKnobs> {
+ 	double TLS_CLIENT_CONNECTION_THROTTLE_TIMEOUT;
+ 	int TLS_SERVER_CONNECTION_THROTTLE_ATTEMPTS;
+ 	int TLS_CLIENT_CONNECTION_THROTTLE_ATTEMPTS;
++	// If true, TLS handshakes that time out or whose connection closes do not count toward per-address TLS connection
++	// throttling.
++	bool TLS_THROTTLE_IGNORE_TIMEOUTS_AND_DISCONNECTS;
+ 	int TLS_CLIENT_HANDSHAKE_THREADS;
+ 	int TLS_SERVER_HANDSHAKE_THREADS;
+ 	int TLS_HANDSHAKE_THREAD_STACKSIZE;
 ```
 
 #### Recent Merged Pull Requests:
@@ -2029,39 +2378,73 @@ Use one size bound for bulkdump manifests in expire and restore
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #14531 from kumarnitin15/fix-expire-bulkdump-test
+## X. Trace restore start/done and a ValidateBackup coverage summary, and time the pha
 
 **RULE**:
-When implementing operations in `fdbclient/BackupContainerFileSystem.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbserver/tester/TesterServer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3dc2d504`: Merge pull request #14531 from kumarnitin15/fix-expire-bulkdump-test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b9f084af`: Trace restore start/done and a ValidateBackup coverage summary, and time the phases of the tester's liveness ping. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbclient/BackupContainerFileSystem.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/tester/TesterServer.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	// A bulkdump snapshot manifest holds only the job ID and a single key range, so it is far smaller than this.
-	static constexpr int64_t kMaxBulkDumpManifestSize = 1 << 20;
+// Progress of one liveness ping. Owned by the caller so that it can still be read after the ping's timeout cancels it.
+struct PingState {
+	int attempts = 0;
+	const char* phase = "grv";
+	double attemptStart = 0;
+	// Durations of the phases of the latest attempt.
+	double grvSeconds = 0;
+	double readSeconds = 0;
+	double commitSeconds = 0;
+	Key key;
+};
 
-			if (restoring && size > kMaxBulkDumpManifestSize) {
-			// Refusing to read anything over kMaxBulkDumpManifestSize keeps expire from pulling in a huge
-			// manifest just to discover it has no job id.
-			if (!restoring && size > kMaxBulkDumpManifestSize) {
-				    .detail("Limit", kMaxBulkDumpManifestSize);
+// The storage servers the client's location cache holds for `key`; empty until the key's location has been looked up.
+// It does no I/O, so it answers even while the cluster is not.
+std::string cachedStorageAddresses(Database cx, KeyRef key) {
+	std::string list;
+	Optional<KeyRangeLocationInfo> location = cx->getCachedLocation(key);
+	if (location.present()) {
+		for (int i = 0; i < location.get().locations->size(); ++i) {
+			list += (i ? "," : "") + location.get().locations->getInterface(i).address().toString();
+		}
+	}
+	return list;
+}
+
+// Tries indefinitely to commit a simple, self conflicting transaction. The phases are timed separately, and a ping
+// error also traces which storage servers hold its key, so a failed ping shows where it stalled.
+Future<Void> pingDatabase(Database cx, PingState* state) {
+		state->phase = "grv";
+		state->
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-			if (restoring && size > (1 << 20)) {
-			// Refusing to read anything over a chunk keeps expire from pulling in a huge manifest just to
-			// discover it has no job id.
-			if (!restoring && size > CLIENT_KNOBS->BACKUP_MANIFEST_CHUNK_SIZE) {
-				    .detail("Limit", CLIENT_KNOBS->BACKUP_MANIFEST_CHUNK_SIZE);
+// Induced defect failure mode:
+// Tries indefinitely to commit a simple, self conflicting transaction
+Future<Void> pingDatabase(Database cx) {
+		bool needsErrorHandling = false;
+			Optional<Value> v =
+			    co_await tr.get(StringRef("/Liveness/" + deterministicRandom()->randomUniqueID().toString()));
+			TraceEvent("PingingDatabaseTransactionError").error(e);
+			needsErrorHandling = true;
+		}
+
+		if (needsErrorHandling) {
+			co_await tr.onError(caughtError);
+		Error caughtError;
+			co_await timeoutError(pingDatabase(cx), databasePingDelay);
+			TraceEvent(("PingingDatabaseLivenessDone_" + context).c_str()).detail("TimeTaken", pingTime);
+				TraceEvent(SevError, ("PingingDatabaseLivenessError_" + context).c_str())
+				    .error(e)
+				    .detail("PingDelay", databasePingDelay);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3dc2d504` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b9f084af` are properly handled with clean fallback behavior.

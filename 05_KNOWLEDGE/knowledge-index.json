@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T15:09:37.596Z",
-  "total_verified_learnings": 8549,
+  "last_updated": "2026-11-14T15:26:59.530Z",
+  "total_verified_learnings": 8552,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17481,
+  "total_items": 17501,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113366,10 +113366,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-architecture-intelligence-microsoft-agent-gov.md",
       "title": "Architecture Intelligence: microsoft/agent-governance-toolkit Core Invariants",
       "repository": "microsoft/agent-governance-toolkit",
-      "source_version": "c8939518",
-      "content_hash": "75b4c7efa86df50ee25c6a02ab01df7766c4d9aad71c19a1e59b877eea04e1ff",
+      "source_version": "678070ab",
+      "content_hash": "af22d16b12feeefeced6d52072d15b06fb0a3b8186515f899021f5b68e8cdd31",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:36:41.544Z"
+      "persisted_at": "2026-11-14T15:25:47.866Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit",
@@ -113378,10 +113378,10 @@
       "relative_path": "12_DECISIONS/ADR-microsoft-agent-governance-toolkit-adr-subsystem-boundary-modular-decoupling-in-.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in microsoft/agent-governance-toolkit",
       "repository": "microsoft/agent-governance-toolkit",
-      "source_version": "c8939518",
-      "content_hash": "a068df3d4eb3b444e27d71350d3e67dd41d04c1aecf053bb41477a1abacc9013",
+      "source_version": "678070ab",
+      "content_hash": "d0786b3caf8cca36db5528191ea62eb34139b70a3ce4c932fca85f989909cbd8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:36:41.658Z"
+      "persisted_at": "2026-11-14T15:25:47.966Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-agent-governance-too": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-agent-governance-too",
@@ -113391,9 +113391,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for microsoft-agent-governance-toolkit-learnings",
       "repository": "microsoft-agent-governance-toolkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "affa453150c12f3a30c02824ac33dea3b6eeecd2757d33fecd59d248bfe0c744",
+      "content_hash": "2d165865bc8a71ddfab3062583dedad79bb9058a9e3e18dff49b3a9699313535",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:37:19.213Z"
+      "persisted_at": "2026-11-14T15:26:23.845Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari",
@@ -113415,9 +113415,9 @@
       "title": "Architecture Intelligence: microsoft-agent-governance-toolkit-learnings Core Invariants",
       "repository": "microsoft-agent-governance-toolkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7cfefbda9325888672a836c195f894a5b7b7c15e0a663f17721360cc82307b6",
+      "content_hash": "7f2ea1c0f16f54086ef9fd9c79ef15e6545c7b90eee4fe3947df59c920853c39",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:37:18.965Z"
+      "persisted_at": "2026-11-14T15:26:23.607Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit-": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit-",
@@ -113427,9 +113427,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in microsoft-agent-governance-toolkit-learnings",
       "repository": "microsoft-agent-governance-toolkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "7cd6d4811d41b1fa2277769002451a35abe95335f6f564368e2e683cc48d4cf7",
+      "content_hash": "7bdfa6c6e0be798bdeced287d64aa15b086c36af50868b201dba405cd7ad0535",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T21:37:19.092Z"
+      "persisted_at": "2026-11-14T15:26:23.724Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants",
@@ -216344,14 +216344,19 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "c8939518",
-      "content_hash": "b926ded77a84b3341b3bc66fcb56019d724b45fb81c5932c8220221c385c0794",
+      "source_version": "678070ab",
+      "content_hash": "469afe900402c0bae14be8431d34d4721d1ae30e942c9b349d590ccc32b3529e",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
         {
           "number": 8389,
           "title": "docs(changelog): record the conversation guardian invisible-character fix",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8497,
+          "title": "Bump aiohttp",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -216360,7 +216365,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:36:41.073Z",
+      "verified_at": "2026-11-14T15:25:47.435Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229235,6 +229240,309 @@
       "content_hash": "4738d385202b274e769b93cf9a77d0f4b48dec7f0ffc0d8e35e0a4a55d818055",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T15:09:37.596Z"
+    },
+    "learn-huggingface-lilylilith-qi_2-1_anyangle": {
+      "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lilylilith/QI_2.1_AnyAngle",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "slug": "hf-lilylilith-qi_2.1_anyangle",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+      "source_version": "hf-lilylilith-qi_2.1_anyangle",
+      "content_hash": "e3a8951752a7b06470178298093b3b7fbd36a3a91445a999c581754a4eb0cd34",
+      "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T15:25:36.663Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-lilylilith-qi_2-1_anyangle-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-lilylilith-qi_2-1_anyangle-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lilylilith-qi_2-1_anyangle-research-knowledge-intelligence-lilylilith-qi_2-1_.md",
+      "title": "Research & Knowledge Intelligence: lilylilith/QI_2.1_AnyAngle Core Invariants",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "source_version": "hf-lilylilith-qi_2.1_anyangle",
+      "content_hash": "2612ed45b47310d311496153037e5794badf170ac1f44802926f90231b8d60b6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T15:25:36.996Z"
+    },
+    "learn-github-biomejs-biome": {
+      "learning_id": "learn-github-biomejs-biome",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "biomejs/biome",
+      "repository": "biomejs/biome",
+      "slug": "biomejs-biome",
+      "platform": "github",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "e3ab04d5",
+      "content_hash": "e812066f94fe7095c4d5e74e324dc34945aec2079bbcdc025483d91e6fd98c83",
+      "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8496,
+          "title": "locate classes in unquoted object keys correctly",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T15:25:38.852Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8496": {
+      "learning_id": "rule-8496",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8496,
+      "title": "locate classes in unquoted object keys correctly",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "e3ab04d5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T15:25:38.852Z"
+    },
+    "candidate_directive-locate-classes-in-unquoted-object-keys-correctly": {
+      "item_id": "candidate_directive-locate-classes-in-unquoted-object-keys-correctly",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-57OR-locate-classes-in-unquoted-object-keys-correctly.md",
+      "title": "locate classes in unquoted object keys correctly",
+      "repository": "biomejs/biome",
+      "source_version": "e3ab04d5",
+      "content_hash": "d2959ca5aadf11cba21f77800b08495335ea205daba206e236d55e56e3f33d70",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T15:25:39.247Z"
+    },
+    "domain_intelligence-architecture-intelligence-biomejs-biome-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-biomejs-biome-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-architecture-intelligence-biomejs-biome-core-invariants.md",
+      "title": "Architecture Intelligence: biomejs/biome Core Invariants",
+      "repository": "biomejs/biome",
+      "source_version": "e3ab04d5",
+      "content_hash": "bba425210bbd4d1f7bcc8c171ba6b814e14d696e056bd858e47a0d117b567da1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T15:25:39.439Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/biomejs-biome-verification-protocol-empirical-defect-shield-for-biomejs-biome.md",
+      "title": "Verification Protocol: Empirical Defect Shield for biomejs/biome",
+      "repository": "biomejs/biome",
+      "source_version": "e3ab04d5",
+      "content_hash": "26ac39874f12b63fca8c9d58967785719465416aafacc0a46dc5ec7c35969499",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T15:25:39.655Z"
+    },
+    "rule-8497": {
+      "learning_id": "rule-8497",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8497,
+      "title": "Bump aiohttp",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "678070ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T15:25:47.435Z"
+    },
+    "candidate_directive-bump-aiohttp": {
+      "item_id": "candidate_directive-bump-aiohttp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5E8Z-bump-aiohttp.md",
+      "title": "Bump aiohttp",
+      "repository": "microsoft/agent-governance-toolkit",
+      "source_version": "678070ab",
+      "content_hash": "ef2911f835e22087e8dc033a66d64d84fbcfb6ff3a85dfc9990c64a023afba97",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T15:25:47.748Z"
+    },
+    "learn-github-apple-foundationdb": {
+      "learning_id": "learn-github-apple-foundationdb",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "apple/foundationdb",
+      "repository": "apple/foundationdb",
+      "slug": "apple-foundationdb",
+      "platform": "github",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "bf64ce35",
+      "content_hash": "31188ca886a93b9de907de236b206bbda2eb9e212203dc472065096dd0f96037",
+      "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8498,
+          "title": "Trace restore start/done and a ValidateBackup coverage summary, and time the pha",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T15:25:50.409Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8498": {
+      "learning_id": "rule-8498",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8498,
+      "title": "Trace restore start/done and a ValidateBackup coverage summary, and time the pha",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "bf64ce35",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T15:25:50.409Z"
+    },
+    "candidate_directive-trace-restore-start-done-and-a-validatebackup-coverage-summary-and-time-the-pha": {
+      "item_id": "candidate_directive-trace-restore-start-done-and-a-validatebackup-coverage-summary-and-time-the-pha",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6XFB-trace-restore-start-done-and-a-validatebackup-coverage-summary-and-time-the-pha.md",
+      "title": "Trace restore start/done and a ValidateBackup coverage summary, and time the pha",
+      "repository": "apple-foundationdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9afda577396ee2ba04626315e79195a39de814a753ae3146ffaf9c0bd87420c9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T15:26:59.273Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-apple-foundationdb-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-apple-foundationdb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-quality-verification-intelligence-apple-foundationdb-core-inv.md",
+      "title": "Quality & Verification Intelligence: apple/foundationdb Core Invariants",
+      "repository": "apple/foundationdb",
+      "source_version": "bf64ce35",
+      "content_hash": "4b9252fc7465190e127de2c0f6b67252290a0e040dc38639bcc1b25480249dd5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T15:25:50.836Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-apple-foundationdb": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apple-foundationdb",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/apple-foundationdb-verification-protocol-empirical-defect-shield-for-apple-found.md",
+      "title": "Verification Protocol: Empirical Defect Shield for apple/foundationdb",
+      "repository": "apple/foundationdb",
+      "source_version": "bf64ce35",
+      "content_hash": "481aba9cfe1ccca8172fbfa3c459e9eaa726d5fe3ee347dbce8e1ef74a41429e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T15:25:50.936Z"
+    },
+    "candidate_directive-tailwind-locate-classes-in-unquoted-object-keys-correctly": {
+      "item_id": "candidate_directive-tailwind-locate-classes-in-unquoted-object-keys-correctly",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-65BF-tailwind-locate-classes-in-unquoted-object-keys-correctly.md",
+      "title": "tailwind): locate classes in unquoted object keys correctly",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "11f1cfac63e2d74e54e3df7c741d6d495f6dedfe8fe60fa701557af7ebfdd719",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-14T15:26:22.840Z"
+    },
+    "domain_intelligence-architecture-intelligence-biomejs-biome-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-biomejs-biome-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-learnings-architecture-intelligence-biomejs-biome-learnings-core-i.md",
+      "title": "Architecture Intelligence: biomejs-biome-learnings Core Invariants",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "86567926e388ea1bd63795ee94cef433222c95844e0b647e444693adac782386",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T15:26:22.960Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/biomejs-biome-learnings-verification-protocol-empirical-defect-shield-for-biomej.md",
+      "title": "Verification Protocol: Empirical Defect Shield for biomejs-biome-learnings",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a2e0cda072c781eff9531951718b73eda12b1a581bbb2458056093ac2b3a70d7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T15:26:23.076Z"
+    },
+    "candidate_directive-deps-bump-aiohttp": {
+      "item_id": "candidate_directive-deps-bump-aiohttp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-65TU-deps-bump-aiohttp.md",
+      "title": "deps): Bump aiohttp",
+      "repository": "microsoft-agent-governance-toolkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "db3f093d4e4fe1cc5e344b605ac4101c6e495e3620eabc8d33b7a9c2f531b921",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T15:26:23.490Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-apple-foundationdb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-apple-foundationdb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-learnings-quality-verification-intelligence-apple-foundationd.md",
+      "title": "Quality & Verification Intelligence: apple-foundationdb-learnings Core Invariants",
+      "repository": "apple-foundationdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "76a7245c5ce70a18d8954b3f3f084eb527116b8437c480d646b1cdf631189216",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T15:26:59.405Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-apple-foundationdb-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apple-foundationdb-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/apple-foundationdb-learnings-verification-protocol-empirical-defect-shield-for-a.md",
+      "title": "Verification Protocol: Empirical Defect Shield for apple-foundationdb-learnings",
+      "repository": "apple-foundationdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2dfda7476b3e109698275132ba63a3f007d83dd2c9d0a251fe403c46970fff35",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T15:26:59.530Z"
     }
   },
   "ai-builder-brain": {

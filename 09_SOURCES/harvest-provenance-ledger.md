@@ -9889,3 +9889,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-higurashi-ai-haru-4b` | `https://huggingface.co/higurashi-ai/Haru-4B` | `hf-higuras` | Multi-dimensional audit evidence | 2026-11-14T15:08:40.301Z |
 | `learn-dom-d-b30f5813` | `project://hf-higurashi-ai-haru-4b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md` | 2026-11-14T15:09:07.212Z |
 | `learn-dom-d-d4002b93` | `project://hf-bingsu-adetailer` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | 2026-11-14T15:09:36.922Z |
+| `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-11-14T15:25:36.808Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `e3ab04d5` | Multi-dimensional audit evidence | 2026-11-14T15:25:38.988Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `678070ab` | Multi-dimensional audit evidence | 2026-11-14T15:25:47.579Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `bf64ce35` | Multi-dimensional audit evidence | 2026-11-14T15:25:50.552Z |
+| `learn-dom-f-0c4992d6` | `project://biomejs-biome` | `e3ab04d5` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md` | 2026-11-14T15:26:22.304Z |
+| `learn-dom-l-817d65b4` | `project://apple-foundationdb` | `bf64ce35` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apple-foundationdb-learnings.md` | 2026-11-14T15:26:58.983Z |

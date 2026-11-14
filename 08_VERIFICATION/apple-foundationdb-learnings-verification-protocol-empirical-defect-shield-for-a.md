@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:33:29.376Z",
+  "timestamp": "2026-11-14T15:26:59.155Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-apple-foundationdb-learnings",
+  "learning_id": "LEARN-EVO-apple-foundationdb-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apple-foundationdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:33:29.376Z`  
-> **Learning ID**: `LEARN-REEXTRACT-apple-foundationdb-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T15:26:59.155Z`  
+> **Learning ID**: `LEARN-EVO-apple-foundationdb-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source**: github ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
-> **Source Version**: `5431e621`  
+> **Source Version**: `bf64ce35`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:10:34.168Z  
+> **Timestamp**: 2026-11-14T15:25:49.711Z  
 > **Learning ID**: `learn-github-apple-foundationdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:10:34.155Z  
+> **Harvest Timestamp**: 2026-11-14T15:25:49.706Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16855 stars
+- **Stars / Engagement**: 16860 stars
 
 ---
 
@@ -1982,224 +1982,408 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50f1c933` (2026-11-10)
-**Commit Message**: tests: fix flow test hangs in threadSafeQueue and onMainThreadFIFO (#14474)
+### Incident Patch 1: `b9f084af` (2026-11-13)
+**Commit Message**: Trace restore start/done and a ValidateBackup coverage summary, and time the phases of the tester's liveness ping (#14427)
 
-Each producer thread called `s.doneProducing.send(Void())` directly.
-Promises aren't thread-safe: `SAV::send()` sets the ready state and then
-walks the callback list with no synchronization. Meanwhile the main thread,
-having drained the queue, enters `waitForAll(doneProducing)` and registers
-a callback on that promise. If the main thread sees "not ready" and the
-producer sees "no callbacks" (at roughly the same time), the wakeup is lost
-and the test hangs.
+* Trace restore start/done and a ValidateBackup coverage summary
 
-In flow/Net2/ThreadSafeQueue/Threaded, the consumer loop already knows
-when every element has been popped, it doesn't need promises. It now
-just joins the producer threads, checks counts, and returns Void()
-instead of being a coroutine.
+Diagnosing slow or failed backup/restore Perf v2 runs required reading server-side
+events by hand: a run showed no marker of when the restore itself began and ended,
+and the client had no figure for how much live data a passing ValidateBackup audit
+covered (the key and byte totals exist only in the storage servers'
+SSAuditRestoreComplete events).
 
-In noSim/flow/Net2/onMainThreadFIFO, it does need to wait on
-doneProducing, so it needs to call Future.send() on the main thread
-(instead of each producer thread).
+RestoreBackup now traces RestoreBackupStart (tag, in-place or prefixed, range count,
+prefixes, snapshot size) and RestoreBackupDone (duration) around the restore call.
+ValidateBackup traces ValidateBackupSummary after a passing audit (range counts, the
+wait/restore/audit durations, snapshot size and an estimate of the live data size
+from the storage metrics) and reports the estimate as the PerfMetric
+"Validated live data estimate (MB)". The estimate is read only outside simulation
+(option reportRangeSize), so simulation behaviour is unchanged; a failed estimate is
+logged at SevWarn and does not fail the workload.
 
-**File**: `flow/Net2.cpp` (modified, +2/-12)
+Testing:
+- Syntax-compiled ValidateBac
+
+**File**: `fdbserver/tester/TesterServer.cpp` (modified, +70/-17)
 ```diff
-@@ -2406,12 +2406,10 @@ TEST_CASE("flow/Net2/ThreadSafeQueue/Threaded") {
- 	std::vector<QueueTestThreadState> perThread = { QueueTestThreadState(0, 1000000),
- 		                                            QueueTestThreadState(1, 100000),
- 		                                            QueueTestThreadState(2, 1000000) };
--	std::vector<Future<Void>> doneProducing;
+@@ -201,30 +201,71 @@ Future<Void> databaseWarmer(Database cx) {
  
- 	int total = 0;
- 	for (int t = 0; t < perThread.size(); ++t) {
- 		auto& s = perThread[t];
--		doneProducing.push_back(s.doneProducing.getFuture());
- 		total += s.toProduce;
- 		auto produce = [&queue, &s]() {
- 			printf("Thread%d\n", s.threadId);
-@@ -2424,7 +2422,6 @@ TEST_CASE("flow/Net2/ThreadSafeQueue/Threaded") {
- 				}
- 			}
- 			printf("T%dDone\n", s.threadId);
--			s.doneProducing.send(Void());
- 		};
- 		s.handle = startThreadF(produce);
- 	}
-@@ -2443,18 +2440,11 @@ TEST_CASE("flow/Net2/ThreadSafeQueue/Threaded") {
- 			queue.canSleep();
- 	}
+ namespace {
  
--	co_await waitForAll(doneProducing);
+-// Tries indefinitely to commit a simple, self conflicting transaction
+-Future<Void> pingDatabase(Database cx) {
++// Progress of one liveness ping. Owned by the caller so that it can still be read after the ping's timeout cancels it.
++struct PingState {
++	int attempts = 0;
++	const char* phase = "grv";
++	double attemptStart = 0;
++	// Durations of the phases of the latest attempt.
++	double grvSeconds = 0;
++	double readSeconds = 0;
++	double commitSeconds = 0;
++	Key key;
++};
++
++// The storage servers the client's location cache holds for `key`; empty until the key's location has been looked up.
++// It does no I/O, so it answers even while the cluster is not.
++std::string cachedStorageAddresses(Database cx, KeyRef key) {
++	std::string list;
++	Optional<KeyRangeLocationInfo> location = cx->getCachedLocation(key);
++	if (location.present()) {
++		for (int i = 0; i < location.get().locations->size(); ++i) {
++			list += (i ? "," : "") + location.get().locations->getInterface(i).address().toString();
++		}
++	}
++	return list;
++}
++
++// Tries indefinitely to commit a simple, self conflicting transaction. The phases are timed separately, and a ping
++// error also traces which storage servers hold its key, so a failed ping shows where it stalled.
++Future<Void> pingDatabase(Database cx, PingState* state) {
+ 	Transaction tr(cx);
+ 	while (true) {
+-		bool needsErrorHandling = false;
+ 		Error caughtError;
++		state->phase = "grv";
++		state->key = Key(StringRef("/Liveness/" + deterministicRandom()->randomUniqueID().toString()));
++		state->attemptStart = now();
++		state->grvSeconds = state->readSeconds = state->commitSeconds = 0;
++		++state->attempts;
+ 
+ 		try {
+ 			tr.setOption(FDBTransactionOptions::PRIORITY_SYSTEM_IMMEDIATE);
+ 			tr.setOption(FDBTransactionOptions::LOCK_AWARE);
+-			Optional<Value> v =
+-			    co_await tr.get(StringRef("/Liveness/" + deterministicRandom()->randomUniqueID().toString()));
++			co_await tr.getReadVersion();
++			double afterGrv = now();
++			state->grvSeconds = afterGrv - state->attemptStart;
++			state->phase = "read";
++			Optional<Value> v = co_await tr.get(state->key);
++			double afterRead = now();
++			state->readSeconds = afterRead - afterGrv;
++			state->phase = "commit";
+ 			tr.makeSelfConflicting();
+ 			co_await tr.commit();
++			state->commitSeconds = now() - afterRead;
+ 			co_return;
+ 		} catch (Error& e) {
+-			TraceEvent("PingingDatabaseTransactionError").error(e);
++			TraceEvent("PingingDatabaseTransactionError")
++			    .error(e)
++			    .detail("Phase", state->phase)
++			    .detail("Key", state->key)
++			    .detail("Attempt", state->attempts)
++			    .detail("AttemptSeconds", now() - state->attemptStart)
++			    .detail("StorageAddresses", cachedStorageAddresses(cx, state->key));
+ 			caughtError = e;
+-			needsErrorHandling = true;
+-		}
 -
--	// Make sure we continue on the main thread.
--	Promise<Void> signal;
--	Future<Void> doneConsuming = signal.getFuture();
--	g_network->onMainThread(std::move(signal), TaskPriority::DefaultOnMainThread);
--	co_await doneConsuming;
--
- 	for (int t = 0; t < perThread.size(); ++t) {
- 		waitThread(perThread[t].handle);
- 		perThread[t].checkDone();
+-		if (needsErrorHandling) {
+-			co_await tr.onError(caughtError);
+ 		}
++		// A stall in the back-off is not a stall of the phase that failed.
++		state->phase = "retry";
++		co_await tr.onError(caughtError);
  	}
-+	return Void();
  }
  
- TEST_CASE("noSim/flow/Net2/onMainThreadFIFO") {
-@@ -2478,7 +2468,7 @@ TEST_CASE("noSim/flow/Net2/onMainThreadFIFO") {
- 				int v = s.nextProduced();
- 				onMainThreadVoid([&s, v]() { ASSERT_EQ(v, s.nextConsumed()); });
+@@ -233,22 +274,34 @@ Future<Void> pingDatabase(Database cx) {
+ Future<Void> testDatabaseLiveness(Database cx, double databasePingDelay, std::string context, double startDelay) {
+ 	co_await delay(startDelay);
+ 	while (true) {
+-		Error caughtError;
++		PingState ping;
+ 
+ 		try {
+ 			double start = now();
+ 			auto traceMsg = "PingingDatabaseLiveness_" + context;
+ 			TraceEvent(traceMsg.c_str()).log();
+-			co_await timeoutError(pingDatabase(cx), databasePingDelay);
++			co_await timeoutError(pingDatabase(cx, &ping), databasePingDelay);
+ 			double pingTime = now() - start;
+ 			ASSERT(pingTime > 0);
+-			TraceEvent(("PingingDatabaseLivenessDone_" + context).c_str()).detail("TimeTaken", pingTime);
++			TraceEvent(("PingingDatabaseLivenessDone_" + context).c_str())
++			    .detail("TimeTaken", pingTime)
++			    .detail("Attempts", ping.attempts)
++			    .detail("GrvSeconds", ping.grvSeconds)
++			    .detail("ReadSeconds", ping.readSeconds)
++			    .detail("CommitSeconds", ping.commitSeconds);
+ 			co_await delay(databasePingDelay - pingTime);
+ 		} catch (Error& e) {
+ 			if (e.code() != error_code_actor_cancelled) {
+-				TraceEvent(SevError, ("PingingDatabaseLivenessError_" + context).c_str())
+-				    .error(e)
+-				    .detail("PingDelay", databasePingDelay);
++				// The event keeps the pointer to its type name until it is logged, past the end of this statement.
++				std::string errorType = "PingingDatabaseLivenessError_" + context;
++				TraceEvent event(SevError, errorType.c_str());
++				event.error(e).detail("PingDelay", databasePingDelay);
++				if (ping.attempts > 0) {
++					event.detail("Phase", ping.phase)
++					    .detail("Attempts", ping.attempts)
++					    .detail("AttemptSeconds", now() - ping.attemptStart)
++					    .detail("StorageAddresses", cachedStorageAddresses(cx, ping.key));
++				}
  			}
--			s.doneProducing.send(Void());
-+			onMainThreadVoid([&s]() { s.doneProducing.send(Void()); });
- 		});
+ 			throw;
+ 		}
+```
+
+**File**: `fdbserver/workloads/RestoreBackup.cpp` (modified, +8/-0)
+```diff
+@@ -209,6 +209,13 @@ struct RestoreBackupWorkload : TestWorkload {
+ 		}
+ 
+ 		LockDB lockDB(inPlace);
++		TraceEvent("RestoreBackupStart")
++		    .detail("Tag", tag)
++		    .detail("InPlace", inPlace)
++		    .detail("RangeCount", ranges.size())
++		    .detail("AddPrefix", addPrefix)
++		    .detail("RemovePrefix", removePrefix)
++		    .detail("SnapshotMB", snapshotMB.orDefault(-1));
+ 		double restoreStart = now();
+ 		BackupSteps::RestoreSpec spec;
+ 		spec.tag = tag;
+@@ -220,6 +227,7 @@ struct RestoreBackupWorkload : TestWorkload {
+ 		spec.encryptionKeyFileName = encryptionKeyFileName;
+ 		co_await BackupSteps::restoreBackup(cx, &backupAgent, version, spec);
+ 		restoreDuration = now() - restoreStart;
++		TraceEvent("RestoreBackupDone").detail("Tag", tag).detail("DurationSeconds", restoreDuration.get());
  	}
- 	co_await waitForAll(doneProducing);
+ 
+ 	Future<Void> setup(Database const& cx) override { return Void(); }
+```
+
+**File**: `fdbserver/workloads/ValidateBackup.cpp` (modified, +40/-0)
+```diff
+@@ -60,6 +60,10 @@ struct ValidateBackupWorkload : TestWorkload {
+ 	ValidationTimings timings;
+ 	Optional<double> snapshotMB;
+ 	Optional<int> validatedRangeCount;
++	// The estimate reads storage metrics from the storage servers, so it is skipped in simulation by default.
++	bool reportRangeSize;
++	int64_t liveRangeBytes = 0;
++	bool liveRangeBytesKnown = false;
+ 	int auditedRangeCount = 0;
+ 	bool passed = false;
+ 
+@@ -73,6 +77,22 @@ struct ValidateBackupWorkload : TestWorkload {
+ 		validateRanges = BackupRangeSpec::readOptionalRanges(options, "validateRanges"_sr, "validateRangePrefix"_sr);
+ 		clearValidationData = getOption(options, "clearValidationData"_sr, true);
+ 		settleSeconds = getOption(options, "settleSeconds"_sr, 0.0);
++		reportRangeSize = getOption(options, "reportRangeSize"_sr, !g_network->isSimulated());
++	}
++
++	// The client gets no key or byte totals from a ValidateRestore audit. This adds the size of the live range, which
++	// the audit covered, to a total that bounds what was validated; it is not the audit's own count.
++	Future<Void> addLiveRangeEstimate(Database cx, KeyRange range) {
++		try {
++			StorageMetrics metrics = co_await cx->getStorageMetrics(range, -1);
++			liveRangeBytes += metrics.bytes;
++			liveRangeBytesKnown = true;
++		} catch (Error& e) {
++			if (e.code() == error_code_actor_cancelled) {
++				throw;
++			}
++			TraceEvent(SevWarn, "ValidateBackupRangeSizeFailed").error(e).detail("Range", range);
++		}
+ 	}
+ 
+ 	// Waits until data distribution has no queued or in-flight work and the storage queues are small, or
+@@ -195,12 +215,29 @@ struct ValidateBackupWorkload : TestWorkload {
+ 			    .detail("Range", audit.range)
+ 			    .detail("Phase", static_cast<int>(audit.getPhase()));
+ 		}
++		if (reportRangeSize) {
++			std::vector<Future<Void>> estimates;
++			estimates.reserve(audits.size());
++			for (const auto& audit : audits) {
++				estimates.push_back(addLiveRangeEstimate(cx, audit.range));
++			}
++			co_await waitForAll(estimates);
++		}
+ 		if (!anyData) {
+ 			TraceEvent(SevWarnAlways, "ValidateBackupNothingAudited")
+ 			    .detail("Tag", tag)
+ 			    .detail("Audits", audits.size());
+ 			throw audit_storage_failed();
+ 		}
++		TraceEvent("ValidateBackupSummary")
++		    .detail("Tag", tag)
++		    .detail("ValidatedRanges", validatedRangeCount.orDefault(0))
++		    .detail("AuditedRanges", auditedRangeCount)
++		    .detail("WaitForRestorableSeconds", waitForRestorableSeconds.orDefault(-1))
++		    .detail("RestoreSeconds", timings.restoreSeconds)
++		    .detail("AuditSeconds", timings.auditSeconds)
++		    .detail("SnapshotMB", snapshotMB.orDefault(-1))
++		    .detail("LiveRangeEstimatedMB", liveRangeBytesKnown ? liveRangeBytes / 1e6 : -1.0);
+ 
+ 		if (clearValidationData && settleSeconds > 0) {
+ 			co_await waitToSettle(cx);
+@@ -230,6 +267,9 @@ struct ValidateBackupWorkload : TestWorkload {
+ 		if (snapshotMB.present()) {
+ 			m.emplace_back("Validated snapshot size (MB)", snapshotMB.get(), Averaged::False);
+ 		}
++		if (liveRangeBytesKnown) {
++			m.emplace_back("Validated live data estimate (MB)", liveRangeBytes / 1e6, Averaged::False);
++		}
+ 		m.emplace_back("Validation passed", passed ? 1 : 0, Averaged::False);
+ 	}
+ };
 ```
 
 ---
 
-### Incident Patch 2: `5ca27474` (2026-11-11)
-**Commit Message**: bindings/ruby: fix tuple float comparison on Ruby 3.3 and later (#14507)
+### Incident Patch 2: `4b4b6256` (2026-11-13)
+**Commit Message**: flow/Net2: don't count TLS handshake timeouts and disconnects toward throttling (#14424)
 
-FDB::Tuple._compare_floats packed its arguments with the format
-strings ">g" and ">G". ">" is only a modifier for the integer
-directives; in front of "g"/"G" it is an unknown directive. Older
-Rubies ignored it (with a warning under -w), but since Ruby 3.3
-Array#pack raises ArgumentError for unknown directives. As a result
-FDB::Tuple.compare raised for any pair of tuples that reached a float
-or double comparison, and so did FDB::Tuple::SingleFloat#<=>.
-
-"g" and "G" are already big-endian, so drop the ">". The packed bytes
-are the same as before on Rubies that ignored it.
-
-Add a TUPLE_SORT of tuples containing floats and doubles to the
-scripted binding test, which until now did not sort tuples at all.
-
-Signed-off-by: Dezhen Lu <[REDACTED_EMAIL]>
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `bindings/bindingtester/tests/scripted.py` (modified, +17/-0)
+**File**: `flow/Knobs.cpp` (modified, +1/-0)
 ```diff
-@@ -331,6 +331,23 @@ def generate(self, args, thread_number):
-         self.add_result(main_thread, args, rng.stop)
-         self.add_result(main_thread, args, rng.start)
- 
-+        main_thread.append("EMPTY_STACK")
-+        float_tups = [
-+            (2.5,),
-+            (fdb.tuple.SingleFloat(1.5), b"foo"),
-+            (-1.0, "bar"),
-+            (fdb.tuple.SingleFloat(-3.0),),
-+            ((0.0, -0.0),),
-+            ((-0.0, 0.0),),
-+        ]
-+        for float_tup in float_tups:
-+            main_thread.push_args(*test_util.with_length(float_tup))
-+            main_thread.append("TUPLE_PACK")
-+        main_thread.push_args(len(float_tups))
-+        main_thread.append("TUPLE_SORT")
-+        for packed in sorted(map(fdb.tuple.pack, float_tups), reverse=True):
-+            self.add_result(main_thread, args, packed)
-+
-         stampKey = b"stampedXXXXXXXXXXsuffix"
-         stampKeyIndex = stampKey.find(b"XXXXXXXXXX")
-         main_thread.push_args(
+@@ -149,6 +149,7 @@ void FlowKnobs::initialize(Randomize randomize, IsSimulated isSimulated) {
+ 	init( TLS_CLIENT_CONNECTION_THROTTLE_TIMEOUT,             11.0 );
+ 	init( TLS_SERVER_CONNECTION_THROTTLE_ATTEMPTS,               1 );
+ 	init( TLS_CLIENT_CONNECTION_THROTTLE_ATTEMPTS,               1 );
++	init( TLS_THROTTLE_IGNORE_TIMEOUTS_AND_DISCONNECTS,      false );
+ 	init( TLS_CLIENT_HANDSHAKE_THREADS,                          0 );
+ 	init( TLS_SERVER_HANDSHAKE_THREADS,                         64 );
+ 	init( TLS_HANDSHAKE_THREAD_STACKSIZE,                64 * 1024 );
 ```
 
-**File**: `bindings/ruby/lib/fdbtuple.rb` (modified, +2/-2)
+**File**: `flow/Net2.cpp` (modified, +64/-18)
 ```diff
-@@ -308,8 +308,8 @@ def self._compare_floats(f1, f2, is_double)
-       #   2) -0.0 == 0.0 in Ruby but not in our representation
-       # It would be better to just take the floats and compare them, but
-       # this way handles the edge cases correctly.
--      b1 = float_adjust([f1].pack(is_double ? ">G" : ">g"), 0, (is_double ? 8 : 4), true)
--      b2 = float_adjust([f2].pack(is_double ? ">G" : ">g"), 0, (is_double ? 8 : 4), true)
-+      b1 = float_adjust([f1].pack(is_double ? "G" : "g"), 0, (is_double ? 8 : 4), true)
-+      b2 = float_adjust([f2].pack(is_double ? "G" : "g"), 0, (is_double ? 8 : 4), true)
-       b1 <=> b2
-     end
+@@ -381,6 +381,7 @@ class BindPromise {
+ 	std::variant<const char*, AuditedEvent> errContext;
+ 	UID errID;
+ 	NetworkAddress peerAddr;
++	boost::system::error_code* errorOut = nullptr;
  
+ public:
+ 	BindPromise(const char* errContext, UID errID, NetworkAddress peerAddr)
+@@ -389,15 +390,21 @@ class BindPromise {
+ 	  : errContext(auditedEvent), errID(errID), peerAddr(peerAddr) {}
+ 	BindPromise(BindPromise const& r) = default;
+ 	BindPromise(BindPromise&& r) noexcept
+-	  : p(std::move(r.p)), errContext(r.errContext), errID(r.errID), peerAddr(r.peerAddr) {}
++	  : p(std::move(r.p)), errContext(r.errContext), errID(r.errID), peerAddr(r.peerAddr), errorOut(r.errorOut) {}
+ 
+ 	Future<Void> getFuture() const { return p.getFuture(); }
+ 
+ 	NetworkAddress getPeerAddr() const { return peerAddr; }
+ 
++	// `*out` receives the error, if any, before the future is set. `out` must outlive the operation.
++	void setErrorOut(boost::system::error_code* out) { errorOut = out; }
++
+ 	void operator()(const boost::system::error_code& error, size_t bytesWritten = 0) {
+ 		try {
+ 			if (error) {
++				if (errorOut) {
++					*errorOut = error;
++				}
+ 				// Log the error...
+ 				{
+ 					std::optional<TraceEvent> traceEvent;
+@@ -861,13 +868,18 @@ struct SSLHandshakerThread final : IThreadPoolReceiver {
+ 		ssl_socket::handshake_type type;
+ 		boost::system::error_code err;
+ 		NetworkAddress peerAddr;
++		// If set, receives `err` before `done` is set. Owned by the connection, which outlives the handshake.
++		boost::system::error_code* errorOut = nullptr;
+ 	};
+ 
+ 	void action(Handshake& h) {
+ 		try {
+ 			if (h.socket.next_layer().non_blocking(false, h.err).failed() ||
+ 			    h.socket.handshake(h.type, h.err).failed() ||
+ 			    h.socket.next_layer().non_blocking(true, h.err).failed()) {
++				if (h.errorOut) {
++					*h.errorOut = h.err;
++				}
+ 				TraceEvent(SevWarn,
+ 				           h.type == ssl_socket::handshake_type::client ? "N2_ConnectHandshakeError"_audit
+ 				                                                        : "N2_AcceptHandshakeError"_audit)
+@@ -894,6 +906,16 @@ struct SSLHandshakerThread final : IThreadPoolReceiver {
+ 	}
+ };
+ 
++// Whether `error` is how a TLS handshake ends when overload on either end makes it time out or the peer give up: a
++// handshake worker's deadline (timed_out), a worker job cancelled by closeSocket() (operation_aborted), or the
++// connection closing.
++static bool isTimeoutOrDisconnect(const boost::system::error_code& error) {
++	return error == boost::asio::error::timed_out || error == boost::asio::error::operation_aborted ||
++	       error == boost::asio::error::eof || error == boost::asio::ssl::error::stream_truncated ||
++	       error == boost::asio::error::connection_reset || error == boost::asio::error::connection_aborted ||
++	       error == boost::asio::error::broken_pipe;
++}
++
+ class SSLConnection final : public IConnection, ReferenceCounted<SSLConnection> {
+ public:
+ 	void addref() override { ReferenceCounted<SSLConnection>::addref(); }
+@@ -995,6 +1017,7 @@ class SSLConnection final : public IConnection, ReferenceCounted<SSLConnection>
+ 				auto handshake =
+ 				    new SSLHandshakerThread::Handshake(self->ssl_sock, boost::asio::ssl::stream_base::server);
+ 				handshake->setPeerAddr(self->getPeerAddress());
++				handshake->errorOut = &self->handshakeError;
+ 				onHandshook = handshake->done.getFuture();
+ 				N2::g_net2->sslHandshakerPool->post(handshake);
+ 			} else {
+@@ -1003,6 +1026,7 @@ class SSLConnection final : public IConnection, ReferenceCounted<SSLConnection>
+ 				    SimpleCounter<int64_t>::makeCounter("/Net2/TLS/ServerTLSHandshakesOnMainThread");
+ 				countServerTLSHandshakesOnMainThread->increment(1);
+ 				BindPromise p("N2_AcceptHandshakeError"_audit, self->id, self->getPeerAddress());
++				p.setErrorOut(&self->handshakeError);
+ 				onHandshook = p.getFuture();
+ 				self->ssl_sock.async_handshake(boost::asio::ssl::stream_base::server, std::move(p));
+ 			}
+@@ -1048,6 +1072,7 @@ class SSLConnection final : public IConnection, ReferenceCounted<SSLConnection>
+ 
+ 		Promise<Void> connected;
+ 		doAcceptHandshake(Uncancellable(), self, connected);
++		bool timedOut = false;
+ 		try {
+ 			auto res = co_await timeout(connected.getFuture(), FLOW_KNOBS->CONNECTION_MONITOR_TIMEOUT);
+ 			if (res.present()) {
+@@ -1058,17 +1083,12 @@ class SSLConnection final : public IConnection, ReferenceCounted<SSLConnection>
+ 				static SimpleCounter<int64_t>* countServerTLSHandshakesTimedout =
+ 				    SimpleCounter<int64_t>::makeCounter("/Net2/TLS/ServerTLSHandshakesTimedout");
+ 				countServerTLSHandshakesTimedout->increment(1);
++				timedOut = true;
+ 				throw connection_failed();
+ 			}
+ 		} catch (Error& e) {
+ 			if (e.code() != error_code_actor_cancelled) {
+-				auto iter(g_network->networkInfo.serverTLSConnectionThrottler.find(peerIP));
+-				if (iter != g_network->networkInfo.serverTLSConnectionThrottler.end()) {
+-					iter->second.first++;
+-				} else {
+-					g_network->networkInfo.serverTLSConnectionThrottler[
 ```
 
----
-
-### Incident Patch 3: `26fc5eea` (2026-11-11)
-**Commit Message**: bindings/python: fix truth testing of an absent Value on Python 3 (#14508)
-
-FutureString defined __nonzero__, the Python 2 name of the truth
-hook. Python 3 never calls it, so bool() fell back to __len__,
-which is forwarded to bytes.__len__(self.value). For the Value of a
-key that is not present self.value is None, and code such as
-
-    if not tr[key]:
-
-raised "TypeError: descriptor '__len__' requires a 'bytes' object but
-received a 'NoneType'" instead of treating the value as false.
-
-Rename the method to __bool__. An absent value is now false; present
-values and keys keep the truth value they already had through __len__
-(false only when empty).
-
-Signed-off-by: Dezhen Lu <[REDACTED_EMAIL]>
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `bindings/python/fdb/impl.py` (modified, +1/-1)
+**File**: `flow/include/flow/Knobs.h` (modified, +3/-0)
 ```diff
-@@ -1082,7 +1082,7 @@ def __eq__(self, rhs):
-     def __ne__(self, rhs):
-         return not self == rhs
- 
--    def __nonzero__(self):
-+    def __bool__(self):
-         return bool(self.value)
- 
-     def __int__(self):
-```
-
-**File**: `bindings/python/tests/unit_tests.py` (modified, +19/-0)
-```diff
-@@ -210,6 +210,23 @@ def test_predicates():
-     assert not fdb.predicates.is_retryable(fdb.FDBError(10))
- 
- 
-+def test_value_truthiness(db):
-+    missing = b"\x02value-truthiness-missing"
-+    empty = b"\x02value-truthiness-empty"
-+    present = b"\x02value-truthiness-present"
-+
-+    # Nothing is committed; the reads below see the transaction's own writes.
-+    tr = db.create_transaction()
-+    del tr[missing]
-+    tr[empty] = b""
-+    tr[present] = b"x"
-+
-+    assert not tr[missing]
-+    assert not tr[empty]
-+    assert tr[present]
-+    assert tr.get_key(fdb.KeySelector.first_greater_or_equal(present))
-+
-+
- def test_get_client_status(db):
-     @fdb.transactional
-     def simple_txn(tr):
-@@ -263,6 +280,8 @@ def run_unit_tests(db):
-         test_locality(db)
-         log("test_predicates")
-         test_predicates()
-+        log("test_value_truthiness")
-+        test_value_truthiness(db)
-         log("test_size_limit_option")
-         test_size_limit_option(db)
-         log("test_get_approximate_size")
+@@ -225,6 +225,9 @@ class FlowKnobs : public KnobsImpl<FlowKnobs> {
+ 	double TLS_CLIENT_CONNECTION_THROTTLE_TIMEOUT;
+ 	int TLS_SERVER_CONNECTION_THROTTLE_ATTEMPTS;
+ 	int TLS_CLIENT_CONNECTION_THROTTLE_ATTEMPTS;
++	// If true, TLS handshakes that time out or whose connection closes do not count toward per-address TLS connection
++	// throttling.
++	bool TLS_THROTTLE_IGNORE_TIMEOUTS_AND_DISCONNECTS;
+ 	int TLS_CLIENT_HANDSHAKE_THREADS;
+ 	int TLS_SERVER_HANDSHAKE_THREADS;
+ 	int TLS_HANDSHAKE_THREAD_STACKSIZE;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14515** (2026-11-11): [release-7.4] Release notes 7.4.9 (@spraza)
-- **PR #14514** (2026-11-12): Open every backup's container in getLayerStatus() (@shreechaturvedi)
-- **PR #14513** (2026-11-11): [release-8.0] Send one clear per range-restore transaction instead of one per gap (@nos-a)
-- **PR #14512** (2026-11-11): Skip the range-restore clear when the span has no keys (@nos-a)
-- **PR #14510** (2026-11-11): release notes 7.3.80,81 (@ploxiln)
-- **PR #14509** (2026-11-11): [release-8.0] release notes 7.3.80,81 (@ploxiln)
+- **PR #14534** (2026-11-13): [release-8.0] Don't set off ASSERT(skip) in test deliveredToNotAssigned (@saintstack)
+- **PR #14532** (2026-11-13): [release-8.0] Let fdbrestore -v/--version take the restore version again (@saintstack)
+- **PR #14531** (2026-11-13): Use one size bound for bulkdump manifests in expire and restore (@kumarnitin15)
+- **PR #14528** (2026-11-12): Pass blob store endpoint settings in BlobStoreEndpointParams (@shreechaturvedi)
+- **PR #14525** (2026-11-12): [release-8.0] Skip the range-restore clear when the span has no keys (@nos-a)
+- **PR #14522** (2026-11-12): Backup per-URL aws_v4_header (v4) blobstore parameter (#14471) (@shreechaturvedi)
 
 ---
 
@@ -2219,43 +2403,76 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests: fix flow test hangs in threadSafeQueue and onMainThreadFIFO (#14474)
+## X. Trace restore start/done and a ValidateBackup coverage summary, and time the pha
 
 **RULE**:
-When implementing operations in `flow/Net2.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbserver/tester/TesterServer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50f1c933`: tests: fix flow test hangs in threadSafeQueue and onMainThreadFIFO (#14474). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b9f084af`: Trace restore start/done and a ValidateBackup coverage summary, and time the phases of the tester's liveness ping. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/Net2.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/tester/TesterServer.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	return Void();
-			onMainThreadVoid([&s]() { s.doneProducing.send(Void()); });
+// Progress of one liveness ping. Owned by the caller so that it can still be read after the ping's timeout cancels it.
+struct PingState {
+	int attempts = 0;
+	const char* phase = "grv";
+	double attemptStart = 0;
+	// Durations of the phases of the latest attempt.
+	double grvSeconds = 0;
+	double readSeconds = 0;
+	double commitSeconds = 0;
+	Key key;
+};
+
+// The storage servers the client's location cache holds for `key`; empty until the key's location has been looked up.
+// It does no I/O, so it answers even while the cluster is not.
+std::string cachedStorageAddresses(Database cx, KeyRef key) {
+	std::string list;
+	Optional<KeyRangeLocationInfo> location = cx->getCachedLocation(key);
+	if (location.present()) {
+		for (int i = 0; i < location.get().locations->size(); ++i) {
+			list += (i ? "," : "") + location.get().locations->getInterface(i).address().toString();
+		}
+	}
+	return list;
+}
+
+// Tries indefinitely to commit a simple, self conflicting transaction. The phases are timed separately, and a ping
+// error also traces which storage servers hold its key, so a failed ping shows where it stalled.
+Future<Void> pingDatabase(Database cx, PingState* state) {
+		state->phase = "grv";
+		state->
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-	std::vector<Future<Void>> doneProducing;
-		doneProducing.push_back(s.doneProducing.getFuture());
-			s.doneProducing.send(Void());
-	co_await waitForAll(doneProducing);
+// Induced defect failure mode:
+// Tries indefinitely to commit a simple, self conflicting transaction
+Future<Void> pingDatabase(Database cx) {
+		bool needsErrorHandling = false;
+			Optional<Value> v =
+			    co_await tr.get(StringRef("/Liveness/" + deterministicRandom()->randomUniqueID().toString()));
+			TraceEvent("PingingDatabaseTransactionError").error(e);
+			needsErrorHandling = true;
+		}
 
-	// Make sure we continue on the main thread.
-	Promise<Void> signal;
-	Future<Void> doneConsuming = signal.getFuture();
-	g_network->onMainThread(std::move(signal), TaskPriority::DefaultOnMainThread);
-	co_await doneConsuming;
-
-			s.doneProducing.send(Void());
+		if (needsErrorHandling) {
+			co_await tr.onError(caughtError);
+		Error caughtError;
+			co_await timeoutError(pingDatabase(cx), databasePingDelay);
+			TraceEvent(("PingingDatabaseLivenessDone_" + context).c_str()).detail("TimeTaken", pingTime);
+				TraceEvent(SevError, ("PingingDatabaseLivenessError_" + context).c_str())
+				    .error(e)
+				    .detail("PingDelay", databasePingDelay);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50f1c933` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b9f084af` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

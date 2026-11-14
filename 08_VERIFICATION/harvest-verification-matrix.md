@@ -9856,3 +9856,9 @@
 | `CYCLE-20261114-JDGP` | `2026-11-14T15:08:40.297Z` | `higurashi-ai/Haru-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md` | Yes (`acca6964...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T15:09:07.212Z` | `hf-higurashi-ai-haru-4b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B30F5813` [Domain D] | Yes (`f53d2e4e...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T15:09:36.922Z` | `hf-bingsu-adetailer` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D4002B93` [Domain D] | Yes (`dca972d2...`) |
+| `CYCLE-20261114-55T0` | `2026-11-14T15:25:36.804Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`e3a89517...`) |
+| `CYCLE-20261114-57HL` | `2026-11-14T15:25:38.985Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8496` | Yes (`e812066f...`) |
+| `CYCLE-20261114-5E48` | `2026-11-14T15:25:47.576Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8497` | Yes (`469afe90...`) |
+| `CYCLE-20261114-5GET` | `2026-11-14T15:25:50.549Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8498` | Yes (`31188ca8...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T15:26:22.304Z` | `biomejs-biome` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-0C4992D6` [Domain F] | Yes (`3aa4a166...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T15:26:58.983Z` | `apple-foundationdb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-817D65B4` [Domain L] | Yes (`6e2dabdf...`) |

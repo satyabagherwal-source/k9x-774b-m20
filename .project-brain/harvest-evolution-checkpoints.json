@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T15:09:37.716Z",
+  "last_updated": "2026-11-14T15:26:59.650Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T14:28:36.612Z",
@@ -203,7 +203,7 @@
       "staged_for_review": 1
     },
     "microsoft-agent-governance-toolkit-learnings.md": {
-      "processed_at": "2026-11-13T21:37:18.640Z",
+      "processed_at": "2026-11-14T15:26:23.194Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1423,9 +1423,9 @@
       "staged_for_review": 0
     },
     "biomejs-biome-learnings.md": {
-      "processed_at": "2026-11-13T01:58:00.199Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-14T15:26:22.304Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-comfy-org-z-image-turbo-learnings.md": {
       "processed_at": "2026-11-13T05:23:59.453Z",
@@ -1708,7 +1708,7 @@
       "staged_for_review": 0
     },
     "apple-foundationdb-learnings.md": {
-      "processed_at": "2026-11-13T09:38:28.866Z",
+      "processed_at": "2026-11-14T15:26:58.983Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -2628,7 +2628,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 849,
-  "total_canonical_promoted": 199,
-  "total_staged_for_review": 649
+  "total_dossiers_evaluated": 852,
+  "total_canonical_promoted": 201,
+  "total_staged_for_review": 650
 }
