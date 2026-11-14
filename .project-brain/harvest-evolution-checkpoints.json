@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T20:00:04.775Z",
+  "last_updated": "2026-11-14T20:09:45.610Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-14T19:33:51.514Z",
+      "processed_at": "2026-11-14T20:09:45.155Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-14T19:47:14.268Z",
+      "processed_at": "2026-11-14T20:09:44.588Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2736,9 +2736,14 @@
       "processed_at": "2026-11-14T20:00:03.524Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md": {
+      "processed_at": "2026-11-14T20:09:44.302Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 903,
+  "total_dossiers_evaluated": 906,
   "total_canonical_promoted": 218,
-  "total_staged_for_review": 684
+  "total_staged_for_review": 687
 }

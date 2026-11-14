@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T20:00:04.495Z",
+  "last_updated": "2026-11-14T20:09:45.319Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-HMCZ",
+      "id": "CD-AK62",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-HMCZ-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-AK62-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -10262,11 +10262,11 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-0ERW",
+      "id": "CD-AKIS",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0ERW-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-AKIS-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -13411,6 +13411,33 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1298A1-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-6FC390",
+      "directive_title": "Forensic Learning Record (Deep Inspection): nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6FC390-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-BD658D",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BD658D-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-D68053",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D68053-puppet-fix-postgresql-failing-to-start-o.md",
       "staged_date": "2026-11-14"
     }
   ]

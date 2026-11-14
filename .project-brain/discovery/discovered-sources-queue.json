@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T20:00:03.536Z",
+  "updated_at": "2026-11-14T20:09:44.316Z",
   "stats": {
-    "total_discovered": 3399,
-    "approved_pending_harvest": 3193,
+    "total_discovered": 3400,
+    "approved_pending_harvest": 3194,
     "harvested_count": 0,
     "rejected_count": 206,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3173,
+      "COMMUNITY_AND_EXPERT": 3174,
       "OFFICIAL_DOCUMENTATION": 123,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -73356,6 +73356,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
         "fileName": "hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md"
+      }
+    },
+    "SRC-029F4F6CD793": {
+      "id": "SRC-029F4F6CD793",
+      "url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "title": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T20:09:44.316Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
+        "fileName": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md"
       }
     }
   }

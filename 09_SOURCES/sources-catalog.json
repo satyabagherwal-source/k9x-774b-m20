@@ -11425,8 +11425,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
     "sourceVersion": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
     "license": "Open-Source",
-    "contentHash": "11cc36fba094f6717479a39f6da9f46c5b0d169a074b6ec0e0c3640179746797",
-    "lastHarvestedAt": "2026-11-09T08:51:39.821Z",
+    "contentHash": "7a965ea26efbdc3160c463b2d3317f982c090e5943ae3c990206a34256b489de",
+    "lastHarvestedAt": "2026-11-14T20:09:32.648Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b"
   },
   "hf-liquidai-lfm3-omni-2b": {

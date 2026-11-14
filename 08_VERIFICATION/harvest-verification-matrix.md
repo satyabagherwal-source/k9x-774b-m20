@@ -9927,3 +9927,4 @@
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T19:47:13.000Z` | `hf-qwen-qwen3-4b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B7601B75` [Domain D] | Yes (`508a66fe...`) |
 | `CYCLE-20261114-XCB0` | `2026-11-14T19:59:28.140Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`9bd3f605...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T20:00:03.524Z` | `hf-conwayresearch-underdog-saluki-27b-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E0561FD8` [Domain D] | Yes (`efac8eac...`) |
+| `CYCLE-20261114-AAQS` | `2026-11-14T20:09:32.644Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md` | Yes (`7a965ea2...`) |

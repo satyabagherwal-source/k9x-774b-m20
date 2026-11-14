@@ -9960,3 +9960,4 @@ Every entry in this ledger must capture:
 | `learn-dom-d-b7601b75` | `project://hf-qwen-qwen3-4b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | 2026-11-14T19:47:13.000Z |
 | `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-14T19:59:28.144Z |
 | `learn-dom-d-e0561fd8` | `project://hf-conwayresearch-underdog-saluki-27b-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | 2026-11-14T20:00:03.524Z |
+| `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-14T20:09:32.648Z |

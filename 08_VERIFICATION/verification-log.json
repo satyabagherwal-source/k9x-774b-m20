@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-ESV1",
-    "timestamp": "2026-11-09T13:46:46.813Z",
-    "repository": "embassy-rs/embassy",
-    "learningId": "learn-github-embassy-rs-embassy",
-    "contentHash": "42f115cb8dfdcdf06d7d0157487fd107e924555c0abdf16f79dcd7da21d37641",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-EWQS",
     "timestamp": "2026-11-09T13:46:51.844Z",
     "repository": "callstack/react-native-paper",
@@ -7490,6 +7475,21 @@
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
     "contentHash": "9bd3f60541df41266bdee248d3901528b4da6dccc94af2be2994b80bea1c5bc8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-AAQS",
+    "timestamp": "2026-11-14T20:09:32.644Z",
+    "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+    "contentHash": "7a965ea26efbdc3160c463b2d3317f982c090e5943ae3c990206a34256b489de",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

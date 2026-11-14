@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T19:59:28.148Z",
-  "total_cycles_completed": 9587,
-  "total_learnings_persisted": 9587,
+  "last_updated": "2026-11-14T20:09:32.652Z",
+  "total_cycles_completed": 9588,
+  "total_learnings_persisted": 9588,
   "total_rules_promoted": 9251,
   "history": [
-    {
-      "timestamp": "2026-11-13T21:45:08.626Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T21:45:12.715Z",
       "repository": "callstack/react-native-paper",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-14T19:59:28.148Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
       "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T20:09:32.652Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

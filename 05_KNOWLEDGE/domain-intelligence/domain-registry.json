@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T20:00:04.593Z",
-  "total_records": 819,
+  "last_updated": "2026-11-14T20:09:45.417Z",
+  "total_records": 821,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 402,
+      "total": 404,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -439,7 +439,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-saluki-27b-1-0-core-inva",
         "DOM-D-E0561FD8",
-        "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-saluki-27b-1-0-learni"
+        "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-saluki-27b-1-0-learni",
+        "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b"
       ]
     },
     "E": {
@@ -6634,8 +6636,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "0596877e0d9c777f8a7e75c2fd6c5af0f0413eec33a81bc138635e9648d74a81",
-      "created_at": "2026-11-14T19:33:51.798Z"
+      "content_hash": "f7fc3f7c9f50a751f120134e8cd9116b4f73f37850fc050f4965152bb8a9efcd",
+      "created_at": "2026-11-14T20:09:45.417Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -7552,8 +7554,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "0f94f697aeb25639487ec21f4472e360710a099e64abf85fcccadeb5861d710f",
-      "created_at": "2026-11-14T19:47:14.839Z"
+      "content_hash": "388d2eb8432501dcedaa1eb8718889545960fc8aa359198aba8a2f0c34de226f",
+      "created_at": "2026-11-14T20:09:44.956Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -16471,6 +16473,24 @@
       "repository": "zleap-ai-sag-learnings",
       "content_hash": "29fb53ef99f28c4d397dcbbe343752de8b89317f8bcf297db35a02d64920f34f",
       "created_at": "2026-11-14T20:00:04.197Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-research-knowledge-intelligence.md",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "content_hash": "bbb70162b876801580175b74d8f31079ddecdf66854c801f15ba4e7a1a55a343",
+      "created_at": "2026-11-14T20:09:32.807Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-learnings-research-knowledge-in.md",
+      "repository": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings",
+      "content_hash": "1b3e6ba15ffcf40a68a823d00adb798b0709516baab131ac161b342cb5f0e207",
+      "created_at": "2026-11-14T20:09:44.477Z"
     }
   }
 }

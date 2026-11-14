@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T20:00:04.689Z",
-  "total_verified_learnings": 8598,
+  "last_updated": "2026-11-14T20:09:45.517Z",
+  "total_verified_learnings": 8599,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17765,
+  "total_items": 17768,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0596877e0d9c777f8a7e75c2fd6c5af0f0413eec33a81bc138635e9648d74a81",
+      "content_hash": "f7fc3f7c9f50a751f120134e8cd9116b4f73f37850fc050f4965152bb8a9efcd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T19:33:51.798Z"
+      "persisted_at": "2026-11-14T20:09:45.417Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d8d9e1d6bd7e764b109e3983e9816336c1b4e171c11fec7c17d1b1f402361fe",
+      "content_hash": "4a09ff80c0dab3aa1c512e9229c042a98548d00d744e5db927facbdaeebf7772",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:33:51.903Z"
+      "persisted_at": "2026-11-14T20:09:45.517Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HMCZ-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-AK62-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a7b18dc31237de2d15bd4a0612fa46fd10beced336581da2d86763158fef496",
+      "content_hash": "f8b71783adfbcaee69eaee8ea028f49517d7a9043e540622665a28d271b59471",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T19:47:14.687Z"
+      "persisted_at": "2026-11-14T20:09:44.860Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f94f697aeb25639487ec21f4472e360710a099e64abf85fcccadeb5861d710f",
+      "content_hash": "388d2eb8432501dcedaa1eb8718889545960fc8aa359198aba8a2f0c34de226f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T19:47:14.839Z"
+      "persisted_at": "2026-11-14T20:09:44.956Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "baa08f1a0d5d74cbc7739e56877a126b43f5b087eb5f06241f4fccde5aebf4c8",
+      "content_hash": "d3a8b4936afbbdee1469941c2105df52b3e6050356db48fb552e531bb8c47e4e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T19:47:14.998Z"
+      "persisted_at": "2026-11-14T20:09:45.058Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214751,13 +214751,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0ERW-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-AKIS-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "74e3121cd64a9755535f5dc3cb9bde0d22b6083e35f55e1f08d43e7f5fe081cf",
+      "content_hash": "b6a414fbb6e7b78f250b9fb5594cd209e438b485ad988972367d2d5c0a455de3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T19:33:51.696Z"
+      "persisted_at": "2026-11-14T20:09:45.319Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -233637,6 +233637,57 @@
       "content_hash": "29fb53ef99f28c4d397dcbbe343752de8b89317f8bcf297db35a02d64920f34f",
       "domain_letter": "H",
       "persisted_at": "2026-11-14T20:00:04.197Z"
+    },
+    "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
+      "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "slug": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
+      "content_hash": "7a965ea26efbdc3160c463b2d3317f982c090e5943ae3c990206a34256b489de",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T20:09:32.488Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-research-knowledge-intelligence.md",
+      "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B Core Invariants",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "source_version": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b",
+      "content_hash": "bbb70162b876801580175b74d8f31079ddecdf66854c801f15ba4e7a1a55a343",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T20:09:32.807Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-learnings-research-knowledge-in.md",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings Core Invariants",
+      "repository": "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1b3e6ba15ffcf40a68a823d00adb798b0709516baab131ac161b342cb5f0e207",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T20:09:44.477Z"
     }
   },
   "ai-builder-brain": {
