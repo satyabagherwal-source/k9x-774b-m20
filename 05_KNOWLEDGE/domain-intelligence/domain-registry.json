@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T14:28:36.984Z",
-  "total_records": 693,
+  "last_updated": "2026-11-14T14:40:20.435Z",
+  "total_records": 696,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 344,
+      "total": 345,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -381,7 +381,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-base-en-v1-5-learnings-core-invarian",
         "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants",
         "DOM-D-C603EFBB",
-        "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian"
+        "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp"
       ]
     },
     "E": {
@@ -413,7 +414,7 @@
       ]
     },
     "G": {
-      "total": 102,
+      "total": 104,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -516,7 +517,9 @@
         "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-core-invariants",
         "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
         "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
+        "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7426,8 +7429,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "f740d8f1224ecbb8e711916714e17cb3d8638625b1e141d4add9a16c197ecf45",
-      "created_at": "2026-11-14T13:57:44.844Z"
+      "content_hash": "0cb967dc41832f14ad952da8734d2be912472002fea33442867c464ff2af2691",
+      "created_at": "2026-11-14T14:40:20.435Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9097,11 +9100,11 @@
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
       "domain_letter": "D",
-      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings-researc.md",
-      "repository": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings",
-      "content_hash": "b0dbe8c2cabe53a7f0e099e0ec2431cf45d45eb62f21acab52c65a49ffc949bf",
-      "created_at": "2026-11-13T20:47:20.085Z"
+      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings-researc.md",
+      "repository": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings",
+      "content_hash": "cb40320332c7cafed7b7e205419ebf3f027624da76e50523795dbe02093d9373",
+      "created_at": "2026-11-14T14:40:20.033Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
@@ -14518,6 +14521,33 @@
       "repository": "nucleoidai-nucleoid-learnings",
       "content_hash": "a51da87066b934f888e48f481f7f2e8543f4bd7fe959e2a5897bb47b619b189b",
       "created_at": "2026-11-14T14:28:36.344Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sentence-transformers/paraphrase-multilingual-mpnet-base-v2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-research-knowledg.md",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "content_hash": "a7cc452943e6469e8a210eff48aae5e75db0dfa45ab388cf1c88a91ba771cf22",
+      "created_at": "2026-11-14T14:40:07.814Z"
+    },
+    "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "repository": "codewhale-hq/Codewhale",
+      "content_hash": "65d405f3e508f804e6525bde750d63907c563a4c16547ab0dab7b2e6e103883e",
+      "created_at": "2026-11-14T14:40:09.919Z"
+    },
+    "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-learnings-architecture-intelligence-codewhale-hq-codewhal.md",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "content_hash": "a95f5c45eb2f28a64a7f875c655b805d80511c728dcf86acc54bda692a34c4ab",
+      "created_at": "2026-11-14T14:40:19.641Z"
     }
   }
 }

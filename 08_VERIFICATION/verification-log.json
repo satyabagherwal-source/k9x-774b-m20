@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-AOIB",
-    "timestamp": "2026-11-13T13:50:15.443Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "a33b62bf3f2f16019a8485fda271d6a633e9c6d5c89b4dfb701795c796c586a2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-AQZN",
-    "timestamp": "2026-11-13T13:50:18.659Z",
-    "repository": "tuist/tuist",
-    "learningId": "learn-github-tuist-tuist",
-    "contentHash": "a6963985aee561a30fd1550efe7e8a9e511dc088f889b90a5fc16f9e20a65947",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-B3DA",
     "timestamp": "2026-11-13T13:50:34.702Z",
     "repository": "sweetpad-dev/sweetpad",
@@ -7492,6 +7462,36 @@
     "contentHash": "7b6765bc8c88f83811e97b8f40f558299329d2bb3075c1f4e90d605bb6ed9228",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-INZD",
+    "timestamp": "2026-11-14T14:40:07.657Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "contentHash": "bce3a10f6dfa7cb5a9e43b3ae4f30034f712b97d477f9b632b2691be2b4afc93",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-IPJ4",
+    "timestamp": "2026-11-14T14:40:09.664Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "28bb300a30cac6c3b971f459488cc7c369060c7111c7b2305950edb01fe5c8d7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

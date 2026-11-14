@@ -9880,3 +9880,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-14T14:23:04.319Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `4cba3006` | Multi-dimensional audit evidence | 2026-11-14T14:27:57.953Z |
 | `learn-dom-d-c603efbb` | `project://hf-google-gemma-4-31b-it` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | 2026-11-14T14:28:35.461Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-14T14:40:07.661Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `0f339089` | Multi-dimensional audit evidence | 2026-11-14T14:40:09.667Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T14:27:57.973Z",
+  "last_updated": "2026-11-14T14:40:09.675Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1670,14 +1670,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "33a00d2fe0717ab6d6ab32150e26b96dbadeba62bd2c402bff3718003f73e6e2",
-      "verified_at": "2026-11-09T04:27:27.898Z",
+      "content_hash": "bce3a10f6dfa7cb5a9e43b3ae4f30034f712b97d477f9b632b2691be2b4afc93",
+      "verified_at": "2026-11-14T14:40:07.668Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:27:27.898Z"
+      "last_updated": "2026-11-14T14:40:07.668Z"
     },
     "Bingsu/adetailer": {
       "repository": "Bingsu/adetailer",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "0427a1dc11b01f790dccafcc687da63eb58a97420f550cd0cf6ac419c0347a83",
-      "verified_at": "2026-11-13T07:47:17.099Z",
+      "content_hash": "28bb300a30cac6c3b971f459488cc7c369060c7111c7b2305950edb01fe5c8d7",
+      "verified_at": "2026-11-14T14:40:09.674Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T07:47:17.099Z"
+      "last_updated": "2026-11-14T14:40:09.674Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",

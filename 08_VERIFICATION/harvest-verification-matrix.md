@@ -9847,3 +9847,5 @@
 | `CYCLE-20261114-WQD6` | `2026-11-14T14:23:04.314Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`6ecfb0d4...`) |
 | `CYCLE-20261114-30XO` | `2026-11-14T14:27:57.948Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`7b6765bc...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T14:28:35.461Z` | `hf-google-gemma-4-31b-it` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C603EFBB` [Domain D] | Yes (`b654d163...`) |
+| `CYCLE-20261114-INZD` | `2026-11-14T14:40:07.657Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`bce3a10f...`) |
+| `CYCLE-20261114-IPJ4` | `2026-11-14T14:40:09.664Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8492` | Yes (`28bb300a...`) |
