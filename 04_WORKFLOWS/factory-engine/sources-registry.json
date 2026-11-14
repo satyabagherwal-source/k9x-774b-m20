@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T09:18:04.069Z",
-    "lastVerified": "2026-11-14T09:18:04.069Z",
+    "lastChecked": "2026-11-14T09:52:59.465Z",
+    "lastVerified": "2026-11-14T09:52:59.465Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-14T07:53:33.966Z",
-    "lastVerified": "2026-11-14T07:53:33.966Z",
+    "lastChecked": "2026-11-14T09:48:08.107Z",
+    "lastVerified": "2026-11-14T09:48:08.107Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1599,9 +1599,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-14T01:26:18.700Z",
+    "lastChecked": "2026-11-14T09:48:03.151Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-14T01:26:18.700Z"
+    "lastVerified": "2026-11-14T09:48:03.151Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -3597,9 +3597,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-13T07:39:25.667Z",
+    "lastChecked": "2026-11-14T09:48:00.600Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-13T07:39:25.667Z"
+    "lastVerified": "2026-11-14T09:48:00.600Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -4959,9 +4959,9 @@
   "fangwei716-30-days-of-react-native": {
     "name": "30-days-of-react-native",
     "officialUrl": "https://github.com/fangwei716/30-days-of-react-native",
-    "lastChecked": "2026-11-10T01:41:23.706Z",
+    "lastChecked": "2026-11-14T09:47:58.108Z",
     "revisionIdentifier": "66af6134",
-    "lastVerified": "2026-11-10T01:41:23.706Z"
+    "lastVerified": "2026-11-14T09:47:58.108Z"
   },
   "gocrane-crane": {
     "name": "crane",
@@ -5247,9 +5247,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-13T06:33:22.319Z",
+    "lastChecked": "2026-11-14T09:48:05.574Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-13T06:33:22.319Z"
+    "lastVerified": "2026-11-14T09:48:05.574Z"
   },
   "telemt-telemt": {
     "name": "telemt/telemt",
@@ -6606,12 +6606,12 @@
     "officialUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T02:27:56.759Z",
-    "lastVerified": "2026-11-09T02:27:56.759Z",
+    "lastChecked": "2026-11-14T09:47:55.756Z",
+    "lastVerified": "2026-11-14T09:47:55.756Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-    "contentHash": "9e61138d517df0610f078ad58cd72f35ffd62f21a96e0d6095a548cb8ce8feb6",
+    "contentHash": "1c8c1b55fa8f3f0cca7039753627796ca968d1749bf9563744ef9b51aa4c55e6",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8243,9 +8243,9 @@
   "railwayapp-nixpacks": {
     "name": "nixpacks",
     "officialUrl": "https://github.com/railwayapp/nixpacks",
-    "lastChecked": "2026-11-12T23:41:19.091Z",
+    "lastChecked": "2026-11-14T09:47:53.142Z",
     "revisionIdentifier": "144b4f9a",
-    "lastVerified": "2026-11-12T23:41:19.091Z"
+    "lastVerified": "2026-11-14T09:47:53.142Z"
   },
   "hf-liquidai-d1-3b": {
     "name": "LiquidAI/d1-3B",

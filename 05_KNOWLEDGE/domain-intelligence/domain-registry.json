@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T09:18:33.913Z",
-  "total_records": 622,
+  "last_updated": "2026-11-14T09:53:26.915Z",
+  "total_records": 626,
   "domains": {
     "A": {
       "total": 5,
@@ -35,7 +35,7 @@
       ]
     },
     "D": {
-      "total": 302,
+      "total": 305,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -338,7 +338,10 @@
         "domain_intelligence-research-knowledge-intelligence-laion-clap-htsat-fused-core-invariants",
         "DOM-D-7AAC58BB",
         "domain_intelligence-research-knowledge-intelligence-hf-laion-clap-htsat-fused-learnings-core-invaria",
-        "domain_intelligence-research-knowledge-intelligence-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanes"
+        "domain_intelligence-research-knowledge-intelligence-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanes",
+        "domain_intelligence-research-knowledge-intelligence-facebookai-xlm-roberta-base-core-invariants",
+        "DOM-D-F08B07B4",
+        "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in"
       ]
     },
     "E": {
@@ -463,7 +466,7 @@
       ]
     },
     "H": {
-      "total": 138,
+      "total": 139,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -602,7 +605,8 @@
         "DOM-H-DC52FF61",
         "domain_intelligence-technical-construction-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-unce",
         "DOM-H-538CE636",
-        "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-learnings-core-invar"
+        "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-learnings-core-invar",
+        "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co"
       ]
     },
     "I": {
@@ -10013,8 +10017,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "2a62e205e010b23e7b2c678c4a8a05cbf47d8ed4d9a66eb0f8505bcd6de2951d",
-      "created_at": "2026-11-14T04:51:09.129Z"
+      "content_hash": "e5b7a9127b9838278d68a6eb47402f5bbd0ac3c6e8ed5abb8265cf6785bdf2ef",
+      "created_at": "2026-11-14T09:53:26.915Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -13346,6 +13350,75 @@
       "repository": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings",
       "content_hash": "f5d8c2b833efe3e317eaa76c15404b581322a898339f910fb34e07d712c50066",
       "created_at": "2026-11-14T09:18:33.453Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-facebookai-xlm-roberta-base-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-facebookai-xlm-roberta-base-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: FacebookAI/xlm-roberta-base Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebookai-xlm-roberta-base-research-knowledge-intelligence-facebookai-xlm-ro.md",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "content_hash": "f3d2c5ac961558ed4ae6c446f23ece63d97ecfa3f2717bc65e895653dc645ac9",
+      "created_at": "2026-11-14T09:52:56.836Z"
+    },
+    "DOM-D-F08B07B4": {
+      "record_id": "DOM-D-F08B07B4",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): FacebookAI/xlm-roberta-base",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/FacebookAI/xlm-roberta-base](https://huggingface.co/FacebookAI/xlm-roberta-base))  \n> **Source Version**: `hf-facebooka`  \n> **License**: Open-Sou",
+      "content_hash": "18e12f61272fdb214023af4dc9d754c87a24608331964132dde7042ed16e8ac0",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "provenance": {
+        "source_uri": "project://hf-facebookai-xlm-roberta-base/hf-facebookai-xlm-roberta-base-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T09:52:59.566Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-facebookai-xlm-roberta-base)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-facebookai-xlm-roberta-base"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T09:53:25.854Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-facebookai-xlm-roberta-base-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebookai-xlm-roberta-base-learnings-research-knowledge-intelligence-hf-face.md",
+      "repository": "hf-facebookai-xlm-roberta-base-learnings",
+      "content_hash": "e4ef2d97941aef8750e1b55752faa7605d189f1726ca1a3c5f4ae62a079844e1",
+      "created_at": "2026-11-14T09:53:26.045Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
+      "repository": "zoontek-react-native-bootsplash-learnings",
+      "content_hash": "cef6d8c9fb333f105d9e96bc3a4574189ed3a3332de57552740778797bb8e80f",
+      "created_at": "2026-11-14T09:53:26.458Z"
     }
   }
 }

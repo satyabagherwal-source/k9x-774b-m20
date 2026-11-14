@@ -9833,3 +9833,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-11-14T09:08:07.034Z |
 | `learn-huggingface-laion-clap-htsat-fused` | `https://huggingface.co/laion/clap-htsat-fused` | `hf-laion-c` | Multi-dimensional audit evidence | 2026-11-14T09:18:01.295Z |
 | `learn-dom-d-7aac58bb` | `project://hf-laion-clap-htsat-fused` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md` | 2026-11-14T09:18:32.951Z |
+| `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-14T09:52:56.702Z |
+| `learn-dom-d-f08b07b4` | `project://hf-facebookai-xlm-roberta-base` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | 2026-11-14T09:53:25.864Z |

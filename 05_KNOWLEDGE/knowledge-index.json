@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T09:18:34.132Z",
-  "total_verified_learnings": 8514,
+  "last_updated": "2026-11-14T09:53:27.011Z",
+  "total_verified_learnings": 8515,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17292,
+  "total_items": 17298,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217788,13 +217788,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-H8IJ-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-9ZQ5-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "3aaedd41e302bd85b2726917ae30d6accf1ed18af5687f27edc1584aca3803ae",
+      "content_hash": "f8f611c83e7c0a6ff34c006ef7670ed429d7fe74cf38400491244b8efaf04f9a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T04:51:09.020Z"
+      "persisted_at": "2026-11-14T09:53:26.813Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -217804,9 +217804,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a62e205e010b23e7b2c678c4a8a05cbf47d8ed4d9a66eb0f8505bcd6de2951d",
+      "content_hash": "e5b7a9127b9838278d68a6eb47402f5bbd0ac3c6e8ed5abb8265cf6785bdf2ef",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T04:51:09.129Z"
+      "persisted_at": "2026-11-14T09:53:26.915Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -217816,9 +217816,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c033cb1bc99b5cccceddec283de21fef00d6a1e83a7d552ff315e4d52f87b56",
+      "content_hash": "7a4c5cf3b8f88faefbda5a4708f4feeef5d8a79fb2978ae217ef1a21549c5a38",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T04:51:09.238Z"
+      "persisted_at": "2026-11-14T09:53:27.011Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -226287,6 +226287,93 @@
       "content_hash": "f5d8c2b833efe3e317eaa76c15404b581322a898339f910fb34e07d712c50066",
       "domain_letter": "D",
       "persisted_at": "2026-11-14T09:18:33.453Z"
+    },
+    "learn-huggingface-facebookai-xlm-roberta-base": {
+      "learning_id": "learn-huggingface-facebookai-xlm-roberta-base",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "FacebookAI/xlm-roberta-base",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "slug": "hf-facebookai-xlm-roberta-base",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+      "source_version": "hf-facebookai-xlm-roberta-base",
+      "content_hash": "1c8c1b55fa8f3f0cca7039753627796ca968d1749bf9563744ef9b51aa4c55e6",
+      "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T09:52:56.540Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-facebookai-xlm-roberta-base-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-facebookai-xlm-roberta-base-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebookai-xlm-roberta-base-research-knowledge-intelligence-facebookai-xlm-ro.md",
+      "title": "Research & Knowledge Intelligence: FacebookAI/xlm-roberta-base Core Invariants",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "source_version": "hf-facebookai-xlm-roberta-base",
+      "content_hash": "f3d2c5ac961558ed4ae6c446f23ece63d97ecfa3f2717bc65e895653dc645ac9",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T09:52:56.836Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebookai-xlm-roberta-base-learnings-research-knowledge-intelligence-hf-face.md",
+      "title": "Research & Knowledge Intelligence: hf-facebookai-xlm-roberta-base-learnings Core Invariants",
+      "repository": "hf-facebookai-xlm-roberta-base-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e4ef2d97941aef8750e1b55752faa7605d189f1726ca1a3c5f4ae62a079844e1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T09:53:26.045Z"
+    },
+    "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12": {
+      "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9ZDO-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "title": "splash screen staying visible after warm start on Android 12+",
+      "repository": "zoontek-react-native-bootsplash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7748469dede76f36e7b3512fc70f2c18f3c290625af972a887ec5720ac16f871",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T09:53:26.365Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
+      "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
+      "repository": "zoontek-react-native-bootsplash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cef6d8c9fb333f105d9e96bc3a4574189ed3a3332de57552740778797bb8e80f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T09:53:26.458Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/zoontek-react-native-bootsplash-learnings-verification-protocol-empirical-defect.md",
+      "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
+      "repository": "zoontek-react-native-bootsplash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d26a084e43345992200e1a47d20b7790f9b143899480976980c0bcd256a8da7c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T09:53:26.552Z"
     }
   },
   "ai-builder-brain": {

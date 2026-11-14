@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:47:05.500Z",
+  "timestamp": "2026-11-14T09:53:26.297Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-zoontek-react-native-bootsplash-learnings",
+  "learning_id": "LEARN-EVO-zoontek-react-native-bootsplash-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zoontek-react-native-bootsplash-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:47:05.500Z`  
-> **Learning ID**: `LEARN-REEXTRACT-zoontek-react-native-bootsplash-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T09:53:26.297Z`  
+> **Learning ID**: `LEARN-EVO-zoontek-react-native-bootsplash-learnings`
 
 
 ## 1. Scope & Verification Target

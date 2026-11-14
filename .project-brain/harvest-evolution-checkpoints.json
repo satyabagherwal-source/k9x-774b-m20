@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T09:18:34.241Z",
+  "last_updated": "2026-11-14T09:53:27.102Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T05:32:15.509Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-14T04:51:08.836Z",
+      "processed_at": "2026-11-14T09:53:26.645Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-12T15:17:34.724Z",
+      "processed_at": "2026-11-14T09:53:26.170Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2521,9 +2521,14 @@
       "processed_at": "2026-11-14T09:18:33.269Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-facebookai-xlm-roberta-base-learnings.md": {
+      "processed_at": "2026-11-14T09:53:25.864Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 807,
-  "total_canonical_promoted": 183,
-  "total_staged_for_review": 623
+  "total_dossiers_evaluated": 810,
+  "total_canonical_promoted": 184,
+  "total_staged_for_review": 625
 }

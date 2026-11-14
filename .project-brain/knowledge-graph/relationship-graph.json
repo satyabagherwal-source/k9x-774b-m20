@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T09:18:32.950Z",
+  "updated_at": "2026-11-14T09:53:25.863Z",
   "statistics": {
-    "total_nodes": 179,
+    "total_nodes": 180,
     "total_edges": 95,
     "domain_distribution": {
-      "D": 136,
+      "D": 137,
       "M": 1,
       "H": 17,
       "J": 8,
@@ -4009,6 +4009,28 @@
       ],
       "created_at": "2026-11-14T09:18:32.950Z",
       "updated_at": "2026-11-14T09:18:32.950Z"
+    },
+    "DOM-D-F08B07B4": {
+      "id": "DOM-D-F08B07B4",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): FacebookAI/xlm-roberta-base",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-facebookai-xlm-roberta-base/hf-facebookai-xlm-roberta-base-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T09:52:59.566Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-facebookai-xlm-roberta-base)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T09:53:25.863Z",
+      "updated_at": "2026-11-14T09:53:25.863Z"
     }
   },
   "edges": [

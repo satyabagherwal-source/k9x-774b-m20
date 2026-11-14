@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-732E",
-    "timestamp": "2026-11-13T11:55:29.222Z",
-    "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
-    "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-    "contentHash": "362967b4a3bf6c26a8efccdcf45cd2bdebc982d17f4b15252247f8b526ed5ecf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-7DW3",
     "timestamp": "2026-11-13T11:55:43.251Z",
     "repository": "Kuddev/pebrel",
@@ -7490,6 +7475,21 @@
     "repository": "laion/clap-htsat-fused",
     "learningId": "learn-huggingface-laion-clap-htsat-fused",
     "contentHash": "55b4ffd0dcc8a49077c808dd8df372d39dac7f22a180987138a86042cb10a905",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-9CHN",
+    "timestamp": "2026-11-14T09:52:56.699Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "1c8c1b55fa8f3f0cca7039753627796ca968d1749bf9563744ef9b51aa4c55e6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T09:18:33.280Z",
+  "updated_at": "2026-11-14T09:53:25.875Z",
   "stats": {
-    "total_discovered": 3204,
-    "approved_pending_harvest": 2999,
+    "total_discovered": 3205,
+    "approved_pending_harvest": 3000,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2993,
+      "COMMUNITY_AND_EXPERT": 2994,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -69073,6 +69073,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
         "fileName": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md"
+      }
+    },
+    "SRC-672C72E083AF": {
+      "id": "SRC-672C72E083AF",
+      "url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+      "title": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T09:53:25.875Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
+        "fileName": "hf-facebookai-xlm-roberta-base-learnings.md"
       }
     }
   }
