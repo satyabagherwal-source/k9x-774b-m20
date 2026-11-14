@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T03:33:00.048Z",
+  "updated_at": "2026-11-14T03:49:58.387Z",
   "statistics": {
-    "total_nodes": 153,
+    "total_nodes": 154,
     "total_edges": 84,
     "domain_distribution": {
-      "D": 123,
+      "D": 124,
       "M": 1,
       "H": 11,
       "J": 6,
@@ -3426,6 +3426,28 @@
       ],
       "created_at": "2026-11-14T03:33:00.048Z",
       "updated_at": "2026-11-14T03:33:00.048Z"
+    },
+    "DOM-D-0BBA6E16": {
+      "id": "DOM-D-0BBA6E16",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): stabilityai/stable-diffusion-3-medium",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md`  \n> **Source**: huggingface ( -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md`  \n> **Source**: huggingface (",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-stabilityai-stable-diffusion-3-medium/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T03:49:22.867Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-stabilityai-stable-diffusion-3-medium)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T03:49:58.387Z",
+      "updated_at": "2026-11-14T03:49:58.387Z"
     }
   },
   "edges": [

@@ -9760,3 +9760,9 @@ Every entry in this ledger must capture:
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `e4d319d7` | Multi-dimensional audit evidence | 2026-11-14T03:32:23.106Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `0d822c9d` | Multi-dimensional audit evidence | 2026-11-14T03:32:25.581Z |
 | `learn-dom-d-f2b017df` | `project://hf-bigscience-bloom` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | 2026-11-14T03:33:00.049Z |
+| `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-14T03:49:04.821Z |
+| `learn-github-sceneview-sceneview` | `https://github.com/sceneview/sceneview` | `868f9185` | Multi-dimensional audit evidence | 2026-11-14T03:49:12.131Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `0316bc90` | Multi-dimensional audit evidence | 2026-11-14T03:49:13.955Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `3da37a52` | Multi-dimensional audit evidence | 2026-11-14T03:49:16.730Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `356ceb16` | Multi-dimensional audit evidence | 2026-11-14T03:49:19.509Z |
+| `learn-dom-d-0bba6e16` | `project://hf-stabilityai-stable-diffusion-3-medium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | 2026-11-14T03:49:58.389Z |

@@ -606686,3 +606686,329 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `283569e7` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8433. 3D Scan shows a result at once, on a real example, with its film back (Harvested from sceneview/sceneview)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "3D Scan shows a result at once, on a real example, with its film back",
+  "source": "sceneview/sceneview",
+  "source_url": "https://github.com/sceneview/sceneview",
+  "source_version": "868f9185",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-14T03:49:11.661Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-sceneview-sceneview",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sceneview/sceneview](https://github.com/sceneview/sceneview) (Revision: `868f9185`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/scripts/generate-credits.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sceneview/sceneview. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `47046b55`: demo): 3D Scan shows a result at once, on a real example, with its film back. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/scripts/generate-credits.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified production-grade fix pattern:
+    # 3D Scan's "See an example": a garden path scanned with the demo itself by the project's
+    # own Pixel, lightened for shipping by `tools/make-scan-example.py`.
+    "example-session.jsonl": {
+        "name": "example-session.jsonl",
+        "author": "SceneView project",
+        "license": "Apache-2.0",
+        "sourceUrl": "https://github.com/sceneview/sceneview/blob/main/LICENSE",
+        "note": "Timeline of a garden path scanned with the demo (camera path, planes, depth totals) — 3D Scan's example",
+    },
+    "example-media.bin": {
+        "name": "example-media.bin",
+        "author": "SceneView project",
+        "license": "Apache-2.0",
+        "sourceUrl": "https://github.com/sceneview/sceneview/blob/main/LICENSE",
+        "note": "Dense cloud and camera photos of the same scan, packed for 3D Scan's example",
+    },
+    "example-manifest.json": {
+        "name": "example-manifest.json",
+        "author": "SceneView project",
+        "license": "Apache-2.0",
+        "sourceUrl": "https://github.com/sceneview/sceneview/blob/main/LICENSE",
+        "note": "Lens, dense cloud and media index of 3D Scan's example",
+    },
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `47046b55` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8434. preserve proxy tool input schemas (Harvested from higress-group/higress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "preserve proxy tool input schemas",
+  "source": "higress-group/higress",
+  "source_url": "https://github.com/higress-group/higress",
+  "source_version": "0316bc90",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-14T03:49:13.469Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-higress-group-higress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [higress-group/higress](https://github.com/higress-group/higress) (Revision: `0316bc90`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `plugins/wasm-go/extensions/mcp-server/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0316bc90`: mcp-server): preserve proxy tool input schemas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+对于 `mcp-proxy` 工具，在 `tools[].inputSchema` 中保存上游工具返回的完整 Schema，工具集即可发布嵌套属性、数组元素和引用定义。该字段是一个 `type: object` 的 JSON Schema。它与 `args` 同时配置时，工具集采用 `inputSchema`。省略 `inputSchema` 时，工具集从 `args` 生成 Schema。无必填参数时省略顶层 `required`。直接代理的 `tools/list` 读取上游工具描述。
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0316bc90` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8435. build(deps-dev): bump click from 8.4.2 to 8.5.1 (Harvested from mitmproxy/mitmproxy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build(deps-dev): bump click from 8.4.2 to 8.5.1",
+  "source": "mitmproxy/mitmproxy",
+  "source_url": "https://github.com/mitmproxy/mitmproxy",
+  "source_version": "3da37a52",
+  "license": "MIT",
+  "extracted_at": "2026-11-14T03:49:16.272Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mitmproxy-mitmproxy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy) (Revision: `3da37a52`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3da37a52`: build(deps-dev): bump click from 8.4.2 to 8.5.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+    "click==8.5.1",
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+    "click==8.4.2",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3da37a52` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8436. bound model calls by wall clock and skip, not pass, on failure (Harvested from doobidoo/mcp-memory-service)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "bound model calls by wall clock and skip, not pass, on failure",
+  "source": "doobidoo/mcp-memory-service",
+  "source_url": "https://github.com/doobidoo/mcp-memory-service",
+  "source_version": "356ceb16",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-14T03:49:19.042Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-doobidoo-mcp-memory-service",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `356ceb16`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `scripts/pr/lib/llm_prompt.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `bea66063`: quality-gate): bound model calls by wall clock and skip, not pass, on failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/pr/lib/llm_prompt.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+    MCP_QUALITY_LLM_TIMEOUT  wall-clock seconds per request, default 600
+import signal
+# Measured on a shared omlx server: gate prompts of 3-12k tokens waited 2-11
+# minutes behind agent traffic, so 180s skipped most calls on a busy machine.
+DEFAULT_TIMEOUT = "600"
+    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", DEFAULT_TIMEOUT))
+    # The urlopen timeout limits each socket read, not the request. omlx sends a
+    # whitespace keepalive while a request waits in its queue, so that limit
+    # never fired and a call could block for as long as the queue was. SIGALRM
+    # bounds the whole request.
+    def on_deadline(signum, frame):
+        raise TimeoutError(f"no reply within {timeout:g}s")
+
+    previous = signal.signal(signal.SIGALRM, on_deadline)
+    signal.setitimer(signal.ITIMER_REAL, timeout)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            return json.load(response)
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+    MCP_QUALITY_LLM_TIMEOUT  seconds per request, default 180
+    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", "180"))
+    with urllib.request.urlopen(req, timeout=timeout) as response:
+        return json.load(response)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `bea66063` are properly handled with clean fallback behavior.

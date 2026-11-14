@@ -9727,3 +9727,9 @@
 | `CYCLE-20261114-NXZ2` | `2026-11-14T03:32:23.102Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8431` | Yes (`0544bb2b...`) |
 | `CYCLE-20261114-NZVT` | `2026-11-14T03:32:25.577Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8432` | Yes (`f5163ec5...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T03:33:00.049Z` | `hf-bigscience-bloom` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F2B017DF` [Domain D] | Yes (`e30e2cc5...`) |
+| `CYCLE-20261114-9EWG` | `2026-11-14T03:49:04.816Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`0209ed05...`) |
+| `CYCLE-20261114-9KJI` | `2026-11-14T03:49:12.126Z` | `sceneview/sceneview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8433` | Yes (`426658dc...`) |
+| `CYCLE-20261114-9LY6` | `2026-11-14T03:49:13.950Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8434` | Yes (`a18aab4c...`) |
+| `CYCLE-20261114-9O3A` | `2026-11-14T03:49:16.726Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8435` | Yes (`1608d451...`) |
+| `CYCLE-20261114-9Q8H` | `2026-11-14T03:49:19.505Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8436` | Yes (`68e851e3...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T03:49:58.389Z` | `hf-stabilityai-stable-diffusion-3-medium` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0BBA6E16` [Domain D] | Yes (`06d4edb5...`) |

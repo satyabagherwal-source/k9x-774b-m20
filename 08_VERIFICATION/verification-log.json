@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-A41H",
-    "timestamp": "2026-11-13T07:17:54.293Z",
-    "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
-    "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
-    "contentHash": "e96b4b5e647562def31356a757a7449b65a5677f459bd2415eba3ce124df18c9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-A5WV",
-    "timestamp": "2026-11-13T07:17:56.719Z",
-    "repository": "HuggingFaceBio/Carbon-X",
-    "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-    "contentHash": "4fc4869052406968871df10a7999b844a0c86f75191060589a270ba33a4fbc2d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-JT6F",
-    "timestamp": "2026-11-13T07:25:26.775Z",
-    "repository": "Nanbeige/Nanbeige4.3-33B",
-    "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
-    "contentHash": "abab0fd2cf661ba1c49e506ee07a556f68293c850bc8296f1d1a07be21ba4133",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-KAL9",
-    "timestamp": "2026-11-13T07:25:49.341Z",
-    "repository": "gluesql/gluesql",
-    "learningId": "learn-github-gluesql-gluesql",
-    "contentHash": "7c398043ce45bc2883e4f75bceeef97f613e4d2534bf5f759262cf01ff1389a5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-1OYX",
-    "timestamp": "2026-11-13T07:39:21.129Z",
-    "repository": "briaai/Fibo-2.0-dev",
-    "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-    "contentHash": "cd861169bd54da2377c70ee21076d37f4e0155d4fd30f0ee9f6ed2a6bdf1881b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-BHGF",
     "timestamp": "2026-11-13T07:46:57.951Z",
     "repository": "XHToken/Spark-X2.6-4B-GGUF",
@@ -7490,6 +7415,81 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "f5163ec5c888c88508c879ce7a8c9fa63a0490a7de09ad09381888cd5397f12f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-9EWG",
+    "timestamp": "2026-11-14T03:49:04.816Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "0209ed0502b8de79f952cf6389e730548b381e71af57e209810a466d61a58d3d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-9KJI",
+    "timestamp": "2026-11-14T03:49:12.126Z",
+    "repository": "sceneview/sceneview",
+    "learningId": "learn-github-sceneview-sceneview",
+    "contentHash": "426658dc88674ca07192c6eb1c60a46de46aff7c0ebdd7e74914dbd877158ba1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-9LY6",
+    "timestamp": "2026-11-14T03:49:13.950Z",
+    "repository": "higress-group/higress",
+    "learningId": "learn-github-higress-group-higress",
+    "contentHash": "a18aab4cd2f0906ca9330e4ea1ca8e2f577d97c62c3ee711109555ba17afc966",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-9O3A",
+    "timestamp": "2026-11-14T03:49:16.726Z",
+    "repository": "mitmproxy/mitmproxy",
+    "learningId": "learn-github-mitmproxy-mitmproxy",
+    "contentHash": "1608d45155932dacac15e8443100071bc3c08bdd550c34e17d7934bcbc8dfba5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-9Q8H",
+    "timestamp": "2026-11-14T03:49:19.505Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "68e851e39dd54e3ed7829524048c1c30080c6fae67d619e40bb26a58518a51e4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

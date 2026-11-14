@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T03:32:25.586Z",
-  "total_cycles_completed": 9448,
-  "total_learnings_persisted": 9448,
-  "total_rules_promoted": 9153,
+  "last_updated": "2026-11-14T03:49:19.516Z",
+  "total_cycles_completed": 9453,
+  "total_learnings_persisted": 9453,
+  "total_rules_promoted": 9157,
   "history": [
-    {
-      "timestamp": "2026-11-13T13:42:44.692Z",
-      "repository": "MariaDB/server",
-      "learningId": "learn-github-mariadb-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T13:50:15.451Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-lightricks-ltx-2-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T13:50:18.671Z",
-      "repository": "tuist/tuist",
-      "learningId": "learn-github-tuist-tuist",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T13:50:34.715Z",
-      "repository": "sweetpad-dev/sweetpad",
-      "learningId": "learn-github-sweetpad-dev-sweetpad",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T13:50:38.307Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T13:50:43.888Z",
       "repository": "zama-ai/tfhe-rs",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-14T03:32:25.586Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:49:04.827Z",
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:49:12.137Z",
+      "repository": "sceneview/sceneview",
+      "learningId": "learn-github-sceneview-sceneview",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:49:13.962Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:49:16.736Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T03:49:19.516Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

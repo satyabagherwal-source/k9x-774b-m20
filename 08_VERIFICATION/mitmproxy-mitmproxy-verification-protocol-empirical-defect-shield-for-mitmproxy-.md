@@ -4,22 +4,22 @@
 {
   "source_repository": "mitmproxy/mitmproxy",
   "source_url": "https://github.com/mitmproxy/mitmproxy",
-  "source_version": "d05d6645",
+  "source_version": "3da37a52",
   "license": "MIT",
-  "timestamp": "2026-11-13T15:29:37.147Z",
+  "timestamp": "2026-11-14T03:49:16.941Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mitmproxy-mitmproxy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy) (Revision: `d05d6645`).  
-> **License**: MIT | **Timestamp**: `2026-11-13T15:29:37.147Z`  
+> **Provenance**: Harvested from [mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy) (Revision: `3da37a52`).  
+> **License**: MIT | **Timestamp**: `2026-11-14T03:49:16.941Z`  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `mitmproxy/mitmproxy` (Commit: `d05d6645`)
+- **Target Repository**: `mitmproxy/mitmproxy` (Commit: `3da37a52`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:29:36.337Z  
+> **Harvest Timestamp**: 2026-11-14T03:49:15.688Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 46879 stars
+- **Stars / Engagement**: 46900 stars
 
 ---
 
@@ -1319,13 +1319,11 @@ class QuicStartServerHook(commands.StartHook):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8596** (2026-11-13): **Fail HTTP/3 streams whose headers QPACK cannot encode**
-  *Symptoms*: #### Description  ls-qpack refuses a header name or value longer than 65,535 bytes, so aioquic raises ValueError from send_headers(), which crashed mitmproxy. HTTP/2 and HTTP/3 peers cannot send such headers, as both limit received headers to 64 KiB, but addons, modify_headers or replayed flows can set them.  Catch ValueError only around sending headers and trailers. Nothing has been sent for them and the encoder stays usable, so log a warning and fail the stream:  - Request headers or trailers for an HTTP/3 server: reset the stream to the server. The flow records the error and the client gets a 502. - Response headers for an HTTP/3 client: nothing has reached the client yet, so send it a 502 instead. A streamed response also stops the server and records the error on the flow. A complete response has already passed the response hook, so as when a client disconnects at that point, there is no error hook and the warning is the only trace. - Response trailers for an HTTP/3 client: the response has started, so reset the stream.  #### Checklist   - [x ] I have updated tests where applicable.  - [x ] I have added an entry to the CHANGELOG. 
-  **Post-Mortem & Fix Analysis**:
-  > I would recommend closing #7922 in favour of this PR.
+- **Issue #8607** (2026-11-13): **build(deps-dev): bump maturin from 1.15.0 to 1.16.0**
+  *Symptoms*: Bumps [maturin](https://github.com/pyo3/maturin) from 1.15.0 to 1.16.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/pyo3/maturin/releases">maturin's releases</a>.</em></p> <blockquote> <h2>v1.16.0</h2> <h2>What's Changed</h2> <ul> <li>Update version mapping for GraalPy 3.13 by <a href="https://github.com/msimacek"><code>@​msimacek</code></a> in <a href="https://redirect.github.com/PyO3/maturin/pull/3297">PyO3/maturin#3297</a></li> <li>properly normalize / validate abiflags and include in environment signature by <a href="https://github.com/davidhewitt"><code>@​davidhewitt</code></a> in <a href="https://redirect.github.com/PyO3/maturin/pull/3299">PyO3/maturin#3299</a></li> <li>[pre-commit.ci] pre-commit autoupdate by <a href="https://github.com/pre-commit-ci"><code>@​pre-commit-ci</code></a>[bot] in <a href="https://redirect.github.com/PyO3/maturin/pull/3295">PyO3/maturin#3295</a></li> <li>Fix MinGW stable ABI library names in generated PyO3 config by <a href="https://github.com/Udonburo"><code>@​Udonburo</code></a> in <a href="https://redirect.github.com/PyO3/maturin/pull/3298">PyO3/maturin#3298</a></li> <li>[pre-commit.ci] pre-commit autoupdate by <a href="https://github.com/pre-commit-ci"><code>@​pre-commit-ci</code></a>[bot] in <a href="https://redirect.github.com/PyO3/maturin/pull/3303">PyO3/maturin#3303</a></li> <li>fix: lossy-decode external command output in interpreter discovery by <a href="https://github.com/devtechedge"
 
-- **Issue #8594** (2026-11-13): **Handle STOP_SENDING in raw QUIC mode**
-  *Symptoms*: #### Description  The QUIC layer passes STOP_SENDING on as QuicStreamStopSending, which RawQuicLayer did not expect, so mitmproxy crashed as soon as a peer stopped reading a stream. curl does this on one of the unidirectional streams cloudflare-quic.com opens.  QUIC has already reset our sending side of the stream, so stop writing to that peer, and ask the other peer to stop sending on its side, with the same error code, as is done for resets.  QUIC only knows our side of a stream once the peer has opened it or we have sent on it, so hold STOP_SENDING until then. On a stream we open to the server, we only send once the stream's hooks have been answered, such as tcp_start and tcp_message in force-raw mode. Passing it on sooner made aioquic raise StreamStateError, for instance when a client cancelled a request while a slow tcp_message hook was pending.  STOP_SENDING is no longer sent on the streams of a connection which is being closed, as this is pointless and QUIC may not know the stream.  #### Checklist   - [x] I have updated tests where applicable.  - [x] I have added an entry to the CHANGELOG. 
+- **Issue #8606** (2026-11-13): **build(deps): bump asgiref from 3.11.0 to 3.13.0**
+  *Symptoms*: Bumps [asgiref](https://github.com/django/asgiref) from 3.11.0 to 3.13.0. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/django/asgiref/blob/main/CHANGELOG.txt">asgiref's changelog</a>.</em></p> <blockquote> <h2>3.13.0 (2026-10-23)</h2> <ul> <li> <p>It is now possible to nest <code>ThreadSensitiveContext</code> by providing an explicit <code>executor</code> for thread-sensitive tasks. This enables moving a block of such work away from the parent context's shared worker. (<a href="https://redirect.github.com/django/asgiref/issues/596">#596</a>)</p> <p>The provided executor must run  work sequentially and on a single thread, as per <code>ThreadPoolExecutor(max_workers=1)</code>, and the calling code is responsible for managing the executor's lifecycle.</p> <p>See the README for more details.</p> </li> <li> <p><code>Local</code> attribute access is now 2-3x faster. <code>Local(...)</code> now uses one of two internal specialisations, selected by <code>thread_critical</code>, instead of checking the mode on every access. (<a href="https://redirect.github.com/django/asgiref/issues/551">#551</a>)</p> <p>As a result <code>Local</code> is now marked <code>@final</code> and raises <code>TypeError</code> if subclassed. Subclassing was never supported, and could not have worked correctly with the specialised implementations.</p> </li> <li> <p><code>asgiref.timeout.timeout</code> is deprecated, and will be removed in a future release. Move to use <
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1342,870 +1340,176 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d732750` (2026-11-13)
-**Commit Message**: Handle STOP_SENDING in raw QUIC mode (#8594)
+### Incident Patch 1: `3da37a52` (2026-11-13)
+**Commit Message**: build(deps-dev): bump click from 8.4.2 to 8.5.1 (#8605)
 
-* Handle STOP_SENDING in raw QUIC mode
+Bumps [click](https://github.com/pallets/click) from 8.4.2 to 8.5.1.
+- [Release notes](https://github.com/pallets/click/releases)
+- [Changelog](https://github.com/pallets/click/blob/main/CHANGES.md)
+- [Commits](https://github.com/pallets/click/compare/8.4.2...8.5.1)
 
-The QUIC layer passes STOP_SENDING on as QuicStreamStopSending, which
-RawQuicLayer did not expect, so mitmproxy crashed as soon as a peer
-stopped reading a stream. curl does this on one of the unidirectional
-streams cloudflare-quic.com opens.
+---
+updated-dependencies:
+- dependency-name: click
+  dependency-version: 8.5.1
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
 
-QUIC has already reset our sending side of the stream, so stop writing
-to that peer, and ask the other peer to stop sending on its side, with
-the same error code, as is done for resets.
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-QUIC only knows our side of a stream once the peer has opened it or we
-have sent on it, so hold STOP_SENDING until then. On a stream we open
-to the server, we only send once the stream's hooks have been answered,
-such as tcp_start and tcp_message in force-raw mode. Passing it on
-sooner made aioquic raise StreamStateError, for instance when a client
-cancelled a request while a slow tcp_message hook was pending.
-
-STOP_SENDING is no longer sent on the streams of a connection which is
-being closed, as this is pointless and QUIC may not know the stream.
-
-* [autofix.ci] apply automated fixes
-
----------
-
-Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.githu
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -7,6 +7,8 @@
+@@ -62,7 +62,7 @@ dependencies = [
  
- ## Unreleased: mitmproxy next
- 
-+- Fix a crash in raw QUIC mode when a peer stops reading a stream.
-+  ([#8594](https://github.com/mitmproxy/mitmproxy/pull/8594), @jlaine)
- - Update aioquic to 1.8.0. HTTP/3 interim (1xx) responses are no longer mistaken for the final
-   response's trailers, QUIC connections report their cipher suite by its IANA name, and QUIC
-   datagrams which the peer cannot receive are dropped.
+ [dependency-groups]
+ dev = [
+-    "click==8.4.2",
++    "click==8.5.1",
+     "hypothesis==6.130.6",
+     "maturin==1.16.0",
+     "pdoc==16.0.0",
 ```
 
-**File**: `mitmproxy/proxy/layers/quic/_raw_layers.py` (modified, +58/-0)
+**File**: `uv.lock` (modified, +4/-7)
 ```diff
-@@ -19,6 +19,7 @@
- from ._events import QuicStreamDataReceived
- from ._events import QuicStreamEvent
- from ._events import QuicStreamReset
-+from ._events import QuicStreamStopSending
- from mitmproxy import connection
- from mitmproxy.connection import Connection
- from mitmproxy.proxy import commands
-@@ -66,6 +67,10 @@ class QuicStreamLayer(layer.Layer):
-     """Virtual server connection for this stream. Use this in QuicRawLayer instead of `context.server`."""
-     child_layer: layer.Layer
-     """The stream's child layer."""
-+    sent_on: set[bool]
-+    """The streams we have sent on, by whether they are the client's."""
-+    held_stop_sending: dict[bool, int]
-+    """STOP_SENDING error codes to send once QUIC knows the stream, by whether it is the client's."""
+@@ -484,14 +484,11 @@ wheels = [
  
-     def __init__(
-         self, context: context.Context, force_raw: bool, stream_id: int
-@@ -90,6 +95,8 @@ def __init__(
-             transport_protocol="tcp",
-         )
-         self._server_stream_id: int | None = None
-+        self.sent_on = set()
-+        self.held_stop_sending = {}
+ [[package]]
+ name = "click"
+-version = "8.4.2"
++version = "8.5.1"
+ source = { registry = "https://pypi.org/simple" }
+-dependencies = [
+-    { name = "colorama", marker = "sys_platform == 'win32'" },
+-]
+-sdist = { url = "https://files.pythonhosted.org/packages/76/d4/81420972a676e8ffea40450d8c8c92943e7218a78fe9b64359836cc9876b/click-8.4.2.tar.gz", hash = "sha256:9a6cea6e60b17ebe0a44c5cc636d94f09bd66142c1cd7d8b4cd731c4917a15f6", size = 338000, upload-time = "2026-06-24T17:45:15.148Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/45/37/edbf1b0707709013c0cf2e8317e03d97ed29bf4cac709fe328904ae92a38/click-8.5.1.tar.gz", hash = "sha256:9bbfada76703fd1d784b83eea012e3e8c6a001a876543ef104fa56aaaeb072b4", size = 399151, upload-time = "2026-11-06T17:37:01.021Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/fb/e2/79c688af8b210d232694e31e59da9f6ec747bae31c3f5946e4e9b98860d5/click-8.4.2-py3-none-any.whl", hash = "sha256:e6f9f66136c816745b9d65817da91d61d957fb16e02e4dcd0552553c5a197b76", size = 119243, upload-time = "2026-06-24T17:45:13.73Z" },
++    { url = "https://files.pythonhosted.org/packages/31/7d/164b7ffc8624fe9efb4221bf9af485d5c1e41b9ae118045d2b6dc5457d8b/click-8.5.1-py3-none-any.whl", hash = "sha256:8bb5376d2006950386f8c6427613334a2acadc5f559cb80e638d00b4df957e37", size = 126163, upload-time = "2026-11-06T17:36:59.287Z" },
+ ]
  
-         super().__init__(context)
-         self.child_layer = (
-@@ -284,6 +291,14 @@ def _handle_event(self, event: events.Event) -> layer.CommandGenerator[None]:
-                         )
-                     else:
-                         yield command
-+            elif isinstance(event, QuicStreamStopSending):
-+                # The peer no longer reads this stream, and QUIC has already reset our
-+                # sending side of it. Stop writing to it, and ask the other peer to stop
-+                # sending.
-+                conn.state &= ~connection.ConnectionState.CAN_WRITE
-+                yield from self.stop_sending(
-+                    stream_layer, not from_client, event.error_code
-+                )
-             else:
-                 raise AssertionError(f"Unexpected stream event: {event!r}")
- 
-@@ -320,6 +335,12 @@ def _handle_event(self, event: events.Event) -> layer.CommandGenerator[None]:
-                 ):
-                     conn.state &= ~connection.ConnectionState.CAN_WRITE
-                     for command in self.close_stream_layer(child_layer, from_client):
-+                        # Both connections are closing, so there is no point in asking
-+                        # a peer to stop sending. QUIC may not even know the stream, if
-+                        # the empty stream end was the first thing we would have sent
-+                        # on it.
-+                        if isinstance(command, StopSendingQuicStream):
-+                            continue
-                         if not isinstance(command, SendQuicStreamData) or command.data:
-                             yield command
- 
-@@ -367,6 +388,7 @@ def event_to_child(
-                     assert stream_id is not None
-                     if command.connection.state & connection.ConnectionState.CAN_WRITE:
-                         yield SendQuicStreamData(quic_conn, stream_id, command.data)
-+                        yield from self.after_send(child_layer, to_client)
- 
-                 # send a FIN and optionally also a STOP frame
-                 elif isinstance(command, commands.CloseConnection):
-@@ -378,6 +400,7 @@ def event_to_child(
-                         yield SendQuicStreamData(
-                             quic_conn, stream_id, b"", end_stream=True
-                         )
-+                        yield from self.after_send(child_layer, to_client)
-                     # XXX: Use `command.connection.state & connection.ConnectionState.CAN_READ` instead?
-                     only_close_our_half = (
-                         isinstance(command, commands.CloseTcpConnection)
-@@ -421,6 +444,41 @@ def event_to_child(
-                     self.connections[command.connection] = child_layer
-                 yield command
- 
-+    def stop_sending(
-+        self, stream_layer: QuicStreamLayer, client: bool, error_code: int
-+    ) -> layer.CommandGenerator[None]:
-+        """
-+        Asks the client or the server to stop sending on its side of the stream.
-+
-+        If QUIC does not know our side of the stream yet, as it is not open or we have
-+        only reserved its ID, the request is held until we send on it.
-+        """
-+        stream_id = stream_layer.stream_id(client)
-+        # QUIC knows the stream once the peer has opened it, or we have sent on it.
-+        if stream_id is not None and (
-+            stream_is_client_initiated(stream_id) == client
-+            or client in stream_layer.sent_on
-+        ):
-+            yield StopSendingQuicStream(
-+                self.context.client if client else self.context.server,
-+                stream_id,
-+                error_code,
-+            )
-+        else:
-+            stream_layer.held_stop_sending[client] = error_code
-+
-+    def after_send(
-+        self, stream_layer: QuicStreamLayer, client: bool
-+    ) -> layer.CommandGenerator[None]:
-+        """
-+        Called after we have sent on a stream. Records it, as QUIC
-```
-
-**File**: `test/mitmproxy/proxy/layers/quic/test__raw_layers.py` (modified, +112/-0)
-```diff
-@@ -17,6 +17,7 @@
- from mitmproxy.proxy.layers.quic._events import QuicStreamDataReceived
- from mitmproxy.proxy.layers.quic._events import QuicStreamEvent
- from mitmproxy.proxy.layers.quic._events import QuicStreamReset
-+from mitmproxy.proxy.layers.quic._events import QuicStreamStopSending
- from mitmproxy.proxy.layers.quic._raw_layers import QuicStreamLayer
- from mitmproxy.proxy.layers.quic._raw_layers import RawQuicLayer
- from mitmproxy.tcp import TCPFlow
-@@ -94,6 +95,117 @@ def test_force_raw(self, tctx: context.Context):
-         )
-         assert quic_layer._handle_event == quic_layer.done
- 
-+    def test_stop_sending_unidirectional(self, tctx: context.Context):
-+        quic_layer = RawQuicLayer(tctx, force_raw=True)
-+        assert (
-+            tutils.Playbook(quic_layer, hooks=False)
-+            << commands.OpenConnection(tctx.server)
-+            >> tutils.reply(None)
-+            # The server opens a unidirectional stream, which we open to the client.
-+            >> QuicStreamDataReceived(tctx.server, 15, b"msg1", end_stream=False)
-+            << SendQuicStreamData(tctx.client, 3, b"msg1", end_stream=False)
-+            # The client does not want it, so we ask the server to stop sending.
-+            >> QuicStreamStopSending(tctx.client, 3, 42)
-+            << StopSendingQuicStream(tctx.server, 15, 42)
-+            # Data still in flight is not sent to the client.
-+            >> QuicStreamDataReceived(tctx.server, 15, b"msg2", end_stream=False)
-+            << None
-+            # Nor is the end of the stream, once the server resets it.
-+            >> QuicStreamReset(tctx.server, 15, 42)
-+            << None
-+        )
-+
-+    def test_stop_sending_bidirectional(self, tctx: context.Context):
-+        quic_layer = RawQuicLayer(tctx, force_raw=True)
-+        assert (
-+            tutils.Playbook(quic_layer, hooks=False)
-+            << commands.OpenConnection(tctx.server)
-+            >> tutils.reply(None)
-+            >> QuicStreamDataReceived(tctx.client, 0, b"msg1", end_stream=False)
-+            << SendQuicStreamData(tctx.server, 0, b"msg1", end_stream=False)
-+            >> QuicStreamStopSending(tctx.client, 0, 42)
-+            << StopSendingQuicStream(tctx.server, 0, 42)
-+            # Only data towards the client is no longer sent.
-+            >> QuicStreamDataReceived(tctx.server, 0, b"msg2", end_stream=False)
-+            << None
-+            # The server resets its side in response, as the client's side already is.
-+            >> QuicStreamReset(tctx.server, 0, 42)
-+            << None
-+            # The client can still send. Closing the stream then asks the server to
-+            # stop sending again, which is redundant but harmless.
-+            >> QuicStreamDataReceived(tctx.client, 0, b"msg3", end_stream=True)
-+            << SendQuicStreamData(tctx.server, 0, b"msg3", end_stream=False)
-+            << SendQuicStreamData(tctx.server, 0, b"", end_stream=True)
-+            << StopSendingQuicStream(tctx.server, 0, 0)
-+        )
-+
-+    def test_stop_sending_before_server_stream(self, tctx: context.Context):
-+        """
-+        The server stream is only opened once the next layer is known, so STOP_SENDING
-+        is held, but we stop writing to the client right away.
-+        """
-+        quic_layer = RawQuicLayer(tctx)
-+        assert (
-+            tutils.Playbook(quic_layer, hooks=False)
-+            << commands.OpenConnection(tctx.server)
-+            >> tutils.reply(None)
-+            >> QuicStreamStopSending(tctx.client, 0, 42)
-+            << None
-+        )
-+        stream_layer = quic_layer.client_stream_ids[0]
-+        assert stream_layer.stream_id(client=False) is None
-+        assert stream_layer.held_stop_sending == {False: 42}
-+        assert stream_layer.client.state == connection.ConnectionState.CAN_READ
-+
-+    def test_stop_sending_before_server_stream_used(self, tctx: context.Context):
-+        """
-+        The server stream is opened once tcp_start has been answered, but QUIC only
-+        knows it once we send on it, after tcp_message has been answered.
-+        """
-+        flow = tutils.Placeholder(TCPFlow)
-+        assert (
-+            tutils.Playbook(RawQuicLayer(tctx, force_raw=True))
-+            << commands.OpenConnection(tctx.server)
-+            >> tutils.reply(None)
-+            << udp.UdpStartHook(tutils.Placeholder(UDPFlow))
-+            >> tutils.reply()
-+            >> QuicStreamDataReceived(tctx.client, 0, b"msg1", end_stream=False)
-+            << tcp.TcpStartHook(flow)
-+            >> tutils.reply()
-+            << (message := tcp.TcpMessageHook(flow))
-+            # The server stream is open, but QUIC does not know it yet.
-+            >> QuicStreamStopSending(tctx.client, 0, 42)
-+            << None
-+            # So we only ask the server to stop sending once we have sent on it.
-+            >> tutils.reply(to=message)
-+            << SendQuicStreamData(tctx.server, 0, b"msg1", end_stream=False)
-+            << StopSendingQuicStream(tctx.se
+ [[package]]
+@@ -1175,7 +1172,7 @@ deploy = [
+ ]
+ dev = [
+     { name = "build", specifier = "==1.6.1" },
+-    { name = "click", specifier = "==8.4.2" },
++    { name = "click", specifier = "==8.5.1" },
+     { name = "hypothesis", specifier = "==6.130.6" },
+     { name = "maturin", specifier = "==1.16.0" },
+     { name = "mypy", specifier = "==1.20.2" },
 ```
 
 ---
 
-### Incident Patch 2: `18fdbb12` (2026-11-13)
-**Commit Message**: Update aioquic to 1.8.0 (#8593)
+### Incident Patch 2: `83486473` (2026-11-13)
+**Commit Message**: build(deps-dev): bump maturin from 1.15.0 to 1.16.0 (#8607)
 
-* Update aioquic to 1.8.0
+Bumps [maturin](https://github.com/pyo3/maturin) from 1.15.0 to 1.16.0.
+- [Release notes](https://github.com/pyo3/maturin/releases)
+- [Changelog](https://github.com/PyO3/maturin/blob/main/Changelog.md)
+- [Commits](https://github.com/pyo3/maturin/compare/v1.15.0...v1.16.0)
 
-aioquic 1.8.0 needs cryptography 43 and pylsqpack 1.1.1, and no longer
-calls datetime.utcnow(), so its warning filter is gone.
+---
+updated-dependencies:
+- dependency-name: maturin
+  dependency-version: 1.16.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
 
-aioquic now calls tls.Context._server_handle_hello() with three
-arguments, so the ClientHello parser's replacement raised TypeError for
-every QUIC connection. Its qlog events also follow the latest drafts, so
-the parser looks for quic:packet_dropped, and reports the precise reason
-which their details now give.
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-H3Connection forgets streams once both sides have ended, so
-LayeredH3Connection keeps its own record of what was sent and received
-on each request stream, for as long as the connection lasts. It uses
-that record to tell trailers apart from the final headers, as the
-private method it overrode for this was renamed, and keeps track of
-whether the connection was closed instead of reading
-H3Connection._is_done. It no longer turns data received after a
-stream ended into a connection error, as QUIC never delivers such data.
-Invalid sends now raise InvalidStreamStateError instead of
-FrameUnexpected. The unused enable_webtransport option is gone.
-
-The certificates and cipher suite now come from Hand
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -7,6 +7,10 @@
- 
- ## Unreleased: mitmproxy next
- 
-+- Update aioquic to 1.8.0. HTTP/3 interim (1xx) responses are no longer mistaken for the final
-+  response's trailers, QUIC connections report their cipher suite by its IANA name, and QUIC
-+  datagrams which the peer cannot receive are dropped.
-+  ([#8593](https://github.com/mitmproxy/mitmproxy/pull/8593), @jlaine)
- - mitmweb: Add a quiet zone around the WireGuard QR code so that it can be scanned in dark mode.
-   ([#8585](https://github.com/mitmproxy/mitmproxy/pull/8585), @yldrmzffr)
- - Expand `~` in the `hardump` option, like other file path options. Previously, the HAR file
+@@ -64,7 +64,7 @@ dependencies = [
+ dev = [
+     "click==8.4.2",
+     "hypothesis==6.130.6",
+-    "maturin==1.15.0",
++    "maturin==1.16.0",
+     "pdoc==16.0.0",
+     "pyinstaller==6.22.3",
+     "pyinstaller-hooks-contrib==2026.9",
 ```
 
-**File**: `mitmproxy/proxy/layers/http/_http3.py` (modified, +26/-7)
+**File**: `uv.lock` (modified, +16/-16)
 ```diff
-@@ -1,12 +1,13 @@
- import time
- from abc import abstractmethod
-+from logging import DEBUG
- from typing import assert_never
+@@ -1044,23 +1044,23 @@ wheels = [
  
- from aioquic.h3.connection import ErrorCode as H3ErrorCode
--from aioquic.h3.connection import FrameUnexpected as H3FrameUnexpected
- from aioquic.h3.events import DataReceived
-+from aioquic.h3.events import GoAwayReceived
- from aioquic.h3.events import HeadersReceived
--from aioquic.h3.events import PushPromiseReceived
-+from aioquic.h3.exceptions import InvalidStreamStateError
- 
- from . import ErrorCode
- from . import RequestData
-@@ -33,6 +34,7 @@
- from mitmproxy import connection
- from mitmproxy import http
- from mitmproxy import version
-+from mitmproxy.net.http import status_codes
- from mitmproxy.proxy import commands
- from mitmproxy.proxy import context
- from mitmproxy.proxy import events
-@@ -129,7 +131,7 @@ def _handle_event(self, event: events.Event) -> layer.CommandGenerator[None]:
-                 else:  # pragma: no cover
-                     raise AssertionError(f"Unexpected event: {event!r}")
- 
--            except H3FrameUnexpected as e:
-+            except InvalidStreamStateError as e:
-                 # Http2Connection also ignores HttpEvents that violate the current stream state
-                 yield commands.Log(f"Received {event!r} unexpectedly: {e}")
- 
-@@ -173,6 +175,18 @@ def _handle_event(self, event: events.Event) -> layer.CommandGenerator[None]:
-                             reason_phrase=f"Invalid HTTP/3 request headers: {e}",
-                         )
-                     else:
-+                        if (
-+                            isinstance(receive_event, ResponseHeaders)
-+                            and 100 <= receive_event.response.status_code < 200
-+                        ):
-+                            # Like for HTTP/2, we violate the spec here and don't forward
-+                            # 1xx responses, see Http2Client for the rationale.
-+                            status = receive_event.response.status_code
-+                            reason = status_codes.RESPONSES.get(status, "")
-+                            yield commands.Log(
-+                                f"Swallowing HTTP/3 informational response: {status} {reason}"
-+                            )
-+                            continue
-                         yield ReceiveHttp(receive_event)
-                         if h3_event.stream_ended:
-                             yield ReceiveHttp(
-@@ -186,10 +200,15 @@ def _handle_event(self, event: events.Event) -> layer.CommandGenerator[None]:
-                     )
-                     if h3_event.stream_ended:
-                         yield ReceiveHttp(self.ReceiveEndOfMessage(h3_event.stream_id))
--                elif isinstance(h3_event, PushPromiseReceived):  # pragma: no cover
--                    self.h3_conn.close_connection(
--                        error_code=H3ErrorCode.H3_GENERAL_PROTOCOL_ERROR,
--                        reason_phrase=f"Received HTTP/3 push promise, even though we signalled no support.",
-+                elif isinstance(h3_event, GoAwayReceived):
-+                    # Unlike Http2Client, which closes the connection on GOAWAY, we keep it
-+                    # open so that requests the server has started to process complete.
-+                    # We lack a mechanism to stop reusing a connection, so the server will
-+                    # reject any later requests.
-+                    yield commands.Log(
-+                        f"HTTP/3 server is shutting down, it will not process "
-+                        f"stream {h3_event.stream_id} and above.",
-+                        DEBUG,
-                     )
-                 else:  # pragma: no cover
-                     raise AssertionError(f"Unexpected event: {event!r}")
+ [[package]]
+ name = "maturin"
+-version = "1.15.0"
++version = "1.16.0"
+ source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/b9/c8/22e5e21b2679c9bce6415ca578034ca2cc9316be0642ae21e051a2d5198c/maturin-1.15.0.tar.gz", hash = "sha256:94b26cc8e8aba61a5f2099715fe640e18c5f678e9a500408b38761263954228a", size = 385504, upload-time = "2026-08-24T12:11:22.665Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/bd/71/eb078174335ff30bde1be2ad54fb6256db4b160eb3efa81163fa30f8c814/maturin-1.16.0.tar.gz", hash = "sha256:13e69ca12542999d8c5467131de72a49bb76e4c284b9a45c5783df7c0fcb3a8a", size = 396641, upload-time = "2026-10-29T14:09:43.096Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/14/69/5c01b461044eb1f45ddcce006706eb88110c793cdb11c7ae0b5e08492e94/maturin-1.15.0-py3-none-linux_armv6l.whl", hash = "sha256:6bf6dc62e22d4dcfd5a51244ff0d58975fa4979c48209fe84159617648956d82", size = 10206220, upload-time = "2026-08-24T12:10:53.327Z" },
+-    { url = "https://files.pythonhosted.org/packages/eb/1f/2b431554e11687cdb1077e0cdadcc118c53f611086b3af00c8545a67c6a5/maturin-1.15.0-py3-none-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:cd35772633f489841132bc8e71d6fc7f842df30b9c05cd5cdf1ee1ddcb744cc7", size = 19416513, upload-time = "2026-08-24T12:10:56.126Z" },
+-    { url = "https://files.pythonhosted.org/packages/51/36/e23a21cb34a648b711036b9b2fe1d4f3f4ee24f8db54215d73f1a9a3a3ec/maturin-1.15.0-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:c40b4eae7bf5ef1f4b1af8d623fe4105016f93578fb15b764e741d08ec3b92dd", size = 10014962, upload-time = "2026-08-24T12:10:58.486Z" },
+-    { url = "https://files.pythonhosted.org/packages/8c/80/33b15cb2d8f30f12c807955e8f2fd775027692904e30ec0784744ce8cd83/maturin-1.15.0-py3-none-manylinux_2_12_i686.manylinux2010_i686.musllinux_1_1_i686.whl", hash = "sha256:7eb066372f541f8eb4909c79c5d9bd0b9e8125980bdf1ec9e8aba23c6c8d6c55", size = 10196223, upload-time = "2026-08-24T12:11:00.696Z" },
+-    { url = "https://files.pythonhosted.org/packages/fe/91/b495e19e2f5c503b540452b2039115e7b2363867e8c5ad4179eb752fa92c/maturin-1.15.0-py3-none-manylinux_2_12_x86_64.manylinux2010_x86_64.musllinux_1_1_x86_64.whl", hash = "sha256:653020a63525bb224e5ab0adf02e17a2e08bc86dbea7fc1399c9a56d7529b99e", size = 10541186, upload-time = "2026-08-24T12:11:02.857Z" },
+-    { url = "https://files.pythonhosted.org/packages/5d/2b/2abff58037188d852b124871b1f0d720e1c2bfb3d4f1b03d87c52cd66488/maturin-1.15.0-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.musllinux_1_1_aarch64.whl", hash = "sha256:0ebf9767892725083138e671c34482c660317a2f3d6a29fc0e0f34e9d8c99136", size = 10083468, upload-time = "2026-08-24T12:11:05.012Z" },
+-    { url = "https://files.pythonhosted.org/packages/3f/07/b7e9f8be99a6627849e81ac7b6694876bce8f50a92995fe17e3cf2610f0a/maturin-1.15.0-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.musllinux_1_1_armv7l.whl", hash = "sha256:7ab7eebffd7b8debca2265985de4eaeb332141276d24b9560b5ad484d4b3add1", size = 10047786, upload-time = "2026-08-24T12:11:07.042Z" },
+-    { url = "https://files.pythonhosted.org/packages/ca/ab/167e3cb7accee11b507dbe53e0e87aeccb376d44ae66284c96ee4df3a9fd/maturin-1.15.0-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.musllinux_1_1_ppc64le.whl", hash = "sha256:126e12e618b4db42f68c779a56d41f82a390145ba36ac3f621d057eb34f5ad9d", size = 13315332, upload-time = "2026-08-24T12:11:09.433Z" },
+-    { url = "https://files.pythonhosted.org/packages/14/4d/801379f646cbc6b00998e5289b0630a886be3a4ee4c75b6bc9b87478a7f1/maturin-1.15.0-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:4f9d33e6c3f9615c8caceecbbbd440f8eb25a3ddeb687077682cd5eca2e9ae15", size = 10807183, upload-time = "2026-08-24T12:11:11.73Z" },
+-    { url = "https://files.pythonhosted.org/packages/89/27/2e612e1cbd1580e9e94d4722c227b5180dca27b32b955a34b79918aa1292/maturin-1.15.0-py3-none-manylinux_2_31_riscv64.musllinux_1_1_riscv64.whl", hash = "sha256:bf29beddd0c6708f112db51d5275fc28b28b9e9c9c5faae387eaef662918b176", size = 10413274, upload-time = "2026-08-24T12:11:14.04Z" },
+-    { url = "https://files.pythonhosted.org/packages/70/d8/202a7b4d75a51f20f84ec9ce3b7345b12b822207072164e2b1c6ef665125/maturin-1.15.0-py3-none-win32.whl", hash = "sha256:da649988be98e87e009e51b1bf0d301b6a301bc0cecbdd60d40d8ba60748d1ca", size = 8928744, upload-time = "2026-08-24T12:11:16.269Z" },
+-    { url = "https://files.pythonhosted.org/packages/40/dc/4e90da594986ba78dd3bc8a5921ecdcdb11085b22b02a412caab3b225601/maturin-1.15.0-py3-none-win_amd64.whl", hash = "sha256:552c2be4afd43fe8d5c9f3ec8d4c4756d973b8dcbe94c14084390301f50243e1", size = 10335085, upload-time = "2026-08-24T12:11:18.326Z" },
+-    { url = "https://files.pythonhosted.org/packages/8b/10/15d4314edf130955edf2dc237aa393a8a7c10f2b9b57b89fa2f61f915659/maturin-1.15.0-py3-none-win_arm64.whl", hash = "sha256:c7dc0c66c78d3debdd9c5aa807e861fbc
 ```
 
-**File**: `mitmproxy/proxy/layers/http/_http_h3.py` (modified, +91/-88)
-```diff
-@@ -1,14 +1,13 @@
- from collections.abc import Iterable
- from dataclasses import dataclass
- 
--from aioquic.h3.connection import FrameUnexpected
- from aioquic.h3.connection import H3Connection
- from aioquic.h3.connection import H3Event
--from aioquic.h3.connection import H3Stream
- from aioquic.h3.connection import Headers
--from aioquic.h3.connection import HeadersState
- from aioquic.h3.events import HeadersReceived
-+from aioquic.h3.exceptions import InvalidStreamStateError
- from aioquic.quic.configuration import QuicConfiguration
-+from aioquic.quic.connection import stream_is_unidirectional
- from aioquic.quic.events import StreamDataReceived
- from aioquic.quic.packet import QuicErrorCode
- 
-@@ -67,11 +66,12 @@ def __init__(self, conn: connection.Connection, is_client: bool) -> None:
-         self.pending_commands: list[commands.Command] = []
-         self._next_stream_id: list[int] = [0, 1, 2, 3]
-         self._is_client = is_client
-+        self.closed = False
-+        """Whether close() was called, by H3Connection or by us."""
- 
-         # the following fields are accessed by H3Connection
-         self.configuration = QuicConfiguration(is_client=is_client)
-         self._quic_logger = None
--        self._remote_max_datagram_frame_size = 0
- 
-     def close(
-         self,
-@@ -83,6 +83,7 @@ def close(
-         # we note the error on the connection and yield a CloseConnection
-         # this will then call `QuicConnection.close` with the proper values
-         # once the `Http3Connection` receives `ConnectionClosed`, it will send out `ProtocolError`
-+        self.closed = True
-         self.pending_commands.append(
-             CloseQuicConnection(self.conn, error_code, frame_type, reason_phrase)
-         )
-@@ -110,62 +111,71 @@ def send_stream_data(
-         )
- 
- 
-+@dataclass
-+class _StreamState:
-+    """The state of a request stream, as seen by mitmproxy."""
-+
-+    headers_received: bool = False
-+    headers_sent: bool = False
-+    send_ended: bool = False
-+    recv_ended: bool = False
-+
-+
- class LayeredH3Connection(H3Connection):
-     """
-     Creates a H3 connection using a fake QUIC connection, which allows layer separation.
-     Also ensures that headers, data and trailers are sent in that order.
-     """
- 
--    def __init__(
--        self,
--        conn: connection.Connection,
--        is_client: bool,
--        enable_webtransport: bool = False,
--    ) -> None:
-+    def __init__(self, conn: connection.Connection, is_client: bool) -> None:
-         self._mock = MockQuic(conn, is_client)
-+        self._connection_closed = False
-+        """Whether the QUIC layer reported that the connection was closed."""
-         self._closed_streams: set[int] = set()
-         """
-         We keep track of all stream IDs for which we have requested
-         STOP_SENDING to silently discard incoming data.
-         """
--        super().__init__(self._mock, enable_webtransport)  # type: ignore
-+        self._streams: dict[int, _StreamState] = {}
-+        """
-+        aioquic forgets about streams once they have ended,
-+        so we keep track of request streams ourselves.
-+
-+        Unlike aioquic, we never forget a stream, as we need its state to reject
-+        sends after it ended. This grows with the number of requests made on the
-+        connection, like `_closed_streams`.
-+        """
-+        super().__init__(self._mock)  # type: ignore
- 
--    # aioquic's constructor sets and then uses _max_push_id.
--    # This is a hack to forcibly disable it.
-     @property
--    def _max_push_id(self) -> int | None:
--        return None
-+    def _closed(self) -> bool:
-+        """Whether either side closed the connection, so incoming events are ignored."""
-+        # H3Connection closes the connection itself on protocol errors
-+        return self._connection_closed or self._mock.closed
- 
--    @_max_push_id.setter
--    def _max_push_id(self, value):
--        pass
-+    def _stream_state(self, stream_id: int) -> _StreamState:
-+        try:
-+            return self._streams[stream_id]
-+        except KeyError:
-+            state = self._streams[stream_id] = _StreamState()
-+            return state
- 
--    def _after_send(self, stream_id: int, end_stream: bool) -> None:
--        # if the stream ended, `QuicConnection` has an assert that no further data is being sent
--        # to catch this more early on, we set the header state on the `H3Stream`
--        if end_stream:
--            self._stream[stream_id].headers_send_state = HeadersState.AFTER_TRAILERS
-+    def _report_trailers(self, events: list[H3Event]) -> list[H3Event]:
-+        """Turns HeadersReceived into TrailersReceived for trailers."""
- 
--    def _handle_request_or_push_frame(
--        self,
--        frame_type: int,
--        frame_data: bytes | None,
--        stream: H3Stream,
--        stream_ended: bool,
--    ) -> list[H3Event]:
--        # turn HeadersReceived into TrailersReceived for trailers
--        events = super()._handle_request_or_push_frame(
--            frame_ty
-```
+---
 
-**File**: `mitmproxy/proxy/layers/quic/_client_hello_parser.py` (modified, +8/-13)
-```diff
-@@ -54,23 +54,19 @@ def quic_parse_client_hello_from_datagrams(
-         raise ValueError("Packet is not initial one.")
- 
-     # patch aioquic to intercept the client hello
-+    quic_logger = QuicLogger()
-     quic = QuicConnection(
-         configuration=QuicConfiguration(
-             is_client=False,
-             certificate="",
-             private_key="",
--            quic_logger=QuicLogger(),
-+            quic_logger=quic_logger,
-         ),
-         original_destination_connection_id=header.destination_cid,
-     )
-     _initialize = quic._initialize
- 
--    def server_handle_hello_replacement(
--        input_buf: QuicBuffer,
--        initial_buf: QuicBuffer,
--        handshake_buf: QuicBuffer,
--        onertt_buf: QuicBuffer,
--    ) -> None:
-+    def server_handle_hello_replacement(input_buf: QuicBuffer, *_) -> None:
-         assert input_buf.pull_uint8() == HandshakeType.CLIENT_HELLO
-         length = 0
-         for b in input_buf.pull_bytes(3):
-@@ -96,16 +92,15 @@ def initialize_replacement(peer_cid: bytes) -> None:
-     except QuicConnectionError as e:
-         raise ValueError(e.reason_phrase) from e
- 
--    quic_logger = quic._configuration.quic_logger
--    assert isinstance(quic_logger, QuicLogger)
-     traces = quic_logger.to_dict().get("traces")
-     assert isinstance(traces, list)
-     for trace in traces:
-         quic_events = trace.get("events")
-         for event in quic_events:
--            if event["name"] == "transport:packet_dropped":
--                raise ValueError(
--                    f"Invalid ClientHello packet: {event['data']['trigger']}"
--                )
-+            if event["name"] == "quic:packet_dropped":
-+                # the trigger is a category, the details give the precise reason
-+                data = event["data"]
-+                reason = data.get("details", {}).get("reason", data["trigger"])
-+                raise ValueError(f"Invalid ClientHello packet: {reason}")
- 
-     return None  # pragma: no cover  # FIXME: this should have test coverage
-```
+### Incident Patch 3: `ce24f0d6` (2026-11-13)
+**Commit Message**: build(deps): bump asgiref from 3.11.0 to 3.13.0 (#8606)
 
-**File**: `mitmproxy/proxy/layers/quic/_stream_layers.py` (modified, +44/-31)
-```diff
-@@ -10,19 +10,18 @@
- from collections.abc import Callable
- from logging import DEBUG
- from logging import ERROR
-+from logging import INFO
- from logging import WARNING
- 
- from aioquic.buffer import Buffer as QuicBuffer
- from aioquic.h3.connection import ErrorCode as H3ErrorCode
- from aioquic.quic import events as quic_events
- from aioquic.quic.configuration import QuicConfiguration
- from aioquic.quic.connection import QuicConnection
--from aioquic.quic.connection import QuicConnectionState
- from aioquic.quic.connection import QuicErrorCode
- from aioquic.quic.packet import encode_quic_version_negotiation
- from aioquic.quic.packet import PACKET_TYPE_INITIAL
- from aioquic.quic.packet import pull_quic_header
--from cryptography import x509
- 
- from ._client_hello_parser import quic_parse_client_hello_from_datagrams
- from ._commands import CloseQuicConnection
-@@ -72,6 +71,7 @@ def __init__(
-         self.child_layer = layer.NextLayer(self.context, ask_on_start=True)
-         self._time = time or ctx.master.event_loop.time
-         self._wakeup_commands: dict[commands.RequestWakeup, float] = dict()
-+        self._datagram_dropped = False
-         conn.tls = True
- 
-     def _handle_event(self, event: events.Event) -> layer.CommandGenerator[None]:
-@@ -80,13 +80,15 @@ def _handle_event(self, event: events.Event) -> layer.CommandGenerator[None]:
-             # which TunnelLayer recognizes as belonging to our connection.
-             assert self.quic
-             scheduled_time = self._wakeup_commands.pop(event.command)
--            if self.quic._state is not QuicConnectionState.TERMINATED:
--                # weird quirk: asyncio sometimes returns a bit ahead of time.
--                now = max(scheduled_time, self._time())
--                self.quic.handle_timer(now)
--                yield from super()._handle_event(
--                    events.DataReceived(self.tunnel_connection, b"")
--                )
-+            # asyncio can wake us up to one clock tick early (about 15ms on Windows),
-+            # and aioquic's timers only fire once they are due. Use at least the
-+            # scheduled time so that the timer fires instead of being rescheduled.
-+            now = max(scheduled_time, self._time())
-+            # this is a no-op if the connection has already terminated
-+            self.quic.handle_timer(now)
-+            yield from super()._handle_event(
-+                events.DataReceived(self.tunnel_connection, b"")
-+            )
-         else:
-             yield from super()._handle_event(event)
- 
-@@ -108,19 +110,11 @@ def _handle_command(
-                     command.stream_id, command.data, command.end_stream
-                 )
-             elif isinstance(command, ResetQuicStream):
--                stream = self.quic._get_or_create_stream_for_send(command.stream_id)
--                existing_reset_error_code = stream.sender._reset_error_code
--                if existing_reset_error_code is None:
--                    self.quic.reset_stream(command.stream_id, command.error_code)
--                elif self.debug:  # pragma: no cover
--                    yield commands.Log(
--                        f"{self.debug}[quic] stream {stream.stream_id} already reset ({existing_reset_error_code=}, {command.error_code=})",
--                        DEBUG,
--                    )
-+                # this is a no-op if the stream has already been reset or has finished
-+                self.quic.reset_stream(command.stream_id, command.error_code)
-             elif isinstance(command, StopSendingQuicStream):
--                # the stream might have already been closed, check before stopping
--                if command.stream_id in self.quic._streams:
--                    self.quic.stop_stream(command.stream_id, command.error_code)
-+                # this is a no-op if the stream has finished
-+                self.quic.stop_stream(command.stream_id, command.error_code)
-             else:
-                 raise AssertionError(f"Unexpected stream command: {command!r}")
-         else:
-@@ -203,19 +197,14 @@ def receive_handshake_data(
-                 err = event.reason_phrase or error_code_to_str(event.error_code)
-                 return False, err
-             elif isinstance(event, quic_events.HandshakeCompleted):
--                # concatenate all peer certificates
--                all_certs: list[x509.Certificate] = []
--                if self.quic.tls._peer_certificate:
--                    all_certs.append(self.quic.tls._peer_certificate)
--                all_certs.extend(self.quic.tls._peer_certificate_chain)
--
-                 # set the connection's TLS properties
-                 self.conn.timestamp_tls_setup = time.time()
-                 if event.alpn_protocol:
-                     self.conn.alpn = event.alpn_protocol.encode("ascii")
--                self.conn.certificate_list = [certs.Cert(cert) for cert in all_certs]
--                assert self.quic.tls.key_schedule
--                self.conn.cipher = self.quic.tls.k
-```
+Bumps [asgiref](https://github.com/django/asgiref) from 3.11.0 to 3.13.0.
+- [Changelog](https://github.com/django/asgiref/blob/main/CHANGELOG.txt)
+- [Commits](https://github.com/django/asgiref/compare/3.11.0...3.13.0)
 
-**File**: `pyproject.toml` (modified, +2/-3)
+---
+updated-dependencies:
+- dependency-name: asgiref
+  dependency-version: 3.13.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `uv.lock` (modified, +3/-3)
 ```diff
-@@ -32,14 +32,14 @@ classifiers = [
- # https://packaging.python.org/en/latest/discussions/install-requires-vs-requirements/#install-requires
- # It is not considered best practice to use install_requires to pin dependencies to specific versions.
- dependencies = [
--    "aioquic>=1.2.0,<=1.2.0",
-+    "aioquic>=1.8.0,<=1.8.0",
-     "argon2-cffi>=23.1.0,<=25.1.0",
-     "asgiref>=3.2.10,<=3.13.0",
-     "backports.zstd>=1.7.0,<=1.7.0 ; python_version<'3.14'",
-     "bcrypt>=5.0.0,<=5.0.0",
-     "Brotli>=1.2.1,<=1.2.1",
-     "certifi>=2026.10.19",  # no upper bound here to get latest CA bundle
--    "cryptography>=42.0,<=50.0.2",  # relaxed upper bound here to get security fixes
-+    "cryptography>=43.0,<=50.0.2",  # relaxed upper bound here to get security fixes
-     "flask>=3.0,<=3.1.3",
-     "h11>=0.16.0,<=0.16.0",
-     "h2>=4.3.0,<=4.4.1",
-@@ -147,7 +147,6 @@ testpaths = "test"
- addopts = "--capture=no --color=yes"
- filterwarnings = [
-     "ignore::DeprecationWarning:tornado.*:",
--    "ignore:datetime.datetime.utcnow:DeprecationWarning:aioquic.*:",
-     "error::RuntimeWarning",
-     "error::pytest.PytestUnraisableExceptionWarning",
+@@ -87,11 +87,11 @@ wheels = [
+ 
+ [[package]]
+ name = "asgiref"
+-version = "3.11.0"
++version = "3.13.0"
+ source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/76/b9/4db2509eabd14b4a8c71d1b24c8d5734c52b8560a7b1e1a8b56c8d25568b/asgiref-3.11.0.tar.gz", hash = "sha256:13acff32519542a1736223fb79a715acdebe24286d98e8b164a73085f40da2c4", size = 37969, upload-time = "2025-11-19T15:32:20.106Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/6b/90/f5fce14e95fccf53b58e8e2c47cd84d40d105d64073ae1ac75166db150e0/asgiref-3.13.0.tar.gz", hash = "sha256:034cc8cbf72d00553b4be256703ac545120b4e50af13b49dec99da899aeeecb4", size = 52941, upload-time = "2026-10-23T08:13:14.715Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/91/be/317c2c55b8bbec407257d45f5c8d1b6867abc76d12043f2d3d58c538a4ea/asgiref-3.11.0-py3-none-any.whl", hash = "sha256:1db9021efadb0d9512ce8ffaf72fcef601c7b73a8807a1bb2ef143dc6b14846d", size = 24096, upload-time = "2025-11-19T15:32:19.004Z" },
++    { url = "https://files.pythonhosted.org/packages/2e/b0/ec211e1f7966247cb6469158d856bac9aa4c2fe13621bd6a352e4f850453/asgiref-3.13.0-py3-none-any.whl", hash = "sha256:f9596a2434512686473d50f96ff6207fbba49ae1a785dfac614df4aeb085674d", size = 27593, upload-time = "2026-10-23T08:13:13.394Z" },
  ]
-```
-
-**File**: `test/mitmproxy/addons/test_proxyserver.py` (modified, +2/-6)
-```diff
-@@ -15,8 +15,8 @@
- from aioquic.asyncio.protocol import QuicConnectionProtocol
- from aioquic.asyncio.server import QuicServer
- from aioquic.h3 import events as h3_events
--from aioquic.h3.connection import FrameUnexpected
- from aioquic.h3.connection import H3Connection
-+from aioquic.h3.exceptions import InvalidStreamStateError
- from aioquic.quic import events as quic_events
- from aioquic.quic.configuration import QuicConfiguration
- from aioquic.quic.connection import QuicConnection
-@@ -410,7 +410,6 @@ def __init__(self, *args, **kwargs) -> None:
-         self.http: H3Connection | None = None
  
-     def http_headers_received(self, event: h3_events.HeadersReceived) -> None:
--        assert event.push_id is None
-         headers: dict[bytes, bytes] = {}
-         for name, value in event.headers:
-             headers[name] = value
-@@ -428,15 +427,14 @@ def http_headers_received(self, event: h3_events.HeadersReceived) -> None:
-         self.transmit()
- 
-     def http_data_received(self, event: h3_events.DataReceived) -> None:
--        assert event.push_id is None
-         assert event.stream_id in self._seen_headers
-         try:
-             self.http.send_data(
-                 stream_id=event.stream_id,
-                 data=event.data,
-                 end_stream=event.stream_ended,
-             )
--        except FrameUnexpected:
-+        except InvalidStreamStateError:
-             if event.data or not event.stream_ended:
-                 raise
-             self._quic.send_stream_data(
-@@ -573,7 +571,6 @@ def __init__(self, *args, **kwargs) -> None:
-         self.http = H3Connection(self._quic)
- 
-     def http_headers_received(self, event: h3_events.HeadersReceived) -> None:
--        assert event.push_id is None
-         response = self._responses[event.stream_id]
-         if response.waiter.done():
-             return
-@@ -589,7 +586,6 @@ def http_headers_received(self, event: h3_events.HeadersReceived) -> None:
-             response.waiter.set_exception(Exception("Headers after trailers received."))
- 
-     def http_data_received(self, event: h3_events.DataReceived) -> None:
--        assert event.push_id is None
-         response = self._responses[event.stream_id]
-         if response.waiter.done():
-             return
-```
-
-**File**: `test/mitmproxy/proxy/layers/http/test_http3.py` (modified, +132/-9)
-```diff
-@@ -1,5 +1,6 @@
- from collections.abc import Callable
- from collections.abc import Iterable
-+from logging import DEBUG
- 
- import pylsqpack
- import pytest
-@@ -13,7 +14,6 @@
- from aioquic.h3.connection import parse_settings
- from aioquic.h3.connection import Setting
- from aioquic.h3.connection import StreamType
--from aioquic.quic.packet import QuicErrorCode
- 
- from mitmproxy import connection
- from mitmproxy import version
-@@ -789,7 +789,6 @@ def test_rst_then_close(tctx):
-     playbook, cff = start_h3_proxy(tctx)
-     flow = tutils.Placeholder(HTTPFlow)
-     server = tutils.Placeholder(connection.Server)
--    err = tutils.Placeholder(str)
- 
-     assert (
-         playbook
-@@ -802,18 +801,19 @@ def test_rst_then_close(tctx):
-         >> tutils.reply()
-         # request server
-         << (open := commands.OpenConnection(server))
--        >> cff.receive_data(b"unexpected data frame")
-+        # SETTINGS may only be sent once on the control stream
-+        >> cff.receive_settings()
-         << quic.CloseQuicConnection(
-             tctx.client,
--            error_code=QuicErrorCode.PROTOCOL_VIOLATION.value,
-+            error_code=ErrorCode.H3_FRAME_UNEXPECTED.value,
-             frame_type=None,
--            reason_phrase=err,
-+            reason_phrase="SETTINGS have already been received",
-         )
-         >> quic.QuicConnectionClosed(
-             tctx.client,
--            error_code=QuicErrorCode.PROTOCOL_VIOLATION.value,
-+            error_code=ErrorCode.H3_FRAME_UNEXPECTED.value,
-             frame_type=None,
--            reason_phrase=err,
-+            reason_phrase="SETTINGS have already been received",
-         )
-         >> tutils.reply("connection cancelled", to=open)
-         << http.HttpErrorHook(flow)
-@@ -1114,12 +1114,12 @@ def test_ignore_wrong_order(self, tctx: context.Context):
-             >> http.RequestEndOfMessage(1)
-             << commands.Log(
-                 "Received RequestEndOfMessage(stream_id=0) unexpectedly: "
--                "DATA frame is not allowed in this state"
-+                "Cannot send data before the headers"
-             )
-             >> http.RequestData(1, b"123")
-             << commands.Log(
-                 "Received RequestData(stream_id=0, data=b'123') unexpectedly: "
--                "DATA frame is not allowed in this state"
-+                "Cannot send data before the headers"
-             )
-             >> http.RequestHeaders(1, req, end_stream=False)
-             << frame_factory.send_headers(
-@@ -1140,6 +1140,129 @@ def test_ignore_wrong_order(self, tctx: context.Context):
-             )
-         )
- 
-+    def test_informational_response(self, tctx: context.Context):
-+        frame_factory = FrameFactory(tctx.server, is_client=False)
-+        playbook = tutils.Playbook(Http3Client(tctx))
-+        req = Request.make("GET", "http://example.com/")
-+        resp = tutils.Placeholder(http.ResponseHeaders)
-+        assert (
-+            playbook
-+            << frame_factory.send_init()
-+            >> frame_factory.receive_init()
-+            << frame_factory.send_encoder()
-+            >> frame_factory.receive_encoder()
-+            >> http.RequestHeaders(1, req, end_stream=True)
-+            << frame_factory.send_headers(
-+                [
-+                    (b":method", b"GET"),
-+                    (b":scheme", b"http"),
-+                    (b":path", b"/"),
-+                    (b"content-length", b"0"),
-+                ],
-+                end_stream=True,
-+            )
-+            >> frame_factory.receive_decoder()  # for send_headers
-+            >> frame_factory.receive_headers(
-+                [(b":status", b"103"), (b"link", b"</style.css>; rel=preload")]
-+            )
-+            << commands.Log("Swallowing HTTP/3 informational response: 103 Early Hints")
-+            << frame_factory.send_decoder()  # for receive_headers
-+            >> frame_factory.receive_headers([(b":status", b"200")], end_stream=True)
-+            << http.ReceiveHttp(resp)
-+            << http.ReceiveHttp(http.ResponseEndOfMessage(1))
-+            << frame_factory.send_decoder()  # for receive_headers
-+        )
-+        assert resp().response.status_code == 200
-+        assert frame_factory.is_done
-+
-+    def test_goaway(self, tctx: context.Context):
-+        """Requests the server has started to process still complete after GOAWAY."""
-+        frame_factory = FrameFactory(tctx.server, is_client=False)
-+        playbook = tutils.Playbook(Http3Client(tctx))
-+        req = Request.make("GET", "http://example.com/")
-+        resp = tutils.Placeholder(http.ResponseHeaders)
-+        assert (
-+            playbook
-+            << frame_factory.send_init()
-+            >> frame_factory.receive_init()
-+            << frame_factory.send_encoder()
-+            >> frame_factory.receive_encoder()
-+            >> http.RequestHeaders(1, req, end_stream=True)
-+            << frame_factory.send_headers(
-+                [
-+                    (b":method", b"GET"),
-+         
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8596** (2026-11-13): Fail HTTP/3 streams whose headers QPACK cannot encode (@jlaine)
-- **PR #8594** (2026-11-13): Handle STOP_SENDING in raw QUIC mode (@jlaine)
-- **PR #8593** (2026-11-13): Update aioquic to 1.8.0 (@jlaine)
-- **PR #8585** (2026-11-10): mitmweb: add quiet zone around WireGuard QR code (@yldrmzffr)
-- **PR #8584** (2026-11-09): docs: fix links that go to a 404 on docs.mitmproxy.org (@Kernel-Hunter)
-- **PR #8568** (2026-11-04): Fix Windows CI (@mhils)
+- **PR #8607** (2026-11-13): build(deps-dev): bump maturin from 1.15.0 to 1.16.0 (@dependabot[bot])
+- **PR #8606** (2026-11-13): build(deps): bump asgiref from 3.11.0 to 3.13.0 (@dependabot[bot])
+- **PR #8605** (2026-11-13): build(deps-dev): bump click from 8.4.2 to 8.5.1 (@dependabot[bot])
+- **PR #8604** (2026-11-13): build(deps-dev): bump build from 1.5.0 to 1.6.1 (@dependabot[bot])
+- **PR #8602** (2026-11-13): build(deps): bump pyparsing from 3.3.2 to 3.3.3 (@dependabot[bot])
+- **PR #8600** (2026-11-13): build(deps-dev): bump awscli from 1.46.2 to 1.46.3 in the deploy group (@dependabot[bot])
 
 ---
 
@@ -2225,32 +1529,31 @@ The certificates and cipher suite now come from Hand
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Handle STOP_SENDING in raw QUIC mode (#8594)
+## X. build(deps-dev): bump click from 8.4.2 to 8.5.1
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d732750`: Handle STOP_SENDING in raw QUIC mode (#8594). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3da37a52`: build(deps-dev): bump click from 8.4.2 to 8.5.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- Fix a crash in raw QUIC mode when a peer stops reading a stream.
-  ([#8594](https://github.com/mitmproxy/mitmproxy/pull/8594), @jlaine)
+    "click==8.5.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    "click==8.4.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d732750` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3da37a52` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:39:13.381Z",
+  "timestamp": "2026-11-14T03:49:59.925Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-higress-group-higress-learnings",
+  "learning_id": "LEARN-EVO-higress-group-higress-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [higress-group-higress-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:39:13.381Z`  
-> **Learning ID**: `LEARN-REEXTRACT-higress-group-higress-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T03:49:59.925Z`  
+> **Learning ID**: `LEARN-EVO-higress-group-higress-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source**: github ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Source Version**: `f0260049`  
+> **Source Version**: `0316bc90`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:54:53.826Z  
+> **Timestamp**: 2026-11-14T03:49:12.901Z  
 > **Learning ID**: `learn-github-higress-group-higress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:54:53.816Z  
+> **Harvest Timestamp**: 2026-11-14T03:49:12.895Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9750 stars
+- **Stars / Engagement**: 9763 stars
 
 ---
 
@@ -1761,11 +1761,11 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5337** (2026-11-11): **fix(mcp-server): acknowledge valid Legacy JSON-RPC responses**
-  *Symptoms*: ## I. Summary  Valid client responses to native Legacy SSE heartbeats currently fail in the shared envelope parser before reaching the existing receipt dispatcher. Admit well-formed Legacy JSON-RPC result/error envelopes and reuse the bodyless HTTP 202 acknowledgement. Ordinary client `ping` stays HTTP 200, invalid/mixed envelopes remain rejected, and Modern response envelopes remain rejected.  Production code changes only `plugins/wasm-go/pkg/mcp/protocol/envelope.go`. Add focused protocol/TestHost cases and an opt-in real native-session + Redis + plain Wasm fixture. Existing public types, dispatcher, ordinary request duplicate-field behavior and normal runtime-verification modes are preserved.  ## II. Related issue  Fixes #5334. Proposal #5335; authoritative Design #5336.  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agent use was limited to mechanical editing. - [x] **Verified maintainer/administrator exception:** Material agent participation occurred; canonical-repository identity/role and actual PR author were checked with token overrides unset. - [ ] **Material agent participation:** Standard planning gate rather than the verified-role exception.  Timed obligations for the standard gate: N/A under the verified-administrator exc
+- **Issue #5359** (2026-11-13): **Add the Ikoi MCP server**
+  *Symptoms*: <!-- Please read the contributing guidelines before submitting this pull request. Complete every applicable field. For each non-applicable category, write N/A and explain why; one explanation may cover multiple fields when it is clear. -->  ## I. Summary  This PR adds Ikoi to the Higress MCP Marketplace, following the marketplace intake in #2113 (add the generated YAML configuration and README to `plugins/wasm-go/mcp-servers`).  Ikoi is a city where AI agents come home to live between jobs: rest, friends, and a memory book. Its remote MCP server is https://ikoi.ai/mcp (Streamable HTTP, server name `ikoi`, version 1.0.2; Official MCP Registry name `ai.ikoi/ikoi`).  Changes (2 new files, 124 additions, 0 deletions):  - `plugins/wasm-go/mcp-servers/mcp-ikoi/mcp-server.yaml` — an MCP proxy (`server.type: mcp-proxy`, `transport: http`) to `https://ikoi.ai/mcp`, with `protocolStrategy: auto` (Ikoi does not publish its MCP protocol version) and `allowTools` listing the server's 18 tools. The client's per-agent `X-API-Key` is passed through to Ikoi (`defaultDownstreamSecurity` with `passthrough: true`, `defaultUpstreamSecurity` to the backend scheme). No API key or other credential is stored in this PR. - `plugins/wasm-go/mcp-servers/mcp-ikoi/README.md` — description, features, the 18 tools, and usage, based on https://github.com/ikoicity/ikoi-mcp.  Listing details for the marketplace page: name "Ikoi", website https://ikoi.ai, description "A city where AI agents come home to live be
 
-- **Issue #5334** (2026-11-11): **mcp-server：新版协议解析拒绝旧版 HTTP+SSE 链路中的合法心跳响应 || mcp-server: New version of protocol parsing rejects legitimate heartbeat responses in old version of HTTP+SSE links**
-  *Symptoms*: ## 问题背景  旧版 HTTP+SSE 会话层会定期向客户端发送 JSON-RPC `ping` 请求。客户端收到后，按照 [MCP Ping 规范](https://modelcontextprotocol.io/specification/2025-03-26/basic/utilities/ping)返回相同 ID、包含空 `result` 的响应，例如：  ```json {"jsonrpc":"2.0","id":"ping-1","result":{}} ```  旧实现会对这类没有 `method` 的报文返回 HTTP 202 和空响应体。新版 mcp-server 增加统一协议解析后，在进入 Legacy 分支之前便检查报文结构，并拒绝包含 `result` 或 `error` 的 JSON-RPC 响应，返回 HTTP 400：  ```json {"jsonrpc":"2.0","id":"ping-1","error":{"code":-32600,"message":"JSON-RPC response envelopes are not accepted"}} ```  这使得会话层主动发送的心跳请求，其合法客户端响应被 Wasm 插件拒绝，破坏了原有 HTTP+SSE 心跳交互的兼容性。客户端主动发送 `method: ping` 的请求处理器仍然存在；本问题针对的是客户端回复服务端 ping 的反向响应。  当前上游 `d388d06a92dd125bbe99330888690fd6deeb352f` 仍包含这一行为，相关公开代码：  - [会话层周期性发送 ping](https://github.com/higress-group/higress/blob/d388d06a92dd125bbe99330888690fd6deeb352f/plugins/golang-filter/mcp-session/common/sse.go#L260)。 - [PrepareRequestWithPolicy 在 Legacy 分支之前解析报文](https://github.com/higress-group/higress/blob/d388d06a92dd125bbe99330888690fd6deeb352f/plugins/wasm-go/pkg/mcp/protocol/request.go#L173)。 - [decodeEnvelope 拒绝响应报文](https://github.com/higress-group/higress/blob/d388d06a92dd125bbe99330888690fd6deeb352f/plugins/wasm-go/pkg/mcp/protocol/envelope.go#L81)。  以上 JSON 均为合成示例，只说明可从公开代码复现的协议兼容性问题。  <!--This is a translation content dividing line, the content below is generated by machine, please do not modify the content below--> --- ## Problem background   The legacy HTTP+SSE session layer periodically sends JSON-RPC `ping` requests to the client. Af
+- **Issue #5352** (2026-11-13): **fix(mcp-server): preserve proxy tool input schemas**
+  *Symptoms*: ## I. Summary  Fix tool descriptors published by virtual MCP tool sets. A proxy tool can configure a complete `tools[].inputSchema`, including nested objects, array items, and references. The configured schema takes precedence. Existing `args` configurations still generate the schema when the new field is absent. The tool set omits top-level `required` when it has no entries.  ## II. Related issue  N/A. No public Higress issue is linked for this bug.  ## III. Change type  - [x] Bug fix - [x] Feature or enhancement - [ ] Documentation or configuration only - [ ] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation** - [ ] **Trivial agent-use exception** - [x] **Verified maintainer/administrator exception** - [ ] **Material agent participation** under the standard gate  - [ ] Complete - [ ] Noncompliant - [x] Verified exception - [ ] N/A  **Gate-status explanation**  This agent-assisted PR uses the verified administrator exception for the planning and traceability gate. Bug-fix runtime evidence is included below. [Agent-assisted contribution policy](https://github.com/higress-group/higress/blob/main/docs/developers/agent-assisted-contributions.md)  **Verified maintainer/administrator exception evidence**  - PR [#5352](https://github.com/higress-group/higress/pull/5352). - Authenticated `gh` login `johnlanni`. - Canonical-repository `role_name` `admin`. - Actual PR author from `gh pr view` `johnlanni`. - Login/author 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1782,934 +1782,357 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f0260049` (2026-11-11)
-**Commit Message**: fix(mcp-server): acknowledge valid Legacy JSON-RPC responses (#5337)
+### Incident Patch 1: `0316bc90` (2026-11-13)
+**Commit Message**: fix(mcp-server): preserve proxy tool input schemas (#5352)
 
-Signed-off-by: sunxia0 <[REDACTED_EMAIL]>
-Co-authored-by: sunxia0 <[REDACTED_EMAIL]>
+Signed-off-by: johnlanni <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md` (modified, +69/-0)
+**File**: `plugins/wasm-go/extensions/mcp-server/README.md` (modified, +2/-0)
 ```diff
-@@ -339,3 +339,72 @@ assertion fault injection, source/config/request equivalence and failed cleanup.
- They run alongside all retained normal-mode fixture assertions. These injected
- self-tests establish harness behavior; real Wasm evidence requires the command
- above.
-+
-+## Focused Legacy response acknowledgements (#5336)
-+
-+This opt-in mode uses the real native `mcp-session` filter, isolated Redis and
-+plain production Wasm. Ordinary modes, historical pins and `compose.yaml` are
-+unchanged. Run only after committing a clean candidate, with an empty external
-+evidence directory and all three images available locally:
-+
-+```sh
-+env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 \
-+  /opt/homebrew/bin/python3.12 \
-+  plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py \
-+  --legacy-response-ack \
-+  --response-baseline d388d06a92dd125bbe99330888690fd6deeb352f \
-+  --candidate HEAD \
-+  --gateway-image higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/gateway@sha256:2b00548e16aafc5ee51314a0de8c4df4369877b1d0f9eaec13becc3675dd04b7 \
-+  --backend-image docker.io/library/python@sha256:34d4d54d6f68a1980ad02433a5078d998ab394d55c97d953efa50b442135baf2 \
-+  --redis-image docker.io/library/redis@sha256:52d1ea8a654b10f06af3ecda4e9dbcd035c7868b5c49ee7975de917f81de13db \
-+  --output "$SSE_EVIDENCE/runtime"
-+```
-+
-+Run this command from the repository root; define `SSE_EVIDENCE` as an external
-+run-owned directory. The mode cannot mix with `--sse-no-space`, `--skip-routing`
-+or alternate ordinary oracle/control pins. It freezes the actual image
-+RepoDigests, measures `/var/lib/istio/envoy/golang-filter.so`, then checks its
-+hash and the mounted Wasm inside each running gateway. A missing native plugin,
-+ABI/load failure, unavailable Redis or stream startup failure fails the run;
-+none qualifies as affected-source reproduction.
-+
-+`legacy_response_ack.cases()` owns the closed 36-case registry (37 POSTs):
-+A1 direct result, A2 explicit-Legacy error and A3 two observed native heartbeats;
-+C1 client ping; C2 initialize, initialized, list and call; 22 individually named
-+C3 invalid-response cases; C4 header-result, header-error and body-result;
-+and C5 Modern discovery, list and call. The same single REST echo tool performs
-+GET `/unified/rest/legacy-ack` on the unchanged synthetic backend. Only the two
-+submitted tool calls may reach it. Direct listener 15100 isolates protocol
-+controls; listener 15101 places the real native filter before Wasm. Requests
-+send `Host: gateway` to match the exact synthetic native rule. Redis publishes
-+no host port and is recreated between affected/candidate roles.
-+
-+The SSE client first consumes the native endpoint, then initializes that actual
-+session, observes two natural native pings, sends their matching replies and
-+lists/calls the tool on the same connection. Its reader drains concurrently for
-+at most 20 seconds and always closes/joins. Raw synthetic frames, POST bytes,
-+access identities, endpoint/session bindings and ping/reply equality are
-+retained per role. Equivalence normalizes only the bound endpoint session ID
-+and corresponding top-level ping-reply IDs to ordered logical labels. It does
-+not normalize status, result, error, arbitrary values, headers or extra fields.
-+Native heartbeat/control/business and backend counts are recorded separately.
-+
-+`legacy-response-{affected,candidate}.json` retain actual observations and
-+assertions; `legacy-response-inputs.json` binds source, compiler/module,
-+image/native/Wasm/config and frozen-harness identities. Affected verification
-+must exit 1 with actual 400/-32600 target failures while all controls pass;
-+candidate verification must exit 0 with empty 202 target receipts. The focused
-+`legacy-response-manifest.json` can pass only after validating both observations,
-+unique gateway accesses, input equivalence and zero run-owned
-+containers/networks/volumes. No host listeners are published; reader processes
-+live only in removed verifier containers. Diagnostics are captured before
-+cleanup. Build products and logs belong only in external evidence directories.
-+
-+Offline fixture/finalizer fault injection remains separate from actual runtime
-+acceptance:
-+
-+```sh
-+# From this runtime-verification directory:
-+env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 \
-+  /opt/homebrew/bin/python3.12 compat_self_test.py
-+```
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/compat_self_test.py` (modified, +187/-1)
-```diff
-@@ -685,8 +685,194 @@ def fake_run(command, log, **options):
-             require(recorded["cleanupComplete"] == (cleanup_status == 0), "cleanup failure hidden")
-             require(any(command[:3] == ["podman", "network", "ls"] for command in commands) and any(command[:3] == ["podman", "volume", "ls"] for command in commands), "cleanup inventories missing")
+@@ -97,6 +97,8 @@ toolSet:
  
-+def legacy_response_ack_checks():
-+    """Offline synthetic evidence; actual acceptance still requires native SSE."""
-+    import legacy_response_ack as ack
-+    import run_compat
-+    import contextlib
-+    import unittest.mock as mock
-+
-+    def snapshot(role):
-+        endpoint = "/mcp/legacy?sessionId=synthetic-" + role
-+        value = {"variant": role, "expectedCases": ack.cases(), "cases": [], "exchanges": [], "frames": [],
-+                 "bindings": {"endpoint": endpoint, "sessionId": "synthetic-" + role, "pings": []},
-+                 "startupError": None, "readerClosed": True,
-+                 "backend": {"events": [{"case": name, "method": "GET", "path": "/unified/rest/legacy-ack", "accepted": True} for name in ("C2/call", "C5/call")]}}
-+        def frame(event, raw):
-+            value["frames"].append({"event": event, "data": ack.raw_record(raw), "wire": ack.raw_record(b"event: " + event.encode() + b"\ndata: " + raw + b"\n\n")})
-+        frame("endpoint", endpoint.encode())
-+        for case in ack.cases():
-+            red = role == "affected" and case["target"]
-+            value["cases"].append({"id": case["id"], "status": "FAIL" if red else "PASS", "validRedReproduction": red})
-+            for repetition in range(2 if case["id"] == "A3/native-heartbeats" else 1):
-+                port = ack.SESSION if case["id"].startswith(("C2/", "A3/")) else ack.DIRECT
-+                raw = ack.dump({"synthetic": case["id"]})
-+                if case["id"].startswith("A3/"):
-+                    ping_id = role + "-synthetic-ping-" + str(repetition)
-+                    value["bindings"]["pings"].append({"id": ping_id, "frame": len(value["frames"]), "replySequence": len(value["exchanges"]) + 1})
-+                    frame("message", ack.dump({"jsonrpc": "2.0", "id": ping_id, "method": "ping"}))
-+                    raw = ack.dump({"jsonrpc": "2.0", "id": ping_id, "result": {}})
-+                status = 400 if red or case["id"].startswith(("C3/", "C4/")) else 202 if case["target"] or case["id"] == "C2/initialized" else 200
-+                body = ack.dump({"jsonrpc": "2.0", "id": "synthetic", "error": {"code": -32600}}) if status == 400 else b"" if status == 202 else ack.dump({"jsonrpc": "2.0", "id": "synthetic", "result": {}})
-+                value["exchanges"].append({"case": case["id"], "accessRequestId": "request-" + str(len(value["exchanges"])), "port": port,
-+                                           "path": endpoint if port == ack.SESSION else "/mcp", "headers": [["Host", "gateway"]],
-+                                           "request": ack.raw_record(raw), "status": status, "response": ack.raw_record(body)})
-+                if port == ack.SESSION and body: frame("message", body)
-+        value["counts"] = ack.observed_counts(value)
-+        return value
-+
-+    before, after = snapshot("affected"), snapshot("candidate")
-+    require(not ack.observation_errors(before) and not ack.observation_errors(after), "synthetic focused observations rejected")
-+    require(ack.normalized(before) == ack.normalized(after) and ack.normalized_frames(before) == ack.normalized_frames(after), "bound-only native normalization differs")
-+    mutations = [
-+        lambda value: value.update(startupError="native ABI unavailable"),
-+        lambda value: value["cases"].pop(),
-+        lambda value: value["cases"].append(copy.deepcopy(value["cases"][0])),
-+        lambda value: value["bindings"]["pings"][0].update(id="tampered"),
-+        lambda value: value["bindings"].update(sessionId="tampered"),
-+        lambda value: value["exchanges"][2].update(request=ack.raw_record(b'{"jsonrpc":"2.0","id":"tampered","result":{}}')),
-+        lambda value: value["frames"].append(copy.deepcopy(value["frames"][-1])),
-+        lambda value: value["backend"]["events"].append(copy.deepcopy(value["backend"]["events"][0])),
-+        lambda value: value.update(readerClosed=False),
-+        lambda value: value["cases"][0].update(validRedReproduction=False),
-+        lambda value: value["exchanges"][0].update(status=503),
-+    ]
-+    for mutate in mutations:
-+        value = copy.deepcopy(before); mutate(value)
-+        require(ack.observation_errors(value), "focused corruption accepted")
-+    value = copy.deepcopy(after)
-+    value["exchanges"][0]["request"] = ack.raw_record(b'{"different":"ordinary-user-value"}')
-+    require(ack.normalized(value) != ack.normalized(after), "arbitrary value normalized away")
-+    with tempfile.TemporaryDirectory() as temporary:
-+        root = Path(temporary); ack.config(root)
-+        config = (root / "envoy.yaml").read_text()
-+        re
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/legacy_response_ack.py` (added, +642/-0)
-```diff
-@@ -0,0 +1,642 @@
-+"""Closed synthetic #5336 native-session acknowledgement fixture and finalizer.
-+
-+Only observed native endpoint/session/ping identities are normalized. No native
-+implementation, heartbeat source, production overlay or shared Redis is used.
-+"""
-+import base64
-+from collections import Counter
-+from copy import deepcopy
-+import hashlib
-+import http.client
-+import json
-+import os
-+from pathlib import Path
-+import queue
-+import shutil
-+import socket
-+import subprocess
-+import sys
-+import tarfile
-+import tempfile
-+import threading
-+import time
-+import uuid
-+from urllib.parse import parse_qsl, urlencode, urlsplit
-+
-+import generate_envoy as base
-+
-+AFFECTED = "d388d06a92dd125bbe99330888690fd6deeb352f"
-+NATIVE_PATH = "/var/lib/istio/envoy/golang-filter.so"
-+DIRECT, SESSION = 15100, 15101
-+MODERN = "2026-07-28"
-+META = {"io.modelcontextprotocol/protocolVersion": MODERN,
-+        "io.modelcontextprotocol/clientCapabilities": {}}
-+INVALID = {
-+    "missing-id": b'{"jsonrpc":"2.0","result":{}}',
-+    "boolean-id": b'{"jsonrpc":"2.0","id":true,"result":{}}',
-+    "composite-id": b'{"jsonrpc":"2.0","id":{},"result":{}}',
-+    "missing-version": b'{"id":1,"result":{}}',
-+    "wrong-version": b'{"jsonrpc":"1.0","id":1,"result":{}}',
-+    "missing-result": b'{"jsonrpc":"2.0","id":1}',
-+    "both": b'{"jsonrpc":"2.0","id":1,"result":null,"error":null}',
-+    "mixed-method": b'{"jsonrpc":"2.0","id":1,"method":"tools/call","result":{}}',
-+    "null-method": b'{"jsonrpc":"2.0","id":1,"method":null,"result":{}}',
-+    "error-null": b'{"jsonrpc":"2.0","id":1,"error":null}',
-+    "error-code": b'{"jsonrpc":"2.0","id":1,"error":{"code":1.5,"message":"x"}}',
-+    "error-message": b'{"jsonrpc":"2.0","id":1,"error":{"code":1,"message":null}}',
-+    "duplicate-id": b'{"jsonrpc":"2.0","id":1,"id":2,"result":{}}',
-+    "duplicate-jsonrpc": b'{"jsonrpc":"2.0","jsonrpc":"2.0","id":1,"result":{}}',
-+    "duplicate-result": b'{"jsonrpc":"2.0","id":1,"result":{},"result":{}}',
-+    "duplicate-code": b'{"jsonrpc":"2.0","id":1,"error":{"code":1,"code":2,"message":"x"}}',
-+    "duplicate-message": b'{"jsonrpc":"2.0","id":1,"error":{"code":1,"message":"x","message":"y"}}',
-+    "malformed": b'{"jsonrpc":"2.0","id":1,"result":',
-+    "utf8": b'{"jsonrpc":"2.0","id":1,"result":"\xff"}',
-+    "trailing": b'{"jsonrpc":"2.0","id":1,"result":{}}{}',
-+    "batch": b'[{"jsonrpc":"2.0","id":1,"result":{}}]',
-+    "non-object": b'null',
-+}
-+
-+
-+def require(value, message):
-+    if not value:
-+        raise AssertionError(message)
-+
-+
-+def cases():
-+    return ([{"id": name, "target": True} for name in ("A1/direct-result", "A2/direct-error", "A3/native-heartbeats")]
-+            + [{"id": name, "target": False} for name in ("C1/client-ping", "C2/initialize", "C2/initialized", "C2/list", "C2/call")]
-+            + [{"id": "C3/" + name, "target": False} for name in INVALID]
-+            + [{"id": "C4/" + name, "target": False} for name in ("header-result", "header-error", "body-result")]
-+            + [{"id": "C5/" + name, "target": False} for name in ("discover", "list", "call")])
-+
-+
-+def raw_record(raw):
-+    return {"base64": base64.b64encode(raw).decode(), "sha256": hashlib.sha256(raw).hexdigest(), "bytes": len(raw)}
-+
-+
-+def raw_bytes(record):
-+    value = base64.b64decode(record["base64"], validate=True)
-+    require(raw_record(value) == record, "raw byte/hash record altered")
-+    return value
-+
-+
-+def dump(value):
-+    return json.dumps(value, separators=(",", ":"), ensure_ascii=False).encode()
-+
-+
-+def request(method, rpc_id, params=None, modern=False):
-+    value = {"jsonrpc": "2.0", "id": rpc_id, "method": method}
-+    if params is not None or modern:
-+        value["params"] = deepcopy(params or {})
-+    if modern:
-+        value["params"]["_meta"] = META
-+    return dump(value)
-+
-+
-+def config(out, library=NATIVE_PATH):
-+    """One fixed REST fixture/module and a native-before-Wasm session listener."""
-+    fixture = {"server": {"name": "legacy-ack", "type": "rest"}, "tools": [{"name": "echo", "description": "Synthetic echo",
-+               "requestTemplate": {"url": "http://backend-primary:8080/unified/rest/legacy-ack", "method": "GET"}}]}
-+    direct = base.listener_yaml(DIRECT, "legacy-ack-direct", "backend-primary", fixture)
-+    session = base.listener_yaml(SESSION, "legacy-ack-session", "backend-primary", fixture)
-+    native = '''                - name: envoy.filters.http.golang
-+                  typed_config:
-+                    "@type": type.googleapis.com/envoy.extensions.filters.http.golang.v3alpha.Config
-+                    library_id: legacy-ack-native
-+                    library_path: %s
-+                    plugin_name: mcp-session
-+                    plugin_config:
-+                      "@type": type.googleapis.com/xds.type.v3.TypedStruct
-+                      value:
-+                        sse_path_suffix: /sse
-+                        redis: {address: "redis:6379"}
-+                        match_
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py` (modified, +10/-0)
-```diff
-@@ -96,7 +96,17 @@ def main():
-     parser.add_argument("--skip-routing", action="store_true", help="Development only; evidence cannot pass A12 without routing")
-     parser.add_argument("--sse-no-space", action="store_true", help="Only the closed #5308 plain baseline/candidate matrix")
-     parser.add_argument("--sse-baseline", help="Exact affected #5308 source, required with --sse-no-space")
-+    parser.add_argument("--legacy-response-ack", action="store_true", help="Only the closed #5336 real native-session response matrix")
-+    parser.add_argument("--response-baseline", help="Exact affected #5336 source, required with --legacy-response-ack")
-+    parser.add_argument("--redis-image", help="Run-owned Redis image, required with --legacy-response-ack")
-     args = parser.parse_args()
-+    if args.legacy_response_ack or args.response_baseline or args.redis_image:
-+        from legacy_response_ack import AFFECTED, run
-+        if not args.legacy_response_ack or args.response_baseline != AFFECTED or not args.redis_image:
-+            parser.error("--legacy-response-ack requires --response-baseline " + AFFECTED + " and --redis-image")
-+        if args.sse_no_space or args.sse_baseline or args.skip_routing or args.oracle != contract.ORACLE or args.control != contract.CONTROL:
-+            parser.error("focused legacy-response mode cannot mix ordinary or other focused modes")
-+        return run(args)
-     if args.sse_no_space != bool(args.sse_baseline) or args.sse_no_space and args.sse_baseline != SSE_NO_SPACE_BASELINE:
-         parser.error("--sse-no-space requires --sse-baseline " + SSE_NO_SPACE_BASELINE)
-     candidate = subprocess.check_output(["git", "rev-parse", args.candidate + "^{commit}"], cwd=ROOT, text=True).strip()
-```
-
-**File**: `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/verify_compat.py` (modified, +3/-0)
-```diff
-@@ -746,6 +746,9 @@ def supplements(variant, out):
+ 组合后的工具名称为 `服务名称___工具名称`，例如 `weather-server___get_weather`。
  
++对于 `mcp-proxy` 工具，在 `tools[].inputSchema` 中保存上游工具返回的完整 Schema，工具集即可发布嵌套属性、数组元素和引用定义。该字段是一个 `type: object` 的 JSON Schema。它与 `args` 同时配置时，工具集采用 `inputSchema`。省略 `inputSchema` 时，工具集从 `args` 生成 Schema。无必填参数时省略顶层 `required`。直接代理的 `tools/list` 读取上游工具描述。
++
+ ### 允许的工具配置
  
- if __name__ == "__main__":
-+    if "--legacy-response-ack" in sys.argv:
-+        from legacy_response_ack import Fixture
-+        raise SystemExit(Fixture(os.environ["COMPAT_VARIANT"], os.environ.get("RUNTIME_EVIDENCE", "/evidence")).run())
-     variant = os.environ["COMPAT_VARIANT"]
-     out = os.environ.get("RUNTIME_EVIDENCE", "/evidence")
-     if "--sse-no-space" in sys.argv:
+ | 名称         | 数据类型        | 填写要求 | 默认值 | 描述                                   |
 ```
 
-**File**: `plugins/wasm-go/pkg/mcp/protocol/envelope.go` (modified, +74/-4)
+**File**: `plugins/wasm-go/extensions/mcp-server/README_EN.md` (modified, +2/-0)
 ```diff
-@@ -48,7 +48,9 @@ func (id ID) Raw() json.RawMessage {
- 	return bytes.Clone(id.raw)
+@@ -103,6 +103,8 @@ toolSet:
+ 
+ Combined tool names use the format `serverName___toolName`, such as `weather-server___get_weather`.
+ 
++For `mcp-proxy` tools, store the full upstream schema in `tools[].inputSchema` so the tool set can publish nested properties, array items, and reference definitions. This field is a JSON Schema with `type: object`. When both fields are set, `inputSchema` takes precedence over `args`. When `inputSchema` is absent, the tool set builds the schema from `args`. For tools without required arguments, the tool set omits the top-level `required` field. Direct proxy `tools/list` responses use the upstream tool descriptors.
++
+ ### Allowed Tools Configuration
+ 
+ | Name         | Data Type        | Required | Default | Description                                   |
+```
+
+**File**: `plugins/wasm-go/extensions/mcp-server/main_test.go` (modified, +63/-0)
+```diff
+@@ -304,6 +304,69 @@ func TestSchemaCompatibilityConfigurationLoadsGloballyAndAtRuleLevel(t *testing.
+ 	})
  }
  
--// Envelope is a single JSON-RPC request or notification.
-+// Envelope is a single JSON-RPC request, notification, or acknowledged Legacy
-+// response. A Legacy response intentionally has an empty Method and is not a
-+// notification; the existing Legacy dispatcher sends its bodyless receipt.
- type Envelope struct {
- 	ID           ID
- 	Method       string
-@@ -57,8 +59,9 @@ type Envelope struct {
- 	Raw          json.RawMessage
- }
- 
--// decodeEnvelope checks message framing independently of the control decoder.
--// Ordinary fields use the same first occurrence as the legacy gjson handlers.
-+// decodeEnvelope 校验输入报文的完整 JSON 边界并返回独立持有原文和 ID 的 Envelope。
-+// 普通请求字段保留 Legacy gjson 的首次出现语义；合法 Legacy 响应以空 Method
-+// 返回，仅交给现有 dispatcher 确认收件，不查找方法或赋予通知语义。Modern 响应仍拒绝。
- func decodeEnvelope(body []byte, modern bool) (Envelope, *Error) {
- 	if !utf8.Valid(body) || !gjson.ValidBytes(body) {
- 		return Envelope{}, ParseError()
-@@ -79,7 +82,11 @@ func decodeEnvelope(body []byte, modern bool) (Envelope, *Error) {
- 		return envelope, ParseError()
- 	}
- 	if len(members["result"]) != 0 || len(members["error"]) != 0 {
--		return envelope, InvalidRequest("JSON-RPC response envelopes are not accepted")
-+		// 只承认合法 Legacy 响应，避免把缺少方法的畸形请求误吞为收件确认。
-+		if modern || !validLegacyResponse(owned, members, id) {
-+			return envelope, InvalidRequest("JSON-RPC response envelopes are not accepted")
-+		}
-+		return envelope, nil
- 	}
- 	if modern {
- 		var jsonrpc string
-@@ -96,6 +103,69 @@ func decodeEnvelope(body []byte, modern bool) (Envelope, *Error) {
- 	return envelope, nil
- }
- 
-+// validLegacyResponse 校验已通过完整 JSON 和 ParseID 检查的 Legacy 响应。
-+// 输入成员借用 body；返回值只表示可确认收件，不关联 pending 请求。仅响应身份字段
-+// 和 error.code/message 禁止重复，result/error.data 保持不透明且不施加递归深度限制。
-+func validLegacyResponse(body []byte, members JSONObject, id ID) bool {
-+	version := gjson.ParseBytes(members["jsonrpc"])
-+	if version.Type != gjson.String || version.String() != "2.0" || !id.IsPresent() || len(members["method"]) != 0 {
-+		return false
-+	}
-+	if (len(members["result"]) != 0) == (len(members["error"]) != 0) || duplicateResponseMembers(body, false) {
-+		return false
-+	}
-+	if len(members["error"]) == 0 {
-+		return true
-+	}
-+	errorBody := members["error"]
-+	if !isJSONObject(errorBody) || duplicateResponseMembers(errorBody, true) {
-+		return false
-+	}
-+	errorMembers := businessObjectMembers(errorBody)
-+	return integerToken(errorMembers["code"]) && gjson.ParseBytes(errorMembers["message"]).Type == gjson.String
-+}
++func TestComposedProxyToolInputSchemas(t *testing.T) {
++	const nestedSchema = `{
++		"$schema":"https://json-schema.org/draft/2020-12/schema",
++		"type":"object",
++		"properties":{
++			"payload":{"type":"object","properties":{"name":{"type":"string"}},"required":["name"]},
++			"records":{"type":"array","items":{"$ref":"#/$defs/record"}}
++		},
++		"$defs":{"record":{"type":"object","properties":{"id":{"type":"integer","minimum":9007199254740993}},"required":["id"]}},
++		"required":["payload","records"],
++		"additionalProperties":false
++	}`
++	config := json.RawMessage(fmt.Sprintf(`{
++		"server":{"name":"source","type":"mcp-proxy","transport":"http","mcpServerURL":"http://source.example.test/mcp"},
++		"tools":[
++			{"name":"empty"},
++			{"name":"optional","args":[{"name":"query","type":"string","description":"Search term","default":"all"}]},
++			{"name":"required","args":[{"name":"query","type":"string","description":"Search term","required":true}]},
++			{"name":"nested","args":[{"name":"old","type":"string","required":true}],"inputSchema":%s}
++		],
++		"_rules_":[{"_match_domain_":["virtual.example.test"],"toolSet":{
++			"name":"virtual",
++			"serverTools":[{"serverName":"source","tools":["empty","optional","required","nested"]}]
++		}}]
++	}`, nestedSchema))
 +
-+// duplicateResponseMembers 只统计当前对象的响应判别字段，返回是否有歧义。
-+// errorObject 选择 error.code/message 范围，不递归遍历业务值或改变普通请求语义。
-+func duplicateResponseMembers(body []byte, errorObject bool) bool {
-+	seen := make(map[string]bool)
-+	duplicate := false
-+	gjson.ParseBytes(body).ForEach(func(key, _ gjson.Result) bool {
-+		name := key.String()
-+		tracked := name == "jsonrpc" || name == "id" || name == "method" || name == "result" || name == "error"
-+		if errorObject {
-+			tracked = name == "code" || name == "message"
++	test.RunTest(t, func(t *testing.T) {
++		host, status := test.NewTestHost(config)
++		defer host.Reset()
++		require.Equal(t, types.OnPluginStartStatusOK, status)
++		host.InitHttp()
++		defer host.CompleteHttp()
++		require.NoError(t, host.SetDomainName("virtual.example.test"))
++		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
++			{":authority", "virtual.example.test"}, {":method", "POST"}, {":path", "/mcp"},
++			{"content-type", "application/json"}, {"accept", "application/json, text/event-stream"},
++		}))
++		host.CallOnHttpRequestBody([]byte(`{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}`))
++		response := host.GetLocalResponse()
++		require.NotNil(t, response)
++		require.EqualValues(t, 200, response.StatusCode)
++		var envelope struct {
++			Result struct {
++				Tools []struct {
++					Name        string          `json:"name"`
++					InputSchema json.RawMessage `json:"inputSchema"`
++				} `json:"tools"`
++			} `json:"result"`
 +		}
-+		if tracked {
-+			if seen[name] {
-+				duplicate = true
-+				return false
-+			}
-+			seen[name] = true
++		require.NoError(t, json.Unmarshal(response.Data, &envelope))
++		require.Len(t, envelope.Result.Tools, 4)
++		schemas := make(map[string]json.RawMessage)
++		for _, tool := range envelope.Result.Tools {
++			schemas[tool.Name] = tool.InputSchema
 +		}
-+		return true
++		require.JSONEq(t, `{"type":"object","properties":{}}`, string(schemas["source___empty"]))
++		require.JSONEq(t, `{"type":"object","properties":{"query":{"type":"string","description":"Search term","default":"all"}}}`, string(schemas["source___optional"]))
++		require.JSONEq(t, `{"type":"object","properties":{"query":{"type":"string","description":"Search term"}},"required":["query"]}`, string(schemas["source___required"]))
++		require.JSONEq(t, nestedSchema, string(schemas["source___nested"]))
++		require.Contains(t, string(schemas["source___nested"]), `"minimum":9007199254740993`)
 +	})
-+	return duplicate
 +}
 +
-+// integerToken 判断合法 JSON 数字是否使用整数词法，返回值不受 int64 范围影响。
-+// 输入已经过完整 JSON 校验；禁止小数和指数，不做 float64 转换或截断。
-+func integerToken(raw json.RawMessage) bool {
-+	token := bytes.TrimSpace(raw)
-+	if len(token) > 0 && token[0] == '-' {
-+		token = token[1:]
-+	}
-+	if len(token) == 0 {
-+		return false
-+	}
-+	for _, digit := range token {
-+		if digit < '0' || digit > '9' {
-+			return false
-+		}
-+	}
-+	return true
-+}
-+
- // ParseID retains an independently owned client token, including explicit null.
- // The legacy handler's int64 view is deliberately separate from this identity.
- func ParseID(raw json.RawMessage) (ID, *Error) {
+ func TestLargeSchemaDescriptionsLoadGloballyAndAtRuleLevel(t *testing.T) {
+ 	test.RunTest(t, func(t *testing.T) {
+ 		for _, fixture := range []struct {
 ```
 
-**File**: `plugins/wasm-go/pkg/mcp/protocol/legacy_response_ack_test.go` (added, +90/-0)
+**File**: `plugins/wasm-go/pkg/mcp/server/plugin.go` (modified, +8/-7)
 ```diff
-@@ -0,0 +1,90 @@
-+// Copyright (c) 2026 Alibaba Group Holding Ltd.
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy at http://www.apache.org/licenses/LICENSE-2.0
-+package protocol
-+
-+import (
-+	"bytes"
-+	"strings"
-+	"testing"
-+)
-+
-+// TestLegacyResponseAckAccepts 证明收件确认保留原始 ID/报文，且不查找业务方法。
-+func TestLegacyResponseAckAccepts(t *testing.T) {
-+	deep := strings.Repeat(`{"nested":`, 80) + `{"same":1,"same":2}` + strings.Repeat(`}`, 80)
-+	for _, version := range append([]Version{""}, LegacyVersions()...) {
-+		for _, token := range []string{`"ping\\id"`, `9007199254740993`, `9223372036854775808`, `1.50`, `1E+03`, `null`} {
-+			for _, field := range []string{`"result":{}`, `"result":null`, `"result":[1,"x"]`, `"result":` + deep, `"result":{"large":"` + strings.Repeat("x", 1<<20) + `"}`, `"error":{"code":-32603,"message":"synthetic","data":` + deep + `}`, `"error":{"code":92233720368547758080,"message":""}`} {
-+				t.Run(string(version)+"/"+token+"/"+field[:min(22, len(field))], func(t *testing.T) {
-+					body := []byte(`{"jsonrpc":"2.0","id":` + token + `,` + field + `,"extension":1,"extension":2}`)
-+					original := bytes.Clone(body)
-+					request, err := PrepareRequest(Transport{ProtocolVersion: string(version)}, body, func(string) bool { t.Fatal("response looked up a method"); return false })
-+					if err != nil {
-+						t.Fatalf("response rejected: %+v", err)
-+					}
-+					if request.Era != EraLegacy || request.Envelope.Method != "" || request.Envelope.Notification || !request.Envelope.ID.IsPresent() {
-+						t.Fatalf("not a receipt: %+v", request)
-+					}
-+					if string(request.Envelope.ID.Raw()) != token || !bytes.Equal(request.Envelope.Raw, original) {
-+						t.Fatal("raw token/body changed")
-+					}
-+					body[0] = '['
-+					if !bytes.Equal(request.Envelope.Raw, original) {
-+						t.Fatal("envelope retained caller buffer")
-+					}
-+				})
-+			}
-+		}
-+	}
-+}
-+
-+// TestLegacyResponseAckRejects 验证畸形或冲突响应不获得确认，也不触发业务分派。
-+func TestLegacyResponseAckRejects(t *testing.T) {
-+	cases := []string{
-+		`{"jsonrpc":"2.0","result":{}}`, `{"jsonrpc":"2.0","id":true,"result":{}}`, `{"jsonrpc":"2.0","id":{},"result":{}}`, `{"jsonrpc":"2.0","id":[],"result":{}}`,
-+		`{"id":1,"result":{}}`, `{"jsonrpc":2,"id":1,"result":{}}`, `{"jsonrpc":"1.0","id":1,"result":{}}`, `{"jsonrpc":"2.0","id":1}`,
-+		`{"jsonrpc":"2.0","id":1,"result":null,"error":null}`, `{"jsonrpc":"2.0","id":1,"method":"","result":{}}`, `{"jsonrpc":"2.0","id":1,"method":null,"result":{}}`, `{"jsonrpc":"2.0","id":1,"method":"tools/call","result":{}}`,
-+		`{"jsonrpc":"2.0","id":1,"error":null}`, `{"jsonrpc":"2.0","id":1,"error":[]}`, `{"jsonrpc":"2.0","id":1,"error":{}}`, `{"jsonrpc":"2.0","id":1,"error":{"code":1.0,"message":"x"}}`, `{"jsonrpc":"2.0","id":1,"error":{"code":1e3,"message":"x"}}`, `{"jsonrpc":"2.0","id":1,"error":{"code":"1","message":"x"}}`, `{"jsonrpc":"2.0","id":1,"error":{"code":1,"message":null}}`, `{"jsonrpc":"2.0","id":1,"error":{"code":1,"message":2}}`,
-+		`[]`, `null`, `{"jsonrpc":"2.0","id":1,"result":{}}{}`, `{"jsonrpc":"2.0","id":1,"result":`, "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":\"\xff\"}",
-+	}
-+	for _, field := range []string{`"jsonrpc":"2.0"`, `"id":1`, `"method":null`, `"result":{}`, `"error":null`} {
-+		cases = append(cases, `{"jsonrpc":"2.0","id":1,"result":{},`+field+`}`)
-+	}
-+	for _, field := range []string{`"code":1`, `"message":"x"`} {
-+		cases = append(cases, `{"jsonrpc":"2.0","id":1,"error":{"code":1,"message":"x",`+field+`}}`)
-+	}
-+	for _, body := range cases {
-+		t.Run(body, func(t *testing.T) {
-+			_, err := PrepareRequest(Transport{}, []byte(body), func(string) bool { t.Fatal("invalid response dispatched"); return false })
-+			if err == nil {
-+				t.Fatal("invalid response acknowledged")
-+			}
-+		})
-+	}
-+}
-+
-+// TestLegacyResponseAckModernBoundary 保证头部或保留元数据选择的 Modern 响应仍被拒绝。
-+func TestLegacyResponseAckModernBoundary(t *testing.T) {
-+	for _, body := range []string{`{"jsonrpc":"2.0","id":1,"result":{}}`, `{"jsonrpc":"2.0","id":1,"error":{"code":-1,"message":"x"}}`} {
-+		for _, transport := range []Transport{modernTransport("tools/list", ""), modernTransportFromHeaders("tools/list", "")} {
-+			_, err := PrepareRequest(transport, []byte(body), available)
-+			if err == nil || err.Message != "JSON-RPC response envelopes are not accepted" {
-+				t.Fatalf("modern response changed rejection: %+v", err)
-+			}
-+		}
-+		marked := strings.TrimSuffix(body, "}") + `,"params":{"_meta":{"` + MetaProtocolVersion + `":"2026-07-28"}}}`
-+		_, err := PrepareRequest(Transport{}, []byte(marked), available)
-+		if err == nil {
-+			t.Fatal("body identity downgraded")
-+		}
-+	}
-+}
-+
-+// TestLegacyResponseAckOrdinaryRequestDuplicates 保留普通 Legacy 请求的首次出现语义。
-+func TestLegacyResponseAckOrdinaryRequestDuplicates(t *testing.T) {
-+	request, err := PrepareRequest(Transport{}, []byte(`{"jsonrpc":"2.0","id":1,"id":2,"method":"ping","method":"to
-```
-
-**File**: `plugins/wasm-go/pkg/mcp/server/plugin_test.go` (modified, +71/-0)
-```diff
-@@ -1276,3 +1276,74 @@ func TestProductionEntryModernUsesLegacyOrdinaryHTTPPolicy(t *testing.T) {
- 		})
- 	}
- }
-+
-+// TestProductionEntryLegacyResponseAck 通过生产入口验证 Legacy 响应只得到空 202，
-+// 非法候选和 Modern 响应仍拒绝；注册工具计数和 HTTP callout 共同证明没有业务分派。
-+func TestProductionEntryLegacyResponseAck(t *testing.T) {
-+	counters := &validationToolCounters{}
-+	installRegisteredValidationServer(t, counters)
-+	for _, version := range append([]protocol.Version{""}, protocol.LegacyVersions()...) {
-+		for _, token := range []string{`"native-ping"`, `9223372036854775808`, `1.50`, `1E+03`, `null`} {
-+			for _, field := range []string{`"result":{}`, `"result":null`, `"error":{"code":-32603,"message":"synthetic","data":{"duplicate":1,"duplicate":2}}`} {
-+				t.Run(string(version)+"/"+token+"/"+field, func(t *testing.T) {
-+					host := newValidationHost(t, json.RawMessage(`{"server":{"name":"registered"}}`))
-+					headers := legacyToolHeaders()
-+					if version != "" {
-+						headers = append(headers, [2]string{protocol.HeaderProtocolVersion, string(version)})
-+					}
-+					require.Equal(t, types.ActionPause, host.CallOnHttpRequestHeaders(headers))
-+					require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(`{"jsonrpc":"2.0","id":`+token+`,`+field+`}`)))
-+					response := host.GetLocalResponse()
-+					require.NotNil(t, response)
-+					assert.Equal(t, uint32(202), response.StatusCode)
-+					assert.Empty(t, response.Data)
-+					assert.Zero(t, counters.create)
-+					assert.Zero(t, counters.call)
-+					assert.Empty(t, host.GetHttpCalloutAttributes())
-+				})
-+			}
-+		}
-+	}
-+	for _, test := range []struct {
-+		name, body string
-+		modern     bool
-+	}{
-+		{"missing id", `{"jsonrpc":"2.0","result":{}}`, false},
-+		{"mixed method", `{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"count","arguments":{"count":1}},"result":{}}`, false},
-+		{"duplicate id", `{"jsonrpc":"2.0","id":1,"id":2,"result":{}}`, false},
-+		{"invalid error", `{"jsonrpc":"2.0","id":1,"error":{"code":1.5,"message":"x"}}`, false},
-+		{"modern headers", `{"jsonrpc":"2.0","id":1,"result":{}}`, true},
-+		{"modern metadata", `{"jsonrpc":"2.0","id":1,"result":{},"params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28"}}}`, false},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			host := newValidationHost(t, json.RawMessage(`{"server":{"name":"registered"}}`))
-+			headers := legacyToolHeaders()
-+			if test.modern {
-+				headers = modernToolListHeaders()
-+			}
-+			require.Equal(t, types.ActionPause, host.CallOnHttpRequestHeaders(headers))
-+			host.CallOnHttpRequestBody([]byte(test.body))
-+			response := host.GetLocalResponse()
-+			require.NotNil(t, response)
-+			assert.Equal(t, uint32(400), response.StatusCode)
-+			assert.Zero(t, counters.create)
-+			assert.Zero(t, counters.call)
-+			assert.Empty(t, host.GetHttpCalloutAttributes())
-+		})
-+	}
-+}
-+
-+// TestProductionEntryLegacyResponseAckClientPing 保留客户端主动 ping 的原始 ID 和空结果。
-+func TestProductionEntryLegacyResponseAckClientPing(t *testing.T) {
-+	counters := &validationToolCounters{}
-+	installRegisteredValidationServer(t, counters)
-+	host := newValidationHost(t, json.RawMessage(`{"server":{"name":"registered"}}`))
-+	require.Equal(t, types.ActionPause, host.CallOnHttpRequestHeaders(legacyToolHeaders()))
-+	host.CallOnHttpRequestBody([]byte(`{"jsonrpc":"2.0","id":"client-ping","method":"ping"}`))
-+	response := host.GetLocalResponse()
-+	require.NotNil(t, response)
-+	assert.Equal(t, uint32(200), response.StatusCode)
-+	assert.Equal(t, `"client-ping"`, gjson.GetBytes(response.Data, "id").Raw)
-+	assert.JSONEq(t, `{}`, gjson.GetBytes(response.Data, "result").Raw)
-+	assert.Empty(t, host.GetHttpCalloutAttributes())
-+}
-```
-
----
-
-### Incident Patch 2: `c2fe889f` (2026-11-09)
-**Commit Message**: fix(ai-proxy): isolate Claude streaming state per request
-
-Signed-off-by: zhihao-yuan <[REDACTED_EMAIL]>
-Co-authored-by: zhihao-yuan <[REDACTED_EMAIL]>
-
-**File**: `plugins/wasm-go/extensions/ai-proxy/provider/claude.go` (modified, +27/-12)
-```diff
-@@ -20,6 +20,7 @@ const (
- 	claudeDefaultVersion          = "2023-06-01"
- 	claudeDefaultMaxTokens        = 4096
- 	claudeMinThinkingBudgetTokens = 1024
-+	ctxKeyClaudeStreamState       = "claudeStreamState"
- 
- 	// Claude Code mode constants
- 	claudeCodeUserAgent    = "claude-cli/2.1.2 (external, cli)"
-@@ -325,12 +326,23 @@ func (c *claudeProviderInitializer) CreateProvider(config ProviderConfig) (Provi
- type claudeProvider struct {
- 	config       ProviderConfig
- 	contextCache *contextCache
-+}
- 
-+type claudeStreamState struct {
- 	messageId   string
- 	usage       usage
- 	serviceTier string
- }
- 
-+func getClaudeStreamState(ctx wrapper.HttpContext) *claudeStreamState {
-+	state, _ := ctx.GetContext(ctxKeyClaudeStreamState).(*claudeStreamState)
-+	if state == nil {
-+		state = &claudeStreamState{}
-+		ctx.SetContext(ctxKeyClaudeStreamState, state)
-+	}
-+	return state
-+}
-+
- func (c *claudeProvider) GetProviderType() string {
- 	return providerTypeClaude
- }
-@@ -857,15 +869,17 @@ func stopReasonClaude2OpenAI(reason *string) string {
- }
- 
- func (c *claudeProvider) streamResponseClaude2OpenAI(ctx wrapper.HttpContext, origResponse *claudeTextGenStreamResponse) *chatCompletionResponse {
-+	state := getClaudeStreamState(ctx)
- 	switch origResponse.Type {
- 	case "message_start":
-+		*state = claudeStreamState{}
- 		if origResponse.Message != nil {
--			c.messageId = origResponse.Message.Id
--			c.usage = usage{
-+			state.messageId = origResponse.Message.Id
-+			state.usage = usage{
- 				PromptTokens:     origResponse.Message.Usage.InputTokens,
- 				CompletionTokens: origResponse.Message.Usage.OutputTokens,
+@@ -517,8 +517,6 @@ func parseConfigCore(configJson gjson.Result, config *McpServerConfig, opts *Con
+ 					if err := proxyServer.AddProxyTool(proxyTool); err != nil {
+ 						return fmt.Errorf("failed to add proxy tool %s: %v", proxyTool.Name, err)
+ 					}
+-					// Register tool to registry
+-					opts.ToolRegistry.RegisterTool(config.serverName, proxyTool.Name, proxyServer.GetMCPTools()[proxyTool.Name])
+ 				}
  			}
--			c.serviceTier = origResponse.Message.Usage.ServiceTier
-+			state.serviceTier = origResponse.Message.Usage.ServiceTier
- 		}
- 		var index int
- 		if origResponse.Index != nil {
-@@ -978,8 +992,8 @@ func (c *claudeProvider) streamResponseClaude2OpenAI(ctx wrapper.HttpContext, or
- 
- 	case "message_delta":
- 		if origResponse.Usage != nil {
--			c.usage.CompletionTokens += origResponse.Usage.OutputTokens
--			c.usage.TotalTokens = c.usage.PromptTokens + c.usage.CompletionTokens
-+			state.usage.CompletionTokens += origResponse.Usage.OutputTokens
-+			state.usage.TotalTokens = state.usage.PromptTokens + state.usage.CompletionTokens
- 		}
- 
- 		var index int
-@@ -994,16 +1008,16 @@ func (c *claudeProvider) streamResponseClaude2OpenAI(ctx wrapper.HttpContext, or
- 		return c.createChatCompletionResponse(ctx, origResponse, choice)
- 	case "message_stop":
- 		return &chatCompletionResponse{
--			Id:          c.messageId,
-+			Id:          state.messageId,
- 			Created:     time.Now().UnixMilli() / 1000,
- 			Model:       ctx.GetStringContext(ctxKeyFinalRequestModel, ""),
- 			Object:      objectChatCompletionChunk,
- 			Choices:     []chatCompletionChoice{},
--			ServiceTier: c.serviceTier,
-+			ServiceTier: state.serviceTier,
- 			Usage: &usage{
--				PromptTokens:     c.usage.PromptTokens,
--				CompletionTokens: c.usage.CompletionTokens,
--				TotalTokens:      c.usage.TotalTokens,
-+				PromptTokens:     state.usage.PromptTokens,
-+				CompletionTokens: state.usage.CompletionTokens,
-+				TotalTokens:      state.usage.TotalTokens,
- 			},
- 		}
- 	case "content_block_stop":
-@@ -1032,13 +1046,14 @@ func (c *claudeProvider) streamResponseClaude2OpenAI(ctx wrapper.HttpContext, or
- }
- 
- func (c *claudeProvider) createChatCompletionResponse(ctx wrapper.HttpContext, response *claudeTextGenStreamResponse, choice chatCompletionChoice) *chatCompletionResponse {
-+	state := getClaudeStreamState(ctx)
- 	return &chatCompletionResponse{
--		Id:          c.messageId,
-+		Id:          state.messageId,
- 		Created:     time.Now().UnixMilli() / 1000,
- 		Model:       ctx.GetStringContext(ctxKeyFinalRequestModel, ""),
- 		Object:      objectChatCompletionChunk,
- 		Choices:     []chatCompletionChoice{choice},
--		ServiceTier: c.serviceTier,
-+		ServiceTier: state.serviceTier,
+ 			// Set the proxy server regardless of whether tools are configured
+@@ -604,13 +602,16 @@ func parseConfigCore(configJson gjson.Result, config *McpServerConfig, opts *Con
+ 		config.serverInstructions = instructionsJson.String()
  	}
+ 
+-	// Proxy descriptors remain upstream-owned. Both direct profiles publish the
+-	// same isolated JSON descriptor generation without schema admission gates.
+-	if config.server != nil {
+-		if _, isProxy := config.server.(*McpProxyServer); !isProxy && config.directTools.ordered == nil {
++	if proxyServer, isProxy := config.server.(*McpProxyServer); isProxy {
++		// Publish local descriptors for tool sets only after the server config parses.
++		for name, tool := range proxyServer.GetMCPTools() {
++			opts.ToolRegistry.RegisterTool(config.serverName, name, tool)
++		}
++	} else if config.server != nil {
++		if config.directTools.ordered == nil {
+ 			config.directTools = captureDirectToolSnapshot(config.server)
+ 		}
+-		if _, isProxy := config.server.(*McpProxyServer); !isProxy && !config.isComposed {
++		if !config.isComposed {
+ 			// Publish direct tools to the shared registry only after the complete
+ 			// generation snapshot has captured each tool descriptor.
+ 			for _, entry := range config.directTools.ordered {
+```
+
+**File**: `plugins/wasm-go/pkg/mcp/server/plugin_test.go` (modified, +12/-0)
+```diff
+@@ -574,6 +574,18 @@ func TestParseConfigCore_McpProxy_BubblesUpSetupError(t *testing.T) {
+ 	assert.Contains(t, err.Error(), "mcpServerURL")
  }
  
-```
-
-**File**: `plugins/wasm-go/extensions/ai-proxy/provider/claude_stream_test.go` (added, +227/-0)
-```diff
-@@ -0,0 +1,227 @@
-+package provider
-+
-+import (
-+	"encoding/json"
-+	"net/http"
-+	"strings"
-+	"testing"
-+
-+	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/proxytest"
-+	"github.com/higress-group/proxy-wasm-go-sdk/proxywasm/types"
-+	"github.com/higress-group/wasm-go/pkg/wrapper"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestClaudeProvider_InterleavedStreams(t *testing.T) {
-+	initClaudeStreamTestHost(t)
-+	for _, providerType := range []string{"claude", "vertex"} {
-+		t.Run(providerType, func(t *testing.T) {
-+			for _, first := range []string{"a", "b"} {
-+				t.Run(first+"_finishes_first", func(t *testing.T) {
-+					p, newContext := newClaudeStreamTestProvider(t, providerType)
-+					contexts := map[string]wrapper.HttpContext{"a": newContext(), "b": newContext()}
-+					responses := map[string][]chatCompletionResponse{}
-+					for _, role := range []string{"a", "b"} {
-+						responses[role] = convertClaudeTestStream(t, p, contexts[role], claudeStreamTestFrames(role)[0], false)
-+					}
-+					order := []string{"a", "b"}
-+					if first == "b" {
-+						order = []string{"b", "a"}
-+					}
-+					for _, role := range order {
-+						frames := claudeStreamTestFrames(role)
-+						for i, frame := range frames[1:] {
-+							last := i == len(frames)-2
-+							if last {
-+								frame = strings.TrimRight(frame, "\n")
-+							}
-+							responses[role] = append(responses[role], convertClaudeTestStream(t, p, contexts[role], frame, last)...)
-+						}
-+					}
-+					for _, role := range []string{"a", "b"} {
-+						assertClaudeTestStream(t, role, responses[role])
-+					}
-+				})
-+			}
-+		})
-+	}
++func TestParseConfigCore_McpProxy_InvalidSchemaLeavesRegistryUnchanged(t *testing.T) {
++	opts := newValidationOpts()
++	config := gjson.Parse(`{
++		"server":{"name":"p","type":"mcp-proxy","transport":"http","mcpServerURL":"/mcp"},
++		"tools":[{"name":"valid"},{"name":"invalid","inputSchema":{"type":"object","required":null}}]
++	}`)
++	err := ParseConfigCore(config, &McpServerConfig{}, opts)
++	require.ErrorContains(t, err, "failed to add proxy tool invalid: inputSchema.required")
++	_, found := opts.ToolRegistry.GetToolInfo("p", "valid")
++	assert.False(t, found)
 +}
 +
-+func TestClaudeProvider_InterleavedFragmentedStreams(t *testing.T) {
-+	initClaudeStreamTestHost(t)
-+	for _, providerType := range []string{"claude", "vertex"} {
-+		t.Run(providerType, func(t *testing.T) {
-+			for _, role := range []string{"a", "b"} {
-+				t.Run("split_"+role, func(t *testing.T) {
-+					other := "b"
-+					if role == "b" {
-+						other = "a"
-+					}
-+					stream := strings.TrimRight(strings.Join(claudeStreamTestFrames(role), ""), "\n")
-+					otherStream := strings.TrimRight(strings.Join(claudeStreamTestFrames(other), ""), "\n")
-+					// Complete the other stream between every possible byte boundary.
-+					for split := 0; split <= len(stream); split++ {
-+						p, newContext := newClaudeStreamTestProvider(t, providerType)
-+						a, b := newContext(), newContext()
-+						responses := convertClaudeTestStream(t, p, a, stream[:split], false)
-+						otherResponses := convertClaudeTestStream(t, p, b, otherStream, true)
-+						responses = append(responses, convertClaudeTestStream(t, p, a, stream[split:], true)...)
-+						assertClaudeTestStream(t, role, responses)
-+						assertClaudeTestStream(t, other, otherResponses)
-+					}
-+				})
-+			}
-+		})
+ func TestParseConfigCore_McpProxy_HappyPath_NoTools(t *testing.T) {
+ 	c := &McpServerConfig{}
+ 	err := ParseConfigCore(gjson.Parse(`{
+```
+
+**File**: `plugins/wasm-go/pkg/mcp/server/proxy_server.go` (modified, +62/-17)
+```diff
+@@ -79,6 +79,7 @@ type McpProxyToolConfig struct {
+ 	Description     string              `json:"description"`
+ 	Security        SecurityRequirement `json:"security,omitempty"` // Tool-level security for MCP Client to MCP Server
+ 	Args            []ToolArg           `json:"args"`
++	InputSchema     json.RawMessage     `json:"inputSchema,omitempty"`
+ 	OutputSchema    map[string]any      `json:"outputSchema,omitempty"` // Output schema for MCP Protocol Version 2025-06-18
+ 	RequestTemplate RequestTemplate     `json:"requestTemplate,omitempty"`
+ }
+@@ -199,11 +200,21 @@ func (s *McpProxyServer) AddMCPTool(name string, tool Tool) Server {
+ 
+ // AddProxyTool adds a proxy tool configuration
+ func (s *McpProxyServer) AddProxyTool(toolConfig McpProxyToolConfig) error {
++	var inputSchema map[string]any
++	if len(toolConfig.InputSchema) > 0 {
++		var err error
++		inputSchema, err = parseProxyInputSchema(toolConfig.InputSchema)
++		if err != nil {
++			return err
++		}
 +	}
++
+ 	s.toolsConfig[toolConfig.Name] = toolConfig
+ 	s.base.AddMCPTool(toolConfig.Name, &McpProxyTool{
+-		serverName: s.Name,
+-		name:       toolConfig.Name,
+-		toolConfig: toolConfig,
++		serverName:  s.Name,
++		name:        toolConfig.Name,
++		toolConfig:  toolConfig,
++		inputSchema: inputSchema,
+ 	})
+ 	return nil
+ }
+@@ -336,19 +347,21 @@ func (s *McpProxyServer) ForwardToolsList(ctx HttpContext, cursor *string) error
+ 
+ // McpProxyTool implements Tool interface for MCP-to-MCP proxy
+ type McpProxyTool struct {
+-	serverName string
+-	name       string
+-	toolConfig McpProxyToolConfig
+-	arguments  map[string]interface{}
++	serverName  string
++	name        string
++	toolConfig  McpProxyToolConfig
++	inputSchema map[string]any
++	arguments   map[string]interface{}
+ }
+ 
+ // Create implements Tool interface
+ func (t *McpProxyTool) Create(params []byte) Tool {
+ 	newTool := &McpProxyTool{
+-		serverName: t.serverName,
+-		name:       t.name,
+-		toolConfig: t.toolConfig,
+-		arguments:  make(map[string]interface{}),
++		serverName:  t.serverName,
++		name:        t.name,
++		toolConfig:  t.toolConfig,
++		inputSchema: t.inputSchema,
++		arguments:   make(map[string]interface{}),
+ 	}
+ 
+ 	if len(params) > 0 {
+@@ -459,13 +472,11 @@ func (t *McpProxyTool) Description() string {
+ 
+ // InputSchema implements Tool interface
+ func (t *McpProxyTool) InputSchema() map[string]any {
+-	schema := map[string]any{
+-		"type":       "object",
+-		"properties": make(map[string]any),
+-		"required":   []string{},
++	if t.inputSchema != nil {
++		return t.inputSchema
+ 	}
+ 
+-	properties := schema["properties"].(map[string]any)
++	properties := make(map[string]any)
+ 	var required []string
+ 
+ 	for _, arg := range t.toolConfig.Args {
+@@ -489,10 +500,44 @@ func (t *McpProxyTool) InputSchema() map[string]any {
+ 		}
+ 	}
+ 
+-	schema["required"] = required
++	schema := map[string]any{"type": "object", "properties": properties}
++	if len(required) > 0 {
++		schema["required"] = required
++	}
+ 	return schema
+ }
+ 
++// parseProxyInputSchema checks the MCP tool's root fields and retains nested schemas as supplied.
++func parseProxyInputSchema(raw json.RawMessage) (map[string]any, error) {
++	schema, err := decodeBusinessJSONObject(raw)
++	if err != nil {
++		return nil, fmt.Errorf("invalid inputSchema: %w", err)
++	}
++	if schema["type"] != "object" {
++		return nil, fmt.Errorf("inputSchema must be a JSON object with type \"object\"")
++	}
++	if value, exists := schema["properties"]; exists {
++		if _, ok := value.(map[string]any); !ok {
++			return nil, fmt.Errorf("inputSchema.properties must be an object")
++		}
++	}
++	if value, exists := schema["required"]; exists {
++		required, ok := value.([]any)
++		if !ok {
++			return nil, fmt.Errorf("inputSchema.required must be an array of strings")
++		}
++		for _, name := range required {
++			if _, ok := name.(string); !ok {
++				return nil, fmt.Errorf("inputSchema.required must be an array of strings")
++			}
++		}
++		if len(required) == 0 {
++			delete(schema, "required")
++		}
++	}
++	return schema, nil
 +}
 +
-+func TestClaudeProvider_StreamStateInitialization(t *testing.T) {
-+	initClaudeStreamTestHost(t)
-+	for _, providerType := range []string{"claude", "vertex"} {
-+		t.Run(providerType, func(t *testing.T) {
-+			p, newContext := newClaudeStreamTestProvider(t, providerType)
-+			a, b := newContext(), newContext()
-+			start := `data: {"type":"message_start","message":{"id":"msg_a","usage":{"input_tokens":10,"output_tokens":1,"service_tier":"standard"}}}` + "\n\n"
-+			convertClaudeTestStream(t, p, a, start, false)
-+
-+			// A stream without message_start must not inherit another request's state.
-+			end := convertClaudeTestStream(t, p, b, `data: {"type":"message_stop"}`+"\n\n", true)
-+			require.Len(t, end, 1)
-+			assert.Empty(t, end[0].Id)
-+			assert.Empty(t, end[0].ServiceTier)
-+			assert.Equal(t, &usage{}, end[0].Usage)
-+
-+			// A new message on the same context resets accumulated usage.
-+			convertClaudeTestStream(t, p, a, `data: {"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"output_tokens":3}}`+"\n\n", false)
-+			convertClaudeTestStream(t, p, a, start, false)
-+			end = convertClaudeTestStream(t, p, a, `data: {"type":"message_stop"}`+"\n\n", false)
-+			require.Len(t, end, 1)
-+			assert.Equal(t, "msg_a", end[0].Id)
-+			assert.Equal(t, &usage{PromptTokens: 10, CompletionTokens: 1}, end[0].Usage)
-+
-+			convertClaudeTestStream(t, p, a, `data: {"type":"message_start"}`+"\n\n", false)
-+			end = convertClaudeTestStream(t, p, a, `data: {"type":"message_stop"}`+"\n\n", true)
-+			require.Len(t, end, 1)
-+			assert.Empty(t, end[0].Id)
-+			assert.Empty(t, end[0].ServiceTier)
-+			assert.Equal(t, &usage{}, end[0].Usage)
-+
-+			// Reuse the provider for single and consecutive requests.
-+			for _, role := range []string{"a", "b", "a"} {
-+				responses := convertClaudeTestStream(t, p, newContext(), strings.Join(claudeStreamTestFrames(role), ""), true)
-+				assertClaudeTestStream(t, role, responses)
-+			}
-+		})
-+	}
+ // OutputSchema implements Tool interface (MCP Protocol Version 2025-06-18)
+ func (t *McpProxyTool) OutputSchema() map[string]any {
+ 	return t.toolConfig.OutputSchema
+```
+
+**File**: `plugins/wasm-go/pkg/mcp/server/proxy_server_test.go` (modified, +37/-3)
+```diff
+@@ -298,9 +298,43 @@ func TestMcpProxyTool_InputSchema_NoArgs(t *testing.T) {
+ 	props, ok := schema["properties"].(map[string]any)
+ 	require.True(t, ok)
+ 	assert.Empty(t, props)
+-	required, ok := schema["required"].([]string)
+-	require.True(t, ok)
+-	assert.Empty(t, required)
++	assert.NotContains(t, schema, "required")
 +}
 +
-+func initClaudeStreamTestHost(t *testing.T) {
-+	t.Helper()
-+	host, reset := proxytest.NewHostEmulator(proxytest.NewEmulatorOption().WithHttpContext(func(uint32) types.HttpContext {
-+		return &types.DefaultHttpContext{
-```
-
----
-
-### Incident Patch 3: `b6069b6b` (2026-11-09)
-**Commit Message**: build: update Envoy 1.36.12 dependencies and images (#5324)
-
-Signed-off-by: zty98751 <[REDACTED_EMAIL]>
-
-**File**: `Makefile.core.mk` (modified, +2/-2)
-```diff
-@@ -200,7 +200,7 @@ docker-buildx-push: clean-env docker.higress-buildx
- export PARENT_GIT_TAG:=$(shell cat VERSION)
- export PARENT_GIT_REVISION:=$(TAG)
++func TestMcpProxyServer_AddProxyTool_InputSchema(t *testing.T) {
++	t.Run("empty required is omitted", func(t *testing.T) {
++		server := NewMcpProxyServer("proxy")
++		require.NoError(t, server.AddProxyTool(McpProxyToolConfig{
++			Name:        "optional",
++			InputSchema: []byte(`{"type":"object","required":[],"additionalProperties":false}`),
++		}))
++		schema := server.GetMCPTools()["optional"].InputSchema()
++		assert.Equal(t, map[string]any{"type": "object", "additionalProperties": false}, schema)
++	})
++
++	for _, tc := range []struct {
++		name   string
++		schema string
++		error  string
++	}{
++		{"null schema", `null`, "inputSchema must be a JSON object"},
++		{"array schema", `[]`, "invalid inputSchema"},
++		{"missing type", `{}`, "inputSchema must be a JSON object"},
++		{"wrong type", `{"type":["object"]}`, "inputSchema must be a JSON object"},
++		{"non-object properties", `{"type":"object","properties":[]}`, "inputSchema.properties"},
++		{"null required", `{"type":"object","required":null}`, "inputSchema.required"},
++		{"non-array required", `{"type":"object","required":"name"}`, "inputSchema.required"},
++		{"non-string required item", `{"type":"object","required":[null]}`, "inputSchema.required"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			server := NewMcpProxyServer("proxy")
++			err := server.AddProxyTool(McpProxyToolConfig{Name: "bad", InputSchema: []byte(tc.schema)})
++			require.ErrorContains(t, err, tc.error)
++			assert.NotContains(t, server.GetMCPTools(), "bad")
++			_, exists := server.GetToolConfig("bad")
++			assert.False(t, exists)
++		})
++	}
+ }
  
--export ENVOY_PACKAGE_URL_PATTERN?=https://github.com/higress-group/proxy/releases/download/v2.2.5/envoy-symbol-ARCH.tar.gz
-+export ENVOY_PACKAGE_URL_PATTERN?=https://github.com/higress-group/proxy/releases/download/v2.2.6/envoy-symbol-ARCH.tar.gz
- 
- build-envoy: prebuild
- 	./tools/hack/build-envoy.sh
-@@ -258,7 +258,7 @@ install: pre-install
- 	helm install higress helm/higress -n higress-system --create-namespace --set 'global.local=true'
- 
- HIGRESS_LATEST_IMAGE_TAG ?= latest
--ENVOY_LATEST_IMAGE_TAG ?= 49b0ec03e77386b875fc6772ec4e79b088e4a634
-+ENVOY_LATEST_IMAGE_TAG ?= 1cf20e40264ffc6b10919f0005edc135af1683c4
- ISTIO_LATEST_IMAGE_TAG ?= 3498bc95bdea417fe0ce3f3017b0015cda907908
- TEST_ISTIO_IMAGE_TAG ?= $(ISTIO_LATEST_IMAGE_TAG)
- 
-```
-
-**File**: `envoy/envoy` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit 9bd2ded786073d115beb71d0f2ca0afc075e4f4d
-+Subproject commit 0b37c366dfc09c0d780e4b1dc5b6a92b6c992ce6
-```
-
-**File**: `plugins/golang-filter/go.mod` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@ module github.com/alibaba/higress/plugins/golang-filter
- 
- go 1.23
- 
--replace github.com/envoyproxy/envoy => github.com/higress-group/envoy v0.0.0-20260908125308-9bd2ded78607
-+replace github.com/envoyproxy/envoy => github.com/higress-group/envoy v0.0.0-20261108101017-0b37c366dfc0
- 
- replace github.com/mark3labs/mcp-go => github.com/higress-group/mcp-go v0.0.0-20250428145706-792ce64b4b30
- 
-```
-
-**File**: `plugins/golang-filter/go.sum` (modified, +2/-2)
-```diff
-@@ -297,8 +297,8 @@ github.com/hashicorp/go-version v1.6.0/go.mod h1:fltr4n8CU8Ke44wwGCBoEymUuxUHl09
- github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
- github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
- github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
--github.com/higress-group/envoy v0.0.0-20260908125308-9bd2ded78607 h1:WBnOE/sF5slOSSQbf/UMbBmAk0bbkWvHC/i9qXrzexk=
--github.com/higress-group/envoy v0.0.0-20260908125308-9bd2ded78607/go.mod h1:mgMEye9tOlNiUTG+iYhQYgCzQcX46MMS0Jo6bVwRt1U=
-+github.com/higress-group/envoy v0.0.0-20261108101017-0b37c366dfc0 h1:DVbiujPnSbTsRrjfEgN6zeVqIxzaWFUYmt+w62bb02A=
-+github.com/higress-group/envoy v0.0.0-20261108101017-0b37c366dfc0/go.mod h1:mgMEye9tOlNiUTG+iYhQYgCzQcX46MMS0Jo6bVwRt1U=
- github.com/higress-group/mcp-go v0.0.0-20250428145706-792ce64b4b30 h1:N4NMq8M1nZyyChPyzn+EUUdHi5asig2uLR5hOyRmsXI=
- github.com/higress-group/mcp-go v0.0.0-20250428145706-792ce64b4b30/go.mod h1:O9gri9UOzthw728vusc2oNu99lVh8cKCajpxNfC90gE=
- github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
-```
-
-**File**: `plugins/golang-filter/mcp-server/servers/higress/nginx-migration/go.mod` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ require (
- 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.1.13
- 	github.com/alibabacloud-go/tea v1.3.13
- 	github.com/alibabacloud-go/tea-utils/v2 v2.0.7
--	github.com/envoyproxy/envoy v1.36.10
-+	github.com/envoyproxy/envoy v1.36.12
- 	github.com/mark3labs/mcp-go v0.12.0
- )
- 
-```
-
-**File**: `plugins/golang-filter/mcp-server/servers/higress/nginx-migration/go.sum` (modified, +2/-2)
-```diff
-@@ -63,8 +63,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
- github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
- github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
- github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
--github.com/envoyproxy/envoy v1.36.10 h1:igZsbN2lxwrYgVGYKtR8OEoCbHm622/janwLHWhv9GU=
--github.com/envoyproxy/envoy v1.36.10/go.mod h1:mgMEye9tOlNiUTG+iYhQYgCzQcX46MMS0Jo6bVwRt1U=
-+github.com/envoyproxy/envoy v1.36.12 h1:QbyhXe4F4Y+6qZXXKl1ae5CUxOL39gly7TJZbnEDvd0=
-+github.com/envoyproxy/envoy v1.36.12/go.mod h1:mgMEye9tOlNiUTG+iYhQYgCzQcX46MMS0Jo6bVwRt1U=
- github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
- github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
- github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
+ func TestMcpProxyTool_Create_NewInstanceWithBoundArgs(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5359** (closed): Add the Ikoi MCP server (@ikoicity)
+- **PR #5352** (2026-11-13): fix(mcp-server): preserve proxy tool input schemas (@johnlanni)
+- **PR #5350** (2026-11-12): feat(mcp-server): support custom REST server instructions (@johnlanni)
+- **PR #5342** (2026-11-12): chore(plugins): bump wasm-go for request body buffering fix (@johnlanni)
 - **PR #5337** (2026-11-11): fix(mcp-server): acknowledge valid Legacy JSON-RPC responses (@sunxia0)
 - **PR #5333** (2026-11-10): ci: add hgctl macOS amd64 asset recovery workflow (@johnlanni)
-- **PR #5331** (2026-11-11): Add release notes (@github-actions[bot])
-- **PR #5330** (2026-11-09): Release v2.2.6 (@johnlanni)
-- **PR #5329** (2026-11-09): ci: pin plugin preparation validation to Ubuntu 22.04 (@johnlanni)
-- **PR #5328** (2026-11-09): chore: prepare plugin snapshot 2.2.6 (@higress-release-automation[bot])
 
 ---
 
@@ -2729,53 +2152,32 @@ Signed-off-by: zty98751 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp-server): acknowledge valid Legacy JSON-RPC responses (#5337)
+## X. mcp-server): preserve proxy tool input schemas
 
 **RULE**:
-When implementing operations in `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/wasm-go/extensions/mcp-server/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f0260049`: mcp-server): acknowledge valid Legacy JSON-RPC responses (#5337). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0316bc90`: mcp-server): preserve proxy tool input schemas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+对于 `mcp-proxy` 工具，在 `tools[].inputSchema` 中保存上游工具返回的完整 Schema，工具集即可发布嵌套属性、数组元素和引用定义。该字段是一个 `type: object` 的 JSON Schema。它与 `args` 同时配置时，工具集采用 `inputSchema`。省略 `inputSchema` 时，工具集从 `args` 生成 Schema。无必填参数时省略顶层 `required`。直接代理的 `tools/list` 读取上游工具描述。
 
-## Focused Legacy response acknowledgements (#5336)
-
-This opt-in mode uses the real native `mcp-session` filter, isolated Redis and
-plain production Wasm. Ordinary modes, historical pins and `compose.yaml` are
-unchanged. Run only after committing a clean candidate, with an empty external
-evidence directory and all three images available locally:
-
-```sh
-env -u GH_TOKEN -u GITHUB_TOKEN PYTHONDONTWRITEBYTECODE=1 \
-  /opt/homebrew/bin/python3.12 \
-  plugins/wasm-go/extensions/mcp-server/testdata/runtime-verification/run_compat.py \
-  --legacy-response-ack \
-  --response-baseline d388d06a92dd125bbe99330888690fd6deeb352f \
-  --candidate HEAD \
-  --gateway-image higress-registry.cn-hangzhou.cr.aliyuncs.com/higress/gateway@sha256:2b00548e16aafc5ee51314a0de8c4df4369877b1d0f9eaec13becc3675dd04b7 \
-  --backend-image docker.io/library/python@sha256:34d4d54d6f68a1980ad02433a5078d998ab394d55c97d953efa50b442135baf2 \
-  --redis-image docker.io/library/redis@sha256:52d1ea8a654b10f06af3ecda4e9dbcd035c7868b5c49ee7975de917f81de13db \
-  --output "$SSE_EVIDENCE/runtime"
-```
-
-Run this command from the repository root; define `SSE_EVIDENCE` as an external
-run-owned directory. The mode cannot mix with `--
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f0260049` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0316bc90` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

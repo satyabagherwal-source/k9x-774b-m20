@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `f305bb22`  
+> **Source Version**: `356ceb16`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T02:32:04.976Z  
+> **Timestamp**: 2026-11-14T03:49:18.490Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T02:32:04.969Z  
+> **Harvest Timestamp**: 2026-11-14T03:49:18.483Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2118 stars
+- **Stars / Engagement**: 2125 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1944** (2026-11-10): **[Bug]: Dashboard emits multiple Three.js instances warning on page load**
-  *Symptoms*: ## Bug description  Loading the dashboard emits `THREE.WARNING: Multiple instances of Three.js being imported.` This is reproducible on an ordinary dashboard reload, before opening the 3D graph.  ## Steps to reproduce  1. Run the HTTP dashboard from v12.8.0 (commit `03ff09de93e9078433e6a917a9884c4fc26b2419`). 2. Open the dashboard in a browser and start console capture. 3. Reload the page. 4. Observe the Three.js warning during startup.  ## Expected behavior  The dashboard loads a consistent Three.js module graph without the multiple-instance warning. The 3D graph and bloom effects continue to work.  ## Actual behavior and impact  ```text THREE.WARNING: Multiple instances of Three.js being imported. ```  Confirmed with console capture in Orca's embedded browser. The same warning was also reported in Chrome, where its source was `webgpu.mjs:2`.  No functional failure has been demonstrated: observed requests for memories, server status, sync status and the event stream returned HTTP 200. No CSP violations appeared in the Orca console capture. This report does not attribute authentication/update problems or the separately reported Chrome CSP messages to this warning.  ## Investigation starting point  - `src/mcp_memory_service/web/static/dashboard-bootstrap.js` imports `3d-force-graph@1.80.0?external=three`, the bare `three` specifier, and `UnrealBloomPass`. - The import map in `src/mcp_memory_service/web/static/index.html` maps `three` to `https://esm.sh/three@0.184.0` and `thre
+- **Issue #1975** (2026-11-13): **[Bug]: split_content can split in the middle of a URL, version or decimal when "." is the last character of the chunk window**
+  *Symptoms*: ### Bug Description  `_find_best_split_point()` in `src/mcp_memory_service/utils/content_splitter.py` detects sentence ends with `r'[.!?](?=\s|$)'`, applied to `text[:max_length]`. In that window `$` matches the end of the *window*, not the end of the text. So a `.` that happens to be the last character of the window is treated as a sentence end, and the split happens right after it, even when the dot is inside a token such as `example.com`, `3.14159` or `v2.10.4`.  Because only the last regex match is used, this window-end dot also wins over an earlier, genuine sentence end.  This path is used by `MemoryService.store_memory` whenever auto-split is on (the default) and content is longer than the backend limit, so the chunks that are stored and later searched contain broken URLs/versions/numbers.  ### Steps to Reproduce  Run from a source checkout (no server needed):  ```python from mcp_memory_service.utils.content_splitter import split_content  t = "Docs live at https://example.com/guide and the version is 3.14159 today" print(split_content(t, max_length=29, preserve_boundaries=True, overlap=0))  t2 = "Pi is 3.14159. The release is v2.10.4 and the host is api.example.com." print(split_content(t2, max_length=18, preserve_boundaries=True, overlap=0)) print(split_content(t2, max_length=21, preserve_boundaries=True, overlap=0)) ```  ### Expected Behavior  Splits happen at real boundaries (newline, a sentence end followed by whitespace or the end of the text, or a space). A token 
 
-- **Issue #1930** (2026-11-09): **Startup dependency check reports torch/sentence-transformers as missing on the ONNX install**
-  *Symptoms*: On an install with the `[sqlite]` extra (onnxruntime + tokenizers, no torch), every server start prints this to stderr even though embeddings work:  ``` [MISSING] Missing dependencies detected: torch, sentence-transformers [INSTALL] To install missing dependencies, run:    python install.py [WARNING] IMPORTANT: Missing dependencies will cause timeouts! [WARNING] The server will attempt to continue, but may timeout during initialization. WARNING:mcp_memory_service.dependency_check:Dependencies missing, extending base timeout to 30.0s (before client cap) ```  Reproduced on 12.7.0 with `uvx --from "mcp-memory-service[sqlite]" memory server` and a fresh SQLite path. The server initializes, lists 28 tools, and `memory_store` / `memory_search` work with ONNX embeddings, so nothing is actually missing for this setup. The `[sqlite]` extra is what the README now recommends (#1929), so every new user sees this.  ## What is wrong  `check_critical_dependencies()` in `src/mcp_memory_service/dependency_check.py` only knows the torch path: it probes `torch` and `sentence_transformers` and treats either one missing as a failure. ONNX (`onnxruntime` + `tokenizers`) is the default embedding backend for the lightweight install and is not considered.  Three consequences:  1. `run_dependency_check()` (called from `utils/startup_orchestrator.py`) prints the `[MISSING]` and timeout warnings. 2. `get_recommended_timeout()` doubles the base init timeout because it thinks dependencies are missing. 3. 
+- **Issue #1971** (2026-11-13): **dashboard: type-only search filter is a 422 (page_size=1000 against a cap of 100)**
+  *Symptoms*: In the dashboard's Search tab, filtering by content type alone (no query, no tag, no date) always fails with the toast "Filter search failed", for built-in types as well as custom ones.  `handleFilterChange()` in `web/static/app.js` (line 2948 on `main` at 9e69dab1) takes the type-only branch and asks for every memory:  ``` const allMemoriesResponse = await this.apiCall('/memories?page=1&page_size=1000'); ```  `GET /api/memories` caps `page_size` at 100 (`web/api/memories.py:321`, `Query(10, ge=1, le=100)`), so the request is a 422 before anything is filtered. Server log from a run against a scratch database:  ``` "GET /api/memories?page=1&page_size=1000 HTTP/1.1" 422 Unprocessable Entity ```  The call came in with f739d746. Raising the cap is not the fix: even under it, the branch fetches one page and filters it in the browser, so on a store with more memories than one page it silently misses matches.  ## What has to change  The route already filters server-side: `list_memories` takes `memory_type`. The type-only branch should pass the selected type there instead of fetching everything and filtering client-side, keep `page_size` within the cap, and page through the result (or reuse the paging the Browse view already does at line 3391) so a type with more than 100 memories is complete.  Done when: choosing a type with no query, tag or date returns that type's memories without an error, including a type with more than 100 memories, and the other three filter branches behave as
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,176 +2932,762 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0152275` (2026-11-12)
-**Commit Message**: fix(milvus): keep the store and confine get, update and delete by hash to it (#1879) (#1962)
+### Incident Patch 1: `bea66063` (2026-11-13)
+**Commit Message**: fix(quality-gate): bound model calls by wall clock and skip, not pass, on failure (#1982)
 
-* fix(milvus): keep the store and confine get, update and delete by hash to it (#1879)
+* fix(quality-gate): bound model calls by wall clock and skip, not pass, on failure
 
-New collections get a VARCHAR store field defaulting to "default"; store()
-and store_batch() write it, and every upsert writes the row's own store back
-so an update never moves a memory. get_by_hash, update_memory_metadata and
-delete are confined to a named store; on a collection without the field a
-named store is refused with one warning per instance.
+MCP_QUALITY_LLM_TIMEOUT never fired against omlx: the server sends a
+whitespace keepalive while a request waits in its queue, and the
+urlopen timeout only limits each socket read. Calls blocked for as
+long as the queue was, measured at 2-11 minutes behind agent traffic.
+llm_prompt.py now bounds the whole request with SIGALRM; the default
+goes from 180 to 600 seconds to match what a busy shared server needs.
 
-get_by_hash_is_store_scoped stays False: search and listing still ignore
-store here (follow-up under #1683).
+analyze() turned any failed call into empty output, which both the
+complexity and the security check read as clean, so an unreachable
+or overloaded model passed the gate. Failed calls are now counted and
+a run without findings ends as skipped (exit 3).
 
-* fix(milvus): a confined delete that removed nothing is not a success (#1879)
+Answered calls are cached by model and prompt in the shared git dir,
+so rerunning the gate on unchanged files makes no model call.
 
-Between the read and the delete another client can remove the row, or
-remove it and store the same content in a different store. The confined
-filter then matches nothing, and delete() still removed the access record
-and the graph edges and reported success. It now reads delete_count from
-the MilvusClient.delete result (or the length of a primary-key list from
-older servers) and returns (False, 'not found in store ...') without any
-cleanup when nothing went. A result w
+* fix(quality-gate): write cache entries atomically and key them by reviewer
 
-**File**: `changelog.d/1879-milvus.fixed.md` (added, +19/-0)
+Greptile on #1982:
+- an entry is written to a temp file and renamed, so a gate in another
+  worktree never reads a half-written answer; an empty ent
+
+**File**: `scripts/pr/lib/llm_prompt.py` (modified, +21/-4)
 ```diff
-@@ -0,0 +1,19 @@
-+- **Milvus dropped the store a memory was written to and served it from any store (#1879, massimiliano1991).**
-+  The collection had no `store` field, so `store()` and `store_batch()` discarded the
-+  value, and `get_by_hash`, `update_memory_metadata` and `delete` found a memory whatever
-+  store the caller named. New collections get a `store` field (default `"default"`), the
-+  three hash-addressed calls are confined to it, and every upsert writes the row's own
-+  store back, so an update or a versioned update never moves a memory to `"default"`.
-+  A collection created before this has no field to confine on: there a named store is
-+  refused with one warning per instance (`None`, `"all"` and `"default"` are served as
-+  before), and the collection has to be recreated to pick up confinement, as for
-+  `content_lower`. `get_by_hash_is_store_scoped` stays `False`: search and listing still
-+  ignore `store` on this backend.
-+  A confined `delete` whose filter removes nothing (the row was deleted, or re-stored
-+  elsewhere, between the read and the delete) now reports "not found" and leaves the
-+  access record and graph edges alone, instead of removing them and reporting success.
-+  A scoped update is confined within one client only: it is not race-safe across clients
-+  sharing a collection, since a row re-stored elsewhere while the update is in flight is
-+  written back by the unconditional upsert (the cross-client guard is a separate issue).
-+  `update_memories_batch` and `mark_superseded_batch` now skip soft-deleted rows, as
-+  `get_by_hash` does, instead of writing them back and counting them as updated.
+@@ -24,7 +24,7 @@
+     MCP_QUALITY_LLM_URL      base URL, default http://127.0.0.1:11437/v1
+     MCP_QUALITY_LLM_MODEL    model id; prompt mode defaults to first listed model
+     MCP_QUALITY_LLM_API_KEY  optional bearer token
+-    MCP_QUALITY_LLM_TIMEOUT  seconds per request, default 180
++    MCP_QUALITY_LLM_TIMEOUT  wall-clock seconds per request, default 600
+ 
+ Exit codes:
+     0  reply printed on stdout
+@@ -41,11 +41,15 @@
+ import json
+ import os
+ import re
++import signal
+ import sys
+ import urllib.error
+ import urllib.request
+ 
+ DEFAULT_URL = "http://127.0.0.1:11437/v1"
++# Measured on a shared omlx server: gate prompts of 3-12k tokens waited 2-11
++# minutes behind agent traffic, so 180s skipped most calls on a busy machine.
++DEFAULT_TIMEOUT = "600"
+ EXIT_NO_BACKEND = 3
+ THINK_BLOCK = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
+ 
+@@ -65,10 +69,23 @@ def _headers() -> dict:
+ def _request(path: str, payload=None):
+     """POST payload (or GET when payload is None) and return the parsed body."""
+     data = json.dumps(payload).encode() if payload is not None else None
+-    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", "180"))
++    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", DEFAULT_TIMEOUT))
+     req = urllib.request.Request(_base_url() + path, data=data, headers=_headers())
+-    with urllib.request.urlopen(req, timeout=timeout) as response:
+-        return json.load(response)
++    # The urlopen timeout limits each socket read, not the request. omlx sends a
++    # whitespace keepalive while a request waits in its queue, so that limit
++    # never fired and a call could block for as long as the queue was. SIGALRM
++    # bounds the whole request.
++    def on_deadline(signum, frame):
++        raise TimeoutError(f"no reply within {timeout:g}s")
++
++    previous = signal.signal(signal.SIGALRM, on_deadline)
++    signal.setitimer(signal.ITIMER_REAL, timeout)
++    try:
++        with urllib.request.urlopen(req, timeout=timeout) as response:
++            return json.load(response)
++    finally:
++        signal.setitimer(signal.ITIMER_REAL, 0)
++        signal.signal(signal.SIGALRM, previous)
+ 
+ 
+ def model_candidates() -> list[str]:
 ```
 
-**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +215/-45)
+**File**: `scripts/pr/quality_gate.sh` (modified, +49/-3)
 ```diff
-@@ -154,6 +154,22 @@ def __init__(
- # -- Storage implementation --------------------------------------------------
+@@ -82,13 +82,50 @@ else
+     LLM_BACKEND="local ($RESOLVED_MODEL)"
+ fi
  
- 
-+def _deleted_rows(result: Any) -> Optional[int]:
-+    """How many rows a ``MilvusClient.delete`` call removed, if it says.
+-# analyze <prompt> - one model call, empty output on failure so callers stay simple.
++# A failed call used to print nothing, and every check read nothing as clean, so
++# an unreachable or overloaded model passed the gate. Failures are counted here
++# and turn a clean run into SKIPPED (see the summary).
++LLM_FAILURES=$(mktemp)
++trap 'rm -f "$LLM_FAILURES"' EXIT
++# Replies are cached by model and prompt; the prompt holds the whole file, so a
++# rerun on unchanged files makes no model call. Lives in the shared git dir, so
++# all worktrees of a checkout use it.
++# ponytail: never pruned; entries are a few hundred bytes. Prune by age if it grows.
++CACHE_DIR=""
++if git_dir=$(git rev-parse --git-common-dir 2>/dev/null); then
++    CACHE_DIR="$git_dir/quality-gate-cache"
++fi
 +
-+    pymilvus returns ``{"delete_count": n, "cost": c}`` (an ``OmitZeroDict``,
-+    whose zeros are still readable), or a list of primary keys from servers
-+    before 2.3.2. Anything else is ``None``: unknown, treated as a delete that
-+    went through, which is what every caller assumed before this check.
++# analyze <prompt> - one model call; prints the reply, or nothing on failure.
+ analyze() {
++    local key="" reply=""
++    if [ -n "$CACHE_DIR" ]; then
++        # The reviewer is backend + endpoint + model: "local (<model>)" or "gemini",
++        # plus the URL, since one model name can be served by different endpoints.
++        key=$(printf '%s\n%s\n%s' "$LLM_BACKEND" "${MCP_QUALITY_LLM_URL:-}" "$1" \
++            | git hash-object --stdin)
++        # -s, not -f: an empty entry is not an answer.
++        if [ -s "$CACHE_DIR/$key" ]; then
++            cat "$CACHE_DIR/$key"
++            return
++        fi
++    fi
+     if [ "$LLM_BACKEND" = "gemini" ]; then
+-        gemini "$1" 2>&1 || echo ""
++        reply=$(gemini "$1" 2>/dev/null) || reply=""
+     else
+-        printf '%s' "$1" | python3 "$LLM_HELPER" 2>/dev/null || echo ""
++        reply=$(printf '%s' "$1" | python3 "$LLM_HELPER") || reply=""
++    fi
++    if [ -z "$reply" ]; then
++        echo "failed" >> "$LLM_FAILURES"
++        return
+     fi
++    # Write aside and rename: a gate in another worktree must never read a
++    # half-written entry, and an interrupted write must not leave one behind.
++    if [ -n "$key" ] && mkdir -p "$CACHE_DIR"; then
++        printf '%s\n' "$reply" > "$CACHE_DIR/$key.tmp.$$" \
++            && mv -f "$CACHE_DIR/$key.tmp.$$" "$CACHE_DIR/$key"
++    fi
++    printf '%s\n' "$reply"
+ }
+ 
+ if [ "$MODE" = "staged" ]; then
+@@ -342,6 +379,15 @@ fi
+ echo "=== Quality Gate Summary ==="
+ echo ""
+ 
++llm_failed=$(wc -l < "$LLM_FAILURES" | tr -d ' ')
++if [ "$llm_failed" -gt 0 ] && [ $exit_code -eq 0 ]; then
++    echo "WARNING: $llm_failed model call(s) got no usable reply (error above, or no reply"
++    echo "   within MCP_QUALITY_LLM_TIMEOUT=${MCP_QUALITY_LLM_TIMEOUT:-600}s)."
++    echo "   Skipped, NOT passed: complexity and security were not fully evaluated."
++    echo "   Rerun when the endpoint is less busy; answered calls are cached."
++    exit $EXIT_SKIPPED
++fi
++
+ if [ $exit_code -eq 0 ]; then
+     echo "ALL CHECKS PASSED"
+     echo ""
+```
+
+**File**: `tests/ci/test_llm_prompt.py` (modified, +159/-0)
+```diff
+@@ -7,6 +7,7 @@
+ import subprocess
+ import sys
+ import threading
++import time
+ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+ from pathlib import Path
+ 
+@@ -136,3 +137,161 @@ def test_quality_gate_preserves_model_failure(
+     assert "Skipped, NOT passed" in result.stdout
+     assert "no local analysis model reachable" not in result.stdout
+     assert "Start the local endpoint" not in result.stdout
++
++
++class _KeepaliveHandler(BaseHTTPRequestHandler):
++    """Answer like a busy omlx: headers at once, then a space every 0.2s, no body."""
++
++    def do_POST(self) -> None:
++        self.send_response(200)
++        self.send_header("Content-Type", "application/json")
++        self.end_headers()
++        try:
++            for _ in range(200):
++                self.wfile.write(b" ")
++                self.wfile.flush()
++                time.sleep(0.2)
++        except OSError:
++            pass
++
++    def log_message(self, format: str, *args: object) -> None:
++        pass
++
++
++class _GateHandler(_ModelHandler):
++    """One model; answers the readiness probe, then the analysis prompts per `mode`."""
++
++    models = ("m",)
++    mode = "clean"
++    analysis_calls = 0
++
++    def do_POST(self) -> None:
++        length = int(self.headers.get("Content-Length", "0"))
++        prompt = json.loads(self.rfile.read(length))["messages"][0]["content"]
++        if prompt == "reply with READY":
++            self._send_json(200, {"choices": [{"message": {"content": "READY"}}]})
++            return
++        type(self).analysis_calls += 1
++        if self.mode == "fail":
++            self._send_json(500, {"error": "busy"})
++            return
++        self._send_json(200, {"choices": [{"message": {"content": "SECURITY_CLEAN"}}]})
++
++
++def _serve(handler: type[BaseHTTPRequestHandler]):
++    server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
++    server.daemon_threads = True
++    thread = threading.Thread(target=server.serve_forever, daemon=True)
++    thread.start()
++    return server, f"http://127.0.0.1:{server.server_port}/v1"
++
++
++def test_deadline_is_wall_clock_despite_keepalive_bytes() -> None:
++    """omlx streams whitespace while a request waits, so a socket read timeout never fires."""
++    server, url = _serve(_KeepaliveHandler)
++    env = os.environ | {"MCP_QUALITY_LLM_URL": url, "MCP_QUALITY_LLM_MODEL": "m",
++                        "MCP_QUALITY_LLM_TIMEOUT": "1"}
++    try:
++        started = time.monotonic()
++        result = subprocess.run([sys.executable, str(HELPER)], input="hi", env=env,
++                                capture_output=True, text=True, check=False, timeout=20)
++        elapsed = time.monotonic() - started
++    finally:
++        server.shutdown()
++        server.server_close()
++    assert result.returncode == 3, result.stderr
++    assert "no reply within 1s" in result.stderr
++    assert elapsed < 10
++
++
++def _staged_repo(path: Path) -> None:
++    subprocess.run(["git", "init", "-q", str(path)], check=True)
++    (path / "tests").mkdir()
++    (path / "tests" / "test_mod.py").write_text("def test_one():\n    assert 1\n")
++    subprocess.run(["git", "-C", str(path), "add", "tests/test_mod.py"], check=True)
++
++
++def _run_gate(path: Path, url: str) -> subprocess.CompletedProcess:
++    env = os.environ | {"MCP_QUALITY_LLM": "local", "MCP_QUALITY_LLM_URL": url,
++                        "MCP_QUALITY_LLM_TIMEOUT": "5"}
++    env.pop("MCP_QUALITY_LLM_MODEL", None)
++    return subprocess.run(["bash", str(GATE), "--staged"], cwd=path, env=env,
++                          capture_output=True, text=True, check=False, timeout=60)
++
++
++def test_failed_analysis_call_is_skipped_not_passed(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    monkeypatch.setattr(_GateHandler, "mode", "fail")
++    _staged_repo(tmp_path)
++    server, url = _serve(_GateHandler)
++    try:
++        result = _run_gate(tmp_path, url)
++    finally:
++        server.shutdown()
++        server.server_close()
++    assert result.returncode == 3, result.stdout + result.stderr
++    assert "Skipped, NOT passed" in result.stdout
++    assert "ALL CHECKS PASSED" not in result.stdout
++
++
++def test_rerun_on_unchanged_files_reuses_cached_replies(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    monkeypatch.setattr(_GateHandler, "mode", "clean")
++    monkeypatch.setattr(_GateHandler, "analysis_calls", 0)
++    _staged_repo(tmp_path)
++    server, url = _serve(_GateHandler)
++    try:
++        first = _run_gate(tmp_path, url)
++        calls_after_first = _GateHandler.analysis_calls
++        second = _run_gate(tmp_path, url)
++    finally:
++        server.shutdown()
++        server.server_close()
++    assert first.returncode == 0, first.stdout + first.stderr
++    assert second.returncode == 0, second.stdout + second.stderr
++    assert calls_after_first > 0
++    assert _GateHandler.analysis_calls == calls_after_first
++
++
++def _cache_files(path: Path) -> list[Path]:
++    return [p for p in (path / ".git" / "q
+```
+
+---
+
+### Incident Patch 2: `9349b8ac` (2026-11-13)
+**Commit Message**: fix(search): parse a from/to recall range as the whole window (#1935)
+
+* fix(search): parse a from/to recall range as the whole window
+
+"from January to March" and "from 2024-01-01 to 2024-03-31" were read
+as the first month or the first day. They now span the whole window,
+matching "between ... and ...". A from/to phrase that is not a date
+still falls through.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* chore: rename changelog fragment for #1935
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* fix(search): validate from/to range endpoints
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* fix(search): accept dayparts in range endpoints
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* refactor(search): match range endpoints directly
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* fix(search): keep from/to ranges for month years, now, and inverted months
+
+A month name followed by a year keeps that year ("from January 2024 to
+March 2024"), "to now" ends today, and a window whose start comes after
+its end ("from march to january") falls back to the single-expression
+parse instead of returning start > end.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* test(search): pin the from/to edge test to fi
+
+**File**: `changelog.d/1935.fixed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++- **A "from … to …" recall range kept only the start (GPT-AGI).** `from January to March` and `from 2024-01-01 to 2024-03-31` were read as the first month or the first day. They now cover the whole window, the same way `between … and …` already did. A from/to phrase that is not a date still falls through, so `from Alice to Bob yesterday` stays yesterday. A month name with a year keeps that year (`from January 2024 to March 2024`), `to now` ends today, and a window whose start comes after its end (`from march to january`) keeps the previous single-month reading.
+```
+
+**File**: `src/mcp_memory_service/utils/time_parser.py` (modified, +63/-8)
+```diff
+@@ -78,6 +78,28 @@
+ }
+ 
+ _MAX_TIME_QUERY_LEN = 500  # guard against ReDoS on user-supplied input
++_RANGE_ENDPOINT_PATTERNS = (
++    "relative_days", "relative_weeks", "relative_months", "relative_years",
++    "last_n_periods", "last_period", "this_period", "month_name", "recent",
++    "specific_date", "full_date", "named_period", "half_year", "quarter",
++)
++_RANGE_DAYPART_ENDPOINT = re.compile(
++    rf"(?:{PATTERNS['relative_days'].pattern})\s+(?:in\s+the\s+)?"
++    rf"(?:{PATTERNS['time_of_day'].pattern})|"
++    rf"(?:{PATTERNS['time_of_day'].pattern})\s+(?:yesterday|today)"
++)
++_RANGE_ENDPOINT = "|".join(
++    f"(?:{PATTERNS[name].pattern})" for name in _RANGE_ENDPOINT_PATTERNS
++)
++_RANGE_MONTH_YEAR = re.compile(rf"{PATTERNS['month_name'].pattern}\s+(\d{{4}})")
++PATTERNS["from_to"] = re.compile(
++    rf"from\s+(\S[^&]{{0,50}}?)\s+to\s+"
++    rf"({_RANGE_DAYPART_ENDPOINT.pattern}|{_RANGE_MONTH_YEAR.pattern}|{_RANGE_ENDPOINT}|now)"
++    # Sentence punctuation may follow a complete endpoint; only "\s|$" made
++    # "march 2024." fall back to "march" and dropped "2024-03-31." entirely.
++    rf"(?=[\s.,;:!?]|$)"
++)
++
+ 
+ def _resolve_yearless_date(
+     month: int, day: int, today: date, anchor_year: Optional[int] = None
+@@ -157,6 +179,21 @@ def _anchor_yearless_range(
+     )
+ 
+ 
++def _parse_range_side(expr: str) -> Tuple[Optional[float], Optional[float]]:
++    """Parse one end of a ``from X to Y`` range.
++
++    ``now`` means today, and a month name with a year ("march 2024") keeps
++    that year instead of resolving to the most recent such month.
 +    """
-+    if isinstance(result, dict):
-+        count = result.get("delete_count")
-+        return int(count) if isinstance(count, int) else None
-+    if isinstance(result, (list, tuple)):
-+        return len(result)
-+    return None
++    expr = expr.strip()
++    if expr == "now":
++        expr = "today"
++    month_year = _RANGE_MONTH_YEAR.fullmatch(expr)
++    if month_year:
++        return get_month_range(month_year.group(1), int(month_year.group(2)))
++    return parse_time_expression(expr)
 +
 +
- class MilvusMemoryStorage(MemoryStorage):
-     """Milvus-backed storage implementation.
- 
-@@ -174,6 +190,14 @@ class MilvusMemoryStorage(MemoryStorage):
-         default — matches the rest of the project.
-     """
- 
-+    # Whether the live collection has a ``store`` field (#1879). Class-level
-+    # defaults so instances built without ``__init__`` read as a legacy
-+    # collection; ``_ensure_collection`` sets the instance value.
-+    _has_store = False
-+    # A named-store call against a legacy collection is refused with one
-+    # warning per instance, not one per call.
-+    _legacy_store_warned = False
-+
-     @property
-     def max_content_length(self) -> Optional[int]:
-         return _CONTENT_MAX_LEN
-@@ -227,6 +251,11 @@ def __init__(
-         # when this is False. Set in ``_ensure_collection``.
-         self._has_content_lower = False
- 
-+        # Whether the live collection has a ``store`` field. New collections
-+        # do; older ones have no column to confine on, so a named-store
-+        # hash-addressed call fails closed there (#1879).
-+        self._has_store = False
-+
-         # Whether the collection has a BM25 function index on ``content``.
-         # New collections get one automatically; pre-existing collections
-         # without the ``sparse_vector`` field fall back to vector-only search.
-@@ -352,6 +381,14 @@ def _ensure_collection(self) -> None:
-             datatype=DataType.VARCHAR,
-             max_length=_MILVUS_VARCHAR_MAX,
-         )
-+        # The store a memory belongs to (#1879). A row written without the
-+        # key lands in "default", like an unnamed store on the other backends.
-+        schema.add_field(
-+            field_name="store",
-+            datatype=DataType.VARCHAR,
-+            max_length=_ID_MAX_LEN,
-+            default_value="default",
-+        )
-         schema.add_field(
-             field_name="tags",
-             datatype=DataType.VARCHAR,
-@@ -423,6 +460,7 @@ def _ensure_collection(self) -> None:
-             index_params=index_params,
-         )
-         self._has_content_lower = True
-+        self._has_store = True
-         logger.info(
-             "Created Milvus collection '%s' (dim=%s)",
-             self.collection_name, self.embedding_dimension,
-@@ -496,6 +534,15 @@ def _validate_existing_collection(self) -> None:
-                 self.collection_name,
+ def _calculate_season_date_range(
+     period: str,
+     season_info: Dict[str, int],
+@@ -231,7 +268,24 @@ def parse_time_expression(
+                 start_expr, end_expr, start_ts, end_ts
              )
- 
-+        self._has_store = "store" in field_names
-+        if not self._has_store:
-+            logger.warning(
-+                "Collection '%s' lacks the 'store' field — a get, update or "
-+                "delete by hash confined to a named store is refused. Recreate "
-+                "the collection to pick up store confinement.",
-+                self.collection_name,
-+            )
+             return start_ts, end_ts
+-        
 +
-         # Detect BM25 capability by checking for sparse_vector field
-         self._has_bm25 = "sparse_vector" in field_names
-         if not self._has_bm25:
-@@ -783,7 +830,9 @@ def _resolve_timestamps(
-         updated_iso = memory.updated_at_iso or self._iso_from_epoch(updated_at)
-         return created_at, created_iso, updated_at, updated_iso
- 
--    def _memory_to_entity(self, memory: Memory, embedding: List[float]) -> Dict[str, Any]:
-+    def _memory_to_entity(
-+        self, memory: Memory, embedding: List[float], store: Optional[str] = "default"
-+    ) -> Dict[str, Any]:
-         created_at, created_iso, updated_at, updated_iso = self._resolve_timestamps(memory)
-         content = memory.content or ""
-         entity: Dict[str, Any] = {
-@@ -800,8 +849,95 @@ def _memory_to_entity(self, memory: Memory, embedding: List[float]) -> Dict[str,
-         }
-         if self._has_content_lower:
-             entity["content_lower"] = content.lower()
-+        if self._has_store:
-+            entity["store"] = store or "default"
-         return entity
- 
-+    # -- Store confinement (#1879) --------------------------------------------
++        # Documented recall example. Ends that are not times fall through
++        # ("from Alice to Bob yesterday" is still yesterday).
++        from_to_match = PATTERNS["from_to"].search(query)
++        if from_to_match:
++            start_expr = from_to_match.group(1)
++            end_expr = from_to_match.group(2)
++            start_ts, _ = _parse_range_side(start_expr)
++            _, end_ts = _parse_range_side(end_expr)
++            if start_ts is not None and end_ts is not None:
++                start_ts, end_ts = _anchor_yearless_range(
++                    start_expr, end_expr, start_ts, end_ts
++                )
++                # An inverted window ("from march to january") falls through
++                # to the single-expression parse, as before this pattern.
++                if start_ts <= end_ts:
++                    return start_ts, end_ts
 +
-+    def _store_scope(self, store: Optional[str]) -> Tuple[bool, Optional[str]]:
-+        """Resolve ``store`` for a hash-addressed call to ``(refused, confine_to)``.
+         # Check for full ISO dates (YYYY-MM-DD) FIRST
+         full_date_match = PATTERNS["full_date"].search(query)
+         if full_date_match:
+@@ -619,8 +673,8 @@ def get_this_period_range(period: str) -> Tuple[float, float]:
+         
+     return start_dt.timestamp(), end_dt.timestamp()
+ 
+-def get_month_range(month_name: str) -> Tuple[float, float]:
+-    """Get timestamp range for a named month."""
++def get_month_range(month_name: str, year: Optional[int] = None) -> Tuple[float, float]:
++    """Get timestamp range for a named month (the most recent one unless ``year`` is given)."""
+     # Map month name to number
+     month_map = {
+         "january": 1, "february": 2, "march": 3, "april": 4,
+@@ -630,11 +684,12 @@ def get_month_range(month_name: str) -> Tuple[float, float]:
+     
+     if month_name in month_map:
+         month_num = month_map[month_name]
+-        current_year = datetime.now().year
+-        
+-        # If the month is in the future for this year, use last year
+-        current_month = datetime.now().month
+-        year = current_year if month_num <= current_month else current_year - 1
++        if year is None:
++            current_year = datetime.now().year
 +
-+        ``None`` and ``"all"`` are unscoped. On a collection with the ``store``
-+        field every other value confin
++            # If the month is in the future for this year, use last year
++            current_month = datetime.now().month
++            year = current_year if month_num <= current_month else current_year - 1
+         
+         # Get first and last day of the month
+         first_day = date(year, month_num, 1)
 ```
 
-**File**: `tests/storage/test_milvus_store_scope.py` (added, +444/-0)
+**File**: `tests/test_time_parser.py` (modified, +88/-1)
 ```diff
-@@ -0,0 +1,444 @@
+@@ -255,7 +255,94 @@ def test_date_ranges(self):
+         
+         assert start_dt.month == 1
+         assert end_dt.month == 3
+-    
++
++    def test_from_to_covers_the_whole_window(self, monkeypatch):
++        """`from X to Y` is a range, the same window `between X and Y` already is.
++
++        The recall handler documents "from January to March". Without a from/to
++        pattern the first date or month was returned alone, so an ISO range
++        collapsed to its first day.
++        """
++        # In January and February "march" resolves to last year, which would
++        # invert the month window; pin the clock after March.
++        _freeze_clock(monkeypatch, date(2026, 11, 10))
++        start_ts, end_ts = parse_time_expression("from 2024-01-01 to 2024-03-31")
++        assert datetime.fromtimestamp(start_ts) == datetime(2024, 1, 1, 0, 0, 0)
++        end_dt = datetime.fromtimestamp(end_ts)
++        assert (end_dt.year, end_dt.month, end_dt.day) == (2024, 3, 31)
++
++        month_start, month_end = parse_time_expression("from january to march")
++        between_start, between_end = parse_time_expression("between january and march")
++        assert (month_start, month_end) == (between_start, between_end)
++        assert datetime.fromtimestamp(month_end).month == 3
++
++        _, (recall_start, recall_end) = extract_time_expression("from January to March")
++        assert datetime.fromtimestamp(recall_start).month == 1
++        assert datetime.fromtimestamp(recall_end).month == 3
++
++        relative_start, relative_end = parse_time_expression(
++            "from 3 days ago to 1 day ago"
++        )
++        expected_start, _ = parse_time_expression("3 days ago")
++        _, expected_end = parse_time_expression("1 day ago")
++        assert (relative_start, relative_end) == (expected_start, expected_end)
++
++        daypart_start, daypart_end = parse_time_expression(
++            "from yesterday morning to today"
++        )
++        expected_start, _ = parse_time_expression("yesterday morning")
++        _, expected_end = parse_time_expression("today")
++        assert (daypart_start, daypart_end) == (expected_start, expected_end)
++
++        # "today in the morning" is a supported expression on its own, so the
++        # range end keeps the daypart instead of widening to the whole day.
++        for query, end_expr in (
++            ("from yesterday to today in the morning", "today in the morning"),
++            ("from yesterday to today morning", "today morning"),
++        ):
++            range_start, range_end = parse_time_expression(query)
++            expected_start, _ = parse_time_expression("yesterday")
++            _, expected_end = parse_time_expression(end_expr)
++            assert (range_start, range_end) == (expected_start, expected_end)
++
++    def test_from_to_that_is_not_a_date_keeps_a_later_expression(self):
++        """`from Alice to Bob yesterday` is not a date range."""
++        yesterday_start, yesterday_end = parse_time_expression("yesterday")
++        for query in ("from Alice to Bob yesterday", "from May to Bob yesterday"):
++            start_ts, end_ts = parse_time_expression(query)
++            assert (start_ts, end_ts) == (yesterday_start, yesterday_end)
++
++    def test_from_to_edge_endpoints(self, monkeypatch):
++        """Inverted month windows fall back, month-name years are kept, `now` is today."""
++        _freeze_clock(monkeypatch, date(2026, 1, 10))
++        march_start, _ = parse_time_expression("march")
++        _, january_end = parse_time_expression("january")
++        assert parse_time_expression("from march to january") == (march_start, january_end)
++
++        _freeze_clock(monkeypatch, date(2026, 11, 10))
++        assert parse_time_expression("from march to january") == parse_time_expression("march")
++
++        start_ts, end_ts = parse_time_expression("from January 2024 to March 2024")
++        assert datetime.fromtimestamp(start_ts) == datetime(2024, 1, 1, 0, 0, 0)
++        end_dt = datetime.fromtimestamp(end_ts)
++        assert (end_dt.year, end_dt.month, end_dt.day) == (2024, 3, 31)
++
++        now_start, now_end = parse_time_expression("from 2024-01-01 to now")
++        _, today_end = parse_time_expression("today")
++        assert datetime.fromtimestamp(now_start) == datetime(2024, 1, 1, 0, 0, 0)
++        assert now_end == today_end
++
++        # Sentence punctuation after the end must not shorten the endpoint
++        # ("march 2024." falling back to "march") or drop the range.
++        for query in (
++            "from January 2024 to March 2024",
++            "from 2024-01-01 to 2024-03-31",
++            "from yesterday to today in the morning",
++        ):
++            expected = parse_time_expression(query)
++            for punct in (".", ",", "?", "!", ";", ":"):
++                assert parse_time_expression(query + punct) == expected, query + punct
++
+     def test_quarters(self):
+         """Test quarter expressions"""
+         start_ts, end_ts = parse_time_expression(
+```
+
+---
+
+### Incident Patch 3: `314452aa` (2026-11-13)
+**Commit Message**: fix(milvus): keep the embedding call out of the read-upsert window (#1966) (#1978)
+
+* fix(milvus): keep the embedding call out of the read-upsert window (#1966)
+
+update_memory_metadata and update_memories_batch read the stored vector
+with the row and write it back, as mark_superseded_batch does; only a
+row whose vector did not come back is re-embedded. update_memory_versioned
+embeds the new content before it reads the old row and hands the vector
+to store() through a ContextVar, next to _exclude_versioned_parent.
+
+The window between the read and the whole-row upsert is now a get and an
+upsert with no embedding call in it. It is not closed: pymilvus has no
+conditional upsert and _write_lock is per instance. That limit stays
+documented in the changelog fragment.
+
+Refs #1966
+
+* fix(milvus): the legacy vector read drops a tombstoned row (#1966)
+
+On a collection without the store field the vector is read with a second
+get. That get now returns metadata too and goes through _row_is_live, so
+a row soft-deleted between the two reads is not found and nothing is
+written back, as every other read of a memory here treats a tombstone.
+
+Refs #1966
+
+---------
+
+Co-authored-by: massimiliano1991 <[R
+
+**File**: `changelog.d/1966.fixed.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++- **Milvus updates no longer embed the content between the read and the upsert**
++  (#1966). `update_memory_metadata` (and so `update_memory`) and
++  `update_memories_batch` read the stored vector with the row and write it back,
++  as `mark_superseded_batch` already did; only a row whose vector does not come
++  back is re-embedded. `update_memory_versioned` embeds the new content before it
++  reads the old row. The window between the read and the whole-row upsert is now
++  two round-trips with no embedding call in it; it is not closed, since pymilvus
++  has no conditional upsert, and that limit stays documented.
+```
+
+**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +124/-33)
+```diff
+@@ -97,6 +97,7 @@
+     _exclude_versioned_parent,
+     _escape_like, _tags_to_string, _string_to_tags,
+     _safe_json_loads, _versioned_conflict_exclusion,
++    _precomputed_store_vector, _store_with_vector,
+ )
+ from ..compat import _sanitize_log_value
+ from ..models.memory import Memory, MemoryQueryResult
+@@ -890,14 +891,24 @@ def _row_fields(self, base: Tuple[str, ...]) -> List[str]:
+     def _row_store(row: Dict[str, Any]) -> str:
+         return row.get("store") or "default"
+ 
+-    async def _fetch_live_row(self, content_hash: str) -> Optional[Tuple[Memory, str]]:
+-        """Return the live memory under ``content_hash`` and the store it is in."""
++    async def _fetch_live_row(
++        self, content_hash: str, include_embedding: bool = False
++    ) -> Optional[Tuple[Memory, str]]:
++        """Return the live memory under ``content_hash`` and the store it is in.
++
++        With ``include_embedding`` the stored vector comes back on
++        ``Memory.embedding``, so a write that keeps the content can write it
++        back instead of embedding the content again (#1966).
++        """
++        fields = self._OUTPUT_FIELDS
++        if include_embedding:
++            fields = self._OUTPUT_FIELDS_WITH_VECTOR
+         try:
+             rows = await self._call_client(
+                 "get",
+                 collection_name=self.collection_name,
+                 ids=[content_hash],
+-                output_fields=self._row_fields(self._OUTPUT_FIELDS),
++                output_fields=self._row_fields(fields),
+             )
+         except Exception as exc:  # noqa: BLE001
+             logger.error(
+@@ -908,7 +919,7 @@ async def _fetch_live_row(self, content_hash: str) -> Optional[Tuple[Memory, str
+ 
+         if not rows:
+             return None
+-        memory = self._entity_to_memory(rows[0])
++        memory = self._entity_to_memory(rows[0], include_embedding=include_embedding)
+         # Soft-deleted rows carry ``metadata.deleted_at``. Milvus can't filter a
+         # JSON sub-field in the ``get`` expression, so drop the tombstone here to
+         # match the other backends (sqlite_vec at mixins/retrieve.py, cloudflare
+@@ -918,19 +929,61 @@ async def _fetch_live_row(self, content_hash: str) -> Optional[Tuple[Memory, str
+             return None
+         return memory, self._row_store(rows[0])
+ 
++    async def _stored_vector(
++        self, content_hash: str
++    ) -> Tuple[bool, Optional[List[float]]]:
++        """Read the vector stored under ``content_hash`` on a legacy collection.
++
++        Returns ``(live, vector)``. ``live`` is False when the row is gone or
++        carries a soft-delete tombstone, as every other read of a memory
++        here treats it (``_fetch_live_row``). A failed read is reported as
++        live with no vector, so the caller embeds the content again, as it
++        did before #1966. Never raises.
++        """
++        try:
++            rows = await self._call_client(
++                "get",
++                collection_name=self.collection_name,
++                ids=[content_hash],
++                output_fields=["vector", "metadata"],
++            )
++        except Exception as exc:  # noqa: BLE001
++            logger.warning(
++                "Failed to read the vector of %s: %s",
++                _sanitize_log_value(content_hash), _sanitize_log_value(exc),
++            )
++            return True, None
++        if not rows or not self._row_is_live(rows[0]):
++            return False, None
++        return True, self._coerce_vector(rows[0])
++
+     async def _get_for_write(
+-        self, content_hash: str, store: Optional[str]
++        self, content_hash: str, store: Optional[str], include_embedding: bool = False
+     ) -> Tuple[Optional[Memory], str]:
+         """Read the row a hash-addressed write will replace, with its store.
+ 
+         Milvus ``upsert`` replaces the whole row, so the row's own store is
+         written back with it and an update never moves a memory between
+         stores. A legacy collection has no store to carry.
++
++        With ``include_embedding`` the row's vector is read too (on a legacy
++        collection with a second ``get``, since ``get_by_hash`` does not
++        carry it; a row tombstoned by then reads as not found), so the
++        caller can write it back without an embedding call between the read
++        and the upsert (#1966).
+         """
+         if not self._has_store:
+-            return await self.get_by_hash(content_hash, store), "default"
++            memory = await self.get_by_hash(content_hash, store)
++            if memory is not None and include_embedding and not memory.embedding:
++                live, vector = await self._stored_vector(content_hash)
++                if not live:
++                    return None, "default"
++                memory.embedding = vector
++            return memory, "default"
+         refused, confine = self._store_scope(store)
+-        found = None if refused else await self._fetch_live_row(content_hash)
+```
+
+**File**: `src/mcp_memory_service/storage/shared.py` (modified, +18/-0)
+```diff
+@@ -28,6 +28,24 @@ def _exclude_versioned_parent(content_hash: str) -> Iterator[None]:
+     finally:
+         _versioned_conflict_exclusion.reset(token)
+ 
++
++# A vector computed before the row was read, for ``store()`` to write instead
++# of embedding the content again. ``update_memory_versioned`` embeds the new
++# content ahead of its read so that no embedding call sits between the read
++# and the write (#1966).
++_precomputed_store_vector: ContextVar[Optional[List[float]]] = ContextVar(
++    "precomputed_store_vector", default=None
++)
++
++
++@contextmanager
++def _store_with_vector(embedding: List[float]) -> Iterator[None]:
++    token = _precomputed_store_vector.set(embedding)
++    try:
++        yield
++    finally:
++        _precomputed_store_vector.reset(token)
++
+ # ---------------------------------------------------------------------------
+ # Bounded LRU embedding cache
+ # ---------------------------------------------------------------------------
+```
+
+**File**: `tests/storage/test_milvus_update_memory.py` (modified, +6/-4)
+```diff
+@@ -97,10 +97,12 @@ async def test_successful_update(self):
+         result = await storage.update_memory(updated)
+ 
+         assert result is True
+-        # Verify upsert was called (through update_memory_metadata)
+-        storage._call_client.assert_called_once()
+-        call_args = storage._call_client.call_args
+-        assert call_args[0][0] == "upsert"
++        # Verify upsert was called (through update_memory_metadata). The
++        # mocked get_by_hash carries no vector, so the row's vector is read
++        # with a second client call before the upsert (#1966).
++        upserts = [c for c in storage._call_client.call_args_list if c[0][0] == "upsert"]
++        assert len(upserts) == 1
++        assert storage._call_client.call_args[0][0] == "upsert"
+ 
+     @pytest.mark.asyncio
+     async def test_not_found_returns_false(self):
+```
+
+**File**: `tests/storage/test_milvus_update_stored_vector.py` (added, +352/-0)
+```diff
+@@ -0,0 +1,352 @@
 +# Copyright 2024 Heinrich Krupp
 +#
 +# Licensed under the Apache License, Version 2.0 (the "License");
@@ -3116,23 +3702,26 @@ cleanup when nothing went. A result w
 +# See the License for the specific language governing permissions and
 +# limitations under the License.
 +
-+"""Milvus keeps the store a memory was written to and confines the
-+hash-addressed calls to it (#1879).
++"""Milvus updates keep the embedding call out of the read-upsert window (#1966).
 +
-+Before this, the collection had no ``store`` field: ``store()`` dropped the
-+value, and ``get_by_hash`` / ``update_memory_metadata`` / ``delete`` served a
-+memory from any store. A collection created before the field existed has
-+nothing to confine on, so a named store is refused there instead of being
-+served unscoped.
++Every Milvus update is a read followed by a whole-row ``upsert``, and two
++clients on one collection share no lock. An update that keeps the content
++keeps its vector too, so ``update_memory_metadata`` and
++``update_memories_batch`` read the stored vector with the row and write it
++back, as ``mark_superseded_batch`` already did, instead of embedding the
++content between the read and the upsert. ``update_memory_versioned`` stores
++new content, so it embeds that content before it reads the old row.
 +
-+Mocked-client style of test_milvus_parity_methods.py, so these run on CI
-+runners without pymilvus. test_milvus_store_scope_e2e.py runs the same
-+contract against Milvus Lite.
++Mocked-client style of test_milvus_store_scope.py: these run on CI runners
++without pymilvus or a model.
 +"""
 +
 +from __future__ import annotations
 +
-+import logging
++import asyncio
++import json
++import re
++import threading
 +import time
 +from typing import Any
 +from unittest.mock import AsyncMock, MagicMock
@@ -3141,8 +3730,13 @@ cleanup when nothing went. A result w
 +
 +from mcp_memory_service.models.memory import Memory
 +from mcp_memory_service.storage.milvus import MilvusMemoryStorage
++from mcp_memory_service.storage.shared import _string_to_tags
++from mcp_memory_service.utils.hashing import generate_content_hash
 +
 +_HASH = "a" * 64
++_OTHER = "c" * 64
++_STORED = [0.5, 0.5, 0.5, 0.5]
++_FRESH = [0.1, 0.2, 0.3, 0.4]
 +
 +
 +def _make_storage(has_store: bool) -> MilvusMemoryStorage:
@@ -3153,6 +3747,9 @@ cleanup when nothing went. A result w
 +    storage.embedding_dimension = 4
 +    storage.embedding_model_name = "test-model"
 +    storage.embedding_model = MagicMock()
++    storage.embedding_model.encode = MagicMock(
++        side_effect=lambda texts, **_: [list(_FRESH) for _ in texts]
++    )
 +    storage._initialized = True
 +    storage.client = MagicMock()
 +    storage._has_content_lower = True
@@ -3160,486 +3757,81 @@ cleanup when nothing went. A result w
 +    storage._has_access_collection = False
 +    storage._has_store = has_store
 +    storage.semantic_dedup_enabled = False
-+    storage._generate_embedding = MagicMock(return_value=[0.1, 0.2, 0.3, 0.4])
++    storage._generate_embedding = MagicMock(return_value=list(_FRESH))
 +    storage._detect_conflicts = AsyncMock(return_value=[])
 +    storage._delete_graph_edges = AsyncMock()
 +    return storage
 +
 +
-+def _row(store: str | None = "team", content_hash: str = _HASH, **extra) -> dict[str, Any]:
++def _row(
++    content_hash: str = _HASH,
++    store: str | None = "team",
++    vector: list[float] | None = _STORED,
++    content: str = "body",
++    **extra: Any,
++) -> dict[str, Any]:
 +    now = time.time()
 +    row: dict[str, Any] = {
 +        "id": content_hash,
-+        "content": "body",
++        "content": content,
++        "content_lower": content.lower(),
 +        "tags": "t",
 +        "memory_type": "note",
 +        "metadata": "{}",
 +        "created_at": now,
 +        "updated_at": now,
-+        "created_at_iso": "2026-11-11T00:00:00Z",
-+        "updated_at_iso": "2026-11-11T00:00:00Z",
++        "created_at_iso": "2026-11-12T00:00:00Z",
++        "updated_at_iso": "2026-11-12T00:00:00Z",
 +    }
 +    if store is not None:
 +        row["store"] = store
++    if vector is not None:
++        row["vector"] = list(vector)
 +    row.update(extra)
 +    return row
 +
 +
-+def _client(rows: list[dict[str, Any]]) -> AsyncMock:
-+    """``_call_client`` that answers ``get`` with ``rows`` and records writes."""
++class _Collection:
++    """An in-memory collection behind ``_call_client``.
 +
-+    async def call(method: str, **kwargs):
++    ``get`` returns only the requested ``output_fields`` (plus ``id``), as
++    Milvus does, so a test can tell whether the vector was asked for.
++    """
++
++    def __init__(self, rows: list[dict[str, Any]]) -> None:
++        self.rows: dict[str, dict[str, Any]] = {r["id"]: dict(r) for r in rows}
++        self.calls: list[tuple[str, dict[str, Any]]] = []
++
++    def client(self) -> AsyncMock:
++        return AsyncMock(side_effect=self._call)
++
++    async def _call(self, method: str, **kwargs: Any) -> Any:
++        self.calls.append((method, kwargs))
 +        if method == "get":
-+            wanted = set(kwargs.get("ids") or [])
-+            return [r for r in rows if r["id"] in wanted]
-+        return None
-+
-+    return AsyncMock(side_effect=call)
-+
-+
-+def _calls(mock: AsyncMock, method: str) -> list[dict[str, Any]]:
-+    return [c.kwargs for c in mock.call_args_list if c.args and c.args[0] == method]
-+
-+
-+def _memory(content: str = "new body") -> Memory:
-+    return Memory(content=content, content_hash="b" * 64, tags=["t"], memory_type="note")
-+
-+
-+# -- Writes keep the store ----------------------------------------------------
-+
-+
-+@pytest.mark.asyncio
-+async def test_store_writes_the_store_field():
-+    storage = _make_storage(has_store=True)
-+    storage._call_client = _client([])
-+
-+    ok, msg = await storage.store(_memory(), store="team")
-+
-+    assert ok, msg
-+    (insert,) = _calls(storage._call_client, "insert")
-+    assert insert["data"][0]["store"] == "team"
-+
-+
-+@pytest.mark.asyncio
-+async def test_store_batch_writes_the_store_field():
-+    storage = _make_storage(has_store=True)
-+    storage._call_client = _client([])
-+
-+    results = await storage.store_batch([_memory("one"), _memory("two")], store="team")
-+
-+    assert [ok for ok, _ in results] == [True, True]
-+    (insert,) = _calls(storage._call_client, "insert")
-+    assert [e["store"] for e in insert["data"]] == ["team", "team"]
-+
-+
-+@pytest.mark.asyncio
-+async def test_update_writes_back_the_rows_own_store():
-+    # upsert replaces the whole row: without the store the row moves to "default".
-+    storage = _make_storage(has_store=True)
-+    storage._call_client = _client([_row(store="team")])
-+
-+    ok, msg = await storage.update_memory_metadata(_HASH, {"tags": ["x"]})
-+
-+    assert ok, msg
-+    (upsert,) = _calls(storage._call_client, "upsert")
-+    assert upsert["data"][0]["store"] == "team"
-```
-
-**File**: `tests/storage/test_milvus_store_scope_e2e.py` (added, +140/-0)
-```diff
-@@ -0,0 +1,140 @@
-+"""End-to-end store confinement (#1879) against a REAL Milvus Lite backend.
-+
-+test_milvus_store_scope.py pins the calls the storage makes; this file checks
-+that Milvus itself does what those calls assume: a row inserted without the
-+``store`` key lands in ``"default"``, an upsert that carries the row's store
-+keeps it there, and a ``delete`` whose filter names another store removes
-+nothing. Only the embedding is stubbed.
-+
-+Run: pytest tests/storage/test_milvus_store_scope_e2e.py -v
-+"""
-+
-+import uuid
-+
-+import numpy as np
-+from unittest.mock import AsyncMock
-+
-+import pytest
-+import pytest_asyncio
-+
-+pymilvus = pytest.importorskip("pymilvus")
-+milvus_lite = pytest.importorskip("milvus_lite")
-+
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.milvus import MilvusMemoryStorage
-+from mcp_memory_service.utils.hashing import generate_content_hash
-+
-+_DIM = 8
-+
-+
-+class _StubEncoder:
-+    """Deterministic per-text vectors — no model download, no network."""
-+
-+    def encode(self, texts, convert_to_numpy=True, **kwargs):
-+        out = []
-+        for text in texts:
-+            seed = abs(hash(text)) % (10 ** 6)
-+            out.append(np.random.default_rng(seed).random(_DIM, dtype=np.float32))
-+        return np.array(out)
-+
-+
-+@pytest.fixture(scope="module")
-+def milvus_db_path(tmp_path_factory):
-+    return tmp_path_factory.mktemp("milvus_store_scope_e2e") / "milvus.db"
-+
-+
-+@pytest_asyncio.fixture
-+async def storage(milvus_db_path, monkeypatch):
-+    async def _stub_init_embedding(self):
-+        self.embedding_model = _StubEncoder()
-+        self.embedding_dimension = _DIM
-+
-+    monkeypatch.setattr(
-+        MilvusMemoryStorage, "_initialize_embedding_model", _stub_init_embedding
-+    )
-+    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
-+    instance = MilvusMemoryStorage(
-+        uri=str(milvus_db_path),
-+        collection_name=f"mcp_store_{uuid.uuid4().hex[:12]}",
-+        embedding_model="stub",
-+    )
-+    await instance.initialize()
-+    try:
-+        yield instance
-+    finally:
-+        await instance.close()
-+
-+
-+async def _store(storage, content: str, **kwargs) -> str:
-+    content_hash = generate_content_hash(content)
-+    ok, msg = await storage.store(
-+        Memory(content=content, content_hash=content_hash, tags=["t"], memory_type="note"),
-+        **kwargs,
-+    )
-+    assert ok, msg
-+    return content_hash
-+
-+
-+async def _stored_in(storage, content_hash: str):
-+    rows = await storage._call_client(
-+        "get",
-+        collection_name=storage.collection_name,
-+        ids=[content_hash],
-+        output_fields=["store"],
-+    )
-+    return rows[0]["store"] if rows else None
-+
-+
-+@pytest.mark.asyncio
-+async def test_store_is_kept_and_confines_the_hash_addressed_calls(storage):
-+    unnamed = await _store(storage, "written without a store")
-+    team = await _store(storage, "written to the team store", store="team")
-+    assert await _stored_in(storage, unnamed) == "default"
-+    assert await _stored_in(storage, team) == "team"
-+
-+    # Reads
-+    assert await storage.get_by_hash(team, store="team") is not None
-+    assert await storage.get_by_hash(team) is not None
-+    assert await storage.get_by_hash(team, store="ops") is None
-+    assert await storage.get_by_hash(team, store="default") is None
-+
-+    # An update elsewhere is refused; an unscoped one keeps the row where it is.
-+    ok, _ = await storage.update_memory_metadata(team, {"tags": ["x"]}, store="ops")
-+    assert ok is False
-+    ok, msg = await storage.update_memory_metadata(team, {"tags": ["x"]})
-+    assert ok, msg
-+    assert await _stored_in(storage, team) == "team"
-+    assert (await storage.get_by_hash(team, store="team")).tags == ["x"]
-+
-+    # A delete elsewhere removes nothing; in its own store it goes.
-+    ok, _ = await storage.delete(team, store="ops")
-+    assert ok is False
-+    assert await _stored_in(storage, team) == "team"
-+    ok, msg = await storage.delete(team, store="team")
-+    assert ok, msg
-+    assert await _stored_in(storage, team) is None
-+
-+
-+@pytest.mark.asyncio
-+async def test_a_delete_that_removes_nothing_says_so_and_keeps_the_links(storage, monkeypatch):
-+    """The read saw the row in "team"; by the time of the delete another
-+    client had stored the same content in "ops". The confined filter deletes
-+    nothing on Milvus Lite too, and the call must not report success or
-+    remove the graph edges of the row that is there now."""
-+    moved = await _store(storage, "stored again in ops meanwhile", store="ops")
-+    memory = await storage.get_by_hash(moved)
-+    assert memory is not None
-+
-+    async def _stale_read(content_hash, store):
-+        return memory, "team"
-+
-+    monkeypatch.setattr(storage, "_get_for_write", _stale_read)
-+    edges = AsyncMock()
-+    monkeypatch.setattr(storage, "_delete_graph_edges", edges)
-+
-+    ok, msg = await storage.delete(moved, store="team")
-+
-+    assert ok is False
-+    ass
-```
-
----
-
-### Incident Patch 2: `5f9cdcdb` (2026-11-12)
-**Commit Message**: fix(dashboard): remove the System Maintenance placeholders (#1974) (#1976)
-
-* fix(dashboard): remove the System Maintenance placeholders (#1974)
-
-* test(dashboard): assert a successful cleanup_duplicates run in the system-operation test
-
-**File**: `changelog.d/1974.removed.md` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+- **Dashboard: removed the System Maintenance placeholders (#1974).** The Manage tab
-+  showed "Optimize DB" and "Rebuild Index" buttons that were disabled and, behind them,
-+  only answered "not yet implemented". The section, its handlers, its strings in all
-+  eleven catalogs and the `optimize_db` / `rebuild_index` branches of
-+  `POST /api/manage/system/{operation}` are gone; the route now answers both with the
-+  400 for an unknown operation. `cleanup_duplicates` is unchanged.
-```
-
-**File**: `src/mcp_memory_service/web/api/manage.py` (modified, +2/-10)
-```diff
-@@ -79,7 +79,7 @@ class TagStatsListResponse(BaseModel):
- 
- class SystemOperationRequest(BaseModel):
-     """Request model for system operations."""
--    operation: str = Field(..., description="Operation: 'cleanup_duplicates', 'optimize_db', 'rebuild_index'")
-+    operation: str = Field(..., description="Operation: 'cleanup_duplicates'")
- 
- 
- @router.post("/bulk-delete", response_model=BulkOperationResponse, tags=["management"])
-@@ -399,20 +399,12 @@ async def perform_system_operation(
-     """
-     Perform system maintenance operations.
- 
--    Supported operations: cleanup_duplicates, optimize_db, rebuild_index
-+    Supported operations: cleanup_duplicates. Any other operation answers 400.
-     """
-     try:
-         if operation == "cleanup_duplicates":
-             return await cleanup_duplicates(storage, user)
- 
--        elif operation == "optimize_db":
--            # Database optimization (would need storage-specific implementation)
--            raise HTTPException(status_code=501, detail="Database optimization not yet implemented")
--
--        elif operation == "rebuild_index":
--            # Rebuild search indexes (would need storage-specific implementation)
--            raise HTTPException(status_code=501, detail="Index rebuilding not yet implemented")
--
-         else:
-             raise HTTPException(status_code=400, detail=f"Unknown operation: {operation}")
- 
-```
-
-**File**: `src/mcp_memory_service/web/static/app.js` (modified, +0/-16)
-```diff
-@@ -837,8 +837,6 @@ class MemoryDashboard {
-         document.getElementById('deleteUntaggedBtn')?.addEventListener('click', this.handleDeleteUntagged.bind(this));
-         document.getElementById('ontologyAddTypeBtn')?.addEventListener('click', this.handleAddMemoryType.bind(this));
-         document.getElementById('ontologySetRetentionBtn')?.addEventListener('click', this.handleSetRetention.bind(this));
--        document.getElementById('optimizeDbBtn')?.addEventListener('click', this.handleOptimizeDatabase.bind(this));
--        document.getElementById('rebuildIndexBtn')?.addEventListener('click', this.handleRebuildIndex.bind(this));
- 
-         // Analytics tab event listeners
-         document.getElementById('growthPeriodSelect')?.addEventListener('change', this.handleGrowthPeriodChange.bind(this));
-@@ -5935,20 +5933,6 @@ class MemoryDashboard {
-         }
-     }
- 
--    /**
--     * Handle database optimization
--     */
--    async handleOptimizeDatabase() {
--        this.showToast(this.t('toast.dbOptimizeTodo', 'Database optimization not yet implemented'), 'warning');
--    }
--
--    /**
--     * Handle index rebuild
--     */
--    async handleRebuildIndex() {
--        this.showToast(this.t('toast.indexRebuildTodo', 'Index rebuild not yet implemented'), 'warning');
--    }
--
-     /**
-      * Rename a tag
-      */
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/de.json` (modified, +0/-9)
-```diff
-@@ -302,13 +302,6 @@
-   "manage.bulk.deleteTag.placeholder": "Tag auswählen...",
-   "manage.bulk.deleteTag.title": "Nach Tag löschen",
-   "manage.bulk.title": "Massenoperationen",
--  "manage.system.dbOpt.btn": "DB optimieren",
--  "manage.system.dbOpt.desc": "Datenbankleistung optimieren",
--  "manage.system.dbOpt.title": "Datenbank-Optimierung",
--  "manage.system.rebuild.btn": "Index neuaufbauen",
--  "manage.system.rebuild.desc": "Suchindizes für bessere Leistung neuaufbauen",
--  "manage.system.rebuild.title": "Suchindex neuaufbauen",
--  "manage.system.title": "Systemwartung",
-   "manage.tags.column.actions": "Aktionen",
-   "manage.tags.column.count": "Anzahl",
-   "manage.tags.column.tag": "Tag",
-@@ -675,7 +668,6 @@
-   "toast.cleanupSuccess": "{message}",
-   "toast.copyFailed": "Kopieren in Zwischenablage fehlgeschlagen",
-   "toast.copySuccess": "Erinnerung in Zwischenablage kopiert",
--  "toast.dbOptimizeTodo": "Datenbank-Optimierung noch nicht implementiert",
-   "toast.documentChunksPartial": "{count} Chunks gefunden (Teilergebnisse)",
-   "toast.documentRemoved": "\"{name}\" entfernt ({count} Erinnerungen gelöscht)",
-   "toast.duplicateMemoryWarning": "Erinnerung aktualisiert, aber Originalversion existiert noch. Möglicherweise muss das Duplikat manuell gelöscht werden.",
-@@ -691,7 +683,6 @@
-   "toast.filterSearchFailed": "Filtersuche fehlgeschlagen",
-   "toast.filtersCleared": "Alle Filter gelöscht",
-   "toast.genericSuccess": "{message}",
--  "toast.indexRebuildTodo": "Index-Neuaufbau noch nicht implementiert",
-   "toast.languageSwitched": "Sprache gewechselt",
-   "toast.loadAnalyticsFail": "Analysedaten konnten nicht geladen werden",
-   "error.authRequired": "Authentifizierung erforderlich",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/en.json` (modified, +0/-9)
-```diff
-@@ -118,8 +118,6 @@
-   "toast.selectDate": "Please select a date",
-   "toast.bulkDeleteByDateSuccess": "{message}",
-   "toast.bulkDeleteByDateFailedWithReason": "{message}",
--  "toast.dbOptimizeTodo": "Database optimization not yet implemented",
--  "toast.indexRebuildTodo": "Index rebuild not yet implemented",
-   "toast.tagRenameTodo": "Tag renaming not yet implemented",
-   "toast.tagDeleteTodo": "Tag deletion not yet implemented",
-   "toast.loadAnalyticsFail": "Failed to load analytics data",
-@@ -461,13 +459,6 @@
-   "manage.tags.column.actions": "Actions",
-   "manage.tags.rename": "Rename",
-   "manage.tags.delete": "Delete",
--  "manage.system.title": "System Maintenance",
--  "manage.system.dbOpt.title": "Database Optimization",
--  "manage.system.dbOpt.desc": "Optimize database performance",
--  "manage.system.dbOpt.btn": "Optimize DB",
--  "manage.system.rebuild.title": "Rebuild Search Index",
--  "manage.system.rebuild.desc": "Rebuild search indexes for better performance",
--  "manage.system.rebuild.btn": "Rebuild Index",
-   "search.results.title": "Search Results",
-   "search.results.count": "{count} results",
-   "search.results.count.one": "{count} result",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/es.json` (modified, +0/-9)
-```diff
-@@ -302,13 +302,6 @@
-   "manage.bulk.deleteTag.placeholder": "Seleccionar etiqueta...",
-   "manage.bulk.deleteTag.title": "Eliminar por Etiqueta",
-   "manage.bulk.title": "Operaciones Masivas",
--  "manage.system.dbOpt.btn": "Optimizar BD",
--  "manage.system.dbOpt.desc": "Optimizar el rendimiento de la base de datos",
--  "manage.system.dbOpt.title": "Optimización de Base de Datos",
--  "manage.system.rebuild.btn": "Reconstruir Índice",
--  "manage.system.rebuild.desc": "Reconstruir índices de búsqueda para mejor rendimiento",
--  "manage.system.rebuild.title": "Reconstruir Índice de Búsqueda",
--  "manage.system.title": "Mantenimiento del Sistema",
-   "manage.tags.column.actions": "Acciones",
-   "manage.tags.column.count": "Cantidad",
-   "manage.tags.column.tag": "Etiqueta",
-@@ -675,7 +668,6 @@
-   "toast.cleanupSuccess": "{message}",
-   "toast.copyFailed": "Error al copiar al portapapeles",
-   "toast.copySuccess": "Memoria copiada al portapapeles",
--  "toast.dbOptimizeTodo": "Optimización de base de datos aún no implementada",
-   "toast.documentChunksPartial": "Se encontraron {count} fragmentos (resultados parciales)",
-   "toast.documentRemoved": "\"{name}\" eliminado ({count} memorias eliminadas)",
-   "toast.duplicateMemoryWarning": "Memoria actualizada, pero la versión original aún existe. Es posible que necesite eliminar manualmente el duplicado.",
-@@ -691,7 +683,6 @@
-   "toast.filterSearchFailed": "Búsqueda con filtros fallida",
-   "toast.filtersCleared": "Todos los filtros eliminados",
-   "toast.genericSuccess": "{message}",
--  "toast.indexRebuildTodo": "Reconstrucción de índice aún no implementada",
-   "toast.languageSwitched": "Idioma cambiado",
-   "toast.loadAnalyticsFail": "Error al cargar datos de analíticas",
-   "error.authRequired": "Autenticación requerida",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/fr.json` (modified, +0/-9)
-```diff
-@@ -302,13 +302,6 @@
-   "manage.bulk.deleteTag.placeholder": "Sélectionner un tag...",
-   "manage.bulk.deleteTag.title": "Supprimer par Tag",
-   "manage.bulk.title": "Opérations en Masse",
--  "manage.system.dbOpt.btn": "Optimiser DB",
--  "manage.system.dbOpt.desc": "Optimiser les performances de la base de données",
--  "manage.system.dbOpt.title": "Optimisation de la Base de Données",
--  "manage.system.rebuild.btn": "Reconstruire l'Index",
--  "manage.system.rebuild.desc": "Reconstruire les index de recherche pour de meilleures performances",
--  "manage.system.rebuild.title": "Reconstruire l'Index de Recherche",
--  "manage.system.title": "Maintenance Système",
-   "manage.tags.column.actions": "Actions",
-   "manage.tags.column.count": "Nombre",
-   "manage.tags.column.tag": "Tag",
-@@ -675,7 +668,6 @@
-   "toast.cleanupSuccess": "{message}",
-   "toast.copyFailed": "Échec de la copie dans le presse-papiers",
-   "toast.copySuccess": "Mémoire copiée dans le presse-papiers",
--  "toast.dbOptimizeTodo": "Optimisation de la base de données pas encore implémentée",
-   "toast.documentChunksPartial": "{count} fragments trouvés (résultats partiels)",
-   "toast.documentRemoved": "\"{name}\" supprimé ({count} mémoires supprimées)",
-   "toast.duplicateMemoryWarning": "Mémoire mise à jour, mais la version originale existe toujours. Vous devrez peut-être supprimer manuellement le doublon.",
-@@ -691,7 +683,6 @@
-   "toast.filterSearchFailed": "Échec de la recherche avec filtres",
-   "toast.filtersCleared": "Tous les filtres effacés",
-   "toast.genericSuccess": "{message}",
--  "toast.indexRebuildTodo": "Reconstruction de l'index pas encore implémentée",
-   "toast.languageSwitched": "Langue changée",
-   "toast.loadAnalyticsFail": "Échec du chargement des données d'analyse",
-   "error.authRequired": "Authentification requise",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/hi.json` (modified, +0/-9)
-```diff
-@@ -118,8 +118,6 @@
-   "toast.selectDate": "कृपया एक तारीख चुनें",
-   "toast.bulkDeleteByDateSuccess": "{message}",
-   "toast.bulkDeleteByDateFailedWithReason": "{message}",
--  "toast.dbOptimizeTodo": "डेटाबेस अनुकूलन अभी लागू नहीं किया गया है",
--  "toast.indexRebuildTodo": "इंडेक्स का पुनर्निर्माण अभी लागू नहीं किया गया है",
-   "toast.tagRenameTodo": "टैग का नाम बदलने की सुविधा अभी लागू नहीं की गई है",
-   "toast.tagDeleteTodo": "टैग हटाने की सुविधा अभी लागू नहीं की गई है",
-   "toast.loadAnalyticsFail": "विश्लेषण डेटा लोड करने में विफल",
-@@ -461,13 +459,6 @@
-   "manage.tags.column.actions": "कार्रवाइयाँ",
-   "manage.tags.rename": "नाम बदलें",
-   "manage.tags.delete": "हटाएँ",
--  "manage.system.title": "सिस्टम रखरखाव",
--  "manage.system.dbOpt.title": "डेटाबेस अनुकूलन",
--  "manage.system.dbOpt.desc": "डेटाबेस के प्रदर्शन को बेहतर बनाएँ",
--  "manage.system.dbOpt.btn": "डेटाबेस अनुकूलित करें",
--  "manage.system.rebuild.title": "सर्च इंडेक्स दोबारा बनाएँ",
--  "manage.system.rebuild.desc": "बेहतर प्रदर्शन के लिए सर्च इंडेक्स दोबारा बनाएँ",
--  "manage.system.rebuild.btn": "इंडेक्स दोबारा बनाएँ",
-   "search.results.title": "खोज परिणाम",
-   "search.results.count": "{count} परिणाम",
-   "search.results.count.one": "{count} परिणाम",
++            fields = kwargs.get("output_fields") or []
++            out = []
++            for content_hash in kwargs.get("ids") or []:
++                row = self.rows.get(content_hash)
++                if row is not None:
++                    picked = {f: row[f] for f in fields if f in row}
++                    out.append({"id": row["id"], **picked})
++            return out
++        if method in ("insert", "upsert"):
++            for entity in kwargs["data"]:
++                self.rows[entity["id"]] = dict(entity)
++            return {"insert_count": len(kwargs["data"])}
++        if method == "delete":
++            if "ids" in kwargs:
++                gone = [h for h in kwargs["ids"] if self.r
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1977** (2026-11-12): feat(dashboard): filter tag management by minimum use count (@OnlineBunker)
-- **PR #1976** (2026-11-12): fix(dashboard): remove the System Maintenance placeholders (#1974) (@shu-chen-dot-ca)
-- **PR #1970** (2026-11-12): refactor(logging): lazy %-style logger calls in server_impl.py (#1146) (@massimiliano1991)
-- **PR #1968** (2026-11-12): refactor(logging): sanitise lazy %-style logger calls in utils/system_detection.py (#1146) (@SalyyS1)
-- **PR #1967** (2026-11-12): feat(nli): 4-way judgment in the labeling harness (@Yoel-qin)
-- **PR #1965** (2026-11-12): refactor(logging): lazy %-style logger calls in utils/content_splitter.py (#1146) (@SalyyS1)
+- **PR #1988** (2026-11-13): refactor(logging): lazy %-style logger calls in config/oauth.py and config/ontology.py (#1146) (@massimiliano1991)
+- **PR #1987** (2026-11-13): feat(dashboard): split the Manage tab into sub-tabs (#1973) (@shu-chen-dot-ca)
+- **PR #1986** (2026-11-13): chore(release): v12.9.0 (@doobidoo)
+- **PR #1985** (2026-11-13): feat(site): offer a trial prompt for coding agents on the demo page (@doobidoo)
+- **PR #1984** (2026-11-13): fix(dashboard): page the type-only search filter through the server-side type filter (@shu-chen-dot-ca)
+- **PR #1983** (2026-11-13): docs(site): correct claims, fix mobile navigation, add structured data (@doobidoo)
 
 ---
 
@@ -3659,42 +3851,51 @@ cleanup when nothing went. A result w
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. milvus): keep the store and confine get, update and delete by hash to it (#1879)
+## X. quality-gate): bound model calls by wall clock and skip, not pass, on failure
 
 **RULE**:
-When implementing operations in `changelog.d/1879-milvus.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/pr/lib/llm_prompt.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0152275`: milvus): keep the store and confine get, update and delete by hash to it (#1879) (#1962). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bea66063`: quality-gate): bound model calls by wall clock and skip, not pass, on failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1879-milvus.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/pr/lib/llm_prompt.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Milvus dropped the store a memory was written to and served it from any store (#1879, massimiliano1991).**
-  The collection had no `store` field, so `store()` and `store_batch()` discarded the
-  value, and `get_by_hash`, `update_memory_metadata` and `delete` found a memory whatever
-  store the caller named. New collections get a `store` field (default `"default"`), the
-  three hash-addressed calls are confined to it, and every upsert writes the row's own
-  store back, so an update or a versioned update never moves a memory to `"default"`.
-  A collection created before this has no field to confine on: there a named store is
-  refused with one warning per instance (`None`, `"all"` and `"default"` are served as
-  before), and the collection has to be recreated to pick up confinement, as for
-  `content_lower`. `get_by_hash_is_store_scoped` stays `False`: search and listing still
-  ignore `store` on this backend.
-  A confined `delete` whose filter removes nothing (the row was deleted, or re-stored
-  elsewhere, between the read and the delete) now reports "not found" and leaves the
-  access record and graph edges alone, instead of removing them and reporting success.
-  A scoped updat
+    MCP_QUALITY_LLM_TIMEOUT  wall-clock seconds per request, default 600
+import signal
+# Measured on a shared omlx server: gate prompts of 3-12k tokens waited 2-11
+# minutes behind agent traffic, so 180s skipped most calls on a busy machine.
+DEFAULT_TIMEOUT = "600"
+    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", DEFAULT_TIMEOUT))
+    # The urlopen timeout limits each socket read, not the request. omlx sends a
+    # whitespace keepalive while a request waits in its queue, so that limit
+    # never fired and a call could block for as long as the queue was. SIGALRM
+    # bounds the whole request.
+    def on_deadline(signum, frame):
+        raise TimeoutError(f"no reply within {timeout:g}s")
+
+    previous = signal.signal(signal.SIGALRM, on_deadline)
+    signal.setitimer(signal.ITIMER_REAL, timeout)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            return json.load(response)
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    MCP_QUALITY_LLM_TIMEOUT  seconds per request, default 180
+    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", "180"))
+    with urllib.request.urlopen(req, timeout=timeout) as response:
+        return json.load(response)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0152275` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bea66063` are properly handled with clean fallback behavior.

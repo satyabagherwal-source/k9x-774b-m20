@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T03:32:25.590Z",
+  "last_updated": "2026-11-14T03:49:19.520Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1220,14 +1220,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "e638337310463f925d6ed7c816edff0d0f5244a7688b37c1a96ba9edfdd2fad7",
-      "verified_at": "2026-11-08T23:43:48.013Z",
+      "content_hash": "0209ed0502b8de79f952cf6389e730548b381e71af57e209810a466d61a58d3d",
+      "verified_at": "2026-11-14T03:49:04.831Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T23:43:48.013Z"
+      "last_updated": "2026-11-14T03:49:04.831Z"
     },
     "bigscience/bloom": {
       "repository": "bigscience/bloom",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "1401b4d374d6a269bde16e0f5410e6faa0f14cab9db1802dbbd47a04c01db566",
-      "verified_at": "2026-11-13T03:56:10.028Z",
+      "content_hash": "a18aab4cd2f0906ca9330e4ea1ca8e2f577d97c62c3ee711109555ba17afc966",
+      "verified_at": "2026-11-14T03:49:13.966Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T03:56:10.028Z"
+      "last_updated": "2026-11-14T03:49:13.966Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "227954ccc3c5be538f20e1077382ba25dea4e2282266674988dfd31bf0b66a96",
-      "verified_at": "2026-11-13T02:32:14.028Z",
+      "content_hash": "68e851e39dd54e3ed7829524048c1c30080c6fae67d619e40bb26a58518a51e4",
+      "verified_at": "2026-11-14T03:49:19.520Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T02:32:14.028Z"
+      "last_updated": "2026-11-14T03:49:19.520Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "526b4b4234627c43077ceee9adaa4956eb6d6e02df367c183944175611ab832a",
-      "verified_at": "2026-11-13T15:29:36.947Z",
+      "content_hash": "1608d45155932dacac15e8443100071bc3c08bdd550c34e17d7934bcbc8dfba5",
+      "verified_at": "2026-11-14T03:49:16.739Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:29:36.947Z"
+      "last_updated": "2026-11-14T03:49:16.740Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -18441,14 +18441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sceneview-sceneview",
-      "content_hash": "f705756cc6b179cb6c9186ecfc808a8cd3b26239833cd466074f2c5db5136c99",
-      "verified_at": "2026-11-09T21:31:13.332Z",
+      "content_hash": "426658dc88674ca07192c6eb1c60a46de46aff7c0ebdd7e74914dbd877158ba1",
+      "verified_at": "2026-11-14T03:49:12.141Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T21:31:13.332Z"
+      "last_updated": "2026-11-14T03:49:12.141Z"
     },
     "tencent/Qwen3.8-27B-DSpine-b16": {
       "repository": "tencent/Qwen3.8-27B-DSpine-b16",

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T03:33:01.567Z",
-  "total_verified_learnings": 8468,
+  "last_updated": "2026-11-14T03:50:00.313Z",
+  "total_verified_learnings": 8473,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 16991,
+  "total_items": 17019,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112562,10 +112562,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mitmproxy-mitmproxy-architecture-intelligence-mitmproxy-mitmproxy-core-invariant.md",
       "title": "Architecture Intelligence: mitmproxy/mitmproxy Core Invariants",
       "repository": "mitmproxy/mitmproxy",
-      "source_version": "d05d6645",
-      "content_hash": "40756decfa88f749ac784f3c0f7cac27c0290e77b0e599bd3208d3d4851668ce",
+      "source_version": "3da37a52",
+      "content_hash": "327cc2167fa30d38327b702b1bbfb07264fb10d5e222ec163053a2a9707d1b9f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T15:29:37.240Z"
+      "persisted_at": "2026-11-14T03:49:17.058Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-mitmproxy-mitmproxy": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-mitmproxy-mitmproxy",
@@ -112586,10 +112586,10 @@
       "relative_path": "08_VERIFICATION/mitmproxy-mitmproxy-verification-protocol-empirical-defect-shield-for-mitmproxy-.md",
       "title": "Verification Protocol: Empirical Defect Shield for mitmproxy/mitmproxy",
       "repository": "mitmproxy/mitmproxy",
-      "source_version": "d05d6645",
-      "content_hash": "ed10f00b15bbc57d0253bbf8300172347714ff594351512c10d5cc108bfb3386",
+      "source_version": "3da37a52",
+      "content_hash": "515502053bda3d8119b8d5201ccaa6b26a86d5fbaf6ffde9103fa4ac3209fa3d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:29:37.429Z"
+      "persisted_at": "2026-11-14T03:49:17.235Z"
     },
     "candidate_directive-merge-pull-request-131190-from-groeneai-null-as-default-type-default": {
       "item_id": "candidate_directive-merge-pull-request-131190-from-groeneai-null-as-default-type-default",
@@ -221641,6 +221641,449 @@
       "content_hash": "4f1a3b24995370d799e9c54c7aadee90711c9d2d5b1474a2630a2bb7ec65a882",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T03:33:01.567Z"
+    },
+    "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
+      "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "stabilityai/stable-diffusion-3-medium",
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "slug": "hf-stabilityai-stable-diffusion-3-medium",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+      "source_version": "hf-stabilityai-stable-diffusion-3-medium",
+      "content_hash": "0209ed0502b8de79f952cf6389e730548b381e71af57e209810a466d61a58d3d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T03:49:04.651Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-3-medium-research-knowledge-intelligence-stabili.md",
+      "title": "Research & Knowledge Intelligence: stabilityai/stable-diffusion-3-medium Core Invariants",
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "source_version": "hf-stabilityai-stable-diffusion-3-medium",
+      "content_hash": "10296bbc3553fb447a4f3b3d2615dc87ec4382bf690875fc9d27972ed70c5540",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T03:49:05.014Z"
+    },
+    "learn-github-sceneview-sceneview": {
+      "learning_id": "learn-github-sceneview-sceneview",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sceneview/sceneview",
+      "repository": "sceneview/sceneview",
+      "slug": "sceneview-sceneview",
+      "platform": "github",
+      "source_url": "https://github.com/sceneview/sceneview",
+      "source_version": "868f9185",
+      "content_hash": "426658dc88674ca07192c6eb1c60a46de46aff7c0ebdd7e74914dbd877158ba1",
+      "dossier_path": "07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8433,
+          "title": "3D Scan shows a result at once, on a real example, with its film back",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T03:49:11.966Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8433": {
+      "learning_id": "rule-8433",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8433,
+      "title": "3D Scan shows a result at once, on a real example, with its film back",
+      "source_url": "https://github.com/sceneview/sceneview",
+      "source_version": "868f9185",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T03:49:11.966Z"
+    },
+    "candidate_directive-3d-scan-shows-a-result-at-once-on-a-real-example-with-its-film-back": {
+      "item_id": "candidate_directive-3d-scan-shows-a-result-at-once-on-a-real-example-with-its-film-back",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9KPG-3d-scan-shows-a-result-at-once-on-a-real-example-with-its-film-back.md",
+      "title": "3D Scan shows a result at once, on a real example, with its film back",
+      "repository": "sceneview/sceneview",
+      "source_version": "868f9185",
+      "content_hash": "a3f51b7b3ec53140b957ea3bc5d09d8a23a630d3c818ee3b14fef77a3e3d9ac0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:49:12.346Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sceneview-sceneview-quality-verification-intelligence-sceneview-sceneview-core-i.md",
+      "title": "Quality & Verification Intelligence: sceneview/sceneview Core Invariants",
+      "repository": "sceneview/sceneview",
+      "source_version": "868f9185",
+      "content_hash": "c5cd2f70488c6998d5fa5fe7ff1f218737a3393ec3c4c75797d82b68a65b4a69",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:49:12.457Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sceneview-sceneview": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sceneview-sceneview",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sceneview-sceneview-verification-protocol-empirical-defect-shield-for-sceneview-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sceneview/sceneview",
+      "repository": "sceneview/sceneview",
+      "source_version": "868f9185",
+      "content_hash": "de216b86fc17c8ffb825d310cab2aa1b2238bbf64f2987260f681c1c5cf4b5de",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:49:12.576Z"
+    },
+    "learn-github-higress-group-higress": {
+      "learning_id": "learn-github-higress-group-higress",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "higress-group/higress",
+      "repository": "higress-group/higress",
+      "slug": "higress-group-higress",
+      "platform": "github",
+      "source_url": "https://github.com/higress-group/higress",
+      "source_version": "0316bc90",
+      "content_hash": "a18aab4cd2f0906ca9330e4ea1ca8e2f577d97c62c3ee711109555ba17afc966",
+      "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8434,
+          "title": "preserve proxy tool input schemas",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T03:49:13.778Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8434": {
+      "learning_id": "rule-8434",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8434,
+      "title": "preserve proxy tool input schemas",
+      "source_url": "https://github.com/higress-group/higress",
+      "source_version": "0316bc90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T03:49:13.779Z"
+    },
+    "candidate_directive-preserve-proxy-tool-input-schemas": {
+      "item_id": "candidate_directive-preserve-proxy-tool-input-schemas",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9M3Y-preserve-proxy-tool-input-schemas.md",
+      "title": "preserve proxy tool input schemas",
+      "repository": "higress-group/higress",
+      "source_version": "0316bc90",
+      "content_hash": "0b68a2dad3ab1ce82732cb58a6282dc7a894e114a910ea43e0853b63c5cfaba5",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-14T03:49:14.164Z"
+    },
+    "domain_intelligence-content-information-intelligence-higress-group-higress-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-higress-group-higress-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-higress-group-higress-content-information-intelligence-higress-group-higress-cor.md",
+      "title": "Content & Information Intelligence: higress-group/higress Core Invariants",
+      "repository": "higress-group/higress",
+      "source_version": "0316bc90",
+      "content_hash": "bc11d56c35ecc5f84e45c7b60fd39bfa868c89ffad4ab217eb35c7a269bc3a47",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-14T03:49:14.278Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/higress-group-higress-verification-protocol-empirical-defect-shield-for-higress-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for higress-group/higress",
+      "repository": "higress-group/higress",
+      "source_version": "0316bc90",
+      "content_hash": "1f95f6975d0e1518c9c4e0f0a86a921d53f072214d74cbddac9ba67cf7ddb996",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:49:14.396Z"
+    },
+    "learn-github-mitmproxy-mitmproxy": {
+      "learning_id": "learn-github-mitmproxy-mitmproxy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mitmproxy/mitmproxy",
+      "repository": "mitmproxy/mitmproxy",
+      "slug": "mitmproxy-mitmproxy",
+      "platform": "github",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "3da37a52",
+      "content_hash": "1608d45155932dacac15e8443100071bc3c08bdd550c34e17d7934bcbc8dfba5",
+      "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8435,
+          "title": "build(deps-dev): bump click from 8.4.2 to 8.5.1",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T03:49:16.567Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8435": {
+      "learning_id": "rule-8435",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8435,
+      "title": "build(deps-dev): bump click from 8.4.2 to 8.5.1",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "3da37a52",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T03:49:16.567Z"
+    },
+    "candidate_directive-build-deps-dev-bump-click-from-8-4-2-to-8-5-1": {
+      "item_id": "candidate_directive-build-deps-dev-bump-click-from-8-4-2-to-8-5-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9O98-build-deps-dev-bump-click-from-8-4-2-to-8-5-1.md",
+      "title": "build(deps-dev): bump click from 8.4.2 to 8.5.1",
+      "repository": "mitmproxy/mitmproxy",
+      "source_version": "3da37a52",
+      "content_hash": "a06bc365d436a7640a28279b965656de2fb433a55166e73b31f345c11553388d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T03:49:16.941Z"
+    },
+    "learn-github-doobidoo-mcp-memory-service": {
+      "learning_id": "learn-github-doobidoo-mcp-memory-service",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "doobidoo/mcp-memory-service",
+      "repository": "doobidoo/mcp-memory-service",
+      "slug": "doobidoo-mcp-memory-service",
+      "platform": "github",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "356ceb16",
+      "content_hash": "68e851e39dd54e3ed7829524048c1c30080c6fae67d619e40bb26a58518a51e4",
+      "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8436,
+          "title": "bound model calls by wall clock and skip, not pass, on failure",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T03:49:19.343Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8436": {
+      "learning_id": "rule-8436",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8436,
+      "title": "bound model calls by wall clock and skip, not pass, on failure",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "356ceb16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T03:49:19.343Z"
+    },
+    "candidate_directive-bound-model-calls-by-wall-clock-and-skip-not-pass-on-failure": {
+      "item_id": "candidate_directive-bound-model-calls-by-wall-clock-and-skip-not-pass-on-failure",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9QEL-bound-model-calls-by-wall-clock-and-skip-not-pass-on-failure.md",
+      "title": "bound model calls by wall clock and skip, not pass, on failure",
+      "repository": "doobidoo/mcp-memory-service",
+      "source_version": "356ceb16",
+      "content_hash": "4fdf5b5e737a36b37d9fc6a916d48ba7b572375a17c3f0d746fe18f93c7fe713",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:49:19.732Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
+      "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
+      "repository": "doobidoo/mcp-memory-service",
+      "source_version": "356ceb16",
+      "content_hash": "acf19b739d3e95c883b924f0a2b4609f5384d415aebce7b4d332b9c0465c292f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T03:49:19.847Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-doobidoo-mcp-memory-service-adr-subsystem-boundary-modular-decoupling-in-doobido.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo/mcp-memory-service",
+      "repository": "doobidoo/mcp-memory-service",
+      "source_version": "356ceb16",
+      "content_hash": "01f262d087678b205ab0fa1ced82757e5b1a10d47f542184f6ea31794eaaa6f2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T03:49:19.967Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/doobidoo-mcp-memory-service-verification-protocol-empirical-defect-shield-for-do.md",
+      "title": "Verification Protocol: Empirical Defect Shield for doobidoo/mcp-memory-service",
+      "repository": "doobidoo/mcp-memory-service",
+      "source_version": "356ceb16",
+      "content_hash": "fe0d08ae32a47250dd1ae0a4d1266472fce9ba6bca996bcc3da2fab4ac2be519",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:49:20.081Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-3-medium-learnings-research-knowledge-intelligen.md",
+      "title": "Research & Knowledge Intelligence: hf-stabilityai-stable-diffusion-3-medium-learnings Core Invariants",
+      "repository": "hf-stabilityai-stable-diffusion-3-medium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5a53bd1a31e482a30a8267255b1a00e5bb59ccd99c43b5d43384a5498c93ca2e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T03:49:58.630Z"
+    },
+    "candidate_directive-demo-3d-scan-shows-a-result-at-once-on-a-real-example-with-its-film-back": {
+      "item_id": "candidate_directive-demo-3d-scan-shows-a-result-at-once-on-a-real-example-with-its-film-back",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AKTL-demo-3d-scan-shows-a-result-at-once-on-a-real-example-with-its-film-back.md",
+      "title": "demo): 3D Scan shows a result at once, on a real example, with its film back",
+      "repository": "sceneview-sceneview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c457798d2e31f6b51b6f0132c2e9fe1b2ef71efa79d3341c8f5137a4f89e6f7a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:49:59.160Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sceneview-sceneview-learnings-quality-verification-intelligence-sceneview-scenev.md",
+      "title": "Quality & Verification Intelligence: sceneview-sceneview-learnings Core Invariants",
+      "repository": "sceneview-sceneview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aa82ea8474ac5e63017f6b86b02e608dd37551d5dbf7835f407593cfff0f065a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:49:59.280Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sceneview-sceneview-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sceneview-sceneview-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sceneview-sceneview-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sceneview-sceneview-learnings",
+      "repository": "sceneview-sceneview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a04ed3833ab63e2170000055f29bdc532e93207cc4f81b66811008b8cac4a2dc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:49:59.410Z"
+    },
+    "candidate_directive-mcp-server-preserve-proxy-tool-input-schemas": {
+      "item_id": "candidate_directive-mcp-server-preserve-proxy-tool-input-schemas",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ALIN-mcp-server-preserve-proxy-tool-input-schemas.md",
+      "title": "mcp-server): preserve proxy tool input schemas",
+      "repository": "higress-group-higress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "87de150a27db70d1a476658e350036def1f0bb21b2eb616355f4a0323484d741",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-14T03:50:00.061Z"
+    },
+    "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-higress-group-higress-learnings-content-information-intelligence-higress-group-h.md",
+      "title": "Content & Information Intelligence: higress-group-higress-learnings Core Invariants",
+      "repository": "higress-group-higress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2ca6e841adce235e9bf072768f86e7d0f50b154a437c5571b854974e82872df1",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-14T03:50:00.179Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/higress-group-higress-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for higress-group-higress-learnings",
+      "repository": "higress-group-higress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "df52ab889cf7dac3f3b5f2ac03ffb48f13aea04ff0fa3e23e989b857c45e95f9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T03:50:00.313Z"
     }
   },
   "ai-builder-brain": {

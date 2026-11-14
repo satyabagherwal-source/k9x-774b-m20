@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for doobidoo/mcp/memory/service
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for doobidoo/mcp-memory-service
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "doobidoo/mcp/memory/service",
-  "source_url": "https://github.com/doobidoo/mcp/memory/service",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "doobidoo/mcp-memory-service",
+  "source_url": "https://github.com/doobidoo/mcp-memory-service",
+  "source_version": "356ceb16",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T03:49:19.731Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-doobidoo-mcp-memory-service",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [doobidoo/mcp/memory/service](https://github.com/doobidoo/mcp/memory/service) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `356ceb16`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T03:49:19.731Z`  
+> **Learning ID**: `learn-github-doobidoo-mcp-memory-service`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `doobidoo/mcp/memory/service` (Commit: `historical`)
+- **Target Repository**: `doobidoo/mcp-memory-service` (Commit: `356ceb16`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
-> **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `35668fa1`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T15:27:13.569Z  
-> **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): doobidoo/mcp-memory-service
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T15:27:13.358Z  
+> **Harvest Timestamp**: 2026-11-14T03:49:18.483Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2113 stars
+- **Stars / Engagement**: 2125 stars
 
 ---
 
@@ -2936,11 +2922,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1944** (2026-11-10): **[Bug]: Dashboard emits multiple Three.js instances warning on page load**
-  *Symptoms*: ## Bug description  Loading the dashboard emits `THREE.WARNING: Multiple instances of Three.js being imported.` This is reproducible on an ordinary dashboard reload, before opening the 3D graph.  ## Steps to reproduce  1. Run the HTTP dashboard from v12.8.0 (commit `03ff09de93e9078433e6a917a9884c4fc26b2419`). 2. Open the dashboard in a browser and start console capture. 3. Reload the page. 4. Observe the Three.js warning during startup.  ## Expected behavior  The dashboard loads a consistent Three.js module graph without the multiple-instance warning. The 3D graph and bloom effects continue to work.  ## Actual behavior and impact  ```text THREE.WARNING: Multiple instances of Three.js being imported. ```  Confirmed with console capture in Orca's embedded browser. The same warning was also reported in Chrome, where its source was `webgpu.mjs:2`.  No functional failure has been demonstrated: observed requests for memories, server status, sync status and the event stream returned HTTP 200. No CSP violations appeared in the Orca console capture. This report does not attribute authentication/update problems or the separately reported Chrome CSP messages to this warning.  ## Investigation starting point  - `src/mcp_memory_service/web/static/dashboard-bootstrap.js` imports `3d-force-graph@1.80.0?external=three`, the bare `three` specifier, and `UnrealBloomPass`. - The import map in `src/mcp_memory_service/web/static/index.html` maps `three` to `https://esm.sh/three@0.184.0` and `thre
+- **Issue #1975** (2026-11-13): **[Bug]: split_content can split in the middle of a URL, version or decimal when "." is the last character of the chunk window**
+  *Symptoms*: ### Bug Description  `_find_best_split_point()` in `src/mcp_memory_service/utils/content_splitter.py` detects sentence ends with `r'[.!?](?=\s|$)'`, applied to `text[:max_length]`. In that window `$` matches the end of the *window*, not the end of the text. So a `.` that happens to be the last character of the window is treated as a sentence end, and the split happens right after it, even when the dot is inside a token such as `example.com`, `3.14159` or `v2.10.4`.  Because only the last regex match is used, this window-end dot also wins over an earlier, genuine sentence end.  This path is used by `MemoryService.store_memory` whenever auto-split is on (the default) and content is longer than the backend limit, so the chunks that are stored and later searched contain broken URLs/versions/numbers.  ### Steps to Reproduce  Run from a source checkout (no server needed):  ```python from mcp_memory_service.utils.content_splitter import split_content  t = "Docs live at https://example.com/guide and the version is 3.14159 today" print(split_content(t, max_length=29, preserve_boundaries=True, overlap=0))  t2 = "Pi is 3.14159. The release is v2.10.4 and the host is api.example.com." print(split_content(t2, max_length=18, preserve_boundaries=True, overlap=0)) print(split_content(t2, max_length=21, preserve_boundaries=True, overlap=0)) ```  ### Expected Behavior  Splits happen at real boundaries (newline, a sentence end followed by whitespace or the end of the text, or a space). A token 
 
-- **Issue #1930** (2026-11-09): **Startup dependency check reports torch/sentence-transformers as missing on the ONNX install**
-  *Symptoms*: On an install with the `[sqlite]` extra (onnxruntime + tokenizers, no torch), every server start prints this to stderr even though embeddings work:  ``` [MISSING] Missing dependencies detected: torch, sentence-transformers [INSTALL] To install missing dependencies, run:    python install.py [WARNING] IMPORTANT: Missing dependencies will cause timeouts! [WARNING] The server will attempt to continue, but may timeout during initialization. WARNING:mcp_memory_service.dependency_check:Dependencies missing, extending base timeout to 30.0s (before client cap) ```  Reproduced on 12.7.0 with `uvx --from "mcp-memory-service[sqlite]" memory server` and a fresh SQLite path. The server initializes, lists 28 tools, and `memory_store` / `memory_search` work with ONNX embeddings, so nothing is actually missing for this setup. The `[sqlite]` extra is what the README now recommends (#1929), so every new user sees this.  ## What is wrong  `check_critical_dependencies()` in `src/mcp_memory_service/dependency_check.py` only knows the torch path: it probes `torch` and `sentence_transformers` and treats either one missing as a failure. ONNX (`onnxruntime` + `tokenizers`) is the default embedding backend for the lightweight install and is not considered.  Three consequences:  1. `run_dependency_check()` (called from `utils/startup_orchestrator.py`) prints the `[MISSING]` and timeout warnings. 2. `get_recommended_timeout()` doubles the base init timeout because it thinks dependencies are missing. 3. 
+- **Issue #1971** (2026-11-13): **dashboard: type-only search filter is a 422 (page_size=1000 against a cap of 100)**
+  *Symptoms*: In the dashboard's Search tab, filtering by content type alone (no query, no tag, no date) always fails with the toast "Filter search failed", for built-in types as well as custom ones.  `handleFilterChange()` in `web/static/app.js` (line 2948 on `main` at 9e69dab1) takes the type-only branch and asks for every memory:  ``` const allMemoriesResponse = await this.apiCall('/memories?page=1&page_size=1000'); ```  `GET /api/memories` caps `page_size` at 100 (`web/api/memories.py:321`, `Query(10, ge=1, le=100)`), so the request is a 422 before anything is filtered. Server log from a run against a scratch database:  ``` "GET /api/memories?page=1&page_size=1000 HTTP/1.1" 422 Unprocessable Entity ```  The call came in with f739d746. Raising the cap is not the fix: even under it, the branch fetches one page and filters it in the browser, so on a store with more memories than one page it silently misses matches.  ## What has to change  The route already filters server-side: `list_memories` takes `memory_type`. The type-only branch should pass the selected type there instead of fetching everything and filtering client-side, keep `page_size` within the cap, and page through the result (or reuse the paging the Browse view already does at line 3391) so a type with more than 100 memories is complete.  Done when: choosing a type with no query, tag or date returns that type's memories without an error, including a type with more than 100 memories, and the other three filter branches behave as
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2957,839 +2943,906 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5bddbfc9` (2026-11-11)
-**Commit Message**: refactor(logging): lazy %-style logger calls in utils/debug.py (#1146) (#1952)
+### Incident Patch 1: `bea66063` (2026-11-13)
+**Commit Message**: fix(quality-gate): bound model calls by wall clock and skip, not pass, on failure (#1982)
 
-exact_match_retrieve(), behind the exact_match_retrieve MCP tool, logged the
-backend's exception through an f-string. Pass it through
-_sanitize_log_value instead, and the backend class name as a %s argument.
-Ordinary messages are unchanged; a backend error carrying a newline no
-longer forges a second log line.
+* fix(quality-gate): bound model calls by wall clock and skip, not pass, on failure
 
-Add the module to GUARDED_MODULES next to utils/health_check.py. `e` is
-already in EXTERNAL_NAMES, so dropping the wrapper fails the lazy scan.
+MCP_QUALITY_LLM_TIMEOUT never fired against omlx: the server sends a
+whitespace keepalive while a request waits in its queue, and the
+urlopen timeout only limits each socket read. Calls blocked for as
+long as the queue was, measured at 2-11 minutes behind agent traffic.
+llm_prompt.py now bounds the whole request with SIGALRM; the default
+goes from 180 to 600 seconds to match what a busy shared server needs.
 
-Co-authored-by: samyferhat <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+analyze() turned any failed call into empty output, which both the
+complexity and the security check read as clean, so an unreachable
+or overloaded model passed the gate. Failed calls are now counted and
+a run without findings ends as skipped (exit 3).
 
-**File**: `changelog.d/1146-utils-debug.internal.md` (added, +6/-0)
+Answered calls are cached by model and prompt in the shared git dir,
+so rerunning the gate on unchanged files makes no model call.
+
+* fix(quality-gate): write cache entries atomically and key them by reviewer
+
+Greptile on #1982:
+- an entry is written to a temp file and renamed, so a gate in another
+  worktree never reads a half-written answer; an empty ent
+
+**File**: `scripts/pr/lib/llm_prompt.py` (modified, +21/-4)
 ```diff
-@@ -0,0 +1,6 @@
-+- **`utils/debug.py` logs with lazy `%`-style arguments (#1146).**
-+  `exact_match_retrieve()`, which backs the `exact_match_retrieve` MCP tool,
-+  logged the backend's exception through an f-string. A backend error that
-+  echoed the caller's content could forge a second log line. The error now
-+  goes through `_sanitize_log_value`, and the backend class name is a `%s`
-+  argument. The module is added to `GUARDED_MODULES`.
+@@ -24,7 +24,7 @@
+     MCP_QUALITY_LLM_URL      base URL, default http://127.0.0.1:11437/v1
+     MCP_QUALITY_LLM_MODEL    model id; prompt mode defaults to first listed model
+     MCP_QUALITY_LLM_API_KEY  optional bearer token
+-    MCP_QUALITY_LLM_TIMEOUT  seconds per request, default 180
++    MCP_QUALITY_LLM_TIMEOUT  wall-clock seconds per request, default 600
+ 
+ Exit codes:
+     0  reply printed on stdout
+@@ -41,11 +41,15 @@
+ import json
+ import os
+ import re
++import signal
+ import sys
+ import urllib.error
+ import urllib.request
+ 
+ DEFAULT_URL = "http://127.0.0.1:11437/v1"
++# Measured on a shared omlx server: gate prompts of 3-12k tokens waited 2-11
++# minutes behind agent traffic, so 180s skipped most calls on a busy machine.
++DEFAULT_TIMEOUT = "600"
+ EXIT_NO_BACKEND = 3
+ THINK_BLOCK = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
+ 
+@@ -65,10 +69,23 @@ def _headers() -> dict:
+ def _request(path: str, payload=None):
+     """POST payload (or GET when payload is None) and return the parsed body."""
+     data = json.dumps(payload).encode() if payload is not None else None
+-    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", "180"))
++    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", DEFAULT_TIMEOUT))
+     req = urllib.request.Request(_base_url() + path, data=data, headers=_headers())
+-    with urllib.request.urlopen(req, timeout=timeout) as response:
+-        return json.load(response)
++    # The urlopen timeout limits each socket read, not the request. omlx sends a
++    # whitespace keepalive while a request waits in its queue, so that limit
++    # never fired and a call could block for as long as the queue was. SIGALRM
++    # bounds the whole request.
++    def on_deadline(signum, frame):
++        raise TimeoutError(f"no reply within {timeout:g}s")
++
++    previous = signal.signal(signal.SIGALRM, on_deadline)
++    signal.setitimer(signal.ITIMER_REAL, timeout)
++    try:
++        with urllib.request.urlopen(req, timeout=timeout) as response:
++            return json.load(response)
++    finally:
++        signal.setitimer(signal.ITIMER_REAL, 0)
++        signal.signal(signal.SIGALRM, previous)
+ 
+ 
+ def model_candidates() -> list[str]:
 ```
 
-**File**: `src/mcp_memory_service/utils/debug.py` (modified, +4/-2)
+**File**: `scripts/pr/quality_gate.sh` (modified, +49/-3)
 ```diff
-@@ -15,6 +15,8 @@
- """Debug utilities for memory service."""
- from typing import Dict, Any, List
- import logging
+@@ -82,13 +82,50 @@ else
+     LLM_BACKEND="local ($RESOLVED_MODEL)"
+ fi
+ 
+-# analyze <prompt> - one model call, empty output on failure so callers stay simple.
++# A failed call used to print nothing, and every check read nothing as clean, so
++# an unreachable or overloaded model passed the gate. Failures are counted here
++# and turn a clean run into SKIPPED (see the summary).
++LLM_FAILURES=$(mktemp)
++trap 'rm -f "$LLM_FAILURES"' EXIT
++# Replies are cached by model and prompt; the prompt holds the whole file, so a
++# rerun on unchanged files makes no model call. Lives in the shared git dir, so
++# all worktrees of a checkout use it.
++# ponytail: never pruned; entries are a few hundred bytes. Prune by age if it grows.
++CACHE_DIR=""
++if git_dir=$(git rev-parse --git-common-dir 2>/dev/null); then
++    CACHE_DIR="$git_dir/quality-gate-cache"
++fi
 +
-+from ..compat import _sanitize_log_value
- from ..models.memory import Memory, MemoryQueryResult
++# analyze <prompt> - one model call; prints the reply, or nothing on failure.
+ analyze() {
++    local key="" reply=""
++    if [ -n "$CACHE_DIR" ]; then
++        # The reviewer is backend + endpoint + model: "local (<model>)" or "gemini",
++        # plus the URL, since one model name can be served by different endpoints.
++        key=$(printf '%s\n%s\n%s' "$LLM_BACKEND" "${MCP_QUALITY_LLM_URL:-}" "$1" \
++            | git hash-object --stdin)
++        # -s, not -f: an empty entry is not an answer.
++        if [ -s "$CACHE_DIR/$key" ]; then
++            cat "$CACHE_DIR/$key"
++            return
++        fi
++    fi
+     if [ "$LLM_BACKEND" = "gemini" ]; then
+-        gemini "$1" 2>&1 || echo ""
++        reply=$(gemini "$1" 2>/dev/null) || reply=""
+     else
+-        printf '%s' "$1" | python3 "$LLM_HELPER" 2>/dev/null || echo ""
++        reply=$(printf '%s' "$1" | python3 "$LLM_HELPER") || reply=""
++    fi
++    if [ -z "$reply" ]; then
++        echo "failed" >> "$LLM_FAILURES"
++        return
+     fi
++    # Write aside and rename: a gate in another worktree must never read a
++    # half-written entry, and an interrupted write must not leave one behind.
++    if [ -n "$key" ] && mkdir -p "$CACHE_DIR"; then
++        printf '%s\n' "$reply" > "$CACHE_DIR/$key.tmp.$$" \
++            && mv -f "$CACHE_DIR/$key.tmp.$$" "$CACHE_DIR/$key"
++    fi
++    printf '%s\n' "$reply"
+ }
  
- logger = logging.getLogger(__name__)
-@@ -135,9 +137,9 @@ async def exact_match_retrieve(storage, content: str) -> List[Memory]:
-             return memories
+ if [ "$MODE" = "staged" ]; then
+@@ -342,6 +379,15 @@ fi
+ echo "=== Quality Gate Summary ==="
+ echo ""
  
-         # No suitable method available
--        logger.warning(f"Storage backend {type(storage).__name__} does not support exact content match")
-+        logger.warning("Storage backend %s does not support exact content match", type(storage).__name__)
-         return []
- 
-     except Exception as e:
--        logger.error(f"Error in exact_match_retrieve: {str(e)}")
-+        logger.error("Error in exact_match_retrieve: %s", _sanitize_log_value(e))
-         return []
-\ No newline at end of file
++llm_failed=$(wc -l < "$LLM_FAILURES" | tr -d ' ')
++if [ "$llm_failed" -gt 0 ] && [ $exit_code -eq 0 ]; then
++    echo "WARNING: $llm_failed model call(s) got no usable reply (error above, or no reply"
++    echo "   within MCP_QUALITY_LLM_TIMEOUT=${MCP_QUALITY_LLM_TIMEOUT:-600}s)."
++    echo "   Skipped, NOT passed: complexity and security were not fully evaluated."
++    echo "   Rerun when the endpoint is less busy; answered calls are cached."
++    exit $EXIT_SKIPPED
++fi
++
+ if [ $exit_code -eq 0 ]; then
+     echo "ALL CHECKS PASSED"
+     echo ""
 ```
 
-**File**: `tests/unit/test_log_injection_guard.py` (modified, +1/-0)
+**File**: `tests/ci/test_llm_prompt.py` (modified, +159/-0)
 ```diff
-@@ -71,6 +71,7 @@
-     "mcp_memory_service/storage/mixins/store.py",
-     "mcp_memory_service/utils/db_utils.py",
-     "mcp_memory_service/utils/health_check.py",
-+    "mcp_memory_service/utils/debug.py",
-     "mcp_memory_service/server/handlers/utility.py",
-     "mcp_memory_service/server/handlers/documents.py",
-     "mcp_memory_service/web/api/server.py",
-```
-
----
-
-### Incident Patch 2: `799fd323` (2026-11-10)
-**Commit Message**: feat(ontology): store retention periods per type in the memory DB (#1897, phase 4) (#1939)
-
-* feat(ontology): store retention periods per type in the memory DB (#1897, phase 4)
-
-A base type added through the ontology overlay has no key in
-retention_periods, so its memories decayed on the 30-day fallback.
-
-set_retention()/clear_retention() on SqliteVecMemoryStorage write a
-'retention' row to ontology_entries and bump ontology_version. The
-overlay source reads those rows next to the memory types, and the decay
-calculator merges them under the consolidation config: built-in periods
-and MCP_RETENTION_* still win, and set_retention() refuses those types
-so a row never sits there without effect. Subtypes without their own
-entry inherit their parent's period. Malformed rows are skipped on read.
-
-Also moves two f-string logger calls in decay.py to %-style so the
-log-injection guard passes for the touched file.
-
-* fix(ontology): keep a removed subtype's stored parent for retention (#1897, phase 4)
-
-Greptile on #1939: after remove_memory_type("legal"), get_parent_type
-("contract") returns None, so stored contract memories decayed on the
-30-day fallback although legal still had a 400-day peri
-
-**File**: `changelog.d/1897-retention.added.md` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+- **Retention periods for custom memory types, stored in the memory database (#1897, phase 4).**
-+  A base type added through the ontology overlay had no key in `retention_periods`, so its
-+  memories decayed on the 30-day fallback. `SqliteVecMemoryStorage.set_retention()` and
-+  `clear_retention()` store a period (1..3650 days) as a `retention` row in `ontology_entries`,
-+  and the decay calculator uses it for any type the consolidation config does not name.
-+  Subtypes without their own entry inherit their parent's period. The overlay only fills gaps:
-+  built-in periods and `MCP_RETENTION_*` overrides still win, and `set_retention()` refuses
-+  those types. Like the rest of the overlay, the rows are local to sqlite_vec for now.
-```
-
-**File**: `docs/memory-ontology.md` (modified, +11/-0)
-```diff
-@@ -132,6 +132,17 @@ await storage.remove_memory_type("contract")                # tombstone
-   it moved.
- - Removing a type does not touch stored memories. They keep the type; only
-   new writes with it fall back to `observation`.
-+- A new base type has no retention period in the consolidation config, so
-+  its memories decay on the 30-day fallback. Store one next to the type:
-+
-+  ```python
-+  await storage.set_retention("legal", 400)     # days, 1..3650
-+  await storage.clear_retention("legal")        # back to the fallback
-+  ```
-+
-+  Subtypes without their own entry use their parent's period. The overlay
-+  only fills gaps: a type that has a built-in period or an
-+  `MCP_RETENTION_*` override keeps it, and `set_retention` refuses it.
- - **Limit:** the table exists only in the local SQLite database. Cloudflare
-   (D1) does not carry it, and it is not yet synced through the hub. On the
-   `cloudflare` backend, and to keep several `hybrid` or hub nodes in
-```
-
-**File**: `src/mcp_memory_service/consolidation/decay.py` (modified, +15/-7)
-```diff
-@@ -19,9 +19,10 @@
- from datetime import datetime, timezone
- from dataclasses import dataclass
- 
-+from ..compat import _sanitize_log_value
- from .base import ConsolidationBase, ConsolidationConfig
- from ..models.memory import Memory
--from ..models.ontology import get_parent_type
-+from ..models.ontology import get_parent_type, get_retention_overlay, get_stored_parent
- 
- @dataclass
- class RelevanceScore:
-@@ -65,7 +66,7 @@ async def process(self, memories: List[Memory], **kwargs) -> List[RelevanceScore
-             )
-             scores.append(score)
-         
--        self.logger.info(f"Calculated relevance scores for {len(scores)} memories")
-+        self.logger.info("Calculated relevance scores for %d memories", len(scores))
-         return scores
-     
-     async def _calculate_memory_relevance(
-@@ -98,12 +99,17 @@ async def _calculate_memory_relevance(
-         # so they inherit the base retention period instead of the 30-day
-         # fallback. Legacy names stay in retention_periods and skip resolution.
-         # The parent only selects the period; memory_type keeps the stored
--        # subtype for the score metadata.
-+        # subtype for the score metadata. Periods stored in the DB overlay
-+        # (#1897) cover types the config has no key for; the config wins. A
-+        # removed overlay subtype keeps the parent it was stored with.
-         memory_type = self._extract_memory_type(memory)
-+        retention_periods = {**get_retention_overlay(), **self.retention_periods}
-         retention_type = memory_type
--        if retention_type not in self.retention_periods:
--            retention_type = get_parent_type(memory_type) or memory_type
--        retention_period = self.retention_periods.get(retention_type, 30)
-+        if retention_type not in retention_periods:
-+            retention_type = (
-+                get_parent_type(memory_type) or get_stored_parent(memory_type) or memory_type
-+            )
-+        retention_period = retention_periods.get(retention_type, 30)
- 
-         # Calculate exponential decay factor
-         decay_factor = math.exp(-age_days / retention_period)
-@@ -197,7 +203,9 @@ def _get_base_importance(self, memory: Memory) -> float:
-                 score = float(memory.metadata['importance_score'])
-                 return max(0.0, min(2.0, score))  # Clamp between 0 and 2
-             except (ValueError, TypeError):
--                self.logger.warning(f"Invalid importance_score in memory {memory.content_hash}")
-+                self.logger.warning(
-+                    "Invalid importance_score in memory %s", _sanitize_log_value(memory.content_hash)
-+                )
-         
-         # Derive importance from tags
-         tag_importance = {
-```
-
-**File**: `src/mcp_memory_service/models/ontology.py` (modified, +37/-6)
-```diff
-@@ -52,12 +52,16 @@ def clear_ontology_caches():
-     _ALLOWED_PAIRS_CACHE = None
- 
- 
--# DB overlay (#1897). The sqlite_vec storage registers a source with two
--# methods, read_ontology_version() and read_memory_type_overlay(). Readers poll
-+# DB overlay (#1897). The sqlite_vec storage registers a source with three
-+# methods, read_ontology_version(), read_memory_type_overlay() and
-+# read_retention_overlay(). Readers poll
- # the version and reload the overlay when it moved, so a write by the HTTP
- # server reaches the MCP server sharing the same database file.
- _OVERLAY_SOURCE = None
- _OVERLAY_ENTRIES: List[Tuple[str, Optional[str]]] = []
-+_OVERLAY_RETENTION: Dict[str, int] = {}
-+# Parent of every overlay subtype ever stored, removed ones included (retention only).
-+_OVERLAY_STORED_PARENTS: Dict[str, str] = {}
- _OVERLAY_VERSION: Optional[int] = None
- _OVERLAY_CHECKED_AT = float("-inf")
- # ponytail: polled at most once per second, so a write in another process can
-@@ -67,9 +71,12 @@ def clear_ontology_caches():
- 
- def set_overlay_source(source) -> None:
-     """Register the DB overlay source. The last storage to register wins."""
--    global _OVERLAY_SOURCE, _OVERLAY_ENTRIES, _OVERLAY_VERSION
-+    global _OVERLAY_SOURCE, _OVERLAY_ENTRIES, _OVERLAY_RETENTION, _OVERLAY_VERSION
-+    global _OVERLAY_STORED_PARENTS
-     _OVERLAY_SOURCE = source
-     _OVERLAY_ENTRIES = []
-+    _OVERLAY_RETENTION = {}
-+    _OVERLAY_STORED_PARENTS = {}
-     _OVERLAY_VERSION = None
-     invalidate_overlay()
- 
-@@ -89,7 +96,8 @@ def invalidate_overlay() -> None:
- 
- def _refresh_overlay() -> None:
-     """Reload the overlay when the stored ontology_version has moved."""
--    global _OVERLAY_ENTRIES, _OVERLAY_VERSION, _OVERLAY_CHECKED_AT
-+    global _OVERLAY_ENTRIES, _OVERLAY_RETENTION, _OVERLAY_VERSION, _OVERLAY_CHECKED_AT
-+    global _OVERLAY_STORED_PARENTS
-     source = _OVERLAY_SOURCE
-     now = time.monotonic()
-     if source is None or now - _OVERLAY_CHECKED_AT < _OVERLAY_POLL_SECONDS:
-@@ -99,13 +107,16 @@ def _refresh_overlay() -> None:
-         version = source.read_ontology_version()
-         if version == _OVERLAY_VERSION:
-             return
--        entries = list(source.read_memory_type_overlay())
-+        rows = list(source.read_memory_type_overlay())
-+        retention = dict(source.read_retention_overlay())
-     except Exception as e:  # keep the last overlay we had; retry on the next poll
-         logging.getLogger(__name__).warning(
-             "Could not read the ontology overlay: %s", _sanitize_log_value(e)
-         )
-         return
--    _OVERLAY_ENTRIES = entries
-+    _OVERLAY_ENTRIES = [(key, parent) for key, parent, live in rows if live]
-+    _OVERLAY_STORED_PARENTS = {key: parent for key, parent, _ in rows if parent}
-+    _OVERLAY_RETENTION = retention
-     _OVERLAY_VERSION = version
-     clear_ontology_caches()
- 
-@@ -131,6 +142,26 @@ def _merge_overlay(merged: Dict[str, List[str]]) -> None:
-         known.add(key)
- 
- 
-+def get_retention_overlay() -> Dict[str, int]:
-+    """Retention days per memory type from the DB overlay (#1897, phase 4).
-+
-+    These only fill gaps: the consolidation config (built-in defaults and
-+    ``MCP_RETENTION_*``) wins for any type it names.
-+    """
-+    _refresh_overlay()
-+    return dict(_OVERLAY_RETENTION)
-+
-+
-+def get_stored_parent(memory_type: str) -> Optional[str]:
-+    """The parent an overlay subtype was stored with, even after it or its parent was removed.
-+
-+    For retention only: stored memories keep a removed type, and should keep
-+    decaying on their base type's period instead of the 30-day fallback.
-+    """
-+    _refresh_overlay()
-+    return _OVERLAY_STORED_PARENTS.get(memory_type)
-+
-+
- class BaseMemoryType(str, Enum):
-     """
-     Base memory types forming the top-level ontology.
-```
-
-**File**: `src/mcp_memory_service/storage/ontology_overlay.py` (modified, +113/-15)
-```diff
-@@ -1,7 +1,8 @@
--"""Ontology overlay stored in the memory DB (#1897, phase 1).
-+"""Ontology overlay stored in the memory DB (#1897, phases 1 and 4).
- 
- The overlay adds memory types on top of the built-in ontology and
--``MCP_CUSTOM_MEMORY_TYPES``. It lives in the ``ontology_entries`` table, and
-+``MCP_CUSTOM_MEMORY_TYPES``, and retention periods for types that have none
-+in ``CONSOLIDATION_CONFIG``. It lives in the ``ontology_entries`` table, and
- every write bumps ``metadata.ontology_version``. ``models.ontology`` polls that
- counter and reloads the overlay when it moved.
- 
-@@ -10,29 +11,72 @@
- is still the way to share custom types.
- """
- 
-+import json
- import sqlite3
- import time
+@@ -7,6 +7,7 @@
+ import subprocess
+ import sys
+ import threading
++import time
+ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
  from pathlib import Path
--from typing import List, Optional, Tuple
-+from typing import Dict, List, Optional, Tuple
  
-+from ..config.consolidation import CONSOLIDATION_CONFIG
- from ..models import ontology
- 
-+# Same bounds as the MCP_RETENTION_* variables.
-+RETENTION_MIN_DAYS = 1
-+RETENTION_MAX_DAYS = 3650
-+
- 
- def read_ontology_version(conn: sqlite3.Connection) -> int:
-     row = conn.execute("SELECT value FROM metadata WHERE key = 'ontology_version'").fetchone()
-     return int(row[0]) if row else 0
- 
- 
--def read_memory_type_overlay(conn: sqlite3.Connection) -> List[Tuple[str, Optional[str]]]:
-+def read_memory_type_overlay(conn: sqlite3.Connection) -> List[Tuple[str, Optional[str], bool]]:
-+    """All memory type rows as (key, parent, live), tombstoned ones included.
-+
-+    Only live rows extend the ontology. Tombstoned rows still say which base
-+    type a removed subtype belonged to, which retention needs for the stored
-+    memories that keep that type.
-+    """
-     try:
--        return conn.execute(
--            "SELECT key, parent FROM ontology_entries "
--            "WHERE kind = 'memory_type' AND deleted_at IS NULL"
--        ).fetchall()
-+        return [
-+            (key, parent, bool(live))
-+            for key, parent, live in conn.execute(
-+                "SELECT key, parent, deleted_at IS NULL FROM ontology_entries "
-+                "WHERE kind = 'memory_type'"
-+            )
-+        ]
-     except sqlite3.OperationalError:  # migration 022 not applied (yet)
-         return []
- 
- 
-+def _valid_retention_days(days) -> bool:
-+    return (
-+        isinstance(days, int)
-+        and not isinstance(days, bool)
-+        and RETENTION_MIN_DAYS <= days <= RETENTION_MAX_DAYS
-+    )
+@@ -136,3 +137,161 @@ def test_quality_gate_preserves_model_failure(
+     assert "Skipped, NOT passed" in result.stdout
+     assert "no local analysis model reachable" not in result.stdout
+     assert "Start the local endpoint" not in result.stdout
 +
 +
-+def read_retention_overlay(conn: sqlite3.Connection) -> Dict[str, int]:
-+    """Retention days per memory type. Rows with a malformed payload are skipped."""
-+    try:
-+        rows = conn.execute(
-+            "SELECT key, payload_json FROM ontology_entries "
-+            "WHERE kind = 'retention' AND deleted_at IS NULL"
-+        ).fetchall()
-+    except sqlite3.OperationalError:  # migration 022 not applied (yet)
-+        return {}
-+    periods = {}
-+    for key, payload in rows:
++class _KeepaliveHandler(BaseHTTPRequestHandler):
++    """Answer like a busy omlx: headers at once, then a space every 0.2s, no body."""
++
++    def do_POST(self) -> None:
++        self.send_response(200)
++        self.send_header("Content-Type", "application/json")
++        self.end_headers()
 +        try:
-+            days = json.loads(payload)["days"]
-+        except (TypeError, ValueError, KeyError):
-+            continue
-+        if _valid_retention_days(days):
-+            periods[key] = days
-+    return periods
++            for _ in range(200):
++                self.wfile.write(b" ")
++                self.wfile.flush()
++                time.sleep(0.2)
++        except OSError:
++            pass
++
++    def log_message(self, format: str, *args: object) -> None:
++        pass
 +
 +
- def _bump_version(conn: sqlite3.Connection) -> None:
-     conn.execute(
-         "INSERT INTO metadata (key, value) VALUES ('ontology_version', '1') "
-@@ -83,20 +127,67 @@ def upsert_memory_type(conn: sqlite3.Connection, name: str, parent: Optional[str
-         _bump_version(conn)
- 
- 
--def tombstone_memory_type(conn: sqlite3.Connection, name: str) -> bool:
--    """Tombstone an overlay memory type. Built-in and env types are not in the table."""
-+def _tombstone(conn: sqlite3.Connection, kind: str, key: str) -> bool:
-     now = time.time()
-     with conn:
-         cursor = conn.execute(
-             "UPDATE ontology_entries SET deleted_at = ?, updated_at = ? "
--            "WHERE kind = 'memory_type' AND key = ? AND deleted_at IS NULL",
--            (now, now, name),
-+            "WHERE kind = ? AND key = ? AND deleted_at IS NULL",
-+            (now, now, kind, key),
-         )
-         if cursor.rowcount:
-             _bump_version(conn)
-     return bool(cursor.rowcount)
- 
- 
-+def tombstone_memory_type(conn: sqlite3.Connection, name: str) -> bool:
-+    """Tombstone an overlay memory type. Built-in and env types are not in the table."""
-+    return _tombstone(conn, "memory_type", name)
++class _GateHandler(_ModelHandler):
++    """One model; answers the readiness probe, then the analysis prompts per `mode`."""
++
++    models = ("m",)
++    mode = "clean"
++    analysis_calls = 0
++
++    def do_POST(self) -> None:
++        length = int(self.headers.get("Content-Length", "0"))
++        prompt = json.loads(self.rfile.read(length))["messages"][0]["content"]
++        if prompt == "reply with READY":
++            self._send_json(200, {"choices": [{"message": {"content": "READY"}}]})
++            return
++        type(self).analysis_calls += 1
++        if self.mode == "fail":
++            self._send_json(500, {"error": "busy"})
++            return
++        self._send_json(200, {"choices": [{"message": {"content": "SECURITY_CLEAN"}}]})
 +
 +
-+def validate_retention_entry(memory_type: str, days) -> Tuple[str, int]:
-+    """Canonicalize a retention entry and check it against the ontology and config.
-+
-+    Raises ValueError for an unknown type, for days outside 1..3650, or for a
-+    type that already has a period in ``CONSOLIDATION_CONFIG`` (built-in
-+    default or ``MCP_RETENTION_*``): the overlay only fills gaps, so such a
-+    row would never take effect.
-+    """
-+    memory_type = ontology.canonicalize_memory_type(memory_type)
-+    if not ontology.validate_memory_type(memory_type):
-+        raise ValueError(f"'{memory_type}' is not a memory type")
-+    if memory_type in CONSOLIDAT
-```
-
-**File**: `src/mcp_memory_service/storage/sqlite_vec.py` (modified, +20/-0)
-```diff
-@@ -26,8 +26,11 @@
- from .ontology_overlay import (
-     OverlaySource,
-     tombstone_memory_type,
-+    tombstone_retention,
-     upsert_memory_type,
-+    upsert_retention,
-     validate_memory_type_entry,
-+    validate_retention_entry,
- )
- from .mixins import (
-     BaseMixin,
-@@ -141,3 +144,20 @@ async def remove_memory_type(self, name: str) -> bool:
-         """
-         name = ontology.canonicalize_memory_type(name)
-         return await self._write_ontology(lambda conn: tombstone_memory_type(conn, name))
-+
-+    async def set_retention(self, memory_type: str, days: int) -> str:
-+        """Store the retention period (days) of a memory type and return its canonical name.
-+
-+        For types the consolidation config has no period for, such as an
-+        overlay base type that would otherwise decay on the 30-day fallback.
-+        Raises ValueError for an unknown type, a type the config already
-+        covers, or days outside 1..3650.
-+        """
-+        memory_type, days = validate_retention_entry(memory_type, days)
-+        await self._write_ontology(lambda conn: upsert_retention(conn, memory_type, days))
-+        return memory_type
-+
-+    async def clear_retention(self, memory_type: str) -> bool:
-+        """Tombstone a stored retention period; the type falls back to its parent's."""
-+        memory_type = ontology.canonicalize_memory_type(memory_type)
-+        return await self._write_ontology(lambda conn: tombstone_retention(conn, memory_type))
-```
-
-**File**: `tests/storage/test_1897_ontology_retention.py` (added, +141/-0)
-```diff
-@@ -0,0 +1,141 @@
-+"""Retention per type in the ontology overlay (#1897, phase 4).
-+
-+A base type added through the overlay has no key in ``retention_periods``, so
-+its memories decayed on the 30-day fallback. ``set_retention`` stores a period
-+next to the type; the decay calculator reads it for types the consolidation
-+config does not name.
-+"""
-+
-+import sqlite3
-+from datetime import datetime, timedelta
-+
-+import pytest
-+
-+from mcp_memory_service.consolidation.base import ConsolidationConfig
-+from mcp_memory_service.consolidation.decay import ExponentialDecayCalculator
-+from mcp_memory_service.models import ontology
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.ontology_overlay import upsert_retention
-+from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
++def _serve(handler: type[BaseHTTPRequestHandler]):
++    server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
++    server.daemon_threads = True
++    thread = threading.Thread(target=server.serve_forever, daemon=True)
++    thread.start()
++    return server, f"http://127.0.0.1:{server.server_port}/v1"
 +
 +
-+@pytest.fixture
-+async def storage(temp_db_path, monkeypatch):
-+    monkeypatch.delenv("MCP_CUSTOM_MEMORY_TYPES", raising=False)
-+    monkeypatch.setattr(ontology, "_OVERLAY_POLL_SECONDS", 0)
-+    s = SqliteVecMemoryStorage(f"{temp_db_path}/test_1897_retention.db")
-+    await s.initialize()
-+    await s.add_memory_type("legal")
-+    await s.add_memory_type("contract", parent="legal")
-+    yield s
-+    await s.close()
-+    ontology.clear_ontology_caches()
-+
-+
-+async def _retention_period(memory_type):
-+    now = datetime.now()
-+    created = now - timedelta(days=100)
-+    memory = Memory(
-+        content=f"{memory_type} memory",
-+        content_hash=f"hash-{memory_type}",
-+        tags=[],
-+        memory_type=memory_type,
-+        created_at=created.timestamp(),
-+        created_at_iso=created.isoformat() + "Z",
-+    )
-+    calc = ExponentialDecayCalculator(ConsolidationConfig())
-+    score = await calc._calculate_memory_relevance(memory, now, {}, {})
-+    return score.metadata["retention_period"]
-+
-+
-+async def test_overlay_base_type_and_its_subtypes_use_the_stored_period(storage):
-+    assert await _retention_period("legal") == 30  # the fallback this fixes
-+
-+    assert await storage.set_retention("Legal", 400) == "legal"
-+
-+    assert await _retention_period("legal") == 400
-+    assert await _retention_period("contract") == 400  # inherited from the parent
-+
-+
-+async def test_a_subtype_entry_overrides_its_parent_and_clear_falls_back(storage):
-+    await storage.set_retention("legal", 400)
-+    await storage.set_retention("contract", 60)
-+    await storage.set_retention("insight", 90)  # built-in subtype, no config key
-+
-+    assert await _retention_period("contract") == 60
-+    assert await _retention_period("insight") == 90
-+
-+    assert await storage.clear_retention("contract")
-+    assert not await storage.clear_retention("contract")
-+    assert await _retention_period("contract") == 400
-+
-+
-+async def test_removed_types_keep_decaying_on_their_stored_parent(storage):
-+    """Greptile on #1939: removing 'legal' left 'contract' memories without a
-+    parent, so they fell back to 30 days although 'legal' still has 400."""
-+    await storage.set_retention("legal", 400)
-+    await storage.add_memory_type("postmortem", parent="learning")
-+
-+    assert await storage.remove_memory_type("legal")
-+    assert await storage.remove_memory_type("postmortem")
-+    assert ontology.get_parent_type("contract") is None  # no new writes with it
-+
-+    assert await _retention_period("contract") == 400
-+    assert await _retention_period("postmortem") == 180  # built-in parent's period
-+
-+
-+@pytest.mark.parametrize(
-+    "memory_type, days",
-+    [
-+        ("nope", 90),        # not a memory type
-+        ("decision", 90),    # the config already has a period for it
-+        ("temporary", 90),   # legacy config key
-+        ("legal", 0),
-+        ("legal", 3651),
-+        ("legal", True),
-+        ("legal", "90"),
-+    ],
-+)
-+async def test_rejects_entries_that_would_not_apply(storage, memory_type, days):
-+    with pytest.raises(ValueError):
-+        await storage.set_retention(memory_type, days)
-+
-+
-+async def test_write_by_another_process_is_picked_up(storage):
-+    other = sqlite3.connect(storage.db_path)
++def test_deadline_is_wall_clock_despite_keepalive_bytes() -> None:
++    """omlx streams whitespace while a request waits, so a socket read timeout never fires."""
++    server, url = _serve(_KeepaliveHandler)
++    env = os.environ | {"MCP_QUALITY_LLM_URL": url, "MCP_QUALITY_LLM_MODEL": "m",
++                        "MCP_QUALITY_LLM_TIMEOUT": "1"}
 +    try:
-+        upsert_retention(other, "legal", 250)
++        started = time.monotonic()
++        result = subprocess.run([sys.executable, str(HELPER)], input="hi", env=env,
++                                capture_output=True, text=True, check=False, timeout=20)
++        elapsed = time.monotonic() - started
 +    finally:
-+        other.close()
++        server.shutdown()
++        server.server_close()
++    assert result.returncode == 3, result.stderr
++    assert "no reply within 1s" in result.stderr
++    assert elapsed < 10
 +
-+    assert await _retention_period("legal") == 250
++
++def _staged_repo(path: Path) -> None:
++    subprocess.run(["git", "init", "-q", str(path)], check=True)
++    (path / "tests").mkdir()
++    (path / "tests" / "test_mod.py").write_text("def test_one():\n    assert 1\n")
++    subprocess.run(["git", "-C", str(path), "add", "tests/test_mod.py"], check=True)
 +
 +
-+async def test_malformed_rows_are_skipped(storage):
-+    other = sqlite3.connect(storage.db_path)
++def _run_gate(path: Path, url: str) -> subprocess.CompletedProcess:
++    env = os.environ | {"MCP_QUALITY_LLM": "local", "MCP_QUALITY_LLM_URL": url,
++                        "MCP_QUALITY_LLM_TIMEOUT": "5"}
++    env.pop("MCP_QUALITY_LLM_MODEL", None)
++    return subprocess.run(["bash", str(GATE), "--staged"], cwd=path, env=env,
++                          capture_output=True, text=True, check=False, timeout=60)
++
++
++def test_failed_analysis_call_is_skipped_not_passed(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    monkeypatch.setattr(_GateHandler, "mode", "fail")
++    _staged_repo(tmp_path)
++    server, url = _serve(_GateHandler)
 +    try:
-+        with other:
-+            other.executemany(
-+                "INSERT INTO ontology_entries (kind, key, payload_json, updated_at) "
-+                "VALUES ('retention', ?, ?, 0)",
-+                [("legal", "not json"), ("contract", '{"days": -5}'), ("insight", '{"days": 45}')],
-+            )
-+            other.execute("UPDATE metadata SET value = value + 1 WHERE key = 'ontology_version'")
++        result = _run_gate(tmp_path, url)
 +    finally:
-+        other.close()
++        server.shutdown()
++        server.server_close()
++    assert result.returncode == 3, result.stdout + result.stderr
++    assert "Skipped, NOT passed" in result.stdout
++    assert "ALL CHECKS PASSED" not in result.stdout
 +
-+    assert ontology.get_retention_overlay() == {"insight": 45}
++
++def test_rerun_on_unchanged_files_reuses_cached_replies(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
++) -> None:
++    monkeypatch.setattr(_GateHandler, "mode", "clean")
++    monkeypatch.setattr(_GateHandler, "analysis_calls", 0)
++    _staged_repo(tmp_path)
++    server, url = _serve(_GateHandler)
++    try:
++        first = _run_gate(tmp_path, url)
++        calls_after_first = _GateHandler.analysis_calls
++        second = _run_gate(tmp_path, url)
++    finally:
++        server.shutdown()
++        server.server_close()
++    assert first.returncode == 0, first.stdout + first.stderr
++    assert second.returncode == 0, second.stdout + second.stderr
++    assert calls_after_first > 0
++    assert _GateHandler.analysis_calls == calls_after_first
 +
 +
-+async def test_in_memory_database_retention_loads(monkeypatch):
-+    monkeypatch.delenv("MCP_CUSTOM_MEMORY_TYPES", raising=False)
-+    mo
++def _cache_files(path: Path) -> list[Path]:
++    return [p for p in (path / ".git" / "q
 ```
 
 ---
 
-### Incident Patch 3: `a14f19d4` (2026-11-10)
-**Commit Message**: fix(cloudflare): match % and _ in a tag literally in the tag deletes (#1948)
+### Incident Patch 2: `9349b8ac` (2026-11-13)
+**Commit Message**: fix(search): parse a from/to recall range as the whole window (#1935)
 
-* fix(cloudflare): match % and _ in a tag literally in the tag deletes
+* fix(search): parse a from/to recall range as the whole window
 
-delete_by_tags, delete_by_timeframe and delete_before_date built D1 tags LIKE patterns from the raw tag, so % and _ acted as wildcards. Escape them and add ESCAPE '\', as the sqlite-vec deletes do.
+"from January to March" and "from 2024-01-01 to 2024-03-31" were read
+as the first month or the first day. They now span the whole window,
+matching "between ... and ...". A from/to phrase that is not a date
+still falls through.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-* chore: name changelog fragment after PR #1948
+* chore: rename changelog fragment for #1935
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-* test(cloudflare): cover multi-tag matches for %, _ and backslash tags
+* fix(search): validate from/to range endpoints
 
-Single-tag rows only reach the tags = ? arm. Add rows with the tag in the first, middle and last position, plus lookalikes, so the escaped LIKE arms must still delete valid matches.
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* fix(search): accept dayparts in range endpoints
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* refactor(search): match range endpoints directly
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* fix(search): keep from/to ranges for month years, now, and inverted months
+
+A month name followed by a year keeps that year ("from January 2024 to
+March 2024"), "to now" ends today, and a window whose start comes after
+its end ("from march to january") falls back to the single-expression
+parse instead of returning start > end.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* test(search): pin the from/to edge test to fi
+
+**File**: `changelog.d/1935.fixed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++- **A "from … to …" recall range kept only the start (GPT-AGI).** `from January to March` and `from 2024-01-01 to 2024-03-31` were read as the first month or the first day. They now cover the whole window, the same way `between … and …` already did. A from/to phrase that is not a date still falls through, so `from Alice to Bob yesterday` stays yesterday. A month name with a year keeps that year (`from January 2024 to March 2024`), `to now` ends today, and a window whose start comes after its end (`from march to january`) keeps the previous single-month reading.
+```
+
+**File**: `src/mcp_memory_service/utils/time_parser.py` (modified, +63/-8)
+```diff
+@@ -78,6 +78,28 @@
+ }
+ 
+ _MAX_TIME_QUERY_LEN = 500  # guard against ReDoS on user-supplied input
++_RANGE_ENDPOINT_PATTERNS = (
++    "relative_days", "relative_weeks", "relative_months", "relative_years",
++    "last_n_periods", "last_period", "this_period", "month_name", "recent",
++    "specific_date", "full_date", "named_period", "half_year", "quarter",
++)
++_RANGE_DAYPART_ENDPOINT = re.compile(
++    rf"(?:{PATTERNS['relative_days'].pattern})\s+(?:in\s+the\s+)?"
++    rf"(?:{PATTERNS['time_of_day'].pattern})|"
++    rf"(?:{PATTERNS['time_of_day'].pattern})\s+(?:yesterday|today)"
++)
++_RANGE_ENDPOINT = "|".join(
++    f"(?:{PATTERNS[name].pattern})" for name in _RANGE_ENDPOINT_PATTERNS
++)
++_RANGE_MONTH_YEAR = re.compile(rf"{PATTERNS['month_name'].pattern}\s+(\d{{4}})")
++PATTERNS["from_to"] = re.compile(
++    rf"from\s+(\S[^&]{{0,50}}?)\s+to\s+"
++    rf"({_RANGE_DAYPART_ENDPOINT.pattern}|{_RANGE_MONTH_YEAR.pattern}|{_RANGE_ENDPOINT}|now)"
++    # Sentence punctuation may follow a complete endpoint; only "\s|$" made
++    # "march 2024." fall back to "march" and dropped "2024-03-31." entirely.
++    rf"(?=[\s.,;:!?]|$)"
++)
++
+ 
+ def _resolve_yearless_date(
+     month: int, day: int, today: date, anchor_year: Optional[int] = None
+@@ -157,6 +179,21 @@ def _anchor_yearless_range(
+     )
+ 
+ 
++def _parse_range_side(expr: str) -> Tuple[Optional[float], Optional[float]]:
++    """Parse one end of a ``from X to Y`` range.
++
++    ``now`` means today, and a month name with a year ("march 2024") keeps
++    that year instead of resolving to the most recent such month.
++    """
++    expr = expr.strip()
++    if expr == "now":
++        expr = "today"
++    month_year = _RANGE_MONTH_YEAR.fullmatch(expr)
++    if month_year:
++        return get_month_range(month_year.group(1), int(month_year.group(2)))
++    return parse_time_expression(expr)
++
++
+ def _calculate_season_date_range(
+     period: str,
+     season_info: Dict[str, int],
+@@ -231,7 +268,24 @@ def parse_time_expression(
+                 start_expr, end_expr, start_ts, end_ts
+             )
+             return start_ts, end_ts
+-        
++
++        # Documented recall example. Ends that are not times fall through
++        # ("from Alice to Bob yesterday" is still yesterday).
++        from_to_match = PATTERNS["from_to"].search(query)
++        if from_to_match:
++            start_expr = from_to_match.group(1)
++            end_expr = from_to_match.group(2)
++            start_ts, _ = _parse_range_side(start_expr)
++            _, end_ts = _parse_range_side(end_expr)
++            if start_ts is not None and end_ts is not None:
++                start_ts, end_ts = _anchor_yearless_range(
++                    start_expr, end_expr, start_ts, end_ts
++                )
++                # An inverted window ("from march to january") falls through
++                # to the single-expression parse, as before this pattern.
++                if start_ts <= end_ts:
++                    return start_ts, end_ts
++
+         # Check for full ISO dates (YYYY-MM-DD) FIRST
+         full_date_match = PATTERNS["full_date"].search(query)
+         if full_date_match:
+@@ -619,8 +673,8 @@ def get_this_period_range(period: str) -> Tuple[float, float]:
+         
+     return start_dt.timestamp(), end_dt.timestamp()
+ 
+-def get_month_range(month_name: str) -> Tuple[float, float]:
+-    """Get timestamp range for a named month."""
++def get_month_range(month_name: str, year: Optional[int] = None) -> Tuple[float, float]:
++    """Get timestamp range for a named month (the most recent one unless ``year`` is given)."""
+     # Map month name to number
+     month_map = {
+         "january": 1, "february": 2, "march": 3, "april": 4,
+@@ -630,11 +684,12 @@ def get_month_range(month_name: str) -> Tuple[float, float]:
+     
+     if month_name in month_map:
+         month_num = month_map[month_name]
+-        current_year = datetime.now().year
+-        
+-        # If the month is in the future for this year, use last year
+-        current_month = datetime.now().month
+-        year = current_year if month_num <= current_month else current_year - 1
++        if year is None:
++            current_year = datetime.now().year
++
++            # If the month is in the future for this year, use last year
++            current_month = datetime.now().month
++            year = current_year if month_num <= current_month else current_year - 1
+         
+         # Get first and last day of the month
+         first_day = date(year, month_num, 1)
+```
+
+**File**: `tests/test_time_parser.py` (modified, +88/-1)
+```diff
+@@ -255,7 +255,94 @@ def test_date_ranges(self):
+         
+         assert start_dt.month == 1
+         assert end_dt.month == 3
+-    
++
++    def test_from_to_covers_the_whole_window(self, monkeypatch):
++        """`from X to Y` is a range, the same window `between X and Y` already is.
++
++        The recall handler documents "from January to March". Without a from/to
++        pattern the first date or month was returned alone, so an ISO range
++        collapsed to its first day.
++        """
++        # In January and February "march" resolves to last year, which would
++        # invert the month window; pin the clock after March.
++        _freeze_clock(monkeypatch, date(2026, 11, 10))
++        start_ts, end_ts = parse_time_expression("from 2024-01-01 to 2024-03-31")
++        assert datetime.fromtimestamp(start_ts) == datetime(2024, 1, 1, 0, 0, 0)
++        end_dt = datetime.fromtimestamp(end_ts)
++        assert (end_dt.year, end_dt.month, end_dt.day) == (2024, 3, 31)
++
++        month_start, month_end = parse_time_expression("from january to march")
++        between_start, between_end = parse_time_expression("between january and march")
++        assert (month_start, month_end) == (between_start, between_end)
++        assert datetime.fromtimestamp(month_end).month == 3
++
++        _, (recall_start, recall_end) = extract_time_expression("from January to March")
++        assert datetime.fromtimestamp(recall_start).month == 1
++        assert datetime.fromtimestamp(recall_end).month == 3
++
++        relative_start, relative_end = parse_time_expression(
++            "from 3 days ago to 1 day ago"
++        )
++        expected_start, _ = parse_time_expression("3 days ago")
++        _, expected_end = parse_time_expression("1 day ago")
++        assert (relative_start, relative_end) == (expected_start, expected_end)
++
++        daypart_start, daypart_end = parse_time_expression(
++            "from yesterday morning to today"
++        )
++        expected_start, _ = parse_time_expression("yesterday morning")
++        _, expected_end = parse_time_expression("today")
++        assert (daypart_start, daypart_end) == (expected_start, expected_end)
++
++        # "today in the morning" is a supported expression on its own, so the
++        # range end keeps the daypart instead of widening to the whole day.
++        for query, end_expr in (
++            ("from yesterday to today in the morning", "today in the morning"),
++            ("from yesterday to today morning", "today morning"),
++        ):
++            range_start, range_end = parse_time_expression(query)
++            expected_start, _ = parse_time_expression("yesterday")
++            _, expected_end = parse_time_expression(end_expr)
++            assert (range_start, range_end) == (expected_start, expected_end)
++
++    def test_from_to_that_is_not_a_date_keeps_a_later_expression(self):
++        """`from Alice to Bob yesterday` is not a date range."""
++        yesterday_start, yesterday_end = parse_time_expression("yesterday")
++        for query in ("from Alice to Bob yesterday", "from May to Bob yesterday"):
++            start_ts, end_ts = parse_time_expression(query)
++            assert (start_ts, end_ts) == (yesterday_start, yesterday_end)
++
++    def test_from_to_edge_endpoints(self, monkeypatch):
++        """Inverted month windows fall back, month-name years are kept, `now` is today."""
++        _freeze_clock(monkeypatch, date(2026, 1, 10))
++        march_start, _ = parse_time_expression("march")
++        _, january_end = parse_time_expression("january")
++        assert parse_time_expression("from march to january") == (march_start, january_end)
++
++        _freeze_clock(monkeypatch, date(2026, 11, 10))
++        assert parse_time_expression("from march to january") == parse_time_expression("march")
++
++        start_ts, end_ts = parse_time_expression("from January 2024 to March 2024")
++        assert datetime.fromtimestamp(start_ts) == datetime(2024, 1, 1, 0, 0, 0)
++        end_dt = datetime.fromtimestamp(end_ts)
++        assert (end_dt.year, end_dt.month, end_dt.day) == (2024, 3, 31)
++
++        now_start, now_end = parse_time_expression("from 2024-01-01 to now")
++        _, today_end = parse_time_expression("today")
++        assert datetime.fromtimestamp(now_start) == datetime(2024, 1, 1, 0, 0, 0)
++        assert now_end == today_end
++
++        # Sentence punctuation after the end must not shorten the endpoint
++        # ("march 2024." falling back to "march") or drop the range.
++        for query in (
++            "from January 2024 to March 2024",
++            "from 2024-01-01 to 2024-03-31",
++            "from yesterday to today in the morning",
++        ):
++            expected = parse_time_expression(query)
++            for punct in (".", ",", "?", "!", ";", ":"):
++                assert parse_time_expression(query + punct) == expected, query + punct
++
+     def test_quarters(self):
+         """Test quarter expressions"""
+         start_ts, end_ts = parse_time_expression(
+```
+
+---
+
+### Incident Patch 3: `314452aa` (2026-11-13)
+**Commit Message**: fix(milvus): keep the embedding call out of the read-upsert window (#1966) (#1978)
+
+* fix(milvus): keep the embedding call out of the read-upsert window (#1966)
+
+update_memory_metadata and update_memories_batch read the stored vector
+with the row and write it back, as mark_superseded_batch does; only a
+row whose vector did not come back is re-embedded. update_memory_versioned
+embeds the new content before it reads the old row and hands the vector
+to store() through a ContextVar, next to _exclude_versioned_parent.
+
+The window between the read and the whole-row upsert is now a get and an
+upsert with no embedding call in it. It is not closed: pymilvus has no
+conditional upsert and _write_lock is per instance. That limit stays
+documented in the changelog fragment.
+
+Refs #1966
+
+* fix(milvus): the legacy vector read drops a tombstoned row (#1966)
+
+On a collection without the store field the vector is read with a second
+get. That get now returns metadata too and goes through _row_is_live, so
+a row soft-deleted between the two reads is not found and nothing is
+written back, as every other read of a memory here treats a tombstone.
+
+Refs #1966
 
 ---------
 
-Co-authored-by: goranai <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+Co-authored-by: massimiliano1991 <[R
 
-**File**: `changelog.d/1948.fixed.md` (added, +6/-0)
+**File**: `changelog.d/1966.fixed.md` (added, +8/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+- **Cloudflare tag deletes treated `%` and `_` in a tag as wildcards and deleted memories that did not have the tag (#1948).**
-+  `delete_by_tags`, `delete_by_timeframe` and `delete_before_date` built their D1
-+  `tags LIKE ?` patterns from the raw tag, so deleting the tag `%` deleted every memory
-+  with two or more tags, and `snake_case` also deleted a memory tagged `snakeXcase`. The
-+  patterns are escaped now and carry `ESCAPE '\'`, as the sqlite-vec deletes and the
-+  Cloudflare exact-content search already do.
+@@ -0,0 +1,8 @@
++- **Milvus updates no longer embed the content between the read and the upsert**
++  (#1966). `update_memory_metadata` (and so `update_memory`) and
++  `update_memories_batch` read the stored vector with the row and write it back,
++  as `mark_superseded_batch` already did; only a row whose vector does not come
++  back is re-embedded. `update_memory_versioned` embeds the new content before it
++  reads the old row. The window between the read and the whole-row upsert is now
++  two round-trips with no embedding call in it; it is not closed, since pymilvus
++  has no conditional upsert, and that limit stays documented.
 ```
 
-**File**: `src/mcp_memory_service/storage/cloudflare.py` (modified, +25/-8)
+**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +124/-33)
 ```diff
-@@ -179,6 +179,23 @@ def _store_clause(store: Optional[str], column: str = "store") -> Tuple[str, Lis
-     return f" AND {column} = ?", [store]
+@@ -97,6 +97,7 @@
+     _exclude_versioned_parent,
+     _escape_like, _tags_to_string, _string_to_tags,
+     _safe_json_loads, _versioned_conflict_exclusion,
++    _precomputed_store_vector, _store_with_vector,
+ )
+ from ..compat import _sanitize_log_value
+ from ..models.memory import Memory, MemoryQueryResult
+@@ -890,14 +891,24 @@ def _row_fields(self, base: Tuple[str, ...]) -> List[str]:
+     def _row_store(row: Dict[str, Any]) -> str:
+         return row.get("store") or "default"
  
+-    async def _fetch_live_row(self, content_hash: str) -> Optional[Tuple[Memory, str]]:
+-        """Return the live memory under ``content_hash`` and the store it is in."""
++    async def _fetch_live_row(
++        self, content_hash: str, include_embedding: bool = False
++    ) -> Optional[Tuple[Memory, str]]:
++        """Return the live memory under ``content_hash`` and the store it is in.
++
++        With ``include_embedding`` the stored vector comes back on
++        ``Memory.embedding``, so a write that keeps the content can write it
++        back instead of embedding the content again (#1966).
++        """
++        fields = self._OUTPUT_FIELDS
++        if include_embedding:
++            fields = self._OUTPUT_FIELDS_WITH_VECTOR
+         try:
+             rows = await self._call_client(
+                 "get",
+                 collection_name=self.collection_name,
+                 ids=[content_hash],
+-                output_fields=self._row_fields(self._OUTPUT_FIELDS),
++                output_fields=self._row_fields(fields),
+             )
+         except Exception as exc:  # noqa: BLE001
+             logger.error(
+@@ -908,7 +919,7 @@ async def _fetch_live_row(self, content_hash: str) -> Optional[Tuple[Memory, str
  
-+def _escape_like(value: str) -> str:
-+    """Escape LIKE wildcards so ``value`` matches literally under ``ESCAPE '\\'``."""
-+    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+         if not rows:
+             return None
+-        memory = self._entity_to_memory(rows[0])
++        memory = self._entity_to_memory(rows[0], include_embedding=include_embedding)
+         # Soft-deleted rows carry ``metadata.deleted_at``. Milvus can't filter a
+         # JSON sub-field in the ``get`` expression, so drop the tombstone here to
+         # match the other backends (sqlite_vec at mixins/retrieve.py, cloudflare
+@@ -918,19 +929,61 @@ async def _fetch_live_row(self, content_hash: str) -> Optional[Tuple[Memory, str
+             return None
+         return memory, self._row_store(rows[0])
+ 
++    async def _stored_vector(
++        self, content_hash: str
++    ) -> Tuple[bool, Optional[List[float]]]:
++        """Read the vector stored under ``content_hash`` on a legacy collection.
 +
++        Returns ``(live, vector)``. ``live`` is False when the row is gone or
++        carries a soft-delete tombstone, as every other read of a memory
++        here treats it (``_fetch_live_row``). A failed read is reported as
++        live with no vector, so the caller embeds the content again, as it
++        did before #1966. Never raises.
++        """
++        try:
++            rows = await self._call_client(
++                "get",
++                collection_name=self.collection_name,
++                ids=[content_hash],
++                output_fields=["vector", "metadata"],
++            )
++        except Exception as exc:  # noqa: BLE001
++            logger.warning(
++                "Failed to read the vector of %s: %s",
++                _sanitize_log_value(content_hash), _sanitize_log_value(exc),
++            )
++            return True, None
++        if not rows or not self._row_is_live(rows[0]):
++            return False, None
++        return True, self._coerce_vector(rows[0])
 +
-+# Matches one tag in a comma-separated ``tags`` column: first, middle, last or only.
-+_TAG_MATCH_SQL = (
-+    "(tags LIKE ? ESCAPE '\\' OR tags LIKE ? ESCAPE '\\' "
-+    "OR tags LIKE ? ESCAPE '\\' OR tags = ?)"
+     async def _get_for_write(
+-        self, content_hash: str, store: Optional[str]
++        self, content_hash: str, store: Optional[str], include_embedding: bool = False
+     ) -> Tuple[Optional[Memory], str]:
+         """Read the row a hash-addressed write will replace, with its store.
+ 
+         Milvus ``upsert`` replaces the whole row, so the row's own store is
+         written back with it and an update never moves a memory between
+         stores. A legacy collection has no store to carry.
++
++        With ``include_embedding`` the row's vector is read too (on a legacy
++        collection with a second ``get``, since ``get_by_hash`` does not
++        carry it; a row tombstoned by then reads as not found), so the
++        caller can write it back without an embedding call between the read
++        and the upsert (#1966).
+         """
+         if not self._has_store:
+-            return await self.get_by_hash(content_hash, store), "default"
++            memory = await self.get_by_hash(content_hash, store)
++            if memory is not None and include_embedding and not memory.embedding:
++                live, vector = await self._stored_vector(content_hash)
++                if not live:
++                    return None, "default"
++                memory.embedding = vector
++            return memory, "default"
+         refused, confine = self._store_scope(store)
+-        found = None if refused else await self._fetch_live_row(content_hash)
+```
+
+**File**: `src/mcp_memory_service/storage/shared.py` (modified, +18/-0)
+```diff
+@@ -28,6 +28,24 @@ def _exclude_versioned_parent(content_hash: str) -> Iterator[None]:
+     finally:
+         _versioned_conflict_exclusion.reset(token)
+ 
++
++# A vector computed before the row was read, for ``store()`` to write instead
++# of embedding the content again. ``update_memory_versioned`` embeds the new
++# content ahead of its read so that no embedding call sits between the read
++# and the write (#1966).
++_precomputed_store_vector: ContextVar[Optional[List[float]]] = ContextVar(
++    "precomputed_store_vector", default=None
 +)
 +
 +
-+def _tag_match_params(tag: str) -> List[str]:
-+    escaped = _escape_like(tag)
-+    return [f"{escaped},%", f"%,{escaped},%", f"%,{escaped}", tag]
++@contextmanager
++def _store_with_vector(embedding: List[float]) -> Iterator[None]:
++    token = _precomputed_store_vector.set(embedding)
++    try:
++        yield
++    finally:
++        _precomputed_store_vector.reset(token)
 +
-+
- class CloudflareStorage(MemoryStorage):
-     """Cloudflare-based storage backend using Vectorize, D1, and R2."""
- 
-@@ -1671,8 +1688,8 @@ async def delete_by_tags(self, tags: List[str], store: Optional[str] = None) ->
-             params = []
-             for tag in tags:
-                 stripped_tag = tag.strip()
--                conditions.append("(tags LIKE ? OR tags LIKE ? OR tags LIKE ? OR tags = ?)")
--                params.extend([f"{stripped_tag},%", f"%,{stripped_tag},%", f"%,{stripped_tag}", stripped_tag])
-+                conditions.append(_TAG_MATCH_SQL)
-+                params.extend(_tag_match_params(stripped_tag))
- 
-             where_clause = " OR ".join(conditions)
-             store_sql, store_params = _store_clause(store)
-@@ -1719,13 +1736,13 @@ async def delete_by_timeframe(self, start_date: date, end_date: date, tag: Optio
- 
-             if tag:
-                 # Delete with tag filter
--                sql = '''
-+                sql = f'''
-                     SELECT content_hash FROM memories
-                     WHERE created_at >= ? AND created_at <= ?
--                    AND (tags LIKE ? OR tags LIKE ? OR tags LIKE ? OR tags = ?)
-+                    AND {_TAG_MATCH_SQL}
-                     AND deleted_at IS NULL
-                 '''
--                params = (start_ts, end_ts, f"{tag},%", f"%,{tag},%", f"%,{tag}", tag)
-+                params = (start_ts, end_ts, *_tag_match_params(tag))
-             else:
-                 # Delete all in timeframe
-                 sql = '''
-@@ -1766,13 +1783,13 @@ async def delete_before_date(self, before_date: date, tag: Optional[str] = None)
- 
-             if tag:
-                 # Delete with tag filter
--                sql = '''
-+                sql = f'''
-                     SELECT content_hash FROM memories
-                     WHERE created_at < ?
--                    AND (tags LIKE ? OR tags LIKE ? OR tags LIKE ? OR tags = ?)
-+                    AND {_TAG_MATCH_SQL}
-                     AND deleted_at IS NULL
-                 '''
--                params = (before_ts, f"{tag},%", f"%,{tag},%", f"%,{tag}", tag)
-+                params = (before_ts, *_tag_match_params(tag))
-             else:
-                 # Delete all before date
-                 sql = '''
+ # ---------------------------------------------------------------------------
+ # Bounded LRU embedding cache
+ # ---------------------------------------------------------------------------
 ```
 
-**File**: `tests/unit/test_cloudflare_tag_delete_like_wildcards.py` (added, +127/-0)
+**File**: `tests/storage/test_milvus_update_memory.py` (modified, +6/-4)
 ```diff
-@@ -0,0 +1,127 @@
-+"""Cloudflare tag deletes match ``%``, ``_`` and a backslash in a tag literally.
+@@ -97,10 +97,12 @@ async def test_successful_update(self):
+         result = await storage.update_memory(updated)
+ 
+         assert result is True
+-        # Verify upsert was called (through update_memory_metadata)
+-        storage._call_client.assert_called_once()
+-        call_args = storage._call_client.call_args
+-        assert call_args[0][0] == "upsert"
++        # Verify upsert was called (through update_memory_metadata). The
++        # mocked get_by_hash carries no vector, so the row's vector is read
++        # with a second client call before the upsert (#1966).
++        upserts = [c for c in storage._call_client.call_args_list if c[0][0] == "upsert"]
++        assert len(upserts) == 1
++        assert storage._call_client.call_args[0][0] == "upsert"
+ 
+     @pytest.mark.asyncio
+     async def test_not_found_returns_false(self):
+```
+
+**File**: `tests/storage/test_milvus_update_stored_vector.py` (added, +352/-0)
+```diff
+@@ -0,0 +1,352 @@
++# Copyright 2024 Heinrich Krupp
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
 +
-+delete_by_tags, delete_by_timeframe and delete_before_date put the tag into
-+LIKE patterns, where ``%`` and ``_`` are wildcards, so deleting the tag ``%``
-+also deleted every memory with two or more tags. The tests run the real SQL
-+against the in-memory SQLite database that stands in for D1.
++"""Milvus updates keep the embedding call out of the read-upsert window (#1966).
++
++Every Milvus update is a read followed by a whole-row ``upsert``, and two
++clients on one collection share no lock. An update that keeps the content
++keeps its vector too, so ``update_memory_metadata`` and
++``update_memories_batch`` read the stored vector with the row and write it
++back, as ``mark_superseded_batch`` already did, instead of embedding the
++content between the read and the upsert. ``update_memory_versioned`` stores
++new content, so it embeds that content before it reads the old row.
++
++Mocked-client style of test_milvus_store_scope.py: these run on CI runners
++without pymilvus or a model.
 +"""
 +
-+from datetime import date
-+from unittest.mock import AsyncMock
++from __future__ import annotations
++
++import asyncio
++import json
++import re
++import threading
++import time
++from typing import Any
++from unittest.mock import AsyncMock, MagicMock
 +
 +import pytest
 +
 +from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.storage.cloudflare import CloudflareStorage
++from mcp_memory_service.storage.milvus import MilvusMemoryStorage
++from mcp_memory_service.storage.shared import _string_to_tags
 +from mcp_memory_service.utils.hashing import generate_content_hash
-+from tests.unit.test_cloudflare_store_scope import _FakeD1
 +
-+BACKSLASH_TAG = "dir" + chr(92) + "new"
-+MULTI_BACKSLASH_TAG = "lib" + chr(92) + "x"
-+
-+# A wildcard match would also delete the *_lookalike memories.
-+TAGS = {
-+    "underscore": ["snake_case"],
-+    "underscore_lookalike": ["snakexcase", "x"],
-+    "percent": ["100%"],
-+    "percent_lookalike": ["1000", "x"],
-+    "backslash": [BACKSLASH_TAG],
-+    "backslash_lookalike": ["dirxnew", "x"],
-+    "pair": ["keep", "other"],
-+    "single": ["solo"],
-+    "three": ["a", "b", "c"],
-+    # Multi-tag rows go through the LIKE arms, so a valid match must still be
-+    # deleted with the tag in the first, middle and last position.
-+    "us_first": ["multi_tag", "p1"],
-+    "us_mid": ["p2", "multi_tag", "p3"],
-+    "us_last": ["p4", "multi_tag"],
-+    "us_lookalike": ["multixtag", "p5"],
-+    "pct_first": ["50%", "q1"],
-+    "pct_mid": ["q2", "50%", "q3"],
-+    "pct_last": ["q4", "50%"],
-+    "pct_lookalike": ["500", "q5"],
-+    "bs_first": [MULTI_BACKSLASH_TAG, "r1"],
-+    "bs_mid": ["r2", MULTI_BACKSLASH_TAG, "r3"],
-+    "bs_last": ["r4", MULTI_BACKSLASH_TAG],
-+    "bs_lookalike": ["libyx", "r5"],
-+}
-+
-+CASES = [
-+    ("snake_case", ["underscore"]),
-+    ("100%", ["percent"]),
-+    ("%", []),
-+    ("_", []),
-+    (BACKSLASH_TAG, ["backslash"]),
-+    ("solo", ["single"]),
-+    ("other", ["pair"]),
-+    ("b", ["three"]),
-+    ("multi_tag", ["us_first", "us_last", "us_mid"]),
-+    ("50%", ["pct_first", "pct_last", "pct_mid"]),
-+    (MULTI_BACKSLASH_TAG, ["bs_first", "bs_last", "bs_mid"]),
-+]
++_HASH = "a" * 64
++_OTHER = "c" * 64
++_STORED = [0.5, 0.5, 0.5, 0.5]
++_FRESH = [0.1, 0.2, 0.3, 0.4]
 +
 +
-+@pytest.fixture
-+async def cloudflare(monkeypatch):
-+    """Cloudflare storage on a fake D1, holding one memory per entry in TAGS."""
-+    storage = CloudflareStorage(
-+        api_token="test-token",
-+        account_id="test-account",
-+        vectorize_index="test-index",
-+        d1_database_id="test-db",
++def _make_storage(has_store: bool) -> MilvusMemoryStorage:
++    """A MilvusMemoryStorage with __init__ skipped and the client mocked."""
++    storage = MilvusMemoryStorage.__new__(MilvusMemoryStorage)
++    storage.uri = "./milvus.db"
++    storage.collection_name = "unit_test_collection"
++    storage.embedding_dimension = 4
++    storage.embedding_model_name = "test-model"
++    storage.embedding_model = MagicMock()
++    storage.embedding_model.encode = MagicMock(
++        side_effect=lambda texts, **_: [list(_FRESH) for _ in texts]
 +    )
-+    fake_d1 = _FakeD1(storage)
-+    monkeypatch.setattr(storage, "_retry_request", fake_d1)
-+    for name in (
-+        "_store_vectorize_vector",
-+        "_delete_vectorize_vector",
-+        "_store_r2_content",
-+        "_delete_r2_content",
-+    ):
-+        monkeypatch.setattr(storage, name, AsyncMock())
-+    monkeypatch.setattr(storage, "_generate_embedding", AsyncMock(return_value=[0.1]))
-+    await storage._initialize_d1_schema()
-+
-+    hashes = {}
-+    for name, tags in TAGS.items():
-+        content = f"Memory {name} for the tag delete tests."
-+        memory = Memory(
-+            content=content, content_hash=generate_content_hash(content), tags=tags
-+        )
-+        ok, msg = await storage.store(memory)
-+        assert ok, msg
-+        hashes[name] = memory.content_hash
-+
-+    def deleted():
-+        return sorted(
-+            name
-+            for name, content_hash in hashes.items()
-+            if fake_d1.row(content_hash)["deleted_at"] is not None
-+        )
-+
-+    yield storage, deleted
-+    fake_d1.db.close()
++    storage._initialized = True
++    storage.client = MagicMock()
++    storage._has_content_lower = True
++    storage._has_bm25 = False
++    storage._has_access_collection = False
++    storage._has_store = has_store
++    storage.semantic_dedup_enabled = False
++    storage._generate_embedding = MagicMock(return_value=list(_FRESH))
++    storage._detect_conflicts = AsyncMock(return_value=[])
++    storage._delete_graph_edges = AsyncMock()
++    return storage
 +
 +
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("tag, expected", CASES)
-+async def test_delete_by_tags_matches_the_tag_literally(cloudflare, tag, expected):
-+    storage, deleted = cloudflare
-+    await storage.delete_by_tags([tag])
-+    assert deleted() == expected
++def _row(
++    content_hash: str = _HASH,
++    store: str | None = "team",
++    vector: list[float] | None = _STORED,
++    content: str = "body",
++    **extra: Any,
++) -> dict[str, Any]:
++    now = time.time()
++    row: dict[str, Any] = {
++        "id": content_hash,
++        "content": content,
++        "content_lower": content.lower(),
++        "tags": "t",
++        "memory_type": "note",
++        "metadata": "{}",
++        "created_at": now,
++        "updated_at": now,
++        "created_at_iso": "2026-11-12T00:00:00Z",
++        "updated_at_iso": "2026-11-12T00:00:00Z",
++    }
++    if store is not None:
++        row["store"] = store
++    if vector is not None:
++        row["vector"] = list(vector)
++    row.update(extra)
++    return row
 +
 +
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("tag, expected", CASES)
-+async def test_delete_by_timeframe_matches_the_tag_literally(cloudflare, tag, expected):
-+    storage, deleted = cloudflare
-+    await storage.delete_by_timeframe(date(2000, 1, 1), date(2100, 1, 1), tag=tag)
-+    assert deleted() == expected
++class _Collection:
++    """An in-memory collection behind ``_call_client``.
 +
++    ``get`` returns only the requested ``output_fields`` (plus ``id``), as
++    Milvus does, so a test can tell whether the vector was asked for.
++    """
 +
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("tag, expected", CASES)
-+async def test_delete_before_date_matches_the_tag_literally(cloudflare, tag, expected):
-+    storage, deleted = cloudflare
-+    await storage.delete_before_date(date(2100, 1, 1), tag=tag)
-+    assert deleted() == expected
++    def __init__(self, rows: list[dict[str, Any]]) -> None:
++        self.rows: dict[str, dict[str, Any]] = {r["id"]: dict(r) for r in rows}
++        self.calls: list[tuple[str, dict[str, Any]]] = []
++
++    def client(self) -> AsyncMock:
++        return AsyncMock(side_effect=self._call)
++
++    async def _call(self, method: str, **kwargs: Any) -> Any:
++        self.calls.append((method, kwargs))
++        if method == "get":
++            fields = kwargs.get("output_fields") or []
++            out = []
++            for content_hash in kwargs.get("ids") or []:
++                row = self.rows.get(content_hash)
++                if row is not None:
++                    picked = {f: row[f] for f in fields if f in row}
++                    out.append({"id": row["id"], **picked})
++            return out
++        if method in ("insert", "upsert"):
++            for entity in kwargs["data"]:
++                self.rows[entity["id"]] = dict(entity)
++            return {"insert_count": len(kwargs["data"])}
++        if method == "delete":
++            if "ids" in kwargs:
++                gone = [h for h in kwargs["ids"] if self.r
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1961** (2026-11-11): fix(web): resolve the installer before git pull so update works without pip (part of #1943) (@munjikesh)
-- **PR #1960** (2026-11-11): chore(deps): bump the uv group with 9 updates (@dependabot[bot])
-- **PR #1959** (2026-11-11): chore(deps): bump the actions group with 2 updates (@dependabot[bot])
-- **PR #1957** (2026-11-11): fix(sync): restore winning recreation before later metadata edits (@dailyun)
-- **PR #1956** (2026-11-11): feat(ontology): sync the ontology overlay between nodes (#1897, phase 2) (@Dhruv-Sharma29)
-- **PR #1955** (2026-11-11): fix(nli): explicit backend and unlabeled-row support in the labeling harness score (@Yoel-qin)
+- **PR #1988** (2026-11-13): refactor(logging): lazy %-style logger calls in config/oauth.py and config/ontology.py (#1146) (@massimiliano1991)
+- **PR #1987** (2026-11-13): feat(dashboard): split the Manage tab into sub-tabs (#1973) (@shu-chen-dot-ca)
+- **PR #1986** (2026-11-13): chore(release): v12.9.0 (@doobidoo)
+- **PR #1985** (2026-11-13): feat(site): offer a trial prompt for coding agents on the demo page (@doobidoo)
+- **PR #1984** (2026-11-13): fix(dashboard): page the type-only search filter through the server-side type filter (@shu-chen-dot-ca)
+- **PR #1983** (2026-11-13): docs(site): correct claims, fix mobile navigation, add structured data (@doobidoo)
 
 ---
 
@@ -3809,36 +3862,54 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. logging): lazy %-style logger calls in utils/debug.py (#1146) (#1952)
+## X. quality-gate): bound model calls by wall clock and skip, not pass, on failure
 
 **RULE**:
-When implementing operations in `changelog.d/1146-utils-debug.internal.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/pr/lib/llm_prompt.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5bddbfc9`: logging): lazy %-style logger calls in utils/debug.py (#1146) (#1952). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bea66063`: quality-gate): bound model calls by wall clock and skip, not pass, on failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1146-utils-debug.internal.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/pr/lib/llm_prompt.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **`utils/debug.py` logs with lazy `%`-style arguments (#1146).**
-  `exact_match_retrieve()`, which backs the `exact_match_retrieve` MCP tool,
-  logged the backend's exception through an f-string. A backend error that
-  echoed the caller's content could forge a second log line. The error now
-  goes through `_sanitize_log_value`, and the backend class name is a `%s`
-  argument. The module is added to `GUARDED_MODULES`.
+    MCP_QUALITY_LLM_TIMEOUT  wall-clock seconds per request, default 600
+import signal
+# Measured on a shared omlx server: gate prompts of 3-12k tokens waited 2-11
+# minutes behind agent traffic, so 180s skipped most calls on a busy machine.
+DEFAULT_TIMEOUT = "600"
+    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", DEFAULT_TIMEOUT))
+    # The urlopen timeout limits each socket read, not the request. omlx sends a
+    # whitespace keepalive while a request waits in its queue, so that limit
+    # never fired and a call could block for as long as the queue was. SIGALRM
+    # bounds the whole request.
+    def on_deadline(signum, frame):
+        raise TimeoutError(f"no reply within {timeout:g}s")
+
+    previous = signal.signal(signal.SIGALRM, on_deadline)
+    signal.setitimer(signal.ITIMER_REAL, timeout)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            return json.load(response)
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+    MCP_QUALITY_LLM_TIMEOUT  seconds per request, default 180
+    timeout = float(os.environ.get("MCP_QUALITY_LLM_TIMEOUT", "180"))
+    with urllib.request.urlopen(req, timeout=timeout) as response:
+        return json.load(response)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5bddbfc9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bea66063` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T03:33:01.166Z",
+  "updated_at": "2026-11-14T03:49:59.841Z",
   "stats": {
-    "total_discovered": 3097,
-    "approved_pending_harvest": 2895,
+    "total_discovered": 3110,
+    "approved_pending_harvest": 2907,
     "harvested_count": 0,
-    "rejected_count": 202,
+    "rejected_count": 203,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2892,
+      "COMMUNITY_AND_EXPERT": 2905,
       "OFFICIAL_DOCUMENTATION": 110,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -66740,6 +66740,285 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
         "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-7ECAD021DDE7": {
+      "id": "SRC-7ECAD021DDE7",
+      "url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+      "title": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:49:58.414Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
+        "fileName": "hf-stabilityai-stable-diffusion-3-medium-learnings.md"
+      }
+    },
+    "SRC-C2669DA44FD1": {
+      "id": "SRC-C2669DA44FD1",
+      "url": "https://github.com/sceneview/sceneview",
+      "title": "https://github.com/sceneview/sceneview",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:49:58.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+        "fileName": "sceneview-sceneview-learnings.md"
+      }
+    },
+    "SRC-32E5FB1136F8": {
+      "id": "SRC-32E5FB1136F8",
+      "url": "https://github.com/sceneview/sceneview/blob/main/LICENSE",
+      "title": "https://github.com/sceneview/sceneview/blob/main/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:49:58.863Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+        "fileName": "sceneview-sceneview-learnings.md"
+      }
+    },
+    "SRC-8514A96E3F13": {
+      "id": "SRC-8514A96E3F13",
+      "url": "https://github.com/sceneview/sceneview/pull/5028",
+      "title": "https://github.com/sceneview/sceneview/pull/5028",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:49:58.888Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+        "fileName": "sceneview-sceneview-learnings.md"
+      }
+    },
+    "SRC-ED0ED8B63E17": {
+      "id": "SRC-ED0ED8B63E17",
+      "url": "https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker",
+      "title": "https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:49:58.913Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+        "fileName": "sceneview-sceneview-learnings.md"
+      }
+    },
+    "SRC-A039D0F5310F": {
+      "id": "SRC-A039D0F5310F",
+      "url": "https://ikoi.ai/mcp",
+      "title": "https://ikoi.ai/mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:49:59.638Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-6C6F6A5A5A0F": {
+      "id": "SRC-6C6F6A5A5A0F",
+      "url": "https://ikoi.ai/mcp%60",
+      "title": "https://ikoi.ai/mcp%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:49:59.663Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-3731E880DC06": {
+      "id": "SRC-3731E880DC06",
+      "url": "https://github.com/ikoicity/ikoi-mcp",
+      "title": "https://github.com/ikoicity/ikoi-mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:49:59.702Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-CB3523D5594E": {
+      "id": "SRC-CB3523D5594E",
+      "url": "https://ikoi.ai/",
+      "title": "https://ikoi.ai/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:49:59.728Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-C307F5B9CCF2": {
+      "id": "SRC-C307F5B9CCF2",
+      "url": "https://github.com/higress-group/higress/blob/main/docs/developers/agent-assisted-contributions.md",
+      "title": "https://github.com/higress-group/higress/blob/main/docs/developers/agent-assisted-contributions.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:49:59.753Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-CD71702BA54B": {
+      "id": "SRC-CD71702BA54B",
+      "url": "https://github.com/higress-group/higress/pull/5352",
+      "title": "https://github.com/higress-group/higress/pull/5352",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:49:59.778Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-206AE48F6CAE": {
+      "id": "SRC-206AE48F6CAE",
+      "url": "https://json-schema.org/draft/2020-12/schema",
+      "title": "https://json-schema.org/draft/2020-12/schema",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T03:49:59.803Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
+      }
+    },
+    "SRC-B823D62E6652": {
+      "id": "SRC-B823D62E6652",
+      "url": "http://source.example.test/mcp",
+      "title": "http://source.example.test/mcp",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-14T03:49:59.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md",
+        "fileName": "higress-group-higress-learnings.md"
       }
     }
   }

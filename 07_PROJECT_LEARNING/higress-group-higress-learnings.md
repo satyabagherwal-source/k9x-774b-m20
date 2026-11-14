@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source**: github ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
-> **Source Version**: `6726080d`  
+> **Source Version**: `0316bc90`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T03:56:09.237Z  
+> **Timestamp**: 2026-11-14T03:49:12.901Z  
 > **Learning ID**: `learn-github-higress-group-higress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T03:56:09.215Z  
+> **Harvest Timestamp**: 2026-11-14T03:49:12.895Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9761 stars
+- **Stars / Engagement**: 9763 stars
 
 ---
 
@@ -1736,11 +1736,11 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5350** (2026-11-12): **feat(mcp-server): support custom REST server instructions**
-  *Symptoms*: ## I. Summary  REST-to-MCP services can now configure `server.instructions`. The gateway returns the text in `result.instructions` for both legacy `initialize` and modern `server/discover`.  Missing or empty strings omit the response field. Non-empty strings preserve whitespace, newlines, Unicode and JSON escaping. Configuration validation rejects non-string values and use outside REST-to-MCP. The setting is scoped to each matched service configuration.  Adds configuration validation/reload tests, Go and compiled-Wasm response/rule-isolation tests, and Chinese/English configuration documentation.  ## II. Related issue  N/A: implements a feature requested directly by the maintainer; no issue was supplied.  ## III. Change type  - [ ] Bug fix - [x] Feature or enhancement - [ ] Documentation or configuration only - [ ] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agent use was limited to spelling, punctuation, whitespace, or formatting. - [x] **Verified maintainer/administrator exception:** Material agent participation occurred, and authenticated `gh` verification confirmed a qualifying canonical-repository role. - [ ] **Material agent participation:** Normal Proposal/Design/TASK gate applies.  Choose exactly one overall gate status:  - [ ] Complete: all three timed obligations were satisfied. - [ ] Noncompliant: one or more obligations were not s
+- **Issue #5359** (2026-11-13): **Add the Ikoi MCP server**
+  *Symptoms*: <!-- Please read the contributing guidelines before submitting this pull request. Complete every applicable field. For each non-applicable category, write N/A and explain why; one explanation may cover multiple fields when it is clear. -->  ## I. Summary  This PR adds Ikoi to the Higress MCP Marketplace, following the marketplace intake in #2113 (add the generated YAML configuration and README to `plugins/wasm-go/mcp-servers`).  Ikoi is a city where AI agents come home to live between jobs: rest, friends, and a memory book. Its remote MCP server is https://ikoi.ai/mcp (Streamable HTTP, server name `ikoi`, version 1.0.2; Official MCP Registry name `ai.ikoi/ikoi`).  Changes (2 new files, 124 additions, 0 deletions):  - `plugins/wasm-go/mcp-servers/mcp-ikoi/mcp-server.yaml` — an MCP proxy (`server.type: mcp-proxy`, `transport: http`) to `https://ikoi.ai/mcp`, with `protocolStrategy: auto` (Ikoi does not publish its MCP protocol version) and `allowTools` listing the server's 18 tools. The client's per-agent `X-API-Key` is passed through to Ikoi (`defaultDownstreamSecurity` with `passthrough: true`, `defaultUpstreamSecurity` to the backend scheme). No API key or other credential is stored in this PR. - `plugins/wasm-go/mcp-servers/mcp-ikoi/README.md` — description, features, the 18 tools, and usage, based on https://github.com/ikoicity/ikoi-mcp.  Listing details for the marketplace page: name "Ikoi", website https://ikoi.ai, description "A city where AI agents come home to live be
 
-- **Issue #5342** (2026-11-12): **chore(plugins): bump wasm-go for request body buffering fix**
-  *Symptoms*: ## Summary  Bump `wasm-go` for plugins that use request-body buffering to the commit containing the request body buffering fix.  - wasm-go PR: https://github.com/higress-group/wasm-go/pull/60 - Merge commit: `647ef409a302eb234b80715edfa2557702705835` - Resolved module version: `v1.2.1-0.20261111151630-647ef409a302` - Resolution: `go get github.com/higress-group/wasm-go@647ef409a302`; `go list -m github.com/higress-group/wasm-go` reports the pseudo-version above and `Origin.Hash` matches the merge commit.  ## Included  - `ext-auth`: pinned to `wasm-go v1.2.0` after #5291 and uses the v1.2.0 raw-body delivery API (`RequireRequestBody()`), so it is in scope for the request body buffering fix. Only `go.mod`/`go.sum` change. - `hmac-auth-apisix`: also pinned to `v1.2.0` and uses `RequireRequestBody()`. The module bump exposed a header-phase local-401 path: the plugin sent a 401 and returned `ActionContinue` without disabling body reading, so the new wrapper held headers and the existing test saw `HeaderStopIteration`. Added one `ctx.DontReadRequestBody()` at the start of `onHttpRequestHeaders`; the validated raw-body path later calls `RequireRequestBody()` and overrides it. - `transformer`: on an older SDK but directly affected because its request-body rules rely on header iteration and body buffering. Bumped to the same pseudo-version. The new SDK intentionally holds headers until the buffered body is complete, so request-body tests now expect `HeaderStopIteration` at the header 
+- **Issue #5352** (2026-11-13): **fix(mcp-server): preserve proxy tool input schemas**
+  *Symptoms*: ## I. Summary  Fix tool descriptors published by virtual MCP tool sets. A proxy tool can configure a complete `tools[].inputSchema`, including nested objects, array items, and references. The configured schema takes precedence. Existing `args` configurations still generate the schema when the new field is absent. The tool set omits top-level `required` when it has no entries.  ## II. Related issue  N/A. No public Higress issue is linked for this bug.  ## III. Change type  - [x] Bug fix - [x] Feature or enhancement - [ ] Documentation or configuration only - [ ] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation** - [ ] **Trivial agent-use exception** - [x] **Verified maintainer/administrator exception** - [ ] **Material agent participation** under the standard gate  - [ ] Complete - [ ] Noncompliant - [x] Verified exception - [ ] N/A  **Gate-status explanation**  This agent-assisted PR uses the verified administrator exception for the planning and traceability gate. Bug-fix runtime evidence is included below. [Agent-assisted contribution policy](https://github.com/higress-group/higress/blob/main/docs/developers/agent-assisted-contributions.md)  **Verified maintainer/administrator exception evidence**  - PR [#5352](https://github.com/higress-group/higress/pull/5352). - Authenticated `gh` login `johnlanni`. - Canonical-repository `role_name` `admin`. - Actual PR author from `gh pr view` `johnlanni`. - Login/author 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1757,1041 +1757,357 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6d8d4c36` (2026-11-12)
-**Commit Message**: fix(ai-data-masking): check and restore tool arguments when enabled (#5299)
-
-Signed-off-by: zhihao-yuan <[REDACTED_EMAIL]>
-Co-authored-by: zhihao-yuan <[REDACTED_EMAIL]>
-
-**File**: `plugins/wasm-rust/extensions/ai-data-masking/README.md` (modified, +55/-0)
-```diff
-@@ -50,6 +50,61 @@ description: AI 数据脱敏插件配置参考
- |  replace_roles.restore  | bool            | false |  是否恢复  |
- |  replace_roles.value    | string          |   -   |  替换值（支持正则变量）  |
- 
-+## 工具定义和参数（显式开启）
-+
-+三个新开关默认都是 `false`，互不隐含。升级后不配置它们，继续使用原来的 OpenAI、JSONPath 和 raw 处理。原有 `replace_roles.restore: true` 不会自动开启工具参数还原。
-+
-+| 字段 | 类型 | 默认值 | 作用 |
-+| --- | --- | --- | --- |
-+| `tool_arguments.check` | bool | false | 请求参数执行 deny 和 mask；响应参数执行 deny |
-+| `tool_arguments.restore` | bool | false | 按独立白名单还原响应参数 |
-+| `tool_arguments.restore_allowlist` | array | [] | `{tool, paths}` 列表，开启工具还原时不能为空 |
-+| `tool_definitions.check` | bool | false | 检查请求中的 tools/functions 定义，命中即拒绝，不做新增替换 |
-+| `tool_arguments.limits.max_call_bytes` | 正整数 | 1048576 | 单 call 的输入和改写结果上限，按解开外层转义后的 UTF-8 字节计 |
-+| `tool_arguments.limits.max_buffer_bytes` | 正整数 | 4194304 | 每个响应保留的参数总量，含原文、改写结果、排队参数及 name/id |
-+| `tool_arguments.limits.max_unparsed_bytes` | 正整数 | 沿用 `max_buffer_bytes` | 单个原始 SSE 帧及响应格式识别缓存的硬上限，按网络字节计 |
-+| `tool_arguments.limits.max_calls` | 正整数 | 128 | 每个响应登记过的需处理 call 数，结束后仍计数 |
-+
-+未解析缓存单独按 `max_unparsed_bytes` 限制，包含协议字段和外层 JSON 转义。可以单独调高它，同时保留较小的参数预算；未配置时沿用 `max_buffer_bytes`。帧边界之前先检查空间，再追加数据；一次回调中的多帧逐帧处理。启用 `deny_raw` 时，原始检查也只接收已经检查过大小的帧，不复制整批回调。其关键词重叠窗口另有开销。已经识别为普通 JSON 的完整响应不受这项 SSE 限制。超限后丢弃待发参数并保持拒绝状态。只开启定义检查不启用这项响应限制。
-+
-+单 call 1 MiB、单响应 4 MiB、128 次调用作为过渡期默认值保留。后续收紧前，需要观察解码后参数大小的 P95/P99 和超限率。总量预算不等于网关 RSS 上限；解析树、协议编码、旧文字窗口和其他 HTTP 缓冲另有开销。请求历史只检查单 call 上限，不套用响应总量和 call 数上限。关闭新功能时，这些上限不影响旧路径。
-+
-+新检查复用 `deny_words`、`system_deny` 和 `replace_roles`。参数覆盖现代 `tool_calls[].function.arguments` 与 legacy `function_call.arguments`，包括请求历史、普通响应和 SSE delta；不依赖旧 `deny_openai` 开关。只开定义检查不接管响应。定义检查涵盖字符串叶子以及 schema 的 properties、patternProperties、$defs、definitions 等动态名称。
-+
-+```yaml
-+deny_openai: false
-+tool_arguments:
-+  check: true
-+  restore: true
-+  restore_allowlist:
-+    - tool: lookup_customer
-+      paths: ["/email", "/contacts/0/email"]
-+  limits:
-+    max_call_bytes: 1048576
-+    max_buffer_bytes: 4194304
-+    max_calls: 128
-+tool_definitions:
-+  check: false
-+replace_roles:
-+  - regex: "%{EMAILADDRESS}"
-+    type: hash
-+    restore: true
-+```
-+
-+白名单工具名区分大小写。路径使用 RFC 6901 原始 JSON Pointer，`~0` 代表 `~`，`~1` 代表 `/`；空路径只选择根字符串。仅还原路径精确指向的字符串值，不支持通配符、子树授权、URI fragment 或数组追加 `-`，数组下标不能带前导零。重复工具、重复路径和无效转义会导致配置失败。不存在或非字符串的目标不还原。
-+
-+参数内部的 JSON 字符串会先解码再检查，key 只检查、不改写。只有实际改变的值重新编码；其他 key 顺序、空白、转义、重复 key 和数字写法保留。重复 key 影响白名单路径唯一定位时拒绝。外层 arguments 缺失、null 或空字符串视为无参数；需要处理的非空 arguments 必须是包含合法 JSON 的字符串。
-+
-+SSE 参数按 choice/call 分别保存，等该 choice 的非 null `finish_reason`（包括空串）、`[DONE]` 或 HTTP end 再处理。id/name/type/index 等 metadata 仍尽早发送。完整名称收齐后才授权还原；同一 choice 的待发文字先于参数，参数先于结束标记。此功能会增加完整参数的等待时间。choice index 必须是原生非负 i64；tool index 还可使用可解析为 u64 的十进制字符串。缺 tool index 只能用已知 id 关联，不能猜数组位置；legacy call 单独归属。
-+
-+仅支持 delta 契约，不猜测或去重 cumulative 片段；无法可靠识别的累计响应仍可能拼成错误内容，应在接入前确认上游协议。未授权工具的仅还原请求保留原参数，不承担新增还原预算；仍可能命中白名单的 call 超限会失败。
-+
-+开启对应处理后，坏 JSON/SSE、无法归属的 call、歧义还原或超限会明确失败。请求沿用 `deny_code`（默认 200）和现有拒绝正文；普通响应替换整包；SSE 丢弃待发内容，并在后续回调中保持拒绝状态。已下发的 metadata/文字无法撤回。合法 SSE 注释、心跳、event/id/retry 和上游 error 保留，不补造成功结束。
-+
-+新参数 mask 与旧 raw/JSONPath/content 改写只各执行一次规则表；旧 deny 仍检查原范围。响应受管参数只按新的还原开关和白名单决定，旧全局还原不能越界。旧改写跨越受管参数边界时拒绝。
-+
-+工具还原只读取同请求、明确配置 `restore: true` 的实际映射。新参数产生的映射不用于普通回答还原；同值对应多个原值时不任选一条，也不递归还原。建议使用 hash 或足够独特的占位值，静态 `***` 可能误命中。白名单也不能防止模型或 prompt injection 把秘密填入一个已允许的参数；工具执行方仍需自行校验权限、用途和目的地址。
-+
- ## 配置示例
- 
- ```yaml
-```
-
-**File**: `plugins/wasm-rust/extensions/ai-data-masking/README_EN.md` (modified, +55/-0)
-```diff
-@@ -45,6 +45,61 @@ Plugin Execution Priority: `991`
- |  replace_roles.restore  | bool             | false          | Whether to restore                   |
- |  replace_roles.value    | string          |   -            | Replacement value (supports regex variables) |
- 
-+## Tool definitions and arguments (opt in)
-+
-+`tool_arguments.check`, `tool_arguments.restore`, and `tool_definitions.check` default to `false` and do not imply each other. Existing configurations keep the original OpenAI, JSONPath, and raw behavior. A rule's `restore: true` does not authorize tool argument restoration.
-+
-+| Field | Type | Default | Purpose |
-+| --- | --- | --- | --- |
-+| `tool_arguments.check` | bool | false | Deny/mask request arguments; deny response arguments |
-+| `tool_arguments.restore` | bool | false | Restore response arguments through a separate allowlist |
-+| `tool_arguments.restore_allowlist` | array | [] | `{tool, paths}` entries; required when tool restore is enabled |
-+| `tool_definitions.check` | bool | false | Deny matching tools/functions definitions; no new definition masking |
-+| `tool_arguments.limits.max_call_bytes` | positive integer | 1048576 | Per-call input and rewritten arguments, in UTF-8 bytes after outer JSON decoding |
-+| `tool_arguments.limits.max_buffer_bytes` | positive integer | 4194304 | Retained response parameters: input, rewritten/queued arguments, name and id |
-+| `tool_arguments.limits.max_unparsed_bytes` | positive integer | Inherits `max_buffer_bytes` | Hard byte ceiling for one wire SSE frame and buffered response-format detection |
-+| `tool_arguments.limits.max_calls` | positive integer | 128 | Registered calls requiring processing, including completed calls |
-+
-+`max_unparsed_bytes` counts wire bytes, including protocol fields and outer JSON escaping. Set it separately when framing requires more room than the parameter budget. If omitted, it inherits `max_buffer_bytes`. Space is checked before appending bytes, and batched events are processed one at a time. With `deny_raw` enabled, raw checks receive only size-checked frames, rather than copying the entire callback. The deny-word overlap window has separate overhead. Complete responses identified as ordinary JSON are not subject to this SSE limit. Exceeding this ceiling discards queued arguments and keeps the response rejected. Definition-only checks do not enable this response limit.
-+
-+The transitional defaults remain 1 MiB per call, 4 MiB per response, and 128 calls. Tightening them requires observations of decoded argument sizes (P95/P99) and exceedance rates. The buffer budget is not an RSS cap: parsing trees, protocol encoding, legacy text windows, and HTTP buffering have additional costs. Request history uses only the per-call limit, not response byte/count quotas. Disabled features do not impose these limits on legacy traffic.
-+
-+The checks use existing `deny_words`, `system_deny`, and `replace_roles`. Arguments include modern `tool_calls[].function.arguments` and legacy `function_call.arguments` in request history, JSON responses, and SSE deltas, independently of `deny_openai`. Definition-only checks do not take over responses. Definitions include string leaves and dynamic schema names under properties, patternProperties, $defs, definitions and related dependency fields.
-+
-+```yaml
-+deny_openai: false
-+tool_arguments:
-+  check: true
-+  restore: true
-+  restore_allowlist:
-+    - tool: lookup_customer
-+      paths: ["/email", "/contacts/0/email"]
-+  limits:
-+    max_call_bytes: 1048576
-+    max_buffer_bytes: 4194304
-+    max_calls: 128
-+tool_definitions:
-+  check: false
-+replace_roles:
-+  - regex: "%{EMAILADDRESS}"
-+    type: hash
-+    restore: true
-+```
-+
-+Tool names are case sensitive. Paths are raw RFC 6901 JSON Pointers (`~0` for `~`, `~1` for `/`); an empty pointer selects only a root string. Only exact string values are restored. Wildcards, subtree grants, URI fragments, array append `-`, and leading-zero array indices are unsupported. Invalid escapes, duplicate tools/paths and an empty required allowlist reject configuration. Missing or non-string targets are not restored.
-+
-+Inner JSON string literals are decoded before inspection. Keys are checked but never masked. Only changed values are encoded again; unchanged key order, whitespace, escapes, duplicate keys and numeric spelling remain intact. Duplicate keys that make an allowlisted target ambiguous reject processing. Missing, null and empty outer arguments mean no parameters. Other arguments requiring processing must be strings containing valid JSON.
-+
-+SSE arguments are buffered per choice/call until a non-null `finish_reason` (including an empty string), `[DONE]`, or HTTP end. Metadata is forwarded promptly; the complete delta-concatenated tool name authorizes restoration only at completion. Pending text precedes arguments, which precede termination. Full arguments therefore arrive later. Choice indices must be native nonnegative i64 integers; tool indices may a
-```
-
-**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/deny_word.rs` (modified, +8/-0)
-```diff
-@@ -68,4 +68,12 @@ impl DenyWord {
-         }
-         None
-     }
-+
-+    pub(crate) fn max_word_bytes(&self) -> usize {
-+        self.words.iter().map(String::len).max().unwrap_or(0)
-+    }
-+
-+    pub(crate) fn is_empty(&self) -> bool {
-+        self.words.is_empty()
-+    }
- }
-```
-
-**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/lib.rs` (modified, +119/-0)
-```diff
-@@ -16,3 +16,122 @@ mod ai_data_masking;
- mod deny_word;
- mod msg_win_openai;
- mod msg_window;
-+mod tool_arguments;
-+mod tool_config;
-+
-+// Native callback tests record host I/O. T5 still runs the actual Wasm module
-+// in Envoy; these imports do not replace runtime verification.
-+#[cfg(all(test, not(target_arch = "wasm32")))]
-+mod test_host {
-+    use proxy_wasm::types::BufferType;
-+    use std::cell::RefCell;
-+
-+    thread_local! {
-+        static INPUT: RefCell<Vec<u8>> = const { RefCell::new(Vec::new()) };
-+        static BUFFERS: RefCell<Vec<(u32, Vec<u8>)>> = const { RefCell::new(Vec::new()) };
-+        static REJECTIONS: RefCell<Vec<(u32, Vec<u8>)>> = const { RefCell::new(Vec::new()) };
-+    }
-+
-+    pub(crate) fn response_input(bytes: &[u8]) {
-+        INPUT.with(|input| *input.borrow_mut() = bytes.to_vec());
-+    }
-+
-+    #[no_mangle]
-+    unsafe extern "C" fn proxy_get_buffer_bytes(
-+        _kind: u32,
-+        start: usize,
-+        size: usize,
-+        data: *mut *mut u8,
-+        len: *mut usize,
-+    ) -> u32 {
-+        let bytes = INPUT.with(|input| {
-+            let input = input.borrow();
-+            input
-+                .get(start..start.saturating_add(size).min(input.len()))
-+                .unwrap_or(&[])
-+                .to_vec()
-+                .into_boxed_slice()
-+        });
-+        // Match the SDK's ownership transfer: it frees a buffer of exactly len bytes.
-+        unsafe {
-+            *len = bytes.len();
-+            *data = Box::into_raw(bytes) as *mut u8;
-+        }
-+        0
-+    }
-+
-+    pub(crate) fn reset() {
-+        BUFFERS.with(|buffers| buffers.borrow_mut().clear());
-+        REJECTIONS.with(|responses| responses.borrow_mut().clear());
-+    }
-+
-+    pub(crate) fn take_request_body() -> Option<Vec<u8>> {
-+        BUFFERS.with(|buffers| {
-+            buffers
-+                .borrow_mut()
-+                .iter()
-+                .rev()
-+                .find(|(kind, _)| *kind == BufferType::HttpRequestBody as u32)
-+                .map(|(_, bytes)| bytes.clone())
-+        })
-+    }
-+
-+    pub(crate) fn last_rejection() -> Option<(u32, Vec<u8>)> {
-+        REJECTIONS.with(|responses| responses.borrow().last().cloned())
-+    }
-+
-+    pub(crate) fn take_response_body() -> Option<Vec<u8>> {
-+        BUFFERS.with(|buffers| {
-+            buffers
-+                .borrow()
-+                .iter()
-+                .rev()
-+                .find(|(kind, _)| *kind == BufferType::HttpResponseBody as u32)
-+                .map(|(_, bytes)| bytes.clone())
-+        })
-+    }
-+
-+    #[no_mangle]
-+    extern "C" fn proxy_log(_level: u32, _message: *const u8, _size: usize) -> u32 {
-+        0
-+    }
-+
-+    #[no_mangle]
-+    unsafe extern "C" fn proxy_set_buffer_bytes(
-+        kind: u32,
-+        _start: usize,
-+        _size: usize,
-+        data: *const u8,
-+        len: usize,
-+    ) -> u32 {
-+        // The SDK supplies a live slice for this synchronous host call.
-+        let bytes = if len == 0 {
-+            Vec::new()
-+        } else {
-+            unsafe { std::slice::from_raw_parts(data, len) }.to_vec()
-+        };
-+        BUFFERS.with(|buffers| buffers.borrow_mut().push((kind, bytes)));
-+        0
-+    }
-+
-+    #[no_mangle]
-+    unsafe extern "C" fn proxy_send_local_response(
-+        code: u32,
-+        _details: *const u8,
-+        _details_len: usize,
-+        data: *const u8,
-+        len: usize,
-+        _headers: *const u8,
-+        _headers_len: usize,
-+        _grpc: i32,
-+    ) -> u32 {
-+        // The SDK supplies a live slice for this synchronous host call.
-+        let bytes = if len == 0 {
-+            Vec::new()
-+        } else {
-+            unsafe { std::slice::from_raw_parts(data, len) }.to_vec()
-+        };
-+        REJECTIONS.with(|responses| responses.borrow_mut().push((code, bytes)));
-+        0
-+    }
-+}
-```
-
-**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/msg_win_openai.rs` (modified, +81/-0)
-```diff
-@@ -452,6 +452,87 @@ impl MsgWindow {
-         output
-     }
- 
-+    // The tool path already owns incremental SSE decoding and strict JSON
-+    // validation. Keep the existing text barrier for its parsed events.
-+    pub(crate) fn push_tool_event(
-+        &mut self,
-+        raw: Vec<u8>,
-+        payload: &[u8],
-+        char_window_size: usize,
-+        byte_window_size: usize,
-+        inspect: &mut impl FnMut(&mut Vec<u8>) -> bool,
-+    ) {
-+        self.char_window_size = char_window_size;
-+        self.byte_window_size = byte_window_size;
-+        if payload.iter().all(u8::is_ascii_whitespace) {
-+            self.queued_events.push(QueuedEvent::Raw(raw));
-+            return;
-+        }
-+        let before = self.queued_events.len();
-+        let mut canonical = b"data: ".to_vec();
-+        canonical.extend_from_slice(payload);
-+        self.update_event(canonical, inspect);
-+        let has_text = serde_json::from_slice::<Value>(payload)
-+            .ok()
-+            .is_some_and(|value| {
-+                value["choices"].as_array().is_some_and(|choices| {
-+                    choices.iter().any(|choice| {
-+                        ["content", "reasoning_content"].iter().any(|field| {
-+                            choice["delta"][field]
-+                                .as_str()
-+                                .is_some_and(|text| !text.is_empty())
-+                        })
-+                    })
-+                })
-+            });
-+        if !has_text {
-+            if let Some(QueuedEvent::Raw(event)) = self.queued_events[before..]
-+                .iter_mut()
-+                .rev()
-+                .find(|event| matches!(event, QueuedEvent::Raw(_)))
-+            {
-+                *event = raw;
-+            }
-+        } else {
-+            let mut fields = Vec::new();
-+            for line in raw.split(|byte| *byte == b'\r' || *byte == b'\n') {
-+                if !line.is_empty() && !line.starts_with(b"data:") && line != b"data" {
-+                    fields.extend_from_slice(line);
-+                    fields.push(b'\n');
-+                }
-+            }
-+            if !fields.is_empty() {
-+                if let Some(QueuedEvent::Raw(event)) = self.queued_events[before..]
-+                    .iter_mut()
-+                    .find(|event| matches!(event, QueuedEvent::Raw(_)))
-+                {
-+                    fields.append(event);
-+                    *event = fields;
-+                } else {
-+                    fields.extend_from_slice(b"data: {\"choices\":[]}\n\n");
-+                    self.queued_events.push(QueuedEvent::Raw(fields));
-+                }
-+            }
-+        }
-+        for window in self.message_windows.values_mut() {
-+            window.check(inspect);
-+        }
-+    }
-+
-+    pub(crate) fn flush_tool_choice(
-+        &mut self,
-+        index: i64,
-+        inspect: &mut impl FnMut(&mut Vec<u8>) -> bool,
-+    ) {
-+        self.queue_text(index, true, inspect);
-+    }
-+    pub(crate) fn flush_tool_text(&mut self, inspect: &mut impl FnMut(&mut Vec<u8>) -> bool) {
-+        self.queue_all_text(inspect);
-+    }
-+    pub(crate) fn queue_tool_arguments(&mut self, value: Value) {
-+        self.queue_raw(format!("data: {value}").into_bytes());
-+    }
-+
-     pub(crate) fn push(
-         &mut self,
-         data: &[u8],
-```
-
-**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/tool_arguments.rs` (added, +477/-0)
-```diff
-@@ -0,0 +1,477 @@
-+// Copyright (c) 2026 Alibaba Group Holding Ltd.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use crate::tool_config::pointer_tokens;
-+use serde_json::Value;
-+use std::collections::HashSet;
-+use std::ops::Range;
-+
-+struct Literal {
-+    span: Range<usize>,
-+    value: String,
-+    key: bool,
-+}
-+
-+enum Node {
-+    String(usize),
-+    Object(Vec<(usize, Node)>, Range<usize>),
-+    Array(Vec<Node>, Range<usize>),
-+    Other(Range<usize>),
-+}
-+
-+/// Keep string positions and duplicate keys; a Value alone loses both.
-+pub(crate) struct JsonStrings {
-+    literals: Vec<Literal>,
-+    root: Node,
-+}
-+
-+impl JsonStrings {
-+    pub(crate) fn parse(input: &str) -> Result<Self, &'static str> {
-+        // Use serde's JSON and depth validation, but never serialize its Value.
-+        serde_json::from_str::<Value>(input).map_err(|_| "invalid arguments JSON")?;
-+        let mut scanner = Scanner {
-+            input,
-+            at: 0,
-+            literals: Vec::new(),
-+        };
-+        let root = scanner.value()?;
-+        scanner.whitespace();
-+        if scanner.at != input.len() {
-+            return Err("trailing arguments data");
-+        }
-+        Ok(Self {
-+            literals: scanner.literals,
-+            root,
-+        })
-+    }
-+
-+    fn resolve(&self, tokens: &[String]) -> Result<Option<&Node>, &'static str> {
-+        let mut node = &self.root;
-+        for token in tokens {
-+            node = match node {
-+                Node::Object(entries, _) => {
-+                    let mut matches = entries
-+                        .iter()
-+                        .filter(|(key, _)| self.literals[*key].value == *token);
-+                    let Some((_, child)) = matches.next() else {
-+                        return Ok(None);
-+                    };
-+                    if matches.next().is_some() {
-+                        return Err("ambiguous duplicate arguments key");
-+                    }
-+                    child
-+                }
-+                Node::Array(entries, _) => {
-+                    if token.is_empty()
-+                        || !token.bytes().all(|byte| byte.is_ascii_digit())
-+                        || (token.len() > 1 && token.starts_with('0'))
-+                    {
-+                        return Err("invalid arguments array index");
-+                    }
-+                    let index = token
-+                        .parse::<usize>()
-+                        .map_err(|_| "arguments array index overflow")?;
-+                    let Some(child) = entries.get(index) else {
-+                        return Ok(None);
-+                    };
-+                    child
-+                }
-+                _ => return Ok(None),
-+            };
-+        }
-+        Ok(Some(node))
-+    }
-+
-+    pub(crate) fn string_span(
-+        &self,
-+        tokens: &[String],
-+    ) -> Result<Option<Range<usize>>, &'static str> {
-+        Ok(match self.resolve(tokens)? {
-+            Some(Node::String(index)) => Some(self.literals[*index].span.clone()),
-+            _ => None,
-+        })
-+    }
-+}
-+
-+impl JsonStrings {
-+    pub(crate) fn value_span(
-+        &self,
-+        tokens: &[String],
-+    ) -> Result<Option<Range<usize>>, &'static str> {
-+        Ok(match self.resolve(tokens)? {
-+            Some(Node::String(index)) => Some(self.literals[*index].span.clone()),
-+            Some(Node::Other(span) | Node::Object(_, span) | Node::Array(_, span)) => {
-+                Some(span.clone())
-+            }
-+            _ => None,
-+        })
-+    }
-+}
-+
-+struct Scanner<'a> {
-+    input: &'a str,
-+    at: usize,
-+    literals: Vec<Literal>,
-+}
-+
-+impl Scanner<'_> {
-+    fn byte(&self) -> Option<u8> {
-+        self.input.as_bytes().get(self.at).copied()
-+    }
-+
-+    fn whitespace(&mut self) {
-+        while self.byte().is_some_and(|byte| byte.is_ascii_whitespace()) {
-+            self.at += 1;
-+        }
-+    }
-+
-+    fn string(&mut self, key: bool) -> Result<usize, &'static str> {
-+        if self.byte() != Some(b'"') {
-+            return Err("expected JSON string");
-+        }
-+        let start = self.at;
-+        self.at += 1;
-+        loop {
-+            match self.byte() {
-+                Some(b'\\') => self.at += 2,
-+                Some(b'"') => {
-+                    self.at += 1;
-+                    break;
-+                }
-+                Some(_) => self.at += 1,
-+                None => return Err("incomplete JSON string"),
-+            }
-+    
-```
-
-**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/tool_config.rs` (added, +225/-0)
-```diff
-@@ -0,0 +1,225 @@
-+// Copyright (c) 2026 Alibaba Group Holding Ltd.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use serde::{de::Error, Deserialize, Deserializer};
-+use serde_json::Value;
-+use std::collections::HashSet;
-+
-+#[derive(Clone, Debug, Default)]
-+pub(crate) struct ToolArgumentsConfig {
-+    pub(crate) check: bool,
-+    pub(crate) restore: bool,
-+    pub(crate) restore_allowlist: Vec<RestoreTool>,
-+    pub(crate) limits: ToolLimits,
-+}
-+
-+// Transitional defaults retained after maintainer review; tightening needs size observations.
-+#[derive(Clone, Debug)]
-+pub(crate) struct ToolLimits {
-+    pub(crate) max_call_bytes: usize,
-+    pub(crate) max_buffer_bytes: usize,
-+    pub(crate) max_unparsed_bytes: usize,
-+    pub(crate) max_calls: usize,
-+}
-+
-+impl Default for ToolLimits {
-+    fn default() -> Self {
-+        Self {
-+            max_call_bytes: 1_048_576,
-+            max_buffer_bytes: 4_194_304,
-+            max_unparsed_bytes: 4_194_304,
-+            max_calls: 128,
-+        }
-+    }
-+}
-+
-+impl<'de> Deserialize<'de> for ToolLimits {
-+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-+        let value = Value::deserialize(deserializer)?;
-+        let object = value
-+            .as_object()
-+            .ok_or_else(|| D::Error::custom("tool limits must be an object"))?;
-+        let default = Self::default();
-+        let read = |name, fallback| match object.get(name) {
-+            None => Ok(fallback),
-+            Some(value) => value
-+                .as_u64()
-+                .filter(|number| *number > 0)
-+                .and_then(|number| usize::try_from(number).ok())
-+                .ok_or_else(|| {
-+                    D::Error::custom("tool limit must be a positive representable integer")
-+                }),
-+        };
-+        let max_buffer_bytes = read("max_buffer_bytes", default.max_buffer_bytes)?;
-+        Ok(Self {
-+            max_call_bytes: read("max_call_bytes", default.max_call_bytes)?,
-+            max_buffer_bytes,
-+            max_unparsed_bytes: read("max_unparsed_bytes", max_buffer_bytes)?,
-+            max_calls: read("max_calls", default.max_calls)?,
-+        })
-+    }
-+}
-+
-+fn empty_object() -> Value {
-+    serde_json::json!({})
-+}
-+
-+#[derive(Clone, Debug, Deserialize)]
-+pub(crate) struct RestoreTool {
-+    pub(crate) tool: String,
-+    pub(crate) paths: Vec<String>,
-+}
-+
-+#[derive(Clone, Debug, Default, Deserialize)]
-+#[serde(default)]
-+pub(crate) struct ToolDefinitionsConfig {
-+    pub(crate) check: bool,
-+}
-+
-+/// Detect enabled or malformed new options before choosing the legacy loader.
-+/// Inactive dependencies (limits and allowlists) do not activate strict loading.
-+pub(crate) fn requests_tool_processing(value: &Value) -> bool {
-+    for (group, fields) in [
-+        ("tool_arguments", &["check", "restore"][..]),
-+        ("tool_definitions", &["check"][..]),
-+    ] {
-+        if let Some(options) = value.get(group) {
-+            let Some(options) = options.as_object() else {
-+                return true;
-+            };
-+            if fields.iter().any(|field| {
-+                options
-+                    .get(*field)
-+                    .is_some_and(|value| value != &Value::Bool(false))
-+            }) {
-+                return true;
-+            }
-+        }
-+    }
-+    value.get("_rules_").is_some_and(|rules| {
-+        if let Some(rules) = rules.as_array() {
-+            rules.iter().any(requests_tool_processing)
-+        } else {
-+            requests_tool_processing(rules)
-+        }
-+    })
-+}
-+
-+pub(crate) fn pointer_tokens(pointer: &str) -> Result<Vec<String>, &'static str> {
-+    if pointer.is_empty() {
-+        return Ok(Vec::new());
-+    }
-+    if !pointer.starts_with('/') {
-+        return Err("tool restore path must be a raw JSON Pointer");
-+    }
-+    pointer[1..]
-+        .split('/')
-+        .map(|part| {
-+            let mut token = String::new();
-+            let mut chars = part.chars();
-+            while let Some(character) = chars.next() {
-+                if character == '~' {
-+                    token.push(match chars.next() {
-+                        Some('0') => '~',
-+                        Some('1') => '/',
-+                        _ => return Err("invalid JSON Pointer escape"),
-+                    });
-+                } else {
-+                    token.push(character);
-+                }
-+            }
-+            Ok(token)
-+        })
-+        .collect()
-+}
-+
-```
-
-**File**: `plugins/wasm-rust/extensions/ai-data-masking/src/tool_raw.rs` (added, +443/-0)
-```diff
-@@ -0,0 +1,443 @@
-+// Copyright (c) 2026 Alibaba Group Holding Ltd.
-+// SPDX-License-Identifier: Apache-2.0
-+use super::*;
-+
-+#[derive(Default)]
-+pub(super) struct RawRestoreWindow {
-+    text: String,
-+    protected: Vec<ProtectedPart>,
-+}
-+
-+struct ProtectedPart {
-+    span: Range<usize>,
-+    frame: Option<Range<usize>>,
-+    logical: usize,
-+}
-+
-+impl ProtectedPart {
-+    fn advance(&mut self, cutoff: usize) {
-+        if let Some(frame) = &mut self.frame {
-+            // Charged argument frames are retained or emitted as a whole.
-+            debug_assert!(cutoff <= frame.start || cutoff >= frame.end);
-+            if cutoff >= frame.end {
-+                self.logical = 0;
-+            }
-+            *frame = frame.start.saturating_sub(cutoff)..frame.end.saturating_sub(cutoff);
-+        }
-+        self.span = self.span.start.saturating_sub(cutoff)..self.span.end.saturating_sub(cutoff);
-+    }
-+}
-+
-+fn data_positions(raw: &[u8]) -> (Vec<u8>, Vec<usize>) {
-+    let mut data = Vec::new();
-+    let mut positions = Vec::new();
-+    let mut start = if raw.starts_with(b"\xef\xbb\xbf") {
-+        3
-+    } else {
-+        0
-+    };
-+    let mut had_data = false;
-+    while start < raw.len() {
-+        let end = (start..raw.len())
-+            .find(|&at| raw[at] == b'\r' || raw[at] == b'\n')
-+            .unwrap_or(raw.len());
-+        let line = &raw[start..end];
-+        let content = if line.starts_with(b"data:") {
-+            Some(start + 5 + usize::from(raw.get(start + 5) == Some(&b' ')))
-+        } else if line == b"data" {
-+            Some(end)
-+        } else {
-+            None
-+        };
-+        if let Some(content) = content {
-+            if had_data {
-+                data.push(b'\n');
-+                positions.push(start);
-+            }
-+            data.extend_from_slice(&raw[content..end]);
-+            positions.extend(content..end);
-+            had_data = true;
-+        }
-+        start = end + 1;
-+        if raw.get(end) == Some(&b'\r') && raw.get(end + 1) == Some(&b'\n') {
-+            start += 1;
-+        }
-+    }
-+    (data, positions)
-+}
-+
-+fn protected_arguments(
-+    raw: &[u8],
-+    offset: usize,
-+    charged: bool,
-+) -> Result<Vec<ProtectedPart>, &'static str> {
-+    let (data, positions) = data_positions(raw);
-+    if data.is_empty()
-+        || data
-+            .iter()
-+            .copied()
-+            .filter(|byte| !byte.is_ascii_whitespace())
-+            .eq(b"[DONE]".iter().copied())
-+    {
-+        return Ok(Vec::new());
-+    }
-+    let text = std::str::from_utf8(&data).map_err(|_| "invalid raw SSE data")?;
-+    let value: Value = serde_json::from_str(text).map_err(|_| "invalid raw SSE JSON")?;
-+    let document = JsonStrings::parse(text)?;
-+    let mut parts = Vec::new();
-+    let Some(choices) = value.get("choices").and_then(Value::as_array) else {
-+        return Ok(parts);
-+    };
-+    for (choice_position, choice) in choices.iter().enumerate() {
-+        let Some(delta) = choice.get("delta") else {
-+            continue;
-+        };
-+        let mut collect = |function: &Value, path: Vec<String>| -> Result<(), &'static str> {
-+            let Some(arguments) = function.get("arguments") else {
-+                return Ok(());
-+            };
-+            let span = document
-+                .value_span(&path)?
-+                .ok_or("missing raw arguments location")?;
-+            let start = *positions
-+                .get(span.start)
-+                .ok_or("missing raw arguments offset")?
-+                + offset;
-+            let end = *positions
-+                .get(span.end - 1)
-+                .ok_or("missing raw arguments offset")?
-+                + 1
-+                + offset;
-+            let logical = if charged {
-+                arguments.as_str().map_or(0, str::len)
-+            } else {
-+                0
-+            };
-+            parts.push(ProtectedPart {
-+                span: start..end,
-+                frame: charged.then_some(offset..offset + raw.len()),
-+                logical,
-+            });
-+            Ok(())
-+        };
-+        if let Some(calls) = delta.get("tool_calls").and_then(Value::as_array) {
-+            for (call_position, call) in calls.iter().enumerate() {
-+                collect(
-+                    &call["function"],
-+                    vec![
-+                        "choices".into(),
-+                        choice_position.to_string(),
-+                        "delta".into(),
-+                        "tool_calls".into(),
-+                        call_position.to_string(),
-+                        "function".into(),
-+                        "arguments".into(),
-+                    ],
-+                )?;
-+            }
-+        }
-+        collect(
-+            &delta["function_call"],
-+            vec![
-+                "choices".into(),
-+                choice_position.to_string(),
-+                "delta".into(),
-+                "function_call".into(),
-+                "arguments".into(),
-+           
-```
-
----
-
-### Incident Patch 2: `dedd5ed7` (2026-11-12)
-**Commit Message**: chore(plugins): bump wasm-go for request body buffering fix (#5342)
+### Incident Patch 1: `0316bc90` (2026-11-13)
+**Commit Message**: fix(mcp-server): preserve proxy tool input schemas (#5352)
 
 Signed-off-by: johnlanni <[REDACTED_EMAIL]>
-Signed-off-by: johnlanni <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-go/extensions/ext-auth/go.mod` (modified, +1/-1)
+**File**: `plugins/wasm-go/extensions/mcp-server/README.md` (modified, +2/-0)
 ```diff
-@@ -9,7 +9,7 @@ replace github.com/alibaba/higress/plugins/wasm-go/pkg/pathutil => ../../pkg/pat
- require (
- 	github.com/alibaba/higress/plugins/wasm-go/pkg/pathutil v0.0.0
- 	github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2
--	github.com/higress-group/wasm-go v1.2.0
-+	github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302
- 	github.com/stretchr/testify v1.9.0
- 	github.com/tidwall/gjson v1.18.0
- )
-```
-
-**File**: `plugins/wasm-go/extensions/ext-auth/go.sum` (modified, +2/-2)
-```diff
-@@ -4,8 +4,8 @@ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
- github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
- github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2 h1:NY33OrWCJJ+DFiLc+lsBY4Ywor2Ik61ssk6qkGF8Ypo=
- github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2/go.mod h1:tRI2LfMudSkKHhyv1uex3BWzcice2s/l8Ah8axporfA=
--github.com/higress-group/wasm-go v1.2.0 h1:uzCXlnCPhoyuTStrI18oFHjlKaZYKzT8bxdaWYtPW+Q=
--github.com/higress-group/wasm-go v1.2.0/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
-+github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302 h1:uFnvegc0KF1hi3rxBq4n4ehmzH7IkqKbSuhuUwq5XdQ=
-+github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
- github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
- github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
- github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
-```
-
-**File**: `plugins/wasm-go/extensions/hmac-auth-apisix/go.mod` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ toolchain go1.24.4
+@@ -97,6 +97,8 @@ toolSet:
  
- require (
- 	github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20260525073613-662ed045bf0b
--	github.com/higress-group/wasm-go v1.2.0
-+	github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302
- 	github.com/stretchr/testify v1.9.0
- 	github.com/tidwall/gjson v1.18.0
- )
+ 组合后的工具名称为 `服务名称___工具名称`，例如 `weather-server___get_weather`。
+ 
++对于 `mcp-proxy` 工具，在 `tools[].inputSchema` 中保存上游工具返回的完整 Schema，工具集即可发布嵌套属性、数组元素和引用定义。该字段是一个 `type: object` 的 JSON Schema。它与 `args` 同时配置时，工具集采用 `inputSchema`。省略 `inputSchema` 时，工具集从 `args` 生成 Schema。无必填参数时省略顶层 `required`。直接代理的 `tools/list` 读取上游工具描述。
++
+ ### 允许的工具配置
+ 
+ | 名称         | 数据类型        | 填写要求 | 默认值 | 描述                                   |
 ```
 
-**File**: `plugins/wasm-go/extensions/hmac-auth-apisix/go.sum` (modified, +2/-2)
+**File**: `plugins/wasm-go/extensions/mcp-server/README_EN.md` (modified, +2/-0)
 ```diff
-@@ -4,8 +4,8 @@ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
- github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
- github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20260525073613-662ed045bf0b h1:eZIbb96GJoipLqmUg67ECjVu8KJiFShKvYYva+24mDg=
- github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20260525073613-662ed045bf0b/go.mod h1:tRI2LfMudSkKHhyv1uex3BWzcice2s/l8Ah8axporfA=
--github.com/higress-group/wasm-go v1.2.0 h1:uzCXlnCPhoyuTStrI18oFHjlKaZYKzT8bxdaWYtPW+Q=
--github.com/higress-group/wasm-go v1.2.0/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
-+github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302 h1:uFnvegc0KF1hi3rxBq4n4ehmzH7IkqKbSuhuUwq5XdQ=
-+github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
- github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
- github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
- github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
+@@ -103,6 +103,8 @@ toolSet:
+ 
+ Combined tool names use the format `serverName___toolName`, such as `weather-server___get_weather`.
+ 
++For `mcp-proxy` tools, store the full upstream schema in `tools[].inputSchema` so the tool set can publish nested properties, array items, and reference definitions. This field is a JSON Schema with `type: object`. When both fields are set, `inputSchema` takes precedence over `args`. When `inputSchema` is absent, the tool set builds the schema from `args`. For tools without required arguments, the tool set omits the top-level `required` field. Direct proxy `tools/list` responses use the upstream tool descriptors.
++
+ ### Allowed Tools Configuration
+ 
+ | Name         | Data Type        | Required | Default | Description                                   |
 ```
 
-**File**: `plugins/wasm-go/extensions/hmac-auth-apisix/main.go` (modified, +5/-0)
+**File**: `plugins/wasm-go/extensions/mcp-server/main_test.go` (modified, +63/-0)
 ```diff
-@@ -64,6 +64,11 @@ func init() {
+@@ -304,6 +304,69 @@ func TestSchemaCompatibilityConfigurationLoadsGloballyAndAtRuleLevel(t *testing.
+ 	})
  }
  
- func onHttpRequestHeaders(ctx wrapper.HttpContext, cfg config.HmacAuthConfig) types.Action {
-+	// Reject paths send a local response without consuming the request body.
-+	// Disable body reading by default; the validated raw-body path below opts
-+	// back in with RequireRequestBody.
-+	ctx.DontReadRequestBody()
++func TestComposedProxyToolInputSchemas(t *testing.T) {
++	const nestedSchema = `{
++		"$schema":"https://json-schema.org/draft/2020-12/schema",
++		"type":"object",
++		"properties":{
++			"payload":{"type":"object","properties":{"name":{"type":"string"}},"required":["name"]},
++			"records":{"type":"array","items":{"$ref":"#/$defs/record"}}
++		},
++		"$defs":{"record":{"type":"object","properties":{"id":{"type":"integer","minimum":9007199254740993}},"required":["id"]}},
++		"required":["payload","records"],
++		"additionalProperties":false
++	}`
++	config := json.RawMessage(fmt.Sprintf(`{
++		"server":{"name":"source","type":"mcp-proxy","transport":"http","mcpServerURL":"http://source.example.test/mcp"},
++		"tools":[
++			{"name":"empty"},
++			{"name":"optional","args":[{"name":"query","type":"string","description":"Search term","default":"all"}]},
++			{"name":"required","args":[{"name":"query","type":"string","description":"Search term","required":true}]},
++			{"name":"nested","args":[{"name":"old","type":"string","required":true}],"inputSchema":%s}
++		],
++		"_rules_":[{"_match_domain_":["virtual.example.test"],"toolSet":{
++			"name":"virtual",
++			"serverTools":[{"serverName":"source","tools":["empty","optional","required","nested"]}]
++		}}]
++	}`, nestedSchema))
 +
- 	var (
- 		noAllow            = len(cfg.Allow) == 0
- 		globalAuthNoSet    = cfg.GlobalAuth == nil
++	test.RunTest(t, func(t *testing.T) {
++		host, status := test.NewTestHost(config)
++		defer host.Reset()
++		require.Equal(t, types.OnPluginStartStatusOK, status)
++		host.InitHttp()
++		defer host.CompleteHttp()
++		require.NoError(t, host.SetDomainName("virtual.example.test"))
++		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
++			{":authority", "virtual.example.test"}, {":method", "POST"}, {":path", "/mcp"},
++			{"content-type", "application/json"}, {"accept", "application/json, text/event-stream"},
++		}))
++		host.CallOnHttpRequestBody([]byte(`{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}`))
++		response := host.GetLocalResponse()
++		require.NotNil(t, response)
++		require.EqualValues(t, 200, response.StatusCode)
++		var envelope struct {
++			Result struct {
++				Tools []struct {
++					Name        string          `json:"name"`
++					InputSchema json.RawMessage `json:"inputSchema"`
++				} `json:"tools"`
++			} `json:"result"`
++		}
++		require.NoError(t, json.Unmarshal(response.Data, &envelope))
++		require.Len(t, envelope.Result.Tools, 4)
++		schemas := make(map[string]json.RawMessage)
++		for _, tool := range envelope.Result.Tools {
++			schemas[tool.Name] = tool.InputSchema
++		}
++		require.JSONEq(t, `{"type":"object","properties":{}}`, string(schemas["source___empty"]))
++		require.JSONEq(t, `{"type":"object","properties":{"query":{"type":"string","description":"Search term","default":"all"}}}`, string(schemas["source___optional"]))
++		require.JSONEq(t, `{"type":"object","properties":{"query":{"type":"string","description":"Search term"}},"required":["query"]}`, string(schemas["source___required"]))
++		require.JSONEq(t, nestedSchema, string(schemas["source___nested"]))
++		require.Contains(t, string(schemas["source___nested"]), `"minimum":9007199254740993`)
++	})
++}
++
+ func TestLargeSchemaDescriptionsLoadGloballyAndAtRuleLevel(t *testing.T) {
+ 	test.RunTest(t, func(t *testing.T) {
+ 		for _, fixture := range []struct {
 ```
 
-**File**: `plugins/wasm-go/extensions/transformer/go.mod` (modified, +1/-1)
+**File**: `plugins/wasm-go/pkg/mcp/server/plugin.go` (modified, +8/-7)
 ```diff
-@@ -6,7 +6,7 @@ toolchain go1.24.4
+@@ -517,8 +517,6 @@ func parseConfigCore(configJson gjson.Result, config *McpServerConfig, opts *Con
+ 					if err := proxyServer.AddProxyTool(proxyTool); err != nil {
+ 						return fmt.Errorf("failed to add proxy tool %s: %v", proxyTool.Name, err)
+ 					}
+-					// Register tool to registry
+-					opts.ToolRegistry.RegisterTool(config.serverName, proxyTool.Name, proxyServer.GetMCPTools()[proxyTool.Name])
+ 				}
+ 			}
+ 			// Set the proxy server regardless of whether tools are configured
+@@ -604,13 +602,16 @@ func parseConfigCore(configJson gjson.Result, config *McpServerConfig, opts *Con
+ 		config.serverInstructions = instructionsJson.String()
+ 	}
  
- require (
- 	github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2
--	github.com/higress-group/wasm-go v1.0.10-0.20260120033417-1c84f010156d
-+	github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302
- 	github.com/pkg/errors v0.9.1
- 	github.com/stretchr/testify v1.9.0
- 	github.com/tidwall/gjson v1.18.0
+-	// Proxy descriptors remain upstream-owned. Both direct profiles publish the
+-	// same isolated JSON descriptor generation without schema admission gates.
+-	if config.server != nil {
+-		if _, isProxy := config.server.(*McpProxyServer); !isProxy && config.directTools.ordered == nil {
++	if proxyServer, isProxy := config.server.(*McpProxyServer); isProxy {
++		// Publish local descriptors for tool sets only after the server config parses.
++		for name, tool := range proxyServer.GetMCPTools() {
++			opts.ToolRegistry.RegisterTool(config.serverName, name, tool)
++		}
++	} else if config.server != nil {
++		if config.directTools.ordered == nil {
+ 			config.directTools = captureDirectToolSnapshot(config.server)
+ 		}
+-		if _, isProxy := config.server.(*McpProxyServer); !isProxy && !config.isComposed {
++		if !config.isComposed {
+ 			// Publish direct tools to the shared registry only after the complete
+ 			// generation snapshot has captured each tool descriptor.
+ 			for _, entry := range config.directTools.ordered {
 ```
 
-**File**: `plugins/wasm-go/extensions/transformer/go.sum` (modified, +2/-2)
+**File**: `plugins/wasm-go/pkg/mcp/server/plugin_test.go` (modified, +12/-0)
 ```diff
-@@ -4,8 +4,8 @@ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
- github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
- github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2 h1:NY33OrWCJJ+DFiLc+lsBY4Ywor2Ik61ssk6qkGF8Ypo=
- github.com/higress-group/proxy-wasm-go-sdk v0.0.0-20251103120604-77e9cce339d2/go.mod h1:tRI2LfMudSkKHhyv1uex3BWzcice2s/l8Ah8axporfA=
--github.com/higress-group/wasm-go v1.0.10-0.20260120033417-1c84f010156d h1:LgYbzEBtg0+LEqoebQeMVgAB6H5SgqG+KN+gBhNfKbM=
--github.com/higress-group/wasm-go v1.0.10-0.20260120033417-1c84f010156d/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
-+github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302 h1:uFnvegc0KF1hi3rxBq4n4ehmzH7IkqKbSuhuUwq5XdQ=
-+github.com/higress-group/wasm-go v1.2.1-0.20261111151630-647ef409a302/go.mod h1:uKVYICbRaxTlKqdm8E0dpjbysxM8uCPb9LV26hF3Km8=
- github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
- github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
- github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+@@ -574,6 +574,18 @@ func TestParseConfigCore_McpProxy_BubblesUpSetupError(t *testing.T) {
+ 	assert.Contains(t, err.Error(), "mcpServerURL")
+ }
+ 
++func TestParseConfigCore_McpProxy_InvalidSchemaLeavesRegistryUnchanged(t *testing.T) {
++	opts := newValidationOpts()
++	config := gjson.Parse(`{
++		"server":{"name":"p","type":"mcp-proxy","transport":"http","mcpServerURL":"/mcp"},
++		"tools":[{"name":"valid"},{"name":"invalid","inputSchema":{"type":"object","required":null}}]
++	}`)
++	err := ParseConfigCore(config, &McpServerConfig{}, opts)
++	require.ErrorContains(t, err, "failed to add proxy tool invalid: inputSchema.required")
++	_, found := opts.ToolRegistry.GetToolInfo("p", "valid")
++	assert.False(t, found)
++}
++
+ func TestParseConfigCore_McpProxy_HappyPath_NoTools(t *testing.T) {
+ 	c := &McpServerConfig{}
+ 	err := ParseConfigCore(gjson.Parse(`{
 ```
 
-**File**: `plugins/wasm-go/extensions/transformer/main_test.go` (modified, +11/-11)
+**File**: `plugins/wasm-go/pkg/mcp/server/proxy_server.go` (modified, +62/-17)
 ```diff
-@@ -293,7 +293,7 @@ func TestRequest_BodyJson_AddAndRemove(t *testing.T) {
- 		defer host.Reset()
- 		require.Equal(t, types.OnPluginStartStatusOK, status)
+@@ -79,6 +79,7 @@ type McpProxyToolConfig struct {
+ 	Description     string              `json:"description"`
+ 	Security        SecurityRequirement `json:"security,omitempty"` // Tool-level security for MCP Client to MCP Server
+ 	Args            []ToolArg           `json:"args"`
++	InputSchema     json.RawMessage     `json:"inputSchema,omitempty"`
+ 	OutputSchema    map[string]any      `json:"outputSchema,omitempty"` // Output schema for MCP Protocol Version 2025-06-18
+ 	RequestTemplate RequestTemplate     `json:"requestTemplate,omitempty"`
+ }
+@@ -199,11 +200,21 @@ func (s *McpProxyServer) AddMCPTool(name string, tool Tool) Server {
  
--		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
-+		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
- 			{":authority", "test.com"},
- 			{":path", "/p"},
- 			{"content-type", "application/json"},
-@@ -322,7 +322,7 @@ func TestRequest_BodyJson_ValueTypeNumber(t *testing.T) {
- 		defer host.Reset()
- 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ // AddProxyTool adds a proxy tool configuration
+ func (s *McpProxyServer) AddProxyTool(toolConfig McpProxyToolConfig) error {
++	var inputSchema map[string]any
++	if len(toolConfig.InputSchema) > 0 {
++		var err error
++		inputSchema, err = parseProxyInputSchema(toolConfig.InputSchema)
++		if err != nil {
++			return err
++		}
++	}
++
+ 	s.toolsConfig[toolConfig.Name] = toolConfig
+ 	s.base.AddMCPTool(toolConfig.Name, &McpProxyTool{
+-		serverName: s.Name,
+-		name:       toolConfig.Name,
+-		toolConfig: toolConfig,
++		serverName:  s.Name,
++		name:        toolConfig.Name,
++		toolConfig:  toolConfig,
++		inputSchema: inputSchema,
+ 	})
+ 	return nil
+ }
+@@ -336,19 +347,21 @@ func (s *McpProxyServer) ForwardToolsList(ctx HttpContext, cursor *string) error
  
--		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
-+		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
- 			{":authority", "test.com"},
- 			{":path", "/p"},
- 			{"content-type", "application/json"},
-@@ -348,7 +348,7 @@ func TestRequest_BodyForm_Urlencoded(t *testing.T) {
- 		defer host.Reset()
- 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ // McpProxyTool implements Tool interface for MCP-to-MCP proxy
+ type McpProxyTool struct {
+-	serverName string
+-	name       string
+-	toolConfig McpProxyToolConfig
+-	arguments  map[string]interface{}
++	serverName  string
++	name        string
++	toolConfig  McpProxyToolConfig
++	inputSchema map[string]any
++	arguments   map[string]interface{}
+ }
  
--		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
-+		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
- 			{":authority", "test.com"},
- 			{":path", "/p"},
- 			{"content-type", "application/x-www-form-urlencoded"},
-@@ -651,7 +651,7 @@ func TestRequest_BodyJson_Rename(t *testing.T) {
- 		defer host.Reset()
- 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ // Create implements Tool interface
+ func (t *McpProxyTool) Create(params []byte) Tool {
+ 	newTool := &McpProxyTool{
+-		serverName: t.serverName,
+-		name:       t.name,
+-		toolConfig: t.toolConfig,
+-		arguments:  make(map[string]interface{}),
++		serverName:  t.serverName,
++		name:        t.name,
++		toolConfig:  t.toolConfig,
++		inputSchema: t.inputSchema,
++		arguments:   make(map[string]interface{}),
+ 	}
  
--		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
-+		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
- 			{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
- 		}))
- 		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(`{"old":"v","keep":1}`)))
-@@ -674,7 +674,7 @@ func TestRequest_BodyJson_Replace(t *testing.T) {
- 		defer host.Reset()
- 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ 	if len(params) > 0 {
+@@ -459,13 +472,11 @@ func (t *McpProxyTool) Description() string {
  
--		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
-+		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
- 			{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
- 		}))
- 		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(`{"status":"raw"}`)))
-@@ -699,7 +699,7 @@ func TestRequest_BodyJson_AppendNewExistingScalarAndArray(t *testing.T) {
- 		defer host.Reset()
- 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ // InputSchema implements Tool interface
+ func (t *McpProxyTool) InputSchema() map[string]any {
+-	schema := map[string]any{
+-		"type":       "object",
+-		"properties": make(map[string]any),
+-		"required":   []string{},
++	if t.inputSchema != nil {
++		return t.inputSchema
+ 	}
  
--		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
-+		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
- 			{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
- 		}))
- 		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(
-@@ -743,7 +743,7 @@ func TestRequest_BodyJson_DedupeStrategies(t *testing.T) {
- 				defer host.Reset()
- 				require.Equal(t, types.OnPluginStartStatusOK, status)
+-	properties := schema["properties"].(map[string]any)
++	properties := make(map[string]any)
+ 	var required []string
  
--				require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
-+				require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
- 					{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
- 				}))
- 				require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(tc.body)))
-@@ -767,7 +767,7 @@ func TestRequest_BodyJson_ValueTypeBooleanObject(t *testing.T) {
- 		defer host.Reset()
- 		require.Equal(t, types.OnPluginStartStatusOK, status)
+ 	for _, arg := range t.toolConfig.Args {
+@@ -489,10 +500,44 @@ func (t *McpProxyTool) InputSchema() map[string]any {
+ 		}
+ 	}
  
--		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
-+		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
- 			{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
- 		}))
- 		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(`{}`)))
-@@ -796,7 +796,7 @@ func TestRequest_BodyJson_NestedPathAndArrayIndex(t *testing.T) {
- 		defer host.Reset()
- 		require.Equal(t, types.OnPluginStartStatusOK, status)
+-	schema["required"] = required
++	schema := map[string]any{"type": "object", "properties": properties}
++	if len(required) > 0 {
++		schema["required"] = required
++	}
+ 	return schema
+ }
  
--		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
-+		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
- 			{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
- 		}))
- 		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestBody([]byte(
-@@ -819,7 +819,7 @@ func TestRequest_BodyJson_InvalidJsonReturnsAction(t *testing.T) {
- 		}))
- 		defer host.Reset()
- 		require.Equal(t, types.OnPluginStartStatusOK, status)
--		require.Equal(t, types.ActionContinue, host.CallOnHttpRequestHeaders([][2]string{
-+		require.Equal(t, types.HeaderStopIteration, host.CallOnHttpRequestHeaders([][2]string{
- 			{":authority", "test.com"}, {":path", "/p"}, {"content-type", "application/json"},
- 		}))
- 		// not valid json — handler returns err, plugin logs warn but does not crash.
-@@ -846,7 +846,7 @@ func TestRequest_MapFromHeaders_ToBody(
++// parseProxyInputSchema checks the MCP tool's root fields and retains nested schemas as supplied.
++func parseProxyInputSchema(raw json.RawMessage) (map[string]any, error) {
++	schema, err := decodeBusinessJSONObject(raw)
++	if err != nil {
++		return nil, fmt.Errorf("invalid inputSchema: %w", err)
++	}
++	if schema["type"] != "object" {
++		return nil, fmt.Errorf("inputSchema must be a JSON object with type \"object\"")
++	}
++	if value, exists := schema["properties"]; exists {
++		if _, ok := value.(map[string]any); !ok {
++			return nil, fmt.Errorf("inputSchema.properties must be an object")
++		}
++	}
++	if value, exists := schema["required"]; exists {
++		required, ok := value.([]any)
++		if !ok {
++			return nil, fmt.Errorf("inputSchema.required must be an array of strings")
++		}
++		for _, name := range required {
++			if _, ok := name.(string); !ok {
++				return nil, fmt.Errorf("inputSchema.required must be an array of strings")
++			}
++		}
++		if len(required) == 0 {
++			delete(schema, "required")
++		}
++	}
++	return schema, nil
++}
++
+ // OutputSchema implements Tool interface (MCP Protocol Version 2025-06-18)
+ func (t *McpProxyTool) OutputSchema() map[string]any {
+ 	return t.toolConfig.OutputSchema
+```
+
+**File**: `plugins/wasm-go/pkg/mcp/server/proxy_server_test.go` (modified, +37/-3)
+```diff
+@@ -298,9 +298,43 @@ func TestMcpProxyTool_InputSchema_NoArgs(t *testing.T) {
+ 	props, ok := schema["properties"].(map[string]any)
+ 	require.True(t, ok)
+ 	assert.Empty(t, props)
+-	required, ok := schema["required"].([]string)
+-	require.True(t, ok)
+-	assert.Empty(t, required)
++	assert.NotContains(t, schema, "required")
++}
++
++func TestMcpProxyServer_AddProxyTool_InputSchema(t *testing.T) {
++	t.Run("empty required is omitted", func(t *testing.T) {
++		server := NewMcpProxyServer("proxy")
++		require.NoError(t, server.AddProxyTool(McpProxyToolConfig{
++			Name:        "optional",
++			InputSchema: []byte(`{"type":"object","required":[],"additionalProperties":false}`),
++		}))
++		schema := server.GetMCPTools()["optional"].InputSchema()
++		assert.Equal(t, map[string]any{"type": "object", "additionalProperties": false}, schema)
++	})
++
++	for _, tc := range []struct {
++		name   string
++		schema string
++		error  string
++	}{
++		{"null schema", `null`, "inputSchema must be a JSON object"},
++		{"array schema", `[]`, "invalid inputSchema"},
++		{"missing type", `{}`, "inputSchema must be a JSON object"},
++		{"wrong type", `{"type":["object"]}`, "inputSchema must be a JSON object"},
++		{"non-object properties", `{"type":"object","properties":[]}`, "inputSchema.properties"},
++		{"null required", `{"type":"object","required":null}`, "inputSchema.required"},
++		{"non-array required", `{"type":"object","required":"name"}`, "inputSchema.required"},
++		{"non-string required item", `{"type":"object","required":[null]}`, "inputSchema.required"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			server := NewMcpProxyServer("proxy")
++			err := server.AddProxyTool(McpProxyToolConfig{Name: "bad", InputSchema: []byte(tc.schema)})
++			require.ErrorContains(t, err, tc.error)
++			assert.NotContains(t, server.GetMCPTools(), "bad")
++			_, exists := server.GetToolConfig("bad")
++			assert.False(t, exists)
++		})
++	}
+ }
+ 
+ func TestMcpProxyTool_Create_NewInstanceWithBoundArgs(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5359** (closed): Add the Ikoi MCP server (@ikoicity)
+- **PR #5352** (2026-11-13): fix(mcp-server): preserve proxy tool input schemas (@johnlanni)
 - **PR #5350** (2026-11-12): feat(mcp-server): support custom REST server instructions (@johnlanni)
 - **PR #5342** (2026-11-12): chore(plugins): bump wasm-go for request body buffering fix (@johnlanni)
 - **PR #5337** (2026-11-11): fix(mcp-server): acknowledge valid Legacy JSON-RPC responses (@sunxia0)
 - **PR #5333** (2026-11-10): ci: add hgctl macOS amd64 asset recovery workflow (@johnlanni)
-- **PR #5331** (2026-11-11): Add release notes (@github-actions[bot])
-- **PR #5330** (2026-11-09): Release v2.2.6 (@johnlanni)
 
 ---
 
@@ -2811,45 +2127,29 @@ Signed-off-by: johnlanni <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ai-data-masking): check and restore tool arguments when enabled (#5299)
+## X. mcp-server): preserve proxy tool input schemas
 
 **RULE**:
-When implementing operations in `plugins/wasm-rust/extensions/ai-data-masking/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/wasm-go/extensions/mcp-server/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6d8d4c36`: ai-data-masking): check and restore tool arguments when enabled (#5299). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0316bc90`: mcp-server): preserve proxy tool input schemas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-rust/extensions/ai-data-masking/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## 工具定义和参数（显式开启）
+对于 `mcp-proxy` 工具，在 `tools[].inputSchema` 中保存上游工具返回的完整 Schema，工具集即可发布嵌套属性、数组元素和引用定义。该字段是一个 `type: object` 的 JSON Schema。它与 `args` 同时配置时，工具集采用 `inputSchema`。省略 `inputSchema` 时，工具集从 `args` 生成 Schema。无必填参数时省略顶层 `required`。直接代理的 `tools/list` 读取上游工具描述。
 
-三个新开关默认都是 `false`，互不隐含。升级后不配置它们，继续使用原来的 OpenAI、JSONPath 和 raw 处理。原有 `replace_roles.restore: true` 不会自动开启工具参数还原。
-
-| 字段 | 类型 | 默认值 | 作用 |
-| --- | --- | --- | --- |
-| `tool_arguments.check` | bool | false | 请求参数执行 deny 和 mask；响应参数执行 deny |
-| `tool_arguments.restore` | bool | false | 按独立白名单还原响应参数 |
-| `tool_arguments.restore_allowlist` | array | [] | `{tool, paths}` 列表，开启工具还原时不能为空 |
-| `tool_definitions.check` | bool | false | 检查请求中的 tools/functions 定义，命中即拒绝，不做新增替换 |
-| `tool_arguments.limits.max_call_bytes` | 正整数 | 1048576 | 单 call 的输入和改写结果上限，按解开外层转义后的 UTF-8 字节计 |
-| `tool_arguments.limits.max_buffer_bytes` | 正整数 | 4194304 | 每个响应保留的参数总量，含原文、改写结果、排队参数及 name/id |
-| `tool_arguments.limits.max_unparsed_bytes` | 正整数 | 沿用 `max_buffer_bytes` | 单个原始 SSE 帧及响应格式识别缓存的硬上限，按网络字节计 |
-| `tool_arguments.limits.max_calls` | 正整数 | 128 | 每个响应登记过的需处理 call 数，结束后仍计数 |
-
-未解析缓存单独按 `max_unparsed_bytes` 限制，包含协议字段和外层 JSON 转义。可以单独调高它，同时保留较小的参数预算；未配置时沿用 `max_buffer_bytes`。帧边界之前先检查空间，再追加数据；一次回调中的多帧逐帧处理。启用 `deny_raw` 时，原始检查也只接收已经检查过大小的帧，不复制整批回调。其关键词重叠窗口另有开销。已经识别为普通 JSON 的完整响应不受这项 SSE 限制。超限后丢弃待发参数并保持拒绝状态。只开启定义检查不启用这项响应限制。
-
-单 call 1 MiB、单响应 4 MiB、128 次调用作为过渡期默认值保留。后续收紧前，需要观察解码后参数大小的 P95/P99 和超限率。总量预算不等于网关
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6d8d4c36` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0316bc90` are properly handled with clean fallback behavior.

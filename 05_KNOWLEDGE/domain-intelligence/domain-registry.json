@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T03:33:01.453Z",
-  "total_records": 510,
+  "last_updated": "2026-11-14T03:50:00.179Z",
+  "total_records": 518,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 257,
+      "total": 260,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -291,7 +291,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
         "DOM-D-F2B017DF",
-        "domain_intelligence-research-knowledge-intelligence-hf-bigscience-bloom-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-bigscience-bloom-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
+        "DOM-D-0BBA6E16",
+        "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin"
       ]
     },
     "E": {
@@ -395,7 +398,7 @@
       ]
     },
     "H": {
-      "total": 108,
+      "total": 109,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -504,11 +507,12 @@
         "domain_intelligence-technical-construction-intelligence-openai-gpt-oss-20b-core-invariants",
         "domain_intelligence-technical-construction-intelligence-hf-openai-gpt-oss-20b-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-learnings-core-invaria",
-        "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-core-invariants"
       ]
     },
     "I": {
-      "total": 18,
+      "total": 20,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -527,7 +531,9 @@
         "domain_intelligence-content-information-intelligence-prometheus-prometheus-core-invariants",
         "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants",
         "domain_intelligence-content-information-intelligence-pingcap-tidb-core-invariants",
-        "domain_intelligence-content-information-intelligence-pingcap-tidb-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-pingcap-tidb-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-higress-group-higress-core-invariants",
+        "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants"
       ]
     },
     "J": {
@@ -544,7 +550,7 @@
       ]
     },
     "K": {
-      "total": 11,
+      "total": 13,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -556,7 +562,9 @@
         "DOM-K-199063A7",
         "DOM-K-30566771",
         "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-learnings-core-invari"
+        "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-learnings-core-invari",
+        "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants"
       ]
     },
     "L": {
@@ -6502,8 +6510,8 @@
       "title": "Architecture Intelligence: mitmproxy/mitmproxy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mitmproxy-mitmproxy-architecture-intelligence-mitmproxy-mitmproxy-core-invariant.md",
       "repository": "mitmproxy/mitmproxy",
-      "content_hash": "40756decfa88f749ac784f3c0f7cac27c0290e77b0e599bd3208d3d4851668ce",
-      "created_at": "2026-11-13T15:29:37.240Z"
+      "content_hash": "327cc2167fa30d38327b702b1bbfb07264fb10d5e222ec163053a2a9707d1b9f",
+      "created_at": "2026-11-14T03:49:17.058Z"
     },
     "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-core-invariants",
@@ -11426,6 +11434,111 @@
       "repository": "tailscale-tailscale-learnings",
       "content_hash": "99454cb3e6de58f7ebaf97e3e04338b9c9857afd9f4897e3eb180b85bf6230e9",
       "created_at": "2026-11-14T03:33:01.453Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: stabilityai/stable-diffusion-3-medium Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-3-medium-research-knowledge-intelligence-stabili.md",
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "content_hash": "10296bbc3553fb447a4f3b3d2615dc87ec4382bf690875fc9d27972ed70c5540",
+      "created_at": "2026-11-14T03:49:05.014Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: sceneview/sceneview Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sceneview-sceneview-quality-verification-intelligence-sceneview-sceneview-core-i.md",
+      "repository": "sceneview/sceneview",
+      "content_hash": "c5cd2f70488c6998d5fa5fe7ff1f218737a3393ec3c4c75797d82b68a65b4a69",
+      "created_at": "2026-11-14T03:49:12.457Z"
+    },
+    "domain_intelligence-content-information-intelligence-higress-group-higress-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-higress-group-higress-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: higress-group/higress Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-higress-group-higress-content-information-intelligence-higress-group-higress-cor.md",
+      "repository": "higress-group/higress",
+      "content_hash": "bc11d56c35ecc5f84e45c7b60fd39bfa868c89ffad4ab217eb35c7a269bc3a47",
+      "created_at": "2026-11-14T03:49:14.278Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
+      "repository": "doobidoo/mcp-memory-service",
+      "content_hash": "acf19b739d3e95c883b924f0a2b4609f5384d415aebce7b4d332b9c0465c292f",
+      "created_at": "2026-11-14T03:49:19.847Z"
+    },
+    "DOM-D-0BBA6E16": {
+      "record_id": "DOM-D-0BBA6E16",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): stabilityai/stable-diffusion-3-medium",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/stabilityai/stable-diffusion-3-medium](https://huggingface.co/stabilityai/stable-diffusion-3-medium))  \n> **Source Version**: `hf-stabil",
+      "content_hash": "06d4edb52b4ade6355cc49b05c2c6943a62ec2a07118373b67b2ba3334bc711f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md`  \n> **Source**: huggingface ( -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md`  \n> **Source**: huggingface (",
+      "provenance": {
+        "source_uri": "project://hf-stabilityai-stable-diffusion-3-medium/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T03:49:22.867Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-stabilityai-stable-diffusion-3-medium)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-stabilityai-stable-diffusion-3-medium"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T03:49:58.378Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-stabilityai-stable-diffusion-3-medium-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-3-medium-learnings-research-knowledge-intelligen.md",
+      "repository": "hf-stabilityai-stable-diffusion-3-medium-learnings",
+      "content_hash": "5a53bd1a31e482a30a8267255b1a00e5bb59ccd99c43b5d43384a5498c93ca2e",
+      "created_at": "2026-11-14T03:49:58.630Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: sceneview-sceneview-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sceneview-sceneview-learnings-quality-verification-intelligence-sceneview-scenev.md",
+      "repository": "sceneview-sceneview-learnings",
+      "content_hash": "aa82ea8474ac5e63017f6b86b02e608dd37551d5dbf7835f407593cfff0f065a",
+      "created_at": "2026-11-14T03:49:59.280Z"
+    },
+    "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: higress-group-higress-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-higress-group-higress-learnings-content-information-intelligence-higress-group-h.md",
+      "repository": "higress-group-higress-learnings",
+      "content_hash": "2ca6e841adce235e9bf072768f86e7d0f50b154a437c5571b854974e82872df1",
+      "created_at": "2026-11-14T03:50:00.179Z"
     }
   }
 }

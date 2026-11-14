@@ -935,8 +935,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
     "sourceVersion": "hf-stabilityai-stable-diffusion-3-medium",
     "license": "Open-Source",
-    "contentHash": "e638337310463f925d6ed7c816edff0d0f5244a7688b37c1a96ba9edfdd2fad7",
-    "lastHarvestedAt": "2026-11-08T23:43:47.990Z",
+    "contentHash": "0209ed0502b8de79f952cf6389e730548b381e71af57e209810a466d61a58d3d",
+    "lastHarvestedAt": "2026-11-14T03:49:04.821Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium"
   },
   "hf-bigscience-bloom": {
@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "6726080d",
+    "sourceVersion": "0316bc90",
     "license": "Apache-2.0",
-    "contentHash": "1401b4d374d6a269bde16e0f5410e6faa0f14cab9db1802dbbd47a04c01db566",
-    "lastHarvestedAt": "2026-11-13T03:56:09.994Z",
+    "contentHash": "a18aab4cd2f0906ca9330e4ea1ca8e2f577d97c62c3ee711109555ba17afc966",
+    "lastHarvestedAt": "2026-11-14T03:49:13.955Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "f305bb22",
+    "sourceVersion": "356ceb16",
     "license": "Apache-2.0",
-    "contentHash": "227954ccc3c5be538f20e1077382ba25dea4e2282266674988dfd31bf0b66a96",
-    "lastHarvestedAt": "2026-11-13T02:32:14.021Z",
+    "contentHash": "68e851e39dd54e3ed7829524048c1c30080c6fae67d619e40bb26a58518a51e4",
+    "lastHarvestedAt": "2026-11-14T03:49:19.509Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "d05d6645",
+    "sourceVersion": "3da37a52",
     "license": "MIT",
-    "contentHash": "526b4b4234627c43077ceee9adaa4956eb6d6e02df367c183944175611ab832a",
-    "lastHarvestedAt": "2026-11-13T15:29:36.919Z",
+    "contentHash": "1608d45155932dacac15e8443100071bc3c08bdd550c34e17d7934bcbc8dfba5",
+    "lastHarvestedAt": "2026-11-14T03:49:16.730Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -12253,10 +12253,10 @@
     "repository": "sceneview/sceneview",
     "platform": "github",
     "sourceUrl": "https://github.com/sceneview/sceneview",
-    "sourceVersion": "d4cec834",
+    "sourceVersion": "868f9185",
     "license": "Apache-2.0",
-    "contentHash": "f705756cc6b179cb6c9186ecfc808a8cd3b26239833cd466074f2c5db5136c99",
-    "lastHarvestedAt": "2026-11-09T21:31:13.323Z",
+    "contentHash": "426658dc88674ca07192c6eb1c60a46de46aff7c0ebdd7e74914dbd877158ba1",
+    "lastHarvestedAt": "2026-11-14T03:49:12.131Z",
     "learningId": "learn-github-sceneview-sceneview"
   },
   "hf-tencent-qwen3.8-27b-dspine-b16": {
