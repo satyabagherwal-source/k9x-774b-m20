@@ -1125,8 +1125,8 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "6103c8b8e9fba96eb1019d2373e4d24aff6c4308a1c07e00e2f16ba5b587519e",
-    "lastHarvestedAt": "2026-11-09T02:14:32.726Z",
+    "contentHash": "50c4ab9d3612d8bb692a137c5d927c8e9cf61cd7b81000207454fc5afd7c6001",
+    "lastHarvestedAt": "2026-11-14T09:08:07.034Z",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese"
   },
   "hf-facebookai-xlm-roberta-base": {
@@ -12528,5 +12528,15 @@
     "contentHash": "527aa9603848b11eafabb7aa0d3fef0a19bbf7934d9bbee197d6b0346e1f8ac0",
     "lastHarvestedAt": "2026-11-14T08:53:30.555Z",
     "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf"
+  },
+  "hf-laion-clap-htsat-fused": {
+    "repository": "laion/clap-htsat-fused",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/laion/clap-htsat-fused",
+    "sourceVersion": "hf-laion-clap-htsat-fused",
+    "license": "Open-Source",
+    "contentHash": "55b4ffd0dcc8a49077c808dd8df372d39dac7f22a180987138a86042cb10a905",
+    "lastHarvestedAt": "2026-11-14T09:18:01.295Z",
+    "learningId": "learn-huggingface-laion-clap-htsat-fused"
   }
 }

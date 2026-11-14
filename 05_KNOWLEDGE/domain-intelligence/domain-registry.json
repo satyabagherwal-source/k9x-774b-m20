@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T08:54:38.453Z",
-  "total_records": 617,
+  "last_updated": "2026-11-14T09:18:33.913Z",
+  "total_records": 622,
   "domains": {
     "A": {
       "total": 5,
@@ -35,7 +35,7 @@
       ]
     },
     "D": {
-      "total": 297,
+      "total": 302,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -333,7 +333,12 @@
         "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i",
         "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv",
         "DOM-D-6D95F34C",
-        "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn"
+        "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn",
+        "domain_intelligence-research-knowledge-intelligence-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-c",
+        "domain_intelligence-research-knowledge-intelligence-laion-clap-htsat-fused-core-invariants",
+        "DOM-D-7AAC58BB",
+        "domain_intelligence-research-knowledge-intelligence-hf-laion-clap-htsat-fused-learnings-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanes"
       ]
     },
     "E": {
@@ -6387,8 +6392,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "a53bf741c3b21f4d48cb11cee4505a7e0b39f6c4fc0fbec02bf928f6d7cc99b3",
-      "created_at": "2026-11-14T07:54:03.060Z"
+      "content_hash": "62c8334e7f0fbe13ab15955dfa24ff857a7d7deb487eeca33c57ca3577096358",
+      "created_at": "2026-11-14T09:18:33.913Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -13263,6 +13268,84 @@
       "repository": "wix-react-native-ui-lib-learnings",
       "content_hash": "aa97e0e5b3040d455cc13798032d1c658e96f7ec58e4c40405cb832c4b2dc208",
       "created_at": "2026-11-14T08:54:38.453Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-c": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-c",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: jonatasgrosman/wav2vec2-large-xlsr-53-japanese Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-research-knowledge-intelligenc.md",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "content_hash": "6da33bf853432d92fff24ace8d85317edbb9b084e49c43a8d6c4c4c7d2fef5af",
+      "created_at": "2026-11-14T09:08:07.192Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-laion-clap-htsat-fused-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-laion-clap-htsat-fused-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: laion/clap-htsat-fused Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-laion-clap-htsat-fused-research-knowledge-intelligence-laion-clap-htsat-fused.md",
+      "repository": "laion/clap-htsat-fused",
+      "content_hash": "d3fa518e1b070efcf43ef50c4ea09a8f082a0088445e4ba0e9ea19e55be14a51",
+      "created_at": "2026-11-14T09:18:01.452Z"
+    },
+    "DOM-D-7AAC58BB": {
+      "record_id": "DOM-D-7AAC58BB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): laion/clap-htsat-fused",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/laion/clap-htsat-fused](https://huggingface.co/laion/clap-htsat-fused))  \n> **Source Version**: `hf-laion-cla`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "dbaeebf08cabaeb4d15979056be95188bafb50a4bd560e19f1d721b3c1f9f1c5",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-laion-clap-htsat-fused/hf-laion-clap-htsat-fused-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T09:18:04.169Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-laion-clap-htsat-fused)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-laion-clap-htsat-fused"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T09:18:32.941Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-laion-clap-htsat-fused-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-laion-clap-htsat-fused-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-laion-clap-htsat-fused-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-laion-clap-htsat-fused-learnings-research-knowledge-intelligence-hf-laion-cla.md",
+      "repository": "hf-laion-clap-htsat-fused-learnings",
+      "content_hash": "b2e5451260a3c8535cf2bbe04fc0c2637e98d4061e8bd0ef463f03a191af1259",
+      "created_at": "2026-11-14T09:18:33.146Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanes": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanes",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings-research-knowledge-i.md",
+      "repository": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings",
+      "content_hash": "f5d8c2b833efe3e317eaa76c15404b581322a898339f910fb34e07d712c50066",
+      "created_at": "2026-11-14T09:18:33.453Z"
     }
   }
 }

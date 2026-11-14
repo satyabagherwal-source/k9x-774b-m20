@@ -21100,5 +21100,17 @@
     "downloads": 2137747,
     "qualityScore": 19420,
     "discoveredAt": "2026-11-14T08:41:35.586Z"
+  },
+  {
+    "name": "laion/clap-htsat-fused",
+    "fullName": "laion/clap-htsat-fused",
+    "url": "https://huggingface.co/laion/clap-htsat-fused",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: laion/clap-htsat-fused (178 likes, 8599807 downloads)",
+    "likes": 178,
+    "downloads": 8599807,
+    "qualityScore": 3780,
+    "discoveredAt": "2026-11-14T09:05:45.708Z"
   }
 ]

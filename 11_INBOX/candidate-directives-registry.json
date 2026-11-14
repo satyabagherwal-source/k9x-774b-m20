@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T08:54:38.332Z",
+  "last_updated": "2026-11-14T09:18:33.813Z",
   "directives": [
     {
       "id": "CD-001",
@@ -11819,11 +11819,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-0G1U",
+      "id": "CD-14QX",
       "directive_title": "watcher): filter access events before queueing",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0G1U-watcher-filter-access-events-before-queueing.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-14QX-watcher-filter-access-events-before-queueing.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -12159,6 +12159,24 @@
       "source_repo": "wix-react-native-ui-lib",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-67464D-view-floatingbutton-toast-keep-content-c.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-8D33B0",
+      "directive_title": "Forensic Learning Record (Deep Inspection): jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8D33B0-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-7FFD9D",
+      "directive_title": "watcher): filter access events before queueing",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7FFD9D-watcher-filter-access-events-before-queu.md",
       "staged_date": "2026-11-14"
     }
   ]

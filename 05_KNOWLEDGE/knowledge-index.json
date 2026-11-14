@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T08:54:38.575Z",
-  "total_verified_learnings": 8512,
+  "last_updated": "2026-11-14T09:18:34.132Z",
+  "total_verified_learnings": 8514,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17286,
+  "total_items": 17292,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112023,9 +112023,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a53bf741c3b21f4d48cb11cee4505a7e0b39f6c4fc0fbec02bf928f6d7cc99b3",
+      "content_hash": "62c8334e7f0fbe13ab15955dfa24ff857a7d7deb487eeca33c57ca3577096358",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T07:54:03.060Z"
+      "persisted_at": "2026-11-14T09:18:33.913Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112035,9 +112035,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b165e1c89b4582163b8c6e267e87e3637077ba86a202ae82feac7d61443881c",
+      "content_hash": "f9ccc33ee46bf88c4b58685e52874c4337204854413a9f06bb4afe46f08305df",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T07:54:03.174Z"
+      "persisted_at": "2026-11-14T09:18:34.024Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112047,9 +112047,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "561b75338e91403011db1985839d764603589926f7eba204ffd07758d641e517",
+      "content_hash": "6295367668a6e5b4dd7bd7b7d084f0376b9004e56523d6603437f0d855063e54",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T07:54:03.283Z"
+      "persisted_at": "2026-11-14T09:18:34.132Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -224271,13 +224271,13 @@
       "item_id": "candidate_directive-watcher-filter-access-events-before-queueing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0G1U-watcher-filter-access-events-before-queueing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-14QX-watcher-filter-access-events-before-queueing.md",
       "title": "watcher): filter access events before queueing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "81f83a6b394c87f2dd96ca68c1dd9d7672b14fbd47b20e90d3e5d869e33dfdcc",
+      "content_hash": "11c616e11d0ff5ef3594baaa6d9cd7fe5caa84e8fb9f904d2cb698a912b764e5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T07:54:02.958Z"
+      "persisted_at": "2026-11-14T09:18:33.813Z"
     },
     "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant": {
       "item_id": "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant",
@@ -226185,6 +226185,108 @@
       "content_hash": "f78a261294cfa74b8a109274db40f5fc57d8278cc6b2e917319889b544eac36a",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T08:54:38.575Z"
+    },
+    "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
+      "learning_id": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "slug": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "content_hash": "50c4ab9d3612d8bb692a137c5d927c8e9cf61cd7b81000207454fc5afd7c6001",
+      "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T09:08:06.872Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-c": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-c",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-research-knowledge-intelligenc.md",
+      "title": "Research & Knowledge Intelligence: jonatasgrosman/wav2vec2-large-xlsr-53-japanese Core Invariants",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "content_hash": "6da33bf853432d92fff24ace8d85317edbb9b084e49c43a8d6c4c4c7d2fef5af",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T09:08:07.192Z"
+    },
+    "learn-huggingface-laion-clap-htsat-fused": {
+      "learning_id": "learn-huggingface-laion-clap-htsat-fused",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "laion/clap-htsat-fused",
+      "repository": "laion/clap-htsat-fused",
+      "slug": "hf-laion-clap-htsat-fused",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/laion/clap-htsat-fused",
+      "source_version": "hf-laion-clap-htsat-fused",
+      "content_hash": "55b4ffd0dcc8a49077c808dd8df372d39dac7f22a180987138a86042cb10a905",
+      "dossier_path": "07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T09:18:01.140Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-laion-clap-htsat-fused-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-laion-clap-htsat-fused-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-laion-clap-htsat-fused-research-knowledge-intelligence-laion-clap-htsat-fused.md",
+      "title": "Research & Knowledge Intelligence: laion/clap-htsat-fused Core Invariants",
+      "repository": "laion/clap-htsat-fused",
+      "source_version": "hf-laion-clap-htsat-fused",
+      "content_hash": "d3fa518e1b070efcf43ef50c4ea09a8f082a0088445e4ba0e9ea19e55be14a51",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T09:18:01.452Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-laion-clap-htsat-fused-learnings-core-invaria": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-laion-clap-htsat-fused-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-laion-clap-htsat-fused-learnings-research-knowledge-intelligence-hf-laion-cla.md",
+      "title": "Research & Knowledge Intelligence: hf-laion-clap-htsat-fused-learnings Core Invariants",
+      "repository": "hf-laion-clap-htsat-fused-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b2e5451260a3c8535cf2bbe04fc0c2637e98d4061e8bd0ef463f03a191af1259",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T09:18:33.146Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanes": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanes",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings-research-knowledge-i.md",
+      "title": "Research & Knowledge Intelligence: hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings Core Invariants",
+      "repository": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f5d8c2b833efe3e317eaa76c15404b581322a898339f910fb34e07d712c50066",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T09:18:33.453Z"
     }
   },
   "ai-builder-brain": {

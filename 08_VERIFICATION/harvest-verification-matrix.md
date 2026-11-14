@@ -9797,3 +9797,6 @@
 | `CYCLE-20261114-4WU0` | `2026-11-14T08:53:30.552Z` | `DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8474, Rule 8475, Rule 8476` | Yes (`527aa960...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T08:54:02.005Z` | `hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-DC52FF61` [Domain H] | Yes (`5f76ef99...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T08:54:37.318Z` | `hf-baai-bge-reranker-v2-m3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-538CE636` [Domain H] | Yes (`76f35927...`) |
+| `CYCLE-20261114-NP4L` | `2026-11-14T09:08:07.029Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`50c4ab9d...`) |
+| `CYCLE-20261114-0FNV` | `2026-11-14T09:18:01.291Z` | `laion/clap-htsat-fused` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md` | Yes (`55b4ffd0...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T09:18:32.951Z` | `hf-laion-clap-htsat-fused` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7AAC58BB` [Domain D] | Yes (`dbaeebf0...`) |

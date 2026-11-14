@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-NARL",
-    "timestamp": "2026-11-13T11:40:06.081Z",
-    "repository": "pointfreeco/sqlite-data",
-    "learningId": "learn-github-pointfreeco-sqlite-data",
-    "contentHash": "ee80359e8d876225dce2e96e7249419768db1d6b8d88ebecbd27ed3c54ef2ce3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-NMBM",
-    "timestamp": "2026-11-13T11:40:21.058Z",
-    "repository": "krakend/krakend-ce",
-    "learningId": "learn-github-krakend-krakend-ce",
-    "contentHash": "3af1175a98fca7285c72c62af0f2d2aad0ec8ca86a020a8521217df39ef104d3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-732E",
     "timestamp": "2026-11-13T11:55:29.222Z",
     "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
@@ -7492,6 +7462,36 @@
     "contentHash": "527aa9603848b11eafabb7aa0d3fef0a19bbf7934d9bbee197d6b0346e1f8ac0",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-NP4L",
+    "timestamp": "2026-11-14T09:08:07.029Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "contentHash": "50c4ab9d3612d8bb692a137c5d927c8e9cf61cd7b81000207454fc5afd7c6001",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-0FNV",
+    "timestamp": "2026-11-14T09:18:01.291Z",
+    "repository": "laion/clap-htsat-fused",
+    "learningId": "learn-huggingface-laion-clap-htsat-fused",
+    "contentHash": "55b4ffd0dcc8a49077c808dd8df372d39dac7f22a180987138a86042cb10a905",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
