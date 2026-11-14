@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T17:25:24.328Z",
+  "updated_at": "2026-11-14T17:40:48.388Z",
   "stats": {
-    "total_discovered": 3342,
-    "approved_pending_harvest": 3137,
+    "total_discovered": 3346,
+    "approved_pending_harvest": 3141,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3119,
+      "COMMUNITY_AND_EXPERT": 3123,
       "OFFICIAL_DOCUMENTATION": 122,
       "STANDARDS_AND_SPECIFICATIONS": 87,
       "ENGINEERING_BLOGS": 1,
@@ -72109,6 +72109,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
         "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-EB91FC08F1D0": {
+      "id": "SRC-EB91FC08F1D0",
+      "url": "https://github.com/pola-rs/polars/issues/16057",
+      "title": "https://github.com/pola-rs/polars/issues/16057",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T17:40:13.095Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
+        "fileName": "pola-rs-polars-learnings.md"
+      }
+    },
+    "SRC-4C03269D7F1A": {
+      "id": "SRC-4C03269D7F1A",
+      "url": "https://huggingface.co/canberkkkkkk/ema-lightning",
+      "title": "https://huggingface.co/canberkkkkkk/ema-lightning",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T17:40:47.863Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
+        "fileName": "hf-canberkkkkkk-ema-lightning-learnings.md"
+      }
+    },
+    "SRC-AE42333CC2DF": {
+      "id": "SRC-AE42333CC2DF",
+      "url": "https://github.com/yugabyte/yugabyte-db/commit/61e8975d220",
+      "title": "https://github.com/yugabyte/yugabyte-db/commit/61e8975d220",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T17:40:48.361Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-9C424682C0EC": {
+      "id": "SRC-9C424682C0EC",
+      "url": "https://github.com/yugabyte/yugabyte-db/commit/c3a597f64a3",
+      "title": "https://github.com/yugabyte/yugabyte-db/commit/c3a597f64a3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T17:40:48.388Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
+        "fileName": "yugabyte-yugabyte-db-learnings.md"
       }
     }
   }

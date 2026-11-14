@@ -655,8 +655,8 @@
     "sourceUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
     "sourceVersion": "hf-canberkkkkkk-ema-lightning",
     "license": "Open-Source",
-    "contentHash": "8298b4515580f5b9df2c7cbec3fc38146427b53861907e29c7e6b97398e4d887",
-    "lastHarvestedAt": "2026-11-09T06:32:27.522Z",
+    "contentHash": "4110c666b5c220b4bc9f6c02f26475bf71ed0ca04bbbaed355d283da9c87b070",
+    "lastHarvestedAt": "2026-11-14T17:39:52.213Z",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning"
   },
   "hf-google-embeddinggemma-2": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "e79f26cb",
+    "sourceVersion": "ded6b58d",
     "license": "NOASSERTION",
-    "contentHash": "681e4acb259912ecdbfcfee03196f6d3489917ffd30a555c05333bfde8ea2b6d",
-    "lastHarvestedAt": "2026-11-13T12:08:43.166Z",
+    "contentHash": "66e4803fcf43bdb062ae2c20fdf1bfef78639e4e817caac7b6bf009b3e9a3005",
+    "lastHarvestedAt": "2026-11-14T17:40:09.683Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "548e19a3",
+    "sourceVersion": "2d9938df",
     "license": "MIT",
-    "contentHash": "ca1e324c6534d227e1fa5021aa8d15ade23505296908a2f6593f31d3176d583b",
-    "lastHarvestedAt": "2026-11-13T03:48:17.481Z",
+    "contentHash": "84151206900a16dd4e1aa02b2a5cf3bb1230660df89499a00f993dbcd9db405b",
+    "lastHarvestedAt": "2026-11-14T17:39:55.388Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {

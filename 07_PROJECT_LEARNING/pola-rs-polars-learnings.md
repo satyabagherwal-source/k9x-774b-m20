@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `548e19a3`  
+> **Source Version**: `2d9938df`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T03:48:06.042Z  
+> **Timestamp**: 2026-11-14T17:39:54.306Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T03:48:06.036Z  
+> **Harvest Timestamp**: 2026-11-14T17:39:54.298Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40341 stars
+- **Stars / Engagement**: 40340 stars
 
 ---
 
@@ -1697,11 +1697,11 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #30755** (2026-11-13): **SQL `DELETE` on an Iceberg catalog table fails where `UPDATE` works (partly matched files)**
+  *Symptoms*: ### Description  Found and written with AI, human verified.  SQL `DELETE` on an Iceberg table of an attached catalog fails in two cases where `UPDATE` and `MERGE` work. Both come from how `DELETE` rewrites the data files that only some of its rows match. It hands that rewrite to PyIceberg's `delete`, while `UPDATE` and `MERGE` rewrite files through the Polars sink.  1. The partition spec has two fields on one column, e.g. `bucket(2, id), bucket(3, id)`, or `day(ts), hour(ts)` after partition evolution. PyIceberg's writer refuses that spec: `ValueError: Cannot have redundant partitions`. Nothing is deleted. 2. The `DELETE` drops some files whole and rewrites others. The commit then holds two snapshots. Some REST catalogs refuse that (seen on Unity Catalog: "Adding multiple snapshots in a single update is not supported").  ### Reproducible example  ```python import tempfile  import polars as pl from pyiceberg.catalog.sql import SqlCatalog  d = tempfile.mkdtemp() catalog = SqlCatalog("lake", uri=f"sqlite:///{d}/catalog.db", warehouse=f"file://{d}") catalog.create_namespace("ns") ctx = pl.SQLContext().register_catalog("lake", catalog, default_namespace="ns", default=True)  ctx.execute("CREATE TABLE t (id BIGINT, s VARCHAR) PARTITION BY (bucket(2, id), bucket(3, id))") ctx.execute("INSERT INTO t VALUES (1, 'a'), (1, NULL), (2, 'b')") ctx.execute("UPDATE t SET s = 'u' WHERE s = 'a'")  # works ctx.execute("DELETE FROM t WHERE s IS NULL")  # fails ```  ``` ValueError: Cannot have red
+
 - **Issue #30695** (2026-11-10): **`LazyFrame.unnest` followed by a struct field read of another column loses or swaps column values (main)**
   *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  (Not in a release: 2.1.0 and 2.0.0 are correct. It is on main, 09251856d4.)  ### Reproducible example  ```python import polars as pl  # 1. in-memory engine: column `a` is lost and `t` appears twice lf = pl.LazyFrame({"s": [{"a": 1}], "t": [{"p": 2, "q": 3}]}) q = lf.unnest("s").with_columns(t=pl.col("t").struct.field("p")) print(q.collect_schema().names()) # ['a', 't'] print(q.collect(engine="in-memory")) # shape: (1, 2) # ┌───────────┬─────┐ # │ t         ┆ t   │ # │ ---       ┆ --- │ # │ struct[2] ┆ i64 │ # ╞═══════════╪═════╡ # │ {2,3}     ┆ 2   │ # └───────────┴─────┘ print(q.collect().columns)  # streaming # ['t', 'a']  # 2. streaming engine: two joins after the unnest swap the values of `a` and `b` lf = pl.LazyFrame({"k": [1], "s": [{"a": {"p": 1, "q": 2}}], "b": [{"p": 100, "q": 200}]}) other = pl.LazyFrame({"k": [1]}) q = lf.unnest("s").join(other, on="k").join(other, on="k").select("a", pl.col("b").struct.field("p")) print(q.collect().to_dict(as_series=False)) # {'a': [{'p': 100, 'q': 200}], 'p': [1]} # expected {'a': [{'p': 1, 'q': 2}], 'p': [100]} ```  ### Log output  Plan of the first query on main; the scan is projected to `["t", "s"]`, so the unnest returns `[t, a]` while the schema above it is `[a, t]`:  ```shell  WITH_COLUMNS:  [col("t").struct.field_by_name(p)().alias("t")]
-
-- **Issue #30673** (2026-11-10): **Lazy `col.slice(1, 2).head(2)` applies the slice twice**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  lf = pl.LazyFrame({"a": [1, 2, 3, 4, 5]}) print(lf.select(pl.col("a").slice(1, 2).head(2)).collect()["a"].to_list()) # [3], expected [2, 3] ```  ### Log output  With `scan_parquet` as the source, the plan shows both slices:  ```shell SELECT [col("a").slice(offset=1, length=2)]   Parquet SCAN [x.parquet]   PROJECT */1 COLUMNS   SLICE: Positive { offset: 1, len: 2 } ```  ### Issue description  When every column of a lazy `select` is sliced, the slice is moved below the `select`, but the expression slice stays, so the rows are sliced twice. It happens when an outer `head`/`limit`/`slice` doesn't shorten the inner slice (`slice(1, 2).head(5)` also gives `[3]`, `slice(1, 1).head(1)` gives `[]`), and a negative outer slice over an elementwise expression returns other rows: `pl.col("a").abs().slice(1).tail(2)` gives `[3, 4]` instead of `[4, 5]`. Next to a second sliced column (`b = a * 10`, `pl.col("b").slice(1, 2)`), the in-memory engine raises `ShapeError` and the streaming engine broadcasts the short column, giving rows that don't line up: `[(3, 20), (3, 30)]` instead of `[(2, 20), (3, 30)]`. Both engines are affected; the eager `df.select(...)` and `QueryOptFlags(slice_pushdown=False)` give the right answer.  This is the expression slice
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1718,489 +1718,239 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fad42ed7` (2026-11-12)
-**Commit Message**: fix: GeoParquet default CRS, early errors, and user geo key pref (#30735)
+### Incident Patch 1: `8cb46300` (2026-11-13)
+**Commit Message**: fix: Return null instead of silent overflow for temporal total_ functions (#30743)
 
-**File**: `crates/polars-io/src/parquet/write/key_value_metadata.rs` (modified, +10/-0)
+**File**: `crates/polars-time/src/chunkedarray/duration.rs` (modified, +3/-3)
 ```diff
-@@ -99,6 +99,16 @@ impl KeyValueMetadata {
-             Self::DynamicPython(py_func) => py_func.call(ctx),
+@@ -117,7 +117,7 @@ impl DurationMethods for DurationChunked {
+     /// Extract the microseconds from a `Duration`
+     fn microseconds(&self) -> Int64Chunked {
+         match self.time_unit() {
+-            TimeUnit::Milliseconds => &self.phys * 1000,
++            TimeUnit::Milliseconds => (&self.phys).checked_mul_scalar(1000),
+             TimeUnit::Microseconds => self.phys.clone(),
+             TimeUnit::Nanoseconds => (&self.phys).wrapping_trunc_div_scalar(1000),
+         }
+@@ -132,8 +132,8 @@ impl DurationMethods for DurationChunked {
+     /// Extract the nanoseconds from a `Duration`
+     fn nanoseconds(&self) -> Int64Chunked {
+         match self.time_unit() {
+-            TimeUnit::Milliseconds => &self.phys * NANOSECONDS_IN_MILLISECOND,
+-            TimeUnit::Microseconds => &self.phys * 1000,
++            TimeUnit::Milliseconds => (&self.phys).checked_mul_scalar(NANOSECONDS_IN_MILLISECOND),
++            TimeUnit::Microseconds => (&self.phys).checked_mul_scalar(1000),
+             TimeUnit::Nanoseconds => self.phys.clone(),
          }
      }
-+
-+    /// Whether the metadata may set `key`; dynamic metadata is only known when the file is finished.
-+    pub fn may_contain(&self, key: &str) -> bool {
-+        match self {
-+            Self::Static(kv) => kv.iter().any(|kv| kv.key == key),
-+            Self::DynamicRust(_) => true,
-+            #[cfg(feature = "python")]
-+            Self::DynamicPython(_) => true,
-+        }
-+    }
- }
- 
- #[derive(Clone)]
 ```
 
-**File**: `crates/polars-io/src/parquet/write/writer.rs` (modified, +10/-0)
+**File**: `py-polars/tests/unit/operations/namespaces/temporal/test_datetime.py` (modified, +20/-35)
 ```diff
-@@ -4,6 +4,7 @@ use std::sync::Mutex;
- use polars_buffer::Buffer;
- use polars_core::frame::chunk_df_for_writing;
- use polars_core::prelude::*;
-+use polars_parquet::arrow::geo::{GEO_KEY, validate_geo_schema};
- use polars_parquet::write::{
-     CompressionOptions, Encoding, FileWriter, StatisticsOptions, Version, WriteOptions,
-     get_dtype_encoding, to_parquet_schema,
-@@ -128,6 +129,15 @@ where
- 
-     pub fn batched(self, schema: &Schema) -> PolarsResult<BatchedWriter<W>> {
-         let schema = schema_to_arrow_checked(schema, CompatLevel::newest(), "parquet")?;
-+        // Metadata that may set its own `geo` key skips the early checks.
-+        // errors are only emitted at file end, because that's when the callable's keys are known.
-+        if !self
-+            .key_value_metadata
-+            .as_ref()
-+            .is_some_and(|kv| kv.may_contain(GEO_KEY))
-+        {
-+            validate_geo_schema(&schema)?;
-+        }
-         let parquet_schema = to_parquet_schema(&schema)?;
-         let encodings = get_encodings(&schema);
-         let options = self.materialize_options();
-```
-
-**File**: `crates/polars-parquet/src/arrow/geo.rs` (modified, +102/-32)
-```diff
-@@ -1,11 +1,14 @@
- //! Conversion between GeoParquet `geo` file metadata and GeoArrow extension types.
--use polars_arrow::datatypes::{ArrowDataType, ArrowSchema, ExtensionType, Metadata};
-+use polars_arrow::datatypes::{ArrowDataType, ArrowSchema, ExtensionType, Field, Metadata};
- use polars_error::{PolarsResult, polars_bail, polars_err, polars_warn};
- use serde_json::{Map, Value, json};
- 
- use crate::parquet::metadata::KeyValue;
- 
--const GEO_KEY: &str = "geo";
-+pub const GEO_KEY: &str = "geo";
-+
-+/// The geoparquet spec states that something that has no `crs` key should be considered "OGC: CRS84".
-+const DEFAULT_CRS: &str = "OGC:CRS84";
- 
- struct Encoding {
-     geoparquet: &'static str,
-@@ -49,24 +52,30 @@ const ENCODINGS: [Encoding; 7] = [
-     native("multipolygon", "geoarrow.multipolygon", "MultiPolygon", 3),
- ];
- 
-+/// Returns the fields of the coordinate struct inside `dtype`, `None` for WKB.
-+fn coordinate_fields<'a>(encoding: &Encoding, mut dtype: &'a ArrowDataType) -> Option<&'a [Field]> {
-+    for _ in 0..encoding.list_depth? {
-+        dtype = match dtype {
-+            ArrowDataType::List(f) | ArrowDataType::LargeList(f) => &f.dtype,
-+            _ => return None,
-+        };
-+    }
-+    match dtype {
-+        ArrowDataType::Struct(fields) => Some(fields),
-+        _ => None,
-+    }
-+}
-+
- /// Returns `Some(has_z)` if `dtype` is a valid storage type for `encoding`.
--fn check_storage(encoding: &Encoding, mut dtype: &ArrowDataType) -> Option<bool> {
--    let Some(list_depth) = encoding.list_depth else {
-+fn check_storage(encoding: &Encoding, dtype: &ArrowDataType) -> Option<bool> {
-+    if encoding.list_depth.is_none() {
-         return matches!(
-             dtype,
-             ArrowDataType::Binary | ArrowDataType::LargeBinary | ArrowDataType::BinaryView
-         )
-         .then_some(false);
--    };
--    for _ in 0..list_depth {
--        dtype = match dtype {
--            ArrowDataType::List(f) | ArrowDataType::LargeList(f) => &f.dtype,
--            _ => return None,
--        };
-     }
--    let ArrowDataType::Struct(fields) = dtype else {
--        return None;
--    };
-+    let fields = coordinate_fields(encoding, dtype)?;
-     let valid = (2..=3).contains(&fields.len())
-         && fields
-             .iter()
-@@ -130,7 +139,18 @@ pub fn apply_geo_metadata(metadata: &Metadata, schema: &mut ArrowSchema) {
-         }
- 
-         let mut ext_metadata = Map::new();
--        for key in ["crs", "edges", "epoch"] {
-+        match column.get("crs") {
-+            None => {
-+                ext_metadata.insert("crs".into(), DEFAULT_CRS.into());
-+            },
-+            // Geoarrow designates an 'unknown' CRS by leaving `crs` out,
-+            // while GeoParquet explicitly writes it as `Null`.
-+            Some(Value::Null) => {},
-+            Some(crs) => {
-+                ext_metadata.insert("crs".into(), crs.clone());
-+            },
-+        }
-+        for key in ["edges", "epoch"] {
-             if let Some(value) = column.get(key) {
-                 ext_metadata.insert(key.into(), value.clone());
-             }
-@@ -145,9 +165,15 @@ pub fn apply_geo_metadata(metadata: &Metadata, schema: &mut ArrowSchema) {
-     }
- }
- 
-+/// Called once per write, before any file is opened.
-+pub fn validate_geo_schema(schema: &ArrowSchema) -> PolarsResult<()> {
-+    geo_key_value(schema)?;
-+    Ok(())
-+}
-+
- /// Builds the GeoParquet `geo` metadata for the GeoArrow columns in `schema` if
- /// `POLARS_GEOPARQUET_WRITE` is set to `1.0` or `1.1`.
--pub fn geo_key_value(schema: &ArrowSchema) -> PolarsResult<Option<KeyValue>> {
-+pub(crate) fn geo_key_value(schema: &ArrowSchema) -> PolarsResult<Option<KeyValue>> {
-     let version = match std::env::var("POLARS_GEOPARQUET_WRITE").as_deref() {
-         Err(_) | Ok("") => return Ok(None),
-         Ok("1.0") => "1.0.0",
-@@ -177,21 +203,21 @@ pub fn geo_key_value(schema: &ArrowSchema) -> PolarsResult<Option<KeyValue>> {
-                 )
-             })?;
-         let has_z = check_storage(encoding, &ext.inner).ok_or_else(|| {
-+            let has_m = coordinate_fields(encoding, &ext.inner)
-+                .is_some_and(|fields| fields.iter().any(|f| f.name == "m"));
-+            if has_m {
-+                return polars_err!(
-+                    InvalidOperation: "cannot write column '{}' as GeoParquet {}: it cannot store M values",
-+                    name, version
-+                );
-+            }
-             polars_err!(
-                 InvalidOperation: "cannot write column '{}' as GeoParquet: storage type {:?} does not match '{}'",
-                 name, ext.inner, ext.name
-             )
-         })?;
- 
--        let ext_metadata = match ext.metadata.as_deref() {
--            None => Map::new(),
--            Some(md) => match serde_json::from_str(md) {
--                Ok(Value::Object(md)) => md,
--                _ => polars_bail!(
--                    InvalidOperation: "cannot write column '{}' as GeoParquet: invalid extension metadata", name
--                ),
--
-```
-
-**File**: `crates/polars-parquet/src/arrow/write/file.rs` (modified, +3/-3)
-```diff
-@@ -9,7 +9,7 @@ use polars_utils::version::{
- 
- use super::schema::schema_to_metadata_key;
- use super::{ThriftFileMetadata, WriteOptions, to_parquet_schema};
--use crate::arrow::geo::geo_key_value;
-+use crate::arrow::geo::{GEO_KEY, geo_key_value};
- use crate::parquet::encryption::encrypt::FileEncryptionProperties;
- use crate::parquet::metadata::{KeyValue, SchemaDescriptor};
- use crate::parquet::write::{RowGroupIterColumns, WriteOptions as FileWriteOptions};
-@@ -116,8 +116,8 @@ impl<W: Write> FileWriter<W> {
-     pub fn end(&mut self, key_value_metadata: Option<Vec<KeyValue>>) -> PolarsResult<u64> {
-         let mut key_value_metadata =
-             key_value_metadata.unwrap_or_else(|| vec![schema_to_metadata_key(&self.schema)]);
--        if let Some(geo) = geo_key_value(&self.schema)?
--            && !key_value_metadata.iter().any(|kv| kv.key == geo.key)
-+        if !key_value_metadata.iter().any(|kv| kv.key == GEO_KEY)
-+            && let Some(geo) = geo_key_value(&self.schema)?
-         {
-             key_value_metadata.push(geo);
-         }
-```
-
-**File**: `crates/polars-stream/src/nodes/io_sinks/writers/parquet/mod.rs` (modified, +12/-0)
-```diff
-@@ -8,6 +8,7 @@ use polars_buffer::Buffer;
- use polars_core::runtime::ASYNC;
- use polars_error::PolarsResult;
- use polars_io::prelude::{ParquetWriteOptions, get_encodings};
-+use polars_parquet::arrow::geo::{GEO_KEY, validate_geo_schema};
- use polars_parquet::write::{
-     CompressedPage, Encoding, SchemaDescriptor, Version, WriteOptions, to_parquet_schema,
- };
-@@ -36,6 +37,17 @@ impl ParquetWriterStarter {
-         options: Arc<ParquetWriteOptions>,
-         arrow_schema: ArrowSchemaRef,
-     ) -> PolarsResult<Self> {
-+        // Metadata that may set its own `geo` key skips the early checks,
-+        // as that key replaces the derived one.
-+        // A callable's keys are only known when each file ends,
-+        // so for a callable any error comes from `FileWriter::end`.
-+        if !options
-+            .key_value_metadata
-+            .as_ref()
-+            .is_some_and(|kv| kv.may_contain(GEO_KEY))
-+        {
-+            validate_geo_schema(&arrow_schema)?;
-+        }
-         let initialized_state = match &options.encryption {
-             Some(encryption) => {
-                 // Check the encrypted columns exist before any file is opened, rather than
-```
-
-**File**: `py-polars/tests/unit/io/test_geoparquet.py` (modified, +142/-10)
-```diff
-@@ -12,13 +12,18 @@
- import polars as pl
- 
- if TYPE_CHECKING:
-+    from pathlib import Path
-+
-     from polars._typing import PolarsDataType
-     from tests.conftest import PlMonkeyPatch
- 
- POINT_WKB = struct.pack("<bIdd", 1, 1, 1.0, 2.0)
- PROJJSON = {"type": "GeographicCRS", "name": "WGS 84"}
-+CRS84 = {"crs": "OGC:CRS84"}
- XY = pl.Struct({"x": pl.Float64, "y": pl.Float64})
- XYZ = pl.Struct({"x": pl.Float64, "y": pl.Float64, "z": pl.Float64})
-+XYM = pl.Struct({"x": pl.Float64, "y": pl.Float64, "m": pl.Float64})
-+XYZM = pl.Struct(dict.fromkeys(["x", "y", "z", "m"], pl.Float64))
+@@ -432,6 +432,26 @@ def test_duration_extract_times(
+     assert_series_equal(getattr(duration.dt, unit_attr)(), expected)
  
  
- def _write_geo(table: pa.Table, version: str, columns: dict[str, Any]) -> io.BytesIO:
-@@ -35,11 +40,23 @@ def _ext(dtype: PolarsDataType) -> tuple[str, PolarsDataType, Any]:
-     return dtype.ext_name(), dtype.ext_storage(), None if md is None else json.loads(md)
- 
- 
-+def _metadata(source: io.BytesIO | Path) -> dict[bytes, bytes]:
-+    where = (
-+        pa.BufferReader(source.getvalue()) if isinstance(source, io.BytesIO) else source
++def test_duration_extract_times_overflow_16057() -> None:
++    s_us = pl.Series(
++        [timedelta(days=106752), timedelta(days=1), timedelta(days=-106752)],
++        dtype=pl.Duration("us"),
 +    )
-+    metadata: dict[bytes, bytes] = pq.read_metadata(where).metadata
-+    return metadata
-+
-+
-+def _read_geo(source: io.BytesIO | Path) -> Any:
-+    metadata = _metadata(source)
-+    return json.loads(metadata[b"geo"]) if b"geo" in metadata else None
-+
-+
- def _geo_metadata(df: pl.DataFrame) -> Any:
-     buf = io.BytesIO()
-     df.write_parquet(buf)
--    metadata = pq.read_metadata(pa.BufferReader(buf.getvalue())).metadata
--    return json.loads(metadata[b"geo"]) if b"geo" in metadata else None
-+    return _read_geo(buf)
- 
- 
- def test_read_geoparquet_1_0(plmonkeypatch: PlMonkeyPatch) -> None:
-@@ -56,8 +73,8 @@ def test_read_geoparquet_1_0(plmonkeypatch: PlMonkeyPatch) -> None:
- 
-     plmonkeypatch.setenv("POLARS_GEOPARQUET_READ", "1")
-     df = pl.read_parquet(buf)
--    assert _ext(df.schema["a"]) == ("geoarrow.wkb", pl.Binary, None)
--    assert _ext(df.schema["b"]) == ("geoarrow.wkb", pl.Binary, {"crs": None})
-+    assert _ext(df.schema["a"]) == ("geoarrow.wkb", pl.Binary, CRS84)
-+    assert _ext(df.schema["b"]) == ("geoarrow.wkb", pl.Binary, None)
-     assert _ext(df.schema["c"]) == (
-         "geoarrow.wkb",
-         pl.Binary,
-@@ -75,8 +92,8 @@ def test_read_geoparquet_1_1_native(plmonkeypatch: PlMonkeyPatch) -> None:
-     }
-     plmonkeypatch.setenv("POLARS_GEOPARQUET_READ", "1")
-     df = pl.read_parquet(_write_geo(table, "1.1.0", columns))
--    assert _ext(df.schema["a"]) == ("geoarrow.point", XY, None)
--    assert _ext(df.schema["b"]) == ("geoarrow.linestring", pl.List(XYZ), None)
-+    assert _ext(df.schema["a"]) == ("geoarrow.point", XY, CRS84)
-+    assert _ext(df.schema["b"]) == ("geoarrow.linestring", pl.List(XYZ), CRS84)
-     assert df["a"].ext.storage().to_list() == [point]
- 
- 
-@@ -108,21 +125,62 @@ def test_write_geoparquet(plmonkeypatch: PlMonkeyPatch) -> None:
-         "columns": {
-             "a": a,
-             "b": {**wkb, "crs": None},
--            "c": {"encoding": "multipoint", "geometry_types": ["MultiPoint Z"]},
-+            "c": {
-+                "encoding": "multipoint",
-+                "geometry_types": ["MultiPoint Z"],
-+                "crs": None,
-+            },
-         },
-     }
- 
-     buf = io.BytesIO()
-     df.write_parquet(buf)
-     plmonkeypatch.setenv("POLARS_GEOPARQUET_READ", "1")
-     out = pl.read_parquet(buf.getvalue())
--    for name in df.columns:
-+    # A `null` CRS reads back as no CRS at all, both meaning it is unknown.
-+    for name in "ac":
-         assert _ext(out.schema[name]) == _ext(df.schema[name])
-+    assert _ext(out.schema["b"]) == ("geoarrow.wkb", pl.Binary, None)
-     assert out.select(pl.all().ext.storage()).rows() == [
-         (POINT_WKB, POINT_WKB, [{"x": 1.0, "y": 2.0, "z": 3.0}])
-     ]
- 
- 
-+@pytest.mark.parametrize(
-+    ("metadata", "written", "read"),
-+    [
-+        (None, {"crs": None}, None),
-+        ({"crs": None}, {"crs": None}, None),
-+        (CRS84, {}, CRS84),
-+        ({**CRS84, "crs_type": "authority_code"}, {}, CRS84),
-+        ({"crs": {**PROJJSON, "id": {"authority": "OGC", "code": "CRS84"}}}, {}, CRS84),
-+        ({"crs": PROJJSON}, {"crs": PROJJSON}, {"crs": PROJJSON}),
-+    ],
-+)
-+def test_geoparquet_crs_round_trip(
-+    plmonkeypatch: PlMonkeyPatch,
-+    metadata: dict[str, Any] | None,
-+    written: dict[str, Any],
-+    read: dict[str, Any] | None,
-+) -> None:
-+    md = None if metadata is None else json.dumps(metadata)
-+    df = pl.DataFrame(
-+        {"a": [POINT_WKB]}, schema={"a": pl.Extension("geoarrow.wkb", pl.Binary, md)}
++    assert_series_equal(
++        s_us.dt.total_nanoseconds(),
++        pl.Series([None, 86400 * 10**9, None], dtype=pl.Int64),
 +    )
-+    plmonkeypatch.setenv("POLARS_GEOPARQUET_WRITE", "1.1")
-+    assert _geo_metadata(df)["columns"]["a"] == {
-+        "encoding": "WKB",
-+        "geometry_types": [],
-+        **written,
-+    }
 +
-+    buf = io.BytesIO()
-+    df.write_parquet(buf)
-+    plmonkeypatch.setenv("POLARS_GEOPARQUET_READ", "1")
-+    out = pl.read_parquet(buf.getvalue())
-+    assert _ext(out.schema["a"]) == ("geoarrow.wkb", pl.Binary, read)
++    s_ms = pl.Series([2**62, 1, -(2**62)], dtype=pl.Int64).cast(pl.Duration("ms"))
++    assert_series_equal(
++        s_ms.dt.total_microseconds(), pl.Series([None, 1000, None], dtype=pl.Int64)
++    )
++    assert_series_equal(
++        s_ms.dt.total_nanoseconds(),
++        pl.Series([None, 1_000_000, None], dtype=pl.Int64),
++    )
 +
 +
  @pytest.mark.parametrize(
-     ("version", "dtype", 
+     ("time_unit", "every"),
+     [
+@@ -1416,41 +1436,6 @@ def test_agg_median_expr() -> None:
+     assert_frame_equal(df.select(pl.all().median()), expected)
+ 
+ 
+-@given(
+-    s=series(min_size=1, max_size=10, dtype=pl.Duration),
+-)
+-@pytest.mark.skip(
+-    "These functions are currently bugged for large values: "
+-    "https://github.com/pola-rs/polars/issues/16057"
+-)
+-def test_series_duration_timeunits(
+-    s: pl.Series,
+-) -> None:
+-    nanos = s.dt.total_nanoseconds().to_list()
+-    micros = s.dt.total_microseconds().to_list()
+-    millis = s.dt.total_milliseconds().to_list()
+-
+-    scale = {
+-        "ns": 1,
+-        "us": 1_000,
+-        "ms": 1_000_000,
+-    }
+-    assert nanos == [v * scale[s.dtype.time_unit] for v in s.to_physical()]  # type: ignore[attr-defined]
+-    assert micros == [int(v / 1_000) for v in nanos]
+-    assert millis == [int(v / 1_000) for v in micros]
+-
+-    # special handling for ns timeunit (as we may generate a microsecs-based
+-    # timedelta that results in 64bit overflow on conversion to nanosecs)
+-    lower_bound, upper_bound = -(2**63), (2**63) - 1
+-    if all(
+-        (lower_bound <= (us * 1000) <= upper_bound)
+-        for us in micros
+-        if isinstance(us, int)
+-    ):
+-        for ns, us in zip(s.dt.total_nanoseconds(), micros, strict=True):
+-            assert ns == (us * 1000)
+-
+-
+ @given(
+     s=series(min_size=1, max_size=10, dtype=pl.Datetime, allow_null=False),
+ )
 ```
 
 ---
 
-### Incident Patch 2: `9c990c71` (2026-11-12)
-**Commit Message**: fix(python): Sync `prepare_cloud_plan` return type (#30733)
+### Incident Patch 2: `2d9938df` (2026-11-14)
+**Commit Message**: fix: Export the Arrow form of logical dtypes in `Series._export_arrow_to_c` (#30779)
 
-**File**: `py-polars/src/polars/_plr.pyi` (modified, +1/-1)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `crates/polars-python/src/series/c_interface.rs` (modified, +2/-6)
 ```diff
-@@ -2833,7 +2833,7 @@ def _unregister_extension_type(name: str) -> None: ...
- # cloud_client
- def prepare_cloud_plan(
-     lf: PyLazyFrame,
--) -> bytes: ...
-+) -> tuple[bytes, int]: ...
+@@ -50,15 +50,11 @@ unsafe fn export_chunk(
+ ) -> PolarsResult<()> {
+     polars_ensure!(s.chunks().len() == 1, InvalidOperation: "expect a single chunk");
  
- # cloud_server
- def _execute_ir_plan_with_gpu(ir_plan_ser: Sequence[int]) -> PyDataFrame: ...
+-    let c_array = polars_arrow::ffi::export_array_to_c(s.chunks()[0].clone());
++    let c_array = polars_arrow::ffi::export_array_to_c(s.to_arrow(0, CompatLevel::newest()));
+     let out_ptr = out_ptr as *mut polars_arrow::ffi::ArrowArray;
+     *out_ptr = c_array;
+ 
+-    let field = ArrowField::new(
+-        s.name().clone(),
+-        s.dtype().to_arrow(CompatLevel::newest()),
+-        true,
+-    );
++    let field = s.field().to_arrow(CompatLevel::newest());
+     let c_schema = polars_arrow::ffi::export_field_to_c(&field);
+ 
+     let out_schema_ptr = out_schema_ptr as *mut polars_arrow::ffi::ArrowSchema;
 ```
 
-**File**: `py-polars/src/polars/_utils/cloud.py` (modified, +6/-1)
+**File**: `py-polars/tests/unit/interop/test_interop.py` (modified, +20/-0)
 ```diff
-@@ -13,7 +13,7 @@ def prepare_cloud_plan(
-     lf: LazyFrame,
-     *,
-     optimizations: QueryOptFlags = DEFAULT_QUERY_OPT_FLAGS,
--) -> bytes:
-+) -> tuple[bytes, int]:
-     """
-     Prepare the given LazyFrame for execution on Polars Cloud.
- 
-@@ -24,6 +24,11 @@ def prepare_cloud_plan(
-     optimizations
-         Optimizations to enable or disable in the query optimizer.
- 
-+    Returns
-+    -------
-+    tuple[bytes, int]
-+        The serialized plan, and the bits of the optimization flags it carries.
+@@ -1861,3 +1861,23 @@ def test_series_from_arrow_large_list_keeps_fast_explode_28626(
+     assert imported.to_list() == values
+     assert imported.flags["FAST_EXPLODE"] is fast_explode
+     assert imported.explode(empty_as_null=True, keep_nulls=True).to_list() == exploded
 +
-     Raises
-     ------
-     InvalidOperationError
++
++@pytest.mark.parametrize(
++    "s",
++    [
++        pl.Series("a", ["x", "y", None, "x"], dtype=pl.Categorical),
++        pl.Series("a", ["x", "y", None, "x"], dtype=pl.Enum(["x", "y"])),
++        pl.Series("a", [["x", "y"], None], dtype=pl.List(pl.Categorical)),
++    ],
++)
++def test_export_arrow_to_c_logical_dtype(s: pl.Series) -> None:
++    import ctypes
++
++    # sizeof(struct ArrowArray) and sizeof(struct ArrowSchema) on 64-bit platforms.
++    c_array = ctypes.create_string_buffer(80)
++    c_schema = ctypes.create_string_buffer(72)
++    s._export_arrow_to_c(ctypes.addressof(c_array), ctypes.addressof(c_schema))
++    arr = pa.Array._import_from_c(ctypes.addressof(c_array), ctypes.addressof(c_schema))
++    arr.validate(full=True)
++    assert arr.equals(s.to_arrow(compat_level=CompatLevel.newest()))
 ```
 
 ---
 
-### Incident Patch 3: `655f0052` (2026-11-12)
-**Commit Message**: fix(python): Support numpy 0.28 and builds without the cloud feature (#30722)
+### Incident Patch 3: `d3e37ceb` (2026-11-14)
+**Commit Message**: fix: Reject statements that are not queries in EXPLAIN (#30798)
 
-Co-authored-by: Damian Daniel <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-python/src/functions/io.rs` (modified, +8/-4)
+**File**: `crates/polars-sql/src/context.rs` (modified, +19/-1)
 ```diff
-@@ -37,7 +37,6 @@ pub fn read_parquet_metadata(
- ) -> PyResult<Py<PyDict>> {
-     use std::io::Cursor;
- 
--    use polars_error::feature_gated;
-     use polars_parquet::read::read_metadata;
-     use polars_parquet::read::schema::read_custom_key_value_metadata;
- 
-@@ -54,7 +53,12 @@ pub fn read_parquet_metadata(
-             )?;
- 
-             if p.has_scheme() {
--                feature_gated!("cloud", {
-+                #[cfg(not(feature = "cloud"))]
-+                return Err(pyo3::exceptions::PyNotImplementedError::new_err(
-+                    "cloud support is not enabled",
-+                ));
-+                #[cfg(feature = "cloud")]
-+                {
-                     use polars::prelude::ParquetObjectStore;
-                     use polars_error::PolarsResult;
- 
-@@ -67,8 +71,8 @@ pub fn read_parquet_metadata(
-                             PolarsResult::Ok((**result).clone())
-                         })
-                     })
--                })
--                .map_err(PyPolarsErr::from)?
-+                    .map_err(PyPolarsErr::from)?
-+                }
-             } else {
-                 let file =
-                     polars_utils::io::open_file(p.as_std_path()).map_err(PyPolarsErr::from)?;
+@@ -2430,7 +2430,25 @@ impl SQLContext {
+     fn execute_explain(&mut self, stmt: &Statement) -> PolarsResult<LazyFrame> {
+         match stmt {
+             Statement::Explain { statement, .. } => {
+-                let lf = self.execute_statement(statement)?;
++                // Any other statement would be run to get a plan: its table created,
++                // dropped or changed.
++                let query = match statement.as_ref() {
++                    Statement::Query(query)
++                        if !matches!(
++                            query.body.as_ref(),
++                            SetExpr::Insert(_)
++                                | SetExpr::Update(_)
++                                | SetExpr::Delete(_)
++                                | SetExpr::Merge(_)
++                        ) =>
++                    {
++                        query
++                    },
++                    _ => polars_bail!(
++                        SQLInterface: "EXPLAIN supports queries only; found:\n{}", statement,
++                    ),
++                };
++                let lf = self.execute_query(query)?;
+                 let plan = lf.describe_optimized_plan()?;
+                 let plan = plan
+                     .split('\n')
 ```
 
-**File**: `crates/polars-python/src/interop/numpy/utils.rs` (modified, +2/-2)
+**File**: `crates/polars-sql/tests/functions_meta.rs` (modified, +25/-0)
 ```diff
-@@ -3,7 +3,7 @@ use std::ffi::{c_int, c_void};
+@@ -33,3 +33,28 @@ fn test_describe() {
  
- use ndarray::{Dim, Dimension};
- use numpy::npyffi::PyArrayObject;
--use numpy::{Element, PY_ARRAY_API, PyArrayDescr, PyArrayDescrMethods, ToNpyDims, npyffi};
-+use numpy::{Element, PY_ARRAY_API, PyArrayDescr, PyArrayDescrMethods, ToNpyDims};
- use polars_core::prelude::*;
- use pyo3::intern;
- use pyo3::prelude::*;
-@@ -30,7 +30,7 @@ where
-     // See: https://numpy.org/doc/stable/reference/c-api/array.html
-     let array = PY_ARRAY_API.PyArray_NewFromDescr(
-         py,
--        npyffi::get_type_object(py, npyffi::NpyTypes::PyArray_Type),
-+        <numpy::PyArrayDyn<u8> as pyo3::PyTypeInfo>::type_object_raw(py),
-         dtype.into_dtype_ptr(),
-         shape.ndim_cint(),
-         shape.as_dims_ptr(),
+     assert_eq!(actual, expected);
+ }
++
++#[test]
++fn test_explain_does_not_run_other_statements() {
++    let mut context = SQLContext::new();
++    context.register("df", df! { "a" => [1, 2] }.unwrap().lazy());
++
++    for sql in [
++        "EXPLAIN DROP TABLE df",
++        "EXPLAIN CREATE TABLE other AS SELECT * FROM df",
++        "EXPLAIN INSERT INTO df VALUES (3)",
++        "EXPLAIN WITH q AS (SELECT 3 AS a) INSERT INTO df SELECT a FROM q",
++        "EXPLAIN TRUNCATE TABLE df",
++    ] {
++        let err = context.execute(sql).err().unwrap();
++        assert!(err.to_string().contains("EXPLAIN supports queries only"));
++    }
++
++    assert_eq!(context.get_tables(), ["df"]);
++    let df = context
++        .execute("SELECT * FROM df")
++        .unwrap()
++        .collect()
++        .unwrap();
++    assert_eq!(df.height(), 2);
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30736** (2026-11-12): feat: Geoparquet bbox metadata (@Aidavdw)
-- **PR #30735** (2026-11-12): fix: GeoParquet default CRS, early errors, and user geo key pref (@Aidavdw)
-- **PR #30733** (2026-11-12): fix(python): Sync `prepare_cloud_plan` return type (@carnarez)
-- **PR #30732** (2026-11-12): chore: Polars Nanook rebranding (@carnarez)
-- **PR #30731** (closed): fix: Fix `when().then(1).otherwise(-1)` returning null with unsigned columns (@ColonelToad)
-- **PR #30730** (closed): feat(python): add strict parameter to pl.datetime for silent failure (@LeonxLJX)
+- **PR #30798** (2026-11-14): fix: Reject statements that are not queries in EXPLAIN (@kdn36)
+- **PR #30797** (2026-11-14): feat: Support `Map` columns in Iceberg tables created by Polars (@kdn36)
+- **PR #30795** (2026-11-14): perf: Compute rolling_*_by windows outside the generic aggregation (@ritchie46)
+- **PR #30794** (2026-11-14): perf: Skip hashing and hot table lookups for runs of equal string keys (@ritchie46)
+- **PR #30791** (2026-11-14): fix: Do not read Iceberg column names as regex in `sink_iceberg` and SQL CTAS (@kdn36)
+- **PR #30790** (2026-11-14): perf: Build dictionaries in casts with u32 or u64 keys (@ritchie46)
 
 ---
 
@@ -2220,37 +1970,32 @@ Co-authored-by: Damian Daniel <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GeoParquet default CRS, early errors, and user geo key pref (#30735)
+## X. Return null instead of silent overflow for temporal total_ functions
 
 **RULE**:
-When implementing operations in `crates/polars-io/src/parquet/write/key_value_metadata.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-time/src/chunkedarray/duration.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fad42ed7`: GeoParquet default CRS, early errors, and user geo key pref (#30735). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8cb46300`: Return null instead of silent overflow for temporal total_ functions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-io/src/parquet/write/key_value_metadata.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-time/src/chunkedarray/duration.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-    /// Whether the metadata may set `key`; dynamic metadata is only known when the file is finished.
-    pub fn may_contain(&self, key: &str) -> bool {
-        match self {
-            Self::Static(kv) => kv.iter().any(|kv| kv.key == key),
-            Self::DynamicRust(_) => true,
-            #[cfg(feature = "python")]
-            Self::DynamicPython(_) => true,
-        }
-    }
+            TimeUnit::Milliseconds => (&self.phys).checked_mul_scalar(1000),
+            TimeUnit::Milliseconds => (&self.phys).checked_mul_scalar(NANOSECONDS_IN_MILLISECOND),
+            TimeUnit::Microseconds => (&self.phys).checked_mul_scalar(1000),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+            TimeUnit::Milliseconds => &self.phys * 1000,
+            TimeUnit::Milliseconds => &self.phys * NANOSECONDS_IN_MILLISECOND,
+            TimeUnit::Microseconds => &self.phys * 1000,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fad42ed7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8cb46300` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `e79f26cb`  
+> **Source Version**: `ded6b58d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T12:08:29.038Z  
+> **Timestamp**: 2026-11-14T17:40:08.604Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T12:08:29.032Z  
+> **Harvest Timestamp**: 2026-11-14T17:40:08.596Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10662 stars
+- **Stars / Engagement**: 10661 stars
 
 ---
 
@@ -2248,17 +2248,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #37834** (2026-11-13): **[PLAT-22789]**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/37834) <!-- Reviewable:end --> 
-  > No review: this PR changes 4276 lines (limit 3000). Consider splitting it into smaller pull requests, stacked if each builds on the one before, and asking again.
+- **Issue #37955** (2026-11-14): **[#37931] DocDB: Wait for leader readiness in snapshot preflush test**
+  *Symptoms*: ## Summary  Closes #37931.  `SnapshotTest.UnavailablePreflushReplicaDoesNotBlockQuorumWrites` looks up a ready leader immediately after table creation. The elected leader may not have committed its initial NO_OP yet, so `GetLeaderForTablet()` can return `nullptr` and fail the assertion.  Wait for leader readiness with `WaitUntilTabletHasLeader` and `RequireLeaderIsReady::kTrue` before looking up the leader and shutting down a follower.  ## Test plan  Run locally on macOS ARM64 with clang21 in a fastdebug build.  - [x] Without the fix, iteration 84 reproduced the reported assertion at   `snapshot-test.cc:702`: `Expected: (leader) != (nullptr), actual: NULL vs (nullptr)`. - [x] With the fix, all 100 repetitions of   `SnapshotTest.UnavailablePreflushReplicaDoesNotBlockQuorumWrites` passed. 
 
-- **Issue #37833** (2026-11-13): **[BACKPORT 2026.2][#36913] CDC: Expect empty catalog transactions in two Virtual WAL tests with transactional DDL (#37753)**
-  *Symptoms*: ## Summary  With transactional DDL support for logical replication (#36857), the Virtual WAL also ships the BEGIN and COMMIT of catalog transactions that touch no published table, so two tests get more records than they expect when the flag is on:  - `TestCreationOfSlotOnNewDBAfterUpgrade` gets 2 such empty transactions before its insert: 7 records instead of 3, and 3 BEGIN / COMMIT instead of 1. - `TestSplitParentTabletAndHiddenTableGetsPolledAndDeleted` gets 1 for the `TRUNCATE`: 62 records instead of 60.  Both now expect the count for the value of `TEST_ysql_yb_enable_replication_slot_transactional_ddl`. #36857 renames that flag, so whichever PR merges second updates the name.  Test-only change.  Jenkins: test regex: .*(TestCreationOfSlotOnNewDBAfterUpgrade|TestSplitParentTabletAndHiddenTableGetsPolledAndDeleted).*  Original commit: f3b8d2236c5dd1a9f06fda9e2b2143903d3a4321 / #37753  ## Test plan  Debug build, on master, once with flags off and 3 times with `TEST_ysql_yb_enable_replication_slot_transactional_ddl`, `ysql_yb_ddl_transaction_block_enabled`, `enable_object_locking_for_table_locks` and `ysql_enable_concurrent_ddl` on, all passed: - [x] `CDCSDKConsumptionConsistentChangesTest.TestCreationOfSlotOnNewDBAfterUpgrade` - [x] `CDCSDKConsumptionConsistentChangesTest.TestSplitParentTabletAndHiddenTableGetsPolledAndDeleted`  Before the change, with those flags on, both failed 3 out of 3 times, with 7 and 62 records.  Co-authored-by: Claude Opus 5.5 <noreply@anthropic.com>
-  **Post-Mortem & Fix Analysis**:
-  > [![YB](../blob/master/managed/ui/src/redesign/assets/yb_logo.svg?raw=true) CSIweb for PR #37833](https://csiweb.dev.yugabyte.com/pull/37833)
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/37833) <!-- Reviewable:end --> 
+- **Issue #37913** (2026-11-14): **[pg19][#37911] test: Expect postgres_fdw to be installed in yb.port.pgaudit**
+  *Symptoms*: ## Problem: - Global views ([`61e8975d220`](https://github.com/yugabyte/yugabyte-db/commit/61e8975d220)) run `CREATE EXTENSION postgres_fdw SCHEMA pg_catalog` at initdb and create a foreign server that uses it. pg19 has them since the master merge [`c3a597f64a3`](https://github.com/yugabyte/yugabyte-db/commit/c3a597f64a3). - The USER MAPPING password-redaction block of `yb.port.pgaudit` creates and drops postgres_fdw:   - `CREATE EXTENSION postgres_fdw` fails with `extension "postgres_fdw" already exists`.   - `DROP EXTENSION postgres_fdw` fails with `cannot drop extension postgres_fdw because other objects depend on it`. It is then not audited, so every later audit statement ID is one lower than in upstream's output. - So `TestPgRegressThirdPartyExtensionsPgaudit` fails.  ## Solution: - `CREATE EXTENSION postgres_fdw`: expect the `already exists` error. - `DROP EXTENSION postgres_fdw`: replace it with `SELECT 'yb'`, which is audited, so later audit statement IDs stay the same as upstream's.  ## Test plan  ``` ./yb_build.sh release --java-test org.yb.pgsql.TestPgRegressThirdPartyExtensionsPgaudit ``` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2275,509 +2269,135 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `caf4a62b` (2026-11-12)
-**Commit Message**: [PLAT-23825] Build: Build YBA and yugabyted Go components with Go 1.27.4 and x/crypto 0.59.0 (#37633)
-
-## Summary
-
-`govulncheck` reports two findings in the YBA and yugabyted Go
-components on master:
-
-- **CVE-2026-97054** (GO-2026-6859): HTTP/1 server crash from a
-`MaxBytesReader` header race in `net/http`. Affects Go 1.27.0–1.27.3,
-fixed in Go 1.27.4.
-- **GO-2026-5932**: `golang.org/x/crypto` before v0.59.0.
-
-Changes, `go.mod` / `go.sum` only:
-
-- `go 1.27.3` → `go 1.27.4` in node-agent, yba-cli, yba-installer,
-yugabyted-ui and the three support-bundle helpers (cdcstate, logparse,
-serverconfredact).
-- `golang.org/x/crypto` → v0.59.0 in node-agent, yba-cli, yba-installer
-(from v0.58.0) and yugabyted-ui (from v0.57.0). x/sys 0.50.0, x/term
-0.48.0, x/text 0.44.0 follow; yugabyted-ui also moves x/net 0.60.0 →
-0.62.0 and x/sync to 0.25.0.
-- `go mod tidy` regrouped the `require` blocks in
-`yugabyted-ui/apiserver/go.mod`; no module was added or removed there.
-
-To be backported to 2026.2, 2026.1, 2026.1.3 and 2025.2.
-
-## Test plan
-
-- [x] `govulncheck` after the change: no findings in node-agent,
-yba-cli, yba-installer and the three support-bundle helpers.
-yugabyted-ui still lists GO-2026-6
-
-**File**: `managed/devops/supportbundle/cdcstate/go.mod` (modified, +1/-1)
-```diff
-@@ -1,3 +1,3 @@
- module github.com/yugabyte/yugabyte-db/managed/devops/supportbundle/cdcstate
- 
--go 1.27.3
-+go 1.27.4
-```
-
-**File**: `managed/devops/supportbundle/logparse/go.mod` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- module github.com/yugabyte/yugabyte-db/managed/devops/supportbundle/logparse
- 
--go 1.27.3
-+go 1.27.4
- 
- require github.com/dlclark/regexp2 v1.11.5
-```
-
-**File**: `managed/devops/supportbundle/serverconfredact/go.mod` (modified, +1/-1)
-```diff
-@@ -1,3 +1,3 @@
- module github.com/yugabyte/yugabyte-db/managed/devops/supportbundle/serverconfredact
- 
--go 1.27.3
-+go 1.27.4
-```
-
-**File**: `managed/node-agent/go.mod` (modified, +4/-4)
-```diff
-@@ -1,6 +1,6 @@
- module node-agent
- 
--go 1.27.3
-+go 1.27.4
- 
- require (
- 	github.com/apex/log v1.9.0
-@@ -17,7 +17,7 @@ require (
- 	github.com/spf13/pflag v1.0.10
- 	github.com/spf13/viper v1.21.0
- 	github.com/thoas/go-funk v0.9.3
--	golang.org/x/crypto v0.58.0
-+	golang.org/x/crypto v0.59.0
- 	golang.org/x/net v0.62.0
- 	google.golang.org/grpc v1.85.0
- 	google.golang.org/protobuf v1.36.12
-@@ -62,7 +62,7 @@ require (
- 	github.com/subosito/gotenv v1.6.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e // indirect
--	golang.org/x/sys v0.49.0 // indirect
--	golang.org/x/text v0.43.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261026165753-2ffab32bce7e // indirect
- )
-```
-
-**File**: `managed/node-agent/go.sum` (modified, +7/-0)
-```diff
-@@ -193,6 +193,8 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
- golang.org/x/crypto v0.0.0-20190426145343-a29dc8fdc734/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
- golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
-+golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
-+golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
- golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e h1:HgI6W1OolKK6tcV74is+rl9SMT0njsHlp0TbQiGXI/A=
- golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e/go.mod h1:DBoxwWhjaW8DJJw/YeM4zpeOKMC1FMXSblsYy+1mFSw=
- golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
-@@ -207,12 +209,17 @@ golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5h
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
- golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
-+golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
- golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
- golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
- golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
-+golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
-+golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
- golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
- golang.org/x/tools v0.52.0 h1:ryxg4U63oaUYk7uOLTF37n43f4qgtGvqV4Ioit1BaEs=
- golang.org/x/tools v0.52.0/go.mod h1:ItcP5UNaVGG+Yc4eIYmaFLNJ4soEopkx5Y2d4lcEurs=
-```
-
-**File**: `managed/yba-cli/go.mod` (modified, +6/-6)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/yugabyte/yugabyte-db/managed/yba-cli
- 
--go 1.27.3
-+go 1.27.4
- 
- require (
- 	github.com/AlecAivazis/survey/v2 v2.3.7
-@@ -20,8 +20,9 @@ require (
- 	github.com/yugabyte/platform-go-client v0.0.0-20260922032319-ae8e27387c37
- 	github.com/yugabyte/platform-go-client/v2 v2.0.0-20260922032319-ae8e27387c37
- 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9
--	golang.org/x/term v0.47.0
-+	golang.org/x/term v0.48.0
- 	gopkg.in/yaml.v2 v2.4.0
-+	gopkg.in/yaml.v3 v3.0.1
- 	gotest.tools/v3 v3.5.0
- )
- 
-@@ -53,8 +54,7 @@ require (
- 	github.com/spf13/cast v1.10.0 // indirect
- 	github.com/subosito/gotenv v1.6.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
--	golang.org/x/crypto v0.58.0 // indirect
--	golang.org/x/sys v0.49.0 // indirect
--	golang.org/x/text v0.43.0 // indirect
--	gopkg.in/yaml.v3 v3.0.1 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
- )
-```
-
-**File**: `managed/yba-cli/go.sum` (modified, +8/-8)
-```diff
-@@ -124,8 +124,8 @@ go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
- golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
- golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
- golang.org/x/crypto v0.3.0/go.mod h1:hebNnKkNXi2UzZN1eVRvBB7co0a+JxK6XbPiWVs/3J4=
--golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
--golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
-+golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
-+golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
- golang.org/x/exp v0.0.0-20230905200255-921286631fa9 h1:GoHiUyI/Tp2nVkLI2mCxVkOjsbSXD66ic0XW0js0R9g=
- golang.org/x/exp v0.0.0-20230905200255-921286631fa9/go.mod h1:S2oDrQGGwySpoQPVqRShND87VCbxmc6bL1Yd2oYrm6k=
- golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
-@@ -149,19 +149,19 @@ golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBc
- golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.2.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
--golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
-+golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
- golang.org/x/term v0.2.0/go.mod h1:TVmDHMZPmdnySmBfhjOoOdhjzdE1h4u1VwSiw2l1Nuc=
--golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
--golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
-+golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
- golang.org/x/text v0.4.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
--golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
--golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
-+golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
-+golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
- golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
- golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
- golang.org/x/tools v0.1.12/go.mod h1:hNGJHUnrk76NpqgfD5Aqm5Crs+Hm0VOH/i9J2+nxYbc=
-```
-
-**File**: `managed/yba-installer/go.mod` (modified, +5/-5)
-```diff
-@@ -1,6 +1,6 @@
- module github.com/yugabyte/yugabyte-db/managed/yba-installer
- 
--go 1.27.3
-+go 1.27.4
- 
- require (
- 	github.com/aws/aws-sdk-go v1.55.7
-@@ -14,10 +14,10 @@ require (
- 	github.com/vmware-labs/yaml-jsonpath v0.3.2
- 	github.com/xeipuuv/gojsonschema v1.2.0
- 	go.etcd.io/etcd/client/pkg/v3 v3.5.35
--	golang.org/x/crypto v0.58.0
-+	golang.org/x/crypto v0.59.0
- 	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842
--	golang.org/x/sys v0.49.0
--	golang.org/x/term v0.47.0
-+	golang.org/x/sys v0.50.0
-+	golang.org/x/term v0.48.0
- 	gopkg.in/ini.v1 v1.67.0
- 	gopkg.in/yaml.v3 v3.0.1
- 	sigs.k8s.io/yaml v1.4.0
-@@ -45,5 +45,5 @@ require (
- 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.uber.org/zap v1.27.0 // indirect
--	golang.org/x/text v0.43.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
- )
-```
-
----
-
-### Incident Patch 2: `da6fbcfb` (2026-11-03)
-**Commit Message**: [#35051] DocDB: Fix lost wake-up in rpc::Poller that could stop the xCluster safe-time service for good
+### Incident Patch 1: `a7a0e327` (2026-11-13)
+**Commit Message**: [PLAT-23867] Add AI review guide for YBA
 
 Summary:
-Problem:
-rpc::Poller has a race between Pause() and a concurrent Resume() that loses the resume wake-up.
-Resume() relies on the invariant that poll_task_id_ being set means a live task is scheduled,
-and skips Schedule() in that case. Pause() broke this invariant: it called
-scheduler_->Abort(poll_task_id_), which is asynchronous, and left poll_task_id_ set. A Resume()
-racing into that window saw the id still set and skipped scheduling; the aborted callback then
-cleared the id without rescheduling. The poller ended up unpaused with
-nothing scheduled, and every later Resume() returned early -- polling stopped until the process
-restarted or master leadership moved.
+Note: Written with the help of AI.
 
-The target master's XClusterSafeTimeService hits this window during DeleteUniverseReplication of
-an inbound replication group: a safe-time tick sees the emptied consumer registry and calls
-Pause() (aborting the already-rescheduled next poll task), and the end of the delete dispatches
-Resume() right behind it on the same strand. When Resume() beats the abort callback, the
-safe-time service dies silently. The next
+The root REVIEW.md, which AgentK and human reviewers follow, has one line for
+managed/. The YBA bugs that reach customers mostly come from what that misses:
+a change that holds on one path but breaks a sibling path (v1/v2, primary/read
+replica, master/tserver, VM/K8s), state an older YBA left behind, or a partial
+failure that a retry doesn't recover from. The checks in this file come from
+grouping the blocker and major AgentK findings on 87 recent YBA PRs and from
+recent YBA escalations.
 
-**File**: `src/yb/rpc/CMakeLists.txt` (modified, +1/-0)
+managed/REVIEW.md adds YBA checks on top of the root guide:
+- sibling paths, older stored state, saved JSON and POJO compatibility,
+  persisted enums, and older DB/YBC/chart versions
+- universe and task safety, non-atomic changes and retry idempotency, thread
+  safety, API performance, silent failures and nulls, memory and resource leaks
+- RBAC/audit/runtime config, HA, health checks and alerts, secrets, node agent
+  and YNP (including how Go fills Jinja templates), and Flyway migrations
+  (checksums, version conflicts, backports)
+
+The root REVIEW.md now points to managed/REVIEW.md, the same way it does for
+src/
+
+**File**: `REVIEW.md` (modified, +2/-1)
 ```diff
-@@ -176,6 +176,7 @@ ADD_YB_TEST(growable_buffer-test)
- ADD_YB_TEST(lwproto-test)
- ADD_YB_TEST(mt-rpc-test RUN_SERIAL true)
- ADD_YB_TEST(periodic-test)
-+ADD_YB_TEST(poller-test)
- ADD_YB_TEST(reactor-test)
- ADD_YB_TEST(rpc-bench RUN_SERIAL true)
- ADD_YB_TEST(rpc-test)
+@@ -59,6 +59,7 @@ Specifically, **do not** flag:
+ - Non-ASCII characters in new source code or comments, unless the file is test data that needs them.
+ - Under `src/yb/`, departures from the conventions in [`src/yb/REVIEW.md`](src/yb/REVIEW.md).
+ - Under `src/postgres/`, what [`src/postgres/REVIEW.md`](src/postgres/REVIEW.md) asks to flag.
++- Under `managed/`, what [`managed/REVIEW.md`](managed/REVIEW.md) asks to flag.
+ 
+ Default comment severity threshold: **MEDIUM**. Suppress LOW-severity nits unless they reveal an underlying correctness issue.
+ 
+@@ -129,7 +130,7 @@ Regardless of PR type, give these areas extra attention:
+ - **`src/yb/tablet/`** and **`src/yb/docdb/`** — write/read path, MVCC, transaction handling.
+ - **`src/yb/cdc/`** and **`src/yb/cdc_consumer/`** — replication-stream correctness, idempotency.
+ - **`src/postgres/`** — PostgreSQL-fork merges; double-check that upstream Postgres semantics are preserved. Also check the diff against the fork conventions in `.claude/skills/pg-code-style-guide/SKILL.md`: YB additions yb-prefixed and clustered behind `/* YB ... */` marker comments, upstream-owned lines left byte-identical (no style fixes or rewrapping), and regress test changes respecting the upstream-named / `yb.port.*` / `yb.orig.*` taxonomy. Flag violations — they surface as merge conflicts on the next PG major-version merge.
+-- **`managed/`** (YBA platform) — orchestration logic, especially around node lifecycle and cluster-wide ops.
++- **`managed/`** (YBA platform) — orchestration logic, especially around node lifecycle and cluster-wide ops. See [`managed/REVIEW.md`](managed/REVIEW.md).
+ 
+ ## Catalog manager changes
+ 
 ```
 
-**File**: `src/yb/rpc/poller-test.cc` (added, +99/-0)
+**File**: `managed/REVIEW.md` (added, +412/-0)
 ```diff
-@@ -0,0 +1,99 @@
-+// Copyright (c) YugabyteDB, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-+// in compliance with the License.  You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software distributed under the License
-+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-+// or implied.  See the License for the specific language governing permissions and limitations
-+// under the License.
-+//
+@@ -0,0 +1,412 @@
++# Review conventions for managed/ (YugabyteDB Anywhere)
 +
-+#include <atomic>
++These apply to changes under `managed/` in addition to the repo-root [REVIEW.md](../REVIEW.md).
++Skip this file for backport PRs. For v2 API changes, also check the contract rules in
++[AGENTS.md](AGENTS.md#contract-rules).
 +
-+#include "yb/rpc/io_thread_pool.h"
-+#include "yb/rpc/poller.h"
-+#include "yb/rpc/rpc-test-base.h"
-+#include "yb/rpc/scheduler.h"
++YBA orchestrates long-lived universes and upgrades in place, keeping its own database. Most YBA
++bugs that reach customers are not wrong lines in the diff. They come from a change that holds on
++one path and breaks on a sibling path, on state an older YBA left behind, or on a provider or
++deployment the author didn't test. The checks below cover those cases. Report at **HIGH** a finding
++that can break a universe operation, lose or leak data or secrets, or leave a universe locked;
++report the rest at **MEDIUM**.
 +
-+#include "yb/util/backoff_waiter.h"
-+#include "yb/util/countdown_latch.h"
-+#include "yb/util/test_macros.h"
++## Sibling paths
 +
-+using namespace std::literals;
++A fix or new check on one path must hold on its siblings, or the PR must say why a sibling is out
++of scope. Check each that applies:
 +
-+namespace yb::rpc {
++- **API versions:** v1 controllers and request binders (`controllers/`,
++  `UniverseControllerRequestBinder`) and v2 handlers and mappers (`api/v2/handlers/`,
++  `api/v2/mappers/`). A validation added to one is often missing from the other.
++- **Clusters:** the primary cluster and read replica (ASYNC) clusters. Task params may carry only
++  one cluster, and `getClusterByUuid` returns null for a cluster the request left out.
++- **Server types:** master and tserver. Code that builds per-server config (gflags, Helm overrides,
++  HBA conf, certificates) must pass the same inputs to both.
++- **Deployments:** VM (cloud and on-prem) and Kubernetes (Helm and operator-owned universes); for
++  YBA itself, YBA Installer and Helm. Operator-owned universes are changed by
++  `YBUniverseReconciler`, which builds its own overrides, and the API rejects many direct edits to
++  them.
++- **Providers:** AWS, GCP, Azure, OCI, on-prem and Kubernetes differ in destroy idempotency (GCP
++  static IPs), resource ownership (Azure NICs live in the network subscription), identity (IAM
++  roles, federation, managed identity) and images. A claim tested on one provider needs evidence
++  for the others the change touches.
++- **Clients:** the UI (the legacy and the `redesign/` flows), `yba-cli`, the Terraform provider and
++  the operator call the same APIs. A changed default or a newly required field changes behavior for
++  all of them.
++- **Paths that rebuild universe state:** create, edit, resize, instance-type or vCPU change, gflags
++  upgrade, in-memory gflags update (`SetFlagInMemory`), software upgrade, rollback and retry.
 +
-+class PollerTest : public RpcTestBase {
-+ public:
-+  void SetUp() override {
-+    // A single io thread so the test can hold the scheduler's queue back.
-+    pool_.emplace("test", 1);
-+    scheduler_.emplace(&pool_->io_service());
-+  }
++## State an older YBA left behind
 +
-+  void TearDown() override {
-+    scheduler_->Shutdown();
-+    pool_->Shutdown();
-+    pool_->Join();
-+  }
++- **Persisted task params.** A failed task saved by an older build can be retried or rolled back on
++  the new one. A new field is absent from those params, not false, and values redacted when the
++  task was saved stay redacted.
++- **Universes already broken.** A fix for a state that freezes a universe must also unblock
++  universes that are already in it, or the PR must say how support recovers them.
++- **Existing objects.** New validation on stored providers, storage configs, universes or releases
++  blocks unrelated edits (a rename, a credential rotation) on objects created before the PR. Gate
++  it behind a runtime config key, or apply it only to new objects.
++- **Persisted enums.** Enum values are stored in table columns (Ebean `@Enumerated`, `@EnumValue`,
++  `@DbEnumValue`) and inside JSON (universe details, task params, provider details). Removing or
++  renaming a value breaks loading every row that still holds it: Ebean fails the row, and Jackson
++  throws on the unknown value, so the universe or task list can't be loaded and the task can't be
++  retried. Keep the value and mark it `@Deprecated` (`TaskType.filteredValues()` hides those), or
++  add a migration that rewrites the stored values first. Renaming the Java constant while keeping
++  the `@EnumValue` string still breaks the JSON copies, which Jackson reads by `name()`. Where
++  unknown values can arrive, for example from a newer YBA, read with `@JsonEnumDefaultValue` and
++  `READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE`, as `YbcBackupUtil` does.
++- **Migrations.** Platform database migrations and `yba-ctl` state migrations must be correct for
++  every version they can upgrade from, including installs that already took a later path.
++- **Node agent.** Node agents upgrade after YBA, so a new YBA talks to old node agents. Changes to
++  `node-agent/proto/` follow the root guide's protobuf rules, and a new RPC or field needs a
++  fallback for an old agent.
 +
-+ protected:
-+  std::optional<IoThreadPool> pool_;
-+  std::optional<Scheduler> scheduler_;
-+};
++## Saved JSON and POJO changes
 +
-+TEST_F(PollerTest, StartPauseResume) {
-+  std::atomic<int> calls{0};
-+  Poller poller("PollerTest: ", [&calls] { ++calls; });
-+  poller.Start(&*scheduler_, 10ms);
-+  ASSERT_OK(WaitFor([&calls] { return calls.load() >= 3; }, 5s, "poller ticks"));
-+
-+  poller.Pause();
-+  // Pause leaves the pending tick scheduled; it fires once as a no-op. Let it drain, then check
-+  // that ticks have stopped.
-+  std::this_thread::sleep_for(200ms);
-+  auto calls_at_pause = calls.load();
-+  std::this_thread::sleep_for(200ms);
-+  ASSERT_EQ(calls.load(), calls_at_pause);
-+
-+  poller.Resume();
-+  ASSERT_OK(WaitFor(
-+      [&calls, calls_at_pause] { return calls.load() > calls_at_pause; }, 5s, "poller resumed"));
-+
-+  poller.Shutdown();
-+}
-+
-+// Resume() must not lose the wake-up when it runs while the task scheduled before a Pause() is
-+// still pending (GH #35051). Resume() sees poll_task_id_ set and skips Schedule(), so that task
-+// must keep polling alive instead of stopping.
-+TEST_F(PollerTest, ResumeWhileTaskPending) {
-+  std::atomic<int> calls{0};
-+  Poller poller("PollerTest: ", [&calls] { ++calls; });
-+  poller.Pause();
-+  poller.Start(&*scheduler_, 100ms);
-+
-+  // Hold the only io thread so every scheduler handler queues behind this one and the task
-+  // scheduled by Resume() cannot run until the latch is released.
-+  CountDownLatch io_blocked(1), release_io(1);
-+  pool_->io_service().post([&io_blocked, &release_io] {
-+    io_blocked.CountDown();
-+    release_io.Wait();
-+  });
-+  io_blocked.Wait();
-+
-+  poller.Resume();  // Schedules task T, poll_task_id_ = T.
-+  poller.Pause();   // T stays pending.
-+  poller.Resume();  // paused_ = false. Sees poll_task_id_ set and does not schedule.
-+
-+  release_io.CountDown();
-+
-+  // A correct poller keeps ticking after that sequence.
-+  ASSERT_OK(WaitFor([&calls] { return calls.load() >= 1; }, 3s, "poller ticks after resume"));
-+
-+  poller.Shutdown();
-+}
-+
-+}  // namespace yb::rpc
-```
-
-**File**: `src/yb/rpc/poller.cc` (modified, +3/-3)
-```diff
-@@ -66,10 +66,10 @@ void Poller::Schedule() {
- 
- void Poller::Pause() {
-   std::lock_guard lock(mutex_);
-+  // Leave any scheduled task in place: it checks paused_ when it fires and stops without running
-+  // the callback. Aborting it here races with a concurrent Resume(), which sees poll_task_id_
-+  // still set, skips Schedule(), and loses the wake-up for good (GH #35051).
-   paused_ = true;
--  if (poll_task_id_ != rpc::kUninitializedScheduledTaskId) {
--    scheduler_->Abort(poll_task_id_);
--  }
- }
- 
- void Poller::Resume() {
-```
-
-**File**: `src/yb/rpc/poller.h` (modified, +0/-1)
-```diff
-@@ -25,7 +25,6 @@
- namespace yb::rpc {
- 
- // Utility class to invoke specified callback with defined interval using scheduler.
--// TODO Add separate test for poller.
- class Poller {
-  public:
-   explicit Poller(const std::string& log_prefix, std::function<void()> callback);
-```
-
----
-
-### Incident Patch 3: `3f4f684f` (2026-11-13)
-**Commit Message**: [#35539] YSQL: Don't leak connection manager cluster customizations across test methods (#37558)
-
-## Summary
-
-`BaseMiniClusterTest` reuses one cluster across a test class's methods.
-The connection manager test base classes let one method's cluster
-customizations leak into later methods when the class runs in one JVM:
-
-- `BaseYsqlConnMgr`'s restart helpers
-(`restartClusterWithAdditionalFlags`, `restartClusterWithFlags`,
-`disableWarmupModeAndRestartCluster`, and the `*AndRestartCluster`
-helpers built on them) don't mark the cluster for recreation. For
-example, `TestSessionParameters#testSeedMakesConnectionSticky` runs on
-the single-backend cluster left by `testNoParameterStatusDuringDeploy`,
-and `TestMisc#testStickySequence`, `testHllSticky` and
-`testStickySuperuserConns` on the warmup-`none` cluster left by earlier
-methods. Their "not sticky" check needs a second backend PID, so they
-fail.
-- `BasePgSQLTest` recreates the cluster after every method, but under
-connection manager it builds it from the statics `warmupMode` and
-`ysql_conn_mgr_superuser_sticky`, which
-`setConnMgrWarmupModeAndRestartCluster` and
-`enableStickySuperuserConnsAndRestartCluster` change and nothing resets.
-
-Mark
-
-**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/BasePgSQLTest.java` (modified, +15/-2)
-```diff
-@@ -235,11 +235,14 @@ protected static enum ConnectionManagerWarmupMode {
-     ROUND_ROBIN
-   }
- 
--  protected static ConnectionManagerWarmupMode warmupMode = ConnectionManagerWarmupMode.RANDOM;
-+  private static final ConnectionManagerWarmupMode WARMUP_MODE_DEFAULT =
-+      ConnectionManagerWarmupMode.RANDOM;
-+  protected static ConnectionManagerWarmupMode warmupMode = WARMUP_MODE_DEFAULT;
- 
-   protected static final int CONN_MGR_WARMUP_BACKEND_COUNT = 3;
- 
--  protected static boolean ysql_conn_mgr_superuser_sticky = false;
-+  private static final boolean SUPERUSER_STICKY_DEFAULT = false;
-+  protected static boolean ysql_conn_mgr_superuser_sticky = SUPERUSER_STICKY_DEFAULT;
- 
-   // CQL and Redis settings, will be reset before each test via resetSettings method.
-   protected boolean startCqlProxy = false;
-@@ -604,6 +607,16 @@ public void cleanUpAfter() throws Exception {
-     markClusterNeedsRecreation();
-   }
- 
-+  /*
-+   * The cluster recreated for the next test method is built from these statics, which the
-+   * *AndRestartCluster helpers change. Kept apart from cleanUpAfter, which subclasses override.
-+   */
-+  @After
-+  public void resetClusterCustomizations() {
-+    warmupMode = WARMUP_MODE_DEFAULT;
-+    ysql_conn_mgr_superuser_sticky = SUPERUSER_STICKY_DEFAULT;
-+  }
-+
-   public String formatPGId(String str) {
-     // For all details - see PG function: fmtId()
-     String result = "\"";
-```
-
-**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/BaseYsqlConnMgr.java` (modified, +3/-0)
-```diff
-@@ -164,6 +164,7 @@ protected boolean isTestRunningInWarmupRandomMode() {
-   protected void restartClusterWithAdditionalFlags(
-       Map<String, String> additionalMasterFlags,
-       Map<String, String> additionalTserverFlags) throws Exception {
-+    markClusterNeedsRecreation();
-     destroyMiniCluster();
-     waitForProperShutdown();
-     createMiniCluster(-1, -1, builder -> {
-@@ -216,6 +217,7 @@ protected void enableVersionMatchingAndRestartCluster() throws Exception {
- 
-   protected void disableWarmupModeAndRestartCluster() throws Exception {
-     warmup_random_mode = false;
-+    markClusterNeedsRecreation();
-     destroyMiniCluster();
-     waitForProperShutdown();
-     createMiniCluster();
-@@ -841,6 +843,7 @@ protected void clearReversibleStickinessExclusions() throws Exception {
-   protected void restartClusterWithFlags(
-       Map<String, String> additionalMasterFlags,
-       Map<String, String> additionalTserverFlags) throws Exception {
-+    markClusterNeedsRecreation();
-     destroyMiniCluster();
-     waitForProperShutdown();
- 
++Much of YBA's state is a POJO stored as JSON: universe details (`universe_details_json`), task
++params, provider and region details, customer configs. Every stored copy was written by some older
++build, and v1 APIs take the same POJOs as request bodies, so a POJO change is a storage change and
++an API change at once. The shared mapper (`CustomObjectMapperModule`) ig
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #37834** (closed): [PLAT-22789] (@yorq)
-- **PR #37833** (2026-11-13): [BACKPORT 2026.2][#36913] CDC: Expect empty catalog transactions in two Virtual WAL tests with transactional DDL (#37753) (@dr0pdb)
-- **PR #37805** (2026-11-13): [BACKPORT 2025.2][#29915] YSQL: ConnMgr - Make replication origin stickiness reversible (@arpit-saxena)
-- **PR #37803** (2026-11-13): [BACKPORT 2026.1][#29915] YSQL: ConnMgr - Make replication origin stickiness reversible (@arpit-saxena)
-- **PR #37794** (2026-11-13): [BACKPORT 2025.2][#35539] YSQL: Don't leak connection manager cluster customizations across test methods (#37558) (@arpit-saxena)
-- **PR #37793** (2026-11-13): [BACKPORT 2026.1][#35539] YSQL: Don't leak connection manager cluster customizations across test methods (#37558) (@arpit-saxena)
+- **PR #37955** (closed): [#37931] DocDB: Wait for leader readiness in snapshot preflush test (@4arjun)
+- **PR #37913** (2026-11-14): [pg19][#37911] test: Expect postgres_fdw to be installed in yb.port.pgaudit (@ninilo97)
+- **PR #37906** (2026-11-13): [2025.2][#37885] YSQL: Raise the catalog version with CREATE SCHEMA in PgBackendsTest.RetryRefreshAcrossIndexCreate (@ninilo97)
+- **PR #37904** (2026-11-13): [BACKPORT 2026.1][PLAT-21218] YBA: Allow kubeconfig rotation on in-use Kubernetes providers (@aashay-m)
+- **PR #37896** (2026-11-14): [pg19] YSQL: Turn post-merge YB_TODO_PG19MERGE markers into TODO(#issue) (@dilip-simha)
+- **PR #37873** (2026-11-14): [BACKPORT 2026.1][#37536] DocDB: Fix distinct scan skipping live rows after a deleted row (#37550) (#37809) (@spolitov)
 
 ---
 
@@ -2797,28 +2417,29 @@ Mark
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PLAT-23825] Build: Build YBA and yugabyted Go components with Go 1.27.4 and x/c
+## X. [PLAT-23867] Add AI review guide for YBA
 
 **RULE**:
-When implementing operations in `managed/devops/supportbundle/cdcstate/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `REVIEW.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `caf4a62b`: [PLAT-23825] Build: Build YBA and yugabyted Go components with Go 1.27.4 and x/crypto 0.59.0 (#37633). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a7a0e327`: [PLAT-23867] Add AI review guide for YBA. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/devops/supportbundle/cdcstate/go.mod`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `REVIEW.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-go 1.27.4
+- Under `managed/`, what [`managed/REVIEW.md`](managed/REVIEW.md) asks to flag.
+- **`managed/`** (YBA platform) — orchestration logic, especially around node lifecycle and cluster-wide ops. See [`managed/REVIEW.md`](managed/REVIEW.md).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
-// Anti-pattern to NEVER write (induced failure mode):
-go 1.27.3
+// Induced defect failure mode:
+- **`managed/`** (YBA platform) — orchestration logic, especially around node lifecycle and cluster-wide ops.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `caf4a62b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a7a0e327` are properly handled with clean fallback behavior.

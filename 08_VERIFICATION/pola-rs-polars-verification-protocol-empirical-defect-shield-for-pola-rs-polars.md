@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for pola/rs/polars
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for pola-rs/polars
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "pola/rs/polars",
-  "source_url": "https://github.com/pola/rs/polars",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "pola-rs/polars",
+  "source_url": "https://github.com/pola-rs/polars",
+  "source_version": "2d9938df",
+  "license": "MIT",
+  "timestamp": "2026-11-14T17:39:55.601Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-pola-rs-polars",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pola/rs/polars](https://github.com/pola/rs/polars) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [pola-rs/polars](https://github.com/pola-rs/polars) (Revision: `2d9938df`).  
+> **License**: MIT | **Timestamp**: `2026-11-14T17:39:55.601Z`  
+> **Learning ID**: `learn-github-pola-rs-polars`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `pola/rs/polars` (Commit: `historical`)
+- **Target Repository**: `pola-rs/polars` (Commit: `2d9938df`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
-> **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `d9e5ab1a`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T09:59:55.202Z  
-> **Learning ID**: `learn-github-pola-rs-polars`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): pola-rs/polars
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T09:59:54.970Z  
+> **Harvest Timestamp**: 2026-11-14T17:39:54.298Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40315 stars
+- **Stars / Engagement**: 40340 stars
 
 ---
 
@@ -1722,11 +1708,11 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #30755** (2026-11-13): **SQL `DELETE` on an Iceberg catalog table fails where `UPDATE` works (partly matched files)**
+  *Symptoms*: ### Description  Found and written with AI, human verified.  SQL `DELETE` on an Iceberg table of an attached catalog fails in two cases where `UPDATE` and `MERGE` work. Both come from how `DELETE` rewrites the data files that only some of its rows match. It hands that rewrite to PyIceberg's `delete`, while `UPDATE` and `MERGE` rewrite files through the Polars sink.  1. The partition spec has two fields on one column, e.g. `bucket(2, id), bucket(3, id)`, or `day(ts), hour(ts)` after partition evolution. PyIceberg's writer refuses that spec: `ValueError: Cannot have redundant partitions`. Nothing is deleted. 2. The `DELETE` drops some files whole and rewrites others. The commit then holds two snapshots. Some REST catalogs refuse that (seen on Unity Catalog: "Adding multiple snapshots in a single update is not supported").  ### Reproducible example  ```python import tempfile  import polars as pl from pyiceberg.catalog.sql import SqlCatalog  d = tempfile.mkdtemp() catalog = SqlCatalog("lake", uri=f"sqlite:///{d}/catalog.db", warehouse=f"file://{d}") catalog.create_namespace("ns") ctx = pl.SQLContext().register_catalog("lake", catalog, default_namespace="ns", default=True)  ctx.execute("CREATE TABLE t (id BIGINT, s VARCHAR) PARTITION BY (bucket(2, id), bucket(3, id))") ctx.execute("INSERT INTO t VALUES (1, 'a'), (1, NULL), (2, 'b')") ctx.execute("UPDATE t SET s = 'u' WHERE s = 'a'")  # works ctx.execute("DELETE FROM t WHERE s IS NULL")  # fails ```  ``` ValueError: Cannot have red
+
 - **Issue #30695** (2026-11-10): **`LazyFrame.unnest` followed by a struct field read of another column loses or swaps column values (main)**
   *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  (Not in a release: 2.1.0 and 2.0.0 are correct. It is on main, 09251856d4.)  ### Reproducible example  ```python import polars as pl  # 1. in-memory engine: column `a` is lost and `t` appears twice lf = pl.LazyFrame({"s": [{"a": 1}], "t": [{"p": 2, "q": 3}]}) q = lf.unnest("s").with_columns(t=pl.col("t").struct.field("p")) print(q.collect_schema().names()) # ['a', 't'] print(q.collect(engine="in-memory")) # shape: (1, 2) # ┌───────────┬─────┐ # │ t         ┆ t   │ # │ ---       ┆ --- │ # │ struct[2] ┆ i64 │ # ╞═══════════╪═════╡ # │ {2,3}     ┆ 2   │ # └───────────┴─────┘ print(q.collect().columns)  # streaming # ['t', 'a']  # 2. streaming engine: two joins after the unnest swap the values of `a` and `b` lf = pl.LazyFrame({"k": [1], "s": [{"a": {"p": 1, "q": 2}}], "b": [{"p": 100, "q": 200}]}) other = pl.LazyFrame({"k": [1]}) q = lf.unnest("s").join(other, on="k").join(other, on="k").select("a", pl.col("b").struct.field("p")) print(q.collect().to_dict(as_series=False)) # {'a': [{'p': 100, 'q': 200}], 'p': [1]} # expected {'a': [{'p': 1, 'q': 2}], 'p': [100]} ```  ### Log output  Plan of the first query on main; the scan is projected to `["t", "s"]`, so the unnest returns `[t, a]` while the schema above it is `[a, t]`:  ```shell  WITH_COLUMNS:  [col("t").struct.field_by_name(p)().alias("t")]
-
-- **Issue #30673** (2026-11-10): **Lazy `col.slice(1, 2).head(2)` applies the slice twice**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  lf = pl.LazyFrame({"a": [1, 2, 3, 4, 5]}) print(lf.select(pl.col("a").slice(1, 2).head(2)).collect()["a"].to_list()) # [3], expected [2, 3] ```  ### Log output  With `scan_parquet` as the source, the plan shows both slices:  ```shell SELECT [col("a").slice(offset=1, length=2)]   Parquet SCAN [x.parquet]   PROJECT */1 COLUMNS   SLICE: Positive { offset: 1, len: 2 } ```  ### Issue description  When every column of a lazy `select` is sliced, the slice is moved below the `select`, but the expression slice stays, so the rows are sliced twice. It happens when an outer `head`/`limit`/`slice` doesn't shorten the inner slice (`slice(1, 2).head(5)` also gives `[3]`, `slice(1, 1).head(1)` gives `[]`), and a negative outer slice over an elementwise expression returns other rows: `pl.col("a").abs().slice(1).tail(2)` gives `[3, 4]` instead of `[4, 5]`. Next to a second sliced column (`b = a * 10`, `pl.col("b").slice(1, 2)`), the in-memory engine raises `ShapeError` and the streaming engine broadcasts the short column, giving rows that don't line up: `[(3, 20), (3, 30)]` instead of `[(2, 20), (3, 30)]`. Both engines are affected; the eager `df.select(...)` and `QueryOptFlags(slice_pushdown=False)` give the right answer.  This is the expression slice
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1743,690 +1729,239 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6be8f4dd` (2026-11-09)
-**Commit Message**: fix: Avoid segfault on environment changes after a cloud scan (#30665)
+### Incident Patch 1: `8cb46300` (2026-11-13)
+**Commit Message**: fix: Return null instead of silent overflow for temporal total_ functions (#30743)
 
-**File**: `crates/polars-config/src/lib.rs` (modified, +17/-0)
+**File**: `crates/polars-time/src/chunkedarray/duration.rs` (modified, +3/-3)
 ```diff
-@@ -60,6 +60,9 @@ const DEFAULT_VERBOSE_SENSITIVE: bool = false;
- const FORCE_ASYNC: &str = "POLARS_FORCE_ASYNC";
- const DEFAULT_FORCE_ASYNC: bool = false;
- 
-+const LOG_CONCURRENCY: &str = "POLARS_LOG_CONCURRENCY";
-+const DEFAULT_LOG_CONCURRENCY: bool = false;
-+
- const SCAN_CHUNK_STATISTICS: &str = "POLARS_SCAN_CHUNK_STATISTICS";
- const DEFAULT_SCAN_CHUNK_STATISTICS: bool = false;
- 
-@@ -216,6 +219,7 @@ static KNOWN_OPTIONS: &[&str] = &[
-     // Private.
-     VERBOSE_SENSITIVE,
-     FORCE_ASYNC,
-+    LOG_CONCURRENCY,
-     SCAN_CHUNK_STATISTICS,
-     IMPORT_INTERVAL_AS_STRUCT,
-     OOC_DRIFT_THRESHOLD,
-@@ -269,6 +273,7 @@ pub struct Config {
-     // Private.
-     verbose_sensitive: AtomicBool,
-     force_async: AtomicBool,
-+    log_concurrency: AtomicBool,
-     scan_chunk_statistics: AtomicBool,
-     import_interval_as_struct: AtomicBool,
-     ooc_spill_format: AtomicU8,
-@@ -329,6 +334,7 @@ impl Config {
-             // Private.
-             verbose_sensitive: AtomicBool::new(DEFAULT_VERBOSE_SENSITIVE),
-             force_async: AtomicBool::new(DEFAULT_FORCE_ASYNC),
-+            log_concurrency: AtomicBool::new(DEFAULT_LOG_CONCURRENCY),
-             scan_chunk_statistics: AtomicBool::new(DEFAULT_SCAN_CHUNK_STATISTICS),
-             import_interval_as_struct: AtomicBool::new(DEFAULT_IMPORT_INTERVAL_AS_STRUCT),
-             ooc_spill_format: AtomicU8::new(DEFAULT_OOC_SPILL_FORMAT as u8),
-@@ -514,6 +520,11 @@ impl Config {
-                     .unwrap_or(DEFAULT_FORCE_ASYNC),
-                 Ordering::Relaxed,
-             ),
-+            LOG_CONCURRENCY => self.log_concurrency.store(
-+                val.and_then(|x| parse::parse_bool(var, x))
-+                    .unwrap_or(DEFAULT_LOG_CONCURRENCY),
-+                Ordering::Relaxed,
-+            ),
-             SCAN_CHUNK_STATISTICS => self.scan_chunk_statistics.store(
-                 val.and_then(|x| parse::parse_bool(var, x))
-                     .unwrap_or(DEFAULT_SCAN_CHUNK_STATISTICS),
-@@ -787,6 +798,12 @@ impl Config {
-         self.force_async.load(Ordering::Relaxed)
+@@ -117,7 +117,7 @@ impl DurationMethods for DurationChunked {
+     /// Extract the microseconds from a `Duration`
+     fn microseconds(&self) -> Int64Chunked {
+         match self.time_unit() {
+-            TimeUnit::Milliseconds => &self.phys * 1000,
++            TimeUnit::Milliseconds => (&self.phys).checked_mul_scalar(1000),
+             TimeUnit::Microseconds => self.phys.clone(),
+             TimeUnit::Nanoseconds => (&self.phys).wrapping_trunc_div_scalar(1000),
+         }
+@@ -132,8 +132,8 @@ impl DurationMethods for DurationChunked {
+     /// Extract the nanoseconds from a `Duration`
+     fn nanoseconds(&self) -> Int64Chunked {
+         match self.time_unit() {
+-            TimeUnit::Milliseconds => &self.phys * NANOSECONDS_IN_MILLISECOND,
+-            TimeUnit::Microseconds => &self.phys * 1000,
++            TimeUnit::Milliseconds => (&self.phys).checked_mul_scalar(NANOSECONDS_IN_MILLISECOND),
++            TimeUnit::Microseconds => (&self.phys).checked_mul_scalar(1000),
+             TimeUnit::Nanoseconds => self.phys.clone(),
+         }
      }
+```
+
+**File**: `py-polars/tests/unit/operations/namespaces/temporal/test_datetime.py` (modified, +20/-35)
+```diff
+@@ -432,6 +432,26 @@ def test_duration_extract_times(
+     assert_series_equal(getattr(duration.dt, unit_attr)(), expected)
  
-+    /// Whether to log the cloud and scan pipeline concurrency state.
-+    #[inline(always)]
-+    pub fn log_concurrency(&self) -> bool {
-+        self.log_concurrency.load(Ordering::Relaxed)
-+    }
+ 
++def test_duration_extract_times_overflow_16057() -> None:
++    s_us = pl.Series(
++        [timedelta(days=106752), timedelta(days=1), timedelta(days=-106752)],
++        dtype=pl.Duration("us"),
++    )
++    assert_series_equal(
++        s_us.dt.total_nanoseconds(),
++        pl.Series([None, 86400 * 10**9, None], dtype=pl.Int64),
++    )
 +
-     /// Whether a parquet scan, besides its per-column totals, keeps the min, max, null count and
-     /// sizes that each sampled row group records. Planners use these to estimate how a column's
-     /// values are distributed across the files, e.g. how many rows a filter keeps.
-```
-
-**File**: `crates/polars-io/src/cloud/concurrency/mod.rs` (modified, +1/-1)
-```diff
-@@ -514,7 +514,7 @@ impl ConcurrencyController {
-                 let head_rtt_window = head_rtt.take();
++    s_ms = pl.Series([2**62, 1, -(2**62)], dtype=pl.Int64).cast(pl.Duration("ms"))
++    assert_series_equal(
++        s_ms.dt.total_microseconds(), pl.Series([None, 1000, None], dtype=pl.Int64)
++    )
++    assert_series_equal(
++        s_ms.dt.total_nanoseconds(),
++        pl.Series([None, 1_000_000, None], dtype=pl.Int64),
++    )
++
++
+ @pytest.mark.parametrize(
+     ("time_unit", "every"),
+     [
+@@ -1416,41 +1436,6 @@ def test_agg_median_expr() -> None:
+     assert_frame_equal(df.select(pl.all().median()), expected)
  
-                 // Log snapshot.
--                if std::env::var("POLARS_LOG_CONCURRENCY").is_ok() {
-+                if polars_config::config().log_concurrency() {
-                     // The tick the knee saw, before this tick's resize.
-                     let bound = [
-                         ("bytes", knee_tick.bytes_bound()),
-```
-
-**File**: `crates/polars-stream/src/nodes/io_sources/shared/pipeline_budget.rs` (modified, +6/-7)
-```diff
-@@ -25,9 +25,6 @@ use tokio::sync::{OwnedSemaphorePermit, Semaphore};
- // - A scan whose output is blocked (e.g. a join's probe side during the build) keeps fetching and
- //   can grow toward its store's budget.
  
--static SHOULD_LOG_CONCURRENCY: LazyLock<bool> =
--    LazyLock::new(|| std::env::var("POLARS_LOG_CONCURRENCY").is_ok());
+-@given(
+-    s=series(min_size=1, max_size=10, dtype=pl.Duration),
+-)
+-@pytest.mark.skip(
+-    "These functions are currently bugged for large values: "
+-    "https://github.com/pola-rs/polars/issues/16057"
+-)
+-def test_series_duration_timeunits(
+-    s: pl.Series,
+-) -> None:
+-    nanos = s.dt.total_nanoseconds().to_list()
+-    micros = s.dt.total_microseconds().to_list()
+-    millis = s.dt.total_milliseconds().to_list()
 -
- /// Default of `POLARS_CLOUD_PREFETCH_ORDERED_SLACK_MS`.
- const DEFAULT_ORDERED_SLACK_MS: u64 = 100;
- 
-@@ -417,7 +414,7 @@ impl PipelineBudget {
-             }
-         }
- 
--        if *SHOULD_LOG_CONCURRENCY {
-+        if polars_config::config().log_concurrency() {
-             self.log_stats
-                 .grow_cap
-                 .store(grow_cap as u8, Ordering::Relaxed);
-@@ -455,7 +452,9 @@ impl PipelineBudget {
-         let mut charged_kbytes: u32 = self.permit_kbytes(n_bytes).try_into().unwrap_or(u32::MAX);
-         let mut oversized = (charged_kbytes as usize) < n_bytes.div_ceil(1 << 10);
- 
--        if *SHOULD_LOG_CONCURRENCY && self.kbytes.available_permits() < charged_kbytes as usize {
-+        if polars_config::config().log_concurrency()
-+            && self.kbytes.available_permits() < charged_kbytes as usize
-+        {
-             self.log_stats.kbytes_waits.fetch_add(1, Ordering::Relaxed);
-         }
- 
-@@ -490,12 +489,12 @@ impl PipelineBudget {
-         }
-         let _oversized = oversized.then(|| OversizedPermit::new(&self.oversized_in_flight));
- 
--        if *SHOULD_LOG_CONCURRENCY && self.count.available_permits() == 0 {
-+        if polars_config::config().log_concurrency() && self.count.available_permits() == 0 {
-             self.log_stats.count_waits.fetch_add(1, Ordering::Relaxed);
-         }
-         let _count = self.count.clone().acquire_owned().await.unwrap();
- 
--        if *SHOULD_LOG_CONCURRENCY {
-+        if polars_config::config().log_concurrency() {
-             if let Ok(mut last_log) = self.last_reported.lock() {
-                 let count_limit = self.count_limit();
-                 let kbytes_limit = self.kbytes_limit();
+-    scale = {
+-        "ns": 1,
+-        "us": 1_000,
+-        "ms": 1_000_000,
+-    }
+-    assert nanos == [v * scale[s.dtype.time_unit] for v in s.to_physical()]  # type: ignore[attr-defined]
+-    assert micros == [int(v / 1_000) for v in nanos]
+-    assert millis == [int(v / 1_000) for v in micros]
+-
+-    # special handling for ns timeunit (as we may generate a microsecs-based
+-    # timedelta that results in 64bit overflow on conversion to nanosecs)
+-    lower_bound, upper_bound = -(2**63), (2**63) - 1
+-    if all(
+-        (lower_bound <= (us * 1000) <= upper_bound)
+-        for us in micros
+-        if isinstance(us, int)
+-    ):
+-        for ns, us in zip(s.dt.total_nanoseconds(), micros, strict=True):
+-            assert ns == (us * 1000)
+-
+-
+ @given(
+     s=series(min_size=1, max_size=10, dtype=pl.Datetime, allow_null=False),
+ )
 ```
 
 ---
 
-### Incident Patch 2: `f54a1f96` (2026-11-10)
-**Commit Message**: refactor(rust): Expose the building blocks of binning and `hist` (#30676)
+### Incident Patch 2: `2d9938df` (2026-11-14)
+**Commit Message**: fix: Export the Arrow form of logical dtypes in `Series._export_arrow_to_c` (#30779)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `crates/polars-ops/src/chunked_array/hist.rs` (modified, +126/-85)
+**File**: `crates/polars-python/src/series/c_interface.rs` (modified, +2/-6)
 ```diff
-@@ -161,75 +161,132 @@ where
-     count
- }
+@@ -50,15 +50,11 @@ unsafe fn export_chunk(
+ ) -> PolarsResult<()> {
+     polars_ensure!(s.chunks().len() == 1, InvalidOperation: "expect a single chunk");
  
--fn compute_hist<T>(
--    ca: &ChunkedArray<T>,
--    bin_count: Option<usize>,
--    bins: Option<&[f64]>,
--    include_category: bool,
--    include_breakpoint: bool,
--) -> PolarsResult<Series>
--where
--    T: PolarsNumericType,
--    ChunkedArray<T>: ChunkAgg<T::Native>,
--{
--    let (breaks, uniform) = get_breaks(ca, bin_count, bins)?;
--    let num_bins = std::cmp::max(breaks.len(), 1) - 1;
--    let count = if num_bins > 0 && ca.len() > ca.null_count() {
--        if uniform {
--            uniform_hist_count(&breaks, ca)
--        } else {
--            hist_count(&breaks, ca)
--        }
--    } else {
--        vec![0; num_bins]
--    };
-+fn ensure_hist_dtype(s: &Series) -> PolarsResult<()> {
-+    polars_ensure!(
-+        s.dtype().is_primitive_numeric(),
-+        opq = hist,
-+        got = s.dtype(),
-+        expected = "integer or float"
-+    );
-+    Ok(())
-+}
+-    let c_array = polars_arrow::ffi::export_array_to_c(s.chunks()[0].clone());
++    let c_array = polars_arrow::ffi::export_array_to_c(s.to_arrow(0, CompatLevel::newest()));
+     let out_ptr = out_ptr as *mut polars_arrow::ffi::ArrowArray;
+     *out_ptr = c_array;
  
--    // Generate output: breakpoint (optional), breaks (optional), count
--    let mut fields = Vec::with_capacity(3);
-+/// The bin edges of `hist`, which for a bin count depend only on the min and max of the column.
-+#[derive(Clone, Debug)]
-+pub struct HistBreaks {
-+    edges: Vec<f64>,
-+    // Equal-width edges allow counting without sorting.
-+    uniform: bool,
-+}
+-    let field = ArrowField::new(
+-        s.name().clone(),
+-        s.dtype().to_arrow(CompatLevel::newest()),
+-        true,
+-    );
++    let field = s.field().to_arrow(CompatLevel::newest());
+     let c_schema = polars_arrow::ffi::export_field_to_c(&field);
  
--    if include_breakpoint {
--        let breakpoints = if num_bins > 0 {
--            Series::new(PlSmallStr::from_static("breakpoint"), &breaks[1..])
--        } else {
--            let empty: &[f64; 0] = &[];
--            Series::new(PlSmallStr::from_static("breakpoint"), empty)
--        };
--        fields.push(breakpoints)
-+impl HistBreaks {
-+    /// The edges of `bin_count` bins over `s`, or the given `bins`.
-+    pub fn new(s: &Series, bin_count: Option<usize>, bins: Option<&Series>) -> PolarsResult<Self> {
-+        let bins = bins
-+            .map(|bins| {
-+                polars_ensure!(bins.null_count() == 0, InvalidOperation: "nulls not supported in 'bins' argument");
-+                Ok(bins.cast(&DataType::Float64)?.rechunk())
-+            })
-+            .transpose()?;
-+        let bins = bins
-+            .as_ref()
-+            .map(|bins| bins.f64().unwrap().cont_slice().unwrap());
-+        ensure_hist_dtype(s)?;
-+
-+        let (edges, uniform) = with_match_physical_numeric_polars_type!(s.dtype(), |$T| {
-+            let ca: &ChunkedArray<$T> = s.as_ref().as_ref().as_ref();
-+            get_breaks(ca, bin_count, bins)?
-+        });
-+        Ok(Self { edges, uniform })
-     }
- 
--    if include_category {
--        let mut categories =
--            StringChunkedBuilder::new(PlSmallStr::from_static("category"), breaks.len());
--        if num_bins > 0 {
--            let mut lower = AnyValue::Float64(breaks[0]);
--            let mut buf = String::new();
--            let mut open_bracket = "[";
--            for br in &breaks[1..] {
--                let br = AnyValue::Float64(*br);
--                buf.clear();
--                write!(buf, "{open_bracket}{lower}, {br}]").unwrap();
--                open_bracket = "(";
--                categories.append_value(buf.as_str());
--                lower = br;
-+    pub fn edges(&self) -> &[f64] {
-+        &self.edges
-+    }
-+
-+    pub fn num_bins(&self) -> usize {
-+        self.edges.len().saturating_sub(1)
-+    }
-+
-+    /// The number of values of `s` in each bin.
-+    pub fn count(&self, s: &Series) -> PolarsResult<Vec<IdxSize>> {
-+        ensure_hist_dtype(s)?;
-+        let num_bins = self.num_bins();
-+        if num_bins == 0 || s.len() == s.null_count() {
-+            return Ok(vec![0; num_bins]);
-+        }
-+        Ok(with_match_physical_numeric_polars_type!(s.dtype(), |$T| {
-+            let ca: &ChunkedArray<$T> = s.as_ref().as_ref().as_ref();
-+            if self.uniform {
-+                uniform_hist_count(&self.edges, ca)
-+            } else {
-+                hist_count(&self.edges, ca)
-             }
-+        }))
-+    }
-+
-+    /// The `hist` output named `name` for the `counts` of each bin.
-+    pub fn finish(
-+        &self,
-+        name: PlSmallStr,
-+        counts: &[IdxSize],
-+        include_category: bool,
-+        include_breakpoint: bool,
-+    ) -> PolarsResult<Series> {
-+        let breaks = &self.edges;
-+        let num_bins = self.num_bins();
-+        polars_ensure!(
-+            counts.len() == num_bins,
-+            ShapeMismatch: "`hist` has {} bins but got {} counts", num_bins, counts.len()
-+        );
-+
-+        // Generate output: breakpoint (optional), breaks (optional), count
-+        let mut fields = Vec::with_capacity(3);
-+
-+        if include_breakpoint {
-+            let breakpoints = if num_bins > 0 {
-+                Series::new(PlSmallStr::from_static("breakpoint"), &breaks[1..])
-+            } else {
-+                let empty: &[f64; 0] = &[];
-+                Series::new(PlSmallStr::from_static("breakpoint"), empty)
-+            };
-+            fields.push(breakpoints)
-         }
--        let categories = categories
--            .finish()
--            .ca
+     let out_schema_ptr = out_schema_ptr as *mut polars_arrow::ffi::ArrowSchema;
 ```
 
-**File**: `crates/polars-ops/src/series/ops/binning.rs` (modified, +40/-22)
+**File**: `py-polars/tests/unit/interop/test_interop.py` (modified, +20/-0)
 ```diff
-@@ -1,5 +1,6 @@
- use polars_arrow::compute::concatenate::concatenate_validities;
- use polars_core::chunked_array::ops::binning::{FractionSpec, IntervalSpec};
-+use polars_core::prelude::gather::check_bounds_ca;
- use polars_core::prelude::*;
- use polars_core::with_match_physical_integer_polars_type;
- 
-@@ -98,18 +99,23 @@ fn uniform_threshold_offsets(
-     })
- }
- 
--/// Equal-width breakpoints `min + (i + 1)/n_bins * (max - min)` for `0 <= i < n_bins - 1`,
--/// in the input dtype, or `None` when the column has no usable `min`/`max`.
--///
--/// Floats go through `f64` and are narrowed back afterwards; integers and `Decimal` (via
--/// its `Int128` physical) derive representable thresholds in their own width.
--fn uniform_interval_breaks(
-+/// The `bin_intervals` breakpoints of `n_bins` equal-width bins, which depend only on the dtype,
-+/// min and max of `s`, or `None` when `s` has no non-null values.
-+//
-+// Floats go through `f64` and are narrowed back afterwards; integers and `Decimal` (via
-+// its `Int128` physical) derive representable thresholds in their own width.
-+pub fn bin_interval_breaks(
-     s: &Series,
-     n_bins: usize,
-     right_closed: bool,
- ) -> PolarsResult<Option<Series>> {
--    let n_breaks = n_bins - 1;
-+    polars_ensure!(n_bins > 0, ComputeError: "binning requires at least one bin");
-     let dtype = s.dtype();
-+    polars_ensure!(
-+        dtype.is_numeric(),
-+        InvalidOperation: "`bin_intervals` requires a numeric input, got `{}`", dtype
-+    );
-+    let n_breaks = n_bins - 1;
- 
-     if dtype.is_float() {
-         let f = s.cast(&DataType::Float64)?;
-@@ -200,20 +206,23 @@ fn cum_bin_sizes_fractions(non_null_len: usize, fractions: &[f64]) -> Vec<IdxSiz
-         .collect()
- }
- 
--/// Turn a column of bin indices into the final output.
--///
--/// Without labels the bins are returned as `UInt32`, with labels as an `Enum` over them.
--/// When `breaks` is given the result is instead a struct of `bin`, `left` and `right`,
--/// where `left` is null for the first bin and `right` null for the last. `breaks` holds
--/// the `n_bins - 1` boundary values; for rank-based binning these are the gathered
--/// boundary *values*, not the rank positions.
--fn finish_bins(
-+/// The binning output for the bin indices `bin_idx` in `0..n_bins`, labelled by the `n_bins`
-+/// `labels` and with intervals bounded by the `n_bins - 1` boundary values `breaks`.
-+//
-+// Without labels the bins are returned as `UInt32`, with labels as an `Enum` over them.
-+// When `breaks` is given the result is instead a struct of `bin`, `left` and `right`,
-+// where `left` is null for the first bin and `right` null for the last. For rank-based
-+// binning `breaks` are the gathered boundary *values*, not the rank positions.
-+pub fn finish_bins(
-     out_name: PlSmallStr,
-     bin_idx: &IdxCa,
-     n_bins: usize,
-     breaks: Option<&Series>,
-     labels: Option<&[PlSmallStr]>,
- ) -> PolarsResult<Series> {
-+    polars_ensure!(n_bins > 0, ComputeError: "binning requires at least one bin");
-+    check_bounds_ca(bin_idx, n_bins.try_into().unwrap_or(IdxSize::MAX))?;
+@@ -1861,3 +1861,23 @@ def test_series_from_arrow_large_list_keeps_fast_explode_28626(
+     assert imported.to_list() == values
+     assert imported.flags["FAST_EXPLODE"] is fast_explode
+     assert imported.explode(empty_as_null=True, keep_nulls=True).to_list() == exploded
 +
-     let bin = match labels {
-         None => bin_idx.cast(&DataType::UInt32)?,
-         Some(labels) => {
-@@ -241,7 +250,11 @@ fn finish_bins(
-     let Some(breaks) = breaks else {
-         return Ok(bin.with_name(out_name));
-     };
--    debug_assert_eq!(breaks.len() + 1, n_bins);
-+    polars_ensure!(
-+        breaks.len() + 1 == n_bins,
-+        ShapeMismatch: "binning produces {} bins but got {} breakpoints",
-+        n_bins, breaks.len()
-+    );
- 
-     // `left[i]` is `(null ++ breaks)[bin_idx[i]]` and `right[i]` is
-     // `(breaks ++ null)[bin_idx[i]]`. A null index gathers to null, so null inputs and
-@@ -294,7 +307,7 @@ pub fn bin_intervals(
-         IntervalSpec::Count(n_bins) => {
-             let n_bins = n_bins.get();
-             // No usable min/max: an empty or all-null column.
--            let Some(breaks) = uniform_interval_breaks(s, n_bins, right_closed)? else {
-+            let Some(breaks) = bin_interval_breaks(s, n_bins, right_closed)? else {
-                 return empty_bins(s, n_bins, labels, include_intervals);
-             };
-             breaks
-@@ -337,17 +350,22 @@ pub fn bin_quantiles(
-     )
- }
- 
-+/// The `bin_ranks` cuts among `non_null_len` non-null values: bin `i` holds the ranks from
-+/// `cuts[i - 1]` up to but excluding `cuts[i]`.
-+pub fn bin_rank_cuts(non_null_len: usize, spec: &FractionSpec) -> Vec<IdxSize> {
-+    match spec {
-+        FractionSpec::Explicit(fractions) => cum_bin_sizes_fractions(non_null_len, fractions),
-+        FractionSpec::Count(n_bins) => cum_bin_sizes_uniform(non_null_len, n_bins.get()),
-+    }
-+}
 +
- pub fn bin_ranks(
-     s: &Series,
-     spec: &FractionSpec,
-     labels: Option<&[PlSmallStr]>,
-     include_intervals: bool,
- ) -> PolarsResult<Series> {
--    let non_null_len = s.len() - s.null_count();
--    let cum_bin_sizes = match spec {
--        FractionSpec::Explicit(fractions) => cum_bin_sizes_fractions(non_
++@pytest.mark.parametrize(
++    "s",
++    [
++        pl.Series("a", ["x", "y", None, "x"], dtype=pl.Categorical),
++        pl.Series("a", ["x", "y", None, "x"], dtype=pl.Enum(["x", "y"])),
++        pl.Series("a", [["x", "y"], None], dtype=pl.List(pl.Categorical)),
++    ],
++)
++def test_export_arrow_to_c_logical_dtype(s: pl.Series) -> None:
++    import ctypes
++
++    # sizeof(struct ArrowArray) and sizeof(struct ArrowSchema) on 64-bit platforms.
++    c_array = ctypes.create_string_buffer(80)
++    c_schema = ctypes.create_string_buffer(72)
++    s._export_arrow_to_c(ctypes.addressof(c_array), ctypes.addressof(c_schema))
++    arr = pa.Array._import_from_c(ctypes.addressof(c_array), ctypes.addressof(c_schema))
++    arr.validate(full=True)
++    assert arr.equals(s.to_arrow(compat_level=CompatLevel.newest()))
 ```
 
 ---
 
-### Incident Patch 3: `d9e5ab1a` (2026-11-11)
-**Commit Message**: fix: Make `Expr.entropy` corner cases consistent across engines (#30699)
+### Incident Patch 3: `d3e37ceb` (2026-11-14)
+**Commit Message**: fix: Reject statements that are not queries in EXPLAIN (#30798)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-expr/src/dispatch/misc.rs` (modified, +10/-0)
+**File**: `crates/polars-sql/src/context.rs` (modified, +19/-1)
 ```diff
-@@ -877,6 +877,16 @@ pub(super) fn log(columns: &[Column]) -> PolarsResult<Column> {
-     Column::try_apply_broadcasting_binary_elementwise(&columns[0], &columns[1], Series::log)
+@@ -2430,7 +2430,25 @@ impl SQLContext {
+     fn execute_explain(&mut self, stmt: &Statement) -> PolarsResult<LazyFrame> {
+         match stmt {
+             Statement::Explain { statement, .. } => {
+-                let lf = self.execute_statement(statement)?;
++                // Any other statement would be run to get a plan: its table created,
++                // dropped or changed.
++                let query = match statement.as_ref() {
++                    Statement::Query(query)
++                        if !matches!(
++                            query.body.as_ref(),
++                            SetExpr::Insert(_)
++                                | SetExpr::Update(_)
++                                | SetExpr::Delete(_)
++                                | SetExpr::Merge(_)
++                        ) =>
++                    {
++                        query
++                    },
++                    _ => polars_bail!(
++                        SQLInterface: "EXPLAIN supports queries only; found:\n{}", statement,
++                    ),
++                };
++                let lf = self.execute_query(query)?;
+                 let plan = lf.describe_optimized_plan()?;
+                 let plan = plan
+                     .split('\n')
+```
+
+**File**: `crates/polars-sql/tests/functions_meta.rs` (modified, +25/-0)
+```diff
+@@ -33,3 +33,28 @@ fn test_describe() {
+ 
+     assert_eq!(actual, expected);
  }
- 
-+#[cfg(feature = "log")]
-+pub(super) fn x_log_y(columns: &[Column], base: f64) -> PolarsResult<Column> {
-+    use polars_ops::series::LogSeries;
 +
-+    assert_eq!(columns.len(), 2);
-+    Column::try_apply_broadcasting_binary_elementwise(&columns[0], &columns[1], |x, y| {
-+        x.x_log_y(y, base)
-+    })
++#[test]
++fn test_explain_does_not_run_other_statements() {
++    let mut context = SQLContext::new();
++    context.register("df", df! { "a" => [1, 2] }.unwrap().lazy());
++
++    for sql in [
++        "EXPLAIN DROP TABLE df",
++        "EXPLAIN CREATE TABLE other AS SELECT * FROM df",
++        "EXPLAIN INSERT INTO df VALUES (3)",
++        "EXPLAIN WITH q AS (SELECT 3 AS a) INSERT INTO df SELECT a FROM q",
++        "EXPLAIN TRUNCATE TABLE df",
++    ] {
++        let err = context.execute(sql).err().unwrap();
++        assert!(err.to_string().contains("EXPLAIN supports queries only"));
++    }
++
++    assert_eq!(context.get_tables(), ["df"]);
++    let df = context
++        .execute("SELECT * FROM df")
++        .unwrap()
++        .collect()
++        .unwrap();
++    assert_eq!(df.height(), 2);
 +}
-+
- #[cfg(feature = "log")]
- pub(super) fn log1p(s: &Column) -> PolarsResult<Column> {
-     use polars_ops::series::LogSeries;
-```
-
-**File**: `crates/polars-expr/src/dispatch/mod.rs` (modified, +2/-0)
-```diff
-@@ -386,6 +386,8 @@ pub fn function_expr_to_udf(
-         #[cfg(feature = "log")]
-         F::Entropy { base, normalize } => map!(misc::entropy, base, normalize),
-         #[cfg(feature = "log")]
-+        F::XLogY { base } => map_as_slice!(misc::x_log_y, base),
-+        #[cfg(feature = "log")]
-         F::Log => map_as_slice!(misc::log),
-         #[cfg(feature = "log")]
-         F::Log1p => map!(misc::log1p),
-```
-
-**File**: `crates/polars-ops/src/series/ops/log.rs` (modified, +70/-23)
-```diff
-@@ -1,5 +1,4 @@
--#[cfg(feature = "dtype-f16")]
--use num_traits::real::Real;
-+use num_traits::{Float, NumCast, One, ToPrimitive, Zero};
- use polars_core::prelude::arity::broadcast_binary_elementwise_values;
- use polars_core::prelude::*;
- use polars_core::{with_match_physical_float_polars_type, with_match_physical_integer_polars_type};
-@@ -188,36 +187,84 @@ pub trait LogSeries: SeriesSealed {
-     /// where `pk` are discrete probabilities.
-     fn entropy(&self, base: f64, normalize: bool) -> PolarsResult<f64> {
-         let s = self.as_series();
--
--        // If there is only one value in the series, return 0.0 to prevent the function from returning -0.0.
--        if s.len() == 1 {
--            return Ok(0.0);
--        }
-         match s.dtype() {
-             dt if dt.is_float() => {
--                let pk = s;
--
--                let pk = if normalize {
--                    let sum = pk.sum_reduce().unwrap().into_series(PlSmallStr::EMPTY);
--
--                    if sum.get(0).unwrap().extract::<f64>().unwrap() != 1.0 {
--                        (pk / &sum)?
--                    } else {
--                        pk.clone()
--                    }
--                } else {
--                    pk.clone()
--                };
--
--                let base = &Series::new(PlSmallStr::EMPTY, [base]);
--                (&pk * &pk.log(base)?)?.sum::<f64>().map(|v| -v)
-+                with_match_physical_float_polars_type!(s.dtype(), |$T| {
-+                    let ca: &ChunkedArray<$T> = s.as_ref().as_ref();
-+                    Ok(entropy_float(ca, base, normalize))
-+                })
-             },
-             dt if dt.is_integer() || dt.is_decimal() || dt.is_bool() => s
-                 .cast(&DataType::Float64)
-                 .map(|s| s.entropy(base, normalize))?,
-             dt => polars_bail!(opq = entropy, dt),
-         }
-     }
-+
-+    /// Compute `x * log(y, base)` elementwise, which is 0 where `x` is 0 unless `y` is NaN.
-+    ///
-+    /// `x` and `y` must have the same dtype; the planner casts them to their supertype.
-+    fn x_log_y(&self, y: &Series, base: f64) -> PolarsResult<Series> {
-+        let x = self.as_series();
-+        polars_ensure!(
-+            x.dtype() == y.dtype(),
-+            InvalidOperation: "`x_log_y` expects inputs of the same dtype, got `{}` and `{}`",
-+            x.dtype(), y.dtype()
-+        );
-+        match x.dtype() {
-+            dt if dt.is_float() => with_match_physical_float_polars_type!(dt, |$T| {
-+                let x_ca: &ChunkedArray<$T> = x.as_ref().as_ref();
-+                let y_ca: &ChunkedArray<$T> = y.as_ref().as_ref();
-+                let base = NumCast::from(base).unwrap();
-+                let out: ChunkedArray<$T> =
-+                    broadcast_binary_elementwise_values(x_ca, y_ca, |x, y| x_log_y(x, y, base));
-+                Ok(out.into_series())
-+            }),
-+            dt if dt.is_integer() || dt.is_decimal() || dt.is_bool() => {
-+                let f64 = DataType::Float64;
-+                x.cast(&f64)?.x_log_y(&y.cast(&f64)?, base)
-+            },
-+            dt => polars_bail!(opq = x_log_y, dt),
-+        }
-+    }
-+}
-+
-+fn x_log_y<F: Float>(x: F, y: F, base: F) -> F {
-+    if x == F::zero() && !y.is_nan() {
-+        F::zero()
-+    } else {
-+        x * y.log(base)
-+    }
-+}
-+
-+/// Entropy with `0 * log(0) = 0` and NaN for negative weights.
-+fn entropy_float<T>(ca: &ChunkedArray<T>, base: f64, normalize: bool) -> f64
-+where
-+    T: PolarsFloatType,
-+    T::Native: Float,
-+    ChunkedArray<T>: ChunkAgg<T::Native>,
-+{
-+    let zero = T::Native::zero();
-+    let total = if normalize {
-+        ca.sum().unwrap_or(zero)
-+    } else {
-+        T::Native::one()
-+    };
-+    // Also covers empty, all-null and all-zero input.
-+    if total == zero {
-+        return f64::NAN;
-+    }
-+    let base: T::Native = NumCast::from(base).unwrap();
-+    let plogp = ca.apply_values(|x| {
-+        // Checked before dividing, so that a negative weight can't underflow to `-0.0`.
-+        if x < zero {
-+            T::Native::nan()
-+        } else {
-+            let p = x / total;
-+            x_log_y(p, p, base)
-+        }
-+    });
-+    -plogp.sum().map_or(0.0, |t| t.to_f64().unwrap())
- }
- 
- impl LogSeries for Series {}
-```
-
-**File**: `crates/polars-plan/dsl-schema-hashes.json` (modified, +1/-1)
-```diff
-@@ -80,7 +80,7 @@
-   "FillNullStrategy": "459a9a9702415f9ca9e5218bb573609a60291e73162c38fbc046c97feb1b7500",
-   "FractionSpec": "4b742bb2b41bf40f12dc39cb067bc21c8f643aa2996901fd6e751070e0821106",
-   "Fractions": "38d7713cddff75a859aff1bdaf88613671fa714fd68d74b58e4544e9a140c74d",
--  "FunctionExpr": "ab50f8859854e74ab0c8df57a05794df2974c2c387851d6315df70d803712460",
-+  "FunctionExpr": "1221b5f22307a679ed1e360e38c80e45737b27c0abf47afb5ccc351d03ec11fb",
-   "FunctionFlags": "ac68b661d980cee7c3c7f499f4d8fa824b2f8617f7093613b00ec199a0f7c21f",
-   "FunctionOptions": "0784524479a30a7d91b890b03feac9eca6c46d04f0a7c3f4a9a2d827c3e34b5e",
-   "GroupbyOptions": "0cda61fc19eb9866157ae4afeed3dc018294aaea5f02692b085885de771bfcdb",
-```
-
-**File**: `crates/polars-plan/src/dsl/function_expr/mod.rs` (modified, +8/-0)
-```diff
-@@ -311,6 +311,10 @@ pub enum FunctionExpr {
-         normalize: bool,
-     },
-     #[cfg(feature = "log")]
-+    XLogY {
-+        base: f64,
-+    },
-+    #[cfg(feature = "log")]
-     Log,
-     #[cfg(feature = "log")]
-     Log1p,
-@@ -705,6 +709,8 @@ impl Hash for FunctionExpr {
-                 normalize.hash(state);
-             },
-             #[cfg(feature = "log")]
-+            XLogY { base } => base.to_bits().hash(state),
-+            #[cfg(feature = "log")]
-             Log => {},
-             #[cfg(feature = "log")]
-             Log1p => {},
-@@ -980,6 +986,8 @@ impl Display for FunctionExpr {
-             #[cfg(feature = "log")]
-             Entropy { .. } => "entropy",
-             #[cfg(feature = "log")]
-+            XLogY { .. } => "x_log_y",
-+            #[cfg(feature = "log")]
-             Log => "log",
-             #[cfg(feature = "log")]
-             Log1p => "log1p",
-```
-
-**File**: `crates/polars-plan/src/dsl/mod.rs` (modified, +6/-0)
-```diff
-@@ -1633,6 +1633,12 @@ impl Expr {
-         self.map_binary(FunctionExpr::Log, base)
-     }
- 
-+    #[cfg(feature = "log")]
-+    /// Compute `self * log(y, base)`, which is 0 where `self` is 0 unless `y` is NaN.
-+    pub fn x_log_y(self, y: Expr, base: f64) -> Self {
-+        self.map_binary(FunctionExpr::XLogY { base }, y)
-+    }
-+
-     #[cfg(feature = "log")]
-     /// Compute the natural logarithm of all elements plus one in the input array.
-     pub fn log1p(self) -> Self {
-```
-
-**File**: `crates/polars-plan/src/plans/aexpr/determinism.rs` (modified, +1/-1)
-```diff
-@@ -208,7 +208,7 @@ fn is_inherently_nondeterministic_fn(f: &IRFunctionExpr) -> bool {
-         #[cfg(feature = "log")]
-         F::Entropy { .. } => false,
-         #[cfg(feature = "log")]
--        F::Log | F::Log1p | F::Exp | F::Erf | F::Erfc => false,
-+        F::Log | F::Log1p | F::Exp | F::Erf | F::Erfc | F::XLogY { .. } => false,
-         F::Unique(_) => false,
-         #[cfg(feature = "round_series")]
-         F::Round { .. } | F::RoundSF { .. } | F::Truncate { .. } | F::Floor | F::Ceil => false,
-```
-
-**File**: `crates/polars-plan/src/plans/aexpr/function_expr/mod.rs` (modified, +10/-0)
-```diff
-@@ -290,6 +290,10 @@ pub enum IRFunctionExpr {
-         normalize: bool,
-     },
-     #[cfg(feature = "log")]
-+    XLogY {
-+        base: f64,
-+    },
-+    #[cfg(feature = "log")]
-     Log,
-     #[cfg(feature = "log")]
-     Log1p,
-@@ -696,6 +700,8 @@ impl Hash for IRFunctionExpr {
-                 normalize.hash(state);
-             },
-             #[cfg(feature = "log")]
-+            XLogY { base } => base.to_bits().hash(state),
-+            #[cfg(feature = "log")]
-             Log => {},
-             #[cfg(feature = "log")]
-             Log1p => {},
-@@ -1002,6 +1008,8 @@ impl IRFunctionExpr {
-             #[cfg(feature = "log")]
-             Entropy { .. } => "entropy",
-             #[cfg(feature = "log")]
-+            XLogY { .. } => "x_log_y",
-+            #[cfg(feature = "log")]
-             Log => "log",
-             #[cfg(feature = "log")]
-             Log1p => "log1p",
-@@ -1405,6 +1413,8 @@ impl IRFunctionExpr {
-             #[cfg(feature = "log")]
-             F::Log | F::Log1p | F::Exp | F::Erf | F::Erfc => FunctionOptions::elementwise(),
-             #[cfg(feature = "log")]
-+            F::XLogY { .. } => FunctionOptions::elementwise().with_supertyping(Default::default()),
-+            #[cfg(feature = "log")]
-             F::Entropy { .. } => {
-                 FunctionOptions::aggregation().flag(FunctionFlags::NON_ORDER_OBSERVING)
-             },
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30711** (2026-11-10): fix: Do not set `schema.name-mapping.default` on Iceberg commits (@kdn36)
-- **PR #30704** (2026-11-10): perf: Vectorize Decimal mean and sum reductions (@ritchie46)
-- **PR #30702** (2026-11-10): fix: Fix column order of unnest in projection pushdown (@nameexhaustion)
-- **PR #30701** (2026-11-10): fix: Slice pushdown with list/struct eval (@orlp)
-- **PR #30699** (2026-11-11): fix: Make `Expr.entropy` corner cases consistent across engines (@dancsi)
-- **PR #30698** (closed): fix: Don't push row slices into list.eval / struct.with_fields evaluations (@FazeelUsmani)
+- **PR #30798** (2026-11-14): fix: Reject statements that are not queries in EXPLAIN (@kdn36)
+- **PR #30797** (2026-11-14): feat: Support `Map` columns in Iceberg tables created by Polars (@kdn36)
+- **PR #30795** (2026-11-14): perf: Compute rolling_*_by windows outside the generic aggregation (@ritchie46)
+- **PR #30794** (2026-11-14): perf: Skip hashing and hot table lookups for runs of equal string keys (@ritchie46)
+- **PR #30791** (2026-11-14): fix: Do not read Iceberg column names as regex in `sink_iceberg` and SQL CTAS (@kdn36)
+- **PR #30790** (2026-11-14): perf: Build dictionaries in casts with u32 or u64 keys (@ritchie46)
 
 ---
 
@@ -2446,47 +1981,35 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Avoid segfault on environment changes after a cloud scan (#30665)
+## X. Return null instead of silent overflow for temporal total_ functions
 
 **RULE**:
-When implementing operations in `crates/polars-config/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-time/src/chunkedarray/duration.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6be8f4dd`: Avoid segfault on environment changes after a cloud scan (#30665). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8cb46300`: Return null instead of silent overflow for temporal total_ functions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-config/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-time/src/chunkedarray/duration.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-const LOG_CONCURRENCY: &str = "POLARS_LOG_CONCURRENCY";
-const DEFAULT_LOG_CONCURRENCY: bool = false;
-
-    LOG_CONCURRENCY,
-    log_concurrency: AtomicBool,
-            log_concurrency: AtomicBool::new(DEFAULT_LOG_CONCURRENCY),
-            LOG_CONCURRENCY => self.log_concurrency.store(
-                val.and_then(|x| parse::parse_bool(var, x))
-                    .unwrap_or(DEFAULT_LOG_CONCURRENCY),
-                Ordering::Relaxed,
-            ),
-    /// Whether to log the cloud and scan pipeline concurrency state.
-    #[inline(always)]
-    pub fn log_concurrency(&self) -> bool {
-        self.log_concurrency.load(Ordering::Relaxed)
-    }
-
+            TimeUnit::Milliseconds => (&self.phys).checked_mul_scalar(1000),
+            TimeUnit::Milliseconds => (&self.phys).checked_mul_scalar(NANOSECONDS_IN_MILLISECOND),
+            TimeUnit::Microseconds => (&self.phys).checked_mul_scalar(1000),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+            TimeUnit::Milliseconds => &self.phys * 1000,
+            TimeUnit::Milliseconds => &self.phys * NANOSECONDS_IN_MILLISECOND,
+            TimeUnit::Microseconds => &self.phys * 1000,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6be8f4dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8cb46300` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

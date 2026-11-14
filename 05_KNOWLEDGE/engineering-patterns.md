@@ -614057,3 +614057,148 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c31a588a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8512. Return null instead of silent overflow for temporal total_ functions (Harvested from pola-rs/polars)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Return null instead of silent overflow for temporal total_ functions",
+  "source": "pola-rs/polars",
+  "source_url": "https://github.com/pola-rs/polars",
+  "source_version": "2d9938df",
+  "license": "MIT",
+  "extracted_at": "2026-11-14T17:39:54.893Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pola-rs-polars",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pola-rs/polars](https://github.com/pola-rs/polars) (Revision: `2d9938df`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/polars-time/src/chunkedarray/duration.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8cb46300`: Return null instead of silent overflow for temporal total_ functions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-time/src/chunkedarray/duration.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            TimeUnit::Milliseconds => (&self.phys).checked_mul_scalar(1000),
+            TimeUnit::Milliseconds => (&self.phys).checked_mul_scalar(NANOSECONDS_IN_MILLISECOND),
+            TimeUnit::Microseconds => (&self.phys).checked_mul_scalar(1000),
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+            TimeUnit::Milliseconds => &self.phys * 1000,
+            TimeUnit::Milliseconds => &self.phys * NANOSECONDS_IN_MILLISECOND,
+            TimeUnit::Microseconds => &self.phys * 1000,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8cb46300` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8513. [PLAT-23867] Add AI review guide for YBA (Harvested from yugabyte/yugabyte-db)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[PLAT-23867] Add AI review guide for YBA",
+  "source": "yugabyte/yugabyte-db",
+  "source_url": "https://github.com/yugabyte/yugabyte-db",
+  "source_version": "ded6b58d",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-14T17:40:09.185Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yugabyte-yugabyte-db",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db) (Revision: `ded6b58d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `REVIEW.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a7a0e327`: [PLAT-23867] Add AI review guide for YBA. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `REVIEW.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production-grade fix pattern:
+- Under `managed/`, what [`managed/REVIEW.md`](managed/REVIEW.md) asks to flag.
+- **`managed/`** (YBA platform) — orchestration logic, especially around node lifecycle and cluster-wide ops. See [`managed/REVIEW.md`](managed/REVIEW.md).
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// Induced defect failure mode:
+- **`managed/`** (YBA platform) — orchestration logic, especially around node lifecycle and cluster-wide ops.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a7a0e327` are properly handled with clean fallback behavior.

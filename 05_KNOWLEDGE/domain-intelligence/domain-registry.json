@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T17:25:24.555Z",
-  "total_records": 761,
+  "last_updated": "2026-11-14T17:40:48.772Z",
+  "total_records": 768,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 374,
+      "total": 377,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -411,7 +411,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-google-embeddinggemma-2-core-invariants",
         "DOM-D-CCF89F8A",
-        "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-canberkkkkkk-ema-lightning-core-invariants",
+        "DOM-D-A6170DB1",
+        "domain_intelligence-research-knowledge-intelligence-hf-canberkkkkkk-ema-lightning-learnings-core-inv"
       ]
     },
     "E": {
@@ -444,7 +447,7 @@
       ]
     },
     "G": {
-      "total": 116,
+      "total": 118,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -561,7 +564,9 @@
         "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants",
         "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-astral-sh-uv-core-invariants",
-        "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-pola-rs-polars-core-invariants",
+        "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants"
       ]
     },
     "H": {
@@ -732,7 +737,7 @@
       ]
     },
     "I": {
-      "total": 26,
+      "total": 28,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -759,7 +764,9 @@
         "domain_intelligence-content-information-intelligence-peerdb-io-peerdb-core-invariants",
         "domain_intelligence-content-information-intelligence-zed-industries-zed-core-invariants",
         "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants",
-        "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants"
+        "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants",
+        "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants",
+        "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-learnings-core-invariants"
       ]
     },
     "J": {
@@ -15627,6 +15634,102 @@
       "repository": "callstack-agent-device-learnings",
       "content_hash": "a43485127efb2de3e8a8167b3395ffbbb937c85f49af4fd3332d5a58796ba5d7",
       "created_at": "2026-11-14T17:25:24.555Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-canberkkkkkk-ema-lightning-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-canberkkkkkk-ema-lightning-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: canberkkkkkk/ema-lightning Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-canberkkkkkk-ema-lightning-research-knowledge-intelligence-canberkkkkkk-ema-l.md",
+      "repository": "canberkkkkkk/ema-lightning",
+      "content_hash": "f0c11db45d76161762899fa37fc55935c8d3771242fbf82dfe1cc0b46eb329a8",
+      "created_at": "2026-11-14T17:39:52.424Z"
+    },
+    "domain_intelligence-architecture-intelligence-pola-rs-polars-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-pola-rs-polars-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: pola-rs/polars Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-architecture-intelligence-pola-rs-polars-core-invariants.md",
+      "repository": "pola-rs/polars",
+      "content_hash": "c38da01ff476374329397b8f4abbd0f3738e9f84a2b419dd747ba429526cdbf9",
+      "created_at": "2026-11-14T17:39:55.721Z"
+    },
+    "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: yugabyte/yugabyte-db Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-yugabyte-yugabyte-db-content-information-intelligence-yugabyte-yugabyte-db-core-.md",
+      "repository": "yugabyte/yugabyte-db",
+      "content_hash": "fff632619c6136b0d7b492946b6f1711f80758d3c8c0c80f1421fd8960df53a8",
+      "created_at": "2026-11-14T17:40:10.022Z"
+    },
+    "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: pola-rs-polars-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-learnings-architecture-intelligence-pola-rs-polars-learnings-core.md",
+      "repository": "pola-rs-polars-learnings",
+      "content_hash": "23e930181087af247bd02ddbf87cb3354e4808664aba432d2f0ca8200336ea35",
+      "created_at": "2026-11-14T17:40:13.440Z"
+    },
+    "DOM-D-A6170DB1": {
+      "record_id": "DOM-D-A6170DB1",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): canberkkkkkk/ema-lightning",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/canberkkkkkk/ema-lightning](https://huggingface.co/canberkkkkkk/ema-lightning))  \n> **Source Version**: `hf-canberkkk`  \n> **License**: Open-Source",
+      "content_hash": "7cd9d1c8e98cce5ac6dbf8f025f537a36ee2fb576927cad057b93fd625b8ebf7",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "provenance": {
+        "source_uri": "project://hf-canberkkkkkk-ema-lightning/hf-canberkkkkkk-ema-lightning-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T17:40:13.686Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-canberkkkkkk-ema-lightning)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-canberkkkkkk-ema-lightning"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T17:40:47.833Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-canberkkkkkk-ema-lightning-learnings-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-canberkkkkkk-ema-lightning-learnings-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-canberkkkkkk-ema-lightning-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-canberkkkkkk-ema-lightning-learnings-research-knowledge-intelligence-hf-canbe.md",
+      "repository": "hf-canberkkkkkk-ema-lightning-learnings",
+      "content_hash": "ef820ab55da719525cabcb660d056893e5a8e02917aebe557c4248478b70e7c2",
+      "created_at": "2026-11-14T17:40:48.077Z"
+    },
+    "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-yugabyte-yugabyte-db-learnings-content-information-intelligence-yugabyte-yugabyt.md",
+      "repository": "yugabyte-yugabyte-db-learnings",
+      "content_hash": "d33e519bfe81a3bd6100a4829b2c9e1420d609e89bb278970f0ca3b108dd0b63",
+      "created_at": "2026-11-14T17:40:48.772Z"
     }
   }
 }

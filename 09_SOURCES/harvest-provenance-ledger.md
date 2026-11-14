@@ -9925,3 +9925,7 @@ Every entry in this ledger must capture:
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `d78be6c8` | Multi-dimensional audit evidence | 2026-11-14T17:24:51.817Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `c31a588a` | Multi-dimensional audit evidence | 2026-11-14T17:24:59.505Z |
 | `learn-dom-d-ccf89f8a` | `project://hf-google-embeddinggemma-2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | 2026-11-14T17:25:24.066Z |
+| `learn-huggingface-canberkkkkkk-ema-lightning` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-11-14T17:39:52.213Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `2d9938df` | Multi-dimensional audit evidence | 2026-11-14T17:39:55.388Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `ded6b58d` | Multi-dimensional audit evidence | 2026-11-14T17:40:09.683Z |
+| `learn-dom-d-a6170db1` | `project://hf-canberkkkkkk-ema-lightning` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | 2026-11-14T17:40:47.848Z |

@@ -9892,3 +9892,7 @@
 | `CYCLE-20261114-EINA` | `2026-11-14T17:24:51.814Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8510` | Yes (`6c83fe52...`) |
 | `CYCLE-20261114-EOKU` | `2026-11-14T17:24:59.502Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8511` | Yes (`c0e309c3...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T17:25:24.066Z` | `hf-google-embeddinggemma-2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CCF89F8A` [Domain D] | Yes (`4202ea71...`) |
+| `CYCLE-20261114-XTE9` | `2026-11-14T17:39:52.209Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`4110c666...`) |
+| `CYCLE-20261114-XVUG` | `2026-11-14T17:39:55.384Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8512` | Yes (`84151206...`) |
+| `CYCLE-20261114-Y6VJ` | `2026-11-14T17:40:09.679Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8513` | Yes (`66e4803f...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T17:40:47.848Z` | `hf-canberkkkkkk-ema-lightning` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A6170DB1` [Domain D] | Yes (`7cd9d1c8...`) |
