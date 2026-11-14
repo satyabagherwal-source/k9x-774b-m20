@@ -9779,3 +9779,6 @@
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T07:18:39.877Z` | `matthart1983-netwatch` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-C3DCBF34` [Domain K] | Yes (`c994897a...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T07:19:17.741Z` | `hf-pablodawson-minimax-h3-360-orbit-lora` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4E8F92EB` [Domain D] | Yes (`29665813...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T07:20:03.214Z` | `kgateway-dev-kgateway` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-2852CE47` [Domain K] | Yes (`1ac01437...`) |
+| `CYCLE-20261114-6BI3` | `2026-11-14T07:30:37.371Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`76530577...`) |
+| `CYCLE-20261114-6M8Y` | `2026-11-14T07:30:51.298Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8464` | Yes (`5419b102...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T07:31:22.690Z` | `hf-venastine-research-xing4.0-29b-a4b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C8957CC0` [Domain D] | Yes (`24f96f71...`) |

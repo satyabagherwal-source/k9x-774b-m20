@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T07:18:07.347Z",
-  "total_cycles_completed": 9481,
-  "total_learnings_persisted": 9481,
-  "total_rules_promoted": 9185,
+  "last_updated": "2026-11-14T07:30:51.307Z",
+  "total_cycles_completed": 9483,
+  "total_learnings_persisted": 9483,
+  "total_rules_promoted": 9186,
   "history": [
-    {
-      "timestamp": "2026-11-13T15:29:23.613Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-apple-lensvlm-9b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T15:29:32.642Z",
-      "repository": "crossplane/crossplane",
-      "learningId": "learn-github-crossplane-crossplane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T15:29:36.941Z",
       "repository": "mitmproxy/mitmproxy",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-14T07:18:07.347Z",
       "repository": "MaterializeInc/materialize",
       "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T07:30:37.380Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T07:30:51.307Z",
+      "repository": "HelixDB/helix-db",
+      "learningId": "learn-github-helixdb-helix-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

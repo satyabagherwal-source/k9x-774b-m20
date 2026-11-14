@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T07:20:03.213Z",
+  "updated_at": "2026-11-14T07:31:22.689Z",
   "statistics": {
-    "total_nodes": 172,
-    "total_edges": 93,
+    "total_nodes": 173,
+    "total_edges": 94,
     "domain_distribution": {
-      "D": 132,
+      "D": 133,
       "M": 1,
       "H": 14,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 93
+      "CONSTRAINED_BY_ARCHITECTURE": 94
     }
   },
   "nodes": {
@@ -3853,6 +3853,29 @@
       ],
       "created_at": "2026-11-14T07:20:03.213Z",
       "updated_at": "2026-11-14T07:20:03.213Z"
+    },
+    "DOM-D-C8957CC0": {
+      "id": "DOM-D-C8957CC0",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md`  \n> **Source**: huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md`  \n> **Source**: huggingface",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-venastine-research-xing4.0-29b-a4b-gguf/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T07:30:54.480Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-venastine-research-xing4.0-29b-a4b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T07:31:22.688Z",
+      "updated_at": "2026-11-14T07:31:22.688Z"
     }
   },
   "edges": [
@@ -4785,6 +4808,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-K-2852CE47 [K] with Domain G",
       "created_at": "2026-11-14T07:20:03.213Z"
+    },
+    {
+      "id": "EDGE-9F250160C830",
+      "sourceId": "DOM-D-C8957CC0",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-C8957CC0 [D] with Domain M",
+      "created_at": "2026-11-14T07:31:22.688Z"
     }
   ]
 }

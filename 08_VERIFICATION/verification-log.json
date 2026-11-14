@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-YSAV",
-    "timestamp": "2026-11-13T09:57:03.559Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "efc7c5ea4b1de353ed42ec95064e0ef01ee69cc24d36a9a1e042569fce9157aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-YVZB",
-    "timestamp": "2026-11-13T09:57:08.327Z",
-    "repository": "wzh4869/AppPorts",
-    "learningId": "learn-github-wzh4869-appports",
-    "contentHash": "d59f1a07892e9e204509dfe2619fc0001368972a9e7695e28f574d952ca7d6e0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-0J7L",
     "timestamp": "2026-11-13T10:26:24.705Z",
     "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -7490,6 +7460,36 @@
     "repository": "MaterializeInc/materialize",
     "learningId": "learn-github-materializeinc-materialize",
     "contentHash": "bee7228afd9a4b35229b950d1fad5f36502711143899b80297b72267e573a23d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-6BI3",
+    "timestamp": "2026-11-14T07:30:37.371Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+    "contentHash": "76530577fa7501066b66d71fe092ec2fdaab0a3aab85b46afe2f7daaa2c06125",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-6M8Y",
+    "timestamp": "2026-11-14T07:30:51.298Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "5419b10249288346b7db86182a5d9c87e60fbeb95d32c191819927af8386fc7e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

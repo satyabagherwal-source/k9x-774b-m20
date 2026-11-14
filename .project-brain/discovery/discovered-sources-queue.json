@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T07:19:17.753Z",
+  "updated_at": "2026-11-14T07:31:23.142Z",
   "stats": {
-    "total_discovered": 3185,
-    "approved_pending_harvest": 2982,
+    "total_discovered": 3190,
+    "approved_pending_harvest": 2985,
     "harvested_count": 0,
-    "rejected_count": 203,
+    "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2974,
+      "COMMUNITY_AND_EXPERT": 2979,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -68669,6 +68669,102 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
         "fileName": "hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md"
+      }
+    },
+    "SRC-5282B8E550CB": {
+      "id": "SRC-5282B8E550CB",
+      "url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "title": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:31:22.703Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
+        "fileName": "hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md"
+      }
+    },
+    "SRC-E87162162EFB": {
+      "id": "SRC-E87162162EFB",
+      "url": "https://github.com/HelixDB/helix-db",
+      "title": "https://github.com/HelixDB/helix-db",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:31:23.055Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
+        "fileName": "helixdb-helix-db-learnings.md"
+      }
+    },
+    "SRC-CF5446ACB717": {
+      "id": "SRC-CF5446ACB717",
+      "url": "http://localhost:8765/callback%60",
+      "title": "http://localhost:8765/callback%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-14T07:31:23.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
+        "fileName": "helixdb-helix-db-learnings.md"
+      }
+    },
+    "SRC-69946CA30AC3": {
+      "id": "SRC-69946CA30AC3",
+      "url": "https://helix-db.com/login",
+      "title": "https://helix-db.com/login",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:31:23.111Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
+        "fileName": "helixdb-helix-db-learnings.md"
+      }
+    },
+    "SRC-E92CC6F5678D": {
+      "id": "SRC-E92CC6F5678D",
+      "url": "http://localhost:3000`",
+      "title": "http://localhost:3000`",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-14T07:31:23.142Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
+        "fileName": "helixdb-helix-db-learnings.md"
       }
     }
   }

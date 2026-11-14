@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T07:20:03.594Z",
-  "total_records": 589,
+  "last_updated": "2026-11-14T07:31:24.004Z",
+  "total_records": 594,
   "domains": {
     "A": {
       "total": 5,
@@ -35,7 +35,7 @@
       ]
     },
     "D": {
-      "total": 288,
+      "total": 291,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -324,7 +324,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-lear",
         "domain_intelligence-research-knowledge-intelligence-pablodawson-minimax-h3-360-orbit-lora-core-invar",
         "DOM-D-4E8F92EB",
-        "domain_intelligence-research-knowledge-intelligence-hf-pablodawson-minimax-h3-360-orbit-lora-learnin"
+        "domain_intelligence-research-knowledge-intelligence-hf-pablodawson-minimax-h3-360-orbit-lora-learnin",
+        "domain_intelligence-research-knowledge-intelligence-venastine-research-xing4-0-29b-a4b-gguf-core-inv",
+        "DOM-D-C8957CC0",
+        "domain_intelligence-research-knowledge-intelligence-hf-venastine-research-xing4-0-29b-a4b-gguf-learn"
       ]
     },
     "E": {
@@ -352,7 +355,7 @@
       ]
     },
     "G": {
-      "total": 86,
+      "total": 88,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -439,7 +442,9 @@
         "domain_intelligence-architecture-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-matthart1983-netwatch-core-invariants",
         "domain_intelligence-architecture-intelligence-materializeinc-materialize-core-invariants",
-        "domain_intelligence-architecture-intelligence-matthart1983-netwatch-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-matthart1983-netwatch-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-helixdb-helix-db-core-invariants",
+        "domain_intelligence-architecture-intelligence-helixdb-helix-db-learnings-core-invariants"
       ]
     },
     "H": {
@@ -6359,8 +6364,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "019437bcd9ede89680444ee98e497d4749da388a8c4b8cdee5732df38c40c58e",
-      "created_at": "2026-11-14T06:28:26.385Z"
+      "content_hash": "176bd878ca405e254a5e87d2a3a41bbe7c8b797219e24eacfe409bcd941d0166",
+      "created_at": "2026-11-14T07:31:24.004Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -12809,6 +12814,84 @@
       "repository": "kgateway-dev-kgateway-learnings",
       "content_hash": "de163233636209861ba7e69f338bd1c5f8e91e2da8869eb028443741559189ff",
       "created_at": "2026-11-14T07:20:03.594Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-venastine-research-xing4-0-29b-a4b-gguf-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-venastine-research-xing4-0-29b-a4b-gguf-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Venastine-Research/Xing4.0-29B-A4B-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-venastine-research-xing4-0-29b-a4b-gguf-research-knowledge-intelligence-venas.md",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "content_hash": "7c7ad4ba3978e4ba801acca712a79150c53dd7ff4b19d9470dcc11b8b90fc13d",
+      "created_at": "2026-11-14T07:30:37.535Z"
+    },
+    "domain_intelligence-architecture-intelligence-helixdb-helix-db-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-helixdb-helix-db-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: HelixDB/helix-db Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-architecture-intelligence-helixdb-helix-db-core-invariants.md",
+      "repository": "HelixDB/helix-db",
+      "content_hash": "02c8123a33754c9da6efedda4ab9aa98ca66f138ad87db8af9c98afc8d6557b9",
+      "created_at": "2026-11-14T07:30:51.620Z"
+    },
+    "DOM-D-C8957CC0": {
+      "record_id": "DOM-D-C8957CC0",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF](https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF))  \n> **Source Version**: `hf-",
+      "content_hash": "24f96f711fe352eabddf8ae589be7aae3bd0e146f35a9bf6d28bed703b1b7bd6",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md`  \n> **Source**: huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md`  \n> **Source**: huggingface",
+      "provenance": {
+        "source_uri": "project://hf-venastine-research-xing4.0-29b-a4b-gguf/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T07:30:54.480Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-venastine-research-xing4.0-29b-a4b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-venastine-research-xing4.0-29b-a4b-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T07:31:22.679Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-venastine-research-xing4-0-29b-a4b-gguf-learn": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-venastine-research-xing4-0-29b-a4b-gguf-learn",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-venastine-research-xing4.0-29b-a4b-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-venastine-research-xing4-0-29b-a4b-gguf-learnings-research-knowledge-intellig.md",
+      "repository": "hf-venastine-research-xing4.0-29b-a4b-gguf-learnings",
+      "content_hash": "e8960f44d34021a9813120b13ae8e15e360364f41eae9a5a4464dc814e63bea1",
+      "created_at": "2026-11-14T07:31:22.893Z"
+    },
+    "domain_intelligence-architecture-intelligence-helixdb-helix-db-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-helixdb-helix-db-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: helixdb-helix-db-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-learnings-architecture-intelligence-helixdb-helix-db-learnings-.md",
+      "repository": "helixdb-helix-db-learnings",
+      "content_hash": "ae189173afd05677d346c45d2791ac3fb75e2fda71b6547f0a8b121cdc922aff",
+      "created_at": "2026-11-14T07:31:23.440Z"
     }
   }
 }

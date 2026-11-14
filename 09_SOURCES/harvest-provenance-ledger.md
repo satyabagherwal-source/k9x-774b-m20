@@ -9812,3 +9812,6 @@ Every entry in this ledger must capture:
 | `learn-dom-k-c3dcbf34` | `project://matthart1983-netwatch` | `23f3b29a` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md` | 2026-11-14T07:18:39.877Z |
 | `learn-dom-d-4e8f92eb` | `project://hf-pablodawson-minimax-h3-360-orbit-lora` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | 2026-11-14T07:19:17.741Z |
 | `learn-dom-k-2852ce47` | `project://kgateway-dev-kgateway` | `74f2e098` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md` | 2026-11-14T07:20:03.214Z |
+| `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-11-14T07:30:37.374Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `26c3f138` | Multi-dimensional audit evidence | 2026-11-14T07:30:51.301Z |
+| `learn-dom-d-c8957cc0` | `project://hf-venastine-research-xing4.0-29b-a4b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | 2026-11-14T07:31:22.690Z |

@@ -1075,8 +1075,8 @@
     "sourceUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "sourceVersion": "hf-venastine-research-xing4.0-29b-a4b-gguf",
     "license": "Open-Source",
-    "contentHash": "11bfe9e38f3d132261ceea797bab0530926ba950774821c33158fc334d00849d",
-    "lastHarvestedAt": "2026-11-09T01:38:24.197Z",
+    "contentHash": "76530577fa7501066b66d71fe092ec2fdaab0a3aab85b46afe2f7daaa2c06125",
+    "lastHarvestedAt": "2026-11-14T07:30:37.374Z",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf"
   },
   "hf-naiveai-naive-n0.5-flash": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "5be60bda",
+    "sourceVersion": "26c3f138",
     "license": "Apache-2.0",
-    "contentHash": "027d9b1fc3c7e3201366ee9733bd8cea6b2ba8e283f6ed5de908a96597c0b1a0",
-    "lastHarvestedAt": "2026-11-11T18:55:10.679Z",
+    "contentHash": "5419b10249288346b7db86182a5d9c87e60fbeb95d32c191819927af8386fc7e",
+    "lastHarvestedAt": "2026-11-14T07:30:51.301Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {

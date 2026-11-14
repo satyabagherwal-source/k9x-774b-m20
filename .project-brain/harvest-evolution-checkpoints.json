@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T07:20:03.849Z",
+  "last_updated": "2026-11-14T07:31:24.376Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T05:32:15.509Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-14T06:28:25.986Z",
+      "processed_at": "2026-11-14T07:31:23.665Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2466,9 +2466,19 @@
       "processed_at": "2026-11-14T07:19:17.742Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md": {
+      "processed_at": "2026-11-14T07:31:22.690Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "helixdb-helix-db-learnings.md": {
+      "processed_at": "2026-11-14T07:31:23.044Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 789,
-  "total_canonical_promoted": 176,
-  "total_staged_for_review": 610
+  "total_dossiers_evaluated": 792,
+  "total_canonical_promoted": 177,
+  "total_staged_for_review": 612
 }

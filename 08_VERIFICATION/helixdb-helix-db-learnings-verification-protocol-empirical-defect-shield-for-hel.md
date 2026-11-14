@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:36:31.762Z",
+  "timestamp": "2026-11-14T07:31:23.225Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-helixdb-helix-db-learnings",
+  "learning_id": "LEARN-EVO-helixdb-helix-db-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [helixdb-helix-db-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:36:31.762Z`  
-> **Learning ID**: `LEARN-REEXTRACT-helixdb-helix-db-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T07:31:23.225Z`  
+> **Learning ID**: `LEARN-EVO-helixdb-helix-db-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `5be60bda`  
+> **Source Version**: `26c3f138`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T18:54:58.595Z  
+> **Timestamp**: 2026-11-14T07:30:50.413Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T18:54:58.588Z  
+> **Harvest Timestamp**: 2026-11-14T07:30:50.407Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6281 stars
+- **Stars / Engagement**: 6289 stars
 
 ---
 
@@ -2103,329 +2103,300 @@ pub(super) fn validate_body(family: QueueFamily, body: &[u8]) -> Result<(), Enco
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b524727a` (2026-11-10)
-**Commit Message**: Fix the durable wait limit contracts after commits moved to their own thread (#1287)
+### Incident Patch 1: `26c3f138` (2026-11-13)
+**Commit Message**: docs: fix audit findings across HelixDB, Cloud, CLI and Foundry (#1298)
 
-Follow-up to #1284 and #1285. With both merged, the three contracts for
-requests without a deadline flake on main.
+* docs: fix HelixDB start-here and core-concepts pages
 
-They paused tokio's clock to skip the 30 s limit. Since #1285, commits
-apply on the writer's own thread, so paused time raced past setup that
-was waiting on that thread. Stress runs showed three failures: setup
-timeouts, measured waits of 4–11 s, and a racing index DDL losing a
-retryable conflict (the CI failure here).
+- Release notes: add CLI 3.5.0-3.7.0 / Docker v0.0.12-v0.0.16, with the
+  breaking [] empty-return and error-status changes called out; refresh
+  the roadmap's recently shipped list.
+- Installs that work: Rust embedded via a git dependency (crates.io 3.0.0
+  has no embedded feature), Go embedded marked unavailable, TypeScript
+  withDatabaseId needs 3.2.0, Python 3.10+; Verify steps check the
+  reader's project instead of the SDK repo's tests.
+- Local server: no-auth/no-TLS warning, loopback publishing, endpoints and
+  listen-address variables, S3 cache volume in Compose, telemetry opt-out,
+  --disk needs --persist, helix update keeps a project's pinned tag.
+- Embedded: AWS_* credentials, cache config per SDK, one writer per
+  database, request options that are ignored vs rejected.
+- Data model: no relabel operation, no text-analysis settings, tenant
+  property, async vector/text publishing; overview return/encoding rules.
 
-- The contracts now wait the real 30 s; the three run in parallel.
-- They retry transaction conflicts.
-- The wait must fall between the limit and the limit plus the 30 s
-request allowance.
-- A stale comment on `Reservation::committed` is corrected: the commit
-it records is applied but may not be durable yet.
+* docs: correct query guides and add ordering and pagination
 
-Test-only plus a comment, and no stored data changes. On EC2 the
-contract suite passes 10 of 10 stress iterations, and clippy is clean.
+- New ordering-and-pagination page (order_by, order_by_multiple, skip,
+ 
 
-**File**: `crates/db-testkit/tests/commit_durability.rs` (modified, +29/-18)
+**File**: `docs/README.md` (modified, +1/-1)
 ```diff
-@@ -404,60 +404,71 @@ const DURABLE_WAIT_LIMIT: Duration = Duration::from_secs(30);
- /// stops waiting for a held upload at the durable wait limit instead of
- /// waiting as long as storage is unreachable.
- ///
--/// Paused time skips the wait. The limit counts on the real clock, so the time
--/// paused tokio reports is the limit less what the test advanced before the
--/// request, which is why each test makes one such request.
--async fn assert_stops_at_the_durable_wait_limit(db: &Arc<HelixDB>, request: QueryRequest) {
--    let started = tokio::time::Instant::now();
--    let error = HelixQueryService::new(Arc::clone(db))
--        .execute_query(request)
--        .await
--        .expect_err("nothing is durable while the upload is held");
-+/// The wait runs on the real clock: commits apply on the writer's own thread,
-+/// which paused tokio time would race past. A request that loses a retryable
-+/// conflict to such a commit, as a racing index DDL can, is retried.
-+async fn assert_stops_at_the_durable_wait_limit(
-+    db: &Arc<HelixDB>,
-+    request: impl Fn() -> QueryRequest,
-+) {
-+    let service = HelixQueryService::new(Arc::clone(db));
-+    let mut conflicts = 0;
-+    let (started, error) = loop {
-+        let started = tokio::time::Instant::now();
-+        let error = service
-+            .execute_query(request())
-+            .await
-+            .expect_err("nothing is durable while the upload is held");
-+        if !error.is_transaction_conflict() || conflicts == 100 {
-+            break (started, error);
-+        }
-+        conflicts += 1;
-+    };
-     assert!(error.is_deadline_exceeded(), "{error}");
-     let waited = started.elapsed();
-     assert!(
--        waited > PENDING && waited <= DURABLE_WAIT_LIMIT + PENDING,
-+        waited >= DURABLE_WAIT_LIMIT && waited < DURABLE_WAIT_LIMIT + RETURNS,
-         "waited {waited:?} on the held upload"
-     );
- }
+@@ -34,7 +34,7 @@ any name a reader is likely to type. Shortcut sources must not match a live rout
+ | --- | --- | --- |
+ | HelixDB | Start Here, Core Concepts, Query Guides | The engine in every run mode: setup, SDKs, data model, queries, indexes and search, HTTP API, error codes, troubleshooting |
+ | Helix Cloud | Start Here, Connect and automate, Operate | Managed deployments only: account setup, connecting, architecture, MCP, security, tenancy, limits, gateway errors |
+-| Helix Foundry | Start Here, Data, Ontologies, Explore, Ask, Workspace, Reference | The hosted Foundry website (foundry.helix-db.com): connecting and syncing sources, documents, generating, loading, exploring and asking ontologies, members and billing |
++| Helix Foundry | Start Here, Data, Ontologies, Explore, Analyst, Agents, Workspace, Reference | The hosted Foundry website (foundry.helix-db.com): connecting and syncing sources, documents, generating, loading, exploring and asking ontologies, members and billing |
+ | CLI Reference | Using the helix CLI, CLI Command Reference | The `helix` CLI: workflows, configuration, and one page per command |
+ | Learn | One group per topic | Vendor-neutral explainers that answer one broad question each, such as "What is BM25?" |
  
- /// The write's commit stays applied.
--#[tokio::test(start_paused = true)]
-+#[tokio::test(flavor = "multi_thread")]
- async fn a_write_without_a_deadline_stops_at_the_durable_wait_limit() {
-     let store = Arc::new(GatedWalStore::default());
-     let db = open_leased(&store).await;
- 
-     store.hold();
--    assert_stops_at_the_durable_wait_limit(&db, add("held")).await;
-+    assert_stops_at_the_durable_wait_limit(&db, || add("held")).await;
-     assert_eq!(node_count(&db).await, 1, "the timed-out write is applied");
-     store.release();
-     db.close().await.unwrap();
- }
- 
--#[tokio::test(start_paused = true)]
-+#[tokio::test(flavor = "multi_thread")]
- async fn an_empty_write_without_a_deadline_stops_at_the_durable_wait_limit() {
-     let store = Arc::new(GatedWalStore::default());
-     let db = open_leased(&store).await;
- 
-     store.hold();
-     execute(&db, add("applied"), QueryMode::ExecuteWithoutDurableWait).await;
--    assert_stops_at_the_durable_wait_limit(&db, observe()).await;
-+    assert_stops_at_the_durable_wait_limit(&db, observe).await;
-     store.release();
-     db.close().await.unwrap();
- }
- 
--#[tokio::test(start_paused = true)]
-+#[tokio::test(flavor = "multi_thread")]
- async fn a_no_op_index_ddl_without_a_deadline_stops_at_the_durable_wait_limit() {
-     let store = Arc::new(GatedWalStore::default());
-     let db = open_leased(&store).await;
-     let service = HelixQueryService::new(Arc::clone(&db));
- 
-     store.hold();
-     let winner = assert_pending(Box::pin(service.execute_query(create_name_index()))).await;
--    assert_stops_at_the_durable_wait_limit(&db, create_name_index()).await;
-+    assert_stops_at_the_durable_wait_limit(&db, create_name_index).await;
-     store.release();
--    // Paused time has run past the real clock, so the winner's own bounded
--    // wait may end the moment its commit returns; only the loser is checked.
-+    // The winner waited as long as the loser, so it may have timed out too;
-+    // only the loser is checked.
-     drop(winner.await);
-     db.close().await.unwrap();
- }
 ```
 
-**File**: `crates/db/src/index_lifecycle/queue/backlog.rs` (modified, +3/-3)
+**File**: `docs/cli/command-reference.mdx` (modified, +31/-17)
 ```diff
-@@ -1100,9 +1100,9 @@ impl BacklogReservation {
-         self.phase = ReservationPhase::Committing;
-     }
+@@ -29,7 +29,7 @@ They never accept or store application database keys or service credentials.
+ | [`helix stop`](/cli/command-reference/stop) | Local | Stop a local instance and remove its containers |
+ | [`helix restart`](/cli/command-reference/restart) | Local | Restart a local instance |
+ | [`helix status`](/cli/command-reference/status) | Local, Cloud | Inspect runtime or database status |
+-| [`helix doctor`](/cli/command-reference/doctor) | Local, Cloud | Check an instance's setup and recent queries' index use |
++| [`helix doctor`](/cli/command-reference/doctor) | Local | Check a local or self-hosted server's setup and recent queries' index use. A Cloud database gets only the CLI version check. |
+ | [`helix logs`](/cli/command-reference/logs) | Local, Cloud | Follow local logs or list Cloud query errors |
+ | [`helix query`](/cli/command-reference/query) | Local, Cloud | Execute one v3 JSON/SDK query |
+ | [`helix cypher`](/cli/command-reference/cypher) | Local | Execute or explain one Cypher statement |
+@@ -61,7 +61,7 @@ They never accept or store application database keys or service credentials.
  
--    /// Records a commit that was applied, and durable unless the request chose
--    /// not to wait. A crash before its upload loses the enqueue and this charge
--    /// together, since recovery rebuilds the ledger from storage.
-+    /// Records a commit that was applied, which may not be durable yet. A crash
-+    /// before its upload loses the enqueue and this charge together, since
-+    /// recovery rebuilds the ledger from storage.
-     pub(crate) fn committed(mut self) {
-         self.finish(ReservationOutcome::Committed);
-     }
-```
-
----
-
-### Incident Patch 2: `24b4eb7f` (2026-11-10)
-**Commit Message**: Keep a secondary build's activation pause short (#1283)
-
-Activation holds the lifecycle permit, which stops planning and every
-writer of the scope. Since #1271 stopped fencing writers during
-validation, activation inherited up to 8 batches of deltas and drained
-them under the permit. Each drain rescanned the delta prefix from the
-start. It then scanned an applied-state prefix full of deleted rows. At
-the end of a 300k-row unique build, writers and planning paused for
-about 2.3 s.
-
-```diff
- prepare activation
-+  while backlog > 1 batch and still shrinking, for at most 8 preparations
-+    reconcile one batch by exact keys            # no permit
-+  check every applied row has a pending delta    # no permit
-   take the lifecycle permit
--  drain up to 8 batches, each from the prefix start
-+  drain the rest, each transaction resuming after the last key
--  step: drain from the prefix start, then check applied rows
-+  step: drain from the resume key
-```
-
-Stall counts are now kept per stage. Activation tracks its exact drains
-separately and clears them when it takes the permit, so a finished build
-leaves no state behind.
-
-## Stored data
-
-None changed.
-
-## Measured
-
-In-process, release, loca
-
-**File**: `crates/db/src/index_lifecycle/secondary.rs` (modified, +897/-141)
-```diff
-@@ -115,13 +115,26 @@ pub(crate) fn record_equality_point_read() {
- pub(crate) struct SecondaryIndexDriver {
-     scope_gates: Arc<IndexScopeGates>,
-     scan_tuning: IndexLifecycleScanTuning,
--    /// Consecutive preparations of each operation's scan or validation that
--    /// found its cursor where the previous one left it, with that cursor.
--    stalled_preparations: parking_lot::Mutex<HashMap<IndexOperationId, (Option<IndexCursor>, u32)>>,
-+    /// Consecutive preparations of each operation that found its build where
-+    /// the previous one left it, with that point.
-+    stalled_preparations: parking_lot::Mutex<HashMap<IndexOperationId, (StallPoint, u32)>>,
-+    /// Each activating operation's exact drains so far: the backlog the last
-+    /// one observed and how many ran.
-+    activation_drains: parking_lot::Mutex<HashMap<IndexOperationId, (usize, u32)>>,
-+}
+ ## Global options
+ 
+-These flags work with every command.
++These flags work with every command, except `-V`, which works only as `helix --version`.
+ 
+ | Flag | Description |
+ | --- | --- |
+@@ -76,21 +76,37 @@ These flags work with every command.
+ - stdout carries only the command's result: tables, detail views, query results, one-time tokens, or the `--json` payload. It is always safe to pipe.
+ - stderr carries everything else: progress sessions, spinners, warnings, hints, and errors.
+ - Destructive Cloud commands (`project delete`, `database delete`, `database key revoke`, `service-credential revoke`) ask for confirmation in a terminal. Without one, or with `--json`, they fail before any request unless you pass `-y`/`--yes`. They never act on an "only candidate" they were not told about: the target must be named, linked in `helix.toml`, or picked in a terminal.
+-- Commands whose output is a live terminal session have no JSON result and refuse `--json`: `chef`, `start --foreground`, local `logs`, and `skills install` / `skills list`.
+ 
+-With `--json`, a failed command prints one JSON object on stderr and exits with status `1`, or `2`
+-for invalid arguments. Only `message` is always present:
++See [Scripting and CI](/cli/scripting) for exit codes, JSON errors, each command's `--json` payload,
++and the commands that refuse `--json`.
+ 
+-```json
+-{"error":{"message":"...","context":"...","caused_by":"...","hint":"...","candidates":[{"id":"...","name":"..."}]}}
+-```
++## Targets and resolution
 +
-+/// Where a preparation found its build, for counting preparations that made
-+/// no progress: the stage, with its cursor where it has one. A preparation in
-+/// another stage starts a new count even when both cursors are empty.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+enum StallPoint {
-+    Scan(Option<IndexCursor>),
-+    Validate(Option<IndexCursor>),
- }
- 
- /// Unfenced preparations without progress before a scan or validation step
--/// fences writers.
-+/// fences writers, and the most exact drains activation runs before it takes
-+/// its permit.
- ///
- /// A unique scan conflicts with every claiming write to an entity of its
- /// batch (see [`claim_while_building`]), and a validation batch with every
-@@ -149,23 +162,20 @@ impl SecondaryIndexDriver {
-             scope_gates,
-             scan_tuning: IndexLifecycleScanTuning::default(),
-             stalled_preparations: parking_lot::Mutex::new(HashMap::new()),
-+            activation_drains: parking_lot::Mutex::new(HashMap::new()),
-         }
-     }
- 
--    /// Records one preparation at `cursor` and returns whether more than
--    /// [`PREPARATIONS_BEFORE_FENCE`] consecutive preparations found the cursor
--    /// unmoved, so this one must fence writers.
--    fn preparation_stalled(
--        &self,
--        operation: &IndexOperationRecord,
--        cursor: &Option<IndexCursor>,
--    ) -> bool {
-+    /// Records one preparation at `point` and returns whether more than
-+    /// [`PREPARATIONS_BEFORE_FENCE`] consecutive preparations found the build
-+    /// there, so this one must fence writers.
-+    fn preparation_stalled(&self, operation: &IndexOperationRecord, point: StallPoint) -> bool {
-         let mut stalled = self.stalled_preparations.lock();
-         let entry = stalled
-             .entry(operation.operation_id())
--            .or_insert_with(|| (cursor.clone(), 0));
--        if entry.0 != *cursor {
--            *entry = (cursor.clone(), 0);
-+            .or_insert_with(|| (point.clone(), 0));
-+        if entry.0 != point {
-+            *entry = (point, 0);
-         }
-         entry.1 = entry.1.saturating_add(1);
-         entry.1 > PREPARATIONS_BEFORE_FENCE
-@@ -177,6 +187,33 @@ impl SecondaryIndexDriver {
-         self.stalled_preparations
-             .lock()
-             .remove(&operation.operation_id());
-+        self.activation_drains
-+            .lock()
-+            .remove(&operation.operation_id());
-+    }
++Instance names come from `helix.toml`. Helix Cloud workspaces, projects, clusters, and databases
++have their own IDs, slugs, and names, resolved through the Helix Cloud API. The namespaces are
++separate: `helix query production` looks for an instance named `production`, while
++`helix database get orders` looks for a Cloud database named `orders`.
 +
-+    /// Records an activation preparation that observed `backlog` entities,
-+    /// `None` past the reach it counts to, and returns whether it should drain
-+    /// by exact keys again: only while the backlog keeps shrinking, for at
-+    /// most [`PREPARATIONS_BEFORE_FENCE`] drains. A backlog that writes regrow
-+    /// as fast as exact drains remove it would otherwise leave the permit more
-+    /// than it would have drained up front. An uncounted backlog shows no
-+    /// trend, so only the bound stops it.
-+    fn activation_drains_again(
-+        &self,
-+        operation: &IndexOperationRecord,
-+        backlog: Option<usize>,
-+    ) -> bool {
-+        let mut drains = self.activation_drains.lock();
-+        let entry = drains
-+            .entry(operation.operation_id())
-+            .or_insert((usize::MAX, 0));
-+        if entry.1 >= PREPARATIONS_BEFORE_FENCE || backlog.is_some_and(|backlog| backlog >= entry.0)
-+        {
-+            return false;
-+        }
-+        *entry = (backlog.unwrap_or(usize::MAX), entry.1 + 1);
-+        true
-     }
++| Command | `INSTANCE` accepts | When omitted |
++| --- | --- | --- |
++| `start`, `stop`, `restart`, `explorer` | A local instance | `dev`, then the only local instance, then a picker in a terminal |
++| `query`, `shell`, `doctor` | Any instance, or a typed `tenant:<id>` / `cluster:<id>` Cloud database, which needs no `helix.toml` | `dev`, then the only instance, then a picker in a terminal |
++| `logs` | Any instance | Same as `query` |
++| `cypher` | A local instance | Same as `query`; a Cloud instance fails |
++| `status` | Any instance | Every instance; never prompts |
++| `prune` | A local instance | A picker in a terminal; otherwise pass `--all` |
++| `delete` | Any instance; required | — |
++
++`logs`, `status`, `cypher`, and `explorer` reject typed `tenant:<id>` / `cluster:<id>` targets; link
++the database with `helix add cloud` first. Without a terminal, a command that cannot pick a default
++fails with `no default query target` or `no default local instance` and lists the instances.
  
-     /// Applies runtime source-scan prefetching without admitting blocks to cache.
-@@ -192,8 +229,9 @@ pub(crate) struct PreparedSecondaryOperationStep {
- }
+ ## Cloud resource resolution
  
- enum PreparedSecondaryStep {
--    /// A catch-up or validation backlog beyond [`GATED_BACKLOG_BATCHES`]:
--    /// exact durable delta keys selected without adding an SSI range read,
-+    /// A catch-up or validation backlog beyond [`GATED_BACKLOG_BATCHES`], or
-+    /// an activation backlog beyond [`ACTIVATION_BACKLOG_BATCHES`]: exact
-+    /// durable delta keys selected without adding an SSI range read,
-     /// reconciled while writes continue.
-     Exact { k
+-Cloud commands never require raw IDs. Workspace, project, cluster, and database arguments are
+-optional and accept an ID, slug, or display name, matched in that order (names are
+-case-insensitive). Databases also accept `tenant:<id>` and `cluster:<id>`. Application keys and
+-service credentials are passed by ID or name.
++Workspace, project, cluster, and database arguments are optional and accept an ID, slug, or display
++name, matched in that order (names are case-insensitive). Databases also accept `tenant:<id>` and
++`cluster:<id>`. Application keys and service credentials are passed by ID or name. Exception:
++`helix service-credential --grant` takes a project ID only; find it with `helix project get <project>`.
+ 
+ An omitted resource resolves to:
+ 
+@@ -104,12 +120,10 @@ a terminal; pickers only fill in arguments you left out. A resource passed by ID
+ `tenant:<id>` / `cluster:<id>` must belong to any `--project` / `--workspace` you also pass, so
+ `helix database de
 ```
 
----
-
-### Incident Patch 3: `01a6777d` (2026-11-10)
-**Commit Message**: Retry a unique-build test write that loses a conflict
-
-The test's mid-build writes raced the build's transactions only in name:
-on a current-thread runtime the batch writer shared the test's thread.
-With commits applied on their own thread they can now lose a retryable
-conflict, as the steady-writes test already allows.
-
-**File**: `crates/db/tests/unique_index_enforcement.rs` (modified, +11/-2)
+**File**: `docs/cli/command-reference/add.mdx` (modified, +3/-1)
 ```diff
-@@ -486,8 +486,17 @@ async fn moving_a_value_to_a_later_node_mid_build_does_not_block() {
-         let high = add(&db, "z@x").await.unwrap();
-         let operation = create_unique_index(&db).await;
-         tokio::time::sleep(Duration::from_millis(round * 2)).await;
--        set_email(&db, low, "y@x").await.unwrap();
--        set_email(&db, high, "x@x").await.unwrap();
-+        // A write racing one of the build's transactions may lose with a
-+        // retryable conflict; the move only has to land.
-+        for (id, email) in [(low, "y@x"), (high, "x@x")] {
-+            loop {
-+                match set_email(&db, id, email).await {
-+                    Ok(()) => break,
-+                    Err(error) if error.is_transaction_conflict() => {}
-+                    Err(error) => panic!("round {round}: {error}"),
-+                }
-+            }
-+        }
-         let state = finished(&db, &operation).await;
-         assert_unique(&emails(&db).await);
-         assert_eq!(state, "succeeded", "round {round}");
+@@ -39,7 +39,7 @@ Run `helix add` with no subcommand in a terminal to choose interactively.
+ 
+ | Flag | Description | Default |
+ | --- | --- | --- |
+-| `--port <PORT>` | Host port for the instance. | `6969` |
++| `--port <PORT>` | Host port for the instance. Not checked against other instances, and two instances on one port cannot run at once, so pass it for each additional instance. | `6969` |
+ | `--disk` | Use on-disk storage backed by a CLI-managed SeaweedFS container. Cannot be combined with `--storage-uri`. | Off (in-memory) |
+ | `--storage-uri <URI>` | Use an S3 or S3-compatible bucket and prefix, for example `s3://bucket/prefix/`. | — |
+ | `--s3-region <REGION>` | Region for S3 storage. | — |
+@@ -57,6 +57,8 @@ Run `helix add` with no subcommand in a terminal to choose interactively.
+ ## Behavior
+ 
+ - Fails if an instance with the same name already exists in `helix.toml`.
++- `add local` pins the CLI's default `image` and `tag` in the new table; see [Image pinning](/cli/configuration#image-pinning).
++- Rewrites `helix.toml`, removing its comments; see [Commands that rewrite helix.toml](/cli/configuration#commands-that-rewrite-the-file).
+ - Without a subcommand, the CLI prompts for the instance type in a terminal and fails in non-interactive shells.
+ - `--s3-region`, `--s3-endpoint-url`, and `--s3-allow-http` require `--storage-uri`.
+ - `add cloud` uses the WorkOS session and resolves the database as described in [Cloud resource resolution](/cli/command-reference#cloud-resource-resolution).
+```
+
+**File**: `docs/cli/command-reference/auth.mdx` (modified, +18/-4)
+```diff
+@@ -38,21 +38,35 @@ helix auth logout
+ 
+ | Flag | Description | Default |
+ | --- | --- | --- |
+-| `--json` | Print the result as JSON on stdout and never prompt. `status` prints `{"email":"...","workspaces":[{"id":"...","name":"..."}]}`. | Off |
++| `--json` | Print the result as JSON on stdout and never prompt. `status` prints `{"email":"...","workspaces":[{"id":"...","name":"..."}]}` and `logout` prints `{"loggedOut":true}`. `login` refuses `--json`. | Off |
+ 
+ ## Behavior
+ 
+ ### Login
+ 
+-- `login` requires an interactive terminal, so it fails with `--json`.
+-- Browser methods start WorkOS PKCE in a browser (and print the URL in case the browser does not open), then show a spinner while they wait for the loopback callback on `http://localhost:8765/callback`. The login times out after 5 minutes.
+-- `password` signs in with an existing account. To create an account or reset a password, use [the sign-in page](https://helix-db.com/login). It only runs when Helix Cloud is reached over HTTPS or on this machine, so a password never travels unencrypted; browser methods are not affected.
++- `login` needs a terminal on stdin and stderr, so it fails with `--json`, in CI, or with piped input (`logging in needs an interactive terminal`). There is no unattended mode; see [Run in CI](/cli/scripting#run-in-ci).
++- Browser methods start WorkOS PKCE in a browser (and print the URL in case the browser does not open), then show a spinner while they wait for the loopback callback on `http://localhost:8765/callback`. The CLI listens on `127.0.0.1:8765`, a fixed port registered with WorkOS; if another program holds it, login fails with `bind the WorkOS callback listener on port 8765`. The login times out after 5 minutes.
++- `password` signs in with an existing account. To create an account or reset a password, use [the sign-in page](https://helix-db.com/login). It runs only when Helix Cloud is reached over HTTPS or on this machine, so a password never travels unencrypted; with a plain `http://` `CLOUD_AUTHORITY` it fails with `refusing to send a password over an unencrypted connection`. Browser methods are not affected.
+ - A login request that gets no answer fails after 60 seconds. During email verification, the CLI asks for the code again instead.
+ - `--quiet` still prints what a login needs: the URL, why a code prompt repeats, and the notice before single sign-on opens a second tab.
+ - If your company requires single sign-on, any method continues through its identity provider in the browser.
+ - If WorkOS requires email verification, the CLI prompts for the code and accepts up to three attempts.
+ - It hydrates all current workspace memberships and stores only the rotating WorkOS session in `~/.helix/credentials` (or `$HELIX_HOME/credentials`).
+ 
++### Log in over SSH
++
++On a remote machine, a browser method's callback must reach the remote CLI on port 8765. Forward that
++port when you connect, then open the printed URL in your local browser:
++
++```bash
++ssh -L 8765:127.0.0.1:8765 you@remote-host
++helix auth login github
++```
++
++Port 8765 must be free on your local machine. `helix auth login password` needs no callback, so it
++also works over SSH without forwarding, unless your account must use single sign-on, which continues
++in the browser.
++
+ ### Session handling
+ 
+ - The CLI refreshes tokens within 60 seconds of expiry and serializes refreshes across processes.
+```
+
+**File**: `docs/cli/command-reference/chef.mdx` (modified, +3/-3)
+```diff
+@@ -15,7 +15,7 @@ Bootstrap a first HelixDB app for a coding agent. `helix chef` installs agent co
+ helix chef
+ ```
+ 
+-`helix cook` is an alias for `helix chef`. The command takes no flags — it is fully interactive (and falls back to sensible defaults when run without a TTY).
++`helix cook` is an alias for `helix chef`. The command takes no flags — it is fully interactive (and falls back to sensible defaults when run without a TTY). It refuses `--json`.
+ 
+ <Note>
+ `helix chef` uses `npx`, so **Node.js/npm must be on `PATH`** for the skills and docs-MCP install, and it needs **Docker or Podman running** to start the local database. It is intended for local development inside a coding-agent environment.
+@@ -24,8 +24,8 @@ helix chef
+ ## Behavior
+ 
+ 1. Installs the Helix skills (`npx skills add HelixDB/skills`) and docs MCP.
+-2. Initializes a local project (`helix init local`) with a `dev` instance on port `6969`, then starts it in-memory.
+-3. Writes `HELIX_CHEF_PROMPT.md` (your build intent, or a Personal CRM default) and, for the default build, starter query files under `examples/` — then seeds the data.
++2. Initializes a local project (`helix init local`) in `~/my-first-helix-project` by default, with a `dev` instance on port `6969`, then starts it in-memory.
++3. Writes `HELIX_CHEF_PROMPT.md` (your build intent, or a Personal CRM default), `DESIGN.md` (the agent's UI styling guide) and, for the default build, starter query files under `examples/` — then seeds the data.
+ 4. Detects an installed coding agent (Claude Code → OpenAI Codex → OpenCode → Cursor Agent), asks for a permission mode, and launches it against the build prompt.
+ 5. Opens the generated app at `http://localhost:3000` once the agent's frontend is running.
+ 
+```
+
+**File**: `docs/cli/command-reference/cluster.mdx` (modified, +5/-1)
+```diff
+@@ -13,11 +13,15 @@ cluster. Cloud only; these commands are read-only.
+ ## Usage
+ 
+ ```bash
+-helix cluster [list] [--workspace <workspace>] [--project <project>]
++helix cluster
++helix cluster list [--workspace <workspace>] [--project <project>]
+ helix cluster get [CLUSTER] [--workspace <workspace>] [--project <project>]
+ helix cluster indexes [CLUSTER] [--workspace <workspace>] [--project <project>]
+ ```
+ 
++Bare `helix cluster` lists clusters with the defaults below. Flags go after the subcommand:
++`helix cluster list --project <project>`.
++
+ ## Subcommands
+ 
+ | Subcommand | Description |
+```
+
+**File**: `docs/cli/command-reference/database.mdx` (modified, +8/-5)
+```diff
+@@ -13,7 +13,8 @@ application keys your software uses to reach them. Cloud only.
+ ## Usage
+ 
+ ```bash
+-helix database [list] [--workspace <workspace>] [--project <project>]
++helix database
++helix database list [--workspace <workspace>] [--project <project>]
+ helix database get [DATABASE]
+ helix database indexes [DATABASE]
+ helix database create <NAME> [--slug <slug>] [--plan <plan> | --cluster <cluster>]
+@@ -24,7 +25,9 @@ helix database key list [--database <database>]
+ helix database key revoke <KEY> [--database <database>] [--yes]
+ ```
+ 
+-Every subcommand also accepts `--workspace` and `--project`.
++Every subcommand also accepts `--workspace` and `--project`, after the subcommand:
++`helix database list --project <project>`, not `helix database --project <project>`. Bare
++`helix database` lists the linked or only project's databases.
+ 
+ ## Subcommands
+ 
+@@ -55,7 +58,7 @@ Every subcommand also accepts `--workspace` and `--project`.
+ | `--project <PROJECT>` | Project ID, slug, or name that owns the database. | Project linked in `helix.toml` |
+ | `--database <DATABASE>` | `key create`, `key list`, `key revoke`: the database, in the same forms as `DATABASE`. | Same as `DATABASE` |
+ | `--slug <SLUG>` | `create`: URL-safe database slug. | Derived from `NAME` |
+-| `--plan <PLAN>` | `create`: plan code for a shared tenant database. Not allowed with `--cluster`. | Prompted in a terminal; required otherwise |
++| `--plan <PLAN>` | `create`: plan code for a shared tenant database. Not allowed with `--cluster`. List the codes with `helix api get /v1/workspace-plans`. | Prompted in a terminal; required otherwise |
+ | `--cluster <CLUSTER>` | `create`: dedicated cluster ID, slug, or name to create the tenant on. | — |
+ | `--access <ACCESS>` | `key create`: `read-only` or `read-write`. Required. | — |
+ | `--name <NAME>` | `key create`: optional key name. | — |
+@@ -66,10 +69,10 @@ Every subcommand also accepts `--workspace` and `--project`.
+ 
+ - Arguments and defaults resolve as described in [Cloud resource resolution](/cli/command-reference#cloud-resource-resolution). When `helix.toml` links several databases, the CLI picks among them in a terminal.
+ - `list` includes dedicated clusters and tenants in the project and marks linked databases; shared clusters are not listed.
+-- `create` always creates a tenant database, either on a shared plan (`--plan`) or inside a dedicated cluster (`--cluster`).
++- `create` always creates a tenant database, either on a shared plan (`--plan`) or inside a dedicated cluster (`--cluster`). A shared database needs an active workspace plan.
+ - Creating a database creates a default read-write application key and prints its raw token once on stdout. With `--json`, the full create response, including the token, is printed instead. The session-authenticated CLI never stores or uses the key.
+ - Additional key creation is explicit, and each new raw token is also printed once. `key create` prints only the token on stdout, so you can capture it in a script.
+-- Application keys are for software that calls the gateway (the Cloud database endpoint your application connects to) directly.
++- Application keys are for software that calls the gateway (the Cloud database endpoint your application connects to) directly. `get --json` prints a tenant's gateway host as `connectionEndpoint`. See [Run in CI](/cli/scripting#helix-cloud).
+ - `delete` and `key revoke` ask for confirmation in a terminal. Without one, or with `--json`, they fail before any request unless you pass `--yes`. `delete` removes the named or linked database only; it never picks a project's only database on its own.
+ - `delete` removes tenant databases only. Dedicated-cluster create/delete lifecycle is not supported by this CLI.
+ 
+```
+
+**File**: `docs/cli/command-reference/delete.mdx` (modified, +3/-2)
+```diff
+@@ -30,10 +30,11 @@ helix delete <INSTANCE> [OPTIONS]
+ 
+ ## Behavior
+ 
+-- For local instances, Helix-owned containers, networks, disk-mode and disk-cache volumes, and the per-instance directory under `.helix/` are deleted.
++- For local instances, Helix-owned containers, networks, disk-mode and disk-cache volumes, and the per-instance directory under `.helix/` are deleted. Cleanup errors are ignored: with Docker or Podman stopped, the instance leaves `helix.toml` but its volumes stay. Start the runtime and run `helix prune <instance>`, which works for removed instances.
+ - For Helix Cloud instances, only the `[enterprise.<name>]` block in `helix.toml` is removed — the database itself is untouched.
+ - Remote S3 object-store data is not deleted.
+-- The CLI refuses to delete the last instance in `helix.toml`; add a replacement first.
++- The CLI refuses to delete the last instance in `helix.toml` (`Cannot delete the final instance '<instance>'`); add a replacement first.
++- Rewrites `helix.toml`, removing its comments; see [Commands that rewrite helix.toml](/cli/configuration#commands-that-rewrite-the-file).
+ - In a TTY, `helix delete` prints a warning and asks for confirmation. Without a TTY, or with `--json`, it refuses to run without `--yes`:
+ 
+   ```text
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1298** (2026-11-13): docs: fix audit findings across HelixDB, Cloud, CLI and Foundry (@xav-db)
 - **PR #1290** (2026-11-11): Release CLI v3.7.0 with Docker v0.0.16 default (@xav-db)
 - **PR #1289** (2026-11-11): Hand docs readers off to the dashboard at app.helix-db.com (@xav-db)
 - **PR #1288** (2026-11-11): Attribute OSS telemetry to projects and deployments, and count every query (@xav-db)
 - **PR #1287** (2026-11-10): Fix the durable wait limit contracts after commits moved to their own thread (@xav-db)
 - **PR #1286** (2026-11-10): Re-export the embedded cache config types from the Rust SDK (@xav-db)
-- **PR #1285** (2026-11-10): Apply each writer's commits on a thread of its own (@xav-db)
 
 ---
 
@@ -2445,74 +2416,31 @@ conflict, as the steady-writes test already allows.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. the durable wait limit contracts after commits moved to their own thread (#1287)
+## X. docs: fix audit findings across HelixDB, Cloud, CLI and Foundry
 
 **RULE**:
-When implementing operations in `crates/db-testkit/tests/commit_durability.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b524727a`: the durable wait limit contracts after commits moved to their own thread (#1287). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `26c3f138`: docs: fix audit findings across HelixDB, Cloud, CLI and Foundry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db-testkit/tests/commit_durability.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// The wait runs on the real clock: commits apply on the writer's own thread,
-/// which paused tokio time would race past. A request that loses a retryable
-/// conflict to such a commit, as a racing index DDL can, is retried.
-async fn assert_stops_at_the_durable_wait_limit(
-    db: &Arc<HelixDB>,
-    request: impl Fn() -> QueryRequest,
-) {
-    let service = HelixQueryService::new(Arc::clone(db));
-    let mut conflicts = 0;
-    let (started, error) = loop {
-        let started = tokio::time::Instant::now();
-        let error = service
-            .execute_query(request())
-            .await
-            .expect_err("nothing is durable while the upload is held");
-        if !error.is_transaction_conflict() || conflicts == 100 {
-            break (started, error);
-        }
-        conflicts += 1;
-    };
-        waited >= DURABLE_WAIT_LIMIT && waited < DURABLE_WAIT_LIMIT + RETURNS,
-#[tokio::test(flavor = "multi_thread")]
-    assert_stops_at_the_durable_wait_limit(&db, || add("held")).await;
-#[tokio::test(flavor = "multi_thread")]
-    assert_stops_at_the_durable_wait_limit(&db, observe).await;
-#[tokio::test(flavor = "multi_thread")]
-    assert_stops_at_the_durable_wait_limit(&db, creat
+| Helix Foundry | Start Here, Data, Ontologies, Explore, Analyst, Agents, Workspace, Reference | The hosted Foundry website (foundry.helix-db.com): connecting and syncing sources, documents, generating, loading, exploring and asking ontologies, members and billing |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-/// Paused time skips the wait. The limit counts on the real clock, so the time
-/// paused tokio reports is the limit less what the test advanced before the
-/// request, which is why each test makes one such request.
-async fn assert_stops_at_the_durable_wait_limit(db: &Arc<HelixDB>, request: QueryRequest) {
-    let started = tokio::time::Instant::now();
-    let error = HelixQueryService::new(Arc::clone(db))
-        .execute_query(request)
-        .await
-        .expect_err("nothing is durable while the upload is held");
-        waited > PENDING && waited <= DURABLE_WAIT_LIMIT + PENDING,
-#[tokio::test(start_paused = true)]
-    assert_stops_at_the_durable_wait_limit(&db, add("held")).await;
-#[tokio::test(start_paused = true)]
-    assert_stops_at_the_durable_wait_limit(&db, observe()).await;
-#[tokio::test(start_paused = true)]
-    assert_stops_at_the_durable_wait_limit(&db, create_name_index()).await;
-    // Paused time has run past the real clock, so the winner's own bounded
-    // wait may end the moment its commit returns; only the loser is checked.
+// Induced defect failure mode:
+| Helix Foundry | Start Here, Data, Ontologies, Explore, Ask, Workspace, Reference | The hosted Foundry website (foundry.helix-db.com): connecting and syncing sources, documents, generating, loading, exploring and asking ontologies, members and billing |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b524727a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `26c3f138` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
