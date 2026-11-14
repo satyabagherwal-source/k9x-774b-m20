@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T04:06:54.950Z",
+  "last_updated": "2026-11-14T04:15:53.823Z",
   "directives": [
     {
       "id": "CD-001",
@@ -11485,6 +11485,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-879D34-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-6DZY",
+      "directive_title": "Cargo metadata warnings and Windows test crashes",
+      "source_repo": "domcyrus-rustnet-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6DZY-cargo-metadata-warnings-and-windows-test-crashes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-69SN",
+      "directive_title": "disable Pinpoint-backed E2E tests",
+      "source_repo": "aws-amplify/amplify-js",
+      "source_commit": "6a065b17",
+      "staged_file": "11_INBOX/candidate-directives/CD-69SN-disable-pinpoint-backed-e2e-tests.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-65F661",
+      "directive_title": "Cargo metadata warnings and Windows test crashes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "domcyrus-rustnet",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-65F661-cargo-metadata-warnings-and-windows-test.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-7WF2",
+      "directive_title": "e2e): disable Pinpoint-backed E2E tests",
+      "source_repo": "aws-amplify-amplify-js-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7WF2-e2e-disable-pinpoint-backed-e2e-tests.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
     }
   ]
 }

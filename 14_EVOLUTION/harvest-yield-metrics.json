@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T04:06:08.584Z",
-  "total_cycles_completed": 9455,
-  "total_learnings_persisted": 9455,
-  "total_rules_promoted": 9157,
+  "last_updated": "2026-11-14T04:14:37.657Z",
+  "total_cycles_completed": 9458,
+  "total_learnings_persisted": 9458,
+  "total_rules_promoted": 9159,
   "history": [
-    {
-      "timestamp": "2026-11-13T14:05:41.848Z",
-      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T14:06:02.484Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T14:06:08.487Z",
-      "repository": "wcandillon/react-native-skia",
-      "learningId": "learn-github-wcandillon-react-native-skia",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T14:06:12.639Z",
       "repository": "pulumi/pulumi",
@@ -1403,6 +1382,27 @@
       "repository": "meta-llama/Llama-2-7b-chat-hf",
       "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T04:14:31.277Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T04:14:32.802Z",
+      "repository": "domcyrus/rustnet",
+      "learningId": "learn-github-domcyrus-rustnet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T04:14:37.657Z",
+      "repository": "aws-amplify/amplify-js",
+      "learningId": "learn-github-aws-amplify-amplify-js",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

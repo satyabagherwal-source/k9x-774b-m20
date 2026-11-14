@@ -9736,3 +9736,8 @@
 | `CYCLE-20261114-VAXL` | `2026-11-14T04:06:06.105Z` | `chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md` | Yes (`6c59e1f4...`) |
 | `CYCLE-20261114-VCU6` | `2026-11-14T04:06:08.574Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`2c9409f0...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T04:06:54.223Z` | `hf-meta-llama-llama-2-7b-chat-hf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-2672FCA2` [Domain J] | Yes (`1c5d713e...`) |
+| `CYCLE-20261114-64PU` | `2026-11-14T04:14:31.266Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`9c27d54e...`) |
+| `CYCLE-20261114-65W3` | `2026-11-14T04:14:32.787Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8437` | Yes (`a522f2c1...`) |
+| `CYCLE-20261114-69N3` | `2026-11-14T04:14:37.647Z` | `aws-amplify/amplify-js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8438` | Yes (`06630e46...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T04:15:15.928Z` | `hf-mistralai-mixtral-8x7b-instruct-v0.1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2D29CC33` [Domain D] | Yes (`a683279b...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T04:15:53.466Z` | `aws-amplify-amplify-js` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-F74DEC74` [Domain K] | Yes (`8efcb79f...`) |

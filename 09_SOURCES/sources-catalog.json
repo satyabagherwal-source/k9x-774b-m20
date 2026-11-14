@@ -985,8 +985,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
     "sourceVersion": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
     "license": "Open-Source",
-    "contentHash": "b07be66d734d4300c8f757d7ef2c1a41563a742b832c309791910b2694d8e39f",
-    "lastHarvestedAt": "2026-11-09T00:06:01.332Z",
+    "contentHash": "9c27d54ebf4f4a2a2b8d742f71f409c06914f247d6cea5a939ab3564a2ce83e0",
+    "lastHarvestedAt": "2026-11-14T04:14:31.271Z",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1"
   },
   "hf-deepseek-ai-deepseek-v3": {
@@ -4253,10 +4253,10 @@
     "repository": "aws-amplify/amplify-js",
     "platform": "github",
     "sourceUrl": "https://github.com/aws-amplify/amplify-js",
-    "sourceVersion": "3a9b151d",
+    "sourceVersion": "6a065b17",
     "license": "Apache-2.0",
-    "contentHash": "e42f9f6df4bd28d58015ebc0d659de71305179034dad2094e8932fa185c371fa",
-    "lastHarvestedAt": "2026-11-06T23:19:55.035Z",
+    "contentHash": "06630e46362c4e8c45d5d3fd2358c945277380674206480f853f2afab3c18fbe",
+    "lastHarvestedAt": "2026-11-14T04:14:37.651Z",
     "learningId": "learn-github-aws-amplify-amplify-js"
   },
   "go-eagle-eagle": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "5d3227f0",
+    "sourceVersion": "09d7fbf1",
     "license": "Apache-2.0",
-    "contentHash": "a6ebf9a28d4663240a1b5c671c4c590d974b9cbc5dc2d6a91cacb2b127dfd90b",
-    "lastHarvestedAt": "2026-11-12T21:30:51.729Z",
+    "contentHash": "a522f2c1223dbc77c798903369b3db9a6fe4bbf295b27c71f947deccae7b9acb",
+    "lastHarvestedAt": "2026-11-14T04:14:32.793Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {

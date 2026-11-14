@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T04:06:54.245Z",
+  "updated_at": "2026-11-14T04:15:53.621Z",
   "stats": {
-    "total_discovered": 3112,
-    "approved_pending_harvest": 2909,
+    "total_discovered": 3124,
+    "approved_pending_harvest": 2921,
     "harvested_count": 0,
     "rejected_count": 203,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2907,
-      "OFFICIAL_DOCUMENTATION": 110,
+      "COMMUNITY_AND_EXPERT": 2913,
+      "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
@@ -67063,6 +67063,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
         "fileName": "hf-meta-llama-llama-2-7b-chat-hf-learnings.md"
+      }
+    },
+    "SRC-5977EE164601": {
+      "id": "SRC-5977EE164601",
+      "url": "https://docs.rs/rustnet-monitor",
+      "title": "https://docs.rs/rustnet-monitor",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:14:42.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-6558EFD8DA7A": {
+      "id": "SRC-6558EFD8DA7A",
+      "url": "https://docs.rs/rustnet-capture",
+      "title": "https://docs.rs/rustnet-capture",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:14:42.851Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-450E58A8E2CE": {
+      "id": "SRC-450E58A8E2CE",
+      "url": "https://docs.rs/rustnet-core",
+      "title": "https://docs.rs/rustnet-core",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:14:42.879Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-07E0DF1D8EAC": {
+      "id": "SRC-07E0DF1D8EAC",
+      "url": "https://docs.rs/rustnet-host",
+      "title": "https://docs.rs/rustnet-host",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:14:42.904Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-745A5B252B38": {
+      "id": "SRC-745A5B252B38",
+      "url": "https://docs.rs/rustnet-sandbox",
+      "title": "https://docs.rs/rustnet-sandbox",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:14:42.931Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
+        "fileName": "domcyrus-rustnet-learnings.md"
+      }
+    },
+    "SRC-AE0DFA37FDDC": {
+      "id": "SRC-AE0DFA37FDDC",
+      "url": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "title": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:15:15.950Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
+        "fileName": "hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md"
+      }
+    },
+    "SRC-A1E1C31986CF": {
+      "id": "SRC-A1E1C31986CF",
+      "url": "https://github.com/aws-amplify/amplify-js",
+      "title": "https://github.com/aws-amplify/amplify-js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:15:53.480Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
+        "fileName": "aws-amplify-amplify-js-learnings.md"
+      }
+    },
+    "SRC-4D91C86B9A39": {
+      "id": "SRC-4D91C86B9A39",
+      "url": "https://docs.aws.amazon.com/cognito/latest/developerguide/token-endpoint.html",
+      "title": "https://docs.aws.amazon.com/cognito/latest/developerguide/token-endpoint.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:15:53.506Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
+        "fileName": "aws-amplify-amplify-js-learnings.md"
+      }
+    },
+    "SRC-B1EB0C06B26D": {
+      "id": "SRC-B1EB0C06B26D",
+      "url": "https://${domain/",
+      "title": "https://${domain/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:15:53.531Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
+        "fileName": "aws-amplify-amplify-js-learnings.md"
+      }
+    },
+    "SRC-2E84FF3B15AC": {
+      "id": "SRC-2E84FF3B15AC",
+      "url": "https://github.com/aws-amplify/amplify-js/issues?q=is%3Aissue+",
+      "title": "https://github.com/aws-amplify/amplify-js/issues?q=is%3Aissue+",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:15:53.570Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
+        "fileName": "aws-amplify-amplify-js-learnings.md"
+      }
+    },
+    "SRC-E73579A4E3DB": {
+      "id": "SRC-E73579A4E3DB",
+      "url": "https://github.com/aws-amplify/amplify-js/discussions",
+      "title": "https://github.com/aws-amplify/amplify-js/discussions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:15:53.596Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
+        "fileName": "aws-amplify-amplify-js-learnings.md"
+      }
+    },
+    "SRC-CE251050E377": {
+      "id": "SRC-CE251050E377",
+      "url": "https://github.com/aws-amplify/amplify-js/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/aws-amplify/amplify-js/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T04:15:53.621Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md",
+        "fileName": "aws-amplify-amplify-js-learnings.md"
       }
     }
   }

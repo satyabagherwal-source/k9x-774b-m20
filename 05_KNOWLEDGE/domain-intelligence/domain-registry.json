@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T04:06:55.069Z",
-  "total_records": 523,
+  "last_updated": "2026-11-14T04:15:53.955Z",
+  "total_records": 531,
   "domains": {
     "A": {
       "total": 5,
@@ -15,7 +15,7 @@
       ]
     },
     "B": {
-      "total": 7,
+      "total": 9,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -23,7 +23,9 @@
         "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants",
         "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants",
         "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants",
-        "DOM-B-A33663AE"
+        "DOM-B-A33663AE",
+        "domain_intelligence-product-intelligence-domcyrus-rustnet-core-invariants",
+        "domain_intelligence-product-intelligence-domcyrus-rustnet-learnings-core-invariants"
       ]
     },
     "C": {
@@ -33,7 +35,7 @@
       ]
     },
     "D": {
-      "total": 264,
+      "total": 267,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -298,7 +300,10 @@
         "domain_intelligence-research-knowledge-intelligence-chatrlabs-qwen-image-2-1-uncensored-omni-quantiz",
         "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-chat-hf-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan",
-        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-chat-hf-learnings-core-"
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-chat-hf-learnings-core-",
+        "domain_intelligence-research-knowledge-intelligence-mistralai-mixtral-8x7b-instruct-v0-1-core-invari",
+        "DOM-D-2D29CC33",
+        "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning"
       ]
     },
     "E": {
@@ -402,7 +407,7 @@
       ]
     },
     "H": {
-      "total": 109,
+      "total": 111,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -512,7 +517,9 @@
         "domain_intelligence-technical-construction-intelligence-hf-openai-gpt-oss-20b-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-siderolabs-talos-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-learnings-core-invari"
       ]
     },
     "I": {
@@ -555,7 +562,7 @@
       ]
     },
     "K": {
-      "total": 13,
+      "total": 14,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -569,7 +576,8 @@
         "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-core-invariants",
         "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-learnings-core-invari",
         "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants",
+        "DOM-K-F74DEC74"
       ]
     },
     "L": {
@@ -11628,6 +11636,144 @@
       "repository": "hf-meta-llama-llama-2-7b-chat-hf-learnings",
       "content_hash": "10d4a30e957151797906a5e8920f0a3c4b86918e0cd47393fc026e731fb81934",
       "created_at": "2026-11-14T04:06:54.447Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-mistralai-mixtral-8x7b-instruct-v0-1-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-mistralai-mixtral-8x7b-instruct-v0-1-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: mistralai/Mixtral-8x7B-Instruct-v0.1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mixtral-8x7b-instruct-v0-1-research-knowledge-intelligence-mistrala.md",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "content_hash": "9523d3fa2a71244e50b24ced2ef809ae41df26bab636efc8686210da1192e62c",
+      "created_at": "2026-11-14T04:14:31.459Z"
+    },
+    "domain_intelligence-product-intelligence-domcyrus-rustnet-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-domcyrus-rustnet-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
+      "repository": "domcyrus/rustnet",
+      "content_hash": "1151ed1a965f972864ef2b6c8583218494c2aed0768c886782f00e668bc205e8",
+      "created_at": "2026-11-14T04:14:33.163Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: aws-amplify/amplify-js Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-amplify-amplify-js-technical-construction-intelligence-aws-amplify-amplify-j.md",
+      "repository": "aws-amplify/amplify-js",
+      "content_hash": "f521a02ce6d40275e8aa94479116e8cb36d5b430e9df57911409e8ffb1cc882e",
+      "created_at": "2026-11-14T04:14:37.964Z"
+    },
+    "domain_intelligence-product-intelligence-domcyrus-rustnet-learnings-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-domcyrus-rustnet-learnings-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-learnings-product-intelligence-domcyrus-rustnet-learnings-core-.md",
+      "repository": "domcyrus-rustnet-learnings",
+      "content_hash": "5012950f27cb6ea07aa96fc4fc9fe953ab9c1b97c83c3a3736601675221920d0",
+      "created_at": "2026-11-14T04:14:43.414Z"
+    },
+    "DOM-D-2D29CC33": {
+      "record_id": "DOM-D-2D29CC33",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1](https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1))  \n> **Source Version**: `hf-mistralai",
+      "content_hash": "a683279ba3d5bdfd8f6758cd4a5af8f39183c5a14d684f8d0fb6ace2010e8fd4",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md`  \n> **Source**: huggingface ([ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md`  \n> **Source**: huggingface ([",
+      "provenance": {
+        "source_uri": "project://hf-mistralai-mixtral-8x7b-instruct-v0.1/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T04:14:43.642Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-mistralai-mixtral-8x7b-instruct-v0.1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-mistralai-mixtral-8x7b-instruct-v0.1"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T04:15:15.916Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mixtral-8x7b-instruct-v0-1-learnings-research-knowledge-intelligenc.md",
+      "repository": "hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings",
+      "content_hash": "2d2a9472822d47126c340294a4b4e4624cc27f90aaa2da9b37171e2cc670b898",
+      "created_at": "2026-11-14T04:15:16.140Z"
+    },
+    "DOM-K-F74DEC74": {
+      "record_id": "DOM-K-F74DEC74",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "e2e): disable Pinpoint-backed E2E tests",
+      "content": "When implementing operations in `.github/integ-config/integ-all.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws-amplify/amplify-js. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "8efcb79f16076afe2478c610e1df7c95f5089a67e2e9c2daa4cb16fa83b0aa22",
+      "summary": "Prevents defects observed in production commit `6a065b17`: e2e): disable Pinpoint-backed E2E tests. Unvalidated execution paths cause runtim -> When implementing operations in `.github/integ-config/integ-all.yml`, engineers MUST enforce rigorous boundary validation, safe state transi",
+      "provenance": {
+        "source_uri": "project://aws-amplify-amplify-js/aws-amplify-amplify-js-learnings.md",
+        "source_version": "6a065b17",
+        "observed_at": "2026-11-14T04:14:36.668Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (aws-amplify-amplify-js)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of aws-amplify-amplify-js"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T04:15:53.456Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-learnings-core-invari": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-learnings-core-invari",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: aws-amplify-amplify-js-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-amplify-amplify-js-learnings-technical-construction-intelligence-aws-amplify.md",
+      "repository": "aws-amplify-amplify-js-learnings",
+      "content_hash": "23597a12bdb502a3b7f5c0d98a126124f7be327a9b645d4fee3d3e7825b952ed",
+      "created_at": "2026-11-14T04:15:53.955Z"
     }
   }
 }

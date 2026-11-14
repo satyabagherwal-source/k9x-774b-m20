@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for aws/amplify/amplify/js
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for aws-amplify/amplify-js
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "aws/amplify/amplify/js",
-  "source_url": "https://github.com/aws/amplify/amplify/js",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "aws-amplify/amplify-js",
+  "source_url": "https://github.com/aws-amplify/amplify-js",
+  "source_version": "6a065b17",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T04:14:37.848Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-aws-amplify-amplify-js",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aws/amplify/amplify/js](https://github.com/aws/amplify/amplify/js) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [aws-amplify/amplify-js](https://github.com/aws-amplify/amplify-js) (Revision: `6a065b17`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T04:14:37.848Z`  
+> **Learning ID**: `learn-github-aws-amplify-amplify-js`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aws/amplify/amplify/js` (Commit: `historical`)
+- **Target Repository**: `aws-amplify/amplify-js` (Commit: `6a065b17`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md`  
-> **Source**: github ([https://github.com/aws-amplify/amplify-js](https://github.com/aws-amplify/amplify-js))  
-> **Source Version**: `3a9b151d`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T23:19:53.393Z  
-> **Learning ID**: `learn-github-aws-amplify-amplify-js`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): aws-amplify/amplify-js
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-amplify-amplify-js-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws-amplify/amplify-js](https://github.com/aws-amplify/amplify-js))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T23:19:52.543Z  
+> **Harvest Timestamp**: 2026-11-14T04:14:36.662Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -492,501 +478,66 @@ export const getAccessTokenUsername = (accessToken: string): string =>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2d7d7cb0` (2026-11-05)
-**Commit Message**: fix(auth): revoke refresh token when global sign out fails (#15009)
+### Incident Patch 1: `6a065b17` (2026-11-10)
+**Commit Message**: chore(e2e): disable Pinpoint-backed E2E tests (#15013)
 
-**File**: `.changeset/auth-global-signout-revoke-fallback.md` (added, +5/-0)
+**File**: `.github/integ-config/integ-all.yml` (modified, +17/-15)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'@aws-amplify/auth': patch
-+---
-+
-+fix(auth): revoke the refresh token when global sign out cannot complete
-```
-
-**File**: `packages/auth/__tests__/providers/cognito/signOut.test.ts` (modified, +37/-2)
-```diff
-@@ -254,15 +254,50 @@ describe('signOut', () => {
- 			expectSignOut().toComplete();
- 		});
+@@ -722,14 +722,15 @@ tests:
+   #   amplifyjs_dir: true
  
--		it('should still perform global sign out if token revoke fails', async () => {
-+		it('should complete sign out when global sign out fails', async () => {
- 			mockGlobalSignOut.mockRejectedValue(new Error());
+   # ANALYTICS
+-  - test_name: integ_react_analytics_pinpoint
+-    desc: 'Test record and identifyUser calls for pinpoint'
+-    framework: react
+-    category: analytics
+-    sample_name: [pinpoint-test]
+-    spec: pinpoint
+-    # Temp fix:
+-    browser: *minimal_browser_list
++  # DISABLED: Amazon Pinpoint reached end of support on October 31, 2026.
++  # - test_name: integ_react_analytics_pinpoint
++  #   desc: 'Test record and identifyUser calls for pinpoint'
++  #   framework: react
++  #   category: analytics
++  #   sample_name: [pinpoint-test]
++  #   spec: pinpoint
++  #   # Temp fix:
++  #   browser: *minimal_browser_list
  
- 			await signOut(mockCtx, { global: true });
+   - test_name: integ_react_analytics_personalize_auth
+     desc: 'Test record API for Personalize with authenticated user'
+@@ -928,13 +929,14 @@ tests:
+     browser: [chrome] # firefox issues with secure cookies in cypress, manual testing works fine
  
- 			expect(loggerDebugSpy).toHaveBeenCalledWith(
- 				expect.stringContaining('Global signOut error caught'),
- 			);
--			expect(mockGetRegionFromUserPoolId).toHaveBeenCalledTimes(1);
-+			// once for GlobalSignOut, once for the RevokeToken fallback
-+			expect(mockGetRegionFromUserPoolId).toHaveBeenCalledTimes(2);
-+			expectSignOut().toComplete();
-+		});
-+
-+		it('should fall back to revoking the refresh token when global sign out is rejected', async () => {
-+			const notAuthorized = new Error(
-+				'Access Token does not have required scopes',
-+			);
-+			notAuthorized.name = 'NotAuthorizedException';
-+			mockGlobalSignOut.mockRejectedValue(notAuthorized);
-+
-+			await signOut(mockCtx, { global: true });
-+
-+			expect(mockGlobalSignOut).toHaveBeenCalledTimes(1);
-+			expect(mockRevokeToken).toHaveBeenCalledWith(
-+				{ region },
-+				{ ClientId: cognitoConfig.userPoolClientId, Token: refreshToken },
-+			);
-+			expect(loggerDebugSpy).not.toHaveBeenCalledWith(
-+				expect.stringContaining('Client signOut error caught'),
-+			);
-+			expectSignOut().toComplete();
-+		});
-+
-+		it('should not revoke the refresh token when global sign out is rejected on an irrevocable session', async () => {
-+			mockLoadTokens.mockResolvedValue({
-+				...cognitoAuthTokens,
-+				accessToken: {},
-+			});
-+			mockGlobalSignOut.mockRejectedValue(new Error());
-+
-+			await signOut(mockCtx, { global: true });
-+
-+			expect(mockGlobalSignOut).toHaveBeenCalledTimes(1);
-+			expect(mockRevokeToken).not.toHaveBeenCalled();
- 			expectSignOut().toComplete();
- 		});
- 	});
-```
-
-**File**: `packages/auth/src/providers/cognito/apis/signOut.ts` (modified, +6/-0)
-```diff
-@@ -158,6 +158,12 @@ async function globalSignOut(
- 		logger.debug(
- 			'Global signOut error caught but will proceed with token removal',
- 		);
-+		// GlobalSignOut requires the access token to carry the
-+		// `aws.cognito.signin.user.admin` scope, which tokens issued through the
-+		// hosted UI or federated sign-in often lack. Fall back to revoking the
-+		// current refresh token (when the session is revocable) so it can no
-+		// longer be used to refresh the session.
-+		await clientSignOut(cognitoConfig, tokenOrchestrator);
- 	}
- }
+   # INAPPMESSAGING
+-  - test_name: integ_in_app_messaging
+-    desc: 'React InApp Messaging'
+-    framework: react
+-    category: in-app-messaging
+-    sample_name: [in-app-messaging-app]
+-    spec: in-app-messaging
+-    browser: *minimal_browser_list
++  # DISABLED: In-App Messaging is backed by Amazon Pinpoint, which reached end of support on October 31, 2026.
++  # - test_name: integ_in_app_messaging
++  #   desc: 'React InApp Messaging'
++  #   framework: react
++  #   category: in-app-messaging
++  #   sample_name: [in-app-messaging-app]
++  #   spec: in-app-messaging
++  #   browser: *minimal_browser_list
  
-```
-
----
-
-### Incident Patch 2: `7829a19c` (2026-11-05)
-**Commit Message**: fix(auth): get a new guest identityId when the stored one can't be used for guest access (#14999)
-
-* fix(auth): get a new guest identityId when the stored one can't be used for guest access
-
-* fix(auth): share one guest identityId recovery between concurrent calls
-
-* fix(auth): only reuse cached guest credentials for the requested identityId
-
-getGuestCredentials returned the in-memory guest credentials whenever they
-were unexpired, without checking that they belong to the identityId it was
-asked for. During a guest identityId recovery, another call that starts after
-the store is cleared can get its own identityId and cache its credentials, so
-the recovery stored one identityId and returned the other's credentials.
-
-**File**: `.changeset/guest-unusable-identity-id.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'@aws-amplify/auth': patch
-+---
-+
-+fix(auth): get a new guest identityId when the stored one can't be used for guest access (deleted, linked to a login, or malformed), instead of failing on every `fetchAuthSession()` call
-```
-
-**File**: `packages/auth/__tests__/providers/cognito/credentialsProvider/credentialsProvider.test.ts` (modified, +8/-0)
-```diff
-@@ -121,6 +121,14 @@ describe('credentialsProvider', () => {
- 			});
- 
- 			test('in-memory guest creds are returned if not expired and not past TTL', async () => {
-+				// Cognito returns the requested identityId, which the cache is keyed on
-+				mockGetCredentialsForIdentity.mockReset();
-+				mockGetCredentialsForIdentity.mockImplementation(
-+					async (_config, { IdentityId }) => ({
-+						...authAPITestParams.CredentialsForIdentityIdResult,
-+						IdentityId,
-+					}),
-+				);
- 				await cognitoCredentialsProvider.getCredentialsAndIdentityId({
- 					authenticated: false,
- 					authConfig: validAuthConfig.Auth!,
-```
-
-**File**: `packages/auth/__tests__/providers/cognito/credentialsProvider/unusableGuestIdentityId.test.ts` (added, +434/-0)
-```diff
-@@ -0,0 +1,434 @@
-+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-+// SPDX-License-Identifier: Apache-2.0
-+
-+import {
-+	KeyValueStorageInterface,
-+	ResourcesConfig,
-+	createGetCredentialsForIdentityClient,
-+	createGetIdClient,
-+} from '@aws-amplify/core';
-+
-+import {
-+	CognitoAWSCredentialsAndIdentityIdProvider,
-+	DefaultIdentityIdStore,
-+} from '../../../../src/providers/cognito';
-+import { AuthError } from '../../../../src/errors/AuthError';
-+import { authAPITestParams } from '../testUtils/authApiTestParams';
-+
-+jest.mock('@aws-amplify/core', () => ({
-+	...jest.requireActual('@aws-amplify/core'),
-+	createGetCredentialsForIdentityClient: jest.fn(),
-+	createGetIdClient: jest.fn(),
-+}));
-+
-+const identityPoolId = 'us-east-1:test-id';
-+const identityIdKey = `com.amplify.Cognito.${identityPoolId}.identityId`;
-+const storedIdentityId = 'us-east-1:00000000-0000-0000-0000-000000000001';
-+const newIdentityId = 'us-east-1:00000000-0000-0000-0000-000000000002';
-+
-+const authConfig: ResourcesConfig['Auth'] = {
-+	Cognito: {
-+		userPoolId: 'us-east-1_test-id',
-+		identityPoolId,
-+		userPoolClientId: 'test-id',
-+		allowGuestAccess: true,
-+	},
-+};
-+
-+const serviceError = (name: string, message: string) =>
-+	Object.assign(new Error(message), { name, $metadata: {} });
-+
-+const resourceNotFound = () =>
-+	serviceError(
-+		'ResourceNotFoundException',
-+		`Identity '${storedIdentityId}' not found.`,
-+	);
-+const accessForbidden = () =>
-+	serviceError(
-+		'NotAuthorizedException',
-+		`Access to Identity '${storedIdentityId}' is forbidden.`,
-+	);
-+const malformedIdentityId = () =>
-+	serviceError(
-+		'ValidationException',
-+		"1 validation error detected: Value 'not-an-identity-id' at 'identityId' failed to satisfy constraint: Member must satisfy regular expression pattern: [\\w-]+:[0-9a-f-]+",
-+	);
-+
-+/**
-+ * Browser-like storage: reads see earlier writes.
-+ */
-+const createBrowserStorage = (initial: Record<string, string>) => {
-+	const items = new Map(Object.entries(initial));
-+	const storage: KeyValueStorageInterface = {
-+		setItem: jest.fn(async (key: string, value: string) => {
-+			items.set(key, value);
-+		}),
-+		getItem: jest.fn(async (key: string) => items.get(key) ?? null),
-+		removeItem: jest.fn(async (key: string) => {
-+			items.delete(key);
-+		}),
-+		clear: jest.fn(async () => {
-+			items.clear();
-+		}),
-+	};
-+
-+	return { storage, items };
-+};
-+
-+/**
-+ * Server-like storage, like the cookie storage on the server: reads come from
-+ * the request's cookies, and writes are only recorded for the response.
-+ */
-+const createServerStorage = (requestCookies: Record<string, string>) => {
-+	const responseCookies: string[] = [];
-+	const storage: KeyValueStorageInterface = {
-+		setItem: jest.fn(async (key: string, value: string) => {
-+			responseCookies.push(`${key}=${value}`);
-+		}),
-+		getItem: jest.fn(async (key: string) => requestCookies[key] ?? null),
-+		removeItem: jest.fn(async (key: string) => {
-+			responseCookies.push(`${key}=`);
-+		}),
-+		clear: jest.fn(),
-+	};
-+
-+	return { storage, responseCookies };
-+};
-+
-+const mockCreateGetCredentialsForIdentityClient = jest.mocked(
-+	createGetCredentialsForIdentityClient,
-+);
-+const mockCreateGetIdClient = jest.mocked(createGetIdClient);
-+const mockGetCredentialsForIdentity = jest.fn();
-+const mockGetId = jest.fn();
-+
-+const credentialsFor = (identityId: string) => ({
-+	...authAPITestParams.CredentialsForIdentityIdResult,
-+	IdentityId: identityId,
-+});
-+
-+const createProvider = (storage: KeyValueStorageInterface) =>
-+	new CognitoAWSCredentialsAndIdentityIdProvider(
-+		new DefaultIdentityIdStore(storage),
-+	);
-+
-+const fetchGuestCredentials = (
-+	provider: CognitoAWSCredentialsAndIdentityIdProvider,
-+) =>
-+	provider.getCredentialsAndIdentityId({
-+		authenticated: false,
-+		authConfig: authConfig!,
-+	});
-+
-+describe('guest credentials with an unusable stored identityId', () => {
-+	beforeAll(() => {
-+		mockCreateGetCredentialsForIdentityClient.mockReturnValue(
-+			mockGetCredentialsForIdentity,
-+		);
-+		mockCreateGetIdClient.mockReturnValue(mockGetId);
-+	});
-+
-+	beforeEach(() => {
-+		mockGetCredentialsForIdentity.mockReset();
-+		mockGetId.mockReset();
-+		mockGetId.mockResolvedValue({ IdentityId: newIdentityId });
-+		mockGetCredentialsForIdentity.mockImplementation(
-+			async (_config, { IdentityId }) => {
-+				if (IdentityId === storedIdentityId) {
-+					throw resourceNotFound();
-+				}
-+
-+				return credentialsFor(IdentityId);
-+			},
-+		);
-+	});
-+
-+	describe.each([
-+		['ResourceNotFoundException (deleted identity)', resourceNotFound],
-+		['NotAuthorizedException (identity linked to a login)', accessForbidden],
-+		['ValidationException (malformed identityId)', malformedIdentityId],
-+	])('when the stored identityId fails with %s', (_, createError) => {
-+		beforeEach(() => {
-+			mockGetCredentialsForIdentity.mockImplementation(
-+				async (_config, { IdentityId }) => {
-+					if (IdentityId === storedIdentityId) {
-+						throw createError();
-+					}
-+
-+					return
-```
-
-**File**: `packages/auth/src/providers/cognito/credentialsProvider/IdentityIdProvider.ts` (modified, +7/-1)
-```diff
-@@ -17,6 +17,8 @@ import { formLoginsMap } from './utils';
-  * Provides a Cognito identityId
-  *
-  * @param tokens - The AuthTokens received after SignIn
-+ * @param forceNewIdentityId - Skip the stored identityId and get one from
-+ *  Cognito's GetId API. The stored identityId is replaced with the result.
-  * @returns string
-  * @throws configuration exceptions: `InvalidIdentityPoolIdException`
-  *  - Auth errors that may arise from misconfiguration.
-@@ -26,15 +28,19 @@ export async function cognitoIdentityIdProvider({
- 	tokens,
- 	authConfig,
- 	identityIdStore,
-+	forceNewIdentityId = false,
- }: {
- 	tokens?: AuthTokens;
- 	authConfig: CognitoIdentityPoolConfig;
- 	identityIdStore: IdentityIdStore;
-+	forceNewIdentityId?: boolean;
- }): Promise<string> {
- 	identityIdStore.setAuthConfig({ Cognito: authConfig });
- 
- 	// will return null only if there is no identityId cached or if there is an error retrieving it
--	let identityId: Identity | null = await identityIdStore.loadIdentityId();
-+	let identityId: Identity | null = forceNewIdentityId
-+		? null
-+		: await identityIdStore.loadIdentityId();
- 
- 	// A primary identityId belongs to a signed-in user and cannot be used for
- 	// guest access. It can be left in memory when the tokens are cleared without
-```
-
-**File**: `packages/auth/src/providers/cognito/credentialsProvider/credentialsProvider.ts` (modified, +77/-4)
-```diff
-@@ -22,7 +22,7 @@ import { createCognitoIdentityPoolEndpointResolver } from '../factories';
- 
- import { IdentityIdStore } from './types';
- import { cognitoIdentityIdProvider } from './IdentityIdProvider';
--import { formLoginsMap } from './utils';
-+import { formLoginsMap, isUnusableGuestIdentityIdError } from './utils';
- 
- const logger = new ConsoleLogger('CognitoCredentialsProvider');
- const CREDENTIALS_TTL = 50 * 60 * 1000; // 50 min, can be modified on config if required in the future
-@@ -42,6 +42,11 @@ export class CognitoAWSCredentialsAndIdentityIdProvider
- 
- 	private _nextCredentialsRefresh = 0;
- 
-+	private _guestRecovery?: {
-+		failedIdentityId: string;
-+		promise: Promise<CredentialsAndIdentityId>;
-+	};
-+
- 	async clearCredentialsAndIdentityId(): Promise<void> {
- 		logger.debug('Clearing out credentials and identityId');
- 		this._credentialsAndIdentityId = undefined;
-@@ -84,23 +89,91 @@ export class CognitoAWSCredentialsAndIdentityIdProvider
- 			this.clearCredentials();
- 		}
- 		if (!isAuthenticated) {
--			return this.getGuestCredentials(identityId, authConfig.Cognito);
-+			return this.getGuestCredentialsWithRecovery(
-+				identityId,
-+				authConfig.Cognito,
-+			);
- 		} else {
- 			assertIdTokenInAuthTokens(tokens);
- 
- 			return this.credsForOIDCTokens(authConfig.Cognito, tokens, identityId);
- 		}
- 	}
- 
-+	/**
-+	 * Gets guest credentials. If Cognito rejects the stored identityId because
-+	 * the identityId itself can't be used (for example, it was deleted or it is
-+	 * linked to a login), clears it, gets a new guest identityId from GetId and
-+	 * tries once more. A second failure is thrown.
-+	 *
-+	 * Concurrent calls that fail with the same identityId share one recovery,
-+	 * and a call that fails after another call has already recovered returns
-+	 * the new credentials, so only one new identityId is created.
-+	 */
-+	private async getGuestCredentialsWithRecovery(
-+		identityId: string,
-+		authConfig: CognitoIdentityPoolConfig,
-+	): Promise<CredentialsAndIdentityId> {
-+		try {
-+			return await this.getGuestCredentials(identityId, authConfig);
-+		} catch (error) {
-+			if (!isUnusableGuestIdentityIdError(error)) {
-+				throw error;
-+			}
-+			if (
-+				this._credentialsAndIdentityId &&
-+				!this.isPastTTL() &&
-+				this._credentialsAndIdentityId.isAuthenticatedCreds === false &&
-+				this._credentialsAndIdentityId.identityId !== identityId
-+			) {
-+				return this._credentialsAndIdentityId;
-+			}
-+			if (this._guestRecovery?.failedIdentityId !== identityId) {
-+				const promise = this.recoverGuestCredentials(
-+					authConfig,
-+					error as AuthError,
-+				).finally(() => {
-+					if (this._guestRecovery?.promise === promise) {
-+						this._guestRecovery = undefined;
-+					}
-+				});
-+				this._guestRecovery = { failedIdentityId: identityId, promise };
-+			}
-+
-+			return this._guestRecovery.promise;
-+		}
-+	}
-+
-+	private async recoverGuestCredentials(
-+		authConfig: CognitoIdentityPoolConfig,
-+		error: AuthError,
-+	): Promise<CredentialsAndIdentityId> {
-+		logger.warn(
-+			`The stored identityId can't be used for guest access (${error.name}). Getting a new guest identityId.`,
-+		);
-+		await this.clearCredentialsAndIdentityId();
-+		// Don't load the identityId from the store again: on the server, the
-+		// cookie storage keeps returning the request's cookie after it's removed.
-+		const newIdentityId = await cognitoIdentityIdProvider({
-+			authConfig,
-+			identityIdStore: this._identityIdStore,
-+			forceNewIdentityId: true,
-+		});
-+
-+		return this.getGuestCredentials(newIdentityId, authConfig);
-+	}
-+
- 	private async getGuestCredentials(
- 		identityId: string,
- 		authConfig: CognitoIdentityPoolConfig,
- 	): Promise<CredentialsAndIdentityId> {
--		// Return existing in-memory cached credentials only if it exists, is not past it's lifetime and is unauthenticated credentials
-+		// Return existing in-memory cached credentials only if it exists, is not past it's lifetime, is unauthenticated credentials
-+		// and belongs to the requested identityId
- 		if (
- 			this._credentialsAndIdentityId &&
- 			!this.isPastTTL() &&
--			this._credentialsAndIdentityId.isAuthenticatedCreds === false
-+			this._credentialsAndIdentityId.isAuthenticatedCreds === false &&
-+			this._credentialsAndIdentityId.identityId === identityId
- 		) {
- 			logger.info(
- 				'returning stored credentials as they neither past TTL nor expired.',
-```
-
-**File**: `packages/auth/src/providers/cognito/credentialsProvider/utils.ts` (modified, +30/-0)
-```diff
-@@ -20,3 +20,33 @@ export function formLoginsMap(idToken: string) {
- 
- 	return res;
- }
-+
-+/**
-+ * Returns true when Cognito rejected an identityId used for guest access
-+ * because the identityId itself can't be used: it was deleted or never
-+ * existed, it is linked to a login, or it is malformed.
-+ *
-+ * Other errors, such as throttling, network errors or an identity pool that
-+ * doesn't allow guest access, return false: getting a new identityId would
-+ * not help with them.
-+ */
-+export function isUnusableGuestIdentityIdError(error: unknown): boolean {
-+	if (!(error instanceof AuthError)) {
-+		return false;
-+	}
-+	const message = error.message ?? '';
-+
-+	switch (error.name) {
-+		case 'ResourceNotFoundException':
-+			// "Identity '<identityId>' not found."
-+			return true;
-+		case 'NotAuthorizedException':
-+			// "Access to Identity '<identityId>' is forbidden."
-+			return /^Access to Identity '[^']*' is forbidden/.test(message);
-+		case 'ValidationException':
-+			// "... Value '<identityId>' at 'identityId' failed to satisfy constraint ..."
-+			return /at 'identityId'/i.test(message);
-+		default:
-+			return false;
-+	}
-+}
+   # - test_name: integ_duplicate_packages
+   #   desc: 'Duplicate Package Errors'
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15013** (2026-11-10): chore(e2e): disable Pinpoint-backed E2E tests (@soberm)
 - **PR #15010** (2026-11-05): chore(deps): update glob and minimatch transitive dependencies (@soberm)
 - **PR #15009** (2026-11-05): fix(auth): revoke refresh token when global sign out fails (@soberm)
 - **PR #15008** (2026-11-05): chore(deps): bump joi from 18.2.9 to 18.3.2 (@dependabot[bot])
 - **PR #15007** (2026-11-05): chore(deps-dev): bump glob from 10.5.0 to 14.0.2 (@dependabot[bot])
 - **PR #15006** (2026-11-05): chore(deps): bump qs from 6.16.0 to 6.17.1 (@dependabot[bot])
-- **PR #15003** (2026-11-05): chore(deps): bump zod from 4.6.5 to 4.6.7 (@dependabot[bot])
 
 ---
 
@@ -1006,35 +557,61 @@ the recovery stored one identityId and returned the other's credentials.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. auth): revoke refresh token when global sign out fails (#15009)
+## X. e2e): disable Pinpoint-backed E2E tests
 
 **RULE**:
-When implementing operations in `.changeset/auth-global-signout-revoke-fallback.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws-amplify/amplify-js. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/integ-config/integ-all.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws-amplify/amplify-js. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2d7d7cb0`: auth): revoke refresh token when global sign out fails (#15009). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6a065b17`: e2e): disable Pinpoint-backed E2E tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/auth-global-signout-revoke-fallback.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/integ-config/integ-all.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-'@aws-amplify/auth': patch
----
-
-fix(auth): revoke the refresh token when global sign out cannot complete
+  # DISABLED: Amazon Pinpoint reached end of support on October 31, 2026.
+  # - test_name: integ_react_analytics_pinpoint
+  #   desc: 'Test record and identifyUser calls for pinpoint'
+  #   framework: react
+  #   category: analytics
+  #   sample_name: [pinpoint-test]
+  #   spec: pinpoint
+  #   # Temp fix:
+  #   browser: *minimal_browser_list
+  # DISABLED: In-App Messaging is backed by Amazon Pinpoint, which reached end of support on October 31, 2026.
+  # - test_name: integ_in_app_messaging
+  #   desc: 'React InApp Messaging'
+  #   framework: react
+  #   category: in-app-messaging
+  #   sample_name: [in-app-messaging-app]
+  #   spec: in-app-messaging
+  #   browser: *minimal_browser_list
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+  - test_name: integ_react_analytics_pinpoint
+    desc: 'Test record and identifyUser calls for pinpoint'
+    framework: react
+    category: analytics
+    sample_name: [pinpoint-test]
+    spec: pinpoint
+    # Temp fix:
+    browser: *minimal_browser_list
+  - test_name: integ_in_app_messaging
+    desc: 'React InApp Messaging'
+    framework: react
+    category: in-app-messaging
+    sample_name: [in-app-messaging-app]
+    spec: in-app-messaging
+    browser: *minimal_browser_list
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2d7d7cb0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6a065b17` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

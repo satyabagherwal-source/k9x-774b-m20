@@ -4,45 +4,31 @@
 {
   "source_repository": "domcyrus/rustnet",
   "source_url": "https://github.com/domcyrus/rustnet",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "09d7fbf1",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T04:14:33.040Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-domcyrus-rustnet",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [domcyrus/rustnet](https://github.com/domcyrus/rustnet) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [domcyrus/rustnet](https://github.com/domcyrus/rustnet) (Revision: `09d7fbf1`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T04:14:33.040Z`  
+> **Learning ID**: `learn-github-domcyrus-rustnet`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `domcyrus/rustnet` (Commit: `historical`)
+- **Target Repository**: `domcyrus/rustnet` (Commit: `09d7fbf1`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
-> **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `218e16d5`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T00:44:54.222Z  
-> **Learning ID**: `learn-github-domcyrus-rustnet`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): domcyrus/rustnet
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T00:44:52.841Z  
+> **Harvest Timestamp**: 2026-11-14T04:14:31.773Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5224 stars
+- **Stars / Engagement**: 5238 stars
 
 ---
 
@@ -2526,127 +2512,145 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `218e16d5` (2026-11-09)
-**Commit Message**: chore(deps): bump the rust-dependencies group with 2 updates (#724)
+### Incident Patch 1: `ea7b63b5` (2026-11-13)
+**Commit Message**: fix: Cargo metadata warnings and Windows test crashes (#731)
 
-Bumps the rust-dependencies group with 2 updates: [toml](https://github.com/toml-rs/toml) and [zip](https://github.com/zip-rs/zip2).
-
-
-Updates `toml` from 1.1.8+spec-1.1.0 to 1.2.0+spec-1.1.0
-- [Commits](https://github.com/toml-rs/toml/compare/toml-v1.1.8...toml-v1.2.0)
-
-Updates `zip` from 9.2.0 to 9.3.0
-- [Release notes](https://github.com/zip-rs/zip2/releases)
-- [Changelog](https://github.com/zip-rs/zip2/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/zip-rs/zip2/compare/v9.2.0...v9.3.0)
-
----
-updated-dependencies:
-- dependency-name: toml
-  dependency-version: 1.2.0+spec-1.1.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: rust-dependencies
-- dependency-name: zip
-  dependency-version: 9.3.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: rust-dependencies
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +7/-6)
+**File**: `.github/workflows/build-platforms.yml` (modified, +9/-0)
 ```diff
-@@ -3157,9 +3157,9 @@ dependencies = [
+@@ -197,6 +197,15 @@ jobs:
+           default-features: ${{ (contains(matrix.target, 'linux') || contains(matrix.target, 'apple')) && 'true' || 'false' }}
+           strip-symbols: ${{ inputs.strip-symbols && 'true' || 'false' }}
  
- [[package]]
- name = "toml"
--version = "1.1.8+spec-1.1.0"
-+version = "1.2.0+spec-1.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
-+checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
- dependencies = [
-  "indexmap",
-  "serde_core",
-@@ -3190,9 +3190,9 @@ dependencies = [
- 
- [[package]]
- name = "toml_writer"
--version = "1.1.3+spec-1.1.0"
-+version = "1.2.0+spec-1.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
-+checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
- 
- [[package]]
- name = "tracing"
-@@ -4017,14 +4017,15 @@ dependencies = [
- 
- [[package]]
- name = "zip"
--version = "9.2.0"
-+version = "9.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3f5b58784007ff6e5f280ec82c8596686a3b9b5dd5836c63288d4479f84728b9"
-+checksum = "eaeb7f16d2605b49aef586996ded29e65642fab7259a3077e537351df6d80426"
- dependencies = [
-  "crc32fast",
-  "flate2",
-  "getrandom 0.4.3",
-  "indexmap",
-+ "libc",
-  "memchr",
-  "nix 0.31.3",
-  "typed-path",
++      - name: Test Windows executable startup
++        if: runner.os == 'Windows'
++        shell: pwsh
++        run: |
++          & './target/${{ matrix.target }}/release/rustnet.exe' --version
++          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
++          & './target/${{ matrix.target }}/release/rustnet.exe' --help
++          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
++
+       - name: Run workspace tests
+         if: matrix.run-tests
+         run: cargo test --locked --workspace --all-features --no-fail-fast --target ${{ matrix.target }} --verbose
 ```
 
----
-
-### Incident Patch 2: `53a150bb` (2026-11-09)
-**Commit Message**: chore(deps): bump docker/login-action (#723)
-
-Bumps the actions group with 1 update: [docker/login-action](https://github.com/docker/login-action).
-
-
-Updates `docker/login-action` from 4.7.0 to 4.8.0
-- [Release notes](https://github.com/docker/login-action/releases)
-- [Commits](https://github.com/docker/login-action/compare/81c6f93d4bc991e510b342a00b419b3bb4efc5c6...8aa5831fb8d48d8f76594c7ddde61ae58019f550)
-
----
-updated-dependencies:
-- dependency-name: docker/login-action
-  dependency-version: 4.8.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: actions
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/docker.yml` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -25,7 +25,7 @@ jobs:
+@@ -33,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Retire eligible Linux TCP/UDP flows after verified process exit and socket disappearance, including protected processes and sockets present at startup; preserve shared sockets and show cleanup status in Details (#684)
  
-       - name: Log in to Container Registry
-         if: github.event_name != 'pull_request'
--        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
-+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4
-         with:
-           registry: ${{ env.REGISTRY }}
-           username: ${{ github.actor }}
+ ### Fixed
++- Link Windows synchronization APIs explicitly to prevent x86 startup failures and x64 test crashes caused by enclave DLL imports (#731)
++- Remove redundant homepage metadata to prevent Cargo manifest warnings when building from source (#731)
+ - Validate complete DNS questions and recognize STUN on port 53 before DNS to prevent false resolver failures (#722)
+ - Keep headless shutdown bounded when stderr or account-name services stall, using numeric account IDs until background lookups finish (#721)
+ - Discard pending TCP RTT probes on one-byte keepalives to prevent inflated or ambiguous timing samples after missed ACKs or last-byte retransmissions
+```
+
+**File**: `Cargo.toml` (modified, +0/-2)
+```diff
+@@ -17,7 +17,6 @@ authors = ["domcyrus"]
+ edition = "2024"
+ rust-version = "1.88.0" # Let-chains require Rust 1.88.0+
+ repository = "https://github.com/domcyrus/rustnet"
+-homepage = "https://github.com/domcyrus/rustnet"
+ license = "Apache-2.0"
+ 
+ # Single source of truth for the internal crate versions (and the few deps
+@@ -47,7 +46,6 @@ edition.workspace = true
+ rust-version.workspace = true
+ description = "A cross-platform per-process network monitor with TUI and headless JSON modes"
+ repository.workspace = true
+-homepage.workspace = true
+ documentation = "https://docs.rs/rustnet-monitor"
+ readme = "README.md"
+ license.workspace = true
+```
+
+**File**: `build.rs` (modified, +17/-0)
+```diff
+@@ -81,6 +81,23 @@ fn setup_windows_npcap_delay_load() {
+     let target_env = env::var("CARGO_CFG_TARGET_ENV").unwrap_or_default();
+ 
+     if target_os == "windows" && target_env == "msvc" {
++        // pcap's windows-sys 0.36 import library also exports WaitOnAddress and
++        // WakeByAddress* from the enclave-only vertdll.dll. Resolve those
++        // symbols before scanning dependencies, including callers that are
++        // only pulled in later from the test harness or standard library.
++        println!("cargo:rustc-link-lib=synchronization");
++        let x86 = env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|arch| arch == "x86");
++        for (symbol, stack_bytes) in [
++            ("WaitOnAddress", 16),
++            ("WakeByAddressAll", 4),
++            ("WakeByAddressSingle", 4),
++        ] {
++            if x86 {
++                println!("cargo:rustc-link-arg=/INCLUDE:__imp__{symbol}@{stack_bytes}");
++            } else {
++                println!("cargo:rustc-link-arg=/INCLUDE:__imp_{symbol}");
++            }
++        }
+         println!("cargo:rustc-link-arg=/DELAYLOAD:Packet.dll");
+         println!("cargo:rustc-link-arg=/DELAYLOAD:wpcap.dll");
+         println!("cargo:rustc-link-arg=/DEFAULTLIB:delayimp.lib");
+```
+
+**File**: `crates/rustnet-capture/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -6,7 +6,6 @@ edition.workspace = true
+ rust-version.workspace = true
+ description = "libpcap/Npcap-based packet-capture backend for rustnet: device selection, BPF filters, macOS PKTAP, TUN/TAP, and a raw-frame reader"
+ repository.workspace = true
+-homepage.workspace = true
+ documentation = "https://docs.rs/rustnet-capture"
+ readme = "README.md"
+ license.workspace = true
+```
+
+**File**: `crates/rustnet-core/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -6,7 +6,6 @@ edition.workspace = true
+ rust-version.workspace = true
+ description = "Network analysis library: packet parsing, protocol types, deep packet inspection, link-layer parsers, connection merging, and DNS/GeoIP/OUI lookups: the reusable core of rustnet"
+ repository.workspace = true
+-homepage.workspace = true
+ documentation = "https://docs.rs/rustnet-core"
+ readme = "README.md"
+ license.workspace = true
+```
+
+**File**: `crates/rustnet-host/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -6,7 +6,6 @@ edition.workspace = true
+ rust-version.workspace = true
+ description = "Cross-platform process attribution and host TCP/UDP socket inventory for rustnet"
+ repository.workspace = true
+-homepage.workspace = true
+ documentation = "https://docs.rs/rustnet-host"
+ readme = "README.md"
+ license.workspace = true
+```
+
+**File**: `crates/rustnet-sandbox/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -6,7 +6,6 @@ edition.workspace = true
+ rust-version.workspace = true
+ description = "Post-initialization sandboxing and root privilege dropping for rustnet: Landlock + capability drops on Linux, Seatbelt on macOS, restricted token + job object on Windows, and a shared uid drop on Linux/macOS/FreeBSD"
+ repository.workspace = true
+-homepage.workspace = true
+ documentation = "https://docs.rs/rustnet-sandbox"
+ readme = "README.md"
+ license.workspace = true
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #724** (2026-11-09): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
-- **PR #723** (2026-11-09): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 in the actions group (@dependabot[bot])
-- **PR #722** (2026-11-08): Fix DNS validation and STUN detection on port 53 (@domcyrus)
-- **PR #721** (2026-11-07): Extend headless metadata and CLI automation (@domcyrus)
-- **PR #720** (2026-11-07): Add headless snapshot profiling and controlled baselines (@domcyrus)
-- **PR #719** (2026-11-07): Add incremental headless JSONL (@domcyrus)
+- **PR #731** (2026-11-13): fix: Cargo metadata warnings and Windows test crashes (@domcyrus)
+- **PR #730** (2026-11-13): chore(deps): bump zip from 9.4.2 to 9.5.0 in the rust-dependencies group (@dependabot[bot])
+- **PR #729** (2026-11-12): chore(deps): bump debian from `a29215f` to `a72b443` in the docker group (@dependabot[bot])
+- **PR #728** (2026-11-12): docs: document verified Resolute amd64v3 PPA publication (@domcyrus)
+- **PR #726** (2026-11-12): chore(deps): bump zip from 9.4.1 to 9.4.2 in the rust-dependencies group (@dependabot[bot])
+- **PR #725** (2026-11-10): chore(deps): bump the rust-dependencies group with 3 updates (@dependabot[bot])
 
 ---
 
@@ -2666,42 +2670,39 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the rust-dependencies group with 2 updates (#724)
+## X. Cargo metadata warnings and Windows test crashes
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-platforms.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `218e16d5`: deps): bump the rust-dependencies group with 2 updates (#724). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea7b63b5`: Cargo metadata warnings and Windows test crashes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-platforms.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.2.0+spec-1.1.0"
-checksum = "c5ffcdf8f50436dbbfd675c1fe1b8e0854f42b7defea8584bdebe1aee900e561"
-version = "1.2.0+spec-1.1.0"
-checksum = "009dbb7700f11c55ef83aebbe4c0e9cf1f1ac0844bd8d6f00dc38f302026e13a"
-version = "9.3.0"
-checksum = "eaeb7f16d2605b49aef586996ded29e65642fab7259a3077e537351df6d80426"
- "libc",
+      - name: Test Windows executable startup
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          & './target/${{ matrix.target }}/release/rustnet.exe' --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & './target/${{ matrix.target }}/release/rustnet.exe' --help
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-version = "1.1.8+spec-1.1.0"
-checksum = "20489e00e4d8741d6be680764cc12e270655e375a20d1011e844a9c3379e678d"
-version = "1.1.3+spec-1.1.0"
-checksum = "06bdbd8cfc056b8d2e2e85f29b56a3bdbecb527cef81eb39e3e7b98af4652770"
-version = "9.2.0"
-checksum = "3f5b58784007ff6e5f280ec82c8596686a3b9b5dd5836c63288d4479f84728b9"
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `218e16d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea7b63b5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

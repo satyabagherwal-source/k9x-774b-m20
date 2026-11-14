@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T04:06:55.324Z",
+  "last_updated": "2026-11-14T04:15:54.211Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T02:46:28.602Z",
@@ -1238,7 +1238,7 @@
       "staged_for_review": 1
     },
     "domcyrus-rustnet-learnings.md": {
-      "processed_at": "2026-11-12T21:31:22.811Z",
+      "processed_at": "2026-11-14T04:14:42.785Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2386,9 +2386,19 @@
       "processed_at": "2026-11-14T04:06:54.223Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md": {
+      "processed_at": "2026-11-14T04:15:15.928Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "aws-amplify-amplify-js-learnings.md": {
+      "processed_at": "2026-11-14T04:15:53.467Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 762,
-  "total_canonical_promoted": 163,
-  "total_staged_for_review": 595
+  "total_dossiers_evaluated": 765,
+  "total_canonical_promoted": 165,
+  "total_staged_for_review": 596
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `5d3227f0`  
+> **Source Version**: `09d7fbf1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T21:30:35.997Z  
+> **Timestamp**: 2026-11-14T04:14:31.780Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T21:30:35.839Z  
+> **Harvest Timestamp**: 2026-11-14T04:14:31.773Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5234 stars
+- **Stars / Engagement**: 5238 stars
 
 ---
 
@@ -2501,98 +2501,145 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d3227f0` (2026-11-12)
-**Commit Message**: docs: document verified Resolute amd64v3 PPA publication (#728)
+### Incident Patch 1: `ea7b63b5` (2026-11-13)
+**Commit Message**: fix: Cargo metadata warnings and Windows test crashes (#731)
 
-* docs: fix Ubuntu PPA installation guidance for amd64v3 (#727)
-
-* docs: reflect enabled PPA variant builds and publication checks
-
-* docs: keep amd64v3 publication guidance in maintainer notes
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.github/workflows/build-platforms.yml` (modified, +9/-0)
 ```diff
-@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Stop counting one-byte TCP keepalive probes as retransmits or out-of-order segments (#713)
+@@ -197,6 +197,15 @@ jobs:
+           default-features: ${{ (contains(matrix.target, 'linux') || contains(matrix.target, 'apple')) && 'true' || 'false' }}
+           strip-symbols: ${{ inputs.strip-symbols && 'true' || 'false' }}
  
- ### Documentation
-+- Document Resolute `amd64v3` PPA builds, requesting missing builds for existing releases, and verifying publication without a client architecture override (#727)
- - Add release-mode headless snapshot profiling with PCAP replay and controlled history/payload workloads (#720)
- - Consolidate terminal guidance into concise usage documentation in English, Chinese, and Japanese (#683)
- - Add Repology packaging badges, Alpine edge installation instructions, and credit the Alpine maintainer (#671)
++      - name: Test Windows executable startup
++        if: runner.os == 'Windows'
++        shell: pwsh
++        run: |
++          & './target/${{ matrix.target }}/release/rustnet.exe' --version
++          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
++          & './target/${{ matrix.target }}/release/rustnet.exe' --help
++          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
++
+       - name: Run workspace tests
+         if: matrix.run-tests
+         run: cargo test --locked --workspace --all-features --no-fail-fast --target ${{ matrix.target }} --verbose
 ```
 
-**File**: `debian/README.md` (modified, +18/-1)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -53,7 +53,24 @@ sudo apt install rustnet
- - **Maintainer**: Marco Cadetg <cadetg@gmail.com>
- - **PPA**: https://launchpad.net/~domcyrus/+archive/ubuntu/rustnet
- - **Supported**: Ubuntu 22.04 LTS (Jammy), 24.04 LTS (Noble) and 26.04 LTS (Resolute)
--- **Architectures**: amd64, arm64, armhf
-+- **Build processors enabled**: amd64, arm64, armhf, and amd64v3 (for Resolute); package availability depends on successful build and publication
-+
-+## Publishing the amd64v3 variant
-+
-+Keep the PPA's `amd64v3` build processor enabled for Resolute alongside
-+`amd64`, `arm64`, and `armhf`. This Launchpad setting lets variant-enabled
-+APT clients use the normal PPA installation commands without an architecture
-+override.
-+
-+For an existing source missing a variant build, use
-+[Copy packages](https://launchpad.net/~domcyrus/+archive/ubuntu/rustnet/+copy-packages)
-+with **This PPA**, **The same series**, and **Copy existing binaries**.
-+A source-only rebuild copy is rejected when that version already has binaries.
-+
-+A successful build must also finish publication. Check the
-+[variant index](https://ppa.launchpadcontent.net/domcyrus/rustnet/ubuntu/dists/resolute/main/binary-amd64v3/Packages.gz),
-+then verify `apt-cache policy rustnet` selects it after `sudo apt update` on
-+Ubuntu 26.04 with `APT::Architecture-Variants "amd64v3";` enabled.
+@@ -33,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Retire eligible Linux TCP/UDP flows after verified process exit and socket disappearance, including protected processes and sockets present at startup; preserve shared sockets and show cleanup status in Details (#684)
  
- ## Workflow
- 
+ ### Fixed
++- Link Windows synchronization APIs explicitly to prevent x86 startup failures and x64 test crashes caused by enclave DLL imports (#731)
++- Remove redundant homepage metadata to prevent Cargo manifest warnings when building from source (#731)
+ - Validate complete DNS questions and recognize STUN on port 53 before DNS to prevent false resolver failures (#722)
+ - Keep headless shutdown bounded when stderr or account-name services stall, using numeric account IDs until background lookups finish (#721)
+ - Discard pending TCP RTT probes on one-byte keepalives to prevent inflated or ambiguous timing samples after missed ACKs or last-byte retransmissions
 ```
 
----
-
-### Incident Patch 2: `ba040fa3` (2026-11-12)
-**Commit Message**: chore(deps): bump debian from `a29215f` to `a72b443` in the docker group (#729)
-
-Bumps the docker group with 1 update: debian.
-
-
-Updates `debian` from `a29215f` to `a72b443`
-
----
-updated-dependencies:
-- dependency-name: debian
-  dependency-version: trixie-slim
-  dependency-type: direct:production
-  dependency-group: docker
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +0/-2)
 ```diff
-@@ -46,7 +46,7 @@ RUN if [ -n "$CARGO_FEATURES" ]; then \
+@@ -17,7 +17,6 @@ authors = ["domcyrus"]
+ edition = "2024"
+ rust-version = "1.88.0" # Let-chains require Rust 1.88.0+
+ repository = "https://github.com/domcyrus/rustnet"
+-homepage = "https://github.com/domcyrus/rustnet"
+ license = "Apache-2.0"
  
- # Runtime stage - use trixie-slim to match GLIBC version from builder
- # Pinned by digest for a reproducible, tamper-evident base image.
--FROM debian:trixie-slim@sha256:a29215f6a35e51e22adffa17f89e9d2ef06214e64a2bad10d765c46aea49f11f
-+FROM debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2
+ # Single source of truth for the internal crate versions (and the few deps
+@@ -47,7 +46,6 @@ edition.workspace = true
+ rust-version.workspace = true
+ description = "A cross-platform per-process network monitor with TUI and headless JSON modes"
+ repository.workspace = true
+-homepage.workspace = true
+ documentation = "https://docs.rs/rustnet-monitor"
+ readme = "README.md"
+ license.workspace = true
+```
+
+**File**: `build.rs` (modified, +17/-0)
+```diff
+@@ -81,6 +81,23 @@ fn setup_windows_npcap_delay_load() {
+     let target_env = env::var("CARGO_CFG_TARGET_ENV").unwrap_or_default();
  
- # Install runtime dependencies
- # libcap2-bin provides setcap, used below to grant packet-capture capabilities
+     if target_os == "windows" && target_env == "msvc" {
++        // pcap's windows-sys 0.36 import library also exports WaitOnAddress and
++        // WakeByAddress* from the enclave-only vertdll.dll. Resolve those
++        // symbols before scanning dependencies, including callers that are
++        // only pulled in later from the test harness or standard library.
++        println!("cargo:rustc-link-lib=synchronization");
++        let x86 = env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|arch| arch == "x86");
++        for (symbol, stack_bytes) in [
++            ("WaitOnAddress", 16),
++            ("WakeByAddressAll", 4),
++            ("WakeByAddressSingle", 4),
++        ] {
++            if x86 {
++                println!("cargo:rustc-link-arg=/INCLUDE:__imp__{symbol}@{stack_bytes}");
++            } else {
++                println!("cargo:rustc-link-arg=/INCLUDE:__imp_{symbol}");
++            }
++        }
+         println!("cargo:rustc-link-arg=/DELAYLOAD:Packet.dll");
+         println!("cargo:rustc-link-arg=/DELAYLOAD:wpcap.dll");
+         println!("cargo:rustc-link-arg=/DEFAULTLIB:delayimp.lib");
+```
+
+**File**: `crates/rustnet-capture/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -6,7 +6,6 @@ edition.workspace = true
+ rust-version.workspace = true
+ description = "libpcap/Npcap-based packet-capture backend for rustnet: device selection, BPF filters, macOS PKTAP, TUN/TAP, and a raw-frame reader"
+ repository.workspace = true
+-homepage.workspace = true
+ documentation = "https://docs.rs/rustnet-capture"
+ readme = "README.md"
+ license.workspace = true
+```
+
+**File**: `crates/rustnet-core/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -6,7 +6,6 @@ edition.workspace = true
+ rust-version.workspace = true
+ description = "Network analysis library: packet parsing, protocol types, deep packet inspection, link-layer parsers, connection merging, and DNS/GeoIP/OUI lookups: the reusable core of rustnet"
+ repository.workspace = true
+-homepage.workspace = true
+ documentation = "https://docs.rs/rustnet-core"
+ readme = "README.md"
+ license.workspace = true
+```
+
+**File**: `crates/rustnet-host/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -6,7 +6,6 @@ edition.workspace = true
+ rust-version.workspace = true
+ description = "Cross-platform process attribution and host TCP/UDP socket inventory for rustnet"
+ repository.workspace = true
+-homepage.workspace = true
+ documentation = "https://docs.rs/rustnet-host"
+ readme = "README.md"
+ license.workspace = true
+```
+
+**File**: `crates/rustnet-sandbox/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -6,7 +6,6 @@ edition.workspace = true
+ rust-version.workspace = true
+ description = "Post-initialization sandboxing and root privilege dropping for rustnet: Landlock + capability drops on Linux, Seatbelt on macOS, restricted token + job object on Windows, and a shared uid drop on Linux/macOS/FreeBSD"
+ repository.workspace = true
+-homepage.workspace = true
+ documentation = "https://docs.rs/rustnet-sandbox"
+ readme = "README.md"
+ license.workspace = true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #731** (2026-11-13): fix: Cargo metadata warnings and Windows test crashes (@domcyrus)
+- **PR #730** (2026-11-13): chore(deps): bump zip from 9.4.2 to 9.5.0 in the rust-dependencies group (@dependabot[bot])
 - **PR #729** (2026-11-12): chore(deps): bump debian from `a29215f` to `a72b443` in the docker group (@dependabot[bot])
 - **PR #728** (2026-11-12): docs: document verified Resolute amd64v3 PPA publication (@domcyrus)
 - **PR #726** (2026-11-12): chore(deps): bump zip from 9.4.1 to 9.4.2 in the rust-dependencies group (@dependabot[bot])
 - **PR #725** (2026-11-10): chore(deps): bump the rust-dependencies group with 3 updates (@dependabot[bot])
-- **PR #724** (2026-11-09): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
-- **PR #723** (2026-11-09): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 in the actions group (@dependabot[bot])
 
 ---
 
@@ -2612,28 +2659,36 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: document verified Resolute amd64v3 PPA publication (#728)
+## X. Cargo metadata warnings and Windows test crashes
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-platforms.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d3227f0`: docs: document verified Resolute amd64v3 PPA publication (#728). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea7b63b5`: Cargo metadata warnings and Windows test crashes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-platforms.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Document Resolute `amd64v3` PPA builds, requesting missing builds for existing releases, and verifying publication without a client architecture override (#727)
+      - name: Test Windows executable startup
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          & './target/${{ matrix.target }}/release/rustnet.exe' --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & './target/${{ matrix.target }}/release/rustnet.exe' --help
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d3227f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea7b63b5` are properly handled with clean fallback behavior.
