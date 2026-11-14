@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T14:40:20.517Z",
-  "total_verified_learnings": 8545,
+  "last_updated": "2026-11-14T15:09:37.596Z",
+  "total_verified_learnings": 8549,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17460,
+  "total_items": 17481,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112094,10 +112094,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "b0d8deec",
-      "content_hash": "9871387d0cfbebb3c26da6cf69f175d187e205866feed2ca755ceecc7d81fbf8",
+      "source_version": "5332623c",
+      "content_hash": "466878d133830890485a230f95e61ea0b875bcbe331a51bba00351e8a7dccc47",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T13:38:52.928Z"
+      "persisted_at": "2026-11-14T15:03:59.915Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -218656,8 +218656,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "b0d8deec",
-      "content_hash": "b2228f7a84688c0cae28c341dc66562f49fcec1e4589a3e40f5ba5b82170d606",
+      "source_version": "5332623c",
+      "content_hash": "961c19e8a43bf7c6e0f934b6f6115066b900a84352fb905e49ca2df3ff295a68",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218675,6 +218675,11 @@
           "number": 8491,
           "title": "unnecessary-to-owned",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8495,
+          "title": "allow clippy::format_push_string",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218682,7 +218687,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T13:38:52.331Z",
+      "verified_at": "2026-11-14T15:03:59.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219512,10 +219517,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "b0d8deec",
-      "content_hash": "11b9a5b16479f3b0de0a97292dcf30def03a864d1ce39e2e5a78db5722cb58d7",
+      "source_version": "5332623c",
+      "content_hash": "2b031af5f06c7ec3f0a0b41bf458919aaec2b88f295481f88684602f9a284771",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T13:38:52.804Z"
+      "persisted_at": "2026-11-14T15:03:59.837Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -228900,6 +228905,336 @@
       "content_hash": "0623cc3e66b4addb4c30e49b42bc2ab1386e8c4adb908e5707e0864d2c8e9ba7",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T14:40:19.803Z"
+    },
+    "learn-huggingface-bingsu-adetailer": {
+      "learning_id": "learn-huggingface-bingsu-adetailer",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Bingsu/adetailer",
+      "repository": "Bingsu/adetailer",
+      "slug": "hf-bingsu-adetailer",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Bingsu/adetailer",
+      "source_version": "hf-bingsu-adetailer",
+      "content_hash": "ca51dce944858e2ec999329484a296b270d8654a493c1aa868fe214a3a12b55f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T15:03:42.203Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bingsu-adetailer-research-knowledge-intelligence-bingsu-adetailer-core-invari.md",
+      "title": "Research & Knowledge Intelligence: Bingsu/adetailer Core Invariants",
+      "repository": "Bingsu/adetailer",
+      "source_version": "hf-bingsu-adetailer",
+      "content_hash": "e765e6b8f2a188dce049665c25f4c83b897b60c585736bf4339cb655d5ef9be2",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T15:03:42.449Z"
+    },
+    "learn-github-argoproj-argo-events": {
+      "learning_id": "learn-github-argoproj-argo-events",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "argoproj/argo-events",
+      "repository": "argoproj/argo-events",
+      "slug": "argoproj-argo-events",
+      "platform": "github",
+      "source_url": "https://github.com/argoproj/argo-events",
+      "source_version": "c1654c54",
+      "content_hash": "38b7719bde30b641f7cf0fd3a843ddfe9ff06adb2ed79a73bad45581ce419308",
+      "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8493,
+          "title": "update Go and crypto security baseline",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T15:03:52.199Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8493": {
+      "learning_id": "rule-8493",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8493,
+      "title": "update Go and crypto security baseline",
+      "source_url": "https://github.com/argoproj/argo-events",
+      "source_version": "c1654c54",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T15:03:52.199Z"
+    },
+    "candidate_directive-update-go-and-crypto-security-baseline": {
+      "item_id": "candidate_directive-update-go-and-crypto-security-baseline",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D7DI-update-go-and-crypto-security-baseline.md",
+      "title": "update Go and crypto security baseline",
+      "repository": "argoproj/argo-events",
+      "source_version": "c1654c54",
+      "content_hash": "d50e84f3bc3e7d1a5fb9290b3ec7a67368c94bf3e573997d16df3c00f136e7c5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T15:03:52.471Z"
+    },
+    "domain_intelligence-architecture-intelligence-argoproj-argo-events-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-argoproj-argo-events-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-events-architecture-intelligence-argoproj-argo-events-core-invaria.md",
+      "title": "Architecture Intelligence: argoproj/argo-events Core Invariants",
+      "repository": "argoproj/argo-events",
+      "source_version": "c1654c54",
+      "content_hash": "76fa926e24d73116763da4777d14fa95259d569eeb1ad228a88c1edb05783693",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T15:03:52.565Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-events": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-events",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/argoproj-argo-events-verification-protocol-empirical-defect-shield-for-argoproj-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-events",
+      "repository": "argoproj/argo-events",
+      "source_version": "c1654c54",
+      "content_hash": "16dab5beed21c692a1611d6dc1afd8dc7b752872edc067037d5877f14da4bf99",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T15:03:52.642Z"
+    },
+    "learn-github-rqlite-rqlite": {
+      "learning_id": "learn-github-rqlite-rqlite",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "rqlite/rqlite",
+      "repository": "rqlite/rqlite",
+      "slug": "rqlite-rqlite",
+      "platform": "github",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "87d2a416",
+      "content_hash": "4e963afd54f3c3e6e71d60513b113f87d8eb165f2a41193dd2125f77f8971239",
+      "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8494,
+          "title": "Shorten Raft timeouts for system test nodes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T15:03:57.125Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8494": {
+      "learning_id": "rule-8494",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8494,
+      "title": "Shorten Raft timeouts for system test nodes",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "87d2a416",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T15:03:57.125Z"
+    },
+    "candidate_directive-shorten-raft-timeouts-for-system-test-nodes": {
+      "item_id": "candidate_directive-shorten-raft-timeouts-for-system-test-nodes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DB5R-shorten-raft-timeouts-for-system-test-nodes.md",
+      "title": "Shorten Raft timeouts for system test nodes",
+      "repository": "rqlite/rqlite",
+      "source_version": "87d2a416",
+      "content_hash": "9c810aee42ed5f05e8273451ff428818e4cfbad2f2834c5b2d90cb75f5adbced",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T15:03:57.379Z"
+    },
+    "domain_intelligence-architecture-intelligence-rqlite-rqlite-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-rqlite-rqlite-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
+      "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
+      "repository": "rqlite/rqlite",
+      "source_version": "87d2a416",
+      "content_hash": "43001af112ae1a01f86c2f3ffc98b76e2e6f219d6f719810cfe395d53ad2b1de",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T15:03:57.452Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rqlite-rqlite-verification-protocol-empirical-defect-shield-for-rqlite-rqlite.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rqlite/rqlite",
+      "repository": "rqlite/rqlite",
+      "source_version": "87d2a416",
+      "content_hash": "df688eaee5bde878fcf175f7ef095d7d909347be1cfd72d8e53f27a699e2b565",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T15:03:57.529Z"
+    },
+    "rule-8495": {
+      "learning_id": "rule-8495",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8495,
+      "title": "allow clippy::format_push_string",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "5332623c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T15:03:59.507Z"
+    },
+    "candidate_directive-allow-clippy-format_push_string": {
+      "item_id": "candidate_directive-allow-clippy-format_push_string",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DCZY-allow-clippy-format_push_string.md",
+      "title": "allow clippy::format_push_string",
+      "repository": "dathere/qsv",
+      "source_version": "5332623c",
+      "content_hash": "f614cb9b7fc9c101c402db3d200ca021c6ce3c06e8a32f02dc9f5f9872938227",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T15:03:59.763Z"
+    },
+    "learn-huggingface-higurashi-ai-haru-4b": {
+      "learning_id": "learn-huggingface-higurashi-ai-haru-4b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "higurashi-ai/Haru-4B",
+      "repository": "higurashi-ai/Haru-4B",
+      "slug": "hf-higurashi-ai-haru-4b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/higurashi-ai/Haru-4B",
+      "source_version": "hf-higurashi-ai-haru-4b",
+      "content_hash": "acca69643d657c0b2a320b582772a2bfa946d0c2f5c610eba93f0e7b99d61bf0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T15:08:40.159Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-higurashi-ai-haru-4b-research-knowledge-intelligence-higurashi-ai-haru-4b-cor.md",
+      "title": "Research & Knowledge Intelligence: higurashi-ai/Haru-4B Core Invariants",
+      "repository": "higurashi-ai/Haru-4B",
+      "source_version": "hf-higurashi-ai-haru-4b",
+      "content_hash": "2f0cc76d5828b30bafc8f2d31e865fa6bc04f98b6aa3603d981596aff9f121ae",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T15:08:40.435Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-higurashi-ai-haru-4b-learnings-core-invariant": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-higurashi-ai-haru-4b-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-higurashi-ai-haru-4b-learnings-research-knowledge-intelligence-hf-higurashi-a.md",
+      "title": "Research & Knowledge Intelligence: hf-higurashi-ai-haru-4b-learnings Core Invariants",
+      "repository": "hf-higurashi-ai-haru-4b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "18fee63e7acb539c9af37e1eafb3c17d088f66a1df87a75c477841acd265009d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T15:09:07.389Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-bingsu-adetailer-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-bingsu-adetailer-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bingsu-adetailer-learnings-research-knowledge-intelligence-hf-bingsu-adetaile.md",
+      "title": "Research & Knowledge Intelligence: hf-bingsu-adetailer-learnings Core Invariants",
+      "repository": "hf-bingsu-adetailer-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e1159a0871cf07f1f77af58c4ad2fb735f2360018448b17a0317b650c8002ba",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T15:09:37.077Z"
+    },
+    "candidate_directive-deps-update-go-and-crypto-security-baseline": {
+      "item_id": "candidate_directive-deps-update-go-and-crypto-security-baseline",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KLJC-deps-update-go-and-crypto-security-baseline.md",
+      "title": "deps): update Go and crypto security baseline",
+      "repository": "argoproj-argo-events-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eb46e5efce69df70125d5ea2824fadf99a7e130df65d5868bb9945b4d1570cf9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T15:09:37.416Z"
+    },
+    "domain_intelligence-architecture-intelligence-argoproj-argo-events-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-argoproj-argo-events-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-events-learnings-architecture-intelligence-argoproj-argo-events-le.md",
+      "title": "Architecture Intelligence: argoproj-argo-events-learnings Core Invariants",
+      "repository": "argoproj-argo-events-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4db5d1ed61f82e5fbd45c2904fd31b452a5e38e61ea293f9e802f996cfd20ec8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T15:09:37.499Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-events-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-events-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/argoproj-argo-events-learnings-verification-protocol-empirical-defect-shield-for.md",
+      "title": "Verification Protocol: Empirical Defect Shield for argoproj-argo-events-learnings",
+      "repository": "argoproj-argo-events-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4738d385202b274e769b93cf9a77d0f4b48dec7f0ffc0d8e35e0a4a55d818055",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T15:09:37.596Z"
     }
   },
   "ai-builder-brain": {

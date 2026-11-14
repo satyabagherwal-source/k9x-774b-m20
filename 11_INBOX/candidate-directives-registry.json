@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T14:40:20.351Z",
+  "last_updated": "2026-11-14T15:09:37.416Z",
   "directives": [
     {
       "id": "CD-001",
@@ -12646,6 +12646,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-04EAFA-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-D7DI",
+      "directive_title": "update Go and crypto security baseline",
+      "source_repo": "argoproj/argo-events",
+      "source_commit": "c1654c54",
+      "staged_file": "11_INBOX/candidate-directives/CD-D7DI-update-go-and-crypto-security-baseline.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-DB5R",
+      "directive_title": "Shorten Raft timeouts for system test nodes",
+      "source_repo": "rqlite/rqlite",
+      "source_commit": "87d2a416",
+      "staged_file": "11_INBOX/candidate-directives/CD-DB5R-shorten-raft-timeouts-for-system-test-nodes.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-DCZY",
+      "directive_title": "allow clippy::format_push_string",
+      "source_repo": "dathere/qsv",
+      "source_commit": "5332623c",
+      "staged_file": "11_INBOX/candidate-directives/CD-DCZY-allow-clippy-format_push_string.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-KLJC",
+      "directive_title": "deps): update Go and crypto security baseline",
+      "source_repo": "argoproj-argo-events-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KLJC-deps-update-go-and-crypto-security-baseline.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
     }
   ]
 }

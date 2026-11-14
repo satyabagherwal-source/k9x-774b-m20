@@ -9849,3 +9849,10 @@
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T14:28:35.461Z` | `hf-google-gemma-4-31b-it` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C603EFBB` [Domain D] | Yes (`b654d163...`) |
 | `CYCLE-20261114-INZD` | `2026-11-14T14:40:07.657Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`bce3a10f...`) |
 | `CYCLE-20261114-IPJ4` | `2026-11-14T14:40:09.664Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8492` | Yes (`28bb300a...`) |
+| `CYCLE-20261114-CZJD` | `2026-11-14T15:03:42.313Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`ca51dce9...`) |
+| `CYCLE-20261114-D78Z` | `2026-11-14T15:03:52.307Z` | `argoproj/argo-events` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8493` | Yes (`38b7719b...`) |
+| `CYCLE-20261114-DB1U` | `2026-11-14T15:03:57.234Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8494` | Yes (`4e963afd...`) |
+| `CYCLE-20261114-DCW0` | `2026-11-14T15:03:59.616Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8495` | Yes (`961c19e8...`) |
+| `CYCLE-20261114-JDGP` | `2026-11-14T15:08:40.297Z` | `higurashi-ai/Haru-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md` | Yes (`acca6964...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T15:09:07.212Z` | `hf-higurashi-ai-haru-4b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B30F5813` [Domain D] | Yes (`f53d2e4e...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T15:09:36.922Z` | `hf-bingsu-adetailer` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D4002B93` [Domain D] | Yes (`dca972d2...`) |

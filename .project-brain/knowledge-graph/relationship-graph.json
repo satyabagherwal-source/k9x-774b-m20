@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T14:28:35.460Z",
+  "updated_at": "2026-11-14T15:09:36.921Z",
   "statistics": {
-    "total_nodes": 193,
-    "total_edges": 103,
+    "total_nodes": 195,
+    "total_edges": 105,
     "domain_distribution": {
-      "D": 150,
+      "D": 152,
       "M": 1,
       "H": 17,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 103
+      "CONSTRAINED_BY_ARCHITECTURE": 105
     }
   },
   "nodes": {
@@ -4325,6 +4325,52 @@
       ],
       "created_at": "2026-11-14T14:28:35.459Z",
       "updated_at": "2026-11-14T14:28:35.459Z"
+    },
+    "DOM-D-B30F5813": {
+      "id": "DOM-D-B30F5813",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): higurashi-ai/Haru-4B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-higurashi-ai-haru-4b/hf-higurashi-ai-haru-4b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T15:08:43.140Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-higurashi-ai-haru-4b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T15:09:07.211Z",
+      "updated_at": "2026-11-14T15:09:07.211Z"
+    },
+    "DOM-D-D4002B93": {
+      "id": "DOM-D-D4002B93",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Bingsu/adetailer",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md`  \n> **Source**: huggingface ([https://huggingface. -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md`  \n> **Source**: huggingface ([https://huggingface.",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-bingsu-adetailer/hf-bingsu-adetailer-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T15:09:07.506Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-bingsu-adetailer)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T15:09:36.921Z",
+      "updated_at": "2026-11-14T15:09:36.921Z"
     }
   },
   "edges": [
@@ -5357,6 +5403,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-C603EFBB [D] with Domain M",
       "created_at": "2026-11-14T14:28:35.460Z"
+    },
+    {
+      "id": "EDGE-11E11B0F20BF",
+      "sourceId": "DOM-D-B30F5813",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-B30F5813 [D] with Domain M",
+      "created_at": "2026-11-14T15:09:07.211Z"
+    },
+    {
+      "id": "EDGE-D04C834A9920",
+      "sourceId": "DOM-D-D4002B93",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-D4002B93 [D] with Domain M",
+      "created_at": "2026-11-14T15:09:36.921Z"
     }
   ]
 }

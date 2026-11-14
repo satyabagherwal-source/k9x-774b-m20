@@ -21151,5 +21151,17 @@
     "downloads": 8656286,
     "qualityScore": 17990,
     "discoveredAt": "2026-11-14T10:27:46.487Z"
+  },
+  {
+    "name": "higurashi-ai/Haru-4B",
+    "fullName": "higurashi-ai/Haru-4B",
+    "url": "https://huggingface.co/higurashi-ai/Haru-4B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: higurashi-ai/Haru-4B (211 likes, 1262 downloads)",
+    "likes": 211,
+    "downloads": 1262,
+    "qualityScore": 3372,
+    "discoveredAt": "2026-11-14T15:01:25.369Z"
   }
 ]

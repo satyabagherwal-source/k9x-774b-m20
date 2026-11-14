@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T14:40:09.671Z",
-  "total_cycles_completed": 9530,
-  "total_learnings_persisted": 9530,
-  "total_rules_promoted": 9215,
+  "last_updated": "2026-11-14T15:08:40.305Z",
+  "total_cycles_completed": 9535,
+  "total_learnings_persisted": 9535,
+  "total_rules_promoted": 9218,
   "history": [
-    {
-      "timestamp": "2026-11-13T18:43:41.083Z",
-      "repository": "kucherenko/jscpd",
-      "learningId": "learn-github-kucherenko-jscpd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T18:43:47.277Z",
-      "repository": "expo/expo",
-      "learningId": "learn-github-expo-expo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T18:52:19.281Z",
-      "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T18:52:21.911Z",
-      "repository": "actix/actix-web",
-      "learningId": "learn-github-actix-actix-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T18:52:26.080Z",
-      "repository": "dkhamsing/open-source-ios-apps",
-      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T18:52:34.431Z",
       "repository": "weaviate/weaviate",
@@ -1403,6 +1368,41 @@
       "repository": "codewhale-hq/Codewhale",
       "learningId": "learn-github-codewhale-hq-codewhale",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T15:03:42.320Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-bingsu-adetailer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T15:03:52.314Z",
+      "repository": "argoproj/argo-events",
+      "learningId": "learn-github-argoproj-argo-events",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T15:03:57.241Z",
+      "repository": "rqlite/rqlite",
+      "learningId": "learn-github-rqlite-rqlite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T15:03:59.624Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T15:08:40.305Z",
+      "repository": "higurashi-ai/Haru-4B",
+      "learningId": "learn-huggingface-higurashi-ai-haru-4b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T14:40:09.675Z",
+  "last_updated": "2026-11-14T15:08:40.308Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1685,14 +1685,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-bingsu-adetailer",
-      "content_hash": "ac1ad1886d831e1e142985b091ada74d81509e1fa3b9fc38c014bbb970dce85a",
-      "verified_at": "2026-11-09T04:42:19.289Z",
+      "content_hash": "ca51dce944858e2ec999329484a296b270d8654a493c1aa868fe214a3a12b55f",
+      "verified_at": "2026-11-14T15:03:42.323Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:42:19.289Z"
+      "last_updated": "2026-11-14T15:03:42.323Z"
     },
     "lilylilith/QI_2.1_AnyAngle": {
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "b2228f7a84688c0cae28c341dc66562f49fcec1e4589a3e40f5ba5b82170d606",
-      "verified_at": "2026-11-14T13:38:52.508Z",
+      "content_hash": "961c19e8a43bf7c6e0f934b6f6115066b900a84352fb905e49ca2df3ff295a68",
+      "verified_at": "2026-11-14T15:03:59.626Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T13:38:52.508Z"
+      "last_updated": "2026-11-14T15:03:59.626Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -6066,14 +6066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-events",
-      "content_hash": "62eac0657e05e79b4bf1dd30252793cf8a791da13d2ac96f80386c17a7be1e02",
-      "verified_at": "2026-11-13T11:24:38.050Z",
+      "content_hash": "38b7719bde30b641f7cf0fd3a843ddfe9ff06adb2ed79a73bad45581ce419308",
+      "verified_at": "2026-11-14T15:03:52.316Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T11:24:38.050Z"
+      "last_updated": "2026-11-14T15:03:52.316Z"
     },
     "HelixDB/helix-db": {
       "repository": "HelixDB/helix-db",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "dbcada5793cc15b11dd2532da738141b606692f7fd53bbb8e9a5292945a4723f",
-      "verified_at": "2026-11-12T02:56:44.594Z",
+      "content_hash": "4e963afd54f3c3e6e71d60513b113f87d8eb165f2a41193dd2125f77f8971239",
+      "verified_at": "2026-11-14T15:03:57.244Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T02:56:44.594Z"
+      "last_updated": "2026-11-14T15:03:57.244Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -18914,6 +18914,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-14T10:30:01.057Z"
+    },
+    "higurashi-ai/Haru-4B": {
+      "repository": "higurashi-ai/Haru-4B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-higurashi-ai-haru-4b",
+      "content_hash": "acca69643d657c0b2a320b582772a2bfa946d0c2f5c610eba93f0e7b99d61bf0",
+      "verified_at": "2026-11-14T15:08:40.307Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-14T15:08:40.307Z"
     }
   },
   "repos": {

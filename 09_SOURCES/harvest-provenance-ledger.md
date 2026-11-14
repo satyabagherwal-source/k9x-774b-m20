@@ -9882,3 +9882,10 @@ Every entry in this ledger must capture:
 | `learn-dom-d-c603efbb` | `project://hf-google-gemma-4-31b-it` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | 2026-11-14T14:28:35.461Z |
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-14T14:40:07.661Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `0f339089` | Multi-dimensional audit evidence | 2026-11-14T14:40:09.667Z |
+| `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-11-14T15:03:42.316Z |
+| `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `c1654c54` | Multi-dimensional audit evidence | 2026-11-14T15:03:52.310Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `87d2a416` | Multi-dimensional audit evidence | 2026-11-14T15:03:57.237Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5332623c` | Multi-dimensional audit evidence | 2026-11-14T15:03:59.619Z |
+| `learn-huggingface-higurashi-ai-haru-4b` | `https://huggingface.co/higurashi-ai/Haru-4B` | `hf-higuras` | Multi-dimensional audit evidence | 2026-11-14T15:08:40.301Z |
+| `learn-dom-d-b30f5813` | `project://hf-higurashi-ai-haru-4b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md` | 2026-11-14T15:09:07.212Z |
+| `learn-dom-d-d4002b93` | `project://hf-bingsu-adetailer` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | 2026-11-14T15:09:36.922Z |

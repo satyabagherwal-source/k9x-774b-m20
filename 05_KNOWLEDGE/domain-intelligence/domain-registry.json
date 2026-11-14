@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T14:40:20.435Z",
-  "total_records": 696,
+  "last_updated": "2026-11-14T15:09:37.499Z",
+  "total_records": 705,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 345,
+      "total": 351,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -382,7 +382,13 @@
         "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants",
         "DOM-D-C603EFBB",
         "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
-        "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp"
+        "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",
+        "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants",
+        "DOM-D-B30F5813",
+        "domain_intelligence-research-knowledge-intelligence-hf-higurashi-ai-haru-4b-learnings-core-invariant",
+        "DOM-D-D4002B93",
+        "domain_intelligence-research-knowledge-intelligence-hf-bingsu-adetailer-learnings-core-invariants"
       ]
     },
     "E": {
@@ -414,7 +420,7 @@
       ]
     },
     "G": {
-      "total": 104,
+      "total": 107,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -519,7 +525,10 @@
         "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
-        "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-argoproj-argo-events-core-invariants",
+        "domain_intelligence-architecture-intelligence-rqlite-rqlite-core-invariants",
+        "domain_intelligence-architecture-intelligence-argoproj-argo-events-learnings-core-invariants"
       ]
     },
     "H": {
@@ -10753,8 +10762,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "11b9a5b16479f3b0de0a97292dcf30def03a864d1ce39e2e5a78db5722cb58d7",
-      "created_at": "2026-11-14T13:38:52.804Z"
+      "content_hash": "2b031af5f06c7ec3f0a0b41bf458919aaec2b88f295481f88684602f9a284771",
+      "created_at": "2026-11-14T15:03:59.837Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -14548,6 +14557,153 @@
       "repository": "codewhale-hq-codewhale-learnings",
       "content_hash": "a95f5c45eb2f28a64a7f875c655b805d80511c728dcf86acc54bda692a34c4ab",
       "created_at": "2026-11-14T14:40:19.641Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Bingsu/adetailer Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bingsu-adetailer-research-knowledge-intelligence-bingsu-adetailer-core-invari.md",
+      "repository": "Bingsu/adetailer",
+      "content_hash": "e765e6b8f2a188dce049665c25f4c83b897b60c585736bf4339cb655d5ef9be2",
+      "created_at": "2026-11-14T15:03:42.449Z"
+    },
+    "domain_intelligence-architecture-intelligence-argoproj-argo-events-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-argoproj-argo-events-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: argoproj/argo-events Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-events-architecture-intelligence-argoproj-argo-events-core-invaria.md",
+      "repository": "argoproj/argo-events",
+      "content_hash": "76fa926e24d73116763da4777d14fa95259d569eeb1ad228a88c1edb05783693",
+      "created_at": "2026-11-14T15:03:52.565Z"
+    },
+    "domain_intelligence-architecture-intelligence-rqlite-rqlite-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-rqlite-rqlite-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
+      "repository": "rqlite/rqlite",
+      "content_hash": "43001af112ae1a01f86c2f3ffc98b76e2e6f219d6f719810cfe395d53ad2b1de",
+      "created_at": "2026-11-14T15:03:57.452Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: higurashi-ai/Haru-4B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-higurashi-ai-haru-4b-research-knowledge-intelligence-higurashi-ai-haru-4b-cor.md",
+      "repository": "higurashi-ai/Haru-4B",
+      "content_hash": "2f0cc76d5828b30bafc8f2d31e865fa6bc04f98b6aa3603d981596aff9f121ae",
+      "created_at": "2026-11-14T15:08:40.435Z"
+    },
+    "DOM-D-B30F5813": {
+      "record_id": "DOM-D-B30F5813",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): higurashi-ai/Haru-4B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/higurashi-ai/Haru-4B](https://huggingface.co/higurashi-ai/Haru-4B))  \n> **Source Version**: `hf-higurashi`  \n> **License**: Open-Source  \n> **Synthesized",
+      "content_hash": "f53d2e4ed175cd7e623bcb6af11e3a70d938e02efa9c29e782bbfe49d77565a0",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md`  \n> **Source**: huggingface ([https://huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md`  \n> **Source**: huggingface ([https://huggingf",
+      "provenance": {
+        "source_uri": "project://hf-higurashi-ai-haru-4b/hf-higurashi-ai-haru-4b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T15:08:43.140Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-higurashi-ai-haru-4b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-higurashi-ai-haru-4b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T15:09:07.202Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-higurashi-ai-haru-4b-learnings-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-higurashi-ai-haru-4b-learnings-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-higurashi-ai-haru-4b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-higurashi-ai-haru-4b-learnings-research-knowledge-intelligence-hf-higurashi-a.md",
+      "repository": "hf-higurashi-ai-haru-4b-learnings",
+      "content_hash": "18fee63e7acb539c9af37e1eafb3c17d088f66a1df87a75c477841acd265009d",
+      "created_at": "2026-11-14T15:09:07.389Z"
+    },
+    "DOM-D-D4002B93": {
+      "record_id": "DOM-D-D4002B93",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Bingsu/adetailer",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Bingsu/adetailer](https://huggingface.co/Bingsu/adetailer))  \n> **Source Version**: `hf-bingsu-ad`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-",
+      "content_hash": "dca972d20ace5eac67d5c1614a5c93a6d78e205489d7bafe8fbcff115cf6271a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md`  \n> **Source**: huggingface ([https://huggingface. -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md`  \n> **Source**: huggingface ([https://huggingface.",
+      "provenance": {
+        "source_uri": "project://hf-bingsu-adetailer/hf-bingsu-adetailer-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T15:09:07.506Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-bingsu-adetailer)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-bingsu-adetailer"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T15:09:36.913Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-bingsu-adetailer-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-bingsu-adetailer-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-bingsu-adetailer-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bingsu-adetailer-learnings-research-knowledge-intelligence-hf-bingsu-adetaile.md",
+      "repository": "hf-bingsu-adetailer-learnings",
+      "content_hash": "4e1159a0871cf07f1f77af58c4ad2fb735f2360018448b17a0317b650c8002ba",
+      "created_at": "2026-11-14T15:09:37.077Z"
+    },
+    "domain_intelligence-architecture-intelligence-argoproj-argo-events-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-argoproj-argo-events-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: argoproj-argo-events-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-events-learnings-architecture-intelligence-argoproj-argo-events-le.md",
+      "repository": "argoproj-argo-events-learnings",
+      "content_hash": "4db5d1ed61f82e5fbd45c2904fd31b452a5e38e61ea293f9e802f996cfd20ec8",
+      "created_at": "2026-11-14T15:09:37.499Z"
     }
   }
 }

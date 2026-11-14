@@ -35,8 +35,8 @@
     "sourceUrl": "https://huggingface.co/Bingsu/adetailer",
     "sourceVersion": "hf-bingsu-adetailer",
     "license": "Open-Source",
-    "contentHash": "ac1ad1886d831e1e142985b091ada74d81509e1fa3b9fc38c014bbb970dce85a",
-    "lastHarvestedAt": "2026-11-09T04:42:19.268Z",
+    "contentHash": "ca51dce944858e2ec999329484a296b270d8654a493c1aa868fe214a3a12b55f",
+    "lastHarvestedAt": "2026-11-14T15:03:42.316Z",
     "learningId": "learn-huggingface-bingsu-adetailer"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "b0d8deec",
+    "sourceVersion": "5332623c",
     "license": "NOASSERTION",
-    "contentHash": "b2228f7a84688c0cae28c341dc66562f49fcec1e4589a3e40f5ba5b82170d606",
-    "lastHarvestedAt": "2026-11-14T13:38:52.499Z",
+    "contentHash": "961c19e8a43bf7c6e0f934b6f6115066b900a84352fb905e49ca2df3ff295a68",
+    "lastHarvestedAt": "2026-11-14T15:03:59.619Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3963,10 +3963,10 @@
     "repository": "argoproj/argo-events",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-events",
-    "sourceVersion": "48cb7266",
+    "sourceVersion": "c1654c54",
     "license": "Apache-2.0",
-    "contentHash": "62eac0657e05e79b4bf1dd30252793cf8a791da13d2ac96f80386c17a7be1e02",
-    "lastHarvestedAt": "2026-11-13T11:24:38.040Z",
+    "contentHash": "38b7719bde30b641f7cf0fd3a843ddfe9ff06adb2ed79a73bad45581ce419308",
+    "lastHarvestedAt": "2026-11-14T15:03:52.310Z",
     "learningId": "learn-github-argoproj-argo-events"
   },
   "helixdb-helix-db": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "d904ad91",
+    "sourceVersion": "87d2a416",
     "license": "MIT",
-    "contentHash": "dbcada5793cc15b11dd2532da738141b606692f7fd53bbb8e9a5292945a4723f",
-    "lastHarvestedAt": "2026-11-12T02:56:44.583Z",
+    "contentHash": "4e963afd54f3c3e6e71d60513b113f87d8eb165f2a41193dd2125f77f8971239",
+    "lastHarvestedAt": "2026-11-14T15:03:57.237Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -12568,5 +12568,15 @@
     "contentHash": "2f735245cb5977ba11c6be9993868f8493ddf88e731decaca9e8bc820689ce0e",
     "lastHarvestedAt": "2026-11-14T10:30:01.048Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2"
+  },
+  "hf-higurashi-ai-haru-4b": {
+    "repository": "higurashi-ai/Haru-4B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/higurashi-ai/Haru-4B",
+    "sourceVersion": "hf-higurashi-ai-haru-4b",
+    "license": "Open-Source",
+    "contentHash": "acca69643d657c0b2a320b582772a2bfa946d0c2f5c610eba93f0e7b99d61bf0",
+    "lastHarvestedAt": "2026-11-14T15:08:40.301Z",
+    "learningId": "learn-huggingface-higurashi-ai-haru-4b"
   }
 }

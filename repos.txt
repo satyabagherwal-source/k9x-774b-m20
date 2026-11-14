@@ -5084,3 +5084,7 @@ https://huggingface.co/adventists-ai/Sophon-Realtime-v1
 # --- Automatically Discovered by AI Scout Engine [2026-11-14T10:29:54.296Z] ---
 # [HUGGINGFACE-AI-MODELS] deepseek-ai/DeepSeek-V3.2 (17990 score) - Verified Hugging Face Model: deepseek-ai/DeepSeek-V3.2 (1599 likes, 8656286 down
 https://huggingface.co/deepseek-ai/DeepSeek-V3.2
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-14T15:03:33.555Z] ---
+# [HUGGINGFACE-AI-MODELS] higurashi-ai/Haru-4B (3372 score) - Verified Hugging Face Model: higurashi-ai/Haru-4B (211 likes, 1262 downloads)
+https://huggingface.co/higurashi-ai/Haru-4B

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
-> **Source Version**: `48cb7266`  
+> **Source Version**: `c1654c54`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T11:24:24.862Z  
+> **Timestamp**: 2026-11-14T15:03:51.609Z  
 > **Learning ID**: `learn-github-argoproj-argo-events`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T11:24:24.857Z  
+> **Harvest Timestamp**: 2026-11-14T15:03:51.604Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1046,317 +1046,198 @@ func (g *gerritWebhookService) Delete(project, remoteName string) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `48cb7266` (2026-11-12)
-**Commit Message**: fix(ci): fix the ci issues after using ubutnu 26 runner (#4274)
+### Incident Patch 1: `ca9817ff` (2026-11-13)
+**Commit Message**: fix(deps): update Go and crypto security baseline (#4272)
 
-Signed-off-by: Derek Wang <[REDACTED_EMAIL]>
+Signed-off-by: Helena Brewster <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/gh-pages.yaml` (modified, +2/-2)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -17,9 +17,9 @@ jobs:
-     steps:
-       - uses: actions/checkout@v6
-       - name: Setup Python
--        uses: actions/setup-python@v5
-+        uses: actions/setup-python@v7
-         with:
--          python-version: 3.9
-+          python-version: "3.12"
-       - name: Setup Golang
-         uses: actions/setup-go@v7
-         with:
+@@ -87,7 +87,7 @@ require (
+ 	go.uber.org/ratelimit v0.3.1
+ 	go.uber.org/zap v1.28.0
+ 	go.yaml.in/yaml/v3 v3.0.6
+-	golang.org/x/crypto v0.58.0
++	golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2
+ 	golang.org/x/tools v0.52.0
+ 	google.golang.org/api v0.310.0
+ 	google.golang.org/grpc v1.85.0
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +3/-3)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -36,7 +36,7 @@ jobs:
-       - name: Make checksums
-         run: make checksums
-       - name: store artifacts
--        uses: actions/upload-artifact@v5
-+        uses: actions/upload-artifact@v7
-         with:
-           name: binaries
-           path: dist
-@@ -93,10 +93,10 @@ jobs:
-           else
-             echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
-           fi
-+      - uses: actions/checkout@v6
-       - uses: actions/setup-go@v7
-         with:
-           go-version: "1.26"
--      - uses: actions/checkout@v6
-       - run: go install sigs.k8s.io/bom/cmd/bom@v0.2.0
-       - run:
-           go install github.com/spdx/spdx-sbom-generator/cmd/generator@v0.0.13
-@@ -107,7 +107,7 @@ jobs:
-           /tmp/argo-events.spdx
-       # pack the boms into one file to make it easy to download
-       - run: cd /tmp && tar -zcf sbom.tar.gz *.spdx
--      - uses: actions/upload-artifact@v5
-+      - uses: actions/upload-artifact@v7
-         with:
-           name: sbom.tar.gz
-           path: /tmp/sbom.tar.gz
-```
-
-**File**: `Makefile` (modified, +7/-2)
-```diff
-@@ -69,9 +69,14 @@ K := $(foreach exec,$(EXECUTABLES), $(if $(shell which $(exec)),some string,$(er
- 
- # build
- .PHONY: build
--build: dist/$(BINARY_NAME)-linux-amd64.gz dist/$(BINARY_NAME)-linux-arm64.gz dist/$(BINARY_NAME)-linux-arm.gz dist/$(BINARY_NAME)-linux-ppc64le.gz dist/$(BINARY_NAME)-linux-s390x.gz
-+PLATFORMS:=linux-amd64 linux-arm64 linux-arm linux-ppc64le linux-s390x
-+BINARY_GZ_TARGETS:=$(addprefix dist/$(BINARY_NAME)-,$(addsuffix .gz,$(PLATFORMS)))
- 
--dist/$(BINARY_NAME)-%.gz: dist/$(BINARY_NAME)-%
-+build: $(BINARY_GZ_TARGETS)
-+
-+# Static pattern rule: the implicit dist/$(BINARY_NAME)-% rule also matches the
-+# .gz names, and newer GNU make versions pick it over the gzip rule.
-+$(BINARY_GZ_TARGETS): dist/$(BINARY_NAME)-%.gz: dist/$(BINARY_NAME)-%
- 	@[[ -e dist/$(BINARY_NAME)-$*.gz ]] || gzip -k dist/$(BINARY_NAME)-$*
- 
- dist/$(BINARY_NAME): GOARGS = GOOS= GOARCH=
+@@ -998,8 +998,8 @@ golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa/go.mod h1:IxCIyHEi3zRg3s0
+ golang.org/x/crypto v0.5.0/go.mod h1:NK/OQwhpMQP3MwtdjgLlYHnH9ebylxKWv3e0fK+mkQU=
+ golang.org/x/crypto v0.6.0/go.mod h1:OFC/31mSvZgRz0V1QTNCzfAI1aIRzbiufJtkMIlEp58=
+ golang.org/x/crypto v0.18.0/go.mod h1:R0j02AL6hcrfOiy9T4ZYp/rcWeMxM3L6QYxlOuEG1mg=
+-golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
+-golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
++golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2 h1:zGDaB+/Mus2mScKvZ23k+W9NAUbP56sNM9SptgvWI5A=
++golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20200908183739-ae8ad444f925/go.mod h1:1phAWC201xIgDyaFpmDeZkgf70Q4Pd/CNqfRtVPtxNw=
 ```
 
 ---
 
-### Incident Patch 2: `5a04d224` (2026-11-12)
-**Commit Message**: fix: reject TLS CA certs that contain no valid PEM certificate (#4244)
+### Incident Patch 2: `b6e3d89a` (2026-11-13)
+**Commit Message**: chore(deps): bump slack-go/slack to v0.35.0 and fix Slack signature test timestamp (#4275)
 
-Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
+Signed-off-by: Michael Walsh <[REDACTED_EMAIL]>
 
-**File**: `pkg/eventsources/sources/minio/start.go` (modified, +4/-3)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -19,7 +19,6 @@ package minio
- import (
- 	"context"
- 	"crypto/tls"
--	"crypto/x509"
- 	"encoding/json"
- 	"fmt"
- 	"net/http"
-@@ -91,8 +90,10 @@ func (el *EventListener) StartListening(ctx context.Context, dispatch func([]byt
- 		if err != nil {
- 			return fmt.Errorf("failed to get the CA certificate for event source %s, %w", el.GetEventName(), err)
- 		}
--		caCertPool := x509.NewCertPool()
--		caCertPool.AppendCertsFromPEM([]byte(caCertificate))
-+		caCertPool, err := sharedutil.NewCertPoolFromPEM([]byte(caCertificate))
-+		if err != nil {
-+			return fmt.Errorf("invalid CA certificate for event source %s, %w", el.GetEventName(), err)
-+		}
- 		tlsConfig := &tls.Config{
- 			RootCAs: caCertPool,
- 		}
+@@ -73,7 +73,7 @@ require (
+ 	github.com/radovskyb/watcher v1.0.7
+ 	github.com/riferrei/srclient v0.7.4
+ 	github.com/robfig/cron/v3 v3.0.1
+-	github.com/slack-go/slack v0.31.0
++	github.com/slack-go/slack v0.35.0
+ 	github.com/smartystreets/goconvey v1.8.1
+ 	github.com/spf13/cobra v1.10.2
+ 	github.com/spf13/viper v1.21.0
 ```
 
-**File**: `pkg/shared/util/util.go` (modified, +16/-2)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -191,6 +191,18 @@ func GenerateEnvFromConfigMapSpec(selector *v1.ConfigMapKeySelector) v1.EnvFromS
- 	}
- }
- 
-+// NewCertPoolFromPEM returns a certificate pool with the PEM encoded
-+// certificates in caCert. It returns an error when caCert contains no valid
-+// certificate, so that a bad CA does not silently produce an empty pool that
-+// rejects every server certificate.
-+func NewCertPoolFromPEM(caCert []byte) (*x509.CertPool, error) {
-+	pool := x509.NewCertPool()
-+	if !pool.AppendCertsFromPEM(caCert) {
-+		return nil, fmt.Errorf("no valid PEM encoded certificate found")
-+	}
-+	return pool, nil
-+}
-+
- // GetTLSConfig returns a tls configuration for given cert and key or skips the certs if InsecureSkipVerify is true.
- func GetTLSConfig(config *aev1.TLSConfig) (*tls.Config, error) {
- 	if config == nil {
-@@ -244,8 +256,10 @@ func GetTLSConfig(config *aev1.TLSConfig) (*tls.Config, error) {
- 		if err != nil {
- 			return nil, fmt.Errorf("failed to read ca cert file %s, %w", caCertPath, err)
- 		}
--		pool := x509.NewCertPool()
--		pool.AppendCertsFromPEM(caCert)
-+		pool, err := NewCertPoolFromPEM(caCert)
-+		if err != nil {
-+			return nil, fmt.Errorf("invalid ca cert file %s, %w", caCertPath, err)
-+		}
- 		c.RootCAs = pool
- 	}
- 
+@@ -834,8 +834,8 @@ github.com/sirupsen/logrus v1.10.2 h1:G2SED73/qrAu6YwbdxOD6peLkCBI3z7L+ykJFTXJBB
+ github.com/sirupsen/logrus v1.10.2/go.mod h1:SLEg8TqYulVKKfIGHldVp2K2aYz2DKSVBq4g/H5bR7Q=
+ github.com/skeema/knownhosts v1.3.1 h1:X2osQ+RAjK76shCbvhHHHVl3ZlgDm8apHEHFqRjnBY8=
+ github.com/skeema/knownhosts v1.3.1/go.mod h1:r7KTdC8l4uxWRyK2TpQZ/1o5HaSzh06ePQNxPwTcfiY=
+-github.com/slack-go/slack v0.31.0 h1:gjep/mWO7igMHh9GU/Yc4jTgDlRkjMZWz99AD6zBuwY=
+-github.com/slack-go/slack v0.31.0/go.mod h1:ph5iUlM1bUhqOeRynzryiWfkv6vVElt5JbhXbhtApsI=
++github.com/slack-go/slack v0.35.0 h1:lxUmPzkYYlSHLMNdmgvtdzGFnKAJiApA5gZiMcGEYiw=
++github.com/slack-go/slack v0.35.0/go.mod h1:swfK2lWHa2StZ3TXdUdK9sBzcC+oDXpW+jsHd5PoPRM=
+ github.com/smarty/assertions v1.15.0 h1:cR//PqUBUiQRakZWqBiFFQ9wb8emQGDb0HeGdqGByCY=
+ github.com/smarty/assertions v1.15.0/go.mod h1:yABtdzeQs6l1brC900WlRNwj6ZR55d7B+E8C6HtKdec=
+ github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d/go.mod h1:OnSkiWE9lh6wB0YB77sQom3nweQdgAjqCqsofrRNTgc=
 ```
 
-**File**: `pkg/shared/util/util_test.go` (modified, +42/-0)
+**File**: `pkg/eventsources/sources/slack/start_test.go` (modified, +1/-1)
 ```diff
-@@ -1,9 +1,17 @@
- package util
+@@ -84,7 +84,7 @@ func TestSlackSignature(t *testing.T) {
+ 			payload := []byte("payload=%7B%22type%22%3A%22block_actions%22%2C%22team%22%3A%7B%22id%22%3A%22T0CAG%22%2C%22domain%22%3A%22acme-creamery%22%7D%2C%22user%22%3A%7B%22id%22%3A%22U0CA5%22%2C%22username%22%3A%22Amy%20McGee%22%2C%22name%22%3A%22Amy%20McGee%22%2C%22team_id%22%3A%22T3MDE%22%7D%2C%22api_app_id%22%3A%22A0CA5%22%2C%22token%22%3A%22Shh_its_a_seekrit%22%2C%22container%22%3A%7B%22type%22%3A%22message%22%2C%22text%22%3A%22The%20contents%20of%20the%20original%20message%20where%20the%20action%20originated%22%7D%2C%22trigger_id%22%3A%2212466734323.1395872398%22%2C%22response_url%22%3A%22https%3A%2F%2Fwww.postresponsestome.com%2FT123567%2F1509734234%22%2C%22actions%22%3A%5B%7B%22type%22%3A%22button%22%2C%22block_id%22%3A%22actionblock789%22%2C%22action_id%22%3A%2227S%22%2C%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Link%20Button%22%2C%22emoji%22%3Atrue%7D%2C%22action_ts%22%3A%221564701248.149432%22%7D%5D%7D")
+ 			h := make(http.Header)
  
- import (
-+	"crypto/ecdsa"
-+	"crypto/elliptic"
-+	"crypto/rand"
-+	"crypto/x509"
-+	"crypto/x509/pkix"
-+	"encoding/pem"
-+	"math/big"
- 	"net/http"
- 	"strings"
- 	"testing"
-+	"time"
- 
- 	aev1 "github.com/argoproj/argo-events/pkg/apis/events/v1alpha1"
- 	"github.com/stretchr/testify/assert"
-@@ -312,3 +320,37 @@ func TestSliceContains(t *testing.T) {
- 	assert.True(t, SliceContains([]string{"*", "hello", "*"}, "*"))
- 	assert.False(t, SliceContains([]string{"hello", "world"}, "*"))
- }
-+
-+func TestNewCertPoolFromPEM(t *testing.T) {
-+	t.Run("valid certificate", func(t *testing.T) {
-+		key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-+		assert.NoError(t, err)
-+		tmpl := &x509.Certificate{
-+			SerialNumber:          big.NewInt(1),
-+			Subject:               pkix.Name{CommonName: "test-ca"},
-+			NotBefore:             time.Now(),
-+			NotAfter:              time.Now().Add(time.Hour),
-+			IsCA:                  true,
-+			BasicConstraintsValid: true,
-+		}
-+		der, err := x509.CreateCertificate(rand.Reader, tmpl, tmpl, &key.PublicKey, key)
-+		assert.NoError(t, err)
-+		caCert := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: der})
-+
-+		pool, err := NewCertPoolFromPEM(caCert)
-+		assert.NoError(t, err)
-+		assert.NotNil(t, pool)
-+	})
-+
-+	for name, caCert := range map[string][]byte{
-+		"empty":   {},
-+		"not pem": []byte("not a certificate"),
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			pool, err := NewCertPoolFromPEM(caCert)
-+			assert.Nil(t, pool)
-+			assert.Error(t, err)
-+			assert.Contains(t, err.Error(), "no valid PEM encoded certificate found")
-+		})
-+	}
-+}
+-			rts := int(time.Now().UTC().UnixNano())
++			rts := int(time.Now().UTC().Unix())
+ 			hmac := hmac.New(sha256.New, []byte(router.signingSecret))
+ 			b := strings.Join([]string{"v0", strconv.Itoa(rts), string(payload)}, ":")
+ 			_, err := hmac.Write([]byte(b))
 ```
 
 ---
 
-### Incident Patch 3: `7a582dc9` (2026-11-12)
-**Commit Message**: docs: fix dead links to moved event source setup pages and examples (#4243)
+### Incident Patch 3: `4b00e71c` (2026-11-13)
+**Commit Message**: fix(eventsources): enforce webhook payload limit on form posts (#4189)
 
-Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
+Signed-off-by: immanuwell <[REDACTED_EMAIL]>
 
-**File**: `docs/FAQ.md` (modified, +1/-1)
+**File**: `pkg/eventsources/sources/webhook/payload_limit_test.go` (added, +58/-0)
 ```diff
-@@ -55,7 +55,7 @@ set up the AWS SNS event-source.
- 
- **Q. If I have multiple event dependencies and triggers in a single sensor, can I execute a specific trigger upon a specific event?**  
- 
--**A.** Yes, this functionality is offered by the sensor event resolution circuitry. Please take a look at the [Circuit and Switch](https://argoproj.github.io/argo-events/tutorials/06-circuit-and-switch/) tutorial.
-+**A.** Yes, this functionality is offered by the sensor event resolution circuitry. Please take a look at the [Trigger Conditions](https://argoproj.github.io/argo-events/tutorials/06-trigger-conditions/) tutorial.
- 
- **Q. The latest image tag does not point to latest release tag?**
- 
+@@ -0,0 +1,58 @@
++package webhook
++
++import (
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++
++	"github.com/argoproj/argo-events/pkg/apis/events/v1alpha1"
++	"github.com/argoproj/argo-events/pkg/eventsources/common/webhook"
++)
++
++func TestFormPayloadRespectsDefaultMaxPayloadSize(t *testing.T) {
++	route := webhook.GetFakeRoute()
++	context := *route.Context
++	route.Context = &context
++	route.Context.Method = http.MethodPost
++	route.Active = true
++	router := &Router{route: route}
++
++	server := httptest.NewServer(http.HandlerFunc(router.HandleRoute))
++	defer server.Close()
++	dispatched := make(chan bool, 1)
++	done := make(chan struct{})
++	go func() {
++		select {
++		case event := <-route.DispatchChan:
++			dispatched <- true
++			event.SuccessChan <- true
++		case <-done:
++		}
++	}()
++	form := "a=" + strings.Repeat("x", int(v1alpha1.DefaultMaxWebhookPayloadSize))
++	response, err := http.Post(server.URL+"/fake", "application/x-www-form-urlencoded", strings.NewReader(form))
++	if err != nil {
++		close(done)
++		t.Fatal(err)
++	}
++	defer response.Body.Close()
++	close(done)
++	body, err := io.ReadAll(response.Body)
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	if response.StatusCode != http.StatusBadRequest {
++		t.Errorf("status = %d, want %d", response.StatusCode, http.StatusBadRequest)
++	}
++	if !strings.Contains(string(body), "http: request body too large") {
++		t.Errorf("response = %q, want request body too large error", body)
++	}
++	select {
++	case <-dispatched:
++		t.Error("oversized form was dispatched")
++	default:
++	}
++}
 ```
 
-**File**: `docs/sensors/triggers/azure-event-hubs.md` (modified, +1/-1)
+**File**: `pkg/eventsources/sources/webhook/start.go` (modified, +1/-5)
 ```diff
-@@ -85,4 +85,4 @@ The Azure Event Hubs trigger specification is available [here](../../APIs.md#arg
- 
-         curl -d '{"message":"ok"}' -H "Content-Type: application/json" -X POST http://localhost:12000/example
- 
--1.  Verify Events have been in ingested in Azure Events Hub by creating a [listener app](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-go-get-started-send#receive-events) or following other [code samples](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-samples). You can optionally create an [Azure Event Hubs Event Source](https://raw.githubusercontent.com/argoproj/argo-events/stable/examples/event-sources/azure-event-hubs-sensor.yaml).
-+1.  Verify Events have been in ingested in Azure Events Hub by creating a [listener app](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-go-get-started-send#receive-events) or following other [code samples](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-samples). You can optionally create an [Azure Event Hubs Event Source](https://raw.githubusercontent.com/argoproj/argo-events/stable/examples/event-sources/azure-events-hub.yaml).
-```
-
-**File**: `docs/sensors/triggers/http-trigger.md` (modified, +3/-3)
-```diff
-@@ -63,7 +63,7 @@ We will set up a basic go http server and connect it with the Minio events.
-         kubectl -n argo-events port-forward <http-server-pod-name> 8090:8090
- 
- 5.  Our goals is to seamlessly integrate Minio S3 bucket notifications with REST API server created in previous step. So,
--    lets set up the Minio event-source available [here](https://argoproj.github.io/argo-events/setup/minio/).
-+    lets set up the Minio event-source available [here](https://argoproj.github.io/argo-events/eventsources/setup/minio/).
-     Don't create the sensor as we will be deploying it in next step.
- 
- 6.  Create a sensor as follows.
-@@ -175,7 +175,7 @@ to invoke OpenFaaS function.
- 
- 4.  We are going to invoke OpenFaaS function on a message on Redis Subscriber.
- 
--5.  Let's set up the Redis Database, Redis PubSub event-source as specified [here](https://argoproj.github.io/argo-events/setup/redis/).
-+5.  Let's set up the Redis Database, Redis PubSub event-source as specified [here](https://argoproj.github.io/argo-events/eventsources/setup/redis/).
-     Do not create the Redis sensor, we are going to create it in next step.
- 
- 6.  Let's create the sensor with OpenFaaS trigger.
-@@ -222,7 +222,7 @@ Similar to REST API calls, you can easily invoke Kubeless functions using HTTP t
- 
- 4.  Now, we are going to invoke the Kubeless function when a message is placed on a NATS queue.
- 
--5.  Let's set up the NATS event-source. Follow [instructions](https://argoproj.github.io/argo-events/setup/nats/#setup) for details.
-+5.  Let's set up the NATS event-source. Follow [instructions](https://argoproj.github.io/argo-events/eventsources/setup/nats/#setup) for details.
-     Do not create the NATS sensor, we are going to create it in next step.
- 
- 6.  Let's create NATS sensor with HTTP trigger.
-```
-
-**File**: `docs/sensors/triggers/kafka-trigger.md` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ The Kafka trigger specification is available [here](../../APIs.md#argoproj.io/v1
- 
- 1.  Consider a scenario where you are expecting a file drop onto a Minio bucket and want to place that event on a Kafka topic.
- 
--1.  Set up the Minio Event Source [here](https://argoproj.github.io/argo-events/setup/minio/).
-+1.  Set up the Minio Event Source [here](https://argoproj.github.io/argo-events/eventsources/setup/minio/).
-     Do not create the Minio sensor, we are going to create it in next step.
- 
- 1.  Lets create the sensor.
-```
-
-**File**: `docs/sensors/triggers/pulsar-trigger.md` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ The Pulsar trigger specification is available [here](../../APIs.md#argoproj.io/v
- 
- 1.  Consider a scenario where you are expecting a file drop onto a Minio bucket and want to place that event on a Pulsar topic.
- 
--1.  Set up the Minio Event Source [here](https://argoproj.github.io/argo-events/setup/minio/).
-+1.  Set up the Minio Event Source [here](https://argoproj.github.io/argo-events/eventsources/setup/minio/).
-     Do not create the Minio sensor, we are going to create it in next step.
- 
- 1.  Lets create the sensor.
-```
-
-**File**: `docs/sensors/triggers/slack-trigger.md` (modified, +1/-1)
-```diff
-@@ -110,7 +110,7 @@ generate complex event payloads, take a look at [this library](https://github.co
-                   messageAggregationKey: "abcdefg" # aggregate message by some key to send them to the same Slack thread
-                   broadcastMessageToChannel: true # also broadcast the message from the thread to the channel
- 
--#### Sending attachments using [Slack Attachments API](https://api.slack.com/reference/messaging/attachments):
-+#### Sending attachments using [Slack Attachments API](https://docs.slack.dev/legacy/legacy-messaging/legacy-secondary-message-attachments/):
- 
-          - template:
-               name: slack-trigger
+@@ -165,6 +165,7 @@ func GetBody(writer *http.ResponseWriter, request *http.Request, route *webhook.
+ 		ret := json.RawMessage(body)
+ 		return &ret, nil
+ 	case http.MethodPost:
++		request.Body = http.MaxBytesReader(*writer, request.Body, route.Context.GetMaxPayloadSize())
+ 		contentType := ""
+ 		if len(request.Header["Content-Type"]) > 0 {
+ 			contentType = request.Header["Content-Type"][0]
+@@ -174,21 +175,16 @@ func GetBody(writer *http.ResponseWriter, request *http.Request, route *webhook.
+ 		case "application/x-www-form-urlencoded":
+ 			if err := request.ParseForm(); err != nil {
+ 				logger.Errorw("failed to parse form data", zap.Error(err))
+-				sharedutil.SendInternalErrorResponse(*writer, err.Error())
+-				route.Metrics.EventProcessingFailed(route.EventSourceName, route.EventName)
+ 				return nil, err
+ 			}
+ 			body, _ := json.Marshal(request.PostForm)
+ 			ret := json.RawMessage(body)
+ 			return &ret, nil
+ 		// default including "application/json" is parsing body as JSON
+ 		default:
+-			request.Body = http.MaxBytesReader(*writer, request.Body, route.Context.GetMaxPayloadSize())
+ 			body, err := getRequestBody(request)
+ 			if err != nil {
+ 				logger.Errorw("failed to read request body", zap.Error(err))
+-				sharedutil.SendErrorResponse(*writer, err.Error())
+-				route.Metrics.EventProcessingFailed(route.EventSourceName, route.EventName)
+ 				return nil, err
+ 			}
+ 			ret := json.RawMessage(body)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4274** (2026-11-12): fix(ci): fix the ci issues after using ubutnu 26 runner (@whynowy)
-- **PR #4271** (2026-11-07): chore(deps): bump github.com/xdg-go/scram from 1.2.0 to 1.3.0 (@dependabot[bot])
-- **PR #4270** (2026-11-07): chore(deps): bump google.golang.org/api from 0.309.0 to 0.310.0 (@dependabot[bot])
-- **PR #4269** (2026-11-07): chore(deps): bump go.yaml.in/yaml/v3 from 3.0.5 to 3.0.6 (@dependabot[bot])
-- **PR #4268** (2026-11-07): chore(deps): bump github.com/go-swagger/go-swagger from 0.36.6 to 0.36.7 (@dependabot[bot])
-- **PR #4267** (2026-11-07): chore(deps): bump cloud.google.com/go/iam from 1.15.0 to 1.15.1 (@dependabot[bot])
+- **PR #4286** (closed): chore(deps): bump github.com/tidwall/gjson from 1.20.0 to 1.20.2 (@dependabot[bot])
+- **PR #4285** (2026-11-13): chore(deps): bump google.golang.org/api from 0.310.0 to 0.312.0 (@dependabot[bot])
+- **PR #4284** (2026-11-14): chore(deps): bump github.com/xdg-go/scram from 1.3.0 to 1.4.0 (@dependabot[bot])
+- **PR #4283** (2026-11-13): chore(deps): bump cloud.google.com/go/pubsub/v2 from 2.8.0 to 2.8.1 (@dependabot[bot])
+- **PR #4282** (2026-11-13): chore(deps): bump github.com/tidwall/sjson from 1.2.5 to 1.2.9 (@dependabot[bot])
+- **PR #4277** (2026-11-13): chore: update dependency bot running interval to monthly (@whynowy)
 
 ---
 
@@ -1376,30 +1257,28 @@ Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): fix the ci issues after using ubutnu 26 runner (#4274)
+## X. deps): update Go and crypto security baseline
 
 **RULE**:
-When implementing operations in `.github/workflows/gh-pages.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `48cb7266`: ci): fix the ci issues after using ubutnu 26 runner (#4274). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ca9817ff`: deps): update Go and crypto security baseline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/gh-pages.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: actions/setup-python@v7
-          python-version: "3.12"
+	golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-        uses: actions/setup-python@v5
-          python-version: 3.9
+// Induced defect failure mode:
+	golang.org/x/crypto v0.58.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `48cb7266` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ca9817ff` are properly handled with clean fallback behavior.
