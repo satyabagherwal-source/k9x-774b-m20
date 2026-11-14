@@ -9951,3 +9951,7 @@
 | `CYCLE-20261114-GPM5` | `2026-11-14T21:38:30.701Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8540` | Yes (`bc901b40...`) |
 | `CYCLE-20261114-GROX` | `2026-11-14T21:38:33.393Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8541` | Yes (`e93e9c87...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T21:39:04.643Z` | `hf-francisring-prism` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-11540386` [Domain D] | Yes (`efd1b393...`) |
+| `CYCLE-20261114-W2MJ` | `2026-11-14T21:50:27.403Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md` | Yes (`6f07474f...`) |
+| `CYCLE-20261114-W9M7` | `2026-11-14T21:50:36.463Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8542` | Yes (`fb7258ad...`) |
+| `CYCLE-20261114-WF33` | `2026-11-14T21:50:43.551Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8543` | Yes (`9beabd2c...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T21:51:09.002Z` | `onejs-one` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-053419E8` [Domain F] | Yes (`52f5be1a...`) |

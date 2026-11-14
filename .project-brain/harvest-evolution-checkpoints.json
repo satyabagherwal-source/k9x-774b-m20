@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T21:39:06.205Z",
+  "last_updated": "2026-11-14T21:51:09.936Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T20:09:45.155Z",
@@ -238,9 +238,9 @@
       "staged_for_review": 1
     },
     "onejs-one-learnings.md": {
-      "processed_at": "2026-11-11T11:19:20.190Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-14T21:51:09.002Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "k3s-io-k3s-learnings.md": {
       "processed_at": "2026-11-13T21:08:33.604Z",
@@ -2766,9 +2766,19 @@
       "processed_at": "2026-11-14T21:39:04.643Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md": {
+      "processed_at": "2026-11-14T21:50:46.552Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "duckdb-duckdb-learnings.md": {
+      "processed_at": "2026-11-14T21:51:09.492Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 921,
-  "total_canonical_promoted": 223,
-  "total_staged_for_review": 698
+  "total_dossiers_evaluated": 924,
+  "total_canonical_promoted": 224,
+  "total_staged_for_review": 700
 }

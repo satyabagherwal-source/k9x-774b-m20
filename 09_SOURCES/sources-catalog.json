@@ -585,8 +585,8 @@
     "sourceUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "sourceVersion": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "license": "Open-Source",
-    "contentHash": "7260c45ebe8bdcf9ac2e385b4af9603a66bbfaeb85f2a280b3665a20eff49deb",
-    "lastHarvestedAt": "2026-11-09T11:04:02.291Z",
+    "contentHash": "6f07474fa387533dbadb621e1e9a1a9a5e14f0756eba21058c7a105c175b5641",
+    "lastHarvestedAt": "2026-11-14T21:50:27.410Z",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2"
   },
   "hf-psrben-visionhope": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "399d7a83",
+    "sourceVersion": "b678afa9",
     "license": "MIT",
-    "contentHash": "fe578b2976f8ba1c3e34470d7cdbf3d9c75117c0629c1fa7e5a8950fb1ac8ceb",
-    "lastHarvestedAt": "2026-11-13T15:18:40.692Z",
+    "contentHash": "9beabd2c33d5528d54005efbb3d2d7a1ea053765953c346a3c0c175fe3be55bf",
+    "lastHarvestedAt": "2026-11-14T21:50:43.554Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -6923,10 +6923,10 @@
     "repository": "onejs/one",
     "platform": "github",
     "sourceUrl": "https://github.com/onejs/one",
-    "sourceVersion": "7e497e23",
+    "sourceVersion": "e49f6c39",
     "license": "NOASSERTION",
-    "contentHash": "38f9e8f5d5a3624fc114431754500661abd82f66179979270e3e1354105aa7b0",
-    "lastHarvestedAt": "2026-11-11T11:19:09.411Z",
+    "contentHash": "fb7258adbfc0674b7ebe182f4e47cdd564d50ff61fc4252296dac7428d66be32",
+    "lastHarvestedAt": "2026-11-14T21:50:36.471Z",
     "learningId": "learn-github-onejs-one"
   },
   "influxdata-influxdb": {

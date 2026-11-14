@@ -4,45 +4,31 @@
 {
   "source_repository": "onejs/one",
   "source_url": "https://github.com/onejs/one",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "e49f6c39",
+  "license": "NOASSERTION",
+  "timestamp": "2026-11-14T21:50:36.620Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-onejs-one",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [onejs/one](https://github.com/onejs/one) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [onejs/one](https://github.com/onejs/one) (Revision: `e49f6c39`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-14T21:50:36.620Z`  
+> **Learning ID**: `learn-github-onejs-one`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `onejs/one` (Commit: `historical`)
+- **Target Repository**: `onejs/one` (Commit: `e49f6c39`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
-> **Source**: github ([https://github.com/onejs/one](https://github.com/onejs/one))  
-> **Source Version**: `7e497e23`  
-> **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T11:18:52.840Z  
-> **Learning ID**: `learn-github-onejs-one`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): onejs/one
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/onejs/one](https://github.com/onejs/one))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T11:18:52.832Z  
+> **Harvest Timestamp**: 2026-11-14T21:50:35.774Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1803,9 +1789,9 @@ export declare function transformHermesLoops(code: string, filename: string): {
 
 ### Core Architecture Module: `packages/compiler/types/workletUtils.d.ts`
 ```
-export { getClosureVariables } from './worklets/scope';
-export { JS_GLOBALS } from './worklets/globals';
-export { transformHermesLoops } from './transformHermesLoops';
+export { getClosureVariables } from './worklets/scope.js';
+export { JS_GLOBALS } from './worklets/globals.js';
+export { transformHermesLoops } from './transformHermesLoops.js';
 //# sourceMappingURL=workletUtils.d.ts.map
 ```
 
@@ -1908,863 +1894,219 @@ class OneBackgroundWorker(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b3c0f93` (2026-11-10)
-**Commit Message**: fix(one): emit the objective-c selector a protocol requirement declares (#1179)
+### Incident Patch 1: `6f2dc32f` (2026-11-14)
+**Commit Message**: perf(one): render blocking head scripts ahead of the css links in the root layout (#1225)
 
-* fix(one): emit the objective-c selector a protocol requirement declares
+* perf(one): render blocking head scripts ahead of the css links in the root layout
 
-Bare @objc made every overload share one inferred selector, so wasm
-conformance failed for delegates whose selector is not the swift name.
-Requirements that are not objective-c representable are skipped, and
-constant lists use Self.member so a same-named global is not ambiguous.
+* perf(one): keep meta tags and the server context ahead of hoisted head scripts
 
-* fix(one): skip protocol requirements swiftc rejects as @objc
-
-Character, a generic argument that does not bridge, an optional of a scalar, a variadic parameter, and a non-class metatype were treated as representable. Those requirements now stay off @objc.
-
-* fix(one): keep optional elements out of objective-c collections
-
-An optional object is a nullable parameter. An array, set, or dictionary of optionals is not representable, and neither is a double optional.
-
-* fix(one): keep function types out of objective-c collections
-
-A block parameter and an optional block are selector-safe. An array, set, or dictionary of blocks is not.
-
-* fix(vxrn): drop the stale __esmMin production assertion
-
-The native iife turns strict execution order off, so rolldown no
-
-**File**: `packages/one/codegen/sdk/emit-protocols.ts` (modified, +153/-3)
+**File**: `apps/onestack.dev/data/docs/routing-layouts.mdx` (modified, +2/-0)
 ```diff
-@@ -2,7 +2,7 @@
- import { inUniverse, type Bridge } from './bridge'
- import { effectsOf, outputValue, type Skipped } from './emit'
- import { loadGraph, type Fragment, type Graph, type Symbol } from './graph'
--import { parameterType, type SwiftType } from './types'
-+import { parameterType, parseType, type SwiftType, TypeParseError } from './types'
+@@ -147,6 +147,8 @@ export default function Layout() {
  
- const text = (fragments: Fragment[] = []) => fragments.map((f) => f.spelling).join('')
- const quoted = (name: string) => `\`${name.replace(/`/g, '')}\``
-@@ -12,6 +12,144 @@ const SYNC_REASON = 'synchronous protocol result requires an active JS-thread ca
- // checks the generated witness against their concurrency semantics.
- const MARKERS = new Set(['s:s8SendableP', 's:s16SendableMetatypeP'])
+ Note - you should have both a `lang` property on your `html` tag, and a `<meta charSet />` tag in your `head`. Otherwise, React can have hydration re-rendering issues.
  
-+// stdlib and foundation values that cross into an objective-c method. character
-+// is a swift struct and does not. array, dictionary, set and optional are in
-+// this set, and objcRepresentable still requires every generic argument.
-+const BRIDGED_USRS = new Set([
-+  's:Sb', 's:Si', 's:Su', 's:Sd', 's:Sf', 's:SS', 's:Ss',
-+  's:s4Int8V', 's:s5Int16V', 's:s5Int32V', 's:s5Int64V',
-+  's:s5UInt8V', 's:s6UInt16V', 's:s6UInt32V', 's:s6UInt64V', 's:s7Float16V',
-+  's:14CoreFoundation7CGFloatV', 's:12CoreGraphics7CGFloatV',
-+  's:s5ErrorP', 's:s4Voida', 's:s8AnyClassa',
-+  's:10Foundation4DateV', 's:10Foundation3URLV', 's:10Foundation4DataV', 's:10Foundation4UUIDV',
-+  's:Sa', 's:SD', 's:Sh', 's:Sq',
-+])
++Blocking scripts in the root layout's `<head>` (no `async`, `defer` or `type="module"`) are rendered before the stylesheet links, after the `<meta>` tags, so they run as soon as the HTML parses instead of waiting for the stylesheets to download. A script that reads layout from a stylesheet, such as `getComputedStyle` or `offsetWidth`, no longer sees it loaded: wait for the `load` event or use a `defer` script for that.
 +
-+// c:objc(pl)Name(im)archiver:didEncodeObject: — the selector is the objective-c
-+// requirement, which is not the selector swift infers from the swift name.
-+function objcMethod(usr: string): { selector: string; instance: boolean } | undefined {
-+  const match = /^c:objc\([^)]*\)[^(]*\((im|cm)\)([A-Za-z_][A-Za-z0-9_:]*)$/.exec(usr)
-+  if (!match) return undefined
-+  return { selector: match[2], instance: match[1] === 'im' }
-+}
-+
-+// values that bridge to an objective-c object, so an optional of them is nullable.
-+// numbers and clang enums are selector-safe on their own and are not.
-+const REFERENCE_USRS = new Set([
-+  's:SS', 's:Ss',
-+  's:10Foundation4DateV', 's:10Foundation3URLV', 's:10Foundation4DataV', 's:10Foundation4UUIDV',
-+])
-+
-+function clangEnum(usr: string | undefined): boolean {
-+  return !!usr && usr.includes('@E@')
-+}
-+
-+function bridgesToObjC(usr: string, bridge: Bridge, seen: Set<string>, boxed: boolean): boolean {
-+  if (BRIDGED_USRS.has(usr) || usr.startsWith('c:')) return !(boxed && clangEnum(usr))
-+  if (seen.has(usr)) return false
-+  seen.add(usr)
-+  const info = bridge.index.get(usr)
-+  if (!info) return false
-+  if (info.conformsTo?.some((id) => bridge.index.get(id)?.path.at(-1) === 'ReferenceConvertible')) return true
-+  if (info.kind === 'typealias' && info.alias) return objcRepresentable(info.alias, bridge, seen, boxed)
-+  if (info.kind === 'class' && info.superclass) return bridgesToObjC(info.superclass, bridge, seen, boxed)
-+  return false
-+}
-+
-+// a metatype is selector-safe only for an objective-c class. string.Type is not.
-+function objcClassType(type: SwiftType, bridge: Bridge, seen: Set<string>): boolean {
-+  if (type.k === 'existential') return objcClassType(type.t, bridge, seen)
-+  if (type.k !== 'named' || type.args.length > 0) return false
-+  const name = type.name.split('.').at(-1)!
-+  if (name === 'AnyObject' || name === 'AnyClass') return true
-+  if (!type.usr) return false
-+  if (type.usr.startsWith('c:objc(cs)') || type.usr.startsWith('c:objc(pl)')) return true
-+  const key = `class:${type.usr}`
-+  if (seen.has(key)) return false
-+  seen.add(key)
-+  const info = bridge.index.get(type.usr)
-+  if (!info || info.kind !== 'class' || !info.superclass) return false
-+  if (info.superclass.startsWith('c:objc(cs)')) return true
-+  return objcClassType({ k: 'named', name: '', usr: info.superclass, args: [] }, bridge, seen)
-+}
-+
-+// optional bridges only when the wrapped value is an object. collections bridge
-+// to nsarray, nsset and nsdictionary, which are objects.
-+function objcOptional(type: SwiftType, bridge: Bridge, seen: Set<string>): boolean {
-+  switch (type.k) {
-+    case 'optional':
-+      return false
-+    case 'existential':
-+      return objcOptional(type.t, bridge, seen)
-+    case 'array':
-+    case 'dictionary':
-+      return objcRepresentable(type, bridge, seen)
-+    case 'function':
-+      if (type.throws || type.async) return false
-+      return type.params.every((param) => objcRepresentable(param.t, bridge, seen)) && objcRepresentable(type.result, bridge, seen)
-+    case 'metatype':
-+      return objcClassType(type.t, bridge, seen)
-+    case 'composition':
-+      return type.items.every((item) => objcOptional(item, bridge, seen))
-+    case 'named': {
-+      if (type.usr === 's:Sa' || type.usr === 's:Sh' || type.usr === 's:SD' || type.usr === 's:Sq') return objcRepresentable(type, bridge, seen)
-+      const name = type.name.split('.').at(-1)!
-+      if (name === 'Any' || name === 'AnyObject' || name === 'AnyClass' || name =
+ ### Layout Render Modes
+ 
+ Layouts support render mode suffixes just like pages. This is especially useful for the root layout:
 ```
 
-**File**: `packages/one/codegen/sdk/emit.ts` (modified, +4/-2)
+**File**: `packages/one/src/router/useScreens.tsx` (modified, +39/-2)
 ```diff
-@@ -864,9 +864,11 @@ function emitConformance(symbol: Symbol, bridge: Bridge, memberUsrs: string[], b
-   const list = (names: string[]) => {
-     const always = names.filter((n) => !needsCheck(laterVersion(versionOf.get(n), typeVersion)) || laterVersion(typeVersion, versionOf.get(n)) === typeVersion)
-     const later = names.filter((n) => !always.includes(n))
--    const literal = (ns: string[]) => `[${ns.map((n) => `(${JSON.stringify(n)}, .${member(n)})`).join(', ')}]`
-+    // Self.member, not a leading dot: a same-named global (a cf constant beside
-+    // an extensible-enum member) makes the implicit member ambiguous.
-+    const literal = (ns: string[]) => `[${ns.map((n) => `(${JSON.stringify(n)}, Self.${member(n)})`).join(', ')}]`
-     if (!later.length) return literal(always)
--    return `{ var out: [(String, Self)] = ${literal(always)}; ${later.map((n) => `if #available(iOS ${versionOf.get(n)}, *) { out.append((${JSON.stringify(n)}, .${member(n)})) }`).join('; ')}; return out }()`
-+    return `{ var out: [(String, Self)] = ${literal(always)}; ${later.map((n) => `if #available(iOS ${versionOf.get(n)}, *) { out.append((${JSON.stringify(n)}, Self.${member(n)})) }`).join('; ')}; return out }()`
-   }
-   const available = needsCheck(typeVersion) ? `@available(iOS ${typeVersion}, *)\n` : ''
-   if (info.kind === 'enum' && info.cases?.length && !info.payload) {
-```
-
-**File**: `packages/one/ios-bindings/AVRouting.ts` (modified, +36/-36)
-```diff
-@@ -15,17 +15,17 @@ type $SDK3 = (Implements<AVRoutingPlaybackParticipant> | SDKHandle) | null;
-  */
- export class AVCustomDeviceRoute extends SDKHandle {
-   /** init() */
--  static init(): AVCustomDeviceRoute { return callSDK<AVCustomDeviceRoute>("AVRouting_b66fbf8c99a1c012", 3584039809474712, undefined, []); }
-+  static init(): AVCustomDeviceRoute { return callSDK<AVCustomDeviceRoute>("AVRouting_86f7e029fa4ce140", 3584039809474712, undefined, []); }
-   /**
-    * var bluetoothIdentifier: UUID? { get }
-    * @availability iOS 16.0+
-    */
--  get bluetoothIdentifier(): (string) | null { return callSDK<(string) | null>("AVRouting_b66fbf8c99a1c012", 4204461396644883, this, []); }
-+  get bluetoothIdentifier(): (string) | null { return callSDK<(string) | null>("AVRouting_86f7e029fa4ce140", 4204461396644883, this, []); }
-   /**
-    * var networkEndpoint: nw_endpoint_t? { get }
-    * @availability iOS 16.0+
-    */
--  get networkEndpoint(): (SDKHandle) | null { return callSDK<(SDKHandle) | null>("AVRouting_b66fbf8c99a1c012", 1104922136028668, this, []); }
-+  get networkEndpoint(): (SDKHandle) | null { return callSDK<(SDKHandle) | null>("AVRouting_86f7e029fa4ce140", 1104922136028668, this, []); }
-   declare readonly $type: { "c:objc(cs)AVCustomDeviceRoute": true; "c:objc(cs)NSObject": true };
-   declare readonly $observable: { "bluetoothIdentifier": true; "networkEndpoint": true };
+@@ -121,6 +121,40 @@ const SSR_SAFE_METRICS = {
+   insets: { top: 0, left: 0, right: 0, bottom: 0 },
  }
-@@ -36,13 +36,13 @@ export class AVCustomDeviceRoute extends SDKHandle {
-  */
- export class AVCustomRoutingActionItem extends SDKHandle {
-   /** init() */
--  static init(): AVCustomRoutingActionItem { return callSDK<AVCustomRoutingActionItem>("AVRouting_b66fbf8c99a1c012", 1613856744217575, undefined, []); }
-+  static init(): AVCustomRoutingActionItem { return callSDK<AVCustomRoutingActionItem>("AVRouting_86f7e029fa4ce140", 1613856744217575, undefined, []); }
-   /**
-    * var overrideTitle: String? { get set }
-    * @availability iOS 16.0+
-    */
--  get overrideTitle(): (string) | null { return callSDK<(string) | null>("AVRouting_b66fbf8c99a1c012", 3290305562960780, this, []); }
--  set overrideTitle(value: (string) | null) { callSDK<void>("AVRouting_b66fbf8c99a1c012", 1046266366010321, this, [value]); }
-+  get overrideTitle(): (string) | null { return callSDK<(string) | null>("AVRouting_86f7e029fa4ce140", 3290305562960780, this, []); }
-+  set overrideTitle(value: (string) | null) { callSDK<void>("AVRouting_86f7e029fa4ce140", 1046266366010321, this, [value]); }
-   declare readonly $type: { "c:objc(cs)AVCustomRoutingActionItem": true; "c:objc(cs)NSObject": true };
-   declare readonly $observable: { "overrideTitle": true };
- }
-@@ -56,47 +56,47 @@ export class AVCustomRoutingController extends SDKHandle {
-    * class let authorizedRoutesDidChange: NSNotification.Name
-    * @availability iOS 16.0+
-    */
--  static get authorizedRoutesDidChange(): _Foundation_NSNotification_Name { return callSDK<_Foundation_NSNotification_Name>("AVRouting_b66fbf8c99a1c012", 174651251545805, undefined, []); }
-+  static get authorizedRoutesDidChange(): _Foundation_NSNotification_Name { return callSDK<_Foundation_NSNotification_Name>("AVRouting_86f7e029fa4ce140", 174651251545805, undefined, []); }
-   /** init() */
--  static init(): AVCustomRoutingController { return callSDK<AVCustomRoutingController>("AVRouting_b66fbf8c99a1c012", 3915504032879488, undefined, []); }
-+  static init(): AVCustomRoutingController { return callSDK<AVCustomRoutingController>("AVRouting_86f7e029fa4ce140", 3915504032879488, undefined, []); }
-   /**
-    * func invalidateAuthorization(for route: AVCustomDeviceRoute)
-    * @availability iOS 16.0+
-    */
--  invalidateAuthorization(route: AVCustomDeviceRoute): void { return callSDK<void>("AVRouting_b66fbf8c99a1c012", 3781054979465583, this, [route]); }
-+  invalidateAuthorization(route: AVCustomDeviceRoute): void { return callSDK<void>("AVRouting_86f7e029fa4ce140", 3781054979465583, this, [route]); }
-   /**
-    * func isRouteActive(_ route: AVCustomDeviceRoute) -> Bool
-    * @availability iOS 16.0+
-    */
--  isRouteActive(route: AVCustomDeviceRoute): boolean { return callSDK<boolean>("AVRouting_b66fbf8c99a1c012", 2238314312563014, this, [route]); }
-+  isRouteActive(route: AVCustomDeviceRoute): boolean { return callSDK<boolean>("AVRouting_86f7e029fa4ce140", 2238314312563014, this, [route]); }
-   /**
-    * func setActive(_ active: Bool, for route: AVCustomDeviceRoute)
-    * @availability iOS 16.0+
-    */
--  setActive(active: boolean, route: AVCustomDeviceRoute): void { return callSDK<void>("AVRouting_b66fbf8c99a1c012", 4122320749038147, this, [active, route]); }
-+  setActive(active: boolean, route: AVCustomDeviceRoute): void { return callSDK<void>("AVRouting_86f7e029fa4ce140", 4122320749038147, this, [active, route]); }
-   /**
-    * var authorizedRoutes: [AVCustomDeviceRoute] { get }
-    * @availability iOS 16.0+
-    */
--  get authorizedRoutes(): Array<AVCustomDeviceRoute> { return callSDK<Array<AVCustomDeviceRoute>>("AVRouting_b66fbf8c99a1c012"
-```
-
-**File**: `packages/one/ios-bindings/AccessoryLiveActivities.ts` (modified, +23/-23)
-```diff
-@@ -17,12 +17,12 @@ export const AccessoryAuthorizationResult = {
-    * var description: String { get }
-    * @availability iOS 26.5+
-    */
--  getDescription($self: AccessoryAuthorizationResult): string { return callSDK<string>("AccessoryLiveActivities_b66fbf8c99a1c012", 3670283131861824, $self, []); },
-+  getDescription($self: AccessoryAuthorizationResult): string { return callSDK<string>("AccessoryLiveActivities_86f7e029fa4ce140", 3670283131861824, $self, []); },
-   /**
-    * nonisolated static var allCases: [AccessoryAuthorizationResult] { get }
-    * @availability iOS 26.5+
-    */
--  get allCases(): $SDK0 { return callSDK<$SDK0>("AccessoryLiveActivities_b66fbf8c99a1c012", 3709921195692933, undefined, []); }
-+  get allCases(): $SDK0 { return callSDK<$SDK0>("AccessoryLiveActivities_86f7e029fa4ce140", 3709921195692933, undefined, []); }
- };
  
++// a classic script that blocks the parser waits for every stylesheet before it,
++// so the ones a layout puts in <head> run ahead of the css links instead of
++// after the whole stylesheet downloads. meta tags stay ahead of those scripts
++// so charset and viewport keep their place. async, defer and module scripts
++// never wait on a stylesheet and keep their place.
++function splitBlockingHeadScripts(headChildren: React.ReactNode): {
++  metas: React.ReactNode[]
++  scripts: React.ReactNode[]
++  rest: React.ReactNode[]
++} {
++  const metas: React.ReactNode[] = []
++  const scripts: React.ReactNode[] = []
++  const rest: React.ReactNode[] = []
++  for (const child of React.Children.toArray(headChildren)) {
++    if (React.isValidElement<{ async?: boolean; defer?: boolean; type?: string }>(child)) {
++      if (child.type === 'meta') {
++        metas.push(child)
++        continue
++      }
++      if (
++        child.type === 'script' &&
++        !child.props.async &&
++        !child.props.defer &&
++        child.props.type !== 'module'
++      ) {
++        scripts.push(child)
++        continue
++      }
++    }
++    rest.push(child)
++  }
++  return { metas, scripts, rest }
++}
++
  /**
-@@ -40,32 +40,32 @@ export class AccessoryLiveActivity extends SDKHandle {
-    * let sourceBundleIcon: AccessoryLiveActivity.IconFile?
-    * @availability iOS 26.5+
-    */
--  get sourceBundleIcon(): (AccessoryLiveActivity_IconFile) | null { return callSDK<(AccessoryLiveActivity_IconFile) | null>("AccessoryLiveActivities_b66fbf8c99a1c012", 4047563833700731, this, []); }
-+  get sourceBundleIcon(): (AccessoryLiveActivity_IconFile) | null { return callSDK<(AccessoryLiveActivity_IconFile) | null>("AccessoryLiveActivities_86f7e029fa4ce140", 4047563833700731, this, []); }
-   /**
-    * let sourceBundleName: String
-    * @availability iOS 26.5+
-    */
--  get sourceBundleName(): string { return callSDK<string>("AccessoryLiveActivities_b66fbf8c99a1c012", 3185154113949138, this, []); }
-+  get sourceBundleName(): string { return callSDK<string>("AccessoryLiveActivities_86f7e029fa4ce140", 3185154113949138, this, []); }
-   /**
-    * let activityIdentifier: String
-    * @availability iOS 26.5+
-    */
--  get activityIdentifier(): string { return callSDK<string>("AccessoryLiveActivities_b66fbf8c99a1c012", 4337749233102375, this, []); }
-+  get activityIdentifier(): string { return callSDK<string>("AccessoryLiveActivities_86f7e029fa4ce140", 4337749233102375, this, []); }
-   /**
-    * let sourceBundleIdentifier: String
-    * @availability iOS 26.5+
-    */
--  get sourceBundleIdentifier(): string { return callSDK<string>("AccessoryLiveActivities_b66fbf8c99a1c012", 4416715418224946, this, []); }
-+  get sourceBundleIdentifier(): string { return callSDK<string>("AccessoryLiveActivities_86f7e029fa4ce140", 4416715418224946, this, []); }
-   /**
-    * let state: ActivityState
-    * @availability iOS 26.5+
-    */
--  get state(): _ActivityKit_ActivityState { return callSDK<_ActivityKit_ActivityState>("AccessoryLiveActivities_b66fbf8c99a1c012", 420192175269726, this, []); }
-+  get state(): _ActivityKit_ActivityState { return callSDK<_ActivityKit_ActivityState>("AccessoryLiveActivities_86f7e029fa4ce140", 420192175269726, this, []); }
-   /**
-    * let content: AccessoryLiveActivity.Content?
-    * @availability iOS 26.5+
-    */
--  get content(): (AccessoryLiveActivity_Content) | null { return callSDK<(AccessoryLiveActivity_Content) | null>("AccessoryLiveActivities_b66fbf8c99a1c012", 363878853623809, this, []); }
-+  get content(): (AccessoryLiveActivity_Content) | null { return callSDK<(AccessoryLiveActivity_Content) | null>("AccessoryLiveActivities_86f7e029fa4ce140", 363878853623809, this, []); }
-   declare readonly $type: { "s:23AccessoryLiveActivities0aB8ActivityV": true };
- }
+  * Separate component for rendering root layouts with HTML.
+  * This is extracted into its own component so React's HMR can properly track changes.
+@@ -157,6 +191,7 @@ function RootLayoutRenderer({
+     any
+   >
+   const serverContext = useServerContext()
++  const headScripts = splitBlockingHeadScripts(headChildren)
  
-@@ -78,7 +78,7 @@ export class AccessoryLiveActivity_Content extends SDKHandle {
-    * let alert: AccessoryLiveActivity.Content.AlertMessage?
-    * @availability iOS 26.5+
-    */
--  get alert(): (AccessoryLiveActivity_Content_AlertMessage) | null { return callSDK<(AccessoryLiveActivity_Content_AlertMessage) | null>("AccessoryLiveActivities_b66fbf8c99a1c012", 4307931896745600, this, []); }
-+  get alert(): (AccessoryLiveActivity_Content_AlertMessage) | null { return callSDK<(AccessoryLiveActivity_Content_AlertMessage) | null>("AccessoryLiveActivities_86f7e029fa4ce140", 4307931896745600, this, []); }
-   declare readonly $type: { "s:23AccessoryLiveActivities0aB8ActivityV7ContentV": true };
- }
+   let finalChildren = children
  
-@@ -91,12 +91,12 @@ export class AccessoryLiveActivity_Content_AlertMessage extends SDKHandle {
-    * let body: String
-    * @availability iOS 26.5+
-    */
--  get body(): string { return callSDK<string>("AccessoryLiveActivities_b66fbf8c99a1c012", 4022771453244179, this, []); }
-+  get body(): string { return callSDK<string>("AccessoryLiveActivities_86f7e029fa4ce140", 4022771453244179, this, []); }
-   /**
-    * let title: String
-    * @availability iOS 26.5+
-    */
--  get title(): string { return callSDK<string>("AccessoryLiveActivities_b66fbf8c99a1c012", 1035982993643164, this, []); }
-+  get title(): string { return callSDK<string>("AccessoryLiveActivities_86f7e029fa4ce140", 1035982993643164, this, []); }
-   declare readonly $type: { "s:23AccessoryLiveActivities0aB8ActivityV7ContentV12AlertMessageV": true };
- }
- 
-@@ -109,7 +109,7 @@ ex
-```
-
-**File**: `packages/one/ios-bindings/AccessoryNotifications.ts` (modified, +68/-68)
-```diff
-@@ -32,77 +32,77 @@ export class AccessoryNotification extends SDKHandle {
-    * let attributes: AccessoryNotification.Attributes
-    * @availability iOS 26.5+
-    */
--  get attributes(): AccessoryNotification_Attributes { return callSDK<AccessoryNotification_Attributes>("AccessoryNotifications_b66fbf8c99a1c012", 1227217026595009, this, []); }
-+  get attributes(): AccessoryNotification_Attributes { return callSDK<AccessoryNotification_Attributes>("AccessoryNotifications_86f7e029fa4ce140", 1227217026595009, this, []); }
-   /**
-    * init(identifier: AccessoryNotification.Identifier, sourceName: String, deliveryDate: Date, displayDate: AccessoryNotification.DisplayDate = .deliveryDate, title: String? = nil, subtitle: String? = nil, body: NSAttributedString? = nil, threadIdentifier: String? = nil, attributes: AccessoryNotification.Attributes = [], summary: NSAttributedString? = nil, actions: [AccessoryNotification.Action] = [], sourceIcon: AccessoryNotification.File? = nil, contextIcon: AccessoryNotification.File? = nil, attachments: [AccessoryNotification.File] = [])
-    * @availability iOS 26.5+
-    */
--  static init(identifier: AccessoryNotification_Identifier, sourceName: string, deliveryDate: globalThis.Date, displayDate?: AccessoryNotification_DisplayDate, title?: (string) | null, subtitle?: (string) | null, body?: $SDK0, threadIdentifier?: (string) | null, attributes?: AccessoryNotification_Attributes, summary?: $SDK0, actions?: $SDK1, sourceIcon?: $SDK2, contextIcon?: $SDK2, attachments?: $SDK3): AccessoryNotification { return callSDK<AccessoryNotification>("AccessoryNotifications_b66fbf8c99a1c012", 3801282590515458, undefined, [identifier, sourceName, deliveryDate, displayDate, title, subtitle, body, threadIdentifier, attributes, summary, actions, sourceIcon, contextIcon, attachments]); }
-+  static init(identifier: AccessoryNotification_Identifier, sourceName: string, deliveryDate: globalThis.Date, displayDate?: AccessoryNotification_DisplayDate, title?: (string) | null, subtitle?: (string) | null, body?: $SDK0, threadIdentifier?: (string) | null, attributes?: AccessoryNotification_Attributes, summary?: $SDK0, actions?: $SDK1, sourceIcon?: $SDK2, contextIcon?: $SDK2, attachments?: $SDK3): AccessoryNotification { return callSDK<AccessoryNotification>("AccessoryNotifications_86f7e029fa4ce140", 3801282590515458, undefined, [identifier, sourceName, deliveryDate, displayDate, title, subtitle, body, threadIdentifier, attributes, summary, actions, sourceIcon, contextIcon, attachments]); }
-   /**
-    * let identifier: AccessoryNotification.Identifier
-    * @availability iOS 26.5+
-    */
--  get identifier(): AccessoryNotification_Identifier { return callSDK<AccessoryNotification_Identifier>("AccessoryNotifications_b66fbf8c99a1c012", 383882640483565, this, []); }
-+  get identifier(): AccessoryNotification_Identifier { return callSDK<AccessoryNotification_Identifier>("AccessoryNotifications_86f7e029fa4ce140", 383882640483565, this, []); }
-   /**
-    * let sourceIcon: AccessoryNotification.File?
-    * @availability iOS 26.5+
-    */
--  get sourceIcon(): $SDK2 { return callSDK<$SDK2>("AccessoryNotifications_b66fbf8c99a1c012", 2625070366122517, this, []); }
-+  get sourceIcon(): $SDK2 { return callSDK<$SDK2>("AccessoryNotifications_86f7e029fa4ce140", 2625070366122517, this, []); }
-   /**
-    * let sourceName: String
-    * @availability iOS 26.5+
-    */
--  get sourceName(): string { return callSDK<string>("AccessoryNotifications_b66fbf8c99a1c012", 864514208070037, this, []); }
-+  get sourceName(): string { return callSDK<string>("AccessoryNotifications_86f7e029fa4ce140", 864514208070037, this, []); }
-   /**
-    * let attachments: [AccessoryNotification.File]
-    * @availability iOS 26.5+
-    */
--  get attachments(): $SDK3 { return callSDK<$SDK3>("AccessoryNotifications_b66fbf8c99a1c012", 2502421713953149, this, []); }
-+  get attachments(): $SDK3 { return callSDK<$SDK3>("AccessoryNotifications_86f7e029fa4ce140", 2502421713953149, this, []); }
-   /**
-    * let contextIcon: AccessoryNotification.File?
-    * @availability iOS 26.5+
-    */
--  get contextIcon(): $SDK2 { return callSDK<$SDK2>("AccessoryNotifications_b66fbf8c99a1c012", 1817948872673576, this, []); }
-+  get contextIcon(): $SDK2 { return callSDK<$SDK2>("AccessoryNotifications_86f7e029fa4ce140", 1817948872673576, this, []); }
-   /**
-    * let displayDate: AccessoryNotification.DisplayDate
-    * @availability iOS 26.5+
-    */
--  get displayDate(): AccessoryNotification_DisplayDate { return callSDK<AccessoryNotification_DisplayDate>("AccessoryNotifications_b66fbf8c99a1c012", 2241925399924083, this, []); }
-+  get displayDate(): AccessoryNotification_DisplayDate { return callSDK<AccessoryNotification_DisplayDate>("AccessoryNotifications_86f7e029fa4ce140", 2241925399924083, this, []); }
-   /**
-    * let deliveryDate: Date
-    * @availability iOS 26.5+
-    */
--  get deliveryDate(): globalThis.Date { return callSDK<globalThis.Date>("AccessoryNotifications_b66fbf8c99a1c
-```
-
-**File**: `packages/one/ios-bindings/AccessorySetupKit.ts` (modified, +143/-143)
-```diff
-@@ -19,42 +19,42 @@ type $SDK7 = (ASPropertyCompareString) | null;
-  */
- export class ASAccessory extends SDKHandle {
-   /** init() */
--  static init(): ASAccessory { return callSDK<ASAccessory>("AccessorySetupKit_b66fbf8c99a1c012", 3669024516710039, undefined, []); }
-+  static init(): ASAccessory { return callSDK<ASAccessory>("AccessorySetupKit_86f7e029fa4ce140", 3669024516710039, undefined, []); }
-   /**
-    * var ssid: String? { get }
-    * @availability iOS 18.0+
-    */
--  get ssid(): (string) | null { return callSDK<(string) | null>("AccessorySetupKit_b66fbf8c99a1c012", 2914734530532972, this, []); }
-+  get ssid(): (string) | null { return callSDK<(string) | null>("AccessorySetupKit_86f7e029fa4ce140", 2914734530532972, this, []); }
-   /**
-    * var bluetoothIdentifier: UUID? { get }
-    * @availability iOS 18.0+
-    */
--  get bluetoothIdentifier(): (string) | null { return callSDK<(string) | null>("AccessorySetupKit_b66fbf8c99a1c012", 1911175871666637, this, []); }
-+  get bluetoothIdentifier(): (string) | null { return callSDK<(string) | null>("AccessorySetupKit_86f7e029fa4ce140", 1911175871666637, this, []); }
-   /**
-    * var bluetoothTransportBridgingIdentifier: Data? { get }
-    * @availability iOS 18.0+
-    */
--  get bluetoothTransportBridgingIdentifier(): (ArrayBuffer) | null { return callSDK<(ArrayBuffer) | null>("AccessorySetupKit_b66fbf8c99a1c012", 1103404994235907, this, []); }
-+  get bluetoothTransportBridgingIdentifier(): (ArrayBuffer) | null { return callSDK<(ArrayBuffer) | null>("AccessorySetupKit_86f7e029fa4ce140", 1103404994235907, this, []); }
-   /**
-    * @NSCopying var descriptor: ASDiscoveryDescriptor { get }
-    * @availability iOS 18.0+
-    */
--  get descriptor(): ASDiscoveryDescriptor { return callSDK<ASDiscoveryDescriptor>("AccessorySetupKit_b66fbf8c99a1c012", 7373525458804, this, []); }
-+  get descriptor(): ASDiscoveryDescriptor { return callSDK<ASDiscoveryDescriptor>("AccessorySetupKit_86f7e029fa4ce140", 7373525458804, this, []); }
-   /**
-    * var displayName: String { get }
-    * @availability iOS 18.0+
-    */
--  get displayName(): string { return callSDK<string>("AccessorySetupKit_b66fbf8c99a1c012", 1602967468563506, this, []); }
-+  get displayName(): string { return callSDK<string>("AccessorySetupKit_86f7e029fa4ce140", 1602967468563506, this, []); }
-   /**
-    * var state: ASAccessory.AccessoryState { get }
-    * @availability iOS 18.0+
-    */
--  get state(): ASAccessory_AccessoryState { return callSDK<ASAccessory_AccessoryState>("AccessorySetupKit_b66fbf8c99a1c012", 1768942552787339, this, []); }
-+  get state(): ASAccessory_AccessoryState { return callSDK<ASAccessory_AccessoryState>("AccessorySetupKit_86f7e029fa4ce140", 1768942552787339, this, []); }
-   /**
-    * var wifiAwarePairedDeviceID: ASAccessory.WiFiAwarePairedDeviceID { get }
-    * @availability iOS 26.0+
-    */
--  get wifiAwarePairedDeviceID(): number { return callSDK<number>("AccessorySetupKit_b66fbf8c99a1c012", 1374554358110187, this, []); }
-+  get wifiAwarePairedDeviceID(): number { return callSDK<number>("AccessorySetupKit_86f7e029fa4ce140", 1374554358110187, this, []); }
-   declare readonly $type: { "c:objc(cs)ASAccessory": true; "c:objc(cs)NSObject": true };
-   declare readonly $observable: { "ssid": true; "bluetoothIdentifier": true; "bluetoothTransportBridgingIdentifier": true; "descriptor": true; "displayName": true; "state": true; "wifiAwarePairedDeviceID": true };
- }
-@@ -64,17 +64,17 @@ export type ASAccessory_AccessoryState = "unauthorized" | "awaitingAuthorization
- 
- export const ASAccessory_AccessoryState = {
-   /** init?(rawValue: Int) */
--  init(rawValue: number): (ASAccessory_AccessoryState) | null { return callSDK<(ASAccessory_AccessoryState) | null>("AccessorySetupKit_b66fbf8c99a1c012", 804282956779045, undefined, [rawValue]); }
-+  init(rawValue: number): (ASAccessory_AccessoryState) | null { return callSDK<(ASAccessory_AccessoryState) | null>("AccessorySetupKit_86f7e029fa4ce140", 804282956779045, undefined, [rawValue]); }
- };
- 
- /** struct RenameOptions */
- export type ASAccessory_RenameOptions = Array<"ssid">;
- 
- export const ASAccessory_RenameOptions = {
-   /** static var ssid: ASAccessory.RenameOptions { get } */
--  get ssid(): ASAccessory_RenameOptions { return callSDK<ASAccessory_RenameOptions>("AccessorySetupKit_b66fbf8c99a1c012", 1749257941837886, undefined, []); },
-+  get ssid(): ASAccessory_RenameOptions { return callSDK<ASAccessory_RenameOptions>("AccessorySetupKit_86f7e029fa4ce140", 1749257941837886, undefined, []); },
-   /** init(rawValue: UInt) */
--  init(rawValue: number): ASAccessory_RenameOptions { return callSDK<ASAccessory_RenameOptions>("AccessorySetupKit_b66fbf8c99a1c012", 689685456475229, undefined, [rawValue]); }
-+  init(rawValue: number): ASAccessory_RenameOptions { return callSDK<ASAccessory_RenameOptions>("AccessorySetupKit_86f7e029fa4ce140", 689685456475229, undefined, [rawValue]); }
- };
- 
- /** struct SupportOptions */
-@@ -85,13 +85,13 @@ export const ASAccessory_Sup
-```
-
-**File**: `packages/one/ios-bindings/AccessoryTransportExtension.ts` (modified, +55/-55)
-```diff
-@@ -55,12 +55,12 @@ export class AccessoryMessage extends SDKHandle {
-    * let id: UUID
-    * @availability iOS 26.5+
-    */
--  get id(): string { return callSDK<string>("AccessoryTransportExtension_b66fbf8c99a1c012", 774128166234715, this, []); }
-+  get id(): string { return callSDK<string>("AccessoryTransportExtension_86f7e029fa4ce140", 774128166234715, this, []); }
-   /**
-    * let payloads: [AccessoryMessage.Payload]
-    * @availability iOS 26.5+
-    */
--  get payloads(): Array<AccessoryMessage_Payload> { return callSDK<Array<AccessoryMessage_Payload>>("AccessoryTransportExtension_b66fbf8c99a1c012", 779717261205513, this, []); }
-+  get payloads(): Array<AccessoryMessage_Payload> { return callSDK<Array<AccessoryMessage_Payload>>("AccessoryTransportExtension_86f7e029fa4ce140", 779717261205513, this, []); }
-   declare readonly $type: { "s:27AccessoryTransportExtension0A7MessageV": true };
- }
- 
-@@ -73,22 +73,22 @@ export class AccessoryMessage_Builder extends SDKHandle {
-    * static func buildEither(first component: AccessoryMessage) -> AccessoryMessage
-    * @availability iOS 26.5+
-    */
--  static buildEitherFirst(component: AccessoryMessage): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_b66fbf8c99a1c012", 2855712208762146, undefined, [component]); }
-+  static buildEitherFirst(component: AccessoryMessage): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_86f7e029fa4ce140", 2855712208762146, undefined, [component]); }
-   /**
-    * static func buildEither(second component: AccessoryMessage) -> AccessoryMessage
-    * @availability iOS 26.5+
-    */
--  static buildEitherSecond(component: AccessoryMessage): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_b66fbf8c99a1c012", 854258817505985, undefined, [component]); }
-+  static buildEitherSecond(component: AccessoryMessage): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_86f7e029fa4ce140", 854258817505985, undefined, [component]); }
-   /**
-    * static func buildOptional(_ component: AccessoryMessage?) -> AccessoryMessage
-    * @availability iOS 26.5+
-    */
--  static buildOptional(component?: (AccessoryMessage) | null): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_b66fbf8c99a1c012", 3921256350998921, undefined, [component]); }
-+  static buildOptional(component?: (AccessoryMessage) | null): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_86f7e029fa4ce140", 3921256350998921, undefined, [component]); }
-   /**
-    * static func buildExpression(_ expression: AccessoryMessage.Payload) -> AccessoryMessage
-    * @availability iOS 26.5+
-    */
--  static buildExpression(expression: AccessoryMessage_Payload): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_b66fbf8c99a1c012", 2490227912391446, undefined, [expression]); }
-+  static buildExpression(expression: AccessoryMessage_Payload): AccessoryMessage { return callSDK<AccessoryMessage>("AccessoryTransportExtension_86f7e029fa4ce140", 2490227912391446, undefined, [expression]); }
-   declare readonly $type: { "s:27AccessoryTransportExtension0A7MessageV7BuilderV": true };
- }
- 
-@@ -113,17 +113,17 @@ export class AccessoryMessage_Payload extends SDKHandle {
-    * let data: Data
-    * @availability iOS 26.5+
-    */
--  get data(): ArrayBuffer { return callSDK<ArrayBuffer>("AccessoryTransportExtension_b66fbf8c99a1c012", 1235276067093849, this, []); }
-+  get data(): ArrayBuffer { return callSDK<ArrayBuffer>("AccessoryTransportExtension_86f7e029fa4ce140", 1235276067093849, this, []); }
-   /**
-    * init(transport: AccessoryTransport = .bluetooth, data: Data)
-    * @availability iOS 26.5+
-    */
--  static init(transport: AccessoryTransport, data: ArrayBuffer): AccessoryMessage_Payload { return callSDK<AccessoryMessage_Payload>("AccessoryTransportExtension_b66fbf8c99a1c012", 2491419463238566, undefined, [transport, data]); }
-+  static init(transport: AccessoryTransport, data: ArrayBuffer): AccessoryMessage_Payload { return callSDK<AccessoryMessage_Payload>("AccessoryTransportExtension_86f7e029fa4ce140", 2491419463238566, undefined, [transport, data]); }
-   /**
-    * let transport: AccessoryTransport
-    * @availability iOS 26.5+
-    */
--  get transport(): AccessoryTransport { return callSDK<AccessoryTransport>("AccessoryTransportExtension_b66fbf8c99a1c012", 1636390874581994, this, []); }
-+  get transport(): AccessoryTransport { return callSDK<AccessoryTransport>("AccessoryTransportExtension_86f7e029fa4ce140", 1636390874581994, this, []); }
-   declare readonly $type: { "s:27AccessoryTransportExtension0A7MessageV7PayloadV": true };
- }
- 
-@@ -144,17 +144,17 @@ export class AccessorySecuritySession extends SDKHandle {
-    * func sendSecurityMessage(_ message: SecurityMessage) throws(AccessorySecuritySession.Error)
-    * @availability iOS 26.5+
-    */
--  sendSecurityMessage(message: SecurityMessage): void { 
-```
-
-**File**: `packages/one/ios-bindings/Accounts.ts` (modified, +73/-73)
-```diff
-@@ -19,47 +19,47 @@ export class ACAccount extends SDKHandle {
-    * @availability iOS 6.0+
-    * @deprecated iOS 15.0
-    */
--  static init(type?: (ACAccountType) | null): ACAccount { return callSDK<ACAccount>("Accounts_b66fbf8c99a1c012", 3553497133647124, undefined, [type]); }
-+  static init(type?: (ACAccountType) | null): ACAccount { return callSDK<ACAccount>("Accounts_86f7e029fa4ce140", 3553497133647124, undefined, [type]); }
-   /**
-    * var accountDescription: String! { get set }
-    * @availability iOS 6.0+
-    * @deprecated iOS 15.0
-    */
--  get accountDescription(): (string) | null { return callSDK<(string) | null>("Accounts_b66fbf8c99a1c012", 3793422184587810, this, []); }
--  set accountDescription(value: (string) | null) { callSDK<void>("Accounts_b66fbf8c99a1c012", 1094570912781220, this, [value]); }
-+  get accountDescription(): (string) | null { return callSDK<(string) | null>("Accounts_86f7e029fa4ce140", 3793422184587810, this, []); }
-+  set accountDescription(value: (string) | null) { callSDK<void>("Accounts_86f7e029fa4ce140", 1094570912781220, this, [value]); }
-   /**
-    * var accountType: ACAccountType! { get set }
-    * @availability iOS 6.0+
-    * @deprecated iOS 15.0
-    */
--  get accountType(): (ACAccountType) | null { return callSDK<(ACAccountType) | null>("Accounts_b66fbf8c99a1c012", 3193494046219139, this, []); }
--  set accountType(value: (ACAccountType) | null) { callSDK<void>("Accounts_b66fbf8c99a1c012", 1535889853684466, this, [value]); }
-+  get accountType(): (ACAccountType) | null { return callSDK<(ACAccountType) | null>("Accounts_86f7e029fa4ce140", 3193494046219139, this, []); }
-+  set accountType(value: (ACAccountType) | null) { callSDK<void>("Accounts_86f7e029fa4ce140", 1535889853684466, this, [value]); }
-   /**
-    * var credential: ACAccountCredential! { get set }
-    * @availability iOS 6.0+
-    * @deprecated iOS 15.0
-    */
--  get credential(): $SDK0 { return callSDK<$SDK0>("Accounts_b66fbf8c99a1c012", 2489381869882901, this, []); }
--  set credential(value: $SDK0) { callSDK<void>("Accounts_b66fbf8c99a1c012", 2892676595699668, this, [value]); }
-+  get credential(): $SDK0 { return callSDK<$SDK0>("Accounts_86f7e029fa4ce140", 2489381869882901, this, []); }
-+  set credential(value: $SDK0) { callSDK<void>("Accounts_86f7e029fa4ce140", 2892676595699668, this, [value]); }
-   /**
-    * weak var identifier: NSString! { get }
-    * @availability iOS 6.0+
-    * @deprecated iOS 15.0
-    */
--  get identifier(): (_Foundation_NSString) | null { return callSDK<(_Foundation_NSString) | null>("Accounts_b66fbf8c99a1c012", 2209586596200436, this, []); }
-+  get identifier(): (_Foundation_NSString) | null { return callSDK<(_Foundation_NSString) | null>("Accounts_86f7e029fa4ce140", 2209586596200436, this, []); }
-   /**
-    * var userFullName: String! { get }
-    * @availability iOS 7.0+
-    * @deprecated iOS 15.0
-    */
--  get userFullName(): (string) | null { return callSDK<(string) | null>("Accounts_b66fbf8c99a1c012", 94016183291278, this, []); }
-+  get userFullName(): (string) | null { return callSDK<(string) | null>("Accounts_86f7e029fa4ce140", 94016183291278, this, []); }
-   /**
-    * var username: String! { get set }
-    * @availability iOS 6.0+
-    * @deprecated iOS 15.0
-    */
--  get username(): (string) | null { return callSDK<(string) | null>("Accounts_b66fbf8c99a1c012", 171930232256420, this, []); }
--  set username(value: (string) | null) { callSDK<void>("Accounts_b66fbf8c99a1c012", 2317682055580322, this, [value]); }
-+  get username(): (string) | null { return callSDK<(string) | null>("Accounts_86f7e029fa4ce140", 171930232256420, this, []); }
-+  set username(value: (string) | null) { callSDK<void>("Accounts_86f7e029fa4ce140", 2317682055580322, this, [value]); }
-   declare readonly $type: { "c:objc(cs)ACAccount": true; "c:objc(cs)NSObject": true };
-   declare readonly $observable: { "accountDescription": true; "accountType": true; "credential": true; "identifier": true; "userFullName": true; "username": true };
- }
-@@ -75,20 +75,20 @@ export class ACAccountCredential extends SDKHandle {
-    * @availability iOS 6.0+
-    * @deprecated iOS 15.0
-    */
--  static initOAuth2TokenRefreshTokenExpiryDate(token?: (string) | null, refreshToken?: (string) | null, expiryDate?: (globalThis.Date) | null): ACAccountCredential { return callSDK<ACAccountCredential>("Accounts_b66fbf8c99a1c012", 4499833021511138, undefined, [token, refreshToken, expiryDate]); }
-+  static initOAuth2TokenRefreshTokenExpiryDate(token?: (string) | null, refreshToken?: (string) | null, expiryDate?: (globalThis.Date) | null): ACAccountCredential { return callSDK<ACAccountCredential>("Accounts_86f7e029fa4ce140", 4499833021511138, undefined, [token, refreshToken, expiryDate]); }
-   /**
-    * init!(oAuthToken token: String!, tokenSecret secret: String!)
-    * @availability iOS 6.0+
-    * @deprecated iOS 15.0
-    */
--  static initOAuthTokenTokenSecret(token?: (string) | null, secret?: (string) | null): ACAccountCredential { return 
+@@ -182,6 +217,9 @@ function RootLayoutRenderer({
+     <>
+       <head key="head" {...headProps}>
+         <DevHead />
++        <ServerContextScript />
++        {headScripts.metas}
++        {headScripts.scripts}
+         {serverContext?.cssContents?.length || serverContext?.cssInlineCount
+           ? // inline/mixed CSS: render each entry as <style> (if content) or <link>
+             serverContext?.cssContents
+@@ -204,8 +242,7 @@ function RootLayoutRenderer({
+           : serverContext?.css?.map((file) => (
+               <link key={file} rel="stylesheet" href={file} />
+             ))}
+-        <ServerContextScript />
+-        {headChildren}
++        {headScripts.rest}
+       </head>
+       <body key="body" suppressHydrationWarning {...bodyProps}>
+         <SafeAreaProvider initialMetrics={SSR_SAFE_METRICS}>
 ```
 
 ---
 
-### Incident Patch 2: `e16b55a0` (2026-11-09)
-**Commit Message**: fix(vxrn): serve native dev assets requested with a platform that has no engine (#1170)
+### Incident Patch 2: `030daa2a` (2026-11-14)
+**Commit Message**: fix(one): native production loads the root layout before the router shell (#1226)
 
-* fix(vxrn): serve native dev assets requested with a platform that has no engine
+* fix(one): native production loads the root layout before the router shell
 
-Validation: new reactNativeDevServer test fails with 404 before the change and passes after; not run against the Team Machine repro app (its worktree no longer exists).
+One.Updates counts a launch as good at React Native's first native view, which is the router shell, so a root layout that failed to load rendered empty and its update was never rolled back.
 
-* fix(vxrn): look native assets up across engines, requested platform first
+Validation: Contrast rv139 Release sim with a planted update whose One SDK generation mismatches the binary: before, white screen and the update counted a success; after, the load error is fatal before the first view and One.Updates rolls back to the embedded bundle in the same launch. Normal launch, 5 alternating cold-launch pairs to root layout commit: control median 1306 ms, this 1289 ms.
+Team-Machine-Session: p258464
 
-Validation: reactNativeDevServer test passes.
+* fix(one): record a falsy route load rejection as an error
 
-**File**: `packages/vxrn/src/plugins/reactNativeDevServer.test.ts` (modified, +63/-0)
+Validation: tsc --noEmit in packages/one; rollback repro rerun on the rv139 sim.
+Team-Machine-Session: p258464
+
+* chore(one): regenerate route loader types
+
+Team-Machine-Session: p258464
+
+**File**: `packages/one/src/Root.tsx` (modified, +9/-1)
 ```diff
-@@ -146,3 +146,66 @@ it('starts the native multipart response before bundling finishes', async () =>
-     await rm(root, { recursive: true, force: true })
-   }
- })
-+
-+it('serves an asset outside the app root for a platform without its own engine', async () => {
-+  const workspace = await mkdtemp(join(tmpdir(), 'native-asset-http-'))
-+  const root = join(workspace, 'app')
-+  const rnRoot = join(root, 'node_modules/react-native')
-+  await mkdir(join(rnRoot, 'src'), { recursive: true })
-+  await mkdir(join(workspace, 'assets'))
-+  await mkdir(join(root, 'node_modules/one'))
-+  await writeFile(join(root, 'node_modules/one/package.json'), '{"name":"one"}')
-+  await writeFile(
-+    join(rnRoot, 'package.json'),
-+    JSON.stringify({
-+      name: 'react-native',
-+      exports: { './asset-registry': './src/asset-registry.js' },
-+    })
-+  )
-+  await writeFile(
-+    join(rnRoot, 'src/asset-registry.js'),
-+    'const assets = []; export function registerAsset(asset) { return assets.push(asset) }; export function getAssetByID(id) { return assets[id - 1] }'
-+  )
-+  await writeFile(join(workspace, 'assets/logo.png'), 'logo')
-+  await writeFile(
-+    join(root, 'entry.js'),
-+    "import logo from '../assets/logo.png'; import { getAssetByID } from 'react-native/asset-registry'; globalThis.logo = getAssetByID(logo)"
-+  )
-+  const previousPlugins = globalThis.__vxrnAddNativePlugins
-+  globalThis.__vxrnAddNativePlugins = () => [
-+    {
-+      name: 'asset-fixture-entry',
-+      transform(_code, id) {
-+        if (id.endsWith('/__virtual-native-entry.tsx')) return "import './entry.js'"
-+      },
-+    },
-+  ]
-+  const server = await createServer({
-+    root,
-+    configFile: false,
-+    plugins: [createReactNativeDevServerPlugin()],
-+    server: { host: '127.0.0.1', port: 0 },
-+  })
-+  try {
-+    await server.listen()
-+    const { port } = server.httpServer!.address() as { port: number }
-+    const origin = `http://127.0.0.1:${port}`
-+    const bundle = await fetch(`${origin}/index.bundle?platform=macos`)
-+    const code = await bundle.text()
-+    expect(bundle.status, code.slice(0, 800)).toBe(200)
-+    const hash = code.match(/hash["']?\s*:\s*["']([0-9a-f]{32})["']/)![1]
-+    const location = code.match(/httpServerLocation["']?\s*:\s*["']([^"']+)["']/)![1]
-+    // react-native internals resolve to Platform.ios.js on macOS, so the
-+    // asset URL carries platform=ios although only a macos engine exists
-+    const url = `${origin}${location}/logo.png?platform=ios`
-+    expect(location).toBe('/assets/_/assets')
-+    const served = await fetch(`${url}&hash=${hash}`)
-+    expect(served.status).toBe(200)
-+    expect(await served.text()).toBe('logo')
-+    expect((await fetch(`${url}&hash=stale`)).status).toBe(404)
-+  } finally {
-+    await server.close()
-+    globalThis.__vxrnAddNativePlugins = previousPlugins
-+    await rm(workspace, { recursive: true, force: true })
+@@ -23,7 +23,7 @@ import { handleNavigationContainerStateChange } from './router/router'
+ import { ServerLocationContext } from './router/serverLocationContext'
+ import { LaunchScreenRelease } from './router/LaunchScreenRelease'
+ import { useInitializeOneRouter } from './router/useInitializeOneRouter'
+-import { useViteRoutes } from './router/useViteRoutes'
++import { getRouteLoadError, useViteRoutes } from './router/useViteRoutes'
+ import type { GlobbedRouteImports } from './types'
+ import { evictOldest } from './utils/evictOldest'
+ import { ServerRenderID } from './useServerHeadInsertion'
+@@ -131,6 +131,14 @@ export function Root(props: RootProps) {
+ 
+   onRenderId?.(id)
+ 
++  // One.Updates counts a launch as good once react native shows its first
++  // native view, which is the shell below. load the root layout before it, so
++  // an update whose root layout cannot load fails first and rolls back.
++  if (isNative && process.env.NODE_ENV === 'production' && store.routeNode) {
++    const loadError = getRouteLoadError(store.routeNode.loadRoute())
++    if (loadError) throw loadError
 +  }
-+})
++
+   // Use Vercel's global ID if available, otherwise use AsyncLocalStorage
+   const value = process.env.VERCEL
+     ? globalThis['__oneGlobalContextId']
 ```
 
-**File**: `packages/vxrn/src/plugins/reactNativeDevServer.ts` (modified, +12/-3)
+**File**: `packages/one/src/router/useViteRoutes.tsx` (modified, +11/-3)
 ```diff
-@@ -276,8 +276,16 @@ export function createReactNativeDevServerPlugin(
+@@ -10,6 +10,13 @@ import { hmrImport } from './hmrImport'
+ let lastVersion = 0
+ let context
  
-         const url = new URL(rawUrl, `http://${req.headers.host || 'localhost'}`)
++// the stand-in module a route gets when its import failed, mapped to that error.
++const routeLoadErrors = new WeakMap<object, Error>()
++
++export function getRouteLoadError(route: unknown): Error | undefined {
++  return typeof route === 'object' && route ? routeLoadErrors.get(route) : undefined
++}
++
+ // for some reason putting it in state doesnt even re-render
+ export function useViteRoutes(
+   routes: GlobbedRouteImports,
+@@ -330,9 +337,10 @@ export function globbedRoutesToRouteContext(
+                 .catch(() => {})
+             }
+           }
+-          loadedRoutes[id] = {
+-            default: () => null,
+-          }
++          const failed = { default: () => null }
++          // a falsy rejection would read back as no error
++          routeLoadErrors.set(failed, err instanceof Error ? err : new Error(String(err)))
++          loadedRoutes[id] = failed
+           delete promises[id]
+         })
  
-+        // macOS and linux keep react-native internals on Platform.ios.js, so asset
-+        // urls say `?platform=ios` with no ios engine. ask the requested engine first, then the rest.
-         const platform = validPlatforms[url.searchParams.get('platform') || '']
--        const engine = platform ? devEngines[platform] : undefined
-+        const requested = platform ? devEngines[platform] : undefined
-+        const engines = platform
-+          ? [
-+              requested,
-+              ...Object.values(devEngines).filter((e) => e !== requested),
-+            ].filter((e) => e != null)
-+          : []
- 
-         let pathname: string
-         try {
-@@ -288,11 +296,12 @@ export function createReactNativeDevServerPlugin(
-           return
-         }
- 
-+        const hash = url.searchParams.get('hash') || undefined
-         const asset =
--          engine?.getAsset(pathname, url.searchParams.get('hash') || undefined) ??
-+          engines.map((e) => e.getAsset(pathname, hash)).find(Boolean) ??
-           getProjectAssetFile(root, pathname)
-         if (!asset) {
--          if (!engine) return next()
-+          if (!engines.length) return next()
-           res.writeHead(404, { 'Content-Type': 'text/plain' })
-           res.end('Native asset not found')
-           return
+```
+
+**File**: `packages/one/types/router/useViteRoutes.d.ts` (modified, +1/-0)
+```diff
+@@ -1,5 +1,6 @@
+ import type { GlobbedRouteImports } from '../types';
+ import type { One } from '../vite/types';
++export declare function getRouteLoadError(route: unknown): Error | undefined;
+ export declare function useViteRoutes(routes: GlobbedRouteImports, routerRoot: string, options?: One.RouteOptions, version?: number): any;
+ export declare function registerPreloadedRoute(key: string, module: any): void;
+ export declare function getPreloadedModule(key: string): any;
 ```
 
 ---
 
-### Incident Patch 3: `c894ac22` (2026-11-11)
-**Commit Message**: fix(one): load the optional reanimated and worklets peers only when installed
+### Incident Patch 3: `c11fcfd3` (2026-11-14)
+**Commit Message**: fix(one): fail package build when ios-bindings mismatch sdk generator (#1224)
 
-Stack screens skip the shared transition boundary without reanimated, and SyncSwitch needs worklets only for onCheckedChangeSync.
+Validation: CI checks and tests green (11/11).
 
-Team-Machine-Session: m116428
-
-**File**: `packages/one/src/layouts/stack-navigator.tsx` (modified, +19/-8)
+**File**: `packages/one/codegen/sdk/build.ts` (modified, +3/-0)
 ```diff
-@@ -1,7 +1,6 @@
- import { createNativeStackNavigator } from '@react-navigation/native-stack'
- import { useIsFocused } from '@react-navigation/native'
- import type { ReactElement, ReactNode } from 'react'
--import { SharedTransitionBoundary } from 'react-native-reanimated'
- 
- /**
-  * Returns a Stack navigator factory. On native this is the stock
-@@ -10,23 +9,35 @@ import { SharedTransitionBoundary } from 'react-native-reanimated'
-  */
- export const createStackNavigator = createNativeStackNavigator
- 
-+// reanimated is an optional peer, so an app without it gets no shared transitions
-+let SharedTransitionBoundary:
-+  | typeof import('react-native-reanimated').SharedTransitionBoundary
-+  | undefined
-+try {
-+  SharedTransitionBoundary = require('react-native-reanimated').SharedTransitionBoundary
-+} catch {}
-+
- // reanimated matches sharedTransitionTag views only inside an active boundary,
- // so the focused screen's boundary is the one a push or pop morphs into
--function SharedTransitionScreen({ children }: { children: ReactNode }) {
--  return (
--    <SharedTransitionBoundary isActive={useIsFocused()}>
--      {children}
--    </SharedTransitionBoundary>
--  )
-+function SharedTransitionScreen({
-+  Boundary,
-+  children,
-+}: {
-+  Boundary: NonNullable<typeof SharedTransitionBoundary>
-+  children: ReactNode
-+}) {
-+  return <Boundary isActive={useIsFocused()}>{children}</Boundary>
+@@ -78,6 +78,9 @@ if (import.meta.main) {
+   const { path, fingerprint } = await buildSdkApp(outdir)
+   console.log(`sdk app: ${path} ${fingerprint.slice(0, 16)}`)
+   if (outdir === undefined) {
++    const manifest = JSON.parse(readFileSync(join(dir, '../../ios-bindings/manifest.json'), 'utf8'))
++    if (manifest.generation !== fingerprint.slice(0, 16))
++      throw new Error(`ios-bindings generation ${manifest.generation} does not match the sdk generator ${fingerprint.slice(0, 16)}; regenerate the facades before building`)
+     console.log(`ios facades: ${await buildIosFacades()} compiled`)
+   }
  }
- 
- export function getStackNavigatorProps<Args extends { children: ReactElement }>(
-   _children: ReactNode,
-   screenLayout?: (props: Args) => ReactElement
- ) {
-+  const Boundary = SharedTransitionBoundary
-+  if (!Boundary) return { screenLayout }
-   return {
-     screenLayout: (props: Args) => (
--      <SharedTransitionScreen>
-+      <SharedTransitionScreen Boundary={Boundary}>
-         {screenLayout ? screenLayout(props) : props.children}
-       </SharedTransitionScreen>
-     ),
-```
-
-**File**: `packages/one/src/platform/compose.android.tsx` (modified, +13/-3)
-```diff
-@@ -1,4 +1,3 @@
--import { runOnUISync, isWorkletFunction } from 'react-native-worklets'
- import { composeRangeDay, validateComposeFamily } from './composeFamilyValidation'
- import { Children, createContext, forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState, type ReactNode } from 'react'
- import { Image as ReactNativeImage, StyleSheet, type ColorValue } from 'react-native'
-@@ -2251,6 +2250,12 @@ const Shape = {
-   Polygon: shape('polygon'),
-   RoundedCorner: shape('roundedCorner'),
- }
-+// worklets is an optional peer, needed only for SyncSwitch's onCheckedChangeSync
-+let worklets: typeof import('react-native-worklets') | undefined
-+try {
-+  worklets = require('react-native-worklets')
-+} catch {}
-+
- let nextSyncCallback = 1
- function SyncSwitch({
-   isOn,
-@@ -2259,10 +2264,15 @@ function SyncSwitch({
-   ...props
- }: ComposeSyncSwitchProps) {
-   validateComposeFamily('syncswitch', { isOn, enabled })
--  if (onCheckedChangeSync !== undefined && !isWorkletFunction(onCheckedChangeSync))
--    throw new Error('SyncSwitch onCheckedChangeSync must be a worklet')
-+  if (onCheckedChangeSync !== undefined) {
-+    if (!worklets) throw new Error('SyncSwitch onCheckedChangeSync requires react-native-worklets')
-+    if (!worklets.isWorkletFunction(onCheckedChangeSync))
-+      throw new Error('SyncSwitch onCheckedChangeSync must be a worklet')
-+  }
-   const [callbackId] = useState(() => nextSyncCallback++)
-   useEffect(() => {
-+    if (!worklets) return
-+    const { runOnUISync } = worklets
-     runOnUISync(() => {
-       'worklet'
-       const globals = globalThis as unknown as {
-```
-
-**File**: `packages/one/tests/setupNativeState.ts` (modified, +10/-0)
-```diff
-@@ -3,6 +3,8 @@
- // release invalidation). loaded as a vitest setup file so every suite
- // starts with a fresh global; the installer is re-exported so tests can
- // restore it after removal.
-+import Module, { createRequire } from 'node:module'
-+import * as worklets from '../src/__mocks__/react-native-worklets'
- import { createMemorySyncFactory } from '../src/platform/syncMemoryHost'
- import type { NativeSyncHost } from '../src/platform/syncNative'
- 
-@@ -15,6 +17,14 @@ export function installMockNativeSync(): void {
- 
- installMockNativeSync()
- 
-+// compose requires its optional worklets peer, which a vitest alias cannot reach
-+const require = createRequire(import.meta.url)
-+const workletsPath = require.resolve('react-native-worklets')
-+const workletsModule = new Module(workletsPath)
-+workletsModule.exports = worklets
-+workletsModule.loaded = true
-+require.cache[workletsPath] = workletsModule
-+
- // creates a handle whose native entry the test can write the way a native edit
- // does: the entry changes before the view's event reaches JS, and only the
- // entry's onChange hears it.
-```
-
-**File**: `packages/one/vitest.config.ts` (modified, +0/-4)
-```diff
-@@ -111,10 +111,6 @@ export default defineConfig({
-             // a nested react copy breaks hooks rendered through react-test-renderer
-             { find: /^react$/, replacement: react },
-             { find: /^react-native$/, replacement: reactNativeWeb },
--            {
--              find: /^react-native-worklets$/,
--              replacement: resolve(__dirname, 'src/__mocks__/react-native-worklets.ts'),
--            },
-             {
-               find: /^react-native\/Libraries\/Utilities\/codegenNativeCommands$/,
-               replacement: resolve(__dirname, 'src/__mocks__/codegenNativeCommands.ts'),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1186** (2026-11-11): feat: patch opt-out, Expo watch folders, optional reanimated, worklets and css-interop (@natew)
-- **PR #1185** (2026-11-11): fix: type Swift SDK dispatch bounds as Int64 (@natew)
-- **PR #1183** (2026-11-11): fix(one): Metro config load without tsconfig or hoisting, watcher-free release bundle, peer ranges (@natew)
-- **PR #1181** (2026-11-10): fix(vxrn): declare @react-native-community/template as optional peer dependency (@natew)
-- **PR #1179** (2026-11-10): fix(one): emit the objective-c selector a protocol requirement declares (@natew)
-- **PR #1177** (2026-11-10): fix(one): expose generated Objective-C delegate witnesses explicitly (@natew)
+- **PR #1226** (2026-11-14): fix(one): native production loads the root layout before the router shell (@natew)
+- **PR #1225** (2026-11-14): perf(one): render blocking head scripts ahead of the css links in the root layout (@natew)
+- **PR #1224** (2026-11-14): fix(one): fail the package build when ios-bindings do not match the sdk generator (@natew)
+- **PR #1223** (2026-11-14): fix(native): measure composed slots at their placed origins (@natew)
+- **PR #1221** (2026-11-14): feat(one): export EdgeFade by name (@natew)
+- **PR #1220** (2026-11-14): fix(metro): /index.assets and /index.map resolve to the main module like /index.bundle (@natew)
 
 ---
 
@@ -2784,50 +2126,32 @@ Team-Machine-Session: m116428
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. one): emit the objective-c selector a protocol requirement declares (#1179)
+## X. one): render blocking head scripts ahead of the css links in the root layout
 
 **RULE**:
-When implementing operations in `packages/one/codegen/sdk/emit-protocols.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/onestack.dev/data/docs/routing-layouts.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b3c0f93`: one): emit the objective-c selector a protocol requirement declares (#1179). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f2dc32f`: one): render blocking head scripts ahead of the css links in the root layout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/one/codegen/sdk/emit-protocols.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/onestack.dev/data/docs/routing-layouts.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { parameterType, parseType, type SwiftType, TypeParseError } from './types'
-// stdlib and foundation values that cross into an objective-c method. character
-// is a swift struct and does not. array, dictionary, set and optional are in
-// this set, and objcRepresentable still requires every generic argument.
-const BRIDGED_USRS = new Set([
-  's:Sb', 's:Si', 's:Su', 's:Sd', 's:Sf', 's:SS', 's:Ss',
-  's:s4Int8V', 's:s5Int16V', 's:s5Int32V', 's:s5Int64V',
-  's:s5UInt8V', 's:s6UInt16V', 's:s6UInt32V', 's:s6UInt64V', 's:s7Float16V',
-  's:14CoreFoundation7CGFloatV', 's:12CoreGraphics7CGFloatV',
-  's:s5ErrorP', 's:s4Voida', 's:s8AnyClassa',
-  's:10Foundation4DateV', 's:10Foundation3URLV', 's:10Foundation4DataV', 's:10Foundation4UUIDV',
-  's:Sa', 's:SD', 's:Sh', 's:Sq',
-])
+Blocking scripts in the root layout's `<head>` (no `async`, `defer` or `type="module"`) are rendered before the stylesheet links, after the `<meta>` tags, so they run as soon as the HTML parses instead of waiting for the stylesheets to download. A script that reads layout from a stylesheet, such as `getComputedStyle` or `offsetWidth`, no longer sees it loaded: wait for the `load` event or use a `defer` script for that.
 
-// c:objc(pl)Name(im)archiver:didEncodeObject: — the selector is the objective-c
-// requirement, which is not the selector swift infers from the swift name.
-function objcMethod(usr: string): { selector: string; instance: boolean } | undefined {
-  const match = /^c:objc\([^)]*\)[^(]*\((im|cm)\)([A-Za-z_][A-Za-z0-9_:]*)$/.exec(usr)
-  if (!match) return undefined
-  return { selector: match[2], instance: match[1] === '
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-import { parameterType, type SwiftType } from './types'
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b3c0f93` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f2dc32f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

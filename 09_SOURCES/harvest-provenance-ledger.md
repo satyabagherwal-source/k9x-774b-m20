@@ -9984,3 +9984,7 @@ Every entry in this ledger must capture:
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `1975aa79` | Multi-dimensional audit evidence | 2026-11-14T21:38:30.704Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `9045d150` | Multi-dimensional audit evidence | 2026-11-14T21:38:33.397Z |
 | `learn-dom-d-11540386` | `project://hf-francisring-prism` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | 2026-11-14T21:39:04.643Z |
+| `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-11-14T21:50:27.410Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `e49f6c39` | Multi-dimensional audit evidence | 2026-11-14T21:50:36.471Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `b678afa9` | Multi-dimensional audit evidence | 2026-11-14T21:50:43.554Z |
+| `learn-dom-f-053419e8` | `project://onejs-one` | `e49f6c39` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/onejs-one-learnings.md` | 2026-11-14T21:51:09.002Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T21:38:33.406Z",
+  "last_updated": "2026-11-14T21:50:43.561Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1880,14 +1880,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "content_hash": "7260c45ebe8bdcf9ac2e385b4af9603a66bbfaeb85f2a280b3665a20eff49deb",
-      "verified_at": "2026-11-09T11:04:02.298Z",
+      "content_hash": "6f07474fa387533dbadb621e1e9a1a9a5e14f0756eba21058c7a105c175b5641",
+      "verified_at": "2026-11-14T21:50:27.417Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T11:04:02.298Z"
+      "last_updated": "2026-11-14T21:50:27.417Z"
     },
     "ZHangZHengEric/Sage": {
       "repository": "ZHangZHengEric/Sage",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "fe578b2976f8ba1c3e34470d7cdbf3d9c75117c0629c1fa7e5a8950fb1ac8ceb",
-      "verified_at": "2026-11-13T15:18:40.709Z",
+      "content_hash": "9beabd2c33d5528d54005efbb3d2d7a1ea053765953c346a3c0c175fe3be55bf",
+      "verified_at": "2026-11-14T21:50:43.561Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:18:40.709Z"
+      "last_updated": "2026-11-14T21:50:43.561Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -10446,14 +10446,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-onejs-one",
-      "content_hash": "38f9e8f5d5a3624fc114431754500661abd82f66179979270e3e1354105aa7b0",
-      "verified_at": "2026-11-11T11:19:09.423Z",
+      "content_hash": "fb7258adbfc0674b7ebe182f4e47cdd564d50ff61fc4252296dac7428d66be32",
+      "verified_at": "2026-11-14T21:50:36.478Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T11:19:09.423Z"
+      "last_updated": "2026-11-14T21:50:36.478Z"
     },
     "influxdata/influxdb": {
       "repository": "influxdata/influxdb",

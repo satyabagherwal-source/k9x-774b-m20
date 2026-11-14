@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:35:10.797Z",
+  "timestamp": "2026-11-14T21:51:09.598Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-duckdb-duckdb-learnings",
+  "learning_id": "LEARN-EVO-duckdb-duckdb-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [duckdb-duckdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:35:10.797Z`  
-> **Learning ID**: `LEARN-REEXTRACT-duckdb-duckdb-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T21:51:09.598Z`  
+> **Learning ID**: `LEARN-EVO-duckdb-duckdb-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `988d97f3`  
+> **Source Version**: `b678afa9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T08:52:50.088Z  
+> **Timestamp**: 2026-11-14T21:50:42.895Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T08:52:50.078Z  
+> **Harvest Timestamp**: 2026-11-14T21:50:42.890Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43026 stars
+- **Stars / Engagement**: 43072 stars
 
 ---
 
@@ -2032,13 +2032,14 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28731** (2026-11-12): **Preserve aggregate domains for proven singleton groups**
-  *Symptoms*: When DISTINCT ON is lowered to GROUP BY plus first(), aggregate outputs receive a cardinality-derived domain even when the grouping is known to contain exactly one row per key. This can distort join estimates although the aggregate preserves the input value.  Reuse child domain statistics only when the grouping covers a certified unique key and the bound aggregate has single-value identity. Reuse the existing functional-dependency machinery, preserve supported binding/cast lineage, and set singleton aggregate cardinality from the child. Carry identity through the ordered first/last/any_value rewrite, whose encoded sort key is non-NULL.  Nullable UNIQUE keys, deferred constraints, incomplete composite keys, lossy/TRY casts, multiplying joins, aggregate FILTER, list-returning overloads, and ordinary nullable-selector arg_min/max remain on the fallback. Tests include a concrete HLL false-positive case: 33 input rows are estimated as 33 groups although there are only 32 groups.  Related to #28615. This covers inputs with exact key evidence; it does not resolve the unconstrained CTAS reproduction. In the local 1M-node/5M-edge/5M-message experiment, repeated-query medians were about 29 ms for the declared-key variant and 149 ms for the unconstrained variant, with identical results. Serialized rewritten functions can conservatively lose identity metadata when rebound and consequently lose forwarding eligibility.  Validation on upstream main `39aeee12ef8`:  - `make reldebug`; formatt
+- **Issue #28826** (2026-11-13): **UPDATE ... RETURNING on an indexed table drops rows when the local append crosses a row-group boundary**
+  *Symptoms*: ### What happens?  On a table with an index (PRIMARY KEY, UNIQUE, or a plain CREATE INDEX), UPDATE ... RETURNING can return fewer rows than it updated. The table is updated correctly but RETURNING result is missing rows.  With RETURNING, every column is bound into the UPDATE, so an indexed column counts as updated and the UPDATE runs as delete + insert. In PhysicalUpdate::Sink, that path calls table.LocalAppend(mock_chunk) and then appends the same mock_chunk to return_collection. When the transaction-local append fills a row group partway through a chunk, RowGroupCollection::Append calls chunk.Slice(append_count, remaining) on the caller's chunk. So return_collection only receives the rows that went into the new row group, and the rows that filled the previous row group are lost.  It looks thread-dependent because with 1 thread and full 2048-row vectors, chunks usually line up with the 122880-row boundary. With more threads, a short chunk can be processed early and shift the alignment. It reproduces deterministically on 1 thread if the first chunk is short (see repro).  INSERT ... RETURNING is not affected.  ### To Reproduce  ```python import duckdb con = duckdb.connect() con.execute("SET threads = 1") con.execute("CREATE TABLE t (id INTEGER PRIMARY KEY, v INTEGER)") con.execute("INSERT INTO t SELECT i, 0 FROM range(300000) r(i)") # first chunk has 1600 rows, so the 122880-row local row-group boundary falls mid-chunk n = len(con.execute("UPDATE t SET v = 1 WHERE id >= 448 RE
 
-- **Issue #28724** (2026-11-12): **Keep test_concurrentqueue.cpp out of the test_common unity build (fixes macOS reldebug)**
-  *Symptoms*: Since #28674 added `test/common/test_concurrentqueue.cpp`, the `reldebug` build fails on macOS:  ``` .../MacOSX.sdk/usr/include/mach/host_info.h:123:2: error: reference to 'integer_t' is ambiguous   candidate: ::integer_t          (mach/arm/vm_types.h:97)   candidate: duckdb::integer_t    (src/include/duckdb/common/checked_integer.hpp:432) ```  `blockingconcurrentqueue.h` includes `mach/mach.h`, which uses the unqualified global `integer_t`. In the `test_common` unity translation unit that file is pasted in after `test_cast.cpp` and `test_checked_integer.cpp`, both of which have a file-scope `using namespace duckdb;`, so the SDK's `integer_t` now resolves to two candidates. Reordering does not help: with the mach headers first, `test_checked_integer.cpp`'s own unqualified `integer_t` becomes ambiguous instead. The two files cannot share a translation unit on macOS.  This PR removes `test_concurrentqueue.cpp` from the `add_library_unity` list and adds it to the same object library with `target_sources`, so it compiles as its own translation unit. The file already builds cleanly standalone, which is why Linux CI (and `DISABLE_UNITY` builds) never saw the error.  Verified locally on macOS 26 / Xcode 27 SDK: `make reldebug` completes and `unittest "[concurrentqueue]"` passes.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #28810** (2026-11-13): **Let compressed materialization use registered casts**
+  *Symptoms*: Compressed materialization now resolves its casts through the database's `CastFunctionSet`, like every other cast. User-registered casts apply here too.  - `CreateStatsAwareCast` uses `AddCastToType`. `PropagateCastStatistics` and `ValuePreservingCastFits` use the registered cast set. If a registered cast cannot propagate statistics, the integral compression falls back to the dedicated compress functions. - `CMUtils::MarkCast` no longer asserts a default cast. - SQL export drops the compressed materialization cast and exports its child, so it no longer rejects a non-default one. - Compression assumes casts are correct for in-range values. An incorrect registered cast can produce wrong results here, as it can anywhere else.  This replaces the built-in-only casts that duckdb/duckdb#28757 kept for compressed materialization (`CreateDefaultStatsAwareCast`). 
   **Post-Mortem & Fix Analysis**:
-  > Thanks! Fix was merged via https://github.com/duckdb/duckdb/pull/28707 so this is no longer necessary
+  > CC @kryonix 
+  > Thanks. Both points come from the same underlying issue. Compressed materialization adds casts the query never asked for. Using registered casts there exposes cast-free queries to whatever a user-registered cast does, so this is not "as anywhere else", as the description claims. The endpoint round trip and the statistics callback do not show that a cast preserves values or order, as your 0..100 example shows.  I see three options:  1. Keep CM on built-in casts only, i.e. the base's fresh built-in `CastFunctionSet` from #28757, and close this PR. CM is an internal rewrite, so the user's casts arguably should not apply to it. 2. Use a registered cast only if it declares itself value- and order-preserving (an explicit flag on the cast function) and has a statistics callback. Otherwise use the built-in cast. The probe would also have to run only after these eligibility checks and treat any exception as "not usable", not only `ConversionException`. That is your second point. 3. Keep the cur
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2055,785 +2056,469 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1cccba45` (2026-11-11)
-**Commit Message**: Preserve fixed allocator blocks when queue allocation fails
+### Incident Patch 1: `b678afa9` (2026-11-13)
+**Commit Message**: Build Per-Column Runtime Filters For Multi-Key Hash Joins (#28726)
 
-Reserve bounded per-shard overflow before publishing the fixed pool so
-free-only threads and TLS teardown retain block IDs when queue metadata
-allocation fails. Release staged storage if pool initialization fails.
+When a hash join matches on more than one key, the probe side sends
+almost every row up to the join, even when only a few of them can match.
+TPC-DS q93 is a good example. It joins `store_sales` to `store_returns`
+on both `ss_item_sk` and `ss_ticket_number`, and at SF10 its
+`store_sales` scan passes all 28.8 million rows to the join, even though
+only a small share of those tickets were ever returned.
 
-Exercise queue failures and actual allocator ownership/cleanup with a
-standalone fault-injection check, including the no-thread path. Record
-the vendored concurrentqueue retry customization.
+Single-key joins already avoid this with bloom and prefix-range runtime
+filters, which the scan checks before rows reach the join. Joins on
+several keys only get min/max filters. The hash table hashes all of the
+key columns together, so a bloom filter over those hashes can't be
+checked against any single column. A min/max range on a key like
+`ss_ticket_number` covers nearly all of its values, so it rejects very
+little.
 
-**File**: `src/include/duckdb/storage/sharded_allocator_queue.hpp` (added, +175/-0)
+This PR builds a bloom or prefix-range filter for each key column on its
+own, choosing between them the way a single-key join does today. Each
+key column also keeps its min/max filter, and we skip a prefix-range
+filter whose build keys fill at least half of its range, since the scan
+would likely pause i
+
+**File**: `.github/regression/micro.csv` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,175 @@
-+//===----------------------------------------------------------------------===//
-+//                         DuckDB
-+//
-+// duckdb/storage/sharded_allocator_queue.hpp
-+//
-+//
-+//===----------------------------------------------------------------------===//
-+
-+#pragma once
-+
-+#include "duckdb/common/atomic.hpp"
-+#include "duckdb/common/helper.hpp"
-+#include "duckdb/common/mutex.hpp"
-+#include "duckdb/common/vector.hpp"
-+#include "duckdb/parallel/concurrentqueue.hpp"
-+
-+#include <new>
-+#include <type_traits>
-+
-+namespace duckdb {
-+
-+template <class T, class QUEUE = duckdb_moodycamel::ConcurrentQueue<T>>
-+class ShardedAllocatorQueue {
-+	static_assert(std::is_trivially_copyable<T>::value, "Allocator queue entries must be trivially copyable");
-+
-+public:
-+	struct alignas(64) Shard {
-+		bool Enqueue(T value) {
-+			return EnqueueInternal(
-+			    1, [&] { return q.enqueue(value); }, [&] { return EnqueueOverflow(&value, 1); });
-+		}
-+		template <class ITERATOR>
-+		bool EnqueueBulk(ITERATOR begin, idx_t size) {
-+#ifdef DUCKDB_NO_THREADS
-+			// The single-threaded queue can throw after publishing a prefix of a batch.
-+			for (idx_t i = 0; i < size; i++) {
-+				if (!Enqueue(begin[i])) {
-+					return false;
-+				}
-+			}
-+			return true;
-+#else
-+			return EnqueueInternal(
-+			    size, [&] { return q.enqueue_bulk(begin, size); }, [&] { return EnqueueOverflow(begin, size); });
-+#endif
-+		}
-+		bool TryDequeue(T &value) {
-+			return TryDequeueInternal([&] { return idx_t(q.try_dequeue(value)); },
-+			                          [&] { return DequeueOverflow(&value, 1); }) != 0;
-+		}
-+		template <class ITERATOR>
-+		idx_t TryDequeueBulk(ITERATOR begin, idx_t size) {
-+			return TryDequeueInternal([&] { return q.try_dequeue_bulk(begin, size); },
-+			                          [&] { return DequeueOverflow(begin, size); });
-+		}
-+		idx_t SizeApprox() const {
-+			return track_count ? count.load(std::memory_order_relaxed)
-+			                   : q.size_approx() + overflow_count.load(std::memory_order_relaxed);
-+		}
-+		//! Reserve before publication: fixed-pool returns must survive queue allocation failure.
-+		void ReserveOverflow(idx_t capacity) {
-+			if (capacity == 0) {
-+				overflow.reset();
-+			} else {
-+				overflow = make_uniq<vector<T>>(capacity);
-+			}
-+		}
-+
-+		bool track_count = false;
-+
-+	private:
-+		template <class ENQUEUE, class OVERFLOW>
-+		bool EnqueueInternal(idx_t size, ENQUEUE enqueue, OVERFLOW enqueue_overflow) {
-+			if (track_count) {
-+				count.fetch_add(size, std::memory_order_relaxed);
-+			}
-+			try {
-+				bool queued = false;
-+				try {
-+					queued = enqueue();
-+				} catch (const std::bad_alloc &) {
-+					// The single-threaded queue reports allocation failure by throwing.
-+				}
-+				if (queued || enqueue_overflow()) {
-+					return true;
-+				}
-+			} catch (...) {
-+				if (track_count) {
-+					count.fetch_sub(size, std::memory_order_relaxed);
-+				}
-+				throw;
-+			}
-+			if (track_count) {
-+				count.fetch_sub(size, std::memory_order_relaxed);
-+			}
-+			return false;
-+		}
-+		template <class DEQUEUE, class OVERFLOW>
-+		idx_t TryDequeueInternal(DEQUEUE dequeue, OVERFLOW dequeue_overflow) {
-+			if (track_count && count.load(std::memory_order_relaxed) == 0) {
-+				return 0;
-+			}
-+			auto obtained = dequeue();
-+			if (obtained == 0) {
-+				obtained = dequeue_overflow();
-+			}
-+			if (track_count && obtained > 0) {
-+				count.fetch_sub(obtained, std::memory_order_relaxed);
-+			}
-+			return obtained;
-+		}
-+		template <class ITERATOR>
-+		bool EnqueueOverflow(ITERATOR begin, idx_t size) {
-+			if (!overflow) {
-+				return false;
-+			}
-+			lock_guard<mutex> guard(overflow_lock);
-+			const auto current = overflow_count.load(std::memory_order_relaxed);
-+			if (size > overflow->size() - current) {
-+				return false;
-+			}
-+			for (idx_t i = 0; i < size; i++) {
-+				(*overflow)[current + i] = begin[i];
-+			}
-+			overflow_count.store(current + size, std::memory_order_relaxed);
-+			return true;
-+		}
-+		template <class ITERATOR>
-+		idx_t DequeueOverflow(ITERATOR begin, idx_t size) {
-+			if (overflow_count.load(std::memory_order_relaxed) == 0) {
-+				return 0;
-+			}
-+			lock_guard<mutex> guard(overflow_lock);
-+			const auto current = overflow_count.load(std::memory_order_relaxed);
-+			const auto obtained = MinValue(size, current);
-+			for (idx_t i = 0; i < obtained; i++) {
-+				begin[i] = (*overflow)[current - obtained + i];
-+			}
-+			overflow_count.store(current - obtained, std::memory_order_relaxed);
-+			return obtained;
-+		}
-+
-+		QUEUE q;
-+		mutex overflow_lock;
-+		unique_ptr<vector<T>> overflow;
-+		atomic<idx_t> overflow_count {0};
-+		alignas(64) atomic<idx_t> count {0};
-+	};
-+
-+public:
-+	explicit ShardedAllocatorQueue(idx_t count, bool track_count = false) : queues(count) {
-+		D_ASSERT(count > 0);
-+		for (auto &queue : queues) {
-+			queue.track_count = track_count;
-+		}
-+	}
-+	idx_t Count() const {
-+		return queues.size();
-+	}
-+	Shard &Get(idx_t shard) {
-+		return queues[shard];
-+	}
-+	idx_t SizeApprox()
+@@ -66,3 +66,7 @@ benchmark/micro/json/lateral_json_each.benchmark
+ benchmark/micro/pushdown/rowid_in_list.benchmark
+ benchmark/micro/list/unnest_repeated_long_string.benchmark
+ benchmark/micro/string/substring_grapheme_negative_offset.benchmark
++benchmark/micro/pushdown/multi_key_join_filter.benchmark
++benchmark/micro/pushdown/multi_key_join_filter_covered.benchmark
++benchmark/micro/pushdown/multi_key_join_filter_holes.benchmark
++benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark
 ```
 
-**File**: `src/storage/block_allocator.cpp` (modified, +18/-91)
+**File**: `benchmark/micro/pushdown/multi_key_join_filter.benchmark` (added, +26/-0)
 ```diff
-@@ -1,4 +1,5 @@
- #include "duckdb/storage/block_allocator.hpp"
-+#include "duckdb/storage/sharded_allocator_queue.hpp"
- 
- #include "duckdb/common/allocator.hpp"
- #include "duckdb/common/types/uuid.hpp"
-@@ -214,102 +215,23 @@ static idx_t AllocatorLocalShard(const idx_t count) {
- 	return count == 1 ? 0 : (TaskScheduler::GetEstimatedCPUId() / 4) % count;
- }
- 
--template <class T>
--class ShardedAllocatorQueue {
--public:
--	struct alignas(64) Shard {
--		bool Enqueue(T value) {
--			return EnqueueInternal(1, [&] { return q.enqueue(value); });
--		}
--		template <class ITERATOR>
--		bool EnqueueBulk(ITERATOR begin, idx_t size) {
--			return EnqueueInternal(size, [&] { return q.enqueue_bulk(begin, size); });
--		}
--		bool TryDequeue(T &value) {
--			return TryDequeueInternal([&] { return idx_t(q.try_dequeue(value)); }) != 0;
--		}
--		template <class ITERATOR>
--		idx_t TryDequeueBulk(ITERATOR begin, idx_t size) {
--			return TryDequeueInternal([&] { return q.try_dequeue_bulk(begin, size); });
--		}
--		idx_t SizeApprox() const {
--			return track_count ? count.load(std::memory_order_relaxed) : q.size_approx();
--		}
--
--		bool track_count = false;
--
--	private:
--		template <class ENQUEUE>
--		bool EnqueueInternal(idx_t size, ENQUEUE enqueue) {
--			if (track_count) {
--				count.fetch_add(size, std::memory_order_relaxed);
--			}
--			try {
--				if (enqueue()) {
--					return true;
--				}
--			} catch (...) {
--				if (track_count) {
--					count.fetch_sub(size, std::memory_order_relaxed);
--				}
--				throw;
--			}
--			if (track_count) {
--				count.fetch_sub(size, std::memory_order_relaxed);
--			}
--			return false;
--		}
--		template <class DEQUEUE>
--		idx_t TryDequeueInternal(DEQUEUE dequeue) {
--			if (track_count && count.load(std::memory_order_relaxed) == 0) {
--				return 0;
--			}
--			const auto obtained = dequeue();
--			if (track_count && obtained > 0) {
--				count.fetch_sub(obtained, std::memory_order_relaxed);
--			}
--			return obtained;
--		}
--
--		duckdb_moodycamel::ConcurrentQueue<T> q;
--		alignas(64) atomic<idx_t> count {0};
--	};
--
--public:
--	explicit ShardedAllocatorQueue(idx_t count, bool track_count = false) : queues(count) {
--		D_ASSERT(count > 0);
--		for (auto &queue : queues) {
--			queue.track_count = track_count;
--		}
--	}
--	idx_t Count() const {
--		return queues.size();
--	}
--	idx_t LocalShard() const {
--		return AllocatorLocalShard(Count());
--	}
--	Shard &Get(idx_t shard) {
--		return queues[shard];
--	}
--	idx_t SizeApprox() const {
--		idx_t count = 0;
--		for (auto &queue : queues) {
--			count += queue.SizeApprox();
--		}
--		return count;
--	}
--
--private:
--	vector<Shard> queues;
--};
--
- struct BlockQueue {
- 	BlockQueue(idx_t blocks, idx_t shards)
- 	    : blocks_per_shard(MaxValue<idx_t>(1, blocks / shards + (blocks % shards != 0))),
- 	      queues(MaxValue<idx_t>(1, blocks / blocks_per_shard + (blocks % blocks_per_shard != 0)),
- 	             blocks > blocks_per_shard) {
- 	}
- 
-+	void ReserveOverflow(idx_t blocks) {
-+		for (idx_t shard = 0; shard < queues.Count(); shard++) {
-+			queues.Get(shard).ReserveOverflow(MinValue(blocks_per_shard, blocks - shard * blocks_per_shard));
-+		}
-+	}
-+	void ReleaseOverflow() {
-+		for (idx_t shard = 0; shard < queues.Count(); shard++) {
-+			queues.Get(shard).ReserveOverflow(0);
-+		}
-+	}
- 	idx_t Home(uint32_t block) const {
- 		return block / blocks_per_shard;
- 	}
-@@ -726,7 +648,7 @@ class AllocationCache {
- 
- private:
- 	idx_t LocalShard() const {
--		return buckets[0]->queues.LocalShard();
-+		return AllocatorLocalShard(buckets[0]->queues.Count());
- 	}
- 
- 	Allocator &allocator;
-@@ -806,6 +728,8 @@ bool BlockAllocator::InitializePool() const {
- 	unsafe_unique_ptr<BlockQueue> queue;
- 	try {
- 		queue = make_unsafe_uniq<BlockQueue>(DivBlockSize(pool_size), touched->queues.Count());
-+		queue->ReserveOverflow(DivBlockSize(pool_size));
-+		touched->ReserveOverflow(DivBlockSize(pool_size));
- 		uint32_t block_ids[STANDARD_VECTOR_SIZE];
- 		const auto count = DivBlockSize(pool_size);
- 		for (idx_t block_id = 0; block_id < count; block_id += STANDARD_VECTOR_SIZE) {
-@@ -814,17 +738,20 @@ bool BlockAllocator::InitializePool() const {
- 				block_ids[i] = NumericCast<uint32_t>(block_id + i);
- 			}
- 			if (!queue->EnqueueBulk(block_ids, next)) {
-+				touched->ReleaseOverflow();
- 				pool_state.store(PoolState::UNAVAILABLE, std::memory_order_release);
- 				return false;
- 			}
- 		}
- 	} catch (const std::bad_alloc &) {
-+		touched->ReleaseOverflow();
- 		pool_state.store(PoolState::UNAVAILABLE, std::memory_order_release);
- 		return false;
- 	}
- 
- 	const auto pointer = AllocateVirtualMemory(pool_size);
- 	if (!pointer) {
-+		touched->ReleaseOverflow();
- 		pool_state.store(PoolState::UNAVAILABLE, std::memory_order_release);
- 		return false;
- 	}
-@@ -856,7 +783,7 @@ idx_t BlockAllocator::DivBlockSize(const idx_t n) const {
- }
- 
- idx_t BlockAllocator::GetLocalPoolShard() const {
--	return touched->queues.LocalShard();
-+	return AllocatorLocalShard(touched->queues.Count());
- }
- 
- uint32_t BlockAllocator::GetBlockID(const data_ptr_t pointer) c
+@@ -0,0 +1,26 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter.benchmark
++# description: Two-key join where only one key column is selective
++# group: [pushdown]
++
++name MultiKeyJoinFilter
++group micro
++subgroup pushdown
++
++load
++CREATE TABLE fact AS
++  SELECT (i % 300000)::INTEGER AS item,
++         (i // 12)::BIGINT AS ticket,
++         (i % 997)::INTEGER AS payload
++  FROM range(24000000) t(i);
++CREATE TABLE dim AS
++  SELECT item, ticket
++  FROM fact
++  WHERE hash(ticket * 31 + item) % 50 = 0;
++
++run
++SELECT count(*), sum(f.payload)
++FROM fact f
++JOIN dim d ON f.item = d.item AND f.ticket = d.ticket;
++
++result II
++480569	239672695
 ```
 
-**File**: `test/CMakeLists.txt` (modified, +40/-0)
+**File**: `benchmark/micro/pushdown/multi_key_join_filter_covered.benchmark` (added, +26/-0)
 ```diff
-@@ -71,6 +71,46 @@ endif()
- 
- add_executable(unittest unittest.cpp ${UNITTEST_OBJECT_FILES})
- 
-+if(CMAKE_SYSTEM_NAME STREQUAL "Linux"
-+   AND NOT CMAKE_CROSSCOMPILING
-+   AND CMAKE_SIZEOF_VOID_P EQUAL 8
-+   AND ENABLE_UNITTEST_CPP_TESTS
-+   AND TARGET duckdb)
-+  # Exercise real allocator failures without installing hooks in the library.
-+  add_executable(
-+    block_allocator_fault_injection api/block_allocator_fault_injection.cpp
-+                                    ../src/storage/block_allocator.cpp)
-+  target_link_libraries(block_allocator_fault_injection duckdb pthread)
-+  target_link_options(
-+    block_allocator_fault_injection
-+    PRIVATE
-+    -Wl,--wrap=malloc
-+    -Wl,--wrap=_Znwm
-+    -Wl,--wrap=_ZdlPv
-+    -Wl,--wrap=_ZdlPvm
-+    -Wl,--wrap=mmap)
-+  if(CMAKE_VERSION VERSION_LESS 3.20)
-+    set(allocator_probe_stamp
-+        "${CMAKE_CFG_INTDIR}/block_allocator_fault_injection.stamp")
-+    set(allocator_probe_executable
-+        $<TARGET_FILE:block_allocator_fault_injection>)
-+  else()
-+    set(allocator_probe_stamp "block_allocator_fault_injection-$<CONFIG>.stamp")
-+    set(allocator_probe_executable
-+        $<OUTPUT_CONFIG:$<TARGET_FILE:block_allocator_fault_injection>>)
-+  endif()
-+  add_custom_command(
-+    OUTPUT "${allocator_probe_stamp}"
-+    COMMAND ${CMAKE_COMMAND} -E env "${allocator_probe_executable}"
-+    COMMAND ${CMAKE_COMMAND} -E touch "${allocator_probe_stamp}"
-+    DEPENDS "${allocator_probe_executable}"
-+    COMMENT "Checking BlockAllocator allocation-failure ownership"
-+    VERBATIM)
-+  add_custom_target(check_block_allocator_fault_injection
-+                    DEPENDS "${allocator_probe_stamp}")
-+  add_dependencies(unittest check_block_allocator_fault_injection)
-+endif()
+@@ -0,0 +1,26 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter_covered.benchmark
++# description: Two-key join whose small build side holds every value of both key columns
++# group: [pushdown]
 +
- # Enable best-effort stack traces for fatal signals in the test runner without
- # enabling stack traces for every DuckDB exception.
- if((CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT MUSL_ENABLED) OR APPLE)
++name MultiKeyJoinFilterCovered
++group micro
++subgroup pushdown
++
++load
++CREATE TABLE fact AS
++  SELECT ((i % 1000) * 1000003)::BIGINT AS a,
++         (((i // 1000) % 1000) * 1000003)::BIGINT AS b,
++         (i % 997)::INTEGER AS payload
++  FROM range(24000000) t(i);
++CREATE TABLE dim AS
++  SELECT a, b
++  FROM (SELECT DISTINCT a, b FROM fact)
++  WHERE hash(a + b) % 2 = 0;
++
++run
++SELECT count(*), sum(f.payload)
++FROM fact f
++JOIN dim d ON f.a = d.a AND f.b = d.b;
++
++result II
++12278352	6112566278
 ```
 
-**File**: `test/api/block_allocator_fault_injection.cpp` (added, +220/-0)
+**File**: `benchmark/micro/pushdown/multi_key_join_filter_holes.benchmark` (added, +21/-0)
 ```diff
-@@ -0,0 +1,220 @@
-+#include "duckdb/common/allocator.hpp"
-+#include "duckdb/storage/block_allocator.hpp"
+@@ -0,0 +1,21 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter_holes.benchmark
++# description: A half-full key filter rejects every probe value while another key covers its domain
++# group: [pushdown]
 +
-+#include <algorithm>
-+#include <cerrno>
-+#include <cstdio>
-+#include <cstdlib>
-+#include <new>
-+#include <thread>
-+#include <vector>
-+#include <sys/mman.h>
++name MultiKeyJoinFilterHoles
++group micro
++subgroup pushdown
 +
-+// Link wrapping confines failures to this executable's allocator implementation.
-+static thread_local bool reject_malloc = false;
-+static thread_local bool reject_new = false;
-+static thread_local bool reject_mapping = false;
-+static thread_local size_t allowed_new = 0;
-+static thread_local size_t fail_new_at = 0;
-+static thread_local size_t failures = 0;
-+static thread_local size_t new_calls = 0;
-+static thread_local bool track_new = false;
-+static thread_local int64_t new_balance = 0;
++load
++CREATE TABLE probe AS
++SELECT (2 * (i % 500) + 1)::INTEGER a, ((i // 500) % 1000)::INTEGER b
++FROM range(24000000) t(i);
++CREATE TABLE build AS
++SELECT (2 * a)::INTEGER a, (b + (a % 5) * 200)::INTEGER b
++FROM range(500) t(a), range(200) u(b);
 +
-+extern "C" {
-+void *__real_malloc(size_t size);
-+void *__real__Znwm(size_t size);
-+void __real__ZdlPv(void *pointer);
-+void __real__ZdlPvm(void *pointer, size_t size);
-+void *__real_mmap(void *address, size_t length, int protection, int flags, int fd, off_t offset);
++run
++SELECT count(*) FROM probe p JOIN build b ON p.a = b.a AND p.b = b.b;
 +
-+void *__wrap_malloc(size_t size) {
-+	if (reject_malloc) {
-+		failures++;
-+		return nullptr;
-+	}
-+	return __real_malloc(size);
-+}
-+
-+void *__wrap__Znwm(size_t size) {
-+	new_calls++;
-+	const bool fail_once = fail_new_at > 0 && --fail_new_at == 0;
-+	if (fail_once || (reject_new && allowed_new == 0)) {
-+		failures++;
-+		throw std::bad_alloc();
-+	}
-+	if (allowed_new > 0) {
-+		allowed_new--;
-+	}
-+	auto result = __real__Znwm(size);
-+	if (track_new) {
-+		new_balance++;
-+	}
-+	return result;
-+}
-+
-+void __wrap__ZdlPv(void *pointer) {
-+	if (track_new && pointer) {
-+		new_balance--;
-+	}
-+	__real__ZdlPv(pointer);
-+}
-+
-+void __wrap__ZdlPvm(void *pointer, size_t size) {
-+	if (track_new && pointer) {
-+		new_balance--;
-+	}
-+	__real__ZdlPvm(pointer, size);
-+}
-+
-+void *__wrap_mmap(void *address, size_t length, int protection, int flags, int fd, off_t offset) {
-+	if (reject_mapping) {
-+		errno = ENOMEM;
-+		return MAP_FAILED;
-+	}
-+	return __real_mmap(address, length, protection, flags, fd, offset);
-+}
-+}
-+
-+namespace duckdb {
-+class BlockAllocatorTestHelper {
-+public:
-+	static bool IsInPool(const BlockAllocator &allocator, data_ptr_t pointer) {
-+		return allocator.IsInPool(pointer);
-+	}
-+	static bool InitializePool(const BlockAllocator &allocator) {
-+		return allocator.InitializePool();
-+	}
-+};
-+} // namespace duckdb
-+
-+static void Check(bool condition, const char *message) {
-+	if (!condition) {
-+		std::fprintf(stderr, "BlockAllocator fault injection: %s\n", message);
-+		std::abort();
-+	}
-+}
-+
-+template <class FUNC>
-+static void OnFreeingThread(FUNC function) {
-+#ifndef DUCKDB_NO_THREADS
-+	std::thread worker(function);
-+	worker.join();
-+#else
-+	function();
-+#endif
-+}
-+
-+static void CheckAbandonedInitialization() {
-+	using namespace duckdb;
-+	constexpr idx_t BLOCK_SIZE = 65536;
-+	idx_t failure_points = 0;
-+	idx_t failed_reservations = 0;
-+	for (idx_t failure = 0; failure <= failure_points; failure++) {
-+		Allocator fallback;
-+		BlockAllocator allocator(fallback, BLOCK_SIZE, 257 * BLOCK_SIZE);
-+		new_balance = 0;
-+		new_calls = 0;
-+		track_new = true;
-+		reject_mapping = failure == 0;
-+		fail_new_at = failure;
-+		const auto previous_failures = failures;
-+		const auto initialized = BlockAllocatorTestHelper::InitializePool(allocator);
-+		track_new = false;
-+		reject_mapping = false;
-+		fail_new_at = 0;
-+		if (failure == 0) {
-+			Check(!initialized, "failed mapping must leave the pool unavailable");
-+			failure_points = new_calls;
-+		} else if (!initialized && failures != previous_failures) {
-+			failed_reservations++;
-+		}
-+		if (!initialized) {
-+			Check(new_balance == 0, "abandoned initialization retains queue storage");
-+		}
-+		auto pointer = allocator.AllocateData(BLOCK_SIZE);
-+		Check(BlockAllocatorTestHelper::IsInPool(allocator, pointer) == initialized, "allocation follows pool state");
-+		allocator.FreeData(pointer, BLOCK_SIZE);
-+	}
-+	Check(failed_reservations > 0, "reservation fault injection must activate");
-+}
-+
-+static void CheckPoolOwnership() {
-+	using namespace duckdb;
-+	constexpr idx_t BLOCK_SIZE = 65536;
-+	constexpr idx_t BLOCK_COUNT = 2049;
-+	for (idx_t mode = 0; mode < 4; mode++) {
-+		Allocator fallback;
-+		BlockAllocator allocator(fallback, BLOCK_SIZE, BLOCK_COUNT * BLOCK_SIZE);
-+		std::vector<data_ptr_t> original;
-+		reject_malloc = mode == 0;
-+		for (idx_t i = 0; i < BLOCK_COUNT; i++) {
-+			auto pointer = allocator.AllocateData(BLOCK_SIZE);
-+			Check(BlockAllocatorTestHelper::IsInPool(allocator, pointer), "initial pool capacity");
-+			pointer[0] = 42;
-+			original.push_back(pointer);
-+		}
-+		reject_malloc = false;
-+		size_t return_failures = 0;
-+		auto return_blocks = [&] {
-+			const auto previous_failures = failures;
-+			reject_malloc = true;
-+			reject_new = true;
-+			for (auto pointer : original) {
-+				allocator.FreeData(pointer, BLOCK_SIZE);
-+			}
-+			if (mode == 2) {
-+				allocator.ThreadExit();
-+			}
-+			reject_malloc = false;
-+			reject_new = false;
-+			return_failures = failures - previous_
++result I
++0
 ```
 
-**File**: `test/common/test_concurrentqueue.cpp` (modified, +122/-0)
+**File**: `benchmark/micro/pushdown/multi_key_join_filter_mid.benchmark` (added, +26/-0)
 ```diff
-@@ -2,6 +2,7 @@
- 
- #ifndef DUCKDB_NO_THREADS
- #include "blockingconcurrentqueue.h"
-+#include "duckdb/storage/sharded_allocator_queue.hpp"
- #include <thread>
- #include <vector>
- 
-@@ -90,8 +91,129 @@ struct FailingQueueTraits : SmallQueueTraits<std::size_t> {
- uint32_t FailingQueueTraits::allocations_until_failure = 0;
- uint32_t FailingQueueTraits::allocation_count = 0;
- 
-+struct AllocatorOverflowQueueTraits : SmallQueueTraits<std::size_t> {
-+	static std::atomic<bool> reject_allocations;
-+	static std::atomic<uint32_t> rejected_allocations;
+@@ -0,0 +1,26 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter_mid.benchmark
++# description: Two-key join with a build side of 8% of the probe side
++# group: [pushdown]
 +
-+	static void *malloc(size_t bytes) {
-+		if (reject_allocations.load()) {
-+			rejected_allocations.fetch_add(1);
-+			return nullptr;
-+		}
-+		return std::malloc(bytes);
-+	}
-+};
++name MultiKeyJoinFilterMid
++group micro
++subgroup pushdown
 +
-+std::atomic<bool> AllocatorOverflowQueueTraits::reject_allocations {false};
-+std::atomic<uint32_t> AllocatorOverflowQueueTraits::rejected_allocations {0};
++load
++CREATE TABLE fact AS
++  SELECT (i % 300000)::INTEGER AS item,
++         ((i // 12) * 1000003)::BIGINT AS ticket,
++         (i % 997)::INTEGER AS payload
++  FROM range(24000000) t(i);
++CREATE TABLE dim AS
++  SELECT item, ticket
++  FROM fact
++  WHERE hash(ticket * 31 + item) % 12 = 0;
 +
-+class AllocatorOverflowQueue : public duckdb_moodycamel::ConcurrentQueue<uint32_t, AllocatorOverflowQueueTraits> {
-+public:
-+	AllocatorOverflowQueue() : ConcurrentQueue(0) {
-+	}
-+};
++run
++SELECT count(*), sum(f.payload)
++FROM fact f
++JOIN dim d ON f.item = d.item AND f.ticket = d.ticket;
 +
-+struct RejectAllocatorQueueAllocations {
-+	RejectAllocatorQueueAllocations() {
-+		AllocatorOverflowQueueTraits::reject_allocations = true;
-+	}
-+	~RejectAllocatorQueueAllocations() {
-+		AllocatorOverflowQueueTraits::reject_allocations = false;
-+	}
-+};
-+
- } // namespace
- 
-+TEST_CASE("Allocator queue preserves fixed-pool returns when metadata allocation fails",
-+          "[concurrentqueue][allocator_locality]") {
-+	const bool track_count = GENERATE(false, true);
-+	duckdb::ShardedAllocatorQueue<uint32_t, AllocatorOverflowQueue> queues(2, track_count);
-+	auto &first = queues.Get(0);
-+	auto &second = queues.Get(1);
-+	first.ReserveOverflow(4);
-+	second.ReserveOverflow(1);
-+	uint32_t input[] = {1, 2, 3, 4};
-+	const auto rejected = AllocatorOverflowQueueTraits::rejected_allocations.load();
-+	{
-+		RejectAllocatorQueueAllocations failures;
-+		REQUIRE(first.EnqueueBulk(input, 4));
-+		REQUIRE(second.Enqueue(5));
-+		CHECK(queues.SizeApprox() == 5);
-+		REQUIRE(AllocatorOverflowQueueTraits::rejected_allocations.load() > rejected);
-+	}
-+	// Both the recovered queue and overflow storage own live entries.
-+	REQUIRE(first.Enqueue(6));
-+	CHECK(queues.SizeApprox() == 6);
-+	bool seen[7] = {};
-+	uint32_t output[4];
-+	duckdb::idx_t total = 0;
-+	for (duckdb::idx_t shard = 0; shard < queues.Count(); shard++) {
-+		duckdb::idx_t obtained;
-+		while ((obtained = queues.Get(shard).TryDequeueBulk(output, 4)) != 0) {
-+			for (duckdb::idx_t i = 0; i < obtained; i++) {
-+				REQUIRE(output[i] >= 1);
-+				REQUIRE(output[i] <= 6);
-+				CHECK_FALSE(seen[output[i]]);
-+				seen[output[i]] = true;
-+			}
-+			total += obtained;
-+		}
-+	}
-+	CHECK(total == 6);
-+	CHECK(queues.SizeApprox() == 0);
-+	// A cache without a fixed-pool reserve remains fallible.
-+	duckdb::ShardedAllocatorQueue<uint32_t, AllocatorOverflowQueue> unreserved(1, track_count);
-+	RejectAllocatorQueueAllocations failures;
-+	CHECK_FALSE(unreserved.Get(0).Enqueue(1));
-+	CHECK(unreserved.SizeApprox() == 0);
-+}
-+
-+TEST_CASE("Allocator queue overflow supports concurrent producers and consumers",
-+          "[concurrentqueue][allocator_locality]") {
-+	constexpr uint32_t COUNT = 128;
-+	duckdb::ShardedAllocatorQueue<uint32_t, AllocatorOverflowQueue> queues(1, true);
-+	auto &queue = queues.Get(0);
-+	queue.ReserveOverflow(COUNT);
-+	std::atomic<uint32_t> seen[COUNT] {};
-+	std::atomic<uint32_t> remaining {4};
-+	std::atomic<uint32_t> returned {0};
-+	std::atomic<bool> success {true};
-+	std::vector<std::thread> threads;
-+	RejectAllocatorQueueAllocations failures;
-+	for (uint32_t worker = 0; worker < 4; worker++) {
-+		threads.emplace_back([&, worker] {
-+			for (uint32_t value = worker; value < COUNT; value += 4) {
-+				if (!queue.Enqueue(value)) {
-+					success = false;
-+				}
-+				returned.fetch_add(1);
-+			}
-+			remaining.fetch_sub(1);
-+		});
-+		threads.emplace_back([&] {
-+			uint32_t value;
-+			do {
-+				if (queue.TryDequeue(value)) {
-+					if (value >= COUNT || seen[value].fetch_add(1) != 0) {
-+						success = false;
-+					}
-+				} else {
-+					std::this_thread::yield();
-+				}
-+			} while (remaining.load() != 0 || queue.SizeApprox() != 0);
-+		});
-+	}
-+	for (auto &thread : threads) {
-+		thread.join();
-+	}
-+	CHECK(success.load());
-+	CHECK(returned.load() == COUNT);
-+	for (auto &entry : seen) {
-+		CHECK(entry.load() == 1);
-+	}
-+	CHECK(queues.SizeApprox() == 0);
-+}
-+
- TEST_CASE("Concurrent queue padding preserves custom allocation and producer lifetime", "[concurrentqueue]") {
- 	CheckQueueTraits<std::size_t>();
- 	CheckQueueTraits<uint8_t>();
++result II
++1999936	995253336
 ```
 
-**File**: `third_party/concurrentqueue/README.duckdb` (modified, +1/-0)
+**File**: `benchmark/micro/pushdown/multi_key_join_filter_sparse.benchmark` (added, +26/-0)
 ```diff
-@@ -8,3 +8,4 @@ DuckDB customizations:
- * Use std::chrono for the non-monotonic semaphore clock fallback.
- * Keep implicit-producer thread-exit notification disabled for TLS destructor enqueueing.
- * Separate producer/consumer counters and semaphore state with byte padding.
-+* Retry failed initial implicit-producer block-index allocation on allocating enqueue.
+@@ -0,0 +1,26 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter_sparse.benchmark
++# description: Two-key join where the selective key column gets a bloom filter
++# group: [pushdown]
++
++name MultiKeyJoinFilterSparse
++group micro
++subgroup pushdown
++
++load
++CREATE TABLE fact AS
++  SELECT (i % 300000)::INTEGER AS item,
++         ((i // 12) * 1000003)::BIGINT AS ticket,
++         (i % 997)::INTEGER AS payload
++  FROM range(24000000) t(i);
++CREATE TABLE dim AS
++  SELECT item, ticket
++  FROM fact
++  WHERE hash(ticket * 31 + item) % 50 = 0;
++
++run
++SELECT count(*), sum(f.payload)
++FROM fact f
++JOIN dim d ON f.item = d.item AND f.ticket = d.ticket;
++
++result II
++479664	238830267
+```
+
+**File**: `benchmark/micro/pushdown/multi_key_join_filter_unselective.benchmark` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter_unselective.benchmark
++# description: Two-key join with a build side of 17% of the probe side
++# group: [pushdown]
++
++name MultiKeyJoinFilterUnselective
++group micro
++subgroup pushdown
++
++load
++CREATE TABLE fact AS
++  SELECT (i % 300000)::INTEGER AS item,
++         ((i // 12) * 1000003)::BIGINT AS ticket,
++         (i % 997)::INTEGER AS payload
++  FROM range(24000000) t(i);
++CREATE TABLE dim AS
++  SELECT item, ticket
++  FROM fact
++  WHERE hash(ticket * 31 + item) % 6 = 0;
++
++run
++SELECT count(*), sum(f.payload)
++FROM fact f
++JOIN dim d ON f.item = d.item AND f.ticket = d.ticket;
++
++result II
++3999604	1991681839
+```
+
+**File**: `benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark
++# description: Eight wide key domains retain useful Bloom filters under a shared memory cap
++# group: [pushdown]
++
++name MultiKeyJoinFilterWide
++group micro
++subgroup pushdown
++
++load
++CREATE TABLE probe AS
++SELECT i,
++       (hash(i) % 67108864)::BIGINT * 1000003 a,
++       (hash(i + 1000003) % 67108864)::BIGINT * 1000003 b,
++       (hash(i + 2000006) % 67108864)::BIGINT * 1000003 c,
++       (hash(i + 3000009) % 67108864)::BIGINT * 1000003 d,
++       (hash(i + 4000012) % 67108864)::BIGINT * 1000003 e,
++       (hash(i + 5000015) % 67108864)::BIGINT * 1000003 f,
++       (hash(i + 6000018) % 67108864)::BIGINT * 1000003 g,
++       (hash(i + 7000021) % 67108864)::BIGINT * 1000003 h
++FROM range(2000000) t(i);
++CREATE TABLE build AS FROM probe WHERE i % 100 = 0;
++
++run
++SELECT count(*) FROM probe p JOIN build b
++ON p.a = b.a AND p.b = b.b AND p.c = b.c AND p.d = b.d
++AND p.e = b.e AND p.f = b.f AND p.g = b.g AND p.h = b.h;
++
++result I
++20000
 ```
 
 ---
 
-### Incident Patch 2: `146f57a3` (2026-11-11)
-**Commit Message**: Bound threads in the memory-limited window regression test
+### Incident Patch 2: `afdc4212` (2026-11-13)
+**Commit Message**: Fix VARIANT type normalization for function metadata (#28681)
 
-Cap this test at eight threads so its 300 MB limit is reproducible on
-large hosts, while preserving smaller and no-thread defaults. Keep the
-query, input size, memory limit and expected result unchanged.
+Currently we lose documentation when a parameter is documented as
+`VARIANT`:
 
-**File**: `test/issues/general/test_21431.test` (modified, +3/-0)
+ ```sql
+   SELECT description, examples, categories
+   FROM duckdb_functions()
+   WHERE function_name = 'variant_contains';
+
+┌─────────────┬───────────┬────────────┐
+│ description │ examples  │ categories │
+│   varchar   │ varchar[] │ varchar[]  │
+├─────────────┼───────────┼────────────┤
+│ NULL        │ []        │ []         │
+└─────────────┴───────────┴────────────┘
+ ```
+
+We now normalize the `VARIANT` type so equality matches and we get the
+documentation:
+
+ ```sql
+
+┌────────────────────────────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────┬────────────┐
+│ description │ examples │ categories │
+│ varchar │ varchar[] │ varchar[] │
+
+├────────────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┼────────────┤
+│ Returns whether the needle is contained in the haystack, recursively c
+│ ['variant_contains({\'a\': {\'b\': 42}}::VARIANT, {\'b\':
+42}::VARIANT) │ [variant] │
+│ hecking nested arrays 
+
+**File**: `extension/json/json_functions/json_create.cpp` (modified, +2/-0)
 ```diff
-@@ -2,6 +2,9 @@
- # description: Regression test for OOM with TopN window elimination
- # group: [general]
- 
-+statement ok
-+SET threads = least(current_setting('threads'), 8)
-+
- statement ok
- SET memory_limit = '300MB'
- 
+@@ -1629,6 +1629,8 @@ void JSONFunctions::RegisterJSONCreateCastFunctions(ExtensionLoader &loader) {
+ 		case LogicalTypeId::ARRAY:
+ 			source_type = LogicalType::ARRAY(LogicalType::ANY, optional_idx());
+ 			break;
++		case LogicalTypeId::VARIANT:
++			continue;
+ 		case LogicalTypeId::VARCHAR:
+ 			// We skip this one here as it's handled in json_functions.cpp
+ 			continue;
 ```
 
----
-
-### Incident Patch 3: `22e1eb15` (2026-11-11)
-**Commit Message**: Bound parallelism in the memory-limited window paging test
-
-Both the pre-change allocator and this branch can exhaust the 1GB limit at 192 threads. Cap this test at eight threads while retaining lower configured counts, the 20M-row workload, forced external execution, memory limit, and expected result.
-
-**File**: `test/sql/window/window_partition_paging.test_slow` (modified, +3/-0)
+**File**: `extension/json/json_functions/json_transform.cpp` (modified, +2/-0)
 ```diff
-@@ -4,6 +4,9 @@
+@@ -1328,6 +1328,8 @@ void JSONFunctions::RegisterJSONTransformCastFunctions(ExtensionLoader &loader)
+ 		case LogicalTypeId::ARRAY:
+ 			target_type = LogicalType::ARRAY(LogicalType::ANY, optional_idx());
+ 			break;
++		case LogicalTypeId::VARIANT:
++			continue;
+ 		case LogicalTypeId::VARCHAR:
+ 			// We skip this one here as it's handled in json_functions.cpp
+ 			continue;
+```
+
+**File**: `src/common/types.cpp` (modified, +24/-22)
+```diff
+@@ -213,11 +213,32 @@ const LogicalTypeInfo *LogicalType::TryGetBuiltinTypeInfo(LogicalTypeId id) noex
+ 	return builtins->infos[static_cast<uint8_t>(id)];
+ }
  
- require 64bit
- 
-+statement ok
-+SET threads = least(current_setting('threads'), 8)
++static unique_ptr<LogicalTypeInfo> CreateVariantTypeInfo() {
++	child_list_t<LogicalType> children;
++	//! keys
++	children.emplace_back("keys", LogicalType::LIST(LogicalTypeId::VARCHAR));
++	//! children
++	children.emplace_back("children",
++	                      LogicalType::LIST(LogicalType::STRUCT(
++	                          {{"keys_index", LogicalType::UINTEGER}, {"values_index", LogicalType::UINTEGER}})));
++	//! values
++	children.emplace_back("values", LogicalType::LIST(LogicalType::STRUCT(
++	                                    {{"type_id", LogicalType::UTINYINT}, {"byte_offset", LogicalType::UINTEGER}})));
++	//! data
++	children.emplace_back("data", LogicalType::BLOB);
 +
- statement ok
- CREATE or replace TABLE big_table AS
-     SELECT
++	return make_uniq<StructTypeInfo>(std::move(children));
++}
++
+ const LogicalTypeInfo &LogicalType::GetBuiltinTypeInfo(LogicalTypeId id) {
+ 	auto info = TryGetBuiltinTypeInfo(id);
+ 	if (!info) {
+ 		throw InternalException("Invalid LogicalType %d", static_cast<uint8_t>(id));
+ 	}
++	if (id == LogicalTypeId::VARIANT) {
++		static const auto variant_type = CreateImmortal(LogicalTypeId::VARIANT, CreateVariantTypeInfo());
++		return variant_type.GetTypeInfo();
++	}
+ 	return *info;
+ }
+ 
+@@ -228,10 +249,9 @@ LogicalType::LogicalType(LogicalTypeId id) : type_info_(GetBuiltinTypeInfo(id))
+ }
+ 
+ const LogicalTypeInfo &LogicalType::AdoptNewTypeInfo(LogicalTypeId id, unique_ptr<LogicalTypeInfo> type_info) {
+-	// validates the id - and ensures the builtin infos exist before any type does
+-	auto &builtin_type_info = GetBuiltinTypeInfo(id);
++	// Only resolve built-in info when none was supplied, to avoid recursive initialization.
+ 	if (!type_info) {
+-		return builtin_type_info;
++		return GetBuiltinTypeInfo(id);
+ 	}
+ 	if (!TryGetPhysicalType(id, *type_info, type_info->physical_type)) {
+ 		throw InternalException("Invalid LogicalType %d", static_cast<uint8_t>(id));
+@@ -2066,26 +2086,8 @@ const string &TemplateType::GetName(const LogicalType &type) {
+ // Variant Type
+ //===--------------------------------------------------------------------===//
+ 
+-static unique_ptr<LogicalTypeInfo> CreateVariantTypeInfo() {
+-	child_list_t<LogicalType> children;
+-	//! keys
+-	children.emplace_back("keys", LogicalType::LIST(LogicalTypeId::VARCHAR));
+-	//! children
+-	children.emplace_back("children",
+-	                      LogicalType::LIST(LogicalType::STRUCT(
+-	                          {{"keys_index", LogicalType::UINTEGER}, {"values_index", LogicalType::UINTEGER}})));
+-	//! values
+-	children.emplace_back("values", LogicalType::LIST(LogicalType::STRUCT(
+-	                                    {{"type_id", LogicalType::UTINYINT}, {"byte_offset", LogicalType::UINTEGER}})));
+-	//! data
+-	children.emplace_back("data", LogicalType::BLOB);
+-
+-	return make_uniq<StructTypeInfo>(std::move(children));
+-}
+-
+ LogicalType LogicalType::VARIANT() {
+-	static const auto variant_type = CreateImmortal(LogicalTypeId::VARIANT, CreateVariantTypeInfo());
+-	return variant_type;
++	return LogicalType(LogicalTypeId::VARIANT);
+ }
+ 
+ //===--------------------------------------------------------------------===//
+```
+
+**File**: `test/common/test_logical_type_immutable.cpp` (modified, +16/-0)
+```diff
+@@ -91,6 +91,22 @@ TEST_CASE("Test that types without parameters share one type info", "[logical_ty
+ 	REQUIRE(LogicalType::DECIMAL(18, 3) == LogicalType::DECIMAL(18, 3));
+ }
+ 
++TEST_CASE("VARIANT has canonical metadata when constructed from its id", "[logical_type_immutable]") {
++	const auto canonical = LogicalType::VARIANT();
++	LogicalType from_id(LogicalTypeId::VARIANT);
++	REQUIRE(from_id == canonical);
++	REQUIRE(from_id.IsComplete());
++	REQUIRE(&from_id.GetTypeInfo() == &canonical.GetTypeInfo());
++
++	LogicalType without_info(LogicalTypeId::VARIANT, nullptr);
++	REQUIRE(&without_info.GetTypeInfo() == &canonical.GetTypeInfo());
++
++	auto explicit_info = canonical.GetTypeInfo().Copy();
++	explicit_info->alias = "MY_VARIANT";
++	LogicalType aliased(LogicalTypeId::VARIANT, std::move(explicit_info));
++	REQUIRE(aliased == canonical.WithAlias("MY_VARIANT"));
++}
++
+ TEST_CASE("Test that a moved-from type keeps its id", "[logical_type_immutable]") {
+ 	auto list = LogicalType::LIST(LogicalType::VARCHAR);
+ 	auto moved = std::move(list);
+```
+
+**File**: `test/sql/table_function/duckdb_functions_variant.test` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++# name: test/sql/table_function/duckdb_functions_variant.test
++# description: Typed VARIANT function parameters retain their documentation
++# group: [table_function]
++
++# Check the single-description branch, including examples and categories.
++query TTTT
++SELECT parameters, description, examples[1], categories
++FROM duckdb_functions() WHERE function_name = 'variant_contains';
++----
++[variant_haystack, variant_needle]	Returns whether the needle is contained in the haystack, recursively checking nested arrays and objects.	variant_contains({'a': {'b': 42}}::VARIANT, {'b': 42}::VARIANT)	[variant]
++
++# Multiple descriptions must still distinguish the second argument's type.
++query TTT rowsort
++SELECT parameter_types, parameters, description
++FROM duckdb_functions() WHERE function_name = 'variant_extract';
++----
++[VARIANT, UINTEGER]	[input_variant, index]	Returns the entry at `index` from the `input_variant` if it's an ARRAY.
++[VARIANT, VARCHAR]	[input_variant, field]	Returns the `field` from the `input_variant` if it's an OBJECT.
+```
+
+**File**: `test/sql/types/variant/variant_json_cast_registration.test` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++# name: test/sql/types/variant/variant_json_cast_registration.test
++# description: Loading JSON preserves the core casts to and from VARIANT
++# group: [variant]
++
++require json
++
++query T
++SELECT ('{"a":[1,null]}'::JSON::VARIANT::JSON)::VARCHAR;
++----
++{"a":[1,null]}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28731** (closed): Preserve aggregate domains for proven singleton groups (@kevintruong)
-- **PR #28724** (closed): Keep test_concurrentqueue.cpp out of the test_common unity build (fixes macOS reldebug) (@hawkfish)
-- **PR #28712** (closed): [v2.0-cyanoptera] Backport 54 merged labeled PRs (@smvv)
-- **PR #28708** (closed): Fix macOS unity build failure in concurrentqueue tests (@HendrikLambert)
-- **PR #28707** (2026-11-12): NUMA-aware `BlockAllocator` (@lnkuiper)
-- **PR #28698** (2026-11-12): Fix wrong results and "Conflicting or cyclic column binding replacement" when a lateral join reads a CTE (@Robinho-MR)
+- **PR #28810** (2026-11-13): Let compressed materialization use registered casts (@Robinho-MR)
+- **PR #28804** (2026-11-13): Add TIMSTAMPTZ_NS VARIANT to unshredded parquet varient encoder (@ThijsDreef)
+- **PR #28801** (2026-11-13): Remove obsolete Member-label workflow (@smvv)
+- **PR #28800** (closed): Add an escape_mode option to the CSV reader: 'quote' stops the escape from escaping the delimiter and newlines (@pdet)
+- **PR #28798** (2026-11-13): Keep the struct column qualifier in index expressions when the table shares the column's name (@h4nsmuller)
+- **PR #28787** (2026-11-13): Support MAP generic settings and migrate profiling_renderer_settings (@Robinho-MR)
 
 ---
 
@@ -2853,71 +2538,34 @@ Both the pre-change allocator and this branch can exhaust the 1GB limit at 192 t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Preserve fixed allocator blocks when queue allocation fails
+## X. Build Per-Column Runtime Filters For Multi-Key Hash Joins
 
 **RULE**:
-When implementing operations in `src/include/duckdb/storage/sharded_allocator_queue.hpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/regression/micro.csv`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1cccba45`: Preserve fixed allocator blocks when queue allocation fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b678afa9`: Build Per-Column Runtime Filters For Multi-Key Hash Joins. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/include/duckdb/storage/sharded_allocator_queue.hpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/regression/micro.csv`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-//===----------------------------------------------------------------------===//
-//                         DuckDB
-//
-// duckdb/storage/sharded_allocator_queue.hpp
-//
-//
-//===----------------------------------------------------------------------===//
-
-#pragma once
-
-#include "duckdb/common/atomic.hpp"
-#include "duckdb/common/helper.hpp"
-#include "duckdb/common/mutex.hpp"
-#include "duckdb/common/vector.hpp"
-#include "duckdb/parallel/concurrentqueue.hpp"
-
-#include <new>
-#include <type_traits>
-
-namespace duckdb {
-
-template <class T, class QUEUE = duckdb_moodycamel::ConcurrentQueue<T>>
-class ShardedAllocatorQueue {
-	static_assert(std::is_trivially_copyable<T>::value, "Allocator queue entries must be trivially copyable");
-
-public:
-	struct alignas(64) Shard {
-		bool Enqueue(T value) {
-			return EnqueueInternal(
-			    1, [&] { return q.enqueue(value); }, [&] { return EnqueueOverflow(&value, 1); });
-		}
-		template <class ITERATOR>
-		bool EnqueueBulk(ITERATOR begin, idx_t size) {
-#ifdef DUCKDB_NO_THREADS
-			// The single-threaded queue can throw after publishing a prefix of a batch.
-			for (idx_t i = 0; i < size; i++) {
-				if (!Enqueue(begin[i])) {
-					return false;
-				}
-			}
-			return t
+benchmark/micro/pushdown/multi_key_join_filter.benchmark
+benchmark/micro/pushdown/multi_key_join_filter_covered.benchmark
+benchmark/micro/pushdown/multi_key_join_filter_holes.benchmark
+benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1cccba45` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b678afa9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

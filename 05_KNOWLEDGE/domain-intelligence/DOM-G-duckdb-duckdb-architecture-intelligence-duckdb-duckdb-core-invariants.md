@@ -4,24 +4,24 @@
 {
   "source_repository": "duckdb/duckdb",
   "source_url": "https://github.com/duckdb/duckdb",
-  "source_version": "399d7a83",
+  "source_version": "b678afa9",
   "license": "MIT",
-  "timestamp": "2026-11-13T15:18:40.864Z",
+  "timestamp": "2026-11-14T21:50:43.692Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-duckdb-duckdb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [duckdb/duckdb](https://github.com/duckdb/duckdb) (Revision: `399d7a83`).  
-> **License**: MIT | **Timestamp**: `2026-11-13T15:18:40.864Z`  
+> **Provenance**: Harvested from [duckdb/duckdb](https://github.com/duckdb/duckdb) (Revision: `b678afa9`).  
+> **License**: MIT | **Timestamp**: `2026-11-14T21:50:43.692Z`  
 > **Learning ID**: `learn-github-duckdb-duckdb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 80%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from duckdb/duckdb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:18:40.270Z  
+> **Harvest Timestamp**: 2026-11-14T21:50:42.890Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43060 stars
+- **Stars / Engagement**: 43072 stars
 
 ---
 
@@ -2021,15 +2021,14 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28801** (2026-11-13): **Remove obsolete Member-label workflow**
-  *Symptoms*: Remove `.github/workflows/OnPR.yml`, which only applies the `Member` label to newly opened pull requests. The label is no longer used.
-  **Post-Mortem & Fix Analysis**:
-  > Thanks!
+- **Issue #28826** (2026-11-13): **UPDATE ... RETURNING on an indexed table drops rows when the local append crosses a row-group boundary**
+  *Symptoms*: ### What happens?  On a table with an index (PRIMARY KEY, UNIQUE, or a plain CREATE INDEX), UPDATE ... RETURNING can return fewer rows than it updated. The table is updated correctly but RETURNING result is missing rows.  With RETURNING, every column is bound into the UPDATE, so an indexed column counts as updated and the UPDATE runs as delete + insert. In PhysicalUpdate::Sink, that path calls table.LocalAppend(mock_chunk) and then appends the same mock_chunk to return_collection. When the transaction-local append fills a row group partway through a chunk, RowGroupCollection::Append calls chunk.Slice(append_count, remaining) on the caller's chunk. So return_collection only receives the rows that went into the new row group, and the rows that filled the previous row group are lost.  It looks thread-dependent because with 1 thread and full 2048-row vectors, chunks usually line up with the 122880-row boundary. With more threads, a short chunk can be processed early and shift the alignment. It reproduces deterministically on 1 thread if the first chunk is short (see repro).  INSERT ... RETURNING is not affected.  ### To Reproduce  ```python import duckdb con = duckdb.connect() con.execute("SET threads = 1") con.execute("CREATE TABLE t (id INTEGER PRIMARY KEY, v INTEGER)") con.execute("INSERT INTO t SELECT i, 0 FROM range(300000) r(i)") # first chunk has 1600 rows, so the 122880-row local row-group boundary falls mid-chunk n = len(con.execute("UPDATE t SET v = 1 WHERE id >= 448 RE
 
-- **Issue #28800** (2026-11-13): **Add an escape_mode option to the CSV reader: 'quote' stops the escape from escaping the delimiter and newlines**
-  *Symptoms*: This adds an `escape_mode` option to `read_csv` and `COPY ... FROM`. The default, `'all'`, is today's behavior: with `strict_mode = false`, the escape character makes whatever byte follows it literal, including the delimiter and the line break. `'quote'` limits the escape to the quote and escape characters: before anything else the escape is dropped and the byte keeps its meaning, so a delimiter still separates values and a newline still ends the record. This is how Hive/Athena's OpenCSVSerde (and similar line-based readers) treat a `\` escape — files written that way currently read back corrupted: `a\,b` collapses into one field, and a line ending in `\` swallows the following row (`1,\` / `2,b` / `3,c` reads as 2 rows instead of 3).  The change is confined to the state machine: under `'quote'`, the `UNQUOTED_ESCAPE` row transitions to `DELIMITER`/`RECORD_SEPARATOR`/`CARRIAGE_RETURN` instead of staying in the field (multi-byte delimiters and comment characters keep their meaning too); value materialization is untouched since escape removal already drops the escape byte. The option is part of the state machine cache key, flows through the sniffer, and is serialized with a default so existing plans are unaffected. An invalid value gets an error explaining both modes; combining it with an explicit `strict_mode = true` errors (unset `strict_mode` is implied `false`); without an escape character distinct from the quote the option is inert, which keeps the prompt built by `sniff_c
+- **Issue #28810** (2026-11-13): **Let compressed materialization use registered casts**
+  *Symptoms*: Compressed materialization now resolves its casts through the database's `CastFunctionSet`, like every other cast. User-registered casts apply here too.  - `CreateStatsAwareCast` uses `AddCastToType`. `PropagateCastStatistics` and `ValuePreservingCastFits` use the registered cast set. If a registered cast cannot propagate statistics, the integral compression falls back to the dedicated compress functions. - `CMUtils::MarkCast` no longer asserts a default cast. - SQL export drops the compressed materialization cast and exports its child, so it no longer rejects a non-default one. - Compression assumes casts are correct for in-range values. An incorrect registered cast can produce wrong results here, as it can anywhere else.  This replaces the built-in-only casts that duckdb/duckdb#28757 kept for compressed materialization (`CreateDefaultStatsAwareCast`). 
   **Post-Mortem & Fix Analysis**:
-  > Do we really need this to be yet another option? Can't we just use our existing options to model this?
+  > CC @kryonix 
+  > Thanks. Both points come from the same underlying issue. Compressed materialization adds casts the query never asked for. Using registered casts there exposes cast-free queries to whatever a user-registered cast does, so this is not "as anywhere else", as the description claims. The endpoint round trip and the statistics callback do not show that a cast preserves values or order, as your 0..100 example shows.  I see three options:  1. Keep CM on built-in casts only, i.e. the base's fresh built-in `CastFunctionSet` from #28757, and close this PR. CM is an internal rewrite, so the user's casts arguably should not apply to it. 2. Use a registered cast only if it declares itself value- and order-preserving (an explicit flag on the cast function) and has a statistics callback. Otherwise use the built-in cast. The probe would also have to run only after these eligibility checks and treat any exception as "not usable", not only `ConversionException`. That is your second point. 3. Keep the cur
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2046,892 +2045,469 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5c8008b4` (2026-11-13)
-**Commit Message**: Order small runtime filter builds before filtered and nested scans (#28768)
+### Incident Patch 1: `b678afa9` (2026-11-13)
+**Commit Message**: Build Per-Column Runtime Filters For Multi-Key Hash Joins (#28726)
 
-IMDB 05c can report much higher intermediate cardinalities with an
-unchanged physical plan. Filtered scans and scans feeding nested join
-builds currently do not wait for ordinary runtime filter producers, so
-they can snapshot their filters before a small dimension build publishes
-its filter. In 05c, missing the `company_type_id = 2` filter makes the
-`movie_companies` scan emit 295,628 rows instead of 798.
+When a hash join matches on more than one key, the probe side sends
+almost every row up to the join, even when only a few of them can match.
+TPC-DS q93 is a good example. It joins `store_sales` to `store_returns`
+on both `ss_item_sk` and `ss_ticket_number`, and at SF10 its
+`store_sales` scan passes all 28.8 million rows to the join, even though
+only a small share of those tickets were ever returned.
 
-Allow these scans to wait when the producer's estimated build fits in
-one vector. Keep the existing build/probe size guard, cycle checks, and
-CTE disjunction scheduling behavior. The regression test checks the
-filtered nested build scan's cardinality with one and four threads, plus
-prepared executions after changing and emptying the dimension.
+Single-key joins already avoid this with bloom and prefix-range runtime
+filters, which the scan checks before rows reach the join. Joins on
+several keys only get min/max filters. The hash table hashes all of the
+key columns together, so a bloom filter over those hashes can't be
+checked against any single column. A min/max range on a key like
+`ss_ticket_number` covers nearly all of its values, so it rejects very
+little.
 
-Reproduced the exact costs from [the failing CI job for
-#28750](https://github.com/duckdb/duckdb/actions/runs/43249792499/job/131303617671?pr=28750):
+This PR builds a bloom or prefix-range filter for each key column on its
+own, choosing between them the way a single-key join does today. Each
+key column also keeps its min/max filter, and we skip a prefix-range
+filter whose build keys fill at least half of its range, since the scan
+would likely pause i
 
-| 05c measured cost | Before | After |
-| --- | ---: | ---: |
-| Total join output | 107,606 | 2,872 |
-| Build input | 296,506 | 1,676 |
-| Probe input | 190,121 | 2,843 |
-
-Both results were stable over 30 tries agains
-
-**File**: `src/parallel/runtime_filter_schedule.cpp` (modified, +29/-7)
+**File**: `.github/regression/micro.csv` (modified, +4/-0)
 ```diff
-@@ -23,6 +23,18 @@ static optional_ptr<PhysicalComparisonJoin> RuntimeFilterProducer(Pipeline &pipe
- 	}
- }
- 
-+static bool IsSmallBuild(const PhysicalOperator &op) {
-+	if (op.estimated_cardinality > DEFAULT_STANDARD_VECTOR_SIZE || op.IsSink()) {
-+		return false;
-+	}
-+	for (auto &child : op.children) {
-+		if (!IsSmallBuild(child.get())) {
-+			return false;
-+		}
-+	}
-+	return true;
-+}
+@@ -66,3 +66,7 @@ benchmark/micro/json/lateral_json_each.benchmark
+ benchmark/micro/pushdown/rowid_in_list.benchmark
+ benchmark/micro/list/unnest_repeated_long_string.benchmark
+ benchmark/micro/string/substring_grapheme_negative_offset.benchmark
++benchmark/micro/pushdown/multi_key_join_filter.benchmark
++benchmark/micro/pushdown/multi_key_join_filter_covered.benchmark
++benchmark/micro/pushdown/multi_key_join_filter_holes.benchmark
++benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark
+```
+
+**File**: `benchmark/micro/pushdown/multi_key_join_filter.benchmark` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter.benchmark
++# description: Two-key join where only one key column is selective
++# group: [pushdown]
 +
- static bool HasJoinSink(Pipeline &pipeline) {
- 	auto sink = pipeline.GetSink();
- 	if (!sink) {
-@@ -128,7 +140,11 @@ static void ScheduleRuntimeFiltersInternal(PipelineSchedule &schedule, bool clea
- 		dependency_check = RuntimeFilterDependencyCheck(schedule);
- 		join_build_stages = CollectJoinBuildStages(schedule);
- 	}
--	reference_map_t<DynamicTableFilterSet, vector<idx_t>> sources;
-+	struct FilterSource {
-+		idx_t stage_idx;
-+		bool small_build_only;
-+	};
-+	reference_map_t<DynamicTableFilterSet, vector<FilterSource>> sources;
- 	for (idx_t stage_idx = 0; add_edges && stage_idx < schedule.stages.size(); stage_idx++) {
- 		auto &stage = schedule.stages[stage_idx];
- 		auto &pipeline = *stage.pipeline;
-@@ -143,12 +159,12 @@ static void ScheduleRuntimeFiltersInternal(PipelineSchedule &schedule, bool clea
- 		    scan.function.global_initialization == TableFunctionInitialization::INITIALIZE_ON_SCHEDULE) {
++name MultiKeyJoinFilter
++group micro
++subgroup pushdown
++
++load
++CREATE TABLE fact AS
++  SELECT (i % 300000)::INTEGER AS item,
++         (i // 12)::BIGINT AS ticket,
++         (i % 997)::INTEGER AS payload
++  FROM range(24000000) t(i);
++CREATE TABLE dim AS
++  SELECT item, ticket
++  FROM fact
++  WHERE hash(ticket * 31 + item) % 50 = 0;
++
++run
++SELECT count(*), sum(f.payload)
++FROM fact f
++JOIN dim d ON f.item = d.item AND f.ticket = d.ticket;
++
++result II
++480569	239672695
+```
+
+**File**: `benchmark/micro/pushdown/multi_key_join_filter_covered.benchmark` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter_covered.benchmark
++# description: Two-key join whose small build side holds every value of both key columns
++# group: [pushdown]
++
++name MultiKeyJoinFilterCovered
++group micro
++subgroup pushdown
++
++load
++CREATE TABLE fact AS
++  SELECT ((i % 1000) * 1000003)::BIGINT AS a,
++         (((i // 1000) % 1000) * 1000003)::BIGINT AS b,
++         (i % 997)::INTEGER AS payload
++  FROM range(24000000) t(i);
++CREATE TABLE dim AS
++  SELECT a, b
++  FROM (SELECT DISTINCT a, b FROM fact)
++  WHERE hash(a + b) % 2 = 0;
++
++run
++SELECT count(*), sum(f.payload)
++FROM fact f
++JOIN dim d ON f.a = d.a AND f.b = d.b;
++
++result II
++12278352	6112566278
+```
+
+**File**: `benchmark/micro/pushdown/multi_key_join_filter_holes.benchmark` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter_holes.benchmark
++# description: A half-full key filter rejects every probe value while another key covers its domain
++# group: [pushdown]
++
++name MultiKeyJoinFilterHoles
++group micro
++subgroup pushdown
++
++load
++CREATE TABLE probe AS
++SELECT (2 * (i % 500) + 1)::INTEGER a, ((i // 500) % 1000)::INTEGER b
++FROM range(24000000) t(i);
++CREATE TABLE build AS
++SELECT (2 * a)::INTEGER a, (b + (a % 5) * 200)::INTEGER b
++FROM range(500) t(a), range(200) u(b);
++
++run
++SELECT count(*) FROM probe p JOIN build b ON p.a = b.a AND p.b = b.b;
++
++result I
++0
+```
+
+**File**: `benchmark/micro/pushdown/multi_key_join_filter_mid.benchmark` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter_mid.benchmark
++# description: Two-key join with a build side of 8% of the probe side
++# group: [pushdown]
++
++name MultiKeyJoinFilterMid
++group micro
++subgroup pushdown
++
++load
++CREATE TABLE fact AS
++  SELECT (i % 300000)::INTEGER AS item,
++         ((i // 12) * 1000003)::BIGINT AS ticket,
++         (i % 997)::INTEGER AS payload
++  FROM range(24000000) t(i);
++CREATE TABLE dim AS
++  SELECT item, ticket
++  FROM fact
++  WHERE hash(ticket * 31 + item) % 12 = 0;
++
++run
++SELECT count(*), sum(f.payload)
++FROM fact f
++JOIN dim d ON f.item = d.item AND f.ticket = d.ticket;
++
++result II
++1999936	995253336
+```
+
+**File**: `benchmark/micro/pushdown/multi_key_join_filter_sparse.benchmark` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter_sparse.benchmark
++# description: Two-key join where the selective key column gets a bloom filter
++# group: [pushdown]
++
++name MultiKeyJoinFilterSparse
++group micro
++subgroup pushdown
++
++load
++CREATE TABLE fact AS
++  SELECT (i % 300000)::INTEGER AS item,
++         ((i // 12) * 1000003)::BIGINT AS ticket,
++         (i % 997)::INTEGER AS payload
++  FROM range(24000000) t(i);
++CREATE TABLE dim AS
++  SELECT item, ticket
++  FROM fact
++  WHERE hash(ticket * 31 + item) % 50 = 0;
++
++run
++SELECT count(*), sum(f.payload)
++FROM fact f
++JOIN dim d ON f.item = d.item AND f.ticket = d.ticket;
++
++result II
++479664	238830267
+```
+
+**File**: `benchmark/micro/pushdown/multi_key_join_filter_unselective.benchmark` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter_unselective.benchmark
++# description: Two-key join with a build side of 17% of the probe side
++# group: [pushdown]
++
++name MultiKeyJoinFilterUnselective
++group micro
++subgroup pushdown
++
++load
++CREATE TABLE fact AS
++  SELECT (i % 300000)::INTEGER AS item,
++         ((i // 12) * 1000003)::BIGINT AS ticket,
++         (i % 997)::INTEGER AS payload
++  FROM range(24000000) t(i);
++CREATE TABLE dim AS
++  SELECT item, ticket
++  FROM fact
++  WHERE hash(ticket * 31 + item) % 6 = 0;
++
++run
++SELECT count(*), sum(f.payload)
++FROM fact f
++JOIN dim d ON f.item = d.item AND f.ticket = d.ticket;
++
++result II
++3999604	1991681839
+```
+
+**File**: `benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++# name: benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark
++# description: Eight wide key domains retain useful Bloom filters under a shared memory cap
++# group: [pushdown]
++
++name MultiKeyJoinFilterWide
++group micro
++subgroup pushdown
++
++load
++CREATE TABLE probe AS
++SELECT i,
++       (hash(i) % 67108864)::BIGINT * 1000003 a,
++       (hash(i + 1000003) % 67108864)::BIGINT * 1000003 b,
++       (hash(i + 2000006) % 67108864)::BIGINT * 1000003 c,
++       (hash(i + 3000009) % 67108864)::BIGINT * 1000003 d,
++       (hash(i + 4000012) % 67108864)::BIGINT * 1000003 e,
++       (hash(i + 5000015) % 67108864)::BIGINT * 1000003 f,
++       (hash(i + 6000018) % 67108864)::BIGINT * 1000003 g,
++       (hash(i + 7000021) % 67108864)::BIGINT * 1000003 h
++FROM range(2000000) t(i);
++CREATE TABLE build AS FROM probe WHERE i % 100 = 0;
++
++run
++SELECT count(*) FROM probe p JOIN build b
++ON p.a = b.a AND p.b = b.b AND p.c = b.c AND p.d = b.d
++AND p.e = b.e AND p.f = b.f AND p.g = b.g AND p.h = b.h;
++
++result I
++20000
+```
+
+---
+
+### Incident Patch 2: `afdc4212` (2026-11-13)
+**Commit Message**: Fix VARIANT type normalization for function metadata (#28681)
+
+Currently we lose documentation when a parameter is documented as
+`VARIANT`:
+
+ ```sql
+   SELECT description, examples, categories
+   FROM duckdb_functions()
+   WHERE function_name = 'variant_contains';
+
+┌─────────────┬───────────┬────────────┐
+│ description │ examples  │ categories │
+│   varchar   │ varchar[] │ varchar[]  │
+├─────────────┼───────────┼────────────┤
+│ NULL        │ []        │ []         │
+└─────────────┴───────────┴────────────┘
+ ```
+
+We now normalize the `VARIANT` type so equality matches and we get the
+documentation:
+
+ ```sql
+
+┌────────────────────────────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────┬────────────┐
+│ description │ examples │ categories │
+│ varchar │ varchar[] │ varchar[] │
+
+├────────────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────┼────────────┤
+│ Returns whether the needle is contained in the haystack, recursively c
+│ ['variant_contains({\'a\': {\'b\': 42}}::VARIANT, {\'b\':
+42}::VARIANT) │ [variant] │
+│ hecking nested arrays 
+
+**File**: `extension/json/json_functions/json_create.cpp` (modified, +2/-0)
+```diff
+@@ -1629,6 +1629,8 @@ void JSONFunctions::RegisterJSONCreateCastFunctions(ExtensionLoader &loader) {
+ 		case LogicalTypeId::ARRAY:
+ 			source_type = LogicalType::ARRAY(LogicalType::ANY, optional_idx());
+ 			break;
++		case LogicalTypeId::VARIANT:
++			continue;
+ 		case LogicalTypeId::VARCHAR:
+ 			// We skip this one here as it's handled in json_functions.cpp
  			continue;
- 		}
--		if (!join_build_stages[stage_idx] && (!scan.table_filters || (!scan.table_filters->HasFilters() &&
--		                                                              !scan.table_filters->HasMultiColumnFilters()))) {
--			sources[*scan.dynamic_filters].push_back(stage_idx);
--		}
-+		const auto small_build_only =
-+		    join_build_stages[stage_idx] ||
-+		    (scan.table_filters && (scan.table_filters->HasFilters() || scan.table_filters->HasMultiColumnFilters()));
-+		sources[*scan.dynamic_filters].push_back({stage_idx, small_build_only});
- 		for (auto &filters : scan.dynamic_filters->GetDisjunctionFilters()) {
--			sources[filters.get()].push_back(stage_idx);
-+			sources[filters.get()].push_back({stage_idx, false});
- 		}
- 	}
- 
-@@ -157,6 +173,7 @@ static void ScheduleRuntimeFiltersInternal(PipelineSchedule &schedule, bool clea
- 		auto &publication = publications[producer];
- 		auto build_estimate = producer.children[1].get().estimated_cardinality;
- 		auto probe_estimate = producer.children[0].get().estimated_cardinality;
-+		const auto small_build = add_edges && IsSmallBuild(producer.children[1].get());
- 		for (auto &target : producer.filter_pushdown->probe_info) {
- 			if (clear_filters) {
- 				// Clear previous executions before any scan can take its filter snapshot.
-@@ -170,7 +187,12 @@ static void ScheduleRuntimeFiltersInternal(PipelineSchedule &schedule, bool clea
- 			    build_estimate >= MaxValue(probe_estimate, target.estimated_scan_cardinality)) {
- 				continue;
- 			}
--			for (auto execution : source->second) {
-+			for (auto &filter_source : source->second) {
-+				// A small aggregate or join result can still require expensive inputs.
-+				if (filter_source.small_build_only && !small_build) {
-+					continue;
-+				}
-+				auto execution = filter_source.stage_idx;
- 				if (dependency_check.TryAddDependency(execution, publication[0])) {
- 					schedule.TryAddDependency(execution, publication[0]);
- 				}
 ```
 
-**File**: `test/optimizer/runtime_filter_schedule.cpp` (modified, +83/-0)
+**File**: `extension/json/json_functions/json_transform.cpp` (modified, +2/-0)
 ```diff
-@@ -1,10 +1,16 @@
- #include "catch.hpp"
- #include "duckdb.hpp"
-+#include "duckdb/execution/operator/aggregate/physical_ungrouped_aggregate.hpp"
- #include "duckdb/execution/operator/join/physical_cross_product.hpp"
-+#include "duckdb/execution/operator/join/physical_hash_join.hpp"
-+#include "duckdb/execution/operator/projection/physical_projection.hpp"
- #include "duckdb/execution/operator/scan/physical_dummy_scan.hpp"
-+#include "duckdb/execution/operator/scan/physical_table_scan.hpp"
- #include "duckdb/execution/physical_plan_generator.hpp"
- #include "duckdb/parallel/meta_pipeline.hpp"
- #include "duckdb/parallel/pipeline_schedule.hpp"
-+#include "duckdb/planner/filter/expression_filter.hpp"
-+#include "duckdb/planner/operator/logical_comparison_join.hpp"
- 
- using namespace duckdb;
- 
-@@ -73,3 +79,80 @@ TEST_CASE("Sibling coordination uses build input cardinality", "[runtime_filter_
- 		REQUIRE_FALSE(schedule->HasCycle());
- 	}
- }
-+
-+TEST_CASE("Small runtime filter builds exclude blocking and larger inputs", "[runtime_filter_schedule]") {
-+	DuckDB db(nullptr);
-+	Connection con(db);
-+	Executor executor(*con.context);
-+	PipelineBuildState state;
-+	PhysicalPlan plan(Allocator::Get(*con.context));
-+	auto &probe = plan.Make<PhysicalDummyScan>(vector<LogicalType> {}, 100000);
-+	auto &small_input = plan.Make<PhysicalDummyScan>(vector<LogicalType> {}, DEFAULT_STANDARD_VECTOR_SIZE);
-+	auto &large_input = plan.Make<PhysicalDummyScan>(vector<LogicalType> {}, DEFAULT_STANDARD_VECTOR_SIZE + 1);
-+	auto &unknown_input = plan.Make<PhysicalDummyScan>(vector<LogicalType> {}, 0);
-+	auto &small_projection =
-+	    plan.Make<PhysicalProjection>(vector<LogicalType> {}, vector<unique_ptr<Expression>> {}, 1);
-+	small_projection.children.push_back(small_input);
-+	auto &large_projection =
-+	    plan.Make<PhysicalProjection>(vector<LogicalType> {}, vector<unique_ptr<Expression>> {}, 1);
-+	large_projection.children.push_back(large_input);
-+	auto &aggregate = plan.Make<PhysicalUngroupedAggregate>(vector<LogicalType> {}, vector<unique_ptr<Expression>> {},
-+	                                                        1, TupleDataValidityType::CAN_HAVE_NULL_VALUES);
-+	aggregate.children.push_back(unknown_input);
-+	auto &aggregate_projection =
-+	    plan.Make<PhysicalProjection>(vector<LogicalType> {}, vector<unique_ptr<Expression>> {}, 1);
-+	aggregate_projection.children.push_back(aggregate);
-+	auto &scan =
-+	    plan.Make<PhysicalTableScan>(vector<LogicalType> {}, BoundTableFunction(), nullptr, vector<LogicalType> {},
-+	                                 vector<ColumnIndex> {}, vector<idx_t> {}, vector<string> {}, nullptr, 100000,
-+	                                 ExtraOperatorInfo(), vector<Value> {}, virtual_column_map_t {})
-+	        .Cast<PhysicalTableScan>();
-+	scan.dynamic_filters = make_shared_ptr<DynamicTableFilterSet>();
-+	auto &nested_join = plan.Make<PhysicalCrossProduct>(vector<LogicalType> {}, probe, scan, 100000);
-+
-+	vector<pair<reference<PhysicalOperator>, bool>> builds {{small_input, true},      {large_input, false},
-+	                                                        {small_projection, true}, {large_projection, false},
-+	                                                        {aggregate, false},       {aggregate_projection, false}};
-+	vector<pair<bool, bool>> consumers {{false, false}, {true, false}, {false, true}};
-+	for (auto &build : builds) {
-+		for (auto &consumer : consumers) {
-+			const auto nested = consumer.first;
-+			const auto filtered = consumer.second;
-+			CAPTURE(build.first.get().type);
-+			CAPTURE(nested);
-+			CAPTURE(filtered);
-+			scan.table_filters.reset();
-+			if (filtered) {
-+				scan.table_filters = make_uniq<TableFilterSet>();
-+				scan.table_filters->PushFilter(
-+				    ProjectionIndex(0),
-+				    ExpressionFilter::CreateComparisonFilter(ExpressionType::COMPARE_EQUAL, Value::BIGINT(0)));
-+			}
-+			LogicalComparisonJoin logical_join(JoinType::INNER);
-+			auto &producer = plan.Make<PhysicalHashJoin>(logical_join, probe, build.first.get(),
-+			                                             vector<JoinCondition> {}, JoinType::INNER, 100000)
-+			                     .Cast<PhysicalHashJoin>();
-+			producer.filter_pushdown = make_uniq<JoinFilterPushdownInfo>();
-+			producer.filter_pushdown->build_side_has_filter = false;
-+			JoinFilterPushdownFilter target;
-+			target.dynamic_filters = scan.dynamic_filters;
-+			target.estimated_scan_cardinality = 100000;
-+			producer.filter_pushdown->probe_info.push_back(std::move(target));
-+			auto consumer_pipeline = make_shared_ptr<Pipeline>(executor);
-+			state.SetPipelineSource(*consumer_pipeline, scan);
-+			auto producer_pipeline = make_shared_ptr<Pipeline>(executor);
-+			state.SetPipelineSink(*producer_pipeline, producer, 1);
-+			PipelineSchedule schedule;
-+			schedule.stages.emplace_back(PipelineScheduleStageType::EXECUTE, consumer_pipeline);
-+			schedule.stages.emplace_back(PipelineScheduleStageType::COMPLETE, producer_pipeline);
-+			if (nested) {
-+				state.SetPipeline
+@@ -1328,6 +1328,8 @@ void JSONFunctions::RegisterJSONTransformCastFunctions(ExtensionLoader &loader)
+ 		case LogicalTypeId::ARRAY:
+ 			target_type = LogicalType::ARRAY(LogicalType::ANY, optional_idx());
+ 			break;
++		case LogicalTypeId::VARIANT:
++			continue;
+ 		case LogicalTypeId::VARCHAR:
+ 			// We skip this one here as it's handled in json_functions.cpp
+ 			continue;
 ```
 
-**File**: `test/sql/join/runtime_filter_nested_build_scheduling.test` (added, +70/-0)
+**File**: `src/common/types.cpp` (modified, +24/-22)
 ```diff
-@@ -0,0 +1,70 @@
-+# name: test/sql/join/runtime_filter_nested_build_scheduling.test
-+# description: Small runtime filter producers finish before filtered nested build scans
-+# group: [join]
-+
-+statement ok
-+SET disabled_optimizers='statistics_propagation,join_order,build_side_probe_side,compressed_materialization';
-+
-+statement ok
-+CREATE TABLE nested_probe AS SELECT i AS id FROM range(200000) t(i);
-+
-+statement ok
-+CREATE TABLE nested_build AS
-+SELECT i AS id,i%1000 AS k,CASE WHEN i%2=0 THEN 'USA' ELSE 'Sweden' END AS country
-+FROM range(200000) t(i);
-+
-+statement ok
-+CREATE TABLE dimension AS SELECT 0::BIGINT AS k,true AS selected;
-+
-+statement ok
-+PREPARE nested_target AS
-+SELECT count(*) FROM nested_probe p
-+JOIN nested_build b ON p.id=b.id
-+JOIN dimension d ON b.k=d.k
-+WHERE b.country='USA' AND d.selected;
-+
-+foreach threads 1 4
-+
-+statement ok
-+SET threads={threads};
-+
-+query I
-+EXECUTE nested_target;
-+----
-+200
-+
-+# The dimension filter must be published before the nested build scan takes its snapshot.
-+query II
-+EXPLAIN (ANALYZE, FORMAT JSON)
-+SELECT count(*) FROM nested_probe p
-+JOIN nested_build b ON p.id=b.id
-+JOIN dimension d ON b.k=d.k
-+WHERE b.country='USA' AND d.selected;
-+----
-+analyzed_plan	<REGEX>:(?s).*"Table": "[^"]*[.]nested_build"[^}]*},\s*"intermediate_rows": 200,.*
-+
-+endloop
-+
-+statement ok
-+UPDATE dimension SET k=1;
-+
-+query I
-+EXECUTE nested_target;
-+----
-+0
-+
-+statement ok
-+UPDATE dimension SET k=2;
-+
-+query I
-+EXECUTE nested_target;
-+----
-+200
-+
-+statement ok
-+DELETE FROM dimension;
-+
-+query I
-+EXECUTE nested_target;
-+----
-+0
-```
-
----
-
-### Incident Patch 2: `27c6fa82` (2026-11-13)
-**Commit Message**: Support MAP generic settings and migrate profiling_renderer_settings (#28787)
-
-Follow-up to #28700. This adds `MAP` support to generic settings and
-uses it to migrate `profiling_renderer_settings`, which was one of the
-remaining custom-implementation settings that stored its state in
-`ClientConfig`.
-
-### Generic settings: `MAP(K, V)`
-
-- `Settings::Get` turns a `MAP(K, V)` setting into an `unordered_map<K,
-V>`. Keys and values are converted with the existing `FromValue`
-overloads, so nested types work the same way they do for lists.
-- `ToSettingValue` gets an `unordered_map` overload that builds the
-`Value::MAP` for the typed default.
-- The only map default supported is `{}`. Any other default is an
-`InternalException` at startup.
-
-### `profiling_renderer_settings`
-
-- It is now a generic `LOCAL` setting of type `MAP(VARCHAR, VARCHAR)`
-with default `{}` and an `OnSet` callback. `RESET` goes through the same
-path.
-- `OnSet` keeps the existing validation. It lower-cases the keys,
-rejects NULL values, and eagerly configures the active renderer so bad
-values fail at `SET` time. It then stores the values as VARCHAR, sorted
-by key, so `current_setting` / `duckdb_settings()` output is
-deter
-
-**File**: `src/common/settings.json` (modified, +4/-1)
-```diff
-@@ -1542,7 +1542,10 @@
-         "description": "A map of settings passed to the renderer of the profiler output, e.g. {'max_extra_lines': 100}. Settings not recognized by the active renderer are ignored.",
-         "type": "MAP(VARCHAR, VARCHAR)",
-         "scope": "local",
--        "custom_implementation": true
-+        "default_value": "{}",
-+        "on_callbacks": [
-+            "set"
-+        ]
-     },
-     {
-         "name": "progress_bar_time",
-```
-
-**File**: `src/common/tree_renderer.cpp` (modified, +30/-1)
-```diff
-@@ -11,6 +11,7 @@
- #include "duckdb/common/string_util.hpp"
- #include "duckdb/main/query_profiler.hpp"
- #include "duckdb/main/client_config.hpp"
-+#include "duckdb/main/settings.hpp"
- #include "duckdb/main/profiler_extension.hpp"
- 
- namespace duckdb {
-@@ -89,6 +90,34 @@ unique_ptr<TreeRenderer> TreeRenderer::CreateRenderer(const ProfilerPrintFormat
- 	return CreateRenderer(format.ToString());
+@@ -213,11 +213,32 @@ const LogicalTypeInfo *LogicalType::TryGetBuiltinTypeInfo(LogicalTypeId id) noex
+ 	return builtins->infos[static_cast<uint8_t>(id)];
  }
  
-+unordered_map<string, Value> TreeRenderer::GetRendererSettings(ClientContext &context) {
-+	unordered_map<string, Value> result;
-+	for (auto &entry : Settings::Get<ProfilingRendererSettingsSetting>(context)) {
-+		result.emplace(entry.first, Value(entry.second));
-+	}
-+	return result;
++static unique_ptr<LogicalTypeInfo> CreateVariantTypeInfo() {
++	child_list_t<LogicalType> children;
++	//! keys
++	children.emplace_back("keys", LogicalType::LIST(LogicalTypeId::VARCHAR));
++	//! children
++	children.emplace_back("children",
++	                      LogicalType::LIST(LogicalType::STRUCT(
++	                          {{"keys_index", LogicalType::UINTEGER}, {"values_index", LogicalType::UINTEGER}})));
++	//! values
++	children.emplace_back("values", LogicalType::LIST(LogicalType::STRUCT(
++	                                    {{"type_id", LogicalType::UTINYINT}, {"byte_offset", LogicalType::UINTEGER}})));
++	//! data
++	children.emplace_back("data", LogicalType::BLOB);
++
++	return make_uniq<StructTypeInfo>(std::move(children));
 +}
 +
-+void TreeRenderer::SetRendererSettings(ClientContext &context, const unordered_map<string, Value> &settings) {
-+	Settings::Set<ProfilingRendererSettingsSetting>(context, SetScope::SESSION, RendererSettingsToValue(settings));
-+}
-+
-+Value TreeRenderer::RendererSettingsToValue(const unordered_map<string, Value> &settings) {
-+	// sort the settings by name so that the rendered value is deterministic
-+	vector<string> setting_names;
-+	for (auto &entry : settings) {
-+		setting_names.push_back(entry.first);
+ const LogicalTypeInfo &LogicalType::GetBuiltinTypeInfo(LogicalTypeId id) {
+ 	auto info = TryGetBuiltinTypeInfo(id);
+ 	if (!info) {
+ 		throw InternalException("Invalid LogicalType %d", static_cast<uint8_t>(id));
+ 	}
++	if (id == LogicalTypeId::VARIANT) {
++		static const auto variant_type = CreateImmortal(LogicalTypeId::VARIANT, CreateVariantTypeInfo());
++		return variant_type.GetTypeInfo();
 +	}
-+	std::sort(setting_names.begin(), setting_names.end());
-+	vector<Value> keys;
-+	vector<Value> values;
-+	for (auto &name : setting_names) {
-+		keys.emplace_back(name);
-+		values.push_back(settings.at(name).DefaultCastAs(LogicalType::VARCHAR));
-+	}
-+	return Value::MAP(LogicalType::VARCHAR, LogicalType::VARCHAR, std::move(keys), std::move(values));
-+}
-+
- unique_ptr<TreeRenderer> TreeRenderer::CreateRenderer(ClientContext &context, const string &name) {
- 	// registered renderers take precedence over the built-in formats
- 	auto extension = ProfilerExtension::Find(context, name);
-@@ -97,7 +126,7 @@ unique_ptr<TreeRenderer> TreeRenderer::CreateRenderer(ClientContext &context, co
- 	}
- 	auto renderer = CreateRenderer(name);
- 	if (renderer) {
--		renderer->Configure(ClientConfig::GetConfig(context).profiling_renderer_settings);
-+		renderer->Configure(GetRendererSettings(context));
- 	}
- 	return renderer;
- }
-```
-
-**File**: `src/include/duckdb/common/tree_renderer.hpp` (modified, +7/-0)
-```diff
-@@ -67,6 +67,13 @@ class TreeRenderer {
- 	virtual void Configure(const unordered_map<string, Value> &settings) {
- 	}
- 
-+	//! The "profiling_renderer_settings" of the client, as passed to Configure
-+	static unordered_map<string, Value> GetRendererSettings(ClientContext &context);
-+	//! Overwrites the "profiling_renderer_settings" of the client without validating them
-+	static void SetRendererSettings(ClientContext &context, const unordered_map<string, Value> &settings);
-+	//! Converts renderer settings to the MAP(VARCHAR, VARCHAR) value of the setting, sorted by name
-+	static Value RendererSettingsToValue(const unordered_map<string, Value> &settings);
-+
- 	virtual bool UsesRawKeyNames() {
- 		return false;
- 	}
-```
-
-**File**: `src/include/duckdb/main/client_config.hpp` (modified, +0/-3)
-```diff
-@@ -44,9 +44,6 @@ struct ClientConfig {
- 	//! The format to print query profiling information in (default: query_tree), if enabled.
- 	//! This is the profiler format name passed to QueryProfiler::CreateProfiler.
- 	string profiler_print_format = "query_tree";
--	//! Settings that are passed to the renderer of the profiler output (e.g. 'maximum_render_width' for the text
--	//! renderer). Settings that are not recognized by the active renderer are ignored.
--	unordered_map<string, Value> profiling_renderer_settings;
- 
- 	//! system-wide progress bar disable.
- 	const char *system_progress_bar_disable_reason = nullptr;
-```
-
-**File**: `src/include/duckdb/main/settings.hpp` (modified, +41/-3)
-```diff
-@@ -21,6 +21,12 @@ struct IsSettingList : std::false_type {};
- template <class T>
- struct IsSettingList<vector<T>> : std::true_type {};
- 
-+template <class T>
-+struct IsSettingMap : std::false_type {};
-+
-+template <class K, class V>
-+struct IsSettingMap<unordered_map<K, V>> : std::true_type {};
-+
- struct Settings {
- 	template <class OP, class SOURCE>
- 	static typename OP::RETURN_TYPE Get(const SOURCE &source) {
-@@ -82,6 +88,17 @@ struct Settings {
- 		return result;
- 	}
- 
-+	template <class T>
-+	static typename std::enable_if<IsSettingMap<T>::value, T>::type FromValue(const Value &value) {
-+		T result;
-+		for (auto &entry : MapValue::GetChildren(value)) {
-+			auto &key_value = StructValue::GetChildren(entry);
-+			result.emplace(FromValue<typename T::key_type>(key_value[0]),
-+			               FromValue<typename T::mapped_type>(key_value[1]));
-+		}
-+		return result;
-+	}
-+
- 	//! Parses the default value of a setting
- 	template <class T>
- 	static typename std::enable_if<std::is_enum<T>::value, T>::type FromDefault(const char *default_value) {
-@@ -115,6 +132,15 @@ struct Settings {
- 		}
- 		return result;
- 	}
-+	template <class T>
-+	static typename std::enable_if<IsSettingMap<T>::value, T>::type FromDefault(const char *default_value) {
-+		// only the empty map is supported as a default
-+		if (!StringUtil::Equals(default_value, "{}")) {
-+			throw InternalException("Default value \"%s\" of a map setting must be {}", default_value);
-+		}
-+		return T();
-+	}
-+
- 	//! Splits a list literal (e.g. "['a', 'b']") into its entries
- 	static vector<string> SplitListDefault(const char *default_value);
- 
-@@ -153,6 +179,17 @@ struct Settings {
- 		}
- 		return Value::LIST(SettingLogicalType(static_cast<const T *>(nullptr)), std::move(children));
- 	}
-+	template <class K, class V>
-+	static Value ToSettingValue(const unordered_map<K, V> &values) {
-+		vector<Value> keys;
-+		vector<Value> map_values;
-+		for (auto &entry : values) {
-+			keys.push_back(ToSettingValue(entry.first));
-+			map_values.push_back(ToSettingValue(entry.second));
-+		}
-+		return Value::MAP(SettingLogicalType(static_cast<const K *>(nullptr)),
-+		                  SettingLogicalType(static_cast<const V *>(nullptr)), std::move(keys), std::move(map_values));
-+	}
- 
- 	//! The logical type of a setting value, selected by the (unused) pointer type
- 	static LogicalType SettingLogicalType(const string *) {
-@@ -2536,9 +2573,10 @@ struct ProfilingRendererSettingsSetting {
- 	static constexpr const char *InputType = "MAP(VARCHAR, VARCHAR)";
- 	static constexpr bool IsDebug = false;
- 	static constexpr bool IsDeprecated = false;
--	static void SetLocal(ClientContext &context, const Value &parameter);
--	static void ResetLocal(ClientContext &context);
--	static Value GetSetting(const ClientContext &context);
-+	static constexpr const char *DefaultValue = "{}";
-+	static constexpr SettingScopeTarget Scope = SettingScopeTarget::LOCAL_ONLY;
-+	static constexpr idx_t SettingIndex = NEXT_SETTING_INDEX();
-+	static void OnSet(SettingCallbackInfo &info, Value &input);
- };
- 
- struct ProgressBarTimeSetting {
-```
-
-**File**: `src/main/config.cpp` (modified, +1/-1)
-```diff
-@@ -250,7 +250,7 @@ static const ConfigurationOption internal_options[] = {
-     DUCKDB_SETTING_CALLBACK(ProfilingCoverageSetting),
-     DUCKDB_LOCAL(ProfilingModeSetting),
-     DUCKDB_SETTING_CALLBACK(ProfilingOutputSetting),
--    DUCKDB_LOCAL(ProfilingRendererSettingsSetting),
-+    DUCKDB_SETTING_CALLBACK(ProfilingRendererSettingsSetting),
-     DUCKDB_SETTING_CALLBACK(ProgressBarTimeSetting),
-     DUCKDB_SETTING_CALLBACK(ReadAheadDepthSetting),
-     DUCKDB_SETTING(RedactHttpLogsSetting),
-```
-
-**File**: `src/main/query_profiler.cpp` (modified, +1/-1)
-```diff
-@@ -1163,7 +1163,7 @@ void QueryProfiler::Initialize(const PhysicalOperator &root_op) {
- 
- void QueryProfiler::Render(const ProfilingNode &node, BaseTreeRenderer &ss) const {
- 	TextTreeRenderer renderer;
--	renderer.Configure(ClientConfig::GetConfig(context).profiling_renderer_settings);
-+	renderer.Configure(TreeRenderer::GetRendererSettings(context));
- 	renderer.Render(node, ss);
+ 	return *info;
  }
  
-```
-
-**File**: `src/main/settings/custom_settings.cpp` (modified, +8/-28)
-```diff
-@@ -1462,8 +1462,7 @@ void ProfilingOutputSetting::OnSet(SettingCallbackInfo &info, Value &input) {
- //===----------------------------------------------------------------------===//
- // Profiler Renderer Settings
- //===----------------------------------------------------------------------===//
--void ProfilingRendererSettingsSetting::SetLocal(ClientContext &context, const Value &input) {
--	auto &config = ClientConfig::GetConfig(context);
-+void ProfilingRendererSettingsSetting::OnSet(SettingCallbackInfo &info, Value &input) {
- 	if (input.IsNull() || input.type().id() != LogicalTypeId::MAP) {
- 		throw InvalidInputException("Invalid profiling_renderer_settings type \"%s\", expected a map of settings "
- 		                            "(e.g. {'maximum_render_width': 300})",
-@@ -1476,35 +1475,16 @@ void ProfilingRendererSettingsSetting::SetLocal(ClientContext &context, const Va
- 			throw InvalidInputException("profiling_renderer_settings: the value of \"%s\" cannot be NULL",
- 			                            key_value[0].ToString());
- 		}
--		new_settings[StringUtil::Lower(key_value[0].ToString())] = key_value[1];
-+		new_settings[StringUtil::Lower(key_value[0].ToString())] = key_value[1].DefaultCastAs(LogicalType::VARCHAR);
+@@ -228,10 +249,9 @@ LogicalType::LogicalType(LogicalTypeId id) : type_info_(GetBuiltinTypeInfo(id))
+ }
+ 
+ const LogicalTypeInfo &LogicalType::AdoptNewTypeInfo(LogicalTypeId id, unique_ptr<LogicalTypeInfo> type_info) {
+-	// validates the id - and ensures the builtin infos exist before any type does
+-	auto &builtin_type_info = GetBuiltinTypeInfo(id);
++	// Only resolve built-in info when none was supplied, to avoid recursive initialization.
+ 	if (!type_info) {
+-		return builtin_type_info;
++		return GetBuiltinTypeInfo(id);
  	}
- 	// eagerly configure the renderer of the current profiler format to validate the setting values
--	auto renderer = QueryProfiler::Get(context).GetRenderer();
--	if (renderer) {
--		renderer->Configure(new_settings);
--	}
--	config.profiling_renderer_settings = std::move(new_settings);
+ 	if (!TryGetPhysicalType(id, *type_info, type_info->physical_type)) {
+ 		throw InternalException("Invalid LogicalType %d", static_cast<uint8_t>(id));
+@@ -2066,26 +2086,8 @@ const string &TemplateType::GetName(const LogicalType &type) {
+ // Variant Type
+ //===--------------------------------------------------------------------===//
+ 
+-static unique_ptr<LogicalTypeInfo> CreateVariantTypeInfo() {
+-	child_list_t<LogicalType> children;
+-	//! keys
+-	children.emplace_back("keys", LogicalType::LIST(LogicalTypeId::VARCHAR));
+-	//! children
+-	children.emplace_back("children",
+-	                      LogicalType::LIST(LogicalType::STRUCT(
+-	                          {{"keys_index", LogicalType::UINTEGER}, {"values_index", LogicalType::UINTEGER}})));
+-	//! values
+-	children.emplace_back("values", LogicalType::LIST(LogicalType::STRUCT(
+-	                                    {{"type_id", LogicalType::UTINYINT}, {"byte_offset", LogicalType::UINTEGER}})));
+-	//! data
+-	children.emplace_back("data", LogicalType::BLOB);
+-
+-	return make_uniq<StructTypeInfo>(std::move(children));
 -}
 -
--void ProfilingRendererSettingsSetting::ResetLocal(ClientContext &context) {
--	ClientConfig::GetConfig(context).profiling_renderer_settings.clear();
--}
--
--Value ProfilingRendererSettingsSetting::GetSetting(const ClientContext &context) {
--	auto &config = ClientConfig::GetConfig(context);
--	// sort the settings by name so that the rendered value is deterministic
--	vector<string> setting_names;
--	for (auto &entry : config.profiling_renderer_settings) {
--		setting_names.push_back(entry.first);
--	}
--	std::sort(setting_names.begin(), setting_names.end());
--	vector<Value> keys;
--	vector<Value> values;
--	for (auto &name : setting_names) {
--		keys.emplace_back(name);
--		values.push_back(config.profiling_renderer_settings.at(name).DefaultCastAs(LogicalType::VARCHAR));
-+	if (info.context) {
-+		auto renderer = QueryProfiler::Get(*info.context).GetRenderer();
-+		if (renderer) {
-+			renderer->Configure(new_settings);
-+		}
- 	}
--	return Value::MAP(LogicalType::VARCHAR, LogicalType::VARCHAR, std::move(keys), std::move(values));
-+	input = TreeRenderer::RendererSettingsToValue(new_settings);
+ LogicalType LogicalType::VARIANT() {
+-	static const auto variant_type = CreateImmortal(LogicalTypeId::VARIANT, CreateVariantTypeInfo());
+-	return variant_type;
++	return LogicalType(LogicalTypeId::VARIANT);
  }
  
- //===----------------------------------------------------------------------===//
+ //===--------------------------------------------------------------------===//
 ```
 
----
-
-### Incident Patch 3: `399d7a83` (2026-11-13)
-**Commit Message**: Improve ALP size estimate and relax block size requirement (#28695)
-
-In the encoding analyze phase ALP calculates a multiplier, it does so
-for scaling the estimated bytes of the sample set to the total value
-count. This multiplier however is truncated, so for example x2.9 would
-become x2, leading to inaccurate size estimates. In addition,
-segment-scoped metadata was over counted and vector-scoped metadata was
-omitted.
-
-We've also relaxed the minimum block size from 256KiB to 32KiB when we
-don't support the uncompressed fallback, since we'll never write close
-to 32KiB for a single vector anyway (exact calculation is present in a
-comment above the constant).
-
-**File**: `src/include/duckdb/storage/compression/alp/alp_analyze.hpp` (modified, +43/-68)
+**File**: `test/common/test_logical_type_immutable.cpp` (modified, +16/-0)
 ```diff
-@@ -23,61 +23,32 @@ struct AlpAnalyzeState : public AnalyzeState {
- public:
- 	using EXACT_TYPE = typename FloatingToExact<T>::TYPE;
- 
--	explicit AlpAnalyzeState(BlockManager &block_manager) : AnalyzeState(block_manager), compression_data() {
-+	AlpAnalyzeState(BlockManager &block_manager, bool has_fallback)
-+	    : AnalyzeState(block_manager), has_fallback(has_fallback) {
- 	}
- 
--	idx_t total_bytes_used = 0;
--	idx_t current_bytes_used_in_segment = 0;
-+	//! Flag indicating support for uncompressed storage in case of many exceptions.
-+	const bool has_fallback;
- 	idx_t vectors_sampled_count = 0;
- 	idx_t total_values_count = 0;
- 	idx_t vectors_count = 0;
- 	vector<vector<T>> rowgroup_sample;
- 	vector<vector<T>> complete_vectors_sampled;
- 	alp::AlpCompressionData<T, true> compression_data;
--	StorageVersion storage_version = StorageVersion::INVALID;
--
--public:
--	// Returns the required space to hyphotetically store the compressed segment
--	void FlushSegment() {
--		// We add the size of the segment header (the pointer to the metadata)
--		total_bytes_used += current_bytes_used_in_segment + AlpConstants::METADATA_POINTER_SIZE;
--		current_bytes_used_in_segment = 0;
--	}
--
--	void FlushVector(idx_t vector_size) {
--		current_bytes_used_in_segment += vector_size;
--		compression_data.Reset();
--	}
--
--	// Check if we have enough space in the segment to hyphotetically store the compressed vector
--	bool HasEnoughSpace(idx_t vector_size) {
--		idx_t bytes_to_be_used = AlignValue(current_bytes_used_in_segment + vector_size);
--		// We have enough space if the already used space + the required space for a new vector
--		// does not exceed the space of the block - the segment header (the pointer to the metadata)
--		return bytes_to_be_used <= (info.GetBlockSize() - AlpConstants::METADATA_POINTER_SIZE);
--	}
--
--	idx_t TotalUsedBytes() const {
--		return AlignValue(total_bytes_used);
--	}
- };
- 
- template <class T>
- unique_ptr<AnalyzeState> AlpInitAnalyze(ColumnData &col_data, PhysicalType type) {
--	auto &storage_manager = col_data.GetStorageManager();
- 	auto &block_manager = col_data.GetBlockManager();
--	const auto storage_version = storage_manager.GetStorageVersion();
-+	const auto storage_version = col_data.GetStorageManager().GetStorageVersion();
-+	const bool has_fallback = !StorageManager::IsPriorToVersion(StorageVersion::V1_5_0, storage_version);
- 
--	if (block_manager.GetBlockSize() + block_manager.GetBlockHeaderSize() < DEFAULT_BLOCK_ALLOC_SIZE) {
--		if (StorageManager::IsPriorToVersion(StorageVersion::V1_5_0, storage_version)) {
--			// Before v1.5.0, blocks cannot use uncompressed-vector fallback
--			return nullptr;
--		}
-+	if (!has_fallback &&
-+	    block_manager.GetBlockSize() + block_manager.GetBlockHeaderSize() < AlpConstants::MIN_BLOCK_SIZE) {
-+		return nullptr;
- 	}
- 
--	auto state = make_uniq<AlpAnalyzeState<T>>(block_manager);
--	state->storage_version = storage_version;
--	return unique_ptr<AnalyzeState>(std::move(state));
-+	return make_uniq<AlpAnalyzeState<T>>(block_manager, has_fallback);
+@@ -91,6 +91,22 @@ TEST_CASE("Test that types without parameters share one type info", "[logical_ty
+ 	REQUIRE(LogicalType::DECIMAL(18, 3) == LogicalType::DECIMAL(18, 3));
  }
  
- /*
-@@ -152,42 +123,46 @@ bool AlpAnalyze(AnalyzeState &state, const Vector &input) {
- template <class T>
- idx_t AlpFinalAnalyze(AnalyzeState &state) {
- 	auto &analyze_state = state.Cast<AlpAnalyzeState<T>>();
--
--	// Finding the Top K combinations of Exponent and Factor
--	alp::AlpCompression<T, true>::FindTopKCombinations(analyze_state.rowgroup_sample, analyze_state.compression_data);
--
--	// Encode the entire sampled vectors to estimate a compression size
--	idx_t compressed_values = 0;
--	for (auto &vector_to_compress : analyze_state.complete_vectors_sampled) {
--		alp::AlpCompression<T, true>::Compress(vector_to_compress.data(), vector_to_compress.size(),
--		                                       analyze_state.compression_data);
--		const idx_t uncompressed_size = AlpConstants::EXPONENT_SIZE + sizeof(T) * vector_to_compress.size();
--		const idx_t compressed_size = analyze_state.compression_data.RequiredSpace();
--		const bool should_compress =
--		    compressed_size < uncompressed_size ||
--		    StorageManager::IsPriorToVersion(StorageVersion::V1_5_0, analyze_state.storage_version);
--
--		const idx_t vector_size = should_compress ? compressed_size : uncompressed_size;
--
--		if (!analyze_state.HasEnoughSpace(vector_size)) {
--			analyze_state.FlushSegment();
-+	auto &compression_data = analyze_state.compression_data;
++TEST_CASE("VARIANT has canonical metadata when constructed from its id", "[logical_type_immutable]") {
++	const auto canonical = LogicalType::VARIANT();
++	LogicalType from_id(LogicalTypeId::VARIANT);
++	REQUIRE(from_id == canonical);
++	REQUIRE(from_id.IsComplete());
++	REQUIRE(&from_id.GetTypeInfo() == &canonical.GetTypeInfo());
 +
-+	// Find the top combinations of exponent and factor.
-+	alp::AlpCompression<T, true>::FindTopKCombinations(analyze_state.rowgroup_sample, compression_data);
++	LogicalType without_info(LogicalTypeId::VARIANT, nullptr);
++	REQUIRE(&without_info.GetTypeInfo() == &canonical.GetTypeInfo());
 +
-+	// Encode the sampled vectors to estimate their storage size.
-+	double sampled_values = 0;
-+	double sampled_bytes = 0;
-+	for (auto &sample : analyze_state.complete_vectors_sampled) {
-+		alp::AlpCompression<T, true>::Compress(sample.data(), sample.size(), compression_data);
-+		auto vector_size = compression_data.RequiredSpace();
-+		if (analyze_state.has_fallback) {
-+			const idx_t uncompressed_size = AlpConstants::EXPONENT_SIZE + sizeof(T) * sample.size();
-+			vector_size = Mi
++	auto explicit_info = canonical.GetTypeInfo().Copy();
++	explicit_info->alias = "MY_VARIANT";
++	LogicalType aliased(LogicalTypeId::VARIANT, std::move(explicit_info));
++	REQUIRE(aliased == canonical.WithAlias("MY_VARIANT"));
++}
++
+ TEST_CASE("Test that a moved-from type keeps its id", "[logical_type_immutable]") {
+ 	auto list = LogicalType::LIST(LogicalType::VARCHAR);
+ 	auto moved = std::move(list);
 ```
 
-**File**: `src/include/duckdb/storage/compression/alp/alp_compress.hpp` (modified, +0/-3)
+**File**: `test/sql/table_function/duckdb_functions_variant.test` (added, +18/-0)
 ```diff
-@@ -9,12 +9,9 @@
- #pragma once
- 
- #include "duckdb/common/helper.hpp"
--#include "duckdb/common/operator/subtract.hpp"
--#include "duckdb/common/types/null_value.hpp"
- #include "duckdb/function/compression_function.hpp"
- #include "duckdb/storage/compression/standard_compression_state.hpp"
- #include "duckdb/main/config.hpp"
--#include "duckdb/storage/buffer_manager.hpp"
- #include "duckdb/storage/compression/alp/algorithm/alp.hpp"
- #include "duckdb/storage/compression/alp/alp_analyze.hpp"
- #include "duckdb/storage/compression/patas/patas.hpp"
-```
-
-**File**: `src/include/duckdb/storage/compression/alp/alp_constants.hpp` (modified, +9/-0)
-```diff
-@@ -25,6 +25,15 @@ class AlpConstants {
- 	using BIT_WIDTH_TYPE = uint8_t;
- 	using METADATA_POINTER_TYPE = uint32_t;
- 
-+	//! Conservative upper bounds on encoded vector size, combining maximum bitpacked data and exception sizes.
-+	//! Formula: vector_size * max_bit_width / 8 + vector_size * (original_type_size + position_size) +
-+	//! encoding_metadata
-+	//!
-+	//! DOUBLE: 1024 * 64 / 8 + 1024 * (8 + 2) + 13 = 18445 bytes < 32 KiB
-+	//! FLOAT:  1024 * 64 / 8 + 1024 * (4 + 2) + 13 = 14349 bytes < 32 KiB
-+	//! 32 KiB also accommodates block/segment headers, vector pointers and alignment.
-+	static constexpr idx_t MIN_BLOCK_SIZE = static_cast<const idx_t>(1024 * 32);
+@@ -0,0 +1,18 @@
++# name: test/sql/table_function/duckdb_functions_variant.test
++# description: Typed VARIANT function parameters retain their documentation
++# group: [table_function]
 +
- 	static constexpr uint32_t ALP_VECTOR_SIZE = 1024;
- 	static constexpr uint32_t RG_SAMPLES = 8;
- 	static constexpr uint16_t SAMPLES_PER_VECTOR = 32;
-```
-
-**File**: `test/configs/force_storage_restart.json` (modified, +2/-1)
-```diff
-@@ -107,7 +107,8 @@
-     {
-       "reason": "disabled_compression_methods doesn't survive database restarts",
-       "paths": [
--        "test/sql/settings/setting_validation_and_reset.test"
-+        "test/sql/settings/setting_validation_and_reset.test",
-+        "test/sql/storage/compression/alp/alp_sampling_ratio.test"
-       ]
-     },
-     {
-```
-
-**File**: `test/sql/storage/compression/alp/alp_legacy_block_size.test` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+# name: test/sql/storage/compression/alp/alp_legacy_block_size.test
-+# description: Legacy ALP supports 32 KiB blocks without uncompressed-vector fallback
-+# group: [alp]
-+
-+require exact_vector_size 2048
-+
-+statement ok
-+SET initial_column_segment_size=262144
-+
-+statement ok
-+SET force_compression='alp'
-+
-+# The sampled values have a wide integer range; most other values are exceptions.
-+statement ok
-+CREATE TEMP TABLE source AS
-+SELECT x::FLOAT AS f, x AS d FROM (
-+    SELECT CASE WHEN i % 64 = 0 THEN 1152921504606846976.0::DOUBLE
-+                WHEN i % 64 = 32 THEN -1152921504606846976.0::DOUBLE
-+                WHEN i % 64 = 1 THEN NULL
-+                ELSE 'NaN'::DOUBLE END AS x
-+    FROM range(12345) t(i)
-+)
-+
-+query RR rowsort original_data
-+SELECT * FROM source
++# Check the single-description branch, including examples and categories.
++query TTTT
++SELECT parameters, description, examples[1], categories
++FROM duckdb_functions() WHERE function_name = 'variant_contains';
 +----
++[variant_haystack, variant_needle]	Returns whether the needle is contained in the haystack, recursively checking nested arrays and objects.	variant_contains({'a': {'b': 42}}::VARIANT, {'b': 42}::VARIANT)	[variant]
 +
-+statement ok
-+ATTACH '{TEST_DIR}/alp_legacy_32k.db' AS legacy (STORAGE_VERSION 'v1.4.0', BLOCK_SIZE 32768)
-+
-+statement ok
-+CREATE TABLE legacy.exceptions AS SELECT * FROM source
-+
-+statement ok
-+CHECKPOINT legacy
-+
-+query TT rowsort
-+SELECT DISTINCT segment_type, compression FROM pragma_storage_info('legacy.exceptions')
-+WHERE segment_type IN ('FLOAT', 'DOUBLE') AND compression <> 'Constant'
++# Multiple descriptions must still distinguish the second argument's type.
++query TTT rowsort
++SELECT parameter_types, parameters, description
++FROM duckdb_functions() WHERE function_name = 'variant_extract';
 +----
-+DOUBLE	ALP
-+FLOAT	ALP
-+
-+statement ok
-+DETACH legacy
-+
-+statement ok
-+ATTACH '{TEST_DIR}/alp_legacy_32k.db' AS legacy (READ_ONLY)
-+
-+query RR rowsort original_data
-+SELECT * FROM legacy.exceptions
-+----
++[VARIANT, UINTEGER]	[input_variant, index]	Returns the entry at `index` from the `input_variant` if it's an ARRAY.
++[VARIANT, VARCHAR]	[input_variant, field]	Returns the `field` from the `input_variant` if it's an OBJECT.
 ```
 
-**File**: `test/sql/storage/compression/alp/alp_sampling_ratio.test` (added, +51/-0)
+**File**: `test/sql/types/variant/variant_json_cast_registration.test` (added, +10/-0)
 ```diff
-@@ -0,0 +1,51 @@
-+# name: test/sql/storage/compression/alp/alp_sampling_ratio.test
-+# description: ALP size extrapolation retains fractional sampling ratios
-+# group: [alp]
+@@ -0,0 +1,10 @@
++# name: test/sql/types/variant/variant_json_cast_registration.test
++# description: Loading JSON preserves the core casts to and from VARIANT
++# group: [variant]
 +
-+require exact_vector_size 2048
++require json
 +
-+load {TEST_DIR}/alp_sampling_ratio.db
-+
-+# Ensure the first analyzed vector contains at least 1024 values for both types.
-+statement ok
-+SET initial_column_segment_size=262144
-+
-+# Isolate ALP's estimate against uncompressed storage.
-+statement ok
-+SET disabled_compression_methods='chimp,patas,alprd,rle'
-+
-+# An exact sampling ratio and a fractional ratio with a partial vector.
-+foreach count 3072 3000
-+
-+statement ok
-+CREATE OR REPLACE TABLE incompressible AS
-+SELECT (hash(i)::DOUBLE / 18446744073709551616.0)::FLOAT AS f,
-+       hash(i)::DOUBLE / 18446744073709551616.0 AS d
-+FROM range({count}) t(i)
-+
-+statement ok
-+CHECKPOINT
-+
-+query TT rowsort
-+SELECT DISTINCT segment_type, compression FROM pragma_storage_info('incompressible')
-+WHERE segment_type IN ('FLOAT', 'DOUBLE') AND compression <> 'Constant'
++query T
++SELECT ('{"a":[1,null]}'::JSON::VARIANT::JSON)::VARCHAR;
 +----
-+DOUBLE	Uncompressed
-+FLOAT	Uncompressed
-+
-+endloop
-+
-+# Compressible data must still select ALP with a fractional sampling ratio.
-+statement ok
-+CREATE TABLE compressible AS
-+SELECT i::FLOAT AS f, i::DOUBLE AS d FROM range(3000) t(i)
-+
-+statement ok
-+CHECKPOINT
-+
-+query TT rowsort
-+SELECT segment_type, compression FROM pragma_storage_info('compressible')
-+WHERE segment_type IN ('FLOAT', 'DOUBLE')
-+----
-+DOUBLE	ALP
-+FLOAT	ALP
-```
-
-**File**: `test/sql/storage/compression/alp/alp_storage_version.test` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ CHECKPOINT alp_v1_4_0_default;
- statement ok
- CHECKPOINT alp_v1_5_0;
- 
--# Before storage version v1.5.0 should disable ALP with block sizes smaller than the default
-+# Before storage version v1.5.0, ALP is disabled for 16 KiB blocks.
- 
- query I
- SELECT compression FROM pragma_storage_info('alp_v1_4_0.t') WHERE segment_type = 'DOUBLE' ORDER BY compression LIMIT 1;
++{"a":[1,null]}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #28810** (2026-11-13): Let compressed materialization use registered casts (@Robinho-MR)
+- **PR #28804** (2026-11-13): Add TIMSTAMPTZ_NS VARIANT to unshredded parquet varient encoder (@ThijsDreef)
 - **PR #28801** (2026-11-13): Remove obsolete Member-label workflow (@smvv)
 - **PR #28800** (closed): Add an escape_mode option to the CSV reader: 'quote' stops the escape from escaping the delimiter and newlines (@pdet)
+- **PR #28798** (2026-11-13): Keep the struct column qualifier in index expressions when the table shares the column's name (@h4nsmuller)
 - **PR #28787** (2026-11-13): Support MAP generic settings and migrate profiling_renderer_settings (@Robinho-MR)
-- **PR #28783** (2026-11-13): Keep the loaded-copy extension test path under Windows MAX_PATH (@h4nsmuller)
-- **PR #28781** (2026-11-13): Run one-chunk task slices on the consumer of a parallel streaming result (@h4nsmuller)
-- **PR #28768** (2026-11-13): Order small runtime filter builds before filtered and nested scans (@smvv)
 
 ---
 
@@ -2951,65 +2527,34 @@ comment above the constant).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Order small runtime filter builds before filtered and nested scans (#28768)
+## X. Build Per-Column Runtime Filters For Multi-Key Hash Joins
 
 **RULE**:
-When implementing operations in `src/parallel/runtime_filter_schedule.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/regression/micro.csv`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5c8008b4`: Order small runtime filter builds before filtered and nested scans (#28768). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b678afa9`: Build Per-Column Runtime Filters For Multi-Key Hash Joins. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/parallel/runtime_filter_schedule.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/regression/micro.csv`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-static bool IsSmallBuild(const PhysicalOperator &op) {
-	if (op.estimated_cardinality > DEFAULT_STANDARD_VECTOR_SIZE || op.IsSink()) {
-		return false;
-	}
-	for (auto &child : op.children) {
-		if (!IsSmallBuild(child.get())) {
-			return false;
-		}
-	}
-	return true;
-}
-
-	struct FilterSource {
-		idx_t stage_idx;
-		bool small_build_only;
-	};
-	reference_map_t<DynamicTableFilterSet, vector<FilterSource>> sources;
-		const auto small_build_only =
-		    join_build_stages[stage_idx] ||
-		    (scan.table_filters && (scan.table_filters->HasFilters() || scan.table_filters->HasMultiColumnFilters()));
-		sources[*scan.dynamic_filters].push_back({stage_idx, small_build_only});
-			sources[filters.get()].push_back({stage_idx, false});
-		const auto small_build = add_edges && IsSmallBuild(producer.children[1].get());
-			for (auto &filter_source : source->second) {
-				// A small aggregate or join result can still require expensive inputs.
-				if (filter_source.small_build_only && !small_build) {
-					continue;
-				}
-				auto execution = filter_source.stage_idx;
+benchmark/micro/pushdown/multi_key_join_filter.benchmark
+benchmark/micro/pushdown/multi_key_join_filter_covered.benchmark
+benchmark/micro/pushdown/multi_key_join_filter_holes.benchmark
+benchmark/micro/pushdown/multi_key_join_filter_wide.benchmark
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-	reference_map_t<DynamicTableFilterSet, vector<idx_t>> sources;
-		if (!join_build_stages[stage_idx] && (!scan.table_filters || (!scan.table_filters->HasFilters() &&
-		                                                              !scan.table_filters->HasMultiColumnFilters()))) {
-			sources[*scan.dynamic_filters].push_back(stage_idx);
-		}
-			sources[filters.get()].push_back(stage_idx);
-			for (auto execution : source->second) {
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5c8008b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b678afa9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

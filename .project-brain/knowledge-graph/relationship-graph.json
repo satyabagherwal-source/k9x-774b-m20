@@ -2,10 +2,10 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T21:39:04.642Z",
+  "updated_at": "2026-11-14T21:51:09.001Z",
   "statistics": {
-    "total_nodes": 219,
-    "total_edges": 119,
+    "total_nodes": 220,
+    "total_edges": 120,
     "domain_distribution": {
       "D": 172,
       "M": 1,
@@ -14,11 +14,11 @@
       "K": 10,
       "L": 3,
       "G": 1,
-      "F": 4,
+      "F": 5,
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 119
+      "CONSTRAINED_BY_ARCHITECTURE": 120
     }
   },
   "nodes": {
@@ -4913,6 +4913,29 @@
       ],
       "created_at": "2026-11-14T21:39:04.641Z",
       "updated_at": "2026-11-14T21:39:04.641Z"
+    },
+    "DOM-F-053419E8": {
+      "id": "DOM-F-053419E8",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "one): render blocking head scripts ahead of the css links in the root layout",
+      "summary": "Prevents defects observed in production commit `6f2dc32f`: one): render blocking head scripts ahead of the css links in the root layout. Unv -> When implementing operations in `apps/onestack.dev/data/docs/routing-layouts.mdx`, engineers MUST enforce rigorous boundary validation, safe",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://onejs-one/onejs-one-learnings.md",
+        "source_version": "e49f6c39",
+        "observed_at": "2026-11-14T21:50:35.778Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (onejs-one)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-14T21:51:09.001Z",
+      "updated_at": "2026-11-14T21:51:09.001Z"
     }
   },
   "edges": [
@@ -6105,6 +6128,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-11540386 [D] with Domain M",
       "created_at": "2026-11-14T21:39:04.641Z"
+    },
+    {
+      "id": "EDGE-B185BBF0576F",
+      "sourceId": "DOM-F-053419E8",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-F-053419E8 [F] with Domain G",
+      "created_at": "2026-11-14T21:51:09.001Z"
     }
   ]
 }

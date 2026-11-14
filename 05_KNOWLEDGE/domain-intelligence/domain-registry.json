@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T21:39:05.975Z",
-  "total_records": 850,
+  "last_updated": "2026-11-14T21:51:09.759Z",
+  "total_records": 856,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 418,
+      "total": 420,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -455,7 +455,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv",
         "domain_intelligence-research-knowledge-intelligence-francisring-prism-core-invariants",
         "DOM-D-11540386",
-        "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-nerkyor-qwen3-8-27b-coder390-efficientthink-opus",
+        "domain_intelligence-research-knowledge-intelligence-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-o"
       ]
     },
     "E": {
@@ -465,7 +467,7 @@
       ]
     },
     "F": {
-      "total": 18,
+      "total": 19,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -484,11 +486,12 @@
         "domain_intelligence-design-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invariants",
         "domain_intelligence-design-intelligence-baai-bge-reranker-v2-m3-core-invariants",
         "domain_intelligence-design-intelligence-hf-baai-bge-reranker-v2-m3-learnings-core-invariants",
-        "DOM-F-0C4992D6"
+        "DOM-F-0C4992D6",
+        "DOM-F-053419E8"
       ]
     },
     "G": {
-      "total": 134,
+      "total": 137,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -623,7 +626,10 @@
         "domain_intelligence-architecture-intelligence-sqldelight-sqldelight-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-vespa-engine-vespa-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-iii-hq-iii-core-invariants",
-        "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-onejs-one-core-invariants",
+        "domain_intelligence-architecture-intelligence-onejs-one-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants"
       ]
     },
     "H": {
@@ -6746,8 +6752,8 @@
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "repository": "duckdb/duckdb",
-      "content_hash": "fb3af31aa77a11916162307285d693cd1c6aa2afc7dc5dcdb102dd040f570ae7",
-      "created_at": "2026-11-13T15:18:40.943Z"
+      "content_hash": "2915e6746ff91704e8e53ae7a8b19be61601003281d26410669313f9186c8140",
+      "created_at": "2026-11-14T21:50:43.774Z"
     },
     "DOM-D-A827EB1D": {
       "record_id": "DOM-D-A827EB1D",
@@ -16938,6 +16944,93 @@
       "repository": "hf-francisring-prism-learnings",
       "content_hash": "c0c5aef820ab40571906f5581f194966bab62b5f91235835a1443d9f494eecde",
       "created_at": "2026-11-14T21:39:04.835Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nerkyor-qwen3-8-27b-coder390-efficientthink-opus": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nerkyor-qwen3-8-27b-coder390-efficientthink-opus",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro.md",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "content_hash": "f416a515d00a93d89837e2ebd8e4c3691771fc9014c61c320328996e6bc2715f",
+      "created_at": "2026-11-14T21:50:27.543Z"
+    },
+    "domain_intelligence-architecture-intelligence-onejs-one-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-onejs-one-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: onejs/one Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-onejs-one-architecture-intelligence-onejs-one-core-invariants.md",
+      "repository": "onejs/one",
+      "content_hash": "e6fd1bf84c2868179be3895789f010c014fae1185fb554cf20de00ab77e5c89c",
+      "created_at": "2026-11-14T21:50:36.696Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-o": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-o",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro.md",
+      "repository": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings",
+      "content_hash": "d40e7be70f2ea5dc7adf197b6afb104e909875b3e1f695f676a78696657dd21e",
+      "created_at": "2026-11-14T21:50:46.696Z"
+    },
+    "DOM-F-053419E8": {
+      "record_id": "DOM-F-053419E8",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "one): render blocking head scripts ahead of the css links in the root layout",
+      "content": "When implementing operations in `apps/onestack.dev/data/docs/routing-layouts.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "52f5be1ab4b50b9375053e193102c49c971781b2ca278eb142f93014c6692c1d",
+      "summary": "Prevents defects observed in production commit `6f2dc32f`: one): render blocking head scripts ahead of the css links in the root layout. Unv -> When implementing operations in `apps/onestack.dev/data/docs/routing-layouts.mdx`, engineers MUST enforce rigorous boundary validation, safe",
+      "provenance": {
+        "source_uri": "project://onejs-one/onejs-one-learnings.md",
+        "source_version": "e49f6c39",
+        "observed_at": "2026-11-14T21:50:35.778Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (onejs-one)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of onejs-one"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T21:51:08.992Z"
+    },
+    "domain_intelligence-architecture-intelligence-onejs-one-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-onejs-one-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: onejs-one-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-onejs-one-learnings-architecture-intelligence-onejs-one-learnings-core-invariant.md",
+      "repository": "onejs-one-learnings",
+      "content_hash": "394dbe5b851adeab186f1a9924b266edcea42524d3dfc453e60deec5e3a01c68",
+      "created_at": "2026-11-14T21:51:09.300Z"
+    },
+    "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: duckdb-duckdb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-learnings-architecture-intelligence-duckdb-duckdb-learnings-core-i.md",
+      "repository": "duckdb-duckdb-learnings",
+      "content_hash": "d92954930cb20b27d6c96b955dfbb23440d12f4ab2fb9a8c10b409c2750d3b02",
+      "created_at": "2026-11-14T21:51:09.759Z"
     }
   }
 }
