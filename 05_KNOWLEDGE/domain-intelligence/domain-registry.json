@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T19:03:31.280Z",
-  "total_records": 801,
+  "last_updated": "2026-11-14T19:21:24.660Z",
+  "total_records": 808,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 391,
+      "total": 394,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -428,7 +428,10 @@
         "DOM-D-666917A5",
         "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria",
         "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co",
-        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf"
+        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+        "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants",
+        "DOM-D-CC7591B7",
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core"
       ]
     },
     "E": {
@@ -461,7 +464,7 @@
       ]
     },
     "G": {
-      "total": 126,
+      "total": 128,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -588,7 +591,9 @@
         "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants",
-        "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants",
+        "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants"
       ]
     },
     "H": {
@@ -768,7 +773,7 @@
       ]
     },
     "I": {
-      "total": 30,
+      "total": 32,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -799,7 +804,9 @@
         "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants",
         "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-apache-arrow-core-invariants",
-        "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-pulumi-pulumi-core-invariants",
+        "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants"
       ]
     },
     "J": {
@@ -16192,6 +16199,102 @@
       "repository": "aquasecurity-trivy-learnings",
       "content_hash": "58443eae94500649d2dac8644ca4a5c15bc783fb43ecc211f796e1ea44726b1d",
       "created_at": "2026-11-14T19:03:31.280Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: autotrust/GEV-26B-Decide-NVFP4 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-nvfp4-research-knowledge-intelligence-autotrust-gev-.md",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "content_hash": "1a42bbac8b9acbfa29f2e59922ac0011e90f5a1ea7d6627dee55dabc1a4099f8",
+      "created_at": "2026-11-14T19:20:38.412Z"
+    },
+    "domain_intelligence-content-information-intelligence-pulumi-pulumi-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-pulumi-pulumi-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
+      "repository": "pulumi/pulumi",
+      "content_hash": "980ba6faf88849e72e70cb1d35a92d0a3f3f1ee24a5598bfbba7caec0c6296e3",
+      "created_at": "2026-11-14T19:20:46.083Z"
+    },
+    "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ytsaurus/ytsaurus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ytsaurus-ytsaurus-architecture-intelligence-ytsaurus-ytsaurus-core-invariants.md",
+      "repository": "ytsaurus/ytsaurus",
+      "content_hash": "36fd31f79a58d1e65554b21c7c1e7ddafe9af4df5131894448a8aefa3f2e57ad",
+      "created_at": "2026-11-14T19:20:51.246Z"
+    },
+    "DOM-D-CC7591B7": {
+      "record_id": "DOM-D-CC7591B7",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): autotrust/GEV-26B-Decide-NVFP4",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4](https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4))  \n> **Source Version**: `hf-autotrust`  \n> **License**:",
+      "content_hash": "bbc7cfe450dd7c6ee58de75c7201411f332ebda8f0b856941c27a985cd480609",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md`  \n> **Source**: huggingface ([https:",
+      "provenance": {
+        "source_uri": "project://hf-autotrust-gev-26b-decide-nvfp4/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T19:20:54.097Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-autotrust-gev-26b-decide-nvfp4)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-autotrust-gev-26b-decide-nvfp4"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T19:21:23.047Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-autotrust-gev-26b-decide-nvfp4-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-nvfp4-learnings-research-knowledge-intelligence-hf-a.md",
+      "repository": "hf-autotrust-gev-26b-decide-nvfp4-learnings",
+      "content_hash": "bf13ddc91c82a61ff6eff5fbf232847a48e7e4dda6579993c6ed1efc3632f0be",
+      "created_at": "2026-11-14T19:21:23.263Z"
+    },
+    "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-learnings-content-information-intelligence-pulumi-pulumi-learnings.md",
+      "repository": "pulumi-pulumi-learnings",
+      "content_hash": "c9090d12cbd832db2e1361f6d69fd0d3b48826cb782c1e4765647e6b8e69188b",
+      "created_at": "2026-11-14T19:21:23.960Z"
+    },
+    "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ytsaurus-ytsaurus-learnings-architecture-intelligence-ytsaurus-ytsaurus-learning.md",
+      "repository": "ytsaurus-ytsaurus-learnings",
+      "content_hash": "8167a87b76e643f9ce8a72dd6feae7aa39af9ae1c15346dab2eb25411d26d890",
+      "created_at": "2026-11-14T19:21:24.660Z"
     }
   }
 }

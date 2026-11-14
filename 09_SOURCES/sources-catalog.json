@@ -245,8 +245,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
     "sourceVersion": "hf-autotrust-gev-26b-decide-nvfp4",
     "license": "Open-Source",
-    "contentHash": "b8add8abfdab304cd03ad6b2369aa0a36b7ab2a431cb5b105c10e98b1c5e3906",
-    "lastHarvestedAt": "2026-11-09T07:32:08.473Z",
+    "contentHash": "cf2f74b334da961cf635512f719f1ef89c1beb3c8329fad97c2cf9407f33a574",
+    "lastHarvestedAt": "2026-11-14T19:20:38.239Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4"
   },
   "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "9e3190a8",
+    "sourceVersion": "97d0b4f2",
     "license": "Apache-2.0",
-    "contentHash": "f5b0f48434501de20c44175fb97281eeb5955469ede98aa70497f71ad3d0cd68",
-    "lastHarvestedAt": "2026-11-13T14:06:12.633Z",
+    "contentHash": "8806504cd6257cef57c3cb998d6a627b96d83f2033be60ff3e2ef6e5e27b3fb3",
+    "lastHarvestedAt": "2026-11-14T19:20:45.800Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "54d901da",
+    "sourceVersion": "349c6541",
     "license": "Apache-2.0",
-    "contentHash": "04a7886f758949123d7c43df84da84ec707f1f178eafb1113f89a2d502241ac4",
-    "lastHarvestedAt": "2026-11-13T13:02:57.622Z",
+    "contentHash": "b7689485e0227050f56d09ef0ff5c9b6935227832452393a67982828fc9f46c3",
+    "lastHarvestedAt": "2026-11-14T19:20:50.978Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {

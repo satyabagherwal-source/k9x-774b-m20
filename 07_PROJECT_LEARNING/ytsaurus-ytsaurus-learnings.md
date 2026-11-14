@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `54d901da`  
+> **Source Version**: `349c6541`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T13:02:42.291Z  
+> **Timestamp**: 2026-11-14T19:20:50.139Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T13:02:42.283Z  
+> **Harvest Timestamp**: 2026-11-14T19:20:50.134Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1195,387 +1195,183 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54d901da` (2026-11-13)
-**Commit Message**: fix contrib/libs/grpc: zstd decompressor spins forever on an empty trailing slice
+### Incident Patch 1: `16e53abb` (2026-11-13)
+**Commit Message**: Fix worker stack introspection and GWM leader reporting
 
-The zstd decompressor in zstd_common could loop forever and allocate memory until OOM.
+Unblock SIGUSR1 after InitSignals and before starting dq_service_process worker threads when monitoring is enabled. Thread and fiber introspection can then receive the signal instead of leaving stack requests stuck.
 
-For the last slice the loop ran until ZSTD_decompressStream returned 0. With an empty last slice that never happens: given no input, zstd only returns a non-zero hint that it expects more data. The loop therefore never ended and allocated a new 1 KiB output block on every iteration. A message gets such a slice from a zero-length DATA frame, for example the one that carries END_STREAM when the client half-closes after its last message.
+Add the GWM leader to ClusterInfo immediately after leadership is acquired, before the first IsReady request. Report its address through Coordinator->GetIp(), matching other service nodes and supporting combined service/worker nodes.
 
-The fix makes zstd compression and decompression follow zlib_body: empty slices are skipped, ZSTD_e_end is passed with the last non-empty slice, and the loop over the current slice repeats only while the output block is completely full and zstd has more to produce, or while input remains. If the frame is still unfinished after all slices, an error is returned.
-commit_hash:bd228e50a3ab8ddda0d5d8a568d04882e6c797c7
+Keep DQ UI changes in [PR 17119089](https://nda.ya.ru/t/9XhVa8Ox7wStjx This PR contains the worker/GWM changes and their regression tests.
 
-**File**: `contrib/libs/grpc/src/core/lib/compression/message_compress.cc` (modified, +55/-18)
+Validation: the signal test passed, checking the inherited thread mask and preservation of other signals. All 108 GWM tests passed, including leader visibility before readiness and its IP address.
+commit_hash:aba56d6d8bf048b0f1681797c9a3959f3e381f89
+
+**File**: `yt/yql/providers/dq/global_worker_manager/global_worker_manager.cpp` (modified, +7/-3)
 ```diff
-@@ -145,10 +145,16 @@ static int zlib_decompress(grpc_slice_buffer* input, grpc_slice_buffer* output,
- }
+@@ -28,7 +28,6 @@
+ #include <util/generic/vector.h>
+ #include <util/generic/guid.h>
+ #include <util/system/fs.h>
+-#include <util/system/hostname.h>
+ #include <util/system/getpid.h>
+ #include <util/generic/scope.h>
+ #include <util/random/shuffle.h>
+@@ -931,6 +930,8 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
+         // update leader info (used for leader)
+         auto attributes = NYT::NodeFromYsonString(ev->Get()->Attributes).AsMap();
+         UpdateLeaderInfo(attributes);
++        // Report the leader even before its first IsReady request.
++        UpdateLocalCriticalFiles();
  
- struct CompressTraits {
--  static std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> CreateContext() {
--    return std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)>(
-+  static std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> CreateContext(size_t input_length) {
-+    std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> context(
-        ZSTD_createCCtx(),
-        &ZSTD_freeCCtx);
-+    if (context) {
-+      // Content size goes into the frame header; zstd sizes the window to it.
-+      size_t rc = ZSTD_CCtx_setPledgedSrcSize(context.get(), input_length);
-+      if (ZSTD_isError(rc)) context.reset();
+         YQL_CLOG(INFO, ProviderDq) << "Become leader, epoch=" << CurrentResourceId.Epoch;
+         YQL_CLOG(INFO, ProviderDq) << "Leader resolver=" << LeaderHost << ":" << LeaderPort;
+@@ -1682,6 +1683,10 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
+             //}
+             LocalCriticalFiles->AddFile("unused", f.GetObjectId());
+         }
++        UpdateLocalCriticalFiles();
 +    }
-+    return context;
-   }
++
++    void UpdateLocalCriticalFiles() {
+         TVector<TFileResource> files;
+         LocalCriticalFiles->Walk([&](const TString& objectId) {
+             TFileResource r;
+@@ -1692,7 +1697,7 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
+         r.SetObjectId(Revision);
+         files.push_back(r);
  
-   static size_t ProcessPart(
-@@ -162,7 +168,7 @@ struct CompressTraits {
+-        AllCriticalFiles.Add(TGUID(), SelfId().NodeId(), Revision, Address, Pid, TString(), files);
++        AllCriticalFiles.Add(TGUID(), SelfId().NodeId(), Revision, Coordinator->GetIp(), Pid, TString(), files);
+     }
+ 
+     void OnIsReadyForward(TEvIsReady::TPtr& ev, const TActorContext& ctx) {
+@@ -1932,7 +1937,6 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
+     TInstant LastCleanTime;
+     TDuration CleanInterval = TDuration::Seconds(2);
+     bool TerminatingMode = false;
+-    const TString Address = HostName();
+     const ui32 Pid = GetPID();
  };
  
- struct DecompressTraits {
--  static std::unique_ptr<ZSTD_DCtx, decltype(&ZSTD_freeDCtx)> CreateContext() {
-+  static std::unique_ptr<ZSTD_DCtx, decltype(&ZSTD_freeDCtx)> CreateContext(size_t /* input_length */) {
-     return std::unique_ptr<ZSTD_DCtx, decltype(&ZSTD_freeDCtx)>(
-        ZSTD_createDCtx(),
-        &ZSTD_freeDCtx);
-@@ -179,37 +185,68 @@ struct DecompressTraits {
+```
+
+**File**: `yt/yql/providers/dq/global_worker_manager/global_worker_manager_ut.cpp` (modified, +16/-0)
+```diff
+@@ -235,6 +235,7 @@ class TGlobalWorkerManagerTest: public TTestBase {
+     UNIT_TEST(TestTasksAllocation5)
+     UNIT_TEST(RejectsNegativeWorkerCapacity)
+     UNIT_TEST(RejectsTargetCapacityOverflow)
++    UNIT_TEST(ReportsLeaderBeforeReadiness)
+     UNIT_TEST_SUITE_END();
  
- template<typename Traits>
- static bool zstd_common(grpc_slice_buffer* input, grpc_slice_buffer* output) {
--  const auto context_ptr = Traits::CreateContext();
-+  const auto context_ptr = Traits::CreateContext(input->length);
-   if (!context_ptr) {
-     gpr_log(GPR_INFO, "Failed create zstd context");
-     return false;
-   }
-+  // ZSTD_e_end goes with the last non-empty slice. Empty slices are skipped:
-+  // zstd given no input only asks for more, which looped forever.
-+  size_t last = input->count;
-+  for (size_t i = input->count; i-- > 0;) {
-+    if (GRPC_SLICE_LENGTH(input->slices[i]) != 0) {
-+      last = i;
-+      break;
-+    }
-+  }
-+  grpc_slice outbuf = GRPC_SLICE_MALLOC(OUTPUT_BLOCK_SIZE);
-+  ZSTD_outBuffer zstd_output;
-+  zstd_output.dst = GRPC_SLICE_START_PTR(outbuf);
-+  zstd_output.size = GRPC_SLICE_LENGTH(outbuf);
-+  zstd_output.pos = 0;
-+  size_t process_result = 0;  // Do not fail on an empty input.
-   for (size_t i = 0; i < input->count; i++) {
--    const bool is_last_chunk = (i == input->count - 1);
-+    const bool is_last_chunk = (i == last);
-     ZSTD_inBuffer zstd_input;
-     zstd_input.src = GRPC_SLICE_START_PTR(input->slices[i]);
-     zstd_input.size = GRPC_SLICE_LENGTH(input->slices[i]);
-     zstd_input.pos = 0;
--    bool should_continue = true;
--    while (should_continue) {
--      grpc_slice outbuf = GRPC_SLICE_MALLOC(OUTPUT_BLOCK_SIZE);
--      ZSTD_outBuffer zstd_output;
--      zstd_output.dst = GRPC_SLICE_START_PTR(outbuf);
--      zstd_output.size = GRPC_SLICE_LENGTH(outbuf);
--      zstd_output.pos = 0;
--      size_t const process_result = Traits::ProcessPart(context_ptr.get(), &zstd_output, &zstd_input, is_last_chunk);
-+    if (zstd_input.size == 0) continue;
-+    // Repeat while the block fills up and zstd still has data to flush, or
-+    // input remains (the next frame of a multi-frame message).
-+    do {
-+      if (zstd_output.pos == zstd_output.size) {
-+        grpc_slice_buffer_add_indexed(output, outbuf);
-+        outbuf = GRPC_SLICE_MALLOC(OUTPUT_BLOCK_SIZE);
-+        zstd_output.dst = GRPC_SLICE_START_PTR(outbuf);
-+        zstd_output.size = GRPC_SLICE_LENGTH(outbuf);
-+        zstd_output.pos = 0;
-+      }
-+      process_result = Traits::ProcessPart(context_ptr.get(), &zstd_output, &zstd_input, is_last_chunk);
-       if (ZSTD_isError(process_result)) {
-         gpr_log(GPR_INFO, "zstd error code (%d)", ZSTD_getErrorCode(process_result));
-         grpc_core::CSliceUnref(outbuf);
-         return false;
-       }
--      const auto out_data_left = zstd_output.size - zstd_output.pos;
--      outbuf.data.refcounted.length -= out_data_left;
--      grpc_slice_buffer_add_indexed(output, outbuf);
--
--      should_continue = is_last_chunk ? (process_result != 0) : (zstd_input.pos != zstd_input.size);
-+    } while ((zstd_output.pos == zstd_output.size && process_result != 0) ||
-+             zstd_input.pos != zstd_input.size);
-+    if (zstd_input.pos != zstd_input.size) {
-+      gpr_log(GPR_INFO, "zstd: not all input consumed");
-+      grpc_core::CSliceUnref(outbuf);
-+      return false;
+     void SetUp() override {
+@@ -335,6 +336,21 @@ class TGlobalWorkerManagerTest: public TTestBase {
+         remove("/tmp/test");
      }
-   }
-+  if (process_result != 0) {
-+    gpr_log(GPR_INFO, "zstd: incomplete stream");
-+    grpc_core::CSliceUnref(outbuf);
-+    return false;
-+  }
-+  if (zstd_output.pos == 0) {
-+    grpc_core::CSliceUnref(outbuf);
-+  } else {
-+    outbuf.data.refcounted.length = zstd_output.pos;
-+    grpc_slice_buffer_add_indexed(output, outbuf);
-+  }
-   return true;
- }
  
++    void ReportsLeaderBeforeReadiness() {
++        const auto sender = ActorRuntime_->AllocateEdgeActor();
++        ActorRuntime_->Send(new IEventHandle(MakeWorkerManagerActorID(NodeId()), sender, new TEvClusterStatus()));
++        const auto response = ActorRuntime_->GrabEdgeEvent<TEvClusterStatusResponse>(sender);
++        const auto& status = response->Get()->Record.GetResponse();
++        UNIT_ASSERT_VALUES_EQUAL(status.ServiceNodeSize(), 1);
++        const auto& leader = status.GetServiceNode(0);
++        UNIT_ASSERT_VALUES_EQUAL(leader.GetGuid(), "0-0-0-0");
++        UNIT_ASSERT_VALUES_EQUAL(leader.GetNodeId(), NodeId());
++        UNIT_ASSERT_VALUES_EQUAL(leader.GetAddress(), "::1");
++        UNIT_ASSERT_VALUES_EQUAL(leader.GetRevision(), status.GetRevision());
++        UNIT_ASSERT_VALUES_EQUAL(leader.FileSize(), 1);
++        UNIT_ASSERT_VALUES_EQUAL(leader.GetFile(0), status.GetRevision());
++    }
++
+     void TestTasksAllocation1() {
+         TVector<TVector<TString>> filesPerNode = {
+             {"file0", "file11"},
 ```
 
 ---
 
-### Incident Patch 2: `b0300142` (2026-11-13)
-**Commit Message**: Take the arm64 Linux tick rate from CNTFRQ_EL0
+### Incident Patch 2: `e6831dd8` (2026-11-14)
+**Commit Message**: erm: Add new version for `@yatool/prebuilder`: `2.1.0` and set `2.1.0` as default
 
-On arm64 Linux, cpu_clock fell back to NHPTimer, which estimates the tick rate by sleeping 9 x 5 ms, and on some hosts this estimate is systematically off. CPU instants are recalibrated against TInstant::Now once per 1B ticks: a fraction of a second with an x86-64 TSC, but tens of seconds with the tens-of-MHz generic timers common on arm64. Between recalibrations GetInstant drifts away from the wall clock, so code that mixes the two clocks sees short waits expire at once, and the process wakes up many times more often than on x86-64.
+Executed command: `./erm --verbose --profile update @yatool/prebuilder`
+commit_hash:ac1683ec49a5dedebed24ea2bcac7708a13ca2b7
 
-Now the tick rate is taken from CNTFRQ_EL0, the frequency of the generic timer virtual counter that GetCpuInstant reads on arm64, if it lies within [1 MHz, 2 GHz]; otherwise NHPTimer remains the fallback. This also saves the ~45 ms NHPTimer spends on calibration at startup.
-commit_hash:b9446571a8e288fef7d0a42b043faae6080c6f8a
-
-**File**: `library/cpp/yt/cpu_clock/clock.cpp` (modified, +13/-0)
+**File**: `devtools/frontend_build_platform/erm/erm-packages.json` (modified, +11/-1)
 ```diff
-@@ -222,6 +222,13 @@ std::optional<double> TryMeasureTicksPerSecond()
-     return std::nullopt;
- }
- 
-+#elif defined(_arm64_) && defined(_linux_)
-+
-+bool IsSaneTicksPerSecond(double ticksPerSecond)
-+{
-+    return ticksPerSecond >= 1e6 && ticksPerSecond <= 2e9;
-+}
-+
- #endif
- 
- double ComputeTicksPerSecond()
-@@ -248,6 +255,12 @@ double ComputeTicksPerSecond()
-     if (auto ticksPerSecond = TryMeasureTicksPerSecond()) {
-         return *ticksPerSecond;
-     }
-+#elif defined(_arm64_) && defined(_linux_)
-+    ui64 frequency;
-+    __asm__ __volatile__("mrs %0, cntfrq_el0" : "=r"(frequency));
-+    if (IsSaneTicksPerSecond(frequency)) {
-+        return static_cast<double>(frequency);
-+    }
- #endif
-     return NHPTimer::GetCyclesPerSecond();
- }
-```
-
-**File**: `library/cpp/yt/cpu_clock/unittests/clock_ut.cpp` (modified, +10/-0)
-```diff
-@@ -40,6 +40,16 @@ TEST(TTimingTest, DurationVSCpuDuration)
-     EXPECT_LE(DiffMS(duration1, duration2), 10);
- }
- 
-+#if defined(_arm64_) && defined(_linux_)
-+TEST(TTimingTest, TicksPerSecondFromCntfrq)
-+{
-+    ui64 frequency;
-+    __asm__ __volatile__("mrs %0, cntfrq_el0" : "=r"(frequency));
-+    ASSERT_NE(frequency, 0u);
-+    EXPECT_NEAR(DurationToCpuDuration(TDuration::Seconds(1)), static_cast<TCpuDuration>(frequency), 1);
-+}
-+#endif
-+
- ////////////////////////////////////////////////////////////////////////////////
- 
- } // namespace
+@@ -410,7 +410,7 @@
+     "title": "@yatool/prebuilder",
+     "description": "Сборщик нативных зависимостей, поставляющий на проект уже готовые, собранные под нужную платформу пакеты.",
+     "type": "NPM_PACKAGE",
+-    "default": "2.0.1",
++    "default": "2.1.0",
+     "links": {
+       "Home": "https://a.yandex-team.ru/arcadia/devtools/frontend_build_platform/prebuilder/cli",
+       "Sources": "https://a.yandex-team.ru/arcadia/devtools/frontend_build_platform/prebuilder/cli",
+@@ -419,6 +419,16 @@
+     },
+     "internal": true,
+     "versions": {
++      "2.1.0": {
++        "add_date": "2026-11-14T19:21:29",
++        "resources": [
++          {
++            "id": 14269615047,
++            "platform": "any",
++            "arch": "any"
++          }
++        ]
++      },
+       "2.0.1": {
+         "add_date": "2026-10-26T15:40:27",
+         "resources": [
 ```
 
 ---
 
-### Incident Patch 3: `c60ba9f3` (2026-11-13)
-**Commit Message**: Fix fiber introspection locking
-commit_hash:f16b78d6a55c6914affcdc01c61aff95775eeefd
+### Incident Patch 3: `9edb1cc5` (2026-11-13)
+**Commit Message**: Fix grammar
+commit_hash:e793856f6d3d44d11aa2ef36d469c6f5fe6b277c
 
-**File**: `yt/yt/core/concurrency/fiber.cpp` (modified, +10/-6)
+**File**: `util/thread/pool.h` (modified, +4/-4)
 ```diff
-@@ -334,7 +334,7 @@ std::optional<TDuration> TFiberIntrospectionBase::SetRunning()
-     auto observed = GetState();
-     std::optional<NProfiling::TWallTimer> lockedTimer;
+@@ -150,7 +150,7 @@ class IThreadPool: public IThreadFactory, public TNonCopyable {
  
--    do {
-+    while (true) {
-         // NB(arkady-e1ppa): We expect SetRunning to have
-         // either SetIdle, SetWaiting or Ctor in HB relation to this call.
-         // If we have SetIdle in HB relation then we must
-@@ -356,11 +356,15 @@ std::optional<TDuration> TFiberIntrospectionBase::SetRunning()
-             continue;
-         }
-         // TryAcquire lock.
--    } while (!State_.compare_exchange_weak(
--        observed,
--        EFiberState::Running,
--        std::memory_order::acquire,
--        std::memory_order::relaxed));
-+        if (State_.compare_exchange_weak(
-+            observed,
-+            EFiberState::Running,
-+            std::memory_order::acquire,
-+            std::memory_order::relaxed))
-+        {
-+            break;
-+        }
-+    }
+     /**
+      * Safe versions of Add*() functions. Behave exactly like as non-safe
+-     * version of Add*(), but use exceptions instead returning false
++     * version of Add*(), but use exceptions instead of returning false
+      */
+     void SafeAdd(IObjectInQueue* obj);
  
-     return lockedTimer.has_value()
-         ? std::optional(lockedTimer->GetElapsedTime())
-```
-
-**File**: `yt/yt/core/concurrency/unittests/CMakeLists.darwin-arm64.txt` (modified, +1/-0)
-```diff
-@@ -67,6 +67,7 @@ target_sources(unittester-core-concurrency PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_share_thread_pool_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_manager_ut.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fls_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/hazard_ptr_reclaim_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/invoker_alarm_ut.cpp
-```
-
-**File**: `yt/yt/core/concurrency/unittests/CMakeLists.darwin-x86_64.txt` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ target_sources(unittester-core-concurrency PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_share_thread_pool_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_manager_ut.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fls_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/hazard_ptr_reclaim_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/invoker_alarm_ut.cpp
-```
-
-**File**: `yt/yt/core/concurrency/unittests/CMakeLists.linux-aarch64.txt` (modified, +1/-0)
-```diff
-@@ -73,6 +73,7 @@ target_sources(unittester-core-concurrency PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_share_thread_pool_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_manager_ut.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fls_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/hazard_ptr_reclaim_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/invoker_alarm_ut.cpp
-```
-
-**File**: `yt/yt/core/concurrency/unittests/CMakeLists.linux-x86_64.txt` (modified, +1/-0)
-```diff
-@@ -75,6 +75,7 @@ target_sources(unittester-core-concurrency PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_share_thread_pool_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_manager_ut.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fls_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/hazard_ptr_reclaim_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/invoker_alarm_ut.cpp
-```
-
-**File**: `yt/yt/core/concurrency/unittests/CMakeLists.windows-x86_64.txt` (modified, +1/-0)
-```diff
-@@ -50,6 +50,7 @@ target_sources(unittester-core-concurrency PRIVATE
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_share_thread_pool_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fair_throttler_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_manager_ut.cpp
-+  ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fiber_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/fls_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/hazard_ptr_reclaim_ut.cpp
-   ${PROJECT_SOURCE_DIR}/yt/yt/core/concurrency/unittests/invoker_alarm_ut.cpp
-```
-
-**File**: `yt/yt/core/concurrency/unittests/fiber_ut.cpp` (added, +78/-0)
-```diff
-@@ -0,0 +1,78 @@
-+#include <yt/yt/core/test_framework/framework.h>
-+
-+#include <yt/yt/core/concurrency/fiber.h>
-+
-+#include <yt/yt/core/misc/finally.h>
-+
-+#include <library/cpp/yt/system/event_count.h>
-+
-+#include <thread>
-+
-+namespace NYT::NConcurrency {
-+namespace {
-+
-+////////////////////////////////////////////////////////////////////////////////
-+
-+TEST(TFiberTest, SetRunningTransitions)
-+{
-+    auto* fiber = TFiber::CreateFiber();
-+    fiber->SetRunning();
-+    auto releaseFiber = Finally([&] {
-+        TFiber::ReleaseFiber(fiber);
-+    });
-+
-+    auto noop = [] { };
-+    EFiberState state;
-+    EXPECT_FALSE(fiber->TryLockForIntrospection(&state, noop));
-+    EXPECT_EQ(EFiberState::Running, state);
-+
-+    fiber->SetIdle();
-+    fiber->SetRunning();
-+    EXPECT_FALSE(fiber->TryLockForIntrospection(&state, noop));
-+    EXPECT_EQ(EFiberState::Running, state);
-+
-+    fiber->SetWaiting();
-+    EXPECT_TRUE(fiber->TryLockForIntrospection(&state, noop));
-+    fiber->SetRunning();
-+    EXPECT_FALSE(fiber->TryLockForIntrospection(&state, noop));
-+    EXPECT_EQ(EFiberState::Running, state);
-+}
-+
-+TEST(TFiberTest, SetRunningWaitsForIntrospection)
-+{
-+    auto* fiber = TFiber::CreateFiber();
-+    fiber->SetRunning();
-+    auto releaseFiber = Finally([&] {
-+        TFiber::ReleaseFiber(fiber);
-+    });
-+    fiber->SetWaiting();
-+
-+    TEvent started;
-+    TEvent resumed;
-+    std::thread scheduler;
-+    auto noop = [] { };
-+    EFiberState state;
-+    auto introspect = [&] {
-+        scheduler = std::thread([&] {
-+            started.NotifyAll();
-+            fiber->SetRunning();
-+            resumed.NotifyAll();
-+        });
-+        started.Wait();
-+        EXPECT_FALSE(resumed.Wait(TDuration::MilliSeconds(200)));
-+
-+        EFiberState lockedState;
-+        EXPECT_FALSE(fiber->TryLockForIntrospection(&lockedState, noop));
-+        EXPECT_EQ(EFiberState::Introspecting, lockedState);
-+    };
-+    EXPECT_TRUE(fiber->TryLockForIntrospection(&state, introspect));
-+
-+    scheduler.join();
-+    EXPECT_FALSE(fiber->TryLockForIntrospection(&state, noop));
-+    EXPECT_EQ(EFiberState::Running, state);
-+}
-+
-+////////////////////////////////////////////////////////////////////////////////
-+
-+} // namespace
-+} // namespace NYT::NConcurrency
-```
-
-**File**: `yt/yt/core/concurrency/unittests/ya.make` (modified, +1/-0)
-```diff
-@@ -22,6 +22,7 @@ SRCS(
-     fair_share_thread_pool_ut.cpp
-     fair_throttler_ut.cpp
-     fiber_manager_ut.cpp
-+    fiber_ut.cpp
-     fls_ut.cpp
-     hazard_ptr_reclaim_ut.cpp
-     invoker_alarm_ut.cpp
+@@ -162,7 +162,7 @@ class IThreadPool: public IThreadFactory, public TNonCopyable {
+     void SafeAddAndOwn(THolder<IObjectInQueue> obj);
+ 
+     /**
+-     * Add object to queue, run obj->Proccess in other threads.
++     * Add object to queue, run obj->Process in other threads.
+      * Obj is not deleted after execution
+      * @return true of obj is successfully added to queue
+      * @return false if queue is full or shutting down
+@@ -220,7 +220,7 @@ class IThreadPool: public IThreadFactory, public TNonCopyable {
+      * CreateThreadSpecificResource and DestroyThreadSpecificResource
+      * called from internals of (TAdaptiveThreadPool, TThreadPool, ...) implementation,
+      * not by user of IThreadPool interface.
+-     * Created resource is passed to IObjectInQueue::Proccess function.
++     * Created resource is passed to IObjectInQueue::Process function.
+      */
+     virtual void* CreateThreadSpecificResource() {
+         return nullptr;
+@@ -237,7 +237,7 @@ class IThreadPool: public IThreadFactory, public TNonCopyable {
+ };
+ 
+ /**
+- * Single-threaded implementation of IThreadPool, process tasks in same thread when
++ * Single-threaded implementation of IThreadPool, process tasks in the same thread when
+  * added.
+  * Can be used to remove multithreading.
+  */
 ```
 
 #### Recent Merged Pull Requests:
@@ -1604,70 +1400,36 @@ commit_hash:f16b78d6a55c6914affcdc01c61aff95775eeefd
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. contrib/libs/grpc: zstd decompressor spins forever on an empty trailing slice
+## X. worker stack introspection and GWM leader reporting
 
 **RULE**:
-When implementing operations in `contrib/libs/grpc/src/core/lib/compression/message_compress.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yql/providers/dq/global_worker_manager/global_worker_manager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54d901da`: contrib/libs/grpc: zstd decompressor spins forever on an empty trailing slice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `16e53abb`: worker stack introspection and GWM leader reporting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `contrib/libs/grpc/src/core/lib/compression/message_compress.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yql/providers/dq/global_worker_manager/global_worker_manager.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  static std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> CreateContext(size_t input_length) {
-    std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> context(
-    if (context) {
-      // Content size goes into the frame header; zstd sizes the window to it.
-      size_t rc = ZSTD_CCtx_setPledgedSrcSize(context.get(), input_length);
-      if (ZSTD_isError(rc)) context.reset();
+        // Report the leader even before its first IsReady request.
+        UpdateLocalCriticalFiles();
+        UpdateLocalCriticalFiles();
     }
-    return context;
-  static std::unique_ptr<ZSTD_DCtx, decltype(&ZSTD_freeDCtx)> CreateContext(size_t /* input_length */) {
-  const auto context_ptr = Traits::CreateContext(input->length);
-  // ZSTD_e_end goes with the last non-empty slice. Empty slices are skipped:
-  // zstd given no input only asks for more, which looped forever.
-  size_t last = input->count;
-  for (size_t i = input->count; i-- > 0;) {
-    if (GRPC_SLICE_LENGTH(input->slices[i]) != 0) {
-      last = i;
-      break;
-    }
-  }
-  grpc_slice outbuf = GRPC_SLICE_MALLOC(OUTPUT_BLOCK_SIZE);
-  ZSTD_outBuffer zstd_output;
-  zstd_output.dst = GRPC_SLICE_START_PTR(outbuf);
-  zstd_output.size = GRPC_SLICE_LENGTH(outbuf);
-  zstd_output.pos = 0;
-  size_t process_result = 0;  // Do not fail on an empty input.
-    const bool is_last_chunk = (i =
+
+    void UpdateLocalCriticalFiles() {
+        AllCriticalFiles.Add(TGUID(), SelfId().NodeId(), Revision, Coordinator->GetIp(), Pid, TString(), files);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-  static std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)> CreateContext() {
-    return std::unique_ptr<ZSTD_CCtx, decltype(&ZSTD_freeCCtx)>(
-  static std::unique_ptr<ZSTD_DCtx, decltype(&ZSTD_freeDCtx)> CreateContext() {
-  const auto context_ptr = Traits::CreateContext();
-    const bool is_last_chunk = (i == input->count - 1);
-    bool should_continue = true;
-    while (should_continue) {
-      grpc_slice outbuf = GRPC_SLICE_MALLOC(OUTPUT_BLOCK_SIZE);
-      ZSTD_outBuffer zstd_output;
-      zstd_output.dst = GRPC_SLICE_START_PTR(outbuf);
-      zstd_output.size = GRPC_SLICE_LENGTH(outbuf);
-      zstd_output.pos = 0;
-      size_t const process_result = Traits::ProcessPart(context_ptr.get(), &zstd_output, &zstd_input, is_last_chunk);
-      const auto out_data_left = zstd_output.size - zstd_output.pos;
-      outbuf.data.refcounted.length -= out_data_left;
-      grpc_slice_buffer_add_indexed(output, outbuf);
-
-      should_continue = is_last_chunk ? (process_result != 0) : (zstd_input.pos != zstd_input.size);
+// Induced defect failure mode:
+#include <util/system/hostname.h>
+        AllCriticalFiles.Add(TGUID(), SelfId().NodeId(), Revision, Address, Pid, TString(), files);
+    const TString Address = HostName();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54d901da` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `16e53abb` are properly handled with clean fallback behavior.

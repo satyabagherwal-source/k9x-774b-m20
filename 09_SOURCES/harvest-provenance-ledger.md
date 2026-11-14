@@ -9950,3 +9950,7 @@ Every entry in this ledger must capture:
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `6498b4d7` | Multi-dimensional audit evidence | 2026-11-14T19:03:11.095Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `239be7b2` | Multi-dimensional audit evidence | 2026-11-14T19:03:19.170Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `c10b67e8` | Multi-dimensional audit evidence | 2026-11-14T19:03:26.757Z |
+| `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-14T19:20:38.239Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `97d0b4f2` | Multi-dimensional audit evidence | 2026-11-14T19:20:45.800Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `349c6541` | Multi-dimensional audit evidence | 2026-11-14T19:20:50.978Z |
+| `learn-dom-d-cc7591b7` | `project://hf-autotrust-gev-26b-decide-nvfp4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | 2026-11-14T19:21:23.060Z |

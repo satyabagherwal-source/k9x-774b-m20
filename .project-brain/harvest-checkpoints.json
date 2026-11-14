@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T19:03:26.767Z",
+  "last_updated": "2026-11-14T19:20:50.987Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -260,14 +260,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "b8add8abfdab304cd03ad6b2369aa0a36b7ab2a431cb5b105c10e98b1c5e3906",
-      "verified_at": "2026-11-09T07:32:08.490Z",
+      "content_hash": "cf2f74b334da961cf635512f719f1ef89c1beb3c8329fad97c2cf9407f33a574",
+      "verified_at": "2026-11-14T19:20:38.249Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T07:32:08.490Z"
+      "last_updated": "2026-11-14T19:20:38.249Z"
     },
     "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF": {
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "f5b0f48434501de20c44175fb97281eeb5955469ede98aa70497f71ad3d0cd68",
-      "verified_at": "2026-11-13T14:06:12.643Z",
+      "content_hash": "8806504cd6257cef57c3cb998d6a627b96d83f2033be60ff3e2ef6e5e27b3fb3",
+      "verified_at": "2026-11-14T19:20:45.810Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:06:12.643Z"
+      "last_updated": "2026-11-14T19:20:45.810Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "04a7886f758949123d7c43df84da84ec707f1f178eafb1113f89a2d502241ac4",
-      "verified_at": "2026-11-13T13:02:57.646Z",
+      "content_hash": "b7689485e0227050f56d09ef0ff5c9b6935227832452393a67982828fc9f46c3",
+      "verified_at": "2026-11-14T19:20:50.987Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:02:57.646Z"
+      "last_updated": "2026-11-14T19:20:50.987Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",

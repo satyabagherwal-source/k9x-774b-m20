@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `9e3190a8`  
+> **Source Version**: `97d0b4f2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T14:05:54.265Z  
+> **Timestamp**: 2026-11-14T19:20:44.964Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T14:05:54.256Z  
+> **Harvest Timestamp**: 2026-11-14T19:20:44.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25904 stars
+- **Stars / Engagement**: 25903 stars
 
 ---
 
@@ -1713,68 +1713,79 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4fcfbeb` (2026-11-12)
-**Commit Message**: Serialize prepare-release runs to fix release checksum/binary mismatch (#25684)
+### Incident Patch 1: `6825a345` (2026-11-13)
+**Commit Message**: Fix Markdown rendering of `pulumi package publish` help text (#25695)
 
-## Background
+Fixes #19920
 
-The `SHA256SUMS`, `SHA512SUMS`, and `B3SUMS` files published on recent
-GitHub releases (e.g.
-[v3.275.0](https://github.com/pulumi/pulumi/releases/tag/v3.275.0)) do
-not match the hashes of the binaries uploaded alongside them. For
-example, `SHA512SUMS` for v3.275.0 claims
-`pulumi-v3.275.0-linux-x64.tar.gz` hashes to `4db9be95…`, but the
-uploaded tarball actually hashes to `f4a18060…`.
+The CLI reference page for `pulumi package publish` is generated from
+the command's `Long` help text by `pulumi gen-markdown`, but that text
+was written as plain text rather than Markdown.
+On the docs site this:
 
-Nothing was tampered with — this is a race in our own release pipeline.
+- dropped `<provider>` and `<schema>` entirely, because they were parsed
+as HTML tags
+- turned `'--'` into an en dash
+- rendered the two-space-indented examples as ordinary paragraphs
+instead of code blocks
 
-## Root cause
+This change wraps the placeholders, `--`, and file extensions in
+backticks (as other commands' help text already does) and indents the
+examples by four spaces so they render as code blocks.
+The terminal help output still reads naturally.
 
-`on-merge.yml` runs on every `merge_group` event and calls
-`ci-prepare-release.yml`, which builds the binaries, computes the sums,
-and uploads everything to the `v${version}` draft release via
-`ncipollo/release-action` with `allowUpdates: true, replacesArtifacts:
-true`.
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-The `on-merge.yml` concurrency group is keyed on `${{ github.workflow
-}}-${{ github.ref }}`, but `merge_group` events have a different
-`github.ref` per PR (e.g. `gh-readonly-queue/master/pr-25070-…`). So
-multiple merge-queue runs execute `ci-prepare-release` concurrently and
-all target the same draft release.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Because Go binaries are not bit-reproducible
-
-**File**: `.github/workflows/ci-prepare-release.yml` (modified, +4/-0)
-```diff
-@@ -36,6 +36,10 @@ on:
-         description: "Whether to create a draft release"
-         type: boolean
- 
-+concurrency:
-+  group: prepare-release-${{ inputs.version }}
-+  cancel-in-progress: false
-+
- env:
-   PULUMI_VERSION: ${{ inputs.version }}
- 
-```
-
-**File**: `changelog/pending/ci-fix-20261108-release-race.yaml` (added, +4/-0)
+**File**: `changelog/pending/20261112--cli-package--publish-help-markdown.yaml` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
-+component: ci
++component: cli/package
 +kind: fix
-+body: Serialize prepare-release runs per version to prevent checksum/binary mismatches on draft releases
-+time: 2026-11-08T12:00:00+00:00
++body: Fix formatting of the `pulumi package publish` reference docs
++time: 2026-11-12T00:00:00Z
+```
+
+**File**: `pkg/cmd/pulumi/packagecmd/package_publish.go` (modified, +7/-7)
+```diff
+@@ -82,20 +82,20 @@ func newPackagePublishCmd() *cobra.Command {
+ 		Long: "Publish a package to the Private Registry.\n\n" +
+ 			"This command publishes a package to the Private Registry. The package can be a provider " +
+ 			"or a schema.\n\n" +
+-			"When <provider> is specified as a PLUGIN[@VERSION] reference, Pulumi attempts to " +
++			"When `<provider>` is specified as a `PLUGIN[@VERSION]` reference, Pulumi attempts to " +
+ 			"resolve a resource plugin first, installing it on-demand, similarly to:\n\n" +
+-			"  pulumi plugin install resource PLUGIN [VERSION]\n\n" +
+-			"When <provider> is specified as a local path, Pulumi executes the provider " +
++			"    pulumi plugin install resource PLUGIN [VERSION]\n\n" +
++			"When `<provider>` is specified as a local path, Pulumi executes the provider " +
+ 			"binary to extract its package schema.\n\n" +
+ 			"For parameterized providers, parameters may be specified as additional " +
+ 			"arguments. The exact format of parameters is provider-specific; consult the " +
+ 			"provider's documentation for more information. If the parameters include flags " +
+-			"that begin with dashes, you may need to use '--' to separate the provider name " +
++			"that begin with dashes, you may need to use `--` to separate the provider name " +
+ 			"from the parameters, as in:\n\n" +
+-			"  pulumi package publish <provider> --readme ./README.md -- --provider-parameter-flag value\n\n" +
+-			"When <schema> is a path to a local file with a '.json', '.yml' or '.yaml' " +
++			"    pulumi package publish <provider> --readme ./README.md -- --provider-parameter-flag value\n\n" +
++			"When `<schema>` is a path to a local file with a `.json`, `.yml` or `.yaml` " +
+ 			"extension, Pulumi package schema is read from it directly:\n\n" +
+-			"  pulumi package publish ./my/schema.json --readme ./README.md",
++			"    pulumi package publish ./my/schema.json --readme ./README.md",
+ 		RunE: func(cmd *cobra.Command, cliArgs []string) error {
+ 			ctx := cmd.Context()
+ 			pkgPublishCmd.extractSchema = packages.SchemaFromSchemaSource
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25703** (2026-11-13): Regenerate automation APIs (@pulumi-bot)
+- **PR #25697** (2026-11-13): Add --parent to `pulumi state move` (@Frassle)
+- **PR #25695** (2026-11-13): Fix Markdown rendering of `pulumi package publish` help text (@jkodroff)
 - **PR #25691** (2026-11-13): Changelog for v3.276.0 (@pulumi-bot)
 - **PR #25687** (2026-11-12): Lock 3.276 for release (@Frassle)
 - **PR #25684** (2026-11-12): Serialize prepare-release runs to fix release checksum/binary mismatch (@Frassle)
-- **PR #25675** (2026-11-12): Changelog for v3.275.0 (@pulumi-bot)
-- **PR #25671** (closed): Fork CheckConfigResponse and expose CheckConfig as two Go methods (@VenelinMartinov)
-- **PR #25668** (2026-11-11): Freeze v3.275.0 (@pulumi-bot)
 
 ---
 
@@ -1794,31 +1805,31 @@ Because Go binaries are not bit-reproducible
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Serialize prepare-release runs to fix release checksum/binary mismatch (#25684)
+## X. Markdown rendering of `pulumi package publish` help text
 
 **RULE**:
-When implementing operations in `.github/workflows/ci-prepare-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/20261112--cli-package--publish-help-markdown.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4fcfbeb`: Serialize prepare-release runs to fix release checksum/binary mismatch (#25684). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6825a345`: Markdown rendering of `pulumi package publish` help text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-prepare-release.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261112--cli-package--publish-help-markdown.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-concurrency:
-  group: prepare-release-${{ inputs.version }}
-  cancel-in-progress: false
-
+component: cli/package
+kind: fix
+body: Fix formatting of the `pulumi package publish` reference docs
+time: 2026-11-12T00:00:00Z
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4fcfbeb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6825a345` are properly handled with clean fallback behavior.

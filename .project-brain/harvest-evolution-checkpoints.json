@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T19:03:31.482Z",
+  "last_updated": "2026-11-14T19:21:24.902Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T18:35:11.549Z",
@@ -998,7 +998,7 @@
       "staged_for_review": 1
     },
     "pulumi-pulumi-learnings.md": {
-      "processed_at": "2026-11-12T09:46:27.563Z",
+      "processed_at": "2026-11-14T19:21:23.433Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2711,9 +2711,19 @@
       "processed_at": "2026-11-14T19:03:30.662Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-autotrust-gev-26b-decide-nvfp4-learnings.md": {
+      "processed_at": "2026-11-14T19:21:23.061Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "ytsaurus-ytsaurus-learnings.md": {
+      "processed_at": "2026-11-14T19:21:24.198Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 891,
-  "total_canonical_promoted": 215,
-  "total_staged_for_review": 675
+  "total_dossiers_evaluated": 894,
+  "total_canonical_promoted": 216,
+  "total_staged_for_review": 677
 }

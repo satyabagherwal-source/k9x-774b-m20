@@ -4,45 +4,31 @@
 {
   "source_repository": "ytsaurus/ytsaurus",
   "source_url": "https://github.com/ytsaurus/ytsaurus",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "349c6541",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T19:20:51.144Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-ytsaurus-ytsaurus",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `349c6541`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T19:20:51.144Z`  
+> **Learning ID**: `learn-github-ytsaurus-ytsaurus`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ytsaurus/ytsaurus` (Commit: `historical`)
+- **Target Repository**: `ytsaurus/ytsaurus` (Commit: `349c6541`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
-> **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `64d040b5`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T06:27:04.301Z  
-> **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): ytsaurus/ytsaurus
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T06:27:04.296Z  
+> **Harvest Timestamp**: 2026-11-14T19:20:50.134Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1220,141 +1206,183 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `df0b544e` (2026-11-11)
-**Commit Message**: YT-30385: Fix lease timeout assertions and force transaction cleanup
+### Incident Patch 1: `16e53abb` (2026-11-13)
+**Commit Message**: Fix worker stack introspection and GWM leader reporting
 
-The lease revocation test introduced in https://nda.ya.ru/t/-tbdDpB27wJmXy rejects a valid timeout: the driver reports "Operation timed out" (code 3), while the assertion requires "Request timed out". The worker exception reaches join() before unreference_lease(), leaving cleanup waiting for the held reference.
-commit_hash:4eb268d491e58881392019c1869e4161fd11c1f0
+Unblock SIGUSR1 after InitSignals and before starting dq_service_process worker threads when monitoring is enabled. Thread and fiber introspection can then receive the signal instead of leaving stack requests stuck.
 
-**File**: `yt/yt/tests/integration/dynamic_tables/test_dynamic_tables_leases.py` (modified, +9/-2)
+Add the GWM leader to ClusterInfo immediately after leadership is acquired, before the first IsReady request. Report its address through Coordinator->GetIp(), matching other service nodes and supporting combined service/worker nodes.
+
+Keep DQ UI changes in [PR 17119089](https://nda.ya.ru/t/9XhVa8Ox7wStjx This PR contains the worker/GWM changes and their regression tests.
+
+Validation: the signal test passed, checking the inherited thread mask and preservation of other signals. All 108 GWM tests passed, including leader visibility before readiness and its IP address.
+commit_hash:aba56d6d8bf048b0f1681797c9a3959f3e381f89
+
+**File**: `yt/yql/providers/dq/global_worker_manager/global_worker_manager.cpp` (modified, +7/-3)
 ```diff
-@@ -10,6 +10,8 @@
+@@ -28,7 +28,6 @@
+ #include <util/generic/vector.h>
+ #include <util/generic/guid.h>
+ #include <util/system/fs.h>
+-#include <util/system/hostname.h>
+ #include <util/system/getpid.h>
+ #include <util/generic/scope.h>
+ #include <util/random/shuffle.h>
+@@ -931,6 +930,8 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
+         // update leader info (used for leader)
+         auto attributes = NYT::NodeFromYsonString(ev->Get()->Attributes).AsMap();
+         UpdateLeaderInfo(attributes);
++        // Report the leader even before its first IsReady request.
++        UpdateLocalCriticalFiles();
  
- from yt_driver_bindings import Driver
- 
-+import yt_error_codes
-+
- from yt_helpers import master_exit_read_only_sync
- 
- from yt.test_helpers import (
-@@ -30,6 +32,9 @@ class TestDynamicTablesLeases(YTEnvSetup):
-     NUM_NODES = 3
-     USE_DYNAMIC_TABLES = True
- 
-+    # Failed assertions can leave deliberately held lease references blocking cleanup.
-+    FORCE_ABORT_TRANSACTIONS_ON_CLEANUP = True
-+
-     LEASE_ID = "1-2-3-4"
- 
-     DELTA_MASTER_CONFIG = {
-@@ -730,8 +735,10 @@ def test_lease_revocation_timeout(self):
-         driver = Driver(driver_config)
- 
-         def run_abort():
--            with raises_yt_error("Request timed out|Request queue size limit exceeded"):
-+            with raises_yt_error() as error:
-                 abort_transaction(tx, driver=driver, verbose=False)
-+            assert error[0].contains_code(yt_error_codes.Timeout) or error[0].contains_code(
-+                yt_error_codes.RequestQueueSizeLimitExceeded)
- 
-         abort_requests = [
-             self.spawn_additional_thread(target=run_abort)
-@@ -743,7 +750,7 @@ def run_abort():
- 
-         # NB: If all previous requests aren't stuck this request won't get
-         # "RequestQueueSizeLimitExceeded" error.
--        with raises_yt_error("Request timed out"):
-+        with raises_yt_error(code=yt_error_codes.Timeout):
-             abort_transaction(tx, driver=driver)
- 
-         self._check_lease(cell_id, "revoking", 1, 0, lease_id=tx)
-```
-
-**File**: `yt/yt/tests/library/yt_env_setup.py` (modified, +5/-1)
-```diff
-@@ -505,6 +505,7 @@ class YTEnvSetup(object):
-     TEST_MAINTENANCE_FLAGS = False
- 
-     WAIT_FOR_DYNAMIC_CONFIG = True
-+    FORCE_ABORT_TRANSACTIONS_ON_CLEANUP = False
- 
-     ENABLE_MULTIDAEMON = False
- 
-@@ -2256,7 +2257,10 @@ def _abort_transactions(self, driver=None):
-         test_cleanup.abort_transactions(
-             list_action=lambda *args, **kwargs: yt_commands.ls(*args, driver=driver, **kwargs),
-             abort_action=lambda transaction_id: requests.append(
--                yt_commands.make_batch_request(abort_command, transaction_id=transaction_id)),
-+                yt_commands.make_batch_request(
-+                    abort_command,
-+                    transaction_id=transaction_id,
-+                    force=self.FORCE_ABORT_TRANSACTIONS_ON_CLEANUP)),
-             exists_action=lambda *args, **kwargs: yt_commands.exists(*args, driver=driver, **kwargs),
-             get_action=lambda *args, **kwargs: yt_commands.get(*args, driver=driver, **kwargs))
- 
-```
-
----
-
-### Incident Patch 2: `884fc894` (2026-11-11)
-**Commit Message**: Fix transaction cleanup in Sequoia reconstructor tests
-commit_hash:a6992634534551a2c2995ee2ab7e59ba8b985323
-
-**File**: `yt/yt/tests/integration/sequoia/test_sequoia_reconstructor.py` (modified, +2/-2)
-```diff
-@@ -2,7 +2,7 @@
- 
- from yt_commands import (
-     authors, create, create_user, make_ace, remove, write_table,
--    start_transaction, abort_transaction, abort_all_transactions,
-+    start_transaction, abort_transaction, abort_all_user_transactions,
-     commit_transaction, get, lock, link, set)
- 
- from sequoia_reconstructor import check_single_cell_sequoia_reconstructor
-@@ -35,7 +35,7 @@ def cypress_root(self):
-         path = "//cypress"
-         create("map_node", path, attributes={"account": "tmp"})
-         yield path
--        abort_all_transactions()
-+        abort_all_user_transactions()
-         remove(path, recursive=True)
- 
-     @authors("grphil")
-```
-
----
-
-### Incident Patch 3: `49906e19` (2026-11-11)
-**Commit Message**: YQL-21692 prebuilt embedded
-
-#### Execute YQL jobs through the prebuilt embedded ABI ✎
-
-- A new set of C ABI functions exposes job descriptors (Calc, InferSchema, User) and a `Run` entry point so that YQL jobs can be executed inside a prebuilt embedded library. Job descriptors are available before factory construction.
-- When the library is used as a prebuilt binary, proxy job classes are auto-registered in the host job registry; when source-linked, the existing native registrations are detected and no proxies are added.
-- Errors propagate across the ABI boundary with their original type preserved: `TSystemError` status codes (including zero) are surfaced through a dedicated accessor, while other exceptions are returned as generic error strings.
-- YT runtime initialization now checks whether the process is already dispatched as a YT job (via the `YT_JOB_ID` environment variable) and skips re-dispatch in that case.
-- Prebuilt embedded ABI resource IDs are now set for default and RelWithDebInfo builds.
-
-<a href="https://nda.ya.ru/t/qa0kX64r7DqvtN"><font size="2">Autodescription by Yandex Code Assistant</font></a>
-commit_hash:631450ac25037a2101604bfe3591f4d3ed670768
-
-**File**: `yql/essentials/udfs/common/python/python_udf/python_udf.cpp` (modified, +5/-3)
-```diff
-@@ -82,9 +82,11 @@ class TPythonModule: public IUdfModule {
+         YQL_CLOG(INFO, ProviderDq) << "Become leader, epoch=" << CurrentResourceId.Epoch;
+         YQL_CLOG(INFO, ProviderDq) << "Leader resolver=" << LeaderHost << ":" << LeaderPort;
+@@ -1682,6 +1683,10 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
+             //}
+             LocalCriticalFiles->AddFile("unused", f.GetObjectId());
          }
- #endif
++        UpdateLocalCriticalFiles();
++    }
++
++    void UpdateLocalCriticalFiles() {
+         TVector<TFileResource> files;
+         LocalCriticalFiles->Walk([&](const TString& objectId) {
+             TFileResource r;
+@@ -1692,7 +1697,7 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
+         r.SetObjectId(Revision);
+         files.push_back(r);
  
--        char executableVar[] = "executable"; // PySys_{Get,Set}Object take a non-const char* arg
--        TPyObjectPtr pyExecutableStr = PyRepr(GetExecPath().data());
--        Y_ABORT_UNLESS(PySys_SetObject(executableVar, pyExecutableStr.Get()) >= 0, "Can't set sys.executable");
-+        {
-+            char executableVar[] = "executable"; // PySys_{Get,Set}Object take a non-const char* arg
-+            TPyObjectPtr pyExecutableStr = PyRepr(GetExecPath().data());
-+            Y_ABORT_UNLESS(PySys_SetObject(executableVar, pyExecutableStr.Get()) >= 0, "Can't set sys.executable");
-+        }
+-        AllCriticalFiles.Add(TGUID(), SelfId().NodeId(), Revision, Address, Pid, TString(), files);
++        AllCriticalFiles.Add(TGUID(), SelfId().NodeId(), Revision, Coordinator->GetIp(), Pid, TString(), files);
+     }
  
-         if (Standalone_) {
-             PyEval_InitThreads();
+     void OnIsReadyForward(TEvIsReady::TPtr& ev, const TActorContext& ctx) {
+@@ -1932,7 +1937,6 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
+     TInstant LastCleanTime;
+     TDuration CleanInterval = TDuration::Seconds(2);
+     bool TerminatingMode = false;
+-    const TString Address = HostName();
+     const ui32 Pid = GetPID();
+ };
+ 
+```
+
+**File**: `yt/yql/providers/dq/global_worker_manager/global_worker_manager_ut.cpp` (modified, +16/-0)
+```diff
+@@ -235,6 +235,7 @@ class TGlobalWorkerManagerTest: public TTestBase {
+     UNIT_TEST(TestTasksAllocation5)
+     UNIT_TEST(RejectsNegativeWorkerCapacity)
+     UNIT_TEST(RejectsTargetCapacityOverflow)
++    UNIT_TEST(ReportsLeaderBeforeReadiness)
+     UNIT_TEST_SUITE_END();
+ 
+     void SetUp() override {
+@@ -335,6 +336,21 @@ class TGlobalWorkerManagerTest: public TTestBase {
+         remove("/tmp/test");
+     }
+ 
++    void ReportsLeaderBeforeReadiness() {
++        const auto sender = ActorRuntime_->AllocateEdgeActor();
++        ActorRuntime_->Send(new IEventHandle(MakeWorkerManagerActorID(NodeId()), sender, new TEvClusterStatus()));
++        const auto response = ActorRuntime_->GrabEdgeEvent<TEvClusterStatusResponse>(sender);
++        const auto& status = response->Get()->Record.GetResponse();
++        UNIT_ASSERT_VALUES_EQUAL(status.ServiceNodeSize(), 1);
++        const auto& leader = status.GetServiceNode(0);
++        UNIT_ASSERT_VALUES_EQUAL(leader.GetGuid(), "0-0-0-0");
++        UNIT_ASSERT_VALUES_EQUAL(leader.GetNodeId(), NodeId());
++        UNIT_ASSERT_VALUES_EQUAL(leader.GetAddress(), "::1");
++        UNIT_ASSERT_VALUES_EQUAL(leader.GetRevision(), status.GetRevision());
++        UNIT_ASSERT_VALUES_EQUAL(leader.FileSize(), 1);
++        UNIT_ASSERT_VALUES_EQUAL(leader.GetFile(0), status.GetRevision());
++    }
++
+     void TestTasksAllocation1() {
+         TVector<TVector<TString>> filesPerNode = {
+             {"file0", "file11"},
+```
+
+---
+
+### Incident Patch 2: `e6831dd8` (2026-11-14)
+**Commit Message**: erm: Add new version for `@yatool/prebuilder`: `2.1.0` and set `2.1.0` as default
+
+Executed command: `./erm --verbose --profile update @yatool/prebuilder`
+commit_hash:ac1683ec49a5dedebed24ea2bcac7708a13ca2b7
+
+**File**: `devtools/frontend_build_platform/erm/erm-packages.json` (modified, +11/-1)
+```diff
+@@ -410,7 +410,7 @@
+     "title": "@yatool/prebuilder",
+     "description": "Сборщик нативных зависимостей, поставляющий на проект уже готовые, собранные под нужную платформу пакеты.",
+     "type": "NPM_PACKAGE",
+-    "default": "2.0.1",
++    "default": "2.1.0",
+     "links": {
+       "Home": "https://a.yandex-team.ru/arcadia/devtools/frontend_build_platform/prebuilder/cli",
+       "Sources": "https://a.yandex-team.ru/arcadia/devtools/frontend_build_platform/prebuilder/cli",
+@@ -419,6 +419,16 @@
+     },
+     "internal": true,
+     "versions": {
++      "2.1.0": {
++        "add_date": "2026-11-14T19:21:29",
++        "resources": [
++          {
++            "id": 14269615047,
++            "platform": "any",
++            "arch": "any"
++          }
++        ]
++      },
+       "2.0.1": {
+         "add_date": "2026-10-26T15:40:27",
+         "resources": [
+```
+
+---
+
+### Incident Patch 3: `9edb1cc5` (2026-11-13)
+**Commit Message**: Fix grammar
+commit_hash:e793856f6d3d44d11aa2ef36d469c6f5fe6b277c
+
+**File**: `util/thread/pool.h` (modified, +4/-4)
+```diff
+@@ -150,7 +150,7 @@ class IThreadPool: public IThreadFactory, public TNonCopyable {
+ 
+     /**
+      * Safe versions of Add*() functions. Behave exactly like as non-safe
+-     * version of Add*(), but use exceptions instead returning false
++     * version of Add*(), but use exceptions instead of returning false
+      */
+     void SafeAdd(IObjectInQueue* obj);
+ 
+@@ -162,7 +162,7 @@ class IThreadPool: public IThreadFactory, public TNonCopyable {
+     void SafeAddAndOwn(THolder<IObjectInQueue> obj);
+ 
+     /**
+-     * Add object to queue, run obj->Proccess in other threads.
++     * Add object to queue, run obj->Process in other threads.
+      * Obj is not deleted after execution
+      * @return true of obj is successfully added to queue
+      * @return false if queue is full or shutting down
+@@ -220,7 +220,7 @@ class IThreadPool: public IThreadFactory, public TNonCopyable {
+      * CreateThreadSpecificResource and DestroyThreadSpecificResource
+      * called from internals of (TAdaptiveThreadPool, TThreadPool, ...) implementation,
+      * not by user of IThreadPool interface.
+-     * Created resource is passed to IObjectInQueue::Proccess function.
++     * Created resource is passed to IObjectInQueue::Process function.
+      */
+     virtual void* CreateThreadSpecificResource() {
+         return nullptr;
+@@ -237,7 +237,7 @@ class IThreadPool: public IThreadFactory, public TNonCopyable {
+ };
+ 
+ /**
+- * Single-threaded implementation of IThreadPool, process tasks in same thread when
++ * Single-threaded implementation of IThreadPool, process tasks in the same thread when
+  * added.
+  * Can be used to remove multithreading.
+  */
 ```
 
 #### Recent Merged Pull Requests:
@@ -1383,40 +1411,39 @@ commit_hash:631450ac25037a2101604bfe3591f4d3ed670768
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-30385: Fix lease timeout assertions and force transaction cleanup
+## X. worker stack introspection and GWM leader reporting
 
 **RULE**:
-When implementing operations in `yt/yt/tests/integration/dynamic_tables/test_dynamic_tables_leases.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yql/providers/dq/global_worker_manager/global_worker_manager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `df0b544e`: YT-30385: Fix lease timeout assertions and force transaction cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `16e53abb`: worker stack introspection and GWM leader reporting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/tests/integration/dynamic_tables/test_dynamic_tables_leases.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yql/providers/dq/global_worker_manager/global_worker_manager.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-import yt_error_codes
+        // Report the leader even before its first IsReady request.
+        UpdateLocalCriticalFiles();
+        UpdateLocalCriticalFiles();
+    }
 
-    # Failed assertions can leave deliberately held lease references blocking cleanup.
-    FORCE_ABORT_TRANSACTIONS_ON_CLEANUP = True
-
-            with raises_yt_error() as error:
-            assert error[0].contains_code(yt_error_codes.Timeout) or error[0].contains_code(
-                yt_error_codes.RequestQueueSizeLimitExceeded)
-        with raises_yt_error(code=yt_error_codes.Timeout):
+    void UpdateLocalCriticalFiles() {
+        AllCriticalFiles.Add(TGUID(), SelfId().NodeId(), Revision, Coordinator->GetIp(), Pid, TString(), files);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-            with raises_yt_error("Request timed out|Request queue size limit exceeded"):
-        with raises_yt_error("Request timed out"):
+// Induced defect failure mode:
+#include <util/system/hostname.h>
+        AllCriticalFiles.Add(TGUID(), SelfId().NodeId(), Revision, Address, Pid, TString(), files);
+    const TString Address = HostName();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `df0b544e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `16e53abb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

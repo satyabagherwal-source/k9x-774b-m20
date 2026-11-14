@@ -9917,3 +9917,7 @@
 | `CYCLE-20261114-WYK4` | `2026-11-14T19:03:11.092Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8522` | Yes (`02cbae7b...`) |
 | `CYCLE-20261114-X4SE` | `2026-11-14T19:03:19.166Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8523` | Yes (`b431e785...`) |
 | `CYCLE-20261114-XAN6` | `2026-11-14T19:03:26.754Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8524` | Yes (`76107d48...`) |
+| `CYCLE-20261114-JEJF` | `2026-11-14T19:20:38.235Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`cf2f74b3...`) |
+| `CYCLE-20261114-JKDG` | `2026-11-14T19:20:45.796Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8525` | Yes (`8806504c...`) |
+| `CYCLE-20261114-JODA` | `2026-11-14T19:20:50.974Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8526` | Yes (`b7689485...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T19:21:23.060Z` | `hf-autotrust-gev-26b-decide-nvfp4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-CC7591B7` [Domain D] | Yes (`bbc7cfe4...`) |

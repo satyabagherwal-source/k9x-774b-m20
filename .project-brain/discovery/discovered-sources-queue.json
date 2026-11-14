@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T19:03:30.675Z",
+  "updated_at": "2026-11-14T19:21:24.353Z",
   "stats": {
-    "total_discovered": 3383,
-    "approved_pending_harvest": 3177,
+    "total_discovered": 3392,
+    "approved_pending_harvest": 3186,
     "harvested_count": 0,
     "rejected_count": 206,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3158,
+      "COMMUNITY_AND_EXPERT": 3167,
       "OFFICIAL_DOCUMENTATION": 122,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -73004,6 +73004,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
         "fileName": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md"
+      }
+    },
+    "SRC-F5589A3EA48B": {
+      "id": "SRC-F5589A3EA48B",
+      "url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+      "title": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:21:23.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
+        "fileName": "hf-autotrust-gev-26b-decide-nvfp4-learnings.md"
+      }
+    },
+    "SRC-63DEA9E21F63": {
+      "id": "SRC-63DEA9E21F63",
+      "url": "https://github.com/pulumi/pulumi/releases/download/v$%7Bv",
+      "title": "https://github.com/pulumi/pulumi/releases/download/v$%7Bv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:21:23.562Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-FE610D608682": {
+      "id": "SRC-FE610D608682",
+      "url": "https://github.com/pulumi/pulumi/pull/25684",
+      "title": "https://github.com/pulumi/pulumi/pull/25684",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:21:23.586Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-D0C47B273C5E": {
+      "id": "SRC-D0C47B273C5E",
+      "url": "https://github.com/ytsaurus/ytsaurus",
+      "title": "https://github.com/ytsaurus/ytsaurus",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:21:24.210Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-EB89AEF4D601": {
+      "id": "SRC-EB89AEF4D601",
+      "url": "https://codahale.com/a-lesson-in-timing-attacks",
+      "title": "https://codahale.com/a-lesson-in-timing-attacks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:21:24.246Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-51B7DBB0C875": {
+      "id": "SRC-51B7DBB0C875",
+      "url": "https://github.com/ytsaurus/ytsaurus/actions/runs/42027488293",
+      "title": "https://github.com/ytsaurus/ytsaurus/actions/runs/42027488293",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:21:24.268Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-85D37E985541": {
+      "id": "SRC-85D37E985541",
+      "url": "https://github.com/ytsaurus/ytsaurus/actions/runs/42027611538",
+      "title": "https://github.com/ytsaurus/ytsaurus/actions/runs/42027611538",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:21:24.291Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-028E670F67FE": {
+      "id": "SRC-028E670F67FE",
+      "url": "https://nda.ya.ru/t/9XhVa8Ox7wStjx",
+      "title": "https://nda.ya.ru/t/9XhVa8Ox7wStjx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:21:24.313Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-DCCDC2D6D161": {
+      "id": "SRC-DCCDC2D6D161",
+      "url": "https://a.yandex-team.ru/arcadia/devtools/frontend_build_platform/prebuilder/cli",
+      "title": "https://a.yandex-team.ru/arcadia/devtools/frontend_build_platform/prebuilder/cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T19:21:24.353Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
+        "fileName": "ytsaurus-ytsaurus-learnings.md"
       }
     }
   }
