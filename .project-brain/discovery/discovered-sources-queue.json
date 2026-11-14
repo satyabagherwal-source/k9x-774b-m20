@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T07:31:23.142Z",
+  "updated_at": "2026-11-14T07:41:29.786Z",
   "stats": {
-    "total_discovered": 3190,
-    "approved_pending_harvest": 2985,
+    "total_discovered": 3193,
+    "approved_pending_harvest": 2988,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2979,
+      "COMMUNITY_AND_EXPERT": 2982,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -68765,6 +68765,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
         "fileName": "helixdb-helix-db-learnings.md"
+      }
+    },
+    "SRC-E0A4EBA565D6": {
+      "id": "SRC-E0A4EBA565D6",
+      "url": "https://github.com/lingyired/status-trio",
+      "title": "https://github.com/lingyired/status-trio",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:41:04.303Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lingyired-status-trio-learnings.md",
+        "fileName": "lingyired-status-trio-learnings.md"
+      }
+    },
+    "SRC-3BBEE62DF3EF": {
+      "id": "SRC-3BBEE62DF3EF",
+      "url": "https://gitee.com/",
+      "title": "https://gitee.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:41:04.325Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lingyired-status-trio-learnings.md",
+        "fileName": "lingyired-status-trio-learnings.md"
+      }
+    },
+    "SRC-962AB47B0587": {
+      "id": "SRC-962AB47B0587",
+      "url": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
+      "title": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T07:41:29.786Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
+        "fileName": "hf-naiveai-naive-n0.5-flash-learnings.md"
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T07:31:23.902Z",
+  "last_updated": "2026-11-14T07:41:30.621Z",
   "directives": [
     {
       "id": "CD-001",
@@ -11819,11 +11819,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-7BEA",
+      "id": "CD-KBJO",
       "directive_title": "watcher): filter access events before queueing",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-7BEA-watcher-filter-access-events-before-queueing.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-KBJO-watcher-filter-access-events-before-queueing.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -11962,6 +11962,59 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-69DD96-watcher-filter-access-events-before-queu.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-HJG0",
+      "directive_title": "let horizontal trackpad scrolling adjust panel sliders",
+      "source_repo": "lingyired/status-trio",
+      "source_commit": "a0ebb92d",
+      "staged_file": "11_INBOX/candidate-directives/CD-HJG0-let-horizontal-trackpad-scrolling-adjust-panel-sliders.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-JRDX",
+      "directive_title": "popover): let horizontal trackpad scrolling adjust panel sliders",
+      "source_repo": "lingyired-status-trio-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JRDX-popover-let-horizontal-trackpad-scrolling-adjust-panel-sliders.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-KB11",
+      "directive_title": "Dual-Frequency Context Decoupling for Hybrid Local-Sparse Transformer Layers",
+      "source_repo": "hf-naiveai-naive-n0.5-flash-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KB11-dual-frequency-context-decoupling-for-hybrid-local-sparse-transformer-layers.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-KB12",
+      "directive_title": "MoE Sigmoid Top-K Gating with Renormalization Invariant",
+      "source_repo": "hf-naiveai-naive-n0.5-flash-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-KB12-moe-sigmoid-top-k-gating-with-renormalization-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-5E6065",
+      "directive_title": "watcher): filter access events before queueing",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5E6065-watcher-filter-access-events-before-queu.md",
       "staged_date": "2026-11-14"
     }
   ]

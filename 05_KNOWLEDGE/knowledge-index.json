@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T07:31:24.229Z",
-  "total_verified_learnings": 8503,
+  "last_updated": "2026-11-14T07:41:30.897Z",
+  "total_verified_learnings": 8505,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17215,
+  "total_items": 17234,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112023,9 +112023,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "176bd878ca405e254a5e87d2a3a41bbe7c8b797219e24eacfe409bcd941d0166",
+      "content_hash": "c9d5ba4ac54feaec5072c027879133ab17ef9bf64f4567f6efff9e07eadc8380",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T07:31:24.004Z"
+      "persisted_at": "2026-11-14T07:41:30.712Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112035,9 +112035,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d325ed6033e088f9ccb786042dadb8e07587532d1af28716b7b7ed2c25d4714c",
+      "content_hash": "874da1ecd59e3e5f066fee4e06593bfaa98c3b6bc4f05171fc6efa2f4dbb6d65",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T07:31:24.121Z"
+      "persisted_at": "2026-11-14T07:41:30.806Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112047,9 +112047,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "75a73e67a0fd454a512d7f7de31e62cb4ddabcb239381e0970a9f836c7b196ad",
+      "content_hash": "daa3b213bd0aa92a89a54a8a55d95cbb5380fa25597a571b66c6a755bbaafcfe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T07:31:24.229Z"
+      "persisted_at": "2026-11-14T07:41:30.897Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -224266,13 +224266,13 @@
       "item_id": "candidate_directive-watcher-filter-access-events-before-queueing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7BEA-watcher-filter-access-events-before-queueing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KBJO-watcher-filter-access-events-before-queueing.md",
       "title": "watcher): filter access events before queueing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "49f107775d63cc8c13f40c103b2563e15cb394e11a10faaef36b1c48e8be3fe2",
+      "content_hash": "525dd38c0771bfec58624495d56c04237743010636b27378878e2c55c125360f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T07:31:23.902Z"
+      "persisted_at": "2026-11-14T07:41:30.621Z"
     },
     "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant": {
       "item_id": "candidate_directive-hybrid-linear-attention-full-attention-layer-synchronization-invariant",
@@ -225108,6 +225108,294 @@
       "content_hash": "f85c6997d990f972bfa0f919c79e61865e3c664c29ce80e3559f0201369e64eb",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T07:31:23.552Z"
+    },
+    "learn-github-lingyired-status-trio": {
+      "learning_id": "learn-github-lingyired-status-trio",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lingyired/status-trio",
+      "repository": "lingyired/status-trio",
+      "slug": "lingyired-status-trio",
+      "platform": "github",
+      "source_url": "https://github.com/lingyired/status-trio",
+      "source_version": "a0ebb92d",
+      "content_hash": "ccd11aaf1de5d57ff4f6adbf6bdfff93545e0a036969a2e32195c1ff4a4a5254",
+      "dossier_path": "07_PROJECT_LEARNING/lingyired-status-trio-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/lingyired-status-trio-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8465,
+          "title": "let horizontal trackpad scrolling adjust panel sliders",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T07:39:20.598Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8465": {
+      "learning_id": "rule-8465",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8465,
+      "title": "let horizontal trackpad scrolling adjust panel sliders",
+      "source_url": "https://github.com/lingyired/status-trio",
+      "source_version": "a0ebb92d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T07:39:20.598Z"
+    },
+    "candidate_directive-let-horizontal-trackpad-scrolling-adjust-panel-sliders": {
+      "item_id": "candidate_directive-let-horizontal-trackpad-scrolling-adjust-panel-sliders",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HJG0-let-horizontal-trackpad-scrolling-adjust-panel-sliders.md",
+      "title": "let horizontal trackpad scrolling adjust panel sliders",
+      "repository": "lingyired/status-trio",
+      "source_version": "a0ebb92d",
+      "content_hash": "be12e56f8b05d4bfc338f9f4246f2ddde4ba4a5e8ecbb9d5efb07fe30f91f12b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T07:39:20.883Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-technical-construction-intelligence-lingyired-status-trio-.md",
+      "title": "Technical Construction Intelligence: lingyired/status-trio Core Invariants",
+      "repository": "lingyired/status-trio",
+      "source_version": "a0ebb92d",
+      "content_hash": "ae5860d8ca8e87b1f97de6fe9388a0f468074059d1f1d579d11ba89fdc3a2372",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T07:39:20.970Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/lingyired-status-trio-verification-protocol-empirical-defect-shield-for-lingyire.md",
+      "title": "Verification Protocol: Empirical Defect Shield for lingyired/status-trio",
+      "repository": "lingyired/status-trio",
+      "source_version": "a0ebb92d",
+      "content_hash": "b56b8d191fd3cf8af7490a90081cbc323e21ed54e54824b639b73bf20b848a4e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T07:39:21.067Z"
+    },
+    "learn-huggingface-naiveai-naive-n0-5-flash": {
+      "learning_id": "learn-huggingface-naiveai-naive-n0-5-flash",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "NaiveAI/Naive-N0.5-Flash",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "slug": "hf-naiveai-naive-n0.5-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
+      "source_version": "hf-naiveai-naive-n0.5-flash",
+      "content_hash": "c4e811c5ba05978cb2cb571fec6687e42dbc82335081e233194a89112bcf4f64",
+      "dossier_path": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8466,
+          "title": "Dual-Frequency Context Decoupling for Hybrid Local-Sparse Transformer Layers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8467,
+          "title": "Dimensionally Asymmetric Attention Scale Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8468,
+          "title": "MoE Sigmoid Top-K Gating with Renormalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T07:41:00.783Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8466": {
+      "learning_id": "rule-8466",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8466,
+      "title": "Dual-Frequency Context Decoupling for Hybrid Local-Sparse Transformer Layers",
+      "source_url": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
+      "source_version": "hf-naiveai-naive-n0.5-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T07:41:00.783Z"
+    },
+    "rule-8467": {
+      "learning_id": "rule-8467",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8467,
+      "title": "Dimensionally Asymmetric Attention Scale Normalization",
+      "source_url": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
+      "source_version": "hf-naiveai-naive-n0.5-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T07:41:00.783Z"
+    },
+    "rule-8468": {
+      "learning_id": "rule-8468",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8468,
+      "title": "MoE Sigmoid Top-K Gating with Renormalization Invariant",
+      "source_url": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
+      "source_version": "hf-naiveai-naive-n0.5-flash",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T07:41:00.783Z"
+    },
+    "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-naiveai-naive-n0-5-flash-design-intelligence-naiveai-naive-n0-5-flash-core-in.md",
+      "title": "Design Intelligence: NaiveAI/Naive-N0.5-Flash Core Invariants",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "source_version": "hf-naiveai-naive-n0.5-flash",
+      "content_hash": "cd6aeae4344288d054ddee18ca301b1c4462e0059231c15d9d086057b1b6b7e9",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-14T07:41:01.270Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-naiveai-naive-n0-5-flash": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-naiveai-naive-n0-5-flash",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-naiveai-naive-n0-5-flash-verification-protocol-empirical-defect-shield-for-na.md",
+      "title": "Verification Protocol: Empirical Defect Shield for NaiveAI/Naive-N0.5-Flash",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "source_version": "hf-naiveai-naive-n0.5-flash",
+      "content_hash": "8f6efecc1ab93c2e76cbd73e1d603981cb5a1afbf6425c8fa28479687faa6d57",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T07:41:01.355Z"
+    },
+    "candidate_directive-popover-let-horizontal-trackpad-scrolling-adjust-panel-sliders": {
+      "item_id": "candidate_directive-popover-let-horizontal-trackpad-scrolling-adjust-panel-sliders",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JRDX-popover-let-horizontal-trackpad-scrolling-adjust-panel-sliders.md",
+      "title": "popover): let horizontal trackpad scrolling adjust panel sliders",
+      "repository": "lingyired-status-trio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b0b367e961f96c77c272c7c30c73cdbae8384805d2c042dbee7b2608f7afda31",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T07:41:04.487Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-learnings-technical-construction-intelligence-lingyired-st.md",
+      "title": "Technical Construction Intelligence: lingyired-status-trio-learnings Core Invariants",
+      "repository": "lingyired-status-trio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e65461ec0ea404f014455098619e0b52f30515a4b72eb3a7b718d06af19b3f8a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T07:41:04.575Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lingyired-status-trio-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/lingyired-status-trio-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for lingyired-status-trio-learnings",
+      "repository": "lingyired-status-trio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "302de154ca9244668ec8949f6279f647073f5f2e599312601122067368e57173",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T07:41:04.659Z"
+    },
+    "candidate_directive-dual-frequency-context-decoupling-for-hybrid-local-sparse-transformer-layers": {
+      "item_id": "candidate_directive-dual-frequency-context-decoupling-for-hybrid-local-sparse-transformer-layers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KB11-dual-frequency-context-decoupling-for-hybrid-local-sparse-transformer-layers.md",
+      "title": "Dual-Frequency Context Decoupling for Hybrid Local-Sparse Transformer Layers",
+      "repository": "hf-naiveai-naive-n0.5-flash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b43eccbf1219d5006b7368abd000d57e9ff0b78cdb27001202ea904f33620a26",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-14T07:41:29.942Z"
+    },
+    "candidate_directive-dimensionally-asymmetric-attention-scale-normalization": {
+      "item_id": "candidate_directive-dimensionally-asymmetric-attention-scale-normalization",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KB12-dimensionally-asymmetric-attention-scale-normalization.md",
+      "title": "Dimensionally Asymmetric Attention Scale Normalization",
+      "repository": "hf-naiveai-naive-n0.5-flash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c01fe001bd2a6004667745938009afb877159b64a3864f55d6a1b6e8945d3d9d",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-14T07:41:30.042Z"
+    },
+    "candidate_directive-moe-sigmoid-top-k-gating-with-renormalization-invariant": {
+      "item_id": "candidate_directive-moe-sigmoid-top-k-gating-with-renormalization-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KB12-moe-sigmoid-top-k-gating-with-renormalization-invariant.md",
+      "title": "MoE Sigmoid Top-K Gating with Renormalization Invariant",
+      "repository": "hf-naiveai-naive-n0.5-flash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a5215f6d36c9a9e15709da403337d3816388d1ce76ade9b9bb4a6510d78e44bf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T07:41:30.135Z"
+    },
+    "domain_intelligence-design-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-naiveai-naive-n0-5-flash-learnings-design-intelligence-hf-naiveai-naive-n0-5-.md",
+      "title": "Design Intelligence: hf-naiveai-naive-n0.5-flash-learnings Core Invariants",
+      "repository": "hf-naiveai-naive-n0.5-flash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "db120cb6d002ddd8478f13a634e6ee5b913bb20e64db7adc5e3470961c8dd0bc",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-14T07:41:30.228Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-naiveai-naive-n0-5-flash-le": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-naiveai-naive-n0-5-flash-le",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-naiveai-naive-n0-5-flash-learnings-verification-protocol-empirical-defect-shi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-naiveai-naive-n0.5-flash-learnings",
+      "repository": "hf-naiveai-naive-n0.5-flash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c08478cd3c3a84453fb5d3e2fff95d84dfcd75070c36e56cb47267d136bfaf4e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T07:41:30.321Z"
     }
   },
   "ai-builder-brain": {

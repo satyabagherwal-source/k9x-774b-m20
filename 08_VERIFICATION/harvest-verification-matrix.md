@@ -9782,3 +9782,6 @@
 | `CYCLE-20261114-6BI3` | `2026-11-14T07:30:37.371Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`76530577...`) |
 | `CYCLE-20261114-6M8Y` | `2026-11-14T07:30:51.298Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8464` | Yes (`5419b102...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T07:31:22.690Z` | `hf-venastine-research-xing4.0-29b-a4b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C8957CC0` [Domain D] | Yes (`24f96f71...`) |
+| `CYCLE-20261114-HJBN` | `2026-11-14T07:39:20.723Z` | `lingyired/status-trio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8465` | Yes (`ccd11aaf...`) |
+| `CYCLE-20261114-JOML` | `2026-11-14T07:41:00.909Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8466, Rule 8467, Rule 8468` | Yes (`c4e811c5...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T07:41:29.773Z` | `hf-naiveai-naive-n0.5-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-87566B56` [Domain H] | Yes (`d7e4a53e...`) |

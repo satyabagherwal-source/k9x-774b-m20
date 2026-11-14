@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T07:31:24.004Z",
-  "total_records": 594,
+  "last_updated": "2026-11-14T07:41:30.712Z",
+  "total_records": 599,
   "domains": {
     "A": {
       "total": 5,
@@ -337,7 +337,7 @@
       ]
     },
     "F": {
-      "total": 13,
+      "total": 15,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -351,7 +351,9 @@
         "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants",
         "DOM-F-F89A3B28",
         "domain_intelligence-design-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
-        "domain_intelligence-design-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants",
+        "domain_intelligence-design-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invariants"
       ]
     },
     "G": {
@@ -448,7 +450,7 @@
       ]
     },
     "H": {
-      "total": 125,
+      "total": 128,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -574,7 +576,10 @@
         "domain_intelligence-technical-construction-intelligence-risingwavelabs-risingwave-learnings-core-inv",
         "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-core-invariants",
         "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-shopify-react-native-skia-learnings-core-inv"
+        "domain_intelligence-technical-construction-intelligence-shopify-react-native-skia-learnings-core-inv",
+        "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-learnings-core-invaria",
+        "DOM-H-87566B56"
       ]
     },
     "I": {
@@ -6364,8 +6369,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "176bd878ca405e254a5e87d2a3a41bbe7c8b797219e24eacfe409bcd941d0166",
-      "created_at": "2026-11-14T07:31:24.004Z"
+      "content_hash": "c9d5ba4ac54feaec5072c027879133ab17ef9bf64f4567f6efff9e07eadc8380",
+      "created_at": "2026-11-14T07:41:30.712Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -12892,6 +12897,76 @@
       "repository": "helixdb-helix-db-learnings",
       "content_hash": "ae189173afd05677d346c45d2791ac3fb75e2fda71b6547f0a8b121cdc922aff",
       "created_at": "2026-11-14T07:31:23.440Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lingyired/status-trio Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-technical-construction-intelligence-lingyired-status-trio-.md",
+      "repository": "lingyired/status-trio",
+      "content_hash": "ae5860d8ca8e87b1f97de6fe9388a0f468074059d1f1d579d11ba89fdc3a2372",
+      "created_at": "2026-11-14T07:39:20.970Z"
+    },
+    "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: NaiveAI/Naive-N0.5-Flash Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-naiveai-naive-n0-5-flash-design-intelligence-naiveai-naive-n0-5-flash-core-in.md",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "content_hash": "cd6aeae4344288d054ddee18ca301b1c4462e0059231c15d9d086057b1b6b7e9",
+      "created_at": "2026-11-14T07:41:01.270Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lingyired-status-trio-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lingyired-status-trio-learnings-technical-construction-intelligence-lingyired-st.md",
+      "repository": "lingyired-status-trio-learnings",
+      "content_hash": "e65461ec0ea404f014455098619e0b52f30515a4b72eb3a7b718d06af19b3f8a",
+      "created_at": "2026-11-14T07:41:04.575Z"
+    },
+    "DOM-H-87566B56": {
+      "record_id": "DOM-H-87566B56",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "KV Eviction Memory Corruption in SWA Chunked Prefill (BUG-FLASH-01)",
+      "content": "SWA with attention sink retention requires two-tier KV cache buffer management: a pinned slot for sink tokens and a cyclic ring buffer for the local window.",
+      "content_hash": "d7e4a53eeeb9b9c6dc735d3a79d7278bda3a7ea72ead0cb465c8e119a1de16f5",
+      "summary": "Index mismatch between relative attention query indices and absolute KV cache ring buffers when `add_swa_attention_sink_bias` is active. -> SWA with attention sink retention requires two-tier KV cache buffer management: a pinned slot for sink tokens and a cyclic ring buffer for t",
+      "provenance": {
+        "source_uri": "project://hf-naiveai-naive-n0.5-flash/hf-naiveai-naive-n0.5-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T07:41:04.740Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-naiveai-naive-n0.5-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json` specifies `\"sliding_window\": 128` and `\"add_swa_attention_sink_bias\": true`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T07:41:29.764Z"
+    },
+    "domain_intelligence-design-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: hf-naiveai-naive-n0.5-flash-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-naiveai-naive-n0-5-flash-learnings-design-intelligence-hf-naiveai-naive-n0-5-.md",
+      "repository": "hf-naiveai-naive-n0.5-flash-learnings",
+      "content_hash": "db120cb6d002ddd8478f13a634e6ee5b913bb20e64db7adc5e3470961c8dd0bc",
+      "created_at": "2026-11-14T07:41:30.228Z"
     }
   }
 }

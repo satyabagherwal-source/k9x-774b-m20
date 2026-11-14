@@ -21073,5 +21073,20 @@
     "downloads": 14134,
     "qualityScore": 4130,
     "discoveredAt": "2026-11-14T06:54:36.202Z"
+  },
+  {
+    "name": "status-trio",
+    "fullName": "lingyired/status-trio",
+    "url": "https://github.com/lingyired/status-trio",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Status Trio — a native macOS app that combines Wi-Fi, battery, and volume into one compact, configurable status icon for the menu bar, the Dock, or both, inspired by the iPhone Duo combined status bar.",
+    "stars": 1901,
+    "forks": 100,
+    "openIssues": 26,
+    "language": "Swift",
+    "qualityScore": 1183,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-14T07:37:06.945Z"
   }
 ]

@@ -5062,3 +5062,7 @@ https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized
 # --- Automatically Discovered by AI Scout Engine [2026-11-14T06:56:44.319Z] ---
 # [HUGGINGFACE-AI-MODELS] Edge0/Edge0-145B-NVFP4 (4130 score) - Verified Hugging Face Model: Edge0/Edge0-145B-NVFP4 (213 likes, 14134 downloads)
 https://huggingface.co/Edge0/Edge0-145B-NVFP4
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-14T07:39:10.699Z] ---
+# [MOBILE-CROSS-PLATFORM] lingyired/status-trio (1183 score) - Status Trio — a native macOS app that combines Wi-Fi, battery, and volume into o
+https://github.com/lingyired/status-trio

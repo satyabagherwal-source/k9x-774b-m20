@@ -9815,3 +9815,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-11-14T07:30:37.374Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `26c3f138` | Multi-dimensional audit evidence | 2026-11-14T07:30:51.301Z |
 | `learn-dom-d-c8957cc0` | `project://hf-venastine-research-xing4.0-29b-a4b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | 2026-11-14T07:31:22.690Z |
+| `learn-github-lingyired-status-trio` | `https://github.com/lingyired/status-trio` | `a0ebb92d` | Multi-dimensional audit evidence | 2026-11-14T07:39:20.726Z |
+| `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-11-14T07:41:00.913Z |
+| `learn-dom-h-87566b56` | `project://hf-naiveai-naive-n0.5-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | 2026-11-14T07:41:29.773Z |

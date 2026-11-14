@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T07:31:22.689Z",
+  "updated_at": "2026-11-14T07:41:29.772Z",
   "statistics": {
-    "total_nodes": 173,
+    "total_nodes": 174,
     "total_edges": 94,
     "domain_distribution": {
       "D": 133,
       "M": 1,
-      "H": 14,
+      "H": 15,
       "J": 8,
       "K": 10,
       "L": 2,
@@ -3876,6 +3876,28 @@
       ],
       "created_at": "2026-11-14T07:31:22.688Z",
       "updated_at": "2026-11-14T07:31:22.688Z"
+    },
+    "DOM-H-87566B56": {
+      "id": "DOM-H-87566B56",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "KV Eviction Memory Corruption in SWA Chunked Prefill (BUG-FLASH-01)",
+      "summary": "Index mismatch between relative attention query indices and absolute KV cache ring buffers when `add_swa_attention_sink_bias` is active. -> SWA with attention sink retention requires two-tier KV cache buffer management: a pinned slot for sink tokens and a cyclic ring buffer for t",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-naiveai-naive-n0.5-flash/hf-naiveai-naive-n0.5-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T07:41:04.740Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-naiveai-naive-n0.5-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-14T07:41:29.772Z",
+      "updated_at": "2026-11-14T07:41:29.772Z"
     }
   },
   "edges": [
