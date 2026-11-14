@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T03:50:00.313Z",
-  "total_verified_learnings": 8473,
+  "last_updated": "2026-11-14T04:06:55.201Z",
+  "total_verified_learnings": 8475,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17019,
+  "total_items": 17025,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113663,13 +113663,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5IAM-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WCM2-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2ef5d313d7aeeb023366f52586b59aad5d667ff16878ea205f1eb86905fec207",
+      "content_hash": "e46c1588373149ea837f5da9c16f2bb774a7b0592edceaddc4cd7d1a0866aef7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T02:22:03.755Z"
+      "persisted_at": "2026-11-14T04:06:54.950Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113679,9 +113679,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8fab2a14dc07901ed35466967f6dd08b817b26faa685b5825b0012cbe759e622",
+      "content_hash": "43d2c5762bd58473a0e183fb97461e2faf20b4ae4d810363dc4c3042d636eced",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T02:22:03.852Z"
+      "persisted_at": "2026-11-14T04:06:55.069Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113691,9 +113691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0cb8a97dadfc2d0fd98515846d3f401c101d180465340a68e8a48770978939d5",
+      "content_hash": "feff81a48ef0d0edd7821e5d7c48a7d8d70dcb061f8f5545ba946899f9744e6a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T02:22:03.963Z"
+      "persisted_at": "2026-11-14T04:06:55.201Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -222084,6 +222084,108 @@
       "content_hash": "df52ab889cf7dac3f3b5f2ac03ffb48f13aea04ff0fa3e23e989b857c45e95f9",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T03:50:00.313Z"
+    },
+    "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized": {
+      "learning_id": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+      "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+      "slug": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+      "source_version": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
+      "content_hash": "6c59e1f427690f627ad9493f95c2deaf677683908cd397e694f6ec42ca8886d0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T04:06:05.932Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-chatrlabs-qwen-image-2-1-uncensored-omni-quantiz": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-chatrlabs-qwen-image-2-1-uncensored-omni-quantiz",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quantized-research-knowledge-intelli.md",
+      "title": "Research & Knowledge Intelligence: chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized Core Invariants",
+      "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+      "source_version": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
+      "content_hash": "27f0cc7494f6171043af80580202548dba54c4f3030989cecdee8cfa6718108d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T04:06:06.309Z"
+    },
+    "learn-huggingface-meta-llama-llama-2-7b-chat-hf": {
+      "learning_id": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "meta-llama/Llama-2-7b-chat-hf",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "slug": "hf-meta-llama-llama-2-7b-chat-hf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+      "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
+      "content_hash": "2c9409f01a99303c43698bf63706b6dc7e05c3411ced5e3bfbe28350c1f9e801",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T04:06:08.416Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-chat-hf-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-chat-hf-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-chat-hf-research-knowledge-intelligence-meta-llama-llam.md",
+      "title": "Research & Knowledge Intelligence: meta-llama/Llama-2-7b-chat-hf Core Invariants",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
+      "content_hash": "97f51a3d3de341d1a05e2d5266776fccc71ddfb9d0761724b5ae72cc5daa04f6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T04:06:08.770Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quantized-learnings-research-knowled.md",
+      "title": "Research & Knowledge Intelligence: hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings Core Invariants",
+      "repository": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d10d8677de5918ac2c2fdc99aeaa5c61fb11e65576a9cdf6274f0913d98413bb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T04:06:20.691Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-chat-hf-learnings-core-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-chat-hf-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-chat-hf-learnings-research-knowledge-intelligence-hf-me.md",
+      "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-2-7b-chat-hf-learnings Core Invariants",
+      "repository": "hf-meta-llama-llama-2-7b-chat-hf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "10d4a30e957151797906a5e8920f0a3c4b86918e0cd47393fc026e731fb81934",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T04:06:54.447Z"
     }
   },
   "ai-builder-brain": {

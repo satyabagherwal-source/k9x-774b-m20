@@ -965,8 +965,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceVersion": "hf-meta-llama-llama-2-7b-chat-hf",
     "license": "Open-Source",
-    "contentHash": "891a29f5810f46253760fb9d1c2415ad1d4a2586102468f460e9b896d5c278f9",
-    "lastHarvestedAt": "2026-11-08T23:50:35.280Z",
+    "contentHash": "2c9409f01a99303c43698bf63706b6dc7e05c3411ced5e3bfbe28350c1f9e801",
+    "lastHarvestedAt": "2026-11-14T04:06:08.578Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf"
   },
   "hf-meta-llama-llama-2-7b": {
@@ -12488,5 +12488,15 @@
     "contentHash": "469fe2c8df64e94fb0df84f2ede759b0802c80101f5167fdd2df554f8991bf96",
     "lastHarvestedAt": "2026-11-14T02:36:55.741Z",
     "learningId": "learn-huggingface-meituan-longcat-longcat-2-5"
+  },
+  "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized": {
+    "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+    "sourceVersion": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
+    "license": "Open-Source",
+    "contentHash": "6c59e1f427690f627ad9493f95c2deaf677683908cd397e694f6ec42ca8886d0",
+    "lastHarvestedAt": "2026-11-14T04:06:06.109Z",
+    "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized"
   }
 }

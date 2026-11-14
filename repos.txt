@@ -5054,3 +5054,7 @@ https://github.com/ForeactLabs/OpenExecutive
 # --- Automatically Discovered by AI Scout Engine [2026-11-14T02:36:49.182Z] ---
 # [HUGGINGFACE-AI-MODELS] meituan-longcat/LongCat-2.5 (3361 score) - Verified Hugging Face Model: meituan-longcat/LongCat-2.5 (239 likes, 971 downloa
 https://huggingface.co/meituan-longcat/LongCat-2.5
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-14T04:05:59.345Z] ---
+# [HUGGINGFACE-AI-MODELS] chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized (4390 score) - Verified Hugging Face Model: chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized 
+https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized

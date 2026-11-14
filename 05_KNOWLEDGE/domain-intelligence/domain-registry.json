@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T03:50:00.179Z",
-  "total_records": 518,
+  "last_updated": "2026-11-14T04:06:55.069Z",
+  "total_records": 523,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 260,
+      "total": 264,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -294,7 +294,11 @@
         "domain_intelligence-research-knowledge-intelligence-hf-bigscience-bloom-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
         "DOM-D-0BBA6E16",
-        "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin"
+        "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin",
+        "domain_intelligence-research-knowledge-intelligence-chatrlabs-qwen-image-2-1-uncensored-omni-quantiz",
+        "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-chat-hf-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan",
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-chat-hf-learnings-core-"
       ]
     },
     "E": {
@@ -537,7 +541,7 @@
       ]
     },
     "J": {
-      "total": 8,
+      "total": 9,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -546,7 +550,8 @@
         "DOM-J-782C1A9D",
         "DOM-J-44A35728",
         "DOM-J-B241A1ED",
-        "DOM-J-37B3B4A9"
+        "DOM-J-37B3B4A9",
+        "DOM-J-2672FCA2"
       ]
     },
     "K": {
@@ -7251,8 +7256,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "8fab2a14dc07901ed35466967f6dd08b817b26faa685b5825b0012cbe759e622",
-      "created_at": "2026-11-14T02:22:03.852Z"
+      "content_hash": "43d2c5762bd58473a0e183fb97461e2faf20b4ae4d810363dc4c3042d636eced",
+      "created_at": "2026-11-14T04:06:55.069Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11539,6 +11544,90 @@
       "repository": "higress-group-higress-learnings",
       "content_hash": "2ca6e841adce235e9bf072768f86e7d0f50b154a437c5571b854974e82872df1",
       "created_at": "2026-11-14T03:50:00.179Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-chatrlabs-qwen-image-2-1-uncensored-omni-quantiz": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-chatrlabs-qwen-image-2-1-uncensored-omni-quantiz",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quantized-research-knowledge-intelli.md",
+      "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+      "content_hash": "27f0cc7494f6171043af80580202548dba54c4f3030989cecdee8cfa6718108d",
+      "created_at": "2026-11-14T04:06:06.309Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-chat-hf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-chat-hf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: meta-llama/Llama-2-7b-chat-hf Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-chat-hf-research-knowledge-intelligence-meta-llama-llam.md",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "content_hash": "97f51a3d3de341d1a05e2d5266776fccc71ddfb9d0761724b5ae72cc5daa04f6",
+      "created_at": "2026-11-14T04:06:08.770Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quantized-learnings-research-knowled.md",
+      "repository": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings",
+      "content_hash": "d10d8677de5918ac2c2fdc99aeaa5c61fb11e65576a9cdf6274f0913d98413bb",
+      "created_at": "2026-11-14T04:06:20.691Z"
+    },
+    "DOM-J-2672FCA2": {
+      "record_id": "DOM-J-2672FCA2",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        },
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): meta-llama/Llama-2-7b-chat-hf",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/meta-llama/Llama-2-7b-chat-hf](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf))  \n> **Source Version**: `hf-meta-llam`  \n> **License**: Op",
+      "content_hash": "1c5d713eec01661e9df91293f3914cadb1ce9d1e29082005f66bea1ecbf88f87",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-meta-llama-llama-2-7b-chat-hf/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T04:06:20.809Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-meta-llama-llama-2-7b-chat-hf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-meta-llama-llama-2-7b-chat-hf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M",
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.93,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T04:06:54.210Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-chat-hf-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-chat-hf-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-2-7b-chat-hf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-chat-hf-learnings-research-knowledge-intelligence-hf-me.md",
+      "repository": "hf-meta-llama-llama-2-7b-chat-hf-learnings",
+      "content_hash": "10d4a30e957151797906a5e8920f0a3c4b86918e0cd47393fc026e731fb81934",
+      "created_at": "2026-11-14T04:06:54.447Z"
     }
   }
 }

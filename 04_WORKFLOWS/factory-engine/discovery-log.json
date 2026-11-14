@@ -21049,5 +21049,17 @@
     "downloads": 971,
     "qualityScore": 3361,
     "discoveredAt": "2026-11-14T02:34:41.084Z"
+  },
+  {
+    "name": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+    "fullName": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+    "url": "https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized (239 likes, 68096 downloads)",
+    "likes": 239,
+    "downloads": 68096,
+    "qualityScore": 4390,
+    "discoveredAt": "2026-11-14T04:03:50.581Z"
   }
 ]

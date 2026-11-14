@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T03:50:00.061Z",
+  "last_updated": "2026-11-14T04:06:54.950Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4833,11 +4833,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-5IAM",
+      "id": "CD-WCM2",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-5IAM-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-WCM2-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -11467,6 +11467,24 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
       "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-8E92AE",
+      "directive_title": "Forensic Learning Record (Deep Inspection): chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8E92AE-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-879D34",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-879D34-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-14"
     }
   ]
 }

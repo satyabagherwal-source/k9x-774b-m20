@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T03:50:00.443Z",
+  "last_updated": "2026-11-14T04:06:55.324Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T02:46:28.602Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-14T02:22:03.426Z",
+      "processed_at": "2026-11-14T04:06:54.576Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2376,9 +2376,19 @@
       "processed_at": "2026-11-14T03:49:58.808Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md": {
+      "processed_at": "2026-11-14T04:06:20.475Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
+    },
+    "hf-meta-llama-llama-2-7b-chat-hf-learnings.md": {
+      "processed_at": "2026-11-14T04:06:54.223Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 759,
-  "total_canonical_promoted": 162,
-  "total_staged_for_review": 593
+  "total_dossiers_evaluated": 762,
+  "total_canonical_promoted": 163,
+  "total_staged_for_review": 595
 }

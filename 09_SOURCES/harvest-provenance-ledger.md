@@ -9766,3 +9766,6 @@ Every entry in this ledger must capture:
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `3da37a52` | Multi-dimensional audit evidence | 2026-11-14T03:49:16.730Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `356ceb16` | Multi-dimensional audit evidence | 2026-11-14T03:49:19.509Z |
 | `learn-dom-d-0bba6e16` | `project://hf-stabilityai-stable-diffusion-3-medium` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | 2026-11-14T03:49:58.389Z |
+| `learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized` | `https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized` | `hf-chatrla` | Multi-dimensional audit evidence | 2026-11-14T04:06:06.109Z |
+| `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-14T04:06:08.578Z |
+| `learn-dom-j-2672fca2` | `project://hf-meta-llama-llama-2-7b-chat-hf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | 2026-11-14T04:06:54.223Z |
