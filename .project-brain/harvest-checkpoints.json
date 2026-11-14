@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T17:40:09.693Z",
+  "last_updated": "2026-11-14T17:51:23.434Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -845,14 +845,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "29d8a078936c0676a9f98b2b5fdd24d013233aeba3efba679279e6c4f0110644",
-      "verified_at": "2026-11-09T06:38:53.450Z",
+      "content_hash": "7a6d3eedbe07b00a85d247126e949dc67ef458b9ecd426bdfd2e654599732e67",
+      "verified_at": "2026-11-14T17:51:05.346Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T06:38:53.450Z"
+      "last_updated": "2026-11-14T17:51:05.346Z"
     },
     "Cloudflare/clef": {
       "repository": "Cloudflare/clef",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "e727c601191752f2c267d552e8c5ec9fb0990271cb8bd707d81e6bf0e9815a77",
-      "verified_at": "2026-11-13T12:16:29.260Z",
+      "content_hash": "09ff498897a97b54ad9eaaebded4bfe929cc0c0a92e763b394ef332f772b99ea",
+      "verified_at": "2026-11-14T17:51:23.433Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T12:16:29.260Z"
+      "last_updated": "2026-11-14T17:51:23.433Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "e093b4e45072efd989690fc7197e3cb5c567570c0eb9254b8b5dfbd01e88e810",
-      "verified_at": "2026-11-13T03:56:15.678Z",
+      "content_hash": "f420d583df88f4e9997a00c7e7f8211c1878d99abf3c17b2b74e95110de3b98f",
+      "verified_at": "2026-11-14T17:51:07.781Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T03:56:15.678Z"
+      "last_updated": "2026-11-14T17:51:07.781Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",

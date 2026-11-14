@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T17:40:49.169Z",
+  "last_updated": "2026-11-14T17:51:54.779Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T17:04:27.051Z",
@@ -123,7 +123,7 @@
       "staged_for_review": 1
     },
     "apache-arrow-learnings.md": {
-      "processed_at": "2026-11-13T03:56:27.027Z",
+      "processed_at": "2026-11-14T17:51:26.532Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -838,7 +838,7 @@
       "staged_for_review": 1
     },
     "greptimeteam-greptimedb-learnings.md": {
-      "processed_at": "2026-11-13T12:16:48.758Z",
+      "processed_at": "2026-11-14T17:51:54.253Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2681,9 +2681,14 @@
       "processed_at": "2026-11-14T17:40:47.849Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-unsloth-embeddinggemma-2-gguf-learnings.md": {
+      "processed_at": "2026-11-14T17:51:53.962Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 876,
-  "total_canonical_promoted": 211,
-  "total_staged_for_review": 664
+  "total_dossiers_evaluated": 879,
+  "total_canonical_promoted": 212,
+  "total_staged_for_review": 666
 }

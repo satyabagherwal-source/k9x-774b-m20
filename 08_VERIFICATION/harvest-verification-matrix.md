@@ -9896,3 +9896,7 @@
 | `CYCLE-20261114-XVUG` | `2026-11-14T17:39:55.384Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8512` | Yes (`84151206...`) |
 | `CYCLE-20261114-Y6VJ` | `2026-11-14T17:40:09.679Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8513` | Yes (`66e4803f...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T17:40:47.848Z` | `hf-canberkkkkkk-ema-lightning` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A6170DB1` [Domain D] | Yes (`7cd9d1c8...`) |
+| `CYCLE-20261114-C8S6` | `2026-11-14T17:51:05.334Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`7a6d3eed...`) |
+| `CYCLE-20261114-CANT` | `2026-11-14T17:51:07.769Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8514` | Yes (`f420d583...`) |
+| `CYCLE-20261114-CMQL` | `2026-11-14T17:51:23.421Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8515` | Yes (`09ff4988...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T17:51:53.962Z` | `hf-unsloth-embeddinggemma-2-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A21D48E1` [Domain D] | Yes (`9695445e...`) |

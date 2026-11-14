@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `68145fc7`  
+> **Source Version**: `176bc07b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T12:16:18.483Z  
+> **Timestamp**: 2026-11-14T17:51:22.573Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T12:16:18.477Z  
+> **Harvest Timestamp**: 2026-11-14T17:51:22.567Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6810 stars
+- **Stars / Engagement**: 6812 stars
 
 ---
 
@@ -1715,13 +1715,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10434** (2026-11-13): **fix(auth): backport physical metric permission targets to v1.3**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  #10084, #10415, #10148  ## What's changed and what's your intention?  Backport #10084 from its main merge commit to `release/v1.3`. Preserve physical metric-table permission targets and filter Prometheus discovery by access.  This supplies the permission-target API needed by #10415. After this PR merges, update #10415 from the release branch and rerun its CI. The same source fix is already included in candidate #10264.  The backport has the same stable patch ID as the main merge. Formatting and diff checks passed. Runtime and downstream interface validation remain pending; this PR is draft.   ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [ ] API changes are backward compatible. - [ ] Schema or data changes are backward compatible. - [ ] This PR needs to be backported to release branches, and I have added the `backport-<target>` labels (e.g. `backport-v1.3` targets `release/v1.3`). 
+- **Issue #10442** (2026-11-14): **docs(skills): focus release notes on user impact**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  ### Problem  The release-note skill classifies internal changes as breaking changes, overprescribes editorial choices, and uses a moving branch tip for patch releases.  ### Change  Use the release tag as the range endpoint across release types, and align the release runbook to create tags from the verified SHA and check them before publishing the docs copy. Replace writing examples with concise selection criteria: highlight consequential changes, including evidence-backed performance and architectural improvements, and reserve upgrade notes for user-visible compatibility changes and required actions. Apply the same impact review to generated breaking-change bullets.  ### Non-goals  Changing release automation or the backport and contributor collection procedures.  ### Constraints  Preserve genuine external incompatibilities, PR links, and contributor attribution.  ### Verification  - Both release-note and release skill validators passed. - `git diff --check` passed. - Manually reviewed the guidance against the v1.3.1 editorial revision. - Rust checks were not run; only skill instructions changed.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the neces
 
-- **Issue #10419** (2026-11-13): **perf(mito-codec): index sparse label columns by id once at bind time**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  The sparse-label audit walked the physical primary key once per label: `column()` and `position()` were linear scans over the described columns, so decoding a key with N labels over M primary-key columns cost O(N·M) per chunk.  Build an id→encoding-position index once in `bind()` and use it for both lookups, so the cost drops to O(N). The full structural audit still runs before any value is read, and error text and error-selection order are unchanged.  ## PR Checklist - [x] I have written the necessary rustdoc comments. - [x] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [x] API changes are backward compatible. - [x] Schema or data changes are backward compatible. - [ ] This PR needs to be backported to release branches, and I have added the `backport-<target>` labels (e.g. `backport-v1.3` targets `release/v1.3`).  ## Merge timing  - [x] Merge during the nightly window <!-- nightly-merge --> 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- pr-open-limit --> > [!WARNING] > @discord9 has **35** open non-draft pull requests in this repository, over the limit of **5**.  Review is the scarcest resource here. Please land or close some of these before pushing this one forward.  - [PR 9404: feat\(query\)\: add opt\-in distributed broadcast join planner](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9404) - [PR 9463: fix\(flow\)\: clean up cross\-mode replacements without checker deadlocks](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9463) - [PR 9496: test\: query option regressions separate from capability](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9496) - [PR 9546: feat\(query\)\: opt\-in experimental factorized join aggregation rewrite \(WIP\)](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9546) - [PR 9557: feat\(query\)\: materialized broadcast join for volatile small sides](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9557) - [PR 10039: test\(promql\)\: cover
+- **Issue #10439** (2026-11-14): **chore(ci): update compatibility versions**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Automated after a stable release or the daily fallback.  ## What's changed and what's your intention?  Updates `tests/compatibility/ci.toml` from checked-out `main` tags that have published release assets. The PR window keeps the latest patch of the two most recent stable minor lines; exact `=vX.Y.Z` case anchors are validated nightly instead of being added to the PR window.  ## PR Checklist  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [x] API changes are backward compatible. - [x] Schema or data changes are backward compatible.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1738,1679 +1736,171 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9f6c957e` (2026-11-12)
-**Commit Message**: fix(mito2): commit staging edits once when staging ends (#10322)
+### Incident Patch 1: `176bc07b` (2026-11-14)
+**Commit Message**: docs(skills): focus release notes on user impact (#10442)
 
-* fix(mito2): commit staging edits once when staging ends
+* docs(skills): focus release notes on user impact
 
-Staging edits (the new partition expression, the imported files) were saved
-as deltas in the staging directory, each taking a manifest version. The end of
-staging listed that directory and merged every delta it found, including
-deltas a stale writer wrote late.
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
 
-Staged actions now stay in memory and take no version. The end of staging
-commits them once, as the next version, in a new EndingStaging state that
-stalls writes and holds role changes back until the commit returns. If the
-commit may have been written and the region stays staging, the encoded commit
-is kept: a retried request stages nothing new and commits the same content,
-and other staged edits are refused with a retryable error meanwhile.
+* docs(skills): simplify compatibility guidance
 
-Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
 
-* fix(mito2): settle an uncertain end of staging before later commits
+* docs(skills): clarify release scope and highlight criteria
 
-Under overwrite publication a save that may have landed must not be
-overwritten, so every commit takes its version before the save and a failed
-save leaves that version unused. For the end of staging, the version is now
-taken only once the result is 
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
 
-**File**: `src/mito2/AGENTS.md` (modified, +8/-4)
+* docs(skills): align release targets and generated change groups
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
+
+**File**: `.agents/skills/greptimedb-release-note/SKILL.md` (modified, +40/-71)
 ```diff
-@@ -111,7 +111,9 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
-   arbitrary partial groups: readers and index row IDs rely on this layout.
- - Sequence numbers are strictly increasing per region; dedup and snapshot reads
-   depend on this. Do not change assignment lightly.
--- Manifest version is monotonic — never reset or skip it.
-+- Manifest version is monotonic — never reset or skip it. Staging takes no version:
-+  its actions stay in memory (`manifest/manager.rs`) and are committed once, as the
-+  next version, when staging ends (`MitoRegion::end_staging_locked`).
- - In regions whose writes require a lease and whose WAL is the object store WAL,
-   each manifest version has one fixed object name, created conditionally. A late
-   create can succeed again once checkpoint cleanup frees the name, so a commit
-@@ -156,9 +158,11 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
- - In flat batches, equal `__primary_key` dictionary keys imply the same series, but
-   not the reverse: `wrap_pk_binary_to_dict` gives every row its own key. Compare key
-   bytes when grouping rows by series.
--- Staging regions never flush: a flush would move rows into the staging manifest and
--  release their WAL, losing them if staging does not end successfully. Every flush
--  trigger in `worker/handle_flush.rs` must skip them, and `handle_close` leaves staging first.
-+- Staging regions, ending staging included, never flush: a flush would stage its SST and
-+  release the rows' WAL, losing them if staging does not end successfully. Every flush
-+  trigger in `worker/handle_flush.rs` must skip them: background triggers test `is_writable()`
-+  and `is_staging()`, a flush request `is_flushable()` and `is_staging()` (`is_writable()` and
-+  `is_flushable()` are false while ending staging). `handle_close` leaves staging first.
+@@ -39,6 +39,12 @@ Double-check with the user.
  
- ## Maintenance contract
+ ## 3. Pick the range and generate
  
-```
-
-**File**: `src/mito2/src/compaction/scheduler.rs` (modified, +2/-2)
-```diff
-@@ -51,8 +51,8 @@ use crate::error::{
-     CompactionCancelledSnafu, Error, ManualCompactionAlreadyRunningSnafu, RegionClosedSnafu,
-     RegionDroppedSnafu, RegionTruncatedSnafu, Result, UnsupportedOperationSnafu,
- };
-+use crate::region::ManifestContextRef;
- use crate::region::version::VersionControlRef;
--use crate::region::{ManifestContextRef, RegionLeaderState, RegionRoleState};
- use crate::request::{DdlRequest, OptionOutputTx, SenderDdlRequest, WorkerRequestWithTime};
- use crate::schedule::RequestCancelResult;
- use crate::worker::WorkerListener;
-@@ -569,7 +569,7 @@ impl CompactionScheduler {
-             return Ok(false);
-         }
-         let current_state = manifest_ctx.current_state();
--        if current_state == RegionRoleState::Leader(RegionLeaderState::Staging) {
-+        if current_state.in_staging_session() {
-             info!(
-                 "Skipping compaction for region {} in staging mode, options: {:?}",
-                 region_id, compact_options
-```
-
-**File**: `src/mito2/src/compaction/scheduler_test.rs` (modified, +6/-3)
-```diff
-@@ -45,7 +45,7 @@ use crate::engine::pending_tail_test::{pending_tails_edit, tail};
- use crate::error::InvalidSchedulerStateSnafu;
- use crate::manifest::manager::{RegionManifestManager, RegionManifestOptions};
- use crate::metrics::COMPACTION_MEMORY_REJECTED;
--use crate::region::ManifestContext;
-+use crate::region::{ManifestContext, RegionLeaderState, RegionRoleState};
- use crate::request::{BackgroundNotify, CompactionUnitNotification, OutputTx, WorkerRequest};
- use crate::schedule::CancellableTaskState;
- use crate::schedule::remote_job_scheduler::{RemoteJob, RemoteJobSchedulerRef};
-@@ -2314,8 +2314,11 @@ async fn test_scheduler_env_submits_compactions_to_injected_executor() {
-     assert_eq!(1, injected.num_jobs());
- }
- 
-+#[rstest::rstest]
-+#[case::staging(RegionLeaderState::Staging)]
-+#[case::ending_staging(RegionLeaderState::EndingStaging)]
- #[tokio::test]
--async fn test_compaction_bypass_in_staging_mode() {
-+async fn test_compaction_bypass_in_staging_mode(#[case] state: RegionLeaderState) {
-     let env = SchedulerEnv::new().await;
-     let (tx, _rx) = mpsc::channel(4);
-     let mut scheduler = env.mock_compaction_scheduler(tx);
-@@ -2346,7 +2349,7 @@ async fn test_compaction_bypass_in_staging_mode() {
-         .unwrap();
-         Arc::new(ManifestContext::new(
-             manager,
--            RegionRoleState::Leader(RegionLeaderState::Staging),
-+            RegionRoleState::Leader(state),
-             None,
-             Default::default(),
-         ))
-```
-
-**File**: `src/mito2/src/engine/apply_staging_manifest_test.rs` (modified, +154/-4)
-```diff
-@@ -18,6 +18,7 @@ use std::{assert_matches, fs};
- 
- use api::v1::Rows;
- use api::v1::region::{StrictWindow, compact_request};
-+use common_error::ext::{ErrorExt, RetryHint};
- use common_function::utils::partition_expr_version;
- use common_recordbatch::RecordBatches;
- use datatypes::arrow::array::{AsArray, UInt64Array};
-@@ -42,7 +43,8 @@ use crate::manifest::action::{
- use crate::sst::FormatType;
- use crate::sst::file::FileMeta;
- use crate::test_util::{
--    CreateRequestBuilder, TestEnv, build_rows, build_rows_for_key, put_rows, rows_schema,
-+    CreateRequestBuilder, DeltaFaults, TestEnv, build_rows, build_rows_for_key, put_rows,
-+    reopen_region, rows_schema,
- };
- 
- fn range_expr(col_name: &str, start: i64, end: i64) -> PartitionExpr {
-@@ -609,6 +611,16 @@ async fn test_apply_staging_manifest_success_with_format(flat_format: bool) {
-     assert_eq!(manifest.files.len(), 0);
-     let staging_manifest = region.manifest_ctx.staging_manifest().await.unwrap();
-     assert_eq!(staging_manifest.files.len(), 0);
-+    // A delta that an older binary left in the staging directory goes when staging ends.
-+    let data_home = env.data_home();
-+    let region_dir = format!("{}/data/test/1_0000000002", data_home.display());
-+    let staging_manifest_dir = format!("{}/staging/manifest", region_dir);
-+    fs::create_dir_all(&staging_manifest_dir).unwrap();
-+    fs::write(
-+        format!("{staging_manifest_dir}/00000000000000000001.json"),
-+        "{}",
-+    )
-+    .unwrap();
- 
-     engine
-         .handle_request(
-@@ -638,9 +650,6 @@ async fn test_apply_staging_manifest_success_with_format(flat_format: bool) {
-     // The staging partition expr should be cleared.
-     assert!(region.manifest_ctx.staging_partition_info().is_none());
-     // The staging manifest directory should be empty.
--    let data_home = env.data_home();
--    let region_dir = format!("{}/data/test/1_0000000001", data_home.display());
--    let staging_manifest_dir = format!("{}/staging/manifest", region_dir);
-     let staging_files = fs::read_dir(&staging_manifest_dir)
-         .map(|entries| {
-             entries
-@@ -1359,3 +1368,144 @@ async fn test_merge_repartition_data_integrity() {
-         batches.pretty_print().unwrap()
-     );
- }
++For every release type, use the release tag's commit as `<tip>` when the tag exists.
++Resolve the exact tag from the remote (use the peeled `^{}` commit for annotated tags)
++and exclude commits added to the release branch afterward. Before tagging, pin the
++intended release commit and record its SHA. Pass that SHA as `--target` when creating
++the release, then verify the resulting tag before publishing the docs copy.
 +
-+/// The end commit fails after its delta landed (a lost response) or before. The retry writes the
-+/// same delta at the next version, and a reopen sees one commit.
-+#[rstest::rstest]
-+#[case::landed(true)]
-+#[case::not_landed(false)]
-+#[tokio::test]
-+async fn test_apply_staging_manifest_retries_failed_commit(#[case] landed: bool) {
-+    let faults = DeltaFaults::default();
-+    let mut env = TestEnv::with_prefix("apply-failed-commit")
-+        .await
-+        .with_mock_layer(faults.layer());
-+    let engine = env.create_engine(MitoConfig::default()).await;
-+    let region_id = RegionId::new(2, 2);
-+    let request = CreateRequestBuilder::new().build();
-+    let table_dir = request.table_dir.clone();
-+    let schema = rows_schema(&request);
-+    engine
-+        .handle_request(region_id, RegionRequest::Create(request))
-+        .await
-+        .unwrap();
-+    put_rows(
-+        &engine,
-+        region_id,
-+        Rows {
-+            schema,
-+            rows: build_rows(0, 3),
-+        },
-+    )
-+    .await;
-+    engine
-+        .handle_request(region_id, RegionRequest::Flush(Default::default()))
-+        .await
-+        .unwrap();
-+    let partition_expr = range_expr("tag_0", 0, 50).as_json_str().unwrap();
-+    engine
-+        .handle_request(
-+            region_id,
-+            RegionRequest::EnterStaging(EnterStagingRequest {
-+                partition_directive: StagingPartitionDirective::UpdatePartitionExpr(
-+                    partition_expr.clone(),
-+                ),
-+            }),
-+        )
-+        .await
-+        .unwrap();
-+    let remap_result = engine
-+        .remap_manifests(RemapManifestsRequest {
-+            region_id,
-+            input_regions: vec![region_id],
-+            region_mapping: [(region_id, vec![region_id])].into_iter().collect(),
-+            new_partition_exprs: [(region_id, partition_expr.clone())].into_iter().collect(),
-+        })
-+        .await
-+        .unwrap();
-+    let apply = || {
-+        RegionRequest::ApplyStagingManifest(ApplyStagingManifestRequest {
-+            partition_expr: partition_expr.clone(),
-+            central_region_id: region_id,
-+            manifest_path: remap_result.manifest_paths[&region_id].clone(),
-+        })
-+    };
-+    let region = engine.get_region(region_id).unwrap();
-+    let version = region.manifest_ctx.manifest_version().await;
-+
-+    if landed {
-+        faults.lose_next_response();
-+    } else {
-+        faults.fail_next_write();
-+    }
-+    // The region stays staging and keeps its edits for a retry.
-+    let err = engine.handle_request(region_id, apply()).await.unwrap_err();
-+    assert_eq!(RetryHint::Retryable, err.retry_hint());
-+    assert!(region.is_staging());
-+    // Until the retry, another edit is refused with
-```
-
-**File**: `src/mito2/src/engine/listener.rs` (modified, +28/-0)
-```diff
-@@ -190,6 +190,34 @@ impl EventListener for StallListener {
-     }
- }
+ Key topology fact: **patch tags** (`v1.0.1`, `v1.0.2`) live on `release/vX.Y` and are **NOT**
+ ancestors of `main` (they are cherry-picks with different SHAs). Up to v1.1 the `.0` tag was
+ the point where `release/vX.Y` left `main`; from v1.2 the branch is cut before the `.0`, and
+@@ -51,8 +57,8 @@ left `main`, minus what any published `vX.(Y-1).*` release (pre-releases, `.0`,
+ already shipped. The line's own pre-releases (`vX.Y.0-beta.*`) are not subtracted; the `.0`
+ note covers the whole minor.
  
-+/// Counts write stalls, for tests that wait for more than one.
-+#[derive(Default)]
-+pub struct CountingStallListener {
-+    count: AtomicUsize,
-+    notify: Notify,
-+}
-+
-+impl CountingStallListener {
-+    /// Waits until the engine has stalled writes at least `expected` times.
-+    pub async fn wait_for_count(&self, expected: usize) {
-+        loop {
-+            let notified = self.notify.notified();
-+            if self.count.load(Ordering::Relaxed) >= expected {
-+                return;
-+            }
-+            notified.await;
-+        }
-+    }
-+}
-+
-+#[async_trait]
-+impl EventListener for CountingStallListener {
-+    fn on_write_stall(&self) {
-+        self.count.fetch_add(1, Ordering::Relaxed);
-+        self.notify.notify_waiters();
-+    }
-+}
-+
- /// Blocks a flush at its begin event until the worker requests flush cancellation.
- ///
- /// Tests use this gate to ensure a flush is active before submitting a lifecycle DDL.
-```
-
-**File**: `src/mito2/src/engine/object_store_wal_test.rs` (modified, +54/-3)
-```diff
-@@ -828,7 +828,7 @@ async fn test_staging_save_after_deadline_sends_nothing() {
-     let region = engine.get_region(region_id).unwrap();
-     let version = next_manifest_version(&region).await;
+-Base = the **previous minor tag** (e.g. `v1.1.0`); tip = the tagged `vX.Y.0` commit, resolved as
+-in "Pre-release" below. Split the range at the point where `release/vX.Y` left `main`:
++Base = the **previous minor tag** (e.g. `v1.1.0`); tip = the release commit resolved above.
++Split the range at the point where `release/vX.Y` left `main`:
+ ```
+ bp=$(git merge-base <remote>/release/vX.Y <remote>/main)
+ ```
+@@ -80,14 +86,14 @@ small Python script is the reliable way — match `pull/<n>)` on lines starting
+ The previous patch tag is an ancestor of the release branch, so a plain range works **when the
+ cherry-picks land as individual commits**:
+ ```
+-GITHUB_TOKEN=$(gh auth token) git cliff <prev-patch-tag>..<release-branch-tip> --tag vX.Y.Z -o ...
++GITHUB_TOKEN=$(gh auth token) git cliff <prev-patch-tag>..<tip> --tag vX.Y.Z -o ...
+ ```
+ No extra subtraction (the branch only contains the new cherry-picks).
  
--    // The memtable is empty, so entering staging saves its manifest without a flush.
-+    // The memtable is empty, so entering staging stages its change without a flush.
-     engine.freeze_lease_clock(deadline);
-     let error = engine
-         .handle_request(region_id, enter_staging_request())
-@@ -840,12 +840,63 @@ async fn test_staging_save_after_deadline_sends_nothing() {
-         "{error:?}"
-     );
-     assert_eq!(version, next_manifest_version(&region).await);
--    let store = region.manifest_ctx.manifest_manager.read().await.store();
--    assert!(store.fetch_staging_manifests().await.unwrap().is_empty());
-+    let manager = region.manifest_ctx.manifest_manager.read().await;
-+    assert!(manager.staged_actions().is_none());
-+    drop(manager);
-     assert!(!region.manifest_ctx.is_reload_pending());
-     assert!(region.is_writable());
- }
+ **Common case — squashed pick commit.** Patch branches are often a single squashed commit like
+ `chore: pick fixes and bump version to vX.Y.Z (#NNNN)`, so the plain range above yields just
+ that one bullet. First **find the picked PRs**: read the squash commit message
+-(`git log -1 --format=%B <release-branch-tip>`) — each `* fix: ... (#NN)` line is a picked PR.
++(`git log -1 --format=%B <tip>`) — each `* fix: ... (#NN)` line is a picked PR.
+ Then pick one of two ways to build the changelog (a patch is usually only a few PRs — **ask the
+ user which they prefer**):
  
-+#[tokio::test]
-+async fn test_end_of_staging_after_deadline_sends_nothing() {
-+    let mut env = TestEnv::with_prefix("end-staging-after-deadline").await;
-+    let region_id = RegionId::new(1, 1);
-+    let (engine, _log_store, table_dir, schema, deadline) =
-+        create_leased_region(&mut env, region_id).await;
-+    put_range(&engine, region_id, &schema, 0, 3).await;
-+    flush_region(&engine, region_id, None).await;
-+    let region = engine.get_region(region_id).unwrap();
-+    let file = region
-+        .manifest_ctx
-+        .manifest()
-+        .await
-+        .files
-+        .values()
-+        .next()
-+        .unwrap()
-+        .clone();
-+    engine
-+        .handle_request(region_id, enter_staging_request())
-+        .await
-+        .unwrap();
-+    engine
-+        .edit_region(region_id, edit_files(vec![file], vec![]))
-+        .await
-+        .unwrap();
-+    let version = next_manifest_version(&region).await;
-+
-+    engine.freeze_lease_clock(deadline);
-+    let response = engine
-+        .set_region_role_state_gracefully(region_id, SettableRegionRoleState::Leader)
-+        .await
-+        .unwrap();
-+
-+    assert!(response.is_invalid_transition(), "{response:?}");
-+    assert_eq!(version, next_manifest_version(&region).await);
-+    let store = env.get_object_store().unwrap();
-+    let region_dir = region_dir_from_table_dir(&table_dir, region_id, PathType::Bare);
-+    let delta = gen_path(
-+        &manifest_dir(&region_dir),
-+        &delta_file(version),
-+        CompressionType::Gzip,
-+    );
-+    assert!(!store.exists(&delta).await.unwrap());
-+    assert!(region.is_follower());
-+    assert!(!region.manifest_ctx.is_reload_pending());
-+    // The staged edit leaves with staging.
-+    assert!(region.manifest_ctx.staging_manifest().await.is_none());
-+}
-+
- #[tokio::test]
- async fn test_default_mode_commit_ignores_leader_deadline() {
-     let mut env = TestEnv::with_prefix("default-mode-deadline").await;
-```
-
-**File**: `src/mito2/src/engine/open_test.rs` (modified, +21/-1)
-```diff
-@@ -1198,8 +1198,11 @@ fn new_dummy_fetcher(region_id: RegionId, expr_json: String) -> PartitionExprFet
-     })
- }
+@@ -131,16 +137,6 @@ Either source alone misses PRs: a release body can omit a backport that its tag
+ backport commit can name only the backport PR.
  
-+#[rstest::rstest]
-+#[case::from_writable(false)]
-+#[case::after_empty_staging(true)]
- #[tokio::test]
--async fn test_open_backfills_partition_expr_with_fetcher() {
-+async fn test_open_backfills_partition_expr_with_fetcher(#[case] staging: bool) {
-     let mut env = TestEnv::with_prefix("open-backfill-fetcher").await;
- 
-     // prepare plugins with dummy fetcher
-@@ -1255,10 +1258,27 @@ async fn test_open_backfills_partition_expr_with_fetcher() {
-     engine
-         .set_region_role(region_id, RegionRole::Leader)
-         .unwrap();
-+    if staging {
-+        // Ending a staging with nothing to commit also backfills.
-+        engine
-+            .set_region_role_state_gracefully(region_id, SettableRegionRoleState::StagingLeader)
-+            .await
-+            .unwrap();
-+    }
-     engine
-         .set_region_role_state_gracefully(region_id, SettableRegionRoleState::Leader)
-         .await
-         .unwrap();
-+    let manifest = engine
-+        .get_region(region_id)
-+        .unwrap()
-+        .manifest_ctx
-+        .manifest()
-+        .await;
-+    assert_eq!(
-+        manifest.metadata.partition_expr.as_deref(),
-+        Some(expr_json.as_str())
-+    );
- 
-     // reopen again to ensure no further changes and still Some
-     engine
-```
-
-**File**: `src/mito2/src/engine/region_hook.rs` (modified, +16/-16)
-```diff
-@@ -24,7 +24,7 @@
- //!   (see [`SstFileInfo`] and the coverage footnote).
- //!
- //! - [`on_manifest_updated`]: Fires after a manifest write is committed to the **live**
--//!   (normal) manifest directory. Writes to the staging directory (enter staging,
-+//!   (normal) manifest directory. Actions staged in memory (enter staging,
- //!   operations during staging, the intermediate apply-staging edit) are suppressed —
- //!   their effects are accumulated and delivered in a single notification when the
- //!   staged actions are promoted to the live manifest. Receives the full
-@@ -43,10 +43,10 @@
- //! ## Coverage
- //!
- //! Only manifest writes to the **normal** (live) manifest directory trigger
--//! `on_manifest_updated`. Writes to the staging manifest directory (operations
-+//! `on_manifest_updated`. Actions staged in memory (operations
- //! that happen while the region is in staging mode) are intentionally suppressed:
- //! their effects are accumulated and delivered in a single notification when
--//! the staged actions are promoted to the live manifest via `exit_staging_on_success`.
-+//! the staged actions are committed to the live manifest via `end_staging_locked`.
- //!
- //! | Scenario                     | `on_sst_files_written` | `on_manifest_updated` |
- //! |------------------------------|:----------------------:|:---------------------:|
-@@ -58,17 +58,17 @@
- //! | Apply staging (promote)      | ❌ (delegates to edit)  | ✅ Yes ²               |
- //! | Alter (schema change)        | ❌ (no SST files)       | ✅ Yes                |
- //! | Truncate                     | ❌ (removes files)      | ✅ Yes                |
--//! | Enter staging                | ❌ (no SST files)       | ❌ (staging dir)      |
--//! | Operations during staging    | N/A                    | ❌ (staging dir)      |
-+//! | Enter staging                | ❌ (no SST files)       | ❌ (in memory)        |
-+//! | Operations during staging    | N/A                    | ❌ (in memory)        |
- //! | Async index build            | ❌ (index files only)   | ✅ Yes                |
- //!
- //! ¹ Remote compaction runs on a dedicated compactor node via `CompactionRegionOpener::open()`;
- //!   pass plugins via `OpenCompactionRegionRequest` to enable hooks there. `sst_infos` is
- //!   `#[serde(skip)]` over the wire, so each [`SstInfo`] is rebuilt from [`FileMeta`] with
- //!   empty footer/index — see [`SstFileInfo`] for field-level detail.
--//! ² Apply staging fires `on_manifest_updated` once when `exit_staging_on_success` promotes
-+//! ² Apply staging fires `on_manifest_updated` once when `end_staging_locked` commits
- //!   all staged manifest actions (including the SST file additions) into the live manifest.
--//!   The intermediate staging `RegionEdit` is written to the staging directory and does not
-+//!   The intermediate staging `RegionEdit` is staged in memory and does not
- //!   fire the hook — its file list is included in the promote notification.
- //!
- //! The following paths do **not** trigger any hook:
-@@ -176,18 +176,18 @@ use crate::sst::parquet::SstInfo;
- ///
- /// ## Staging suppression
- ///
--/// When `is_staging` is `true`, [`fire`](Self::fire) is a no-op — the write went to
--/// the staging manifest directory. The hook only observes writes to the live (normal)
-+/// When `is_staging` is `true`, [`fire`](Self::fire) is a no-op — the actions were
-+/// staged in memory. The hook only observes writes to the live (normal)
- /// manifest directory. Staging actions are accumulated and delivered in a single
--/// notification when `exit_staging_on_success` promotes them (`is_staging = false`).
-+/// notification when `end_staging_locked` commits them (`is_staging = false`).
- #[must_use = "the region hook must be fired after releasing the manifest write lock"]
- pub(crate) struct PendingManifestHook {
-     region_id: RegionId,
-     /// `None` when no hook is registered (fire becomes a no-op).
-     action_list: Option<RegionMetaActionList>,
-     version: ManifestVersion,
-     hook: Option<RegionHookRef>,
--    /// Whether the manifest write went to the staging directory.
-+    /// Whether the actions were staged in memory.
-     /// When `true`, `fire()` is suppressed — the hook only observes live manifest writes.
-     is_staging: bool,
- }
-@@ -214,9 +214,9 @@ impl PendingManifestHook {
-         self.version
-     }
- 
--    /// Fires the hook if one is registered, **unless** the write went to the staging
--    /// manifest directory (`is_staging = true`). Safe to call unconditionally:
--    /// it is a no-op when no hook is registered or when the write is staging-only.
-+    /// Fires the hook if one is registered, **unless** the actions were staged in
-+    /// memory (`is_staging = true`). Safe to call unconditionally:
-+    /// it is a no-op when no hook is registered or when the actions were staged in memory.
-     pub(crate) async fn fire(self) {
-         if self.is_staging {
-             return;
-@@ -342,8 +342,8 @@ pub trait RegionHook: Send + Sync + Debug {
-     //
-```
-
----
-
-### Incident Patch 2: `643bdd72` (2026-11-13)
-**Commit Message**: fix(metric-engine): reuse existing column ids when adding columns is retried (#10372)
-
-The metric engine derives the columns to add from the cached physical
-schema, and `DataRegion::assemble_alter_request` assigned every given
-column `max(non-reserved column id) + 1` without checking the existing
-names. That cache can lag behind: Mito reads its in-memory metadata
-without going through the region worker, and a caller future dropped on a
-client timeout does not withdraw the request that is already queued. A
-retry then treats an installed column as new and Mito rejects it, because
-the name exists with a different id.
-
-Recheck the real metadata in `assemble_alter_request`, validate an
-existing column with `validate_shared_column` and drop it from the
-payload, assign ids only to genuinely new columns, and skip the alter when
-nothing is new. Serialize the existence check, the id allocation and the
-physical alter per physical data region: the mutex lives in
-`PhysicalRegionState` and is held by the metric engine orchestration, so
-concurrent requests on logical regions sharing the region cannot allocate
-one id to different columns. `DataRegion` stays a stateless adapter.
-
-Build the logical 
-
-**File**: `src/metric-engine/src/data_region.rs` (modified, +178/-12)
-```diff
-@@ -12,6 +12,8 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+use std::collections::HashMap;
-+
- use api::v1::SemanticType;
- use common_query::native_histogram::is_native_histogram_value_type;
- use common_telemetry::{debug, info};
-@@ -26,7 +28,7 @@ use store_api::region_request::{
- use store_api::storage::consts::ReservedColumnId;
- use store_api::storage::{ConcreteDataType, RegionId};
- 
--use crate::engine::IndexOptions;
-+use crate::engine::{IndexOptions, validate_shared_column};
- use crate::error::{
-     AddingFieldColumnSnafu, ColumnTypeMismatchSnafu, ForbiddenPhysicalAlterSnafu,
-     MitoReadOperationSnafu, MitoWriteOperationSnafu, Result, SetSkippingIndexOptionSnafu,
-@@ -44,7 +46,7 @@ pub struct DataRegion {
- }
- 
- impl DataRegion {
--    pub fn new(mito: MitoEngine) -> Self {
-+    pub(crate) fn new(mito: MitoEngine) -> Self {
-         Self { mito }
-     }
- 
-@@ -55,10 +57,16 @@ impl DataRegion {
-     /// logical regions.
-     ///
-     /// Invoker don't need to set up or verify the column id. This method will adjust
--    /// it using underlying schema.
-+    /// it using underlying schema, and reuse the persisted id of a column that the
-+    /// physical region already has.
-     ///
-     /// This method will also set the nullable marker to true. All of those change are applies
-     /// to `columns` in-place.
-+    ///
-+    /// Callers must hold the column-add lock of the physical region, otherwise two
-+    /// concurrent requests could read the same metadata and assign one column id to
-+    /// different columns. Use
-+    /// [MetricEngineInner::add_physical_columns](crate::engine::MetricEngineInner::add_physical_columns).
-     pub async fn add_columns(
-         &self,
-         region_id: RegionId,
-@@ -72,10 +80,13 @@ impl DataRegion {
- 
-         let region_id = utils::to_data_region_id(region_id);
- 
--        let num_columns = columns.len();
--        let request = self
-+        let Some((new_column_count, request)) = self
-             .assemble_alter_request(region_id, columns, index_options)
--            .await?;
-+            .await?
-+        else {
-+            // Every requested column already exists.
-+            return Ok(());
-+        };
- 
-         let _timer = MITO_DDL_DURATION.start_timer();
- 
-@@ -85,26 +96,55 @@ impl DataRegion {
-             .await
-             .context(MitoWriteOperationSnafu)?;
- 
--        PHYSICAL_COLUMN_COUNT.add(num_columns as _);
-+        PHYSICAL_COLUMN_COUNT.add(new_column_count as _);
- 
-         Ok(())
-     }
- 
-     /// Generate wrapped [RegionAlterRequest] with given [ColumnMetadata].
--    /// This method will modify `columns` in-place.
-+    ///
-+    /// Columns that the physical region already has are not added again: their
-+    /// definitions are validated and their persisted column ids are reused.
-+    /// Returns `None` if every given column already exists.
-     async fn assemble_alter_request(
-         &self,
-         region_id: RegionId,
-         columns: Vec<ColumnMetadata>,
-         index_options: IndexOptions,
--    ) -> Result<RegionRequest> {
--        // retrieve underlying version
-+    ) -> Result<Option<(usize, RegionRequest)>> {
-         let region_metadata = self
-             .mito
-             .get_metadata(region_id)
-             .await
-             .context(MitoReadOperationSnafu)?;
- 
-+        // The caller derives the columns to add from a cached schema that a cancelled or
-+        // concurrent alter may have left behind, so the names are checked against the
-+        // real metadata instead of being trusted.
-+        let mut seen: HashMap<String, usize> = HashMap::with_capacity(columns.len());
-+        let mut columns_to_add = Vec::with_capacity(columns.len());
-+        for column in columns {
-+            let name = column.column_schema.name.clone();
-+            if let Some(existing) = region_metadata.column_by_name(&name) {
-+                validate_shared_column(region_id, existing, &column)?;
-+                continue;
-+            }
-+            // The batch itself may repeat a column that is not installed yet: the duplicate
-+            // must agree with the first occurrence, and only one of them is added.
-+            if let Some(&index) = seen.get(&name) {
-+                validate_shared_column(region_id, &columns_to_add[index], &column)?;
-+                continue;
-+            }
-+            seen.insert(name, columns_to_add.len());
-+            columns_to_add.push(column);
-+        }
-+
-+        if columns_to_add.is_empty() {
-+            debug!("No new columns to add to physical region {region_id:?}");
-+            return Ok(None);
-+        }
-+        let new_column_count = columns_to_add.len();
-+
-         // find the max column id
-         let new_column_id_start = 1 + region_metadata
-             .column_metadatas
-@@ -120,7 +160,7 @@ impl DataRegion {
-             .unwrap_or(0);
- 
-         // overwrite semantic type
--        let new_columns = columns
-+        let new_columns
-```
-
-**File**: `src/metric-engine/src/engine.rs` (modified, +40/-4)
-```diff
-@@ -25,7 +25,7 @@ mod put;
- mod read;
- mod region_metadata;
- mod staging;
--mod state;
-+pub(crate) mod state;
- mod sync;
- 
- use std::any::Any;
-@@ -59,8 +59,8 @@ use store_api::storage::{RegionId, ScanRequest, SequenceNumber};
- use crate::config::EngineConfig;
- use crate::data_region::DataRegion;
- use crate::error::{
--    self, Error, Result, StartRepeatedTaskSnafu, UnsupportedRegionRequestSnafu,
--    UnsupportedRemapManifestsRequestSnafu,
-+    self, Error, PhysicalRegionNotFoundSnafu, Result, StartRepeatedTaskSnafu,
-+    UnsupportedRegionRequestSnafu, UnsupportedRemapManifestsRequestSnafu,
- };
- use crate::metadata_region::MetadataRegion;
- use crate::repeated_task::FlushMetadataRegionTask;
-@@ -608,7 +608,7 @@ impl MetricEngine {
- }
- 
- /// Shared definitions must agree before CREATE/ALTER mutates either region.
--fn validate_shared_column(
-+pub(crate) fn validate_shared_column(
-     region_id: store_api::storage::RegionId,
-     existing: &store_api::metadata::ColumnMetadata,
-     proposed: &store_api::metadata::ColumnMetadata,
-@@ -647,6 +647,42 @@ struct MetricEngineInner {
-     flush_task: RepeatedTask<Error>,
- }
- 
-+impl MetricEngineInner {
-+    /// Adds columns to the physical region while holding its column-add lock.
-+    ///
-+    /// Column ids are derived from the metadata of the physical region, so requests
-+    /// on logical regions that share one physical region must not allocate ids at
-+    /// the same time, otherwise two different columns could get one id.
-+    async fn add_physical_columns(
-+        &self,
-+        physical_region_id: RegionId,
-+        columns: Vec<store_api::metadata::ColumnMetadata>,
-+        index_options: IndexOptions,
-+    ) -> Result<()> {
-+        if columns.is_empty() {
-+            return Ok(());
-+        }
-+
-+        let data_region_id = utils::to_data_region_id(physical_region_id);
-+        let column_add_lock = {
-+            let state = self.state.read().unwrap();
-+            state
-+                .physical_region_states()
-+                .get(&data_region_id)
-+                .with_context(|| PhysicalRegionNotFoundSnafu {
-+                    region_id: data_region_id,
-+                })?
-+                .column_add_lock()
-+                .clone()
-+        };
-+
-+        let _guard = column_add_lock.lock().await;
-+        self.data_region
-+            .add_columns(physical_region_id, columns, index_options)
-+            .await
-+    }
-+}
-+
- #[cfg(test)]
- mod test {
-     use std::assert_matches;
-```
-
-**File**: `src/metric-engine/src/engine/alter.rs` (modified, +147/-23)
-```diff
-@@ -29,8 +29,8 @@ use validate::validate_alter_region_requests;
- 
- use crate::engine::MetricEngineInner;
- use crate::error::{
--    AddingFieldColumnSnafu, LogicalRegionNotFoundSnafu, PhysicalRegionNotFoundSnafu, Result,
--    SerializeColumnMetadataSnafu, UnexpectedRequestSnafu,
-+    AddingFieldColumnSnafu, LogicalRegionNotFoundSnafu, MissingPhysicalColumnSnafu,
-+    PhysicalRegionNotFoundSnafu, Result, SerializeColumnMetadataSnafu, UnexpectedRequestSnafu,
- };
- use crate::utils::{append_manifest_info, encode_manifest_info_to_extensions, to_data_region_id};
- 
-@@ -163,8 +163,7 @@ impl MetricEngineInner {
-             );
-         }
- 
--        self.data_region
--            .add_columns(data_region_id, new_columns_to_add, index_options)
-+        self.add_physical_columns(physical_region_id, new_columns_to_add, index_options)
-             .await?;
- 
-         let physical_columns = self.data_region.physical_columns(data_region_id).await?;
-@@ -173,28 +172,39 @@ impl MetricEngineInner {
-             .map(|metadata| (metadata.column_schema.name.as_str(), metadata))
-             .collect::<HashMap<_, _>>();
- 
--        let logical_region_columns = requests.iter().map(|(region_id, request)| {
-+        // The physical region now has every requested column, either because this call
-+        // added it or because it was already there with the same definition.
-+        let mut logical_region_columns = Vec::with_capacity(requests.len());
-+        for (region_id, request) in &requests {
-             let AlterKind::AddColumns { columns } = &request.kind else {
-                 unreachable!()
-             };
--            (
--                *region_id,
--                columns
--                    .iter()
--                    .map(|col| {
--                        let column_name = col.column_metadata.column_schema.name.as_str();
--                        let column_metadata = *physical_schema_map.get(column_name).unwrap();
--                        (column_name, column_metadata)
--                    })
--                    .collect::<HashMap<_, _>>(),
--            )
--        });
-+            let mut column_metadata = HashMap::with_capacity(columns.len());
-+            for col in columns {
-+                let column_name = col.column_metadata.column_schema.name.as_str();
-+                let metadata =
-+                    physical_schema_map
-+                        .get(column_name)
-+                        .copied()
-+                        .with_context(|| MissingPhysicalColumnSnafu {
-+                            name: column_name,
-+                            region_id: physical_region_id,
-+                        })?;
-+                column_metadata.insert(column_name, metadata);
-+            }
-+            logical_region_columns.push((*region_id, column_metadata));
-+        }
- 
--        let new_add_columns = new_column_indices.keys().map(|name| {
--            // Safety: previous steps ensure the physical region exist
--            let column_metadata = *physical_schema_map.get(name).unwrap();
--            (name.to_string(), column_metadata.clone())
--        });
-+        let mut new_add_columns = Vec::with_capacity(new_column_indices.len());
-+        for name in new_column_indices.keys() {
-+            let column_metadata = physical_schema_map.get(name).copied().with_context(|| {
-+                MissingPhysicalColumnSnafu {
-+                    name: name.to_string(),
-+                    region_id: physical_region_id,
-+                }
-+            })?;
-+            new_add_columns.push((name.to_string(), column_metadata.clone()));
-+        }
- 
-         // The data region has the new columns, whatever happens to the metadata write.
-         self.state
-@@ -205,7 +215,11 @@ impl MetricEngineInner {
-         // Writes logical regions metadata to metadata region
-         let result = self
-             .metadata_region
--            .add_logical_regions(physical_region_id, false, logical_region_columns)
-+            .add_logical_regions(
-+                physical_region_id,
-+                false,
-+                logical_region_columns.into_iter(),
-+            )
-             .await;
-         // A failed write may still be applied, e.g. when the region lease expires after the WAL
-         // append, so the cached logical columns are dropped either way.
-@@ -284,6 +298,9 @@ mod test {
-     use common_meta::ddl::test_util::assert_column_name_and_id;
-     use common_meta::ddl::utils::{parse_column_metadatas, parse_manifest_infos_from_extensions};
-     use common_query::prelude::{greptime_timestamp, greptime_value};
-+    use datatypes::prelude::ConcreteDataType;
-+    use datatypes::schema::ColumnSchema;
-+    use store_api::metadata::ColumnMetadata;
-     use store_api::metric_engine_consts::ALTER_PHYSICAL_EXTENSION_KEY;
-     use store_api::region_engine::RegionEngine;
-     use store_api::region_request::{
-@@ -292,7 +309,9 @@ mod test {
-     use store_api::storage::RegionId;
-     use store_api::storage::consts::ReservedColumnId;
- 
-+ 
-```
-
-**File**: `src/metric-engine/src/engine/create.rs` (modified, +33/-27)
-```diff
-@@ -45,9 +45,9 @@ use crate::engine::create::extract_new_columns::extract_new_columns;
- use crate::engine::options::{PhysicalRegionOptions, set_data_region_options};
- use crate::error::{
-     ColumnTypeMismatchSnafu, ConflictRegionOptionSnafu, CreateMitoRegionSnafu,
--    InternalColumnOccupiedSnafu, InvalidMetadataSnafu, MissingRegionOptionSnafu,
--    MultipleFieldColumnSnafu, NoFieldColumnSnafu, ParseRegionIdSnafu, PhysicalRegionNotFoundSnafu,
--    Result, SerializeColumnMetadataSnafu, UnexpectedRequestSnafu,
-+    InternalColumnOccupiedSnafu, InvalidMetadataSnafu, MissingPhysicalColumnSnafu,
-+    MissingRegionOptionSnafu, MultipleFieldColumnSnafu, NoFieldColumnSnafu, ParseRegionIdSnafu,
-+    PhysicalRegionNotFoundSnafu, Result, SerializeColumnMetadataSnafu, UnexpectedRequestSnafu,
- };
- use crate::metrics::PHYSICAL_REGION_COUNT;
- use crate::utils::{
-@@ -289,8 +289,7 @@ impl MetricEngineInner {
-         };
- 
-         // TODO(weny): we dont need to pass a mutable new_columns here.
--        self.data_region
--            .add_columns(data_region_id, new_columns, index_option)
-+        self.add_physical_columns(physical_region_id, new_columns, index_option)
-             .await?;
- 
-         let physical_columns = self.data_region.physical_columns(data_region_id).await?;
-@@ -302,28 +301,35 @@ impl MetricEngineInner {
-             .iter()
-             .map(|(region_id, _)| *region_id)
-             .collect::<Vec<_>>();
--        let logical_region_columns = requests.iter().map(|(region_id, request)| {
--            (
--                *region_id,
--                request
--                    .column_metadatas
--                    .iter()
--                    .map(|metadata| {
--                        // Safety: previous steps ensure the physical region exist
--                        let column_metadata = *physical_schema_map
--                            .get(metadata.column_schema.name.as_str())
--                            .unwrap();
--                        (metadata.column_schema.name.as_str(), column_metadata)
--                    })
--                    .collect::<HashMap<_, _>>(),
--            )
--        });
-+        // The physical region now has every requested column, either because this call
-+        // added it or because it was already there with the same definition.
-+        let mut logical_region_columns = Vec::with_capacity(requests.len());
-+        for (region_id, request) in &requests {
-+            let mut column_metadata = HashMap::with_capacity(request.column_metadatas.len());
-+            for metadata in &request.column_metadatas {
-+                let name = metadata.column_schema.name.as_str();
-+                let physical_metadata =
-+                    physical_schema_map.get(name).copied().with_context(|| {
-+                        MissingPhysicalColumnSnafu {
-+                            name,
-+                            region_id: physical_region_id,
-+                        }
-+                    })?;
-+                column_metadata.insert(name, physical_metadata);
-+            }
-+            logical_region_columns.push((*region_id, column_metadata));
-+        }
- 
--        let new_add_columns = new_column_indices.keys().map(|name| {
--            // Safety: previous steps ensure the physical region exist
--            let column_metadata = *physical_schema_map.get(name).unwrap();
--            (name.to_string(), column_metadata.clone())
--        });
-+        let mut new_add_columns = Vec::with_capacity(new_column_indices.len());
-+        for name in new_column_indices.keys() {
-+            let column_metadata = physical_schema_map.get(name).copied().with_context(|| {
-+                MissingPhysicalColumnSnafu {
-+                    name: name.to_string(),
-+                    region_id: physical_region_id,
-+                }
-+            })?;
-+            new_add_columns.push((name.to_string(), column_metadata.clone()));
-+        }
-         // The data region has the new columns, whatever happens to the metadata write.
-         self.state
-             .write()
-@@ -337,7 +343,7 @@ impl MetricEngineInner {
- 
-         // Writes logical regions metadata to metadata region
-         self.metadata_region
--            .add_logical_regions(physical_region_id, true, logical_region_columns)
-+            .add_logical_regions(physical_region_id, true, logical_region_columns.into_iter())
-             .await?;
- 
-         self.state
-```
-
-**File**: `src/metric-engine/src/engine/state.rs` (modified, +15/-0)
-```diff
-@@ -43,6 +43,15 @@ pub struct PhysicalRegionState {
-     primary_key_encoding: PrimaryKeyEncoding,
-     options: PhysicalRegionOptions,
-     time_index_unit: TimeUnit,
-+    /// Serializes adding columns to this physical region: the column existence
-+    /// check, the column id allocation and the physical ALTER that installs the
-+    /// columns. Column ids are derived from the current metadata, so two
-+    /// concurrent add-column requests on logical regions sharing this physical
-+    /// region could otherwise assign the same id to different columns.
-+    ///
-+    /// Callers clone the [`Arc`] out of the state and hold it across the
-+    /// physical alter; see [`crate::data_region::DataRegion::add_columns`].
-+    column_add_lock: Arc<tokio::sync::Mutex<()>>,
- }
- 
- impl PhysicalRegionState {
-@@ -67,9 +76,15 @@ impl PhysicalRegionState {
-             primary_key_encoding,
-             options,
-             time_index_unit,
-+            column_add_lock: Arc::new(tokio::sync::Mutex::new(())),
-         }
-     }
- 
-+    /// Returns the lock that serializes adding columns to this physical region.
-+    pub fn column_add_lock(&self) -> &Arc<tokio::sync::Mutex<()>> {
-+        &self.column_add_lock
-+    }
-+
-     /// Returns a reference to the logical region ids.
-     pub fn logical_regions(&self) -> &HashSet<RegionId> {
-         &self.logical_regions
-```
-
-**File**: `src/metric-engine/src/error.rs` (modified, +16/-0)
-```diff
-@@ -255,6 +255,18 @@ pub enum Error {
-         location: Location,
-     },
- 
-+    #[snafu(display(
-+        "Column {} is missing from physical region {} after adding columns",
-+        name,
-+        region_id
-+    ))]
-+    MissingPhysicalColumn {
-+        name: String,
-+        region_id: RegionId,
-+        #[snafu(implicit)]
-+        location: Location,
-+    },
-+
-     #[snafu(display("Table id count mismatch. Expect {}, got {}", expected, actual))]
-     TableIdCountMismatch {
-         expected: usize,
-@@ -451,6 +463,10 @@ impl ErrorExt for Error {
- 
-             ColumnNotFound { .. } => StatusCode::TableColumnNotFound,
- 
-+            // The physical region was read twice around the alter and lost a column in
-+            // between, so the failure is an inconsistent server state, not a bad request.
-+            MissingPhysicalColumn { .. } => StatusCode::Unexpected,
-+
-             CreateMitoRegion { source, .. }
-             | OpenMitoRegion { source, .. }
-             | CleanUpMitoRegion { source, .. }
-```
-
----
-
-### Incident Patch 3: `68145fc7` (2026-11-13)
-**Commit Message**: fix(mito2): coordinate region edits with repartition lifecycle requests (#10354)
-
-* fix(mito2): coordinate region edits with repartition requests
-
-Extend the pending ALTER queue to defer lifecycle requests blocked by region edits. Preserve scheduler handoffs and drain accepted edits before entering staging, rejecting new unbound imports at that boundary.
-
-Keep ApplyStagingManifest's asynchronous execution and close-time flush behavior. Cover queue bounds, failures, staging transitions, close/reload races, and flush concurrency.
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-* fix(mito2): settle region waiters before completion returns
-
-Reject pending lifecycle requests when retiring a region. Give each completion one dispatch owner while preserving stalled-write ordering, edit-before-compaction dispatch, and fenced-region reload handling.
-
-Cover edit retirement with queued requests; the regression times out when removal only rejects edits.
-
-Signed-off-by: WenyXu <[REDACTED_EMAIL]>
-
-* fix(mito2): preserve queued close flush requirements
-
-Defer later closes behind a pending close even when they do not request a flush themselves. Reuse the existing close-time flush and waiter handoff.
-
-Co
-
-**File**: `src/mito2/AGENTS.md` (modified, +3/-0)
-```diff
-@@ -187,6 +187,9 @@ Tests live next to the code as `*_test.rs` (e.g. `src/mito2/src/engine/flush_tes
-   and `is_staging()`, a flush request `is_flushable()` and `is_staging()` (`is_writable()` and
-   `is_flushable()` are false while ending staging). `handle_close` leaves staging first.
-   Tail replays never run for them: entering staging fails while tails are pending.
-+- Direct SST imports without a staging binding cannot publish into staging.
-+  `worker/handle_manifest.rs` seals edit admission while EnterStaging drains accepted
-+  edits. Scheduler-owned DDLs resume through execution, bypassing initial admission.
- 
- ## Maintenance contract
- 
-```
-
-**File**: `src/mito2/src/compaction/scheduler.rs` (modified, +17/-0)
-```diff
-@@ -516,6 +516,23 @@ impl CompactionScheduler {
-         status.pending_ddl_requests.push(request);
-         Ok(())
-     }
-+
-+    /// Pending and handed-off DDLs retain their turn until the final reply.
-+    pub(crate) fn blocks_region_edits(&self, region_id: RegionId) -> bool {
-+        self.region_status
-+            .get(&region_id)
-+            .is_some_and(|status| status.has_ddl())
-+    }
-+
-+    /// Whether a staging request is still waiting for compaction cancellation.
-+    pub(crate) fn has_pending_enter_staging(&self, region_id: RegionId) -> bool {
-+        self.region_status.get(&region_id).is_some_and(|status| {
-+            status
-+                .pending_ddl_requests
-+                .iter()
-+                .any(|ddl| matches!(ddl.request, DdlRequest::EnterStaging(_)))
-+        })
-+    }
- }
- 
- // Internal state-machine helpers.
-```
-
-**File**: `src/mito2/src/engine/apply_staging_manifest_test.rs` (modified, +10/-1)
-```diff
-@@ -1527,7 +1527,16 @@ async fn test_apply_staging_manifest_retries_failed_commit(#[case] landed: bool)
-         }],
-         ..Default::default()
-     };
--    let err = engine.edit_region(region_id, edit).await.unwrap_err();
-+    let (sender, receiver) = tokio::sync::oneshot::channel();
-+    let edit = crate::request::RegionEditRequest::new(region_id, edit, true, sender)
-+        .for_staging(partition_expr.clone());
-+    engine
-+        .inner
-+        .workers
-+        .submit_to_worker(region_id, crate::request::WorkerRequest::EditRegion(edit))
-+        .await
-+        .unwrap();
-+    let err = receiver.await.unwrap().unwrap_err();
-     assert_eq!(RetryHint::Retryable, err.retry_hint());
-     assert!(region.is_staging());
-     assert!(
-```
-
-**File**: `src/mito2/src/engine/close_test.rs` (modified, +134/-0)
-```diff
-@@ -277,3 +277,137 @@ async fn test_engine_close_region_flush_on_close_while_flushing() {
-     let batches = RecordBatches::try_collect(stream).await.unwrap();
-     assert_eq!(6, batches.iter().map(|b| b.num_rows()).sum::<usize>());
- }
-+
-+#[rstest::rstest]
-+#[case::skip_wal(true, [false, false])]
-+#[case::flush_on_close(false, [true, false])]
-+#[tokio::test]
-+async fn test_repeated_close_during_edit_preserves_flush_requirement(
-+    #[case] skip_wal: bool,
-+    #[case] flush_on_close: [bool; 2],
-+) {
-+    use crate::manifest::action::RegionEdit;
-+    use crate::region::{RegionLeaderState, RegionRoleState};
-+    use crate::request::{DdlRequest, SenderDdlRequest, WorkerRequest};
-+    use store_api::region_request::RegionPutRequest;
-+
-+    let mut env = TestEnv::new().await;
-+    let engine = env
-+        .create_engine(MitoConfig {
-+            num_workers: 1,
-+            schedule_compaction_after_edit: false,
-+            ..Default::default()
-+        })
-+        .await;
-+    let region_id = RegionId::new(1, 1);
-+    let other_id = RegionId::new(1, 2);
-+    let create = CreateRequestBuilder::new().build();
-+    let schema = rows_schema(&create);
-+    for id in [region_id, other_id] {
-+        engine
-+            .handle_request(id, RegionRequest::Create(create.clone()))
-+            .await
-+            .unwrap();
-+    }
-+    engine
-+        .handle_request(
-+            region_id,
-+            RegionRequest::Put(RegionPutRequest {
-+                rows: Rows {
-+                    schema,
-+                    rows: build_rows(0, 3),
-+                },
-+                hint: None,
-+                partition_expr_version: None,
-+                skip_wal,
-+            }),
-+        )
-+        .await
-+        .unwrap();
-+    let region = engine.get_region(region_id).unwrap();
-+    let guard = region.manifest_ctx.manifest_manager.write().await;
-+    // A removal of a nonexistent file exercises manifest serialization without fake SSTs.
-+    let e = engine.clone();
-+    let edit = tokio::spawn(async move {
-+        e.edit_region(
-+            region_id,
-+            RegionEdit {
-+                files_to_remove: vec![crate::sst::file::FileMeta {
-+                    region_id,
-+                    file_id: store_api::storage::FileId::random(),
-+                    ..Default::default()
-+                }],
-+                ..Default::default()
-+            },
-+        )
-+        .await
-+    });
-+    tokio::time::timeout(std::time::Duration::from_secs(5), async {
-+        while region.state() != RegionRoleState::Leader(RegionLeaderState::Editing) {
-+            tokio::task::yield_now().await;
-+        }
-+    })
-+    .await
-+    .unwrap();
-+    let mut closes = Vec::new();
-+    for flush_on_close in flush_on_close {
-+        let (sender, receiver) = tokio::sync::oneshot::channel();
-+        engine
-+            .inner
-+            .workers
-+            .submit_to_worker(
-+                region_id,
-+                WorkerRequest::Ddl(SenderDdlRequest {
-+                    region_id,
-+                    sender: sender.into(),
-+                    request: DdlRequest::Close(RegionCloseRequest { flush_on_close }),
-+                }),
-+            )
-+            .await
-+            .unwrap();
-+        closes.push(receiver);
-+    }
-+    tokio::time::timeout(
-+        std::time::Duration::from_secs(5),
-+        flush_region(&engine, other_id, None),
-+    )
-+    .await
-+    .unwrap();
-+    for close in &mut closes {
-+        assert!(matches!(
-+            close.try_recv(),
-+            Err(tokio::sync::oneshot::error::TryRecvError::Empty)
-+        ));
-+    }
-+    drop(guard);
-+    tokio::time::timeout(std::time::Duration::from_secs(5), edit)
-+        .await
-+        .unwrap()
-+        .unwrap()
-+        .unwrap();
-+    for close in closes {
-+        assert_eq!(
-+            0,
-+            tokio::time::timeout(std::time::Duration::from_secs(5), close)
-+                .await
-+                .unwrap()
-+                .unwrap()
-+                .unwrap()
-+        );
-+    }
-+    assert!(!engine.is_region_exists(region_id));
-+    // WAL replay could hide a skipped flush after reopening. Check the committed SST first.
-+    assert!(!region.manifest_ctx.manifest().await.files.is_empty());
-+    crate::test_util::reopen_region(&engine, region_id, create.table_dir, true, create.options)
-+        .await;
-+    let stream = engine
-+        .scan_to_stream(region_id, ScanRequest::default())
-+        .await
-+        .unwrap();
-+    let batches = RecordBatches::try_collect(stream).await.unwrap();
-+    assert_eq!(
-+        3,
-+        batches.iter().map(|batch| batch.num_rows()).sum::<usize>()
-+    );
-+    engine.stop().await.unwrap();
-+}
-```
-
-**File**: `src/mito2/src/engine/compaction_test.rs` (modified, +20/-0)
-```diff
-@@ -2687,6 +2687,26 @@ async fn test_enter_staging_waits_for_picking_logical_cancellation_ack() {
-     assert!(!compact_task.is_finished());
-     assert!(!staging_task.is_finished());
- 
-+    // Moving EnterStaging into the compaction scheduler must keep import admission sealed.
-+    let error = tokio::time::timeout(
-+        Duration::from_secs(5),
-+        engine.edit_region(
-+            region_id,
-+            crate::manifest::action::RegionEdit {
-+                files_to_add: vec![crate::sst::file::FileMeta {
-+                    region_id,
-+                    file_id: store_api::storage::FileId::random(),
-+                    ..Default::default()
-+                }],
-+                ..Default::default()
-+            },
-+        ),
-+    )
-+    .await
-+    .unwrap()
-+    .unwrap_err();
-+    assert_eq!(StatusCode::RegionBusy, error.status_code());
-+
-     gate_guard.release();
-     let compact_err = tokio::time::timeout(Duration::from_secs(5), compact_task)
-         .await
-```
-
-**File**: `src/mito2/src/engine/edit_region_test.rs` (modified, +512/-1)
-```diff
-@@ -1271,7 +1271,7 @@ async fn test_drop_rejects_alter_and_edit_queues_after_flush_commit() {
-     });
-     wait_worker_recv_event(&mut rx).await;
- 
--    // The first ALTER waits in the flush scheduler; the second uses pending_alters.
-+    // The first ALTER waits in the flush scheduler; the second uses pending_ddls.
-     let mut alters = Vec::new();
-     for _ in 0..2 {
-         let e = engine.clone();
-@@ -1321,3 +1321,514 @@ async fn test_drop_rejects_alter_and_edit_queues_after_flush_commit() {
-     .await
-     .expect("DROP left queued ALTER or edit requests unresolved");
- }
-+
-+/// Submits without awaiting the reply so a test can observe a deferred control request.
-+async fn submit_control(
-+    engine: &MitoEngine,
-+    region_id: RegionId,
-+    request: crate::request::DdlRequest,
-+) -> oneshot::Receiver<crate::error::Result<store_api::region_request::AffectedRows>> {
-+    let (sender, receiver) = oneshot::channel();
-+    engine
-+        .inner
-+        .workers
-+        .submit_to_worker(
-+            region_id,
-+            WorkerRequest::Ddl(crate::request::SenderDdlRequest {
-+                region_id,
-+                request,
-+                sender: sender.into(),
-+            }),
-+        )
-+        .await
-+        .unwrap();
-+    receiver
-+}
-+
-+#[tokio::test]
-+async fn test_edit_retirement_rejects_pending_requests() {
-+    use crate::request::DdlRequest;
-+    use store_api::region_request::RegionFlushRequest;
-+
-+    let mut env = TestEnv::new().await;
-+    let engine = env
-+        .create_engine(MitoConfig {
-+            num_workers: 1,
-+            schedule_compaction_after_edit: false,
-+            ..Default::default()
-+        })
-+        .await;
-+    let region_id = RegionId::new(1, 1);
-+    let other_id = RegionId::new(1, 2);
-+    for id in [region_id, other_id] {
-+        engine
-+            .handle_request(
-+                id,
-+                RegionRequest::Create(CreateRequestBuilder::new().build()),
-+            )
-+            .await
-+            .unwrap();
-+    }
-+    let region = engine.get_region(region_id).unwrap();
-+    let mut guard = region.manifest_ctx.manifest_manager.write().await;
-+    let e = engine.clone();
-+    let edit = tokio::spawn(async move {
-+        e.edit_region(region_id, test_region_edit(region_id, FileId::random()))
-+            .await
-+    });
-+    wait_until_region_is_in_editing(&region).await;
-+    let mut flush = submit_control(
-+        &engine,
-+        region_id,
-+        DdlRequest::Flush(RegionFlushRequest::default()),
-+    )
-+    .await;
-+    let (sender, queued_edit) = oneshot::channel();
-+    engine
-+        .inner
-+        .workers
-+        .submit_to_worker(
-+            region_id,
-+            WorkerRequest::EditRegion(RegionEditRequest::new(
-+                region_id,
-+                test_region_edit(region_id, FileId::random()),
-+                true,
-+                sender,
-+            )),
-+        )
-+        .await
-+        .unwrap();
-+    tokio::time::timeout(
-+        Duration::from_secs(5),
-+        crate::test_util::flush_region(&engine, other_id, None),
-+    )
-+    .await
-+    .unwrap();
-+    assert!(matches!(
-+        flush.try_recv(),
-+        Err(oneshot::error::TryRecvError::Empty)
-+    ));
-+
-+    // A stopped manager without reload pending forces edit completion to retire the region
-+    // and return early. Its queued requests must finish without another dispatch notification.
-+    guard.stop().await;
-+    drop(guard);
-+    tokio::time::timeout(Duration::from_secs(5), edit)
-+        .await
-+        .unwrap()
-+        .unwrap()
-+        .unwrap_err();
-+    let error = tokio::time::timeout(Duration::from_secs(5), flush)
-+        .await
-+        .unwrap()
-+        .unwrap()
-+        .unwrap_err();
-+    assert_eq!(StatusCode::RegionNotFound, error.status_code());
-+    let error = tokio::time::timeout(Duration::from_secs(5), queued_edit)
-+        .await
-+        .unwrap()
-+        .unwrap()
-+        .unwrap_err();
-+    assert_eq!(StatusCode::RegionNotFound, error.status_code());
-+    assert!(!engine.is_region_exists(region_id));
-+    engine.stop().await.unwrap();
-+}
-+
-+#[tokio::test]
-+async fn test_repartition_flush_waits_for_region_edit() {
-+    use crate::request::DdlRequest;
-+    use store_api::region_request::{RegionFlushReason, RegionFlushRequest};
-+
-+    let mut env = TestEnv::new().await;
-+    let engine = env
-+        .create_engine(MitoConfig {
-+            num_workers: 1,
-+            schedule_compaction_after_edit: false,
-+            ..Default::default()
-+        })
-+        .await;
-+    let region_id = RegionId::new(1, 1);
-+    let other_id = RegionId::new(1, 2);
-+    for id in [region_id, other_id] {
-+        engine
-+            .handle_request(
-+                id,
-+                RegionRequest::Create(CreateRequestBuilder::new().build()),
-+            )
-+            .await
-+            .unwrap();
-+    }
-+    let region = engine.get_region(region_id).unwrap();
-+    let guard = region.manifest_ctx.manifest_manage
-```
-
-**File**: `src/mito2/src/engine/object_store_wal_test.rs` (modified, +54/-6)
-```diff
-@@ -877,10 +877,32 @@ async fn test_end_of_staging_after_deadline_sends_nothing() {
-         .handle_request(region_id, enter_staging_request())
-         .await
-         .unwrap();
-+    let partition_expr = region
-+        .manifest_ctx
-+        .staging_partition_info()
-+        .unwrap()
-+        .partition_expr()
-+        .unwrap()
-+        .to_string();
-+    let (sender, receiver) = oneshot::channel();
-     engine
--        .edit_region(region_id, edit_files(vec![file.as_ref().clone()], vec![]))
-+        .inner
-+        .workers
-+        .submit_to_worker(
-+            region_id,
-+            WorkerRequest::EditRegion(
-+                RegionEditRequest::new(
-+                    region_id,
-+                    edit_files(vec![file.as_ref().clone()], vec![]),
-+                    false,
-+                    sender,
-+                )
-+                .for_staging(partition_expr),
-+            ),
-+        )
-         .await
-         .unwrap();
-+    receiver.await.unwrap().unwrap();
-     let version = next_manifest_version(&region).await;
- 
-     engine.freeze_lease_clock(deadline);
-@@ -1187,7 +1209,10 @@ async fn test_reload_ignores_edit_of_replaced_instance() {
-     plugins.insert::<RegionHookRef>(hook.clone());
-     let engine = env
-         .create_engine_with_log_store_and_plugins(
--            MitoConfig::default(),
-+            MitoConfig {
-+                num_workers: 1,
-+                ..Default::default()
-+            },
-             new_log_store().await,
-             plugins,
-         )
-@@ -1212,6 +1237,8 @@ async fn test_reload_ignores_edit_of_replaced_instance() {
-     };
-     let added = file(FileId::random());
- 
-+    let barrier_region_id = RegionId::new(1, 2);
-+    create_leased_region_on(&engine, barrier_region_id).await;
-     hook.armed.store(true, Ordering::Relaxed);
-     let committed = {
-         let engine = engine.clone();
-@@ -1228,9 +1255,8 @@ async fn test_reload_ignores_edit_of_replaced_instance() {
-         .submit_to_worker(region_id, request)
-         .await
-         .unwrap();
--    // The worker queues the edit before it handles the flush request sent after it.
--    let flush = RegionRequest::Flush(RegionFlushRequest::default());
--    engine.handle_request(region_id, flush).await.unwrap_err();
-+    // An empty flush on the same worker acknowledges receipt without waiting for this edit.
-+    flush_region(&engine, barrier_region_id, None).await;
-     let region_dir = region_dir_from_table_dir(&table_dir, region_id, PathType::Bare);
-     let version = next_manifest_version(&old).await;
-     let removal = RegionMetaActionList::with_action(RegionMetaAction::Edit(edit_files(
-@@ -1406,10 +1432,32 @@ async fn test_end_of_staging_conflict_reloads_region() {
-         .handle_request(region_id, enter_staging_request())
-         .await
-         .unwrap();
-+    let partition_expr = old
-+        .manifest_ctx
-+        .staging_partition_info()
-+        .unwrap()
-+        .partition_expr()
-+        .unwrap()
-+        .to_string();
-+    let (sender, receiver) = oneshot::channel();
-     engine
--        .edit_region(region_id, edit_files(vec![file.as_ref().clone()], vec![]))
-+        .inner
-+        .workers
-+        .submit_to_worker(
-+            region_id,
-+            WorkerRequest::EditRegion(
-+                RegionEditRequest::new(
-+                    region_id,
-+                    edit_files(vec![file.as_ref().clone()], vec![]),
-+                    false,
-+                    sender,
-+                )
-+                .for_staging(partition_expr),
-+            ),
-+        )
-         .await
-         .unwrap();
-+    receiver.await.unwrap().unwrap();
-     let region_dir = region_dir_from_table_dir(&table_dir, region_id, PathType::Bare);
-     let version = next_manifest_version(&old).await;
-     let store = env.get_object_store().unwrap();
-```
-
-**File**: `src/mito2/src/engine/staging_test.rs` (modified, +195/-53)
-```diff
-@@ -749,22 +749,14 @@ async fn test_staging_exit_success_with_manifests_with_format(flat_format: bool)
- 
-     let region = engine.get_region(region_id).unwrap();
-     for (file, expected) in source_files.into_iter().zip([11, 12]) {
--        engine
--            .edit_region(
--                region_id,
--                RegionEdit {
--                    files_to_add: vec![file.as_ref().clone()],
--                    files_to_remove: vec![],
--                    timestamp_ms: None,
--                    compaction_time_window: None,
--                    flushed_entry_id: None,
--                    flushed_sequence: None,
--                    committed_sequence: None,
--                    wal_recovery: Default::default(),
--                },
--            )
--            .await
--            .unwrap();
-+        submit_staging_edit(
-+            &engine,
-+            region_id,
-+            file.as_ref().clone(),
-+            partition_expr.clone(),
-+        )
-+        .await
-+        .unwrap();
-         let current = region.version_control.current();
-         assert_eq!(current.last_sequence, expected);
-         assert_eq!(current.committed_sequence, 10);
-@@ -1560,14 +1552,26 @@ fn edit_adding(file: FileMeta) -> RegionEdit {
-     }
- }
- 
--/// Spawns an edit importing `file`.
-+/// Spawns an edit importing `file`, retaining the current staging binding when present.
- fn spawn_edit(
-     engine: &MitoEngine,
-     region_id: RegionId,
-     file: FileMeta,
- ) -> tokio::task::JoinHandle<crate::error::Result<()>> {
-     let edit_engine = engine.clone();
--    tokio::spawn(async move { edit_engine.edit_region(region_id, edit_adding(file)).await })
-+    let partition_expr = engine
-+        .get_region(region_id)
-+        .unwrap()
-+        .manifest_ctx
-+        .staging_partition_info()
-+        .and_then(|info| info.partition_expr().map(ToOwned::to_owned));
-+    tokio::spawn(async move {
-+        if let Some(partition_expr) = partition_expr {
-+            submit_staging_edit(&edit_engine, region_id, file, partition_expr).await
-+        } else {
-+            edit_engine.edit_region(region_id, edit_adding(file)).await
-+        }
-+    })
- }
- 
- /// Starts an edit importing `file` and waits until the region is `Editing`.
-@@ -1905,22 +1909,14 @@ async fn test_successful_staging_end_keeps_rows_of_rejected_flush() {
-         .unwrap_err();
- 
-     let imported_file = first_file(&engine.get_region(region_id).unwrap()).await;
--    engine
--        .edit_region(
--            region_id,
--            RegionEdit {
--                files_to_add: vec![imported_file],
--                files_to_remove: vec![],
--                timestamp_ms: None,
--                compaction_time_window: None,
--                flushed_entry_id: None,
--                flushed_sequence: None,
--                committed_sequence: None,
--                wal_recovery: Default::default(),
--            },
--        )
--        .await
--        .unwrap();
-+    submit_staging_edit(
-+        &engine,
-+        region_id,
-+        imported_file,
-+        float_range_expr("field_0", 0., 100.).as_json_str().unwrap(),
-+    )
-+    .await
-+    .unwrap();
-     engine
-         .set_region_role_state_gracefully(region_id, SettableRegionRoleState::Leader)
-         .await
-@@ -2010,7 +2006,7 @@ impl EventListener for RequestCountListener {
- }
- 
- #[tokio::test]
--async fn test_edit_returns_to_staging_after_staging_leader_role() {
-+async fn test_unbound_edit_rejected_after_staging_leader_role() {
-     let mut env = TestEnv::new().await;
-     let engine = env.create_engine(MitoConfig::default()).await;
-     let region_id = RegionId::new(1024, 0);
-@@ -2029,8 +2025,11 @@ async fn test_edit_returns_to_staging_after_staging_leader_role() {
- 
-     let region = engine.get_region(region_id).unwrap();
-     let file = first_file(&region).await;
--    spawn_edit(&engine, region_id, file).await.unwrap().unwrap();
+ ### Pre-release (`X.Y.Z-{alpha,beta,rc}.N` after an earlier pre-release)
+-**The tip is the tagged commit, not the release branch tip.** Resolve it from the remote and
+-write this SHA in the docs PR body (§8) as what the note was checked against:
+-```
+-git ls-remote --tags <remote> 'vX.Y.Z-beta.N*'
+-```
+-Use the `refs/tags/vX.Y.Z-beta.N` line (its `^{}` line if the tag is annotated), not the
+-build-suffixed tags it also lists. PRs that land on `release/vX.Y` after the tag
+-(`git log --oneline <tag>..<remote>/release/vX.Y`) belong to the next release, even if they are
+-already merged when you write the note.
 -
-+    let err = spawn_edit(&engine, region_id, file)
-+        .await
-+        .unwrap()
-+        .unwrap_err();
-+    assert_matches!(err, Error::RejectWriteInStaging { .. });
-     assert!(region.is_staging());
- }
+ The range `<prev-pre-release>..<tag>` usually mixes two kinds of commits: individual backports
+ (`... [Backport release/vX.Y] (#NNNN)`) and squashed pick commits (`chore: backport selected
+ changes for ... (#NNNN)`). In both, the original PRs are the `(#NN)` at the end of body lines;
+@@ -156,8 +152,8 @@ done | tr -dc '0-9\n' | sort -un
+ List the bullets under the **original** PRs (title and author of the PR merged to `main`), not
+ the backport PRs. Build them with patch (a) or (b) above; for (b), fetch
+ `gh api repos/GreptimeTeam/greptimedb/pulls/<n> --jq '{number,title,author:.user.login,merged_at}'`,
+-group by the `cliff.toml` parsers (first match wins), order by `merged_at`, and put `!` titles
+-under Breaking changes (§6).
++group by the `cliff.toml` parsers (first match wins), order by `merged_at`, and review `!` titles
++for user-visible compatibility impact (§6) before assigning a category.
  
-@@ -2360,22 +2359,14 @@ async fn test_close_after_end_of_staging_is_queued_keeps_committed_result() {
-     put_range(&engine, region_id, &schema, (3, 5)).await;
-     let region = engine.get_region(region_id).unwrap();
-     let file = first_file(&region).await;
--    engine
--        .edit_region(
--            region_id,
--            RegionEdit {
--                files_to_add: vec![file],
--                files_to_remove: vec![],
--                timestamp_ms: None,
--                compaction_time_window: None,
--                flushed_entry_id: None,
--                flushed_sequence: None,
--                committed_sequence: None,
--                wal_recovery: Default::default(),
--            },
--        )
--        .await
--        .unwrap();
-+    submit_staging_edit(
-+        &engine,
-+        region_id,
-+        file,
-+        float_range_expr("field_0", 0., 100.).as_json_str().u
+ A squashed pick PR can also contain release-only commits that have no PR. List them:
+ ```
+@@ -179,6 +175,10 @@ them and add the user-facing ones by hand:
+ ```
+ git log --format=%s <range> | grep -E '\(#[0-9]+\)$' | grep -vE '^[a-z]+(\([^)]*\))?!?: '
+ ```
++Review generated breaking-change bullets using the same user-impact criteria as §6. Move
++internal-only entries to ordinary groups, preserving genuine incompatibilities, PR links,
++and authors.
++
+ Use only the groups in `cliff.toml`. `git cliff` prints a `### Build` section for `build:` commits
+ because no parser matches them; move a user-facing `build(deps)` fix to Bug Fixes and the rest to
+ Miscellaneous Tasks. Keep each bullet list free of blank lines; a blank line turns it into a
+@@ -217,45 +217,18 @@ line (ask the user; some prefer to keep it).
+ 
+```
+
+**File**: `.agents/skills/greptimedb-release/SKILL.md` (modified, +4/-2)
+```diff
+@@ -62,11 +62,12 @@ publishing.
+ 
+ **Do NOT pre-create the tag.** Creating the release creates the tag and fires the
+ tag-push CI (`.github/workflows/release.yml`) that builds all binaries (**~hours**).
++Use the exact commit SHA verified for the changelog as `<verified-release-sha>`.
+ Confirm with the user, then:
+ ```
+ gh release create vX.Y.Z \
+   --repo GreptimeTeam/greptimedb \
+-  --target release/vX.Y \
++  --target <verified-release-sha> \
+   --title "Release vX.Y.Z" \
+   --notes-file CHANGELOG-vX.Y.Z.md \
+   --prerelease
+@@ -78,7 +79,8 @@ gh release create vX.Y.Z \
+ 
+ ## 4. Open the docs release-note PR (do not wait for CI)
+ 
+-Right after triggering the release, open the docs draft PR (see the docs section of the
++Verify that the remote tag resolves to the verified release SHA (peel annotated tags);
++stop if it differs. Then open the docs draft PR (see the docs section of the
+ `greptimedb-release-note` skill). It only needs the finalized changelog.
+ 
+ Then **delete the local `CHANGELOG-vX.Y.Z.md`** (its content now lives in the release body
+```
+
+---
+
+### Incident Patch 2: `7f7c003f` (2026-11-14)
+**Commit Message**: chore(ci): update compatibility versions (#10439)
+
+Signed-off-by: greptimedb-ci <[REDACTED_EMAIL]>
+Co-authored-by: greptimedb-ci <[REDACTED_EMAIL]>
+
+**File**: `tests/compatibility/ci.toml` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@
+ # exercised by nightly runs (--nightly-window); they are not retained in the PR
+ # window. Run .github/scripts/update-compat-versions.py --update --published-only
+ # after release tags land.
+-from_versions = ["v1.2.1", "v1.3.0"]
++from_versions = ["v1.2.1", "v1.3.1"]
+ 
+ # Recent releases that must be able to reopen tables written by the PR build.
+ downgrade_to_versions = ["v1.1.4"]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #10442** (2026-11-14): docs(skills): focus release notes on user impact (@killme2008)
+- **PR #10439** (2026-11-14): chore(ci): update compatibility versions (@MichaelScofield)
 - **PR #10434** (2026-11-13): fix(auth): backport physical metric permission targets to v1.3 (@WenyXu)
 - **PR #10419** (2026-11-13): perf(mito-codec): index sparse label columns by id once at bind time (@discord9)
 - **PR #10417** (2026-11-13): feat(common-meta): make RDS metadata backends closable (@WenyXu)
 - **PR #10415** (2026-11-13): fix(frontend): classify physical entity graph sources [Backport release/v1.3] (@MichaelScofield)
-- **PR #10410** (2026-11-13): fix(function): handle unaligned binary vector literals [Backport release/v1.3] (@MichaelScofield)
-- **PR #10407** (closed): perf(promql): advance both binary operands in turn (@discord9)
 
 ---
 
@@ -3430,38 +1920,58 @@ Co
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mito2): commit staging edits once when staging ends (#10322)
+## X. docs(skills): focus release notes on user impact
 
 **RULE**:
-When implementing operations in `src/mito2/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.agents/skills/greptimedb-release-note/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9f6c957e`: mito2): commit staging edits once when staging ends (#10322). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `176bc07b`: docs(skills): focus release notes on user impact. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mito2/AGENTS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/skills/greptimedb-release-note/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Manifest version is monotonic — never reset or skip it. Staging takes no version:
-  its actions stay in memory (`manifest/manager.rs`) and are committed once, as the
-  next version, when staging ends (`MitoRegion::end_staging_locked`).
-- Staging regions, ending staging included, never flush: a flush would stage its SST and
-  release the rows' WAL, losing them if staging does not end successfully. Every flush
-  trigger in `worker/handle_flush.rs` must skip them: background triggers test `is_writable()`
-  and `is_staging()`, a flush request `is_flushable()` and `is_staging()` (`is_writable()` and
-  `is_flushable()` are false while ending staging). `handle_close` leaves staging first.
+For every release type, use the release tag's commit as `<tip>` when the tag exists.
+Resolve the exact tag from the remote (use the peeled `^{}` commit for annotated tags)
+and exclude commits added to the release branch afterward. Before tagging, pin the
+intended release commit and record its SHA. Pass that SHA as `--target` when creating
+the release, then verify the resulting tag before publishing the docs copy.
+
+Base = the **previous minor tag** (e.g. `v1.1.0`); tip = the release commit resolved above.
+Split the range at the point where `release/vX.Y` left `main`:
+GITHUB_TOKEN=$(gh auth token) git cliff <prev-patch-tag>..<tip> --tag vX.Y.Z -o ...
+(`git log -1 --format=%B <tip>`) — each `* fix: ... (#NN)` line is a picked PR.
+group by the `cliff.toml` parsers (first match wins), order by `merged_at`, and review `!` titles
+for user-visible compatibility impact (§6) before assigning a category.
+Review generated breaking-change bullets using the same user-impact criteria as §6. Move
+internal-only entries to ordinary groups, preserving genuine incompatibilities, PR links,
+and authors.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-- Manifest version is monotonic — never reset or skip it.
-- Staging regions never flush: a flush would move rows into the staging manifest and
-  release their WAL, losing them if staging does not end successfully. Every flush
-  trigger in `worker/handle_flush.rs` must skip them, and `handle_close` leaves staging first.
+// Induced defect failure mode:
+Base = the **previous minor tag** (e.g. `v1.1.0`); tip = the tagged `vX.Y.0` commit, resolved as
+in "Pre-release" below. Split the range at the point where `release/vX.Y` left `main`:
+GITHUB_TOKEN=$(gh auth token) git cliff <prev-patch-tag>..<release-branch-tip> --tag vX.Y.Z -o ...
+(`git log -1 --format=%B <release-branch-tip>`) — each `* fix: ... (#NN)` line is a picked PR.
+**The tip is the tagged commit, not the release branch tip.** Resolve it from the remote and
+write this SHA in the docs PR body (§8) as what the note was checked against:
+```
+git ls-remote --tags <remote> 'vX.Y.Z-beta.N*'
+```
+Use the `refs/tags/vX.Y.Z-beta.N` line (its `^{}` line if the tag is annotated), not the
+build-suffixed tags it also lists. PRs that land on `release/vX.Y` after the tag
+(`git log --oneline <tag>..<remote>/release/vX.Y`) belong to the next release, even if they are
+already merged when you write the note.
+
+group by the `cliff.toml` parsers (first match wins), order by `merged_at`, and put `!` titles
+under Breaking changes (§6).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9f6c957e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `176bc07b` are properly handled with clean fallback behavior.

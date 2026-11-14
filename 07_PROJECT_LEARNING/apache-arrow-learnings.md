@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `dd619adc`  
+> **Source Version**: `ab5b4223`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T03:56:02.170Z  
+> **Timestamp**: 2026-11-14T17:51:06.935Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T03:56:02.164Z  
+> **Harvest Timestamp**: 2026-11-14T17:51:06.930Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17306 stars
+- **Stars / Engagement**: 17295 stars
 
 ---
 
@@ -1377,11 +1377,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55507** (2026-11-11): **Fix Homebrew dependency mode in CMake**
-  *Symptoms*: **What** - Fix Homebrew dependency setup.  **Why** - `BREW` skipped dependency discovery. Parquet configure failed.  **Implementation** - Use system lookup and detect the Homebrew prefix. - Enable CMP0177 when available. 
+- **Issue #55610** (2026-11-14): **GH-55503: [C++] Fix Float16 memo table keys built from raw bits**
+  *Symptoms*: ### Rationale for this change  Float16 dictionary unification and `count_distinct` produce incorrect results because raw `uint16_t` storage values are interpreted as numeric values instead of Float16 bit patterns.  For example, the Float16 bit pattern `0x3C00`, representing `1.0`, is interpreted as `15360.0` when passed through the converting constructor.  This causes dictionary values to be corrupted during dictionary unification and distinct Float16 values to be incorrectly merged by `count_distinct`.  ### What changes are included in this PR?  - Use `Float16::FromBits()` when constructing memo table keys from raw Float16 values in `DictionaryUnifierImpl::Unify`. - Fix Float16 handling in the array path of `CountDistinctImpl::Consume`. - Fix Float16 scalar unboxing to preserve the original bit representation in `UnboxScalar<HalfFloatType>::Unbox`.  ### Are these changes tested?  Added regression tests:  - `TestDictionaryUnifier.HalfFloat`: verifies unified dictionary values and transpose maps. - `TestCountDistinctKernel.HalfFloat`: covers distinct Float16 values, duplicates, nulls, chunked arrays, and scalar input.  Verified that both new regression tests fail with the original implementation and pass with the fix.  Validation performed:  - `arrow-array-test`: 346 tests passed (2 disabled). - `arrow-compute-aggregate-test`: 346 tests passed. - `clang-format --dry-run --Werror`: passed. - `git diff --check`: passed.  ### Are there any user-facing changes?  Fixes incorrect Fl
 
-- **Issue #55496** (2026-11-12): **GH-55495: [Packaging][deb] Extract source archive like dpkg-source in apt/build.sh**
-  *Symptoms*: ### Rationale for this change  `dev/tasks/linux-packages/apt/build.sh` assumes that the top-level directory in the source archive is `${PACKAGE}-${VERSION}/`. It needs special cases for `~dev` and `~rc` versions because their source archives use different top-level directory names.  `dpkg-source` doesn't assume the top-level directory name. If the archive has only one top-level directory, it uses the directory whatever its name is.  ### What changes are included in this PR?  Extract the source archive like `dpkg-source` does:  1. Extract the archive into a temporary directory. 2. If the temporary directory has only one entry and it's a directory (not a symbolic link), rename it to `${PACKAGE}-${VERSION}`. Otherwise, rename the temporary directory itself to `${PACKAGE}-${VERSION}`.  The `~dev`/`~rc` special cases are removed.  `apache-arrow-apt-source` no longer needs to re-create its source archive to rename the top-level directory for `apt/build.sh`. It just copies the source archive like `apache-arrow` does.  ### Are these changes tested?  Yes.  ### Are there any user-facing changes?  No.  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [x] AI - [ ] Not reviewed  * GitHub Issue: #55495
+- **Issue #55584** (2026-11-13): **[Python] c/driver/sqlite: re-executing a prepared statement fails with "no more rows available" on macOS system SQLite**
+  *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  SQLite driver fails to re-execute a prepared statement when SQLite is built with `SQLITE_OMIT_AUTORESET`.  ## Description  Executing the same prepared statement a second time fails if the SQLite driver is linked against a SQLite built with [`SQLITE_OMIT_AUTORESET`](https://www.sqlite.org/compile.html#omit_autoreset).  Apple's system SQLite (`/usr/lib/libsqlite3.dylib`) is built that way, and CMake picks it up by default on macOS.  On my own macOS:  ```console $ echo "pragma compile_options;" | /usr/bin/sqlite3 | grep AUTORESET OMIT_AUTORESET ```  This shows up in the Python DB-API, which skips `set_sql_query()` and `prepare()` when the same SQL is executed twice in a row. As a result, `python/adbc_driver_manager/tests/test_dbapi.py::test_query_fetch_py` fails locally on macOS but passes in CI.  ## Minimal reproducible example  Build the SQLite driver on macOS with the default SQLite:  ```shell cmake -S c -B build -G Ninja -DADBC_DRIVER_SQLITE=ON cmake --build build --target adbc_driver_sqlite_shared otool -L build/driver/sqlite/libadbc_driver_sqlite.dylib | grep sqlite3 # /usr/lib/libsqlite3.dylib (compatibility version 9.0.0, current version 371.0.0) ```  ```python # mre.py import adbc_driver_manager.dbapi as dbapi  with dbapi.connect(driver="adbc_driver_sqlite") as conn:     with conn.cursor() as cur:         for i in range(2):             cur.execute("SELECT 1")             print(
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1398,267 +1398,559 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd619adc` (2026-11-12)
-**Commit Message**: GH-51482: [R] allow building with shared snappy (#51490)
+### Incident Patch 1: `0974e94e` (2026-11-13)
+**Commit Message**: GH-51043: [Python] Reject null required Arrow objects (#51161)
 
 ### Rationale for this change
 
-Couldn't build with shared snappy
+Passing None where pyarrow requires an object can abort the Python process or raise an unrelated AttributeError, because the value reaches native Arrow code that cannot handle it. The original report covered some constructors, and later comments found the same failure in ScanNodeOptions, ParquetSchema, ColumnSchema, SubTreeFileSystem and ProjectNodeOptions, so this PR fixes those too.
+
+Fixes https://github.com/apache/arrow/issues/51043.
+
+get_partition_keys(None) is in https://github.com/apache/arrow/pull/51294.
 
 ### What changes are included in this PR?
 
-Allow it to be specified; default is `OFF`
+The Python layer now checks required arguments before native code runs, so None raises a TypeError that names the argument instead of crashing. This covers schemas, formats, types, dictionaries, fragments, filesystems and child arrays, plus the classes listed above. Array buffer constructors also require a data type.
 
 ### Are these changes tested?
 
-Will run CI
+A native Arrow 26.0.0-SNAPSHOT build reproduced the failures. The same commands then raised TypeError.
 
-### Are there any user-facing changes?
+```console
+$ python -c 'from pyarrow import acero; acero.ScanNodeOptions(None)'
+Before: p
 
-No
-
-### Was AI used for this PR?
-
-In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
-
-**PR code and description written by:**
-
-- [ ] Human
-- [x] AI
-
-**Reviewed before submission by:**
-
-- [x] Human
-- [x] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #51482
-
-Authored-by: Nic Crane <[REDACTED_EMAIL]>
-Signed-off-by: Nic Crane <[REDACTED_EMAIL]>
-
-**File**: `r/inst/build_arrow_static.sh` (modified, +1/-1)
+**File**: `python/pyarrow/_acero.pyx` (modified, +2/-0)
 ```diff
-@@ -77,7 +77,7 @@ read -r -a ARROW_EXTRA_CMAKE_FLAGS <<< "${EXTRA_CMAKE_FLAGS}"
- mkdir -p "${BUILD_DIR}"
- pushd "${BUILD_DIR}"
- "${CMAKE_COMMAND[@]}" -DARROW_BOOST_USE_SHARED=OFF \
--    -DARROW_SNAPPY_USE_SHARED=OFF \
-+    -DARROW_SNAPPY_USE_SHARED="${ARROW_SNAPPY_USE_SHARED:-OFF}" \
-     -DARROW_BUILD_TESTS=OFF \
-     -DARROW_BUILD_SHARED=OFF \
-     -DARROW_BUILD_STATIC=ON \
-```
-
-**File**: `r/tools/nixlibs.R` (modified, +1/-0)
-```diff
-@@ -945,6 +945,7 @@ with_wasm_support <- function(env_var_list) {
-     CMAKE_WRAPPER = "emcmake",
-     ARROW_DEPENDENCY_SOURCE = "BUNDLED",
-     ARROW_DEPENDENCY_USE_SHARED = "OFF",
-+    ARROW_SNAPPY_USE_SHARED = "OFF",
-     ARROW_ENABLE_THREADING = "OFF",
-     ARROW_GCS = "OFF",
-     ARROW_AZURE = "OFF",
-```
-
-**File**: `r/vignettes/install.Rmd` (modified, +5/-0)
-```diff
-@@ -196,6 +196,11 @@ uses only system-installed dependencies (when set to `SYSTEM`) or checks
- system-installed dependencies first and only installs dependencies which aren't
- already present (when set to `AUTO`, the default).
+@@ -141,6 +141,8 @@ cdef class _ProjectNodeOptions(ExecNodeOptions):
+             vector[c_string] c_names
  
-+Snappy is an exception: by default it is always linked statically, even when
-+`ARROW_DEPENDENCY_SOURCE` is `SYSTEM`. If your system only provides a shared
-+`libsnappy`, set `ARROW_SNAPPY_USE_SHARED=ON` to link against it; the library
-+must then be present at runtime.
+         for expr in expressions:
++            if expr is None:
++                raise TypeError("Expression must not be None")
+             c_expressions.push_back(expr.unwrap())
+ 
+         if names is not None:
+```
+
+**File**: `python/pyarrow/_dataset.pyx` (modified, +5/-2)
+```diff
+@@ -1121,7 +1121,8 @@ cdef class FileSystemDataset(Dataset):
+     cdef:
+         CFileSystemDataset* filesystem_dataset
+ 
+-    def __init__(self, fragments, Schema schema, FileFormat format,
++    def __init__(self, fragments, Schema schema not None,
++                 FileFormat format not None,
+                  FileSystem filesystem=None, root_partition=None):
+         cdef:
+             FileFragment fragment=None
+@@ -1138,6 +1139,8 @@ cdef class FileSystemDataset(Dataset):
+             )
+ 
+         for fragment in fragments:
++            if fragment is None:
++                raise TypeError("Fragment must not be None")
+             c_fragments.push_back(
+                 static_pointer_cast[CFileFragment, CFragment](
+                     fragment.unwrap()))
+@@ -4236,5 +4239,5 @@ class ScanNodeOptions(_ScanNodeOptions):
+         Preserve implicit ordering of data.
+     """
+ 
+-    def __init__(self, Dataset dataset, **kwargs):
++    def __init__(self, Dataset dataset not None, **kwargs):
+         self._set_options(dataset, kwargs)
+```
+
+**File**: `python/pyarrow/_fs.pyx` (modified, +1/-1)
+```diff
+@@ -1205,7 +1205,7 @@ cdef class SubTreeFileSystem(FileSystem):
+     For usage of the methods see examples for :func:`~pyarrow.fs.LocalFileSystem`.
+     """
+ 
+-    def __init__(self, base_path, FileSystem base_fs):
++    def __init__(self, base_path, FileSystem base_fs not None):
+         cdef:
+             c_string pathstr
+             shared_ptr[CSubTreeFileSystem] wrapped
+```
+
+**File**: `python/pyarrow/_parquet.pyx` (modified, +5/-4)
+```diff
+@@ -755,7 +755,8 @@ cdef class SortingColumn:
+         self.nulls_first = nulls_first
+ 
+     @classmethod
+-    def from_ordering(cls, Schema schema, sort_keys, null_placement='at_end'):
++    def from_ordering(cls, Schema schema not None, sort_keys,
++                      null_placement='at_end'):
+         """
+         Create a tuple of SortingColumn objects from the same arguments as
+         :class:`pyarrow.compute.SortOptions`.
+@@ -816,7 +817,7 @@ cdef class SortingColumn:
+         return tuple(sorting_columns)
+ 
+     @staticmethod
+-    def to_ordering(Schema schema, sorting_columns):
++    def to_ordering(Schema schema not None, sorting_columns):
+         """
+         Convert a tuple of SortingColumn objects to the same format as
+         :class:`pyarrow.compute.SortOptions`.
+@@ -1247,7 +1248,7 @@ cdef class FileMetaData(_Weakrefable):
+ cdef class ParquetSchema(_Weakrefable):
+     """A Parquet schema."""
+ 
+-    def __cinit__(self, FileMetaData container):
++    def __cinit__(self, FileMetaData container not None):
+         self.parent = container
+         self.schema = container._metadata.schema()
+ 
+@@ -1336,7 +1337,7 @@ cdef class ColumnSchema(_Weakrefable):
+         ParquetSchema parent
+         const ColumnDescriptor* descr
+ 
+-    def __cinit__(self, ParquetSchema schema, int index):
++    def __cinit__(self, ParquetSchema schema not None, int index):
+         self.parent = schema
+         self.index = index  # for pickling support
+         self.descr = schema.schema.Column(index)
+```
+
+**File**: `python/pyarrow/array.pxi` (modified, +9/-6)
+```diff
+@@ -1329,8 +1329,8 @@ cdef class Array(_PandasConvertible):
+             (_reduce_array_data(self.sp_array.get().data().get()),)
+ 
+     @staticmethod
+-    def from_buffers(DataType type, length, buffers, null_count=-1, offset=0,
+-                     children=None):
++    def from_buffers(DataType type not None, length, buffers, null_count=-1,
++                     offset=0, children=None):
+         """
+         Construct an Array from a sequence of buffers.
+ 
+@@ -1386,6 +1386,8 @@ cdef class Array(_PandasConvertible):
+             c_buffers.push_back(pyarrow_unwrap_buffer(buf))
+ 
+         for child in children:
++            if child is None:
++                raise TypeError("Array child must not be None")
+             c_child_data.push_back(child.ap.data())
+ 
+         array_data = CArrayData.MakeWithChildren(type.sp_type, length,
+@@ -4328,8 +4330,9 @@ cdef class DictionaryArray(Array):
+         return self._indices
+ 
+     @staticmethod
+-    def from_buffers(DataType type, int64_t length, buffers, Array dictionary,
+-                     int64_t null_count=-1, int64_t offset=0):
++    def from_buffers(DataType type not None, int64_t length, buffers,
++                     Array dictionary not None, int64_t null_count=-1,
++                     int64_t offset=0):
+         """
+         Construct a DictionaryArray from buffers.
+ 
+@@ -4745,8 +4748,8 @@ cdef class RunEndEncodedArray(Array):
+                                                run_ends, values, 0)
+ 
+     @staticmethod
+-    def from_buffers(DataType type, length, buffers, null_count=-1, offset=0,
+-                     children=None):
++    def from_buffers(DataType type not None, length, buffers, null_count=-1,
++                     offset=0, children=None):
+         """
+         Construct a RunEndEncodedArray from all the parameters that make up an
+         Array.
+```
+
+**File**: `python/pyarrow/tests/parquet/test_metadata.py` (modified, +12/-0)
+```diff
+@@ -351,6 +351,12 @@ def test_parquet_sorting_column():
+     with pytest.raises(ValueError):
+         pq.SortingColumn.from_ordering(schema, (("a", "not a valid sort order")))
+ 
++    with pytest.raises(TypeError, match="Argument 'schema' has incorrect type"):
++        pq.SortingColumn.from_ordering(None, ())
 +
- These dependencies vary by platform; however, if you wish to install these
- yourself prior to libarrow installation, we recommend that you take a look at
- the [docker file for whichever of our CI builds](https://github.com/apache/arrow/tree/main/ci/docker)
++    with pytest.raises(TypeError, match="Argument 'schema' has incorrect type"):
++        pq.SortingColumn.to_ordering(None, ())
++
+     with pytest.raises(ValueError, match="inconsistent null placement"):
+         sorting_cols = (
+             pq.SortingColumn(1, nulls_first=True),
+@@ -871,6 +877,12 @@ def msg(c):
+     with pytest.raises(TypeError, match=msg("FileMetaData")):
+         pq.FileMetaData()
+ 
++    with pytest.raises(TypeError, match="Argument 'container'"):
++        pq.ParquetSchema(None)
++
++    with pytest.raises(TypeError, match="Argument 'schema'"):
++        pq.ColumnSchema(None, 0)
++
+ 
+ def test_read_schema_uuid_extension_type(tmp_path):
+     # These are the raw 16-byte payloads for
+```
+
+**File**: `python/pyarrow/tests/test_acero.py` (modified, +5/-0)
+```diff
+@@ -247,6 +247,8 @@ def test_project(table_source):
+     # input validation
+     with pytest.raises(ValueError):
+         ProjectNodeOptions([pc.multiply(field("a"), 2)], ["a2", "b2"])
++    with pytest.raises(TypeError, match="Expression must not be None"):
++        ProjectNodeOptions([None])
+ 
+     # no scalar expression
+     decl = Declaration.from_sequence([
+@@ -597,3 +599,6 @@ def test_scan(tempdir):
+     assert result["a"].to_pylist() == [1, 2, 3]
+     # "b" is still included, but without data as it will be removed by the projection
+     assert pc.all(result["b"].is_null()).as_py()
++
++    with pytest.raises(TypeError, match="Argument 'dataset'"):
++        ScanNodeOptions(None)
+```
+
+**File**: `python/pyarrow/tests/test_array.py` (modified, +17/-0)
+```diff
+@@ -784,6 +784,9 @@ def test_array_from_buffers():
+     with pytest.raises(TypeError):
+         pa.Array.from_buffers(pa.int16(), 3, ['', ''], offset=1)
+ 
++    with pytest.raises(TypeError, match="Argument 'type' has incorrect type"):
++        pa.Array.from_buffers(type=None, length=0, buffers=[])
++
+ 
+ def test_string_binary_from_buffers():
+     array = pa.array(["a", None, "b", "c"])
+@@ -868,6 +871,10 @@ def test_list_from_buffers(list_type_factory):
+         pa.Array.from_buffers(ty, 4, buffers[:ty.num_buffers],
+                               children=[child, child])
+ 
++    with pytest.raises(TypeError, match="Array child must not be None"):
++        pa.Array.from_buffers(
++            type=ty, length=4, buffers=buffers[:ty.num_buffers], children=[None])
++
+ 
+ def test_struct_from_buffers():
+     ty = pa.struct([pa.field('a', pa.int16()), pa.field('b', pa.utf8())])
+@@ -987,6 +994,13 @@ def test_dictionary_from_buffers(offset):
+                                         offset=offset)
+     assert a[offset:] == b
+ 
++    with pytest.raises(TypeError, match="Argument 'type' has incorrect type"):
++        pa.DictionaryArray.from_buffers(
++            None, len(a), a.indices.buffers(), a.dictionary)
++    with pytest.raises(TypeError, match="Argument 'dictionary' has incorrect type"):
++        pa.DictionaryArray.from_buffers(
++            a.type, len(a), a.indices.buffers(), None)
++
+ 
+ @pytest.mark.numpy
+ def test_dictionary_from_numpy():
+@@ -4275,6 +4289,9 @@ def test_run_end_encoded_from_buffers():
+         pa.RunEndEncodedArray.from_buffers(ree_type, length, buffers,
+                                            1, offset, children)
+ 
++    with pytest.raises(TypeError, match="Argument 'type' has incorrect type"):
++        pa.RunEndEncodedArray.from_buffers(type=None, length=0, buffers=[])
++
+ 
+ @pytest.mark.numpy
+ def test_run_end_encoded_from_array_with_type():
 ```
 
 ---
 
-### Incident Patch 2: `2105eadf` (2026-11-12)
-**Commit Message**: GH-38983: [Python] Bug in pyarrow.from_pandas() when input has MultiIndex index columns having non-string names (#55485)
+### Incident Patch 2: `48e4abf5` (2026-11-13)
+**Commit Message**: GH-47329: [Packaging][Python][C++] Build and test PyArrow against Pyodide 314 (`2026_0` ABI) (#47330)
 
 ### Rationale for this change
 
-`pa.Table.from_pandas()` on a DataFrame whose `MultiIndex` has integer level names returned the wrong data for some index levels. For example, with `names=[1, 2]` both index columns were named `"1"` and both contained the values of the first level, so the second level's data was lost.
+This PR allows PyArrow to be built and tested against our Pyodide `2026_0` ABI introduced with [the Pyodide 314.0.0 release](https://blog.pyodide.org/posts/314-release/).
+
+Closes #47329
 
 ### What changes are included in this PR?
 
-`_get_index_level_values()` in `pandas_compat.py` called `index.get_level_values(i)` with a position, but pandas matches an integer against level names before treating it as a position. The levels are now looked up by position regardless of their names.
+This PR updates the Pyodide version in the build scripts to 314.0.7 and the Emscripten version to 5.0.3, along with associated build-time changes to fix compilation issues.
 
-### Are these changes tested?
+This PR updates the `conda-python-emscripten` job to Pyodide 314.0.7, Python 3.14, Node 24, and pyodide-build 0.39.2 and later. The Emscripten version for this job is gathered from the Pyodide distribution, which renders it to be 5.0.3. That matches the version the C++ job uses, since #55417.
 
-Yes
+The build changes are as follows:
 
-### Are there any user-facing changes?
+- Emscripten builds now use native WebAssembly exceptions and WebAssembly-based `setjmp`/`longjmp` (`-fwasm-exceptions -sSUPPORT_LONGJMP=wasm`), as our `2026_0` ABI requires.
+- `libarrow_python.so` and the Cython extension modules are linked with an `$ORIGIN` RPATH, in order for us to find `libarrow_python.so` next to the modules 
 
-No
-
-### Was AI used for this PR?
-
-Used Claude, asked lots of questions about why etc, did an adversarial review with roborev too
-
-**PR code and description written by:**
-
-- [x] Human
-- [x] AI
-
-**Reviewed before submission by:**
-
-- [x] Human
-- [x] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #38983
-
-Authored-by: Nic Crane <[REDACTED_EMAIL]>
-Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
-
-**File**: `python/pyarrow/pandas_compat.py` (modified, +6/-2)
+**File**: `ci/docker/conda-python-emscripten.dockerfile` (modified, +15/-8)
 ```diff
-@@ -547,8 +547,12 @@ def _get_range_index_descriptor(level):
+@@ -18,32 +18,39 @@
+ ARG repo
+ ARG arch
+ ARG arch_short
+-ARG python="3.12"
++ARG python="3.14"
+ FROM --platform=linux/${arch} ${repo}:${arch_short}-conda-python-${python}
  
+ ARG selenium_version="4.41.0"
+-ARG pyodide_version="0.27.1"
++ARG pyodide_version="314.0.7"
++# pyodide-build is versioned independently of Pyodide
++ARG pyodide_build_version="0.39.2"
+ ARG chrome_version="latest"
+-ARG required_python_min="(3,12)"
+-# fail if python version < 3.12
++ARG required_python_min="(3,14)"
++# fail if python version < 3.14
+ RUN echo "check PYTHON>=${required_python_min}" && python -c "import sys;sys.exit(0 if sys.version_info>=${required_python_min} else 1)"
  
- def _get_index_level_values(index):
--    n = len(getattr(index, 'levels', [index]))
--    return [index.get_level_values(i) for i in range(n)]
-+    if not hasattr(index, 'levels'):
-+        return [index.get_level_values(0)]
-+    # get_level_values() matches integers against level names first
-+    positional = index.set_names(list(range(index.nlevels)))
-+    return [positional.get_level_values(i).rename(name)
-+            for i, name in enumerate(index.names)]
+-# install selenium and recent pyodide-build and recent python
++RUN apt-get update -y -q && \
++    apt-get install -y -q --no-install-recommends \
++        libatomic1 && \
++    apt-get clean && \
++    rm -rf /var/lib/apt/lists/*
  
+ # needs to be a login shell so ~/.profile is read
+ SHELL ["/bin/bash", "--login", "-c", "-o", "pipefail"]
  
- def _resolve_columns_of_interest(df, schema, columns):
++# install selenium and recent pyodide-build and recent python
+ RUN python -m pip install --no-cache-dir selenium==${selenium_version} && \
+-    python -m pip install --no-cache-dir --upgrade pyodide-build>=${pyodide_version}
++    python -m pip install --no-cache-dir --upgrade "pyodide-build>=${pyodide_build_version}"
+ 
+ # install pyodide dist directory to /pyodide
+ RUN pyodide_dist_url="https://github.com/pyodide/pyodide/releases/download/${pyodide_version}/pyodide-${pyodide_version}.tar.bz2" && \
+     wget -q "${pyodide_dist_url}" -O- | tar -xj -C /
+ 
+-# install node 20 (needed for async call support)
++# install node 24 (needed for async call support and JSPI)
+ # and pthread-stubs for build, and unzip needed for chrome build to work
+ # xz is needed by emsdk to extract node tarballs
+-RUN conda install nodejs=20 unzip pthread-stubs make xz -c conda-forge
++RUN conda install nodejs=24 unzip pthread-stubs make xz -c conda-forge
+ 
+ # install correct version of emscripten for this pyodide
+ COPY ci/scripts/install_emscripten.sh /arrow/ci/scripts/
 ```
 
-**File**: `python/pyarrow/tests/test_pandas.py` (modified, +20/-0)
+**File**: `compose.yaml` (modified, +3/-2)
 ```diff
-@@ -5370,3 +5370,23 @@ def test_pandas_array_likes_with_extension_arrays():
-         for box in [pd.array, pd.Index, pd.Series]:
-             _check_array_roundtrip(box(arr[0]), expected=pd.Series(
-                 arr[1]) if arr[1] is not None else None)
-+
-+
-+def test_multiindex_integer_level_names():
-+    # https://github.com/apache/arrow/issues/38983
-+    index = pd.MultiIndex.from_tuples(
-+        [(10, 20), (30, 40), (50, 60), (70, 80)], names=[1, 2])
-+    df = pd.DataFrame({"a": [1, 2, 3, 4], "b": [5, 6, 7, 8]}, index=index)
-+
-+    # non-str index names are converted to str, with a warning
-+    with pytest.warns(UserWarning):
-+        table = pa.Table.from_pandas(df)
-+
-+    assert table.column_names == ["a", "b", "1", "2"]
-+    assert table.column(2).to_pylist() == [10, 30, 50, 70]
-+    assert table.column(3).to_pylist() == [20, 40, 60, 80]
-+
-+    expected = df.copy()
-+    expected.index.names = ["1", "2"]
-+    with pytest.warns(UserWarning):
-+        _check_pandas_roundtrip(df, expected=expected, preserve_index=True)
+@@ -982,10 +982,11 @@ services:
+         arch_short: ${ARCH_SHORT}
+         clang_tools: ${CLANG_TOOLS}
+         llvm: ${LLVM}
+-        pyodide_version: "0.27.1"
++        pyodide_version: "314.0.7"
++        pyodide_build_version: "0.39.2"
+         chrome_version: "latest"
+         selenium_version: "4.41.0"
+-        required_python_min: "(3,12)"
++        required_python_min: "(3,14)"
+         python: ${PYTHON}
+     shm_size: *shm-size
+     volumes: *ubuntu-volumes
+```
+
+**File**: `cpp/cmake_modules/SetupCxxFlags.cmake` (modified, +20/-11)
+```diff
+@@ -714,26 +714,35 @@ if(MSVC)
+ endif()
+ 
+ if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+-  # flags are:
++  # For the Pyodide 2026_0 ABI, the flags are:
+   # 1) We force *everything* to build as position independent
+-  # 2) And with support for C++ exceptions
+-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -fexceptions")
++  # 2) We support C++ WASM exceptions, using the native WebAssembly
++  #    exception handling proposal and WebAssembly-based setjmp/longjmp
++  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -fwasm-exceptions -sSUPPORT_LONGJMP=wasm")
+   # deprecated-literal-operator error is thrown in datetime (vendored lib in arrow)
+   set(CMAKE_CXX_FLAGS
+-      "${CMAKE_CXX_FLAGS} -fPIC -fexceptions -Wno-error=deprecated-literal-operator")
++      "${CMAKE_CXX_FLAGS} -fPIC -fwasm-exceptions -sSUPPORT_LONGJMP=wasm -Wno-error=deprecated-literal-operator"
++  )
+ 
+   # flags for creating shared libraries (only used in pyarrow, because
+   # Emscripten builds libarrow as static)
+   # flags are:
+   # 1) Tell it to use JavaScript / WebAssembly 64 bit number support.
+-  # 2) Tell it to build with support for C++ exceptions
++  # 2) Tell it to build with support for C++ exceptions (see above)
+   # 3) Skip linker flags error which happens with -soname parameter
+-  set(ARROW_EMSCRIPTEN_LINKER_FLAGS "-sWASM_BIGINT=1 -fexceptions -Wno-error=linkflags")
+-  set(CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS
+-      "-sSIDE_MODULE=1 ${ARROW_EMSCRIPTEN_LINKER_FLAGS}")
+-  set(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS
+-      "-sSIDE_MODULE=1 ${ARROW_EMSCRIPTEN_LINKER_FLAGS}")
+-  set(CMAKE_SHARED_LINKER_FLAGS "-sSIDE_MODULE=1 ${ARROW_EMSCRIPTEN_LINKER_FLAGS}")
++  # 4) Record $ORIGIN as an RPATH, so that Pyodide can locate
++  #    libarrow_python.so next to the extension modules needing it
++  # Note: the CMAKE_SHARED_LIBRARY_CREATE_<LANG>_FLAGS and
++  # CMAKE_SHARED_MODULE_CREATE_<LANG>_FLAGS variables are not used by the
++  # Ninja generator, so the flags must go through the linker-flags
++  # variables, which apply to SHARED (libarrow_python) and MODULE (Cython
++  # extension) targets respectively.
++  set(ARROW_EMSCRIPTEN_LINKER_FLAGS
++      "-sWASM_BIGINT=1 -fwasm-exceptions -sSUPPORT_LONGJMP=wasm -Wno-error=linkflags")
++  set(ARROW_EMSCRIPTEN_DYLIB_CREATE_FLAGS
++      "-sSIDE_MODULE=1 ${ARROW_EMSCRIPTEN_LINKER_FLAGS} '-Wl,-rpath,$ORIGIN'")
++  set(CMAKE_SHARED_LINKER_FLAGS "${ARROW_EMSCRIPTEN_DYLIB_CREATE_FLAGS}")
++  set(CMAKE_MODULE_LINKER_FLAGS "${ARROW_EMSCRIPTEN_DYLIB_CREATE_FLAGS}")
+   if(ARROW_TESTING)
+     # Deeply nested tests need a larger stack (1 MiB).
+     set(ARROW_EMSCRIPTEN_TEST_STACK_SIZE 1048576)
+```
+
+**File**: `cpp/cmake_modules/ThirdpartyToolchain.cmake` (modified, +4/-0)
+```diff
+@@ -2171,6 +2171,10 @@ function(build_protobuf)
+     set(PROTOBUF_HOST_CMAKE_ARGS
+         "-DCMAKE_CXX_FLAGS="
+         "-DCMAKE_C_FLAGS="
++        # Explicitly set the C++ standard for the host build. Without this,
++        # Abseil may be compiled with the host compiler's default standard,
++        # which can be older than C++17.
++        "-DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}"
+         "-DCMAKE_INSTALL_PREFIX=${PROTOBUF_HOST_PREFIX}"
+         -Dprotobuf_BUILD_TESTS=OFF
+         -Dprotobuf_DEBUG_POSTFIX=
+```
+
+**File**: `dev/tasks/tasks.yml` (modified, +1/-1)
+```diff
+@@ -493,7 +493,7 @@ tasks:
+     params:
+       env:
+         UBUNTU: 22.04
+-        PYTHON: 3.12
++        PYTHON: 3.14
+       image: conda-python-emscripten
+ 
+   test-conda-python-3.11-hypothesis:
+```
+
+**File**: `docs/source/developers/cpp/emscripten.rst` (modified, +5/-4)
+```diff
+@@ -34,9 +34,9 @@ activate it using the commands below (see https://emscripten.org/docs/getting_st
+    git clone https://github.com/emscripten-core/emsdk.git
+    cd emsdk
+    # replace <version> with the desired EMSDK version.
+-   # e.g. for Pyodide 0.26, you need EMSDK version 3.1.58
++   # e.g. for Pyodide 314.0.x, you need EMSDK version 5.0.3
+    # the versions can be found in the Makefile.envs file in the Pyodide repo:
+-   # https://github.com/pyodide/pyodide/blob/10b484cfe427e076c929a55dc35cfff01ea8d3bc/Makefile.envs
++   # https://github.com/pyodide/pyodide/blob/314.0.7/Makefile.envs
+    ./emsdk install <version>
+    ./emsdk activate <version>
+    source ./emsdk_env.sh
+@@ -49,8 +49,9 @@ versions of emsdk tools.
+ .. code:: shell
+ 
+    # install Pyodide build tools.
+-   # e.g., for version 0.26 of Pyodide, pyodide-build 0.26 and later work
+-   pip install "pyodide-build>=0.26"
++   # pyodide-build is versioned independently of Pyodide.
++   # For Pyodide 314.0.x, pyodide-build 0.39.2 and later work well
++   pip install "pyodide-build>=0.39.2"
+ 
+ Then build with the ``ninja-release-emscripten`` CMake preset,
+ like below:
+```
+
+**File**: `python/CMakeLists.txt` (modified, +3/-1)
+```diff
+@@ -111,7 +111,9 @@ if("$ENV{CMAKE_EXPORT_COMPILE_COMMANDS}" STREQUAL "1")
+   set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+ endif()
+ 
+-if(UNIX)
++# On Emscripten, the equivalent $ORIGIN runtime path is added
++# through the linker flags in SetupCxxFlags.cmake instead
++if(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+   # In the event that we are bundling the shared libraries (e.g. in a
+   # manylinux1 wheel), we need to set the RPATH of the extensions to the
+```
+
+**File**: `python/pyarrow/tests/test_csv.py` (modified, +1/-0)
+```diff
+@@ -2202,6 +2202,7 @@ def test_write_csv_decimal(tmpdir, type_factory):
+     assert out.column('col').cast(type) == table.column('col')
+ 
+ 
++@pytest.mark.threading
+ def test_read_csv_gil_deadlock():
+     # GH-38676
+     # This test depends on several preconditions:
 ```
 
 ---
 
-### Incident Patch 3: `7eb865cd` (2026-11-12)
-**Commit Message**: GH-55495: [Packaging][deb] Extract source archive like dpkg-source in apt/build.sh (#55496)
+### Incident Patch 3: `b5dd1041` (2026-11-13)
+**Commit Message**: MINOR: [Docs] Fix compatibility spelling (#55574)
 
 ### Rationale for this change
 
-`dev/tasks/linux-packages/apt/build.sh` assumes that the top-level directory in the source archive is `${PACKAGE}-${VERSION}/`. It needs special cases for `~dev` and `~rc` versions because their source archives use different top-level directory names.
-
-`dpkg-source` doesn't assume the top-level directory name. If the archive has only one top-level directory, it uses the directory whatever its name is.
+While I was going through the Apache Arrow codebase as someone who is new to open source, I came across a small spelling mistake in the R packaging documentation. I thought I'd take the opportunity to fix it.
 
 ### What changes are included in this PR?
 
-Extract the source archive like `dpkg-source` does:
-
-1. Extract the archive into a temporary directory.
-2. If the temporary directory has only one entry and it's a directory (not a symbolic link), rename it to `${PACKAGE}-${VERSION}`. Otherwise, rename the temporary directory itself to `${PACKAGE}-${VERSION}`.
-
-The `~dev`/`~rc` special cases are removed.
-
-`apache-arrow-apt-source` no longer needs to re-create its source archive to rename the top-level directory for `apt/build.sh`. It just copies the source archive like `apache-arrow` does.
+A minor spelling correction in the R packaging documentation. No functional changes.
 
 ### Are these changes tested?
 
-Yes.
+Not applicable. This is a documentation-only change.
 
 ### Are there any user-facing changes?
 
-No.
+No functional user-facing changes. Only a documentation correction.
 
-**File**: `dev/tasks/linux-packages/apache-arrow-apt-source/Rakefile` (modified, +1/-7)
+### Was AI used for this PR?
+
+**PR code and description written by:**
+
+- [O] Human
+- [ ] AI
+
+**Reviewed before submission by:**
+
+- [O] Human
+- [ ] AI
+- [ ] Not reviewed
+
+This might be a very small contribution, but it's my first ever open-source contribution, so it means quite a lot to me. I'm looking forward to continuing to explore the codebase, learn more about the project, and hopefully contribute more in the future.
+
+Thanks for maintaining Apache Arrow and for making it welcoming to new contributors like me!
+
+Authored-by: Sumedh Pimplikar <[REDACTED_EMAIL]>
+Signed-off-by: N
+
+**File**: `r/PACKAGING.md` (modified, +1/-1)
 ```diff
-@@ -57,13 +57,7 @@ class ApacheArrowAptSourcePackageTask < PackageTask
+@@ -75,7 +75,7 @@ _This step must be done by the current package maintainer._
  
-     if deb_archive_name != @archive_name
-       file deb_archive_name => @archive_name do
--        if @archive_base_name == deb_archive_base_name
--          cp(@archive_name, deb_archive_name)
--        else
--          sh("tar", "xf", @archive_name)
--          mv(@archive_base_name, deb_archive_base_name)
--          sh("tar", "czf", deb_archive_name, deb_archive_base_name)
--        end
-+        cp(@archive_name, deb_archive_name)
-       end
-     end
-   end
-```
-
-**File**: `dev/tasks/linux-packages/apt/build.sh` (modified, +15/-11)
-```diff
-@@ -96,17 +96,21 @@ run mkdir -p "${build_dir}"
- run pushd "${build_dir}"
- run cp /host/tmp/${PACKAGE}-${VERSION}.tar.gz \
-   ${PACKAGE}_${VERSION}.orig.tar.gz
--run tar xfz ${PACKAGE}_${VERSION}.orig.tar.gz
--case "${VERSION}" in
--  *~dev*)
--    run mv ${PACKAGE}-$(echo $VERSION | sed -e 's/~dev/-dev/') \
--        ${PACKAGE}-${VERSION}
--    ;;
--  *~rc*)
--    run mv ${PACKAGE}-$(echo $VERSION | sed -r -e 's/~rc[0-9]+//') \
--        ${PACKAGE}-${VERSION}
--    ;;
--esac
-+# Extract the source archive like dpkg-source does. If the archive has
-+# only one top-level directory, use it as the source directory whatever
-+# its name is. Otherwise, use the extracted directory as is.
-+source_tmp_dir=${PACKAGE}-${VERSION}.tmp
-+run mkdir ${source_tmp_dir}
-+run tar xfz ${PACKAGE}_${VERSION}.orig.tar.gz -C ${source_tmp_dir}
-+# "d" means that there is only one entry and it's a directory (not a
-+# symbolic link).
-+top_level_entry_types=$(find ${source_tmp_dir} -mindepth 1 -maxdepth 1 -printf '%y')
-+if [ "${top_level_entry_types}" = "d" ]; then
-+  run mv "$(find ${source_tmp_dir} -mindepth 1 -maxdepth 1)" ${PACKAGE}-${VERSION}
-+  run rm -rf ${source_tmp_dir}
-+else
-+  run mv ${source_tmp_dir} ${PACKAGE}-${VERSION}
-+fi
- run pushd ${PACKAGE}-${VERSION}/
- platform="${distribution}-${code_name}"
- if [ -d "/host/tmp/debian.${platform}-${architecture}" ]; then
+ - [ ] CRAN has accepted the submission.
+ - [ ] Tag the tip of the CRAN-specific release branch with `r-universe-release`; e.g. `git tag -f r-universe-release maint-X.Y.Z-r && git push upstream r-universe-release --force`
+-- [ ] Add a new line to the matrix in the [backwards compatability job](https://github.com/apache/arrow/blob/main/dev/tasks/r/github.linux.arrow.version.back.compat.yml).
++- [ ] Add a new line to the matrix in the [backwards compatibility job](https://github.com/apache/arrow/blob/main/dev/tasks/r/github.linux.arrow.version.back.compat.yml).
+ - [ ] (patch releases only) Update the package version in `ci/scripts/PKGBUILD`, `r/DESCRIPTION`, and `r/NEWS.md`.
+ - [ ] (CRAN-only releases) Rebuild news page with `pkgdown::build_news()` and submit a PR to the asf-site branch of the docs site with the contents of `arrow/r/docs/news/index.html` replacing the current contents of `arrow-site/docs/r/news/index.html`.
+ - [ ] (CRAN-only releases) Bump the version number in `r/pkgdown/assets/versions.json`, and update this on the [the `asf-site` branch of the docs site](https://github.com/apache/arrow-site) too..
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55507** (closed): Fix Homebrew dependency mode in CMake (@fallintoplace)
+- **PR #55610** (closed): GH-55503: [C++] Fix Float16 memo table keys built from raw bits (@AnuragRaut08)
+- **PR #55574** (2026-11-13): MINOR: [Docs] Fix compatibility spelling (@Sumdiboii)
 - **PR #55496** (2026-11-12): GH-55495: [Packaging][deb] Extract source archive like dpkg-source in apt/build.sh (@kou)
+- **PR #55492** (closed): GH-55478: [R] Vendored dependencies to enable parquet (biggest change, smallest tarball) (@jonkeane)
 - **PR #55485** (2026-11-12): GH-38983: [Python] Bug in pyarrow.from_pandas() when input has MultiIndex index columns having non-string names (@thisisnic)
 - **PR #55482** (2026-11-11): MINOR: [CI] Bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
-- **PR #55481** (2026-11-11): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
-- **PR #55477** (closed): GH-35721: [Python] Recognize pandas arrays in the array() constructor for the from_pandas argument (@jay23606)
 
 ---
 
@@ -1678,28 +1970,29 @@ No.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-51482: [R] allow building with shared snappy (#51490)
+## X. GH-51043: [Python] Reject null required Arrow objects
 
 **RULE**:
-When implementing operations in `r/inst/build_arrow_static.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/pyarrow/_acero.pyx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd619adc`: GH-51482: [R] allow building with shared snappy (#51490). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0974e94e`: GH-51043: [Python] Reject null required Arrow objects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `r/inst/build_arrow_static.sh`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/pyarrow/_acero.pyx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    -DARROW_SNAPPY_USE_SHARED="${ARROW_SNAPPY_USE_SHARED:-OFF}" \
+            if expr is None:
+                raise TypeError("Expression must not be None")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-    -DARROW_SNAPPY_USE_SHARED=OFF \
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd619adc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0974e94e` are properly handled with clean fallback behavior.

@@ -4,45 +4,31 @@
 {
   "source_repository": "apache/arrow",
   "source_url": "https://github.com/apache/arrow",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "ab5b4223",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T17:51:07.940Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-apache-arrow",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/arrow](https://github.com/apache/arrow) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [apache/arrow](https://github.com/apache/arrow) (Revision: `ab5b4223`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T17:51:07.940Z`  
+> **Learning ID**: `learn-github-apache-arrow`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `apache/arrow` (Commit: `historical`)
+- **Target Repository**: `apache/arrow` (Commit: `ab5b4223`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
-> **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `976779b2`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:08:04.386Z  
-> **Learning ID**: `learn-github-apache-arrow`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): apache/arrow
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:08:04.215Z  
+> **Harvest Timestamp**: 2026-11-14T17:51:06.930Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17290 stars
+- **Stars / Engagement**: 17295 stars
 
 ---
 
@@ -1402,11 +1388,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55482** (2026-11-11): **MINOR: [CI] Bump docker/login-action from 4.7.0 to 4.8.0**
-  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.7.0 to 4.8.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.8.0</h2> <ul> <li>Set Docker Hub OIDC token lifetime default to 1 hour by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1070">docker/login-action#1070</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1161.0 in <a href="https://redirect.github.com/docker/login-action/pull/1103">docker/login-action#1103</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.107.0 to 0.109.0 in <a href="https://redirect.github.com/docker/login-action/pull/1105">docker/login-action#1105</a></li> <li>Bump vite from 7.3.6 to 7.3.7 in <a href="https://redirect.github.com/docker/login-action/pull/1101">docker/login-action#1101</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/login-action/compare/v4.7.0...v4.8.0">https://github.com/docker/login-action/compare/v4.7.0...v4.8.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/docker/login-action/commit/8aa5831fb8d48d8f76594c7ddde61ae58019f550"><code>8aa5831</code></a> Merge pull request <a href="https://redirect.github.com/docker/login-action/iss
+- **Issue #55610** (2026-11-14): **GH-55503: [C++] Fix Float16 memo table keys built from raw bits**
+  *Symptoms*: ### Rationale for this change  Float16 dictionary unification and `count_distinct` produce incorrect results because raw `uint16_t` storage values are interpreted as numeric values instead of Float16 bit patterns.  For example, the Float16 bit pattern `0x3C00`, representing `1.0`, is interpreted as `15360.0` when passed through the converting constructor.  This causes dictionary values to be corrupted during dictionary unification and distinct Float16 values to be incorrectly merged by `count_distinct`.  ### What changes are included in this PR?  - Use `Float16::FromBits()` when constructing memo table keys from raw Float16 values in `DictionaryUnifierImpl::Unify`. - Fix Float16 handling in the array path of `CountDistinctImpl::Consume`. - Fix Float16 scalar unboxing to preserve the original bit representation in `UnboxScalar<HalfFloatType>::Unbox`.  ### Are these changes tested?  Added regression tests:  - `TestDictionaryUnifier.HalfFloat`: verifies unified dictionary values and transpose maps. - `TestCountDistinctKernel.HalfFloat`: covers distinct Float16 values, duplicates, nulls, chunked arrays, and scalar input.  Verified that both new regression tests fail with the original implementation and pass with the fix.  Validation performed:  - `arrow-array-test`: 346 tests passed (2 disabled). - `arrow-compute-aggregate-test`: 346 tests passed. - `clang-format --dry-run --Werror`: passed. - `git diff --check`: passed.  ### Are there any user-facing changes?  Fixes incorrect Fl
 
-- **Issue #55481** (2026-11-11): **MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates**
-  *Symptoms*: Updates the requirements on [apache/infrastructure-actions/stash/restore](https://github.com/apache/infrastructure-actions) and [apache/infrastructure-actions/stash/save](https://github.com/apache/infrastructure-actions) to permit the latest version. Updates `apache/infrastructure-actions/stash/restore` to 5a4eaabe6c43770c9df95875a513a6b8362be5eb <details> <summary>Commits</summary> <ul> <li>See full diff in <a href="https://github.com/apache/infrastructure-actions/commits/5a4eaabe6c43770c9df95875a513a6b8362be5eb">compare view</a></li> </ul> </details> <br />  Updates `apache/infrastructure-actions/stash/save` to 5a4eaabe6c43770c9df95875a513a6b8362be5eb <details> <summary>Commits</summary> <ul> <li>See full diff in <a href="https://github.com/apache/infrastructure-actions/commits/5a4eaabe6c43770c9df95875a513a6b8362be5eb">compare view</a></li> </ul> </details> <br />   Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the sp
+- **Issue #55584** (2026-11-13): **[Python] c/driver/sqlite: re-executing a prepared statement fails with "no more rows available" on macOS system SQLite**
+  *Symptoms*: ### Describe the bug, including details regarding any error messages, version, and platform.  SQLite driver fails to re-execute a prepared statement when SQLite is built with `SQLITE_OMIT_AUTORESET`.  ## Description  Executing the same prepared statement a second time fails if the SQLite driver is linked against a SQLite built with [`SQLITE_OMIT_AUTORESET`](https://www.sqlite.org/compile.html#omit_autoreset).  Apple's system SQLite (`/usr/lib/libsqlite3.dylib`) is built that way, and CMake picks it up by default on macOS.  On my own macOS:  ```console $ echo "pragma compile_options;" | /usr/bin/sqlite3 | grep AUTORESET OMIT_AUTORESET ```  This shows up in the Python DB-API, which skips `set_sql_query()` and `prepare()` when the same SQL is executed twice in a row. As a result, `python/adbc_driver_manager/tests/test_dbapi.py::test_query_fetch_py` fails locally on macOS but passes in CI.  ## Minimal reproducible example  Build the SQLite driver on macOS with the default SQLite:  ```shell cmake -S c -B build -G Ninja -DADBC_DRIVER_SQLITE=ON cmake --build build --target adbc_driver_sqlite_shared otool -L build/driver/sqlite/libadbc_driver_sqlite.dylib | grep sqlite3 # /usr/lib/libsqlite3.dylib (compatibility version 9.0.0, current version 371.0.0) ```  ```python # mre.py import adbc_driver_manager.dbapi as dbapi  with dbapi.connect(driver="adbc_driver_sqlite") as conn:     with conn.cursor() as cur:         for i in range(2):             cur.execute("SELECT 1")             print(
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1423,495 +1409,559 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bea76d64` (2026-11-11)
-**Commit Message**: GH-55277: [C++][Gandiva] Fix stack overflow in decimal evaluation with JIT optimization disabled (#55278)
+### Incident Patch 1: `0974e94e` (2026-11-13)
+**Commit Message**: GH-51043: [Python] Reject null required Arrow objects (#51161)
 
 ### Rationale for this change
-Gandiva can exhaust the stack when evaluating decimal expressions with JIT optimization disabled. Decimal return slots are allocated inside the record loop, so each row uses more stack. The stack is only released when the function returns.
+
+Passing None where pyarrow requires an object can abort the Python process or raise an unrelated AttributeError, because the value reaches native Arrow code that cannot handle it. The original report covered some constructors, and later comments found the same failure in ScanNodeOptions, ParquetSchema, ColumnSchema, SubTreeFileSystem and ProjectNodeOptions, so this PR fixes those too.
+
+Fixes https://github.com/apache/arrow/issues/51043.
+
+get_partition_keys(None) is in https://github.com/apache/arrow/pull/51294.
 
 ### What changes are included in this PR?
-Move return-slot allocations to the function entry block in `CallDecimalFunction` and `AddLarge`.
+
+The Python layer now checks required arguments before native code runs, so None raises a TypeError that names the argument instead of crashing. This covers schemas, formats, types, dictionaries, fragments, filesystems and child arrays, plus the classes listed above. Array buffer constructors also require a data type.
 
 ### Are these changes tested?
-Locally, the large-batch test crashes before the fix (SIGSEGV, exit 139) and passes afterward. It checks negative values and nulls, with optimization off and on.
+
+A native Arrow 26.0.0-SNAPSHOT build reproduced the failures. The same commands then raised TypeError.
+
+```console
+$ python -c 'from pyarrow import acero; acero.ScanNodeOptions(None)'
+Before: p
+
+**File**: `python/pyarrow/_acero.pyx` (modified, +2/-0)
+```diff
+@@ -141,6 +141,8 @@ cdef class _ProjectNodeOptions(ExecNodeOptions):
+             vector[c_string] c_names
+ 
+         for expr in expressions:
++            if expr is None:
++                raise TypeError("Expression must not be None")
+             c_expressions.push_back(expr.unwrap())
+ 
+         if names is not None:
+```
+
+**File**: `python/pyarrow/_dataset.pyx` (modified, +5/-2)
+```diff
+@@ -1121,7 +1121,8 @@ cdef class FileSystemDataset(Dataset):
+     cdef:
+         CFileSystemDataset* filesystem_dataset
+ 
+-    def __init__(self, fragments, Schema schema, FileFormat format,
++    def __init__(self, fragments, Schema schema not None,
++                 FileFormat format not None,
+                  FileSystem filesystem=None, root_partition=None):
+         cdef:
+             FileFragment fragment=None
+@@ -1138,6 +1139,8 @@ cdef class FileSystemDataset(Dataset):
+             )
+ 
+         for fragment in fragments:
++            if fragment is None:
++                raise TypeError("Fragment must not be None")
+             c_fragments.push_back(
+                 static_pointer_cast[CFileFragment, CFragment](
+                     fragment.unwrap()))
+@@ -4236,5 +4239,5 @@ class ScanNodeOptions(_ScanNodeOptions):
+         Preserve implicit ordering of data.
+     """
+ 
+-    def __init__(self, Dataset dataset, **kwargs):
++    def __init__(self, Dataset dataset not None, **kwargs):
+         self._set_options(dataset, kwargs)
+```
+
+**File**: `python/pyarrow/_fs.pyx` (modified, +1/-1)
+```diff
+@@ -1205,7 +1205,7 @@ cdef class SubTreeFileSystem(FileSystem):
+     For usage of the methods see examples for :func:`~pyarrow.fs.LocalFileSystem`.
+     """
+ 
+-    def __init__(self, base_path, FileSystem base_fs):
++    def __init__(self, base_path, FileSystem base_fs not None):
+         cdef:
+             c_string pathstr
+             shared_ptr[CSubTreeFileSystem] wrapped
+```
+
+**File**: `python/pyarrow/_parquet.pyx` (modified, +5/-4)
+```diff
+@@ -755,7 +755,8 @@ cdef class SortingColumn:
+         self.nulls_first = nulls_first
+ 
+     @classmethod
+-    def from_ordering(cls, Schema schema, sort_keys, null_placement='at_end'):
++    def from_ordering(cls, Schema schema not None, sort_keys,
++                      null_placement='at_end'):
+         """
+         Create a tuple of SortingColumn objects from the same arguments as
+         :class:`pyarrow.compute.SortOptions`.
+@@ -816,7 +817,7 @@ cdef class SortingColumn:
+         return tuple(sorting_columns)
+ 
+     @staticmethod
+-    def to_ordering(Schema schema, sorting_columns):
++    def to_ordering(Schema schema not None, sorting_columns):
+         """
+         Convert a tuple of SortingColumn objects to the same format as
+         :class:`pyarrow.compute.SortOptions`.
+@@ -1247,7 +1248,7 @@ cdef class FileMetaData(_Weakrefable):
+ cdef class ParquetSchema(_Weakrefable):
+     """A Parquet schema."""
+ 
+-    def __cinit__(self, FileMetaData container):
++    def __cinit__(self, FileMetaData container not None):
+         self.parent = container
+         self.schema = container._metadata.schema()
+ 
+@@ -1336,7 +1337,7 @@ cdef class ColumnSchema(_Weakrefable):
+         ParquetSchema parent
+         const ColumnDescriptor* descr
+ 
+-    def __cinit__(self, ParquetSchema schema, int index):
++    def __cinit__(self, ParquetSchema schema not None, int index):
+         self.parent = schema
+         self.index = index  # for pickling support
+         self.descr = schema.schema.Column(index)
+```
+
+**File**: `python/pyarrow/array.pxi` (modified, +9/-6)
+```diff
+@@ -1329,8 +1329,8 @@ cdef class Array(_PandasConvertible):
+             (_reduce_array_data(self.sp_array.get().data().get()),)
+ 
+     @staticmethod
+-    def from_buffers(DataType type, length, buffers, null_count=-1, offset=0,
+-                     children=None):
++    def from_buffers(DataType type not None, length, buffers, null_count=-1,
++                     offset=0, children=None):
+         """
+         Construct an Array from a sequence of buffers.
+ 
+@@ -1386,6 +1386,8 @@ cdef class Array(_PandasConvertible):
+             c_buffers.push_back(pyarrow_unwrap_buffer(buf))
+ 
+         for child in children:
++            if child is None:
++                raise TypeError("Array child must not be None")
+             c_child_data.push_back(child.ap.data())
+ 
+         array_data = CArrayData.MakeWithChildren(type.sp_type, length,
+@@ -4328,8 +4330,9 @@ cdef class DictionaryArray(Array):
+         return self._indices
+ 
+     @staticmethod
+-    def from_buffers(DataType type, int64_t length, buffers, Array dictionary,
+-                     int64_t null_count=-1, int64_t offset=0):
++    def from_buffers(DataType type not None, int64_t length, buffers,
++                     Array dictionary not None, int64_t null_count=-1,
++                     int64_t offset=0):
+         """
+         Construct a DictionaryArray from buffers.
+ 
+@@ -4745,8 +4748,8 @@ cdef class RunEndEncodedArray(Array):
+                                                run_ends, values, 0)
+ 
+     @staticmethod
+-    def from_buffers(DataType type, length, buffers, null_count=-1, offset=0,
+-                     children=None):
++    def from_buffers(DataType type not None, length, buffers, null_count=-1,
++                     offset=0, children=None):
+         """
+         Construct a RunEndEncodedArray from all the parameters that make up an
+         Array.
+```
+
+**File**: `python/pyarrow/tests/parquet/test_metadata.py` (modified, +12/-0)
+```diff
+@@ -351,6 +351,12 @@ def test_parquet_sorting_column():
+     with pytest.raises(ValueError):
+         pq.SortingColumn.from_ordering(schema, (("a", "not a valid sort order")))
+ 
++    with pytest.raises(TypeError, match="Argument 'schema' has incorrect type"):
++        pq.SortingColumn.from_ordering(None, ())
++
++    with pytest.raises(TypeError, match="Argument 'schema' has incorrect type"):
++        pq.SortingColumn.to_ordering(None, ())
++
+     with pytest.raises(ValueError, match="inconsistent null placement"):
+         sorting_cols = (
+             pq.SortingColumn(1, nulls_first=True),
+@@ -871,6 +877,12 @@ def msg(c):
+     with pytest.raises(TypeError, match=msg("FileMetaData")):
+         pq.FileMetaData()
+ 
++    with pytest.raises(TypeError, match="Argument 'container'"):
++        pq.ParquetSchema(None)
++
++    with pytest.raises(TypeError, match="Argument 'schema'"):
++        pq.ColumnSchema(None, 0)
++
+ 
+ def test_read_schema_uuid_extension_type(tmp_path):
+     # These are the raw 16-byte payloads for
+```
+
+**File**: `python/pyarrow/tests/test_acero.py` (modified, +5/-0)
+```diff
+@@ -247,6 +247,8 @@ def test_project(table_source):
+     # input validation
+     with pytest.raises(ValueError):
+         ProjectNodeOptions([pc.multiply(field("a"), 2)], ["a2", "b2"])
++    with pytest.raises(TypeError, match="Expression must not be None"):
++        ProjectNodeOptions([None])
+ 
+     # no scalar expression
+     decl = Declaration.from_sequence([
+@@ -597,3 +599,6 @@ def test_scan(tempdir):
+     assert result["a"].to_pylist() == [1, 2, 3]
+     # "b" is still included, but without data as it will be removed by the projection
+     assert pc.all(result["b"].is_null()).as_py()
++
++    with pytest.raises(TypeError, match="Argument 'dataset'"):
++        ScanNodeOptions(None)
+```
+
+**File**: `python/pyarrow/tests/test_array.py` (modified, +17/-0)
+```diff
+@@ -784,6 +784,9 @@ def test_array_from_buffers():
+     with pytest.raises(TypeError):
+         pa.Array.from_buffers(pa.int16(), 3, ['', ''], offset=1)
+ 
++    with pytest.raises(TypeError, match="Argument 'type' has incorrect type"):
++        pa.Array.from_buffers(type=None, length=0, buffers=[])
++
+ 
+ def test_string_binary_from_buffers():
+     array = pa.array(["a", None, "b", "c"])
+@@ -868,6 +871,10 @@ def test_list_from_buffers(list_type_factory):
+         pa.Array.from_buffers(ty, 4, buffers[:ty.num_buffers],
+                               children=[child, child])
+ 
++    with pytest.raises(TypeError, match="Array child must not be None"):
++        pa.Array.from_buffers(
++            type=ty, length=4, buffers=buffers[:ty.num_buffers], children=[None])
++
+ 
+ def test_struct_from_buffers():
+     ty = pa.struct([pa.field('a', pa.int16()), pa.field('b', pa.utf8())])
+@@ -987,6 +994,13 @@ def test_dictionary_from_buffers(offset):
+                                         offset=offset)
+     assert a[offset:] == b
+ 
++    with pytest.raises(TypeError, match="Argument 'type' has incorrect type"):
++        pa.DictionaryArray.from_buffers(
++            None, len(a), a.indices.buffers(), a.dictionary)
++    with pytest.raises(TypeError, match="Argument 'dictionary' has incorrect type"):
++        pa.DictionaryArray.from_buffers(
++            a.type, len(a), a.indices.buffers(), None)
++
+ 
+ @pytest.mark.numpy
+ def test_dictionary_from_numpy():
+@@ -4275,6 +4289,9 @@ def test_run_end_encoded_from_buffers():
+         pa.RunEndEncodedArray.from_buffers(ree_type, length, buffers,
+                                            1, offset, children)
+ 
++    with pytest.raises(TypeError, match="Argument 'type' has incorrect type"):
++        pa.RunEndEncodedArray.from_buffers(type=None, length=0, buffers=[])
++
+ 
+ @pytest.mark.numpy
+ def test_run_end_encoded_from_array_with_type():
+```
+
+---
+
+### Incident Patch 2: `48e4abf5` (2026-11-13)
+**Commit Message**: GH-47329: [Packaging][Python][C++] Build and test PyArrow against Pyodide 314 (`2026_0` ABI) (#47330)
+
+### Rationale for this change
+
+This PR allows PyArrow to be built and tested against our Pyodide `2026_0` ABI introduced with [the Pyodide 314.0.0 release](https://blog.pyodide.org/posts/314-release/).
+
+Closes #47329
+
+### What changes are included in this PR?
+
+This PR updates the Pyodide version in the build scripts to 314.0.7 and the Emscripten version to 5.0.3, along with associated build-time changes to fix compilation issues.
+
+This PR updates the `conda-python-emscripten` job to Pyodide 314.0.7, Python 3.14, Node 24, and pyodide-build 0.39.2 and later. The Emscripten version for this job is gathered from the Pyodide distribution, which renders it to be 5.0.3. That matches the version the C++ job uses, since #55417.
+
+The build changes are as follows:
+
+- Emscripten builds now use native WebAssembly exceptions and WebAssembly-based `setjmp`/`longjmp` (`-fwasm-exceptions -sSUPPORT_LONGJMP=wasm`), as our `2026_0` ABI requires.
+- `libarrow_python.so` and the Cython extension modules are linked with an `$ORIGIN` RPATH, in order for us to find `libarrow_python.so` next to the modules 
+
+**File**: `ci/docker/conda-python-emscripten.dockerfile` (modified, +15/-8)
+```diff
+@@ -18,32 +18,39 @@
+ ARG repo
+ ARG arch
+ ARG arch_short
+-ARG python="3.12"
++ARG python="3.14"
+ FROM --platform=linux/${arch} ${repo}:${arch_short}-conda-python-${python}
+ 
+ ARG selenium_version="4.41.0"
+-ARG pyodide_version="0.27.1"
++ARG pyodide_version="314.0.7"
++# pyodide-build is versioned independently of Pyodide
++ARG pyodide_build_version="0.39.2"
+ ARG chrome_version="latest"
+-ARG required_python_min="(3,12)"
+-# fail if python version < 3.12
++ARG required_python_min="(3,14)"
++# fail if python version < 3.14
+ RUN echo "check PYTHON>=${required_python_min}" && python -c "import sys;sys.exit(0 if sys.version_info>=${required_python_min} else 1)"
+ 
+-# install selenium and recent pyodide-build and recent python
++RUN apt-get update -y -q && \
++    apt-get install -y -q --no-install-recommends \
++        libatomic1 && \
++    apt-get clean && \
++    rm -rf /var/lib/apt/lists/*
+ 
+ # needs to be a login shell so ~/.profile is read
+ SHELL ["/bin/bash", "--login", "-c", "-o", "pipefail"]
+ 
++# install selenium and recent pyodide-build and recent python
+ RUN python -m pip install --no-cache-dir selenium==${selenium_version} && \
+-    python -m pip install --no-cache-dir --upgrade pyodide-build>=${pyodide_version}
++    python -m pip install --no-cache-dir --upgrade "pyodide-build>=${pyodide_build_version}"
+ 
+ # install pyodide dist directory to /pyodide
+ RUN pyodide_dist_url="https://github.com/pyodide/pyodide/releases/download/${pyodide_version}/pyodide-${pyodide_version}.tar.bz2" && \
+     wget -q "${pyodide_dist_url}" -O- | tar -xj -C /
+ 
+-# install node 20 (needed for async call support)
++# install node 24 (needed for async call support and JSPI)
+ # and pthread-stubs for build, and unzip needed for chrome build to work
+ # xz is needed by emsdk to extract node tarballs
+-RUN conda install nodejs=20 unzip pthread-stubs make xz -c conda-forge
++RUN conda install nodejs=24 unzip pthread-stubs make xz -c conda-forge
+ 
+ # install correct version of emscripten for this pyodide
+ COPY ci/scripts/install_emscripten.sh /arrow/ci/scripts/
+```
+
+**File**: `compose.yaml` (modified, +3/-2)
+```diff
+@@ -982,10 +982,11 @@ services:
+         arch_short: ${ARCH_SHORT}
+         clang_tools: ${CLANG_TOOLS}
+         llvm: ${LLVM}
+-        pyodide_version: "0.27.1"
++        pyodide_version: "314.0.7"
++        pyodide_build_version: "0.39.2"
+         chrome_version: "latest"
+         selenium_version: "4.41.0"
+-        required_python_min: "(3,12)"
++        required_python_min: "(3,14)"
+         python: ${PYTHON}
+     shm_size: *shm-size
+     volumes: *ubuntu-volumes
+```
+
+**File**: `cpp/cmake_modules/SetupCxxFlags.cmake` (modified, +20/-11)
+```diff
+@@ -714,26 +714,35 @@ if(MSVC)
+ endif()
+ 
+ if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+-  # flags are:
++  # For the Pyodide 2026_0 ABI, the flags are:
+   # 1) We force *everything* to build as position independent
+-  # 2) And with support for C++ exceptions
+-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -fexceptions")
++  # 2) We support C++ WASM exceptions, using the native WebAssembly
++  #    exception handling proposal and WebAssembly-based setjmp/longjmp
++  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -fwasm-exceptions -sSUPPORT_LONGJMP=wasm")
+   # deprecated-literal-operator error is thrown in datetime (vendored lib in arrow)
+   set(CMAKE_CXX_FLAGS
+-      "${CMAKE_CXX_FLAGS} -fPIC -fexceptions -Wno-error=deprecated-literal-operator")
++      "${CMAKE_CXX_FLAGS} -fPIC -fwasm-exceptions -sSUPPORT_LONGJMP=wasm -Wno-error=deprecated-literal-operator"
++  )
+ 
+   # flags for creating shared libraries (only used in pyarrow, because
+   # Emscripten builds libarrow as static)
+   # flags are:
+   # 1) Tell it to use JavaScript / WebAssembly 64 bit number support.
+-  # 2) Tell it to build with support for C++ exceptions
++  # 2) Tell it to build with support for C++ exceptions (see above)
+   # 3) Skip linker flags error which happens with -soname parameter
+-  set(ARROW_EMSCRIPTEN_LINKER_FLAGS "-sWASM_BIGINT=1 -fexceptions -Wno-error=linkflags")
+-  set(CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS
+-      "-sSIDE_MODULE=1 ${ARROW_EMSCRIPTEN_LINKER_FLAGS}")
+-  set(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS
+-      "-sSIDE_MODULE=1 ${ARROW_EMSCRIPTEN_LINKER_FLAGS}")
+-  set(CMAKE_SHARED_LINKER_FLAGS "-sSIDE_MODULE=1 ${ARROW_EMSCRIPTEN_LINKER_FLAGS}")
++  # 4) Record $ORIGIN as an RPATH, so that Pyodide can locate
++  #    libarrow_python.so next to the extension modules needing it
++  # Note: the CMAKE_SHARED_LIBRARY_CREATE_<LANG>_FLAGS and
++  # CMAKE_SHARED_MODULE_CREATE_<LANG>_FLAGS variables are not used by the
++  # Ninja generator, so the flags must go through the linker-flags
++  # variables, which apply to SHARED (libarrow_python) and MODULE (Cython
++  # extension) targets respectively.
++  set(ARROW_EMSCRIPTEN_LINKER_FLAGS
++      "-sWASM_BIGINT=1 -fwasm-exceptions -sSUPPORT_LONGJMP=wasm -Wno-error=linkflags")
++  set(ARROW_EMSCRIPTEN_DYLIB_CREATE_FLAGS
++      "-sSIDE_MODULE=1 ${ARROW_EMSCRIPTEN_LINKER_FLAGS} '-Wl,-rpath,$ORIGIN'")
++  set(CMAKE_SHARED_LINKER_FLAGS "${ARROW_EMSCRIPTEN_DYLIB_CREATE_FLAGS}")
++  set(CMAKE_MODULE_LINKER_FLAGS "${ARROW_EMSCRIPTEN_DYLIB_CREATE_FLAGS}")
+   if(ARROW_TESTING)
+     # Deeply nested tests need a larger stack (1 MiB).
+     set(ARROW_EMSCRIPTEN_TEST_STACK_SIZE 1048576)
+```
+
+**File**: `cpp/cmake_modules/ThirdpartyToolchain.cmake` (modified, +4/-0)
+```diff
+@@ -2171,6 +2171,10 @@ function(build_protobuf)
+     set(PROTOBUF_HOST_CMAKE_ARGS
+         "-DCMAKE_CXX_FLAGS="
+         "-DCMAKE_C_FLAGS="
++        # Explicitly set the C++ standard for the host build. Without this,
++        # Abseil may be compiled with the host compiler's default standard,
++        # which can be older than C++17.
++        "-DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}"
+         "-DCMAKE_INSTALL_PREFIX=${PROTOBUF_HOST_PREFIX}"
+         -Dprotobuf_BUILD_TESTS=OFF
+         -Dprotobuf_DEBUG_POSTFIX=
+```
+
+**File**: `dev/tasks/tasks.yml` (modified, +1/-1)
+```diff
+@@ -493,7 +493,7 @@ tasks:
+     params:
+       env:
+         UBUNTU: 22.04
+-        PYTHON: 3.12
++        PYTHON: 3.14
+       image: conda-python-emscripten
+ 
+   test-conda-python-3.11-hypothesis:
+```
+
+**File**: `docs/source/developers/cpp/emscripten.rst` (modified, +5/-4)
+```diff
+@@ -34,9 +34,9 @@ activate it using the commands below (see https://emscripten.org/docs/getting_st
+    git clone https://github.com/emscripten-core/emsdk.git
+    cd emsdk
+    # replace <version> with the desired EMSDK version.
+-   # e.g. for Pyodide 0.26, you need EMSDK version 3.1.58
++   # e.g. for Pyodide 314.0.x, you need EMSDK version 5.0.3
+    # the versions can be found in the Makefile.envs file in the Pyodide repo:
+-   # https://github.com/pyodide/pyodide/blob/10b484cfe427e076c929a55dc35cfff01ea8d3bc/Makefile.envs
++   # https://github.com/pyodide/pyodide/blob/314.0.7/Makefile.envs
+    ./emsdk install <version>
+    ./emsdk activate <version>
+    source ./emsdk_env.sh
+@@ -49,8 +49,9 @@ versions of emsdk tools.
+ .. code:: shell
+ 
+    # install Pyodide build tools.
+-   # e.g., for version 0.26 of Pyodide, pyodide-build 0.26 and later work
+-   pip install "pyodide-build>=0.26"
++   # pyodide-build is versioned independently of Pyodide.
++   # For Pyodide 314.0.x, pyodide-build 0.39.2 and later work well
++   pip install "pyodide-build>=0.39.2"
+ 
+ Then build with the ``ninja-release-emscripten`` CMake preset,
+ like below:
+```
+
+**File**: `python/CMakeLists.txt` (modified, +3/-1)
+```diff
+@@ -111,7 +111,9 @@ if("$ENV{CMAKE_EXPORT_COMPILE_COMMANDS}" STREQUAL "1")
+   set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+ endif()
+ 
+-if(UNIX)
++# On Emscripten, the equivalent $ORIGIN runtime path is added
++# through the linker flags in SetupCxxFlags.cmake instead
++if(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+   # In the event that we are bundling the shared libraries (e.g. in a
+   # manylinux1 wheel), we need to set the RPATH of the extensions to the
+```
+
+**File**: `python/pyarrow/tests/test_csv.py` (modified, +1/-0)
+```diff
+@@ -2202,6 +2202,7 @@ def test_write_csv_decimal(tmpdir, type_factory):
+     assert out.column('col').cast(type) == table.column('col')
+ 
+ 
++@pytest.mark.threading
+ def test_read_csv_gil_deadlock():
+     # GH-38676
+     # This test depends on several preconditions:
+```
+
+---
+
+### Incident Patch 3: `b5dd1041` (2026-11-13)
+**Commit Message**: MINOR: [Docs] Fix compatibility spelling (#55574)
+
+### Rationale for this change
+
+While I was going through the Apache Arrow codebase as someone who is new to open source, I came across a small spelling mistake in the R packaging documentation. I thought I'd take the opportunity to fix it.
+
+### What changes are included in this PR?
+
+A minor spelling correction in the R packaging documentation. No functional changes.
+
+### Are these changes tested?
+
+Not applicable. This is a documentation-only change.
 
 ### Are there any user-facing changes?
-No.
 
-**This PR contains a "Critical Fix".** It fixes a native process crash.
+No functional user-facing changes. Only a documentation correction.
 
 ### Was AI used for this PR?
-AI tools helped investigate the crash and write the fix, tests, and description.
 
 **PR code and description written by:**
-- [x] Human
-- [x] AI
 
-**Reviewed before submission by:**
-- [x] Human
+- [O] Human
 - [ ] AI
 
-GitHub Issue: #55277
+**Reviewed before submission by:**
 
-P.S. The first commit contains only the regression test. The second commit contains only the fix.
-* GitHub Issue: #5527
+- [O] Human
+- [ ] AI
+- [ ] Not reviewed
 
-**File**: `cpp/src/gandiva/decimal_ir.cc` (modified, +12/-6)
+This might be a very small contribution, but it's my first ever open-source contribution, so it means quite a lot to me. I'm looking forward to continuing to explore the codebase, learn more about the project, and hopefully contribute more in the future.
+
+Thanks for maintaining Apache Arrow and for making it welcoming to new contributors like me!
+
+Authored-by: Sumedh Pimplikar <[REDACTED_EMAIL]>
+Signed-off-by: N
+
+**File**: `r/PACKAGING.md` (modified, +1/-1)
 ```diff
-@@ -243,12 +243,18 @@ DecimalIR::ValueWithOverflow DecimalIR::AddWithOverflowCheck(const ValueFull& x,
-   return ValueWithOverflow(sum_descaled, overflow);
- }
+@@ -75,7 +75,7 @@ _This step must be done by the current package maintainer._
  
-+std::pair<llvm::AllocaInst*, llvm::AllocaInst*> DecimalIR::CreateEntryBlockReturnSlots() {
-+  auto& entry = ir_builder()->GetInsertBlock()->getParent()->getEntryBlock();
-+  llvm::IRBuilder<> entry_builder(&entry, entry.begin());
-+  auto out_high_ptr = entry_builder.CreateAlloca(types()->i64_type(), nullptr, "out_hi");
-+  auto out_low_ptr = entry_builder.CreateAlloca(types()->i64_type(), nullptr, "out_low");
-+  return {out_high_ptr, out_low_ptr};
-+}
-+
- // This is pretty complex, so use CPP fns.
- llvm::Value* DecimalIR::AddLarge(const ValueFull& x, const ValueFull& y,
-                                  const ValueFull& out) {
--  auto block = ir_builder()->GetInsertBlock();
--  auto out_high_ptr = new llvm::AllocaInst(types()->i64_type(), 0, "out_hi", block);
--  auto out_low_ptr = new llvm::AllocaInst(types()->i64_type(), 0, "out_low", block);
-+  auto [out_high_ptr, out_low_ptr] = CreateEntryBlockReturnSlots();
-   auto x_split = ValueSplit::MakeFromInt128(this, x.value());
-   auto y_split = ValueSplit::MakeFromInt128(this, y.value());
- 
-@@ -454,9 +460,9 @@ llvm::Value* DecimalIR::CallDecimalFunction(const std::string& function_name,
-   llvm::Value* result = nullptr;
-   if (return_type == i128) {
-     // for i128 ret, replace with two int64* args, and join them.
--    auto block = ir_builder()->GetInsertBlock();
--    auto out_high_ptr = new llvm::AllocaInst(i64, 0, "out_hi", block);
--    auto out_low_ptr = new llvm::AllocaInst(i64, 0, "out_low", block);
-+    // Decimal calls can be emitted inside the record loop or a CASE branch.
-+    // Allocate return slots once per invocation, rather than once per row.
-+    auto [out_high_ptr, out_low_ptr] = CreateEntryBlockReturnSlots();
-     dis_assembled_args.push_back(out_high_ptr);
-     dis_assembled_args.push_back(out_low_ptr);
- 
-```
-
-**File**: `cpp/src/gandiva/decimal_ir.h` (modified, +4/-0)
-```diff
-@@ -19,6 +19,7 @@
- 
- #include <memory>
- #include <string>
-+#include <utility>
- #include <vector>
- 
- #include "gandiva/function_ir_builder.h"
-@@ -137,6 +138,9 @@ class DecimalIR : public FunctionIRBuilder {
-   ValueWithOverflow AddWithOverflowCheck(const ValueFull& x, const ValueFull& y,
-                                          const ValueFull& out);
- 
-+  // Allocate decimal return slots in the current function's entry block.
-+  std::pair<llvm::AllocaInst*, llvm::AllocaInst*> CreateEntryBlockReturnSlots();
-+
-   // Do addition of large integers (both positive and negative).
-   llvm::Value* AddLarge(const ValueFull& x, const ValueFull& y, const ValueFull& out);
- 
-```
-
-**File**: `cpp/src/gandiva/tests/decimal_test.cc` (modified, +36/-0)
-```diff
-@@ -67,6 +67,42 @@ std::vector<Decimal128> TestDecimal::MakeDecimalVector(std::vector<std::string>
-   return ret;
- }
- 
-+TEST_F(TestDecimal, CastLargeBatch) {
-+  // Allocating decimal return slots in the record loop can exhaust the stack
-+  // when optimization is disabled. A single int32-to-decimal cast is sufficient.
-+  constexpr int kNumRecords = 1 << 19;
-+  auto input_field = arrow::field("large_batch_decimal", arrow::int32());
-+  auto schema = arrow::schema({input_field});
-+  auto decimal_type = arrow::decimal128(10, 0);
-+  auto decimal = TreeExprBuilder::MakeFunction(
-+      "castDECIMAL", {TreeExprBuilder::MakeField(input_field)}, decimal_type);
-+  auto expression =
-+      TreeExprBuilder::MakeExpression(decimal, arrow::field("result", decimal_type));
-+
-+  std::vector<int32_t> values(kNumRecords);
-+  std::vector<bool> validity(kNumRecords);
-+  std::vector<Decimal128> expected_values(kNumRecords);
-+  for (int i = 0; i < kNumRecords; ++i) {
-+    values[i] = i % 17 - 8;
-+    validity[i] = i % 11 != 0;
-+    expected_values[i] = Decimal128(values[i]);
-+  }
-+  auto batch = arrow::RecordBatch::Make(schema, kNumRecords,
-+                                        {MakeArrowArrayInt32(values, validity)});
-+  auto expected = MakeArrowArrayDecimal(decimal_type, expected_values, validity);
-+
-+  for (bool optimize : {false, true}) {
-+    SCOPED_TRACE(optimize);
-+    auto config = std::make_shared<Configuration>(optimize);
-+    std::shared_ptr<Projector> projector;
-+    ASSERT_OK(Projector::Make(schema, {expression}, config, &projector));
-+    arrow::ArrayVector output;
-+    ASSERT_OK(projector->Evaluate(*batch, pool_, &output));
-+    ASSERT_EQ(output.size(), 1);
-+    EXPECT_ARROW_ARRAY_EQUALS(expected, output[0]);
-+  }
-+}
-+
- TEST_F(TestDecimal, TestSimple) {
-   // schema for input fields
-   constexpr int32_t precision = 36;
-```
-
----
-
-### Incident Patch 2: `16900e3b` (2026-11-10)
-**Commit Message**: GH-49884: [C++] Fix integer overflow in BufferBuilder reachable from JSON parsing (#49883)
-
-### Rationale for this change
-
-`BufferBuilder` and `TypedBufferBuilder` perform size calculations that are reachable from JSON parsing of untrusted input. These calculations previously used unchecked integer arithmetic (e.g., `size_ + additional_bytes`, `num_elements * sizeof(T)`), which can overflow.
-
-Since the JSON parser constructs arrays, strings, and offsets based on input data, an attacker can influence these values. Overflow in these calculations can result in incorrect buffer sizing and unsafe memory operations.
-
-### What changes are included in this PR?
-
-- Added overflow-safe arithmetic using `internal::AddWithOverflow` and `internal::MultiplyWithOverflow` for:
-  - `size_ + additional_bytes`
-  - `num_elements * sizeof(T)`
-  - capacity growth logic
-
-- Centralised the negative / too-large capacity check in a single `ValidateBufferCapacity` helper in `memory_pool.cc`, used by `PoolBuffer::Reserve`, `PoolBuffer::Resize` and `AllocateResizableBuffer`
-
-- Hardened `GrowByFactor` to prevent overflow when doubling capacity
-
-- Updated `TypedBufferBuilder` to safely compute byte sizes from ele
-
-**File**: `cpp/src/arrow/buffer_builder.h` (modified, +54/-14)
-```diff
-@@ -29,6 +29,7 @@
- #include "arrow/util/bit_util.h"
- #include "arrow/util/bitmap_generate.h"
- #include "arrow/util/bitmap_ops.h"
-+#include "arrow/util/int_util_overflow.h"
- #include "arrow/util/macros.h"
- #include "arrow/util/ubsan.h"
- #include "arrow/util/visibility.h"
-@@ -91,7 +92,12 @@ class ARROW_EXPORT BufferBuilder {
-   /// \param[in] additional_bytes number of additional bytes to make space for
-   /// \return Status
-   Status Reserve(const int64_t additional_bytes) {
--    auto min_capacity = size_ + additional_bytes;
-+    int64_t min_capacity;
-+    if (ARROW_PREDICT_FALSE(
-+            internal::AddWithOverflow(size_, additional_bytes, &min_capacity))) {
-+      return Status::CapacityError("Reserve: capacity overflow: ", size_, " + ",
-+                                   additional_bytes);
-+    }
-     if (min_capacity <= capacity_) {
-       return Status::OK();
-     }
-@@ -104,15 +110,24 @@ class ARROW_EXPORT BufferBuilder {
-     // (versus 1.5x) seems to have slightly better performance when using
-     // jemalloc, but significantly better performance when using the system
-     // allocator. See ARROW-6450 for further discussion
--    return std::max(new_capacity, current_capacity * 2);
-+    int64_t doubled;
-+    if (ARROW_PREDICT_FALSE(
-+            internal::AddWithOverflow(current_capacity, current_capacity, &doubled))) {
-+      return new_capacity;
-+    }
-+    return std::max(new_capacity, doubled);
-   }
- 
-   /// \brief Append the given data to the buffer
-   ///
-   /// The buffer is automatically expanded if necessary.
-   Status Append(const void* data, const int64_t length) {
--    if (ARROW_PREDICT_FALSE(size_ + length > capacity_)) {
--      ARROW_RETURN_NOT_OK(Resize(GrowByFactor(capacity_, size_ + length), false));
-+    int64_t new_size;
-+    if (ARROW_PREDICT_FALSE(internal::AddWithOverflow(size_, length, &new_size))) {
-+      return Status::CapacityError("Append: size overflow: ", size_, " + ", length);
-+    }
-+    if (ARROW_PREDICT_FALSE(new_size > capacity_)) {
-+      ARROW_RETURN_NOT_OK(Resize(GrowByFactor(capacity_, new_size), false));
-     }
-     UnsafeAppend(data, length);
-     return Status::OK();
-@@ -250,12 +265,13 @@ class TypedBufferBuilder<
-   }
- 
-   Status Append(const T* values, int64_t num_elements) {
--    return bytes_builder_.Append(reinterpret_cast<const uint8_t*>(values),
--                                 num_elements * sizeof(T));
-+    int64_t num_bytes = 0;
-+    ARROW_RETURN_NOT_OK(ElementsToBytes("Append", num_elements, &num_bytes));
-+    return bytes_builder_.Append(reinterpret_cast<const uint8_t*>(values), num_bytes);
-   }
- 
-   Status Append(const int64_t num_copies, T value) {
--    ARROW_RETURN_NOT_OK(Reserve(num_copies + length()));
-+    ARROW_RETURN_NOT_OK(Reserve(num_copies));
-     UnsafeAppend(num_copies, value);
-     return Status::OK();
-   }
-@@ -284,15 +300,21 @@ class TypedBufferBuilder<
-   }
- 
-   Status Resize(const int64_t new_capacity, bool shrink_to_fit = true) {
--    return bytes_builder_.Resize(new_capacity * sizeof(T), shrink_to_fit);
-+    int64_t num_bytes = 0;
-+    ARROW_RETURN_NOT_OK(ElementsToBytes("Resize", new_capacity, &num_bytes));
-+    return bytes_builder_.Resize(num_bytes, shrink_to_fit);
-   }
- 
-   Status Reserve(const int64_t additional_elements) {
--    return bytes_builder_.Reserve(additional_elements * sizeof(T));
-+    int64_t num_bytes = 0;
-+    ARROW_RETURN_NOT_OK(ElementsToBytes("Reserve", additional_elements, &num_bytes));
-+    return bytes_builder_.Reserve(num_bytes);
-   }
- 
-   Status Advance(const int64_t length) {
--    return bytes_builder_.Advance(length * sizeof(T));
-+    int64_t num_bytes = 0;
-+    ARROW_RETURN_NOT_OK(ElementsToBytes("Advance", length, &num_bytes));
-+    return bytes_builder_.Advance(num_bytes);
-   }
- 
-   void UnsafeAdvance(const int64_t length) {
-@@ -316,7 +338,9 @@ class TypedBufferBuilder<
-   /// only for memory allocation).
-   Result<std::shared_ptr<Buffer>> FinishWithLength(int64_t final_length,
-                                                    bool shrink_to_fit = true) {
--    return bytes_builder_.FinishWithLength(final_length * sizeof(T), shrink_to_fit);
-+    int64_t num_bytes = 0;
-+    ARROW_RETURN_NOT_OK(ElementsToBytes("FinishWithLength", final_length, &num_bytes));
-+    return bytes_builder_.FinishWithLength(num_bytes, shrink_to_fit);
-   }
- 
-   void Reset() { bytes_builder_.Reset(); }
-@@ -327,6 +351,18 @@ class TypedBufferBuilder<
-   T* mutable_data() { return reinterpret_cast<T*>(bytes_builder_.mutable_data()); }
- 
-  private:
-+  // Convert a number of elements to a number of bytes, erroring out on
-+  // byte size overflow.
-+  static Status ElementsToBytes(const char* operation, int64_t num_elements,
-+                                int64_t* num_bytes) {
-+    if (ARROW_PREDICT_FALSE(internal::MultiplyWithOverflow(
-+            num_elements, static_cast<int64_t>(sizeof(T)), num_bytes))) {
-+      return Status::CapacityError(operation, ": byte size overflow: ", num_elements,
-+                            
-```
-
-**File**: `cpp/src/arrow/buffer_test.cc` (modified, +24/-0)
-```diff
-@@ -726,6 +726,21 @@ TEST(TestBufferBuilder, ResizeReserve) {
-   ASSERT_EQ(9, builder.length());
- }
- 
-+TEST(TestBufferBuilder, ReserveAndAppendOverflow) {
-+  const std::string data = "x";
-+  auto data_ptr = data.c_str();
-+  BufferBuilder builder;
-+
-+  const int64_t overflow_add = std::numeric_limits<int64_t>::max() - 8;
-+  ASSERT_RAISES(OutOfMemory, builder.Reserve(overflow_add));
-+
-+  ASSERT_OK(builder.Append(data_ptr, 1));
-+  constexpr int64_t kMaxLength = std::numeric_limits<int64_t>::max();
-+  ASSERT_RAISES(CapacityError, builder.Reserve(kMaxLength));
-+  ASSERT_RAISES(CapacityError, builder.Append(data_ptr, kMaxLength));
-+  ASSERT_EQ(1, builder.length());
-+}
-+
- TEST(TestBufferBuilder, Alignment) {
-   const std::string data = "some data";
-   auto data_ptr = data.c_str();
-@@ -862,6 +877,15 @@ TYPED_TEST(TypedTestBufferBuilder, AppendCopies) {
-   }
- }
- 
-+TYPED_TEST(TypedTestBufferBuilder, OverflowAppend) {
-+  TypedBufferBuilder<TypeParam> builder;
-+
-+  const int64_t max_num_elements =
-+      std::numeric_limits<int64_t>::max() / static_cast<int64_t>(sizeof(TypeParam)) + 1;
-+  ASSERT_RAISES(CapacityError,
-+                builder.Append(max_num_elements, static_cast<TypeParam>(0)));
-+}
-+
- TEST(TestBoolBufferBuilder, Basics) {
-   TypedBufferBuilder<bool> builder;
- 
-```
-
-**File**: `cpp/src/arrow/memory_pool.cc` (modified, +14/-9)
-```diff
-@@ -64,6 +64,17 @@ namespace {
- 
- constexpr char kDefaultBackendEnvVar[] = "ARROW_DEFAULT_MEMORY_POOL";
- constexpr char kDebugMemoryEnvVar[] = "ARROW_DEBUG_MEMORY_POOL";
-+constexpr int64_t kMaxBufferCapacity = std::numeric_limits<int64_t>::max() - 63;
-+
-+Status ValidateBufferCapacity(int64_t capacity, const char* operation) {
-+  if (ARROW_PREDICT_FALSE(capacity < 0)) {
-+    return Status::Invalid(operation, ": negative capacity: ", capacity);
-+  }
-+  if (ARROW_PREDICT_FALSE(capacity > kMaxBufferCapacity)) {
-+    return Status::OutOfMemory(operation, ": capacity too large: ", capacity);
-+  }
-+  return Status::OK();
-+}
- 
- enum class MemoryPoolBackend : uint8_t { System, Jemalloc, Mimalloc };
- 
-@@ -915,9 +926,7 @@ class PoolBuffer final : public ResizableBuffer {
-   }
- 
-   Status Reserve(const int64_t capacity) override {
--    if (capacity < 0) {
--      return Status::Invalid("Negative buffer capacity: ", capacity);
--    }
-+    RETURN_NOT_OK(ValidateBufferCapacity(capacity, "Reserve"));
-     uint8_t* ptr = mutable_data();
-     if (!ptr || capacity > capacity_) {
-       ARROW_ASSIGN_OR_RAISE(int64_t new_capacity, RoundCapacity(capacity));
-@@ -933,9 +942,7 @@ class PoolBuffer final : public ResizableBuffer {
-   }
- 
-   Status Resize(const int64_t new_size, bool shrink_to_fit = true) override {
--    if (ARROW_PREDICT_FALSE(new_size < 0)) {
--      return Status::Invalid("Negative buffer resize: ", new_size);
--    }
-+    RETURN_NOT_OK(ValidateBufferCapacity(new_size, "Resize"));
-     uint8_t* ptr = mutable_data();
-     if (ptr && shrink_to_fit && new_size <= size_) {
-       // Buffer is non-null and is not growing, so shrink to the requested size without
-@@ -979,9 +986,7 @@ class PoolBuffer final : public ResizableBuffer {
- 
-  private:
-   static Result<int64_t> RoundCapacity(int64_t capacity) {
--    if (capacity > std::numeric_limits<int64_t>::max() - 63) {
--      return Status::OutOfMemory("capacity too large");
--    }
-+    DCHECK_LE(capacity, kMaxBufferCapacity);
-     return bit_util::RoundUpToMultipleOf64(capacity);
-   }
- 
-```
-
----
-
-### Incident Patch 3: `87eb47ec` (2026-11-09)
-**Commit Message**: GH-53500: [Python][Parquet] Prevent crashes when comparing metadata with None (#55168)
-
-### Rationale for this change
-Five Parquet metadata/schema `equals()` wrappers (`Statistics`, `ColumnChunkMetaData`, `RowGroupMetaData`, `ParquetSchema`, `ColumnSchema`) accept `None` for their typed `other` argument and then dereference a native pointer on it, which can crash the interpreter. This follows the existing `FileMetaData.equals()` pattern, which already declares `other not None`.
-
-### What changes are included in this PR?
-- Require non-null typed arguments in the five affected Cython `equals()` methods. `__eq__` already catches the resulting `TypeError` and returns `NotImplemented`, so `obj == None` is `False` and `obj != None` is `True`.
-- Add a regression test covering `==`, `!=` and direct `.equals(None)` for all five wrappers.
-
-### Are these changes tested?
-Yes. I added a regression test and ran it locally: it passes with the fix and segfaults without it (details in the comment below). `flake8` and `cython-lint` pass on the changed files.
-
-See comment for detailed testing evidence.
-
-### Are there any user-facing changes?
-`obj.equals(None)` now raises `TypeError` instead of riskin
-
-**File**: `python/pyarrow/_parquet.pyx` (modified, +5/-5)
-```diff
-@@ -108,7 +108,7 @@ cdef class Statistics(_Weakrefable):
-         except TypeError:
-             return NotImplemented
- 
--    def equals(self, Statistics other):
-+    def equals(self, Statistics other not None):
-         """
-         Return whether the two column statistics objects are equal.
- 
-@@ -521,7 +521,7 @@ cdef class ColumnChunkMetaData(_Weakrefable):
-         except TypeError:
-             return NotImplemented
- 
--    def equals(self, ColumnChunkMetaData other):
-+    def equals(self, ColumnChunkMetaData other not None):
-         """
-         Return whether the two column chunk metadata objects are equal.
- 
-@@ -919,7 +919,7 @@ cdef class RowGroupMetaData(_Weakrefable):
-         except TypeError:
-             return NotImplemented
- 
--    def equals(self, RowGroupMetaData other):
-+    def equals(self, RowGroupMetaData other not None):
-         """
-         Return whether the two row group metadata objects are equal.
- 
-@@ -1295,7 +1295,7 @@ cdef class ParquetSchema(_Weakrefable):
-         except TypeError:
-             return NotImplemented
- 
--    def equals(self, ParquetSchema other):
-+    def equals(self, ParquetSchema other not None):
-         """
-         Return whether the two schemas are equal.
- 
-@@ -1350,7 +1350,7 @@ cdef class ColumnSchema(_Weakrefable):
-     def __reduce__(self):
-         return ColumnSchema, (self.parent, self.index)
- 
--    def equals(self, ColumnSchema other):
-+    def equals(self, ColumnSchema other not None):
-         """
-         Return whether the two column schemas are equal.
- 
-```
-
-**File**: `python/pyarrow/tests/parquet/test_metadata.py` (modified, +21/-0)
-```diff
-@@ -724,6 +724,27 @@ def test_metadata_equals():
-         original_metadata.equals(None)
- 
- 
-+def test_parquet_metadata_equals_none(tempdir):
-+    table = pa.table({"a": [1, 2, 3]})
-+    path = tempdir / "metadata_equals_none.parquet"
-+    pq.write_table(table, path)
-+
-+    metadata = pq.read_metadata(path)
-+    row_group = metadata.row_group(0)
-+    column_chunk = row_group.column(0)
-+    objects = [
-+        column_chunk.statistics,
-+        column_chunk,
-+        row_group,
-+        metadata.schema,
-+        metadata.schema[0],
-+    ]
-+
-+    for obj in objects:
-+        with pytest.raises(TypeError):
-+            obj.equals(None)
-+
-+
- @pytest.mark.parametrize("t1,t2,expected_error", (
-     ({'col1': range(10)}, {'col1': range(10)}, None),
-     ({'col1': range(10)}, {'col2': range(10)},
+ - [ ] CRAN has accepted the submission.
+ - [ ] Tag the tip of the CRAN-specific release branch with `r-universe-release`; e.g. `git tag -f r-universe-release maint-X.Y.Z-r && git push upstream r-universe-release --force`
+-- [ ] Add a new line to the matrix in the [backwards compatability job](https://github.com/apache/arrow/blob/main/dev/tasks/r/github.linux.arrow.version.back.compat.yml).
++- [ ] Add a new line to the matrix in the [backwards compatibility job](https://github.com/apache/arrow/blob/main/dev/tasks/r/github.linux.arrow.version.back.compat.yml).
+ - [ ] (patch releases only) Update the package version in `ci/scripts/PKGBUILD`, `r/DESCRIPTION`, and `r/NEWS.md`.
+ - [ ] (CRAN-only releases) Rebuild news page with `pkgdown::build_news()` and submit a PR to the asf-site branch of the docs site with the contents of `arrow/r/docs/news/index.html` replacing the current contents of `arrow-site/docs/r/news/index.html`.
+ - [ ] (CRAN-only releases) Bump the version number in `r/pkgdown/assets/versions.json`, and update this on the [the `asf-site` branch of the docs site](https://github.com/apache/arrow-site) too..
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55610** (closed): GH-55503: [C++] Fix Float16 memo table keys built from raw bits (@AnuragRaut08)
+- **PR #55574** (2026-11-13): MINOR: [Docs] Fix compatibility spelling (@Sumdiboii)
+- **PR #55496** (2026-11-12): GH-55495: [Packaging][deb] Extract source archive like dpkg-source in apt/build.sh (@kou)
+- **PR #55492** (closed): GH-55478: [R] Vendored dependencies to enable parquet (biggest change, smallest tarball) (@jonkeane)
+- **PR #55485** (2026-11-12): GH-38983: [Python] Bug in pyarrow.from_pandas() when input has MultiIndex index columns having non-string names (@thisisnic)
 - **PR #55482** (2026-11-11): MINOR: [CI] Bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
-- **PR #55481** (2026-11-11): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
-- **PR #55477** (closed): GH-35721: [Python] Recognize pandas arrays in the array() constructor for the from_pandas argument (@jay23606)
-- **PR #55472** (2026-11-11): GH-55471: [Dev] Stop clearing non-existent PR workflow labels on merge script (@raulcd)
-- **PR #55469** (2026-11-10): GH-55468: [CI][Packaging] Add libarrow-s3 to the list of allow-downgrades (@raulcd)
-- **PR #55466** (2026-11-11): MINOR: [R] Update backwards compatibility matrix for 26.0.1 release (@amoeba)
 
 ---
 
@@ -1931,47 +1981,32 @@ See comment for detailed testing evidence.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-55277: [C++][Gandiva] Fix stack overflow in decimal evaluation with JIT optim
+## X. GH-51043: [Python] Reject null required Arrow objects
 
 **RULE**:
-When implementing operations in `cpp/src/gandiva/decimal_ir.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/pyarrow/_acero.pyx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bea76d64`: GH-55277: [C++][Gandiva] Fix stack overflow in decimal evaluation with JIT optimization disabled (#55278). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0974e94e`: GH-51043: [Python] Reject null required Arrow objects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/gandiva/decimal_ir.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/pyarrow/_acero.pyx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-std::pair<llvm::AllocaInst*, llvm::AllocaInst*> DecimalIR::CreateEntryBlockReturnSlots() {
-  auto& entry = ir_builder()->GetInsertBlock()->getParent()->getEntryBlock();
-  llvm::IRBuilder<> entry_builder(&entry, entry.begin());
-  auto out_high_ptr = entry_builder.CreateAlloca(types()->i64_type(), nullptr, "out_hi");
-  auto out_low_ptr = entry_builder.CreateAlloca(types()->i64_type(), nullptr, "out_low");
-  return {out_high_ptr, out_low_ptr};
-}
-
-  auto [out_high_ptr, out_low_ptr] = CreateEntryBlockReturnSlots();
-    // Decimal calls can be emitted inside the record loop or a CASE branch.
-    // Allocate return slots once per invocation, rather than once per row.
-    auto [out_high_ptr, out_low_ptr] = CreateEntryBlockReturnSlots();
+            if expr is None:
+                raise TypeError("Expression must not be None")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-  auto block = ir_builder()->GetInsertBlock();
-  auto out_high_ptr = new llvm::AllocaInst(types()->i64_type(), 0, "out_hi", block);
-  auto out_low_ptr = new llvm::AllocaInst(types()->i64_type(), 0, "out_low", block);
-    auto block = ir_builder()->GetInsertBlock();
-    auto out_high_ptr = new llvm::AllocaInst(i64, 0, "out_hi", block);
-    auto out_low_ptr = new llvm::AllocaInst(i64, 0, "out_low", block);
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bea76d64` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0974e94e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

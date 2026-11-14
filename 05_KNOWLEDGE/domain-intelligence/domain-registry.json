@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T17:40:48.772Z",
-  "total_records": 768,
+  "last_updated": "2026-11-14T17:51:54.565Z",
+  "total_records": 775,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 377,
+      "total": 380,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -414,7 +414,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-canberkkkkkk-ema-lightning-core-invariants",
         "DOM-D-A6170DB1",
-        "domain_intelligence-research-knowledge-intelligence-hf-canberkkkkkk-ema-lightning-learnings-core-inv"
+        "domain_intelligence-research-knowledge-intelligence-hf-canberkkkkkk-ema-lightning-learnings-core-inv",
+        "domain_intelligence-research-knowledge-intelligence-unsloth-embeddinggemma-2-gguf-core-invariants",
+        "DOM-D-A21D48E1",
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-"
       ]
     },
     "E": {
@@ -447,7 +450,7 @@
       ]
     },
     "G": {
-      "total": 118,
+      "total": 120,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -566,7 +569,9 @@
         "domain_intelligence-architecture-intelligence-astral-sh-uv-core-invariants",
         "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-pola-rs-polars-core-invariants",
-        "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants",
+        "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants"
       ]
     },
     "H": {
@@ -737,7 +742,7 @@
       ]
     },
     "I": {
-      "total": 28,
+      "total": 30,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -766,7 +771,9 @@
         "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants",
         "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants",
-        "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-apache-arrow-core-invariants",
+        "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants"
       ]
     },
     "J": {
@@ -15730,6 +15737,102 @@
       "repository": "yugabyte-yugabyte-db-learnings",
       "content_hash": "d33e519bfe81a3bd6100a4829b2c9e1420d609e89bb278970f0ca3b108dd0b63",
       "created_at": "2026-11-14T17:40:48.772Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-unsloth-embeddinggemma-2-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-embeddinggemma-2-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: unsloth/embeddinggemma-2-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-embeddinggemma-2-gguf-research-knowledge-intelligence-unsloth-embeddi.md",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "content_hash": "dcd6c6eae9e6f8ed9162c6de43017876276c5b6adc7a210258355f89bbc8cfbc",
+      "created_at": "2026-11-14T17:51:05.494Z"
+    },
+    "domain_intelligence-content-information-intelligence-apache-arrow-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: apache/arrow Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-content-information-intelligence-apache-arrow-core-invariants.md",
+      "repository": "apache/arrow",
+      "content_hash": "ac991daf6e4ca3c1afe8a4e19e4cba295da05be64a88de056ffd3e94e374150b",
+      "created_at": "2026-11-14T17:51:08.037Z"
+    },
+    "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
+      "repository": "GreptimeTeam/greptimedb",
+      "content_hash": "f451bd38feaf6d7c21d5a7b04a11eaae0a2a30366ce443c62f235041e0cb47a7",
+      "created_at": "2026-11-14T17:51:23.698Z"
+    },
+    "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: apache-arrow-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-learnings-content-information-intelligence-apache-arrow-learnings-c.md",
+      "repository": "apache-arrow-learnings",
+      "content_hash": "0dea475f5567e9f07a3771662774e0ed0de49a1960e23fbe39dbc734516bcb0e",
+      "created_at": "2026-11-14T17:51:27.052Z"
+    },
+    "DOM-D-A21D48E1": {
+      "record_id": "DOM-D-A21D48E1",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): unsloth/embeddinggemma-2-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/unsloth/embeddinggemma-2-GGUF](https://huggingface.co/unsloth/embeddinggemma-2-GGUF))  \n> **Source Version**: `hf-unsloth-e`  \n> **License**: Op",
+      "content_hash": "9695445eb2a9bedf260a0fcfe9f64884503fee9252b5858551620b3217b1b563",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-unsloth-embeddinggemma-2-gguf/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T17:51:27.243Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-unsloth-embeddinggemma-2-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-unsloth-embeddinggemma-2-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T17:51:53.951Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-unsloth-embeddinggemma-2-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-embeddinggemma-2-gguf-learnings-research-knowledge-intelligence-hf-un.md",
+      "repository": "hf-unsloth-embeddinggemma-2-gguf-learnings",
+      "content_hash": "3419a2de6dbc8c7821640a8396c9ab0620227ec2f7d4486838463d13f5a08d0f",
+      "created_at": "2026-11-14T17:51:54.131Z"
+    },
+    "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: greptimeteam-greptimedb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-learnings-architecture-intelligence-greptimeteam-greptim.md",
+      "repository": "greptimeteam-greptimedb-learnings",
+      "content_hash": "0bd5e2a3dcd9a722835867c5664969090062ca7a790d509206433c178bc70554",
+      "created_at": "2026-11-14T17:51:54.565Z"
     }
   }
 }

@@ -9929,3 +9929,7 @@ Every entry in this ledger must capture:
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `2d9938df` | Multi-dimensional audit evidence | 2026-11-14T17:39:55.388Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `ded6b58d` | Multi-dimensional audit evidence | 2026-11-14T17:40:09.683Z |
 | `learn-dom-d-a6170db1` | `project://hf-canberkkkkkk-ema-lightning` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | 2026-11-14T17:40:47.848Z |
+| `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-14T17:51:05.338Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `ab5b4223` | Multi-dimensional audit evidence | 2026-11-14T17:51:07.773Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `176bc07b` | Multi-dimensional audit evidence | 2026-11-14T17:51:23.425Z |
+| `learn-dom-d-a21d48e1` | `project://hf-unsloth-embeddinggemma-2-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | 2026-11-14T17:51:53.962Z |
