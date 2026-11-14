@@ -9687,3 +9687,6 @@
 | `CYCLE-20261114-DFLN` | `2026-11-14T00:36:15.035Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | Yes (`dda65751...`) |
 | `CYCLE-20261114-DNQE` | `2026-11-14T00:36:25.574Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8412` | Yes (`59082090...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T00:37:02.061Z` | `hf-black-forest-labs-flux.1-schnell` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C4A2A37A` [Domain D] | Yes (`073cfbb1...`) |
+| `CYCLE-20261114-T73V` | `2026-11-14T00:48:30.523Z` | `Scantist/GLM-5.3-SLIM-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md` | Yes (`9a3f76b1...`) |
+| `CYCLE-20261114-TN0V` | `2026-11-14T00:48:51.151Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8413` | Yes (`82f498f1...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T00:49:23.505Z` | `hf-scantist-glm-5.3-slim-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0C0C2CB4` [Domain D] | Yes (`fa7161b0...`) |

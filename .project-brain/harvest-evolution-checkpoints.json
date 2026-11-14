@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T00:37:03.849Z",
+  "last_updated": "2026-11-14T00:49:25.251Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-13T21:28:54.085Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-14T00:37:03.057Z",
+      "processed_at": "2026-11-14T00:49:24.577Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2233,7 +2233,7 @@
       "staged_for_review": 1
     },
     "bitterbot-ai-bitterbot-desktop-learnings.md": {
-      "processed_at": "2026-11-13T23:45:21.062Z",
+      "processed_at": "2026-11-14T00:49:23.817Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2286,9 +2286,14 @@
       "processed_at": "2026-11-14T00:37:02.061Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-scantist-glm-5.3-slim-gguf-learnings.md": {
+      "processed_at": "2026-11-14T00:49:23.505Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 726,
-  "total_canonical_promoted": 149,
-  "total_staged_for_review": 572
+  "total_dossiers_evaluated": 729,
+  "total_canonical_promoted": 150,
+  "total_staged_for_review": 574
 }

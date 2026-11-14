@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T00:37:03.475Z",
-  "total_records": 448,
+  "last_updated": "2026-11-14T00:49:24.931Z",
+  "total_records": 451,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 228,
+      "total": 231,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -262,7 +262,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core",
         "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants",
         "DOM-D-C4A2A37A",
-        "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-co"
+        "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-co",
+        "domain_intelligence-research-knowledge-intelligence-scantist-glm-5-3-slim-gguf-core-invariants",
+        "DOM-D-0C0C2CB4",
+        "domain_intelligence-research-knowledge-intelligence-hf-scantist-glm-5-3-slim-gguf-learnings-core-inv"
       ]
     },
     "E": {
@@ -6218,8 +6221,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "d9f7da8103f572e29cc5ab6257aa858b38b5c2b5870071f19aa381b4343abbc8",
-      "created_at": "2026-11-14T00:37:03.475Z"
+      "content_hash": "8f29c7ac8d65afd6a7bcadce8b429106e67043cf2ec3c8dc11f07cd822a7c9b1",
+      "created_at": "2026-11-14T00:49:24.931Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -9743,8 +9746,8 @@
       "title": "Technical Construction Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bitterbot-ai-bitterbot-desktop-technical-construction-intelligence-bitterbot-ai-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "e0b473f5e165fe633e1e2351ba87f508ff77f1b069d5b2820e899e099b485f8d",
-      "created_at": "2026-11-13T23:42:07.540Z"
+      "content_hash": "9fec65337b5b2abcabedc6046365c1e6f879d4c3b70d97d8fb8bc5c58468e3c3",
+      "created_at": "2026-11-14T00:48:51.423Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
@@ -9761,8 +9764,8 @@
       "title": "Technical Construction Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bitterbot-ai-bitterbot-desktop-learnings-technical-construction-intelligence-bit.md",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
-      "content_hash": "7368689b878f398cd848f9e810fb1b312de14a7d1b953dda693b97a2154b11f8",
-      "created_at": "2026-11-13T23:45:21.437Z"
+      "content_hash": "086f62f9e8a989fca211abc545be31ce0f016a0c3978e346bcb47c3f5e76fa10",
+      "created_at": "2026-11-14T00:49:24.360Z"
     },
     "DOM-D-62BFCC58": {
       "record_id": "DOM-D-62BFCC58",
@@ -10420,6 +10423,66 @@
       "repository": "flux-iac-tofu-controller-learnings",
       "content_hash": "b641d36a83035151fecdab57296ad21caa386ae66ae17e06f239da1959b7d268",
       "created_at": "2026-11-14T00:37:02.800Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-scantist-glm-5-3-slim-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-scantist-glm-5-3-slim-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Scantist/GLM-5.3-SLIM-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-scantist-glm-5-3-slim-gguf-research-knowledge-intelligence-scantist-glm-5-3-s.md",
+      "repository": "Scantist/GLM-5.3-SLIM-GGUF",
+      "content_hash": "d53fbd82a3058765c4bc06093e9ecf2aaf89c2d5525116b5fbc6ed110c7589c2",
+      "created_at": "2026-11-14T00:48:30.686Z"
+    },
+    "DOM-D-0C0C2CB4": {
+      "record_id": "DOM-D-0C0C2CB4",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Scantist/GLM-5.3-SLIM-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF](https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF))  \n> **Source Version**: `hf-scantist-`  \n> **License**: Open-Source",
+      "content_hash": "fa7161b0a1a2d22e818c371f4bc12466d241a06248595c245c83dd1d410ed399",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "provenance": {
+        "source_uri": "project://hf-scantist-glm-5.3-slim-gguf/hf-scantist-glm-5.3-slim-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T00:48:54.250Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-scantist-glm-5.3-slim-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-scantist-glm-5.3-slim-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T00:49:23.487Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-scantist-glm-5-3-slim-gguf-learnings-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-scantist-glm-5-3-slim-gguf-learnings-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-scantist-glm-5.3-slim-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-scantist-glm-5-3-slim-gguf-learnings-research-knowledge-intelligence-hf-scant.md",
+      "repository": "hf-scantist-glm-5.3-slim-gguf-learnings",
+      "content_hash": "64326af889262212952692ebfb2527c79471326a02f962dc76c8ad51712a56f2",
+      "created_at": "2026-11-14T00:49:23.700Z"
     }
   }
 }

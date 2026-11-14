@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T00:37:03.726Z",
-  "total_verified_learnings": 8442,
+  "last_updated": "2026-11-14T00:49:25.144Z",
+  "total_verified_learnings": 8443,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 16837,
+  "total_items": 16843,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112007,13 +112007,13 @@
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EGVM-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-UD06-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
       "title": "engine): restore text fallback for unknown file extensions (#394)",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a72498892a36bf817596b53794f559829c16ce7b0fd362355cfcea5af6527464",
+      "content_hash": "516b337d3d8c311867671f0f64db1db773c1ea0e698fd6b8e535b0c9086bfa94",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T00:37:03.359Z"
+      "persisted_at": "2026-11-14T00:49:24.834Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -112023,9 +112023,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d9f7da8103f572e29cc5ab6257aa858b38b5c2b5870071f19aa381b4343abbc8",
+      "content_hash": "8f29c7ac8d65afd6a7bcadce8b429106e67043cf2ec3c8dc11f07cd822a7c9b1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T00:37:03.475Z"
+      "persisted_at": "2026-11-14T00:49:24.931Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112035,9 +112035,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fec69c3af482f0ff46ffa2adbc9fee1d6d2acbebcfa9b9aa7bbe188c2f5e4772",
+      "content_hash": "2dae85a4085e7aaf15fd8f779ebdd2cfcdf6fd90642a65f0419cdfd3d3743d86",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T00:37:03.604Z"
+      "persisted_at": "2026-11-14T00:49:25.039Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112047,9 +112047,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "405c27f07a59eb05a8e016f19f3de28c0577714f143fb9eb6c4d1c5bf158c8fd",
+      "content_hash": "61ddb7c9e06a18fdce7b0adf1cb36e4e54f1f2ef02271a1ad708d455fa020a68",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T00:37:03.726Z"
+      "persisted_at": "2026-11-14T00:49:25.144Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -217470,8 +217470,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "3d57bd6a",
-      "content_hash": "0d6be646b5200a8c2914ef778d48da51880c4b6f8f6d5ce15b80cfdbe7151ad6",
+      "source_version": "e4d179d3",
+      "content_hash": "82f498f1198ffac06b9f940227110537dd076eba695186ba76f82feaefdd417a",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -217484,6 +217484,11 @@
           "number": 8406,
           "title": "Empirical Invariant Guard in docker-publish.yml",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8413,
+          "title": "bump the build-tooling group across 1 directory with 2 updates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217491,7 +217496,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T23:42:07.059Z",
+      "verified_at": "2026-11-14T00:48:51.021Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217533,10 +217538,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bitterbot-ai-bitterbot-desktop-technical-construction-intelligence-bitterbot-ai-.md",
       "title": "Technical Construction Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "3d57bd6a",
-      "content_hash": "e0b473f5e165fe633e1e2351ba87f508ff77f1b069d5b2820e899e099b485f8d",
+      "source_version": "e4d179d3",
+      "content_hash": "9fec65337b5b2abcabedc6046365c1e6f879d4c3b70d97d8fb8bc5c58468e3c3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T23:42:07.540Z"
+      "persisted_at": "2026-11-14T00:48:51.423Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bitterbot-ai-bitterbot-desktop": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bitterbot-ai-bitterbot-desktop",
@@ -217546,9 +217551,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for bitterbot-ai-bitterbot-desktop-learnings",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "7d5d99e2ea92e732f12fbb3feefdef54156730210f3b69a13373f64bf7263a2c",
+      "content_hash": "6fe0d340c0796ca3edf92b7dfe5e764c03bb20f5057e4d7f1c7752d48a41ad1c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T23:45:21.547Z"
+      "persisted_at": "2026-11-14T00:49:24.468Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
@@ -217594,9 +217599,9 @@
       "title": "Technical Construction Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "7368689b878f398cd848f9e810fb1b312de14a7d1b953dda693b97a2154b11f8",
+      "content_hash": "086f62f9e8a989fca211abc545be31ce0f016a0c3978e346bcb47c3f5e76fa10",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T23:45:21.437Z"
+      "persisted_at": "2026-11-14T00:49:24.360Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-timm-mobilenetv3_small_100-lamb_in1k-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-timm-mobilenetv3_small_100-lamb_in1k-learning",
@@ -219247,6 +219252,95 @@
       "content_hash": "7853aa2b136ea404cec58e4490b5b906da92564fc1c736a9346c3513dd2a2121",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T00:37:02.928Z"
+    },
+    "learn-huggingface-scantist-glm-5-3-slim-gguf": {
+      "learning_id": "learn-huggingface-scantist-glm-5-3-slim-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Scantist/GLM-5.3-SLIM-GGUF",
+      "repository": "Scantist/GLM-5.3-SLIM-GGUF",
+      "slug": "hf-scantist-glm-5.3-slim-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF",
+      "source_version": "hf-scantist-glm-5.3-slim-gguf",
+      "content_hash": "9a3f76b15d179917816cb706e3bd608a59a636830639cbdb317ca1bbf7b3f49d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T00:48:30.356Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-scantist-glm-5-3-slim-gguf-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-scantist-glm-5-3-slim-gguf-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-scantist-glm-5-3-slim-gguf-research-knowledge-intelligence-scantist-glm-5-3-s.md",
+      "title": "Research & Knowledge Intelligence: Scantist/GLM-5.3-SLIM-GGUF Core Invariants",
+      "repository": "Scantist/GLM-5.3-SLIM-GGUF",
+      "source_version": "hf-scantist-glm-5.3-slim-gguf",
+      "content_hash": "d53fbd82a3058765c4bc06093e9ecf2aaf89c2d5525116b5fbc6ed110c7589c2",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T00:48:30.686Z"
+    },
+    "rule-8413": {
+      "learning_id": "rule-8413",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8413,
+      "title": "bump the build-tooling group across 1 directory with 2 updates",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "e4d179d3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T00:48:51.021Z"
+    },
+    "candidate_directive-bump-the-build-tooling-group-across-1-directory-with-2-updates": {
+      "item_id": "candidate_directive-bump-the-build-tooling-group-across-1-directory-with-2-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TN5O-bump-the-build-tooling-group-across-1-directory-with-2-updates.md",
+      "title": "bump the build-tooling group across 1 directory with 2 updates",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "source_version": "e4d179d3",
+      "content_hash": "f43f028042569dd06284797a4334da5ec38e233ef4c9d6b2cb49b3c32d8879d7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T00:48:51.330Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-scantist-glm-5-3-slim-gguf-learnings-core-inv": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-scantist-glm-5-3-slim-gguf-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-scantist-glm-5-3-slim-gguf-learnings-research-knowledge-intelligence-hf-scant.md",
+      "title": "Research & Knowledge Intelligence: hf-scantist-glm-5.3-slim-gguf-learnings Core Invariants",
+      "repository": "hf-scantist-glm-5.3-slim-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "64326af889262212952692ebfb2527c79471326a02f962dc76c8ad51712a56f2",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T00:49:23.700Z"
+    },
+    "candidate_directive-deps-dev-bump-the-build-tooling-group-across-1-directory-with-2-updates": {
+      "item_id": "candidate_directive-deps-dev-bump-the-build-tooling-group-across-1-directory-with-2-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UCKB-deps-dev-bump-the-build-tooling-group-across-1-directory-with-2-updates.md",
+      "title": "deps-dev): bump the build-tooling group across 1 directory with 2 updates",
+      "repository": "bitterbot-ai-bitterbot-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "82fee1c018d7d78c05c6f71f6d16cd2e105577f6fac7de845c34c9cf4c98e964",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T00:49:24.263Z"
     }
   },
   "ai-builder-brain": {

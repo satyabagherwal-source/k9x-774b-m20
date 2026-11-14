@@ -9720,3 +9720,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-14T00:36:15.039Z |
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `e938178a` | Multi-dimensional audit evidence | 2026-11-14T00:36:25.578Z |
 | `learn-dom-d-c4a2a37a` | `project://hf-black-forest-labs-flux.1-schnell` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | 2026-11-14T00:37:02.061Z |
+| `learn-huggingface-scantist-glm-5-3-slim-gguf` | `https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF` | `hf-scantis` | Multi-dimensional audit evidence | 2026-11-14T00:48:30.527Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `e4d179d3` | Multi-dimensional audit evidence | 2026-11-14T00:48:51.155Z |
+| `learn-dom-d-0c0c2cb4` | `project://hf-scantist-glm-5.3-slim-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md` | 2026-11-14T00:49:23.505Z |

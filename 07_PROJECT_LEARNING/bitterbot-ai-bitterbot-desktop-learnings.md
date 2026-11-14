@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `3d57bd6a`  
+> **Source Version**: `e4d179d3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T23:42:06.298Z  
+> **Timestamp**: 2026-11-14T00:48:50.329Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T23:42:06.292Z  
+> **Harvest Timestamp**: 2026-11-14T00:48:50.323Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1698,31 +1698,242 @@ function ControlApp() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fdaddf50` (2026-11-13)
-**Commit Message**: Merge pull request #352 from Bitterbot-AI/dependabot/github_actions/docker/setup-buildx-action-4.4.1
+### Incident Patch 1: `716cfd2b` (2026-11-13)
+**Commit Message**: chore(deps-dev): bump the build-tooling group across 1 directory with 2 updates
 
-chore(deps): bump docker/setup-buildx-action from 4.3.0 to 4.4.1
+Bumps the build-tooling group with 2 updates in the / directory: [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/tree/HEAD/packages/plugin-react) and [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite).
 
-**File**: `.github/workflows/docker-publish.yml` (modified, +2/-2)
+
+Updates `@vitejs/plugin-react` from 6.1.2 to 6.3.0
+- [Release notes](https://github.com/vitejs/vite-plugin-react/releases)
+- [Changelog](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/CHANGELOG.md)
+- [Commits](https://github.com/vitejs/vite-plugin-react/commits/plugin-react@6.3.0/packages/plugin-react)
+
+Updates `vite` from 8.3.4 to 8.3.7
+- [Release notes](https://github.com/vitejs/vite/releases)
+- [Changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md)
+- [Commits](https://github.com/vitejs/vite/commits/v8.3.7/packages/vite)
+
+---
+updated-dependencies:
+- dependency-name: "@vitejs/plugin-react"
+  dependency-version: 6.2.1
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+  dependency-group: build-tooling
+- dependency-name: vite
+  dependency-version: 8.3.5
+  dependency-type: direct:developmen
+
+**File**: `pnpm-lock.yaml` (modified, +114/-387)
 ```diff
-@@ -49,7 +49,7 @@ jobs:
-     steps:
-       - uses: actions/checkout@v7
+@@ -267,7 +267,7 @@ importers:
+         version: 7.0.0-dev.20260215.1
+       '@vitest/coverage-v8':
+         specifier: ^4.0.18
+-        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
++        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@7.3.8(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
+       esbuild:
+         specifier: ^0.28.2
+         version: 0.28.2
+@@ -448,7 +448,7 @@ importers:
+         version: 18.3.7(@types/react@18.3.28)
+       '@vitejs/plugin-react':
+         specifier: ^6.1.2
+-        version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
++        version: 6.3.0(vite@8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+       autoprefixer:
+         specifier: ^10.6.1
+         version: 10.6.2(postcss@8.5.32)
+@@ -466,10 +466,10 @@ importers:
+         version: 5.9.3
+       vite:
+         specifier: ^8.3.4
+-        version: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
++        version: 8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
+       vitest:
+         specifier: ^4.1.11
+-        version: 4.1.11(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(@vitest/coverage-v8@4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18))(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
++        version: 4.1.11(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(@vitest/coverage-v8@4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@7.3.8(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18))(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
  
--      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
-+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+   extensions/discord:
+     devDependencies:
+@@ -921,312 +921,156 @@ packages:
+   '@ensofinance/sdk@2.3.1':
+     resolution: {integrity: sha512-sw0Je+x82LxCDexQvWemDk8X2kaPPIaiQwoWqtyWw9sNSnvsu//jLir2FXaNwvusCihYyX3p4Z1zgorqanKZzg==}
  
-       - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-         with:
-@@ -106,7 +106,7 @@ jobs:
-           path: /tmp/digests
-           merge-multiple: true
+-  '@esbuild/aix-ppc64@0.25.12':
+-    resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
+-    engines: {node: '>=18'}
+-    cpu: [ppc64]
+-    os: [aix]
+-
+   '@esbuild/aix-ppc64@0.28.2':
+     resolution: {integrity: sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==}
+     engines: {node: '>=18'}
+     cpu: [ppc64]
+     os: [aix]
  
--      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
-+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+-  '@esbuild/android-arm64@0.25.12':
+-    resolution: {integrity: sha512-6AAmLG7zwD1Z159jCKPvAxZd4y/VTO0VkprYy+3N2FtJ8+BQWFXU+OxARIwA46c5tdD9SsKGZ/1ocqBS/gAKHg==}
+-    engines: {node: '>=18'}
+-    cpu: [arm64]
+-    os: [android]
+-
+   '@esbuild/android-arm64@0.28.2':
+     resolution: {integrity: sha512-5YfKeeI8qWfBZIX+u2xZC3Zlb3Os/gLS2sbEKM+I4ZOcsWmHS2WLysCcQZDAFRslDUU5Oiq44gf6PYN1vGwG5A==}
+     engines: {node: '>=18'}
+     cpu: [arm64]
+     os: [android]
  
-       - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-         with:
+-  '@esbuild/android-arm@0.25.12':
+-    resolution: {integrity: sha512-VJ+sKvNA/GE7Ccacc9Cha7bpS8nyzVv0jdVgwNDaR4gDMC/2TTRc33Ip8qrNYUcpkOHUT5OZ0bUcNNVZQ9RLlg==}
+-    engines: {node: '>=18'}
+-    cpu: [arm]
+-    os: [android]
+-
+   '@esbuild/android-arm@0.28.2':
+     resolution: {integrity: sha512-kXXoiPVVGQcnIYGOeaovwOURpniDBpSq4A03qkQ+BMQqtGG6HYap3xne9C1O1yo4TR3qxlCX5IqqmX6fFo2Lqg==}
+     engines: {node: '>=18'}
+     cpu: [arm]
+     os: [android]
+ 
+-  '@esbuild/android-x64@0.25.12':
+-    resolution: {integrity: sha512-5jbb+2hhDHx5phYR2By8GTWEzn6I9UqR11Kwf22iKbNpYrsmRB18aX/9ivc5cabcUiAT/wM+YIZ6SG9QO6a8kg==}
+-    engines: {node: '>=18'}
+-    cpu: [x64]
+-    os: [android]
+-
+   '@esbuild/android-x64@0.28.2':
+     resolution: {integrity: sha512-O387ite7SzUyCcy3JQX4P4bLtEA7bLLkx+esve5JHnyYfNTxcVpXZo9jhdB0lTKN44gztELTdU7nS8Nr16Fs1Q==}
+     engines: {node: '>=18'}
+     cpu: [x64]
+     os: [android]
+ 
+-  '@esbuild/darwin-arm64@0.25.12':
+-    resolution: {integrity: sha512-N3zl+lxHCifgIlcMUP5016ESkeQjLj/959RxxNYIthIg+CQHInujFuXeWbWMgnTo4cp5XVHqFPmpyu9J65C1Yg==}
+-    engines: {node: '>=18'}
+-    cpu: [arm64]
+-    os: [darwin]
+-
+   '@esbuild/darwin-arm64@0.28.2':
+     resolution: {integrity: sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw==}
+     engines: {node: '>=18'}
+     cpu: [arm64]
+     os: [darwin]
+ 
+-  '@esbuild/darwin-x64@0.25.12':
+-    resolution: {integrity: sha512-HQ9ka4Kx21qHXwtlTUVbKJOAnmG1ipXhdWTmNXiPzPfWKpXqASVcWdnf2bnL73wgjNrFXAa3yYvBSd9pzfEIpA==}
+-    eng
+```
+
+---
+
+### Incident Patch 2: `aac6c8af` (2026-11-13)
+**Commit Message**: Merge pull request #357 from Bitterbot-AI/dependabot/npm_and_yarn/build-tooling-30e09afc1a
+
+chore(deps-dev): bump the build-tooling group across 1 directory with 2 updates
+
+**File**: `pnpm-lock.yaml` (modified, +114/-387)
+```diff
+@@ -267,7 +267,7 @@ importers:
+         version: 7.0.0-dev.20260215.1
+       '@vitest/coverage-v8':
+         specifier: ^4.0.18
+-        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
++        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@7.3.8(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
+       esbuild:
+         specifier: ^0.28.2
+         version: 0.28.2
+@@ -448,7 +448,7 @@ importers:
+         version: 18.3.7(@types/react@18.3.28)
+       '@vitejs/plugin-react':
+         specifier: ^6.1.2
+-        version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
++        version: 6.3.0(vite@8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+       autoprefixer:
+         specifier: ^10.6.1
+         version: 10.6.2(postcss@8.5.32)
+@@ -466,10 +466,10 @@ importers:
+         version: 5.9.3
+       vite:
+         specifier: ^8.3.4
+-        version: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
++        version: 8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
+       vitest:
+         specifier: ^4.1.11
+-        version: 4.1.11(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(@vitest/coverage-v8@4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18))(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
++        version: 4.1.11(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(@vitest/coverage-v8@4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@7.3.8(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18))(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+ 
+   extensions/discord:
+     devDependencies:
+@@ -921,312 +921,156 @@ packages:
+   '@ensofinance/sdk@2.3.1':
+     resolution: {integrity: sha512-sw0Je+x82LxCDexQvWemDk8X2kaPPIaiQwoWqtyWw9sNSnvsu//jLir2FXaNwvusCihYyX3p4Z1zgorqanKZzg==}
+ 
+-  '@esbuild/aix-ppc64@0.25.12':
+-    resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
+-    engines: {node: '>=18'}
+-    cpu: [ppc64]
+-    os: [aix]
+-
+   '@esbuild/aix-ppc64@0.28.2':
+     resolution: {integrity: sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==}
+     engines: {node: '>=18'}
+     cpu: [ppc64]
+     os: [aix]
+ 
+-  '@esbuild/android-arm64@0.25.12':
+-    resolution: {integrity: sha512-6AAmLG7zwD1Z159jCKPvAxZd4y/VTO0VkprYy+3N2FtJ8+BQWFXU+OxARIwA46c5tdD9SsKGZ/1ocqBS/gAKHg==}
+-    engines: {node: '>=18'}
+-    cpu: [arm64]
+-    os: [android]
+-
+   '@esbuild/android-arm64@0.28.2':
+     resolution: {integrity: sha512-5YfKeeI8qWfBZIX+u2xZC3Zlb3Os/gLS2sbEKM+I4ZOcsWmHS2WLysCcQZDAFRslDUU5Oiq44gf6PYN1vGwG5A==}
+     engines: {node: '>=18'}
+     cpu: [arm64]
+     os: [android]
+ 
+-  '@esbuild/android-arm@0.25.12':
+-    resolution: {integrity: sha512-VJ+sKvNA/GE7Ccacc9Cha7bpS8nyzVv0jdVgwNDaR4gDMC/2TTRc33Ip8qrNYUcpkOHUT5OZ0bUcNNVZQ9RLlg==}
+-    engines: {node: '>=18'}
+-    cpu: [arm]
+-    os: [android]
+-
+   '@esbuild/android-arm@0.28.2':
+     resolution: {integrity: sha512-kXXoiPVVGQcnIYGOeaovwOURpniDBpSq4A03qkQ+BMQqtGG6HYap3xne9C1O1yo4TR3qxlCX5IqqmX6fFo2Lqg==}
+     engines: {node: '>=18'}
+     cpu: [arm]
+     os: [android]
+ 
+-  '@esbuild/android-x64@0.25.12':
+-    resolution: {integrity: sha512-5jbb+2hhDHx5phYR2By8GTWEzn6I9UqR11Kwf22iKbNpYrsmRB18aX/9ivc5cabcUiAT/wM+YIZ6SG9QO6a8kg==}
+-    engines: {node: '>=18'}
+-    cpu: [x64]
+-    os: [android]
+-
+   '@esbuild/android-x64@0.28.2':
+     resolution: {integrity: sha512-O387ite7SzUyCcy3JQX4P4bLtEA7bLLkx+esve5JHnyYfNTxcVpXZo9jhdB0lTKN44gztELTdU7nS8Nr16Fs1Q==}
+     engines: {node: '>=18'}
+     cpu: [x64]
+     os: [android]
+ 
+-  '@esbuild/darwin-arm64@0.25.12':
+-    resolution: {integrity: sha512-N3zl+lxHCifgIlcMUP5016ESkeQjLj/959RxxNYIthIg+CQHInujFuXeWbWMgnTo4cp5XVHqFPmpyu9J65C1Yg==}
+-    engines: {node: '>=18'}
+-    cpu: [arm64]
+-    os: [darwin]
+-
+   '@esbuild/darwin-arm64@0.28.2':
+     resolution: {integrity: sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw==}
+     engines: {node: '>=18'}
+     cpu: [arm64]
+     os: [darwin]
+ 
+-  '@esbuild/darwin-x64@0.25.12':
+-    resolution: {integrity: sha512-HQ9ka4Kx21qHXwtlTUVbKJOAnmG1ipXhdWTmNXiPzPfWKpXqASVcWdnf2bnL73wgjNrFXAa3yYvBSd9pzfEIpA==}
+-    eng
 ```
 
 #### Recent Merged Pull Requests:
@@ -1751,30 +1962,42 @@ chore(deps): bump docker/setup-buildx-action from 4.3.0 to 4.4.1
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in docker-publish.yml
+## X. deps-dev): bump the build-tooling group across 1 directory with 2 updates
 
 **RULE**:
-When implementing operations in `.github/workflows/docker-publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fdaddf50`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `716cfd2b`: deps-dev): bump the build-tooling group across 1 directory with 2 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/docker-publish.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pnpm-lock.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@7.3.8(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
+        version: 6.3.0(vite@8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+        version: 8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
+        version: 4.1.11(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(@vitest/coverage-v8@4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@7.3.8(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18))(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@8.3.7(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
-      - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+        version: 4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18)
+        version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+        version: 8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
+        version: 4.1.11(@opentelemetry/api@1.10.0)(@types/node@26.6.5)(@vitest/browser-playwright@4.0.18)(@vitest/coverage-v8@4.0.18(@vitest/browser@4.0.18(bufferutil@4.1.0)(utf-8-validate@5.0.10)(vite@6.4.4(@types/node@26.6.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@4.0.18))(vitest@4.0.18))(happy-dom@20.14.5(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+  '@esbuild/aix-ppc64@0.25.12':
+    resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
+    engines: {node: '>=18'}
+    cpu: [ppc64]
+    os: [aix]
+
+  '@esbuild/android-arm64@0.25.12':
+    resolution: {integrity: sha512-6AAmLG7zwD1Z159jCKPvAxZd4y/VTO0Vkpr
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fdaddf50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `716cfd2b` are properly handled with clean fallback behavior.

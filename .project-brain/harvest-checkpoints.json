@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T00:36:25.588Z",
+  "last_updated": "2026-11-14T00:48:51.163Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "0d6be646b5200a8c2914ef778d48da51880c4b6f8f6d5ce15b80cfdbe7151ad6",
-      "verified_at": "2026-11-13T23:42:07.266Z",
+      "content_hash": "82f498f1198ffac06b9f940227110537dd076eba695186ba76f82feaefdd417a",
+      "verified_at": "2026-11-14T00:48:51.163Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T23:42:07.266Z"
+      "last_updated": "2026-11-14T00:48:51.163Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -18381,14 +18381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-scantist-glm-5-3-slim-gguf",
-      "content_hash": "e244e905d405d519fbaa2a9dd811bd370c26dc68048b0b8a17e184ee9779d917",
-      "verified_at": "2026-11-08T22:19:49.087Z",
+      "content_hash": "9a3f76b15d179917816cb706e3bd608a59a636830639cbdb317ca1bbf7b3f49d",
+      "verified_at": "2026-11-14T00:48:30.536Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:19:49.087Z"
+      "last_updated": "2026-11-14T00:48:30.536Z"
     },
     "wquguru/cicada": {
       "repository": "wquguru/cicada",

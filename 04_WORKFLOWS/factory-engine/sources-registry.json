@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T00:36:28.661Z",
-    "lastVerified": "2026-11-14T00:36:28.661Z",
+    "lastChecked": "2026-11-14T00:48:54.147Z",
+    "lastVerified": "2026-11-14T00:48:54.147Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,14 +155,14 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-13T23:42:06.292Z",
-    "lastVerified": "2026-11-13T23:42:06.292Z",
+    "lastChecked": "2026-11-14T00:48:50.323Z",
+    "lastVerified": "2026-11-14T00:48:50.323Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "0d6be646b5200a8c2914ef778d48da51880c4b6f8f6d5ce15b80cfdbe7151ad6",
+    "contentHash": "82f498f1198ffac06b9f940227110537dd076eba695186ba76f82feaefdd417a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1285,12 +1285,12 @@
     "lastVerified": "2026-11-13T20:07:12.583Z"
   },
   "emberstack-kubernetes-reflector": {
-    "name": "emberstack/kubernetes-reflector",
+    "name": "kubernetes-reflector",
     "officialUrl": "https://github.com/emberstack/kubernetes-reflector",
     "sourceType": "github",
     "technology": "C#",
-    "lastChecked": "2026-11-13T01:38:58.405Z",
-    "lastVerified": "2026-11-13T01:38:58.405Z",
+    "lastChecked": "2026-11-14T00:48:34.946Z",
+    "lastVerified": "2026-11-14T00:48:34.946Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-emberstack-kubernetes-reflector",
@@ -1299,7 +1299,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "19cceb3b"
   },
   "freenet-freenet-core": {
     "name": "freenet/freenet-core",
@@ -1503,8 +1504,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-13T18:52:26.329Z",
-    "lastVerified": "2026-11-13T18:52:26.329Z",
+    "lastChecked": "2026-11-14T00:48:37.382Z",
+    "lastVerified": "2026-11-14T00:48:37.382Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -3121,9 +3122,9 @@
   "nozbe-watermelondb": {
     "name": "WatermelonDB",
     "officialUrl": "https://github.com/Nozbe/WatermelonDB",
-    "lastChecked": "2026-11-09T16:25:52.829Z",
+    "lastChecked": "2026-11-14T00:48:32.458Z",
     "revisionIdentifier": "5c463222",
-    "lastVerified": "2026-11-09T16:25:52.829Z"
+    "lastVerified": "2026-11-14T00:48:32.458Z"
   },
   "kgateway-dev-kgateway": {
     "name": "kgateway-dev/kgateway",
@@ -3343,9 +3344,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-11-13T00:23:44.465Z",
+    "lastChecked": "2026-11-14T00:48:39.801Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-11-13T00:23:44.465Z"
+    "lastVerified": "2026-11-14T00:48:39.801Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -6777,12 +6778,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ataraxy-labs-sem": {
-    "name": "Ataraxy-Labs/sem",
+    "name": "sem",
     "officialUrl": "https://github.com/Ataraxy-Labs/sem",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T13:40:41.598Z",
-    "lastVerified": "2026-11-12T13:40:41.598Z",
+    "lastChecked": "2026-11-14T00:48:27.353Z",
+    "lastVerified": "2026-11-14T00:48:27.353Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ataraxy-labs-sem",
@@ -6791,7 +6792,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "036dde8e"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
     "name": "nomic-ai/nomic-embed-text-v1.5",
@@ -14751,13 +14753,13 @@
     "officialUrl": "https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-08T22:19:37.256Z",
-    "lastVerified": "2026-11-08T22:19:37.256Z",
+    "lastChecked": "2026-11-14T00:48:29.992Z",
+    "lastVerified": "2026-11-14T00:48:29.992Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf",
-    "contentHash": "e244e905d405d519fbaa2a9dd811bd370c26dc68048b0b8a17e184ee9779d917",
-    "promotedRulesCount": 2,
+    "contentHash": "9a3f76b15d179917816cb706e3bd608a59a636830639cbdb317ca1bbf7b3f49d",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

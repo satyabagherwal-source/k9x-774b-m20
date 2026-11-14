@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T00:36:25.584Z",
-  "total_cycles_completed": 9420,
-  "total_learnings_persisted": 9420,
-  "total_rules_promoted": 9133,
+  "last_updated": "2026-11-14T00:48:51.160Z",
+  "total_cycles_completed": 9422,
+  "total_learnings_persisted": 9422,
+  "total_rules_promoted": 9134,
   "history": [
-    {
-      "timestamp": "2026-11-13T12:08:21.271Z",
-      "repository": "Agent-Field/agentfield",
-      "learningId": "learn-github-agent-field-agentfield",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T12:08:24.209Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T12:08:43.181Z",
       "repository": "yugabyte/yugabyte-db",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-14T00:36:25.584Z",
       "repository": "flux-iac/tofu-controller",
       "learningId": "learn-github-flux-iac-tofu-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T00:48:30.532Z",
+      "repository": "Scantist/GLM-5.3-SLIM-GGUF",
+      "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T00:48:51.160Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
