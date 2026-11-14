@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T21:51:09.851Z",
-  "total_verified_learnings": 8617,
+  "last_updated": "2026-11-14T22:16:50.652Z",
+  "total_verified_learnings": 8619,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17880,
+  "total_items": 17888,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f7fc3f7c9f50a751f120134e8cd9116b4f73f37850fc050f4965152bb8a9efcd",
+      "content_hash": "af5eac9c66678e40597ea7be3e62abad28288e177a25c8f2449a5a1b9adffe25",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T20:09:45.417Z"
+      "persisted_at": "2026-11-14T22:16:50.546Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4a09ff80c0dab3aa1c512e9229c042a98548d00d744e5db927facbdaeebf7772",
+      "content_hash": "6f796265ee4820545548698bcd9b77820a5b00a8180c45938a310069f8a454ea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T20:09:45.517Z"
+      "persisted_at": "2026-11-14T22:16:50.652Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -112610,10 +112610,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "c08eec9b",
-      "content_hash": "e0f02991ef7ab740160ea8e2e2bf64833ee3c31c2d4e446fc0ad2ea6c9affa48",
+      "source_version": "e6256de9",
+      "content_hash": "9af387edf0fd05a51e7986b5cd46663c25e33621d896fc9e1f8ea39c37a7b4d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T15:29:40.533Z"
+      "persisted_at": "2026-11-14T22:11:33.233Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse",
@@ -112622,10 +112622,10 @@
       "relative_path": "08_VERIFICATION/clickhouse-clickhouse-verification-protocol-empirical-defect-shield-for-clickhou.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClickHouse/ClickHouse",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "c08eec9b",
-      "content_hash": "f3d61e27ce266e32c75ff188c5613bf917dd2932a7222311aa226f88f4ece149",
+      "source_version": "e6256de9",
+      "content_hash": "c63569a2032fafd366c82e76b9654895115317892db1103fe829a8e99dbe6fee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:29:40.629Z"
+      "persisted_at": "2026-11-14T22:11:33.337Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants",
@@ -214751,13 +214751,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-AKIS-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-U03N-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b6a414fbb6e7b78f250b9fb5594cd209e438b485ad988972367d2d5c0a455de3",
+      "content_hash": "209936bc6a18deb98408b935e8b75b12eaafe207df174949fc1d0610accec27f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T20:09:45.319Z"
+      "persisted_at": "2026-11-14T22:16:50.447Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -235427,6 +235427,140 @@
       "content_hash": "0a9c4ea34b409516fa67a4e879a8ca54bef6dede460e33a2ada5277b4d9b9a9b",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T21:51:09.851Z"
+    },
+    "learn-github-clickhouse-clickhouse": {
+      "learning_id": "learn-github-clickhouse-clickhouse",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ClickHouse/ClickHouse",
+      "repository": "ClickHouse/ClickHouse",
+      "slug": "clickhouse-clickhouse",
+      "platform": "github",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "e6256de9",
+      "content_hash": "cbd225d1a1d4c98ca21490c1936ec9d3c8e698f550443466f1dabf0d69d242ff",
+      "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8544,
+          "title": "Empirical Invariant Guard in executeQuery.cpp",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T22:11:32.819Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8544": {
+      "learning_id": "rule-8544",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8544,
+      "title": "Empirical Invariant Guard in executeQuery.cpp",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "e6256de9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T22:11:32.819Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-executequery-cpp": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-executequery-cpp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TZOV-empirical-invariant-guard-in-executequery-cpp.md",
+      "title": "Empirical Invariant Guard in executeQuery.cpp",
+      "repository": "clickhouse-clickhouse-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e64812de012504707f0f6b7f49a82ec83eab2529f49389688184b4f51fe948ff",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T22:16:49.904Z"
+    },
+    "learn-huggingface-facebook-sam3": {
+      "learning_id": "learn-huggingface-facebook-sam3",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "facebook/sam3",
+      "repository": "facebook/sam3",
+      "slug": "hf-facebook-sam3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/facebook/sam3",
+      "source_version": "hf-facebook-sam3",
+      "content_hash": "ccccc3c0cee5f6f7e1bb48fa4b5b6193d785ac8a9cafb4fe158e3cb0121bcdd7",
+      "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T22:16:18.541Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam3-research-knowledge-intelligence-facebook-sam3-core-invariants.md",
+      "title": "Research & Knowledge Intelligence: facebook/sam3 Core Invariants",
+      "repository": "facebook/sam3",
+      "source_version": "hf-facebook-sam3",
+      "content_hash": "67a37d9f31fa029c66dacf299c6fb64a96d4c19687c1f411ec76cf69e93f3ec3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T22:16:18.831Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam3-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam3-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam3-learnings-research-knowledge-intelligence-hf-facebook-sam3-lear.md",
+      "title": "Research & Knowledge Intelligence: hf-facebook-sam3-learnings Core Invariants",
+      "repository": "hf-facebook-sam3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b4f28ac1d50e86830731ce9bf2682adc7cc371436c0822d9f94fc3723b89df03",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T22:16:49.434Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-learnings-technical-construction-intelligence-clickhouse-c.md",
+      "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
+      "repository": "clickhouse-clickhouse-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f7ec640bc046c41ad276182b5d50d899515bbde73e3106382e04498cd96f7bd0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T22:16:50.017Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/clickhouse-clickhouse-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for clickhouse-clickhouse-learnings",
+      "repository": "clickhouse-clickhouse-learnings",
+      "source_version": "HEAD",
+      "content_hash": "56dd8b34ae8362345b18773c4951123685d86ae3333c574697ef3342abb23a49",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T22:16:50.134Z"
     }
   },
   "ai-builder-brain": {

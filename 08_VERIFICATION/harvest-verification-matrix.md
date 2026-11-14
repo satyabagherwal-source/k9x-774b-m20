@@ -9955,3 +9955,6 @@
 | `CYCLE-20261114-W9M7` | `2026-11-14T21:50:36.463Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8542` | Yes (`fb7258ad...`) |
 | `CYCLE-20261114-WF33` | `2026-11-14T21:50:43.551Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8543` | Yes (`9beabd2c...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T21:51:09.002Z` | `onejs-one` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-053419E8` [Domain F] | Yes (`52f5be1a...`) |
+| `CYCLE-20261114-N751` | `2026-11-14T22:11:32.965Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8544` | Yes (`cbd225d1...`) |
+| `CYCLE-20261114-TBLH` | `2026-11-14T22:16:18.677Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`ccccc3c0...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T22:16:49.250Z` | `hf-facebook-sam3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DD21AD65` [Domain D] | Yes (`9eca88d3...`) |

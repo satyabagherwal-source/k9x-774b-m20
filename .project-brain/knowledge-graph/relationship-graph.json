@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T21:51:09.001Z",
+  "updated_at": "2026-11-14T22:16:49.248Z",
   "statistics": {
-    "total_nodes": 220,
-    "total_edges": 120,
+    "total_nodes": 221,
+    "total_edges": 121,
     "domain_distribution": {
-      "D": 172,
+      "D": 173,
       "M": 1,
       "H": 19,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 120
+      "CONSTRAINED_BY_ARCHITECTURE": 121
     }
   },
   "nodes": {
@@ -4936,6 +4936,29 @@
       ],
       "created_at": "2026-11-14T21:51:09.001Z",
       "updated_at": "2026-11-14T21:51:09.001Z"
+    },
+    "DOM-D-DD21AD65": {
+      "id": "DOM-D-DD21AD65",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): facebook/sam3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-facebook-sam3/hf-facebook-sam3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T22:16:21.554Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-facebook-sam3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T22:16:49.248Z",
+      "updated_at": "2026-11-14T22:16:49.248Z"
     }
   },
   "edges": [
@@ -6138,6 +6161,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-F-053419E8 [F] with Domain G",
       "created_at": "2026-11-14T21:51:09.001Z"
+    },
+    {
+      "id": "EDGE-16662FCE6620",
+      "sourceId": "DOM-D-DD21AD65",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-DD21AD65 [D] with Domain M",
+      "created_at": "2026-11-14T22:16:49.248Z"
     }
   ]
 }

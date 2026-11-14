@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:28.704Z",
+  "timestamp": "2026-11-14T22:16:49.808Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-clickhouse-clickhouse-learnings",
+  "learning_id": "LEARN-EVO-clickhouse-clickhouse-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clickhouse-clickhouse-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:28.704Z`  
-> **Learning ID**: `LEARN-REEXTRACT-clickhouse-clickhouse-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T22:16:49.808Z`  
+> **Learning ID**: `LEARN-EVO-clickhouse-clickhouse-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `1598acaa`  
+> **Source Version**: `e6256de9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T09:19:23.255Z  
+> **Timestamp**: 2026-11-14T22:11:32.132Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T09:19:23.007Z  
+> **Harvest Timestamp**: 2026-11-14T22:11:31.992Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50896 stars
+- **Stars / Engagement**: 50928 stars
 
 ---
 
@@ -1342,11 +1342,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #130799** (2026-11-12): **max_execution_time includes workload query-slot admission wait**
-  *Symptoms*: ### Describe what's wrong  I reproduced this locally on **26.6.1.2439** (Linux/aarch64) and **26.7.1.1315** (macOS/arm64). A short query waits for a workload QUERY slot, then fails with `TIMEOUT_EXCEEDED` because that wait has already used up its `max_execution_time` budget. The same query passes without queueing.  The [admission timeout documentation](https://clickhouse.com/docs/reference/settings/session-settings/other#workload_admission_timeout_ms) gives pre-execution admission its own budget, separate from `max_execution_time`. The short query should still have its execution budget after admission.  ### How to reproduce  Use a fresh local server with two concurrent clients:  ```sql CREATE RESOURCE mre_query (QUERY); CREATE WORKLOAD mre_root; CREATE WORKLOAD mre_leaf IN mre_root SETTINGS max_concurrent_queries = 1; ```  Session A holds the only slot:  ```sql SELECT sleep(2) SETTINGS workload = 'mre_leaf'; ```  Start session B as soon as A holds the slot:  ```sql SELECT sleep(0.1) SETTINGS workload = 'mre_leaf', max_execution_time = 0.5; ```  In my runs I synchronized the clients by observing A in `system.processes` and `inflight_requests = 1` at `/mre_root/mre_leaf/semaphore` in `system.scheduler`. I then observed `queue_length = 1` at `/mre_root/mre_leaf/semaphore/fifo` while B waited. This avoids relying on a fixed delay to start B.  ### Observed results  On 26.6.1.2439:  | Query | Result | `query_duration_ms` | | --- | --- | ---: | | Short query, no holder | Success | 1
+- **Issue #131292** (2026-11-13): **DataLakeCatalog OneLake: tables with `abfs://` locations fail with `Unsupported storage type: abfs://`**
+  *Symptoms*: **Describe what's wrong**  Reading tables of a `DataLakeCatalog` database with `catalog_type = 'onelake'` fails when the catalog reports the table location with the `abfs://` scheme:  ``` Code: 48. DB::Exception: Unsupported storage type: abfs://. (NOT_IMPLEMENTED) 5. src/Databases/DataLake/ICatalog.cpp: DataLake::parseStorageTypeFromString(String const&) 6. src/Databases/DataLake/DatabaseDataLake.cpp: DB::DatabaseDataLake::buildTableEngineArgs(...) 7. src/Databases/DataLake/DatabaseDataLake.cpp: DB::DatabaseDataLake::tryGetTableImpl(...) 8. src/Databases/DataLake/DatabaseDataLake.cpp: DB::DatabaseDataLake::tryGetTable(...) ```  Since 2026-11-13 (between 02:18 and 06:54 UTC) the OneLake Iceberg REST catalog (`https://onelake.table.fabric.microsoft.com/iceberg`) returns `abfs://` locations for Delta tables that Fabric exposes as Iceberg, for example:  ``` "location": "abfs://<workspace>@onelake.dfs.fabric.microsoft.com/<lakehouse>/Tables/dbo/<table>" "metadata-location": "abfs://<workspace>@onelake.dfs.fabric.microsoft.com/<lakehouse>/Tables/dbo/<table>/metadata/v3.metadata.json" ```  Before, the same tables had `abfss://` locations, and they read fine. `tryParseStorageTypeFromString` (`src/Databases/DataLake/ICatalog.cpp`) maps only `abfss` (Azure Blob File System Secure) to `Azure`; `abfs` is the same Azure Data Lake Storage Gen2 scheme without the TLS requirement in the Hadoop ABFS driver, and nothing in `src` accepts it. Every such table in a OneLake database is now unread
 
-- **Issue #130381** (2026-11-12): **26.10: `addDate(formatDateTime(...))` over a Nullable DateTime64 with NULL rows fails with CANNOT_PARSE_DATETIME (regression from #117359)**
-  *Symptoms*: Caused by: https://github.com/ClickHouse/ClickHouse/pull/117359 (automated bisect over master builds narrowed to its merge; the two adjacent candidate commits have no CI build and the same build inputs as the last good commit)  ### Description  addDate(formatDateTime(x, '%Y-%m-%d 00:00:00'), INTERVAL) over a Nullable(DateTime64) column that contains NULL rows now fails with CANNOT_PARSE_DATETIME (Code 41). formatDateTime now leaves an empty string under NULL rows, where it used to leave '1970-01-01 00:00:00', and addDate still parses that value.  Regression between `26.8.1.667` (OLD) and `26.10.2.142` (NEW).  ### How to reproduce  Measure only the SELECT on each version.  ```sql SELECT min(addDate(formatDateTime(c1, '%Y-%m-%d 00:00:00'), toIntervalSecond(0))) AS lo, max(addDate(formatDateTime(c1, '%Y-%m-%d 00:00:00'), toIntervalSecond(0))) AS hi FROM (SELECT parseDateTime64BestEffortOrNull(arrayJoin(['2026-01-01 10:00:00', '']), 3, 'UTC') AS c1) SETTINGS compatibility = '24.12'; ```  ### Expected behavior  NULL rows give NULL and are ignored by min/max. The query should return lo = hi = 2026-01-01 00:00:00.000, as 26.8 does.  Error: `CANNOT_PARSE_DATETIME (Code 41)`.   <!-- ch-version-info:start --> ### Version info - Resolved by: #130646 - Merged into: `26.11.1.2046-master` (included in `26.11` and later) <!-- ch-version-info:end -->
+- **Issue #131194** (2026-11-13): **Negative values of `Seconds` settings bypass settings constraints**
+  *Symptoms*: **Describe the bug**  A setting of type `Seconds` (e.g. `max_execution_time`) accepts a negative value, and a `MAX` settings constraint does not stop it. A negative timeout then means "no limit", so a user restricted by a constraint can run past the limit set by the administrator.  There is also a float→integer overflow in the seconds→microseconds conversion: a value just below `2^63` microseconds passes the range check and is stored as a large negative value, which bypasses the constraint the same way.  **How to reproduce**  Verified on master (26.11, release build). Profile with `max_execution_time = 5` and a constraint `<max_execution_time><max>60</max></max_execution_time>` (or the equivalent `CREATE SETTINGS PROFILE ... SETTINGS max_execution_time = 5 MAX 60`):  ```sql SET max_execution_time = 100;                 -- Code: 452 SETTING_CONSTRAINT_VIOLATION, as expected SET max_execution_time = -1;                  -- accepted SET max_execution_time = 9223372036854.775;   -- accepted, getSetting('max_execution_time') = -9223372036854.775 ```  A query that takes ~8 s is killed at 5 s without the `SET`, but completes after either of the two accepted `SET`s.  **Root cause**  - `float64AsSecondsToTimespan` in `src/Core/SettingsFields.cpp` does not reject negative values. - Its overflow check `d * 1000000 > std::numeric_limits<Int64>::max()` compares with `Int64::max()` converted to `Float64`, i.e. `2^63`, so a product equal to `2^63` passes and `static_cast<Int64>` overflows (
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1363,181 +1363,327 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a1b855d0` (2026-11-12)
-**Commit Message**: Merge pull request #130697 from groeneai/distributed-plan-cleanup-poll-timeout-warning
+### Incident Patch 1: `4eb5bd00` (2026-11-14)
+**Commit Message**: Merge pull request #125616 from groeneai/fix-pr-insert-select-local-pipeline-select-settings
 
-Log a timed-out cleanup status poll of a distributed plan task at Warning
+Fix a crash in parallel replicas INSERT SELECT when the SELECT's own SETTINGS rule out the local plan
 
-**File**: `src/QueryPipeline/DistributedPlanExecutor.cpp` (modified, +6/-0)
+**File**: `src/Interpreters/ClusterProxy/executeQuery.cpp` (modified, +5/-1)
 ```diff
-@@ -1855,6 +1855,12 @@ class DistributedQueryPlanExecutorRemote final : public DistributedQueryPlanExec
-                     if (task_status.status == "Failing")
-                         recordTaskFailureOnce(task, task_status);
-                 }
-+                catch (const Poco::TimeoutException &)
-+                {
-+                    /// A cleanup poll has a short receive timeout, so a slow worker is expected to exceed it.
-+                    tryLogCurrentException(__PRETTY_FUNCTION__, fmt::format("waitForTaskTerminal {} on {}", task.task_id, task.endpoint_uri), LogsLevel::warning);
-+                    return std::nullopt;
-+                }
-                 catch (...)
+@@ -1595,7 +1595,7 @@ bool isSuitableForInsertSelectWithParallelReplicas(const ASTPtr & select, const
+ /// find and remove ReadFromParallelRemoteReplicasStep in query plan,
+ /// also returns the parallel replicas coordinator, connection pools and local replica index
+ /// stored in ReadFromParallelRemoteReplicasStep, so the remote-pool pass can reuse them.
+-LocalPlanParallelReplicasInfo dropReadFromRemoteInPlan(QueryPlan & query_plan)
++std::optional<LocalPlanParallelReplicasInfo> dropReadFromRemoteInPlan(QueryPlan & query_plan)
+ {
+     struct Frame
+     {
+@@ -1618,6 +1618,10 @@ LocalPlanParallelReplicasInfo dropReadFromRemoteInPlan(QueryPlan & query_plan)
+             const auto * step = frame.node->step.get();
+             if (const auto * read_from_remote = typeid_cast<const ReadFromParallelRemoteReplicasStep *>(step))
+             {
++                /// Without a local replica this step is the plan's only reading step.
++                if (!read_from_remote->getExcludePoolIndex())
++                    return {};
++
+                 auto & children = frame.parent->children;
+                 for (auto it = begin(children); it != end(children); ++it)
                  {
-                     tryLogCurrentException(__PRETTY_FUNCTION__, fmt::format("waitForTaskTerminal {} on {}", task.task_id, task.endpoint_uri));
+```
+
+**File**: `src/Interpreters/ClusterProxy/executeQuery.h` (modified, +2/-1)
+```diff
+@@ -171,7 +171,8 @@ struct LocalPlanParallelReplicasInfo
+ /// Predicate gating the local-plan branch of `executeQueryWithParallelReplicas`. Also evaluated
+ /// on followers in `ReadFromMergeTree` so they take the same topology decision as the initiator.
+ bool canUseLocalPlanForParallelReplicas(const ContextPtr & context);
+-LocalPlanParallelReplicasInfo dropReadFromRemoteInPlan(QueryPlan & query_plan);
++/// Returns nothing and leaves the plan intact unless the plan has both a local part and a remote reading step.
++std::optional<LocalPlanParallelReplicasInfo> dropReadFromRemoteInPlan(QueryPlan & query_plan);
+ 
+ /// Execute a distributed query, creating a query plan, from which the query pipeline can be built.
+ /// `stream_factory` object encapsulates the logic of creating plans for a different type of query
+```
+
+**File**: `src/Interpreters/InterpreterInsertQuery.cpp` (modified, +20/-8)
+```diff
+@@ -368,7 +368,8 @@ bool InterpreterInsertQuery::shouldAddSquashingForStorage(const StoragePtr & tab
+     return !(settings[Setting::distributed_foreground_insert] && table->isRemote());
+ }
+ 
+-static std::pair<QueryPipelineBuilder, ClusterProxy::LocalPlanParallelReplicasInfo> getLocalSelectPipelineForInserSelectWithParallelReplicas(const ASTPtr & select, const ContextPtr & context)
++static std::optional<std::pair<QueryPipelineBuilder, ClusterProxy::LocalPlanParallelReplicasInfo>>
++getLocalSelectPipelineForInserSelectWithParallelReplicas(const ASTPtr & select, const ContextPtr & context)
+ {
+     auto select_query_options = SelectQueryOptions(QueryProcessingStage::Complete, /*subquery_depth_=*/1);
+ 
+@@ -382,7 +383,10 @@ static std::pair<QueryPipelineBuilder, ClusterProxy::LocalPlanParallelReplicasIn
+     /// The connection pools and local replica index decided here are returned too, so the remote pass
+     /// reuses the exact same replica set rather than recomputing liveness from a fresh snapshot.
+     auto parallel_replicas_info = ClusterProxy::dropReadFromRemoteInPlan(plan);
+-    return {interpreter.buildQueryPipeline(), std::move(parallel_replicas_info)};
++    if (!parallel_replicas_info)
++        return {};
++
++    return std::make_pair(interpreter.buildQueryPipeline(), std::move(*parallel_replicas_info));
+ }
+ 
+ 
+@@ -799,18 +803,22 @@ QueryPipeline InterpreterInsertQuery::buildInsertSelectPipeline(
+ }
+ 
+ 
+-std::pair<QueryPipeline, ClusterProxy::LocalPlanParallelReplicasInfo> InterpreterInsertQuery::buildLocalInsertSelectPipelineForParallelReplicas(
++std::optional<std::pair<QueryPipeline, ClusterProxy::LocalPlanParallelReplicasInfo>>
++InterpreterInsertQuery::buildLocalInsertSelectPipelineForParallelReplicas(
+     ASTInsertQuery & query, const StoragePtr & table, ContextPtr select_context)
+ {
+     applyTrivialInsertSelectOptimization(query, table->prefersLargeBlocks(), max_insert_threads, select_context);
+ 
+-    auto [pipeline_builder, parallel_replicas_info]
+-        = getLocalSelectPipelineForInserSelectWithParallelReplicas(query.select, select_context);
++    auto local_select = getLocalSelectPipelineForInserSelectWithParallelReplicas(query.select, select_context);
++    if (!local_select)
++        return {};
++
++    auto & [pipeline_builder, parallel_replicas_info] = *local_select;
+     /// Parallel replicas builds its own local pipeline and never routes through the async insert queue,
+     /// so it hands over no lock and the caller keeps it for the whole pipeline.
+     auto local_pipeline = addInsertToSelectPipeline(
+         query, table, pipeline_builder, /* add_async_insert_queue_transform */ false, /* destination_lock */ nullptr);
+-    return {std::move(local_pipeline), std::move(parallel_replicas_info)};
++    return std::make_pair(std::move(local_pipeline), std::move(parallel_replicas_info));
+ }
+ 
+ 
+@@ -918,9 +926,9 @@ std::optional<QueryPipeline> InterpreterInsertQuery::buildInsertSelectPipelinePa
+                 "initiator's: the local pipeline shares the initiator's query status and cannot use the leaf "
+                 "timeout separately");
+         }
+-        else
++        else if (auto local = buildLocalInsertSelectPipelineForParallelReplicas(query, table, context))
+         {
+-            auto [local_pipeline, parallel_replicas_info] = buildLocalInsertSelectPipelineForParallelReplicas(query, table, context);
++            auto & [local_pipeline, parallel_replicas_info] = *local;
+             auto coordinator = parallel_replicas_info.coordinator;
+             auto local_replica_index = parallel_replicas_info.local_replica_index;
+             return ClusterProxy::executeInsertSelectWithParallelReplicas(
+@@ -931,6 +939,10 @@ std::optional<QueryPipeline> InterpreterInsertQuery::buildInsertSelectPipelinePa
+                 std::move(parallel_replicas_info.connection_pools),
+                 local_replica_index);
+         }
++        else
++        {
++            LOG_TRACE(logger, "Not using the local insert select pipeline because the SELECT plan has no local part");
++        }
+     }
+ 
+     return ClusterProxy::executeInsertSelectWithParallelReplicas(query, context);
+```
+
+**File**: `src/Interpreters/InterpreterInsertQuery.h` (modified, +1/-1)
+```diff
+@@ -143,7 +143,7 @@ class InterpreterInsertQuery : public IInterpreter, WithMutableContext
+     QueryPipeline buildInsertPipeline(ASTInsertQuery & query, StoragePtr table);
+ 
+     std::optional<QueryPipeline> buildInsertSelectPipelineParallelReplicas(ASTInsertQuery & query, StoragePtr table);
+-    std::pair<QueryPipeline, ClusterProxy::LocalPlanParallelReplicasInfo>
++    std::optional<std::pair<QueryPipeline, ClusterProxy::LocalPlanParallelReplicasInfo>>
+     buildLocalInsertSelectPipelineForParallelReplicas(ASTInsertQuery & query, const StoragePtr & table, ContextPtr select_context);
+ 
+     // if applicable, build pipeline for replicated MergeTree from cluster storage
+```
+
+**File**: `tests/queries/0_stateless/05394_parallel_replicas_insert_select_select_level_settings.reference` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++-- parallel_replicas_local_plan = 0 in the SELECT
++100000
++-- parallel_replicas_prefer_local_replica = 0 in the SELECT
++100000
++-- max_execution_time_leaf = 0 in the INSERT, 100 in the SELECT
++100000
++-- agreeing settings use the local pipeline
++100000
++05394_control	3
++05394_leaf_timeout	4
++05394_local_plan	4
++05394_prefer_local	4
+```
+
+**File**: `tests/queries/0_stateless/05394_parallel_replicas_insert_select_select_level_settings.sql` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++-- The SELECT's own SETTINGS can rule out the local plan that the INSERT-level settings allow (issue #122729).
++SET enable_analyzer = 1; -- parallel distributed insert select for replicated tables works only with analyzer
++SET parallel_distributed_insert_select = 2;
++
++DROP TABLE IF EXISTS t_mt_source;
++DROP TABLE IF EXISTS t_rmt_target SYNC;
++
++CREATE TABLE t_mt_source (k UInt64, v String) ENGINE = MergeTree() ORDER BY k;
++CREATE TABLE t_rmt_target (k UInt64, v String) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{database}/t_rmt_target', 'r1') ORDER BY ();
++
++INSERT INTO t_mt_source SELECT number AS k, toString(number) AS v FROM system.numbers LIMIT 1e5;
++
++SET enable_parallel_replicas = 1, cluster_for_parallel_replicas = 'test_cluster_one_shard_three_replicas_localhost', max_parallel_replicas = 3;
++SET parallel_replicas_for_non_replicated_merge_tree = 1;
++
++SELECT '-- parallel_replicas_local_plan = 0 in the SELECT';
++TRUNCATE TABLE t_rmt_target;
++INSERT INTO t_rmt_target SETTINGS parallel_replicas_local_plan = 1, log_comment = '05394_local_plan'
++SELECT * FROM t_mt_source SETTINGS parallel_replicas_local_plan = 0;
++SELECT count() FROM t_rmt_target;
++SELECT * FROM t_rmt_target EXCEPT SELECT * FROM t_mt_source;
++
++SELECT '-- parallel_replicas_prefer_local_replica = 0 in the SELECT';
++TRUNCATE TABLE t_rmt_target;
++INSERT INTO t_rmt_target SETTINGS parallel_replicas_local_plan = 1, parallel_replicas_prefer_local_replica = 1, log_comment = '05394_prefer_local'
++SELECT * FROM t_mt_source SETTINGS parallel_replicas_prefer_local_replica = 0;
++SELECT count() FROM t_rmt_target;
++SELECT * FROM t_rmt_target EXCEPT SELECT * FROM t_mt_source;
++
++SELECT '-- max_execution_time_leaf = 0 in the INSERT, 100 in the SELECT';
++TRUNCATE TABLE t_rmt_target;
++INSERT INTO t_rmt_target SETTINGS parallel_replicas_local_plan = 1, max_execution_time = 300, max_execution_time_leaf = 0, log_comment = '05394_leaf_timeout'
++SELECT * FROM t_mt_source SETTINGS max_execution_time_leaf = 100;
++SELECT count() FROM t_rmt_target;
++SELECT * FROM t_rmt_target EXCEPT SELECT * FROM t_mt_source;
++
++SELECT '-- agreeing settings use the local pipeline';
++TRUNCATE TABLE t_rmt_target;
++INSERT INTO t_rmt_target SETTINGS parallel_replicas_local_plan = 1, log_comment = '05394_control'
++SELECT * FROM t_mt_source;
++SELECT count() FROM t_rmt_target;
++SELECT * FROM t_rmt_target EXCEPT SELECT * FROM t_mt_source;
++
++-- Executed INSERTs: the initiator plus one per remote replica, so 4 without the local pipeline and 3 with it.
++SYSTEM FLUSH LOGS query_log;
++SELECT log_comment, count() FROM system.query_log
++WHERE (current_database = currentDatabase() OR has(databases, currentDatabase())) AND type = 'QueryFinish' AND query_kind = 'Insert'
++    AND log_comment IN ('05394_local_plan', '05394_prefer_local', '05394_leaf_timeout', '05394_control') AND event_date >= yesterday() AND event_time >= now() - 600
++GROUP BY log_comment ORDER BY log_comment;
++
++DROP TABLE t_mt_source;
++DROP TABLE t_rmt_target SYNC;
 ```
 
 ---
 
-### Incident Patch 2: `75cbc54e` (2026-11-12)
-**Commit Message**: Merge pull request #130714 from groeneai/fix-resource-soak-tsan-rss-and-fds-median
+### Incident Patch 2: `daec22af` (2026-11-14)
+**Commit Message**: Merge pull request #131278 from raphplt/docs-add-qoredb-gui
 
-Fix flaky resource soak tests on ThreadSanitizer builds
+Docs: add QoreDB to third-party visual interfaces
 
-**File**: `tests/integration/helpers/resource_soak.py` (modified, +14/-9)
+**File**: `docs/integrations/connectors/tools/gui.mdx` (modified, +15/-0)
 ```diff
-@@ -104,6 +104,7 @@ def __init__(self, node, metrics: Iterable[str] = ()):
-         self.pid = node.get_process_pid("clickhouse")
-         assert self.pid is not None, "cannot find the server process"
-         self.asan = node.is_built_with_sanitizer("address")
-+        self.tsan = node.is_built_with_sanitizer("thread")
-         self.samples: List[Sample] = []
+@@ -595,6 +595,21 @@ Features:
  
-     def sample(self, iteration: int) -> Sample:
-@@ -184,7 +185,7 @@ def assert_bounded(
-     ):
-         """Assert that the server-wide resources do not grow from the early to the late window.
+ </Accordion>
  
--        Memory gets a tolerance in bytes plus a fraction of the early value: allocator caching, log buffers and the query that just ran move it by some megabytes between samples. File descriptors and threads come from bounded pools (connection pools, thread pools), so after the warmup their maximum moves by a few at most.
-+        Memory gets a tolerance in bytes plus a fraction of the early value: allocator caching, log buffers and the query that just ran move it by some megabytes between samples. File descriptors and threads come from bounded pools (connection pools, thread pools), so after the warmup their number moves by a few at most.
++<Accordion title="QoreDB">
++
++[QoreDB](https://github.com/QoreDB/QoreDB) is an open-core desktop database client built with Rust and Tauri, with native ClickHouse support.
++
++Features:
++
++- Connects over the HTTP (8123) and HTTPS (8443) interfaces.
++- SQL editor with syntax highlighting, autocompletion and a virtualized result grid.
++- Classifies statements before execution and asks for confirmation before destructive queries on production connections.
++- Cancels running queries with `KILL QUERY`.
++- Read-only mode per connection.
++- Runs on macOS, Windows and Linux. The core is licensed under Apache 2.0.
++
++</Accordion>
++
+ ## Commercial {#commercial}
  
-         `cache_metrics` name `system.metrics` sizes in bytes of caches that legitimately fill up during the soak, for example `IcebergMetadataFilesCacheBytes` while every `INSERT` adds a manifest. Their size is subtracted from the memory before the comparison, as the caches have limits of their own."""
-         caches = [sum(s.metrics[m] for m in cache_metrics) for s in self.samples]
-@@ -196,14 +197,18 @@ def assert_bounded(
-             unit=" B",
-         )
-         # Resident memory also covers allocations that `MemoryTracking` does not see, such as those of the Rust Delta kernel. Only anonymous memory is compared: file-backed pages are those of the binary and of the files it reads, which the server faults in on first use (for example the debug info when it symbolizes a stack trace) and the kernel can evict, so they are not held by the server.
--        assert_not_growing(
--            "anonymous resident memory without caches",
--            [m - c for m, c in zip(self.series("rss"), caches)],
--            abs_tolerance=memory_abs_tolerance + (ASAN_QUARANTINE_BYTES if self.asan else 0),
--            rel_tolerance=memory_rel_tolerance,
--            unit=" B",
--        )
--        assert_not_growing("open file descriptors", self.series("fds"), abs_tolerance=fds_tolerance, statistic=max)
-+        # The resident memory of a ThreadSanitizer build includes its shadow memory, which it discards all at once when its thread slots run out of epochs and then refills, at points unrelated to the iterations.
-+        if self.tsan:
-+            logging.info("anonymous resident memory: not compared on a ThreadSanitizer build")
-+        else:
-+            assert_not_growing(
-+                "anonymous resident memory without caches",
-+                [m - c for m, c in zip(self.series("rss"), caches)],
-+                abs_tolerance=memory_abs_tolerance + (ASAN_QUARANTINE_BYTES if self.asan else 0),
-+                rel_tolerance=memory_rel_tolerance,
-+                unit=" B",
-+            )
-+        assert_not_growing("open file descriptors", self.series("fds"), abs_tolerance=fds_tolerance)
-         assert_not_growing("descriptors of exited threads", self.series("exited_thread_fds"), abs_tolerance=fds_tolerance, statistic=max)
-         assert_not_growing("threads", self.series("threads"), abs_tolerance=threads_tolerance, statistic=max)
- 
+ <Accordion title="ADQM Notebook">
 ```
 
 ---
 
-### Incident Patch 3: `1c8ebee4` (2026-11-12)
-**Commit Message**: Merge pull request #130639 from groeneai/darwin-executable-tests-read-timeout
+### Incident Patch 3: `89b0921b` (2026-11-14)
+**Commit Message**: Merge pull request #131238 from groeneai/fix-131164-namespace-location-not-a-uri
 
-Raise the script read timeout in three executable tests flaky on the macOS Fast test
+Treat a namespace location that is not a URI as no location in `DataLakeCatalog` `CREATE TABLE`
 
-**File**: `tests/queries/0_stateless/05047_selected_rows_executable_loop_double_count.sh` (modified, +4/-4)
+**File**: `src/Databases/DataLake/DatabaseDataLake.cpp` (modified, +7/-0)
 ```diff
-@@ -169,11 +169,11 @@ EOF
- # would make it depend on randomized granule settings. The non-pool cell must not set
- # \`send_chunk_header\`: with a header the child would echo the count back as a data row.
- $CLICKHOUSE_LOCAL --config-file="${WORK_DIR}/config.xml" --query "
--SELECT * FROM executable('gen1000.sh', 'TSV', 'x UInt64')
-+SELECT * FROM executable('gen1000.sh', 'TSV', 'x UInt64', SETTINGS command_read_timeout = 30000)
- SETTINGS log_queries = 1, log_comment = '05047_exec_tf', ast_fuzzer_runs = 0
- FORMAT Null;
+@@ -1009,6 +1009,13 @@ std::optional<DataLake::TableMetadata> DatabaseDataLake::tryGetNewTableMetadata(
+     if (!location)
+         return std::nullopt;
  
--CREATE TABLE t_pool (x UInt64) ENGINE = ExecutablePool('gen1000_pool.sh', 'TSV') SETTINGS pool_size = 1;
-+CREATE TABLE t_pool (x UInt64) ENGINE = ExecutablePool('gen1000_pool.sh', 'TSV') SETTINGS pool_size = 1, command_read_timeout = 30000;
- SELECT * FROM t_pool
- SETTINGS log_queries = 1, log_comment = '05047_exec_pool', ast_fuzzer_runs = 0
- FORMAT Null;
-@@ -182,15 +182,15 @@ CREATE TABLE t_pool_src (x UInt64) ENGINE = Memory;
- INSERT INTO t_pool_src SELECT number FROM numbers(100);
++    /// A catalog can report a placeholder instead of a location, e.g. Databricks reports `not_used` for a schema of managed tables.
++    if (!location->contains("://"))
++    {
++        LOG_DEBUG(log, "Ignoring location {} reported by the catalog for new table {}: it is not a URI", *location, name);
++        return std::nullopt;
++    }
++
+     LOG_DEBUG(log, "Location assigned by the catalog for new table {}: {}", name, *location);
  
- CREATE TABLE t_exec_in (x UInt64)
--ENGINE = Executable('echo_rows.sh', 'TSV', (SELECT x FROM t_pool_src WHERE x < 10));
-+ENGINE = Executable('echo_rows.sh', 'TSV', (SELECT x FROM t_pool_src WHERE x < 10)) SETTINGS command_read_timeout = 30000;
- 
- SELECT * FROM t_exec_in
- SETTINGS log_queries = 1, log_comment = '05047_exec_input', ast_fuzzer_runs = 0
- FORMAT Null;
- 
- CREATE TABLE t_pool_in (x UInt64)
- ENGINE = ExecutablePool('echo_pool.sh', 'TSV', (SELECT x FROM t_pool_src WHERE x < 10))
--SETTINGS send_chunk_header = 1, pool_size = 1;
-+SETTINGS send_chunk_header = 1, pool_size = 1, command_read_timeout = 30000;
- 
- SELECT * FROM t_pool_in
- SETTINGS log_queries = 1, log_comment = '05047_exec_pool_input', ast_fuzzer_runs = 0
+     auto table_metadata = DataLake::TableMetadata().withLocation();
 ```
 
-**File**: `tests/queries/0_stateless/05227_allow_executable_tables_ddl_does_not_run_script.sh` (modified, +4/-4)
+**File**: `tests/integration/test_database_iceberg/test.py` (modified, +39/-0)
 ```diff
-@@ -42,28 +42,28 @@ CONFIG
- # Gate closed: the definition is accepted and the refused read spawns nothing.
- $CLICKHOUSE_LOCAL --config-file="${CONFIG_FILE}" --query "
- SET allow_executable_tables = 0;
--CREATE TABLE t_gate (x UInt32) ENGINE = Executable('marker.sh', 'TSV');
-+CREATE TABLE t_gate (x UInt32) ENGINE = Executable('marker.sh', 'TSV') SETTINGS command_read_timeout = 30000;
- SELECT * FROM t_gate;
- " 2>&1 | grep -o -m1 'SUPPORT_IS_DISABLED'
+@@ -1545,6 +1545,45 @@ def test_create_without_engine_arguments(started_cluster, engine_clause):
+     assert node.query(f"SELECT * FROM {CATALOG_NAME}.`{root_namespace}.{table_name}`") == "AAPL\n"
  
- # Gate open: defining and wrapping still run nothing.
- $CLICKHOUSE_LOCAL --config-file="${CONFIG_FILE}" --query "
--CREATE TABLE t_gate (x UInt32) ENGINE = Executable('marker.sh', 'TSV');
-+CREATE TABLE t_gate (x UInt32) ENGINE = Executable('marker.sh', 'TSV') SETTINGS command_read_timeout = 30000;
- CREATE VIEW v_gate AS SELECT * FROM t_gate;
- "
- if [ -e "${MARKER}" ]; then echo "script ran"; else echo "script did not run"; fi
  
- # Positive control: proves the marker is observable, so the check above is not vacuous.
- $CLICKHOUSE_LOCAL --config-file="${CONFIG_FILE}" --query "
--CREATE TABLE t_gate (x UInt32) ENGINE = Executable('marker.sh', 'TSV');
-+CREATE TABLE t_gate (x UInt32) ENGINE = Executable('marker.sh', 'TSV') SETTINGS command_read_timeout = 30000;
- SELECT * FROM t_gate;
- "
- if [ -e "${MARKER}" ]; then echo "script ran"; else echo "script did not run"; fi
- 
- # A pooled worker started by a permitted read survives the gate closing: the refused read neither
- # reuses nor respawns it, and reopening the gate serves from the same worker.
- $CLICKHOUSE_LOCAL --config-file="${CONFIG_FILE}" --ignore-error --query "
--CREATE TABLE t_pool (x UInt32) ENGINE = ExecutablePool('marker_pool.sh', 'TSV', (SELECT 7)) SETTINGS send_chunk_header = 1, pool_size = 1;
-+CREATE TABLE t_pool (x UInt32) ENGINE = ExecutablePool('marker_pool.sh', 'TSV', (SELECT 7)) SETTINGS send_chunk_header = 1, pool_size = 1, command_read_timeout = 30000;
- SELECT * FROM t_pool;
- SET allow_executable_tables = 0;
- SELECT * FROM t_pool;
-```
-
-**File**: `tests/queries/0_stateless/scripts_udf/function.xml` (modified, +1/-0)
-```diff
-@@ -5,5 +5,6 @@
-         <return_type>String</return_type>
-         <format>TabSeparated</format>
-         <command>udf.sh</command>
-+        <command_read_timeout>30000</command_read_timeout>
-     </function>
- </functions>
++def test_create_without_engine_arguments_namespace_location_not_a_uri(started_cluster):
++    # Databricks reports `not_used` as the location of a schema with managed tables.
++    node = started_cluster.instances["node1"]
++
++    test_ref = f"test_create_namespace_location_not_a_uri_{uuid.uuid4()}"
++    table_name = f"{test_ref}_table"
++    root_namespace = f"{test_ref}_namespace"
++    table_ref = f"{CATALOG_NAME}.`{root_namespace}.{table_name}`"
++
++    catalog = load_catalog_impl(started_cluster)
++    catalog.create_namespace(root_namespace, properties={"location": "not_used"})
++    assert catalog.load_namespace_properties(root_namespace)["location"] == "not_used"
++
++    create_clickhouse_iceberg_database(
++        started_cluster, node, CATALOG_NAME, additional_settings={"storage_endpoint": "http://minio1:9001"}
++    )
++
++    # Without a table engine nothing tells the storage type.
++    error = node.query_and_get_error(
++        f"CREATE TABLE {CATALOG_NAME}.`{root_namespace}.{table_name}_default` (x String)",
++        settings={"allow_experimental_database_iceberg": 1},
++    )
++    assert "cannot tell where table" in error, error
++
++    node.query(
++        f"CREATE TABLE {table_ref} (x String) ENGINE = IcebergS3",
++        settings={"allow_experimental_database_iceberg": 1, "write_full_path_in_iceberg_metadata": 1},
++    )
++    node.query(
++        f"INSERT INTO {table_ref} VALUES ('AAPL')",
++        settings={"allow_insert_into_iceberg": 1, "write_full_path_in_iceberg_metadata": 1},
++    )
++    assert node.query(f"SELECT * FROM {table_ref}") == "AAPL\n"
++
++    # The catalog chose the location.
++    metadata_location = catalog.load_table(f"{root_namespace}.{table_name}").metadata_location
++    assert f"/{root_namespace}/{table_name}/metadata/" in metadata_location, metadata_location
++
++
+ @pytest.mark.parametrize("namespace_exists", [False, True])
+ def test_create_without_engine_arguments_storage_mismatch(started_cluster, namespace_exists):
+     node = started_cluster.instances["node1"]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #130991** (2026-11-12): Backport #130493 to 26.9: Fix flaky test_async_metadata_refresh (@robot-ch-test-poll3)
-- **PR #130990** (2026-11-12): Backport #130493 to 26.8: Fix flaky test_async_metadata_refresh (@robot-ch-test-poll3)
-- **PR #130945** (2026-11-12): Backport #125801 to 26.9: Parallel replicas followers follow the initiator whatever their own `automatic_parallel_replicas_mode` (@robot-clickhouse-ci-2)
-- **PR #130944** (2026-11-12): Backport #127416 to 26.9: Fix `Cannot fold actions for projection` when the join order optimizer reorders an outer join converted to INNER (@robot-clickhouse-ci-2)
-- **PR #130943** (2026-11-12): Backport #125897 to 26.8: Do not prefetch in a two-level GROUP BY that holds few keys (@robot-ch-test-poll)
-- **PR #130940** (2026-11-12): Backport #124526 to 26.10: Do not report progress of server-side AST fuzzer queries to the client (@robot-clickhouse)
+- **PR #131682** (closed): Use flat hash maps for per-block and per-granule name lookups (@nickitat)
+- **PR #131666** (2026-11-14): Do not run 02810 with parallel replicas (@devcrafter)
+- **PR #131658** (2026-11-14): Backport #128005 to 26.10: Cast a column received from a shard only once when a distributed query selects it twice (@robot-ch-test-poll)
+- **PR #131657** (2026-11-14): Backport #129012 to 26.10: Fix `replaceRegexpAll` rewrite when pattern starts with `^(?)?` (@robot-ch-test-poll)
+- **PR #131656** (2026-11-14): Backport #129146 to 26.10: Fix `NOT_FOUND_COLUMN_IN_BLOCK` in `optimize_injective_functions_in_limit_by` when the `LIMIT BY` key carries an alias (@robot-ch-test-poll)
+- **PR #131650** (2026-11-14): Backport #130814 to 26.9: Fix `bloom_filter` index mistaking a column named `mapKeys(m)` for the `Map` index (@robot-clickhouse)
 
 ---
 
@@ -1557,36 +1703,35 @@ Raise the script read timeout in three executable tests flaky on the macOS Fast 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #130697 from groeneai/distributed-plan-cleanup-poll-timeout-w
+## X. Empirical Invariant Guard in executeQuery.cpp
 
 **RULE**:
-When implementing operations in `src/QueryPipeline/DistributedPlanExecutor.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Interpreters/ClusterProxy/executeQuery.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a1b855d0`: Merge pull request #130697 from groeneai/distributed-plan-cleanup-poll-timeout-warning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4eb5bd00`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/QueryPipeline/DistributedPlanExecutor.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Interpreters/ClusterProxy/executeQuery.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-                catch (const Poco::TimeoutException &)
-                {
-                    /// A cleanup poll has a short receive timeout, so a slow worker is expected to exceed it.
-                    tryLogCurrentException(__PRETTY_FUNCTION__, fmt::format("waitForTaskTerminal {} on {}", task.task_id, task.endpoint_uri), LogsLevel::warning);
-                    return std::nullopt;
-                }
+std::optional<LocalPlanParallelReplicasInfo> dropReadFromRemoteInPlan(QueryPlan & query_plan)
+                /// Without a local replica this step is the plan's only reading step.
+                if (!read_from_remote->getExcludePoolIndex())
+                    return {};
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+LocalPlanParallelReplicasInfo dropReadFromRemoteInPlan(QueryPlan & query_plan)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a1b855d0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4eb5bd00` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

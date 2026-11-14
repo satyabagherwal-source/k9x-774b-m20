@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-K6NU",
-    "timestamp": "2026-11-09T16:10:56.058Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "00c45b712d56faa529ababea4e68b2f3ee7184233840b7c91b0637054beb5938",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-KA90",
-    "timestamp": "2026-11-09T16:11:00.708Z",
-    "repository": "invertase/react-native-firebase",
-    "learningId": "learn-github-invertase-react-native-firebase",
-    "contentHash": "ff6c2d0cb4fea86f59fede11acdff45c8a4ae770dc6ebd2f83d1ba16d616b121",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-KE6P",
     "timestamp": "2026-11-09T16:11:05.809Z",
     "repository": "zama-ai/tfhe-rs",
@@ -7492,6 +7462,36 @@
     "contentHash": "9beabd2c33d5528d54005efbb3d2d7a1ea053765953c346a3c0c175fe3be55bf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-N751",
+    "timestamp": "2026-11-14T22:11:32.965Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "cbd225d1a1d4c98ca21490c1936ec9d3c8e698f550443466f1dabf0d69d242ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-TBLH",
+    "timestamp": "2026-11-14T22:16:18.677Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "ccccc3c0cee5f6f7e1bb48fa4b5b6193d785ac8a9cafb4fe158e3cb0121bcdd7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

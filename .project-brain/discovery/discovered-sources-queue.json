@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T21:51:09.529Z",
+  "updated_at": "2026-11-14T22:16:49.697Z",
   "stats": {
-    "total_discovered": 3451,
-    "approved_pending_harvest": 3244,
+    "total_discovered": 3455,
+    "approved_pending_harvest": 3247,
     "harvested_count": 0,
-    "rejected_count": 207,
+    "rejected_count": 208,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3224,
+      "COMMUNITY_AND_EXPERT": 3228,
       "OFFICIAL_DOCUMENTATION": 123,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -74494,6 +74494,87 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
         "fileName": "duckdb-duckdb-learnings.md"
+      }
+    },
+    "SRC-F2BC736C0EE7": {
+      "id": "SRC-F2BC736C0EE7",
+      "url": "https://huggingface.co/facebook/sam3",
+      "title": "https://huggingface.co/facebook/sam3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:16:49.262Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
+        "fileName": "hf-facebook-sam3-learnings.md"
+      }
+    },
+    "SRC-14A0CC4ECAE9": {
+      "id": "SRC-14A0CC4ECAE9",
+      "url": "https://onelake.table.fabric.microsoft.com/iceberg%60",
+      "title": "https://onelake.table.fabric.microsoft.com/iceberg%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:16:49.654Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-F3F6E1618B5F": {
+      "id": "SRC-F3F6E1618B5F",
+      "url": "https://github.com/QoreDB/QoreDB",
+      "title": "https://github.com/QoreDB/QoreDB",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:16:49.676Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-971C3F5EEA1E": {
+      "id": "SRC-971C3F5EEA1E",
+      "url": "http://minio1:9001/",
+      "title": "http://minio1:9001/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-14T22:16:49.697Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
       }
     }
   }

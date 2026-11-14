@@ -9988,3 +9988,6 @@ Every entry in this ledger must capture:
 | `learn-github-onejs-one` | `https://github.com/onejs/one` | `e49f6c39` | Multi-dimensional audit evidence | 2026-11-14T21:50:36.471Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `b678afa9` | Multi-dimensional audit evidence | 2026-11-14T21:50:43.554Z |
 | `learn-dom-f-053419e8` | `project://onejs-one` | `e49f6c39` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/onejs-one-learnings.md` | 2026-11-14T21:51:09.002Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `e6256de9` | Multi-dimensional audit evidence | 2026-11-14T22:11:32.969Z |
+| `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-14T22:16:18.680Z |
+| `learn-dom-d-dd21ad65` | `project://hf-facebook-sam3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | 2026-11-14T22:16:49.250Z |

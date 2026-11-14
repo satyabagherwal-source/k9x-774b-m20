@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T21:51:09.682Z",
+  "last_updated": "2026-11-14T22:16:50.447Z",
   "directives": [
     {
       "id": "CD-001",
@@ -10262,11 +10262,11 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-AKIS",
+      "id": "CD-U03N",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-AKIS-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-U03N-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -13761,6 +13761,35 @@
       "source_repo": "duckdb-duckdb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-DFF91A-build-per-column-runtime-filters-for-mul.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-TZOV",
+      "directive_title": "Empirical Invariant Guard in executeQuery.cpp",
+      "source_repo": "clickhouse-clickhouse-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TZOV-empirical-invariant-guard-in-executequery-cpp.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-3D6705",
+      "directive_title": "Empirical Invariant Guard in executeQuery.cpp",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clickhouse-clickhouse",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3D6705-empirical-invariant-guard-in-executequer.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-7E0818",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7E0818-puppet-fix-postgresql-failing-to-start-o.md",
       "staged_date": "2026-11-14"
     }
   ]

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T21:51:09.759Z",
-  "total_records": 856,
+  "last_updated": "2026-11-14T22:16:50.546Z",
+  "total_records": 860,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 420,
+      "total": 423,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -457,7 +457,10 @@
         "DOM-D-11540386",
         "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-nerkyor-qwen3-8-27b-coder390-efficientthink-opus",
-        "domain_intelligence-research-knowledge-intelligence-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-o"
+        "domain_intelligence-research-knowledge-intelligence-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-o",
+        "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants",
+        "DOM-D-DD21AD65",
+        "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam3-learnings-core-invariants"
       ]
     },
     "E": {
@@ -633,7 +636,7 @@
       ]
     },
     "H": {
-      "total": 179,
+      "total": 180,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -813,7 +816,8 @@
         "DOM-H-ADE4819D",
         "domain_intelligence-technical-construction-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-",
         "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria"
       ]
     },
     "I": {
@@ -6671,8 +6675,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "f7fc3f7c9f50a751f120134e8cd9116b4f73f37850fc050f4965152bb8a9efcd",
-      "created_at": "2026-11-14T20:09:45.417Z"
+      "content_hash": "af5eac9c66678e40597ea7be3e62abad28288e177a25c8f2449a5a1b9adffe25",
+      "created_at": "2026-11-14T22:16:50.546Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -6857,8 +6861,8 @@
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "repository": "ClickHouse/ClickHouse",
-      "content_hash": "e0f02991ef7ab740160ea8e2e2bf64833ee3c31c2d4e446fc0ad2ea6c9affa48",
-      "created_at": "2026-11-13T15:29:40.533Z"
+      "content_hash": "9af387edf0fd05a51e7986b5cd46663c25e33621d896fc9e1f8ea39c37a7b4d7",
+      "created_at": "2026-11-14T22:11:33.233Z"
     },
     "DOM-D-303E5CE5": {
       "record_id": "DOM-D-303E5CE5",
@@ -17031,6 +17035,75 @@
       "repository": "duckdb-duckdb-learnings",
       "content_hash": "d92954930cb20b27d6c96b955dfbb23440d12f4ab2fb9a8c10b409c2750d3b02",
       "created_at": "2026-11-14T21:51:09.759Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-facebook-sam3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: facebook/sam3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam3-research-knowledge-intelligence-facebook-sam3-core-invariants.md",
+      "repository": "facebook/sam3",
+      "content_hash": "67a37d9f31fa029c66dacf299c6fb64a96d4c19687c1f411ec76cf69e93f3ec3",
+      "created_at": "2026-11-14T22:16:18.831Z"
+    },
+    "DOM-D-DD21AD65": {
+      "record_id": "DOM-D-DD21AD65",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): facebook/sam3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/facebook/sam3](https://huggingface.co/facebook/sam3))  \n> **Source Version**: `hf-facebook-`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clone-str",
+      "content_hash": "9eca88d386b8e6b9fb8df0ac8c97cd27303d573c96be8e1c3b3306c9be0d8976",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/",
+      "provenance": {
+        "source_uri": "project://hf-facebook-sam3/hf-facebook-sam3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T22:16:21.554Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-facebook-sam3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-facebook-sam3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T22:16:49.229Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam3-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-facebook-sam3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam3-learnings-research-knowledge-intelligence-hf-facebook-sam3-lear.md",
+      "repository": "hf-facebook-sam3-learnings",
+      "content_hash": "b4f28ac1d50e86830731ce9bf2682adc7cc371436c0822d9f94fc3723b89df03",
+      "created_at": "2026-11-14T22:16:49.434Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-learnings-technical-construction-intelligence-clickhouse-c.md",
+      "repository": "clickhouse-clickhouse-learnings",
+      "content_hash": "f7ec640bc046c41ad276182b5d50d899515bbde73e3106382e04498cd96f7bd0",
+      "created_at": "2026-11-14T22:16:50.017Z"
     }
   }
 }

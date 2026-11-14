@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T21:50:43.561Z",
+  "last_updated": "2026-11-14T22:16:18.688Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1909,14 +1909,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-sam3",
-      "content_hash": "5699c6eb6c4c806e1b8b8ff8d69b6f6cf60f9f62dffd52498cbfdf7bdaffa68a",
-      "verified_at": "2026-11-09T11:16:36.959Z",
+      "content_hash": "ccccc3c0cee5f6f7e1bb48fa4b5b6193d785ac8a9cafb4fe158e3cb0121bcdd7",
+      "verified_at": "2026-11-14T22:16:18.688Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T11:16:36.959Z"
+      "last_updated": "2026-11-14T22:16:18.688Z"
     },
     "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF": {
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "2932f1d4c4a1bf48f0de502a67c1795c273bc86eea656f95dc79f0d4a4facb62",
-      "verified_at": "2026-11-13T15:29:40.243Z",
+      "content_hash": "cbd225d1a1d4c98ca21490c1936ec9d3c8e698f550443466f1dabf0d69d242ff",
+      "verified_at": "2026-11-14T22:11:32.977Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:29:40.243Z"
+      "last_updated": "2026-11-14T22:11:32.977Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
