@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T15:25:53.572Z",
-    "lastVerified": "2026-11-14T15:25:53.572Z",
+    "lastChecked": "2026-11-14T15:34:47.251Z",
+    "lastVerified": "2026-11-14T15:34:47.251Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -433,8 +433,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T05:31:36.767Z",
-    "lastVerified": "2026-11-14T05:31:36.767Z",
+    "lastChecked": "2026-11-14T15:34:34.559Z",
+    "lastVerified": "2026-11-14T15:34:34.559Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -465,12 +465,12 @@
     "revisionIdentifier": "baeabbfe"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T14:22:56.884Z",
-    "lastVerified": "2026-11-14T14:22:56.884Z",
+    "lastChecked": "2026-11-14T15:34:39.481Z",
+    "lastVerified": "2026-11-14T15:34:39.481Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -479,7 +479,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4cba3006"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -4547,9 +4548,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-13T11:55:33.697Z",
+    "lastChecked": "2026-11-14T15:34:32.108Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-13T11:55:33.697Z"
+    "lastVerified": "2026-11-14T15:34:32.108Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -5977,9 +5978,9 @@
   "learnapollo-learnapollo": {
     "name": "learnapollo",
     "officialUrl": "https://github.com/learnapollo/learnapollo",
-    "lastChecked": "2026-11-10T06:12:35.363Z",
+    "lastChecked": "2026-11-14T15:34:29.593Z",
     "revisionIdentifier": "dea1677e",
-    "lastVerified": "2026-11-10T06:12:35.363Z"
+    "lastVerified": "2026-11-14T15:34:29.593Z"
   },
   "orange-cyberdefense-goad": {
     "name": "GOAD",
@@ -6265,14 +6266,14 @@
     "officialUrl": "https://github.com/arangodb/arangodb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-13T09:57:01.171Z",
-    "lastVerified": "2026-11-13T09:57:01.171Z",
+    "lastChecked": "2026-11-14T15:34:43.729Z",
+    "lastVerified": "2026-11-14T15:34:43.729Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "6c38576178fdd57393478856960fafa779562c2fae2379cd04fc54c2f45c9fc6",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 3,
+    "contentHash": "d527f549d0fca2456b6fc3e0d2c353789e9482f85d0afc93cc04aa22655ccbd7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7560,12 +7561,12 @@
     "officialUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T04:59:36.501Z",
-    "lastVerified": "2026-11-09T04:59:36.501Z",
+    "lastChecked": "2026-11-14T15:34:27.211Z",
+    "lastVerified": "2026-11-14T15:34:27.211Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-    "contentHash": "007f65081cac007f0c32a17dd4ea0426b466e6885df936f0210afa807f469c55",
+    "contentHash": "95bc9106f553052b8de3111ea2f5103ba232e31a5ab06b6c70f7cdd182db464f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -15376,6 +15377,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jithin-sabu-purge-app": {
+    "name": "jithin-sabu/purge-app",
+    "officialUrl": "https://github.com/jithin-sabu/purge-app",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-14T15:34:29.578Z",
+    "lastVerified": "2026-11-14T15:34:29.578Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-jithin-sabu-purge-app",
+    "contentHash": "c33edf08e7879ac2c23b69fdbf58d709feaa85eeb433c6731e1f13473271d40f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 13,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

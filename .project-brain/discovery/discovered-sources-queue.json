@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T15:26:23.328Z",
+  "updated_at": "2026-11-14T15:35:10.707Z",
   "stats": {
-    "total_discovered": 3301,
-    "approved_pending_harvest": 3096,
+    "total_discovered": 3309,
+    "approved_pending_harvest": 3104,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3089,
+      "COMMUNITY_AND_EXPERT": 3095,
       "OFFICIAL_DOCUMENTATION": 117,
-      "STANDARDS_AND_SPECIFICATIONS": 81,
+      "STANDARDS_AND_SPECIFICATIONS": 83,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
       "LEGAL_AND_REGULATORY": 1,
@@ -71207,6 +71207,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
         "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-4E61753C0A07": {
+      "id": "SRC-4E61753C0A07",
+      "url": "https://github.com/jithin-sabu/purge-app",
+      "title": "https://github.com/jithin-sabu/purge-app",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:34:47.355Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-98723979314B": {
+      "id": "SRC-98723979314B",
+      "url": "https://www.reddit.com/user/SpectyteCovelight",
+      "title": "https://www.reddit.com/user/SpectyteCovelight",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:34:47.375Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-F6039380BEF8": {
+      "id": "SRC-F6039380BEF8",
+      "url": "https://www.reddit.com/r/MacStack/comments/1xq4gba/purge_my_free_opensource_mac_cleaner_just_passed/19sclwex89ye9",
+      "title": "https://www.reddit.com/r/MacStack/comments/1xq4gba/purge_my_free_opensource_mac_cleaner_just_passed/19sclwex89ye9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:34:47.391Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-CB6F76E0DA9E": {
+      "id": "SRC-CB6F76E0DA9E",
+      "url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "title": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:35:10.344Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
+        "fileName": "hf-baai-bge-large-en-v1.5-learnings.md"
+      }
+    },
+    "SRC-568A1116FDD4": {
+      "id": "SRC-568A1116FDD4",
+      "url": "https://www.rfc-editor.org/info/rfc7515",
+      "title": "https://www.rfc-editor.org/info/rfc7515",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:35:10.648Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
+        "fileName": "arangodb-arangodb-learnings.md"
+      }
+    },
+    "SRC-B64AAFDD62E9": {
+      "id": "SRC-B64AAFDD62E9",
+      "url": "https://github.com/arangodb/arangodb/pull/23664",
+      "title": "https://github.com/arangodb/arangodb/pull/23664",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:35:10.664Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
+        "fileName": "arangodb-arangodb-learnings.md"
+      }
+    },
+    "SRC-1C5BE8D13042": {
+      "id": "SRC-1C5BE8D13042",
+      "url": "https://tools.ietf.org/html/rfc7515",
+      "title": "https://tools.ietf.org/html/rfc7515",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:35:10.691Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
+        "fileName": "arangodb-arangodb-learnings.md"
+      }
+    },
+    "SRC-4FC9A9BF80B0": {
+      "id": "SRC-4FC9A9BF80B0",
+      "url": "https://www.rfc-editor.org/rfc/rfc7515",
+      "title": "IETF RFC 7515",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T15:35:10.707Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
+        "fileName": "arangodb-arangodb-learnings.md"
       }
     }
   }

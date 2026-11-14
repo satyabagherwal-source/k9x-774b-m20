@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-O8LW",
-    "timestamp": "2026-11-09T09:14:10.964Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "c516f17ef37ee4b6cabba8b73bd96c5e1b7bdf40ae19e534f0d1f703e2a0704e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-R5UJ",
-    "timestamp": "2026-11-09T09:16:27.355Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-    "contentHash": "aa5b6c46b12c7cfad91aaa1b68dd30a52cb59d0ec4cdfc041ea5ab75e9a57ff3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-R8XN",
-    "timestamp": "2026-11-09T09:16:31.355Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "642b8118ae31fe3e05720bf03c6965c6644f0e2ab95b88b8c107b6cb1655b283",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-15U3",
     "timestamp": "2026-11-09T09:24:13.899Z",
     "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
@@ -7490,6 +7445,51 @@
     "repository": "apple/foundationdb",
     "learningId": "learn-github-apple-foundationdb",
     "contentHash": "31188ca886a93b9de907de236b206bbda2eb9e212203dc472065096dd0f96037",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-GJF5",
+    "timestamp": "2026-11-14T15:34:27.665Z",
+    "repository": "BAAI/bge-large-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+    "contentHash": "95bc9106f553052b8de3111ea2f5103ba232e31a5ab06b6c70f7cdd182db464f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-GLFB",
+    "timestamp": "2026-11-14T15:34:30.263Z",
+    "repository": "jithin-sabu/purge-app",
+    "learningId": "learn-github-jithin-sabu-purge-app",
+    "contentHash": "c33edf08e7879ac2c23b69fdbf58d709feaa85eeb433c6731e1f13473271d40f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-GWAT",
+    "timestamp": "2026-11-14T15:34:44.357Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "d527f549d0fca2456b6fc3e0d2c353789e9482f85d0afc93cc04aa22655ccbd7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

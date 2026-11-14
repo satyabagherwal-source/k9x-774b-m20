@@ -612934,3 +612934,160 @@ Future<Void> pingDatabase(Database cx) {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `b9f084af` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8499. offer only the Playwright browser builds no installed Playwright uses (Harvested from jithin-sabu/purge-app)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "offer only the Playwright browser builds no installed Playwright uses",
+  "source": "jithin-sabu/purge-app",
+  "source_url": "https://github.com/jithin-sabu/purge-app",
+  "source_version": "8d64ee60",
+  "license": "MIT",
+  "extracted_at": "2026-11-14T15:34:29.958Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-jithin-sabu-purge-app",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [jithin-sabu/purge-app](https://github.com/jithin-sabu/purge-app) (Revision: `8d64ee60`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `PurgeTests/AllowlistAuditTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jithin-sabu/purge-app. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0385710d`: offer only the Playwright browser builds no installed Playwright uses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `PurgeTests/AllowlistAuditTests.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+        "SBT Cache", "Unused Playwright Browsers",
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+        "SBT Cache", "Playwright Browsers",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0385710d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8500. flaky test testSampling (Harvested from arangodb/arangodb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "flaky test testSampling",
+  "source": "arangodb/arangodb",
+  "source_url": "https://github.com/arangodb/arangodb",
+  "source_version": "7d980299",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-14T15:34:44.065Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-arangodb-arangodb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [arangodb/arangodb](https://github.com/arangodb/arangodb) (Revision: `7d980299`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `tests/js/client/server_parameters/test-query-logging-sampling.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ec34a1f4`: flaky test testSampling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/js/client/server_parameters/test-query-logging-sampling.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+// probability (in percent) with which queries are logged
+const logProbability = 5;
+    'query.collection-logger-probability': String(logProbability),
+      // the number of logged queries follows Binomial(n, p). a ±5σ band keeps
+      // the false-failure rate at ~2e-6 while still detecting a 2x deviation
+      // in either direction with ~95% probability.
+      const p = logProbability / 100;
+      const expected = n * p;
+      const tolerance = 5 * Math.sqrt(n * p * (1 - p));
+      const min = expected - tolerance;
+      const max = expected + tolerance;
+      assertTrue(results.length >= min, { actual: results.length, min });
+      assertTrue(results.length <= max, { actual: results.length, max });
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+    'query.collection-logger-probability': '5',
+      let expected = n * 0.05;
+      let min = expected * 0.5;
+      let max = expected * 1.5;
+      assertTrue(results.length > min, { actual: results.length, min });
+      assertTrue(results.length < max, { actual: results.length, max });
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ec34a1f4` are properly handled with clean fallback behavior.

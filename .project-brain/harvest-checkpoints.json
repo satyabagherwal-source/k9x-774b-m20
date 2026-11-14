@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T15:25:50.562Z",
+  "last_updated": "2026-11-14T15:34:44.367Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1715,14 +1715,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-large-en-v1-5",
-      "content_hash": "007f65081cac007f0c32a17dd4ea0426b466e6885df936f0210afa807f469c55",
-      "verified_at": "2026-11-09T04:59:36.855Z",
+      "content_hash": "95bc9106f553052b8de3111ea2f5103ba232e31a5ab06b6c70f7cdd182db464f",
+      "verified_at": "2026-11-14T15:34:27.675Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T04:59:36.855Z"
+      "last_updated": "2026-11-14T15:34:27.675Z"
     },
     "zai-org/GLM-5.3": {
       "repository": "zai-org/GLM-5.3",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "6c38576178fdd57393478856960fafa779562c2fae2379cd04fc54c2f45c9fc6",
-      "verified_at": "2026-11-13T09:57:01.741Z",
+      "content_hash": "d527f549d0fca2456b6fc3e0d2c353789e9482f85d0afc93cc04aa22655ccbd7",
+      "verified_at": "2026-11-14T15:34:44.367Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T09:57:01.741Z"
+      "last_updated": "2026-11-14T15:34:44.367Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -18929,6 +18929,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-14T15:08:40.307Z"
+    },
+    "jithin-sabu/purge-app": {
+      "repository": "jithin-sabu/purge-app",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-jithin-sabu-purge-app",
+      "content_hash": "c33edf08e7879ac2c23b69fdbf58d709feaa85eeb433c6731e1f13473271d40f",
+      "verified_at": "2026-11-14T15:34:30.273Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-14T15:34:30.273Z"
     }
   },
   "repos": {

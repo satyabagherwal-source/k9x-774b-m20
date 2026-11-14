@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T15:26:58.981Z",
+  "updated_at": "2026-11-14T15:35:10.335Z",
   "statistics": {
-    "total_nodes": 197,
-    "total_edges": 107,
+    "total_nodes": 198,
+    "total_edges": 108,
     "domain_distribution": {
-      "D": 152,
+      "D": 153,
       "M": 1,
       "H": 17,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 107
+      "CONSTRAINED_BY_ARCHITECTURE": 108
     }
   },
   "nodes": {
@@ -4417,6 +4417,29 @@
       ],
       "created_at": "2026-11-14T15:26:58.981Z",
       "updated_at": "2026-11-14T15:26:58.981Z"
+    },
+    "DOM-D-4EDAAC12": {
+      "id": "DOM-D-4EDAAC12",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): BAAI/bge-large-en-v1.5",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-baai-bge-large-en-v1.5/hf-baai-bge-large-en-v1.5-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T15:34:47.766Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baai-bge-large-en-v1.5)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T15:35:10.335Z",
+      "updated_at": "2026-11-14T15:35:10.335Z"
     }
   },
   "edges": [
@@ -5489,6 +5512,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-L-817D65B4 [L] with Domain G",
       "created_at": "2026-11-14T15:26:58.981Z"
+    },
+    {
+      "id": "EDGE-C20DAC57CFFA",
+      "sourceId": "DOM-D-4EDAAC12",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-4EDAAC12 [D] with Domain M",
+      "created_at": "2026-11-14T15:35:10.335Z"
     }
   ]
 }

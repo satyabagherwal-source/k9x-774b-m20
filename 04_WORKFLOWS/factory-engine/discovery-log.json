@@ -21163,5 +21163,20 @@
     "downloads": 1262,
     "qualityScore": 3372,
     "discoveredAt": "2026-11-14T15:01:25.369Z"
+  },
+  {
+    "name": "purge-app",
+    "fullName": "jithin-sabu/purge-app",
+    "url": "https://github.com/jithin-sabu/purge-app",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Free up your Mac. Safely. A free, open-source native Mac app that clears the cache and junk your Mac piles up on its own. Files go to the Trash by default, so you can put them back.",
+    "stars": 1906,
+    "forks": 106,
+    "openIssues": 19,
+    "language": "Swift",
+    "qualityScore": 1273,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-14T15:32:15.039Z"
   }
 ]

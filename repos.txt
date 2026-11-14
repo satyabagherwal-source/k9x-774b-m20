@@ -5088,3 +5088,7 @@ https://huggingface.co/deepseek-ai/DeepSeek-V3.2
 # --- Automatically Discovered by AI Scout Engine [2026-11-14T15:03:33.555Z] ---
 # [HUGGINGFACE-AI-MODELS] higurashi-ai/Haru-4B (3372 score) - Verified Hugging Face Model: higurashi-ai/Haru-4B (211 likes, 1262 downloads)
 https://huggingface.co/higurashi-ai/Haru-4B
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-14T15:34:18.811Z] ---
+# [MOBILE-CROSS-PLATFORM] jithin-sabu/purge-app (1273 score) - Free up your Mac. Safely. A free, open-source native Mac app that clears the cac
+https://github.com/jithin-sabu/purge-app

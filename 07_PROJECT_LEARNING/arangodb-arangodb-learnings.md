@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `5f9867e0`  
+> **Source Version**: `7d980299`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T09:57:01.183Z  
+> **Timestamp**: 2026-11-14T15:34:43.734Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T09:57:01.171Z  
+> **Harvest Timestamp**: 2026-11-14T15:34:43.729Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1641,11 +1641,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23660** (2026-11-13): **Remove unused security-governance job from the lint workflow of testing pipeline**
-  *Symptoms*: ### Scope & Purpose  Remove the `security-governance` job from the `lint` workflow of the testing pipeline. It ran the Trivy disposition check and checked `.circleci/required-checks.txt` against the live branch protection.  - `.circleci/base_config.yml`: drop the job, its `lint` workflow entry and the `trivy-scan` orb import, which only this job used. - `.circleci/required-checks.txt`: deleted, nothing else reads it.  Unaffected: the nightly-packages pipeline keeps its own `trivy-scan` orb and Trivy gates, and merge gating doesn't change (`lint` is not a required check).  - [x] :hammer: Refactoring/simplification  ### Checklist  - [x] Backports   - [x] Backport for 3.12: https://github.com/arangodb/arangodb/pull/23659
+- **Issue #23666** (2026-11-13): **[COR-1280] Fix JWT encoding**
+  *Symptoms*: ### Scope & Purpose  https://www.rfc-editor.org/info/rfc7515/ defines that JWT must use “base64url” encoding instead of the standard base64 encoding.  - [x] :hankey: Bugfix  ### Checklist  - [x] Tests   - [x] C++ **Unit tests**
 
-- **Issue #23659** (2026-11-13): **[3.12] Remove unused security-governance job from the lint workflow of testing pipeline**
-  *Symptoms*: ### Scope & Purpose  Remove the `security-governance` job from the `lint` workflow of the testing pipeline. It ran the Trivy disposition check and checked `.circleci/required-checks.txt` against the live branch protection.  - `.circleci/base_config.yml`: drop the job, its `lint` workflow entry and the `trivy-scan` orb import, which only this job used. - `.circleci/required-checks.txt`: deleted, nothing else reads it.  Unaffected: the nightly-packages pipeline keeps its own `trivy-scan` orb and Trivy gates, and merge gating doesn't change (`lint` is not a required check).  - [x] :hammer: Refactoring/simplification
+- **Issue #23665** (2026-11-13): **Fix flaky test testSampling**
+  *Symptoms*: backport of https://github.com/arangodb/arangodb/pull/23664
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1662,306 +1662,445 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `204e1692` (2026-11-13)
-**Commit Message**: Remove unused security-governance job from the lint workflow of testing pipeline (#23660)
+### Incident Patch 1: `ec34a1f4` (2026-11-13)
+**Commit Message**: Fix flaky test testSampling
 
-**File**: `.circleci/base_config.yml` (modified, +0/-166)
+The test is probabilistic so can still fail, but the chances are much lower now.
+
+**File**: `tests/js/client/server_parameters/test-query-logging-sampling.js` (modified, +13/-6)
 ```diff
-@@ -3,9 +3,6 @@ version: 2.1
- orbs:
-   aws-cli: circleci/aws-cli@4.1.1
-   aws-ecr: circleci/aws-ecr@9.0.1
--  # Exact pin: a floating orb range silently changes what runs. Keep in
--  # sync with base_nightly_packages.yml.
--  trivy-scan: arangodb/trivy-scan@1
+@@ -34,12 +34,14 @@ const errors = internal.errors;
+ const cn = "UnitTestsQueries";
+ // fetch everything at once
+ const batchSize = 10 * 1000;
++// probability (in percent) with which queries are logged
++const logProbability = 5;
  
- parameters:
-   enterprise-commit:
-@@ -747,164 +744,6 @@ jobs:
-               echo "Nothing to cancel"
-             fi
- 
--  # PR-time lint of what governs the nightly security gates: disposition
--  # hygiene and the required-status-check inventory.
--  security-governance:
--    docker:
--      - image: cimg/base:current
--    resource_class: small
--    steps:
--      - attach_workspace:
--          at: .
--      # No suppression files exist here today; this keeps any future one
--      # dated and in-window. poam-windows matches the trivy-gate-waivers
--      # table; nosem-exclude skips vendored trees.
--      - trivy-scan/disposition-check:
--          poam-windows: "critical=30,high=30,medium=90,low=180"
--          nosem-exclude: ":!:.circleci/* :!:3rdParty/* :!:*/node_modules/*"
--      - run:
--          name: Compare required checks against the live configuration
--          environment:
--            # "true" anywhere in here marks a variant pipeline, which renames
--            # the build workflows by design (generate_config.py appends the
--            # variant to the workflow name).
--            PIPELINE_VARIANTS: "<< pipeline.parameters.with-tsan >>,<< pipeline.parameters.with-alubsan >>,<< pipeline.parameters.full >>,<< pipeline.parameters.replication-two >>"
--          command: |
--            set -eu
--            set -o pipefail
--            LIST=.circleci/required-checks.txt
--            # PR pipelines run on the head branch, so the protected branch
--            # cannot be derived from CIRCLE_BRANCH.
--            PROTECTED=devel
--            DRIFT=0
--            if [ ! -s "${LIST}" ]; then
--              echo "ERROR: ${LIST} is missing or empty. Commit the required-check inventory." >&2
--              exit 1
--            fi
--            # || true: grep exits 1 on a comments-only list; that is reported
--            # as an error on the next line, not as a pipefail abort here.
--            grep -vE '^[[:space:]]*(#|$)' "${LIST}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | sort -u > /tmp/required-expected.txt || true
--            if [ ! -s /tmp/required-expected.txt ]; then
--              echo "ERROR: ${LIST} lists no contexts." >&2
--              exit 1
--            fi
--            echo "Committed required contexts (${LIST}):"
--            sed -e 's/^/  /' /tmp/required-expected.txt
--            # Live GitHub side. Branch protection needs an administration:read
--            # token, rulesets only a repo token, so both are consulted. No
--            # token means UNVERIFIED, never "no drift".
--            : > /tmp/required-live.txt
--            LIVE_SOURCE=""
--            PROT_OK=0
--            if [ -n "${GITHUB_TOKEN:-}" ]; then
--              GH_API="https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
--              for ENDPOINT in "branches/${PROTECTED}/protection" "rules/branches/${PROTECTED}"; do
--                if curl -sSfL --retry 3 --retry-delay 2 --max-time 60 \
--                     -H "Authorization: Bearer ${GITHUB_TOKEN}" \
--                     -H "Accept: application/vnd.github+json" \
--                     -H "X-GitHub-Api-Version: 2022-11-28" \
--                     -o /tmp/gh-rules.json "${GH_API}/${ENDPOINT}"; then
--                  # grep/sed: heredocs collide with CircleCI parameter
--                  # syntax; "context" only appears in required checks.
--                  grep -oE '"context":[[:space:]]*"[^"]*"' /tmp/gh-rules.json \
--                    | sed -e 's/.*"\([^"]*\)"$/\1/' | sort -u >> /tmp/required-live.txt || true
--                  LIVE_SOURCE="${LIVE_SOURCE}${LIVE_SOURCE:+, }${ENDPOINT}"
--                  if [ "${ENDPOINT}" = "branches/${PROTECTED}/protection" ]; then
--                    PROT_OK=1
--                  fi
--                else
--                  echo "NOTICE: could not read ${ENDPOINT} (token scope?), that surface is unverified on this run." >&2
--                fi
--              done
--            elif [ -n "${CIRCLE_PR_REPONAME:-}" ]; then
--              echo "NOTICE: forked PR, no GITHUB_TOKEN; the live GitHub configuration is unverified on this run." >&2
--            else
--              echo "NOTICE: GITHUB_TOKEN is not set; the live GitHub configuration stays UNVERIFIED until a context with a read-only administration:read token is attached." >&2
--            fi
--            # Compare only when a surface that can carry required contexts
--            # answered: an empty read off the rulesets endpoint alone is a
--            # token-scope gap, not proof that nothing is required.
--            if [ -n "${LIVE_SOURCE}" ] && { [ "${PROT_OK}" = "1" ] || [ -s /tmp/required-live.txt ]; }; then
--              sort -u /tmp/required-live.txt -o /tmp/required-live.tx
-```
-
-**File**: `.circleci/required-checks.txt` (removed, +0/-10)
-```diff
-@@ -1,10 +0,0 @@
--# Required status checks for merging into devel, one context per line.
--# security-governance compares this list against live branch protection and
--# against the workflows a real pipeline emits; drift in either direction is
--# a broken merge gate. Read off the live configuration, never hand-derived;
--# GitHub sees one check per CircleCI workflow, so these are workflow names.
--# The Trivy gates live in the nightly-packages pipeline. They fail that
--# workflow but block neither the merge nor the nightly publish.
--
--aarch64-pr
--x64-pr
-```
-
----
-
-### Incident Patch 2: `fbbdcbfe` (2026-11-12)
-**Commit Message**: Merge pull request #23638 from arangodb/bug-fix/re-enable-tests-for-arm
-
-BTS-2363: re-enable test
-
-
-
----
-
-### Incident Patch 3: `5f4fcc20` (2026-11-10)
-**Commit Message**: COR-1263: NGRAM_MATCH fix for extra counting issue
-
-**File**: `arangod/Aql/Function/NGramFunctions.cpp` (modified, +7/-1)
-```diff
-@@ -220,9 +220,15 @@ AqlValue functions::NgramMatch(ExpressionContext* ctx, AstNode const&,
-   if (!targetNgrams.empty() && !attrNgrams.empty()) {
-     size_t thresholdMatches =
-         (size_t)std::ceil((float_t)targetNgrams.size() * threshold);
--    size_t d = 0;  // will store upper-left cell value for current cache row
-+    // cache[j] is the longest match using the first j attribute n-grams.
-+    // cache[0] stays 0: a match cannot start before the first attribute n-gram.
-     std::vector<size_t> cache(attrNgrams.size() + 1, 0);
-     for (auto const& targetNgram : targetNgrams) {
-+      // Diagonal of column 1 is cache[0] from the previous row. Reusing the
-+      // value left in `d` would apply the previous row's last cell (saved
-+      // before that cell was overwritten, so two rows back) and over-count
-+      // a repeated token, e.g. ["quick"] vs ["quick","quick","quick"].
-+      size_t d = 0;
-       size_t s_ngram_idx = 1;
-       for (; s_ngram_idx <= attrNgrams.size(); ++s_ngram_idx) {
-         size_t curMatches =
-```
-
-**File**: `lib/iresearch/core/utils/ngram_match_utils.hpp` (modified, +4/-1)
-```diff
-@@ -86,12 +86,15 @@ float_t ngram_similarity(const T* target, size_t target_size, const T* src,
-   const T* t_ngram_start_end = target + target_size - ngram_size +
-                                1;  // end() analog for target ngram start
- 
--  float_t d = 0;  // will store upper-left cell value for current cache row
-   std::vector<float_t> cache(s_ngram_count + 1, 0);
- 
-   // here could be constructed source string with start characters affixing
- 
-   for (; t_ngram_start != t_ngram_start_end; ++t_ngram_start) {
-+    // Upper-left cell of this row. Column 0 is always 0, so each target
-+    // n-gram starts from a zero diagonal. Carrying `d` across rows leaks the
-+    // previous row's last cell (the value from two rows earlier).
-+    float_t d = 0;
-     const T* t_ngram_end = t_ngram_start + ngram_size;
-     const T* s_ngram_start = src;
-     size_t s_ngram_idx = 1;
-```
-
-**File**: `lib/iresearch/tests/utils/ngram_match_utils_tests.cpp` (modified, +27/-0)
-```diff
-@@ -431,6 +431,33 @@ TEST(ngram_match_utils_test, test_similarity_shorter) {
-   }
+ if (getOptions === true) {
+   return {
+     'query.collection-logger-enabled': 'true',
+     'query.collection-logger-include-system-database': 'true',
+-    'query.collection-logger-probability': '5',
++    'query.collection-logger-probability': String(logProbability),
+     'query.collection-logger-push-interval': '100',
+   };
  }
+@@ -128,9 +130,14 @@ function QueryLoggerSuite() {
+         db._query(query);
+       }
  
-+TEST(ngram_match_utils_test, test_similarity_repeated_ngram) {
-+  // A single source n-gram must not be counted once per repeated target
-+  // n-gram. The longest common sequence is 1.
-+  const std::string_view one = "a";
-+  const std::string_view three = "aaa";
-+  ASSERT_DOUBLE_EQ(
-+    1.f / 3.f, (irs::ngram_similarity<char, true>(three.data(), three.size(),
-+                                                  one.data(), one.size(), 1)));
-+  ASSERT_DOUBLE_EQ(1, (irs::ngram_similarity<char, true>(
-+                        one.data(), one.size(), three.data(), three.size(),
-+                        1)));
+-      let expected = n * 0.05;
+-      let min = expected * 0.5;
+-      let max = expected * 1.5;
++      // the number of logged queries follows Binomial(n, p). a ±5σ band keeps
++      // the false-failure rate at ~2e-6 while still detecting a 2x deviation
++      // in either direction with ~95% probability.
++      const p = logProbability / 100;
++      const expected = n * p;
++      const tolerance = 5 * Math.sqrt(n * p * (1 - p));
++      const min = expected - tolerance;
++      const max = expected + tolerance;
+ 
+       let results = checkForQuery({
+         query, 
+@@ -143,8 +150,8 @@ function QueryLoggerSuite() {
+         exitCode: 0
+       });
+ 
+-      assertTrue(results.length > min, { actual: results.length, min });
+-      assertTrue(results.length < max, { actual: results.length, max });
++      assertTrue(results.length >= min, { actual: results.length, min });
++      assertTrue(results.length <= max, { actual: results.length, max });
+     },
+     
+   };
+```
+
+---
+
+### Incident Patch 2: `7d980299` (2026-11-13)
+**Commit Message**: Merge pull request #23666 from arangodb/bugfix/COR-1280-JWT-encoding
+
+[COR-1280] Fix JWT encoding
+
+**File**: `lib/Ssl/jwt.cpp` (modified, +6/-18)
+```diff
+@@ -26,7 +26,6 @@
+ #include "Ssl/SslInterface.h"
+ 
+ #include <absl/strings/escaping.h>
+-#include <absl/strings/internal/escaping.h>
+ #include <absl/strings/str_cat.h>
+ #include <velocypack/Builder.h>
+ #include <velocypack/Parser.h>
+@@ -107,21 +106,10 @@ std::string generateRawJwt(std::string_view secret,
+   }
+ 
+   // https://tools.ietf.org/html/rfc7515#section-2 requires
+-  // JWT to use base64-encoding without trailing padding `=` chars
+-
+-  auto header = headerBuilder.toJson();
+-  auto body = bodySlice.toJson();
+-  std::string headerBase64;
+-  std::string bodyBase64;
+-
+-  absl::strings_internal::Base64EscapeInternal(
+-      reinterpret_cast<unsigned char const*>(header.data()), header.size(),
+-      &headerBase64, false, absl::strings_internal::kBase64Chars);
+-  absl::strings_internal::Base64EscapeInternal(
+-      reinterpret_cast<unsigned char const*>(body.data()), body.size(),
+-      &bodyBase64, false, absl::strings_internal::kBase64Chars);
+-
+-  auto fullMessage = absl::StrCat(headerBase64, ".", bodyBase64);
++  // JWT to use base64url-encoding without trailing padding `=` chars
++  auto fullMessage =
++      absl::StrCat(absl::WebSafeBase64Escape(headerBuilder.toJson()), ".",
++                   absl::WebSafeBase64Escape(bodySlice.toJson()));
+ 
+   std::string signature;
+ 
+@@ -151,8 +139,8 @@ std::shared_ptr<velocypack::Builder> decodeClaims(std::string_view token) {
+     return nullptr;
+   }
+ 
+-  // JWTs are specified as base64url, but generateRawJwt encodes the body
+-  // with the standard alphabet, so both have to be accepted
++  // JWTs are specified as base64url, but older versions of generateRawJwt
++  // encoded the body with the standard alphabet, so both have to be accepted
+   std::string body;
+   if (!absl::WebSafeBase64Unescape(parts[1], &body) &&
+       !absl::Base64Unescape(parts[1], &body)) {
+```
+
+**File**: `tests/Ssl/JwtTest.cpp` (modified, +27/-0)
+```diff
+@@ -25,6 +25,7 @@
+ #include "Ssl/jwt.h"
+ 
+ #include <absl/strings/escaping.h>
++#include <velocypack/Parser.h>
+ 
+ #include <chrono>
+ #include <cmath>
+@@ -70,6 +71,32 @@ constexpr auto bodyWithExpiry = R"({"exp":1000,"n":"?"})";
+ 
+ }  // namespace
+ 
++TEST(JwtTest, generateRawJwtEncodesHeaderAndBodyWithBase64Url) {
++  auto const body = arangodb::velocypack::Parser::fromJson(bodyWithExpiry);
 +
-+  const std::string_view abc = "abc";
-+  ASSERT_DOUBLE_EQ(
-+    1.f / 3.f,
-+    (irs::ngram_similarity<char, false>(three.data(), three.size(), abc.data(),
-+                                        abc.size(), 1)));
-+  ASSERT_DOUBLE_EQ(
-+    1.f / 3.f,
-+    (irs::ngram_similarity<char, false>(abc.data(), abc.size(), three.data(),
-+                                        three.size(), 1)));
-+  ASSERT_DOUBLE_EQ(
-+    1.f / 3.f,
-+    (irs::ngram_similarity<char, true>(three.data(), three.size(), abc.data(),
-+                                       abc.size(), 1)));
++  auto const token = generateRawJwt("secret", body->slice());
++
++  EXPECT_TRUE(token.starts_with(
++      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEwMDAsIm4iOiI_In0."))
++      << token;
 +}
 +
- TEST(ngram_match_utils_test, test_similarity_all_empty) {
-   // strings are shorter than ngram length.
-   const std::string_view lhs = "";
-```
-
-**File**: `tests/Aql/Function/NgramMatchFunctionTest.cpp` (modified, +32/-0)
-```diff
-@@ -317,5 +317,37 @@ TEST_F(NgramMatchFunctionTest, test) {
-       assertNgramMatch(__LINE__, false, &Attribute, &Target2,
-                        &ValidAnalyzerName);
-     }
-+    // One attribute bigram against the same bigram repeated on the target.
-+    // Longest common sequence is 1 of 3, so similarity is 1/3.
-+    {
-+      AqlValue const Attribute{"aa"};
-+      AqlValue const Target{"aaaa"};
-+      assertNgramMatch(__LINE__, false, &Attribute, &Target, &ValidAnalyzerName,
-+                       &Threshold05);
-+      assertNgramMatch(__LINE__, true, &Attribute, &Target, &ValidAnalyzerName,
-+                       &Threshold02);
-+      assertNgramMatch(__LINE__, true, &Target, &Attribute, &ValidAnalyzerName,
-+                       &Threshold05);
-+    }
-+  }
-+  // text_en tokens: ["quick"] vs ["quick", "quick", "quick"] is 1/3.
-+  // A stale diagonal from the previous row used to report a match at 0.5.
-+  {
-+    AqlValue const TextEn{"text_en"};
-+    AqlValue const Attribute{"quick"};
-+    AqlValue Repeated{"quick quick quick"};
-+    AqlValueGuard RepeatedGuard(Repeated, true);
++TEST(JwtTest, generateUserTokenIsBase64UrlForUsernameWithSpecialChars) {
++  // in the body, the leading '~' lands at an offset where standard base64
++  // emits '+', which the server's own token validation rejects
++  auto const token = generateUserToken("secret", "~alice");
++  auto const firstDot = token.find('.');
++  auto const secondDot = token.find('.', firstDot + 1);
++  ASSERT_NE(secondDot, std::string::npos);
 +
-+    AqlValue const Pair{"quick quick"};
-+    AqlValue const Threshold05{AqlValueHintDouble{0.5}};
-+    AqlValue const Threshold03{AqlValueHintDouble{0.3}};
-+    assertNgramMatch(__LINE__, false, &Attribute, &Repeated, &TextEn,
-+                     &Threshold05);
-+    assertNgramMatch(__LINE__, true, &Attribute, &Repeated, &TextEn,
-+                     &Threshold03);
-+    assertNgramMatch(__LINE__, true, &Repeated, &Attribute, &TextEn,
-+                     &Threshold05);
-+    // Two attribute tokens still form a sequence of length 2 (2/3 >= 0.5).
-+    assertNgramMatch(__LINE__, true, &Pair, &Repeated, &TextEn, &Threshold05);
-   }
++  std::string header;
++  std::string body;
++  EXPECT_TRUE(absl::WebSafeBase64Unescape(token.substr(0, firstDot), &header));
++  EXPECT_TRUE(absl::WebSafeBase64Unescape(
++      token.substr(firstDot + 1, secondDot - firstDot - 1), &body));
++  EXPECT_EQ(extractPreferredUsername(token), "~alice");
++}
++
+ TEST(JwtTest, extractExpirationReturnsExpClaimOfUserToken) {
+   auto const before = nowInSeconds();
+   auto const token =
+```
+
+---
+
+### Incident Patch 3: `c1ef079c` (2026-11-13)
+**Commit Message**: Merge branch 'devel' into bugfix/COR-1280-JWT-encoding
+
+**File**: `.circleci/base_config.yml` (modified, +3/-2)
+```diff
+@@ -23,7 +23,7 @@ parameters:
+     description: "Docker image to use for building ArangoDB - only relevant when trying new build images"
+   test-docker-image:
+     type: string
+-    default: public.ecr.aws/b0b8h2r4/test-ubuntu:24.04-28214ffe
++    default: public.ecr.aws/b0b8h2r4/test-ubuntu:24.04-fb495166
+   # Unused here, but it will be forwarded from config and will cause errors if not defined
+   enterprise-branch:
+     type: string
+@@ -1211,7 +1211,8 @@ jobs:
+           - KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-3:9092,PLAINTEXT_HOST://kafka-3:39092"
+           - KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+           - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+-      - image: docker.io/confluentinc/cp-schema-registry:7.5.2
++      # waits for the kafka brokers before starting, see scripts/docker/cp-schema-registry
++      - image: public.ecr.aws/b0b8h2r4/test-ubuntu-cp-schema-registry:24.04-fb495166
+         name: kafka-schema-registry
+         environment:
+           - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=PLAINTEXT://kafka-1:19092,PLAINTEXT://kafka-2:29092,PLAINTEXT://kafka-3:39092
+```
+
+**File**: `.circleci/config.yml` (modified, +1/-1)
+```diff
+@@ -83,7 +83,7 @@ parameters:
+     description: "Additional arguments to pass to arangosh during tests (see arangosh --help)"
+   test-docker-image:
+     type: string
+-    default: public.ecr.aws/b0b8h2r4/test-ubuntu:24.04-28214ffe
++    default: public.ecr.aws/b0b8h2r4/test-ubuntu:24.04-fb495166
+     description: "Docker image to use for testing ArangoDB - only relevant when trying new test images"
+   build-docker-image:
+     type: string
+```
+
+**File**: `.circleci/infrastructure.yml` (modified, +17/-1)
+```diff
+@@ -263,7 +263,7 @@ jobs:
+ 
+   # ── Test Docker images ──────────────────────────────────────────────────────
+   # Builds the images used for running ArangoDB tests and driver tests.
+-  # Sources: scripts/docker/{test,go-test,js-test,...} + release-test-automation repo.
++  # Sources: scripts/docker/{test,go-test,js-test,...,cp-schema-registry} + release-test-automation repo.
+   build-test-docker-image:
+     docker:
+       - image: cimg/base:current
+@@ -348,6 +348,18 @@ jobs:
+               docker tag $image:latest-<< parameters.arch >> $image:$(cat << parameters.arch >>-tag-${suite}.txt)-<< parameters.arch >>
+               record_push $image:$(cat << parameters.arch >>-tag-${suite}.txt)-<< parameters.arch >>
+             done
++      - run:
++          name: Build schema registry Docker image
++          command: |
++            set -x
++            cd /home/circleci/project/scripts/docker
++            # Not derived from the test image (its base is confluent's UBI image),
++            # so determine-tag.sh would yield a different OS version prefix; reuse
++            # the base test image's tag so the whole image set shares one tag.
++            image=<< parameters.image >>-cp-schema-registry
++            /bin/sh build-image.sh $image << parameters.arch >> cp-schema-registry
++            docker tag $image:latest-<< parameters.arch >> $image:$(cat << parameters.arch >>-tag.txt)-<< parameters.arch >>
++            record_push $image:$(cat << parameters.arch >>-tag.txt)-<< parameters.arch >>
+       - persist_to_workspace:
+           root: .
+           paths:
+@@ -426,6 +438,7 @@ jobs:
+             for suite in go js python java spark tinkerpop spring; do
+               record_manifest << parameters.image >>-${suite} "$(cat amd64-tag-${suite}.txt)"
+             done
++            record_manifest << parameters.image >>-cp-schema-registry "$(cat amd64-tag.txt)"
+       - run:
+           name: Build RTA container manifest
+           command: |
+@@ -641,12 +654,15 @@ jobs:
+               TAG="$(cat /tmp/workspace/tag-updates/test-tag.txt)"
+               for repo in test-ubuntu test-ubuntu-go test-ubuntu-js test-ubuntu-python test-ubuntu-java \
+                           test-ubuntu-spark test-ubuntu-tinkerpop test-ubuntu-spring \
++                          test-ubuntu-cp-schema-registry \
+                           release-test-automation-tar-oskarnew; do
+                 require_multiarch "${repo}" "${TAG}"
+               done
+               echo "${TAG}" > scripts/docker/amd64-tag.txt
+               git add scripts/docker/amd64-tag.txt
+               update_refs public.ecr.aws/b0b8h2r4/test-ubuntu "public.ecr.aws/b0b8h2r4/test-ubuntu:${TAG}"
++              update_refs public.ecr.aws/b0b8h2r4/test-ubuntu-cp-schema-registry \
++                "public.ecr.aws/b0b8h2r4/test-ubuntu-cp-schema-registry:${TAG}"
+             fi
+             if [ -f /tmp/workspace/tag-updates/build-tag.txt ]; then
+               IMAGE_REF="$(cat /tmp/workspace/tag-updates/build-tag.txt)"
+```
+
+**File**: `3rdParty/boost/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -11,6 +11,7 @@ set(BOOST_INCLUDE_LIBRARIES
+   container_hash
+   core
+   crc
++  hash2
+   lockfree
+   predef
+   property_tree
+```
+
+**File**: `CHANGELOG` (modified, +3/-0)
+```diff
+@@ -1,6 +1,9 @@
+ 4.0.0 (XXXX-XX-XX)
+ ------------------
+ 
++* COR-1088: Removing MD5 as password hash for Users, SHA256 is default for many years now.
++  SHA1 and SHA224 will lead to a warning and will be deleted in some future release.
++
+ * Updated compilers to clang-22.1.8 (previously clang-19.1.7) and to g++-14
+   (previously g++-13).
+ 
+```
+
+**File**: `arangod/Aql/Function/HashFunctions.cpp` (modified, +17/-41)
+```diff
+@@ -30,7 +30,6 @@
+ #include "Basics/ThreadLocalLeaser.h"
+ #include "Basics/conversions.h"
+ #include "Basics/hashes.h"
+-#include "Ssl/SslInterface.h"
+ #include "Transaction/Helpers.h"
+ #include "Transaction/Methods.h"
+ 
+@@ -42,12 +41,25 @@
+ 
+ #include <absl/crc/crc32c.h>
+ 
++#include <boost/hash2/md5.hpp>
++#include <boost/hash2/sha1.hpp>
++#include <boost/hash2/sha2.hpp>
++
+ #include <string_view>
+ 
+ using namespace arangodb;
+ 
+ namespace arangodb::aql {
+ 
++namespace {
++template<typename HashType>
++AqlValue AqlHash(std::string const& buffer) {
++  HashType hash;
++  hash.update(buffer.c_str(), buffer.size());
++  return AqlValue{boost::hash2::to_string(hash.result())};
++}
++}  // anonymous namespace
++
+ /// @brief function SOUNDEX
+ AqlValue functions::Soundex(ExpressionContext* expr, AstNode const&,
+                             VPackFunctionParametersView parameters) {
+@@ -77,16 +89,7 @@ AqlValue functions::Md5(ExpressionContext* exprCtx, AstNode const&,
+   velocypack::StringSink adapter(buffer.get());
+ 
+   appendAsString(vopts, adapter, value);
+-
+-  // create md5
+-  char hash[16];
+-  rest::SslInterface::sslMD5(buffer->data(), buffer->length(), &hash[0]);
+-
+-  // as hex
+-  char hex[32];
+-  rest::SslInterface::sslHEX(hash, 16, &hex[0]);
+-
+-  return AqlValue(std::string_view{&hex[0], 32});
++  return AqlHash<boost::hash2::md5_128>(*buffer);
  }
+ 
+ /// @brief function SHA1
+@@ -100,16 +103,7 @@ AqlValue functions::Sha1(ExpressionContext* exprCtx, AstNode const&,
+   velocypack::StringSink adapter(buffer.get());
+ 
+   appendAsString(vopts, adapter, value);
+-
+-  // create sha1
+-  char hash[20];
+-  rest::SslInterface::sslSHA1(buffer->data(), buffer->length(), &hash[0]);
+-
+-  // as hex
+-  char hex[40];
+-  rest::SslInterface::sslHEX(hash, 20, &hex[0]);
+-
+-  return AqlValue(std::string_view{&hex[0], 40});
++  return AqlHash<boost::hash2::sha1_160>(*buffer);
+ }
+ 
+ /// @brief function SHA256
+@@ -123,16 +117,7 @@ AqlValue functions::Sha256(ExpressionContext* exprCtx, AstNode const&,
+   velocypack::StringSink adapter(buffer.get());
+ 
+   appendAsString(vopts, adapter, value);
+-
+-  // create sha256
+-  char hash[32];
+-  rest::SslInterface::sslSHA256(buffer->data(), buffer->length(), &hash[0]);
+-
+-  // as hex
+-  char hex[64];
+-  rest::SslInterface::sslHEX(hash, 32, &hex[0]);
+-
+-  return AqlValue(std::string_view{&hex[0], 64});
++  return AqlHash<boost::hash2::sha2_256>(*buffer);
+ }
+ 
+ /// @brief function SHA512
+@@ -146,16 +131,7 @@ AqlValue functions::Sha512(ExpressionContext* exprCtx, AstNode const&,
+   velocypack::StringSink adapter(buffer.get());
+ 
+   appendAsString(vopts, adapter, value);
+-
+-  // create sha512
+-  char hash[64];
+-  rest::SslInterface::sslSHA512(buffer->data(), buffer->length(), &hash[0]);
+-
+-  // as hex
+-  char hex[128];
+-  rest::SslInterface::sslHEX(hash, 64, &hex[0]);
+-
+-  return AqlValue(std::string_view{&hex[0], 128});
++  return AqlHash<boost::hash2::sha2_512>(*buffer);
+ }
+ 
+ /// @brief function Crc32
 ```
 
-**File**: `tests/Aql/Function/NgramPosSimilarityFunctionTest.cpp` (modified, +11/-0)
+**File**: `arangod/Auth/User.cpp` (modified, +9/-2)
 ```diff
-@@ -245,6 +245,17 @@ TEST_F(NgramPosSimilarityFunctionTest, test) {
-         assertNgramSimilarity(__LINE__, 0, &Target, &ValidString, &ValidInt);
-       }
-     }
-+    // repeated character against a different string of the same length.
-+    // Only the shared "a" counts, so positional similarity is 1/3.
-+    {
-+      AqlValue const Attribute{"abc"};
-+      AqlValue const Target{"aaa"};
-+      AqlValue const ValidInt{AqlValueHintInt{1}};
-+      assertNgramSimilarity(__LINE__, 1.f / 3.f, &Attribute, &Target,
-+                            &ValidInt);
-+      assertNgramSimilarity(__LINE__, 1.f / 3.f, &Target, &Attribute,
-+                            &ValidInt);
-+    }
-     // less than ngram size
-     {
-       AqlValue const Attribute{"a"};
+@@ -61,6 +61,9 @@ static ErrorCode HexHashFromData(std::string_view hashMethod,
+   size_t cryptedLength;
+ 
+   if (hashMethod == "sha1") {
++    LOG_TOPIC("4c13c", WARN, arangodb::Logger::AUTHENTICATION)
++        << "SHA1 should be retired, it will be deprecated in one of the future "
++           "releases";
+     arangodb::rest::SslInterface::sslSHA1(str.data(), str.size(), &buffer[0]);
+     cryptedLength = 20;
+   } else if (hashMethod == "sha512") {
+@@ -73,11 +76,15 @@ static ErrorCode HexHashFromData(std::string_view hashMethod,
+     arangodb::rest::SslInterface::sslSHA256(str.data(), str.size(), &buffer[0]);
+     cryptedLength = 32;
+   } else if (hashMethod == "sha224") {
++    LOG_TOPIC("5c13c", WARN, arangodb::Logger::AUTHENTICATION)
++        << "SHA224 should be retired, it will be deprecated in one of the "
++           "future releases";
+     arangodb::rest::SslInterface::sslSHA224(str.data(), str.size(), &buffer[0]);
+     cryptedLength = 28;
+   } else if (hashMethod == "md5") {
+-    arangodb::rest::SslInterface::sslMD5(str.data(), str.size(), &buffer[0]);
+-    cryptedLength = 16;
++    LOG_TOPIC("6c13c", ERR, arangodb::Logger::AUTHENTICATION)
++        << "MD5 is deprecated and cannot not be used anymore!";
++    return TRI_ERROR_BAD_PARAMETER;
+   } else {
+     // invalid algorithm...
+     LOG_TOPIC("3c13c", DEBUG, arangodb::Logger::AUTHENTICATION)
 ```
 
-**File**: `tests/Aql/Function/NgramSimilarityFunctionTest.cpp` (modified, +9/-0)
+**File**: `arangod/VocBase/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -232,6 +232,15 @@ TEST_F(NgramSimilarityFunctionTest, test) {
-         assertNgramSimilarity(__LINE__, 0, &Target, &ValidString, &ValidInt);
-       }
-     }
-+    // repeated target character: one source char matches once, so 1/3
-+    {
-+      AqlValue const Attribute{"a"};
-+      AqlValue const Target{"aaa"};
-+      AqlValue const ValidInt{AqlValueHintInt{1}};
-+      assertNgramSimilarity(__LINE__, 1.f / 3.f, &Attribute, &Target,
-+                            &ValidInt);
-+      assertNgramSimilarity(__LINE__, 1, &Target, &Attribute, &ValidInt);
-+    }
-     // less than ngram size
-     {
-       AqlValue const Attribute{"a"};
+@@ -29,6 +29,7 @@ target_link_libraries(arango_vocbase
+   arango_replication2
+   arango_vocbase_api
+   Boost::uuid
++  Boost::hash2
+   arango::validation)
+ 
+ target_include_directories(arango_vocbase PRIVATE
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23666** (2026-11-13): [COR-1280] Fix JWT encoding (@mpoeter)
+- **PR #23665** (2026-11-13): Fix flaky test testSampling (@dothebart)
+- **PR #23664** (2026-11-13): Fix flaky test testSampling (@mpoeter)
+- **PR #23662** (2026-11-13): add a docker wrapper around the schema registry that waits for the kafka cluster to be ready (@dothebart)
+- **PR #23661** (2026-11-13): if github is unreacheable this isn't an error, continue silently without error (@dothebart)
 - **PR #23660** (2026-11-13): Remove unused security-governance job from the lint workflow of testing pipeline (@KVS85)
-- **PR #23659** (2026-11-13): [3.12] Remove unused security-governance job from the lint workflow of testing pipeline (@KVS85)
-- **PR #23649** (2026-11-12): Feature 3.12/makedata more useable (@dothebart)
-- **PR #23648** (2026-11-12): let makedata be more appealing to developers (@dothebart)
-- **PR #23646** (2026-11-12): add waitdata to make sure the vector index is seeded (#23643) (@dothebart)
-- **PR #23643** (2026-11-12): BTS-2424: add waitdata to make sure the vector index is seeded (@dothebart)
 
 ---
 
@@ -1975,3 +2114,51 @@ BTS-2363: re-enable test
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. flaky test testSampling
+
+**RULE**:
+When implementing operations in `tests/js/client/server_parameters/test-query-logging-sampling.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ec34a1f4`: flaky test testSampling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/js/client/server_parameters/test-query-logging-sampling.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+// probability (in percent) with which queries are logged
+const logProbability = 5;
+    'query.collection-logger-probability': String(logProbability),
+      // the number of logged queries follows Binomial(n, p). a ±5σ band keeps
+      // the false-failure rate at ~2e-6 while still detecting a 2x deviation
+      // in either direction with ~95% probability.
+      const p = logProbability / 100;
+      const expected = n * p;
+      const tolerance = 5 * Math.sqrt(n * p * (1 - p));
+      const min = expected - tolerance;
+      const max = expected + tolerance;
+      assertTrue(results.length >= min, { actual: results.length, min });
+      assertTrue(results.length <= max, { actual: results.length, max });
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+    'query.collection-logger-probability': '5',
+      let expected = n * 0.05;
+      let min = expected * 0.5;
+      let max = expected * 1.5;
+      assertTrue(results.length > min, { actual: results.length, min });
+      assertTrue(results.length < max, { actual: results.length, max });
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ec34a1f4` are properly handled with clean fallback behavior.

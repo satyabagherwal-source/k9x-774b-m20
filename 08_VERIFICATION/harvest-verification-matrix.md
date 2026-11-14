@@ -9862,3 +9862,7 @@
 | `CYCLE-20261114-5GET` | `2026-11-14T15:25:50.549Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8498` | Yes (`31188ca8...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T15:26:22.304Z` | `biomejs-biome` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-0C4992D6` [Domain F] | Yes (`3aa4a166...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T15:26:58.983Z` | `apple-foundationdb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-817D65B4` [Domain L] | Yes (`6e2dabdf...`) |
+| `CYCLE-20261114-GJF5` | `2026-11-14T15:34:27.665Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`95bc9106...`) |
+| `CYCLE-20261114-GLFB` | `2026-11-14T15:34:30.263Z` | `jithin-sabu/purge-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8499` | Yes (`c33edf08...`) |
+| `CYCLE-20261114-GWAT` | `2026-11-14T15:34:44.357Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8500` | Yes (`d527f549...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T15:35:10.336Z` | `hf-baai-bge-large-en-v1.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4EDAAC12` [Domain D] | Yes (`d86cabb6...`) |

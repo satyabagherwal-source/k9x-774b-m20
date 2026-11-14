@@ -9895,3 +9895,7 @@ Every entry in this ledger must capture:
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `bf64ce35` | Multi-dimensional audit evidence | 2026-11-14T15:25:50.552Z |
 | `learn-dom-f-0c4992d6` | `project://biomejs-biome` | `e3ab04d5` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md` | 2026-11-14T15:26:22.304Z |
 | `learn-dom-l-817d65b4` | `project://apple-foundationdb` | `bf64ce35` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apple-foundationdb-learnings.md` | 2026-11-14T15:26:58.983Z |
+| `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-14T15:34:27.668Z |
+| `learn-github-jithin-sabu-purge-app` | `https://github.com/jithin-sabu/purge-app` | `8d64ee60` | Multi-dimensional audit evidence | 2026-11-14T15:34:30.266Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `7d980299` | Multi-dimensional audit evidence | 2026-11-14T15:34:44.360Z |
+| `learn-dom-d-4edaac12` | `project://hf-baai-bge-large-en-v1.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | 2026-11-14T15:35:10.336Z |

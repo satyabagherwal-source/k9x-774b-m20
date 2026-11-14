@@ -55,8 +55,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "007f65081cac007f0c32a17dd4ea0426b466e6885df936f0210afa807f469c55",
-    "lastHarvestedAt": "2026-11-09T04:59:36.845Z",
+    "contentHash": "95bc9106f553052b8de3111ea2f5103ba232e31a5ab06b6c70f7cdd182db464f",
+    "lastHarvestedAt": "2026-11-14T15:34:27.668Z",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5"
   },
   "hf-zai-org-glm-5.3": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "5f9867e0",
+    "sourceVersion": "7d980299",
     "license": "NOASSERTION",
-    "contentHash": "6c38576178fdd57393478856960fafa779562c2fae2379cd04fc54c2f45c9fc6",
-    "lastHarvestedAt": "2026-11-13T09:57:01.726Z",
+    "contentHash": "d527f549d0fca2456b6fc3e0d2c353789e9482f85d0afc93cc04aa22655ccbd7",
+    "lastHarvestedAt": "2026-11-14T15:34:44.360Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -12578,5 +12578,15 @@
     "contentHash": "acca69643d657c0b2a320b582772a2bfa946d0c2f5c610eba93f0e7b99d61bf0",
     "lastHarvestedAt": "2026-11-14T15:08:40.301Z",
     "learningId": "learn-huggingface-higurashi-ai-haru-4b"
+  },
+  "jithin-sabu-purge-app": {
+    "repository": "jithin-sabu/purge-app",
+    "platform": "github",
+    "sourceUrl": "https://github.com/jithin-sabu/purge-app",
+    "sourceVersion": "8d64ee60",
+    "license": "MIT",
+    "contentHash": "c33edf08e7879ac2c23b69fdbf58d709feaa85eeb433c6731e1f13473271d40f",
+    "lastHarvestedAt": "2026-11-14T15:34:30.266Z",
+    "learningId": "learn-github-jithin-sabu-purge-app"
   }
 }
