@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T15:11:07.144Z",
+  "timestamp": "2026-11-14T21:39:05.748Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dragonflydb-dragonfly-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dragonflydb-dragonfly-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T15:11:07.144Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-14T21:39:05.748Z`  
 > **Learning ID**: `LEARN-EVO-dragonflydb-dragonfly-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dragonflydb-dragonfly-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `383694c5`  
+> **Source Version**: `1975aa79`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T15:11:03.441Z  
+> **Timestamp**: 2026-11-14T21:38:29.853Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:11:03.437Z  
+> **Harvest Timestamp**: 2026-11-14T21:38:29.847Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31894 stars
+- **Stars / Engagement**: 31873 stars
 
 ---
 
@@ -2349,105 +2349,544 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `383694c5` (2026-11-13)
-**Commit Message**: fix(search): drain pending vector updates safely across suspensions (#8810)
+### Incident Patch 1: `1975aa79` (2026-11-13)
+**Commit Message**: fix(search): keep a document indexed when HINCRBY fails (#8812)
 
-DrainPendingVectorUpdates looked a document's DocId up before FindMutable, which can expire
-the document on the way and free that id, and then freed it again from the stale value, so two
-later documents shared one DocId and one of them vanished from the index. It also iterated the
-pending set itself while FindMutable may suspend: a serializer window opening meanwhile
-inserted into the set being iterated, lost its keys to the final clear and had its preserved
-field data freed early.
+OpIncrBy removes the document from the search indices before it converts the listpack and
+increments the field, and on an increment error it returned without adding the document back,
+so HINCRBY on a non-numeric field, an overflow or a non-finite float unindexed the document
+until its next write. Nothing is journaled on the error, so a replica kept the document.
 
-Look the id up after FindMutable, take the pending set before the loop and keep the preserved
-data while something is buffered again.
+Add the document back before returning the error.
 
-**File**: `src/server/search/doc_index.cc` (modified, +8/-5)
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+
+**File**: `src/server/hset_family.cc` (modified, +4/-1)
 ```diff
-@@ -1032,18 +1032,21 @@ void ShardDocIndex::DrainPendingVectorUpdates(const OpArgs& op_args) {
- 
-   auto& db_slice = op_args.GetDbSlice();
- 
--  LOG(INFO) << "Draining " << pending_vector_updates_.size() << " pending vector updates on shard "
-+  // FindMutable may suspend, and a serializer window opening meanwhile buffers into the members.
-+  auto pending = std::exchange(pending_vector_updates_, {});
-+  LOG(INFO) << "Draining " << pending.size() << " pending vector updates on shard "
-             << EngineShard::tlocal()->shard_id();
- 
-   // Remove stale nodes before additions: their DocIds may already belong to different keys.
-   for (DocId id : pending_hnsw_removals_)
-     RemoveFromAllHnswIndices(id);
-   pending_hnsw_removals_.clear();
- 
--  for (const auto& key : pending_vector_updates_) {
--    auto local_id = key_index_.Find(key);
-+  for (const auto& key : pending) {
-     auto it = db_slice.FindMutable(op_args.db_cntx, key, base_->GetObjCode());
- 
-+    // Looked up after FindMutable: an expiry inside it removes the document and frees the id.
-+    auto local_id = key_index_.Find(key);
-     if (it && IsValid(it->it)) {
-       PrimeValue& pv = it->it->second;
- 
-@@ -1061,8 +1064,8 @@ void ShardDocIndex::DrainPendingVectorUpdates(const OpArgs& op_args) {
-       key_index_.Remove(*local_id);
-     }
+@@ -426,8 +426,11 @@ OpStatus OpIncrBy(const OpArgs& op_args, string_view key, string_view field, Inc
+       res = it->second;
    }
--  pending_vector_updates_.clear();
--  ClearAllHnswPreservedData();
-+  if (pending_vector_updates_.empty())
-+    ClearAllHnswPreservedData();
- }
  
- ShardDocIndex::SerializedEntryWithKey ShardDocIndex::SerializeDocWithKey(
+-  if (OpStatus status = IncrementValue(res, param); status != OpStatus::OK)
++  if (OpStatus status = IncrementValue(res, param); status != OpStatus::OK) {
++    if (!add_res.is_new)
++      op_args.shard->search_indices()->AddDoc(key, op_args.db_cntx, &pv);
+     return status;
++  }
+ 
+   if (holds_alternative<double>(*param)) {
+     double new_val = get<double>(*param);
 ```
 
-**File**: `src/server/search/search_family_test.cc` (modified, +14/-0)
+**File**: `src/server/search/search_family_test.cc` (modified, +4/-0)
 ```diff
-@@ -6263,6 +6263,10 @@ TEST_F(SearchFamilyTest, HnswListpackUpdatesWhileGraphBusy) {
-   EXPECT_THAT(Run({"HSET", "h:5", "v", vec(5)}), IntArg(1));
-   EXPECT_THAT(Run({"DEL", "h:4"}), IntArg(1));
- 
-+  // h:6 expires inside the drain's FindMutable, which frees its DocId before the drain does.
-+  EXPECT_THAT(Run({"HSET", "h:6", "v", vec(6)}), IntArg(1));
-+  EXPECT_THAT(Run({"PEXPIRE", "h:6", "100"}), IntArg(1));
+@@ -2372,6 +2372,10 @@ TEST_F(SearchFamilyTest, SimpleUpdates) {
+     Run({"hset", "d:3", "visits", "175"});
+     EXPECT_THAT(Run({"ft.search", "i1", "@visits:[0 100]"}), kNoResults);
+     EXPECT_THAT(Run({"ft.search", "i1", "@visits:[150 1000]"}), AreDocIds("d:2", "d:3"));
 +
-   string query = vec(0);
-   auto distances = [&](string_view name) {
-     vector<long> out;
-@@ -6273,6 +6277,7 @@ TEST_F(SearchFamilyTest, HnswListpackUpdatesWhileGraphBusy) {
-   };
-   auto drain = [&](string_view name) {
-     pp_->at(0)->Await([&] {
-+      AdvanceTime(200);
-       auto* shard = EngineShard::tlocal();
-       DbContext db_cntx{&namespaces->GetDefaultNamespace(), 0, GetCurrentTimeMs()};
-       index(name)->DrainSerializationUpdates(OpArgs{shard, nullptr, db_cntx});
-@@ -6291,6 +6296,15 @@ TEST_F(SearchFamilyTest, HnswListpackUpdatesWhileGraphBusy) {
-         AreNoContentDocIds("h:1", "h:2", "h:5"));
++    // A failed increment must leave the document indexed.
++    EXPECT_THAT(Run({"hincrby", "d:3", "title", "1"}), ErrArg("hash value is not an integer"));
++    EXPECT_THAT(Run({"ft.search", "i1", "@visits:[150 1000]"}), AreDocIds("d:2", "d:3"));
    }
  
-+  // The expired DocId must be free once, so the next two documents get distinct ids.
-+  EXPECT_THAT(Run({"HSET", "h:7", "v", vec(7)}), IntArg(1));
-+  EXPECT_THAT(Run({"HSET", "h:8", "v", vec(8)}), IntArg(1));
-+  for (string_view name : {"hx", "hy"}) {
-+    EXPECT_THAT(Run({"FT.SEARCH", name, "*", "NOCONTENT"}),
-+                AreNoContentDocIds("h:1", "h:2", "h:5", "h:7", "h:8"));
-+  }
-+  EXPECT_THAT(Run({"DEL", "h:7", "h:8"}), IntArg(2));
+   // Delete documents
+```
+
+---
+
+### Incident Patch 2: `e718f3be` (2026-11-13)
+**Commit Message**: Simplify SnapshotStorage and fix cloud snapshot bugs (#8779)
+
+refactor: simplify SnapshotStorage and fix cloud snapshot bugs
+
+Unify S3, GCS and Azure storages under a shared CloudSnapshotStorage base that implements
+LoadPath and shard file expansion once; each backend only parses/builds paths and lists objects.
+Move cloud storage classes and their creation into snapshot_storage.cc, and return io::WriteFile*
+from OpenWriteFile instead of a (Sink*, FileType) pair.
+
+Fixes:
+- Remove std::regex, which ran inside fibers when matching snapshot names.
+- GCS/Azure shard file regexes were not escaped and could throw on special characters.
+- Only the trailing "summary.dfs" is replaced when expanding DFS shard files, not every
+  "summary" in the path.
+- Propagate GCS/Azure listing errors instead of reporting them as missing shard files.
+- Validate S3/GCS paths in CheckPath, so a mismatched path fails before the dataset is flushed.
+
+**File**: `src/server/detail/save_stages_controller.cc` (modified, +4/-13)
+```diff
+@@ -30,7 +30,6 @@ namespace detail {
+ using namespace util;
+ using absl::GetFlag;
+ using absl::StrCat;
+-using fb2::OpenLinux;
+ 
+ namespace fs = std::filesystem;
+ 
+@@ -122,12 +121,10 @@ GenericError RdbSnapshot::Start(SaveMode save_mode, const std::string& path,
+   if (!res) {
+     return res.error();
+   }
++  io_sink_.reset(*res);
+ 
+-  auto [file, file_type] = *res;
+-  io_sink_.reset(file);
+-
+-  is_linux_file_ = file_type & FileType::IO_URING;
+-  bool align_writes = (file_type & FileType::DIRECT) != 0;
++  // Local files are opened with O_DIRECT.
++  bool align_writes = !snapshot_storage_->IsCloud();
+   saver_.reset(
+       new RdbSaver(io_sink_.get(), save_mode, align_writes, snapshot_id, DflyVersion::CURRENT_VER));
+ 
+@@ -162,14 +159,8 @@ RdbSaver::SnapshotStats RdbSnapshot::GetCurrentSnapshotProgress() const {
+ }
+ 
+ error_code RdbSnapshot::Close() {
+-#ifdef __linux__
+-  if (is_linux_file_) {
+-    return static_cast<LinuxWriteWrapper*>(io_sink_.get())->Close();
+-  }
+-#endif
+-
+   error_code ec;
+-  auto* file = static_cast<io::WriteFile*>(io_sink_.get());
++  io::WriteFile* file = io_sink_.get();
+ 
+   // S3 implementation is stack hungry. We use a fiber to close the file to
+   // avoid wasting stack space.
+```
+
+**File**: `src/server/detail/save_stages_controller.h` (modified, +2/-2)
+```diff
+@@ -7,6 +7,7 @@
+ 
+ #include <filesystem>
+ 
++#include "io/file.h"
+ #include "server/rdb_save.h"
+ #include "util/fibers/fiberqueue_threadpool.h"
+ 
+@@ -66,12 +67,11 @@ class RdbSnapshot {
+   }
+ 
+  private:
+-  bool is_linux_file_ = false;
+   SnapshotStorage* snapshot_storage_ = nullptr;
+ 
+   std::atomic_uint32_t started_shards_ = 0;
+ 
+-  unique_ptr<io::Sink> io_sink_;
++  unique_ptr<io::WriteFile> io_sink_;
+   unique_ptr<RdbSaver> saver_;
+   RdbTypeFreqMap freq_map_;
+ 
+```
+
+**File**: `src/server/detail/snapshot_storage.cc` (modified, +494/-644)
+```diff
+@@ -11,30 +11,42 @@
+ #include <absl/strings/strip.h>
+ 
+ #include <algorithm>
+-
+-#include "util/cloud/aws/s3_storage.h"
+-
+-#ifdef WITH_GCP
+-#include "util/cloud/gcp/gcs_file.h"
+-#endif
+-
+-#include <regex>
++#include <functional>
+ 
+ #include "base/logging.h"
+ #include "io/file_util.h"
+ #include "server/engine_shard_set.h"
+ #include "strings/escaping.h"
+ #include "strings/human_readable.h"
++#include "util/cloud/aws/aws_creds_provider.h"
++#include "util/cloud/aws/s3_storage.h"
+ #include "util/cloud/azure/creds_provider.h"
+ #include "util/cloud/azure/storage.h"
++#include "util/cloud/utils.h"
+ #include "util/fibers/fiber_file.h"
++#include "util/fibers/fiberqueue_threadpool.h"
++#include "util/fibers/uring_file.h"
 +
-   // Update a listpack and delete a converted hash while a search holds hx.
-   Fiber searcher;
-   {
++#ifdef WITH_GCP
++#include "util/cloud/gcp/gcp_creds_provider.h"
++#include "util/cloud/gcp/gcs.h"
++#include "util/cloud/gcp/gcs_file.h"
++#endif
+ 
+ ABSL_RETIRED_FLAG(bool, s3_use_helio_client, true,
+                   "Deprecated: the helio native S3 client is always used.");
+ ABSL_FLAG(uint32_t, s3_upload_traffic_mark, 0,
+           "Linux SO_MARK applied to S3 snapshot upload sockets, so they can be assigned to an "
+           "externally configured tc bandwidth class. Requires CAP_NET_ADMIN. When set, socket "
+           "pacing from snapshot_egress_limit_bytes is not applied. 0 leaves sockets unmarked.");
++ABSL_FLAG(std::string, s3_endpoint, "",
++          "endpoint for s3 snapshots, default uses aws regional endpoint");
++ABSL_FLAG(bool, s3_use_https, true, "whether to use https for s3 endpoints");
++// Disable EC2 metadata by default, or if a users credentials are invalid the
++// AWS client will spent 30s trying to connect to inaccessable EC2 endpoints
++// to load the credentials.
++ABSL_FLAG(bool, s3_ec2_metadata, false,
++          "whether to load credentials and configuration from EC2 metadata");
+ ABSL_DECLARE_FLAG(strings::MemoryBytesFlag, snapshot_egress_limit_bytes);
+ 
+ namespace rng = std::ranges;
+@@ -47,51 +59,99 @@ using namespace std;
+ namespace {
+ 
+ constexpr string_view kSummarySuffix = "summary.dfs"sv;
+-constexpr std::string_view kHttpsPrefix = "https://";
++constexpr string_view kHttpsPrefix = "https://";
++constexpr string_view kAzureBlobEndpointSuffix = ".blob.core.windows.net";
++constexpr unsigned kBucketConnectMs = 2000;
++constexpr unsigned kGcsConnectMs = 3000;
+ 
+-pair<string, string> GetBucketPath(string_view path) {
+-  string_view clean = path;
+-  string_view prefix = kGCSPrefix;
+-  if (absl::StartsWith(clean, kS3Prefix)) {
+-    prefix = kS3Prefix;
+-  }
+-  clean = absl::StripPrefix(clean, prefix);
++// Matches any digit in a file name mask.
++constexpr char kDigit = '\0';
+ 
+-  size_t pos = clean.find('/');
+-  if (pos == string_view::npos) {
+-    return make_pair(string(clean), "");
+-  }
++nonstd::unexpected_type<GenericError> Unexpected(errc code, string details) {
++  return nonstd::make_unexpected(GenericError(make_error_code(code), std::move(details)));
++}
+ 
+-  string bucket_name{clean.substr(0, pos)};
+-  string obj_path{clean.substr(pos + 1)};
++// Attaches `details` to the error of `res`.
++template <typename T>
++io::Result<T, GenericError> WithDetails(io::Result<T> res, string_view details) {
++  if (!res)
++    return nonstd::make_unexpected(GenericError(res.error(), string(details)));
++  return *res;
++}
+ 
+-  return make_pair(std::move(bucket_name), std::move(obj_path));
++bool MatchesMask(string_view name, string_view mask) {
++  return name.size() == mask.size() &&
++         equal(mask.begin(), mask.end(), name.begin(),
++               [](char m, char c) { return m == kDigit ? absl::ascii_isdigit(c) : m == c; });
+ }
+ 
+-#ifdef __linux__
+-const int kRdbWriteFlags = O_CREAT | O_WRONLY | O_TRUNC | O_CLOEXEC | O_DIRECT;
+-#endif
++// Returns whether `name` is a shard file of the DFS snapshot whose summary file is
++// `base` + "summary.dfs", i.e. `base` followed by a 4 digit shard id and ".dfs".
++bool IsShardFile(string_view name, string_view base) {
++  return absl::ConsumePrefix(&name, base) && absl::ConsumeSuffix(&name, ".dfs") &&
++         MatchesMask(name, string(4, kDigit));
++}
+ 
+-std::string EscapeRegex(string_view input) {
+-  // List of regex special characters that need escaping
+-  // We don't escape "{}" since we use them for our own placeholders.
+-  constexpr std::string_view chars{"\\.^$|?*+()[]"};
+-  std::string escaped;
++struct ObjectStat {
++  string key;
++  int64_t mtime;
++};
+ 
+-  // Reserve space to avoid multiple reallocations
+-  escaped.reserve(input.size() * 1.1);
++// Returns the key of the newest object that is a snapshot file named `prefix` + `dbfilename`,
++// or an empty string if there is none. The filename placeholders match the digits that
++// SaveStagesController writes for them, and a filename without extension matches both RDB and
++// DFS snapshots.
++string FindNewestSnapshot(string_view prefix, string_view dbfilename,
++                          const vector<ObjectStat>& objects) {
++  const string d2(2, kDigit), d4(4, kDigit);
++  const string ts = absl::StrCat(d4, "
+```
+
+**File**: `src/server/detail/snapshot_storage.h` (modified, +32/-162)
+```diff
+@@ -3,28 +3,20 @@
+ 
+ #pragma once
+ 
+-#include "util/cloud/aws/aws_creds_provider.h"
+-#include "util/cloud/aws/s3_storage.h"
+-#include "util/cloud/azure/creds_provider.h"
+-
+-#ifdef WITH_GCP
+-#include "util/cloud/gcp/gcp_creds_provider.h"
+-#include "util/cloud/gcp/gcs.h"
+-#endif
+-
+ #include <absl/strings/match.h>
+ 
+ #include <filesystem>
++#include <memory>
+ #include <string>
+ #include <string_view>
+-#include <utility>
++#include <vector>
+ 
+-#include "io/io.h"
++#include "io/file.h"
+ #include "server/execution_state.h"
+-#include "util/cloud/azure/creds_provider.h"
+-#include "util/cloud/utils.h"
+-#include "util/fibers/fiberqueue_threadpool.h"
+-#include "util/fibers/uring_file.h"
++
++namespace util::fb2 {
++class FiberQueueThreadPool;
++}  // namespace util::fb2
+ 
+ namespace dfly {
+ namespace detail {
+@@ -33,187 +25,65 @@ namespace fs = std::filesystem;
+ 
+ constexpr std::string_view kS3Prefix = "s3://";
+ constexpr std::string_view kGCSPrefix = "gs://";
+-constexpr std::string_view kAzureBlobEndpointSuffix = ".blob.core.windows.net";
+-
+-const size_t kBucketConnectMs = 2000;
+-
+-enum FileType : uint8_t {
+-  FILE = (1u << 0),
+-  CLOUD = (1u << 1),
+-  IO_URING = (1u << 2),
+-  DIRECT = (1u << 3),
+-};
+ 
+ class SnapshotStorage {
+  public:
+   virtual ~SnapshotStorage() = default;
+ 
+-  // Opens the file at the given path, and returns the open file and file
+-  // type, which is a bitmask of FileType.
+-  virtual io::Result<std::pair<io::Sink*, uint8_t>, GenericError> OpenWriteFile(
+-      const std::string& path) = 0;
++  // Opens the file at the given path for writing. Local files are opened with O_DIRECT, so their
++  // writes must be aligned; cloud files are published only when closed.
++  virtual io::Result<io::WriteFile*, GenericError> OpenWriteFile(const std::string& path) = 0;
+ 
+   virtual io::ReadonlyFileOrError OpenReadFile(const std::string& path) = 0;
+ 
+-  // Returns the path of the RDB file or DFS summary file to load.
++  // Returns the path of the newest RDB file or DFS summary file in `dir` that matches
++  // `dbfilename`, or an empty string if `dbfilename` is empty.
+   virtual io::Result<std::string, GenericError> LoadPath(std::string_view dir,
+                                                          std::string_view dbfilename) = 0;
+ 
+-  using ExpandResult = std::vector<std::string>;
+-  // Searches for all the relevant snapshot files given the RDB file or DFS summary file path.
+-  io::Result<ExpandResult, GenericError> ExpandSnapshot(const std::string& load_path);
++  // Returns all the files of the snapshot given the RDB file or DFS summary file path.
++  // The DFS summary file is always the last one.
++  io::Result<std::vector<std::string>, GenericError> ExpandSnapshot(const std::string& load_path);
+ 
+   virtual bool IsCloud() const {
+     return false;
+   }
+ 
+  protected:
+-  struct SnapStat {
+-    SnapStat(std::string file_name, int64_t ts) : name(std::move(file_name)), last_modified(ts) {
+-    }
+-    std::string name;
+-    int64_t last_modified;
+-  };
+-
+-  // Returns empty string if nothing is matched. vector is passed by value on purpose, as it is
+-  // been sorted inside.
+-  static std::string FindMatchingFile(std::string_view prefix, std::string_view dbfilename,
+-                                      std::vector<SnapStat> keys);
+-
+-  virtual io::Result<std::vector<std::string>, GenericError> ExpandFromPath(
+-      const std::string& path) = 0;
+-
++  // Returns an error if `path` can not be loaded.
+   virtual std::error_code CheckPath(const std::string& path) = 0;
++
++  // Returns the shard files of the DFS snapshot whose summary file path is `summary_path`.
++  virtual io::Result<std::vector<std::string>, GenericError> ListShardFiles(
++      const std::string& summary_path) = 0;
+ };
+ 
+ class FileSnapshotStorage : public SnapshotStorage {
+  public:
++  // `fq_threadpool` is used for file I/O when the proactors do not support io_uring.
+   explicit FileSnapshotStorage(util::fb2::FiberQueueThreadPool* fq_threadpool);
+ 
+-  io::Result<std::pair<io::Sink*, uint8_t>, GenericError> OpenWriteFile(
+-      const std::string& path) override;
+-
+-  io::ReadonlyFileOrError OpenReadFile(const std::string& path) override;
+-
+-  io::Result<std::string, GenericError> LoadPath(std::string_view dir,
+-                                                 std::string_view dbfilename) override;
+-
+- private:
+-  io::Result<std::vector<std::string>, GenericError> ExpandFromPath(const std::string& path) final;
+-
+-  std::error_code CheckPath(const std::string& path) final;
+-  util::fb2::FiberQueueThreadPool* fq_threadpool_;
+-};
+-
+-#ifdef WITH_GCP
+-class GcsSnapshotStorage : public SnapshotStorage {
+- public:
+-  ~GcsSnapshotStorage();
+-
+-  std::error_code Init(unsigned connect_ms);
+-
+-  io::Result<std::pair<io::Sink*, uint8_t>, GenericError> OpenWriteFile(
+-      const std::string& path) override;
++  io::Result<io::WriteFile*, GenericError> OpenWriteFile(const std::string& path) override;
+ 
+   io::ReadonlyFileOrError OpenReadFile(const std::string& p
+```
+
+**File**: `src/server/rdb_test.cc` (modified, +2/-2)
+```diff
+@@ -714,11 +714,11 @@ class TestCloudStorage : public detail::FileSnapshotStorage {
+   explicit TestCloudStorage(Failure failure) : FileSnapshotStorage(nullptr), failure_(failure) {
+   }
+ 
+-  io::Result<pair<io::Sink*, uint8_t>, GenericError> OpenWriteFile(const string& path) override {
++  io::Result<io::WriteFile*, GenericError> OpenWriteFile(const string& path) override {
+     if (failure_ == kOpenSummary && path.find("summary") != string::npos)
+       return nonstd::make_unexpected(GenericError(make_error_code(errc::io_error)));
+     ++opened;
+-    return pair<io::Sink*, uint8_t>{new File(this), detail::FileType::CLOUD};
++    return new File(this);
+   }
+ 
+   bool IsCloud() const override {
+```
+
+**File**: `src/server/server_family.cc` (modified, +9/-65)
+```diff
+@@ -146,13 +146,6 @@ ABSL_FLAG(uint32_t, pause_wait_timeout, 1,
+           "Timeout in seconds, to set up the pause for all connections for CLIENT PAUSE command "
+           "and cluster slot migration finalization procedure.");
+ 
+-ABSL_FLAG(string, s3_endpoint, "", "endpoint for s3 snapshots, default uses aws regional endpoint");
+-ABSL_FLAG(bool, s3_use_https, true, "whether to use https for s3 endpoints");
+-// Disable EC2 metadata by default, or if a users credentials are invalid the
+-// AWS client will spent 30s trying to connect to inaccessable EC2 endpoints
+-// to load the credentials.
+-ABSL_FLAG(bool, s3_ec2_metadata, false,
+-          "whether to load credentials and configuration from EC2 metadata");
+ ABSL_RETIRED_FLAG(bool, s3_sign_payload, true,
+                   "Deprecated: S3 snapshot uploads always use an unsigned payload.");
+ 
+@@ -314,52 +307,11 @@ string UnknownCmd(string cmd, facade::ParsedArgs args, size_t num_args) {
+                       absl::StrJoin(args.begin(), end, ", ", CmdArgListFormatter()));
+ }
+ 
+-// Returns an error instead of terminating the process: this is called at runtime by
+-// SAVE/LOAD commands, where a transient failure (e.g. missing credentials) must not kill
+-// an already serving instance.
+-io::Result<std::shared_ptr<detail::SnapshotStorage>, GenericError> CreateCloudSnapshotStorage(
+-    std::string_view uri) {
+-  auto make_err = [](std::error_code ec, std::string_view what) {
+-    return nonstd::make_unexpected(GenericError{ec, absl::StrCat("Failed to initialize ", what)});
+-  };
+-
+-  if (detail::IsS3Path(uri)) {
+-    auto aws = std::make_shared<detail::AwsS3SnapshotStorage>(absl::GetFlag(FLAGS_s3_endpoint),
+-                                                              absl::GetFlag(FLAGS_s3_use_https),
+-                                                              absl::GetFlag(FLAGS_s3_ec2_metadata));
+-    auto ec = shard_set->pool()->GetNextProactor()->Await(
+-        [&] { return aws->Init(detail::kBucketConnectMs); });
+-    if (ec)
+-      return make_err(ec, "AWS S3 snapshot storage");
+-    return aws;
+-  } else if (detail::IsGCSPath(uri)) {
+-#ifdef WITH_GCP
+-    auto gcs = std::make_shared<detail::GcsSnapshotStorage>();
+-    auto ec = shard_set->pool()->GetNextProactor()->Await([&] { return gcs->Init(3000); });
+-    if (ec)
+-      return make_err(ec, "GCS snapshot storage");
+-    return gcs;
+-#else
+-    return nonstd::make_unexpected(
+-        GenericError{make_error_code(errc::not_supported), "Compiled without GCP support"});
+-#endif
+-  } else if (detail::IsAzurePath(uri)) {
+-    auto azure = std::make_shared<detail::AzureSnapshotStorage>();
+-    auto ec = shard_set->pool()->GetNextProactor()->Await(
+-        [&] { return azure->Init(uri, detail::kBucketConnectMs); });
+-    if (ec)
+-      return make_err(ec, "Azure snapshot storage");
+-    return azure;
+-  }
+-  return nonstd::make_unexpected(GenericError{make_error_code(errc::invalid_argument),
+-                                              absl::StrCat("Unknown cloud storage ", uri)});
+-}
+-
+ // Cloud paths need their own storage, other paths use the server's default storage.
+ io::Result<std::shared_ptr<detail::SnapshotStorage>, GenericError> SelectSnapshotStorage(
+     std::string_view path, std::shared_ptr<detail::SnapshotStorage> default_storage) {
+   if (detail::IsCloudPath(path))
+-    return CreateCloudSnapshotStorage(path);
++    return detail::CreateCloudSnapshotStorage(path);
+   return default_storage;
+ }
+ 
+@@ -1639,16 +1591,14 @@ void ServerFamily::Init(util::AcceptServer* acceptor, std::vector<facade::Listen
+   string flag_dir = GetFlag(FLAGS_dir);
+ 
+   if (detail::IsCloudPath(flag_dir)) {
+-    auto res = CreateCloudSnapshotStorage(flag_dir);
++    auto res = detail::CreateCloudSnapshotStorage(flag_dir);
+     if (!res) {
+       LOG(ERROR) << res.error().Format();
+       exit(1);
+     }
+     snapshot_storage_ = std::move(*res);
+-  } else if (fq_threadpool_) {
+-    snapshot_storage_ = std::make_shared<detail::FileSnapshotStorage>(fq_threadpool_.get());
+   } else {
+-    snapshot_storage_ = std::make_shared<detail::FileSnapshotStorage>(nullptr);
++    snapshot_storage_ = std::make_shared<detail::FileSnapshotStorage>(fq_threadpool_.get());
+   }
+ 
+   if (GetFlag(FLAGS_aof)) {
+@@ -2223,19 +2173,15 @@ GenericError ServerFamily::DoSaveCheckAndStart(const SaveCmdOptions& save_cmd_op
+                           "SAVING - can not save database"};
+     }
+ 
+-    std::shared_ptr<detail::SnapshotStorage> snapshot_storage = snapshot_storage_;
+-    if (!save_cmd_opts.cloud_uri.empty()) {
+-      auto res = CreateCloudSnapshotStorage(save_cmd_opts.cloud_uri);
+-      if (!res) {
+-        LOG(ERROR) << res.error().Format();
+-        return res.error();
+-      }
+-      snapshot_storage = std::move(*res);
++    auto snapshot_storage = SelectSnapshotStorage(save_cmd_opts.cloud_uri, snapshot_storage_);
++    if (!snapshot_storage) {
++      LOG(ERROR) << snapshot_storage.error().Format();
++      return snapshot_storage.error()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8812** (2026-11-13): fix(search): keep a document indexed when HINCRBY fails (@vyavdoshenko)
+- **PR #8811** (2026-11-13): refactor: improve performance for search (@BorysTheDev)
 - **PR #8810** (2026-11-13): fix(search): drain pending vector updates safely across suspensions (@vyavdoshenko)
 - **PR #8808** (2026-11-13): feat(search): index empty TEXT values with INDEXEMPTY and answer phrases on NOOFFSETS (@vyavdoshenko)
 - **PR #8805** (2026-11-13): fix: multi-exec data loss during slot migration (@BorysTheDev)
 - **PR #8804** (2026-11-13): fix(search): hold the HNSW resize lock in removals and vector updates (@vyavdoshenko)
-- **PR #8803** (2026-11-12): fix(rdb): load integer-root JSON documents as JSON (@vyavdoshenko)
-- **PR #8799** (2026-11-12): ci: skip flaky BullMQ waiting-children event test (@vyavdoshenko)
 
 ---
 
@@ -2467,42 +2906,34 @@ data while something is buffered again.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. search): drain pending vector updates safely across suspensions (#8810)
+## X. search): keep a document indexed when HINCRBY fails
 
 **RULE**:
-When implementing operations in `src/server/search/doc_index.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/hset_family.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `383694c5`: search): drain pending vector updates safely across suspensions (#8810). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1975aa79`: search): keep a document indexed when HINCRBY fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/search/doc_index.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/hset_family.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  // FindMutable may suspend, and a serializer window opening meanwhile buffers into the members.
-  auto pending = std::exchange(pending_vector_updates_, {});
-  LOG(INFO) << "Draining " << pending.size() << " pending vector updates on shard "
-  for (const auto& key : pending) {
-    // Looked up after FindMutable: an expiry inside it removes the document and frees the id.
-    auto local_id = key_index_.Find(key);
-  if (pending_vector_updates_.empty())
-    ClearAllHnswPreservedData();
+  if (OpStatus status = IncrementValue(res, param); status != OpStatus::OK) {
+    if (!add_res.is_new)
+      op_args.shard->search_indices()->AddDoc(key, op_args.db_cntx, &pv);
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-  LOG(INFO) << "Draining " << pending_vector_updates_.size() << " pending vector updates on shard "
-  for (const auto& key : pending_vector_updates_) {
-    auto local_id = key_index_.Find(key);
-  pending_vector_updates_.clear();
-  ClearAllHnswPreservedData();
+// Induced defect failure mode:
+  if (OpStatus status = IncrementValue(res, param); status != OpStatus::OK)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `383694c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1975aa79` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

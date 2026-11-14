@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T21:30:06.160Z",
+  "updated_at": "2026-11-14T21:39:05.110Z",
   "stats": {
-    "total_discovered": 3442,
-    "approved_pending_harvest": 3235,
+    "total_discovered": 3446,
+    "approved_pending_harvest": 3239,
     "harvested_count": 0,
     "rejected_count": 207,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3216,
+      "COMMUNITY_AND_EXPERT": 3220,
       "OFFICIAL_DOCUMENTATION": 123,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -74296,6 +74296,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
         "fileName": "hf-microsoft-frognano-4b-2609-learnings.md"
+      }
+    },
+    "SRC-ABB123843BD5": {
+      "id": "SRC-ABB123843BD5",
+      "url": "https://huggingface.co/FrancisRing/Prism",
+      "title": "https://huggingface.co/FrancisRing/Prism",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:39:04.655Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
+        "fileName": "hf-francisring-prism-learnings.md"
+      }
+    },
+    "SRC-27BA8D2A69AC": {
+      "id": "SRC-27BA8D2A69AC",
+      "url": "https://github.com/gradle/gradle",
+      "title": "https://github.com/gradle/gradle",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:39:05.065Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-64964375DAAA": {
+      "id": "SRC-64964375DAAA",
+      "url": "https://github.com/gradle/gradle/releases",
+      "title": "https://github.com/gradle/gradle/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:39:05.088Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-FB7F6DDEE717": {
+      "id": "SRC-FB7F6DDEE717",
+      "url": "https://github.com/gradle/gradle/compare/v9.9.0...v9.9.1",
+      "title": "https://github.com/gradle/gradle/compare/v9.9.0...v9.9.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:39:05.110Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
       }
     }
   }

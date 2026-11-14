@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T21:30:06.143Z",
+  "updated_at": "2026-11-14T21:39:04.642Z",
   "statistics": {
-    "total_nodes": 218,
-    "total_edges": 118,
+    "total_nodes": 219,
+    "total_edges": 119,
     "domain_distribution": {
-      "D": 171,
+      "D": 172,
       "M": 1,
       "H": 19,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 118
+      "CONSTRAINED_BY_ARCHITECTURE": 119
     }
   },
   "nodes": {
@@ -4890,6 +4890,29 @@
       ],
       "created_at": "2026-11-14T21:30:06.143Z",
       "updated_at": "2026-11-14T21:30:06.143Z"
+    },
+    "DOM-D-11540386": {
+      "id": "DOM-D-11540386",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): FrancisRing/Prism",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md`  \n> **Source**: huggingface ([https://huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md`  \n> **Source**: huggingface ([https://huggingface",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-francisring-prism/hf-francisring-prism-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T21:38:36.486Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-francisring-prism)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T21:39:04.641Z",
+      "updated_at": "2026-11-14T21:39:04.641Z"
     }
   },
   "edges": [
@@ -6072,6 +6095,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-88E5B240 [D] with Domain M",
       "created_at": "2026-11-14T21:30:06.143Z"
+    },
+    {
+      "id": "EDGE-0E7C82BD5F98",
+      "sourceId": "DOM-D-11540386",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-11540386 [D] with Domain M",
+      "created_at": "2026-11-14T21:39:04.641Z"
     }
   ]
 }

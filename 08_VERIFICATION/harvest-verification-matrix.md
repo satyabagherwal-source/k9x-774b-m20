@@ -9946,3 +9946,8 @@
 | `CYCLE-20261114-4X19` | `2026-11-14T21:29:20.445Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`0eee8fab...`) |
 | `CYCLE-20261114-4YK7` | `2026-11-14T21:29:22.423Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8538` | Yes (`026d8bb7...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T21:30:06.145Z` | `hf-microsoft-frognano-4b-2609` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-88E5B240` [Domain D] | Yes (`621d00ef...`) |
+| `CYCLE-20261114-GF84` | `2026-11-14T21:38:17.236Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`bd0c6ae7...`) |
+| `CYCLE-20261114-GLTC` | `2026-11-14T21:38:25.776Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8539` | Yes (`d9cc59f0...`) |
+| `CYCLE-20261114-GPM5` | `2026-11-14T21:38:30.701Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8540` | Yes (`bc901b40...`) |
+| `CYCLE-20261114-GROX` | `2026-11-14T21:38:33.393Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8541` | Yes (`e93e9c87...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T21:39:04.643Z` | `hf-francisring-prism` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-11540386` [Domain D] | Yes (`efd1b393...`) |

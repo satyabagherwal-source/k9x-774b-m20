@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T21:29:22.438Z",
+  "last_updated": "2026-11-14T21:38:33.406Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1865,14 +1865,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-francisring-prism",
-      "content_hash": "98ed1dfa8f19aaee246d3a4813ff52400f053e8a8ccf740ada9c0962e957d850",
-      "verified_at": "2026-11-09T10:31:23.011Z",
+      "content_hash": "bd0c6ae72997914a193bae240eb6d955656924a0e4b7b7c96410a78879a68a7f",
+      "verified_at": "2026-11-14T21:38:17.247Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T10:31:23.011Z"
+      "last_updated": "2026-11-14T21:38:17.247Z"
     },
     "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2": {
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "b2657f28e0b881f1f599e73ba5a63e8a7bbeb3f563ca610ecb82793f6ca1ad78",
-      "verified_at": "2026-11-14T20:32:39.163Z",
+      "content_hash": "e93e9c87515301cd1ae5fbd3f551cdffa9ac092ebed960ed2de972b111d59360",
+      "verified_at": "2026-11-14T21:38:33.405Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T20:32:39.163Z"
+      "last_updated": "2026-11-14T21:38:33.405Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "1ea04846b32a801ce89c901426062294b78aa5385a88f1657d97b079adc05916",
-      "verified_at": "2026-11-13T16:25:49.538Z",
+      "content_hash": "d9cc59f05eafed22ea2fd4e78993cf3f2470337b96f4b8037378578600435484",
+      "verified_at": "2026-11-14T21:38:25.787Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T16:25:49.538Z"
+      "last_updated": "2026-11-14T21:38:25.787Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "9b59296e40577994fa05e0c4e3662ca9318471bc684dd6ff09440b7d95cf99ab",
-      "verified_at": "2026-11-13T15:11:03.860Z",
+      "content_hash": "bc901b40dac24daa45b7f4598b28ee3ec179db89ce3ab6428188f78170293b41",
+      "verified_at": "2026-11-14T21:38:30.712Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:11:03.860Z"
+      "last_updated": "2026-11-14T21:38:30.712Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",

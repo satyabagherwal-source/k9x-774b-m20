@@ -225,8 +225,8 @@
     "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceVersion": "hf-francisring-prism",
     "license": "Open-Source",
-    "contentHash": "98ed1dfa8f19aaee246d3a4813ff52400f053e8a8ccf740ada9c0962e957d850",
-    "lastHarvestedAt": "2026-11-09T10:31:23.002Z",
+    "contentHash": "bd0c6ae72997914a193bae240eb6d955656924a0e4b7b7c96410a78879a68a7f",
+    "lastHarvestedAt": "2026-11-14T21:38:17.240Z",
     "learningId": "learn-huggingface-francisring-prism"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "a3c23355",
+    "sourceVersion": "9045d150",
     "license": "NOASSERTION",
-    "contentHash": "b2657f28e0b881f1f599e73ba5a63e8a7bbeb3f563ca610ecb82793f6ca1ad78",
-    "lastHarvestedAt": "2026-11-14T20:32:39.155Z",
+    "contentHash": "e93e9c87515301cd1ae5fbd3f551cdffa9ac092ebed960ed2de972b111d59360",
+    "lastHarvestedAt": "2026-11-14T21:38:33.397Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "f8f3d3e7",
+    "sourceVersion": "00d5739f",
     "license": "Apache-2.0",
-    "contentHash": "1ea04846b32a801ce89c901426062294b78aa5385a88f1657d97b079adc05916",
-    "lastHarvestedAt": "2026-11-13T16:25:49.513Z",
+    "contentHash": "d9cc59f05eafed22ea2fd4e78993cf3f2470337b96f4b8037378578600435484",
+    "lastHarvestedAt": "2026-11-14T21:38:25.780Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "383694c5",
+    "sourceVersion": "1975aa79",
     "license": "NOASSERTION",
-    "contentHash": "9b59296e40577994fa05e0c4e3662ca9318471bc684dd6ff09440b7d95cf99ab",
-    "lastHarvestedAt": "2026-11-13T15:11:03.840Z",
+    "contentHash": "bc901b40dac24daa45b7f4598b28ee3ec179db89ce3ab6428188f78170293b41",
+    "lastHarvestedAt": "2026-11-14T21:38:30.704Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {

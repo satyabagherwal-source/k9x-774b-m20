@@ -9979,3 +9979,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-14T21:29:20.450Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `325c0b18` | Multi-dimensional audit evidence | 2026-11-14T21:29:22.427Z |
 | `learn-dom-d-88e5b240` | `project://hf-microsoft-frognano-4b-2609` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | 2026-11-14T21:30:06.145Z |
+| `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-11-14T21:38:17.240Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `00d5739f` | Multi-dimensional audit evidence | 2026-11-14T21:38:25.780Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `1975aa79` | Multi-dimensional audit evidence | 2026-11-14T21:38:30.704Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `9045d150` | Multi-dimensional audit evidence | 2026-11-14T21:38:33.397Z |
+| `learn-dom-d-11540386` | `project://hf-francisring-prism` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | 2026-11-14T21:39:04.643Z |

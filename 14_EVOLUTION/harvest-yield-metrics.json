@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T21:29:22.432Z",
-  "total_cycles_completed": 9602,
-  "total_learnings_persisted": 9602,
-  "total_rules_promoted": 9263,
+  "last_updated": "2026-11-14T21:38:33.402Z",
+  "total_cycles_completed": 9606,
+  "total_learnings_persisted": 9606,
+  "total_rules_promoted": 9266,
   "history": [
-    {
-      "timestamp": "2026-11-13T23:01:31.883Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T23:01:33.739Z",
-      "repository": "u-root/u-root",
-      "learningId": "learn-github-u-root-u-root",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T23:01:39.543Z",
-      "repository": "openreplay/openreplay",
-      "learningId": "learn-github-openreplay-openreplay",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T23:01:45.846Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T23:28:37.420Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-14T21:29:22.432Z",
       "repository": "max-sixty/worktrunk",
       "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T21:38:17.245Z",
+      "repository": "FrancisRing/Prism",
+      "learningId": "learn-huggingface-francisring-prism",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T21:38:25.784Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T21:38:30.709Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T21:38:33.402Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

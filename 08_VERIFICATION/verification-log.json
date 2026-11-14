@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261109-NL6J",
-    "timestamp": "2026-11-09T15:17:35.611Z",
-    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-    "contentHash": "f4fe60d7bc57b9299885925c6a24399293637227a2ffd2ada26edd421c4faf2a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-250T",
-    "timestamp": "2026-11-09T15:28:54.509Z",
-    "repository": "black-forest-labs/flux-3-image-klein-comfy",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-    "contentHash": "96cbf5a7d186365e168cb82ce293cfce0f168ea95610dd32daaf079036c89bc4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-2AS2",
-    "timestamp": "2026-11-09T15:29:01.970Z",
-    "repository": "karmada-io/karmada",
-    "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "4d48efac39c917d21869d57532c0faf40b691d6e73e75cc32b89a75beadb627e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261109-VBWB",
-    "timestamp": "2026-11-09T15:51:36.443Z",
-    "repository": "kgateway-dev/kgateway",
-    "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "a4174d89def8cdb6e5fe931ecdcca2202300940b3cd855f2bbd35f20e7a25307",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261109-VSY5",
     "timestamp": "2026-11-09T15:51:58.541Z",
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
@@ -7490,6 +7430,66 @@
     "repository": "max-sixty/worktrunk",
     "learningId": "learn-github-max-sixty-worktrunk",
     "contentHash": "026d8bb73411adcd327c16e646d8ed9a945803d8c4c36164176d9751dcacd8bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-GF84",
+    "timestamp": "2026-11-14T21:38:17.236Z",
+    "repository": "FrancisRing/Prism",
+    "learningId": "learn-huggingface-francisring-prism",
+    "contentHash": "bd0c6ae72997914a193bae240eb6d955656924a0e4b7b7c96410a78879a68a7f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-GLTC",
+    "timestamp": "2026-11-14T21:38:25.776Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "d9cc59f05eafed22ea2fd4e78993cf3f2470337b96f4b8037378578600435484",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-GPM5",
+    "timestamp": "2026-11-14T21:38:30.701Z",
+    "repository": "dragonflydb/dragonfly",
+    "learningId": "learn-github-dragonflydb-dragonfly",
+    "contentHash": "bc901b40dac24daa45b7f4598b28ee3ec179db89ce3ab6428188f78170293b41",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-GROX",
+    "timestamp": "2026-11-14T21:38:33.393Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "e93e9c87515301cd1ae5fbd3f551cdffa9ac092ebed960ed2de972b111d59360",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

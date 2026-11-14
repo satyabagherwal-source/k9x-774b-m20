@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T21:30:07.052Z",
-  "total_records": 846,
+  "last_updated": "2026-11-14T21:39:05.975Z",
+  "total_records": 850,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 415,
+      "total": 418,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -452,7 +452,10 @@
         "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
         "DOM-D-88E5B240",
-        "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv"
+        "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv",
+        "domain_intelligence-research-knowledge-intelligence-francisring-prism-core-invariants",
+        "DOM-D-11540386",
+        "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants"
       ]
     },
     "E": {
@@ -624,7 +627,7 @@
       ]
     },
     "H": {
-      "total": 178,
+      "total": 179,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -803,7 +806,8 @@
         "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
         "DOM-H-ADE4819D",
         "domain_intelligence-technical-construction-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-",
-        "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants"
       ]
     },
     "I": {
@@ -6679,8 +6683,8 @@
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "repository": "dragonflydb/dragonfly",
-      "content_hash": "6e72a920d9eecbec176dc4b85638ee55553cac65850d46f5292cbb092eaf8ee3",
-      "created_at": "2026-11-13T15:11:04.048Z"
+      "content_hash": "694ca3d129ab80f3811a8be39eb1518547a4e3beb5f1498d5fcb5fe5897dc1b7",
+      "created_at": "2026-11-14T21:38:30.976Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -6697,8 +6701,8 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-learnings-technical-construction-intelligence-dragonflydb-.md",
       "repository": "dragonflydb-dragonfly-learnings",
-      "content_hash": "733274ac588f88c2004a041713eb55c7de082820672c8c9a990102ae54225cd8",
-      "created_at": "2026-11-13T15:11:07.288Z"
+      "content_hash": "e303a138ce6c7fbf6a5c7df27df7e9f2a51d3877332148436358cb30d161ff85",
+      "created_at": "2026-11-14T21:39:05.975Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
@@ -7240,8 +7244,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "f911c4c407fd90210749a599e5441713ea89ea7e28318e2bfe6744827d57325f",
-      "created_at": "2026-11-13T16:25:49.842Z"
+      "content_hash": "e26de00debc107d8a6b346f14ccf87981ab4c1b83c7501ac55ea07287bbc8e3b",
+      "created_at": "2026-11-14T21:38:26.033Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -7318,8 +7322,8 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-learnings-technical-construction-intelligence-gocd-gocd-learnings-core.md",
       "repository": "gocd-gocd-learnings",
-      "content_hash": "02b1f933131fdb56132a02032270904a39cb814cfa8506165332c7e931320c38",
-      "created_at": "2026-11-13T16:26:53.588Z"
+      "content_hash": "de5781211a98f64cc98775c209d2164502f550fcc95f8048a6751878b017b87a",
+      "created_at": "2026-11-14T21:39:05.396Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -16865,6 +16869,75 @@
       "repository": "hf-microsoft-frognano-4b-2609-learnings",
       "content_hash": "8833f5a5b1196fa543bc4c2f70442747e6878d6b3bd1a9c2baf3e17f98dee783",
       "created_at": "2026-11-14T21:30:06.359Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-francisring-prism-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-francisring-prism-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: FrancisRing/Prism Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-francisring-prism-research-knowledge-intelligence-francisring-prism-core-inva.md",
+      "repository": "FrancisRing/Prism",
+      "content_hash": "ac4291ec9cdaa153ab6d4b14ec30029a13163538d1ec664101cf566468a57d9f",
+      "created_at": "2026-11-14T21:38:17.402Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
+      "repository": "dathere/qsv",
+      "content_hash": "de55917aa48258f0199c2cc585533cef3f9dd55e22fb0912ce80eb090c2bfebb",
+      "created_at": "2026-11-14T21:38:33.667Z"
+    },
+    "DOM-D-11540386": {
+      "record_id": "DOM-D-11540386",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): FrancisRing/Prism",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/FrancisRing/Prism](https://huggingface.co/FrancisRing/Prism))  \n> **Source Version**: `hf-francisri`  \n> **License**: Open-Source  \n> **Synthesized By**: ze",
+      "content_hash": "efd1b3939a88cb9d45c57fcca622eb81c7f49564b8e2a85460c89955a46198b8",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md`  \n> **Source**: huggingface ([https://huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md`  \n> **Source**: huggingface ([https://huggingface",
+      "provenance": {
+        "source_uri": "project://hf-francisring-prism/hf-francisring-prism-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T21:38:36.486Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-francisring-prism)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-francisring-prism"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T21:39:04.622Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-francisring-prism-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-francisring-prism-learnings-research-knowledge-intelligence-hf-francisring-pr.md",
+      "repository": "hf-francisring-prism-learnings",
+      "content_hash": "c0c5aef820ab40571906f5581f194966bab62b5f91235835a1443d9f494eecde",
+      "created_at": "2026-11-14T21:39:04.835Z"
     }
   }
 }

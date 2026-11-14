@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T21:30:07.195Z",
-  "total_verified_learnings": 8611,
+  "last_updated": "2026-11-14T21:39:06.094Z",
+  "total_verified_learnings": 8614,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17851,
+  "total_items": 17864,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112094,10 +112094,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "a3c23355",
-      "content_hash": "bd52445e16d74cf41307e3a5f2245e5315e0a30553780d58cfdf880646400562",
+      "source_version": "9045d150",
+      "content_hash": "f1e832956566697c987e95dcf82d492b5ed5e74e2ba7d5dc05236f3f99a6e35a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T20:32:39.529Z"
+      "persisted_at": "2026-11-14T21:38:33.773Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112202,10 +112202,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "383694c5",
-      "content_hash": "6e72a920d9eecbec176dc4b85638ee55553cac65850d46f5292cbb092eaf8ee3",
+      "source_version": "1975aa79",
+      "content_hash": "694ca3d129ab80f3811a8be39eb1518547a4e3beb5f1498d5fcb5fe5897dc1b7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T15:11:04.048Z"
+      "persisted_at": "2026-11-14T21:38:30.976Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly",
@@ -112214,10 +112214,10 @@
       "relative_path": "08_VERIFICATION/dragonflydb-dragonfly-verification-protocol-empirical-defect-shield-for-dragonfl.md",
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb/dragonfly",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "383694c5",
-      "content_hash": "bcb97b7163b0fe9c4a927d8bed0aac078abbe1c4365cae0aa95f439bd63872dd",
+      "source_version": "1975aa79",
+      "content_hash": "6b455496ae1602a76c9a95cc998a9e0bcc7e5e34fb39700781b914f15ae0f717",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:11:04.126Z"
+      "persisted_at": "2026-11-14T21:38:31.077Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -112239,9 +112239,9 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "733274ac588f88c2004a041713eb55c7de082820672c8c9a990102ae54225cd8",
+      "content_hash": "e303a138ce6c7fbf6a5c7df27df7e9f2a51d3877332148436358cb30d161ff85",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T15:11:07.288Z"
+      "persisted_at": "2026-11-14T21:39:05.975Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning",
@@ -112251,9 +112251,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb-dragonfly-learnings",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d9c69a44d9e9865b36b4ef06e1204664c8d1ed91f6e5fc7dcacd974ad38f1ff",
+      "content_hash": "cfc1382a4091c39ecec0565e7e0844fbf464a189d628144787709312acd966f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:11:07.345Z"
+      "persisted_at": "2026-11-14T21:39:06.094Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
@@ -113246,10 +113246,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "repository": "gocd/gocd",
-      "source_version": "f8f3d3e7",
-      "content_hash": "f911c4c407fd90210749a599e5441713ea89ea7e28318e2bfe6744827d57325f",
+      "source_version": "00d5739f",
+      "content_hash": "e26de00debc107d8a6b346f14ccf87981ab4c1b83c7501ac55ea07287bbc8e3b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:25:49.842Z"
+      "persisted_at": "2026-11-14T21:38:26.033Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
@@ -113258,10 +113258,10 @@
       "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
       "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
       "repository": "gocd/gocd",
-      "source_version": "f8f3d3e7",
-      "content_hash": "455f7219c3f11b2aeda2e54e972dbd425a986e32f69257c5aa3378c3565f6281",
+      "source_version": "00d5739f",
+      "content_hash": "ed2d444e49166908d729b4720845a6f8781b846703cb6ede0ce932e99f0ae86e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:25:49.943Z"
+      "persisted_at": "2026-11-14T21:38:26.137Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -113319,9 +113319,9 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "02b1f933131fdb56132a02032270904a39cb814cfa8506165332c7e931320c38",
+      "content_hash": "de5781211a98f64cc98775c209d2164502f550fcc95f8048a6751878b017b87a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T16:26:53.588Z"
+      "persisted_at": "2026-11-14T21:39:05.396Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings",
@@ -113331,9 +113331,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gocd-gocd-learnings",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "12112e3ddcbfb1bad75e6480a1de189ec27347f67a29eef321b07b2d84d7e4bc",
+      "content_hash": "07051242ae905a5b0716db19f6372476bf3a3a14e49678336c747b8983d315bb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T16:26:53.700Z"
+      "persisted_at": "2026-11-14T21:39:05.513Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -218661,8 +218661,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "a3c23355",
-      "content_hash": "b2657f28e0b881f1f599e73ba5a63e8a7bbeb3f563ca610ecb82793f6ca1ad78",
+      "source_version": "9045d150",
+      "content_hash": "e93e9c87515301cd1ae5fbd3f551cdffa9ac092ebed960ed2de972b111d59360",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218690,6 +218690,11 @@
           "number": "EXISTING",
           "title": "update lock file",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 8541,
+          "title": "honor QSV_STATS_SEPARATOR for the first mode; recompute a stats CSV",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218697,7 +218702,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T20:32:39.011Z",
+      "verified_at": "2026-11-14T21:38:33.248Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234950,6 +234955,225 @@
       "content_hash": "8833f5a5b1196fa543bc4c2f70442747e6878d6b3bd1a9c2baf3e17f98dee783",
       "domain_letter": "D",
       "persisted_at": "2026-11-14T21:30:06.359Z"
+    },
+    "learn-huggingface-francisring-prism": {
+      "learning_id": "learn-huggingface-francisring-prism",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "FrancisRing/Prism",
+      "repository": "FrancisRing/Prism",
+      "slug": "hf-francisring-prism",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/FrancisRing/Prism",
+      "source_version": "hf-francisring-prism",
+      "content_hash": "bd0c6ae72997914a193bae240eb6d955656924a0e4b7b7c96410a78879a68a7f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T21:38:17.088Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-francisring-prism-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-francisring-prism-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-francisring-prism-research-knowledge-intelligence-francisring-prism-core-inva.md",
+      "title": "Research & Knowledge Intelligence: FrancisRing/Prism Core Invariants",
+      "repository": "FrancisRing/Prism",
+      "source_version": "hf-francisring-prism",
+      "content_hash": "ac4291ec9cdaa153ab6d4b14ec30029a13163538d1ec664101cf566468a57d9f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T21:38:17.402Z"
+    },
+    "learn-github-gocd-gocd": {
+      "learning_id": "learn-github-gocd-gocd",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "gocd/gocd",
+      "repository": "gocd/gocd",
+      "slug": "gocd-gocd",
+      "platform": "github",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "00d5739f",
+      "content_hash": "d9cc59f05eafed22ea2fd4e78993cf3f2470337b96f4b8037378578600435484",
+      "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8539,
+          "title": "build(deps): bump gradle-wrapper",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T21:38:25.636Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8539": {
+      "learning_id": "rule-8539",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8539,
+      "title": "build(deps): bump gradle-wrapper",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "00d5739f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T21:38:25.636Z"
+    },
+    "candidate_directive-build-deps-bump-gradle-wrapper": {
+      "item_id": "candidate_directive-build-deps-bump-gradle-wrapper",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HGB1-build-deps-bump-gradle-wrapper.md",
+      "title": "build(deps): bump gradle-wrapper",
+      "repository": "gocd-gocd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7743d879363178ff39a234252a3631e357421e7b2d3164b71d1a00b65655bbea",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T21:39:05.293Z"
+    },
+    "learn-github-dragonflydb-dragonfly": {
+      "learning_id": "learn-github-dragonflydb-dragonfly",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "dragonflydb/dragonfly",
+      "repository": "dragonflydb/dragonfly",
+      "slug": "dragonflydb-dragonfly",
+      "platform": "github",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "1975aa79",
+      "content_hash": "bc901b40dac24daa45b7f4598b28ee3ec179db89ce3ab6428188f78170293b41",
+      "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8540,
+          "title": "keep a document indexed when HINCRBY fails",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T21:38:30.554Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8540": {
+      "learning_id": "rule-8540",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8540,
+      "title": "keep a document indexed when HINCRBY fails",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "1975aa79",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T21:38:30.554Z"
+    },
+    "candidate_directive-keep-a-document-indexed-when-hincrby-fails": {
+      "item_id": "candidate_directive-keep-a-document-indexed-when-hincrby-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GPQY-keep-a-document-indexed-when-hincrby-fails.md",
+      "title": "keep a document indexed when HINCRBY fails",
+      "repository": "dragonflydb/dragonfly",
+      "source_version": "1975aa79",
+      "content_hash": "b058884d867e46e6ce1479de1effeb73d27647378bab26e16a4733b9fae459f1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T21:38:30.878Z"
+    },
+    "rule-8541": {
+      "learning_id": "rule-8541",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8541,
+      "title": "honor QSV_STATS_SEPARATOR for the first mode; recompute a stats CSV",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "9045d150",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T21:38:33.248Z"
+    },
+    "candidate_directive-honor-qsv_stats_separator-for-the-first-mode-recompute-a-stats-csv": {
+      "item_id": "candidate_directive-honor-qsv_stats_separator-for-the-first-mode-recompute-a-stats-csv",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GRTN-honor-qsv_stats_separator-for-the-first-mode-recompute-a-stats-csv.md",
+      "title": "honor QSV_STATS_SEPARATOR for the first mode; recompute a stats CSV",
+      "repository": "dathere/qsv",
+      "source_version": "9045d150",
+      "content_hash": "ed16131931c8d5cb51d7ef22a23d3e880c89be64bd4fc03e9d10a36f8401140b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T21:38:33.567Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
+      "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
+      "repository": "dathere/qsv",
+      "source_version": "9045d150",
+      "content_hash": "de55917aa48258f0199c2cc585533cef3f9dd55e22fb0912ce80eb090c2bfebb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T21:38:33.667Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-francisring-prism-learnings-research-knowledge-intelligence-hf-francisring-pr.md",
+      "title": "Research & Knowledge Intelligence: hf-francisring-prism-learnings Core Invariants",
+      "repository": "hf-francisring-prism-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c0c5aef820ab40571906f5581f194966bab62b5f91235835a1443d9f494eecde",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T21:39:04.835Z"
+    },
+    "candidate_directive-search-keep-a-document-indexed-when-hincrby-fails": {
+      "item_id": "candidate_directive-search-keep-a-document-indexed-when-hincrby-fails",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HGQQ-search-keep-a-document-indexed-when-hincrby-fails.md",
+      "title": "search): keep a document indexed when HINCRBY fails",
+      "repository": "dragonflydb-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9853cd59630fd4843b6b66631a8a0aa16b10d50c86aeb7daf4d5ecb290e8c7b6",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-14T21:39:05.870Z"
     }
   },
   "ai-builder-brain": {

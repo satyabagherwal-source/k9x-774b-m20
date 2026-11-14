@@ -4,22 +4,22 @@
 {
   "source_repository": "gocd/gocd",
   "source_url": "https://github.com/gocd/gocd",
-  "source_version": "f8f3d3e7",
+  "source_version": "00d5739f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T16:25:49.739Z",
+  "timestamp": "2026-11-14T21:38:25.933Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gocd-gocd",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `f8f3d3e7`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T16:25:49.739Z`  
+> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `00d5739f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T21:38:25.933Z`  
 > **Learning ID**: `learn-github-gocd-gocd`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gocd/gocd` (Commit: `f8f3d3e7`)
+- **Target Repository**: `gocd/gocd` (Commit: `00d5739f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T16:25:48.877Z  
+> **Harvest Timestamp**: 2026-11-14T21:38:24.956Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -891,41 +891,49 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8f3d3e7` (2026-11-13)
-**Commit Message**: build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (#14733)
+### Incident Patch 1: `00d5739f` (2026-11-13)
+**Commit Message**: build(deps): bump gradle-wrapper (#14734)
 
-Bumps aquasec/trivy from 0.76.1 to 0.76.2.
+Bumps the gradle-plugins group with 1 update: [gradle-wrapper](https://github.com/gradle/gradle).
+
+
+Updates `gradle-wrapper` from 9.9.0 to 9.9.1
+- [Release notes](https://github.com/gradle/gradle/releases)
+- [Commits](https://github.com/gradle/gradle/compare/v9.9.0...v9.9.1)
 
 ---
 updated-dependencies:
-- dependency-name: aquasec/trivy
-  dependency-version: 0.76.2
+- dependency-name: gradle-wrapper
+  dependency-version: 9.9.1
   dependency-type: direct:production
   update-type: version-update:semver-patch
+  dependency-group: gradle-plugins
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `docker/docker-compose.yml` (modified, +1/-1)
+**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +2/-2)
 ```diff
-@@ -1,6 +1,6 @@
- services:
-   trivy:
--    image: docker.io/aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
-+    image: docker.io/aquasec/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb
-     command: [ image, --input, /scan-image, --exit-code, "${EXIT_CODE_ON_ERROR}", --config, /trivy.yaml ]
-     volumes:
-       - ./trivy.yaml:/trivy.yaml:ro
+@@ -1,7 +1,7 @@
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+-distributionSha256Sum=0b00b0ffe07c4d4789c12d4935a44a7057d55774b7540bd4a3f76f336deb177a
+-distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
++distributionSha256Sum=d8a18a7a841dd5df825d35a685fad6f2d7f12ac0c280e57b67c27b4a520ba228
++distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
+ networkTimeout=10000
+ retries=0
+ retryBackOffMs=500
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14734** (2026-11-13): build(deps): bump gradle-wrapper from 9.9.0 to 9.9.1 in the gradle-plugins group (@dependabot[bot])
 - **PR #14733** (2026-11-13): build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (@dependabot[bot])
 - **PR #14732** (2026-11-12): build(deps): bump com.fasterxml.jackson:jackson-bom from 2.22.4 to 2.23.0 (@dependabot[bot])
 - **PR #14731** (2026-11-12): build(deps-ui-dev): bump rspec-rails from 8.0.5 to 8.1.0 in /server/src/main/webapp/WEB-INF/rails in the rspec group (@dependabot[bot])
 - **PR #14730** (2026-11-12): build(deps): bump com.autonomousapps.dependency-analysis from 3.20.1 to 3.20.2 in the gradle-plugins group (@dependabot[bot])
 - **PR #14729** (2026-11-09): Upgrade sass-embedded to 1.108.1 (@Copilot)
-- **PR #14728** (2026-11-09): build(deps): bump gradle-wrapper from 9.8.2 to 9.9.0 in the gradle-plugins group (@dependabot[bot])
 
 ---
 
@@ -945,31 +953,33 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (#14733)
+## X. build(deps): bump gradle-wrapper
 
 **RULE**:
-When implementing operations in `docker/docker-compose.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f8f3d3e7`: build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (#14733). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `00d5739f`: build(deps): bump gradle-wrapper. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/docker-compose.yml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    image: docker.io/aquasec/trivy:0.76.2@sha256:8f6bb947dbc528902e11f2f5be52f7b519f6a39d5d148f41166f2040499768fb
+distributionSha256Sum=d8a18a7a841dd5df825d35a685fad6f2d7f12ac0c280e57b67c27b4a520ba228
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-    image: docker.io/aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
+// Induced defect failure mode:
+distributionSha256Sum=0b00b0ffe07c4d4789c12d4935a44a7057d55774b7540bd4a3f76f336deb177a
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f8f3d3e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `00d5739f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

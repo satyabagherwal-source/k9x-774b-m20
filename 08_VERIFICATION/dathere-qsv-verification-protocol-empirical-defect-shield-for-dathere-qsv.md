@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "a3c23355",
+  "source_version": "9045d150",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-14T20:32:39.330Z",
+  "timestamp": "2026-11-14T21:38:33.566Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `a3c23355`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-14T20:32:39.330Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `9045d150`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-14T21:38:33.566Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `a3c23355`)
+- **Target Repository**: `dathere/qsv` (Commit: `9045d150`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T20:32:38.594Z  
+> **Harvest Timestamp**: 2026-11-14T21:38:32.550Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2212,81 +2212,896 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3c23355` (2026-11-14)
-**Commit Message**: deps: update lock file
+### Incident Patch 1: `9045d150` (2026-11-14)
+**Commit Message**: fix(moarstats): honor QSV_STATS_SEPARATOR for the first mode; recompute a stats CSV written with another separator (#5051)
 
-Refresh the lockfile to jiff 0.2.44, jiff-core 0.1.6, jiff-tzdb 0.1.10, and redis 1.8.2.
+* fix(moarstats): honor QSV_STATS_SEPARATOR for the first mode; recompute a stats CSV written with another separator
 
-**File**: `Cargo.lock` (modified, +10/-10)
+The first mode of a multi-modal column was found by splitting the mode
+cell on a hardcoded "|", so under any other QSV_STATS_SEPARATOR a
+multi-modal numeric column had an empty mode_zscore. It is now split
+with the configured separator.
+
+moarstats splits the percentiles cell with the current separator. On a
+stats CSV written under another one it found no entries and left out
+kelly_skewness and percentile_ratio_90_10 without a warning. It now
+compares the separator recorded in the stats sidecar (#5049) with the
+current one (util::stats_csv_separator_mismatch) and reruns stats when
+they differ, as it does for a qsv version mismatch. A stats CSV with no
+sidecar is used as it is.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* docs(changelog): cite #5051
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* fix(moarstats): parse a single mode whole, whatever the separator
+
+Splitting the mode cell with the configured separator cut a lone m
+
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -4131,9 +4131,9 @@ dependencies = [
+@@ -42,6 +42,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
  
- [[package]]
- name = "jiff"
--version = "0.2.43"
-+version = "0.2.44"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
-+checksum = "ac63a5a611e9d720726d6ab6ee2ee19e6f620503554ea5d303c7cb294ff40c12"
- dependencies = [
-  "jiff-core",
-  "jiff-static",
-@@ -4148,18 +4148,18 @@ dependencies = [
+ ### Fixed
++- **`moarstats`: two `QSV_STATS_SEPARATOR` fixes** ([#5051](https://github.com/dathere/qsv/pull/5051)):
++  - **`mode_zscore` is computed for a column with several modes under any separator.** The first mode was looked up by splitting on `|`, so with another separator a multi-modal numeric column had an empty `mode_zscore`.
++  - **A stats CSV written with another separator is recomputed.** Before, its percentile cells could not be split, so `kelly_skewness` and `percentile_ratio_90_10` were left out without a warning. `moarstats` now reads the separator recorded in the stats cache metadata (#5049) and reruns `stats` when it differs, with a warning. A stats CSV that has no metadata file is used as it is.
+ - **`stats`: three stale-cache fixes** ([#5049](https://github.com/dathere/qsv/pull/5049)):
+   - **`QSV_NO_HEADERS` now counts for the stats cache and the field names.** Before, the cache only recorded the `--no-headers` flag, so stats computed with the header row as names were served to a run that set the environment variable (and the reverse). A run with the variable also named the fields after the first row while counting that row as data; it now numbers them `0`, `1`, ... as `--no-headers` does. The commands that read the stats cache check it against the same resolved setting, so `sortcheck` and `extsort` still use a cache built under the variable.
+   - **`stats` recomputes when `QSV_STATS_SEPARATOR` changes.** Before, it served its cache written with the previous separator, so modes, antimodes and percentiles kept the old one. This covers `stats` itself; `moarstats` still reads an existing `<FILESTEM>.stats.csv` as it is.
+```
+
+**File**: `src/cmd/moarstats.rs` (modified, +21/-4)
+```diff
+@@ -5211,6 +5211,10 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         // Every moarstats column already in the CSV is skipped below, so a cache extended by an
+         // older qsv would otherwise keep that version's values after an upgrade.
+         let version_mismatch = stats_current && util::stats_csv_version_mismatch(&path);
++        // The percentiles and modes cells are split with the current QSV_STATS_SEPARATOR below,
++        // so a CSV joined with another one would lose every statistic derived from them.
++        let separator_mismatch =
++            stats_current && util::stats_csv_separator_mismatch(&path, &stats_separator);
+         // A current stats CSV can still be unusable for --use-percentiles: it
+         // may have been computed with a --percentile-list that lacks the
+         // requested --pct-thresholds (issue #4455). Treat that as stale so the
+@@ -5226,7 +5230,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+             } else {
+                 true
+             };
+-        if !stats_current || version_mismatch || !covers_thresholds {
++        if !stats_current || version_mismatch || separator_mismatch || !covers_thresholds {
+             if args.flag_force {
+                 winfo!("Force flag set: recomputing stats...");
+             } else if !stats_current {
+@@ -5247,6 +5251,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                      baseline stats...",
+                     path.display()
+                 );
++            } else if separator_mismatch {
++                wwarn!(
++                    "Stats CSV file was written with a different QSV_STATS_SEPARATOR: \
++                     {}\nRecomputing baseline stats...",
++                    path.display()
++                );
+             } else {
+                 wwarn!(
+                     "Stats CSV file was computed with a --percentile-list that does not include \
+@@ -7200,15 +7210,22 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                 .and_then(parse_float_opt);
  
- [[package]]
- name = "jiff-core"
--version = "0.1.5"
-+version = "0.1.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
-+checksum = "48e9635854583b49ce3c6c43a071f70b0a49e79ad3c261c7b3aa76b2280416d2"
- dependencies = [
-  "log",
- ]
+             // Parse mode (may be a string, need to try parsing as float)
+-            // If multiple modes are separated by "|", try parsing the first one
++            // If there are multiple modes, try parsing the first one
++            let single_mode = mode_count_idx
++                .and_then(|idx| record.get(idx))
++                .is_some_and(|count| count == "1");
+             let mode = mode_idx.and_then(|idx| record.get(idx)).and_then(|s| {
+                 if s.is_empty() {
+                     None
++                } else if single_mode {
++                    // a lone mode is the whole cell: splitting it would cut a number that
++                    // contains the separator (`1.5` under ".", `-2` under "-")
++                    parse_float_opt(s.trim())
+                 } else {
+-                    // Handle multiple modes separated by "|" - try first one
++                    // Multiple modes are joined with QSV_STATS_SEPARATOR - try the first one
+                     // safety: `split` on a non-empty string always yields at least one element,
+                     // so `next` will always return `Some` and `unwrap` will not panic.
+-                    let first_mode = s.split('|').next().unwrap().trim();
++                    let first_mode = s.split(stats_separator.as_str()).next().unwrap().trim();
+                     parse_float_opt(first_mode)
+                 }
+             });
+```
+
+**File**: `src/util/stats_cache.rs` (modified, +21/-0)
+```diff
+@@ -312,6 +312,27 @@ pub fn stats_csv_version_mismatch(stats_csv_path: &Path) -> bool {
+         })
+ }
  
- [[package]]
- name = "jiff-static"
--version = "0.2.43"
-+version = "0.2.44"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
-+checksum = "9f9c27796c21cc8b33ce490f148d53fe41d679b887885bf0ef8f662cdb9b35c0"
- dependencies = [
-  "jiff-core",
-  "proc-macro2",
-@@ -4169,9 +4169,9 @@ dependencies = [
++/// Were the multi-value cells (modes, antimodes, percentiles) of the `<FILESTEM>.stats.csv`
++/// beside this path joined with a separator other than `separator`?
++///
++/// `moarstats` splits those cells with the current `QSV_STATS_SEPARATOR`. On a stats CSV written
++/// under another one it finds no percentile entries, and skips the columns derived from them
++/// without a word. The `stats` rerun this triggers rewrites the CSV with the current separator.
++///
++/// Only a readable sidecar counts, as in `stats_csv_version_mismatch`. A sidecar written before
++/// the separator was recorded reads as the default - and is a version mismatch anyway.
++pub fn stats_csv_separator_mismatch(stats_csv_path: &Path, separator: &str) -> bool {
++    std::fs::read_to_string(stats_csv_path.with_extension("csv.json"))
++        .ok()
++        .and_then(|t| serde_json::from_str::<serde_json::Value>(&t).ok())
++        .is_some_and(|m| {
++            m.get("stats_separator")
++                .and_then(serde_json::Value::as_str)
++                .unwrap_or(crate::cmd::stats::DEFAULT_STATS_SEPARATOR)
++                != separator
++        })
++}
++
+ /// Does the stats cache's metadata sidecar POSTDATE the `.stats.csv.data.jsonl` beside it?
+ ///
+ /// If it does, the JSONL was produced by an earlier stats run and no longer describes the stats
+```
+
+**File**: `tests/test_moarstats.rs` (modified, +158/-0)
+```diff
+@@ -8108,3 +8108,161 @@ fn stats_definitions_at_a_glance_counts() {
+         "the section's headline should say **{measured_total} statistic columns**"
+     );
+ }
++
++/// `qsv select <cols> d.stats.csv`: the named stats columns, header row first.
++fn stats_csv_columns(wrk: &Workdir, cols: &str) -> Vec<Vec<String>> {
++    let mut cmd = wrk.command("select");
++    cmd.args([cols, "d.stats.csv"]);
++    wrk.read_stdout(&mut cmd)
++}
++
++#[test]
++fn moarstats_mode_zscore_with_a_custom_stats_separator() {
++    // several modes are joined with QSV_STATS_SEPARATOR, not always "|": the first one has to
++    // be found under any separator
++    let mut zscores = Vec::new();
++    for separator in ["|", ";"] {
++        let wrk = Workdir::new(&format!(
++            "moarstats_mode_zscore_with_a_custom_stats_separator_{}",
++            separator == ";"
++        ));
++        wrk.create_from_string("d.csv", "v\n1\n1\n2\n2\n3\n9\n");
++        let mut cmd = wrk.command("stats");
++        cmd.env("QSV_STATS_SEPARATOR", separator)
++            .args(["--everything", "--stats-jsonl", "d.csv"]);
++        wrk.assert_success(&mut cmd);
++        let mut cmd = wrk.command("moarstats");
++        cmd.env("QSV_STATS_SEPARATOR", separator).arg("d.csv");
++        wrk.assert_success(&mut cmd);
++
++        let got = stats_csv_columns(&wrk, "mode,mode_zscore");
++        assert_eq!(got[1][0], format!("1{separator}2"));
++        zscores.push(got[1][1].clone());
++    }
++    assert!(!zscores[0].is_empty());
++    assert_eq!(zscores[0], zscores[1]);
++}
++
++#[test]
++fn moarstats_recomputes_stats_written_with_another_stats_separator() {
++    // percentile cells joined with another separator cannot be split, which silently dropped
++    // the statistics derived from them (kelly_skewness, percentile_ratio_90_10)
++    let wrk = Workdir::new("moarstats_recomputes_stats_written_with_another_stats_separator");
++    let rows: String = (1..=200)
++        .map(|i| format!("{}\n", (i * 37) % 101 + i / 7))
++        .collect();
++    wrk.create_from_string("d.csv", &format!("v\n{rows}"));
++    let mut cmd = wrk.command("stats");
++    cmd.args(["--everything", "--stats-jsonl", "d.csv"]);
++    wrk.assert_success(&mut cmd);
++    assert!(stats_csv_columns(&wrk, "percentiles")[1][0].contains('|'));
++
++    let mut cmd = wrk.command("moarstats");
++    cmd.env("QSV_STATS_SEPARATOR", ";")
++        .args(["--advanced", "d.csv"]);
++    wrk.assert_success(&mut cmd);
++
++    let got = stats_csv_columns(&wrk, "percentiles,kelly_skewness,percentile_ratio_90_10");
++    assert!(
++        got[1][0].contains(';') && !got[1][0].contains('|'),
++        "{got:?}"
++    );
++    assert!(!got[1][1].is_empty() && !got[1][2].is_empty(), "{got:?}");
++}
++
++#[test]
++fn moarstats_mode_zscore_of_a_single_mode_containing_the_separator() {
++    // a lone mode is not split: "-1.5" must stay whole when the separator is "." or "-"
++    let mut zscores = Vec::new();
++    for (name, separator) in [("pipe", "|"), ("dot", "."), ("dash", "-")] {
++        let wrk = Workdir::new(&format!(
++            "moarstats_mode_zscore_of_a_single_mode_containing_the_separator_{name}"
++        ));
++        wrk.create_from_string("d.csv", "v\n-1.5\n-1.5\n3\n4\n");
++        let mut cmd = wrk.command("stats");
++        cmd.env("QSV_STATS_SEPARATOR", separator)
++            .args(["--everything", "--stats-jsonl", "d.csv"]);
++        wrk.assert_success(&mut cmd);
++        let mut cmd = wrk.command("moarstats");
++        cmd.env("QSV_STATS_SEPARATOR", separator).arg("d.csv");
++        wrk.assert_success(&mut cmd);
++
++        let got = stats_csv_columns(&wrk, "mode,mode_count,mode_zscore");
++        assert_eq!([&got[1][0], &got[1][1]], ["-1.5", "1"], "{name}");
++        zscores.push(got[1][2].clone());
++    }
++    assert_eq!(zscores, ["-0.9901"; 3]);
++}
++
++/// The column names of `d.stats.csv`.
++fn stats_csv_headers(wrk: &Workdir) -> Vec<String> {
++    let mut cmd = wrk.command("headers");
++    cmd.args(["--just-names", "d.stats.csv"]);
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    got.into_iter().map(|row| row[0].clone()).collect()
++}
++
++fn separator_test_csv() -> String {
++    let rows: String = (1..=200)
++        .map(|i| format!("{}\n", (i * 37) % 101 + i / 7))
++        .collect();
++    format!("v\n{rows}")
++}
++
++#[test]
++fn moarstats_keeps_stats_whose_recorded_separator_matches() {
++    // the separator check must not recompute a baseline that already uses the current
++    // separator. `zero_padded_numeric` is only in the --everything baseline built here, so a
++    // rerun with moarstats' own stats options would drop it.
++    for (name, separator) in [("pipe", "|"), ("semicolon", ";")] {
++        let wrk = Workdir::new(&format!(
++            "moarstats_keeps_stats_whose_recorded_separator_matches_{name}"
++        ));
++        wrk.create_from_string("d.csv", &separator_test_csv());
++        let mut cmd = wrk.command("stats");
++        cmd.env("QSV_STATS_SEPARATOR", separator)
++            .args(["--everyt
+```
+
+---
+
+### Incident Patch 2: `ba93b639` (2026-11-14)
+**Commit Message**: fix(stats): cache follows QSV_NO_HEADERS and QSV_STATS_SEPARATOR; re-sniff date columns after an upgrade (#5049)
+
+* fix(stats): cache follows QSV_NO_HEADERS and QSV_STATS_SEPARATOR; re-sniff date columns after an upgrade
+
+The stats cache key recorded only the --no-headers flag, so a cache
+computed with the header row as names was served to a run that set
+QSV_NO_HEADERS (and the reverse). The key and the field labels now use
+the Config's resolved setting, and the cache readers resolve their flag
+the same way (config::resolved_no_headers), so sortcheck and extsort
+still accept a cache built under the variable.
+
+QSV_STATS_SEPARATOR is now part of the key, including the path that
+serves an --everything cache to a narrower request. Caches written
+before the field existed read as the default separator.
+
+With --dates-whitelist sniff, the sniffed column list in a sidecar from
+another qsv version was reused for the recompute the version change
+triggers, and written into the new cache. It is now sniffed again.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* docs(changelog): cite #5049
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Fable 5.2 <[
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -42,6 +42,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
  
- [[package]]
- name = "jiff-tzdb"
--version = "0.1.9"
-+version = "0.1.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
-+checksum = "0980fca2cc272465bd60e82397607ba9f33add9e48defd77923301bbd03808f2"
+ ### Fixed
++- **`stats`: three stale-cache fixes** ([#5049](https://github.com/dathere/qsv/pull/5049)):
++  - **`QSV_NO_HEADERS` now counts for the stats cache and the field names.** Before, the cache only recorded the `--no-headers` flag, so stats computed with the header row as names were served to a run that set the environment variable (and the reverse). A run with the variable also named the fields after the first row while counting that row as data; it now numbers them `0`, `1`, ... as `--no-headers` does. The commands that read the stats cache check it against the same resolved setting, so `sortcheck` and `extsort` still use a cache built under the variable.
++  - **`stats` recomputes when `QSV_STATS_SEPARATOR` changes.** Before, it served its cache written with the previous separator, so modes, antimodes and percentiles kept the old one. This covers `stats` itself; `moarstats` still reads an existing `<FILESTEM>.stats.csv` as it is.
++  - **`--infer-dates` sniffs the date columns again after a qsv upgrade.** With the default `--dates-whitelist sniff`, the column list sniffed by the previous version was reused for the recompute that the upgrade triggers, and saved into the new cache. It stayed until the file changed or `--force` was used.
+ - **`stats`: wrong `max_precision`, weighted quantiles and `*ALL` antimodes** ([#5050](https://github.com/dathere/qsv/pull/5050)):
+   - **`max_precision` is right for very small and very large floats.** A value below 0.00001 or from 1e16 up was miscounted: `0.000001` reported 4 decimal places, and `1e21` reported 5. They now report 6 and 1. `NaN` and `inf` cells no longer count toward it.
+   - **`--weight`: a column whose rows all have a zero or negative weight has no median, quartiles, MAD or percentiles.** Before, these fell back to the unweighted values, next to a weighted mean of 0. Weighted runs also use less memory: they no longer keep a second, unweighted copy of each numeric column (8 bytes per row).
+```
+
+**File**: `src/cmd/stats.rs` (modified, +31/-4)
+```diff
+@@ -581,6 +581,11 @@ struct StatsArgs {
+     // cache reads as 0 and still matches runs without the env var.
+     #[serde(default)]
+     preamble_rows: u64,
++    // the separator joining multi-value cells (modes, antimodes, percentiles), from
++    // QSV_STATS_SEPARATOR: a cache rendered with another separator is another output. The
++    // default keeps a cache written before this field existed matching runs without the env var.
++    #[serde(default = "default_stats_separator")]
++    stats_separator: String,
+     flag_output_snappy: bool,
+     canonical_input_path: String,
+     canonical_stats_path: String,
+@@ -596,6 +601,15 @@ struct StatsArgs {
+     hash: FileHash,
+ }
  
- [[package]]
- name = "jiff-tzdb-platform"
-@@ -7676,9 +7676,9 @@ dependencies = [
++fn default_stats_separator() -> String {
++    DEFAULT_STATS_SEPARATOR.to_string()
++}
++
++/// The separator for multi-value cells: `QSV_STATS_SEPARATOR`, or the default when unset.
++fn stats_separator_from_env() -> String {
++    std::env::var("QSV_STATS_SEPARATOR").unwrap_or_else(|_| default_stats_separator())
++}
++
+ #[derive(Clone, Serialize, Deserialize, PartialEq, Default)]
+ struct FileHash {
+     #[serde(rename = "BLAKE3", skip_serializing_if = "String::is_empty")]
+@@ -675,6 +689,7 @@ impl StatsArgs {
+             flag_delimiter: get_str("flag_delimiter"),
+             flag_flexible: get_bool("flag_flexible"),
+             preamble_rows: get_u64("preamble_rows"),
++            stats_separator: get_str_or("stats_separator", DEFAULT_STATS_SEPARATOR),
+             flag_output_snappy: get_bool("flag_output_snappy"),
+             canonical_input_path: get_str("canonical_input_path"),
+             canonical_stats_path: get_str("canonical_stats_path"),
+@@ -1820,6 +1835,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         flag_flexible: args.flag_flexible,
+         // set from the resolved rconfig below
+         preamble_rows: 0,
++        stats_separator: stats_separator_from_env(),
+         // when we write to stdout, we don't use snappy compression
+         // when we write to a file with the --output option, we use
+         // snappy compression if the file ends with ".sz"
+@@ -1871,6 +1887,9 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         return fail_incorrectusage_clierror!("{format_error}");
+     }
+     current_stats_args.preamble_rows = rconfig.preamble_rows;
++    // the RESOLVED setting, not the flag: QSV_NO_HEADERS turns the header row into data too, and
++    // a cache keyed on the flag alone was served across that change.
++    current_stats_args.flag_no_headers = rconfig.no_headers;
  
- [[package]]
- name = "redis"
--version = "1.8.1"
-+version = "1.8.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "db7f3d75b5a3301746bff39a767bf4c5c42506b08513527308b3875bfb64a031"
-+checksum = "4bef8fa589dd53a8a379a7856de1365d0a1be50c6b8aebb5c01c1ec441a2c509"
- dependencies = [
-  "ahash",
-  "arcstr",
+     // INVARIANT (issue #4462): `rconfig` below is the one and only resolved Config for this
+     // run's input, and every stats path SHARES it - `sequential_stats` and `parallel_stats`
+@@ -2155,6 +2174,8 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+                             // have another header than stats of the file as stored
+                             && existing_stats_args_json.preamble_rows
+                                 == current_stats_args.preamble_rows
++                            && existing_stats_args_json.stats_separator
++                                == current_stats_args.stats_separator
+                             && existing_stats_args_json.flag_nulls == current_stats_args.flag_nulls
+                             && existing_stats_args_json.flag_weight
+                                 == current_stats_args.flag_weight
+@@ -2388,7 +2409,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+             wtr.write_record(&stats_headers_sr)?;
+             let fields = headers.iter().zip(stats_sr_vec);
+             for (i, (header, stat)) in fields.enumerate() {
+-                let header = if args.flag_no_headers {
++                let header = if rconfig.no_headers {
+                     i.to_string().into_bytes()
+                 } else {
+                     header.to_vec()
+@@ -4324,6 +4345,13 @@ fn read_current_sniff_whitelist(input_path: &std::path::Path, args: &Args) -> Op
+     // literal keyword as the whitelist, breaking date inference. Requiring flag_infer_dates (and
+     // guarding against the literal "sniff" value defensively) ensures the stored whitelist is a
+     // genuinely resolved column set (or the _qsv_no_date_columns_found sentinel).
++    // Another qsv version may sniff another column set. The version mismatch makes the caller
++    // recompute and rewrite the sidecar, so reusing the old list there would carry it into the
++    // new cache, and into every later one, until the file changes.
++    if cached.qsv_version != env!("CARGO_PKG_VERSION") {
++        return None;
++    }
++
+     if cached.flag_infer_dates
+         && cached
+             .flag_dates_whitelist_raw
+@@ -5756,10 +5784,9 @@ impl Stats {
+         // get the stats separator
+         let stats_separator = STATS_SEPARATOR.get_or_init(|| {
+             if self.which.mode || self.which.percentiles {
+-                std::env::var("QSV_STATS_SEPARATOR")
+-                    .unwrap_or_else(|_| DEFAULT_STATS_SEPARATOR.to_string())
++        
+```
+
+**File**: `src/config.rs` (modified, +8/-0)
+```diff
+@@ -108,6 +108,14 @@ impl io::Seek for HeaderStart {
+     }
+ }
+ 
++/// The no-headers setting a `Config` resolves from a command's `--no-headers` flag: the flag
++/// (flipped by `QSV_TOGGLE_HEADERS`) or `QSV_NO_HEADERS`. Mirrors `Config::new` followed by
++/// `Config::no_headers_flag`, for code that must agree with a Config it does not hold - the
++/// stats cache records the resolved setting, and its readers compare against this.
++pub fn resolved_no_headers(flag: bool) -> bool {
++    util::get_envvar_flag("QSV_NO_HEADERS") || (flag != util::get_envvar_flag("QSV_TOGGLE_HEADERS"))
++}
++
+ /// The preamble rows (as the sniffer counts them) `QSV_SNIFF_PREAMBLE` finds above `path`'s
+ /// header, as `Config::preamble_rows` records them; 0 when the env var is unset.
+ pub fn sniffed_preamble_rows(path: &Path) -> u64 {
+```
+
+**File**: `src/util/stats_cache.rs` (modified, +3/-1)
+```diff
+@@ -119,7 +119,9 @@ pub(super) fn stats_cache_parsing_opts_match(
+         .get("flag_no_headers")
+         .and_then(serde_json::Value::as_bool)
+         .unwrap_or(false)
+-        != no_headers
++        // the cache records the RESOLVED setting (flag or QSV_NO_HEADERS), so resolve the
++        // consumer's flag the same way
++        != crate::config::resolved_no_headers(no_headers)
+     {
+         return false;
+     }
+```
+
+**File**: `tests/test_sortcheck.rs` (modified, +26/-0)
+```diff
+@@ -699,3 +699,29 @@ fn sortcheck_rejects_cache_whose_sidecar_cannot_prove_input_size() {
+     cmd.args(["--select", "id"]).arg("--numeric").arg("sc2.csv");
+     wrk.assert_err(&mut cmd);
+ }
++
++// the stats cache records the RESOLVED no-headers setting, so a cache built under
++// QSV_NO_HEADERS has to be accepted by a reader running under the same variable. The
++// tampered sort order shows the cache was used: a full scan finds the column unsorted.
++#[test]
++fn sortcheck_statscache_shortcircuit_under_qsv_no_headers_env() {
++    let wrk = Workdir::new("sortcheck_statscache_shortcircuit_under_qsv_no_headers_env");
++    wrk.create_from_string("in.csv", "name\nbanana\napple\ncherry\n");
++    let mut stats_cmd = wrk.command("stats");
++    stats_cmd
++        .env("QSV_NO_HEADERS", "1")
++        .args(["in.csv", "--stats-jsonl"]);
++    wrk.assert_success(&mut stats_cmd);
++    tamper_sort_order(&wrk, "in", "0", "Ascending");
++
++    let mut cmd = wrk.command("sortcheck");
++    cmd.env("QSV_NO_HEADERS", "1")
++        .args(["--select", "1"])
++        .arg("in.csv");
++    wrk.assert_success(&mut cmd);
++
++    // without the variable the same cache describes another CSV: full scan, not sorted
++    let mut cmd = wrk.command("sortcheck");
++    cmd.args(["--select", "1"]).arg("in.csv");
++    wrk.assert_err(&mut cmd);
++}
+```
+
+**File**: `tests/test_stats.rs` (modified, +91/-0)
+```diff
+@@ -10602,6 +10602,97 @@ fn stats_everything_cache_not_reused_across_sniff_preamble() {
+     assert_eq!(fields, ["id", "name", "amount"]);
+ }
+ 
++#[test]
++fn stats_cache_not_reused_across_qsv_no_headers_env() {
++    // QSV_NO_HEADERS turns the header row into data, like --no-headers: the cache key and the
++    // field labels follow the resolved setting, not the flag alone
++    for everything in [false, true] {
++        let wrk = Workdir::new(&format!(
++            "stats_cache_not_reused_across_qsv_no_headers_env_{everything}"
++        ));
++        wrk.create_from_string("d.csv", "x,y\n1,2\n3,4\n");
++        let mut cmd = wrk.command("stats");
++        cmd.args(["--cache-threshold", "1", "d.csv"]);
++        if everything {
++            cmd.arg("--everything");
++        }
++        let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++        assert_eq!([&got[1][0], &got[1][1]], ["x", "Integer"]);
++
++        let mut cmd = wrk.command("stats");
++        cmd.env("QSV_NO_HEADERS", "1")
++            .args(["--cache-threshold", "1", "d.csv"]);
++        let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++        let fields_types: Vec<[&str; 2]> = got[1..]
++            .iter()
++            .map(|r| [r[0].as_str(), r[1].as_str()])
++            .collect();
++        assert_eq!(
++            fields_types,
++            [["0", "String"], ["1", "String"]],
++            "everything={everything}"
++        );
++    }
++}
++
++#[test]
++fn stats_cache_not_reused_across_stats_separator_env() {
++    for everything in [false, true] {
++        let wrk = Workdir::new(&format!(
++            "stats_cache_not_reused_across_stats_separator_env_{everything}"
++        ));
++        wrk.create_from_string("d.csv", "x\na\na\nb\nb\nc\n");
++        let mode_of = |got: &[Vec<String>]| {
++            let idx = got[0].iter().position(|h| h == "mode").unwrap();
++            got[1][idx].clone()
++        };
++        let flag = if everything { "--everything" } else { "--mode" };
++
++        let mut cmd = wrk.command("stats");
++        cmd.args(["--cache-threshold", "1", flag, "d.csv"]);
++        let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++        assert_eq!(mode_of(&got), "a|b");
++
++        let mut cmd = wrk.command("stats");
++        cmd.env("QSV_STATS_SEPARATOR", ";")
++            .args(["--cache-threshold", "1", "--mode", "d.csv"]);
++        let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++        assert_eq!(mode_of(&got), "a;b", "everything={everything}");
++    }
++}
++
++#[test]
++fn stats_sniff_whitelist_not_reused_from_another_qsv_version() {
++    // a sidecar written by another qsv version forces a recompute; its sniffed date-column list
++    // must be re-sniffed too, not carried into the new cache
++    let wrk = Workdir::new("stats_sniff_whitelist_not_reused_from_another_qsv_version");
++    wrk.create_from_string(
++        "d.csv",
++        "id,when,note\n1,2020-01-02,a\n2,2021-03-04,b\n3,2022-05-06,c\n",
++    );
++    let mut cmd = wrk.command("stats");
++    cmd.args(["--infer-dates", "--cache-threshold", "1", "d.csv"]);
++    wrk.assert_success(&mut cmd);
++
++    let sidecar = wrk.path("d.stats.csv.json");
++    let mut meta: serde_json::Value =
++        serde_json::from_str(&std::fs::read_to_string(&sidecar).unwrap()).unwrap();
++    assert_eq!(meta["flag_dates_whitelist"], "when");
++    meta["qsv_version"] = "0.0.1".into();
++    meta["flag_dates_whitelist"] = "note".into();
++    std::fs::write(&sidecar, serde_json::to_string_pretty(&meta).unwrap()).unwrap();
++
++    let mut cmd = wrk.command("stats");
++    cmd.args(["--infer-dates", "--cache-threshold", "1", "d.csv"]);
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    assert_eq!([&got[2][0], &got[2][1]], ["when", "Date"]);
++
++    let meta: serde_json::Value =
++        serde_json::from_str(&std::fs::read_to_string(&sidecar).unwrap()).unwrap();
++    assert_eq!(meta["flag_dates_whitelist"], "when");
++    assert_eq!(meta["qsv_version"], env!("CARGO_PKG_VERSION"));
++}
++
+ /// `qsv stats <args> d.csv` on `csv`, as a map of each stats column to its value for row 1.
+ fn stats_first_row(
+     name: &str,
+```
+
+---
+
+### Incident Patch 3: `0e866969` (2026-11-14)
+**Commit Message**: fix(stats): max_precision for exponent-form floats, weighted quantiles with no positive weight, *ALL antimodes (#5050)
+
+* fix(stats): max_precision for exponent-form floats, weighted quantiles with no positive weight, *ALL antimodes
+
+max_precision counted the characters after the "." of the float's
+shortest rendering, which is in exponent form below 1e-5 and from 1e16
+up: 0.000001 ("1e-6") reported 4 and 1e21 ("1e+21") reported 5. It now
+counts the decimal places of the value (6 and 1), and NaN/inf cells,
+which parse as floats, count none.
+
+Under --weight the unweighted quantile buffer was filled as well and
+used whenever the weighted one was empty, so a column whose rows all
+have a zero or negative weight reported unweighted median, quartiles,
+MAD and percentiles. Only the weighted buffer is kept now, which also
+drops 8 bytes per row per numeric column from every weighted run.
+
+The weighted *ALL antimode check compared the distinct values with the
+file's row count, so one zero-weight row made an all-unique, equally
+weighted column list every value as a mode. It now compares with the
+rows that carry a positive weight (Stats::weighted_mode_rows).
+
+The unweighted all-unique check rea
+
+**File**: `CHANGELOG.md` (modified, +5/-0)
+```diff
+@@ -42,6 +42,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
+ 
+ ### Fixed
++- **`stats`: wrong `max_precision`, weighted quantiles and `*ALL` antimodes** ([#5050](https://github.com/dathere/qsv/pull/5050)):
++  - **`max_precision` is right for very small and very large floats.** A value below 0.00001 or from 1e16 up was miscounted: `0.000001` reported 4 decimal places, and `1e21` reported 5. They now report 6 and 1. `NaN` and `inf` cells no longer count toward it.
++  - **`--weight`: a column whose rows all have a zero or negative weight has no median, quartiles, MAD or percentiles.** Before, these fell back to the unweighted values, next to a weighted mean of 0. Weighted runs also use less memory: they no longer keep a second, unweighted copy of each numeric column (8 bytes per row).
++  - **`--weight`: the `*ALL` antimode counts only rows with a positive weight.** Before, one zero-weight row made an all-unique, equally weighted column list every value as a mode.
++  - **`--mode` without `--cardinality` reports `*ALL` for an all-unique column.** Before, it listed the values (`*PREVIEW: ...` past 10) and gave their number as `antimode_count`; `*ALL` appeared only with `--cardinality` or `--everything`. A column with no rows no longer reports `*ALL`.
+ - **`viz smart`: category-axis labels no longer land under the wrong bar when the categories look like numbers.** ([#5047](https://github.com/dathere/qsv/pull/5047)) Frequency bars, measure-by-dimension bars, the Top Relationships lollipop and funnels set their axis labels with `tickvals` holding each category's *position* (0, 1, 2…). Plotly.js matches a category-axis tickval against category *names* first, so on an axis of codes like `day_of_week` (`6, 7, 5, …, 0`) the label for position 0 went under category "0", and so on. Hovering a bar showed one value while the axis said another, and labels that collided were dropped. `tickvals` now hold the category values themselves. This needed `Axis::tick_values` to accept strings, so qsv's `plotly` pin moves to `dathere/plotly` rev [`b652677`](https://github.com/dathere/plotly/commit/b652677502d667edb2caa09dc930a6fe294ce3f4). The gallery Data Schematics are regenerated.
+ - **docs: `sqlp`, `joinp` and `schema` USAGE corrections** ([#5046](https://github.com/dathere/qsv/pull/5046)). `sqlp`'s `<=>` is NULL-safe equality (the same as `IS NOT DISTINCT FROM`: true when both sides are equal or both are NULL, never NULL), not a -1/0/1 "spaceship" comparison. A Polars schema file is named after the full input file name, so `data.csv`'s is `data.csv.pschema.json`, not `data.pschema.json`.
+ - **`luau`: fixes from a review of `luau.rs`** ([#5036](https://github.com/dathere/qsv/pull/5036)):
+```
+
+**File**: `src/cmd/stats.rs` (modified, +58/-24)
+```diff
+@@ -4614,7 +4614,10 @@ struct Stats {
+     // #[repr(u8)], so it is intentionally not asserted here)
+ 
+     // Hot counters - all 8-byte aligned, accessed frequently
+-    nullcount: u64, // 8 bytes - frequently updated counter
++    nullcount:          u64, // 8 bytes - frequently updated counter
++    /// --weight only: the rows whose weight is positive, i.e. the rows `weighted_modes` counts.
++    /// It is the row count the weighted all-unique (`*ALL`) check compares against.
++    weighted_mode_rows: u64, // 8 bytes
+ 
+     // Configuration flags (accessed once during initialization, cold after init)
+     which: WhichStats, // 32 bytes - read-only after initialization
+@@ -5095,6 +5098,31 @@ fn weighted_percentiles(data: &[(f64, f64)], percentile_list: &[u8]) -> Option<V
+     Some(results)
+ }
+ 
++/// The number of decimal places in the shortest rendering of `value` that round-trips.
++///
++/// zmij renders a float below 1e-5 or from 1e16 up in exponent form (`1.5e-7`, `1e+21`), where
++/// the digits after the `.` are not the decimal places: `1.5e-7` is 0.00000015, which has 8.
++/// A whole number counts 1 place either way, as `2.0` does. Zero and non-finite values (a
++/// `NaN` or `inf` cell parses as a float) count none - `format_finite` leaves the rendering of
++/// a non-finite value unspecified.
++#[inline]
++fn float_decimal_places(value: f64) -> u16 {
++    if value == 0.0 || !value.is_finite() {
++        return 0;
++    }
++    let mut buffer = zmij::Buffer::new();
++    let rendered = buffer.format_finite(value);
++    let (mantissa, exponent) = match rendered.split_once('e') {
++        // the exponent is at most 3 digits with an optional sign, so the parse cannot fail
++        Some((mantissa, exponent)) => (mantissa, exponent.parse::<i32>().unwrap_or(0)),
++        None => (rendered, 0),
++    };
++    let fraction_len = mantissa
++        .split_once('.')
++        .map_or(0, |(_, fraction)| fraction.len()) as i32;
++    (fraction_len - exponent).max(1) as u16
++}
++
+ /// Converts a timestamp in milliseconds to RFC3339 format.
+ ///
+ /// This function converts a Unix timestamp (in milliseconds) to a human-readable
+@@ -5254,17 +5282,23 @@ impl Stats {
+                         .expect("t-digest k=200 is >= the minimum of 10"),
+                 ));
+             } else {
+-                unsorted_stats = Some(stats::Unsorted::with_capacity(record_count));
++                // one buffer, not both: a weighted run reads its quantiles from the weighted
++                // buffer only, and rows with a zero or negative weight are in neither
+                 if use_weights {
+                     weighted_unsorted_stats = Some(Vec::with_capacity(record_count));
++                } else {
++                    unsorted_stats = Some(stats::Unsorted::with_capacity(record_count));
+                 }
+             }
+             #[cfg(target_endian = "big")]
+             {
+                 // Exact path is the only path here: t-digest is compiled out.
+-                unsorted_stats = Some(stats::Unsorted::with_capacity(record_count));
++                // one buffer, not both: a weighted run reads its quantiles from the weighted
++                // buffer only, and rows with a zero or negative weight are in neither
+                 if use_weights {
+                     weighted_unsorted_stats = Some(Vec::with_capacity(record_count));
++                } else {
++                    unsorted_stats = Some(stats::Unsorted::with_capacity(record_count));
+                 }
+             }
+         }
+@@ -5304,6 +5338,7 @@ impl Stats {
+             zpn_has_value: false,
+             max_precision: 0,
+             nullcount: 0,
++            weighted_mode_rows: 0,
+             which,
+             sum,
+             online,
+@@ -5370,8 +5405,11 @@ impl Stats {
+         // guard a 0-weight value still became a mode-table key (inflating cardinality and
+         // surfacing as an antimode with 0 occurrences). add_row maps non-finite weights to 1.0,
+         // so `<= 0.0` is the complete exclusion test.
+-        if self.which.use_weights && weight <= 0.0 {
+-            return;
++        if self.which.use_weights {
++            if weight <= 0.0 {
++                return;
++            }
++            self.weighted_mode_rows += 1;
+         }
+ 
+         // HLL is independent of the mode-cardinality cap: feed every sample regardless
+@@ -5572,21 +5610,8 @@ impl Stats {
+                 // note that we are referring to number of decimal places,
+                 // not the number of significant digits
+                 if t == TFloat {
+-                    let precision = if float_val == 0.0 {
+-                        0
+-                    } else {
+-                        // safety: we know that f is a valid f64
+-                        // so there will always be a fraction part, even if it's 0
+-                        unsafe {
+-                            zmij::Buffer::new()
+-                                .format_finite(float_val)
+-                            
+```
+
+**File**: `tests/test_stats.rs` (modified, +153/-1)
+```diff
+@@ -2769,7 +2769,8 @@ fn stats_percentiles_edge_cases() {
+             "1",
+             "0",
+             "4",
+-            "4",
++            // 0.0000001 and 0.0000099 each have 7 decimal places
++            "7",
+             "0",
+             "10: -999999|25: 0|50: 0|75: 999999|90: 1000000"
+         ],
+@@ -10600,3 +10601,154 @@ fn stats_everything_cache_not_reused_across_sniff_preamble() {
+     let fields: Vec<&str> = got[1..].iter().map(|r| r[0].as_str()).collect();
+     assert_eq!(fields, ["id", "name", "amount"]);
+ }
++
++/// `qsv stats <args> d.csv` on `csv`, as a map of each stats column to its value for row 1.
++fn stats_first_row(
++    name: &str,
++    csv: &str,
++    args: &[&str],
++) -> std::collections::HashMap<String, String> {
++    let wrk = Workdir::new(name);
++    wrk.create_from_string("d.csv", csv);
++    let mut cmd = wrk.command("stats");
++    cmd.args(args).arg("d.csv");
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    got[0].iter().cloned().zip(got[1].iter().cloned()).collect()
++}
++
++#[test]
++fn stats_max_precision_exponent_form_floats() {
++    // floats below 1e-5 or from 1e16 up render in exponent form, where the digits after the
++    // "." are not the number of decimal places
++    for (value, expected) in [
++        ("0.000001", "6"),
++        ("1.5e-7", "8"),
++        ("0.0000125", "7"),
++        ("1e21", "1"),
++        ("123456789012345680000", "1"),
++        // plain-form values are unchanged
++        ("0.00001", "5"),
++        ("100.125", "3"),
++        ("2.0", "1"),
++    ] {
++        let row = stats_first_row(
++            &format!("stats_max_precision_exponent_form_floats_{value}"),
++            &format!("x\n{value}\n"),
++            &[],
++        );
++        assert_eq!(row["type"], "Float", "{value}");
++        assert_eq!(row["max_precision"], expected, "{value}");
++    }
++}
++
++#[test]
++fn stats_max_precision_ignores_non_finite_values() {
++    // "NaN" and "inf" cells parse as floats; they have no decimal places to count
++    let row = stats_first_row(
++        "stats_max_precision_ignores_non_finite_values",
++        "x\nNaN\ninf\n-inf\n",
++        &[],
++    );
++    assert_eq!(row["type"], "Float");
++    assert_eq!(row["max_precision"], "0");
++}
++
++#[test]
++fn stats_weighted_all_zero_weights_have_no_quantiles() {
++    // rows with a zero weight "do not contribute to the statistics": the quantiles must not
++    // fall back to the unweighted values
++    let row = stats_first_row(
++        "stats_weighted_all_zero_weights_have_no_quantiles",
++        "v,w\n1,0\n2,0\n3,0\n100,0\n",
++        &["--weight", "w", "--everything"],
++    );
++    for stat in [
++        "q1",
++        "q2_median",
++        "q3",
++        "iqr",
++        "mad",
++        "percentiles",
++        "skewness",
++    ] {
++        assert_eq!(row[stat], "", "{stat}");
++    }
++
++    let row = stats_first_row(
++        "stats_weighted_all_zero_weights_have_no_quantiles_median",
++        "v,w\n1,0\n2,0\n3,0\n100,0\n",
++        &["--weight", "w", "--median"],
++    );
++    assert_eq!(row["median"], "");
++}
++
++#[test]
++fn stats_weighted_all_unique_ignores_zero_weight_rows() {
++    // "all unique" is judged over the positively weighted rows, the ones the mode table counts
++    let row = stats_first_row(
++        "stats_weighted_all_unique_ignores_zero_weight_rows",
++        "v,w\na,1\nb,1\nc,1\nd,0\n",
++        &["--weight", "w", "--mode", "--cardinality"],
++    );
++    assert_eq!(row["cardinality"], "3");
++    assert_eq!(
++        [
++            &row["mode"],
++            &row["mode_count"],
++            &row["antimode"],
++            &row["antimode_occurrences"]
++        ],
++        ["", "0", "*ALL", "1"]
++    );
++
++    // a repeated value is not all unique, even when the summed weights tie
++    let row = stats_first_row(
++        "stats_weighted_all_unique_ignores_zero_weight_rows_repeat",
++        "v,w\na,1\na,1\nb,2\nd,0\n",
++        &["--weight", "w", "--mode"],
++    );
++    assert_eq!([&row["mode"], &row["antimode"]], ["a|b", "a|b"]);
++}
++
++#[test]
++fn stats_mode_without_cardinality_reports_all_unique() {
++    // the all-unique check must not depend on --cardinality being passed too
++    let csv = "x\na\nb\nc\nd\n";
++    let mode_only = stats_first_row(
++        "stats_mode_without_cardinality_all_unique",
++        csv,
++        &["--mode"],
++    );
++    let with_cardinality = stats_first_row(
++        "stats_mode_with_cardinality_all_unique",
++        csv,
++        &["--mode", "--cardinality"],
++    );
++    for stat in [
++        "mode",
++        "mode_count",
++        "mode_occurrences",
++        "antimode",
++        "antimode_count",
++        "antimode_occurrences",
++    ] {
++        assert_eq!(mode_only[stat], with_cardinality[stat], "{stat}");
++    }
++    assert_eq!(mode_only["antimode"], "*ALL");
++}
++
++#[test]
++fn stats_mode_of_a_column_with_no_rows_is_not_all_unique() {
++    for args in [&["--mode"][..], &["--mode", "--cardinality"][..]] {
++        let row = stats_first_row(
++            &for
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5051** (2026-11-14): fix(moarstats): honor QSV_STATS_SEPARATOR for the first mode; recompute a stats CSV written with another separator (@jqnatividad)
+- **PR #5050** (2026-11-14): fix(stats): max_precision for exponent-form floats, weighted quantiles with no positive weight, *ALL antimodes (@jqnatividad)
+- **PR #5049** (2026-11-14): fix(stats): cache follows QSV_NO_HEADERS and QSV_STATS_SEPARATOR; re-sniff date columns after an upgrade (@jqnatividad)
 - **PR #5048** (2026-11-14): deps: bump Polars to upstream 36ea0f9 (@jqnatividad)
 - **PR #5047** (2026-11-14): fix(viz): category-axis tickvals are category names, not positions (@jqnatividad)
 - **PR #5046** (2026-11-13): docs: fix sqlp `<=>` and Polars schema file name in USAGE (@jqnatividad)
-- **PR #5045** (2026-11-13): deps: bump Polars to upstream 61fdb30 (@jqnatividad)
-- **PR #5044** (2026-11-13): build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (@dependabot[bot])
-- **PR #5043** (2026-11-13): build(deps): bump hono from 4.13.13 to 4.13.18 in /.claude/skills (@dependabot[bot])
 
 ---
 
@@ -2306,49 +3121,33 @@ Refresh the lockfile to jiff 0.2.44, jiff-core 0.1.6, jiff-tzdb 0.1.10, and redi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: update lock file
+## X. moarstats): honor QSV_STATS_SEPARATOR for the first mode; recompute a stats CSV 
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3c23355`: deps: update lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9045d150`: moarstats): honor QSV_STATS_SEPARATOR for the first mode; recompute a stats CSV written with another separator. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.2.44"
-checksum = "ac63a5a611e9d720726d6ab6ee2ee19e6f620503554ea5d303c7cb294ff40c12"
-version = "0.1.6"
-checksum = "48e9635854583b49ce3c6c43a071f70b0a49e79ad3c261c7b3aa76b2280416d2"
-version = "0.2.44"
-checksum = "9f9c27796c21cc8b33ce490f148d53fe41d679b887885bf0ef8f662cdb9b35c0"
-version = "0.1.10"
-checksum = "0980fca2cc272465bd60e82397607ba9f33add9e48defd77923301bbd03808f2"
-version = "1.8.2"
-checksum = "4bef8fa589dd53a8a379a7856de1365d0a1be50c6b8aebb5c01c1ec441a2c509"
+- **`moarstats`: two `QSV_STATS_SEPARATOR` fixes** ([#5051](https://github.com/dathere/qsv/pull/5051)):
+  - **`mode_zscore` is computed for a column with several modes under any separator.** The first mode was looked up by splitting on `|`, so with another separator a multi-modal numeric column had an empty `mode_zscore`.
+  - **A stats CSV written with another separator is recomputed.** Before, its percentile cells could not be split, so `kelly_skewness` and `percentile_ratio_90_10` were left out without a warning. `moarstats` now reads the separator recorded in the stats cache metadata (#5049) and reruns `stats` when it differs, with a warning. A stats CSV that has no metadata file is used as it is.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.2.43"
-checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
-version = "0.1.5"
-checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
-version = "0.2.43"
-checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
-version = "0.1.9"
-checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
-version = "1.8.1"
-checksum = "db7f3d75b5a3301746bff39a767bf4c5c42506b08513527308b3875bfb64a031"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3c23355` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9045d150` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
