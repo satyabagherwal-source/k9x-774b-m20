@@ -9962,3 +9962,9 @@
 | `CYCLE-20261114-MW49` | `2026-11-14T22:39:18.297Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`01e530f1...`) |
 | `CYCLE-20261114-N0BG` | `2026-11-14T22:39:23.740Z` | `mikepenz/AboutLibraries` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8546` | Yes (`9b6cf103...`) |
 | `CYCLE-20261114-N8D9` | `2026-11-14T22:39:34.173Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8547` | Yes (`fa001ba3...`) |
+| `CYCLE-20261114-AC70` | `2026-11-14T22:57:32.220Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`feca3a30...`) |
+| `CYCLE-20261114-AF8F` | `2026-11-14T22:57:36.159Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8492` | Yes (`257ca9b6...`) |
+| `CYCLE-20261114-AISV` | `2026-11-14T22:57:40.783Z` | `apollographql/apollo-kotlin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8548` | Yes (`5ac98586...`) |
+| `CYCLE-20261114-APZS` | `2026-11-14T22:57:50.104Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8549` | Yes (`ff1b6b97...`) |
+| `CYCLE-20261114-AQO8` | `2026-11-14T22:57:50.984Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8550` | Yes (`26ea2b70...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T22:58:30.106Z` | `hf-speridlabs-iris-3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D6B073D5` [Domain D] | Yes (`69042b81...`) |

@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T22:39:38.431Z",
+  "updated_at": "2026-11-14T22:58:30.671Z",
   "stats": {
-    "total_discovered": 3466,
-    "approved_pending_harvest": 3257,
+    "total_discovered": 3475,
+    "approved_pending_harvest": 3266,
     "harvested_count": 0,
     "rejected_count": 209,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3239,
-      "OFFICIAL_DOCUMENTATION": 123,
+      "COMMUNITY_AND_EXPERT": 3246,
+      "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 10,
@@ -74810,6 +74810,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
         "fileName": "mikepenz-aboutlibraries-learnings.md"
+      }
+    },
+    "SRC-E3C84BF5EAB2": {
+      "id": "SRC-E3C84BF5EAB2",
+      "url": "https://github.com/openai/codex/tree/6fc6b9d6d2580d62622fc9884b5f5707f6505a5e",
+      "title": "https://github.com/openai/codex/tree/6fc6b9d6d2580d62622fc9884b5f5707f6505a5e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:57:54.317Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-E20D20576C97": {
+      "id": "SRC-E20D20576C97",
+      "url": "https://github.com/openai/codex/blob/6fc6b9d6d2580d62622fc9884b5f5707f6505a5e/codex-rs/core/src/guardian/mod.rs",
+      "title": "https://github.com/openai/codex/blob/6fc6b9d6d2580d62622fc9884b5f5707f6505a5e/codex-rs/core/src/guardian/mod.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:57:54.348Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-5208514D5198": {
+      "id": "SRC-5208514D5198",
+      "url": "https://huggingface.co/speridlabs/iris-3b",
+      "title": "https://huggingface.co/speridlabs/iris-3b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:58:30.129Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
+        "fileName": "hf-speridlabs-iris-3b-learnings.md"
+      }
+    },
+    "SRC-F95943A63508": {
+      "id": "SRC-F95943A63508",
+      "url": "https://github.com/apollographql/apollo-kotlin",
+      "title": "https://github.com/apollographql/apollo-kotlin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:58:30.513Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+        "fileName": "apollographql-apollo-kotlin-learnings.md"
+      }
+    },
+    "SRC-2207058A7E0D": {
+      "id": "SRC-2207058A7E0D",
+      "url": "https://docs.gradle.org/8.11/userguide/upgrading_version_8.html",
+      "title": "https://docs.gradle.org/8.11/userguide/upgrading_version_8.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:58:30.541Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+        "fileName": "apollographql-apollo-kotlin-learnings.md"
+      }
+    },
+    "SRC-B3AB31D436CC": {
+      "id": "SRC-B3AB31D436CC",
+      "url": "https://docs.access.apollographql.com/docs/internal/ai-reviews/20261112-8fa2c544-7046-1d2e5967641c9035",
+      "title": "https://docs.access.apollographql.com/docs/internal/ai-reviews/20261112-8fa2c544-7046-1d2e5967641c9035",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:58:30.569Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+        "fileName": "apollographql-apollo-kotlin-learnings.md"
+      }
+    },
+    "SRC-08561717C619": {
+      "id": "SRC-08561717C619",
+      "url": "https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c441f84625",
+      "title": "https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c441f84625",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:58:30.597Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+        "fileName": "apollographql-apollo-kotlin-learnings.md"
+      }
+    },
+    "SRC-39256B8E4B0E": {
+      "id": "SRC-39256B8E4B0E",
+      "url": "https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c441f84625/logs",
+      "title": "https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c441f84625/logs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:58:30.625Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+        "fileName": "apollographql-apollo-kotlin-learnings.md"
+      }
+    },
+    "SRC-BF1EEDA385FA": {
+      "id": "SRC-BF1EEDA385FA",
+      "url": "https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c",
+      "title": "https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T22:58:30.670Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+        "fileName": "apollographql-apollo-kotlin-learnings.md"
       }
     }
   }

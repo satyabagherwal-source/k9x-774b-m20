@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T22:16:49.248Z",
+  "updated_at": "2026-11-14T22:58:30.104Z",
   "statistics": {
-    "total_nodes": 221,
-    "total_edges": 121,
+    "total_nodes": 222,
+    "total_edges": 122,
     "domain_distribution": {
-      "D": 173,
+      "D": 174,
       "M": 1,
       "H": 19,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 121
+      "CONSTRAINED_BY_ARCHITECTURE": 122
     }
   },
   "nodes": {
@@ -4959,6 +4959,29 @@
       ],
       "created_at": "2026-11-14T22:16:49.248Z",
       "updated_at": "2026-11-14T22:16:49.248Z"
+    },
+    "DOM-D-D6B073D5": {
+      "id": "DOM-D-D6B073D5",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): speridlabs/iris-3b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-speridlabs-iris-3b/hf-speridlabs-iris-3b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T22:57:55.238Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-speridlabs-iris-3b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T22:58:30.104Z",
+      "updated_at": "2026-11-14T22:58:30.104Z"
     }
   },
   "edges": [
@@ -6171,6 +6194,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-DD21AD65 [D] with Domain M",
       "created_at": "2026-11-14T22:16:49.248Z"
+    },
+    {
+      "id": "EDGE-F59BBB1E778D",
+      "sourceId": "DOM-D-D6B073D5",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-D6B073D5 [D] with Domain M",
+      "created_at": "2026-11-14T22:58:30.104Z"
     }
   ]
 }

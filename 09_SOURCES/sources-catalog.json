@@ -1025,8 +1025,8 @@
     "sourceUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceVersion": "hf-speridlabs-iris-3b",
     "license": "Open-Source",
-    "contentHash": "393e882de1e9690228c890a84e4328495acd779987e341ab15a439271285609c",
-    "lastHarvestedAt": "2026-11-09T11:56:27.783Z",
+    "contentHash": "feca3a3031cc372da7d5f7d89e4d6a04be762577ebb1e0c2a62dd4aff3f85271",
+    "lastHarvestedAt": "2026-11-14T22:57:32.224Z",
     "learningId": "learn-huggingface-speridlabs-iris-3b"
   },
   "hf-qwen-qwen3-4b": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "9045d150",
+    "sourceVersion": "229979d6",
     "license": "NOASSERTION",
-    "contentHash": "e93e9c87515301cd1ae5fbd3f551cdffa9ac092ebed960ed2de972b111d59360",
-    "lastHarvestedAt": "2026-11-14T21:38:33.397Z",
+    "contentHash": "26ea2b70a381ebe86478def8b20a1eea0ab53ff6dc28290b390648c4b581bd54",
+    "lastHarvestedAt": "2026-11-14T22:57:50.988Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "622a4930",
+    "sourceVersion": "29e41070",
     "license": "MIT",
-    "contentHash": "0427a1dc11b01f790dccafcc687da63eb58a97420f550cd0cf6ac419c0347a83",
-    "lastHarvestedAt": "2026-11-13T07:47:17.078Z",
+    "contentHash": "257ca9b69ee726f0df831bb75727f76bc7ceb64499e67b7ea9ca6078aa81a881",
+    "lastHarvestedAt": "2026-11-14T22:57:36.163Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "072456f5",
+    "sourceVersion": "c718b2ad",
     "license": "MIT",
-    "contentHash": "7e6d7049ba4d9402d638d1af117c372b0eb161fe542462e10330ae09584193ac",
-    "lastHarvestedAt": "2026-11-13T15:47:20.953Z",
+    "contentHash": "ff1b6b9750f8b2ee9178b6b47f0f187d757656aaf6929a8e033d66c6416c458a",
+    "lastHarvestedAt": "2026-11-14T22:57:50.108Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -7063,10 +7063,10 @@
     "repository": "apollographql/apollo-kotlin",
     "platform": "github",
     "sourceUrl": "https://github.com/apollographql/apollo-kotlin",
-    "sourceVersion": "e1178ba3",
+    "sourceVersion": "257ec5f0",
     "license": "MIT",
-    "contentHash": "b3389017efa9d109838d20bbecc0055f8a26145316ef57b168f8b92e4088003d",
-    "lastHarvestedAt": "2026-11-04T21:33:01.882Z",
+    "contentHash": "5ac98586e71360a14e396e840ec05b56428a368b37f3162b79d91bfec9042aa8",
+    "lastHarvestedAt": "2026-11-14T22:57:40.787Z",
     "learningId": "learn-github-apollographql-apollo-kotlin"
   },
   "crate-ci-typos": {

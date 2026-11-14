@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:33:28.594Z",
+  "timestamp": "2026-11-14T22:58:30.748Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-apollographql-apollo-kotlin-learnings",
+  "learning_id": "LEARN-EVO-apollographql-apollo-kotlin-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apollographql-apollo-kotlin-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:33:28.594Z`  
-> **Learning ID**: `LEARN-REEXTRACT-apollographql-apollo-kotlin-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T22:58:30.748Z`  
+> **Learning ID**: `LEARN-EVO-apollographql-apollo-kotlin-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md`  
 > **Source**: github ([https://github.com/apollographql/apollo-kotlin](https://github.com/apollographql/apollo-kotlin))  
-> **Source Version**: `e1178ba3`  
+> **Source Version**: `257ec5f0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T21:33:01.418Z  
+> **Timestamp**: 2026-11-14T22:57:39.697Z  
 > **Learning ID**: `learn-github-apollographql-apollo-kotlin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apollographql/apollo-kotlin](https://github.com/apollographql/apollo-kotlin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T21:33:01.414Z  
+> **Harvest Timestamp**: 2026-11-14T22:57:39.690Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: :rocket:  A strongly-typed, caching GraphQL client for the JVM, Android, and Kotlin multiplatform.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3977 stars
+- **Stars / Engagement**: 3976 stars
 
 ---
 
@@ -558,15 +558,16 @@ actual fun currentTimeMillis(): Long {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7046** (2026-11-12): **Fix publishMarkers path failure on Windows**
+  *Symptoms*: Running `publishMarkers` on Windows fails with an invalid Maven path error in Nmcp. `File.relativeTo` uses backslashes on Windows instead of forward slashes. Using `invariantSeparatorsPath` fixes the Windows paths and leaves Linux and macOS unchanged.  Follow-up from #7038.
+  **Post-Mortem & Fix Analysis**:
+  > ### ✅ AI Style Review — No Changes Detected  No MDX files were changed in this pull request.  **Review Log**: [View detailed log](https://docs.access.apollographql.com/docs/internal/ai-reviews/20261112-8fa2c544-7046-1d2e5967641c9035)  > This review is AI-generated. Please use common sense when accepting these suggestions, as they may not always be accurate or appropriate for your specific context.
+  > Thanks! 
+
 - **Issue #7045** (2026-11-02): **Version is now 4.4.5-SNAPSHOT**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
   > ### ✅ Docs preview ready  The preview is ready to be viewed. [View the preview](https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c441f84625)  File Changes  <details> <summary>0 new, 8 changed, 0 removed</summary>  ``` * (developer-tools)/kotlin/v4/index.mdx * (developer-tools)/kotlin/v4/advanced/apollo-ast.mdx * (developer-tools)/kotlin/v4/advanced/compiler-plugins.mdx * (developer-tools)/kotlin/v4/advanced/no-runtime.mdx * (developer-tools)/kotlin/v4/caching/http-cache.mdx * (developer-tools)/kotlin/v4/caching/normalized-cache.mdx * (developer-tools)/kotlin/v4/testing/apollo-debug-server.mdx * (developer-tools)/kotlin/v4/testing/mocking-graphql-responses.mdx ```  </details>  **Build ID**: 3ed8e97a77fce1c441f84625 **Build Logs**: [View logs](https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c441f84625/logs)  **URL**: [https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c441f84625](https://www.apollographql.com/docs/deploy-preview/3ed8e97a77fce1c
-
-- **Issue #7044** (2026-10-29): **Add v4.4.4 changelog**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > ### ✅ Docs preview has no changes  The preview was not built because there were no changes.  **Build ID**: b982eb811194633872bddb71 **Build Logs**: [View logs](https://www.apollographql.com/docs/deploy-preview/b982eb811194633872bddb71/logs)  ---  ### ✅ AI Style Review — No Changes Detected  No MDX files were changed in this pull request.  **Review Log**: [View detailed log](https://docs.access.apollographql.com/docs/internal/ai-reviews/20261029-8fa2c544-7044-b17ae1ce63e9828f)  > This review is AI-generated. Please use common sense when accepting these suggestions, as they may not always be accurate or appropriate for your specific context.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -583,142 +584,29 @@ actual fun currentTimeMillis(): Long {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1178ba3` (2026-11-02)
-**Commit Message**: Update plugin com.gradle.develocity to v4.6.1 (#7021)
+### Incident Patch 1: `257ec5f0` (2026-11-12)
+**Commit Message**: Use invariant path separators in publishMarkers on Windows (#7046)
 
-* Update plugin com.gradle.develocity to v4.6.1
-
-* Keep in sync
-
----------
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: Martin Bonnin <[REDACTED_EMAIL]>
-
-**File**: `benchmark/settings.gradle.kts` (modified, +1/-1)
+**File**: `libraries/apollo-gradle-plugin/build.gradle.kts` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,5 @@
- plugins {
--  id("com.gradle.develocity") version "4.5.0" // sync with libraries.toml
-+  id("com.gradle.develocity") version "4.6.1" // sync with libraries.toml
-   id("com.gradle.common-custom-user-data-gradle-plugin") version "2.8.0"
-   id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
- }
-```
-
-**File**: `build-logic/settings.gradle.kts` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- plugins {
--  id("com.gradle.develocity") version "4.5.0" // sync with libraries.toml
-+  id("com.gradle.develocity") version "4.6.1" // sync with libraries.toml
-   id("com.gradle.common-custom-user-data-gradle-plugin") version "2.8.0"
-   id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
- }
-```
-
-**File**: `gradle/libraries.toml` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ atomicfu-plugin = { group = "org.jetbrains.kotlinx", name = "atomicfu-gradle-plu
- compat-patrouille = { module = "com.gradleup.compat.patrouille:compat-patrouille-gradle-plugin", version.ref = "compat-patrouille" }
- compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "compose" }
- compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
--dgp = "com.gradle:develocity-gradle-plugin:4.5.0" # // sync with settings.gradle.kts, see also https://github.com/gradle/gradle/issues/36437
-+dgp = "com.gradle:develocity-gradle-plugin:4.6.1" # // sync with settings.gradle.kts, see also https://github.com/gradle/gradle/issues/36437
- # Not updating because it fails in apollo-compiler Java tests with
- # annotation @org.jetbrains.annotations.Nullable not applicable in this type context
- google-testing-compile = { group = "com.google.testing.compile", name = "compile-testing", version = "0.23.0" }
-```
-
-**File**: `settings.gradle.kts` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- plugins {
--  id("com.gradle.develocity") version "4.5.0" // sync with libraries.toml
-+  id("com.gradle.develocity") version "4.6.1" // sync with libraries.toml
-   id("com.gradle.common-custom-user-data-gradle-plugin") version "2.8.0"
-   id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
- }
-```
-
-**File**: `tests/settings.gradle.kts` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- plugins {
--  id("com.gradle.develocity") version "4.5.0" // sync with libraries.toml
-+  id("com.gradle.develocity") version "4.6.1" // sync with libraries.toml
-   id("com.gradle.common-custom-user-data-gradle-plugin") version "2.8.0"
-   id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
- }
-```
-
----
-
-### Incident Patch 2: `a2343cd6` (2026-11-02)
-**Commit Message**: Include the response path in MapJsonReader.nextString() errors (#7042)
-
-**File**: `libraries/apollo-api/src/commonMain/kotlin/com/apollographql/apollo/api/json/MapJsonReader.kt` (modified, +1/-1)
-```diff
-@@ -197,7 +197,7 @@ constructor(
-       is Double -> value.toString()
-       is String -> value
-       is JsonNumber -> value.value
--      else -> throw JsonDataException("Expected a String but got $value instead")
-+      else -> throw JsonDataException("Expected a String but was ${peek()} at path ${getPathAsString()}")
-     }.also {
-       advanceIterator()
-     }
-```
-
-**File**: `libraries/apollo-api/src/commonTest/kotlin/test/MapJsonReaderTest.kt` (modified, +23/-1)
-```diff
-@@ -3,8 +3,13 @@ package test
- import com.apollographql.apollo.api.json.JsonNumber
- import com.apollographql.apollo.api.json.JsonReader
- import com.apollographql.apollo.api.json.MapJsonReader
-+import com.apollographql.apollo.api.json.MapJsonReader.Companion.buffer
-+import com.apollographql.apollo.api.json.jsonReader
-+import com.apollographql.apollo.exception.JsonDataException
-+import okio.Buffer
- import kotlin.test.Test
- import kotlin.test.assertEquals
-+import kotlin.test.assertFailsWith
- import kotlin.test.assertTrue
- 
- class MapJsonReaderTest {
-@@ -98,4 +103,21 @@ class MapJsonReaderTest {
-       endObject()
-     }
+@@ -159,7 +159,7 @@ val publishMarkers = tasks.register("publishMarkers") {
+   doLast {
+     val src = from.get().files.single()
+     val dst = into.get().asFile
+-    publishFileByFile(FilesystemTransport(dst.absolutePath), src.walk().filter { it.isFile }.map { FileWithPath(it, it.relativeTo(src).path) }.toList())
++    publishFileByFile(FilesystemTransport(dst.absolutePath), src.walk().filter { it.isFile }.map { FileWithPath(it, it.relativeTo(src).invariantSeparatorsPath) }.toList())
    }
--}
-\ No newline at end of file
-+
-+  @Test
-+  fun nextStringOnNullIncludesPath() {
-+    val jsonReader = Buffer().writeUtf8("""{"data": {"user": {"id": null}}}""").jsonReader()
-+    jsonReader.beginObject()
-+    assertEquals("data", jsonReader.nextName())
-+    jsonReader.beginObject()
-+    assertEquals("user", jsonReader.nextName())
-+
-+    val bufferedReader = jsonReader.buffer()
-+    bufferedReader.beginObject()
-+    assertEquals("id", bufferedReader.nextName())
-+    val exception = assertFailsWith<JsonDataException> {
-+      bufferedReader.nextString()
-+    }
-+    assertEquals("Expected a String but was NULL at path data.user.id", exception.message)
-+  }
-+}
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7046** (2026-11-12): Fix publishMarkers path failure on Windows (@shayann07)
 - **PR #7045** (2026-11-02): Version is now 4.4.5-SNAPSHOT (@martinbonnin)
 - **PR #7044** (2026-10-29): Add v4.4.4 changelog (@martinbonnin)
 - **PR #7043** (2026-10-29): Add support for empty input objects and empty unions (@martinbonnin)
 - **PR #7042** (2026-11-02): Include the response path in MapJsonReader.nextString() errors (@RaphaelFakhri)
 - **PR #7041** (2026-10-21): Allow GET for introspection queries (@AtharvaLakhe)
-- **PR #7037** (2026-11-02): Bump Dokka to 2.2.0 (@BoD)
 
 ---
 
@@ -738,31 +626,31 @@ Co-authored-by: Martin Bonnin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update plugin com.gradle.develocity to v4.6.1 (#7021)
+## X. Use invariant path separators in publishMarkers on Windows
 
 **RULE**:
-When implementing operations in `benchmark/settings.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apollographql/apollo-kotlin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `libraries/apollo-gradle-plugin/build.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apollographql/apollo-kotlin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e1178ba3`: Update plugin com.gradle.develocity to v4.6.1 (#7021). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `257ec5f0`: Use invariant path separators in publishMarkers on Windows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmark/settings.gradle.kts`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `libraries/apollo-gradle-plugin/build.gradle.kts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-  id("com.gradle.develocity") version "4.6.1" // sync with libraries.toml
+    publishFileByFile(FilesystemTransport(dst.absolutePath), src.walk().filter { it.isFile }.map { FileWithPath(it, it.relativeTo(src).invariantSeparatorsPath) }.toList())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-  id("com.gradle.develocity") version "4.5.0" // sync with libraries.toml
+// Induced defect failure mode:
+    publishFileByFile(FilesystemTransport(dst.absolutePath), src.walk().filter { it.isFile }.map { FileWithPath(it, it.relativeTo(src).path) }.toList())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1178ba3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `257ec5f0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

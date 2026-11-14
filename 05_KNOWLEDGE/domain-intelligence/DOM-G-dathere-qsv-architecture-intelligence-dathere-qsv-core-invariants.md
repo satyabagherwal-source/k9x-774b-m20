@@ -4,23 +4,23 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "a3c23355",
+  "source_version": "229979d6",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-14T20:32:39.328Z",
+  "timestamp": "2026-11-14T22:57:51.199Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `a3c23355`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-14T20:32:39.328Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `229979d6`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-14T22:57:51.199Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
 - **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T20:32:38.594Z  
+> **Harvest Timestamp**: 2026-11-14T22:57:49.833Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2215,81 +2215,425 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3c23355` (2026-11-14)
-**Commit Message**: deps: update lock file
+### Incident Patch 1: `229979d6` (2026-11-14)
+**Commit Message**: fix(stats): the cache key records the resolved delimiter, not the --delimiter flag (#5052)
 
-Refresh the lockfile to jiff 0.2.44, jiff-core 0.1.6, jiff-tzdb 0.1.10, and redis 1.8.2.
+* fix(stats): the cache key records the resolved delimiter, not the --delimiter flag
 
-**File**: `Cargo.lock` (modified, +10/-10)
+QSV_SNIFF_DELIMITER and QSV_DEFAULT_DELIMITER change how a file is
+parsed without touching --delimiter, and the stats cache recorded only
+the flag. A semicolon-separated data.csv read as one comma-delimited
+column kept that cache after QSV_SNIFF_DELIMITER was set, so stats and
+the commands that read its cache went on describing one column.
+
+The sidecar now records the delimiter the Config resolved
+(Config::configured_delimiter), and the cache readers resolve the
+consuming command's delimiter the same way
+(config::resolved_delimiter). A sidecar with an empty delimiter still
+stands for the extension default.
+
+configured_delimiter does not convert a special-format input the way
+get_delimiter does, so checking a cache still decompresses nothing.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* docs(changelog): cite #5052
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* fix(stats): cache readers refuse metadata with no recorded delimiter
+
+A sidecar written before the resolved delimiter was recorded
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -4131,9 +4131,9 @@ dependencies = [
+@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - **New SQL:** join keys of different numeric types ([#30401](https://github.com/pola-rs/polars/pull/30401)); correlated subqueries with any outer condition, `GROUP BY`, `HAVING`, `LIMIT`, `ANY`/`ALL`, and `LATERAL` derived tables ([#30378](https://github.com/pola-rs/polars/pull/30378), [#30453](https://github.com/pola-rs/polars/pull/30453), [#30466](https://github.com/pola-rs/polars/pull/30466), [#30459](https://github.com/pola-rs/polars/pull/30459), [#30490](https://github.com/pola-rs/polars/pull/30490), [#30467](https://github.com/pola-rs/polars/pull/30467)); `PERCENTILE_CONT`/`PERCENTILE_DISC ... WITHIN GROUP` ([#30442](https://github.com/pola-rs/polars/pull/30442)); non-literal `LIKE` patterns ([#30364](https://github.com/pola-rs/polars/pull/30364), [#30372](https://github.com/pola-rs/polars/pull/30372)); typed numeric/string literals ([#30486](https://github.com/pola-rs/polars/pull/30486)); `LIMIT`/`OFFSET` expressions such as scalar subqueries ([#30425](https://github.com/pola-rs/polars/pull/30425)); repeated unnamed constants ([#30488](https://github.com/pola-rs/polars/pull/30488)); `RANDOM()`, `REPEAT`, `CARDINALITY`, constant `GROUP BY` keys and row values in `IN (subquery)`.
  
- [[package]]
- name = "jiff"
--version = "0.2.43"
-+version = "0.2.44"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
-+checksum = "ac63a5a611e9d720726d6ab6ee2ee19e6f620503554ea5d303c7cb294ff40c12"
- dependencies = [
-  "jiff-core",
-  "jiff-static",
-@@ -4148,18 +4148,18 @@ dependencies = [
+ ### Fixed
++- **`stats`: the cache follows the delimiter set by `QSV_SNIFF_DELIMITER` and `QSV_DEFAULT_DELIMITER`** ([#5052](https://github.com/dathere/qsv/pull/5052)). The stats cache recorded only the `--delimiter` flag. A semicolon-separated `data.csv` read as one comma-delimited column kept that one-column cache after `QSV_SNIFF_DELIMITER` was set, so `stats` and the commands that read its cache went on describing the wrong columns. The cache now records the delimiter the file was read with, and `stats` and its readers compare against the delimiter they resolve the same way. Checking the cache still does not decompress a compressed or Parquet input. A cache written before this change did not record the delimiter it was read with, so it is recomputed on its next use.
+ - **`moarstats`: two `QSV_STATS_SEPARATOR` fixes** ([#5051](https://github.com/dathere/qsv/pull/5051)):
+   - **`mode_zscore` is computed for a column with several modes under any separator.** The first mode was looked up by splitting on `|`, so with another separator a multi-modal numeric column had an empty `mode_zscore`.
+   - **A stats CSV written with another separator is recomputed.** Before, its percentile cells could not be split, so `kelly_skewness` and `percentile_ratio_90_10` were left out without a warning. `moarstats` now reads the separator recorded in the stats cache metadata (#5049) and reruns `stats` when it differs, with a warning. A stats CSV that has no metadata file is used as it is.
+```
+
+**File**: `src/cmd/stats.rs` (modified, +4/-0)
+```diff
+@@ -1890,6 +1890,10 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     // the RESOLVED setting, not the flag: QSV_NO_HEADERS turns the header row into data too, and
+     // a cache keyed on the flag alone was served across that change.
+     current_stats_args.flag_no_headers = rconfig.no_headers;
++    // Likewise the RESOLVED delimiter: QSV_SNIFF_DELIMITER and QSV_DEFAULT_DELIMITER change how
++    // the file is parsed without touching --delimiter. Not `get_delimiter()`, which converts a
++    // special-format input - a cache hit must not decompress anything.
++    current_stats_args.flag_delimiter = (rconfig.configured_delimiter() as char).to_string();
  
- [[package]]
- name = "jiff-core"
--version = "0.1.5"
-+version = "0.1.6"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
-+checksum = "48e9635854583b49ce3c6c43a071f70b0a49e79ad3c261c7b3aa76b2280416d2"
- dependencies = [
-  "log",
- ]
+     // INVARIANT (issue #4462): `rconfig` below is the one and only resolved Config for this
+     // run's input, and every stats path SHARES it - `sequential_stats` and `parallel_stats`
+```
+
+**File**: `src/config.rs` (modified, +17/-0)
+```diff
+@@ -116,6 +116,15 @@ pub fn resolved_no_headers(flag: bool) -> bool {
+     util::get_envvar_flag("QSV_NO_HEADERS") || (flag != util::get_envvar_flag("QSV_TOGGLE_HEADERS"))
+ }
  
- [[package]]
- name = "jiff-static"
--version = "0.2.43"
-+version = "0.2.44"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
-+checksum = "9f9c27796c21cc8b33ce490f148d53fe41d679b887885bf0ef8f662cdb9b35c0"
- dependencies = [
-  "jiff-core",
-  "proc-macro2",
-@@ -4169,9 +4169,9 @@ dependencies = [
++/// The delimiter a `Config` for `path` resolves from a command's `--delimiter` flag (see
++/// `Config::configured_delimiter`), for code that must agree with a Config it does not hold -
++/// the stats cache records the resolved delimiter, and its readers compare against this.
++pub fn resolved_delimiter(path: &Path, flag: Option<Delimiter>) -> u8 {
++    Config::new(Some(&path.to_string_lossy().into_owned()))
++        .delimiter(flag)
++        .configured_delimiter()
++}
++
+ /// The preamble rows (as the sniffer counts them) `QSV_SNIFF_PREAMBLE` finds above `path`'s
+ /// header, as `Config::preamble_rows` records them; 0 when the env var is unset.
+ pub fn sniffed_preamble_rows(path: &Path) -> u64 {
+@@ -572,6 +581,14 @@ impl Config {
+         self
+     }
  
- [[package]]
- name = "jiff-tzdb"
--version = "0.1.9"
-+version = "0.1.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
-+checksum = "0980fca2cc272465bd60e82397607ba9f33add9e48defd77923301bbd03808f2"
++    /// The delimiter this Config resolved from `--delimiter`, `QSV_SNIFF_DELIMITER`, the path's
++    /// extension and `QSV_DEFAULT_DELIMITER`, WITHOUT converting a special-format input (which
++    /// `get_delimiter` does). It is what the stats cache records, so that checking a cache
++    /// never decompresses anything.
++    pub const fn configured_delimiter(&self) -> u8 {
++        self.delimiter
++    }
++
+     pub fn get_delimiter(&self) -> u8 {
+         // For a special-format input the effective delimiter is the converted
+         // temp's (e.g. a `.tsv` entry inside a `.zip`), not the outer path's
+```
+
+**File**: `src/util/stats_cache.rs` (modified, +17/-16)
+```diff
+@@ -19,10 +19,7 @@ use super::{
+ use crate::{
+     CliError, CliResult,
+     cmd::stats::{STATSDATA_TYPES_MAP, StatsData},
+-    config::{
+-        Config, DEFAULT_RDR_BUFFER_CAPACITY, Delimiter, SpecialFormat, get_delim_by_extension,
+-        get_special_format,
+-    },
++    config::{Config, DEFAULT_RDR_BUFFER_CAPACITY, Delimiter, SpecialFormat, get_special_format},
+ };
  
- [[package]]
- name = "jiff-tzdb-platform"
-@@ -7676,9 +7676,9 @@ dependencies = [
+ /// get stats records from stats.csv.data.jsonl file, or if its invalid, by running the stats
+@@ -144,19 +141,23 @@ pub(super) fn stats_cache_parsing_opts_match(
+         return false;
+     }
  
- [[package]]
- name = "redis"
--version = "1.8.1"
-+version = "1.8.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "db7f3d75b5a3301746bff39a767bf4c5c42506b08513527308b3875bfb64a031"
-+checksum = "4bef8fa589dd53a8a379a7856de1365d0a1be50c6b8aebb5c01c1ec441a2c509"
- dependencies = [
-  "ahash",
-  "arcstr",
+-    // The effective delimiter must match. Both the cache and the command resolve an unset
+-    // delimiter from the same file path, so compare resolved bytes: an explicit recorded/passed
+-    // delimiter is a single ASCII byte, otherwise the extension default.
+-    let ext_delim = {
+-        let (_, d, _) = get_delim_by_extension(input_path, b',');
+-        d
+-    };
+-    let cache_delim = match metadata.get("flag_delimiter").and_then(|v| v.as_str()) {
+-        Some(s) if !s.is_empty() => s.as_bytes()[0],
+-        _ => ext_delim,
++    // The effective delimiter must match. The cache records the delimiter its Config RESOLVED
++    // (flag, QSV_SNIFF_DELIMITER, extension, QSV_DEFAULT_DELIMITER), so resolve the command's
++    // the same way.
++    //
++    // An empty or missing value is refused. A cache written before the resolved delimiter was
++    // recorded holds only an explicit --delimiter, so "empty" there may be the extension
++    // default or a delimiter QSV_SNIFF_DELIMITER / QSV_DEFAULT_DELIMITER chose - there is no
++    // telling which. `stats` itself refuses such a cache too (empty never equals a resolved
++    // delimiter), and its rerun records the real one.
++    let Some(cache_delim) = metadata
++        .get("flag_delimiter")
++        .and_then(|v| v.as_str())
++        .and_then(|s| s.bytes().next())
++    else {
++        return false;
+     };
+-    let cmd_delim = delimiter.map_or(ext_delim, |d| d.as_byte());
+-    cache_delim == cmd_delim
++    cache_delim == crate::config::resolved_delimiter(input_path, delimiter)
+ }
+ 
+ /// Was the stats cache beside `bases` built WITHOUT `--infer-dates`?
+```
+
+**File**: `src/util/tests.rs` (modified, +35/-8)
+```diff
+@@ -250,29 +250,38 @@ fn stats_cache_parsing_opts_match_rejects_mismatched_delimiter() {
+ 
+ #[test]
+ fn stats_cache_parsing_opts_match_resolves_unset_delimiter_from_extension() {
+-    // an unset delimiter on BOTH sides resolves from the file extension, so a cache whose
+-    // recorded delimiter is empty still matches a consumer that passed none
+-    let meta = serde_json::json!({"flag_no_headers": false, "flag_delimiter": ""});
++    // a consumer that passed no delimiter resolves it from the file extension, and that is
++    // compared with the delimiter the cache RECORDED
++    let comma = serde_json::json!({"flag_no_headers": false, "flag_delimiter": ","});
+     assert!(stats_cache_parsing_opts_match(
+-        &meta,
++        &comma,
+         Path::new("data.csv"),
+         false,
+         None,
+         None,
+         false
+     ));
+-    // ... and a .tsv input resolves to tab on both sides
++    // ... and a .tsv input resolves to tab
++    let tab = serde_json::json!({"flag_no_headers": false, "flag_delimiter": "\t"});
+     assert!(stats_cache_parsing_opts_match(
+-        &meta,
++        &tab,
+         Path::new("data.tsv"),
+         false,
+         None,
+         None,
+         false
+     ));
+-    // but an explicit comma against a .tsv input is a genuine mismatch
+     assert!(!stats_cache_parsing_opts_match(
+-        &meta,
++        &comma,
++        Path::new("data.tsv"),
++        false,
++        None,
++        None,
++        false
++    ));
++    // but an explicit comma against a tab cache is a genuine mismatch
++    assert!(!stats_cache_parsing_opts_match(
++        &tab,
+         Path::new("data.tsv"),
+         false,
+         Some(Delimiter(b',')),
+@@ -281,6 +290,24 @@ fn stats_cache_parsing_opts_match_resolves_unset_delimiter_from_extension() {
+     ));
+ }
+ 
++#[test]
++fn stats_cache_parsing_opts_match_refuses_an_unrecorded_delimiter() {
++    // a cache written before the resolved delimiter was recorded holds "" unless --delimiter
++    // was passed: it may have been read with the extension default, or with a delimiter
++    // QSV_SNIFF_DELIMITER / QSV_DEFAULT_DELIMITER chose. It cannot be verified, so it is
++    // refused even where the extension default would have matched.
++    let empty = serde_json::json!({"flag_no_headers": false, "flag_delimiter": ""});
++    let missing = serde_json::json!({"flag_no_headers": false});
++    for meta in [&empty, &missing] {
++        for input in ["data.csv", "data.tsv"] {
++            assert!(
++                !stats_cache_parsing_opts_match(meta, Path::new(input), false, None, None, false),
++                "{meta} for {input}"
++            );
++        }
++    }
++}
++
+ #[test]
+ fn stats_cache_parsing_opts_conflict_only_on_a_readable_mismatch() {
+     let dir = tempfile::tempdir().unwrap();
+```
+
+**File**: `tests/test_frequency.rs` (modified, +35/-0)
+```diff
+@@ -9509,3 +9509,38 @@ fn frequency_piped_stdin_keeps_default_delimiter() {
+         .collect();
+     assert_eq!(fields, ["a", "b"].into_iter().collect(), "{stdout}");
+ }
++
++// A stats cache written before the resolved delimiter was recorded has an empty
++// `flag_delimiter` unless --delimiter was passed. This one was built under QSV_SNIFF_DELIMITER
++// (three semicolon-separated columns). `frequency` without the variable reads one
++// comma-delimited column, and must regenerate the stats instead of taking that cache: with
++// its own stats the all-unique column collapses to <ALL_UNIQUE>.
++#[test]
++fn frequency_refuses_a_stats_cache_with_an_unrecorded_delimiter() {
++    let wrk = Workdir::new("frequency_refuses_a_stats_cache_with_an_unrecorded_delimiter");
++    let rows: String = (0..60)
++        .map(|i| format!("k{:02};{};row{i}\n", (i * 7) % 60, i * 2))
++        .collect();
++    wrk.create_from_string("in.csv", &format!("x;y;z\n{rows}"));
++    let mut stats_cmd = wrk.command("stats");
++    stats_cmd
++        .env("QSV_SNIFF_DELIMITER", "1")
++        .args(["in.csv", "--everything", "--stats-jsonl"]);
++    wrk.assert_success(&mut stats_cmd);
++
++    let sidecar = wrk.path("in.stats.csv.json");
++    let mut meta: serde_json::Value =
++        serde_json::from_str(&std::fs::read_to_string(&sidecar).unwrap()).unwrap();
++    assert_eq!(meta["flag_delimiter"], ";");
++    meta["flag_delimiter"] = "".into();
++    std::fs::write(&sidecar, serde_json::to_string_pretty(&meta).unwrap()).unwrap();
++    // rewrite the JSONL after the sidecar, so it is not the older of the two
++    let jsonl = wrk.path("in.stats.csv.data.jsonl");
++    std::fs::write(&jsonl, std::fs::read_to_string(&jsonl).unwrap()).unwrap();
++
++    let mut cmd = wrk.command("frequency");
++    cmd.arg("in.csv");
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    assert_eq!(got.len(), 2, "{got:?}");
++    assert_eq!([&got[1][0], &got[1][1]], ["x;y;z", "<ALL_UNIQUE>"]);
++}
+```
+
+**File**: `tests/test_sortcheck.rs` (modified, +31/-0)
+```diff
+@@ -725,3 +725,34 @@ fn sortcheck_statscache_shortcircuit_under_qsv_no_headers_env() {
+     cmd.args(["--select", "1"]).arg("in.csv");
+     wrk.assert_err(&mut cmd);
+ }
++
++// the stats cache records the RESOLVED delimiter, so a cache built under QSV_SNIFF_DELIMITER
++// has to be accepted by a reader running under the same variable, and refused without it. The
++// tampered sort order shows the cache was used: a full scan finds the column unsorted.
++#[test]
++fn sortcheck_statscache_shortcircuit_under_qsv_sniff_delimiter_env() {
++    let wrk = Workdir::new("sortcheck_statscache_shortcircuit_under_qsv_sniff_delimiter_env");
++    let rows: String = (0..60)
++        // a String column: the shortcut only applies when sortcheck's comparison matches the
++        // cached column's type
++        .map(|i| format!("k{:02};{};row{i}\n", (i * 7) % 60, i * 2))
++        .collect();
++    wrk.create_from_string("in.csv", &format!("x;y;z\n{rows}"));
++    let mut stats_cmd = wrk.command("stats");
++    stats_cmd
++        .env("QSV_SNIFF_DELIMITER", "1")
++        .args(["in.csv", "--stats-jsonl"]);
++    wrk.assert_success(&mut stats_cmd);
++    tamper_sort_order(&wrk, "in", "x", "Ascending");
++
++    let mut cmd = wrk.command("sortcheck");
++    cmd.env("QSV_SNIFF_DELIMITER", "1")
++        .args(["--select", "1"])
++        .arg("in.csv");
++    wrk.assert_success(&mut cmd);
++
++    // without the variable the file is one comma-delimited column: full scan, not sorted
++    let mut cmd = wrk.command("sortcheck");
++    cmd.args(["--select", "1"]).arg("in.csv");
++    wrk.assert_err(&mut cmd);
++}
+```
+
+**File**: `tests/test_stats.rs` (modified, +102/-0)
+```diff
+@@ -10843,3 +10843,105 @@ fn stats_mode_of_a_column_with_no_rows_is_not_all_unique() {
+         );
+     }
+ }
++
++/// 60 rows of `x;y;z`: a semicolon-separated file under a `.csv` name.
++fn semicolon_csv() -> String {
++    let rows: String = (0..60)
++        .map(|i| format!("{};{};row{i}\n", (i * 7) % 60, i * 2))
++        .collect();
++    format!("x;y;z\n{rows}")
++}
++
++#[test]
++fn stats_cache_not_reused_across_qsv_sniff_delimiter_env() {
++    // QSV_SNIFF_DELIMITER changes the delimiter without --delimiter: the cache key records the
++    // delimiter the reader resolved, not the flag alone
++    for everything in [false, true] {
++        let wrk = Workdir::new(&format!(
++            "stats_cache_not_reused_across_qsv_sniff_delimiter_env_{everything}"
++        ));
++        wrk.create_from_string("s.csv", &semicolon_csv());
++        let mut cmd = wrk.command("stats");
++        cmd.args(["--cache-threshold", "1", "s.csv"]);
++        if everything {
++            cmd.arg("--everything");
++        }
++        let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++        assert_eq!([&got[1][0], &got[1][1]], ["x;y;z", "String"]);
++
++        let mut cmd = wrk.command("stats");
++        cmd.env("QSV_SNIFF_DELIMITER", "1")
++            .args(["--cache-threshold", "1", "s.csv"]);
++        let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++        let fields_types: Vec<[&str; 2]> = got[1..]
++            .iter()
++            .map(|r| [r[0].as_str(), r[1].as_str()])
++            .collect();
++        assert_eq!(
++            fields_types,
++            [["x", "Integer"], ["y", "Integer"], ["z", "String"]],
++            "everything={everything}"
++        );
++    }
++}
++
++#[test]
++fn stats_cache_not_reused_across_qsv_default_delimiter_env() {
++    let wrk = Workdir::new("stats_cache_not_reused_across_qsv_default_delimiter_env");
++    wrk.create_from_string("f.txt", "x;y\n1;2\n3;4\n");
++    let mut cmd = wrk.command("stats");
++    cmd.env("QSV_SKIP_FORMAT_CHECK", "1")
++        .args(["--cache-threshold", "1", "f.txt"]);
++    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
++    assert_eq!([&got[1][0], &got[1][1]], ["x;y", "String"]);
++
++    let mut cmd = wrk.command("stats");
++    cmd.env("QSV_SKIP_FORMAT_CHECK", "1")
++        .env("QSV_DEFAULT_DELIMITER", ";")
++        .args(["--cache-threshold", "1", "--output", "out.csv", "f.txt"]);
++    wrk.assert_success(&mut cmd);
++    let got = std::fs::read_to_string(wrk.path("out.csv")).unwrap();
++    let fields_types: Vec<String> = got
++        .lines()
++        .skip(1)
++        .map(|l| l.split(',').take(2).collect::<Vec<_>>().join(","))
++        .collect();
++    assert_eq!(fields_types, ["x,Integer", "y,Integer"]);
++}
++
++#[test]
++#[cfg(feature = "polars")]
++fn stats_cache_hit_does_not_convert_a_compressed_input() {
++    // checking the cache reads the delimiter the Config resolved, which must not decompress
++    // the input: a cache hit exists to skip that work
++    let wrk = Workdir::new("stats_cache_hit_does_not_convert_a_compressed_input");
++    std::fs::copy(
++        wrk.load_test_file("boston311-100.csv.gz"),
++        wrk.path("b.csv.gz"),
++    )
++    .unwrap();
++    let mut cmd = wrk.command("stats");
++    cmd.args(["--cache-threshold", "1", "b.csv.gz"]);
++    wrk.assert_success(&mut cmd);
++
++    let log_dir = wrk.path("logs");
++    std::fs::create_dir_all(&log_dir).unwrap();
++    let mut cmd = wrk.command("stats");
++    cmd.env("QSV_LOG_LEVEL", "info")
++        .env("QSV_LOG_DIR", &log_dir)
++        .args(["--cache-threshold", "1", "b.csv.gz"]);
++    wrk.assert_success(&mut cmd);
++
++    let log: String = std::fs::read_dir(&log_dir)
++        .unwrap()
++        .map(|entry| std::fs::read_to_string(entry.unwrap().path()).unwrap())
++        .collect();
++    assert!(
++        log.contains("already exists and is current"),
++        "expected a cache hit: {log}"
++    );
++    assert!(
++        !log.contains("converted special-format input"),
++        "a cache hit converted the input: {log}"
++    );
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5052** (2026-11-14): fix(stats): the cache key records the resolved delimiter, not the --delimiter flag (@jqnatividad)
+- **PR #5051** (2026-11-14): fix(moarstats): honor QSV_STATS_SEPARATOR for the first mode; recompute a stats CSV written with another separator (@jqnatividad)
+- **PR #5050** (2026-11-14): fix(stats): max_precision for exponent-form floats, weighted quantiles with no positive weight, *ALL antimodes (@jqnatividad)
+- **PR #5049** (2026-11-14): fix(stats): cache follows QSV_NO_HEADERS and QSV_STATS_SEPARATOR; re-sniff date columns after an upgrade (@jqnatividad)
 - **PR #5048** (2026-11-14): deps: bump Polars to upstream 36ea0f9 (@jqnatividad)
 - **PR #5047** (2026-11-14): fix(viz): category-axis tickvals are category names, not positions (@jqnatividad)
-- **PR #5046** (2026-11-13): docs: fix sqlp `<=>` and Polars schema file name in USAGE (@jqnatividad)
-- **PR #5045** (2026-11-13): deps: bump Polars to upstream 61fdb30 (@jqnatividad)
-- **PR #5044** (2026-11-13): build(deps): bump anthropics/claude-code-action from 1.0.270 to 1.0.271 (@dependabot[bot])
-- **PR #5043** (2026-11-13): build(deps): bump hono from 4.13.13 to 4.13.18 in /.claude/skills (@dependabot[bot])
 
 ---
 
@@ -2309,49 +2653,31 @@ Refresh the lockfile to jiff 0.2.44, jiff-core 0.1.6, jiff-tzdb 0.1.10, and redi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: update lock file
+## X. stats): the cache key records the resolved delimiter, not the --delimiter flag
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3c23355`: deps: update lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `229979d6`: stats): the cache key records the resolved delimiter, not the --delimiter flag. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.2.44"
-checksum = "ac63a5a611e9d720726d6ab6ee2ee19e6f620503554ea5d303c7cb294ff40c12"
-version = "0.1.6"
-checksum = "48e9635854583b49ce3c6c43a071f70b0a49e79ad3c261c7b3aa76b2280416d2"
-version = "0.2.44"
-checksum = "9f9c27796c21cc8b33ce490f148d53fe41d679b887885bf0ef8f662cdb9b35c0"
-version = "0.1.10"
-checksum = "0980fca2cc272465bd60e82397607ba9f33add9e48defd77923301bbd03808f2"
-version = "1.8.2"
-checksum = "4bef8fa589dd53a8a379a7856de1365d0a1be50c6b8aebb5c01c1ec441a2c509"
+- **`stats`: the cache follows the delimiter set by `QSV_SNIFF_DELIMITER` and `QSV_DEFAULT_DELIMITER`** ([#5052](https://github.com/dathere/qsv/pull/5052)). The stats cache recorded only the `--delimiter` flag. A semicolon-separated `data.csv` read as one comma-delimited column kept that one-column cache after `QSV_SNIFF_DELIMITER` was set, so `stats` and the commands that read its cache went on describing the wrong columns. The cache now records the delimiter the file was read with, and `stats` and its readers compare against the delimiter they resolve the same way. Checking the cache still does not decompress a compressed or Parquet input. A cache written before this change did not record the delimiter it was read with, so it is recomputed on its next use.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.2.43"
-checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
-version = "0.1.5"
-checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
-version = "0.2.43"
-checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
-version = "0.1.9"
-checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
-version = "1.8.1"
-checksum = "db7f3d75b5a3301746bff39a767bf4c5c42506b08513527308b3875bfb64a031"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3c23355` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `229979d6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

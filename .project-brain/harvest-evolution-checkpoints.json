@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T22:39:38.937Z",
+  "last_updated": "2026-11-14T22:58:31.289Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T22:16:50.251Z",
@@ -353,7 +353,7 @@
       "staged_for_review": 1
     },
     "hmbown-codewhale-learnings.md": {
-      "processed_at": "2026-11-13T07:47:28.835Z",
+      "processed_at": "2026-11-14T22:57:54.271Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2786,9 +2786,19 @@
       "processed_at": "2026-11-14T22:39:38.016Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-speridlabs-iris-3b-learnings.md": {
+      "processed_at": "2026-11-14T22:58:30.106Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "apollographql-apollo-kotlin-learnings.md": {
+      "processed_at": "2026-11-14T22:58:30.489Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 930,
-  "total_canonical_promoted": 225,
-  "total_staged_for_review": 705
+  "total_dossiers_evaluated": 933,
+  "total_canonical_promoted": 226,
+  "total_staged_for_review": 707
 }

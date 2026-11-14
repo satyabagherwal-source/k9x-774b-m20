@@ -9995,3 +9995,9 @@ Every entry in this ledger must capture:
 | `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `6cf33028` | Multi-dimensional audit evidence | 2026-11-14T22:39:18.301Z |
 | `learn-github-mikepenz-aboutlibraries` | `https://github.com/mikepenz/AboutLibraries` | `42e86795` | Multi-dimensional audit evidence | 2026-11-14T22:39:23.744Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `2825902a` | Multi-dimensional audit evidence | 2026-11-14T22:39:34.177Z |
+| `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-14T22:57:32.224Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `29e41070` | Multi-dimensional audit evidence | 2026-11-14T22:57:36.163Z |
+| `learn-github-apollographql-apollo-kotlin` | `https://github.com/apollographql/apollo-kotlin` | `257ec5f0` | Multi-dimensional audit evidence | 2026-11-14T22:57:40.787Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `c718b2ad` | Multi-dimensional audit evidence | 2026-11-14T22:57:50.108Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `229979d6` | Multi-dimensional audit evidence | 2026-11-14T22:57:50.988Z |
+| `learn-dom-d-d6b073d5` | `project://hf-speridlabs-iris-3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | 2026-11-14T22:58:30.106Z |

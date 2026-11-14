@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T22:39:38.712Z",
-  "total_records": 867,
+  "last_updated": "2026-11-14T22:58:31.014Z",
+  "total_records": 873,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 425,
+      "total": 428,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -462,7 +462,10 @@
         "DOM-D-DD21AD65",
         "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam3-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-",
-        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gg"
+        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gg",
+        "domain_intelligence-research-knowledge-intelligence-speridlabs-iris-3b-core-invariants",
+        "DOM-D-D6B073D5",
+        "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants"
       ]
     },
     "E": {
@@ -496,7 +499,7 @@
       ]
     },
     "G": {
-      "total": 140,
+      "total": 141,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -637,11 +640,12 @@
         "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-core-invariants",
         "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-core-invariants",
-        "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-hmbown-codewhale-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 180,
+      "total": 182,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -822,7 +826,9 @@
         "domain_intelligence-technical-construction-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-",
         "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-core-invariants",
         "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-clickhouse-clickhouse-learnings-core-invaria",
+        "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i"
       ]
     },
     "I": {
@@ -7076,10 +7082,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "bddbc0d76ef3ecc7bd61de1fd1d2374ecec1685c10f34a54b4d4a9cf9ddf3efb",
-      "created_at": "2026-11-13T19:40:04.067Z"
+      "content_hash": "6952d996df5001b71ace36a921974c5540044646b78fbabed78fe4601abacf69",
+      "created_at": "2026-11-14T22:57:50.480Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -10924,8 +10930,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "ce26e9ecfa47dd9157043d0cb1090adc26365b0be2937d472b4b7b2d7ba463af",
-      "created_at": "2026-11-14T20:32:39.429Z"
+      "content_hash": "38e8a460fc2a30995fd0716764470428c5168bb2bc29dae7c594839bfc3671d4",
+      "created_at": "2026-11-14T22:57:51.331Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -14706,10 +14712,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "65d405f3e508f804e6525bde750d63907c563a4c16547ab0dab7b2e6e103883e",
-      "created_at": "2026-11-14T14:40:09.919Z"
+      "content_hash": "29fcb39a3d7b7559da26b83b8728bb7f0d45ebab7e3748ea29318526540a2bdf",
+      "created_at": "2026-11-14T22:57:36.536Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -17174,6 +17180,93 @@
       "repository": "mikepenz-aboutlibraries-learnings",
       "content_hash": "b1a467ea2151f2e71d5ee37ce354e502bb3acfb832dc40f3e2977b37609f9732",
       "created_at": "2026-11-14T22:39:38.712Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-speridlabs-iris-3b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-speridlabs-iris-3b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: speridlabs/iris-3b Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-iris-3b-research-knowledge-intelligence-speridlabs-iris-3b-core-in.md",
+      "repository": "speridlabs/iris-3b",
+      "content_hash": "e4951326162e838332f65b4b165d8d284f285e1d5a204cdf5450d004a647dcbe",
+      "created_at": "2026-11-14T22:57:32.432Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: apollographql/apollo-kotlin Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apollographql-apollo-kotlin-technical-construction-intelligence-apollographql-ap.md",
+      "repository": "apollographql/apollo-kotlin",
+      "content_hash": "3986d96149f073fa0881bc24d26ad2ad2f4ae414664a7150423a31a5c615a895",
+      "created_at": "2026-11-14T22:57:41.142Z"
+    },
+    "domain_intelligence-architecture-intelligence-hmbown-codewhale-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-hmbown-codewhale-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-learnings-architecture-intelligence-hmbown-codewhale-learnings-.md",
+      "repository": "hmbown-codewhale-learnings",
+      "content_hash": "7dca47dc957427a5c97c5ccf43806348ae82b876f622f4dcc9432b0d4b189e2e",
+      "created_at": "2026-11-14T22:57:54.727Z"
+    },
+    "DOM-D-D6B073D5": {
+      "record_id": "DOM-D-D6B073D5",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): speridlabs/iris-3b",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/speridlabs/iris-3b](https://huggingface.co/speridlabs/iris-3b))  \n> **Source Version**: `hf-speridlab`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "69042b810e6688b240e9e2a42dd060238263236ea48b421c736ea42f2b92e68a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-speridlabs-iris-3b/hf-speridlabs-iris-3b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T22:57:55.238Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-speridlabs-iris-3b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-speridlabs-iris-3b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T22:58:30.089Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-speridlabs-iris-3b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-iris-3b-learnings-research-knowledge-intelligence-hf-speridlabs-ir.md",
+      "repository": "hf-speridlabs-iris-3b-learnings",
+      "content_hash": "3482322c6ca5b63841ed9510327b4b09b524db127c816624252af2b1e66730ff",
+      "created_at": "2026-11-14T22:58:30.336Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: apollographql-apollo-kotlin-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apollographql-apollo-kotlin-learnings-technical-construction-intelligence-apollo.md",
+      "repository": "apollographql-apollo-kotlin-learnings",
+      "content_hash": "34d43cc0dc5a1b4547a3467e5d5da63b69ab12ceff96d2664f6fe08f63dc7a90",
+      "created_at": "2026-11-14T22:58:31.014Z"
     }
   }
 }

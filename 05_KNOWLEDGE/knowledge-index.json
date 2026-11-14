@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T22:39:38.827Z",
-  "total_verified_learnings": 8622,
+  "last_updated": "2026-11-14T22:58:31.156Z",
+  "total_verified_learnings": 8624,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17908,
+  "total_items": 17927,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112094,10 +112094,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "9045d150",
-      "content_hash": "f1e832956566697c987e95dcf82d492b5ed5e74e2ba7d5dc05236f3f99a6e35a",
+      "source_version": "229979d6",
+      "content_hash": "4a34cf4eeb807a1ef2c2293dd4050a1f37fe87438361fcbfe604ea8b370a0693",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:38:33.773Z"
+      "persisted_at": "2026-11-14T22:57:51.465Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112967,13 +112967,13 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "13626c16",
-      "content_hash": "bddbc0d76ef3ecc7bd61de1fd1d2374ecec1685c10f34a54b4d4a9cf9ddf3efb",
+      "source_version": "c718b2ad",
+      "content_hash": "6952d996df5001b71ace36a921974c5540044646b78fbabed78fe4601abacf69",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T19:40:04.067Z"
+      "persisted_at": "2026-11-14T22:57:50.480Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
@@ -213316,17 +213316,22 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "13626c16",
-      "content_hash": "75c8c045c175b983e4796e5560984be060ab152716dbb26b11f6d82c23fe66b8",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "c718b2ad",
+      "content_hash": "ff1b6b9750f8b2ee9178b6b47f0f187d757656aaf6929a8e033d66c6416c458a",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
           "title": "Merge 'core: resolve DEFAULT in UPDATE SET and ON CONFLICT DO UPDATE' from Glaub",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8549,
+          "title": "Merge 'tests: move the MVCC tests that need only the public API out of core' fro",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -213335,7 +213340,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T19:40:03.564Z",
+      "verified_at": "2026-11-14T22:57:49.909Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218666,8 +218671,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "9045d150",
-      "content_hash": "e93e9c87515301cd1ae5fbd3f551cdffa9ac092ebed960ed2de972b111d59360",
+      "source_version": "229979d6",
+      "content_hash": "26ea2b70a381ebe86478def8b20a1eea0ab53ff6dc28290b390648c4b581bd54",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -218700,6 +218705,11 @@
           "number": 8541,
           "title": "honor QSV_STATS_SEPARATOR for the first mode; recompute a stats CSV",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8550,
+          "title": "the cache key records the resolved delimiter, not the --delimiter flag",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218707,7 +218717,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T21:38:33.248Z",
+      "verified_at": "2026-11-14T22:57:50.795Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219537,10 +219547,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "a3c23355",
-      "content_hash": "ce26e9ecfa47dd9157043d0cb1090adc26365b0be2937d472b4b7b2d7ba463af",
+      "source_version": "229979d6",
+      "content_hash": "38e8a460fc2a30995fd0716764470428c5168bb2bc29dae7c594839bfc3671d4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T20:32:39.429Z"
+      "persisted_at": "2026-11-14T22:57:51.331Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -228798,18 +228808,18 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "0f339089",
-      "content_hash": "28bb300a30cac6c3b971f459488cc7c369060c7111c7b2305950edb01fe5c8d7",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "29e41070",
+      "content_hash": "257ca9b69ee726f0df831bb75727f76bc7ceb64499e67b7ea9ca6078aa81a881",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
           "title": "fill the dsh/broker llm arm on the Engine's own auxiliary model",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228817,7 +228827,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T14:40:09.541Z",
+      "verified_at": "2026-11-14T22:57:35.967Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228831,74 +228841,74 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8492,
       "title": "fill the dsh/broker llm arm on the Engine's own auxiliary model",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "0f339089",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "29e41070",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-14T14:40:09.541Z"
+      "verified_at": "2026-11-14T22:57:35.967Z"
     },
     "candidate_directive-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-IPNO-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-AFF7-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model.md",
       "title": "fill the dsh/broker llm arm on the Engine's own auxiliary model",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "0f339089",
-      "content_hash": "46f4ea1a4280fef2655dd762b81bdf005d850b68c2c9b7acab219a184640ad23",
+      "source_version": "29e41070",
+      "content_hash": "034114880981b0e7f9c0e041ddf1d759907c4aa1303a9950c43a5e94f0141f73",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T14:40:09.832Z"
+      "persisted_at": "2026-11-14T22:57:36.408Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "0f339089",
-      "content_hash": "65d405f3e508f804e6525bde750d63907c563a4c16547ab0dab7b2e6e103883e",
+      "source_version": "29e41070",
+      "content_hash": "29fcb39a3d7b7559da26b83b8728bb7f0d45ebab7e3748ea29318526540a2bdf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T14:40:09.919Z"
+      "persisted_at": "2026-11-14T22:57:36.536Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "0f339089",
-      "content_hash": "0e7353a9fc141a78398e4dc9534528380b3fe6d9a664819e0cda52330a744d3c",
+      "source_version": "29e41070",
+      "content_hash": "981c478b89ac9160ea84213a15ef160d3c85e25752f4c4e0117b5f1db4bcbbec",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T14:40:10.005Z"
+      "persisted_at": "2026-11-14T22:57:36.788Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
+      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "0f339089",
-      "content_hash": "e6e93deb8c0de7b5d5acd55b2f72c505a875a20a7dfb81822c5a28253659c8f4",
+      "source_version": "29e41070",
+      "content_hash": "ea8651bf639bfd9ffdb6fe4dbdf0d664b3a745913e8315811001ceb63b8bae08",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T14:40:10.085Z"
+      "persisted_at": "2026-11-14T22:57:36.909Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-IX5R-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ATGH-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model.md",
       "title": "extension-host): fill the dsh/broker llm arm on the Engine's own auxiliary model",
-      "repository": "codewhale-hq-codewhale-learnings",
+      "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb7e685041f7b541925f192475c288e99880e4807eebd5da8cf163207fc99bf8",
+      "content_hash": "725e1090c92b67505b810a612a29e825cc2829c95a2a4c9680f07fd2882aaa12",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T14:40:19.554Z"
+      "persisted_at": "2026-11-14T22:57:54.598Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -235869,6 +235879,276 @@
       "content_hash": "c85177930e39e198a9e36d2cb8dd7c9a546bf614172b04b6aee75c8b6084cfa9",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T22:39:38.827Z"
+    },
+    "learn-huggingface-speridlabs-iris-3b": {
+      "learning_id": "learn-huggingface-speridlabs-iris-3b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "speridlabs/iris-3b",
+      "repository": "speridlabs/iris-3b",
+      "slug": "hf-speridlabs-iris-3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/speridlabs/iris-3b",
+      "source_version": "hf-speridlabs-iris-3b",
+      "content_hash": "feca3a3031cc372da7d5f7d89e4d6a04be762577ebb1e0c2a62dd4aff3f85271",
+      "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T22:57:32.026Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-speridlabs-iris-3b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-speridlabs-iris-3b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-iris-3b-research-knowledge-intelligence-speridlabs-iris-3b-core-in.md",
+      "title": "Research & Knowledge Intelligence: speridlabs/iris-3b Core Invariants",
+      "repository": "speridlabs/iris-3b",
+      "source_version": "hf-speridlabs-iris-3b",
+      "content_hash": "e4951326162e838332f65b4b165d8d284f285e1d5a204cdf5450d004a647dcbe",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T22:57:32.432Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codewhale": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codewhale",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-hmbown-codewhale-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codew.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in codewhale-hq/Codewhale",
+      "repository": "codewhale-hq/Codewhale",
+      "source_version": "29e41070",
+      "content_hash": "f3fc6ef50a4f89fd8982e3edc6a92c2277085f13c6516f7b62599c38d795bcf8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T22:57:36.667Z"
+    },
+    "learn-github-apollographql-apollo-kotlin": {
+      "learning_id": "learn-github-apollographql-apollo-kotlin",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "apollographql/apollo-kotlin",
+      "repository": "apollographql/apollo-kotlin",
+      "slug": "apollographql-apollo-kotlin",
+      "platform": "github",
+      "source_url": "https://github.com/apollographql/apollo-kotlin",
+      "source_version": "257ec5f0",
+      "content_hash": "5ac98586e71360a14e396e840ec05b56428a368b37f3162b79d91bfec9042aa8",
+      "dossier_path": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8548,
+          "title": "Use invariant path separators in publishMarkers on Windows",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T22:57:40.598Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8548": {
+      "learning_id": "rule-8548",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8548,
+      "title": "Use invariant path separators in publishMarkers on Windows",
+      "source_url": "https://github.com/apollographql/apollo-kotlin",
+      "source_version": "257ec5f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T22:57:40.598Z"
+    },
+    "candidate_directive-use-invariant-path-separators-in-publishmarkers-on-windows": {
+      "item_id": "candidate_directive-use-invariant-path-separators-in-publishmarkers-on-windows",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BLGB-use-invariant-path-separators-in-publishmarkers-on-windows.md",
+      "title": "Use invariant path separators in publishMarkers on Windows",
+      "repository": "apollographql-apollo-kotlin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d1973baf75aeca8c91944b15d6538449a8ca40a9967497c3c9fce77be0f06339",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T22:58:30.875Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apollographql-apollo-kotlin-technical-construction-intelligence-apollographql-ap.md",
+      "title": "Technical Construction Intelligence: apollographql/apollo-kotlin Core Invariants",
+      "repository": "apollographql/apollo-kotlin",
+      "source_version": "257ec5f0",
+      "content_hash": "3986d96149f073fa0881bc24d26ad2ad2f4ae414664a7150423a31a5c615a895",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T22:57:41.142Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-apollographql-apollo-kotlin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apollographql-apollo-kotlin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/apollographql-apollo-kotlin-verification-protocol-empirical-defect-shield-for-ap.md",
+      "title": "Verification Protocol: Empirical Defect Shield for apollographql/apollo-kotlin",
+      "repository": "apollographql/apollo-kotlin",
+      "source_version": "257ec5f0",
+      "content_hash": "24ef92815b10fad8d2eb8724d7fc2c91d3dd44a5e80c3b4af6eb372db1fdebe6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T22:57:41.278Z"
+    },
+    "rule-8549": {
+      "learning_id": "rule-8549",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8549,
+      "title": "Merge 'tests: move the MVCC tests that need only the public API out of core' fro",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "c718b2ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T22:57:49.909Z"
+    },
+    "candidate_directive-merge-tests-move-the-mvcc-tests-that-need-only-the-public-api-out-of-core-fro": {
+      "item_id": "candidate_directive-merge-tests-move-the-mvcc-tests-that-need-only-the-public-api-out-of-core-fro",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AQ6J-merge-tests-move-the-mvcc-tests-that-need-only-the-public-api-out-of-core-fro.md",
+      "title": "Merge 'tests: move the MVCC tests that need only the public API out of core' fro",
+      "repository": "tursodatabase/turso",
+      "source_version": "c718b2ad",
+      "content_hash": "fcb952cc40cd832905fa8b9abad135f2ca7d67d1706a727027bf0c75dd36cdf2",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-14T22:57:50.351Z"
+    },
+    "rule-8550": {
+      "learning_id": "rule-8550",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8550,
+      "title": "the cache key records the resolved delimiter, not the --delimiter flag",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "229979d6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T22:57:50.795Z"
+    },
+    "candidate_directive-the-cache-key-records-the-resolved-delimiter-not-the-delimiter-flag": {
+      "item_id": "candidate_directive-the-cache-key-records-the-resolved-delimiter-not-the-delimiter-flag",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AQU6-the-cache-key-records-the-resolved-delimiter-not-the-delimiter-flag.md",
+      "title": "the cache key records the resolved delimiter, not the --delimiter flag",
+      "repository": "dathere/qsv",
+      "source_version": "229979d6",
+      "content_hash": "55ae9043ddf251a4b9c0c0b2d70b271346e4fb214362b6f0ee705d7c25495591",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T22:57:51.202Z"
+    },
+    "domain_intelligence-architecture-intelligence-hmbown-codewhale-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-hmbown-codewhale-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-learnings-architecture-intelligence-hmbown-codewhale-learnings-.md",
+      "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
+      "repository": "hmbown-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7dca47dc957427a5c97c5ccf43806348ae82b876f622f4dcc9432b0d4b189e2e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T22:57:54.727Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-hmbown-codewhale-learnings-adr-subsystem-boundary-modular-decoupling-in-hmbown-c.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in hmbown-codewhale-learnings",
+      "repository": "hmbown-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0dabd9ea687fd1e398bdfea7baf49bdc2fd27c91d6462b516fb3eb62782b568b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T22:57:54.861Z"
+    },
+    "agent_contract-agent-contract-hmbown-codewhale-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-hmbown-codewhale-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-learnings-agent-contract-hmbown-codewhale-learnings-autonomous-.md",
+      "title": "Agent Contract: hmbown-codewhale-learnings Autonomous Specialist Persona",
+      "repository": "hmbown-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "db009ba8fca446c01a0eafe9d6107c62f225f89578a5382a514aca8181078363",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T22:57:54.986Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hmbown-codewhale-learnings-verification-protocol-empirical-defect-shield-for-hmb.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hmbown-codewhale-learnings",
+      "repository": "hmbown-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "42a251e64d369e40aec749f083c916b5dccb115b5f4ca93af9f33665e7e37cc1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T22:57:55.111Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-iris-3b-learnings-research-knowledge-intelligence-hf-speridlabs-ir.md",
+      "title": "Research & Knowledge Intelligence: hf-speridlabs-iris-3b-learnings Core Invariants",
+      "repository": "hf-speridlabs-iris-3b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3482322c6ca5b63841ed9510327b4b09b524db127c816624252af2b1e66730ff",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T22:58:30.336Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apollographql-apollo-kotlin-learnings-technical-construction-intelligence-apollo.md",
+      "title": "Technical Construction Intelligence: apollographql-apollo-kotlin-learnings Core Invariants",
+      "repository": "apollographql-apollo-kotlin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "34d43cc0dc5a1b4547a3467e5d5da63b69ab12ceff96d2664f6fe08f63dc7a90",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T22:58:31.014Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-apollographql-apollo-kotlin-le": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apollographql-apollo-kotlin-le",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/apollographql-apollo-kotlin-learnings-verification-protocol-empirical-defect-shi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for apollographql-apollo-kotlin-learnings",
+      "repository": "apollographql-apollo-kotlin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f4a4b0ad972d22fd96508259202bf7cd299e97ba27eec86a2c66157c3cfe0e6c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T22:58:31.156Z"
     }
   },
   "ai-builder-brain": {

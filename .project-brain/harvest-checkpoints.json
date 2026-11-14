@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T22:39:34.187Z",
+  "last_updated": "2026-11-14T22:57:50.997Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1967,14 +1967,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-speridlabs-iris-3b",
-      "content_hash": "393e882de1e9690228c890a84e4328495acd779987e341ab15a439271285609c",
-      "verified_at": "2026-11-09T11:56:27.801Z",
+      "content_hash": "feca3a3031cc372da7d5f7d89e4d6a04be762577ebb1e0c2a62dd4aff3f85271",
+      "verified_at": "2026-11-14T22:57:32.233Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T11:56:27.801Z"
+      "last_updated": "2026-11-14T22:57:32.233Z"
     },
     "Infisical/infisical": {
       "repository": "Infisical/infisical",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "e93e9c87515301cd1ae5fbd3f551cdffa9ac092ebed960ed2de972b111d59360",
-      "verified_at": "2026-11-14T21:38:33.405Z",
+      "content_hash": "26ea2b70a381ebe86478def8b20a1eea0ab53ff6dc28290b390648c4b581bd54",
+      "verified_at": "2026-11-14T22:57:50.997Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T21:38:33.405Z"
+      "last_updated": "2026-11-14T22:57:50.997Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "28bb300a30cac6c3b971f459488cc7c369060c7111c7b2305950edb01fe5c8d7",
-      "verified_at": "2026-11-14T14:40:09.674Z",
+      "content_hash": "257ca9b69ee726f0df831bb75727f76bc7ceb64499e67b7ea9ca6078aa81a881",
+      "verified_at": "2026-11-14T22:57:36.174Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T14:40:09.674Z"
+      "last_updated": "2026-11-14T22:57:36.174Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "75c8c045c175b983e4796e5560984be060ab152716dbb26b11f6d82c23fe66b8",
-      "verified_at": "2026-11-13T19:40:03.742Z",
+      "content_hash": "ff1b6b9750f8b2ee9178b6b47f0f187d757656aaf6929a8e033d66c6416c458a",
+      "verified_at": "2026-11-14T22:57:50.118Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T19:40:03.742Z"
+      "last_updated": "2026-11-14T22:57:50.118Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -10641,14 +10641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apollographql-apollo-kotlin",
-      "content_hash": "b3389017efa9d109838d20bbecc0055f8a26145316ef57b168f8b92e4088003d",
-      "verified_at": "2026-11-04T21:33:01.895Z",
+      "content_hash": "5ac98586e71360a14e396e840ec05b56428a368b37f3162b79d91bfec9042aa8",
+      "verified_at": "2026-11-14T22:57:40.797Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T21:33:01.895Z"
+      "last_updated": "2026-11-14T22:57:40.797Z"
     },
     "crate-ci/typos": {
       "repository": "crate-ci/typos",
