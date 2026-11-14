@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T05:09:43.680Z",
-  "total_records": 551,
+  "last_updated": "2026-11-14T05:32:16.551Z",
+  "total_records": 554,
   "domains": {
     "A": {
       "total": 5,
@@ -35,7 +35,7 @@
       ]
     },
     "D": {
-      "total": 270,
+      "total": 273,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -306,7 +306,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning",
         "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v3-core-invariants",
         "DOM-D-C791DEC9",
-        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-core-invariants",
+        "DOM-D-2A203D84",
+        "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-learnings-core-invariants"
       ]
     },
     "E": {
@@ -6321,8 +6324,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "4afe29e6d7681c004fecc30b7fd13878c784762b09447629e0a8333270e53d7b",
-      "created_at": "2026-11-14T04:37:58.448Z"
+      "content_hash": "095750eb38f4fc682339bd5680fca193c889526fd12e599beee569fcdf559157",
+      "created_at": "2026-11-14T05:32:16.551Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -6366,8 +6369,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "5efdb9d702458aee640a5b2c952f21b1127211e2a65f1faa1b2fa7e79f234d2c",
-      "created_at": "2026-11-14T02:46:28.894Z"
+      "content_hash": "dbc692b7db0a8f2490675ba285bc7dac989faed993a9439eed222e3ffaf29d22",
+      "created_at": "2026-11-14T05:32:15.877Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -12165,6 +12168,66 @@
       "confidence": 0.95,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-14T05:09:43.676Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: baidu/Unlimited-OCR Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-unlimited-ocr-research-knowledge-intelligence-baidu-unlimited-ocr-core-.md",
+      "repository": "baidu/Unlimited-OCR",
+      "content_hash": "71d7bd1c18e4e5bde8deffaa0c847df68df585c8d26ee4a582d9cd0763b61545",
+      "created_at": "2026-11-14T05:31:30.181Z"
+    },
+    "DOM-D-2A203D84": {
+      "record_id": "DOM-D-2A203D84",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): baidu/Unlimited-OCR",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/baidu/Unlimited-OCR](https://huggingface.co/baidu/Unlimited-OCR))  \n> **Source Version**: `hf-baidu-unl`  \n> **License**: Open-Source  \n> **Synthesized By",
+      "content_hash": "e482db8f46fd06ad28778f9ea0acee84a84fdcf3e29ed0b17dd0e038dd423e8f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "provenance": {
+        "source_uri": "project://hf-baidu-unlimited-ocr/hf-baidu-unlimited-ocr-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T05:31:41.892Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baidu-unlimited-ocr)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-baidu-unlimited-ocr"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T05:32:15.127Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-baidu-unlimited-ocr-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-unlimited-ocr-learnings-research-knowledge-intelligence-hf-baidu-unlimi.md",
+      "repository": "hf-baidu-unlimited-ocr-learnings",
+      "content_hash": "024386d11a0dcc755474a15c0febd311577c19665725b90de132b44ed553ecad",
+      "created_at": "2026-11-14T05:32:15.370Z"
     }
   }
 }

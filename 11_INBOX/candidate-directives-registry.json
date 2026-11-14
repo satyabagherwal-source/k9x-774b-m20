@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T05:08:56.969Z",
+  "last_updated": "2026-11-14T05:32:16.433Z",
   "directives": [
     {
       "id": "CD-001",
@@ -7427,11 +7427,11 @@
       "staged_date": "2026-11-12"
     },
     {
-      "id": "CD-0AED",
+      "id": "CD-Y4DH",
       "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0AED-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y4DH-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -10260,11 +10260,11 @@
       "staged_date": "2026-11-13"
     },
     {
-      "id": "CD-0WQG",
+      "id": "CD-Y3UQ",
       "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-0WQG-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y3UQ-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
@@ -11706,6 +11706,24 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
       "domain_letter": "F"
+    },
+    {
+      "id": "CD-REV-CA9D14",
+      "directive_title": "puppet: Fix PostgreSQL failing to start on new installs.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CA9D14-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-REV-FC8DE1",
+      "directive_title": "engine): restore text fallback for unknown file extensions (#394)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FC8DE1-engine-restore-text-fallback-for-unknown.md",
+      "staged_date": "2026-11-14"
     }
   ]
 }

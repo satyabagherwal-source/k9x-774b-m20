@@ -9788,3 +9788,5 @@ Every entry in this ledger must capture:
 | `learn-dom-k-325b6346` | `project://restatedev-restate` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md` | 2026-11-14T05:08:13.697Z |
 | `learn-dom-h-c33ff226` | `project://hf-edge0-audio8-tts-realistic-0.6b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | 2026-11-14T05:08:56.536Z |
 | `learn-dom-k-6b875983` | `project://authzed-spicedb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md` | 2026-11-14T05:09:43.684Z |
+| `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-14T05:31:29.990Z |
+| `learn-dom-d-2a203d84` | `project://hf-baidu-unlimited-ocr` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | 2026-11-14T05:32:15.140Z |

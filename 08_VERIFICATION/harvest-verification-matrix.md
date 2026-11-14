@@ -9755,3 +9755,5 @@
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T05:08:13.697Z` | `restatedev-restate` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-325B6346` [Domain K] | Yes (`0593febf...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T05:08:56.536Z` | `hf-edge0-audio8-tts-realistic-0.6b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-C33FF226` [Domain H] | Yes (`acff2736...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T05:09:43.684Z` | `authzed-spicedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-6B875983` [Domain K] | Yes (`d10747bc...`) |
+| `CYCLE-20261114-X4JM` | `2026-11-14T05:31:29.986Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`bd2dea14...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T05:32:15.140Z` | `hf-baidu-unlimited-ocr` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2A203D84` [Domain D] | Yes (`e482db8f...`) |

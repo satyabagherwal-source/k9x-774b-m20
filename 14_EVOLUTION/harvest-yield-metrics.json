@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T05:07:04.586Z",
-  "total_cycles_completed": 9465,
-  "total_learnings_persisted": 9465,
+  "last_updated": "2026-11-14T05:31:29.996Z",
+  "total_cycles_completed": 9466,
+  "total_learnings_persisted": 9466,
   "total_rules_promoted": 9173,
   "history": [
-    {
-      "timestamp": "2026-11-13T14:26:05.369Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T14:33:40.310Z",
       "repository": "SupersonicLabs/Julia-1",
@@ -1403,6 +1396,13 @@
       "repository": "restatedev/restate",
       "learningId": "learn-github-restatedev-restate",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T05:31:29.996Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

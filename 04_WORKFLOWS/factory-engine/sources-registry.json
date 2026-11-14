@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T05:07:07.839Z",
-    "lastVerified": "2026-11-14T05:07:07.839Z",
+    "lastChecked": "2026-11-14T05:31:41.782Z",
+    "lastVerified": "2026-11-14T05:31:41.782Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-14T04:14:42.647Z",
-    "lastVerified": "2026-11-14T04:14:42.647Z",
+    "lastChecked": "2026-11-14T05:31:41.769Z",
+    "lastVerified": "2026-11-14T05:31:41.769Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -435,8 +435,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T21:45:13.059Z",
-    "lastVerified": "2026-11-13T21:45:13.059Z",
+    "lastChecked": "2026-11-14T05:31:36.767Z",
+    "lastVerified": "2026-11-14T05:31:36.767Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -2749,12 +2749,12 @@
     "lastVerified": "2026-11-13T23:28:39.519Z"
   },
   "nats-io-nats.go": {
-    "name": "nats-io/nats.go",
+    "name": "nats.go",
     "officialUrl": "https://github.com/nats-io/nats.go",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T05:15:51.675Z",
-    "lastVerified": "2026-11-13T05:15:51.675Z",
+    "lastChecked": "2026-11-14T05:31:34.276Z",
+    "lastVerified": "2026-11-14T05:31:34.276Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-go",
@@ -2763,7 +2763,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "91d00498"
   },
   "infiniflow-infinity": {
     "name": "infiniflow/infinity",
@@ -4144,9 +4145,9 @@
   "gorhom-react-native-bottom-sheet": {
     "name": "react-native-bottom-sheet",
     "officialUrl": "https://github.com/gorhom/react-native-bottom-sheet",
-    "lastChecked": "2026-11-09T22:40:55.772Z",
+    "lastChecked": "2026-11-14T05:31:31.837Z",
     "revisionIdentifier": "9bfbeb52",
-    "lastVerified": "2026-11-09T22:40:55.772Z"
+    "lastVerified": "2026-11-14T05:31:31.837Z"
   },
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
@@ -4402,9 +4403,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-11-13T03:56:08.561Z",
+    "lastChecked": "2026-11-14T05:31:39.263Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-11-13T03:56:08.561Z"
+    "lastVerified": "2026-11-14T05:31:39.263Z"
   },
   "chmln-sd": {
     "name": "sd",
@@ -5797,12 +5798,12 @@
     "officialUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T00:39:06.744Z",
-    "lastVerified": "2026-11-09T00:39:06.744Z",
+    "lastChecked": "2026-11-14T05:31:29.423Z",
+    "lastVerified": "2026-11-14T05:31:29.423Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baidu-unlimited-ocr",
-    "contentHash": "878a998e182c757690f2db1937c4d8f913581082e59fd39ce82e82f78c56436e",
+    "contentHash": "bd2dea14a5580c21a1fb68db5a22a7b91bf9fff719ec8f89e65e2f4aa7a60356",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7778,8 +7779,8 @@
     "officialUrl": "https://github.com/jhspetersson/fselect",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-12T22:04:55.791Z",
-    "lastVerified": "2026-11-12T22:04:55.792Z",
+    "lastChecked": "2026-11-14T05:31:26.812Z",
+    "lastVerified": "2026-11-14T05:31:26.812Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jhspetersson-fselect",

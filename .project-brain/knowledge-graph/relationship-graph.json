@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T05:09:43.683Z",
+  "updated_at": "2026-11-14T05:32:15.138Z",
   "statistics": {
-    "total_nodes": 164,
-    "total_edges": 88,
+    "total_nodes": 165,
+    "total_edges": 89,
     "domain_distribution": {
-      "D": 126,
+      "D": 127,
       "M": 1,
       "H": 14,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 88
+      "CONSTRAINED_BY_ARCHITECTURE": 89
     }
   },
   "nodes": {
@@ -3672,6 +3672,29 @@
       ],
       "created_at": "2026-11-14T05:09:43.683Z",
       "updated_at": "2026-11-14T05:09:43.683Z"
+    },
+    "DOM-D-2A203D84": {
+      "id": "DOM-D-2A203D84",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): baidu/Unlimited-OCR",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-baidu-unlimited-ocr/hf-baidu-unlimited-ocr-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T05:31:41.892Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baidu-unlimited-ocr)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T05:32:15.138Z",
+      "updated_at": "2026-11-14T05:32:15.138Z"
     }
   },
   "edges": [
@@ -4554,6 +4577,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-C791DEC9 [D] with Domain M",
       "created_at": "2026-11-14T04:51:07.656Z"
+    },
+    {
+      "id": "EDGE-A7EDD398BFEA",
+      "sourceId": "DOM-D-2A203D84",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-2A203D84 [D] with Domain M",
+      "created_at": "2026-11-14T05:32:15.138Z"
     }
   ]
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T05:08:57.319Z",
-  "total_verified_learnings": 8485,
+  "last_updated": "2026-11-14T05:32:16.806Z",
+  "total_verified_learnings": 8486,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17108,
+  "total_items": 17111,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112007,13 +112007,13 @@
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0AED-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y4DH-engine-restore-text-fallback-for-unknown-file-extensions-394.md",
       "title": "engine): restore text fallback for unknown file extensions (#394)",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "98392b401950ae12a96819dee89cd3b9cb71e432e7db30ddb9364507f01eb61e",
+      "content_hash": "81be1ea76427849cbd95f94651ed43eed188a68d53f2cd30ced0491442cb7f91",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T04:37:58.325Z"
+      "persisted_at": "2026-11-14T05:32:16.433Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -112023,9 +112023,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4afe29e6d7681c004fecc30b7fd13878c784762b09447629e0a8333270e53d7b",
+      "content_hash": "095750eb38f4fc682339bd5680fca193c889526fd12e599beee569fcdf559157",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T04:37:58.448Z"
+      "persisted_at": "2026-11-14T05:32:16.551Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112035,9 +112035,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "82e06ce7b9af3cf9ccee62f1fec5d0bd350bb3a388e795834a73e44fa1f0b9c2",
+      "content_hash": "ff7cf57a1fe861076994fa2b5d77c8d4ea434b10a040cec9f191205a31e56e6f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T04:37:58.589Z"
+      "persisted_at": "2026-11-14T05:32:16.682Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112047,9 +112047,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc89bb6ee92740ef16a9bea1c96f8742371dada472b41d0a86d6b1e234dd7230",
+      "content_hash": "83c3d66cd015a98c1f49e25efb748d0a2204def3e211cbdd6092750366e473e5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T04:37:58.721Z"
+      "persisted_at": "2026-11-14T05:32:16.806Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "5efdb9d702458aee640a5b2c952f21b1127211e2a65f1faa1b2fa7e79f234d2c",
+      "content_hash": "dbc692b7db0a8f2490675ba285bc7dac989faed993a9439eed222e3ffaf29d22",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T02:46:28.894Z"
+      "persisted_at": "2026-11-14T05:32:15.877Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c1c433e8e5c5e74da10a2c519b2bb727230be8698680104a6965997d8cbf1e4",
+      "content_hash": "4e7a5725c138016cf41b14c8a5950c75f00bc0560de52af6011e4bfd0ed23727",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T02:46:28.991Z"
+      "persisted_at": "2026-11-14T05:32:16.008Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214751,13 +214751,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0WQG-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y3UQ-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "51b2e133a33933c63736024d1ee448d28218cc1994c3320f0598962d9b968efd",
+      "content_hash": "056474b4f059aa848eb87013bdc6cbcfd42d917fdbf36217e5ff95a50cf9e192",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T02:46:28.804Z"
+      "persisted_at": "2026-11-14T05:32:15.758Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -223452,6 +223452,57 @@
       "content_hash": "f501910a89ebb330c4877728348e597b2d201836fde1cd010d1768d71614d8c5",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T05:08:57.319Z"
+    },
+    "learn-huggingface-baidu-unlimited-ocr": {
+      "learning_id": "learn-huggingface-baidu-unlimited-ocr",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "baidu/Unlimited-OCR",
+      "repository": "baidu/Unlimited-OCR",
+      "slug": "hf-baidu-unlimited-ocr",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/baidu/Unlimited-OCR",
+      "source_version": "hf-baidu-unlimited-ocr",
+      "content_hash": "bd2dea14a5580c21a1fb68db5a22a7b91bf9fff719ec8f89e65e2f4aa7a60356",
+      "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T05:31:29.824Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-unlimited-ocr-research-knowledge-intelligence-baidu-unlimited-ocr-core-.md",
+      "title": "Research & Knowledge Intelligence: baidu/Unlimited-OCR Core Invariants",
+      "repository": "baidu/Unlimited-OCR",
+      "source_version": "hf-baidu-unlimited-ocr",
+      "content_hash": "71d7bd1c18e4e5bde8deffaa0c847df68df585c8d26ee4a582d9cd0763b61545",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T05:31:30.181Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-unlimited-ocr-learnings-research-knowledge-intelligence-hf-baidu-unlimi.md",
+      "title": "Research & Knowledge Intelligence: hf-baidu-unlimited-ocr-learnings Core Invariants",
+      "repository": "hf-baidu-unlimited-ocr-learnings",
+      "source_version": "HEAD",
+      "content_hash": "024386d11a0dcc755474a15c0febd311577c19665725b90de132b44ed553ecad",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T05:32:15.370Z"
     }
   },
   "ai-builder-brain": {

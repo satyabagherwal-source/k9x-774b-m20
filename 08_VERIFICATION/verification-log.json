@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-KR4I",
-    "timestamp": "2026-11-13T08:22:10.002Z",
-    "repository": "etcd-io/etcd",
-    "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "70db2db93254a3f49818303d49bc0eb90195c31d4a450526794960c50f1a086d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-2ERH",
     "timestamp": "2026-11-13T08:35:53.789Z",
     "repository": "ccore/Qwen3.5-4B-3D-Coder",
@@ -7492,6 +7477,21 @@
     "contentHash": "10c1c542c53b889824cf179d681f0a498b71488fa3f78f6d3b651a2683e8b533",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-X4JM",
+    "timestamp": "2026-11-14T05:31:29.986Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr",
+    "contentHash": "bd2dea14a5580c21a1fb68db5a22a7b91bf9fff719ec8f89e65e2f4aa7a60356",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T05:08:56.550Z",
+  "updated_at": "2026-11-14T05:32:15.164Z",
   "stats": {
-    "total_discovered": 3151,
-    "approved_pending_harvest": 2948,
+    "total_discovered": 3152,
+    "approved_pending_harvest": 2949,
     "harvested_count": 0,
     "rejected_count": 203,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2940,
+      "COMMUNITY_AND_EXPERT": 2941,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -67921,6 +67921,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md",
         "fileName": "hf-edge0-audio8-tts-realistic-0.6b-learnings.md"
+      }
+    },
+    "SRC-B7884DA985BF": {
+      "id": "SRC-B7884DA985BF",
+      "url": "https://huggingface.co/baidu/Unlimited-OCR",
+      "title": "https://huggingface.co/baidu/Unlimited-OCR",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T05:32:15.164Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
+        "fileName": "hf-baidu-unlimited-ocr-learnings.md"
       }
     }
   }
