@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T11:04:41.085Z",
-    "lastVerified": "2026-11-14T11:04:41.085Z",
+    "lastChecked": "2026-11-14T11:34:02.571Z",
+    "lastVerified": "2026-11-14T11:34:02.571Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-14T09:48:08.107Z",
-    "lastVerified": "2026-11-14T09:48:08.107Z",
+    "lastChecked": "2026-11-14T11:29:10.940Z",
+    "lastVerified": "2026-11-14T11:29:10.940Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1943,8 +1943,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-14T02:37:05.077Z",
-    "lastVerified": "2026-11-14T02:37:05.077Z",
+    "lastChecked": "2026-11-14T11:29:05.950Z",
+    "lastVerified": "2026-11-14T11:29:05.950Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -3845,12 +3845,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dragonflyoss-dragonfly": {
-    "name": "dragonflyoss/dragonfly",
+    "name": "dragonfly",
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-13T08:21:47.931Z",
-    "lastVerified": "2026-11-13T08:21:47.931Z",
+    "lastChecked": "2026-11-14T11:29:03.498Z",
+    "lastVerified": "2026-11-14T11:29:03.498Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflyoss-dragonfly",
@@ -3859,7 +3859,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5ace19fb"
   },
   "matrixorigin-matrixone": {
     "name": "matrixorigin/matrixone",
@@ -5211,8 +5212,8 @@
     "officialUrl": "https://github.com/ZSeven-W/openpencil",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-10T02:31:37.078Z",
-    "lastVerified": "2026-11-10T02:31:37.078Z",
+    "lastChecked": "2026-11-14T11:29:00.969Z",
+    "lastVerified": "2026-11-14T11:29:00.969Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zseven-w-openpencil",
@@ -5507,9 +5508,9 @@
   "tako8ki-gobang": {
     "name": "gobang",
     "officialUrl": "https://github.com/TaKO8Ki/gobang",
-    "lastChecked": "2026-11-13T07:18:06.336Z",
+    "lastChecked": "2026-11-14T11:29:08.454Z",
     "revisionIdentifier": "7b1b5f7e",
-    "lastVerified": "2026-11-13T07:18:06.336Z"
+    "lastVerified": "2026-11-14T11:29:08.454Z"
   },
   "salvo-rs-salvo": {
     "name": "salvo-rs/salvo",
@@ -6811,12 +6812,12 @@
     "officialUrl": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T03:03:28.661Z",
-    "lastVerified": "2026-11-09T03:03:28.661Z",
+    "lastChecked": "2026-11-14T11:28:58.551Z",
+    "lastVerified": "2026-11-14T11:28:58.551Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-    "contentHash": "94f04db82054b4517d14488d320e6780eaa4e03a19a708d317d15287e8c04ac0",
+    "contentHash": "b97d3d61e6b7560f25f49e1a3d8d3a24bd091a40ecdff34533f52dc59f071144",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8341,9 +8342,9 @@
   "killercup-cargo-edit": {
     "name": "cargo-edit",
     "officialUrl": "https://github.com/killercup/cargo-edit",
-    "lastChecked": "2026-11-13T00:01:30.586Z",
+    "lastChecked": "2026-11-14T11:28:55.952Z",
     "revisionIdentifier": "5cf6c0ba",
-    "lastVerified": "2026-11-13T00:01:30.586Z"
+    "lastVerified": "2026-11-14T11:28:55.953Z"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",

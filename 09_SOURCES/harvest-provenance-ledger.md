@@ -9851,3 +9851,5 @@ Every entry in this ledger must capture:
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `0a6a032b` | Multi-dimensional audit evidence | 2026-11-14T11:04:34.785Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `120db05d` | Multi-dimensional audit evidence | 2026-11-14T11:04:37.985Z |
 | `learn-dom-d-2f30eb65` | `project://hf-qwen-qwen3-vl-8b-instruct` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | 2026-11-14T11:05:14.835Z |
+| `learn-huggingface-nomic-ai-nomic-embed-text-v1-5` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-11-14T11:33:59.729Z |
+| `learn-dom-d-bfa5a06d` | `project://hf-nomic-ai-nomic-embed-text-v1.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | 2026-11-14T11:34:36.813Z |

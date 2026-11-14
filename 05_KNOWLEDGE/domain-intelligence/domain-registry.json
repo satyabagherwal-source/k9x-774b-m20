@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T11:05:15.775Z",
-  "total_records": 651,
+  "last_updated": "2026-11-14T11:34:38.257Z",
+  "total_records": 654,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 317,
+      "total": 320,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -354,7 +354,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-openai-community-gpt2-learnings-core-invarian",
         "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants",
         "DOM-D-2F30EB65",
-        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva"
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-vl-8b-instruct-learnings-core-inva",
+        "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants",
+        "DOM-D-BFA5A06D",
+        "domain_intelligence-research-knowledge-intelligence-hf-nomic-ai-nomic-embed-text-v1-5-learnings-core"
       ]
     },
     "E": {
@@ -6421,8 +6424,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "62c8334e7f0fbe13ab15955dfa24ff857a7d7deb487eeca33c57ca3577096358",
-      "created_at": "2026-11-14T09:18:33.913Z"
+      "content_hash": "90b601b81f32c53343387fe515d377995a15bea5810a436fc325836f75b4a2e4",
+      "created_at": "2026-11-14T11:34:38.257Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -6466,8 +6469,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "dbc692b7db0a8f2490675ba285bc7dac989faed993a9439eed222e3ffaf29d22",
-      "created_at": "2026-11-14T05:32:15.877Z"
+      "content_hash": "60224a6b21ab6318830c5782fa5b132496c47cb0386dfecff176931e39eef694",
+      "created_at": "2026-11-14T11:34:37.580Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -13801,6 +13804,66 @@
       "repository": "okteto-okteto-learnings",
       "content_hash": "cad2ac2f341e472181aae3954abd8a6ea73b3aa0311adbfc09fd6130e0b94eb5",
       "created_at": "2026-11-14T11:05:15.775Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: nomic-ai/nomic-embed-text-v1.5 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nomic-ai-nomic-embed-text-v1-5-research-knowledge-intelligence-nomic-ai-nomic.md",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "content_hash": "73a7fcb4649bada5a8c839f29e05af8770bf7fd9d88051aca176adbe2fecde71",
+      "created_at": "2026-11-14T11:33:59.922Z"
+    },
+    "DOM-D-BFA5A06D": {
+      "record_id": "DOM-D-BFA5A06D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): nomic-ai/nomic-embed-text-v1.5",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/nomic-ai/nomic-embed-text-v1.5](https://huggingface.co/nomic-ai/nomic-embed-text-v1.5))  \n> **Source Version**: `hf-nomic-ai-`  \n> **License**:",
+      "content_hash": "57cb3f4277c7e25b219ed127156742e019795b4d0530ab0ff5886b937b1f92c9",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md`  \n> **Source**: huggingface ([https:",
+      "provenance": {
+        "source_uri": "project://hf-nomic-ai-nomic-embed-text-v1.5/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T11:34:02.705Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nomic-ai-nomic-embed-text-v1.5)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-nomic-ai-nomic-embed-text-v1.5"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T11:34:36.799Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nomic-ai-nomic-embed-text-v1-5-learnings-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nomic-ai-nomic-embed-text-v1-5-learnings-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nomic-ai-nomic-embed-text-v1.5-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nomic-ai-nomic-embed-text-v1-5-learnings-research-knowledge-intelligence-hf-n.md",
+      "repository": "hf-nomic-ai-nomic-embed-text-v1.5-learnings",
+      "content_hash": "55bf85277cf5ab047352efdeb9c6b26a39612696bd130370a76a7efd9f352c41",
+      "created_at": "2026-11-14T11:34:37.055Z"
     }
   }
 }

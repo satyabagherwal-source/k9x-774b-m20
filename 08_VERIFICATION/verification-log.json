@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-IZY8",
-    "timestamp": "2026-11-13T12:32:44.672Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "0d3f6ab9ffbe3db056a4ea6999105bbd08e55081ae59cfce507a0f524fcf5344",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-J4HS",
     "timestamp": "2026-11-13T12:32:50.560Z",
     "repository": "KeyboardKit/KeyboardKit",
@@ -7492,6 +7477,21 @@
     "contentHash": "4f4cd7f38124f76537d32c2468a0053f2de7f81181c43394d1f9aaf60f22bf3d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-VAR1",
+    "timestamp": "2026-11-14T11:33:59.725Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "b97d3d61e6b7560f25f49e1a3d8d3a24bd091a40ecdff34533f52dc59f071144",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

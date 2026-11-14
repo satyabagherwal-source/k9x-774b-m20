@@ -9818,3 +9818,5 @@
 | `CYCLE-20261114-TGWT` | `2026-11-14T11:04:34.781Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8482` | Yes (`e894f3e3...`) |
 | `CYCLE-20261114-TJDP` | `2026-11-14T11:04:37.981Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8483` | Yes (`4f4cd7f3...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T11:05:14.835Z` | `hf-qwen-qwen3-vl-8b-instruct` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2F30EB65` [Domain D] | Yes (`3d0d98b8...`) |
+| `CYCLE-20261114-VAR1` | `2026-11-14T11:33:59.725Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`b97d3d61...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T11:34:36.813Z` | `hf-nomic-ai-nomic-embed-text-v1.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BFA5A06D` [Domain D] | Yes (`57cb3f42...`) |

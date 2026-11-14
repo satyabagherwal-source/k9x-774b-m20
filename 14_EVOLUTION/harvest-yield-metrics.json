@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T11:04:37.991Z",
-  "total_cycles_completed": 9508,
-  "total_learnings_persisted": 9508,
+  "last_updated": "2026-11-14T11:33:59.735Z",
+  "total_cycles_completed": 9509,
+  "total_learnings_persisted": 9509,
   "total_rules_promoted": 9205,
   "history": [
-    {
-      "timestamp": "2026-11-13T17:11:08.523Z",
-      "repository": "meilisearch/meilisearch",
-      "learningId": "learn-github-meilisearch-meilisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T17:24:39.303Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -1403,6 +1396,13 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T11:33:59.735Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
