@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T19:46:34.108Z",
-  "total_cycles_completed": 9586,
-  "total_learnings_persisted": 9586,
+  "last_updated": "2026-11-14T19:59:28.148Z",
+  "total_cycles_completed": 9587,
+  "total_learnings_persisted": 9587,
   "total_rules_promoted": 9251,
   "history": [
-    {
-      "timestamp": "2026-11-13T21:36:41.243Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T21:45:08.626Z",
       "repository": "ntex-rs/ntex",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-14T19:46:34.108Z",
       "repository": "Qwen/Qwen3-4B",
       "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T19:59:28.148Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

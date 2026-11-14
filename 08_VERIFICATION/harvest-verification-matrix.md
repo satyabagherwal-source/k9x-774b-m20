@@ -9925,3 +9925,5 @@
 | `CYCLE-20261114-AGXW` | `2026-11-14T19:41:41.060Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8527` | Yes (`3640b959...`) |
 | `CYCLE-20261114-GR1T` | `2026-11-14T19:46:34.097Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`d09138b3...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T19:47:13.000Z` | `hf-qwen-qwen3-4b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B7601B75` [Domain D] | Yes (`508a66fe...`) |
+| `CYCLE-20261114-XCB0` | `2026-11-14T19:59:28.140Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`9bd3f605...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T20:00:03.524Z` | `hf-conwayresearch-underdog-saluki-27b-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E0561FD8` [Domain D] | Yes (`efac8eac...`) |

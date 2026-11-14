@@ -9958,3 +9958,5 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `708bee9a` | Multi-dimensional audit evidence | 2026-11-14T19:41:41.065Z |
 | `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-14T19:46:34.102Z |
 | `learn-dom-d-b7601b75` | `project://hf-qwen-qwen3-4b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | 2026-11-14T19:47:13.000Z |
+| `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-14T19:59:28.144Z |
+| `learn-dom-d-e0561fd8` | `project://hf-conwayresearch-underdog-saluki-27b-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | 2026-11-14T20:00:03.524Z |
