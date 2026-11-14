@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T12:58:49.434Z",
+  "timestamp": "2026-11-14T14:28:36.096Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T12:58:49.434Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-14T14:28:36.096Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `41394de4`  
+> **Source Version**: `4cba3006`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T12:57:42.859Z  
+> **Timestamp**: 2026-11-14T14:27:57.519Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T12:57:42.854Z  
+> **Harvest Timestamp**: 2026-11-14T14:22:56.884Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1764,274 +1764,405 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41394de4` (2026-11-14)
-**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
+### Incident Patch 1: `4cba3006` (2026-11-14)
+**Commit Message**: Resume NUC 106 Intersect and Except Reasoning Selections
 
-**File**: `.claude/CLAUDE.md` (modified, +2/-2)
+Claims the stale Draft allocated in cc21315a (Draft NUC 106 Intersect and
+Except Reasoning Selections, 2026-11-11T22:31:30-05:00). It waited 2 days,
+10 hours and 34 minutes without an allocation or claim commit. This
+continuous cycle completes it with a fresh baseline, candidate worktree,
+proposer and evaluator, under its Reasoning enhancement category.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8gLvp2aQjMS8yXtmh6
+
+
+
+---
+
+### Incident Patch 2: `9abb3434` (2026-11-14)
+**Commit Message**: NUC 105 List and Population Sorting by Key
+
+Accepted under the automatic acceptance rule, in a continuous
+/nuc-proposal cycle (Utility enhancement): the frozen candidate meets every
+hard criterion and passes every policy check. The cycle picked NUC 105 up
+as a stale Draft, allocated in e2ade2a2, under the claim 120db05d, with a
+fresh baseline, candidate, proposer, Rust improvement pass and evaluator.
+
+Adds the read-only list and population query `sortBy`: `xs.sortBy(f)`
+returns a new list of the receiver's items in stable ascending order of
+`f(item)`, comparing keys as `<` does, and a key that cannot be compared
+with itself makes it undefined, as it makes `maxBy` and `minBy`. It never
+writes its receiver, unlike `sort`, so `ranked = scores.sortBy(s -> s)` is
+a standing ordering. When every key compares with itself it equals the
+accepted spelling
+`xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`.
+Only `sortBy` calls on lists and class populations change; they raised
+TypeError("<receiver>.sortBy is not a function").
+
+Hard criteria, checked by the independent evaluator and again by the caller
+on the integrated tree: build, warning-denied Clippy on 1.97.1 and
+
+**File**: `README.md` (modified, +26/-0)
 ```diff
-@@ -17,9 +17,9 @@ not a replacement for the policies it links to.
- | [rust-guidelines.instructions.md](rules/rust-guidelines.instructions.md) | The Rust API Guidelines, Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy, always followed under the Power of 10 adaptation: their precedence, a digest for the crate, comment-free Rust source, deliberate divergences and known gaps |
- | [documents.instructions.md](rules/documents.instructions.md) | Authoritative specification, executable documents, and dataset synchronization |
- | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
--| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, and `NUC <number> <Title>` outcome commit messages |
-+| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, continuous cycles that first pick up allocated Drafts idle for 24 hours under a pushed `Resume NUC <number> <Title>` claim, and `NUC <number> <Title>` outcome commit messages |
- | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
--| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
-+| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations, claims and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
+@@ -2167,6 +2167,32 @@ assert([a.color, b.color], [null, "red"])
+   before. See the
+   [root contract](nucleoid.spec.md#any-and-all-class-references).
  
- All instruction files use `applyTo: "**"` to preserve their repository-wide scope.
++## List and population sorting by key
++
++**Sorting by key keeps a live agenda while the list keeps its order**
++
++```nuc
++tasks = [{name: "ship", due: 3}, {name: "plan", due: 1}, {name: "build", due: 2}]
++agenda = tasks.sortBy(task -> task.due)
++assert(agenda.map(task -> task.name), ["plan", "build", "ship"])
++tasks.push({name: "test", due: 2})
++assert(agenda.map(task -> task.name), ["plan", "build", "test", "ship"])
++tasks[2].due = 4
++assert(agenda.map(task -> task.name), ["plan", "test", "ship", "build"])
++assert(tasks.map(task -> task.name), ["ship", "plan", "build", "test"])
++```
++
++- [NUC 105](docs/nuc-0105.md) adds `sortBy(selector)` to lists and class
++  populations. `tasks.sortBy(task -> task.due)` is a new list of the tasks
++  themselves in ascending order of their due days, and tasks due the same day
++  keep their list order, so `test` follows `build` until `build` moves to
++  day 4.
++- `agenda` is a live declaration that follows new tasks and changed days,
++  while `tasks` keeps its own order, where `sort` would reorder `tasks`
++  itself. Keys compare as `<` compares them, so numbers compare as numbers
++  and strings as text. See the
++  [root contract](nucleoid.spec.md#list-and-population-sorting-by-key).
++
+ ## Reactive list flattening
  
+ **Flat turns nested lists into one live list**
 ```
 
-**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +6/-4)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +22/-16)
 ```diff
-@@ -16,10 +16,12 @@ You draft and prototype exactly one added or updated NUC revision. Follow
-   supplied candidate worktree, and report the commits it brought in. Keep
-   drafting against the caller's pinned baseline revision.
- - For a new NUC, the caller has already allocated it under the skill's
--  [allocation rule](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only):
--  the pinned revision is the pushed allocation, whose Draft document carries
--  the number, confirmed category and proposal details. Complete that draft in
--  the candidate, keeping its number and category.
-+  [allocation rule](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only),
-+  or claimed an allocated Draft under the
-+  [stale-Draft rule](../skills/nuc-proposal/SKILL.md#pick-up-stale-drafts-first-caller-only):
-+  the pinned revision is that pushed allocation or claim, whose Draft document
-+  carries the number, confirmed category and proposal details. Complete that
-+  draft in the candidate, keeping its number and category.
- - Follow the caller-owned [enhancement selection rule](../skills/nuc-proposal/SKILL.md#select-an-unspecified-enhancement);
-   do not redraw the selected category.
- - Apply any caller-supplied hint under the skill's
+@@ -731,19 +731,25 @@
+ {"id":"spec-0731","description":"Nucleoid writes class level rules and conditionals with all and any","code":"class Order(total):\n    this.total = total\nsmall = Order(5)\nall Order.big = all Order.total > 10\nif any Order.total > 100:\n    all Order.vip = true\nlarge = Order(200)\nassert([small.big, large.big], [false, true])\nassert([small.vip, large.vip], [null, true])\nsmall.total = 150\nassert([small.big, small.vip], [true, true])\nlarge.total = 8\nassert(large.big, false)\nall Order.big = all Order.total > 100\n[small.big, large.big]","return":"[true,false]"}
+ {"id":"spec-0732","description":"Nucleoid states class predicates with all and any","code":"class Human(name: str):\n    this.name = name\nplato = Human(\"Plato\")\nall Human is mortal\nany Human is wise\nsocrates = Human(\"Socrates\")\nassert([plato.mortal, socrates.mortal], [true, true])\nassert([plato.wise, socrates.wise], [true, true])\nassert((why socrates.mortal)[0].rule, \"$Human.mortal = true\")\nplato.wise = false\nassert([plato.wise, socrates.wise], [false, true])\nsocrates.mortal","return":"true"}
+ {"id":"spec-0733","description":"Nucleoid keeps all and any as names and quantifiers beside class references","code":"class Item(x):\n    this.x = x\nall = [1, 2, 3]\nany = 2\nall Item.big = all Item.x > any\nfirst = Item(1)\nthird = Item(3)\nassert([first.big, third.big], [false, true])\nassert(all n in all: n > any, false)\nassert(any n in all: n > any, true)\nassert(all.length + any, 5)\nany = 0\nassert([first.big, third.big], [true, true])\nassert(all i in Item: i.big, true)\nfirst.big","return":"true"}
+-{"id":"spec-0734","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0735","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0736","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0737","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0738","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0739","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
+-{"id":"spec-0740","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, null], true)\nassert(Number.NaN in [Number.NaN], false)\nassert(\"ell\" in \"hello\", true)\nassert(1 in \"a1\", true)\nassert(\"\" in \"abc\", tr
 ```
 
-**File**: `.claude/rules/git.instructions.md` (modified, +5/-2)
+**File**: `dataset/nucleoid.synth.69.jsonl` (added, +8/-0)
 ```diff
-@@ -17,6 +17,9 @@ pulling before it starts.
-     [nuc-proposal skill](../skills/nuc-proposal/SKILL.md), commits each new
-     NUC's Draft allocation before working on its details, under the
-     [allocation step](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only),
-+    the empty `Resume NUC <number> <Title>` claims that pick up a stale Draft
-+    or keep a NUC in progress claimed, under the
-+    [stale-Draft rule](../skills/nuc-proposal/SKILL.md#pick-up-stale-drafts-first-caller-only),
-     and NUC outcomes (Accepted, Automatic-Accepted, Rejected), which carry the
-     final version, under the [proposal rules](proposals.instructions.md),
-     including those of NUCs that `/arc-purposal` requests and of cycles that
-@@ -63,8 +66,8 @@ pulling before it starts.
- 
- - Every `/nuc-proposal` and `/arc-purposal` commit is followed immediately by
-   `git push` of the same branch. This includes NUC allocation commits, NUC
--  outcome commits (Accepted, Automatic-Accepted, Rejected), those for NUCs
--  that `/arc-purposal` requests,
-+  claim commits, NUC outcome commits (Accepted, Automatic-Accepted, Rejected),
-+  those for NUCs that `/arc-purposal` requests,
-   `/arc-purposal`'s own commit of its ARC changes, and merge commits. A commit
-   is not finished until it is pushed.
- - If the push is rejected because the remote moved, pull, resolve, and push
+@@ -0,0 +1,8 @@
++{"id":"synth-69-0001","description":"SortBy orders records by a numeric key and keeps ties in list order","code":"tasks = [{name: \"ship\", due: 3}, {name: \"plan\", due: 1}, {name: \"test\", due: 3}, {name: \"build\", due: 2}]\nagenda = tasks.sortBy(task -> task.due)\nagenda.map(task -> task.name)","return":"[\"plan\",\"build\",\"ship\",\"test\"]"}
++{"id":"synth-69-0002","description":"SortBy compares string keys as text, by code point","code":"codes = [{code: \"B12\"}, {code: \"A7\"}, {code: \"B3\"}]\ncodes.sortBy(item -> item.code).map(item -> item.code)","return":"[\"A7\",\"B12\",\"B3\"]"}
++{"id":"synth-69-0003","description":"A negated key sorts numbers in descending order","code":"scores = [{name: \"ana\", points: 9}, {name: \"bo\", points: 3}, {name: \"cy\", points: 7}]\nscores.sortBy(score -> -score.points).map(score -> score.name)","return":"[\"ana\",\"cy\",\"bo\"]"}
++{"id":"synth-69-0004","description":"A sorted declaration follows its list while the list keeps its own order","code":"queue = [{id: 1, eta: 30}, {id: 2, eta: 10}]\nroute = queue.sortBy(stop -> stop.eta).map(stop -> stop.id)\nqueue.push({id: 3, eta: 20})\nassert(route, [2, 3, 1])\nqueue.map(stop -> stop.id)","return":"[1,2,3]"}
++{"id":"synth-69-0005","description":"SortBy orders a class population and follows new instances and changed keys","code":"class Runner(name, time):\n    this.name = name\n    this.time = time\nboard = Runner.sortBy(runner -> runner.time)\nana = Runner(\"ana\", 31)\nRunner(\"bo\", 28)\nana.time = 25\nboard.map(runner -> runner.name)","return":"[\"ana\",\"bo\"]"}
++{"id":"synth-69-0006","description":"A class-level rule ranks every instance by its place in a sorted population","code":"class Bid(who, amount):\n    this.who = who\n    this.amount = amount\n$Bid.place = Bid.sortBy(bid -> -bid.amount).indexOf($Bid) + 1\nada = Bid(\"ada\", 40)\nbo = Bid(\"bo\", 65)\ncy = Bid(\"cy\", 50)\n[ada.place, bo.place, cy.place]","return":"[3,1,2]"}
++{"id":"synth-69-0007","description":"A key that is not set yet leaves the sorted list null until it is set","code":"class Job(name):\n    this.name = name\nqueue = Job.sortBy(job -> job.due)\npress = Job(\"press\")\npress.due = 5\ncoat = Job(\"coat\")\nassert(queue, null)\ncoat.due = 2\nqueue.map(job -> job.name)","return":"[\"coat\",\"press\"]"}
++{"id":"synth-69-0008","description":"A selector error rolls back the change that triggered it","code":"labels = [\"b\", \"a\"]\nsorted = labels.sortBy(label -> label.toUpperCase())\nfailure = \"\"\ntry:\n    labels.push(7)\ncatch error:\n    failure = error\n[failure, labels.length, sorted]","return":"[\"TypeError: number.toUpperCase is not a function\",2,[\"a\",\"b\"]]"}
 ```
 
-**File**: `.claude/rules/proposals.instructions.md` (modified, +41/-9)
+**File**: `docs/README.md` (modified, +55/-1)
 ```diff
-@@ -256,12 +256,13 @@ undergo independent behavior, integrity, compatibility, and development checks.
+@@ -2458,7 +2458,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
+ | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
+ | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split` |
+ | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
+-| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), and `median` ([NUC 84](nuc-0084.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
++| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), and `sortBy` ([NUC 105](nuc-0105.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
+ | `Class` | the global list of declared types; `Class.length` |
  
- Pin the accepted Git revision and record its token baseline before editing
- runtime behavior or executable cases. For a new NUC, that revision is its
--pushed [allocation](#allocate-new-nucs-first-caller-only). Give the proposer
--its requested change, proposal path and confirmed category, execution mode
--and runtime applicability with supporting rationale, baseline revision and
--immutable JSON artifact, and candidate worktree. When configured, also supply
--the pre-draft strategy receipt and policy paths/raw pins, trial identity and
--actionable approach.
-+pushed [allocation](#allocate-new-nucs-first-caller-only), or the pushed claim
-+of a [picked-up Draft](#pick-up-stale-drafts-first-caller-only). Give the
-+proposer its requested change, proposal path and confirmed category, execution
-+mode and runtime applicability with supporting rationale, baseline revision
-+and immutable JSON artifact, and candidate worktree. When configured, also
-+supply the pre-draft strategy receipt and policy paths/raw pins, trial
-+identity and actionable approach.
- Use `.claude/agents/nuc-proposal.agent.md` and
- `.claude/skills/nuc-proposal/SKILL.md` for drafting, prototyping, equivalent
- case rewrites, synchronization, and development checks. It must not run the
-@@ -346,6 +347,34 @@ to that evaluation and must not recursively launch another agent.
-   [nuc-proposal skill](../skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only)
-   has the steps.
+ ```
+@@ -3510,6 +3510,58 @@ top.who
+   [list and population extreme items](../nucleoid.spec.md#list-and-population-extreme-items)
+   section.
  
-+## Pick up stale Drafts first (caller only)
++### List and population sorting by key
 +
-+- In continuous mode, every cycle, the first one included, completes an
-+  abandoned NUC before it drafts a new one. A Draft on `main` is stale when it
-+  has a pushed `Draft NUC <number> <Title>` allocation and the latest of that
-+  commit and any `Resume NUC <number> <Title>` claim is more than 24 hours
-+  old. A Draft without an allocation commit, such as the reference NUCs 2–7
-+  and 9–11, is never picked up.
-+- The cycle takes the lowest-numbered stale Draft, keeps its number, title,
-+  category and requested change, and skips the selection and allocation.
-+  Right after a pull that confirms the Draft is still stale, it claims it with
-+  an empty `Resume NUC <number> <Title>` commit that leaves anything staged
-+  out, and pushes it right away. The pushed claim restarts the 24 hours, so
-+  concurrent sessions leave the NUC alone.
-+- The claim is the accepted revision the NUC pins. Fresh agents, baselines
-+  and a fresh candidate complete it like a new NUC, under the
-+  [automatic acceptance rule](#automatic-acceptance-caller-only) directly and
-+  the continuous token policy of its category; the ARC-requested and
-+  user-requested bases do not carry over.
-+- Every task working on an allocated NUC renews its claim once the latest
-+  allocation or claim is 12 hours old, and claims a Blocked or paused NUC
-+  before resuming it. Another session's claim takes the NUC over only when it
-+  came more than 24 hours after the task's own; on a takeover, or an outcome
-+  already on `main`, the task records nothing for that NUC.
-+- A claim records no outcome and needs no evaluation of its own. The
-+  [nuc-proposal skill](../skills/nuc-proposal/SKILL.md#pick-up-stale-drafts-first-caller-only)
-+  has the steps.
++```
++scores = [{name: "ben", points: 3}, {name: "ana", points: 9}, {name: "dan", points: 5}, {name: "cy", points: 9}]
++ranked = scores.sortBy(score -> -score.points)
++class Bid(who, amount):
++    this.who = who
++    this.amount = amount
++Bid("ada", 40)
++Bid("bo", 65)
++book = Bid.sortBy(bid -> bid.amount)
++assert(ranked.map(score -> score.name), ["ana", "cy", "dan", "ben"])
++assert(book.map(bid -> bid.who), ["ada", "bo"])
++scores.push({name: "eve", points: 7})
++Bid("col", 50)
++assert(ranked.map(score -> score.name), ["ana", "cy", "eve", "dan", "ben"])
++assert(book.map(bid -> bid.who), ["ada", "col", "bo"])
++assert(scores[0].name, "ben")
++book[1].who
++```
 +
- ## Outcome commit messages (caller only)
- 
- - Every commit that records a NUC outcome, Accepted, Automatic-Accepted or
-@@ -374,7 +403,7 @@ to that evaluation and must not recursively launch another agent.
- - Keep rejected implementation changes isolated in the candidate worktree; do not apply its full diff merely to record the NUC.
- - Stage explicit proposal/index paths and use a path-limited commit. Verify the resulting commit contains only the rejection documentation and directly related metadata. Never use repository-wide staging or `git commit -a`, or include unrelated files already staged.
- - Preserve unrelated staged and unstaged changes. If the rejection documentation is already committed, verify and report that commit instead of creating an empty duplicate.
--- Proposal and evaluation agents must not commit, push or merge; the rejection commit belongs solely to the `/nuc-proposal` caller, the only flow that commits NUC allocations and outcomes, which pulls before committing and pushes right after under the [git synchronization policy](git.instructions.md).
-+- Proposal and evaluation agents must not commit, push or merge; the rejection commit belongs solely to the `/nuc-proposal` caller, the only flow that commits NUC allocations, claims and outcomes, which pulls before committing and pushes right after under the [git synchronization policy](git.instructions.md).
- 
- ## ARC-requested proposals (caller only)
- 
-@@ -465,8 +494,11 @@ In continuous mode, after finalizing and committing an `Accepted`,
- `Automatic-Accepted` or `Rejected` outcome for a new NUC, the caller
- immediately starts a distinct new proposal under
- the [continu
++- This is the complete
++  `Nucleoid sorts lists and populations by key with sortBy` program in
++  `tests/reference.md`, without its title and expected-return metadata; it
++  returns `"col"`.
++- [NUC 105](nuc-0105.md) adds `sortBy(selector)` to lists and class instance
++  lists. The result is a new list of the items themselves in ascending order
++  of their selected keys, and items with equal keys keep their receiver
++  order, so `ana` stays before `cy`. A negated key, such as
++  `score -> -score.points`, sorts in descending order. An empty list or class
++  gives `[]`.
++- The receiver is never written: `scores` keeps its own order, where `sort`
++  reorders a writable list in place.
++- Keys compare as `<` compares them: two strings as text and every other pair
++  as numbers, so dates compare by time. When every key can be compared with
++  itself, `xs.sortBy(f)` is exactly
++  `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`.
++  A key that cannot be compared with itself, such as undefined, NaN or an
++  object, makes the result undefined, which a declaration stores as `null`.
++- The selector is required and is called once per item, in order, with only
++  the item. A missing selector, or one that is not a function, including
++  `null`, raises `TypeError("sortBy expects a function")`, even on an empty
++  receiver.
++- Sorted lists are read-only and live: a declaration follows the list or
++  population, the arguments and what the selector reads, in class-level rules
++  too. On a class name, `Name.sortBy(...)` is the population query even when
++  the class declares an instance method `sortBy`; instances keep calling the
++  method.
++- The authoritative contract is the
++  [list and population sorting by key](../nucleoid.spec.md#l
 ```
 
-**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +5/-3)
+**File**: `docs/examples.md` (modified, +28/-0)
 ```diff
-@@ -29,9 +29,11 @@ explicit branch even in single mode.
- Confirm that the current proposal blob matches the handoff and the baseline
- matches the accepted revision. For a new NUC, that revision is its pushed
- [allocation](../nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only),
--which adds only the Draft document and its index rows, so it is not a
--revision containing the candidate. Missing prerequisites block evaluation;
--never invent measurements or guess an uncertain category.
-+which adds only the Draft document and its index rows, or the empty pushed
-+claim of a
-+[picked-up Draft](../nuc-proposal/SKILL.md#pick-up-stale-drafts-first-caller-only),
-+so it is not a revision containing the candidate. Missing prerequisites block
-+evaluation; never invent measurements or guess an uncertain category.
+@@ -3672,6 +3672,34 @@ all Shelf is tracked
+   `$Shelf.tracked = true` for every shelf. See [NUC 104](nuc-0104.md) and the
+   [root contract](../nucleoid.spec.md#any-and-all-class-references).
  
- Treat candidate sources, generated exports, and the baseline as read-only.
- Apart from the pull of the primary checkout before you start, under the
++## List and population sorting by key
++
++**Sorting by key keeps every courier's route in order of distance**
++
++```nuc
++class Courier(name, stops):
++    this.name = name
++    this.stops = stops
++$Courier.route = $Courier.stops.sortBy(stop -> stop.km).map(stop -> stop.name)
++ana = Courier("ana", [{name: "mill", km: 12}, {name: "dock", km: 3}, {name: "farm", km: 7}])
++bo = Courier("bo", [{name: "pier", km: 5}])
++assert([ana.route, bo.route], [["dock", "farm", "mill"], ["pier"]])
++ana.stops.push({name: "yard", km: 1})
++ana.stops[0].km = 2
++bo.stops = [{name: "gate", km: 9}, {name: "lane", km: 2}]
++assert(ana.stops[0].name, "mill")
++[ana.route, bo.route]
++# return: [["yard","mill","dock","farm"],["lane","gate"]]
++```
++
++- A class-level rule keeps the route of each courier: the names of its stops
++  in order of distance. `$Courier.stops.sortBy(stop -> stop.km)` sorts the
++  courier's own list, so every courier has its own route.
++- A new stop, a changed distance and a new list of stops re-sort the routes,
++  while each courier's `stops` keep the order they were listed in. See
++  [NUC 105](nuc-0105.md) and the
++  [root contract](../nucleoid.spec.md#list-and-population-sorting-by-key).
++
+ ## Reactive list flattening
+ 
+ **Flattening keeps the dirty tiles of every room counted**
 ```
 
-**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +102/-20)
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -24,7 +24,12 @@ repeats it:
-    [git synchronization policy](../../rules/git.instructions.md#pull-first),
-    so the task runs against the most current remote state. Report the commits
-    it brought in.
--2. **Draft first.** Once the
-+2. **Pick up a stale Draft first.** In continuous mode, look for an allocated
-+   Draft that has gone 24 hours without an allocation or claim commit. When
-+   one exists, the cycle claims and completes it under the
-+   [stale-Draft rule](#pick-up-stale-drafts-first-caller-only) instead of
-+   starting a new NUC, and continues at step 6 with that claim pinned.
-+3. **Draft first.** Once the
-    [execution mode](#choose-execution-mode-caller-only), the confirmed
-    [category](#classify-every-proposal) and the requested change are chosen,
-    number the new NUC as the highest NUC recorded in `docs/` plus one. In the
-@@ -33,7 +38,7 @@ repeats it:
-    details: the Abstract and Motivation of the requested change, followed by
-    the remaining required sections for the proposer to complete. Add its Draft
-    rows to both indexes in `docs/nuc-0000.md`, and change nothing else.
--3. **Check before submitting.** Right before the allocation commit, pull
-+4. **Check before submitting.** Right before the allocation commit, pull
-    again and compare the draft with every NUC that `main` now records:
-    - **Same number:** when another NUC already uses the drafted number,
-      claim the next one, the highest number recorded plus one, and renumber
-@@ -44,18 +49,18 @@ repeats it:
-      nothing, and start again at step 1 with a new selection under the
-      [selection rule](#select-an-unspecified-enhancement). A request that
-      names that concept stops instead and reports the existing NUC.
--4. **Allocate.** Commit those two paths alone, with the subject
-+5. **Allocate.** Commit those two paths alone, with the subject
-    `Draft NUC <number> <Title>` and the category and requested change in the
-    body, and push right away. The pushed commit allocates the proposal and its
-    number, so concurrent sessions number their NUCs after it.
--5. **Work on the details as usual.** Pin the `HEAD` just pushed, which holds
--   the allocation, as the accepted revision, record its baseline, and create
--   the candidate worktree from it. Then
-+6. **Work on the details as usual.** Pin the `HEAD` just pushed, which holds
-+   the allocation or the claim, as the accepted revision, record its baseline,
-+   and create the candidate worktree from it. Then
-    [select the strategy](#select-and-consume-a-proposal-strategy) and run the
-    fresh proposer, which completes the draft and prototypes the change, the
-    Rust improvement pass and the fresh evaluator, as the rest of this skill
-    describes.
--6. **Commit and push the final version.** Record the outcome in a new commit,
-+7. **Commit and push the final version.** Record the outcome in a new commit,
-    `NUC <number> <Title>`, that holds the final proposal along with its code
-    changes when it is accepted, and push it right after, under the
-    [outcome commit rule](#name-outcome-commits-caller-only).
-@@ -86,8 +91,78 @@ repeats it:
- - A revision of an existing NUC, including a revisited Rejected NUC, already
-   holds its number: skip the draft and allocation steps, and leave its text
-   and status on `main` unchanged until the outcome commit. A Blocked or paused
--  NUC keeps its pushed Draft and number, and a later task resumes it under
--  that number instead of allocating another.
-+  NUC keeps its pushed Draft and number, and a later task claims and resumes
-+  it under that number, under the
-+  [stale-Draft rule](#pick-up-stale-drafts-first-caller-only), instead of
-+  allocating another.
-+
-+## Pick up stale Drafts first (caller only)
-+
-+In continuous mode, every cycle, the first one included, completes an
-+abandoned NUC before it starts a new one. A single-proposal request still does
-+only what it asks.
-+
-+1. **Find.** After the cycle's pull, a NUC is a stale Draft when its header on
-+   `main` still reads `Status: Draft`, it has a pushed
-+   `Draft NUC <number> <Title>` allocation commit, and the latest of that
-+   commit and any `Resume NUC <number> <Title>` claim commit is more than
-+   24 hours old by committer date, which
-+   `git log -1 --format=%cI -E --grep='^(Draft|Resume) NUC <number> '` shows.
-+   A Draft without an allocation commit, such as the reference NUCs 2–7 and
-+   9–11, is never picked up. When the request names a category, only Drafts
-+   of that category count.
-+2. **Pick the lowest-numbered stale Draft,** one per cycle. The cycle skips
-+   the [selection](#select-an-unspecified-enhancement) and steps 3–5 of the
-+   [allocation order](#allocate-the-nuc-first-caller-only). Its confirmed
-+   inputs are the Draft's number, `Title` and `Category`, and the requested
-+   change that its Abstract, Motivation and allocation commit body record. An
-+   uncertain category still goes to the user under the
-+   [classification rule](#classify-eve
+@@ -123,7 +123,7 @@ Created: 31-Jul-2026
+ | [84](nuc-0084.md) | List and Population Medians | Accepted |
+ | [100](nuc-0100.md) | Reactive Cotangent | Accepted |
+ | [103](nuc-0103.md) | Reactive List Flattening | Accepted |
+-| [105](nuc-0105.md) | List and Population Sorting by Key | Draft |
++| [105](nuc-0105.md) | List and Population Sorting by Key | Accepted |
+ 
+ ### Reasoning enhancement
+ 
+@@ -265,7 +265,7 @@ Created: 31-Jul-2026
+ | [102](nuc-0102.md) | Implicit Receiver Properties | Standards Track | Syntax enhancement | Automatic-Accepted: independent evaluation rejected it because a `while` condition or `suppose` premise in a property value that holds a receiver read and ends in `is NAME: NAME` builds a loop or hypothetical where its written-out spelling runs as separate statements |
+ | [103](nuc-0103.md) | Reactive List Flattening | Standards Track | Utility enhancement | Accepted |
+ | [104](nuc-0104.md) | Any and All Class References | Standards Track | Syntax enhancement | Accepted |
+-| [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Draft |
++| [105](nuc-0105.md) | List and Population Sorting by Key | Standards Track | Utility enhancement | Accepted |
+ | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+ 
+ ## Copyright
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +11/-1)
+**File**: `docs/nuc-0105.md` (modified, +1127/-11)
 ```diff
-@@ -131,6 +131,15 @@ uses the drafted one, and skips the proposal and starts again when a NUC on
- changes; see the
- [allocation step](.claude/skills/nuc-proposal/SKILL.md#allocate-the-nuc-first-caller-only).
+@@ -4,7 +4,7 @@
+ NUC: 105
+ Title: List and Population Sorting by Key
+ Author: Can Mingir <canmingir@gmail.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Utility enhancement
+ Created: 10-Nov-2026
+@@ -23,20 +23,26 @@ Requires: 58, 77
+   - Keys compare as `<` compares them, the rule of `maxBy` and `minBy`: two
+     strings as text, and every other pair as numbers.
+   - The selector runs once for every item, in receiver order, and the items
+-    are returned unchanged, so an instance stays the same instance.
++    are returned unchanged, so an instance stays the same instance. An empty
++    receiver gives `[]`.
+ - Unlike `sort`, which [NUC 58](nuc-0058.md) makes reorder a writable
+   receiver in place, `sortBy` never writes its receiver.
+   `ranked = scores.sortBy(s -> s)` is a standing ordering that follows later
+   writes of `scores`, while `scores` keeps its own order.
+-- When every key can be compared with itself, `xs.sortBy(f)` is exactly the
+-  list that `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`
+-  returns. A key that cannot be compared with itself makes the result
++- When every key can be compared with itself, the list `xs.sortBy(f)`
++  evaluates to is exactly the list that
++  `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`
++  evaluates to at the accepted revision, including where strings and other
++  keys mix. A key that cannot be compared with itself makes the result
+   undefined, as it makes `maxBy` and `minBy` undefined.
+ - Only calls of `sortBy` on lists and class populations change. They raised
+   `TypeError("<receiver>.sortBy is not a function")` at the accepted
+   revision. Reading `xs.sortBy` without a call, object properties named
+   `sortBy`, instance methods named `sortBy` called on an instance, and every
+   other receiver keep their accepted behavior.
++- No token, keyword, syntax, error type or message format, option or public
++  item is added. The authoritative contract is
++  [List and population sorting by key](../nucleoid.spec.md#list-and-population-sorting-by-key).
  
-+In continuous mode, every cycle first completes an abandoned NUC: a Draft
-+whose latest `Draft NUC <number> <Title>` allocation or
-+`Resume NUC <number> <Title>` claim is more than 24 hours old. The caller
-+claims the lowest-numbered one with an empty, pushed
-+`Resume NUC <number> <Title>` commit, pins that claim, and completes the NUC
-+like a new one. Only a cycle that finds no such Draft selects a new NUC; see
-+the
-+[stale-Draft rule](.claude/skills/nuc-proposal/SKILL.md#pick-up-stale-drafts-first-caller-only).
+ ## Motivation
+ 
+@@ -59,24 +65,1134 @@ Requires: 58, 77
+   Python's `sorted(xs, key=f)`, yet `[3, 1, 2].sortBy(x -> x)` raises
+   `TypeError("[3,1,2].sortBy is not a function")`.
+ - `Shape.sortBy(s -> s.size)` is ten lexer tokens against eighteen for
+-  `Shape.sort((a, b) -> a.size - b.size)`, and it names the key once
+-  instead of spelling a comparator.
++  `Shape.sort((a, b) -> a.size - b.size)` and seventeen for
++  `Shape.sort(lambda a, b: a.size - b.size)`, and it names the key once
++  instead of spelling a comparator. A list adds a copy to the comparator
++  spelling: `ranked = scores.sortBy(s -> s.points)` is twelve tokens against
++  twenty-two for `ranked = scores[:].sort(lambda a, b: a.points - b.points)`.
+ 
+ ## Rationale
+ 
+-- Pending: the proposer completes this section.
++- **Category and mode.** The cycle that allocated this Draft made one
++  tool-backed uniform draw over the five categories that NUC 1's registry
++  marks eligible for automatic selection and selected Utility enhancement,
++  index 2, with probability 1/5 and no redraw. A later continuous cycle
++  found the Draft stale and claimed it with the pushed empty commit
++  `Resume NUC 105 List and Population Sorting by Key`, `120db05d`, keeping
++  its number, title, category and requested change without a new draw.
++  Token comparison is required; runtime applicability does not apply to this
++  category.
++- **Optional evidence.** No hint was supplied. Advisory usefulness is
++  unscored, not zero. Strategy learning is `not_configured`, so this
++  revision is unattributed, with no policy, selection receipt, trial or
++  reward.
++- **One more shared query.** `sortBy` joins `Runtime::list_query` beside
++  `maxBy` and `minBy`, so lists however they are reached, through variables,
++  members, slices, call results, `.value` snapshots and selected state
++  versions, and class populations named by the class, by a variable that
++  holds the class or by `$Name`, gain it at once, with the receiver snapshot,
++  argument evaluation, receiver text and null-receiver routing of every other
++  query. Rejected: a list-only method, which would leave `Name.sortBy(f)`
++  raising where `Name.maxBy(f)` runs.
++- **Read-only, unlike `sort`.** [NUC 58](nuc-0058.md)'s `sort` writes a
++  writable receiver, so a declaration holding it is a standing sort of that
++  list, and two standing sorts of one list conflict. `sortBy` never writes:
++  `call_method` routes only `sort` through its writable-receiver path, so a
++  declaration holding `sortBy` is a derived ordering, and several orderings
++  of one list coexist. Rejected: an in-place `sortBy`; lodash's `_.sortBy`,
++  Ruby's `sort_by`, Kotlin's `sortedBy`, Scala's `sortBy` and Python's
++  `sorted` all return a new list.
++- **The items themselves.** The query orders the objects of a model, so it
++  returns those objects, unchanged and in order, as every pr
+```
+
+**File**: `nucleoid.spec.md` (modified, +186/-0)
+```diff
+@@ -5327,6 +5327,83 @@ statement positions; caught values and transaction recovery are unchanged.
+   `Nucleoid rolls back failed median updates` specify the executable
+   behavior.
+ 
++## List and population sorting by key
 +
- Outcomes follow the
- [automatic acceptance rule](.claude/rules/proposals.instructions.md#automatic-acceptance-caller-only).
- A candidate is accepted when it meets three hard criteria: no compile errors
-@@ -219,7 +228,8 @@ a runtime that differs from it. Use a separate baseline worktree if candidate
- runtime edits already exist. `HEAD` is suitable only when it is the accepted
- revision, not a commit containing unevaluated candidate changes. A new NUC's
- allocation commit, which adds only its Draft document and index rows, is
--still the accepted revision, and the proposal pins it.
-+still the accepted revision, and the proposal pins it. A picked-up Draft pins
-+its empty claim commit the same way.
- 
- Example PowerShell commands, using fresh artifact paths outside the repository:
- 
++- [NUC 105](docs/nuc-0105.md) adds the read-only list query `sortBy` to lists
++  and class instance lists, the receivers of `maxBy` and `minBy`, through the
++  same shared list-query route. No syntax, keyword or error type is added.
++- `RECEIVER.sortBy(selector)` returns a new list of the receiver's items in
++  ascending order of `selector(item)`. The items are the items themselves,
++  unchanged: an object or instance stays the same object, and the keys are
++  not returned. Items with equal keys keep their receiver order, and an empty
++  receiver gives `[]`.
++- **Read-only.** The receiver is never written, whatever its kind. After
++  `ranked = scores.sortBy(score -> score)`, `scores` keeps its own order and
++  `ranked` follows it, while the `sort` of [NUC 58](docs/nuc-0058.md)
++  reorders a writable receiver in place.
++- **Keys.** Keys compare as `<` compares them: two strings as text, by code
++  point, and every other pair as numbers with the numeric conversion of the
++  comparisons, so dates compare by time and `true`, `false`, `null`, empty
++  lists and one-item lists count as numbers. `["10", "9", "2"].sortBy(code -> code)`
++  is `["10", "2", "9"]`, while `[10, 9, 2].sortBy(count -> count)` is
++  `[2, 9, 10]`, and `0` and `-0` keys tie.
++- **Unordered keys.** A key that cannot be compared with itself, one for
++  which `key >= key` is `false`, makes the result undefined, which a
++  declaration stores as `null`: undefined, NaN, objects, instances, classes,
++  functions, regular expressions and lists that convert to NaN. Every item is
++  still visited, so a declaration waits for every key to be comparable.
++- **Accepted spelling.** When every key can be compared with itself,
++  `xs.sortBy(f)` evaluates to exactly the list that
++  `xs.map(x -> [f(x), x]).sort((a, b) -> a[0] < b[0] ? -1 : 0).map(p -> p[1])`
++  evaluates to, with `f` called once per item: each item, in receiver order,
++  is placed before the first already placed item whose key it compares
++  below. Where strings that are not numeric mix with other keys, which they
++  are neither smaller nor greater than, that placement decides the order, so
++  `["b", 5, "a", 3].sortBy(key -> key)` is `["a", "b", 3, 5]`. A declaration
++  of either spelling settles by what that spelling reads.
++- **Selectors.** The selector is required. It is called once for every item,
++  in receiver order, with only the item; further parameters are `null`. A
++  missing first argument, or one that is not a function, including `null`,
++  raises `TypeError("sortBy expects a function")`, even on an empty receiver.
++- **Reads.** A `null` key compares as `0`. Reads inside a selector follow the
++  existing rules, so a selector that reads a `null` binding or property
++  settles a declaration to `null`, while an item the selector does not read
++  stays an item: after `xs = [1, null]`, `r = xs.sortBy(x -> 1)` stores
++  `[1, null]`.
++- **Receivers.** The receiver is a list, however it is reached, or a class's
++  instance list in population order, named by the class, by a variable that
++  holds the class or by `$Name`. On a class name, `sortBy` is the population
++  query even when the class declares an instance method `sortBy`; its
++  instances keep calling that method.
++- **Live.** `sortBy` follows the shared rules of the list queries: it reads
++  the receiver before its arguments and evaluates every supplied argument
++  once, left to right, including unused extras. A declaration that uses it
++  depends on the list or population, on its argument expressions and on
++  whatever the selector reads for every item, so list mutations, new and
++  deleted instances and property changes re-evaluate it, in class-level
++  rules too. Selector errors roll back through the existing transaction. A
++  null or undefined receiver yields undefined without evaluating the
++  arguments.
++- **Cost.** A call selects each key once. Keys that are all strings, or among
++  which none is a string, are ordered by a stable sort in O(n log n)
++  comparisons; only a mix of strings and other keys is ordered by the
++  placement rule above, in up to O(n²) comparisons.
++- **Rendering.** The call keeps its ordinary rendering, so
++  `ranked = scores.sortBy(score -> score.points)` explains as
++  `ranked = scores.sortBy(function())`, and a `sortBy` call and its accepted
++  spelling are different statements and graph keys.
++- **Unchanged.** Only calls of `sortBy` on lists and class populations
++  change; they raised `TypeError("<receiver>.sortBy is not a function")`.
++  `sortBy of xs` stays `SyntaxError("Unexpected keyword 'of'")`. Property
++  reads such as `xs.sortBy`, bindings and object properties named `sortBy`,
++  `sortBy(...)` without a definition, `Math.sortBy` and the other built-in
++  namespaces, i
 ```
 
 #### Recent Merged Pull Requests:
@@ -2060,33 +2191,55 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
+## X. NUC 105 List and Population Sorting by Key
 
 **RULE**:
-When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41394de4`: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9abb3434`: NUC 105 List and Population Sorting by Key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, continuous cycles that first pick up allocated Drafts idle for 24 hours under a pushed `Resume NUC <number> <Title>` claim, and `NUC <number> <Title>` outcome commit messages |
-| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations, claims and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
+## List and population sorting by key
+
+**Sorting by key keeps a live agenda while the list keeps its order**
+
+```nuc
+tasks = [{name: "ship", due: 3}, {name: "plan", due: 1}, {name: "build", due: 2}]
+agenda = tasks.sortBy(task -> task.due)
+assert(agenda.map(task -> task.name), ["plan", "build", "ship"])
+tasks.push({name: "test", due: 2})
+assert(agenda.map(task -> task.name), ["plan", "build", "test", "ship"])
+tasks[2].due = 4
+assert(agenda.map(task -> task.name), ["plan", "test", "ship", "build"])
+assert(tasks.map(task -> task.name), ["ship", "plan", "build", "test"])
+```
+
+- [NUC 105](docs/nuc-0105.md) adds `sortBy(selector)` to lists and class
+  populations. `tasks.sortBy(task -> task.due)` is a new list of the tasks
+  themselves in ascending order of their due days, and tasks due the same day
+  keep their list order, so `test` follows `build` until `build` moves to
+  day 4.
+- `agenda` is a live declaration that follows new tasks and changed days,
+  while `tasks` keeps its own order, where `sort` would reorder `tasks`
+  itself. Keys compare as `<` compares them, so numbers compare as numbers
+  and strings as text. See the
+  [root contract](nucleoid.spec.md#list-and-population-sorti
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-| [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, and `NUC <number> <Title>` outcome commit messages |
-| [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41394de4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9abb3434` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

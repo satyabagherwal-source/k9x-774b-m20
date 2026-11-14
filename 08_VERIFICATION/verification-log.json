@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-0NE3",
-    "timestamp": "2026-11-13T13:42:27.435Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "99e14902ebffd36c54fdd6a0bc262db327cbc6719203b856f12d27567aa8a505",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-10OS",
-    "timestamp": "2026-11-13T13:42:44.668Z",
-    "repository": "MariaDB/server",
-    "learningId": "learn-github-mariadb-server",
-    "contentHash": "6cf0648c60692011171d1c801d295de6bf1046128328dc9f0ee55f3147085f36",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-AOIB",
     "timestamp": "2026-11-13T13:50:15.443Z",
     "repository": "Lightricks/LTX-2.5",
@@ -7490,6 +7460,36 @@
     "repository": "BAAI/bge-base-en-v1.5",
     "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
     "contentHash": "5fd29a34c759bfc6cc9dbb64d0f00f1c688bbf03d059a8bb62410f2cc2167a44",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-WQD6",
+    "timestamp": "2026-11-14T14:23:04.314Z",
+    "repository": "google/gemma-4-31B-it",
+    "learningId": "learn-huggingface-google-gemma-4-31b-it",
+    "contentHash": "6ecfb0d407720f475dfefd261a17981a45076c9237ff12853c7b5ebfbb3b3fd4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-30XO",
+    "timestamp": "2026-11-14T14:27:57.948Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "7b6765bc8c88f83811e97b8f40f558299329d2bb3075c1f4e90d605bb6ed9228",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -9844,3 +9844,6 @@
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T13:39:24.436Z` | `hf-google-vit-base-patch16-224` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D7AD2A79` [Domain D] | Yes (`dae0bf99...`) |
 | `CYCLE-20261114-ZFVY` | `2026-11-14T13:57:11.086Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`5fd29a34...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T13:57:44.188Z` | `hf-baai-bge-base-en-v1.5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-641F7D27` [Domain D] | Yes (`6b271c14...`) |
+| `CYCLE-20261114-WQD6` | `2026-11-14T14:23:04.314Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`6ecfb0d4...`) |
+| `CYCLE-20261114-30XO` | `2026-11-14T14:27:57.948Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`7b6765bc...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T14:28:35.461Z` | `hf-google-gemma-4-31b-it` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C603EFBB` [Domain D] | Yes (`b654d163...`) |

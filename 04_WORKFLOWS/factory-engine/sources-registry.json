@@ -4,8 +4,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T04:14:37.635Z",
-    "lastVerified": "2026-11-14T04:14:37.635Z",
+    "lastChecked": "2026-11-14T14:22:48.138Z",
+    "lastVerified": "2026-11-14T14:22:48.138Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T13:57:22.887Z",
-    "lastVerified": "2026-11-14T13:57:22.887Z",
+    "lastChecked": "2026-11-14T14:28:01.072Z",
+    "lastVerified": "2026-11-14T14:28:01.072Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -470,13 +470,13 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T12:57:42.854Z",
-    "lastVerified": "2026-11-14T12:57:42.854Z",
+    "lastChecked": "2026-11-14T14:22:56.884Z",
+    "lastVerified": "2026-11-14T14:22:56.884Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "5ad6a3fb093a824e03a87d8d0ae390eb8305dad382be63d4f294141791fb3ac6",
-    "promotedRulesCount": 1,
+    "contentHash": "7b6765bc8c88f83811e97b8f40f558299329d2bb3075c1f4e90d605bb6ed9228",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -4273,9 +4273,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-13T10:55:22.408Z",
+    "lastChecked": "2026-11-14T14:22:45.638Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-13T10:55:22.408Z"
+    "lastVerified": "2026-11-14T14:22:45.638Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -5681,9 +5681,9 @@
   "flipkart-recyclerlistview": {
     "name": "recyclerlistview",
     "officialUrl": "https://github.com/Flipkart/recyclerlistview",
-    "lastChecked": "2026-11-10T05:06:16.790Z",
+    "lastChecked": "2026-11-14T14:22:43.165Z",
     "revisionIdentifier": "3485036e",
-    "lastVerified": "2026-11-10T05:06:16.790Z"
+    "lastVerified": "2026-11-14T14:22:43.165Z"
   },
   "encoredev-encore": {
     "name": "encoredev/encore",
@@ -5990,9 +5990,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-11-13T08:35:11.013Z",
+    "lastChecked": "2026-11-14T14:22:50.970Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-11-13T08:35:11.013Z"
+    "lastVerified": "2026-11-14T14:22:50.970Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7297,12 +7297,12 @@
     "officialUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T04:20:05.821Z",
-    "lastVerified": "2026-11-09T04:20:05.821Z",
+    "lastChecked": "2026-11-14T14:22:40.739Z",
+    "lastVerified": "2026-11-14T14:22:40.739Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-gemma-4-31b-it",
-    "contentHash": "837bc09cea08b11d0c832b3f6ff18abda8be9fb978f0bfadae9d620df87ca74d",
+    "contentHash": "6ecfb0d407720f475dfefd261a17981a45076c9237ff12853c7b5ebfbb3b3fd4",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -8641,9 +8641,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-11-13T01:31:14.959Z",
+    "lastChecked": "2026-11-14T14:22:38.135Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-11-13T01:31:14.959Z"
+    "lastVerified": "2026-11-14T14:22:38.135Z"
   },
   "hf-microsoft-frognano-4b-2609": {
     "name": "microsoft/FrogNano-4B-2609",

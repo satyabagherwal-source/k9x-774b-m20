@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T13:57:45.356Z",
-  "total_verified_learnings": 8542,
+  "last_updated": "2026-11-14T14:28:37.118Z",
+  "total_verified_learnings": 8543,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17442,
+  "total_items": 17448,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112155,9 +112155,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e6430f2edf57da2a176d663094484472865038bc42c81b6b28f6f150619be06",
+      "content_hash": "8ae536e3220c92a2b2f2040ea18b2c1b1513a24ba75bcf2e05722b40e026ab9a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T13:57:45.271Z"
+      "persisted_at": "2026-11-14T14:28:36.984Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112167,9 +112167,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce42b08505a7b547f5019f5893fb7a02d17b1b4275d197a3d830c747393e417b",
+      "content_hash": "2d94637a53a4e4ca33ec42f04da844bbcf173d8800ee90ce6e2af2d453412481",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T13:57:45.356Z"
+      "persisted_at": "2026-11-14T14:28:37.118Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214751,13 +214751,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0671-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3UYC-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "315a068e283d6196f5b9df9b0e5e72c2f1625febea0b226e0db74175db53bffc",
+      "content_hash": "99de3b6ca478730de7c2ec83c37ab380555649adb2a9ecacca9925ae6a8a4ce7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T13:57:45.194Z"
+      "persisted_at": "2026-11-14T14:28:36.864Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -227177,8 +227177,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "41394de4",
-      "content_hash": "5ad6a3fb093a824e03a87d8d0ae390eb8305dad382be63d4f294141791fb3ac6",
+      "source_version": "4cba3006",
+      "content_hash": "7b6765bc8c88f83811e97b8f40f558299329d2bb3075c1f4e90d605bb6ed9228",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -227198,7 +227198,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T12:57:43.283Z",
+      "verified_at": "2026-11-14T14:27:57.783Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227252,10 +227252,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "41394de4",
-      "content_hash": "4c743226ad2df90ed0e548b3c2d801ab7937c661a500d1238e75cb36c3ba1998",
+      "source_version": "4cba3006",
+      "content_hash": "991c801405094e5eb698a4f9663182b4da002f6661971e59f12846fe776e3f7b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T12:57:43.842Z"
+      "persisted_at": "2026-11-14T14:27:58.427Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -228199,9 +228199,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "d77ab9ec15f62128761d1c3fc8e21ba8d11091115db04f4eb012dc7df992f4a8",
+      "content_hash": "75728ca539eb5f63f7809e67bb633f44f6d2c13639b11c3290c3bc777e00950c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T12:58:49.765Z"
+      "persisted_at": "2026-11-14T14:28:36.478Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -228631,6 +228631,93 @@
       "content_hash": "029d07ef7c9315fa3a0e34cd008333a5a4ced8af44e5560d4ba28ee10a557828",
       "domain_letter": "D",
       "persisted_at": "2026-11-14T13:57:44.407Z"
+    },
+    "learn-huggingface-google-gemma-4-31b-it": {
+      "learning_id": "learn-huggingface-google-gemma-4-31b-it",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "google/gemma-4-31B-it",
+      "repository": "google/gemma-4-31B-it",
+      "slug": "hf-google-gemma-4-31b-it",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/google/gemma-4-31B-it",
+      "source_version": "hf-google-gemma-4-31b-it",
+      "content_hash": "6ecfb0d407720f475dfefd261a17981a45076c9237ff12853c7b5ebfbb3b3fd4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T14:23:04.141Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-31b-it-research-knowledge-intelligence-google-gemma-4-31b-it-c.md",
+      "title": "Research & Knowledge Intelligence: google/gemma-4-31B-it Core Invariants",
+      "repository": "google/gemma-4-31B-it",
+      "source_version": "hf-google-gemma-4-31b-it",
+      "content_hash": "069859e5bc62386c4e7d2f1172c0b1eae2e0be91386fac247eca2527b3025814",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T14:23:04.523Z"
+    },
+    "candidate_directive-nuc-105-list-and-population-sorting-by-key": {
+      "item_id": "candidate_directive-nuc-105-list-and-population-sorting-by-key",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3UGK-nuc-105-list-and-population-sorting-by-key.md",
+      "title": "NUC 105 List and Population Sorting by Key",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a351b939ae936942f9ee182aa56e55682473b17f69666113a35b730dcebb80f0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T14:28:36.223Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
+      "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "4cba3006",
+      "content_hash": "3cdf13337e0af0ed79a2c4c66696dc771118797ecdc220d76f59ea9a47c8ea45",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T14:27:58.305Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-31b-it-learnings-research-knowledge-intelligence-hf-google-gem.md",
+      "title": "Research & Knowledge Intelligence: hf-google-gemma-4-31b-it-learnings Core Invariants",
+      "repository": "hf-google-gemma-4-31b-it-learnings",
+      "source_version": "HEAD",
+      "content_hash": "640b8ce28910a09cc3591905988d846e6300c0fc85943d3b2db3c30e3a4dc2c5",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T14:28:35.684Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
+      "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a51da87066b934f888e48f481f7f2e8543f4bd7fe959e2a5897bb47b619b189b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T14:28:36.344Z"
     }
   },
   "ai-builder-brain": {

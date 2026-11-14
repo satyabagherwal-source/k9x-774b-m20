@@ -9877,3 +9877,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-d7ad2a79` | `project://hf-google-vit-base-patch16-224` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | 2026-11-14T13:39:24.436Z |
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-14T13:57:11.089Z |
 | `learn-dom-d-641f7d27` | `project://hf-baai-bge-base-en-v1.5` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | 2026-11-14T13:57:44.188Z |
+| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-14T14:23:04.319Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `4cba3006` | Multi-dimensional audit evidence | 2026-11-14T14:27:57.953Z |
+| `learn-dom-d-c603efbb` | `project://hf-google-gemma-4-31b-it` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | 2026-11-14T14:28:35.461Z |

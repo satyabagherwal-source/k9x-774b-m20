@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T13:57:11.093Z",
-  "total_cycles_completed": 9526,
-  "total_learnings_persisted": 9526,
+  "last_updated": "2026-11-14T14:27:57.968Z",
+  "total_cycles_completed": 9528,
+  "total_learnings_persisted": 9528,
   "total_rules_promoted": 9214,
   "history": [
-    {
-      "timestamp": "2026-11-13T18:34:51.514Z",
-      "repository": "laurent22/joplin",
-      "learningId": "learn-github-laurent22-joplin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T18:34:56.939Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T18:34:59.765Z",
       "repository": "topoteretes/cognee",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-14T13:57:11.093Z",
       "repository": "BAAI/bge-base-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T14:23:04.325Z",
+      "repository": "google/gemma-4-31B-it",
+      "learningId": "learn-huggingface-google-gemma-4-31b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T14:27:57.968Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

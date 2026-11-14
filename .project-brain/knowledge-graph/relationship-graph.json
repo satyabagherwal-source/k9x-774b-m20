@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T13:57:44.187Z",
+  "updated_at": "2026-11-14T14:28:35.460Z",
   "statistics": {
-    "total_nodes": 192,
-    "total_edges": 102,
+    "total_nodes": 193,
+    "total_edges": 103,
     "domain_distribution": {
-      "D": 149,
+      "D": 150,
       "M": 1,
       "H": 17,
       "J": 8,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 102
+      "CONSTRAINED_BY_ARCHITECTURE": 103
     }
   },
   "nodes": {
@@ -4302,6 +4302,29 @@
       ],
       "created_at": "2026-11-14T13:57:44.187Z",
       "updated_at": "2026-11-14T13:57:44.187Z"
+    },
+    "DOM-D-C603EFBB": {
+      "id": "DOM-D-C603EFBB",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): google/gemma-4-31B-it",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-google-gemma-4-31b-it/hf-google-gemma-4-31b-it-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T14:28:01.206Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-gemma-4-31b-it)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T14:28:35.459Z",
+      "updated_at": "2026-11-14T14:28:35.459Z"
     }
   },
   "edges": [
@@ -5324,6 +5347,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-641F7D27 [D] with Domain M",
       "created_at": "2026-11-14T13:57:44.187Z"
+    },
+    {
+      "id": "EDGE-69627CE04111",
+      "sourceId": "DOM-D-C603EFBB",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-C603EFBB [D] with Domain M",
+      "created_at": "2026-11-14T14:28:35.460Z"
     }
   ]
 }

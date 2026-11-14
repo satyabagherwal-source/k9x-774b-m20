@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T13:57:45.437Z",
+  "last_updated": "2026-11-14T14:28:37.244Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-14T13:57:45.019Z",
+      "processed_at": "2026-11-14T14:28:36.612Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-14T12:58:49.217Z",
+      "processed_at": "2026-11-14T14:28:35.829Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2606,9 +2606,14 @@
       "processed_at": "2026-11-14T13:57:44.188Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-google-gemma-4-31b-it-learnings.md": {
+      "processed_at": "2026-11-14T14:28:35.462Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 840,
-  "total_canonical_promoted": 196,
-  "total_staged_for_review": 643
+  "total_dossiers_evaluated": 843,
+  "total_canonical_promoted": 197,
+  "total_staged_for_review": 645
 }

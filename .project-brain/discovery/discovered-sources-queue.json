@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T13:57:44.198Z",
+  "updated_at": "2026-11-14T14:28:36.002Z",
   "stats": {
-    "total_discovered": 3284,
-    "approved_pending_harvest": 3079,
+    "total_discovered": 3286,
+    "approved_pending_harvest": 3081,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3072,
+      "COMMUNITY_AND_EXPERT": 3074,
       "OFFICIAL_DOCUMENTATION": 117,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -70833,6 +70833,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
         "fileName": "hf-baai-bge-base-en-v1.5-learnings.md"
+      }
+    },
+    "SRC-DED81031FAAE": {
+      "id": "SRC-DED81031FAAE",
+      "url": "https://huggingface.co/google/gemma-4-31B-it",
+      "title": "https://huggingface.co/google/gemma-4-31B-it",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T14:28:35.476Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
+        "fileName": "hf-google-gemma-4-31b-it-learnings.md"
+      }
+    },
+    "SRC-2CA6AD68349A": {
+      "id": "SRC-2CA6AD68349A",
+      "url": "https://claude.ai/code/session_01AJtz8gLvp2aQjMS8yXtmh6",
+      "title": "https://claude.ai/code/session_01AJtz8gLvp2aQjMS8yXtmh6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T14:28:36.002Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
+        "fileName": "nucleoidai-nucleoid-learnings.md"
       }
     }
   }

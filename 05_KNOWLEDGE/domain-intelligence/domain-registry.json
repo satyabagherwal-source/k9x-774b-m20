@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T13:57:45.271Z",
-  "total_records": 688,
+  "last_updated": "2026-11-14T14:28:36.984Z",
+  "total_records": 693,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 341,
+      "total": 344,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -378,7 +378,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-google-vit-base-patch16-224-learnings-core-in",
         "domain_intelligence-research-knowledge-intelligence-baai-bge-base-en-v1-5-core-invariants",
         "DOM-D-641F7D27",
-        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-base-en-v1-5-learnings-core-invarian"
+        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-base-en-v1-5-learnings-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants",
+        "DOM-D-C603EFBB",
+        "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian"
       ]
     },
     "E": {
@@ -517,7 +520,7 @@
       ]
     },
     "H": {
-      "total": 145,
+      "total": 147,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -663,7 +666,9 @@
         "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-core-invariants",
         "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-react-metro-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-react-metro-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant"
       ]
     },
     "I": {
@@ -6503,8 +6508,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "6e6430f2edf57da2a176d663094484472865038bc42c81b6b28f6f150619be06",
-      "created_at": "2026-11-14T13:57:45.271Z"
+      "content_hash": "8ae536e3220c92a2b2f2040ea18b2c1b1513a24ba75bcf2e05722b40e026ab9a",
+      "created_at": "2026-11-14T14:28:36.984Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -14435,6 +14440,84 @@
       "repository": "hf-baai-bge-base-en-v1.5-learnings",
       "content_hash": "029d07ef7c9315fa3a0e34cd008333a5a4ced8af44e5560d4ba28ee10a557828",
       "created_at": "2026-11-14T13:57:44.407Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: google/gemma-4-31B-it Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-31b-it-research-knowledge-intelligence-google-gemma-4-31b-it-c.md",
+      "repository": "google/gemma-4-31B-it",
+      "content_hash": "069859e5bc62386c4e7d2f1172c0b1eae2e0be91386fac247eca2527b3025814",
+      "created_at": "2026-11-14T14:23:04.523Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
+      "repository": "NucleoidAI/Nucleoid",
+      "content_hash": "3cdf13337e0af0ed79a2c4c66696dc771118797ecdc220d76f59ea9a47c8ea45",
+      "created_at": "2026-11-14T14:27:58.305Z"
+    },
+    "DOM-D-C603EFBB": {
+      "record_id": "DOM-D-C603EFBB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): google/gemma-4-31B-it",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it))  \n> **Source Version**: `hf-google-ge`  \n> **License**: Open-Source  \n> **Synthesi",
+      "content_hash": "b654d163f10df13c9283edf04f9aeffc251317e64980e5192b3ab5069835c3bb",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "provenance": {
+        "source_uri": "project://hf-google-gemma-4-31b-it/hf-google-gemma-4-31b-it-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T14:28:01.206Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-gemma-4-31b-it)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-google-gemma-4-31b-it"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T14:28:35.447Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-google-gemma-4-31b-it-learnings-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-google-gemma-4-31b-it-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-31b-it-learnings-research-knowledge-intelligence-hf-google-gem.md",
+      "repository": "hf-google-gemma-4-31b-it-learnings",
+      "content_hash": "640b8ce28910a09cc3591905988d846e6300c0fc85943d3b2db3c30e3a4dc2c5",
+      "created_at": "2026-11-14T14:28:35.684Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "content_hash": "a51da87066b934f888e48f481f7f2e8543f4bd7fe959e2a5897bb47b619b189b",
+      "created_at": "2026-11-14T14:28:36.344Z"
     }
   }
 }
