@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261113-XANI",
-    "timestamp": "2026-11-13T05:15:57.870Z",
-    "repository": "rtk-ai/rtk",
-    "learningId": "learn-github-rtk-ai-rtk",
-    "contentHash": "98b04d784dda2f20a0c2dd0d2ab6425f4fef0b2c8212d639330ea3c6ade429f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-XG5S",
-    "timestamp": "2026-11-13T05:16:05.008Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "089a887a8c5d8ddca36b23a54488b8ae4bbf08e7b76af37c251f3d5cf83591ee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261113-70K0",
-    "timestamp": "2026-11-13T05:23:31.344Z",
-    "repository": "Comfy-Org/Z-Image-Turbo",
-    "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-    "contentHash": "3187fcd13f36923015371e58fc84035a378b3f9531e4fee16abc82aa2fb44d47",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261113-79C4",
     "timestamp": "2026-11-13T05:23:42.724Z",
     "repository": "sxyazi/yazi",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "d0b1b2beab32ae1d0840b957abdff3531e85e034b182b14cb742dd4e2b468d41",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-YEHJ",
+    "timestamp": "2026-11-14T01:48:32.599Z",
+    "repository": "Qwen/Qwen3.8-Flash-Next",
+    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+    "contentHash": "f9e35df3ce1974d2b575ee9fd8808e487d140d70b6826f04e5cb6eede780fe35",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-YJ5W",
+    "timestamp": "2026-11-14T01:48:38.660Z",
+    "repository": "software-mansion/react-native-reanimated",
+    "learningId": "learn-github-software-mansion-react-native-reanimated",
+    "contentHash": "e9fd7e5cae9cf1ea118411801e8608d60b068ef6c0393a44dde4af176a01af66",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261114-YLSV",
+    "timestamp": "2026-11-14T01:48:42.079Z",
+    "repository": "zeromicro/go-zero",
+    "learningId": "learn-github-zeromicro-go-zero",
+    "contentHash": "c58b3d29bd53a77cdb91ea087fbcda7e67caeec076ec97b37c1fd0db261a8eb0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

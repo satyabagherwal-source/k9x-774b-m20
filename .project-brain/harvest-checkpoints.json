@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T01:26:27.530Z",
+  "last_updated": "2026-11-14T01:48:42.091Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1130,14 +1130,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "content_hash": "6118b3223b12b5c78c6c1b88687246af4daf45ed43943e47b6d0ec5a07ca7910",
-      "verified_at": "2026-11-08T22:26:15.792Z",
+      "content_hash": "f9e35df3ce1974d2b575ee9fd8808e487d140d70b6826f04e5cb6eede780fe35",
+      "verified_at": "2026-11-14T01:48:32.611Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T22:26:15.792Z"
+      "last_updated": "2026-11-14T01:48:32.611Z"
     },
     "deepseek-ai/DeepSeek-V4-Pro": {
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -5826,14 +5826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-reanimated",
-      "content_hash": "4aa733de7aeebc43b3205d11941c090ade3700913f2d6e1d1cb447679636b305",
-      "verified_at": "2026-11-09T16:40:24.976Z",
+      "content_hash": "e9fd7e5cae9cf1ea118411801e8608d60b068ef6c0393a44dde4af176a01af66",
+      "verified_at": "2026-11-14T01:48:38.671Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T16:40:24.976Z"
+      "last_updated": "2026-11-14T01:48:38.671Z"
     },
     "liftbridge-io/liftbridge": {
       "repository": "liftbridge-io/liftbridge",
@@ -10776,14 +10776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeromicro-go-zero",
-      "content_hash": "10512f9a14a239e8ecb4b06bc857260e493de51709ec29c69765be1a7d7a3799",
-      "verified_at": "2026-11-08T15:28:21.286Z",
+      "content_hash": "c58b3d29bd53a77cdb91ea087fbcda7e67caeec076ec97b37c1fd0db261a8eb0",
+      "verified_at": "2026-11-14T01:48:42.090Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-08T15:28:21.286Z"
+      "last_updated": "2026-11-14T01:48:42.090Z"
     },
     "t8y2/dbx": {
       "repository": "t8y2/dbx",

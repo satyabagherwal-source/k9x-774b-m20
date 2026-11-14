@@ -9694,3 +9694,7 @@
 | `CYCLE-20261114-5UYU` | `2026-11-14T01:26:20.934Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8414` | Yes (`20b38ab3...`) |
 | `CYCLE-20261114-601Q` | `2026-11-14T01:26:27.518Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8415` | Yes (`d0b1b2be...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T01:26:58.114Z` | `hf-minimaxai-minimax-h3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-F5645095` [Domain D] | Yes (`b6da644d...`) |
+| `CYCLE-20261114-YEHJ` | `2026-11-14T01:48:32.599Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`f9e35df3...`) |
+| `CYCLE-20261114-YJ5W` | `2026-11-14T01:48:38.660Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8416` | Yes (`e9fd7e5c...`) |
+| `CYCLE-20261114-YLSV` | `2026-11-14T01:48:42.079Z` | `zeromicro/go-zero` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8417` | Yes (`c58b3d29...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T01:49:12.906Z` | `hf-qwen-qwen3.8-flash-next` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-79605CEE` [Domain D] | Yes (`493c8036...`) |

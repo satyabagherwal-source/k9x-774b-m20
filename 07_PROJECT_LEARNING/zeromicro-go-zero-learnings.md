@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source**: github ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
-> **Source Version**: `17efbb51`  
+> **Source Version**: `74651def`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-08T15:28:19.784Z  
+> **Timestamp**: 2026-11-14T01:48:41.282Z  
 > **Learning ID**: `learn-github-zeromicro-go-zero`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-08T15:28:19.779Z  
+> **Harvest Timestamp**: 2026-11-14T01:48:41.277Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud-native Go microservices framework with cli tool for productivity.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 33419 stars
+- **Stars / Engagement**: 33427 stars
 
 ---
 
@@ -1305,47 +1305,121 @@ func Gunzip(bs []byte) ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `17efbb51` (2026-11-08)
-**Commit Message**: chore(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 in /tools/goctl (#5881)
+### Incident Patch 1: `7c6b596e` (2026-11-13)
+**Commit Message**: fix(goctl): keep imported API group order deterministic (#5892)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `tools/goctl/go.mod` (modified, +1/-1)
+**File**: `tools/goctl/pkg/parser/api/parser/analyzer.go` (modified, +8/-1)
 ```diff
-@@ -11,7 +11,7 @@ require (
- 	github.com/gookit/color v1.6.3
- 	github.com/iancoleman/strcase v0.3.0
- 	github.com/spf13/cobra v1.10.2
--	github.com/spf13/pflag v1.0.10
-+	github.com/spf13/pflag v1.1.0
- 	github.com/stretchr/testify v1.12.1
- 	github.com/withfig/autocomplete-tools/integrations/cobra v1.2.1
- 	github.com/zeromicro/antlr v0.0.1
+@@ -154,7 +154,14 @@ func (a *Analyzer) convert2Spec() error {
+ 		groups = append(groups, v)
+ 	}
+ 	sort.SliceStable(groups, func(i, j int) bool {
+-		return groups[i].Annotation.Properties[groupKeyText] < groups[j].Annotation.Properties[groupKeyText]
++		gi := groups[i].Annotation.Properties[groupKeyText]
++		gj := groups[j].Annotation.Properties[groupKeyText]
++		if gi != gj {
++			return gi < gj
++		}
++		// Same @server group: keep output stable by prefix (import
++		// order alone is not enough if groups are later reshuffled).
++		return groups[i].Annotation.Properties[atServerPrefixKey] < groups[j].Annotation.Properties[atServerPrefixKey]
+ 	})
+ 	a.spec.Service.Groups = groups
+ 
 ```
 
-**File**: `tools/goctl/go.sum` (modified, +2/-2)
+**File**: `tools/goctl/pkg/parser/api/parser/analyzer_test.go` (modified, +31/-0)
 ```diff
-@@ -178,8 +178,8 @@ github.com/spaolacci/murmur3 v1.1.0/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2
- github.com/spf13/cobra v1.10.2 h1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=
- github.com/spf13/cobra v1.10.2/go.mod h1:7C1pvHqHw5A4vrJfjNwvOdzYu0Gml16OCs2GRiTUUS4=
- github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
--github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
--github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
-+github.com/spf13/pflag v1.1.0 h1:6W6MbVUrnMb8PEhjkqwsVLY7ryuzRfFHF4mQd7L94ag=
-+github.com/spf13/pflag v1.1.0/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
- github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
- github.com/stretchr/objx v0.5.3 h1:jmXUvGomnU1o3W/V5h2VEradbpJDwGrzugQQvL0POH4=
- github.com/stretchr/objx v0.5.3/go.mod h1:rDQraq+vQZU7Fde9LOZLr8Tax6zZvy4kuNKF+QYS+U0=
+@@ -108,3 +108,34 @@ func Test_Parse(t *testing.T) {
+ 		},
+ 	)
+ }
++
++func TestParse_importedGroupOrderIsStable(t *testing.T) {
++	dir := t.TempDir()
++	for i, prefix := range []string{"/s1", "/s2", "/s3", "/s4"} {
++		n := i + 1
++		body := fmt.Sprintf("syntax = \"v1\"\n\n@server(\n    group: demo\n    prefix: %s\n)\nservice demo-api {\n	@handler H%d\n	get /h%d returns (Resp)\n}\n", prefix, n, n)
++		err := os.WriteFile(filepath.Join(dir, fmt.Sprintf("svc%d.api", n)), []byte(body), 0o666)
++		assert.NoError(t, err)
++	}
++	mainAPI := "syntax = \"v1\"\n\nimport (\n	\"svc1.api\"\n	\"svc2.api\"\n	\"svc3.api\"\n	\"svc4.api\"\n)\n\ntype Resp {\n	Msg string `json:\"msg\"`\n}\n"
++	mainPath := filepath.Join(dir, "main.api")
++	assert.NoError(t, os.WriteFile(mainPath, []byte(mainAPI), 0o666))
++
++	var first []string
++	for i := 0; i < 20; i++ {
++		apiSpec, err := Parse(mainPath, nil)
++		if !assert.NoError(t, err) {
++			return
++		}
++		var prefixes []string
++		for _, g := range apiSpec.Service.Groups {
++			prefixes = append(prefixes, g.Annotation.Properties["prefix"])
++		}
++		if first == nil {
++			first = prefixes
++			continue
++		}
++		assert.Equal(t, first, prefixes)
++	}
++	assert.Equal(t, []string{"/s1", "/s2", "/s3", "/s4"}, first)
++}
+```
+
+**File**: `tools/goctl/pkg/parser/api/parser/api.go` (modified, +21/-4)
+```diff
+@@ -265,20 +265,37 @@ func (api *API) parseImportedAPI(imports []ast.ImportStmt) ([]*API, error) {
+ 		return list, nil
+ 	}
+ 
+-	var importValueSet = map[string]token.Token{}
++	// Keep declaration order. A map iteration made the merge (and later
++	// group order) depend on randomized map walk when several imports
++	// share the same @server group.
++	type importRef struct {
++		path string
++		tok  token.Token
++	}
++	var importList []importRef
++	seen := make(map[string]struct{})
++	addImport := func(tok token.Token) {
++		impPath := strings.ReplaceAll(tok.Text, `"`, "")
++		if _, ok := seen[impPath]; ok {
++			return
++		}
++		seen[impPath] = struct{}{}
++		importList = append(importList, importRef{path: impPath, tok: tok})
++	}
+ 	for _, imp := range imports {
+ 		switch val := imp.(type) {
+ 		case *ast.ImportLiteralStmt:
+-			importValueSet[strings.ReplaceAll(val.Value.Token.Text, `"`, "")] = val.Value.Token
++			addImport(val.Value.Token)
+ 		case *ast.ImportGroupStmt:
+ 			for _, v := range val.Values {
+-				importValueSet[strings.ReplaceAll(v.Token.Text, `"`, "")] = v.Token
++				addImport(v.Token)
+ 			}
+ 		}
+ 	}
+ 
+ 	dir := filepath.Dir(api.Filename)
+-	for impPath, tok := range importValueSet {
++	for _, ref := range importList {
++		impPath, tok := ref.path, ref.tok
+ 		if !filepath.IsAbs(impPath) {
+ 			impPath = filepath.Join(dir, impPath)
+ 		}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5893** (closed): chore(deps): bump golang.org/x/text from 0.41.0 to 0.44.0 in /tools/goctl (@dependabot[bot])
+- **PR #5892** (2026-11-13): fix(goctl): keep imported API group order deterministic (@kevin9327)
+- **PR #5888** (closed): chore(deps): bump golang.org/x/sys from 0.47.0 to 0.50.0 (@dependabot[bot])
+- **PR #5885** (closed): chore(deps): bump go.mongodb.org/mongo-driver/v2 from 2.9.2 to 2.9.3 (@dependabot[bot])
+- **PR #5884** (2026-11-13): chore(ci): standardize workflow file extensions (@hainuoli)
 - **PR #5881** (2026-11-08): chore(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 in /tools/goctl (@dependabot[bot])
-- **PR #5875** (2026-11-05): chore(deps): bump github.com/jackc/pgx/v5 from 5.11.0 to 5.12.0 (@dependabot[bot])
-- **PR #5874** (closed): chore(deps): bump k8s.io/apimachinery from 0.35.9 to 0.37.2 (@dependabot[bot])
-- **PR #5873** (closed): chore(deps): bump k8s.io/client-go from 0.35.9 to 0.37.2 (@dependabot[bot])
-- **PR #5872** (2026-11-05): Prevent invalid stdout descriptors in logx tests (@Copilot)
-- **PR #5871** (closed): fix(rest): enforce request body limits while reading (@leehainuo)
 
 ---
 
@@ -1365,28 +1439,35 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 in /tools/goctl (#5881)
+## X. goctl): keep imported API group order deterministic
 
 **RULE**:
-When implementing operations in `tools/goctl/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/goctl/pkg/parser/api/parser/analyzer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `17efbb51`: deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 in /tools/goctl (#5881). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c6b596e`: goctl): keep imported API group order deterministic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/goctl/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/goctl/pkg/parser/api/parser/analyzer.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/spf13/pflag v1.1.0
+		gi := groups[i].Annotation.Properties[groupKeyText]
+		gj := groups[j].Annotation.Properties[groupKeyText]
+		if gi != gj {
+			return gi < gj
+		}
+		// Same @server group: keep output stable by prefix (import
+		// order alone is not enough if groups are later reshuffled).
+		return groups[i].Annotation.Properties[atServerPrefixKey] < groups[j].Annotation.Properties[atServerPrefixKey]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	github.com/spf13/pflag v1.0.10
+// Induced defect failure mode:
+		return groups[i].Annotation.Properties[groupKeyText] < groups[j].Annotation.Properties[groupKeyText]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `17efbb51` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c6b596e` are properly handled with clean fallback behavior.

@@ -875,8 +875,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceVersion": "hf-qwen-qwen3.8-flash-next",
     "license": "Open-Source",
-    "contentHash": "6118b3223b12b5c78c6c1b88687246af4daf45ed43943e47b6d0ec5a07ca7910",
-    "lastHarvestedAt": "2026-11-08T22:26:15.785Z",
+    "contentHash": "f9e35df3ce1974d2b575ee9fd8808e487d140d70b6826f04e5cb6eede780fe35",
+    "lastHarvestedAt": "2026-11-14T01:48:32.603Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
@@ -3803,10 +3803,10 @@
     "repository": "software-mansion/react-native-reanimated",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-reanimated",
-    "sourceVersion": "b66eb8c7",
+    "sourceVersion": "1b66ac4d",
     "license": "MIT",
-    "contentHash": "4aa733de7aeebc43b3205d11941c090ade3700913f2d6e1d1cb447679636b305",
-    "lastHarvestedAt": "2026-11-09T16:40:24.970Z",
+    "contentHash": "e9fd7e5cae9cf1ea118411801e8608d60b068ef6c0393a44dde4af176a01af66",
+    "lastHarvestedAt": "2026-11-14T01:48:38.664Z",
     "learningId": "learn-github-software-mansion-react-native-reanimated"
   },
   "liftbridge-io-liftbridge": {
@@ -7153,10 +7153,10 @@
     "repository": "zeromicro/go-zero",
     "platform": "github",
     "sourceUrl": "https://github.com/zeromicro/go-zero",
-    "sourceVersion": "17efbb51",
+    "sourceVersion": "74651def",
     "license": "MIT",
-    "contentHash": "10512f9a14a239e8ecb4b06bc857260e493de51709ec29c69765be1a7d7a3799",
-    "lastHarvestedAt": "2026-11-08T15:28:21.280Z",
+    "contentHash": "c58b3d29bd53a77cdb91ea087fbcda7e67caeec076ec97b37c1fd0db261a8eb0",
+    "lastHarvestedAt": "2026-11-14T01:48:42.083Z",
     "learningId": "learn-github-zeromicro-go-zero"
   },
   "t8y2-dbx": {

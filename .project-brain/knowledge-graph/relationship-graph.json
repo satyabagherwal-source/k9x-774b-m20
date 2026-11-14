@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T01:26:58.113Z",
+  "updated_at": "2026-11-14T01:49:12.905Z",
   "statistics": {
-    "total_nodes": 143,
-    "total_edges": 77,
+    "total_nodes": 144,
+    "total_edges": 78,
     "domain_distribution": {
-      "D": 116,
+      "D": 117,
       "M": 1,
       "H": 11,
       "J": 4,
@@ -18,7 +18,7 @@
       "B": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 77
+      "CONSTRAINED_BY_ARCHITECTURE": 78
     }
   },
   "nodes": {
@@ -3199,6 +3199,29 @@
       ],
       "created_at": "2026-11-14T01:26:58.112Z",
       "updated_at": "2026-11-14T01:26:58.112Z"
+    },
+    "DOM-D-79605CEE": {
+      "id": "DOM-D-79605CEE",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Qwen/Qwen3.8-Flash-Next",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-qwen-qwen3.8-flash-next/hf-qwen-qwen3.8-flash-next-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T01:48:45.117Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-qwen-qwen3.8-flash-next)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-14T01:49:12.905Z",
+      "updated_at": "2026-11-14T01:49:12.905Z"
     }
   },
   "edges": [
@@ -3971,6 +3994,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-F5645095 [D] with Domain M",
       "created_at": "2026-11-14T01:26:58.113Z"
+    },
+    {
+      "id": "EDGE-FE5CAC220DE7",
+      "sourceId": "DOM-D-79605CEE",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-79605CEE [D] with Domain M",
+      "created_at": "2026-11-14T01:49:12.905Z"
     }
   ]
 }

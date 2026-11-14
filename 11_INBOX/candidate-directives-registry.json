@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T01:26:59.214Z",
+  "last_updated": "2026-11-14T01:49:14.278Z",
   "directives": [
     {
       "id": "CD-001",
@@ -11074,6 +11074,50 @@
       "source_repo": "dathere-qsv-learnings",
       "source_commit": "HEAD",
       "staged_file": "11_INBOX/candidate-directives/CD-6OHV-deps-bump-lock-file.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-YJA0",
+      "directive_title": "fix dead links and accept empty banner slots in URL validation",
+      "source_repo": "software-mansion/react-native-reanimated",
+      "source_commit": "1b66ac4d",
+      "staged_file": "11_INBOX/candidate-directives/CD-YJA0-fix-dead-links-and-accept-empty-banner-slots-in-url-validation.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-YLXL",
+      "directive_title": "keep imported API group order deterministic",
+      "source_repo": "zeromicro/go-zero",
+      "source_commit": "74651def",
+      "staged_file": "11_INBOX/candidate-directives/CD-YLXL-keep-imported-api-group-order-deterministic.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-ZA3E",
+      "directive_title": "docs: fix dead links and accept empty banner slots in URL validation",
+      "source_repo": "software-mansion-react-native-reanimated-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZA3E-docs-fix-dead-links-and-accept-empty-banner-slots-in-url-validation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-ZAN9",
+      "directive_title": "goctl): keep imported API group order deterministic",
+      "source_repo": "zeromicro-go-zero-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZAN9-goctl-keep-imported-api-group-order-deterministic.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",

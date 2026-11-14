@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T01:26:58.125Z",
+  "updated_at": "2026-11-14T01:49:14.110Z",
   "stats": {
-    "total_discovered": 3040,
-    "approved_pending_harvest": 2840,
+    "total_discovered": 3061,
+    "approved_pending_harvest": 2860,
     "harvested_count": 0,
-    "rejected_count": 200,
+    "rejected_count": 201,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2840,
-      "OFFICIAL_DOCUMENTATION": 106,
-      "STANDARDS_AND_SPECIFICATIONS": 80,
+      "COMMUNITY_AND_EXPERT": 2857,
+      "OFFICIAL_DOCUMENTATION": 109,
+      "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
       "SECURITY_ADVISORIES": 10,
       "LEGAL_AND_REGULATORY": 1,
@@ -65500,6 +65500,461 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
         "fileName": "hf-minimaxai-minimax-h3-learnings.md"
+      }
+    },
+    "SRC-EB79656C925C": {
+      "id": "SRC-EB79656C925C",
+      "url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+      "title": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:12.918Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
+        "fileName": "hf-qwen-qwen3.8-flash-next-learnings.md"
+      }
+    },
+    "SRC-E23BE7534A3C": {
+      "id": "SRC-E23BE7534A3C",
+      "url": "https://github.com/software-mansion/react-native-reanimated",
+      "title": "https://github.com/software-mansion/react-native-reanimated",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.219Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
+        "fileName": "software-mansion-react-native-reanimated-learnings.md"
+      }
+    },
+    "SRC-DA6F48D843F6": {
+      "id": "SRC-DA6F48D843F6",
+      "url": "https://github.com/user-attachments/assets/afea926d-5701-4bc5-8464-411e1b0d0785",
+      "title": "https://github.com/user-attachments/assets/afea926d-5701-4bc5-8464-411e1b0d0785",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.251Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
+        "fileName": "software-mansion-react-native-reanimated-learnings.md"
+      }
+    },
+    "SRC-053891A344E7": {
+      "id": "SRC-053891A344E7",
+      "url": "https://snack.expo.dev/Yw0yWgR-j23l3qT2JES2c",
+      "title": "https://snack.expo.dev/Yw0yWgR-j23l3qT2JES2c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.271Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
+        "fileName": "software-mansion-react-native-reanimated-learnings.md"
+      }
+    },
+    "SRC-241CB3132592": {
+      "id": "SRC-241CB3132592",
+      "url": "https://github.com/software-mansion/react-native-reanimated/actions/runs/42887668346/job/130080180075",
+      "title": "https://github.com/software-mansion/react-native-reanimated/actions/runs/42887668346/job/130080180075",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.291Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
+        "fileName": "software-mansion-react-native-reanimated-learnings.md"
+      }
+    },
+    "SRC-9377AC44C8CB": {
+      "id": "SRC-9377AC44C8CB",
+      "url": "https://github.com/facebook/flipper/issues/3026",
+      "title": "https://github.com/facebook/flipper/issues/3026",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.311Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
+        "fileName": "software-mansion-react-native-reanimated-learnings.md"
+      }
+    },
+    "SRC-225869B6108F": {
+      "id": "SRC-225869B6108F",
+      "url": "https://github.com/meta/flipper/issues/3026",
+      "title": "https://github.com/meta/flipper/issues/3026",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.342Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
+        "fileName": "software-mansion-react-native-reanimated-learnings.md"
+      }
+    },
+    "SRC-30A1DA9A70E2": {
+      "id": "SRC-30A1DA9A70E2",
+      "url": "https://docs.swmansion.com/reanimated/docs/shared-values",
+      "title": "https://docs.swmansion.com/reanimated/docs/shared-values",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.362Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
+        "fileName": "software-mansion-react-native-reanimated-learnings.md"
+      }
+    },
+    "SRC-4BB4FF99DA50": {
+      "id": "SRC-4BB4FF99DA50",
+      "url": "https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/glossary",
+      "title": "https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/glossary",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.382Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
+        "fileName": "software-mansion-react-native-reanimated-learnings.md"
+      }
+    },
+    "SRC-03D220C172B7": {
+      "id": "SRC-03D220C172B7",
+      "url": "https://docs.swmansion.com/react-native-worklets/docs",
+      "title": "https://docs.swmansion.com/react-native-worklets/docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.402Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
+        "fileName": "software-mansion-react-native-reanimated-learnings.md"
+      }
+    },
+    "SRC-0B0D95FA9836": {
+      "id": "SRC-0B0D95FA9836",
+      "url": "https://github.com/zeromicro/go-zero",
+      "title": "https://github.com/zeromicro/go-zero",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.892Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
+        "fileName": "zeromicro-go-zero-learnings.md"
+      }
+    },
+    "SRC-359A70421FB5": {
+      "id": "SRC-359A70421FB5",
+      "url": "http://pages.cs.wisc.edu/~cao/papers/summary-cache/node8.html",
+      "title": "http://pages.cs.wisc.edu/~cao/papers/summary-cache/node8.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-14T01:49:13.922Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
+        "fileName": "zeromicro-go-zero-learnings.md"
+      }
+    },
+    "SRC-81870CD1AF85": {
+      "id": "SRC-81870CD1AF85",
+      "url": "https://landing.google.com/sre/sre-book/chapters/handling-overload",
+      "title": "https://landing.google.com/sre/sre-book/chapters/handling-overload",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.942Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
+        "fileName": "zeromicro-go-zero-learnings.md"
+      }
+    },
+    "SRC-8717D7F4CC72": {
+      "id": "SRC-8717D7F4CC72",
+      "url": "https://www.zhihu.com/question/29383090/answer/70435297",
+      "title": "https://www.zhihu.com/question/29383090/answer/70435297",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.962Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
+        "fileName": "zeromicro-go-zero-learnings.md"
+      }
+    },
+    "SRC-6E92BBA5E79A": {
+      "id": "SRC-6E92BBA5E79A",
+      "url": "https://www.ietf.org/rfc/rfc3526.txt",
+      "title": "https://www.ietf.org/rfc/rfc3526.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:13.981Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
+        "fileName": "zeromicro-go-zero-learnings.md"
+      }
+    },
+    "SRC-1FE7A504231A": {
+      "id": "SRC-1FE7A504231A",
+      "url": "https://go-zero.dev/docs/tutorials/http/server/middleware",
+      "title": "https://go-zero.dev/docs/tutorials/http/server/middleware",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:14.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
+        "fileName": "zeromicro-go-zero-learnings.md"
+      }
+    },
+    "SRC-183E7B1DA301": {
+      "id": "SRC-183E7B1DA301",
+      "url": "https://app.codecov.io/gh/zeromicro/go-zero/pull/4816?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/zeromicro/go-zero/pull/4816?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:14.030Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
+        "fileName": "zeromicro-go-zero-learnings.md"
+      }
+    },
+    "SRC-37498EF9E3EA": {
+      "id": "SRC-37498EF9E3EA",
+      "url": "https://app.codecov.io/gh/zeromicro/go-zero/commit/8690859c7d1c9461bdc422c3c65608bde30904db?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/zeromicro/go-zero/commit/8690859c7d1c9461bdc422c3c65608bde30904db?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:14.052Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
+        "fileName": "zeromicro-go-zero-learnings.md"
+      }
+    },
+    "SRC-D5B50865B7B0": {
+      "id": "SRC-D5B50865B7B0",
+      "url": "https://app.codecov.io/gh/zeromicro/go-zero/commit/dd22ed871d44617bc2f06306c974f6b63a0fdf4f?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/zeromicro/go-zero/commit/dd22ed871d44617bc2f06306c974f6b63a0fdf4f?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:14.072Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
+        "fileName": "zeromicro-go-zero-learnings.md"
+      }
+    },
+    "SRC-BFFCB39D0CEF": {
+      "id": "SRC-BFFCB39D0CEF",
+      "url": "https://app.codecov.io/gh/zeromic",
+      "title": "https://app.codecov.io/gh/zeromic",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:14.091Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
+        "fileName": "zeromicro-go-zero-learnings.md"
+      }
+    },
+    "SRC-52D6B514ECBC": {
+      "id": "SRC-52D6B514ECBC",
+      "url": "https://www.rfc-editor.org/rfc/rfc3526",
+      "title": "IETF RFC 3526",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T01:49:14.110Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md",
+        "fileName": "zeromicro-go-zero-learnings.md"
       }
     }
   }

@@ -9727,3 +9727,7 @@ Every entry in this ledger must capture:
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `7a158c6a` | Multi-dimensional audit evidence | 2026-11-14T01:26:20.937Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `9e86198d` | Multi-dimensional audit evidence | 2026-11-14T01:26:27.522Z |
 | `learn-dom-d-f5645095` | `project://hf-minimaxai-minimax-h3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | 2026-11-14T01:26:58.114Z |
+| `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-14T01:48:32.603Z |
+| `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `1b66ac4d` | Multi-dimensional audit evidence | 2026-11-14T01:48:38.664Z |
+| `learn-github-zeromicro-go-zero` | `https://github.com/zeromicro/go-zero` | `74651def` | Multi-dimensional audit evidence | 2026-11-14T01:48:42.083Z |
+| `learn-dom-d-79605cee` | `project://hf-qwen-qwen3.8-flash-next` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | 2026-11-14T01:49:12.906Z |

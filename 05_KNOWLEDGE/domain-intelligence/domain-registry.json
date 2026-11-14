@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T01:26:59.304Z",
-  "total_records": 458,
+  "last_updated": "2026-11-14T01:49:14.371Z",
+  "total_records": 465,
   "domains": {
     "A": {
       "total": 5,
@@ -33,7 +33,7 @@
       ]
     },
     "D": {
-      "total": 234,
+      "total": 237,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -268,7 +268,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-scantist-glm-5-3-slim-gguf-learnings-core-inv",
         "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-core-invariants",
         "DOM-D-F5645095",
-        "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant"
+        "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
+        "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
+        "DOM-D-79605CEE",
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-flash-next-learnings-core-invari"
       ]
     },
     "E": {
@@ -293,7 +296,7 @@
       ]
     },
     "G": {
-      "total": 63,
+      "total": 67,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -357,7 +360,11 @@
         "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-core-invariants",
         "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants",
-        "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-core-invarian",
+        "domain_intelligence-architecture-intelligence-zeromicro-go-zero-core-invariants",
+        "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-learnings-cor",
+        "domain_intelligence-architecture-intelligence-zeromicro-go-zero-learnings-core-invariants"
       ]
     },
     "H": {
@@ -10586,6 +10593,102 @@
       "repository": "dathere-qsv-learnings",
       "content_hash": "12282d166866a14a1aee169d9aba1b948a22ec0b78dd21010e6e2fa140b840da",
       "created_at": "2026-11-14T01:26:59.304Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen3.8-Flash-Next Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-flash-next-research-knowledge-intelligence-qwen-qwen3-8-flash-ne.md",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "content_hash": "4cdc71636f8c3556854c7b46809d586ecaa5e07d7e50c11a210fafee79c22d9e",
+      "created_at": "2026-11-14T01:48:32.755Z"
+    },
+    "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-core-invarian": {
+      "record_id": "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-core-invarian",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: software-mansion/react-native-reanimated Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-software-mansion-react-native-reanimated-architecture-intelligence-software-mans.md",
+      "repository": "software-mansion/react-native-reanimated",
+      "content_hash": "d0c0e06e0ccd0805aa258c4d5adf97c5f148b2eb2e0e555b816bf88e2d4137dc",
+      "created_at": "2026-11-14T01:48:38.899Z"
+    },
+    "domain_intelligence-architecture-intelligence-zeromicro-go-zero-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-zeromicro-go-zero-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: zeromicro/go-zero Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeromicro-go-zero-architecture-intelligence-zeromicro-go-zero-core-invariants.md",
+      "repository": "zeromicro/go-zero",
+      "content_hash": "aa1ab6a36e5ea00b0f5722aef5439b612e82e0946f0f2cb20ab387cbf0a47f5b",
+      "created_at": "2026-11-14T01:48:42.342Z"
+    },
+    "DOM-D-79605CEE": {
+      "record_id": "DOM-D-79605CEE",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Qwen/Qwen3.8-Flash-Next",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Qwen/Qwen3.8-Flash-Next](https://huggingface.co/Qwen/Qwen3.8-Flash-Next))  \n> **Source Version**: `hf-qwen-qwen`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "493c80365ca38aec74a9795b11f191510cf726fca0f0a963c16e91bd9327c46c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-qwen-qwen3.8-flash-next/hf-qwen-qwen3.8-flash-next-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T01:48:45.117Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-qwen-qwen3.8-flash-next)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-qwen-qwen3.8-flash-next"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T01:49:12.898Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-flash-next-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-flash-next-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen3.8-flash-next-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-flash-next-learnings-research-knowledge-intelligence-hf-qwen-qwe.md",
+      "repository": "hf-qwen-qwen3.8-flash-next-learnings",
+      "content_hash": "230f19bf75815acbcb49d29d41b8ea93dafb8b93907266f805afdedc702d5dfd",
+      "created_at": "2026-11-14T01:49:13.096Z"
+    },
+    "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-learnings-cor": {
+      "record_id": "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-learnings-cor",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: software-mansion-react-native-reanimated-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-software-mansion-react-native-reanimated-learnings-architecture-intelligence-sof.md",
+      "repository": "software-mansion-react-native-reanimated-learnings",
+      "content_hash": "b8bca3a2aee3eb1b0f48223b731a2986fba76544550f7547a6a02afeca9edc3b",
+      "created_at": "2026-11-14T01:49:13.667Z"
+    },
+    "domain_intelligence-architecture-intelligence-zeromicro-go-zero-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-zeromicro-go-zero-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: zeromicro-go-zero-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeromicro-go-zero-learnings-architecture-intelligence-zeromicro-go-zero-learning.md",
+      "repository": "zeromicro-go-zero-learnings",
+      "content_hash": "c5bb32b698fda011b1e29b700d5cbc54bff9115d6804b9e08a013456b4303912",
+      "created_at": "2026-11-14T01:49:14.371Z"
     }
   }
 }

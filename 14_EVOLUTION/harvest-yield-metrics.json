@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T01:26:27.526Z",
-  "total_cycles_completed": 9425,
-  "total_learnings_persisted": 9425,
-  "total_rules_promoted": 9136,
+  "last_updated": "2026-11-14T01:48:42.088Z",
+  "total_cycles_completed": 9428,
+  "total_learnings_persisted": 9428,
+  "total_rules_promoted": 9138,
   "history": [
-    {
-      "timestamp": "2026-11-13T12:24:11.836Z",
-      "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T12:24:23.071Z",
-      "repository": "ratatui/ratatui",
-      "learningId": "learn-github-ratatui-ratatui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T12:24:39.757Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T12:32:30.387Z",
       "repository": "moonshotai/Kimi-K3",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-14T01:26:27.526Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T01:48:32.608Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T01:48:38.669Z",
+      "repository": "software-mansion/react-native-reanimated",
+      "learningId": "learn-github-software-mansion-react-native-reanimated",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T01:48:42.088Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
