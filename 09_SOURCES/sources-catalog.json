@@ -175,8 +175,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "sourceVersion": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
     "license": "Open-Source",
-    "contentHash": "674cd434d5cb8403b6d55c6383386c94fbfca8d29ab3dc2ced9d4cdf76203753",
-    "lastHarvestedAt": "2026-11-09T06:50:44.007Z",
+    "contentHash": "ebcc8605052b2424f1a9dcf363f28aaa0ed624a26e722515fe413bdbbfd6e0ba",
+    "lastHarvestedAt": "2026-11-14T18:14:36.437Z",
     "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark"
   },
   "hf-liquidai-d1-3b": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "acbe836e",
+    "sourceVersion": "7d522757",
     "license": "Apache-2.0",
-    "contentHash": "8260bfd80a6bb4010a0c06d4c67916b61d128d722394ca713345500abf265092",
-    "lastHarvestedAt": "2026-11-13T12:24:39.752Z",
+    "contentHash": "b87b3fc0f76798bfe7b4472188e9b702669de9d55ee12364ecd0147966a53229",
+    "lastHarvestedAt": "2026-11-14T18:14:51.594Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -6243,10 +6243,10 @@
     "repository": "gkd-kit/gkd",
     "platform": "github",
     "sourceUrl": "https://github.com/gkd-kit/gkd",
-    "sourceVersion": "d07357d4",
+    "sourceVersion": "301e7e0a",
     "license": "GPL-3.0",
-    "contentHash": "6c18f2452d34582e43fd75ef053d0aee423101f64eb604bb12070fb6a9729e40",
-    "lastHarvestedAt": "2026-11-11T08:27:47.280Z",
+    "contentHash": "fe4dedebda76d32c9c7a369d03950382f6f16b6cf01398695da962350495bce0",
+    "lastHarvestedAt": "2026-11-14T18:14:44.176Z",
     "learningId": "learn-github-gkd-kit-gkd"
   },
   "envoyproxy-envoy": {
@@ -7663,10 +7663,10 @@
     "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "05e29181",
+    "sourceVersion": "25bb18ff",
     "license": "Apache-2.0",
-    "contentHash": "b077b63fab6f074dff6c57b21f659e7b2f23036a3403f8b3b1264a55033ed480",
-    "lastHarvestedAt": "2026-11-13T04:13:24.116Z",
+    "contentHash": "80b16de04a3c4bf2e03c5758261a55a19a7a2d5a9666c3aa26669670783666f4",
+    "lastHarvestedAt": "2026-11-14T18:14:39.510Z",
     "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {

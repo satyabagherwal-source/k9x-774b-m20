@@ -9933,3 +9933,8 @@ Every entry in this ledger must capture:
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `ab5b4223` | Multi-dimensional audit evidence | 2026-11-14T17:51:07.773Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `176bc07b` | Multi-dimensional audit evidence | 2026-11-14T17:51:23.425Z |
 | `learn-dom-d-a21d48e1` | `project://hf-unsloth-embeddinggemma-2-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | 2026-11-14T17:51:53.962Z |
+| `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-14T18:14:36.437Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `25bb18ff` | Multi-dimensional audit evidence | 2026-11-14T18:14:39.510Z |
+| `learn-github-gkd-kit-gkd` | `https://github.com/gkd-kit/gkd` | `301e7e0a` | Multi-dimensional audit evidence | 2026-11-14T18:14:44.176Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `7d522757` | Multi-dimensional audit evidence | 2026-11-14T18:14:51.594Z |
+| `learn-dom-d-5db2a72d` | `project://hf-autotrust-glm5.3-flash-e224-dgx-spark` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | 2026-11-14T18:15:25.153Z |

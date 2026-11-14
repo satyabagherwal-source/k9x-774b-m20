@@ -9900,3 +9900,8 @@
 | `CYCLE-20261114-CANT` | `2026-11-14T17:51:07.769Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8514` | Yes (`f420d583...`) |
 | `CYCLE-20261114-CMQL` | `2026-11-14T17:51:23.421Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8515` | Yes (`09ff4988...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T17:51:53.962Z` | `hf-unsloth-embeddinggemma-2-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A21D48E1` [Domain D] | Yes (`9695445e...`) |
+| `CYCLE-20261114-6HLD` | `2026-11-14T18:14:36.433Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`ebcc8605...`) |
+| `CYCLE-20261114-6JYR` | `2026-11-14T18:14:39.507Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8516` | Yes (`80b16de0...`) |
+| `CYCLE-20261114-6NKC` | `2026-11-14T18:14:44.172Z` | `gkd-kit/gkd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8517` | Yes (`fe4dedeb...`) |
+| `CYCLE-20261114-6TAE` | `2026-11-14T18:14:51.590Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8518` | Yes (`b87b3fc0...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T18:15:25.153Z` | `hf-autotrust-glm5.3-flash-e224-dgx-spark` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5DB2A72D` [Domain D] | Yes (`9d9951ec...`) |

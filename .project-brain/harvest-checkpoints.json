@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T17:51:23.434Z",
+  "last_updated": "2026-11-14T18:14:51.603Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -155,14 +155,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "content_hash": "674cd434d5cb8403b6d55c6383386c94fbfca8d29ab3dc2ced9d4cdf76203753",
-      "verified_at": "2026-11-09T06:50:44.015Z",
+      "content_hash": "ebcc8605052b2424f1a9dcf363f28aaa0ed624a26e722515fe413bdbbfd6e0ba",
+      "verified_at": "2026-11-14T18:14:36.445Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T06:50:44.015Z"
+      "last_updated": "2026-11-14T18:14:36.445Z"
     },
     "LiquidAI/d1-3B": {
       "repository": "LiquidAI/d1-3B",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "8260bfd80a6bb4010a0c06d4c67916b61d128d722394ca713345500abf265092",
-      "verified_at": "2026-11-13T12:24:39.759Z",
+      "content_hash": "b87b3fc0f76798bfe7b4472188e9b702669de9d55ee12364ecd0147966a53229",
+      "verified_at": "2026-11-14T18:14:51.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T12:24:39.759Z"
+      "last_updated": "2026-11-14T18:14:51.602Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -9486,14 +9486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gkd-kit-gkd",
-      "content_hash": "6c18f2452d34582e43fd75ef053d0aee423101f64eb604bb12070fb6a9729e40",
-      "verified_at": "2026-11-11T08:27:47.289Z",
+      "content_hash": "fe4dedebda76d32c9c7a369d03950382f6f16b6cf01398695da962350495bce0",
+      "verified_at": "2026-11-14T18:14:44.185Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T08:27:47.289Z"
+      "last_updated": "2026-11-14T18:14:44.185Z"
     },
     "envoyproxy/envoy": {
       "repository": "envoyproxy/envoy",
@@ -17181,14 +17181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-folly",
-      "content_hash": "b077b63fab6f074dff6c57b21f659e7b2f23036a3403f8b3b1264a55033ed480",
-      "verified_at": "2026-11-13T04:13:24.125Z",
+      "content_hash": "80b16de04a3c4bf2e03c5758261a55a19a7a2d5a9666c3aa26669670783666f4",
+      "verified_at": "2026-11-14T18:14:39.519Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T04:13:24.125Z"
+      "last_updated": "2026-11-14T18:14:39.519Z"
     },
     "LiquidAI/LFM3-Omni-2B": {
       "repository": "LiquidAI/LFM3-Omni-2B",

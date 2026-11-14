@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `05e29181`  
+> **Source Version**: `25bb18ff`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T04:13:14.468Z  
+> **Timestamp**: 2026-11-14T18:14:38.522Z  
 > **Learning ID**: `learn-github-meta-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T04:13:14.462Z  
+> **Harvest Timestamp**: 2026-11-14T18:14:38.516Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30558 stars
+- **Stars / Engagement**: 30559 stars
 
 ---
 
@@ -2364,662 +2364,738 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `749133fd` (2026-11-12)
-**Commit Message**: Fix SIGFPE and 11x slowdown in folly::Random::randDouble
+### Incident Patch 1: `90d245a1` (2026-11-13)
+**Commit Message**: Fix JSON Patch lifetime, add, index, and test semantics
 
 Summary:
-Before this change, `folly::Random::randDouble(min, max)` delegates to
-`std::uniform_real_distribution`, which draws its canonical `[0, 1)` value from
-`std::generate_canonical`. That function computes
+Why: Configuration-supplied JSON patches can crash or corrupt a document when `add`, `move`, or `copy` touches the root, aliases containers, or names a missing parent. Pointer resolution also accepted whitespace-padded array indices, and `test` could equate a large `int64` with the nearest `double`.
 
-```
-const long double __r = urng.max() - urng.min() + 1;
-const size_t __log2r  = std::log(__r) / std::log(2.0L);
-const size_t __m      = std::max<size_t>(1UL, (__b + __log2r - 1UL) / __log2r);
-```
+What: `copy` snapshots its source and `move` takes its source out before mutating; `move` then removes, resolves the destination, and adds, restoring the source if that add fails. Same-location moves are no-ops. `do_add` uses the full pointer for root, final-token, and numeric-append cases; irrelevant `from` members are ignored. Array indices must be canonical decimal digits. `test` compares recursively, treating an `int64` and a `double` as equal only when `tryTo<int64_t>` converts exactly. A new `json_pointer::is_strict_prefix_of` backs the `move` overlap check, and the `is_prefix_of` comment now says equal pointers count.
 
-`__log2r` is 32 for `ThreadLocalPRNG`, so this looks like it should fold to a
-constant. It does under gcc. It does not under clang: LLVM declines to
-constant-fold libm calls on `long double` (x86_fp80), so `logl` is called twice
-at runtime and `__m` is computed with a real `divq`/`divl` by the result. Two
-consequences, both live in production today:
+Non-obvious: Resolving the destination after removal is required for same-array moves. Exact numeric comparison is local to JSON Patch `test`, not a change to `dynamic::operator==`.
 
-**Crash surface.** If `logl` ever returns a wrong finite value, `__log2r`
-truncates to 0 and the divide traps `SIGFPE`. This is not theoretical — it took
-down `a2x_engine_retrieval_aal_pace_prodTier1` task 2490 and contributed to
-S704876:
+Reviewed By: yf
 
-```
-Signal 8 (SIGFPE) (code: integer divide by zero)
-  @ GRTrafficOffloadManager::shouldUseCurrentBucket(...)
-    .../bits/random.tcc:3356
-`
-
-**File**: `folly/BUCK` (modified, +1/-0)
+**File**: `folly/json/dynamic.cpp` (modified, +10/-0)
 ```diff
-@@ -241,6 +241,7 @@ fb_dirsync_cpp_library(
-         ":traits",
-         "//folly/functional:invoke",
-         "//folly/lang:bits",
-+        "//folly/random:uniform_real_distribution",
-         "//folly/random:xoshiro256pp",
-     ] + select({
-         "DEFAULT": [],
+@@ -473,6 +473,16 @@ dynamic::try_get_ptr(json_pointer const& jsonPtr) const& {
+         curr = nullptr;
+         continue;
+       }
++      // RFC 6901 array indices are decimal digits only. `tryTo` accepts
++      // surrounding whitespace, so reject non-digit tokens before using it.
++      bool is_canonical_index = !it->empty();
++      for (char const c : *it) {
++        is_canonical_index &= (c >= '0' && c <= '9');
++      }
++      if (!is_canonical_index) {
++        return makeUnexpected(
++            error{err_code::index_not_numeric, it.index, prev});
++      }
+       auto const idx = tryTo<size_t>(*it);
+       if (!idx.hasValue()) {
+         return makeUnexpected(
 ```
 
-**File**: `folly/CMakeLists.txt` (modified, +1/-0)
+**File**: `folly/json/json_patch.cpp` (modified, +103/-26)
 ```diff
-@@ -1025,6 +1025,7 @@ folly_add_library(
-     folly_functional_invoke
-     folly_lang_bits
-     folly_portability
-+    folly_random_uniform_real_distribution
-     folly_random_xoshiro256pp
-     folly_traits
- )
-```
-
-**File**: `folly/Random.h` (modified, +18/-9)
-```diff
-@@ -21,14 +21,18 @@
- #pragma once
- #define FOLLY_RANDOM_H_
+@@ -18,6 +18,7 @@
  
-+#include <cassert>
-+#include <cmath>
- #include <cstdint>
-+#include <limits>
- #include <random>
- #include <type_traits>
+ #include <glog/logging.h>
  
- #include <folly/Portability.h>
- #include <folly/Traits.h>
- #include <folly/functional/Invoke.h>
- #include <folly/lang/Bits.h>
-+#include <folly/random/UniformRealDistribution.h>
- #include <folly/random/xoshiro256pp.h>
++#include <folly/Conv.h>
+ #include <folly/container/Enumerate.h>
  
- #if defined(FOLLY_HAVE_EXTRANDOM_SFMT19937) && FOLLY_HAVE_EXTRANDOM_SFMT19937
-@@ -197,6 +201,7 @@ class Random {
+ namespace folly {
+@@ -64,7 +65,10 @@ Expected<json_patch, json_patch::parse_error> json_patch::try_parse(
  
-   /**
-    * Returns a secure double in [min, max), if min == max, returns min.
-+   * Reversed bounds sample (max, min]. Bounds must be finite.
-    */
-   static double secureRandDouble(double min, double max) {
-     SecureRNG<uint64_t> srng;
-@@ -393,32 +398,36 @@ class Random {
-    */
-   template <class RNG = ThreadLocalPRNG, class /* EnableIf */ = ValidRNG<RNG>>
-   static double randDouble01(RNG&& rng) {
--    // Assuming 64-bit IEEE754 doubles, numbers in the form k/2^53 can be
--    // represented exactly, so we can sample uniformly in [0, 1) by sampling an
--    // integer in [0, 2^53) and scaling accordingly. This is the highest
--    // precision we can obtain if we want a symmetric output distribution.
--    // See https://prng.di.unimi.it/#remarks for more details.
--    static_assert(
--        std::numeric_limits<double>::digits == 53, "Unsupported double type");
--    return (rand64(std::forward<RNG>(rng)) >> 11) * 0x1.0p-53;
-+    auto& engine = rng;
-+    return detail::uniform_real_distribution_canonical<double>(engine);
-   }
+     // extract 'from' attribute
+     {
+-      auto const* from_ptr = elem.get_ptr(kFromTag);
++      auto const* from_ptr =
++          (op_str == kOperationMove || op_str == kOperationCopy)
++          ? elem.get_ptr(kFromTag)
++          : nullptr;
+       if (from_ptr) {
+         if (!from_ptr->isString()) {
+           return makeUnexpected(parse_error{err_code::invalid_shape, &elem});
+@@ -131,8 +135,7 @@ Expected<json_patch, json_patch::parse_error> json_patch::try_parse(
+       if (!op.from) {
+         return makeUnexpected(parse_error{err_code::missing_from_attr, &elem});
+       }
+-      // is from a proper prefix to path?
+-      if (op.from->is_prefix_of(op.path)) {
++      if (op.from->is_strict_prefix_of(op.path)) {
+         return makeUnexpected(
+             parse_error{err_code::overlapping_pointers, &elem});
+       }
+@@ -159,6 +162,50 @@ std::vector<json_patch::patch_operation> const& json_patch::ops() const {
  
-   /**
-    * Returns a double in [min, max), if min == max, returns min.
-+   * Reversed bounds sample (max, min]. Bounds must be finite.
-    */
-   static double randDouble(double min, double max) {
-     return randDouble(min, max, ThreadLocalPRNG());
-   }
+ namespace {
  
-   /**
-    * Returns a double in [min, max), if min == max, returns min.
-+   * Reversed bounds sample (max, min]. Bounds must be finite.
-    */
-   template <class RNG = ThreadLocalPRNG, class /* EnableIf */ = ValidRNG<RNG>>
-   static double randDouble(double min, double max, RNG&& rng) {
-     if (std::fabs(max - min) < std::numeric_limits<double>::epsilon()) {
-       return min;
-     }
--    return std::uniform_real_distribution<double>(min, max)(rng);
-+    if (min > max || !std::isfinite(max - min)) {
-+      assert(std::isfinite(min) && std::isfinite(max));
-+      auto value = randDouble01(std::forward<RNG>(rng));
-+      auto result = std::lerp(min, max, value);
-+      auto inRange = min > max ? result > max : result < max;
-+      return inRange ? result : std::nextafter(max, min);
++bool numbers_equal(dynamic const& lhs, dynamic const& rhs) {
++  if (lhs.type() == rhs.type()) {
++    return lhs == rhs;
++  }
++  auto const& int_value = lhs.isInt() ? lhs : rhs;
++  auto const& double_value = lhs.isInt() ? rhs : lhs;
++  auto const exact = tryTo<int64_t>(double_value.getDouble());
++  return exact.hasValue() && *exact == int_value.getInt();
++}
++
++bool json_values_equal(dynamic const& lhs, dynamic const& rhs) {
++  if (lhs.isNumber() && rhs.isNumber()) {
++    return numbers_equal(lhs, rhs);
++  }
++  if (lhs.type() != rhs.type()) {
++    return false;
++  }
++  if (lhs.isArray()) {
++    if (lhs.size() != rhs.size()) {
++      return false;
 +    }
-+    auto& engine = rng;
-+    return uniform_real_distribution<double>(min, max)(engine);
++    for (size_t i = 0; i < lhs.size(); ++i) {
++      if (!json_values_equal(lhs[i], rhs[i])) {
++        return false;
++      }
++    }
++    return true;
++  }
++  if (lhs.isObject()) {
++    if (lhs.size() != rhs.size()) {
++      return false;
++    }
++    for (auto const& item : lhs.items()) {
++      auto const it = rhs.find(item.first);
++      if (it == rhs.items().end() ||
++          !json_values_equal(item.second, it->second)) {
++        return false;
++      }
++    }
++    return true;
++  }
++  return lhs == rhs;
++}
++
+ // clang-format off
+ Expected<Unit, json_patch::patch_application_error_code>
+ // clang-format on
+@@ -188,43 +235,65 @@ do_remove(dynamic::resolved_json_pointer<dynamic>& ptr) {
+   return makeUnexpected(error_code::other);
+ }
+ 
++// Moves from `value` only when the add succeeds.
+ // clang-format off
+ Expected<Unit, json_patch::patch_application_error_code>
+ // clang-format on
+ do_add(
+     dynamic::resolved_json_pointer<dynamic>& ptr,
+-    const dynamic& value,
+-    const std::string& last_token) {
++    dynamic&& value,
++    json_pointer const& path) {
+   using app_err_code = json_patch::patch_application_error_code;
+   using res_err_code = dynamic::json_pointer_resolution_error_code;
+ 
++  auto const& tokens = path.tokens();
++  auto const failed_at_last_token = !tokens.empty() && !ptr.hasValue() &&
++      ptr.error().index == tokens.size() - 1;
++
+   // element found: see if parent is object or array
+   if (ptr.hasValue()) {
+     // root element, or key in object - replace (per RFC)
+     if (ptr->parent == nullptr || ptr->parent->isObject()) {
+-      *ptr->value = value;
+-    }
+-    // valid index in array: insert at index and shift right
+-    if (ptr->parent && ptr->parent->isArray()) {
+-      ptr->parent->insert(ptr->parent->begin() + ptr->parent_index, value);
++      *ptr->value = std::move(value);
++    } else if (ptr->parent->isArray()) {
++      // valid index in array: insert at index and shift right
++      ptr->parent->insert(
++          ptr->parent->begin() + ptr->parent_index, std::move(value));
+     }
+   } else {
+     // see if we can add value, based on pointer resolution state
+     switch (ptr.error().error_code) {
+-      // key not found. can only happen in object - add new key-value
++      // key not found: only the final token may name a new object member
+       case res_err_code::key_not_found: {
++        if (!failed_at_last_token) {
++          return makeUnexpected(app_err_code::other);
++        }
+         DCHECK(ptr.error().context->isObject());
+-        ptr.error().context->insert(last_token, value);
++        ptr.error().context->insert(tokens.back(), std::move(value));
+         break;
+       }
+       // special '-' index in array - do append operation
+       case res_err_code::append_requested: {
++        if (!failed_at_last_token) {
++          return makeUnexpected(app_err_code::other);
++        }
+         DCHECK(ptr.error().context->isArray());
+-        ptr.error().context->push_back(value);
++        ptr.error().context->push_back(std::move(value));
+         break;
+       }
++      // a numeric index equal to the array size is also an append
++      case res_err_code::index_out_
+```
+
+**File**: `folly/json/json_pointer.cpp` (modified, +5/-0)
+```diff
+@@ -83,6 +83,11 @@ bool json_pointer::is_prefix_of(json_pointer const& other) const noexcept {
+   return std::equal(tokens_.cbegin(), tokens_.cend(), other_begin, other_end);
+ }
+ 
++bool json_pointer::is_strict_prefix_of(
++    json_pointer const& other) const noexcept {
++  return tokens_.size() < other.tokens_.size() && is_prefix_of(other);
++}
++
+ std::vector<std::string> const& json_pointer::tokens() const {
+   return tokens_;
+ }
+```
+
+**File**: `folly/json/json_pointer.h` (modified, +7/-1)
+```diff
+@@ -56,10 +56,16 @@ class json_pointer {
+   static json_pointer parse(std::string_view str);
+ 
+   /*
+-   * Return true if this pointer is proper to prefix to another pointer
++   * Return true if this pointer is a prefix of another pointer. Equal
++   * pointers are prefixes of each other.
+    */
+   bool is_prefix_of(json_pointer const& other) const noexcept;
+ 
++  /*
++   * Return true if this pointer is a prefix of another, longer pointer.
++   */
++  bool is_strict_prefix_of(json_pointer const& other) const noexcept;
++
+   /*
+    * Get access to the parsed tokens for applications that want to traverse
+    * the pointer.
+```
+
+**File**: `folly/json/test/DynamicTest.cpp` (modified, +9/-0)
+```diff
+@@ -1624,6 +1624,15 @@ TEST(Dynamic, JSONPointer) {
+         target.get_ptr(json_pointer::parse("/foo/01")), std::invalid_argument);
    }
- };
  
++  {
++    auto err = target.try_get_ptr(json_pointer::parse("/foo/ 1")).error();
++    EXPECT_EQ(err_code::index_not_numeric, err.error_code);
++    EXPECT_EQ(1, err.index);
++    EXPECT_EQ(target.get_ptr(json_pointer::parse("/foo")), err.context);
++    EXPECT_THROW(
++        target.get_ptr(json_pointer::parse("/foo/ 1")), std::invalid_argument);
++  }
++
+   // non-existent keys/indexes
+   {
+     auto err = ary.try_get_ptr(json_pointer::parse("/3")).error();
 ```
 
-**File**: `folly/random/BUCK` (modified, +7/-0)
+**File**: `folly/json/test/json_patch_test.cpp` (modified, +286/-8)
 ```diff
-@@ -44,6 +44,13 @@ fb_dirsync_cpp_library(
-     ],
- )
+@@ -14,6 +14,10 @@
+  * limitations under the License.
+  */
  
++#include <cstdint>
++#include <limits>
++#include <string_view>
++
+ #include <folly/json/json.h>
+ #include <folly/json_patch.h>
+ #include <folly/json_pointer.h>
+@@ -23,6 +27,7 @@
+ using folly::dynamic;
+ using folly::json_patch;
+ using folly::json_pointer;
++using namespace std::string_view_literals;
+ 
+ using err_code = folly::json_patch::parse_error_code;
+ using op_code = folly::json_patch::patch_operation_code;
+@@ -136,14 +141,6 @@ TEST_F(JsonPatchTest, InvalidPatches) {
+           .error()
+           .error_code);
+ 
+-  EXPECT_EQ(
+-      err_code::overlapping_pointers,
+-      json_patch::try_parse(
+-          folly::parseJson(
+-              R"([{"op": "move", "from" : "/a/b/c", "path" : "/a/b/c"}])"))
+-          .error()
+-          .error_code);
+-
+   EXPECT_EQ(
+       err_code::overlapping_pointers,
+       json_patch::try_parse(
+@@ -359,3 +356,284 @@ TEST_F(JsonPatchTest, FailedOpIndex) {
+       res.error().error_code);
+   EXPECT_EQ(1, res.error().index);
+ }
++
++TEST_F(JsonPatchTest, AddCopyAndMoveAtDocumentRoot) {
++  {
++    constexpr auto patchText =
++        R"([{"op":"add","path":"","value":{"new":1}}])"sv;
++    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++    dynamic doc = folly::parseJson(R"({"old":true})");
++    ASSERT_TRUE(patch.apply(doc).hasValue());
++    EXPECT_EQ(folly::parseJson(R"({"new":1})"), doc);
++  }
++  {
++    constexpr auto patchText = R"([{"op":"copy","from":"/a","path":""}])"sv;
++    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++    dynamic doc = folly::parseJson(R"({"a":{"x":1}})");
++    ASSERT_TRUE(patch.apply(doc).hasValue());
++    EXPECT_EQ(folly::parseJson(R"({"x":1})"), doc);
++  }
++  {
++    constexpr auto patchText = R"([{"op":"move","from":"/a","path":""}])"sv;
++    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++    dynamic doc = folly::parseJson(R"({"a":{"x":1},"b":2})");
++    ASSERT_TRUE(patch.apply(doc).hasValue());
++    EXPECT_EQ(folly::parseJson(R"({"x":1})"), doc);
++  }
++}
++
++TEST_F(JsonPatchTest, MoveAppendFromNestedArrayElement) {
++  constexpr auto patchText = R"([{"op":"move","from":"/0/x","path":"/-"}])"sv;
++  auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++
++  dynamic doc = dynamic::array(dynamic::object("x", 1));
++  doc.push_back(99);
++
++  ASSERT_TRUE(patch.apply(doc).hasValue());
++  EXPECT_EQ(folly::parseJson(R"([{},99,1])"), doc);
++}
++
++TEST_F(JsonPatchTest, MoveArrayElementUsesPostRemovalDestinationIndex) {
++  {
++    constexpr auto patchText = R"([{"op":"move","from":"/1","path":"/0"}])"sv;
++    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++    dynamic doc = folly::parseJson(R"(["bar","baz"])");
++    ASSERT_TRUE(patch.apply(doc).hasValue());
++    EXPECT_EQ(folly::parseJson(R"(["baz","bar"])"), doc);
++  }
++  {
++    constexpr auto patchText = R"([{"op":"move","from":"/0","path":"/2"}])"sv;
++    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++    dynamic doc = folly::parseJson(R"([1,2,3])");
++    ASSERT_TRUE(patch.apply(doc).hasValue());
++    EXPECT_EQ(folly::parseJson(R"([2,3,1])"), doc);
++  }
++}
++
++TEST_F(JsonPatchTest, CopyDescendantToAncestorUsesSnapshot) {
++  constexpr folly::StringPiece value =
++      "01234567890123456789012345678901234567890123456789";
++  constexpr auto patchText = R"([{"op":"copy","from":"/a/b","path":"/a"}])"sv;
++  auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++  dynamic doc = dynamic::object("a", dynamic::object("b", value));
++
++  ASSERT_TRUE(patch.apply(doc).hasValue());
++  const dynamic expected = dynamic::object("a", value);
++  EXPECT_EQ(expected, doc);
++}
++
++TEST_F(JsonPatchTest, CopyArrayElementToSameArrayAppend) {
++  constexpr auto patchText = R"([
++    {"op":"add","path":"/arr","value":["x"]},
++    {"op":"copy","from":"/arr/0","path":"/arr/-"}
++  ])"sv;
++  auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++  dynamic doc = dynamic::object();
++
++  ASSERT_TRUE(patch.apply(doc).hasValue());
++  EXPECT_EQ(folly::parseJson(R"({"arr":["x","x"]})"), doc);
++}
++
++TEST_F(JsonPatchTest, MoveToSameLocationIsNoOp) {
++  constexpr auto patchText = R"([{"op":"move","from":"/a/b","path":"/a/b"}])"sv;
++  auto parsed = json_patch::try_parse(folly::parseJson(patchText));
++  ASSERT_TRUE(parsed.hasValue());
++
++  dynamic doc = folly::parseJson(R"({"a":{"b":[1,2]}})");
++  ASSERT_TRUE(parsed->apply(doc).hasValue());
++  EXPECT_EQ(folly::parseJson(R"({"a":{"b":[1,2]}})"), doc);
++}
++
++TEST_F(JsonPatchTest, AddAtNumericArrayEnd) {
++  {
++    constexpr auto patchText = R"([{"op":"add","path":"/a/2","value":3}])"sv;
++    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++    dynamic doc = folly::parseJson(R"({"a":[1,2]})");
++
++    ASSERT_TRUE(patch.apply(doc).hasValue());
++    EXPECT_EQ(folly::parseJson(R"({"a":[1,2,3]})"), doc);
++  }
++  {
++    constexpr auto patchText = R"([{
+```
+
+**File**: `folly/json/test/json_pointer_test.cpp` (modified, +19/-0)
+```diff
+@@ -75,8 +75,27 @@ TEST_F(JsonPointerTest, BoundedBytes) {
+ TEST_F(JsonPointerTest, IsPrefixTo) {
+   EXPECT_TRUE(
+       json_pointer::parse("/a/b").is_prefix_of(json_pointer::parse("/a/b/c")));
++  EXPECT_TRUE(
++      json_pointer::parse("/a/b").is_prefix_of(json_pointer::parse("/a/b")));
+   EXPECT_FALSE(
+       json_pointer::parse("/a/b").is_prefix_of(json_pointer::parse("/a/d/e")));
+   EXPECT_FALSE(
+       json_pointer::parse("/a/b/c").is_prefix_of(json_pointer::parse("/a/b")));
+ }
++
++TEST_F(JsonPointerTest, IsStrictPrefixOf) {
++  EXPECT_TRUE(
++      json_pointer::parse("/a/b").is_strict_prefix_of(
++          json_pointer::parse("/a/b/c")));
++  EXPECT_TRUE(
++      json_pointer::parse("").is_strict_prefix_of(json_pointer::parse("/a")));
++  EXPECT_FALSE(
++      json_pointer::parse("/a/b").is_strict_prefix_of(
++          json_pointer::parse("/a/b")));
++  EXPECT_FALSE(
++      json_pointer::parse("/a/b").is_strict_prefix_of(
++          json_pointer::parse("/a/d/e")));
++  EXPECT_FALSE(
++      json_pointer::parse("/a/b/c").is_strict_prefix_of(
++          json_pointer::parse("/a/b")));
++}
+```
+
+---
+
+### Incident Patch 2: `94502935` (2026-11-14)
+**Commit Message**: Remove the last required compiled Boost library
+
+Summary:
+Boost.Context is the last compiled Boost library a folly build requires: Boost.Regex and Boost.ProgramOptions are optional, and only fibers need Boost.Context. Fibers use just two small assembly routines from it, `make_fcontext` and `jump_fcontext`, yet every folly user has to build and install Boost's compiled libraries, a large dependency that most of them don't otherwise need, to get them. This vendors the routines as `folly/external/boost-fcontext`, so fibers no longer depend on Boost.Context, and a CMake build of folly on x86_64 and arm64 outside Windows no longer requires any compiled Boost library. That is a prerequisite for building folly without Boost, which will make it much easier to build, package and depend on.
+
+Vendoring also pins the saved-register layout that fibers rely on. `BoostContextCompatibility.h` stitches fiber stacks for frame-pointer stack walkers by reading the frame pointer and return address that `jump_fcontext` saves at fixed offsets, but that layout is private to Boost.Context and changes between releases: Boost 1.89 adds a stack guard slot to the x86_64 SysV ELF layout, which moves both regist
+
+**File**: `cmake/folly-config.h.cmake` (modified, +1/-0)
+```diff
+@@ -65,6 +65,7 @@
+ #cmakedefine01 FOLLY_HAVE_DWARF
+ #cmakedefine01 FOLLY_HAVE_ELF
+ #cmakedefine FOLLY_HAVE_SWAPCONTEXT 1
++#cmakedefine FOLLY_FIBERS_USE_BOOST_CONTEXT 1
+ #cmakedefine FOLLY_HAVE_BACKTRACE 1
+ #cmakedefine FOLLY_USE_SYMBOLIZER 1
+ #define FOLLY_DEMANGLE_MAX_SYMBOL_SIZE 1024
+```
+
+**File**: `cmake/folly-deps.cmake` (modified, +18/-1)
+```diff
+@@ -56,7 +56,24 @@ set(Boost_USE_STATIC_LIBS "${FOLLY_BOOST_LINK_STATIC}")
+ # Note: We find these components so the CMake targets exist, but we don't
+ # link them globally. Targets that need specific Boost libraries should
+ # add them to their EXTERNAL_DEPS (e.g., Boost::regex, Boost::context).
+-set(FOLLY_BOOST_COMPONENTS context)
++set(FOLLY_BOOST_COMPONENTS "")
++
++# Fibers switch contexts with the assembly in folly/external/boost-fcontext
++# on x86_64 and arm64 outside Windows, and with Boost.Context elsewhere.
++set(FOLLY_FIBERS_USE_BOOST_CONTEXT OFF)
++set(folly_fcontext_archs ${CMAKE_SYSTEM_PROCESSOR})
++if (APPLE AND CMAKE_OSX_ARCHITECTURES)
++  set(folly_fcontext_archs ${CMAKE_OSX_ARCHITECTURES})
++endif ()
++foreach (arch IN LISTS folly_fcontext_archs)
++  if (NOT arch MATCHES "^(x86_64|aarch64|arm64)$")
++    set(FOLLY_FIBERS_USE_BOOST_CONTEXT ON)
++  endif ()
++endforeach ()
++if (WIN32 OR NOT folly_fcontext_archs OR FOLLY_FIBERS_USE_BOOST_CONTEXT)
++  set(FOLLY_FIBERS_USE_BOOST_CONTEXT ON)
++  list(APPEND FOLLY_BOOST_COMPONENTS context)
++endif ()
+ 
+ # CMake 4 dropped FindBoost, so this config-only probe warns without QUIET.
+ # folly/cli's ProgramOptions is built only if Boost.ProgramOptions is found,
+```
+
+**File**: `folly/external/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -14,6 +14,7 @@
+ 
+ # @generated by folly/facebook/generate_cmake.py
+ 
++add_subdirectory(boost-fcontext)
+ add_subdirectory(farmhash)
+ add_subdirectory(fast-crc32)
+ add_subdirectory(nvidia)
+```
+
+**File**: `folly/external/boost-fcontext/BUCK` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_library.bzl", "fb_dirsync_cpp_library")
++
++oncall("fbcode_entropy_wardens_folly")
++
++MACHO_SRCS = select({
++    "DEFAULT": [],
++    "ovr_config//cpu:arm64": [
++        "jump_arm64_aapcs_macho_gas.S",
++        "make_arm64_aapcs_macho_gas.S",
++    ],
++    "ovr_config//cpu:x86_64": [
++        "jump_x86_64_sysv_macho_gas.S",
++        "make_x86_64_sysv_macho_gas.S",
++    ],
++})
++
++ELF_ARM64_SRCS = [
++    "jump_arm64_aapcs_elf_gas.S",
++    "make_arm64_aapcs_elf_gas.S",
++]
++
++ELF_SRCS = {
++    "ovr_config//cpu:arm32": [
++        "jump_arm_aapcs_elf_gas.S",
++        "make_arm_aapcs_elf_gas.S",
++    ],
++    "ovr_config//cpu:arm64": ELF_ARM64_SRCS,
++    "ovr_config//cpu:x86_32": [
++        "jump_i386_sysv_elf_gas.S",
++        "make_i386_sysv_elf_gas.S",
++    ],
++    "ovr_config//cpu:x86_64": [
++        "jump_x86_64_sysv_elf_gas.S",
++        "make_x86_64_sysv_elf_gas.S",
++    ],
++}
++
 +fb_dirsync_cpp_library(
-+    name = "uniform_real_distribution",
-+    headers = ["UniformRealDistribution.h"],
-+    apple_sdks = (IOS, APPLETVOS, MACOSX, WATCHOS),
-+    use_raw_headers = True,
++    name = "fcontext",
++    srcs = select({
++        "DEFAULT": select(dict(ELF_SRCS, DEFAULT = [])),
++        # Android configurations without a CPU constraint compile for arm64.
++        "ovr_config//os:android": select(dict(ELF_SRCS, DEFAULT = ELF_ARM64_SRCS)),
++        "ovr_config//os:appletvos": MACHO_SRCS,
++        "ovr_config//os:iphoneos": MACHO_SRCS,
++        "ovr_config//os:macos": MACHO_SRCS,
++        "ovr_config//os:windows": select({
++            "DEFAULT": [],
++            "ovr_config//cpu:arm64": [
++                "jump_arm64_aapcs_pe_armasm.asm",
++                "make_arm64_aapcs_pe_armasm.asm",
++            ],
++            "ovr_config//cpu:x86_32": [
++                "jump_i386_ms_pe_masm.asm",
++                "make_i386_ms_pe_masm.asm",
++            ],
++            "ovr_config//cpu:x86_64": [
++                "jump_x86_64_ms_pe_masm.asm",
++                "make_x86_64_ms_pe_masm.asm",
++            ],
++        }),
++    }),
++    headers = ["fcontext.h"],
++    compiler_flags = select({
++        "DEFAULT": ["-Wno-unused-command-line-argument"],
++        "ovr_config//os:windows": [],
++        "ovr_config//os:windows-x86_32": ["/DBOOST_CONTEXT_EXPORT="],
++        "ovr_config//os:windows-x86_64": ["/DBOOST_CONTEXT_EXPORT="],
++    }),
 +)
-+
- fb_dirsync_cpp_library(
-     name = "xoshiro256pp",
-     headers = [
 ```
 
-**File**: `folly/random/CMakeLists.txt` (modified, +5/-0)
+**File**: `folly/external/boost-fcontext/CMakeLists.txt` (added, +41/-0)
 ```diff
-@@ -38,6 +38,11 @@ folly_add_library(
-     folly_random_seed_seq
- )
- 
+@@ -0,0 +1,41 @@
++# Copyright (c) Meta Platforms, Inc. and affiliates.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++# NOTE: This file is manually maintained, not auto-generated.
++# Update this file when the corresponding BUCK file changes.
++
++if (FOLLY_FIBERS_USE_BOOST_CONTEXT)
++  folly_add_library(
++    NAME fcontext
++    HEADERS fcontext.h
++    EXTERNAL_DEPS Boost::context
++  )
++  return ()
++endif ()
++
++# On Apple platforms the wrappers pick the variant for each architecture in
++# CMAKE_OSX_ARCHITECTURES, which may differ from CMAKE_SYSTEM_PROCESSOR.
++if (APPLE)
++  set(abi macho_gas.S)
++elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
++  set(abi x86_64_sysv_elf_gas.S)
++else ()
++  set(abi arm64_aapcs_elf_gas.S)
++endif ()
++
 +folly_add_library(
-+  NAME uniform_real_distribution
-+  HEADERS UniformRealDistribution.h
++  NAME fcontext
++  SRCS make_${abi} jump_${abi}
++  HEADERS fcontext.h
 +)
-+
- folly_add_library(
-   NAME xoshiro256pp
-   HEADERS xoshiro256pp.h
 ```
 
-**File**: `folly/random/UniformRealDistribution.h` (added, +174/-0)
+**File**: `folly/external/boost-fcontext/LICENSE_1_0.txt` (added, +23/-0)
 ```diff
-@@ -0,0 +1,174 @@
-+/*
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
+@@ -0,0 +1,23 @@
++Boost Software License - Version 1.0 - August 17th, 2003
++
++Permission is hereby granted, free of charge, to any person or organization
++obtaining a copy of the software and accompanying documentation covered by
++this license (the "Software") to use, reproduce, display, distribute,
++execute, and transmit the Software, and to prepare derivative works of the
++Software, and to permit third-parties to whom the Software is furnished to
++do so, all subject to the following:
++
++The copyright notices in the Software and this entire statement, including
++the above license grant, this restriction and the following disclaimer,
++must be included in all copies of the Software, in whole or in part, and
++all derivative works of the Software, unless such copies or derivative
++works are solely in the form of machine-executable object code generated by
++a source language processor.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
++SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
++FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
++ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++DEALINGS IN THE SOFTWARE.
+```
+
+**File**: `folly/external/boost-fcontext/README.md` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++# boost-fcontext
++
++The `make_fcontext` and `jump_fcontext` assembly from
++[Boost.Context](https://github.com/boostorg/context) 1.77.0, and a header
++declaring them, adapted from `boost/context/detail/fcontext.hpp`.
++
++The assembly matches Boost.Context 1.77.0 with two exceptions: the Windows arm64
++(armasm) files are backported from Boost.Context 1.80.0, which added them, and
++the arm64 ELF files add BTI landing pads (a `bti c` and the GNU BTI property
++note), functionally equivalent to those Boost.Context 1.90.0 later added.
++Otherwise, the only change to the assembly is that the functions are renamed to
++`folly_make_fcontext` and `folly_jump_fcontext`, so that they do not clash with
++Boost.Context in a program that links both. `update.sh` regenerates the
++assembly from a Boost source tree. `make_macho_gas.S` and `jump_macho_gas.S`
++include the Mach-O variant for the target architecture, so that CMake builds
++for any combination of arm64 and x86_64 in `CMAKE_OSX_ARCHITECTURES`, including
++universal binaries, and uses Boost.Context for other architectures.
++
++Distributed under the Boost Software License, Version 1.0 (see
++`LICENSE_1_0.txt`).
+```
+
+**File**: `folly/external/boost-fcontext/fcontext.h` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++//          Copyright Oliver Kowalke 2009.
++// Distributed under the Boost Software License, Version 1.0.
++//    (See accompanying file LICENSE_1_0.txt or copy at
++//          http://www.boost.org/LICENSE_1_0.txt)
 +
 +#pragma once
 +
-+#include <cassert>
-+#include <cmath>
-+#include <cstdint>
-+#include <istream>
-+#include <limits>
-+#include <ostream>
-+#include <random>
-+#include <type_traits>
++#include <cstddef>
 +
-+namespace folly {
-+namespace detail {
++#if defined(_MSC_VER) && defined(_M_IX86)
++#define FOLLY_FCONTEXT_CALLDECL __cdecl
++#else
++#define FOLLY_FCONTEXT_CALLDECL
++#endif
 +
-+template <typename UInt, typename RNG>
-+UInt uniform_real_distribution_bits(RNG& rng) {
-+  constexpr bool uniform =
-+      RNG::min() == 0 && (RNG::max() & (RNG::max() + 1)) == 0;
-+  if constexpr (uniform && RNG::max() >= std::numeric_limits<UInt>::max()) {
-+    return static_cast<UInt>(rng());
-+  } else if constexpr (
-+      uniform && std::is_same_v<UInt, uint64_t> &&
-+      RNG::max() >= std::numeric_limits<uint32_t>::max()) {
-+    auto high = static_cast<uint64_t>(static_cast<uint32_t>(rng()));
-+    auto low = static_cast<uint32_t>(rng());
-+    return (high << 32) | low;
-+  } else {
-+    return std::uniform_int_distribution<UInt>()(rng);
-+  }
-+}
++namespace folly::detail::fcontext {
 +
-+// Sample the exactly representable grid k / 2^Bits in [0, 1). Discarding
-+// low bits avoids rounding the largest RNG outputs up to 1.
-+template <
-+    typename Real,
-+    int Bits = std::numeric_limits<Real>::digits,
-+    typename RNG>
-+Real uniform_real_distribution_canonical(RNG& rng) {
-+  static_assert(std::numeric_limits<Real>::radix == 2);
-+  constexpr int bits = Bits < 64 ? Bits : 64;
-+  using UInt = std::conditional_t<(bits <= 32), uint32_t, uint64_t>;
-+  constexpr int shift = std::numeric_limits<UInt>::digits - bits;
-+  constexpr Real scale = Real{0x1p-64} * (uint64_t{1} << (64 - bits));
-+  auto randomBits = uniform_real_distribution_bits<UInt>(rng);
-+  auto value = static_cast<Real>(randomBits >> shift) * scale;
-+  if constexpr (Bits > 64) {
-+    auto tail = uniform_real_distribution_canonical<Real, Bits - 64>(rng);
-+    value += tail * Real{0x1p-64};
-+  }
-+  return value;
-+}
++using fcontext_t = void*;
 +
-+} // namespace detail
-+
-+/**
-+ * A uniform real distribution in [a, b), with the interface of
-+ * std::uniform_real_distribution. Bounds must be finite and ordered, with a
-+ * finite span b - a; equal bounds return that value without consuming the RNG.
-+ *
-+ * Canonical values use numeric_limits<RealType>::digits random bits, without
-+ * the runtime logarithms some standard libraries use to count RNG draws.
-+ * Seeded sequences need not match std::uniform_real_distribution.
-+ */
-+template <typename RealType = double>
-+class uniform_real_distribution {
-+  static_assert(std::is_floating_point_v<RealType>);
-+
-+ public:
-+  using result_type = RealType;
-+
-+  class param_type {
-+   public:
-+    using distribution_type = uniform_real_distribution;
-+
-+    explicit param_type(RealType a = 0, RealType b = 1) : a_(a), b_(b) {
-+      assert(std::isfinite(a) && std::isfinite(b) && a <= b);
-+      assert(std::isfinite(b - a));
-+    }
-+
-+    RealType a() const { return a_; }
-+    RealType b() const { return b_; }
-+
-+    friend bool operator==(const param_type&, const param_type&) = default;
-+
-+   private:
-+    RealType a_;
-+    RealType b_;
-+  };
-+
-+  explicit uniform_real_distribution(RealType a = 0, RealType b = 1)
-+      : param_(a, b) {}
-+
-+  explicit uniform_real_distribution(const param_type& param) : param_(param) {}
-+
-+  void reset() {}
-+
-+  RealType a() const { return param_.a(); }
-+  RealType b() const { return param_.b(); }
-+  RealType min() const { return a(); }
-+  RealType max() const { return b(); }
-+  param_type param() const { return param_; }
-+  void param(const param_type& param) { param_ = param; }
-+
-+  template <typename RNG>
-+  result_type operator()(RNG& rng) const {
-+    return (*this)(rng, param_);
-+  }
-+
-+  template <typename RNG>
-+  result_type operator()(RNG& rng, const param_type& param) const {
-+    if (param.a() == param.b()) {
-+      return param.a();
-+    }
-+    auto value = detail::uniform_real_distribution_canonical<RealType>(rng);
-+    auto result = std::lerp(param.a(), param.b(), value);
-+    // Scaling can round up to the excluded upper endpoint.
-+    return result < param.b() ? result : std::nextafter(param.b(), param.a());
-+  }
-+
-+  friend bool operator==(
-+      const uniform_real_distribution&,
-+      const uniform_real_distribution&) = default;
-+
-+  template <typename Char, typename Traits>
-+  friend std::basic_ostream<Char, Traits>& operator<<(
-+      std::basic_ostream<Char, Traits>& out,
-+      const uniform_real_distribution& dist) {
-+    auto flags = out.flags();
-+    auto precision = 
-```
-
-**File**: `folly/random/test/BUCK` (modified, +9/-0)
-```diff
-@@ -42,6 +42,15 @@ fb_dirsync_cpp_unittest(
-     ],
- )
- 
-+fb_dirsync_cpp_unittest(
-+    name = "uniform_real_distribution_test",
-+    srcs = ["UniformRealDistributionTest.cpp"],
-+    deps = [
-+        "//folly/portability:gtest",
-+        "//folly/random:uniform_real_distribution",
-+    ],
-+)
-+
- fb_dirsync_cpp_unittest(
-     name = "xoshiro256pp_test",
-     srcs = ["Xoshiro256ppTest.cpp"],
-```
-
-**File**: `folly/random/test/UniformRealDistributionTest.cpp` (added, +253/-0)
-```diff
-@@ -0,0 +1,253 @@
-+/*
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+#include <folly/random/UniformRealDistribution.h>
-+
-+#include <array>
-+#include <cmath>
-+#include <cstdint>
-+#include <limits>
-+#include <random>
-+#include <sstream>
-+#include <type_traits>
-+
-+#include <folly/portability/GTest.h>
-+
-+namespace folly {
-+namespace {
-+
-+template <typename UInt>
-+struct ConstantRNG {
-+  using result_type = UInt;
-+
-+  UInt value = 0;
-+  unsigned calls = 0;
-+
-+  UInt operator()() {
-+    ++calls;
-+    return value;
-+  }
-+  static constexpr UInt min() { return 0; }
-+  static constexpr UInt max() { return std::numeric_limits<UInt>::max(); }
++struct transfer_t {
++  fcontext_t fctx;
++  void* data;
 +};
 +
-+struct SequenceRNG {
-+  using result_type = uint32_t;
++extern "C" transfer_t FOLLY_FCONTEXT_CALLDECL
++folly_jump_fcontext(fcontext_t to, void* vp);
++extern "C" fcontext_t FOLLY_FCONTEXT_CALLDECL
++folly_make_fcontext(void* sp, std::size_t size, void (*fn)(transfer_t));
 +
-+  std::array<uint32_t, 4> values{0x80000000, 0, 0, 0};
-+  unsigned calls = 0;
-+
-+  uint32_t operator()() { return values.at(calls++); }
-+  static constexpr uint32_t min() { return 0; }
-+  static constexpr uint32_t max() { return UINT32_MAX; }
-+};
-+
-+template <typename Real>
-+class UniformRealDistributionTest : public testing::Test {};
-+
-+using RealTypes = testing::Types<float, double, long double>;
-+TYPED_TEST_SUITE(UniformRealDistributionTest, RealTypes);
-+
-+TYPED_TEST(UniformRealDistributionTest, Parameters) {
-+  using Dist = uniform_real_distribution<TypeParam>;
-+  using Param = typename Dist::param_type;
-+  static_assert(std::is_same_v<typename Dist::result_type, TypeParam>);
-+  static_assert(std::is_same_v<typename Param::distribution_type, Dist>);
-+
-+  Dist dist;
-+  EXPECT_EQ(dist.a(), 0);
-+  EXPECT_EQ(dist.b(), 1);
-+  EXPECT_EQ(dist.min(), 0);
-+  EXPECT_EQ(dist.max(), 1);
-+  EXPECT_EQ(dist.param(), Param());
-+
-+  Param param(-5, 17);
-+  dist.param(param);
-+  EXPECT_EQ(dist, Dist(param));
-+  EXPECT_EQ(dist, Dist(-5, 17));
-+  EXPECT_NE(dist, Dist());
-+  EXPECT_EQ(dist.min(), -5);
-+  EXPECT_EQ(dist.max(), 17);
-+  dist.reset();
-+  EXPECT_EQ(dist.param(), param);
-+
-+  ConstantRNG<uint32_t> rng;
-+  EXPECT_EQ(dist(rng, Param(2, 3)), 2);
-+  EXPECT_EQ(dist.param(), param);
-+}
-+
-+TYPED_TEST(UniformRealDistributionTest, FullWidthEngines) {
-+  using Real = TypeParam;
-+  uniform_real_distribution<Real> dist;
-+  ConstantRNG<uint32_t> rng32;
-+  EXPECT_EQ(dist(rng32), 0);
-+  rng32.value = rng32.max();
-+  EXPECT_EQ(dist(rng32), std::nextafter(Real{1}, Real{0}));
-+  EXPECT_EQ(rng32.calls, 2 * ((std::numeric_limits<Real>::digits + 31) / 32));
-+
-+  ConstantRNG<uint64_t> rng64;
-+  EXPECT_EQ(dist(rng64), 0);
-+  rng64.value = rng64.max();
-+  EXPECT_EQ(dist(rng64), std::nextafter(Real{1}, Real{0}));
-+  EXPECT_EQ(rng64.calls, 2 * ((std::numeric_limits<Real>::digits + 63) / 64));
-+}
-+
-+TYPED_TEST(UniformRealDistributionTest, WordOrderAndPrecision) {
-+  using Real = TypeParam;
-+  uniform_real_distribution<Real> dist;
-+  SequenceRNG rng;
-+  EXPECT_EQ(dist(rng), Real{0.5});
-+  EXPECT_EQ(rng.calls, (std::numeric_limits<Real>::digits + 31) / 32);
-+
-+  SequenceRNG low;
-+  constexpr int digits = std::numeric_limits<Real>::digits;
-+  constexpr int words = (digits + 31) / 32;
-+  low.values.fill(0);
-+  low.values[words - 1] = uint32_t{1} << ((32 - digits % 32) % 32);
-+  EXPECT_EQ(dist(low), std::ldexp(Real{1}, -digits));
-+}
-+
-+TYPED_TEST(UniformRealDistributionTest, ExcludesUpperEndpoint) {
-+  using Real = TypeParam;
-+  ConstantRNG<uint32_t> rng{UINT32_MAX};
-+  EXPECT_EQ(
-+      uniform_real_distribution<Real>(1, 2)(rng),
-+      std::nextafter(Real{2}, Real{1}));
-+  EXPECT_EQ(
-+      uniform_real_distribution<Real>(-2, -1)(rng),
-+      std::nextafter(Real{-1}, Real{-2}));
-+  auto adjacent = std::nextafter(Real{1}, Real{2});
-+  EXPECT_EQ(uniform_real_distribution<Real>(1, adjacent)(rng), 1);
-+  if constexpr (std::numeric_limits<Real>::has_denorm == std::denorm_present) {
-+    EXPECT_EQ(
-+        uniform_real_distribution<Real>(
-+            0, std::numeric_limits<Real>::denorm_min())(rng),
-+        0);
-+  }
-+}
-+
-+TYPED_TEST(UniformRealDistributionTest, ExtremeFiniteBounds) {
-+  using Real = TypeParam;
-+  auto max = std::numeric_limits<Real>::max() / 2;
-+  uniform_real_distribution<Real> dist(-max, max);
-+  ConstantRNG<uint32_t> zero;
-+  EXPECT_EQ(dist(zero), -max);
-+  SequenceRNG half;
-+  EXPECT_EQ(dist(half), 0);
-+  ConstantRNG<uint32_t> high{UINT32_MAX};
-+  auto value = dist(high);
-+  EXPECT_TRUE(std::isfinite(value));
-+  EXPECT_GT(value, 0);
-+  EXPECT_LT(value, max);
-+}
-+
-+TYPED_TEST(UniformRealDistributionTest, EqualBoundsDoNotConsumeEngine) {
-+  ConstantRNG<uint32_t>
++} // namespace folly::detail::fcontext
 ```
 
 ---
 
-### Incident Patch 2: `3abdf4c0` (2026-11-12)
-**Commit Message**: thread_local: Take the fork guard in the debug set check
+### Incident Patch 3: `7014db84` (2026-11-13)
+**Commit Message**: Give IoUring RescheduleTimeout extra timeout tolerance
 
 Summary:
-## The issue
-- In debug builds, `ThreadLocalPtr::get()` runs `DCHECK(te->cachedInSetMatchesElementsArray(id))`, which read-locks the per-id `ThreadEntrySet` without the shared `forkHandlerLock_` that every other set-lock path holds. If another thread is in that check when a process forks, the child inherits a read-locked `SharedMutex` with no owner, and `StaticMeta::onForkChild()` blocks forever on `set.wlock()`.
+`RescheduleTimeout` asserts 15/20/50ms timers fire within the 5ms default
+tolerance. The `IoUring` backend delivers timer callbacks up to a loop
+iteration later than other backends, so on loaded hosts it lands just over
+the line under stress (overshoots of 6-11ms observed; continuous is green).
+Allow 15ms for `IoUring` providers only; other backends keep the tight
+default. Same approach as D128818075 for `ScheduledFnAt`.
 
-## The fix
-- `cachedInSetMatchesElementsArray` now try-acquires `forkHandlerLock_` shared before taking the set lock, and skips the debug check if it can't. Non-debug builds are unchanged, since the function returns early there.
+___
 
-Reviewed By: yfeldblum
+landed-with-radar-review
 
-Differential Revision: D128543041
+Differential Revision: D131700400
 
-fbshipit-source-id: 7a4573d02753eeb7185c63e8e1984ee82f37a9ab
+fbshipit-source-id: bf638f8806fd53a2acbb7282eb2332671b03c854
 
-**File**: `folly/detail/ThreadLocalDetail.cpp` (modified, +6/-0)
+**File**: `folly/io/async/test/EventBaseTestLib.h` (modified, +14/-4)
 ```diff
-@@ -192,6 +192,12 @@ bool ThreadEntry::cachedInSetMatchesElementsArray(uint32_t id) {
-     return true;
-   }
+@@ -1247,10 +1247,20 @@ TYPED_TEST_P(EventBaseTest, RescheduleTimeout) {
+   eb.loop();
+   TimePoint end;
  
-+  // Without the fork guard, a fork() while this thread holds the set's read
-+  // lock leaves the child's copy locked forever, hanging onForkChild().
-+  std::shared_lock forkRlock(meta->forkHandlerLock_, std::try_to_lock);
-+  if (!forkRlock) {
-+    return true;
-+  }
-   auto rlock = meta->allId2ThreadEntrySets_[id].tryRLock();
-   if (!rlock) {
-     // Try lock failed. Skip checking in this case. Avoids
-```
-
----
-
-### Incident Patch 3: `b8fcc053` (2026-11-12)
-**Commit Message**: Detect Synchronized mutex levels with requires-expressions
-
-Summary: Replace the three `kSynchronizedMutexIs*` partial specializations in `folly/Synchronized.h` with plain `requires` expressions. This drops the dummy first template parameter, so the test library's uses are updated too.
-
-Reviewed By: yfeldblum
-
-Differential Revision: D131337181
-
-fbshipit-source-id: f326d1081abdbc36fedc732790f8caa3b373d823
-
-**File**: `folly/Synchronized.h` (modified, +12/-18)
-```diff
-@@ -51,26 +51,20 @@ namespace folly {
- 
- namespace detail {
- 
--template <typename, typename Mutex>
--inline constexpr bool kSynchronizedMutexIsUnique = false;
- template <typename Mutex>
--inline constexpr bool kSynchronizedMutexIsUnique<
--    decltype(void(std::declval<Mutex&>().lock())),
--    Mutex> = true;
-+inline constexpr bool kSynchronizedMutexIsUnique = requires(Mutex& mutex) {
-+  mutex.lock();
-+};
- 
--template <typename, typename Mutex>
--inline constexpr bool kSynchronizedMutexIsShared = false;
- template <typename Mutex>
--inline constexpr bool kSynchronizedMutexIsShared<
--    decltype(void(std::declval<Mutex&>().lock_shared())),
--    Mutex> = true;
-+inline constexpr bool kSynchronizedMutexIsShared = requires(Mutex& mutex) {
-+  mutex.lock_shared();
-+};
- 
--template <typename, typename Mutex>
--inline constexpr bool kSynchronizedMutexIsUpgrade = false;
- template <typename Mutex>
--inline constexpr bool kSynchronizedMutexIsUpgrade<
--    decltype(void(std::declval<Mutex&>().lock_upgrade())),
--    Mutex> = true;
-+inline constexpr bool kSynchronizedMutexIsUpgrade = requires(Mutex& mutex) {
-+  mutex.lock_upgrade();
-+};
+-  T_CHECK_TIMEOUT(start, t1.timestamp, std::chrono::milliseconds(15));
+-  T_CHECK_TIMEOUT(start, t2.timestamp, std::chrono::milliseconds(20));
+-  T_CHECK_TIMEOUT(start, t3.timestamp, std::chrono::milliseconds(50));
+-  T_CHECK_TIMEOUT(start, end, std::chrono::milliseconds(50));
++  // The IoUring backend can deliver timer callbacks up to a loop iteration
++  // later than other backends, so on loaded hosts it can exceed the tight
++  // default tolerance (overruns of 6-11ms observed under stress). Allow it
++  // extra room without weakening the check for other backends.
++  auto timeoutTolerance = TypeParam::isIoUringBackend()
++      ? std::chrono::milliseconds(15)
++      : std::chrono::milliseconds(5);
++  T_CHECK_TIMEOUT(
++      start, t1.timestamp, std::chrono::milliseconds(15), timeoutTolerance);
++  T_CHECK_TIMEOUT(
++      start, t2.timestamp, std::chrono::milliseconds(20), timeoutTolerance);
++  T_CHECK_TIMEOUT(
++      start, t3.timestamp, std::chrono::milliseconds(50), timeoutTolerance);
++  T_CHECK_TIMEOUT(start, end, std::chrono::milliseconds(50), timeoutTolerance);
+ }
  
  /**
-  * An enum to describe the "level" of a mutex.  The supported levels are
-@@ -83,9 +77,9 @@ enum class SynchronizedMutexLevel { Unknown, Unique, Shared, Upgrade };
- 
- template <typename Mutex>
- inline constexpr SynchronizedMutexLevel kSynchronizedMutexLevel =
--    kSynchronizedMutexIsUpgrade<void, Mutex>  ? SynchronizedMutexLevel::Upgrade
--    : kSynchronizedMutexIsShared<void, Mutex> ? SynchronizedMutexLevel::Shared
--    : kSynchronizedMutexIsUnique<void, Mutex>
-+    kSynchronizedMutexIsUpgrade<Mutex>  ? SynchronizedMutexLevel::Upgrade
-+    : kSynchronizedMutexIsShared<Mutex> ? SynchronizedMutexLevel::Shared
-+    : kSynchronizedMutexIsUnique<Mutex>
-     ? SynchronizedMutexLevel::Unique
-     : SynchronizedMutexLevel::Unknown;
- 
-```
-
-**File**: `folly/test/SynchronizedTestLib-inl.h` (modified, +6/-6)
-```diff
-@@ -103,7 +103,7 @@ void runParallel(size_t numThreads, const Function& function) {
- 
- // testBasic() version for shared lock types
- template <class Mutex>
--std::enable_if_t<folly::detail::kSynchronizedMutexIsShared<void, Mutex>>
-+std::enable_if_t<folly::detail::kSynchronizedMutexIsShared<Mutex>>
- testBasicImpl() {
-   folly::Synchronized<std::vector<int>, Mutex> obj;
-   const auto& constObj = obj;
-@@ -155,7 +155,7 @@ testBasicImpl() {
- 
- // testBasic() version for non-shared lock types
- template <class Mutex>
--std::enable_if_t<!folly::detail::kSynchronizedMutexIsShared<void, Mutex>>
-+std::enable_if_t<!folly::detail::kSynchronizedMutexIsShared<Mutex>>
- testBasicImpl() {
-   folly::Synchronized<std::vector<int>, Mutex> obj;
-   const auto& constObj = obj;
-@@ -200,7 +200,7 @@ void testBasic() {
- 
- // testWithLock() version for shared lock types
- template <class Mutex>
--std::enable_if_t<folly::detail::kSynchronizedMutexIsShared<void, Mutex>>
-+std::enable_if_t<folly::detail::kSynchronizedMutexIsShared<Mutex>>
- testWithLock() {
-   folly::Synchronized<std::vector<int>, Mutex> obj;
-   const auto& constObj = obj;
-@@ -291,7 +291,7 @@ testWithLock() {
- 
- // testWithLock() version for non-shared lock types
- template <class Mutex>
--std::enable_if_t<!folly::detail::kSynchronizedMutexIsShared<void, Mutex>>
-+std::enable_if_t<!folly::detail::kSynchronizedMutexIsShared<Mutex>>
- testWithLock() {
-   folly::Synchronized<std::vector<int>, Mutex> obj;
- 
-@@ -372,7 +372,7 @@ void testUnlockCommon() {
- 
- // testUnlock() version for shared lock types
- template <class Mutex>
--std::enable_if_t<folly::detail::kSynchronizedMutexIsShared<void, Mutex>>
-+std::enable_if_t<folly::detail::kSynchronizedMutexIsShared<Mutex>>
- testUnlock() {
-   folly::Synchronized<int, Mutex> value{10};
-   {
-@@ -405,7 +405,7 @@ testUnlock() {
- 
- // testUnlock() version for non-shared lock types
- template <class Mutex>
--std::enable_if_t<!folly::detail::kSynchronizedMutexIsShared<void, Mutex>>
-+std::enable_if_t<!folly::detail::kSynchronizedMutexIsShared<Mutex>>
- testUnlock() {
-   folly::Synchronized<int, Mutex> value{10};
-   {
 ```
 
 #### Recent Merged Pull Requests:
@@ -3048,28 +3124,37 @@ fbshipit-source-id: f326d1081abdbc36fedc732790f8caa3b373d823
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. SIGFPE and 11x slowdown in folly::Random::randDouble
+## X. JSON Patch lifetime, add, index, and test semantics
 
 **RULE**:
-When implementing operations in `folly/BUCK`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/json/dynamic.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `749133fd`: SIGFPE and 11x slowdown in folly::Random::randDouble. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `90d245a1`: JSON Patch lifetime, add, index, and test semantics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/BUCK`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/json/dynamic.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        "//folly/random:uniform_real_distribution",
+      // RFC 6901 array indices are decimal digits only. `tryTo` accepts
+      // surrounding whitespace, so reject non-digit tokens before using it.
+      bool is_canonical_index = !it->empty();
+      for (char const c : *it) {
+        is_canonical_index &= (c >= '0' && c <= '9');
+      }
+      if (!is_canonical_index) {
+        return makeUnexpected(
+            error{err_code::index_not_numeric, it.index, prev});
+      }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `749133fd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `90d245a1` are properly handled with clean fallback behavior.

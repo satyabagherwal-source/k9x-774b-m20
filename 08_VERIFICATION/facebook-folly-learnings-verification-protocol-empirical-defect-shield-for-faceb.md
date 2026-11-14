@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:35:36.781Z",
+  "timestamp": "2026-11-14T18:14:54.947Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-facebook-folly-learnings",
+  "learning_id": "LEARN-EVO-facebook-folly-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [facebook-folly-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:35:36.781Z`  
-> **Learning ID**: `LEARN-REEXTRACT-facebook-folly-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T18:14:54.947Z`  
+> **Learning ID**: `LEARN-EVO-facebook-folly-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `4a2f75a6`  
+> **Source Version**: `25bb18ff`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:17:15.743Z  
+> **Timestamp**: 2026-11-14T18:14:38.522Z  
 > **Learning ID**: `learn-github-meta-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:17:15.736Z  
+> **Harvest Timestamp**: 2026-11-14T18:14:38.516Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30556 stars
+- **Stars / Engagement**: 30559 stars
 
 ---
 
@@ -2389,951 +2389,738 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86c6c973` (2026-11-10)
-**Commit Message**: Fix Arena large-block overruns and drop its Boost.Intrusive dependency
+### Incident Patch 1: `90d245a1` (2026-11-13)
+**Commit Message**: Fix JSON Patch lifetime, add, index, and test semantics
 
 Summary:
-On platforms where `max_align_t` is 8 bytes (Windows, Apple arm64), `Arena` sizes large blocks with too small a header, so large allocations can overrun the block. `LargeBlock`'s header is 16 bytes, larger than `Block`'s (8) and than its own alignment:
+Why: Configuration-supplied JSON patches can crash or corrupt a document when `add`, `move`, or `copy` touches the root, aliases containers, or names a missing parent. Pointer resolution also accepted whitespace-padded array indices, and `test` could equate a large `int64` with the nearest `double`.
 
-- `allocateSlow()` checks overflow and `sizeLimit` with `Block`'s header, then recomputes a large block's size with `LargeBlock`'s, unchecked. A large allocation can exceed `sizeLimit` by 8 bytes, and `allocate(SIZE_MAX - 15)` wraps around to a zero-byte allocation, writes the block header past its end and returns a pointer beyond it, instead of throwing `std::bad_alloc`.
-- With a `maxAlign` above 8, a large block reserves `roundUp(sizeof(LargeBlock))` for its header and alignment padding, up to 8 bytes too few, so writing the whole allocation runs past the end of the block.
+What: `copy` snapshots its source and `move` takes its source out before mutating; `move` then removes, resolves the destination, and adds, restoring the source if that add fails. Same-location moves are no-ops. `do_add` uses the full pointer for root, final-token, and numeric-append cases; irrelevant `from` members are ignored. Array indices must be canonical decimal digits. `test` compares recursively, treating an `int64` and a `double` as equal only when `tryTo<int64_t>` converts exactly. A new `json_pointer::is_strict_prefix_of` backs the `move` overlap check, and the `is_prefix_of` comment now says equal pointers count.
 
-Size each block with the header it uses, computed once and checked: `sizeof(Header) + max(maxAlign, alignof(Header)) - alignof(Header)`. That is unchanged where a header's size equals its alignment, as on Linux x86_64. `kLargeBlockOverhead` exposes the large header size, which `Siz
+Non-obvious: Resolving the destination after removal is required for same-array moves. Exact numeric comparison is local to JSON Patch `test`, not a change to `dynamic::operator==`.
 
-**File**: `folly/memory/Arena-inl.h` (modified, +27/-15)
+Reviewed By: yf
+
+**File**: `folly/json/dynamic.cpp` (modified, +10/-0)
 ```diff
-@@ -28,24 +28,26 @@ template <class Alloc>
- void* Arena<Alloc>::allocateSlow(size_t size) {
-   char* start;
- 
-+  const bool large = size > minBlockSize();
-   size_t allocSize;
-   if (!checked_add(
--          &allocSize, std::max(size, minBlockSize()), roundUp(sizeof(Block)))) {
-+          &allocSize,
-+          std::max(size, minBlockSize()),
-+          large ? headerSize<LargeBlock>() : headerSize<Block>())) {
-     throw_exception<std::bad_alloc>();
-   }
-   if (sizeLimit_ != kNoSizeLimit &&
-       allocSize > sizeLimit_ - totalAllocatedSize_) {
-     throw_exception<std::bad_alloc>();
-   }
- 
--  if (size > minBlockSize()) {
-+  if (large) {
-     // Allocate a large block for this chunk only; don't change ptr_ and end_,
-     // let them point into a normal block (or none, if they're null)
--    allocSize = roundUp(sizeof(LargeBlock)) + size;
-     void* mem = AllocTraits::allocate(alloc(), allocSize);
-     auto blk = new (mem) LargeBlock(allocSize);
-     start = align(blk->start());
--    largeBlocks_.push_back(*blk);
-+    append(firstLargeBlock_, lastLargeBlock_, blk, blk);
-   } else {
-     // Allocate a normal sized block and carve out size bytes from it
-     // Will allocate more than size bytes if convenient
-@@ -55,8 +57,8 @@ void* Arena<Alloc>::allocateSlow(size_t size) {
-     void* mem = AllocTraits::allocate(alloc(), allocSize);
-     auto blk = new (mem) Block();
-     start = align(blk->start());
--    blocks_.push_back(*blk);
--    currentBlock_ = blocks_.last();
-+    append(firstBlock_, lastBlock_, blk, blk);
-+    currentBlock_ = blk;
-     ptr_ = start + size;
-     end_ = static_cast<char*>(mem) + allocSize;
-     assert(ptr_ <= end_);
-@@ -71,16 +73,26 @@ void Arena<Alloc>::merge(Arena<Alloc>&& other) {
-   FOLLY_SAFE_CHECK(
-       blockGoodAllocSize() == other.blockGoodAllocSize(),
-       "cannot merge arenas of different minBlockSize");
--  const bool wasEmpty = blocks_.empty();
--  blocks_.splice_after(blocks_.before_begin(), other.blocks_);
--  other.blocks_.clear();
--  if (wasEmpty) {
--    // currentBlock_ is still before_begin(); leaving it there would let
--    // canReuseExistingBlock() bump-allocate into a merged block.
--    currentBlock_ = blocks_.last();
-+  // Put the other arena's blocks in front of ours, which keeps them out of
-+  // reach of canReuseExistingBlock(). Without blocks of our own, they are all
-+  // in use, so the last one becomes current.
-+  if (other.firstBlock_) {
-+    append(other.firstBlock_, other.lastBlock_, firstBlock_, lastBlock_);
-+    firstBlock_ = other.firstBlock_;
-+    lastBlock_ = other.lastBlock_;
-+    if (!currentBlock_) {
-+      currentBlock_ = lastBlock_;
-+    }
-   }
--  largeBlocks_.splice_after(largeBlocks_.before_begin(), other.largeBlocks_);
--  other.largeBlocks_.clear();
-+  append(
-+      other.firstLargeBlock_,
-+      other.lastLargeBlock_,
-+      firstLargeBlock_,
-+      lastLargeBlock_);
-+  firstLargeBlock_ = other.firstLargeBlock_;
-+  lastLargeBlock_ = other.lastLargeBlock_;
-+  other.firstBlock_ = other.lastBlock_ = other.currentBlock_ = nullptr;
-+  other.firstLargeBlock_ = other.lastLargeBlock_ = nullptr;
-   other.ptr_ = other.end_ = nullptr;
-   totalAllocatedSize_ += other.totalAllocatedSize_;
-   other.totalAllocatedSize_ = 0;
+@@ -473,6 +473,16 @@ dynamic::try_get_ptr(json_pointer const& jsonPtr) const& {
+         curr = nullptr;
+         continue;
+       }
++      // RFC 6901 array indices are decimal digits only. `tryTo` accepts
++      // surrounding whitespace, so reject non-digit tokens before using it.
++      bool is_canonical_index = !it->empty();
++      for (char const c : *it) {
++        is_canonical_index &= (c >= '0' && c <= '9');
++      }
++      if (!is_canonical_index) {
++        return makeUnexpected(
++            error{err_code::index_not_numeric, it.index, prev});
++      }
+       auto const idx = tryTo<size_t>(*it);
+       if (!idx.hasValue()) {
+         return makeUnexpected(
 ```
 
-**File**: `folly/memory/Arena.h` (modified, +44/-35)
+**File**: `folly/json/json_patch.cpp` (modified, +103/-26)
 ```diff
-@@ -17,13 +17,12 @@
- #pragma once
- #define FOLLY_ARENA_H_
- 
-+#include <algorithm>
- #include <cassert>
- #include <limits>
- #include <stdexcept>
- #include <utility>
- 
--#include <boost/intrusive/slist.hpp>
--
- #include <folly/Conv.h>
- #include <folly/Likely.h>
- #include <folly/Memory.h>
-@@ -67,7 +66,6 @@ class Arena {
-       size_t sizeLimit = kNoSizeLimit,
-       size_t maxAlign = kDefaultMaxAlign)
-       : allocAndSize_(alloc, minBlockSize),
--        currentBlock_(blocks_.last()),
-         ptr_(nullptr),
-         end_(nullptr),
-         totalAllocatedSize_(0),
-@@ -99,7 +97,7 @@ class Arena {
-     }
- 
-     if (canReuseExistingBlock(size)) {
--      currentBlock_++;
-+      currentBlock_ = currentBlock_->next;
-       char* r = align(currentBlock_->start());
-       ptr_ = r + size;
-       end_ = currentBlock_->start() + blockGoodAllocSize() - sizeof(Block);
-@@ -124,10 +122,10 @@ class Arena {
-   void clear() {
-     bytesUsed_ = 0;
-     freeLargeBlocks(); // We don't reuse large blocks
--    if (blocks_.empty()) {
-+    if (!firstBlock_) {
-       return;
-     }
--    currentBlock_ = blocks_.begin();
-+    currentBlock_ = firstBlock_;
-     ptr_ = align(currentBlock_->start());
-     end_ = currentBlock_->start() + blockGoodAllocSize() - sizeof(Block);
-     assert(ptr_ <= end_);
-@@ -151,10 +149,8 @@ class Arena {
-  private:
-   using AllocTraits =
-       typename std::allocator_traits<Alloc>::template rebind_traits<char>;
--  using BlockLink = boost::intrusive::slist_member_hook<>;
--
-   struct alignas(max_align_v) Block {
--    BlockLink link;
-+    Block* next = nullptr;
- 
-     char* start() { return reinterpret_cast<char*>(this + 1); }
- 
-@@ -164,11 +160,11 @@ class Arena {
- 
-   constexpr size_t blockGoodAllocSize() {
-     return ArenaAllocatorTraits<Alloc>::goodSize(
--        alloc(), roundUp(sizeof(Block)) + minBlockSize());
-+        alloc(), headerSize<Block>() + minBlockSize());
-   }
- 
-   struct alignas(max_align_v) LargeBlock {
--    BlockLink link;
-+    LargeBlock* next = nullptr;
-     const size_t allocSize;
- 
-     char* start() { return reinterpret_cast<char*>(this + 1); }
-@@ -182,35 +178,39 @@ class Arena {
-       // We don't reuse large blocks
-       return false;
-     }
--    if (blocks_.empty() || currentBlock_ == blocks_.last()) {
--      // No regular blocks to reuse
--      return false;
--    }
--    return true;
-+    // No regular blocks to reuse past the current one
-+    return currentBlock_ != lastBlock_;
-   }
- 
-   void freeBlocks() {
--    blocks_.clear_and_dispose([this](Block* b) {
-+    for (Block* b = firstBlock_; b;) {
-+      Block* const next = b->next;
-       b->~Block();
-       AllocTraits::deallocate(
-           alloc(), reinterpret_cast<char*>(b), blockGoodAllocSize());
--    });
-+      b = next;
-+    }
-+    firstBlock_ = lastBlock_ = currentBlock_ = nullptr;
-   }
- 
-   void freeLargeBlocks() {
--    largeBlocks_.clear_and_dispose([this](LargeBlock* b) {
-+    for (LargeBlock* b = firstLargeBlock_; b;) {
-+      LargeBlock* const next = b->next;
-       auto size = b->allocSize;
-       totalAllocatedSize_ -= size;
-       b->~LargeBlock();
-       AllocTraits::deallocate(alloc(), reinterpret_cast<char*>(b), size);
--    });
-+      b = next;
-+    }
-+    firstLargeBlock_ = lastLargeBlock_ = nullptr;
-   }
- 
-  public:
-   static constexpr size_t kDefaultMinBlockSize = 4096 - sizeof(Block);
-   static constexpr size_t kNoSizeLimit = 0;
-   static constexpr size_t kDefaultMaxAlign = alignof(Block);
-   static constexpr size_t kBlockOverhead = sizeof(Block);
-+  static constexpr size_t kLargeBlockOverhead = sizeof(LargeBlock);
- 
-  private:
-   bool isAligned(uintptr_t address) const {
-@@ -232,19 +232,23 @@ class Arena {
- 
-   char* align(char* ptr) { return align_ceil(ptr, maxAlign_); }
- 
--  // cache_last<true> makes the list keep a pointer to the last element, so we
--  // have push_back() and constant time splice_after()
--  using BlockList = boost::intrusive::slist<
--      Block,
--      boost::intrusive::member_hook<Block, BlockLink, &Block::link>,
--      boost::intrusive::constant_time_size<false>,
--      boost::intrusive::cache_last<true>>;
-+  // A block header plus the most padding align() can add after it, since the
-+  // allocator only guarantees alignment for the header.
-+  template <typename Header>
-+  size_t headerSize() const {
-+    return sizeof(Header) + std::max(maxAlign_, alignof(Header)) -
-+        alignof(Header);
-+  }
- 
--  using LargeBlockList = boost::intrusive::slist<
--      LargeBlock,
--      boost::intrusive::member_hook<LargeBlock, BlockLink, &LargeBlock::link>,
--      boost::intrusive::constant_time_size<false>,
--      boost::intrusive::cache_last<true>>;
-+  // Appends the chain [first, last], if not empty, to the chain [head, tail].
-+  template <typename B>
-+  static void append(B*& head, B*& tail, B* first, B* last) {
-+    if (!first) {
-+      return;
-+    }
-+    (tail ? tail->next : head) = first;
-+    tail = last;
-+  }
- 
-   void* allocateSlow(size_t size);
- 
-@@ -262,9 +266,14 @@ class Arena {
-   con
-```
-
-**File**: `folly/memory/BUCK` (modified, +0/-1)
-```diff
-@@ -26,7 +26,6 @@ fb_dirsync_cpp_library(
-     ],
-     use_raw_headers = True,
-     exported_deps = [
--        "fbsource//third-party/boost:boost",
-         ":allocator",
-         ":malloc",
-         "//folly:conv",
-```
-
-**File**: `folly/memory/CMakeLists.txt` (modified, +0/-1)
-```diff
-@@ -32,7 +32,6 @@ folly_add_library(
-     Arena-inl.h
-     Arena.h
-   EXPORTED_DEPS
--    Boost::headers
-     folly_conv
-     folly_lang_align
-     folly_lang_checked_math
-```
-
-**File**: `folly/memory/test/ArenaTest.cpp` (modified, +67/-6)
-```diff
-@@ -22,6 +22,7 @@
+@@ -18,6 +18,7 @@
  
  #include <glog/logging.h>
  
-+#include <folly/Memory.h>
- #include <folly/Random.h>
- #include <folly/memory/Allocator.h>
- #include <folly/memory/MallctlHelper.h>
-@@ -86,11 +87,7 @@ TEST(Arena, SizeSanity) {
-   allocatedItems.insert(ptr);
-   minimum_size += 10 * requestedBlockSize;
-   maximum_size +=
--      goodMallocSize(10 * requestedBlockSize + SysArena::kBlockOverhead);
--#if defined(__APPLE__) && defined(FOLLY_AARCH64)
--  // expectation is a bit too small
--  maximum_size += 8;
--#endif
-+      goodMallocSize(10 * requestedBlockSize + SysArena::kLargeBlockOverhead);
-   EXPECT_GE(arena.totalSize(), minimum_size);
-   EXPECT_LE(arena.totalSize(), maximum_size);
-   VLOG(4) << minimum_size << " < " << arena.totalSize() << " < "
-@@ -263,6 +260,70 @@ TEST(Arena, ExtremeSize) {
-   EXPECT_THROW(alloc(arena, SIZE_MAX - 2), std::bad_alloc);
- }
++#include <folly/Conv.h>
+ #include <folly/container/Enumerate.h>
  
-+TEST(Arena, SizeLimitCoversLargeBlockHeader) {
-+  static const size_t size = 4096;
-+
-+  for (size_t sizeLimit = size; sizeLimit < size + 64; ++sizeLimit) {
-+    SCOPED_TRACE(sizeLimit);
-+    SysArena arena(64, sizeLimit);
-+    try {
-+      void* ptr = alloc(arena, size);
-+      EXPECT_EQ(
-+          reinterpret_cast<uintptr_t>(ptr) % SysArena::kDefaultMaxAlign, 0);
-+    } catch (const std::bad_alloc&) {
-+      continue;
-+    }
-+    EXPECT_LE(arena.totalSize() - sizeof(SysArena), sizeLimit);
+ namespace folly {
+@@ -64,7 +65,10 @@ Expected<json_patch, json_patch::parse_error> json_patch::try_parse(
+ 
+     // extract 'from' attribute
+     {
+-      auto const* from_ptr = elem.get_ptr(kFromTag);
++      auto const* from_ptr =
++          (op_str == kOperationMove || op_str == kOperationCopy)
++          ? elem.get_ptr(kFromTag)
++          : nullptr;
+       if (from_ptr) {
+         if (!from_ptr->isString()) {
+           return makeUnexpected(parse_error{err_code::invalid_shape, &elem});
+@@ -131,8 +135,7 @@ Expected<json_patch, json_patch::parse_error> json_patch::try_parse(
+       if (!op.from) {
+         return makeUnexpected(parse_error{err_code::missing_from_attr, &elem});
+       }
+-      // is from a proper prefix to path?
+-      if (op.from->is_prefix_of(op.path)) {
++      if (op.from->is_strict_prefix_of(op.path)) {
+         return makeUnexpected(
+             parse_error{err_code::overlapping_pointers, &elem});
+       }
+@@ -159,6 +162,50 @@ std::vector<json_patch::patch_operation> const& json_patch::ops() const {
+ 
+ namespace {
+ 
++bool numbers_equal(dynamic const& lhs, dynamic const& rhs) {
++  if (lhs.type() == rhs.type()) {
++    return lhs == rhs;
 +  }
++  auto const& int_value = lhs.isInt() ? lhs : rhs;
++  auto const& double_value = lhs.isInt() ? rhs : lhs;
++  auto const exact = tryTo<int64_t>(double_value.getDouble());
++  return exact.hasValue() && *exact == int_value.getInt();
 +}
 +
-+TEST(Arena, LargeBlockSizeOverflow) {
-+  SysArena arena;
-+  // Adding the large block header to this size overflows.
-+  EXPECT_THROW(arena.allocate(SIZE_MAX - 15), std::bad_alloc);
-+}
-+
-+namespace {
-+// Returns memory at a given offset past a 64-byte boundary, followed by guard
-+// bytes that must stay untouched.
-+struct OffsetAllocator {
-+  using value_type = char;
-+  template <typename T>
-+  struct rebind {
-+    using other = OffsetAllocator;
-+  };
-+  static constexpr size_t kGuard = 64;
-+  size_t offset = 0;
-+
-+  char* allocate(size_t n) {
-+    auto p = static_cast<char*>(aligned_malloc(offset + n + kGuard, 64));
-+    memset(p + offset + n, 0x5a, kGuard);
-+    return p + offset;
++bool json_values_equal(dynamic const& lhs, dynamic const& rhs) {
++  if (lhs.isNumber() && rhs.isNumber()) {
++    return numbers_equal(lhs, rhs);
 +  }
-+  void deallocate(char* p, size_t n) {
-+    for (size_t i = 0; i < kGuard; ++i) {
-+      EXPECT_EQ(p[n + i], 0x5a) << "overrun at " << i;
-+    }
-+    aligned_free(p - offset);
++  if (lhs.type() != rhs.type()) {
++    return false;
 +  }
-+};
-+} // namespace
-+
-+TEST(Arena, LargeBlockPaddingForCustomAlign) {
-+  // The allocator only guarantees the alignment of the block header, so a
-+  // large block's payload may need up to 64 - that alignment bytes of padding.
-+  for (size_t offset = 0; offset < 64; offset += max_align_v) {
-+    SCOPED_TRACE(offset);
-+    Arena<OffsetAllocator> arena(
-+        OffsetAllocator{offset}, 64, Arena<OffsetAllocator>::kNoSizeLimit, 64);
-+    for (size_t size : {128, 1024}) {
-+      void* ptr = arena.allocate(size);
-+      EXPECT_EQ(reinterpret_cast<uintptr_t>(ptr) % 64, 0);
-+      memset(ptr, 0xff, size);
-+    }
-+  }
-+}
-+
- TEST(Arena, MaxAlign) {
-   // Results are still aligned with nonstandard size and allocations
-   static const size_t blockSize = 123;
-@@ -381,7 +442,7 @@ TEST(Arena, MergeIntoUntouchedArena) {
-   auto* live = static_cast<char*>(alloc(src, 1));
-   *live = 'x';
- 
--  // dst has never allocated, so its currentBlock_ is still before_begin().
-+  // dst has never allocated, so it has no current block.
-   SysArena dst;
-   dst.merge(std::move(src));
- 
-```
-
-**File**: `folly/memory/test/BUCK` (modified, +1/-0)
-```diff
-@@ -9,6 +9,7 @@ fb_dirsync_cpp_unittest(
-     labels = ["oss-broken"],
-     deps = [
-         "fbsource//third-party/glog:glog",
-+        "//folly:memory",
-         "//folly:random",
-         "//folly/memory:allocator",
-         "//folly/memory:arena",
-```
-
----
-
-### Incident Patch 2: `167dcc32` (2026-11-10)
-**Commit Message**: Build hsthrift and glean on CentOS 10
-
-Summary:
-`oss-hsthrift-linux-getdeps` and `oss-glean-linux-getdeps` fail on CentOS 10, so Sandcastle's `centos9_runtime` rollout tag still holds them on CentOS 9. Two things break there.
-
-`Build folly` fails to link `libfolly.so`. D124075105 maps Boost to EL 10's `boost-devel` and `boost-static`, and those static archives are not position-independent:
-
-```
-/bin/ld: /usr/lib64/libboost_regex.a(posix_api.o): relocation R_X86_64_PC32 against symbol `__libc_single_threaded@GLIBC_2.32' can not be used when making a shared object; recompile with -fPIC
-```
-
-On CentOS 9 Boost has no system mapping, so getdeps builds it from source with `CMAKE_POSITION_INDEPENDENT_CODE=ON` and the link works.
-
-Behind that, hsthrift's `fb-util` and glean both depend on Haskell's `regex-pcre`, which finds PCRE1 through `pkgconfig-depends: libpcre`. EL 10 dropped PCRE1: there is no `pcre-devel`, and nothing in CentOS Stream 10 or EPEL 10 provides `pkgconfig(libpcre)`. So cabal cannot resolve `regex-pcre` (the error in T292121259).
-
-This diff:
-- Adds `shared_lib` to the manifest context, set from `--shared-lib`, so a manifest can select on it. getdeps already puts `shared_
-
-**File**: `tool/fbcode_builder/getdeps/buildopts.py` (modified, +1/-0)
-```diff
-@@ -274,6 +274,7 @@ def get_context_generator(
-                 "distro_family": host_type.distro_family,
-                 "fb": "on" if self.facebook_internal else "off",
-                 "fbsource": "on" if self.fbsource_dir else "off",
-+                "shared_lib": "on" if self.shared_lib else "off",
-                 "test": "off",
-             }
-         )
-```
-
-**File**: `tool/fbcode_builder/getdeps/manifest.py` (modified, +1/-0)
-```diff
-@@ -984,6 +984,7 @@ class ManifestContext:
-         "distro_family",
-         "fb",
-         "fbsource",
-+        "shared_lib",
-         "test",
-     }
- 
-```
-
-**File**: `tool/fbcode_builder/getdeps/test/builder_test.py` (modified, +1/-0)
-```diff
-@@ -44,6 +44,7 @@ def make_cmake_builder() -> CMakeBuilder:
-                 "distro_family": None,
-                 "fb": "off",
-                 "fbsource": "off",
-+                "shared_lib": "off",
-                 "test": "off",
-             }
-         ),
-```
-
-**File**: `tool/fbcode_builder/getdeps/test/fbcode_builder_layout_test.py` (modified, +1/-0)
-```diff
-@@ -68,6 +68,7 @@ def test_shipit_mirror_uses_layout(self) -> None:
-                         "distro_family": None,
-                         "fb": "on",
-                         "fbsource": "on",
-+                        "shared_lib": "off",
-                         "test": "off",
-                     }
-                 ),
-```
-
-**File**: `tool/fbcode_builder/getdeps/test/features_test.py` (modified, +2/-0)
-```diff
-@@ -24,6 +24,7 @@ def _ctx_with_features(features: set[str] | None = None) -> ManifestContext:
-             "distro_family": None,
-             "fb": "off",
-             "fbsource": "off",
-+            "shared_lib": "off",
-             "test": "off",
-         }
-     )
-@@ -68,6 +69,7 @@ def _make_loader(manifests: dict[str, str]) -> ManifestLoader:
-             "distro_family": None,
-             "fb": "off",
-             "fbsource": "off",
-+            "shared_lib": "off",
-             "test": "off",
-         }
-     )
-```
-
-**File**: `tool/fbcode_builder/getdeps/test/manifest_test.py` (modified, +23/-0)
-```diff
-@@ -268,6 +268,29 @@ def test_shared_folly_link_inputs(self) -> None:
-             msg="source-built libaio installs libaio.so with version nodes",
-         )
- 
-+    def test_shared_lib_builds_boost_from_source(self) -> None:
-+        # EL 10's boost-static archives are not position-independent, so a
-+        # --shared-lib build cannot link them into a shared library.
-+        patch_loader(__name__)
-+        manifests = load_all_manifests(MagicMock(spec=BuildOptions))
-+        el10 = {
-+            "os": "linux",
-+            "distro": "centos_stream",
-+            "distro_vers": "10",
-+            "distro_family": "rhel",
-+            "fb": "off",
-+            "fbsource": "off",
-+            "test": "off",
-+        }
-+        boost = manifests["boost"]
-+        self.assertEqual(
-+            boost.get_section_as_args("rpms", {**el10, "shared_lib": "off"}),
-+            ["boost-devel", "boost-static"],
-+        )
-+        self.assertEqual(
-+            boost.get_section_as_args("rpms", {**el10, "shared_lib": "on"}), []
-+        )
-+
-     def test_mismatch_name(self) -> None:
-         with self.assertRaisesRegex(
-             Exception,
-```
-
-**File**: `tool/fbcode_builder/getdeps/test/vendor_test.py` (modified, +1/-0)
-```diff
-@@ -40,6 +40,7 @@ def make_ctx() -> ManifestContext:
-             "distro_family": None,
-             "fb": "off",
-             "fbsource": "off",
-+            "shared_lib": "off",
-             "test": "off",
-         }
-     )
-```
-
-**File**: `tool/fbcode_builder/manifests/boost` (modified, +4/-2)
-```diff
-@@ -60,8 +60,10 @@ boost169-serialization
- boost169-program-options
- 
- # EL 10 and later carry a new enough Boost under the same names (EL 8
--# needs the boost169 compat packages above).
--[rpms.any(distro=fedora,all(distro_family=rhel,not(any(distro_vers=8,distro_vers=9))))]
-+# needs the boost169 compat packages above). Their static archives are not
-+# position-independent and cannot be linked into a shared library, so
-+# --shared-lib builds Boost from source instead.
-+[rpms.all(shared_lib=off,any(distro=fedora,all(distro_family=rhel,not(any(distro_vers=8,distro_vers=9)))))]
- boost-devel
- boost-static
- 
-```
-
----
-
-### Incident Patch 3: `f6cebb72` (2026-11-10)
-**Commit Message**: Revert D130307200: Fix Arena large-block overruns and drop its Boost.Intrusive dependency
-
-Differential Revision:
-D130307200
-
-Original commit changeset: a8ccd5e5fbf6
-
-Original Phabricator Diff: D130307200
-
-fbshipit-source-id: b45e285966942f886c0ca7d06991226679e7c866
-
-**File**: `folly/memory/Arena-inl.h` (modified, +15/-27)
-```diff
-@@ -28,26 +28,24 @@ template <class Alloc>
- void* Arena<Alloc>::allocateSlow(size_t size) {
-   char* start;
- 
--  const bool large = size > minBlockSize();
-   size_t allocSize;
-   if (!checked_add(
--          &allocSize,
--          std::max(size, minBlockSize()),
--          large ? headerSize<LargeBlock>() : headerSize<Block>())) {
-+          &allocSize, std::max(size, minBlockSize()), roundUp(sizeof(Block)))) {
-     throw_exception<std::bad_alloc>();
-   }
-   if (sizeLimit_ != kNoSizeLimit &&
-       allocSize > sizeLimit_ - totalAllocatedSize_) {
-     throw_exception<std::bad_alloc>();
-   }
- 
--  if (large) {
-+  if (size > minBlockSize()) {
-     // Allocate a large block for this chunk only; don't change ptr_ and end_,
-     // let them point into a normal block (or none, if they're null)
-+    allocSize = roundUp(sizeof(LargeBlock)) + size;
-     void* mem = AllocTraits::allocate(alloc(), allocSize);
-     auto blk = new (mem) LargeBlock(allocSize);
-     start = align(blk->start());
--    append(firstLargeBlock_, lastLargeBlock_, blk, blk);
-+    largeBlocks_.push_back(*blk);
-   } else {
-     // Allocate a normal sized block and carve out size bytes from it
-     // Will allocate more than size bytes if convenient
-@@ -57,8 +55,8 @@ void* Arena<Alloc>::allocateSlow(size_t size) {
-     void* mem = AllocTraits::allocate(alloc(), allocSize);
-     auto blk = new (mem) Block();
-     start = align(blk->start());
--    append(firstBlock_, lastBlock_, blk, blk);
--    currentBlock_ = blk;
-+    blocks_.push_back(*blk);
-+    currentBlock_ = blocks_.last();
-     ptr_ = start + size;
-     end_ = static_cast<char*>(mem) + allocSize;
-     assert(ptr_ <= end_);
-@@ -73,26 +71,16 @@ void Arena<Alloc>::merge(Arena<Alloc>&& other) {
-   FOLLY_SAFE_CHECK(
-       blockGoodAllocSize() == other.blockGoodAllocSize(),
-       "cannot merge arenas of different minBlockSize");
--  // Put the other arena's blocks in front of ours, which keeps them out of
--  // reach of canReuseExistingBlock(). Without blocks of our own, they are all
--  // in use, so the last one becomes current.
--  if (other.firstBlock_) {
--    append(other.firstBlock_, other.lastBlock_, firstBlock_, lastBlock_);
--    firstBlock_ = other.firstBlock_;
--    lastBlock_ = other.lastBlock_;
--    if (!currentBlock_) {
--      currentBlock_ = lastBlock_;
--    }
-+  const bool wasEmpty = blocks_.empty();
-+  blocks_.splice_after(blocks_.before_begin(), other.blocks_);
-+  other.blocks_.clear();
-+  if (wasEmpty) {
-+    // currentBlock_ is still before_begin(); leaving it there would let
-+    // canReuseExistingBlock() bump-allocate into a merged block.
-+    currentBlock_ = blocks_.last();
-   }
--  append(
--      other.firstLargeBlock_,
--      other.lastLargeBlock_,
--      firstLargeBlock_,
--      lastLargeBlock_);
--  firstLargeBlock_ = other.firstLargeBlock_;
--  lastLargeBlock_ = other.lastLargeBlock_;
--  other.firstBlock_ = other.lastBlock_ = other.currentBlock_ = nullptr;
--  other.firstLargeBlock_ = other.lastLargeBlock_ = nullptr;
-+  largeBlocks_.splice_after(largeBlocks_.before_begin(), other.largeBlocks_);
-+  other.largeBlocks_.clear();
-   other.ptr_ = other.end_ = nullptr;
-   totalAllocatedSize_ += other.totalAllocatedSize_;
-   other.totalAllocatedSize_ = 0;
-```
-
-**File**: `folly/memory/Arena.h` (modified, +35/-44)
-```diff
-@@ -17,12 +17,13 @@
- #pragma once
- #define FOLLY_ARENA_H_
- 
--#include <algorithm>
- #include <cassert>
- #include <limits>
- #include <stdexcept>
- #include <utility>
- 
-+#include <boost/intrusive/slist.hpp>
-+
- #include <folly/Conv.h>
- #include <folly/Likely.h>
- #include <folly/Memory.h>
-@@ -66,6 +67,7 @@ class Arena {
-       size_t sizeLimit = kNoSizeLimit,
-       size_t maxAlign = kDefaultMaxAlign)
-       : allocAndSize_(alloc, minBlockSize),
-+        currentBlock_(blocks_.last()),
-         ptr_(nullptr),
-         end_(nullptr),
-         totalAllocatedSize_(0),
-@@ -97,7 +99,7 @@ class Arena {
-     }
- 
-     if (canReuseExistingBlock(size)) {
--      currentBlock_ = currentBlock_->next;
-+      currentBlock_++;
-       char* r = align(currentBlock_->start());
-       ptr_ = r + size;
-       end_ = currentBlock_->start() + blockGoodAllocSize() - sizeof(Block);
-@@ -122,10 +124,10 @@ class Arena {
-   void clear() {
-     bytesUsed_ = 0;
-     freeLargeBlocks(); // We don't reuse large blocks
--    if (!firstBlock_) {
-+    if (blocks_.empty()) {
-       return;
-     }
--    currentBlock_ = firstBlock_;
-+    currentBlock_ = blocks_.begin();
-     ptr_ = align(currentBlock_->start());
-     end_ = currentBlock_->start() + blockGoodAllocSize() - sizeof(Block);
-     assert(ptr_ <= end_);
-@@ -149,8 +151,10 @@ class Arena {
-  private:
-   using AllocTraits =
-       typename std::allocator_traits<Alloc>::template rebind_traits<char>;
-+  using BlockLink = boost::intrusive::slist_member_hook<>;
-+
-   struct alignas(max_align_v) Block {
--    Block* next = nullptr;
-+    BlockLink link;
- 
-     char* start() { return reinterpret_cast<char*>(this + 1); }
- 
-@@ -160,11 +164,11 @@ class Arena {
- 
-   constexpr size_t blockGoodAllocSize() {
-     return ArenaAllocatorTraits<Alloc>::goodSize(
--        alloc(), headerSize<Block>() + minBlockSize());
-+        alloc(), roundUp(sizeof(Block)) + minBlockSize());
-   }
- 
-   struct alignas(max_align_v) LargeBlock {
--    LargeBlock* next = nullptr;
-+    BlockLink link;
-     const size_t allocSize;
- 
-     char* start() { return reinterpret_cast<char*>(this + 1); }
-@@ -178,39 +182,35 @@ class Arena {
-       // We don't reuse large blocks
-       return false;
-     }
--    // No regular blocks to reuse past the current one
--    return currentBlock_ != lastBlock_;
-+    if (blocks_.empty() || currentBlock_ == blocks_.last()) {
-+      // No regular blocks to reuse
++  if (lhs.isArray()) {
++    if (lhs.size() != rhs.size()) {
 +      return false;
 +    }
++    for (size_t i = 0; i < lhs.size(); ++i) {
++      if (!json_values_equal(lhs[i], rhs[i])) {
++        return false;
++      }
++    }
 +    return true;
-   }
- 
-   void freeBlocks() {
--    for (Block* b = firstBlock_; b;) {
--      Block* const next = b->next;
-+    blocks_.clear_and_dispose([this](Block* b) {
-       b->~Block();
-       AllocTraits::deallocate(
-           alloc(), reinterpret_cast<char*>(b), blockGoodAllocSize());
--      b = next;
--    }
--    firstBlock_ = lastBlock_ = currentBlock_ = nullptr;
-+    });
-   }
- 
-   void freeLargeBlocks() {
--    for (LargeBlock* b = firstLargeBlock_; b;) {
--      LargeBlock* const next = b->next;
-+    largeBlocks_.clear_and_dispose([this](LargeBlock* b) {
-       auto size = b->allocSize;
-       totalAllocatedSize_ -= size;
-       b->~LargeBlock();
-       AllocTraits::deallocate(alloc(), reinterpret_cast<char*>(b), size);
--      b = next;
--    }
--    firstLargeBlock_ = lastLargeBlock_ = nullptr;
-+    });
-   }
- 
-  public:
-   static constexpr size_t kDefaultMinBlockSize = 4096 - sizeof(Block);
-   static constexpr size_t kNoSizeLimit = 0;
-   static constexpr size_t kDefaultMaxAlign = alignof(Block);
-   static constexpr size_t kBlockOverhead = sizeof(Block);
--  static constexpr size_t kLargeBlockOverhead = sizeof(LargeBlock);
- 
-  private:
-   bool isAligned(uintptr_t address) const {
-@@ -232,23 +232,19 @@ class Arena {
- 
-   char* align(char* ptr) { return align_ceil(ptr, maxAlign_); }
- 
--  // A block header plus the most padding align() can add after it, since the
--  // allocator only guarantees alignment for the header.
--  template <typename Header>
--  size_t headerSize() const {
--    return sizeof(Header) + std::max(maxAlign_, alignof(Header)) -
--        alignof(Header);
--  }
-+  // cache_last<true> makes the list keep a pointer to the last element, so we
-+  // have push_back() and constant time splice_after()
-+  using BlockList = boost::intrusive::slist<
-+      Block,
-+      boost::intrusive::member_hook<Block, BlockLink, &Block::link>,
-+      boost::intrusive::constant_time_size<false>,
-+      boost::intrusive::cache_last<true>>;
- 
--  // Appends the chain [first, last], if not empty, to the chain [head, tail].
--  template <typename B>
--  static void append(B*& head, B*& tail, B* first, B* last) {
--    if (!first) {
--      return;
--    }
--    (tail ? tail->next : head) = first;
--    tail = last;
--  }
-+  using LargeBlockList = boost::intrusive::slist<
-+      LargeBlock,
-+      boost::intrusive::member_hook<LargeBlock, BlockLink, &LargeBlock::link>,
-+      boost::intrusive::constant_time_size<false>,
-+      boost::intrusive::cache_last<true>>;
- 
-   void* allocateSlow(size_t size);
- 
-@@ -266,14 +262,9 @@ class Arena {
-   con
-```
-
-**File**: `folly/memory/BUCK` (modified, +1/-0)
-```diff
-@@ -26,6 +26,7 @@ fb_dirsync_cpp_library(
-     ],
-     use_raw_headers = True,
-     exported_deps = [
-+        "fbsource//third-party/boost:boost",
-         ":allocator",
-         ":malloc",
-         "//folly:conv",
-```
-
-**File**: `folly/memory/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -32,6 +32,7 @@ folly_add_library(
-     Arena-inl.h
-     Arena.h
-   EXPORTED_DEPS
-+    Boost::headers
-     folly_conv
-     folly_lang_align
-     folly_lang_checked_math
-```
-
-**File**: `folly/memory/test/ArenaTest.cpp` (modified, +6/-67)
-```diff
-@@ -22,7 +22,6 @@
- 
- #include <glog/logging.h>
- 
--#include <folly/Memory.h>
- #include <folly/Random.h>
- #include <folly/memory/Allocator.h>
- #include <folly/memory/MallctlHelper.h>
-@@ -87,7 +86,11 @@ TEST(Arena, SizeSanity) {
-   allocatedItems.insert(ptr);
-   minimum_size += 10 * requestedBlockSize;
-   maximum_size +=
--      goodMallocSize(10 * requestedBlockSize + SysArena::kLargeBlockOverhead);
-+      goodMallocSize(10 * requestedBlockSize + SysArena::kBlockOverhead);
-+#if defined(__APPLE__) && defined(FOLLY_AARCH64)
-+  // expectation is a bit too small
-+  maximum_size += 8;
-+#endif
-   EXPECT_GE(arena.totalSize(), minimum_size);
-   EXPECT_LE(arena.totalSize(), maximum_size);
-   VLOG(4) << minimum_size << " < " << arena.totalSize() << " < "
-@@ -260,70 +263,6 @@ TEST(Arena, ExtremeSize) {
-   EXPECT_THROW(alloc(arena, SIZE_MAX - 2), std::bad_alloc);
++  }
++  if (lhs.isObject()) {
++    if (lhs.size() != rhs.size()) {
++      return false;
++    }
++    for (auto const& item : lhs.items()) {
++      auto const it = rhs.find(item.first);
++      if (it == rhs.items().end() ||
++          !json_values_equal(item.second, it->second)) {
++        return false;
++      }
++    }
++    return true;
++  }
++  return lhs == rhs;
++}
++
+ // clang-format off
+ Expected<Unit, json_patch::patch_application_error_code>
+ // clang-format on
+@@ -188,43 +235,65 @@ do_remove(dynamic::resolved_json_pointer<dynamic>& ptr) {
+   return makeUnexpected(error_code::other);
  }
  
--TEST(Arena, SizeLimitCoversLargeBlockHeader) {
--  static const size_t size = 4096;
--
--  for (size_t sizeLimit = size; sizeLimit < size + 64; ++sizeLimit) {
--    SCOPED_TRACE(sizeLimit);
--    SysArena arena(64, sizeLimit);
--    try {
--      void* ptr = alloc(arena, size);
--      EXPECT_EQ(
--          reinterpret_cast<uintptr_t>(ptr) % SysArena::kDefaultMaxAlign, 0);
--    } catch (const std::bad_alloc&) {
--      continue;
--    }
--    EXPECT_LE(arena.totalSize() - sizeof(SysArena), sizeLimit);
--  }
--}
--
--TEST(Arena, LargeBlockSizeOverflow) {
--  SysArena arena;
--  // Adding the large block header to this size overflows.
--  EXPECT_THROW(arena.allocate(SIZE_MAX - 15), std::bad_alloc);
--}
--
--namespace {
--// Returns memory at a given offset past a 64-byte boundary, followed by guard
--// bytes that must stay untouched.
--struct OffsetAllocator {
--  using value_type = char;
--  template <typename T>
--  struct rebind {
--    using other = OffsetAllocator;
--  };
--  static constexpr size_t kGuard = 64;
--  size_t offset = 0;
--
--  char* allocate(size_t n) {
--    auto p = static_cast<char*>(aligned_malloc(offset + n + kGuard, 64));
--    memset(p + offset + n, 0x5a, kGuard);
--    return p + offset;
--  }
--  void deallocate(char* p, size_t n) {
--    for (size_t i = 0; i < kGuard; ++i) {
--      EXPECT_EQ(p[n + i], 0x5a) << "overrun at " << i;
--    }
--    aligned_free(p - offset);
--  }
--};
--} // namespace
--
--TEST(Arena, LargeBlockPaddingForCustomAlign) {
--  // The allocator only guarantees the alignment of the block header, so a
--  // large block's payload may need up to 64 - that alignment bytes of padding.
--  for (size_t offset = 0; offset < 64; offset += max_align_v) {
--    SCOPED_TRACE(offset);
--    Arena<OffsetAllocator> arena(
--        OffsetAllocator{offset}, 64, Arena<OffsetAllocator>::kNoSizeLimit, 64);
--    for (size_t size : {128, 1024}) {
--      void* ptr = arena.allocate(size);
--      EXPECT_EQ(reinterpret_cast<uintptr_t>(ptr) % 64, 0);
--      memset(ptr, 0xff, size);
--    }
--  }
--}
--
- TEST(Arena, MaxAlign) {
-   // Results are still aligned with nonstandard size and allocations
-   static const size_t blockSize = 123;
-@@ -442,7 +381,7 @@ TEST(Arena, MergeIntoUntouchedArena) {
-   auto* live = static_cast<char*>(alloc(src, 1));
-   *live = 'x';
++// Moves from `value` only when the add succeeds.
+ // clang-format off
+ Expected<Unit, json_patch::patch_application_error_code>
+ // clang-format on
+ do_add(
+     dynamic::resolved_json_pointer<dynamic>& ptr,
+-    const dynamic& value,
+-    const std::string& last_token) {
++    dynamic&& value,
++    json_pointer const& path) {
+   using app_err_code = json_patch::patch_application_error_code;
+   using res_err_code = dynamic::json_pointer_resolution_error_code;
  
--  // dst has never allocated, so it has no current block.
-+  // dst has never allocated, so its currentBlock_ is still before_begin().
-   SysArena dst;
-   dst.merge(std::move(src));
- 
++  auto const& tokens = path.tokens();
++  auto const failed_at_last_token = !tokens.empty() && !ptr.hasValue() &&
++      ptr.error().index == tokens.size() - 1;
++
+   // element found: see if parent is object or array
+   if (ptr.hasValue()) {
+     // root element, or key in object - replace (per RFC)
+     if (ptr->parent == nullptr || ptr->parent->isObject()) {
+-      *ptr->value = value;
+-    }
+-    // valid index in array: insert at index and shift right
+-    if (ptr->parent && ptr->parent->isArray()) {
+-      ptr->parent->insert(ptr->parent->begin() + ptr->parent_index, value);
++      *ptr->value = std::move(value);
++    } else if (ptr->parent->isArray()) {
++      // valid index in array: insert at index and shift right
++      ptr->parent->insert(
++          ptr->parent->begin() + ptr->parent_index, std::move(value));
+     }
+   } else {
+     // see if we can add value, based on pointer resolution state
+     switch (ptr.error().error_code) {
+-      // key not found. can only happen in object - add new key-value
++      // key not found: only the final token may name a new object member
+       case res_err_code::key_not_found: {
++        if (!failed_at_last_token) {
++          return makeUnexpected(app_err_code::other);
++        }
+         DCHECK(ptr.error().context->isObject());
+-        ptr.error().context->insert(last_token, value);
++        ptr.error().context->insert(tokens.back(), std::move(value));
+         break;
+       }
+       // special '-' index in array - do append operation
+       case res_err_code::append_requested: {
++        if (!failed_at_last_token) {
++          return makeUnexpected(app_err_code::other);
++        }
+         DCHECK(ptr.error().context->isArray());
+-        ptr.error().context->push_back(value);
++        ptr.error().context->push_back(std::move(value));
+         break;
+       }
++      // a numeric index equal to the array size is also an append
++      case res_err_code::index_out_
 ```
 
-**File**: `folly/memory/test/BUCK` (modified, +0/-1)
+**File**: `folly/json/json_pointer.cpp` (modified, +5/-0)
 ```diff
-@@ -9,7 +9,6 @@ fb_dirsync_cpp_unittest(
-     labels = ["oss-broken"],
-     deps = [
-         "fbsource//third-party/glog:glog",
--        "//folly:memory",
-         "//folly:random",
-         "//folly/memory:allocator",
-         "//folly/memory:arena",
+@@ -83,6 +83,11 @@ bool json_pointer::is_prefix_of(json_pointer const& other) const noexcept {
+   return std::equal(tokens_.cbegin(), tokens_.cend(), other_begin, other_end);
+ }
+ 
++bool json_pointer::is_strict_prefix_of(
++    json_pointer const& other) const noexcept {
++  return tokens_.size() < other.tokens_.size() && is_prefix_of(other);
++}
++
+ std::vector<std::string> const& json_pointer::tokens() const {
+   return tokens_;
+ }
+```
+
+**File**: `folly/json/json_pointer.h` (modified, +7/-1)
+```diff
+@@ -56,10 +56,16 @@ class json_pointer {
+   static json_pointer parse(std::string_view str);
+ 
+   /*
+-   * Return true if this pointer is proper to prefix to another pointer
++   * Return true if this pointer is a prefix of another pointer. Equal
++   * pointers are prefixes of each other.
+    */
+   bool is_prefix_of(json_pointer const& other) const noexcept;
+ 
++  /*
++   * Return true if this pointer is a prefix of another, longer pointer.
++   */
++  bool is_strict_prefix_of(json_pointer const& other) const noexcept;
++
+   /*
+    * Get access to the parsed tokens for applications that want to traverse
+    * the pointer.
+```
+
+**File**: `folly/json/test/DynamicTest.cpp` (modified, +9/-0)
+```diff
+@@ -1624,6 +1624,15 @@ TEST(Dynamic, JSONPointer) {
+         target.get_ptr(json_pointer::parse("/foo/01")), std::invalid_argument);
+   }
+ 
++  {
++    auto err = target.try_get_ptr(json_pointer::parse("/foo/ 1")).error();
++    EXPECT_EQ(err_code::index_not_numeric, err.error_code);
++    EXPECT_EQ(1, err.index);
++    EXPECT_EQ(target.get_ptr(json_pointer::parse("/foo")), err.context);
++    EXPECT_THROW(
++        target.get_ptr(json_pointer::parse("/foo/ 1")), std::invalid_argument);
++  }
++
+   // non-existent keys/indexes
+   {
+     auto err = ary.try_get_ptr(json_pointer::parse("/3")).error();
+```
+
+**File**: `folly/json/test/json_patch_test.cpp` (modified, +286/-8)
+```diff
+@@ -14,6 +14,10 @@
+  * limitations under the License.
+  */
+ 
++#include <cstdint>
++#include <limits>
++#include <string_view>
++
+ #include <folly/json/json.h>
+ #include <folly/json_patch.h>
+ #include <folly/json_pointer.h>
+@@ -23,6 +27,7 @@
+ using folly::dynamic;
+ using folly::json_patch;
+ using folly::json_pointer;
++using namespace std::string_view_literals;
+ 
+ using err_code = folly::json_patch::parse_error_code;
+ using op_code = folly::json_patch::patch_operation_code;
+@@ -136,14 +141,6 @@ TEST_F(JsonPatchTest, InvalidPatches) {
+           .error()
+           .error_code);
+ 
+-  EXPECT_EQ(
+-      err_code::overlapping_pointers,
+-      json_patch::try_parse(
+-          folly::parseJson(
+-              R"([{"op": "move", "from" : "/a/b/c", "path" : "/a/b/c"}])"))
+-          .error()
+-          .error_code);
+-
+   EXPECT_EQ(
+       err_code::overlapping_pointers,
+       json_patch::try_parse(
+@@ -359,3 +356,284 @@ TEST_F(JsonPatchTest, FailedOpIndex) {
+       res.error().error_code);
+   EXPECT_EQ(1, res.error().index);
+ }
++
++TEST_F(JsonPatchTest, AddCopyAndMoveAtDocumentRoot) {
++  {
++    constexpr auto patchText =
++        R"([{"op":"add","path":"","value":{"new":1}}])"sv;
++    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++    dynamic doc = folly::parseJson(R"({"old":true})");
++    ASSERT_TRUE(patch.apply(doc).hasValue());
++    EXPECT_EQ(folly::parseJson(R"({"new":1})"), doc);
++  }
++  {
++    constexpr auto patchText = R"([{"op":"copy","from":"/a","path":""}])"sv;
++    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++    dynamic doc = folly::parseJson(R"({"a":{"x":1}})");
++    ASSERT_TRUE(patch.apply(doc).hasValue());
++    EXPECT_EQ(folly::parseJson(R"({"x":1})"), doc);
++  }
++  {
++    constexpr auto patchText = R"([{"op":"move","from":"/a","path":""}])"sv;
++    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++    dynamic doc = folly::parseJson(R"({"a":{"x":1},"b":2})");
++    ASSERT_TRUE(patch.apply(doc).hasValue());
++    EXPECT_EQ(folly::parseJson(R"({"x":1})"), doc);
++  }
++}
++
++TEST_F(JsonPatchTest, MoveAppendFromNestedArrayElement) {
++  constexpr auto patchText = R"([{"op":"move","from":"/0/x","path":"/-"}])"sv;
++  auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++
++  dynamic doc = dynamic::array(dynamic::object("x", 1));
++  doc.push_back(99);
++
++  ASSERT_TRUE(patch.apply(doc).hasValue());
++  EXPECT_EQ(folly::parseJson(R"([{},99,1])"), doc);
++}
++
++TEST_F(JsonPatchTest, MoveArrayElementUsesPostRemovalDestinationIndex) {
++  {
++    constexpr auto patchText = R"([{"op":"move","from":"/1","path":"/0"}])"sv;
++    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++    dynamic doc = folly::parseJson(R"(["bar","baz"])");
++    ASSERT_TRUE(patch.apply(doc).hasValue());
++    EXPECT_EQ(folly::parseJson(R"(["baz","bar"])"), doc);
++  }
++  {
++    constexpr auto patchText = R"([{"op":"move","from":"/0","path":"/2"}])"sv;
++    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++    dynamic doc = folly::parseJson(R"([1,2,3])");
++    ASSERT_TRUE(patch.apply(doc).hasValue());
++    EXPECT_EQ(folly::parseJson(R"([2,3,1])"), doc);
++  }
++}
++
++TEST_F(JsonPatchTest, CopyDescendantToAncestorUsesSnapshot) {
++  constexpr folly::StringPiece value =
++      "01234567890123456789012345678901234567890123456789";
++  constexpr auto patchText = R"([{"op":"copy","from":"/a/b","path":"/a"}])"sv;
++  auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++  dynamic doc = dynamic::object("a", dynamic::object("b", value));
++
++  ASSERT_TRUE(patch.apply(doc).hasValue());
++  const dynamic expected = dynamic::object("a", value);
++  EXPECT_EQ(expected, doc);
++}
++
++TEST_F(JsonPatchTest, CopyArrayElementToSameArrayAppend) {
++  constexpr auto patchText = R"([
++    {"op":"add","path":"/arr","value":["x"]},
++    {"op":"copy","from":"/arr/0","path":"/arr/-"}
++  ])"sv;
++  auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++  dynamic doc = dynamic::object();
++
++  ASSERT_TRUE(patch.apply(doc).hasValue());
++  EXPECT_EQ(folly::parseJson(R"({"arr":["x","x"]})"), doc);
++}
++
++TEST_F(JsonPatchTest, MoveToSameLocationIsNoOp) {
++  constexpr auto patchText = R"([{"op":"move","from":"/a/b","path":"/a/b"}])"sv;
++  auto parsed = json_patch::try_parse(folly::parseJson(patchText));
++  ASSERT_TRUE(parsed.hasValue());
++
++  dynamic doc = folly::parseJson(R"({"a":{"b":[1,2]}})");
++  ASSERT_TRUE(parsed->apply(doc).hasValue());
++  EXPECT_EQ(folly::parseJson(R"({"a":{"b":[1,2]}})"), doc);
++}
++
++TEST_F(JsonPatchTest, AddAtNumericArrayEnd) {
++  {
++    constexpr auto patchText = R"([{"op":"add","path":"/a/2","value":3}])"sv;
++    auto patch = json_patch::try_parse(folly::parseJson(patchText)).value();
++    dynamic doc = folly::parseJson(R"({"a":[1,2]})");
++
++    ASSERT_TRUE(patch.apply(doc).hasValue());
++    EXPECT_EQ(folly::parseJson(R"({"a":[1,2,3]})"), doc);
++  }
++  {
++    constexpr auto patchText = R"([{
+```
+
+**File**: `folly/json/test/json_pointer_test.cpp` (modified, +19/-0)
+```diff
+@@ -75,8 +75,27 @@ TEST_F(JsonPointerTest, BoundedBytes) {
+ TEST_F(JsonPointerTest, IsPrefixTo) {
+   EXPECT_TRUE(
+       json_pointer::parse("/a/b").is_prefix_of(json_pointer::parse("/a/b/c")));
++  EXPECT_TRUE(
++      json_pointer::parse("/a/b").is_prefix_of(json_pointer::parse("/a/b")));
+   EXPECT_FALSE(
+       json_pointer::parse("/a/b").is_prefix_of(json_pointer::parse("/a/d/e")));
+   EXPECT_FALSE(
+       json_pointer::parse("/a/b/c").is_prefix_of(json_pointer::parse("/a/b")));
+ }
++
++TEST_F(JsonPointerTest, IsStrictPrefixOf) {
++  EXPECT_TRUE(
++      json_pointer::parse("/a/b").is_strict_prefix_of(
++          json_pointer::parse("/a/b/c")));
++  EXPECT_TRUE(
++      json_pointer::parse("").is_strict_prefix_of(json_pointer::parse("/a")));
++  EXPECT_FALSE(
++      json_pointer::parse("/a/b").is_strict_prefix_of(
++          json_pointer::parse("/a/b")));
++  EXPECT_FALSE(
++      json_pointer::parse("/a/b").is_strict_prefix_of(
++          json_pointer::parse("/a/d/e")));
++  EXPECT_FALSE(
++      json_pointer::parse("/a/b/c").is_strict_prefix_of(
++          json_pointer::parse("/a/b")));
++}
+```
+
+---
+
+### Incident Patch 2: `94502935` (2026-11-14)
+**Commit Message**: Remove the last required compiled Boost library
+
+Summary:
+Boost.Context is the last compiled Boost library a folly build requires: Boost.Regex and Boost.ProgramOptions are optional, and only fibers need Boost.Context. Fibers use just two small assembly routines from it, `make_fcontext` and `jump_fcontext`, yet every folly user has to build and install Boost's compiled libraries, a large dependency that most of them don't otherwise need, to get them. This vendors the routines as `folly/external/boost-fcontext`, so fibers no longer depend on Boost.Context, and a CMake build of folly on x86_64 and arm64 outside Windows no longer requires any compiled Boost library. That is a prerequisite for building folly without Boost, which will make it much easier to build, package and depend on.
+
+Vendoring also pins the saved-register layout that fibers rely on. `BoostContextCompatibility.h` stitches fiber stacks for frame-pointer stack walkers by reading the frame pointer and return address that `jump_fcontext` saves at fixed offsets, but that layout is private to Boost.Context and changes between releases: Boost 1.89 adds a stack guard slot to the x86_64 SysV ELF layout, which moves both regist
+
+**File**: `cmake/folly-config.h.cmake` (modified, +1/-0)
+```diff
+@@ -65,6 +65,7 @@
+ #cmakedefine01 FOLLY_HAVE_DWARF
+ #cmakedefine01 FOLLY_HAVE_ELF
+ #cmakedefine FOLLY_HAVE_SWAPCONTEXT 1
++#cmakedefine FOLLY_FIBERS_USE_BOOST_CONTEXT 1
+ #cmakedefine FOLLY_HAVE_BACKTRACE 1
+ #cmakedefine FOLLY_USE_SYMBOLIZER 1
+ #define FOLLY_DEMANGLE_MAX_SYMBOL_SIZE 1024
+```
+
+**File**: `cmake/folly-deps.cmake` (modified, +18/-1)
+```diff
+@@ -56,7 +56,24 @@ set(Boost_USE_STATIC_LIBS "${FOLLY_BOOST_LINK_STATIC}")
+ # Note: We find these components so the CMake targets exist, but we don't
+ # link them globally. Targets that need specific Boost libraries should
+ # add them to their EXTERNAL_DEPS (e.g., Boost::regex, Boost::context).
+-set(FOLLY_BOOST_COMPONENTS context)
++set(FOLLY_BOOST_COMPONENTS "")
++
++# Fibers switch contexts with the assembly in folly/external/boost-fcontext
++# on x86_64 and arm64 outside Windows, and with Boost.Context elsewhere.
++set(FOLLY_FIBERS_USE_BOOST_CONTEXT OFF)
++set(folly_fcontext_archs ${CMAKE_SYSTEM_PROCESSOR})
++if (APPLE AND CMAKE_OSX_ARCHITECTURES)
++  set(folly_fcontext_archs ${CMAKE_OSX_ARCHITECTURES})
++endif ()
++foreach (arch IN LISTS folly_fcontext_archs)
++  if (NOT arch MATCHES "^(x86_64|aarch64|arm64)$")
++    set(FOLLY_FIBERS_USE_BOOST_CONTEXT ON)
++  endif ()
++endforeach ()
++if (WIN32 OR NOT folly_fcontext_archs OR FOLLY_FIBERS_USE_BOOST_CONTEXT)
++  set(FOLLY_FIBERS_USE_BOOST_CONTEXT ON)
++  list(APPEND FOLLY_BOOST_COMPONENTS context)
++endif ()
+ 
+ # CMake 4 dropped FindBoost, so this config-only probe warns without QUIET.
+ # folly/cli's ProgramOptions is built only if Boost.ProgramOptions is found,
+```
+
+**File**: `folly/external/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -14,6 +14,7 @@
+ 
+ # @generated by folly/facebook/generate_cmake.py
+ 
++add_subdirectory(boost-fcontext)
+ add_subdirectory(farmhash)
+ add_subdirectory(fast-crc32)
+ add_subdirectory(nvidia)
+```
+
+**File**: `folly/external/boost-fcontext/BUCK` (added, +70/-0)
+```diff
+@@ -0,0 +1,70 @@
++load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_library.bzl", "fb_dirsync_cpp_library")
++
++oncall("fbcode_entropy_wardens_folly")
++
++MACHO_SRCS = select({
++    "DEFAULT": [],
++    "ovr_config//cpu:arm64": [
++        "jump_arm64_aapcs_macho_gas.S",
++        "make_arm64_aapcs_macho_gas.S",
++    ],
++    "ovr_config//cpu:x86_64": [
++        "jump_x86_64_sysv_macho_gas.S",
++        "make_x86_64_sysv_macho_gas.S",
++    ],
++})
++
++ELF_ARM64_SRCS = [
++    "jump_arm64_aapcs_elf_gas.S",
++    "make_arm64_aapcs_elf_gas.S",
++]
++
++ELF_SRCS = {
++    "ovr_config//cpu:arm32": [
++        "jump_arm_aapcs_elf_gas.S",
++        "make_arm_aapcs_elf_gas.S",
++    ],
++    "ovr_config//cpu:arm64": ELF_ARM64_SRCS,
++    "ovr_config//cpu:x86_32": [
++        "jump_i386_sysv_elf_gas.S",
++        "make_i386_sysv_elf_gas.S",
++    ],
++    "ovr_config//cpu:x86_64": [
++        "jump_x86_64_sysv_elf_gas.S",
++        "make_x86_64_sysv_elf_gas.S",
++    ],
++}
++
++fb_dirsync_cpp_library(
++    name = "fcontext",
++    srcs = select({
++        "DEFAULT": select(dict(ELF_SRCS, DEFAULT = [])),
++        # Android configurations without a CPU constraint compile for arm64.
++        "ovr_config//os:android": select(dict(ELF_SRCS, DEFAULT = ELF_ARM64_SRCS)),
++        "ovr_config//os:appletvos": MACHO_SRCS,
++        "ovr_config//os:iphoneos": MACHO_SRCS,
++        "ovr_config//os:macos": MACHO_SRCS,
++        "ovr_config//os:windows": select({
++            "DEFAULT": [],
++            "ovr_config//cpu:arm64": [
++                "jump_arm64_aapcs_pe_armasm.asm",
++                "make_arm64_aapcs_pe_armasm.asm",
++            ],
++            "ovr_config//cpu:x86_32": [
++                "jump_i386_ms_pe_masm.asm",
++                "make_i386_ms_pe_masm.asm",
++            ],
++            "ovr_config//cpu:x86_64": [
++                "jump_x86_64_ms_pe_masm.asm",
++                "make_x86_64_ms_pe_masm.asm",
++            ],
++        }),
++    }),
++    headers = ["fcontext.h"],
++    compiler_flags = select({
++        "DEFAULT": ["-Wno-unused-command-line-argument"],
++        "ovr_config//os:windows": [],
++        "ovr_config//os:windows-x86_32": ["/DBOOST_CONTEXT_EXPORT="],
++        "ovr_config//os:windows-x86_64": ["/DBOOST_CONTEXT_EXPORT="],
++    }),
++)
+```
+
+**File**: `folly/external/boost-fcontext/CMakeLists.txt` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++# Copyright (c) Meta Platforms, Inc. and affiliates.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++# NOTE: This file is manually maintained, not auto-generated.
++# Update this file when the corresponding BUCK file changes.
++
++if (FOLLY_FIBERS_USE_BOOST_CONTEXT)
++  folly_add_library(
++    NAME fcontext
++    HEADERS fcontext.h
++    EXTERNAL_DEPS Boost::context
++  )
++  return ()
++endif ()
++
++# On Apple platforms the wrappers pick the variant for each architecture in
++# CMAKE_OSX_ARCHITECTURES, which may differ from CMAKE_SYSTEM_PROCESSOR.
++if (APPLE)
++  set(abi macho_gas.S)
++elseif (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
++  set(abi x86_64_sysv_elf_gas.S)
++else ()
++  set(abi arm64_aapcs_elf_gas.S)
++endif ()
++
++folly_add_library(
++  NAME fcontext
++  SRCS make_${abi} jump_${abi}
++  HEADERS fcontext.h
++)
+```
+
+**File**: `folly/external/boost-fcontext/LICENSE_1_0.txt` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++Boost Software License - Version 1.0 - August 17th, 2003
++
++Permission is hereby granted, free of charge, to any person or organization
++obtaining a copy of the software and accompanying documentation covered by
++this license (the "Software") to use, reproduce, display, distribute,
++execute, and transmit the Software, and to prepare derivative works of the
++Software, and to permit third-parties to whom the Software is furnished to
++do so, all subject to the following:
++
++The copyright notices in the Software and this entire statement, including
++the above license grant, this restriction and the following disclaimer,
++must be included in all copies of the Software, in whole or in part, and
++all derivative works of the Software, unless such copies or derivative
++works are solely in the form of machine-executable object code generated by
++a source language processor.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
++SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
++FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
++ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++DEALINGS IN THE SOFTWARE.
+```
+
+**File**: `folly/external/boost-fcontext/README.md` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++# boost-fcontext
++
++The `make_fcontext` and `jump_fcontext` assembly from
++[Boost.Context](https://github.com/boostorg/context) 1.77.0, and a header
++declaring them, adapted from `boost/context/detail/fcontext.hpp`.
++
++The assembly matches Boost.Context 1.77.0 with two exceptions: the Windows arm64
++(armasm) files are backported from Boost.Context 1.80.0, which added them, and
++the arm64 ELF files add BTI landing pads (a `bti c` and the GNU BTI property
++note), functionally equivalent to those Boost.Context 1.90.0 later added.
++Otherwise, the only change to the assembly is that the functions are renamed to
++`folly_make_fcontext` and `folly_jump_fcontext`, so that they do not clash with
++Boost.Context in a program that links both. `update.sh` regenerates the
++assembly from a Boost source tree. `make_macho_gas.S` and `jump_macho_gas.S`
++include the Mach-O variant for the target architecture, so that CMake builds
++for any combination of arm64 and x86_64 in `CMAKE_OSX_ARCHITECTURES`, including
++universal binaries, and uses Boost.Context for other architectures.
++
++Distributed under the Boost Software License, Version 1.0 (see
++`LICENSE_1_0.txt`).
+```
+
+**File**: `folly/external/boost-fcontext/fcontext.h` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++//          Copyright Oliver Kowalke 2009.
++// Distributed under the Boost Software License, Version 1.0.
++//    (See accompanying file LICENSE_1_0.txt or copy at
++//          http://www.boost.org/LICENSE_1_0.txt)
++
++#pragma once
++
++#include <cstddef>
++
++#if defined(_MSC_VER) && defined(_M_IX86)
++#define FOLLY_FCONTEXT_CALLDECL __cdecl
++#else
++#define FOLLY_FCONTEXT_CALLDECL
++#endif
++
++namespace folly::detail::fcontext {
++
++using fcontext_t = void*;
++
++struct transfer_t {
++  fcontext_t fctx;
++  void* data;
++};
++
++extern "C" transfer_t FOLLY_FCONTEXT_CALLDECL
++folly_jump_fcontext(fcontext_t to, void* vp);
++extern "C" fcontext_t FOLLY_FCONTEXT_CALLDECL
++folly_make_fcontext(void* sp, std::size_t size, void (*fn)(transfer_t));
++
++} // namespace folly::detail::fcontext
+```
+
+---
+
+### Incident Patch 3: `7014db84` (2026-11-13)
+**Commit Message**: Give IoUring RescheduleTimeout extra timeout tolerance
+
+Summary:
+`RescheduleTimeout` asserts 15/20/50ms timers fire within the 5ms default
+tolerance. The `IoUring` backend delivers timer callbacks up to a loop
+iteration later than other backends, so on loaded hosts it lands just over
+the line under stress (overshoots of 6-11ms observed; continuous is green).
+Allow 15ms for `IoUring` providers only; other backends keep the tight
+default. Same approach as D128818075 for `ScheduledFnAt`.
+
+___
+
+landed-with-radar-review
+
+Differential Revision: D131700400
+
+fbshipit-source-id: bf638f8806fd53a2acbb7282eb2332671b03c854
+
+**File**: `folly/io/async/test/EventBaseTestLib.h` (modified, +14/-4)
+```diff
+@@ -1247,10 +1247,20 @@ TYPED_TEST_P(EventBaseTest, RescheduleTimeout) {
+   eb.loop();
+   TimePoint end;
+ 
+-  T_CHECK_TIMEOUT(start, t1.timestamp, std::chrono::milliseconds(15));
+-  T_CHECK_TIMEOUT(start, t2.timestamp, std::chrono::milliseconds(20));
+-  T_CHECK_TIMEOUT(start, t3.timestamp, std::chrono::milliseconds(50));
+-  T_CHECK_TIMEOUT(start, end, std::chrono::milliseconds(50));
++  // The IoUring backend can deliver timer callbacks up to a loop iteration
++  // later than other backends, so on loaded hosts it can exceed the tight
++  // default tolerance (overruns of 6-11ms observed under stress). Allow it
++  // extra room without weakening the check for other backends.
++  auto timeoutTolerance = TypeParam::isIoUringBackend()
++      ? std::chrono::milliseconds(15)
++      : std::chrono::milliseconds(5);
++  T_CHECK_TIMEOUT(
++      start, t1.timestamp, std::chrono::milliseconds(15), timeoutTolerance);
++  T_CHECK_TIMEOUT(
++      start, t2.timestamp, std::chrono::milliseconds(20), timeoutTolerance);
++  T_CHECK_TIMEOUT(
++      start, t3.timestamp, std::chrono::milliseconds(50), timeoutTolerance);
++  T_CHECK_TIMEOUT(start, end, std::chrono::milliseconds(50), timeoutTolerance);
+ }
+ 
+ /**
 ```
 
 #### Recent Merged Pull Requests:
@@ -3362,71 +3149,40 @@ fbshipit-source-id: b45e285966942f886c0ca7d06991226679e7c866
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Arena large-block overruns and drop its Boost.Intrusive dependency
+## X. JSON Patch lifetime, add, index, and test semantics
 
 **RULE**:
-When implementing operations in `folly/memory/Arena-inl.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/json/dynamic.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86c6c973`: Arena large-block overruns and drop its Boost.Intrusive dependency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `90d245a1`: JSON Patch lifetime, add, index, and test semantics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/memory/Arena-inl.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/json/dynamic.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  const bool large = size > minBlockSize();
-          &allocSize,
-          std::max(size, minBlockSize()),
-          large ? headerSize<LargeBlock>() : headerSize<Block>())) {
-  if (large) {
-    append(firstLargeBlock_, lastLargeBlock_, blk, blk);
-    append(firstBlock_, lastBlock_, blk, blk);
-    currentBlock_ = blk;
-  // Put the other arena's blocks in front of ours, which keeps them out of
-  // reach of canReuseExistingBlock(). Without blocks of our own, they are all
-  // in use, so the last one becomes current.
-  if (other.firstBlock_) {
-    append(other.firstBlock_, other.lastBlock_, firstBlock_, lastBlock_);
-    firstBlock_ = other.firstBlock_;
-    lastBlock_ = other.lastBlock_;
-    if (!currentBlock_) {
-      currentBlock_ = lastBlock_;
-    }
-  append(
-      other.firstLargeBlock_,
-      other.lastLargeBlock_,
-      firstLargeBlock_,
-      lastLargeBlock_);
-  firstLargeBlock_ = other.firstLargeBlock_;
-  lastLargeBlock_ = other.lastLargeBlock_;
-  other.firstBlock_ = other.lastBlock_ = other.currentBlock_ = nullptr;
-  other.firstLargeBlock_ = other.lastLargeBlock_ = nullptr;
+      // RFC 6901 array indices are decimal digits only. `tryTo` accepts
+      // surrounding whitespace, so reject non-digit tokens before using it.
+      bool is_canonical_index = !it->empty();
+      for (char const c : *it) {
+        is_canonical_index &= (c >= '0' && c <= '9');
+      }
+      if (!is_canonical_index) {
+        return makeUnexpected(
+            error{err_code::index_not_numeric, it.index, prev});
+      }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-          &allocSize, std::max(size, minBlockSize()), roundUp(sizeof(Block)))) {
-  if (size > minBlockSize()) {
-    allocSize = roundUp(sizeof(LargeBlock)) + size;
-    largeBlocks_.push_back(*blk);
-    blocks_.push_back(*blk);
-    currentBlock_ = blocks_.last();
-  const bool wasEmpty = blocks_.empty();
-  blocks_.splice_after(blocks_.before_begin(), other.blocks_);
-  other.blocks_.clear();
-  if (wasEmpty) {
-    // currentBlock_ is still before_begin(); leaving it there would let
-    // canReuseExistingBlock() bump-allocate into a merged block.
-    currentBlock_ = blocks_.last();
-  largeBlocks_.splice_after(largeBlocks_.before_begin(), other.largeBlocks_);
-  other.largeBlocks_.clear();
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86c6c973` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `90d245a1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

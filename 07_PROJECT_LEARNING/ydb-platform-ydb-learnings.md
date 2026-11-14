@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `acbe836e`  
+> **Source Version**: `7d522757`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T12:24:27.766Z  
+> **Timestamp**: 2026-11-14T18:14:50.756Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T12:24:27.760Z  
+> **Harvest Timestamp**: 2026-11-14T18:14:50.751Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4788 stars
+- **Stars / Engagement**: 4790 stars
 
 ---
 
@@ -2044,11 +2044,11 @@ impl Remappable for noncontiguous::NFA {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #59331** (2026-11-14): **Bridge: while a SUSPENDED pile is down, no tablet can boot, CMS included, so the takedown never finishes**
+  *Symptoms*: ## Summary  A pile is SUSPENDED between `bridge takedown` and the moment CMS moves it to DISCONNECTED. If the pile's nodes are down during that time, every tablet boot fails with `ReasonBootSSError`. Tablets that already run keep working; any tablet that starts or restarts loops.  CMS is a tablet too. If it restarts in that window, it cannot boot, so it never moves the pile to DISCONNECTED. On the tested build the public API also refuses any change to a SUSPENDED pile (`cannot update suspended pile`). The only exits are to bring the pile back, or to send a raw `SwitchBridgeClusterState` to distconf through the monitoring page.  A second form: a cold restart of the whole PRIMARY pile while the SUSPENDED pile is powered off. No static tablet (BSController, Hive, SchemeShard, Console, Cms and the others) starts until the SUSPENDED pile's nodes are started again.  The cause is the StateStorage ring group merge added by `79d68642643` ("Fix StateStorage convergence across bridge piles", #56676), which fixed #56585. A tablet boot now waits for every ring group, and the merged reply takes the worst status. The ring group of a SUSPENDED pile still counts, as SYNCHRONIZED. So while its nodes are down, every lock or update fails.  **Exposure.** In a normal takedown the window is short: in a run without a debugger, CMS sent its flip 8 ms after distconf got the takedown. The outage needs one of these: - the leaving pile goes down in that window, and CMS or another tablet restarts before t
+
 - **Issue #58947** (2026-11-13): **viewer: TestViewer.test_storage_stats races on table1 stats and cannot pass on CI retry**
   *Symptoms*: `ydb/core/viewer/tests/test.py.TestViewer.test_storage_stats` is flaky, and CI retries cannot recover it. In PR-check run [42815858606](https://github.com/ydb-platform/ydb/actions/runs/42815858606) (#58358, attempt 1) it failed all 3 tries. A rerun with no code change passed.  There are two separate problems.  ### 1. The test does not wait for `table1` stats  Try 1 (full suite) failed with:  ``` test_result['Paths'][1]['DataSize']: value 'not-zero-number' is missing ```  Setup creates `table1` and inserts rows ([test.py#L313-L328](https://github.com/ydb-platform/ydb/blob/cb5e2e9645c22fed269a35cc40971b2f2c019c18/ydb/core/viewer/tests/test.py#L313-L328)). Table stats reach SchemeShard asynchronously, and nothing waits for them. The poll loop in the test ([test.py#L2321-L2330](https://github.com/ydb-platform/ydb/blob/cb5e2e9645c22fed269a35cc40971b2f2c019c18/ydb/core/viewer/tests/test.py#L2321-L2330)) checks only `result['Paths'][2]['Groups'] != 0` (`topic1`). In this run the topic was ready on the first call, so the loop exited before `table1` had `DataSize`.  ### 2. The test depends on another test creating `topic1`  `topic1` is created by `test_pqrb_tablet` ([test.py#L1422-L1427](https://github.com/ydb-platform/ydb/blob/cb5e2e9645c22fed269a35cc40971b2f2c019c18/ydb/core/viewer/tests/test.py#L1422-L1427)), not by setup. CI retries run only the failed test, so `topic1` does not exist. All 15 polls return zeros, and tries 2 and 3 always fail:  ``` test_result['Paths'][2]['Groups']
-
-- **Issue #56001** (2026-11-10): **Verify during import CS from backup**
-  *Symptoms*: Previous logs: https://nda.ya.ru/t/aLgg1-317uhkgX  The binary was stripped, so full backtrace is not available ``` VERIFY failed (2026-10-16T16:12:59.189659+0300): verification=blobsSplittedConclusion.GetResult().size() == 1;fline=import_actor.cpp:173;   ydb/library/actors/core/log.cpp:918   ~TVerifyFormattedRecordWriter(): requirement false failed build: commit 52f169ee22efc85ae56a8a53e34bb50d453ce580 (clean) 0. ??:0: ?? @ 0xAB125BA 1. ??:0: ?? @ 0xAB0C58B 2. ??:0: ?? @ 0xB746A4F 3. ??:0: ?? @ 0x15C738BC 4. ??:0: ?? @ 0x15C7442B 5. ??:0: ?? @ 0xB6CDD4D 6. ??:0: ?? @ 0xB738306 7. ??:0: ?? @ 0xB73BB3A 8. ??:0: ?? @ 0xB73B774 9. ??:0: ?? @ 0xB73C218 10. ??:0: ?? @ 0xAB135E7 11. ??:0: start_thread @ 0x7FD31134E608 12. ??:0: __clone @ 0x7FD311273352 ??+0 (0xAB125BB) ??+0 (0xAB0C58C) ??+0 (0xB746A50) ??+0 (0x15C738BD) ??+0 (0x15C7442C) ??+0 (0xB6CDD4E) ??+0 (0xB738307) ??+0 (0xB73BB3B) ??+0 (0xB73B775) ??+0 (0xB73C219) ??+0 (0xAB135E8) ??+0 (0x7FD31134E609) clone+67 (0x7FD311273353) ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2065,1004 +2065,435 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `850659aa` (2026-11-13)
-**Commit Message**: feat datashard : allow read-only prepares on CDC overflow (#58063)
+### Incident Patch 1: `659fc244` (2026-11-13)
+**Commit Message**: schemeshard: fix drop-replication + describe race crash (#59293)
 
-KIKIMR-27622
-
-**File**: `ydb/core/tx/datashard/build_write_out_rs_unit.cpp` (modified, +2/-1)
+**File**: `ydb/core/tx/schemeshard/schemeshard_path_describer.cpp` (modified, +4/-5)
 ```diff
-@@ -69,7 +69,8 @@ EExecutionStatus TBuildWriteOutRSUnit::Execute(TOperation::TPtr op, TTransaction
-         const bool allowAncestorLocks =
-             AppData()->FeatureFlags.GetEnableDataShardLocksTransferOnSplit();
-         KqpFillOutReadSets(
--            op->OutReadSets(), kqpLocks, true, DataShard.SysLocksTable(), allowAncestorLocks);
-+            op->OutReadSets(), kqpLocks, true, DataShard.SysLocksTable(), allowAncestorLocks,
-+            op->IsReadOnly() || op->HasFlag(TTxFlags::ReadOnlyPrepare));
-     } catch (const TNotReadyTabletException&) {
-         YDB_LOG_CRIT_CTX(ctx, "TBuildWriteOutRSUnit::Execute: unexpected TNotReadyTabletException while building out readset");
-         return OnTabletNotReady(*writeOp, txc, ctx);
-```
-
-**File**: `ydb/core/tx/datashard/datashard.h` (modified, +3/-2)
-```diff
-@@ -152,13 +152,14 @@ namespace NDataShard {
-             BlockFailPointUnblocked = 1ULL << 49,
-             // Operation sent a TEvProposeTransactionRestart notification
-             RestartNotificationSent = 1ULL << 50,
-+            ReadOnlyPrepare = 1ULL << 51,
+@@ -1800,11 +1800,10 @@ void TSchemeShard::DescribeReplication(const TPathId& pathId, const TString& nam
+     desc.SetVersion(info->AlterVersion);
  
--            LastFlag = RestartNotificationSent,
-+            LastFlag = ReadOnlyPrepare,
- 
-             PrivateFlagsMask = 0xFFFFFFFFFFFF0000ULL,
-             PreservedPrivateFlagsMask = ReadOnly | ProposeBlocker | NeedDiagnostics | GlobalReader
-                 | GlobalWriter | KqpDataTransaction | KqpScanTransaction
--                | BlockingImmediateOps | BlockingImmediateWrites,
-+                | BlockingImmediateOps | BlockingImmediateWrites | ReadOnlyPrepare,
-         };
-     };
- 
-```
-
-**File**: `ydb/core/tx/datashard/datashard_kqp.cpp` (modified, +19/-7)
-```diff
-@@ -77,7 +77,8 @@ TVector<TCell> MakeLockKey(const NKikimrDataEvents::TLock& lockProto, ui64 selfS
- 
- // returns list of broken locks
- TVector<NKikimrDataEvents::TLock> ValidateLocks(
--    const NKikimrDataEvents::TKqpLocks& txLocks, TSysLocks& sysLocks, bool allowAncestorLocks)
-+    const NKikimrDataEvents::TKqpLocks& txLocks, TSysLocks& sysLocks,
-+    bool allowAncestorLocks, bool requireReadOnlyLocks)
- {
-     TVector<NKikimrDataEvents::TLock> brokenLocks;
- 
-@@ -88,6 +89,16 @@ TVector<NKikimrDataEvents::TLock> ValidateLocks(
-     ui64 selfShardId = sysLocks.SelfShardId();
- 
-     for (auto& lockProto : txLocks.GetLocks()) {
-+        if (requireReadOnlyLocks) {
-+            const auto lock = sysLocks.GetRawLock(lockProto.GetLockId());
-+            if (lock && lock->IsWriteLock()) {
-+                YDB_LOG_TRACE("ValidateLocks: read-only lock has writes",
-+                    {"lockId", lockProto.GetLockId()},
-+                    {"shardId", selfShardId});
-+                brokenLocks.emplace_back(lockProto);
-+                continue;
-+            }
-+        }
-         ui32 ourGeneration = 0;
-         ui64 ourCounter = 0;
-         bool writeSeqNumMismatch = false;
-@@ -263,13 +274,13 @@ void KqpSetTxLocksKeys(
- std::tuple<bool, TVector<NKikimrDataEvents::TLock>> KqpValidateLocks(
-     TSysLocks& sysLocks, const NKikimrDataEvents::TKqpLocks* kqpLocks,
-     bool useGenericReadSets, const TInputOpData::TInReadSets& inReadSets,
--    bool allowAncestorLocks)
-+    bool allowAncestorLocks, bool requireReadOnlyLocks)
- {
-     if (kqpLocks == nullptr || !NeedValidateLocks(kqpLocks->GetOp())) {
-         return {true, {}};
-     }
- 
--    auto brokenLocks = ValidateLocks(*kqpLocks, sysLocks, allowAncestorLocks);
-+    auto brokenLocks = ValidateLocks(*kqpLocks, sysLocks, allowAncestorLocks, requireReadOnlyLocks);
- 
-     if (!brokenLocks.empty()) {
-         return {false, std::move(brokenLocks)};
-@@ -318,7 +329,7 @@ std::tuple<bool, TVector<NKikimrDataEvents::TLock>> KqpValidateVolatileTx(
-     TSysLocks& sysLocks, const NKikimrDataEvents::TKqpLocks* kqpLocks,
-     bool useGenericReadSets, ui64 txId, const TVector<NKikimrTx::TEvReadSet>& delayedInReadSets,
-     TInputOpData::TAwaitingDecisions& awaitingDecisions, TOutputOpData::TOutReadSets& outReadSets,
--    bool allowAncestorLocks)
-+    bool allowAncestorLocks, bool requireReadOnlyLocks)
- {
-     if (kqpLocks == nullptr || !NeedValidateLocks(kqpLocks->GetOp())) {
-         return {true, {}};
-@@ -341,7 +352,7 @@ std::tuple<bool, TVector<NKikimrDataEvents::TLock>> KqpValidateVolatileTx(
-     bool sendLocks = SendLocks(*kqpLocks, selfShardId);
-     if (sendLocks) {
-         // Note: it is possible to have no locks
--        auto brokenLocks = ValidateLocks(*kqpLocks, sysLocks, allowAncestorLocks);
-+        auto brokenLocks = ValidateLocks(*kqpLocks, sysLocks, allowAncestorLocks, requireReadOnlyLocks);
- 
-         if (!brokenLocks.empty()) {
-             return {false, std::move(brokenLocks)};
-@@ -464,7 +475,8 @@ std::tuple<bool, TVector<NKikimrDataEvents::TLock>> KqpValidateVolatileTx(
- }
- 
- void KqpFillOutReadSets(
--    TOutputOpData::TOutReadSets& outReadSets, const NKikimrDataEvents::TKqpLocks& kqpLocks, bool useGenericReadSets, TSysLocks& sysLocks, bool allowAncestorLocks)
-+    TOutputOpData::TOutReadSets& outReadSets, const NKikimrDataEvents::TKqpLocks& kqpLocks,
-+    bool useGenericReadSets, TSysLocks& sysLocks, bool allowAncestorLocks, bool requireReadOnlyLocks)
- {
-     TMap<std::pair<ui64, ui64>, NKikimrTxDataShard::TKqpReadset> readsetData;
- 
-@@ -474,7 +486,7 @@ void KqpFillOutReadSets(
-     const ui64 selfShardId = sysLocks.SelfShardId();
- 
-     if (SendLocks(kqpLocks, selfShardId) && !kqpLocks.GetReceivingShards().empty()) {
--        auto brokenLocks = ValidateLocks(kqpLocks, sysLocks, allowAncestorLocks);
-+        auto brokenLocks = ValidateLocks(kqpLocks, sysLocks, allowAncestorLocks, requireReadOnlyLocks);
- 
-         NKikimrTxDataShard::TKqpValidateLocksResult validateLocksResult;
-         validateLocksResult.SetSuccess(brokenLocks.empty());
-```
-
-**File**: `ydb/core/tx/datashard/datashard_kqp.h` (modified, +3/-3)
-```diff
-@@ -27,18 +27,18 @@ void KqpPrepareInReadsets(TInputOpData::TInReadSets& inReadSets,
- std::tuple<bool, TVector<NKikimrDataEvents::TLock>> KqpValidateLocks(
-     TSysLocks& sysLocks, const NKikimrDataEvents::TKqpLocks* kqpLocks,
-     bool useGenericReadSets, const TInputOpData::TInReadSets& inReadSets,
--    bool allowAncestorLocks);
-+    bool allowAncestorLocks, bool requireReadOnlyLocks);
- std::tuple<bool, TVector<NKikimrDataEvents::TLock>> KqpValidateVolatileTx(
-     TSysLocks& sysLocks, const NKikimrDataEvents::TKqpLocks* kqpLocks,
-     bool useGenericReadSets, ui64 txId, const TVector<NKikimrTx::TEvReadSet>& delayedInReadSets,
-     TInputOpData::TAwaitingDecisions& awaitingDecisions, TOutputOpData::TOutReadSets& outReadSets,
--    bool allowAncestorLocks);
-+    bool allowAncestorLocks, bool requireReadOnlyLocks);
- void KqpFillOutReadSets(
-     TOutputOpData::TOutReadSets& outReadSets, const NKikimrDataEvents::TKqpLocks* kqpLocks,
-     NKikimrTx::TReadSetData::EDecision decision, ui64 origin);
- void KqpFillOutReadSets(
-     TOutputOpData::TOutReadSets& outReadSets, const NKikimrDataEvents::TKqpLocks& kqpLocks,
--    bool useGenericReadSets, TSysLocks& sysLocks, bool allowAncestorLocks);
-+    bool useGenericReadSets, TSysLocks& sysLocks, bool allowAncestorLocks, bool requireReadOnlyLocks);
- 
- 
- bool KqpLocksHasArbiter(const NKikimrDataEvents::TKqpLocks* kqpLocks);
-```
-
-**File**: `ydb/core/tx/datashard/datashard_pipeline.cpp` (modified, +4/-0)
-```diff
-@@ -1891,6 +1891,10 @@ TOperation::TPtr TPipeline::BuildOperation(NEvents::TDataEvents::TEvWrite::TPtr&
+     if (const auto& shardIdx = info->ControllerShardIdx; shardIdx != InvalidShardIdx) {
+-        Y_ABORT_UNLESS(ShardInfos.contains(shardIdx));
+-        const auto& shardInfo = ShardInfos.at(shardIdx);
+-
+-        if (shardInfo.TabletID != InvalidTabletId) {
+-            desc.SetControllerId(ui64(shardInfo.TabletID));
++        // The controller shard may already be deleted if the replication is being dropped
++        const auto it = ShardInfos.find(shardIdx);
++        if (it != ShardInfos.end() && it->second.TabletID != InvalidTabletId) {
++            desc.SetControllerId(ui64(it->second.TabletID));
          }
      }
- 
-+    if (writeTx->IsReadOnlyPrepare(Self->GetSysLocks())) {
-+        writeOp->SetFlag(TTxFlags::ReadOnlyPrepare);
-+    }
-+
-     return writeOp;
  }
- 
 ```
 
-**File**: `ydb/core/tx/datashard/datashard_ut_write.cpp` (modified, +917/-0)
+**File**: `ydb/core/tx/schemeshard/ut_replication/ut_replication.cpp` (modified, +52/-0)
 ```diff
-@@ -1,12 +1,16 @@
-+#include "change_exchange.h"
- #include "datashard_active_transaction.h"
-+#include "datashard_failpoints.h"
- #include <ydb/core/tx/data_events/payload_helper.h>
- #include <ydb/core/tx/datashard/ut_common/datashard_ut_common.h>
- #include <ydb/core/tx/datashard/ut_common/datashard_ut_common_tx.h>
- #include <ydb/core/base/tablet_pipecache.h>
- #include <ydb/core/testlib/actors/block_events.h>
- #include <ydb/core/testlib/test_tli.h>
- #include <ydb/core/protos/query_stats.pb.h>
-+#include <ydb/core/protos/schemeshard/operations.pb.h>
- #include <ydb/core/tx/long_tx_service/public/lock_handle.h>
+@@ -1,6 +1,8 @@
+ #include <ydb/core/protos/replication.pb.h>
++#include <ydb/core/testlib/actors/block_events.h>
+ #include <ydb/core/tx/replication/controller/public_events.h>
+ #include <ydb/core/tx/schemeshard/ut_helpers/helpers.h>
 +#include <ydb/core/tx/tx_proxy/proxy.h>
- #include <ydb/library/services/services.pb.h>
- #include "datashard_ut_common_kqp.h"
- 
-@@ -1692,6 +1696,919 @@ Y_UNIT_TEST_SUITE(DataShardWrite) {
- 
-     }  // Y_UNIT_TEST
- 
-+
-+    ui64 ReadChangeQueueSize(TTestActorRuntime& runtime, ui64 tabletId) {
-+        const auto sender = runtime.AllocateEdgeActor();
-+        runtime.SendToPipe(tabletId, sender, new TEvTablet::TEvGetCounters(),
-+            0, GetPipeConfigWithRetries());
-+        const auto response = runtime.GrabEdgeEventRethrow<TEvTablet::TEvGetCountersResponse>(sender);
-+        UNIT_ASSERT(response);
-+        for (const auto& counter : response->Get()->Record.GetTabletCounters().GetAppCounters().GetSimpleCounters()) {
-+            if (counter.GetName() == "DataShard/ChangeQueueSize") {
-+                return counter.GetValue();
-+            }
-+        }
-+        UNIT_ASSERT_C(false, "CDC change queue counter not found");
-+        return 0;
-+    }
-+
-+    std::tuple<TTestActorRuntime&, Tests::TServer::TPtr, TActorId> CreateCdcQueueServer(
-+        bool volatileTransactions, bool inMemoryStateMigration = false, bool writeAlwaysVolatile = false)
-+    {
-+        TPortManager portManager;
-+        NKikimrPQ::TPQConfig pqConfig;
-+        pqConfig.SetEnabled(true);
-+        pqConfig.SetEnableProtoSourceIdInfo(true);
-+        pqConfig.SetTopicsAreFirstClassCitizen(true);
-+        pqConfig.SetMaxReadCookies(10);
-+        pqConfig.AddClientServiceType()->SetName("data-streams");
-+        pqConfig.SetCheckACL(false);
-+        pqConfig.SetRequireCredentialsInNewProtocol(false);
-+        pqConfig.MutableQuotingConfig()->SetEnableQuoting(false);
-+
-+        TServerSettings settings(portManager.GetPort(2134), {}, pqConfig);
-+        settings.SetDomainName("Root").SetUseRealThreads(false).SetChangesQueueItemsLimit(1);
-+        settings.AppConfig->MutableFeatureFlags()->SetEnableDataShardVolatileTransactions(volatileTransactions);
-+        settings.AppConfig->MutableFeatureFlags()->SetEnableDataShardWriteAlwaysVolatile(writeAlwaysVolatile);
-+        settings.FeatureFlags.SetEnableDataShardInMemoryStateMigration(inMemoryStateMigration);
-+        return TestCreateServer(settings);
-+    }
-+
-+    void CheckReadLocksPrepareOnCdcQueueOverflow(bool volatileTransactions, bool writeAlwaysVolatile = false) {
-+        auto [runtime, server, sender] = CreateCdcQueueServer(volatileTransactions, false, writeAlwaysVolatile);
-+
-+        TShardedTableOptions tableOptions;
-+        auto [sourceShards, sourceTableId] = CreateShardedTable(server, sender, "/Root", "source", tableOptions);
-+        const auto [targetShards, targetTableId] = CreateShardedTable(server, sender, "/Root", "target", tableOptions);
-+        const ui64 sourceShard = sourceShards.at(0);
-+        const ui64 targetShard = targetShards.at(0);
-+        WaitTxNotification(server, sender, AsyncAlterAddStream(server, "/Root", "source", {
-+            .Name = "cdc",
-+            .Mode = NKikimrSchemeOp::ECdcStreamModeKeysOnly,
-+            .Format = NKikimrSchemeOp::ECdcStreamFormatJson,
-+        }));
-+
-+        sourceTableId = ResolveTableId(server, sender, "/Root/source");
-+        TBlockEvents<NChangeExchange::TEvChangeExchange::TEvEnqueueRecords> blockedChanges(runtime);
-+        UpsertOneKeyValue(runtime, sender, sourceShard, sourceTableId, tableOptions.Columns_,
-+            1, 10, 100, NKikimrDataEvents::TEvWrite::MODE_IMMEDIATE);
-+        runtime.WaitFor("blocked CDC change", [&]{ return !blockedChanges.empty(); });
-+        UNIT_ASSERT_VALUES_EQUAL(blockedChanges.size(), 1u);
-+        UNIT_ASSERT_VALUES_EQUAL(ReadChangeQueueSize(runtime, sourceShard), 1u);
-+
-+        const ui64 lockTxId = 1234567890001;
-+        NLongTxService::TLockHandle lockHandle(lockTxId, runtime.GetActorSystem(0));
-+        const auto sourceInfo = GetTablesByPathId(server, sourceShard).first;
-+        auto readRequest = GetBaseReadRequest(sourceTableId,
-+            sourceInfo.at(sourceTableId.PathId).GetDescription(), 1, NKikimrDataEvents::FORMAT_CELLVEC);
-+        readRequest->Record.SetLockTxId(lockTxId);
-+        readRequest->Record.SetLockNodeId(runtime.GetNodeId(0));
-+        AddKeyQuery(*readRequest, {1});
-+        const auto readResult = SendRead(server, sourceShard, readRequest.release(), sender);
-+        UNIT_ASSERT(readResult);
-+        UNIT_ASSERT_VALUES_EQUAL(FormatIntReadResult(rea
-```
-
-**File**: `ydb/core/tx/datashard/datashard_write_operation.cpp` (modified, +32/-0)
-```diff
-@@ -15,6 +15,8 @@
- #include <ydb/library/aclib/user_context.h>
- #include <ydb/library/actors/util/memory_track.h>
- 
-+#include <algorithm>
-+
- #define YDB_LOG_THIS_FILE_COMPONENT NKikimrServices::TX_DATASHARD
- 
- namespace NKikimr {
-@@ -91,6 +93,36 @@ TValidatedWriteTx::~TValidatedWriteTx() {
-     NActors::NMemory::TLabel<MemoryLabelValidatedDataTx>::Sub(TxSize);
- }
- 
-+bool TValidatedWriteTx::IsReadOnlyPrepare(const TSysLocks& sysLocks) const {
-+    if (!Ready() || IsImmediate || HasOperations() || LockTxId != 0) {
-+        return false;
-+    }
-+    if (!KqpLocks || KqpLocks->GetOp() != NKikimrDataEvents::TKqpLocks::Commit || KqpLocks->LocksSize() == 0) {
-+        return true;
-+    }
-+
-+    const auto& sendingShards = KqpLocks->GetSendingShards();
-+    if (std::find(sendingShards.begin(), sendingShards.end(), sysLocks.SelfShardId()) == sendingShards.end()) {
-+        return false;
-+    }
-+    const auto& receivingShards = KqpLocks->GetReceivingShards();
-+    if (std::find(receivingShards.begin(), receivingShards.end(), sysLocks.SelfShardId()) != receivingShards.end()) {
-+        return false;
-+    }
-+
-+    const bool allowAncestorLocks = AppData()->FeatureFlags.GetEnableDataShardLocksTransferOnSplit();
-+    for (const auto& lockProto : KqpLocks->GetLocks()) {
-+        if (lockProto.GetDataShard() != sysLocks.SelfShardId() && !allowAncestorLocks) {
-+            return false;
-+        }
-+        const auto lock = sysLocks.GetRawLock(lockProto.GetLockId());
-+        if (lockProto.GetHasWrites() || (lock && lock->IsWriteLock())) {
-+            return false;
-+        }
-+    }
-+    return true;
-+}
-+
- std::tuple<NKikimrTxDataShard::TError::EKind, TString> TValidatedWriteTxOperation::ParseOperation(const NEvents::TDataEvents::TEvWrite& ev, const NKikimrDataEvents::TEvWrite::TOperation& recordOperation, const TUserTable::TTableInfos& tableInfos, ui64 tabletId, TKeyValidator& keyValidator, const NWilson::TTraceId& traceId) {
-     OperationType = recordOperation.GetType();
-     switch (OperationType) {
-```
-
-**File**: `ydb/core/tx/datashard/datashard_write_operation.h` (modified, +1/-0)
-```diff
-@@ -70,6 +70,7 @@ class TValidatedWriteTx: TNonCopyable, public TValidatedTx {
-     bool HasWrites() const {
-         return TxInfo().HasWrites();
+ #include <ydb/core/ydb_convert/replication_description.h>
+ #include <ydb/public/api/protos/draft/ydb_replication.pb.h>
+ #include <ydb/public/lib/ydb_cli/dump/util/replication_utils.h>
+@@ -1009,4 +1011,54 @@ Y_UNIT_TEST_SUITE(TReplicationTests) {
+         TestDescribeResult(DescribePath(runtime, "/MyRoot/Replication"), {NLs::PathNotExist});
      }
-+    bool IsReadOnlyPrepare(const TSysLocks& sysLocks) const;
-     bool HasLockedWrites() const {
-         return HasWrites() && LockTxId;
-     }
+ 
++    Y_UNIT_TEST(DescribeDuringDropAfterControllerShardDeletion) {
++        TTestBasicRuntime runtime;
++        TTestEnv env(runtime, TTestEnvOptions().InitYdbDriver(true));
++        ui64 txId = 100;
++
++        SetupLogging(runtime);
++
++        TestCreateReplication(runtime, ++txId, "/MyRoot", DefaultScheme("Replication"));
++        env.TestWaitNotification(runtime, txId);
++        TestDescribeResult(DescribePath(runtime, "/MyRoot/Replication"), {
++            NLs::PathExist,
++            NLs::ReplicationState(NKikimrReplication::TReplicationState::kStandBy),
++        });
++        // The controller shard is the only shard in the domain: the root
++        // schemeshard is fresh in this test and assigns local shard ids
++        // from 1, so the controller shard has local id 1. (In a tenant
++        // schemeshard this would never hold.)
++        TestDescribeResult(DescribePath(runtime, "/MyRoot"), {NLs::ShardsInsideDomain(1)});
++
++        // Hold the drop's proposal to the coordinator so the drop cannot
++        // commit. The controller tablet is deleted before the commit: the
++        // drop queues the Hive deletion fire-and-forget, and schemeshard
++        // erases the controller shard from ShardInfos upon processing
++        // Hive's confirmation while the replication is still describable.
++        // This is the race the original crash happened on.
++        TBlockEvents<TEvTxProxy::TEvProposeTransaction> dropPropose(runtime);
++
++        const auto dropTxId = ++txId;
++        TestDropReplication(runtime, dropTxId, "/MyRoot", "Replication");
++        runtime.WaitFor("drop propose", [&] { return !dropPropose.empty(); });
++
++        // TEvNotifyShardDeleted is sent by the transaction that erases the
++        // shard from ShardInfos.
++        env.TestWaitShardDeletion(runtime, {1});
++
++        // The drop's proposal is withheld, so the drop is not committed
++        // yet: this describe crashed the whole schemeshard before the
++        // tolerant ShardInfos lookup was introduced.
++        const auto described = DescribePath(runtime, "/MyRoot/Replication");
++        TestDescribeResult(described, {
++            NLs::PathExist,
++            NLs::CheckPathState(NKikimrSchemeOp::EPathStateDrop),
++        });
++        UNIT_ASSERT(!described.GetPathDescription().GetReplicationDescription().HasControllerId());
++
++        dropPropose.Stop().Unblock();
++        env.TestWaitNotification(runtime, dropTxId);
++        TestDescribeResult(DescribePath(runtime, "/MyRoot/Replication"), {NLs::PathNotExist});
++    }
++
+ } // TReplicationTests
 ```
 
 ---
 
-### Incident Patch 2: `064a5d31` (2026-11-13)
-**Commit Message**: Revert "[WindowFunctions] Add ExtractMembers to remove redundand columns -> less spilling (#53894)" (#59253)
+### Incident Patch 2: `7d522757` (2026-11-14)
+**Commit Message**: Fix SelfHeal stuck after group deletion (#59372)
 
-**File**: `ydb/core/kqp/ut/opt/kqp_partitions_by_keys_sort_ut.cpp` (modified, +0/-74)
+**File**: `ydb/core/mind/bscontroller/self_heal.cpp` (modified, +5/-3)
 ```diff
-@@ -254,80 +254,6 @@ Y_UNIT_TEST_SUITE(KqpPartitionsByKeysSort) {
-             true,
-             true);
-     }
--
--    Y_UNIT_TEST(WindowFunctionFullFrameAggregateInputDropsUnusedColumn) {
--        NKikimrConfig::TAppConfig appConfig;
--        appConfig.MutableTableServiceConfig()->SetEnableWindowFunctionsV2(true);
--        TKikimrRunner kikimr(appConfig);
--        auto db = kikimr.GetQueryClient();
--        auto session = db.GetSession().GetValueSync().GetSession();
--
--        const TString query =
--            "--!syntax_v1\n"
--            "$input = SELECT Key, Text, Data,\n"
--            "    Unwrap(CAST(Key AS String) || Text || CAST(Data AS String)) AS unused_fat_col\n"
--            "FROM `/Root/EightShard`;\n"
--            "SELECT Key, Text, Data, unused_fat_col,\n"
--            "    SUM(Data) OVER (PARTITION BY Text) AS total\n"
--            "FROM $input;\n";
--
--        auto explain = session.ExecuteQuery(query, NYdb::NQuery::TTxControl::NoTx(),
--            NYdb::NQuery::TExecuteQuerySettings().ExecMode(NYdb::NQuery::EExecMode::Explain)).GetValueSync();
--        UNIT_ASSERT_VALUES_EQUAL_C(explain.GetStatus(), EStatus::SUCCESS, explain.GetIssues().ToString());
--        const TString ast = *explain.GetStats()->GetAst();
--
--        UNIT_ASSERT_C(ast.Contains("\"unused_fat_col\""), ast);
--        TString sumStage;
--        for (size_t pos = 0; (pos = ast.find("(DqPhyStage", pos)) != TString::npos; ++pos) {
--            int depth = 0;
--            size_t end = pos;
--            for (; end < ast.size(); ++end) {
--                if (ast[end] == '(') {
--                    ++depth;
--                } else if (ast[end] == ')' && --depth == 0) {
--                    ++end;
--                    break;
--                }
--            }
--            const auto stage = ast.substr(pos, end - pos);
--            if (stage.Contains("AggrAdd")) {
--                sumStage = stage;
--                break;
--            }
--        }
--        UNIT_ASSERT_C(!sumStage.empty(), ast);
--        UNIT_ASSERT_C(sumStage.Contains("\"Data\""), sumStage);
--        UNIT_ASSERT_C(!sumStage.Contains("unused_fat_col"), sumStage);
--
--        auto exec = session.ExecuteQuery(query, NYdb::NQuery::TTxControl::BeginTx().CommitTx()).ExtractValueSync();
--        UNIT_ASSERT_VALUES_EQUAL_C(exec.GetStatus(), EStatus::SUCCESS, exec.GetIssues().ToString());
--        CompareYsonUnordered(R"([
--            [[101u];["Value1"];[1];"101Value11";[15]];
--            [[201u];["Value1"];[2];"201Value12";[15]];
--            [[301u];["Value1"];[3];"301Value13";[15]];
--            [[401u];["Value1"];[1];"401Value11";[15]];
--            [[501u];["Value1"];[2];"501Value12";[15]];
--            [[601u];["Value1"];[3];"601Value13";[15]];
--            [[701u];["Value1"];[1];"701Value11";[15]];
--            [[801u];["Value1"];[2];"801Value12";[15]];
--            [[102u];["Value2"];[3];"102Value23";[16]];
--            [[202u];["Value2"];[1];"202Value21";[16]];
--            [[302u];["Value2"];[2];"302Value22";[16]];
--            [[402u];["Value2"];[3];"402Value23";[16]];
--            [[502u];["Value2"];[1];"502Value21";[16]];
--            [[602u];["Value2"];[2];"602Value22";[16]];
--            [[702u];["Value2"];[3];"702Value23";[16]];
--            [[802u];["Value2"];[1];"802Value21";[16]];
--            [[103u];["Value3"];[2];"103Value32";[17]];
--            [[203u];["Value3"];[3];"203Value33";[17]];
--            [[303u];["Value3"];[1];"303Value31";[17]];
--            [[403u];["Value3"];[2];"403Value32";[17]];
--            [[503u];["Value3"];[3];"503Value33";[17]];
--            [[603u];["Value3"];[1];"603Value31";[17]];
--            [[703u];["Value3"];[2];"703Value32";[17]];
--            [[803u];["Value3"];[3];"803Value33";[17]]
--        ])", FormatResultSetYson(exec.GetResultSet(0)));
--    }
- }
+@@ -462,6 +462,7 @@ namespace NKikimr::NBsController {
+                         Y_DEBUG_ABORT_UNLESS(ActiveReassignerActorId);
+                         if (ActiveReassignerActorId) {
+                             Send(*ActiveReassignerActorId, new TEvents::TEvPoison);
++                            ActiveReassignerActorId.reset();
+                         }
+                     }
  
- } // namespace NKikimr::NKqp
-```
-
-**File**: `ydb/library/yql/dq/opt/dq_opt_phy.cpp` (modified, +0/-83)
-```diff
-@@ -13,7 +13,6 @@
- #include <ydb/library/yql/providers/dq/expr_nodes/dqs_expr_nodes.h>
- #include <ydb/library/yql/dq/opt/dq_opt_stat.h>
- #include <yql/essentials/core/yql_cost_function.h>
--#include <util/generic/hash_set.h>
- 
- 
- namespace NYql::NDq {
-@@ -441,73 +440,6 @@ TExprNode::TPtr BuildSortForPartitionsByKeys(const TPartition& partition, const
-         haveSort ? &partition.SortKeySelectorLambda().Ref() : nullptr, ctx);
- }
- 
--template <typename TPartition>
--bool TryCollectNarrowPartitionFields(
--    const TPartition& partition,
--    TVector<const TItemExprType*>& items)
--{
--    const auto* itemType = GetSeqItemType(partition.Input().Ref().GetTypeAnn());
--    if (!itemType || itemType->GetKind() != ETypeAnnotationKind::Struct) {
--        return false;
--    }
--    const auto& inputStruct = *itemType->template Cast<TStructExprType>();
--
--    const auto collect = [&](const TExprNode& root, THashSet<TStringBuf>& dst) {
--        VisitExpr(root, [&](const TExprNode& node) {
--            if (node.IsCallable("Member") && node.Tail().IsAtom() && inputStruct.FindItem(node.Tail().Content())) {
--                dst.emplace(node.Tail().Content());
--            }
--            return true;
--        });
--    };
--
--    // Condense1 is a full-frame aggregate. Chopper copies the whole row.
--    bool hasCondense = false;
--    bool hasChopper = false;
--    VisitExpr(partition.ListHandlerLambda().Ptr(), [&](const TExprNode::TPtr& node) {
--        if (node->IsCallable("Chopper")) {
--            hasChopper = true;
--            return false;
--        }
--        hasCondense = hasCondense || node->IsCallable({"Condense1", "WideCondense1"});
--        return true;
--    });
--    if (hasChopper || !hasCondense) {
--        return false;
--    }
--
--    THashSet<TStringBuf> used;
--    collect(partition.ListHandlerLambda().Ref(), used);
--    THashSet<TStringBuf> keys;
--    collect(partition.KeySelectorLambda().Ref(), keys);
--    for (const auto name : keys) {
--        used.emplace(name);
--    }
--    if (const auto sort = partition.SortKeySelectorLambda().template Maybe<TCoLambda>()) {
--        collect(sort.Cast().Ref(), used);
--    }
--
--    // Keys only: the any-join PartitionsByKeys on {joinKey, total} would drop total.
--    bool hasPayload = false;
--    for (const auto name : used) {
--        if (!keys.contains(name)) {
--            hasPayload = true;
--            break;
--        }
--    }
--    if (!hasPayload || used.empty() || used.size() >= inputStruct.GetSize()) {
--        return false;
--    }
--
--    items.clear();
--    for (const auto* item : inputStruct.GetItems()) {
--        if (used.contains(item->GetName())) {
--            items.push_back(item);
--        }
--    }
--    return !items.empty();
--}
--
- template <typename TPartition>
- TExprBase DqBuildPartitionsStageStub(
-     TExprBase node,
-@@ -617,21 +549,6 @@ TExprBase DqBuildPartitionsStageStub(
-                 .Done();
+@@ -685,9 +686,10 @@ namespace NKikimr::NBsController {
          }
  
--        if (TVector<const TItemExprType*> items; TryCollectNarrowPartitionFields(partition, items)) {
--            TExprNode::TListType members;
--            members.reserve(items.size());
--            for (const auto* item : items) {
--                members.push_back(ctx.NewAtom(partition.Pos(), item->GetName()));
--            }
--            return Build<TPartition>(ctx, node.Pos())
--                .InitFrom(partition)
--                .template Input<TCoExtractMembers>()
--                    .Input(dqUnion)
--                    .Members(ctx.NewList(partition.Pos(), std::move(members)))
--                    .Build()
--                .Done();
--        }
--
-         TDqConnection newConnection = BuildConnection(node.Pos(), keyLambda, dqUnion, ctx, typeCtx, enableShuffleElimination);
-         TCoArgument programArg = Build<TCoArgument>(ctx, node.Pos())
-             .Name("arg")
-```
-
----
-
-### Incident Patch 3: `2f872039` (2026-11-13)
-**Commit Message**: Fix/skipper write rto (#59158)
-
-**File**: `ydb/core/base/statestorage.h` (modified, +3/-0)
-```diff
-@@ -358,6 +358,9 @@ struct TEvStateStorage {
-         const ui64 LockedFor;
-         const TSignature Signature;
-         TVector<TFollowerInfo> Followers;
-+        // Cluster-state version of this request's immutable StateStorage configuration; zero means unknown.
-+        ui64 ClusterStateGeneration = 0;
-+        ui64 ClusterStateGuid = 0;
- 
-         TEvInfo(NKikimrProto::EReplyStatus status, ui64 tabletId, ui64 cookie, const TActorId &leader, const TActorId &leaderTablet, ui32 gen, ui32 step, bool locked, ui64 lockedFor, const TSignature &sig, TVector<TFollowerInfo>&& followers)
-             : Status(status)
-```
-
-**File**: `ydb/core/base/statestorage_proxy.cpp` (modified, +18/-17)
-```diff
-@@ -117,24 +117,22 @@ class TStateStorageProxyRequest : public TActor<TStateStorageProxyRequest> {
-     }
- 
-     void Reply(NKikimrProto::EReplyStatus status) {
--        Send(
--            Source,
--            new TEvStateStorage::TEvInfo(
--                status,
--                TabletID,
--                Cookie,
--                ReplyLeader,
--                ReplyLeaderTablet,
--                ReplyGeneration,
--                ReplyStep,
--                ReplyLocked,
--                ReplyLockedFor,
--                Signature,
--                GetFollowersAsVector(Followers)
--            ),
--            0,
--            SourceCookie
-+        auto* msg = new TEvStateStorage::TEvInfo(
-+            status,
-+            TabletID,
-+            Cookie,
-+            ReplyLeader,
-+            ReplyLeaderTablet,
-+            ReplyGeneration,
-+            ReplyStep,
-+            ReplyLocked,
-+            ReplyLockedFor,
-+            Signature,
-+            GetFollowersAsVector(Followers)
-         );
-+        msg->ClusterStateGeneration = Info->ClusterStateGeneration;
-+        msg->ClusterStateGuid = Info->ClusterStateGuid;
-+        Send(Source, msg, 0, SourceCookie);
-     }
- 
-     void ReplyAndDie(NKikimrProto::EReplyStatus status) {
-@@ -956,6 +954,9 @@ class TStateStorageRingGroupProxyRequest : public TActorBootstrapped<TStateStora
-             GetFollowersAsVector(Followers)
-         );
- 
-+        msg->ClusterStateGeneration = Info->ClusterStateGeneration;
-+        msg->ClusterStateGuid = Info->ClusterStateGuid;
-+
-         YDB_LOG_DEBUG("RingGroupProxyRequest::Reply TEvInfo",
-             {"ev", msg->ToString()});
-         Send(Source, msg, 0, SourceCookie);
-```
-
-**File**: `ydb/core/base/statestorage_proxy_ut.cpp` (modified, +42/-1)
-```diff
-@@ -32,11 +32,14 @@ class TLookupFixture {
-     ui32 SignatureUpdateCount = 0;
-     NKikimrProto::EReplyStatus Status = NKikimrProto::UNKNOWN;
-     TActorId ReplyLeader;
-+    ui64 ReplyClusterStateGeneration = Max<ui64>();
-+    ui64 ReplyClusterStateGuid = Max<ui64>();
-     TEvStateStorage::TSignature Signatures;
-     TVector<TEvStateStorage::TEvInfo::TFollowerInfo> Followers;
- 
-     explicit TLookupFixture(TOptions::ESigWaitMode mode = TOptions::SigNone, ui32 ringGroupCount = 1,
--            const TVector<ERingGroupState>& ringGroupStates = {}, bool waitForAllRingGroups = false) {
-+            const TVector<ERingGroupState>& ringGroupStates = {}, bool waitForAllRingGroups = false,
-+            ui64 clusterStateGeneration = 0, ui64 clusterStateGuid = 0) {
-         Runtime.Initialize();
-         Runtime.GetLogSettings(0)->Append(NKikimrServices::EServiceKikimr_MIN,
-             NKikimrServices::EServiceKikimr_MAX,
-@@ -49,6 +52,8 @@ class TLookupFixture {
-         OtherLeader = Runtime.AllocateEdgeActor();
- 
-         auto info = MakeIntrusive<TStateStorageInfo>();
-+        info->ClusterStateGeneration = clusterStateGeneration;
-+        info->ClusterStateGuid = clusterStateGuid;
-         info->RingGroups.resize(ringGroupCount);
-         for (ui32 ringGroupIndex = 0; ringGroupIndex < info->RingGroups.size(); ++ringGroupIndex) {
-             auto& group = info->RingGroups[ringGroupIndex];
-@@ -81,6 +86,8 @@ class TLookupFixture {
-                     ++ReplyCount;
-                     Status = reply->Status;
-                     ReplyLeader = reply->CurrentLeader;
-+                    ReplyClusterStateGeneration = reply->ClusterStateGeneration;
-+                    ReplyClusterStateGuid = reply->ClusterStateGuid;
-                     Signatures = reply->Signature;
-                     Followers = reply->Followers;
-                     return TTestActorRuntimeBase::EEventAction::DROP;
-@@ -106,6 +113,8 @@ class TLookupFixture {
-         for (const auto& replica : Replicas) {
-             auto request = Runtime.GrabEdgeEvent<TEvStateStorage::TEvReplicaLookup>(replica);
-             UNIT_ASSERT(request);
-+            UNIT_ASSERT_VALUES_EQUAL(request->Get()->Record.GetClusterStateGeneration(), clusterStateGeneration);
-+            UNIT_ASSERT_VALUES_EQUAL(request->Get()->Record.GetClusterStateGuid(), clusterStateGuid);
-             Requests.push_back(request->Sender);
-             ReplicaCookies.push_back(request->Get()->Record.GetCookie());
-         }
-@@ -362,9 +371,41 @@ void CheckIncompleteLockShutdown(bool safetyTimeout, bool partialSuccess, bool r
-     UNIT_ASSERT_VALUES_EQUAL(f.Status, race ? NKikimrProto::RACE : NKikimrProto::TIMEOUT);
- }
- 
-+void CheckLookupReplyClusterStateVersion(ui32 ringGroupCount) {
-+    for (ui64 generation : {0ull, 2ull}) {
-+        const ui64 guid = generation ? 22 : 0;
-+        for (bool hasLeader : {false, true}) {
-+            TLookupFixture f(TEvStateStorage::TProxyOptions::SigNone, ringGroupCount, {}, false, generation, guid);
-+            for (ui32 group = 0; group < ringGroupCount; ++group) {
-+                for (ui32 replica = 0; replica < 3; ++replica) {
-+                    if (hasLeader) {
-+                        f.KnownLeader(group * 5 + replica);
-+                    } else {
-+                        f.Empty(group * 5 + replica);
-+                    }
-+                }
+         void Handle(TEvReassignerDone::TPtr& ev) {
+-            Y_ABORT_UNLESS(ActiveReassignerActorId);
+-            TActorId reassigner = *std::exchange(ActiveReassignerActorId, std::nullopt);
+-            Y_ABORT_UNLESS(reassigner == ev->Sender);
++            if (!ActiveReassignerActorId || *ActiveReassignerActorId != ev->Sender) {
++                return;
 +            }
-+            f.ExpectReply(hasLeader ? NKikimrProto::OK : NKikimrProto::NODATA);
-+            // Check the real proxy result, not an injected TEvInfo. The input
-+            // replicas use legacy (0,0) tags, so the result must carry the
-+            // immutable request configuration rather than a replica's tags.
-+            UNIT_ASSERT_VALUES_EQUAL(f.ReplyClusterStateGeneration, generation);
-+            UNIT_ASSERT_VALUES_EQUAL(f.ReplyClusterStateGuid, guid);
-+        }
-+    }
-+}
-+
- } // namespace
++            ActiveReassignerActorId.reset();
  
- Y_UNIT_TEST_SUITE(TStateStorageProxyLookup) {
-+    Y_UNIT_TEST(LookupReplyCarriesClusterStateVersionSingleRingGroup) {
-+        CheckLookupReplyClusterStateVersion(1);
-+    }
-+
-+    Y_UNIT_TEST(LookupReplyCarriesClusterStateVersionMultipleRingGroups) {
-+        CheckLookupReplyClusterStateVersion(2);
-+    }
-+
-     Y_UNIT_TEST(NodataQuorumSigNone) {
-         CheckEmptyQuorum(TEvStateStorage::TProxyOptions::SigNone);
-     }
+             if (const auto it = Groups.find(ev->Get()->GroupId); it != Groups.end()) {
+                 auto& group = it->second;
 ```
 
-**File**: `ydb/core/base/tablet_pipe.h` (modified, +19/-1)
+**File**: `ydb/core/mind/bscontroller/ut_selfheal/self_heal_actor_ut.cpp` (modified, +90/-2)
 ```diff
-@@ -32,6 +32,7 @@ namespace NKikimr {
-             EvClientCheckDelay,
-             EvClientShuttingDown,
-             EvMessage, // replacement for EvSend
-+            EvClientUpdateGeneration,
+@@ -85,9 +85,12 @@ TEvControllerUpdateSelfHealInfo::TGroupContent Convert(const TIntrusivePtr<TBlob
+     return res;
+ }
  
-             EvEnd
-         };
-@@ -259,7 +260,24 @@ namespace NKikimr {
-         };
+-void ValidateCmd(const TActorId& parentId, TTestActorSystem& runtime, ui32 groupId, ui32 groupGeneration,
++TActorId ValidateCmd(const TActorId& parentId, TTestActorSystem& runtime, ui32 groupId, ui32 groupGeneration,
+         ui32 failRealmIdx, ui32 failDomainIdx, ui32 vdiskIdx, bool isSelfHealReasonDecommit = false) {
+-    auto res = runtime.WaitForEdgeActorEvent({parentId});
++    const TActorId timeoutId = runtime.AllocateEdgeActor(1);
++    runtime.Schedule(TDuration::Minutes(1), new IEventHandle(timeoutId, {}, new TEvents::TEvWakeup), nullptr, 1);
++    auto res = runtime.WaitForEdgeActorEvent({parentId, timeoutId});
++    runtime.DestroyActor(timeoutId);
+     UNIT_ASSERT_EQUAL(res->GetTypeRewrite(), TEvBlobStorage::TEvControllerConfigRequest::EventType);
+     auto *m = res->Get<TEvBlobStorage::TEvControllerConfigRequest>();
+     UNIT_ASSERT(m->SelfHeal);
+@@ -103,6 +106,7 @@ void ValidateCmd(const TActorId& parentId, TTestActorSystem& runtime, ui32 group
+     UNIT_ASSERT_VALUES_EQUAL(reassign.GetFailRealmIdx(), failRealmIdx);
+     UNIT_ASSERT_VALUES_EQUAL(reassign.GetFailDomainIdx(), failDomainIdx);
+     UNIT_ASSERT_VALUES_EQUAL(reassign.GetVDiskIdx(), vdiskIdx);
++    return res->Sender;
+ }
  
-         struct TEvClientRetry : public TEventLocal<TEvClientRetry, EvClientRetry> {
--            TEvClientRetry() {}
-+            explicit TEvClientRetry(ui64 cookie = 0)
-+                : Cookie(cookie)
-+            {}
+ void ValidateNoCmd(const TActorId& parentId, TTestActorSystem& runtime) {
+@@ -112,8 +116,92 @@ void ValidateNoCmd(const TActorId& parentId, TTestActorSystem& runtime) {
+     UNIT_ASSERT_EQUAL(res->GetTypeRewrite(), TEvents::TSystem::Wakeup);
+ }
+ 
++void TestGroupDeletion(bool queueNextGroup, bool completionInFlight) {
++    RunTestCase([&](const TActorId& selfHealId, const TActorId& parentId, TTestActorSystem& runtime) {
++        const auto first = CreateGroup();
++        const auto second = CreateGroup(TBlobStorageGroupType::Erasure4Plus2Block, TGroupId::FromValue(0x82000001));
++        const auto third = CreateGroup(TBlobStorageGroupType::Erasure4Plus2Block, TGroupId::FromValue(0x82000002));
++        RegisterDiskResponders(runtime, first);
 +
-+            const ui64 Cookie;
++        auto updateGroup = [&](const TIntrusivePtr<TBlobStorageGroupInfo>& info, bool faulty) {
++            auto ev = std::make_unique<TEvControllerUpdateSelfHealInfo>();
++            ev->GroupsToUpdate[info->GroupID] = Convert(info, faulty ? std::set<ui32>{0} : std::set<ui32>{}, {});
++            runtime.Send(new IEventHandle(selfHealId, parentId, ev.release()), 1);
 +        };
 +
-+        // The owner observed this tablet actor at the given generation. Wake
-+        // obsolete retries while preserving a connection to that incarnation.
-+        // The generation is a floor; a later incarnation remains acceptable.
-+        struct TEvClientUpdateGeneration : public TEventLocal<TEvClientUpdateGeneration, EvClientUpdateGeneration> {
-+            TEvClientUpdateGeneration(ui64 generation, TActorId tabletActor)
-+                : Generation(generation)
-+                , TabletActor(tabletActor)
-+            {}
++        updateGroup(first, true);
++        const TActorId firstReassigner = ValidateCmd(parentId, runtime, 0x82000000, 1, 0, 0, 0);
 +
-+            const ui64 Generation;
-+            const TActorId TabletActor;
-         };
++        std::unique_ptr<IEventHandle> heldCompletion;
++        if (completionInFlight) {
++            runtime.FilterFunction = [&](ui32, std::unique_ptr<IEventHandle>& ev) {
++                if (ev->Sender == firstReassigner && ev->Recipient == selfHealId) {
++                    heldCompletion = std::move(ev);
++                    return false;
++                }
++                return true;
++            };
++            runtime.Send(new IEventHandle(firstReassigner, parentId, new TEvBlobStorage::TEvControllerConfigResponse), 1);
++            const TInstant deadline = runtime.GetClock() + TDuration::Minutes(1);
++            runtime.Sim([&] { return !heldCompletion && runtime.GetClock() < deadline; });
++            UNIT_ASSERT(heldCompletion);
++            runtime.FilterFunction = {};
++        }
++
++        if (queueNextGroup) {
++            updateGroup(second, true);
++            ValidateNoCmd(parentId, runtime);
++        }
++
++        auto deletion = std::make_unique<TEvControllerUpdateSelfHealInfo>();
++        deletion->GroupsToUpdate[first->GroupID] = std::nullopt;
++        runtime.Send(new IEventHandle(selfHealId, parentId, deletion.release()), 1);
++
++        if (!queueNextGroup) {
++            if (heldCompletion) {
++                runtime.Send(std::move(heldCompletion), 1);
++            }
++            ValidateNoCmd(parentId, runtime);
++            updateGroup(second, true);
++        }
++
++        const TActorId secondReassigner = ValidateCmd(parentId, runtime, 0x82000001, 1, 0, 0, 0);
++        UNIT_ASSERT_UNEQUAL(firstReassigner, secondReassigner);
++        updateGroup(third, true);
++        if (heldCompletion) {
++            runtime.Send(std::move(heldCompletion), 1);
++        }
++        ValidateNoCmd(parentId, runtime);
++
++        updateGroup(second, false);
++        auto response = std::make_unique<TEvBlobStorage::TEvControllerConfigResponse>();
++        auto *result = response->Record.MutableResponse();
++        result->SetSuccess(true);
++        result->SetConfigTxSeqNo(1);
++        result->AddStatus();
++        runtime.Send(new IEventHandle(secondReassigner, parentId, response.release()), 1);
++        ValidateCmd(parentId, runtime, 0x82000002, 1, 0, 0, 0);
++    });
++}
++
+ Y_UNIT_TEST_SUITE(SelfHealActorTest) {
  
-         struct TEvClientCheckDelay : public TEventLocal<TEvClientCheckDelay, EvClientCheckDelay> {
++    Y_UNIT_TEST(GroupDeletionStartsQueuedReassign) {
++        TestGroupDeletion(true, false);
++    }
++
++    Y_UNIT_TEST(GroupDel
 ```
 
-**File**: `ydb/core/mind/hive/hive_impl.cpp` (modified, +9/-1)
+---
+
+### Incident Patch 3: `c4527eca` (2026-11-14)
+**Commit Message**: Fix bridge history being deleted without recovery possibility (#59400)
+
+**File**: `ydb/core/blobstorage/nodewarden/distconf_bridge.cpp` (modified, +6/-5)
 ```diff
-@@ -662,16 +662,24 @@ void THive::Handle(TEvPrivate::TEvBootTablets::TPtr&) {
-     RequestPoolsInformation();
-     Schedule(TDuration::Minutes(5), new TEvPrivate::TEvLogHangingRequests);
-     std::vector<TNodeInfo*> unimportantNodes; // ping nodes with tablets first
-+    std::vector<std::pair<TNodeId, TActorId>> nodesToKill;
-     unimportantNodes.reserve(Nodes.size());
-     for (auto& [id, node] : Nodes) {
-         if (node.IsUnknown() && node.Local) {
--            if (node.GetTabletsTotal() > 0) {
-+            const auto* pile = BridgeInfo ? BridgeInfo->FindPile(node.BridgePileId) : nullptr;
-+            if (pile && !NBridge::PileStateTraits(pile->State).AllowsConnection) {
-+                nodesToKill.emplace_back(id, node.Local);
-+            } else if (node.GetTabletsTotal() > 0) {
-                 node.Ping();
-             } else {
-                 unimportantNodes.push_back(&node);
+@@ -315,24 +315,25 @@ namespace NKikimr::NStorage {
+ 
+             Y_DEBUG_ABORT_UNLESS(config->HasClusterState());
+             const auto& clusterState = config->GetClusterState();
++            const auto& prevClusterState = config->GetPrevConfig().GetClusterState();
+ 
+-            // filter out unsynced piles from config (they become synced when they are the part of the quorum)
+             int maxFullySyncedIndex = -1;
+             for (int i = 0; i < history->size(); ++i) {
+                 auto *unsyncedPiles = history->Mutable(i)->MutableUnsyncedPiles();
+                 for (int j = 0; j < unsyncedPiles->size(); ++j) {
+                     const auto unsyncedBridgePileId = TBridgePileId::FromProto(unsyncedPiles,
+                         &std::decay_t<decltype(*unsyncedPiles)>::at, j);
+                     const auto state = NBridge::GetPileState(clusterState, unsyncedBridgePileId);
++                    const auto prevState = NBridge::GetPileState(prevClusterState, unsyncedBridgePileId);
+                     if (state == NKikimrBridge::TClusterState::INACTIVE ||
+-                            NBridge::PileStateTraits(state).RequiresConfigQuorum) {
+-                        // this pile is a part of quorum we expect to obtain, so it will be config-synced, or it is not
+-                        // a part of the cluster anymore and it won't ever need this history
++                            (NBridge::PileStateTraits(state).RequiresConfigQuorum &&
++                                NBridge::PileStateTraits(prevState).RequiresConfigQuorum)) {
+                         unsyncedPiles->SwapElements(j--, unsyncedPiles->size() - 1);
+                         unsyncedPiles->RemoveLast();
+                     }
+                 }
+-                if (unsyncedPiles->empty()) {
++                if (unsyncedPiles->empty() && history->Get(i).GetClusterState().GetGeneration()
++                        <= prevClusterState.GetGeneration()) {
+                     maxFullySyncedIndex = i;
+                 }
              }
-         }
-     }
-+    // KillNode may erase the node, so finish collecting nodes before calling it.
-+    for (const auto& [nodeId, local] : nodesToKill) {
-+        KillNode(nodeId, local, EHiveEventReason::PileUpdate);
-+    }
-     for (auto* node : unimportantNodes) {
-         node->Ping();
-     }
 ```
 
-**File**: `ydb/core/mind/hive/hive_ut.cpp` (modified, +499/-0)
+**File**: `ydb/core/blobstorage/ut_blobstorage/bridge_cluster_state.cpp` (modified, +47/-0)
 ```diff
-@@ -1,4 +1,5 @@
- #include <algorithm>
-+#include <deque>
- #include <math.h>
- #include <ranges>
- #include <ydb/core/base/hive.h>
-@@ -3617,6 +3618,354 @@ Y_UNIT_TEST_SUITE(THiveTest) {
-         UNIT_ASSERT_VALUES_EQUAL(tabletInfo2.GetGeneration(), tabletInfo1.GetGeneration());
-     }
+@@ -2,10 +2,57 @@
  
-+    enum class ELocalNewHivePipeState {
-+        Retrying,
-+        Connecting,
-+        Connected,
-+    };
+ #include <ydb/core/blobstorage/ut_blobstorage/lib/env.h>
+ #include <ydb/core/blobstorage/nodewarden/distconf.h>
++#include <ydb/library/testlib/helpers.h>
 +
-+    void TestLocalNewHiveGeneration(ELocalNewHivePipeState pipeState) {
-+        TTestBasicRuntime runtime(1, false);
-+        Setup(runtime, true);
-+        auto waitFor = [&](const TString& description, auto&& condition, TDuration timeout) {
-+            const TInstant deadline = runtime.GetCurrentTime() + timeout;
-+            while (!condition() && runtime.GetCurrentTime() < deadline) {
-+                runtime.SimulateSleep(Min(TDuration::MilliSeconds(10), deadline - runtime.GetCurrentTime()));
++#include <algorithm>
+ 
+ using NBridgeTest::GetBridgedLocation;
+ 
+ Y_UNIT_TEST_SUITE(BridgeClusterState) {
++    Y_UNIT_TEST_TWIN(HistorySurvivesUncommittedState, rejoining) {
++        using TState = NKikimrBridge::TClusterState;
++        NKikimrBlobStorage::TStorageConfig config;
++        config.SetGeneration(1);
++        config.MutableClusterState()->CopyFrom(NBridge::MakeInitialClusterState(2));
++        auto update = [&] {
++            if (const auto error = NStorage::TDistributedConfigKeeper::UpdateClusterStateGeneration(&config)) {
++                UNIT_FAIL(*error);
 +            }
-+            UNIT_ASSERT_C(condition(), description);
++            if (const auto error = NStorage::TDistributedConfigKeeper::TrimHistoryEntries(&config)) {
++                UNIT_FAIL(*error);
++            }
 +        };
-+        const ui64 hiveTablet = MakeDefaultHiveID();
-+        const ui64 testerTablet = MakeTabletID(false, 1);
-+        const TActorId sender = runtime.AllocateEdgeActor();
-+
-+        ui32 initialHiveGeneration = 0;
-+        TActorId initialHive;
-+        NKikimrLocal::TEvPing initialPing;
-+        auto firstPing = runtime.AddObserver<TEvLocal::TEvPing>([&](auto& ev) {
-+            if (ev->Get()->Record.GetHiveId() == hiveTablet) {
-+                initialHiveGeneration = ev->Get()->Record.GetHiveGeneration();
-+                initialHive = ev->Sender;
-+                initialPing.CopyFrom(ev->Get()->Record);
-+            }
-+        });
-+        CreateTestBootstrapper(runtime, CreateTestTabletInfo(hiveTablet, TTabletTypes::Hive), &CreateDefaultHive);
-+        const ui64 tabletId = SendCreateTestTablet(runtime, hiveTablet, testerTablet,
-+            MakeHolder<TEvHive::TEvCreateTablet>(testerTablet, 100500, TTabletTypes::Dummy, BINDED_CHANNELS), 0, true);
-+        MakeSureTabletIsUp(runtime, tabletId, 0);
-+        UNIT_ASSERT(initialHiveGeneration > 0);
-+        firstPing.Remove();
-+        const TActorId registrar = runtime.GetLocalServiceId(
-+            MakeLocalRegistrarID(runtime.GetNodeId(0), hiveTablet), 0);
-+        auto runningGeneration = [&]() {
-+            runtime.SendToPipe(hiveTablet, sender, new TEvHive::TEvRequestHiveInfo(tabletId, false));
-+            TAutoPtr<IEventHandle> handle;
-+            const auto* info = runtime.GrabEdgeEventRethrow<TEvHive::TEvResponseHiveInfo>(handle);
-+            UNIT_ASSERT_VALUES_EQUAL(info->Record.TabletsSize(), 1);
-+            UNIT_ASSERT_VALUES_EQUAL(static_cast<ui32>(info->Record.GetTablets(0).GetVolatileState()),
-+                static_cast<ui32>(NKikimrHive::TABLET_VOLATILE_STATE_RUNNING));
-+            return info->Record.GetTablets(0).GetGeneration();
++        update();
++        auto advance = [&](TState::EPileState state) {
++            auto prev = config;
++            prev.ClearPrevConfig();
++            config.MutablePrevConfig()->CopyFrom(prev);
++            config.SetGeneration(prev.GetGeneration() + 1);
++            config.MutableClusterState()->SetPerPileState(1, state);
++            update();
 +        };
-+        const auto originalTabletGeneration = runningGeneration();
 +
-+        // Capture the registrar's first new pipe after the old Hive is killed.
-+        TActorId firstPipe;
-+        auto capturePipe = runtime.AddObserver<IEventHandle>([&](auto& ev) {
-+            if (!firstPipe && ev->Sender == registrar
-+                    && ev->Type == TEvLocal::EvRegisterNode
-+                    && ev->GetTypeRewrite() == TEvTabletPipe::EvSend) {
-+                firstPipe = ev->GetRecipientRewrite();
-+                runtime.EnableScheduleForActor(firstPipe, true);
-+            }
-+        });
-+        // Retry timers have no sender, which the verbose TBlockEvents logger
-+        // cannot name. Keep their original handles without changing the timer.
-+        std::deque<TEvTabletPipe::TEvClientRetry::TPtr> oldRetry;
-+        auto holdOldRetry = runtime.AddObserver<TEvTabletPipe::TEvClientRetry>([&](auto& ev) {
-+            if (pipeState == ELocalNewHivePipeState::Retrying
-+                    && firstPipe && ev->GetRecipientRewrite() == firstPipe) {
-+                oldRetry.emplace_back(ev.Release());
-+            }
-+        });
-+        auto rejectConnect = runtime.AddObserver<TEvTabletPipe::TEvConnect>([&](auto& ev) {
-+            if (pipeState == ELocalNewHivePipeState::Retrying
-+                    && firstPipe && ev->Sender == firstPipe
-+                    && ev->Get()->Record.GetTabletId() == hiveTablet) {
-+                runtime.Send(new IEventHandle(ev->Sender, ev->GetRecipientRewrite(),
-+                    new TEvTabletPipe::TEvConnectResult(NKikimrProto::TRYLATER,
-+                        hiveTablet, ev->Sender, {}, true, 0, {}), 0, ev->Cookie));
-+                ev.Reset();
-+            }
-+        });
-+        TBlockEvents<TEvLocal::TEvPing> newPing(runtime, [&](const auto& ev) {
-+            return ev->GetRecipientRewrite() == registrar
-+                && ev->Get()->Record.GetHiveId() == hiveTablet
-+                && ev->Get()->Record.GetHiveGeneration() > initialHiveGeneration;
-+        });
-+
-+        TBlockEvents<TEvTabletPipe::TEvConnectResult> newConnectResult(runtime, [&](const auto& ev) {
-+            ret
-```
-
-**File**: `ydb/core/mind/local.cpp` (modified, +12/-0)
-```diff
-@@ -400,6 +400,18 @@ class TLocalNodeRegistrar : public TActorBootstrapped<TLocalNodeRegistrar> {
-             return;
-         }
- 
-+        if (HiveGeneration && hiveGen > HiveGeneration) {
-+            // The pipe may already be connecting to this Hive. Let it discard
-+            // an obsolete retry delay without interrupting that connection.
-+            HiveGeneration = hiveGen;
-+            // Resync while BootQueue still identifies the previous Hive, so
-+            // its in-flight boots are discarded before adopting the new one.
-+            Connected = false;
-+            if (HivePipeClient) {
-+                ctx.Send(HivePipeClient, new TEvTabletPipe::TEvClientUpdateGeneration(hiveGen, sender));
-+            }
++        advance(TState::DISCONNECTED);
++        advance(TState::NOT_SYNCHRONIZED_1);
++        if constexpr (!rejoining) {
++            advance(TState::NOT_SYNCHRONIZED_2);
++            advance(TState::NOT_SYNCHRONIZED_2);
 +        }
++        const auto lastCommittedState = config.GetClusterState();
++        advance(rejoining ? TState::NOT_SYNCHRONIZED_2 : TState::SYNCHRONIZED);
 +
-         if (!HivePipeClient) {
-             TryToRegister(ctx);
-             return;
-```
-
-**File**: `ydb/core/tablet/bootstrapper.cpp` (modified, +47/-1)
-```diff
-@@ -2,6 +2,8 @@
- #include "bootstrapper_impl.h"
- 
- #include <ydb/core/base/tablet.h>
-+#include <ydb/core/base/bridge.h>
-+#include <ydb/core/protos/blobstorage_config.pb.h>
- #include <ydb/core/base/tablet_pipe.h>
- #include <ydb/core/base/statestorage.h>
- #include <ydb/core/base/appdata.h>
-@@ -28,6 +30,11 @@ class TBootstrapper : public TActorBootstrapped<TBootstrapper> {
- 
-     TActorId KnownLeaderPipe;
- 
-+    TBridgeInfo::TPtr CycleBridgeInfo;
-+    ui64 CycleClusterStateGeneration = 0;
-+    ui64 CycleClusterStateGuid = 0;
-+    bool FilterExcludedPiles = false;
++        const auto& history = config.GetClusterStateDetails().GetUnsyncedHistory();
++        UNIT_ASSERT_C(std::ranges::any_of(history, [&](const auto& entry) {
++            return NBridge::IsSameClusterState(entry.GetClusterState(), lastCommittedState);
++        }), "previous committed state was trimmed before its successor was committed on the pile");
 +
-     TActorId LookOnActorID;
-     TActorId FollowerActorID;
- 
-@@ -190,6 +197,10 @@ class TBootstrapper : public TActorBootstrapped<TBootstrapper> {
-      */
-     void BeginNewCycle() {
-         ++RoundCounter;
-+        CycleBridgeInfo.reset();
-+        CycleClusterStateGeneration = 0;
-+        CycleClusterStateGuid = 0;
-+        FilterExcludedPiles = false;
- 
-         YDB_LOG_DEBUG("Beginning lookup cycle in state storage",
-             {"tabletId", TabletInfo->TabletID},
-@@ -205,7 +216,12 @@ class TBootstrapper : public TActorBootstrapped<TBootstrapper> {
-     }
- 
-     void Handle(TEvNodeWardenStorageConfig::TPtr ev) {
--        if (ev->Get()->BridgeInfo && !ev->Get()->BridgeInfo->SelfNodePile->IsPrimary) {
-+        CycleBridgeInfo = ev->Get()->BridgeInfo;
-+        if (const auto& config = ev->Get()->Config; config && config->HasClusterState()) {
-+            CycleClusterStateGeneration = config->GetClusterState().GetGeneration();
-+            CycleClusterStateGuid = config->GetClusterState().GetGuid();
-+        }
-+        if (CycleBridgeInfo && !CycleBridgeInfo->SelfNodePile->IsPrimary) {
-             Schedule(GetSleepDuration(), new TEvents::TEvWakeup(RoundCounter));
-         } else {
-             BeginLookup();
-@@ -227,8 +243,20 @@ class TBootstrapper : public TActorBootstrapped<TBootstrapper> {
-             NKikimrBootstrapper::TEvWatchResult::UNKNOWN, Max<ui64>(), record.GetRound()));
-     }
- 
-+    bool IsNodeInExcludedPile(ui32 nodeId) const {
-+        if (!FilterExcludedPiles) {
-+            return false;
-+        }
-+        const auto* pile = CycleBridgeInfo->GetPileForNode(nodeId);
-+        return pile && !NBridge::PileStateTraits(pile->State).AllowsConnection;
++        const auto currentState = config.GetClusterState();
++        advance(currentState.GetPerPileState(1));
++        const auto& trimmed = config.GetClusterStateDetails().GetUnsyncedHistory();
++        UNIT_ASSERT_VALUES_EQUAL(trimmed.size(), 1);
++        UNIT_ASSERT(NBridge::IsSameClusterState(trimmed.Get(0).GetClusterState(), currentState));
 +    }
 +
-     void HandleLookup(TEvStateStorage::TEvInfo::TPtr& ev) {
-         auto* msg = ev->Get();
-+        // A newer or incompatible lookup must not be filtered by the old cycle's pile state.
-+        FilterExcludedPiles = CycleBridgeInfo && CycleClusterStateGeneration && CycleClusterStateGuid
-+            && msg->ClusterStateGeneration == CycleClusterStateGeneration
-+            && msg->ClusterStateGuid == CycleClusterStateGuid;
+     Y_UNIT_TEST(RecoveredStateRejectsInvalidPileRolesAndStates) {
+         using namespace NBridgeTest;
+         TEnvironmentSetup env{{
+```
+
+**File**: `ydb/core/blobstorage/ut_blobstorage/bridge_rejoin.cpp` (modified, +107/-0)
+```diff
+@@ -3,6 +3,7 @@
  
-         YDB_LOG_DEBUG("State storage lookup result",
-             {"tabletId", TabletInfo->TabletID},
-@@ -239,6 +267,9 @@ class TBootstrapper : public TActorBootstrapped<TBootstrapper> {
-         switch (msg->Status) {
-             case NKikimrProto::OK: {
-                 // We have state storage quorum and some known leader
-+                if (IsNodeInExcludedPile(msg->CurrentLeader.NodeId())) {
-+                    return BeginNewRound();
+ #include <ydb/core/blobstorage/ut_blobstorage/lib/env.h>
+ #include <ydb/core/blobstorage/nodewarden/distconf.h>
++#include <ydb/core/blobstorage/nodewarden/node_warden.h>
+ #include <ydb/core/blobstorage/nodewarden/node_warden_events.h>
+ #include <ydb/core/protos/bridge_storage.pb.h>
+ #include <ydb/core/sys_view/common/events.h>
+@@ -26,6 +27,112 @@ TAutoPtr<TEventHandle<TEvent>> WaitReply(TEnvironmentSetup& env, const TActorId&
+ }
+ 
+ Y_UNIT_TEST_SUITE(BridgeRejoin) {
++    Y_UNIT_TEST(PileRestartsBeforeStage2CommitIsStored) {
++        using namespace NBridgeTest;
++        using TState = NKikimrBridge::TClusterState;
++        TEnvironmentSetup env{{
++            .NodeCount = 16,
++            .Erasure = TBlobStorageGroupType::Erasure4Plus2Block,
++            .LocationGenerator = GetBridgedLocation,
++            .SelfManagementConfig = true,
++            .NumPiles = 2,
++            .AutomaticBootstrap = true,
++        }};
++        const ui32 groupId = CreatePoolAndGetGroup(env);
++        TDataChecker checker(env);
++        checker.Write(groupId);
++        SwitchPileState(env, 1, TState::DISCONNECTED);
++        checker.Write(groupId);
++
++        bool holdCommit = true;
++        bool restarted = false;
++        std::set<ui32> blockedNodes;
++        std::set<ui32> recoveredProposals;
++        std::optional<NKikimrBlobStorage::TStorageConfig> lastCommittedConfig;
++        env.Runtime->FilterFunction = [&](ui32 nodeId, std::unique_ptr<IEventHandle>& ev) {
++            if (nodeId < 9 || nodeId > 16) {
++                return true;
++            }
++            if (holdCommit && ev->GetTypeRewrite() == NStorage::TEvNodeWardenWriteMetadata::EventType) {
++                const auto& record = ev->Get<NStorage::TEvNodeWardenWriteMetadata>()->Record;
++                if (record.HasCommittedStorageConfig() && record.HasProposedStorageConfig()
++                        && record.GetCommittedStorageConfig().GetClusterState().GetPerPileState(1) == TState::NOT_SYNCHRONIZED_1
++                        && record.GetProposedStorageConfig().GetClusterState().GetPerPileState(1) == TState::NOT_SYNCHRONIZED_2) {
++                    lastCommittedConfig = record.GetCommittedStorageConfig();
 +                }
-                 KnownLeaderPipe = RegisterWithSameMailbox(
-                     NTabletPipe::CreateClient(SelfId(), TabletInfo->TabletID, {
-                         .RetryPolicy = NTabletPipe::TClientRetryPolicy::WithoutRetries(),
-@@ -358,19 +389,30 @@ class TBootstrapper : public TActorBootstrapped<TBootstrapper> {
- 
-         Round.emplace(OtherNodes.size());
-         for (ui32 alienNode : OtherNodes) {
-+            if (IsNodeInExcludedPile(alienNode)) {
-+                // Keep the peer in total; lifecycle exclusion is not an absent bootstrapper.
-+                ApplyAlienState(TActorId(alienNode, 0, 0, 0), NKikimrBootstrapper::TEvWatchResult::DISCONNECTED,
-+                    Max<ui64>());
-+                continue;
++                if (record.HasCommittedStorageConfig() && record.GetCommittedStorageConfig()
++                        .GetClusterState().GetPerPileState(1) == TState::NOT_SYNCHRONIZED_2) {
++                    blockedNodes.insert(nodeId);
++                    return false;
++                }
 +            }
-             Send(MakeBootstrapperID(tabletId, alienNode),
-                 new TEvBootstrapper::TEvWatch(tabletId, SelfSeed, RoundCounter),
-                 IEventHandle::FlagTrackDelivery | IEventHandle::FlagSubscribeOnSession,
-                 RoundCounter);
-         }
- 
-         Become(&TThis::StateFree);
-+        CheckRoundCompletion();
-     }
- 
-     void HandleFree(TEvBootstrapper::TEvWatch::TPtr& ev) {
-         const NKikimrBootstrapper::TEvWatch& record = ev->Get()->Record;
-         Y_ABORT_UNLESS(record.GetTabletID() == TabletInfo->TabletID);
- 
-+        if (IsNodeInExcludedPile(ev->Sender.NodeId())) {
-+            return HandleUnknown(ev);
++            if (restarted && ev->GetTypeRewrite() == NStorage::TEvNodeWardenReadMetadataResult::EventType) {
++                const auto& record = ev->Get<NStorage::TEvNodeWardenReadMetadataResult>()->Record;
++                if (record.HasCommittedStorageConfig() && record.HasProposedStorageConfig()
++                        && record.GetCommittedStorageConfig().GetClusterState().GetPerPileState(1) == TState::NOT_SYNCHRONIZED_1
++                        && record.GetProposedStorageConfig().GetClusterState().GetPerPileState(1) == TState::NOT_SYNCHRONIZED_2) {
++                    recoveredProposals.insert(nodeId);
++                }
++            }
++            return true;
++        };
++        SwitchPileState(env, 1, TState::NOT_SYNCHRONIZED_1);
++        const auto deadline = env.Runtime->GetClock() + TDuration::Seconds(30);
++        while (blockedNodes.size() != 8 && env.Runtime->GetClock() < deadline) {
++            env.Sim(TDuration::MilliSeconds(1));
++        }
++        UNIT_ASSERT_VALUES_EQUAL_C(blockedNodes.size(), 8, "not all nodes reached the stage-2 commit write");
++        for (ui32 nodeId = 9; nodeId <= 16; ++nodeId) {
++            env.StopNode(nodeId);
 +        }
 +
-         Send(ev->Sender, new TEvBootstrapper::TEvWatchResult(record.GetTabletID(),
-             NKikimrBootstrapper::TEvWatchResult::FREE, SelfSeed, record.GetRound()));
- 
-@@ -444,6 +486,10 @@ class TBootstrapper : public TActorBootstrapped<TBootstrapper> {
-         const size_t alienNodeIdx = AlienIndex(alien.NodeId());
-         if (alienNodeIdx == Max<size_t>())
-             return true;
-+        if (
++        UNIT_ASSERT(lastCommittedConfig);
++        const TActorId connectionChecker = env.Runtime->Register(CreateDistconfBridgeConnectionCheckerActor(
++            TBridgePileId::FromPileIndex(0), "pile_1"), 1);
++        const TActorId edge = env.Runtime->AllocateEdgeActor(1, __FILE__, __LINE__);
++        auto checkConnection = [&](const NKikimrBlobStorage::TStorageConfig& peerConfig) {
++            NKikimrBlobStorage::TConnectivityPayload payload;
++            TBridgePileId::FromPileIndex(1).CopyToProto(&payload,
++                &NKikimrBlobStorage::TConnectivityPayload::SetBridgePileId);
++            payload.SetBridgePileName("pile_2");
++            payload.SetPileListChangeCapable(true);
++            payload.SetBridgeFeatureLevel(NStorage::BridgeFeatureLevel);
++            payload.MutableStorageConfig()->CopyFrom(peerConfig);
++            THashMap<TString, TString> params;
++            UNIT_ASSERT(payload.SerializeToString(&params["distconf"]));
++            env.Runtime->Send(new IEventHandle(connectionChecker, edge,
++                new TEvInterconnect::TEvCheckIncomingConnection(9, std::move(params))), 1);
++            return WaitReply<TEvInterconnect::TEvCheckIncomingConnectionResult>(env, edge, "bridge handshake after a pile crash");
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #59322** (2026-11-13): empty commit (@iddqdex)
-- **PR #59303** (2026-11-13): Avoid full-window waits in positive SDK topic reads (@maximyurchuk)
-- **PR #59291** (2026-11-13): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #59289** (2026-11-13): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #59288** (2026-11-13): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
-- **PR #59287** (2026-11-13): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
+- **PR #59407** (2026-11-14): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #59400** (2026-11-14): Fix bridge history being deleted without recovery possibility (@mregrock)
+- **PR #59398** (2026-11-14): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #59397** (2026-11-14): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #59396** (2026-11-14): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #59395** (2026-11-14): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
 
 ---
 
@@ -3082,29 +2513,35 @@ KIKIMR-27622
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. datashard : allow read-only prepares on CDC overflow (#58063)
+## X. schemeshard: fix drop-replication + describe race crash
 
 **RULE**:
-When implementing operations in `ydb/core/tx/datashard/build_write_out_rs_unit.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/tx/schemeshard/schemeshard_path_describer.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `850659aa`: datashard : allow read-only prepares on CDC overflow (#58063). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `659fc244`: schemeshard: fix drop-replication + describe race crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/datashard/build_write_out_rs_unit.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/schemeshard/schemeshard_path_describer.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            op->OutReadSets(), kqpLocks, true, DataShard.SysLocksTable(), allowAncestorLocks,
-            op->IsReadOnly() || op->HasFlag(TTxFlags::ReadOnlyPrepare));
+        // The controller shard may already be deleted if the replication is being dropped
+        const auto it = ShardInfos.find(shardIdx);
+        if (it != ShardInfos.end() && it->second.TabletID != InvalidTabletId) {
+            desc.SetControllerId(ui64(it->second.TabletID));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
-// Anti-pattern to NEVER write (induced failure mode):
-            op->OutReadSets(), kqpLocks, true, DataShard.SysLocksTable(), allowAncestorLocks);
+// Induced defect failure mode:
+        Y_ABORT_UNLESS(ShardInfos.contains(shardIdx));
+        const auto& shardInfo = ShardInfos.at(shardIdx);
+
+        if (shardInfo.TabletID != InvalidTabletId) {
+            desc.SetControllerId(ui64(shardInfo.TabletID));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `850659aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `659fc244` are properly handled with clean fallback behavior.

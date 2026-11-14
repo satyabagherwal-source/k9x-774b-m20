@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T17:51:53.961Z",
+  "updated_at": "2026-11-14T18:15:25.152Z",
   "statistics": {
-    "total_nodes": 208,
+    "total_nodes": 209,
     "total_edges": 114,
     "domain_distribution": {
-      "D": 162,
+      "D": 163,
       "M": 1,
       "H": 18,
       "J": 8,
@@ -4666,6 +4666,28 @@
       ],
       "created_at": "2026-11-14T17:51:53.961Z",
       "updated_at": "2026-11-14T17:51:53.961Z"
+    },
+    "DOM-D-5DB2A72D": {
+      "id": "DOM-D-5DB2A72D",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md`  \n> **Source**: huggingface ( -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md`  \n> **Source**: huggingface (",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-autotrust-glm5.3-flash-e224-dgx-spark/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T18:14:55.354Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-autotrust-glm5.3-flash-e224-dgx-spark)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T18:15:25.152Z",
+      "updated_at": "2026-11-14T18:15:25.152Z"
     }
   },
   "edges": [

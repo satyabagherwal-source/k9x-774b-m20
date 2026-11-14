@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T17:51:54.565Z",
-  "total_records": 775,
+  "last_updated": "2026-11-14T18:15:26.281Z",
+  "total_records": 783,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 380,
+      "total": 383,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -417,7 +417,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-canberkkkkkk-ema-lightning-learnings-core-inv",
         "domain_intelligence-research-knowledge-intelligence-unsloth-embeddinggemma-2-gguf-core-invariants",
         "DOM-D-A21D48E1",
-        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-"
+        "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-",
+        "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar",
+        "DOM-D-5DB2A72D",
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin"
       ]
     },
     "E": {
@@ -450,7 +453,7 @@
       ]
     },
     "G": {
-      "total": 120,
+      "total": 124,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -571,11 +574,15 @@
         "domain_intelligence-architecture-intelligence-pola-rs-polars-core-invariants",
         "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants",
-        "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-meta-folly-core-invariants",
+        "domain_intelligence-architecture-intelligence-gkd-kit-gkd-core-invariants",
+        "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 162,
+      "total": 163,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -738,7 +745,8 @@
         "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants",
         "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-callstack-agent-device-learnings-core-invari"
+        "domain_intelligence-technical-construction-intelligence-callstack-agent-device-learnings-core-invari",
+        "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-core-invariants"
       ]
     },
     "I": {
@@ -15833,6 +15841,111 @@
       "repository": "greptimeteam-greptimedb-learnings",
       "content_hash": "0bd5e2a3dcd9a722835867c5664969090062ca7a790d509206433c178bc70554",
       "created_at": "2026-11-14T17:51:54.565Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-glm5-3-flash-e224-dgx-spark-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: autotrust/GLM5.3-Flash-E224-DGX-Spark Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-glm5-3-flash-e224-dgx-spark-research-knowledge-intelligence-autotru.md",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "content_hash": "c8c986dee6dcf4bc24f9d65f6d0c96405ea51a9096a0e7b3c3776107def74905",
+      "created_at": "2026-11-14T18:14:36.611Z"
+    },
+    "domain_intelligence-architecture-intelligence-meta-folly-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-meta-folly-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: meta/folly Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-facebook-folly-architecture-intelligence-meta-folly-core-invariants.md",
+      "repository": "meta/folly",
+      "content_hash": "c0ed67533204e8b9c8f9dc4a9609d5136c4f391c6b307d719276d1f04feac4df",
+      "created_at": "2026-11-14T18:14:39.791Z"
+    },
+    "domain_intelligence-architecture-intelligence-gkd-kit-gkd-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-gkd-kit-gkd-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: gkd-kit/gkd Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gkd-kit-gkd-architecture-intelligence-gkd-kit-gkd-core-invariants.md",
+      "repository": "gkd-kit/gkd",
+      "content_hash": "d48886b0f37e5e7930337c93a0f6b1044b8bbe0471492af50c8f4c8b1989ad32",
+      "created_at": "2026-11-14T18:14:44.445Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
+      "repository": "ydb-platform/ydb",
+      "content_hash": "7294f2c0ee70ddfbc8d12cf98b6206de6cf2a80b433424960b1e2b14653dac15",
+      "created_at": "2026-11-14T18:14:51.881Z"
+    },
+    "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: facebook-folly-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-facebook-folly-learnings-architecture-intelligence-facebook-folly-learnings-core.md",
+      "repository": "facebook-folly-learnings",
+      "content_hash": "74d8a23ac86a6e78c70e2f8cf0affb6a8b2aae00f0bb414c1319bdba0fb3c471",
+      "created_at": "2026-11-14T18:14:55.150Z"
+    },
+    "DOM-D-5DB2A72D": {
+      "record_id": "DOM-D-5DB2A72D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark](https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark))  \n> **Source Version**: `hf-autotr",
+      "content_hash": "9d9951ec61297b3486d05a7aec2932e6be892adb5cd59513190773f95d0893fc",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md`  \n> **Source**: huggingface ( -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md`  \n> **Source**: huggingface (",
+      "provenance": {
+        "source_uri": "project://hf-autotrust-glm5.3-flash-e224-dgx-spark/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T18:14:55.354Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-autotrust-glm5.3-flash-e224-dgx-spark)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-autotrust-glm5.3-flash-e224-dgx-spark"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T18:15:25.141Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnings-research-knowledge-intelligen.md",
+      "repository": "hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings",
+      "content_hash": "56ad5f53bd95bc82427415694aeae44c79fbc6dc934188af6ea39a86aba4ddeb",
+      "created_at": "2026-11-14T18:15:25.362Z"
+    },
+    "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: gkd-kit-gkd-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gkd-kit-gkd-learnings-architecture-intelligence-gkd-kit-gkd-learnings-core-invar.md",
+      "repository": "gkd-kit-gkd-learnings",
+      "content_hash": "9b5bb46180f21da24e8d75fadf10119ccae28e9dafdb85717a68934ddc4cb90c",
+      "created_at": "2026-11-14T18:15:26.281Z"
     }
   }
 }

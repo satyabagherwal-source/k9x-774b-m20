@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T17:51:53.973Z",
+  "updated_at": "2026-11-14T18:15:25.973Z",
   "stats": {
-    "total_discovered": 3358,
-    "approved_pending_harvest": 3153,
+    "total_discovered": 3377,
+    "approved_pending_harvest": 3171,
     "harvested_count": 0,
-    "rejected_count": 205,
+    "rejected_count": 206,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3134,
+      "COMMUNITY_AND_EXPERT": 3152,
       "OFFICIAL_DOCUMENTATION": 122,
-      "STANDARDS_AND_SPECIFICATIONS": 87,
+      "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
       "SECURITY_ADVISORIES": 10,
       "LEGAL_AND_REGULATORY": 1,
@@ -72461,6 +72461,417 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
         "fileName": "hf-unsloth-embeddinggemma-2-gguf-learnings.md"
+      }
+    },
+    "SRC-30AE0C2D6D18": {
+      "id": "SRC-30AE0C2D6D18",
+      "url": "https://github.com/boostorg/context",
+      "title": "https://github.com/boostorg/context",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:14:54.812Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-76716D77B83F": {
+      "id": "SRC-76716D77B83F",
+      "url": "http://www.boost.org/LICENSE_1_0.txt",
+      "title": "http://www.boost.org/LICENSE_1_0.txt",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-14T18:14:54.839Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-226A31D347FD": {
+      "id": "SRC-226A31D347FD",
+      "url": "https://www.rfc-editor.org/rfc/rfc6901",
+      "title": "IETF RFC 6901",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:14:54.862Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
+      }
+    },
+    "SRC-6361F7853C1E": {
+      "id": "SRC-6361F7853C1E",
+      "url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "title": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.167Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
+        "fileName": "hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md"
+      }
+    },
+    "SRC-84FFF1CB5BF3": {
+      "id": "SRC-84FFF1CB5BF3",
+      "url": "https://github.com/gkd-kit/gkd",
+      "title": "https://github.com/gkd-kit/gkd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.531Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-D16924882480": {
+      "id": "SRC-D16924882480",
+      "url": "https://github.com/gkd-kit/gkd/issues/954",
+      "title": "https://github.com/gkd-kit/gkd/issues/954",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.554Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-8D49240F6354": {
+      "id": "SRC-8D49240F6354",
+      "url": "https://github.com/gkd-kit/gkd/issues/887",
+      "title": "https://github.com/gkd-kit/gkd/issues/887",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.577Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-07814A5FB94C": {
+      "id": "SRC-07814A5FB94C",
+      "url": "https://github.com/orgs/gkd-kit/discussions/1234",
+      "title": "https://github.com/orgs/gkd-kit/discussions/1234",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.599Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-69CDE2FD66CE": {
+      "id": "SRC-69CDE2FD66CE",
+      "url": "https://cs.android.com/android/platform/superproject/+/android-14.0.0_r55:frameworks/base/services/core/java/com/android/server/appop/AppOpsService.java;l=4237",
+      "title": "https://cs.android.com/android/platform/superproject/+/android-14.0.0_r55:frameworks/base/services/core/java/com/android/server/appop/AppOpsService.java;l=4237",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.622Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-AC6A8E010940": {
+      "id": "SRC-AC6A8E010940",
+      "url": "https://cs.android.com/android/platform/superproject/+/android-14.0.0_r54:frameworks/base/services/core/java/com/android/server/appop/AppOpsService.java;l=4227",
+      "title": "https://cs.android.com/android/platform/superproject/+/android-14.0.0_r54:frameworks/base/services/core/java/com/android/server/appop/AppOpsService.java;l=4227",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.658Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-2996BF13C36C": {
+      "id": "SRC-2996BF13C36C",
+      "url": "https://developer.android.com/security/fraud-prevention/activities?hl=zh-cn",
+      "title": "https://developer.android.com/security/fraud-prevention/activities?hl=zh-cn",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.681Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-B253A9D6691F": {
+      "id": "SRC-B253A9D6691F",
+      "url": "https://github.com/user-attachments/files/20649266/log-1749443937546.zip",
+      "title": "https://github.com/user-attachments/files/20649266/log-1749443937546.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.704Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-1FAEE1603A23": {
+      "id": "SRC-1FAEE1603A23",
+      "url": "https://i.gkd.li/i/20638271",
+      "title": "https://i.gkd.li/i/20638271",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.726Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-BDAEFB8612DE": {
+      "id": "SRC-BDAEFB8612DE",
+      "url": "https://e.gkd.li/516fae2b-3e06-4fed-b229-9e9ba438852c",
+      "title": "https://e.gkd.li/516fae2b-3e06-4fed-b229-9e9ba438852c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.763Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-302AC6EB21F4": {
+      "id": "SRC-302AC6EB21F4",
+      "url": "https://github.com/user-attachments/assets/d4aa72d8-56de-454f-9ce7-dafbb54eb921",
+      "title": "https://github.com/user-attachments/assets/d4aa72d8-56de-454f-9ce7-dafbb54eb921",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.786Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-E6383424B468": {
+      "id": "SRC-E6383424B468",
+      "url": "https://i.gkd.li/i/20649480",
+      "title": "https://i.gkd.li/i/20649480",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.810Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-E6CFC080CBB9": {
+      "id": "SRC-E6CFC080CBB9",
+      "url": "https://i.gkd.li/i/20649525",
+      "title": "https://i.gkd.li/i/20649525",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.837Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-1E06CB7E0218": {
+      "id": "SRC-1E06CB7E0218",
+      "url": "https://github.com/user-attachments/files/20566245/log-1748942787571.zip",
+      "title": "https://github.com/user-attachments/files/20566245/log-1748942787571.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.908Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
+      }
+    },
+    "SRC-E1AB5FA9FF75": {
+      "id": "SRC-E1AB5FA9FF75",
+      "url": "https://github.com/gkd-kit/gkd/releases",
+      "title": "https://github.com/gkd-kit/gkd/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T18:15:25.973Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gkd-kit-gkd-learnings.md",
+        "fileName": "gkd-kit-gkd-learnings.md"
       }
     }
   }
