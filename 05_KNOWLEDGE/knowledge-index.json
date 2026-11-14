@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T20:52:48.984Z",
-  "total_verified_learnings": 8605,
+  "last_updated": "2026-11-14T21:21:33.809Z",
+  "total_verified_learnings": 8609,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17815,
+  "total_items": 17840,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112370,10 +112370,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "0d822c9d",
-      "content_hash": "be9e37e4220eeafad8a0adf4cb22c51f33072eb6f12f6923f1f5fc44ea311c71",
+      "source_version": "9d531366",
+      "content_hash": "e938946f2baf4047091f2199b793a220b267443f8a44acbc208c6010deae9c5f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T03:32:25.848Z"
+      "persisted_at": "2026-11-14T21:21:02.528Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112382,10 +112382,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "0d822c9d",
-      "content_hash": "980aa6a46632294780c76354e16c948fe80ec9d2c156bf9847cb0b95da3eb02b",
+      "source_version": "9d531366",
+      "content_hash": "a75ecbba20c026c15af123f3ea7137360a7baa988e6a34022375b7309d07def3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:32:25.980Z"
+      "persisted_at": "2026-11-14T21:21:02.609Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -221544,14 +221544,19 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "0d822c9d",
-      "content_hash": "f5163ec5c888c88508c879ce7a8c9fa63a0490a7de09ad09381888cd5397f12f",
+      "source_version": "9d531366",
+      "content_hash": "71d9e7361ba3ec0b36c7e4fc831e06df1e3278f8f9163a08fc6f5c0f1de90297",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
         {
           "number": 8432,
           "title": "derp/derpserver: fix data race on sclient.keepAliveTimer",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8536,
+          "title": "go.mod: bump golang.org/x/sys",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -221560,7 +221565,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T03:32:25.443Z",
+      "verified_at": "2026-11-14T21:21:02.201Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234389,6 +234394,392 @@
       "content_hash": "37e06a78c263d996b9e8b248358be437f28eaaf0c1dc487cd3e6fb5ae1d296ab",
       "domain_letter": "H",
       "persisted_at": "2026-11-14T20:52:48.700Z"
+    },
+    "learn-huggingface-phocinae-phocinae-largha-150m-v1": {
+      "learning_id": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Phocinae/Phocinae-Largha-150M-v1",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "slug": "hf-phocinae-phocinae-largha-150m-v1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+      "source_version": "hf-phocinae-phocinae-largha-150m-v1",
+      "content_hash": "469ce49b104feb0188171ad278a275e11cb43be53bf442fcf85c08dd440410b3",
+      "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T21:20:50.368Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-phocinae-phocinae-largha-150m-v1-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-phocinae-phocinae-largha-150m-v1-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-phocinae-phocinae-largha-150m-v1-research-knowledge-intelligence-phocinae-pho.md",
+      "title": "Research & Knowledge Intelligence: Phocinae/Phocinae-Largha-150M-v1 Core Invariants",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "source_version": "hf-phocinae-phocinae-largha-150m-v1",
+      "content_hash": "167a58108c81bec764794ca328e567365fb0e09d78e239a7c6cb47ab46121c26",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T21:20:50.627Z"
+    },
+    "learn-github-automattic-harper": {
+      "learning_id": "learn-github-automattic-harper",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Automattic/harper",
+      "repository": "Automattic/harper",
+      "slug": "automattic-harper",
+      "platform": "github",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "4270327e",
+      "content_hash": "5115026d4da69b31863943d5795d91b707569f08199ef5176ffccc9c171c0e8e",
+      "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8534,
+          "title": "avoid flagging coordinating conjunction 'for they'",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T21:20:52.768Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8534": {
+      "learning_id": "rule-8534",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8534,
+      "title": "avoid flagging coordinating conjunction 'for they'",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "4270327e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T21:20:52.768Z"
+    },
+    "candidate_directive-avoid-flagging-coordinating-conjunction-for-they": {
+      "item_id": "candidate_directive-avoid-flagging-coordinating-conjunction-for-they",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U1IL-avoid-flagging-coordinating-conjunction-for-they.md",
+      "title": "avoid flagging coordinating conjunction 'for they'",
+      "repository": "Automattic/harper",
+      "source_version": "4270327e",
+      "content_hash": "992cede72a2786e0762ba850e5e29f71fbaa71c396aae51853c5f459eaadc118",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T21:20:53.038Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-quality-verification-intelligence-automattic-harper-core-invar.md",
+      "title": "Quality & Verification Intelligence: Automattic/harper Core Invariants",
+      "repository": "Automattic/harper",
+      "source_version": "4270327e",
+      "content_hash": "981ded610d6c7ed83c7a9c3b82e64e0178526daf8694330ea84d769b5ebb329e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T21:20:53.117Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/automattic-harper-verification-protocol-empirical-defect-shield-for-automattic-h.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Automattic/harper",
+      "repository": "Automattic/harper",
+      "source_version": "4270327e",
+      "content_hash": "3e9adc597c34e701bd0cfeb7d3bb02dc8779d525f809f9aaf4ed5e328d1bbe8d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T21:20:53.197Z"
+    },
+    "learn-github-kotest-kotest": {
+      "learning_id": "learn-github-kotest-kotest",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "kotest/kotest",
+      "repository": "kotest/kotest",
+      "slug": "kotest-kotest",
+      "platform": "github",
+      "source_url": "https://github.com/kotest/kotest",
+      "source_version": "acd88ce5",
+      "content_hash": "e04f0a928feb63456a832ac0ef684c711c04dab3b3debb0d7112debac69b4aec",
+      "dossier_path": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8535,
+          "title": "Update dependency dev.reformator.stacktracedecoroutinator:stacktrace-decoroutina",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T21:20:58.487Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8535": {
+      "learning_id": "rule-8535",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8535,
+      "title": "Update dependency dev.reformator.stacktracedecoroutinator:stacktrace-decoroutina",
+      "source_url": "https://github.com/kotest/kotest",
+      "source_version": "acd88ce5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T21:20:58.488Z"
+    },
+    "candidate_directive-update-dependency-dev-reformator-stacktracedecoroutinator-stacktrace-decoroutina": {
+      "item_id": "candidate_directive-update-dependency-dev-reformator-stacktracedecoroutinator-stacktrace-decoroutina",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UWTX-update-dependency-dev-reformator-stacktracedecoroutinator-stacktrace-decoroutina.md",
+      "title": "Update dependency dev.reformator.stacktracedecoroutinator:stacktrace-decoroutina",
+      "repository": "kotest-kotest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "62c0105456b08213d06124326269f8fb35451f09033e382cacb55c3b146f97c6",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-14T21:21:33.621Z"
+    },
+    "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kotest-kotest-content-information-intelligence-kotest-kotest-core-invariants.md",
+      "title": "Content & Information Intelligence: kotest/kotest Core Invariants",
+      "repository": "kotest/kotest",
+      "source_version": "acd88ce5",
+      "content_hash": "3307bf4775c6afa99a9deb50fa93b84bc9e23344477d1cffd6d17e4e4956abf1",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-14T21:20:58.812Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kotest-kotest": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kotest-kotest",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kotest-kotest-verification-protocol-empirical-defect-shield-for-kotest-kotest.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kotest/kotest",
+      "repository": "kotest/kotest",
+      "source_version": "acd88ce5",
+      "content_hash": "da6d4046b689becc22d4376b6961e4cda23995880f48cdd9c58643998d018419",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T21:20:58.892Z"
+    },
+    "rule-8536": {
+      "learning_id": "rule-8536",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8536,
+      "title": "go.mod: bump golang.org/x/sys",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "9d531366",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T21:21:02.201Z"
+    },
+    "candidate_directive-go-mod-bump-golang-org-x-sys": {
+      "item_id": "candidate_directive-go-mod-bump-golang-org-x-sys",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U8S4-go-mod-bump-golang-org-x-sys.md",
+      "title": "go.mod: bump golang.org/x/sys",
+      "repository": "tailscale/tailscale",
+      "source_version": "9d531366",
+      "content_hash": "b66409326b2a31b6aea383df912218c102c876b65eda4c2312237d21776def17",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T21:21:02.453Z"
+    },
+    "learn-github-genkit-ai-genkit": {
+      "learning_id": "learn-github-genkit-ai-genkit",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "genkit-ai/genkit",
+      "repository": "genkit-ai/genkit",
+      "slug": "genkit-ai-genkit",
+      "platform": "github",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "76130045",
+      "content_hash": "5f6536aad6d70f67809f5a02b7159ac023c91479d591011ce4e662207cc7179c",
+      "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8537,
+          "title": "install packed telemetry-server tarball in e2e cli harness",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T21:21:04.933Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8537": {
+      "learning_id": "rule-8537",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8537,
+      "title": "install packed telemetry-server tarball in e2e cli harness",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "76130045",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T21:21:04.934Z"
+    },
+    "candidate_directive-install-packed-telemetry-server-tarball-in-e2e-cli-harness": {
+      "item_id": "candidate_directive-install-packed-telemetry-server-tarball-in-e2e-cli-harness",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UAW5-install-packed-telemetry-server-tarball-in-e2e-cli-harness.md",
+      "title": "install packed telemetry-server tarball in e2e cli harness",
+      "repository": "genkit-ai/genkit",
+      "source_version": "76130045",
+      "content_hash": "04e897358011599762f213593f35fb352cad422a324b3e1a9b090d7ce60688f6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T21:21:05.196Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-technical-construction-intelligence-genkit-ai-genkit-core-invar.md",
+      "title": "Technical Construction Intelligence: genkit-ai/genkit Core Invariants",
+      "repository": "genkit-ai/genkit",
+      "source_version": "76130045",
+      "content_hash": "a4ca7fb00c656c24f426d896b9dbcf5b2ce4cae87a58a70a70c82d477af20635",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-14T21:21:05.281Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-genkit-ai-genkit": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-genkit-ai-genkit",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/genkit-ai-genkit-verification-protocol-empirical-defect-shield-for-genkit-ai-gen.md",
+      "title": "Verification Protocol: Empirical Defect Shield for genkit-ai/genkit",
+      "repository": "genkit-ai/genkit",
+      "source_version": "76130045",
+      "content_hash": "88d01b64b9f3de40c849d7d83444896b844670629e7acc3bb744b09a27fb1c82",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T21:21:05.362Z"
+    },
+    "candidate_directive-theytothem-avoid-flagging-coordinating-conjunction-for-they": {
+      "item_id": "candidate_directive-theytothem-avoid-flagging-coordinating-conjunction-for-they",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UD8R-theytothem-avoid-flagging-coordinating-conjunction-for-they.md",
+      "title": "TheyToThem): avoid flagging coordinating conjunction 'for they'",
+      "repository": "automattic-harper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fe15f942c5cc81f502ef17c8f3d8f9691fcdba5e811e9f4ca08de7ef3e63fb68",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T21:21:08.236Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-learnings-quality-verification-intelligence-automattic-harper-.md",
+      "title": "Quality & Verification Intelligence: automattic-harper-learnings Core Invariants",
+      "repository": "automattic-harper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0c67cb33ded0e02aed662d3a0ec30044a0a4264b9652c9b26afa887e2f056066",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T21:21:08.314Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/automattic-harper-learnings-verification-protocol-empirical-defect-shield-for-au.md",
+      "title": "Verification Protocol: Empirical Defect Shield for automattic-harper-learnings",
+      "repository": "automattic-harper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4a84eda0831ce6f9ebda9b5a2eff769b2b833bb67982366e2429712916d3d09d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T21:21:08.394Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-phocinae-phocinae-largha-150m-v1-learnings-research-knowledge-intelligence-hf.md",
+      "title": "Research & Knowledge Intelligence: hf-phocinae-phocinae-largha-150m-v1-learnings Core Invariants",
+      "repository": "hf-phocinae-phocinae-largha-150m-v1-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8c06bf6bef7bd15267401c6ac2f98ce1a70befa60086e810973f0b6d92b92c1b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T21:21:32.820Z"
+    },
+    "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kotest-kotest-learnings-content-information-intelligence-kotest-kotest-learnings.md",
+      "title": "Content & Information Intelligence: kotest-kotest-learnings Core Invariants",
+      "repository": "kotest-kotest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "05226632263030610d0e3228e7fa4d12e1921bdc7762876c6f3c408ace0189b6",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-14T21:21:33.714Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kotest-kotest-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kotest-kotest-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kotest-kotest-learnings-verification-protocol-empirical-defect-shield-for-kotest.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kotest-kotest-learnings",
+      "repository": "kotest-kotest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e9be845794f8f9c140617a9d32947561415885305b9a946d56e03a2a0066bca6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T21:21:33.809Z"
     }
   },
   "ai-builder-brain": {

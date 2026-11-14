@@ -4,23 +4,23 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "0d822c9d",
+  "source_version": "9d531366",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-14T03:32:25.748Z",
+  "timestamp": "2026-11-14T21:21:02.452Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `0d822c9d`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-14T03:32:25.748Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `9d531366`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-14T21:21:02.452Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
 - **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:32:24.749Z  
+> **Harvest Timestamp**: 2026-11-14T21:21:01.644Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39065 stars
+- **Stars / Engagement**: 39106 stars
 
 ---
 
@@ -837,148 +837,130 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `283569e7` (2026-11-13)
-**Commit Message**: derp/derpserver: fix data race on sclient.keepAliveTimer
+### Incident Patch 1: `9d531366` (2026-11-14)
+**Commit Message**: go.mod: bump golang.org/x/sys
 
-run assigned keepAliveTimer after AfterFunc had already armed it, and
-the timer's func uses the field (writePending resets it), so nothing
-ordered the assignment before the first keepalive. Assign it first and
-arm it with Reset, which does.
+* golang.org/x/sys: v0.49.0 to v0.50.0
 
-No existing test ran long enough for a keepalive to fire. The new
-TestKeepAlive waits for three under synctest; with the race detector it
-fails without this fix.
+Triggered by @bradfitz via the bumpdep workflow.
 
-Updates #13038
+Updates #22390
 
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
-Change-Id: I8f2c4e6a1b3d5f7091a2c3e4d5f6a7b8c9d0e1f2
+Change-Id: I402717314704a7f7b164a15e073608ef9dcc31fb
+Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
 
-**File**: `derp/derpserver/derpserver.go` (modified, +5/-1)
+**File**: `flake.nix` (modified, +1/-1)
 ```diff
-@@ -1265,7 +1265,11 @@ func (c *sclient) run(ctx context.Context) error {
- 		c.startStatsLoop(ctx)
- 	}
- 
--	c.keepAliveTimer = c.s.clock.AfterFunc(keepAliveInterval(), c.onKeepAliveTimer)
-+	// Assign keepAliveTimer before arming it with Reset: its func
-+	// resets it (in writePending), and Reset is what orders this
-+	// assignment before the func runs.
-+	c.keepAliveTimer = c.s.clock.AfterFunc(365*24*time.Hour, c.onKeepAliveTimer)
-+	c.keepAliveTimer.Reset(keepAliveInterval())
- 
- 	for {
- 		ft, fl, err := derp.ReadFrameHeader(c.br)
+@@ -173,4 +173,4 @@
+     });
+   };
+ }
+-# nix-direnv cache busting line: sha256-Ackcupvrl5NqcyZZ7D3X3h/COrZ6Uz/rtxtzeu3ciU8=
++# nix-direnv cache busting line: sha256-lVBZo9FQC4BFAK1yQesPxjLzBqnzWk9CsMm8ixydnoo=
 ```
 
-**File**: `derp/derpserver/handler_test.go` (modified, +36/-0)
+**File**: `flakehashes.json` (modified, +2/-2)
 ```diff
-@@ -4,6 +4,7 @@
- package derpserver
- 
- import (
-+	"bufio"
- 	"bytes"
- 	"context"
- 	"crypto/tls"
-@@ -158,3 +159,38 @@ func TestHandlerTLSReaderSize(t *testing.T) {
- 		})
- 	}
+@@ -4,7 +4,7 @@
+     "sri": "sha256-Up4oMG6TVLQkV9inAYF3uYbxu+bMHeU7q9BLcXIllow="
+   },
+   "vendor": {
+-    "goModSum": "sha256-nepP7wcKXAWXPMCY+/X7majAmQAkszokN3VMaKdgk2k=",
+-    "sri": "sha256-Ackcupvrl5NqcyZZ7D3X3h/COrZ6Uz/rtxtzeu3ciU8="
++    "goModSum": "sha256-mM783v/r/aHCqXYS+9xjrbYMmq0D8T1+6P1LnDHVCAE=",
++    "sri": "sha256-lVBZo9FQC4BFAK1yQesPxjLzBqnzWk9CsMm8ixydnoo="
+   }
  }
-+
-+// TestKeepAlive verifies that the server sends a client keepalives. Run
-+// with the race detector, it also verifies that the keepalive timer's
-+// func (which resets the timer) is ordered after the timer is assigned.
-+func TestKeepAlive(t *testing.T) {
-+	synctest.Test(t, func(t *testing.T) {
-+		s := New(key.NewNode(), t.Logf)
-+		defer s.Close()
-+		ctx, cancel := context.WithCancel(context.Background())
-+		defer cancel()
-+		connIn, connOut := memnet.NewConn("derp", 64<<10)
-+		defer connIn.Close()
-+		defer connOut.Close()
-+		go s.Accept(ctx, connIn, bufio.NewReadWriter(bufio.NewReader(connIn), bufio.NewWriter(connIn)), "test-client")
-+
-+		brw := bufio.NewReadWriter(bufio.NewReader(connOut), bufio.NewWriter(connOut))
-+		c, err := derp.NewClient(key.NewNode(), connOut, brw, t.Logf)
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		start := time.Now()
-+		for got := 0; got < 3; {
-+			m, err := c.Recv()
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if _, ok := m.(derp.KeepAliveMessage); ok {
-+				got++
-+			}
-+		}
-+		if d := time.Since(start); d < 3*derp.KeepAlive {
-+			t.Errorf("got 3 keepalives in %v; want at least %v", d, 3*derp.KeepAlive)
-+		}
-+	})
-+}
 ```
 
----
-
-### Incident Patch 2: `027c2a82` (2026-11-13)
-**Commit Message**: clientupdate: stop requesting the -winui MSI variant on Windows
-
-The Windows installers no longer come in a separate -winui variant.
-Remove the temporary qualifier.
-
-Updates tailscale/corp#50987
-
-Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
-
-**File**: `clientupdate/clientupdate_windows.go` (modified, +1/-19)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -91,17 +91,6 @@ func verifyAuthenticode(path string) error {
- 	return authenticode.Verify(path, certSubjectTailscale)
+@@ -144,7 +144,7 @@ require (
+ 	golang.org/x/net v0.62.0
+ 	golang.org/x/oauth2 v0.37.0
+ 	golang.org/x/sync v0.24.0
+-	golang.org/x/sys v0.49.0
++	golang.org/x/sys v0.50.0
+ 	golang.org/x/term v0.47.0
+ 	golang.org/x/text v0.43.0
+ 	golang.org/x/time v0.16.0
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -1401,8 +1401,8 @@ golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.10.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
+-golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
++golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 h1:DftxASHKl6JolFPqoN+2WrFO53JvkHwRXvFqf8gsivA=
+ golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+```
+
+**File**: `ipn/desktop/zsyscall_windows.go` (modified, +1/-1)
+```diff
+@@ -118,7 +118,7 @@ func sendMessage(hwnd windows.HWND, msg uint32, wparam uintptr, lparam uintptr)
+ 
+ func translateMessage(lpMsg *_MSG) (res bool) {
+ 	r0, _, _ := syscall.SyscallN(procTranslateMessage.Addr(), uintptr(unsafe.Pointer(lpMsg)))
+-	res = r0 != 0
++	res = uint32(r0) != 0
+ 	return
  }
  
--func isTSGUIPresent() bool {
--	us, err := os.Executable()
--	if err != nil {
--		return false
--	}
--
--	tsgui := filepath.Join(filepath.Dir(us), "tsgui.dll")
--	_, err = os.Stat(tsgui)
--	return err == nil
--}
--
- func (up *Updater) updateWindows() error {
- 	if msi := os.Getenv(winMSIEnv); msi != "" {
- 		// stdout/stderr from this part of the install could be lost since the
-@@ -156,14 +145,7 @@ you can run the command prompt as Administrator one of these ways:
- 	}
- 	up.cleanupOldDownloads(filepath.Join(msiDir, "*.msi"))
+```
+
+**File**: `net/netns/zsyscall_windows.go` (modified, +2/-2)
+```diff
+@@ -46,8 +46,8 @@ var (
  
--	qualifiers := []string{ver, arch}
--	// TODO(aaron): Temporary hack so autoupdate still works on winui builds;
--	// remove when we enable winui by default on the unstable track.
--	if isTSGUIPresent() {
--		qualifiers = append(qualifiers, "winui")
--	}
--
--	pkgsPath := fmt.Sprintf("%s/tailscale-setup-%s.msi", up.Track, strings.Join(qualifiers, "-"))
-+	pkgsPath := fmt.Sprintf("%s/tailscale-setup-%s-%s.msi", up.Track, ver, arch)
- 	msiTarget := filepath.Join(msiDir, path.Base(pkgsPath))
- 	if err := up.downloadURLToFile(pkgsPath, msiTarget); err != nil {
- 		return err
+ func getBestInterfaceEx(sockaddr *winipcfg.RawSockaddrInet, bestIfaceIndex *uint32) (ret error) {
+ 	r0, _, _ := syscall.SyscallN(procGetBestInterfaceEx.Addr(), uintptr(unsafe.Pointer(sockaddr)), uintptr(unsafe.Pointer(bestIfaceIndex)))
+-	if r0 != 0 {
+-		ret = syscall.Errno(r0)
++	if uint32(r0) != 0 {
++		ret = syscall.Errno(uint32(r0))
+ 	}
+ 	return
+ }
+```
+
+**File**: `shell.nix` (modified, +1/-1)
+```diff
+@@ -16,4 +16,4 @@
+ ) {
+   src =  ./.;
+ }).shellNix
+-# nix-direnv cache busting line: sha256-Ackcupvrl5NqcyZZ7D3X3h/COrZ6Uz/rtxtzeu3ciU8=
++# nix-direnv cache busting line: sha256-lVBZo9FQC4BFAK1yQesPxjLzBqnzWk9CsMm8ixydnoo=
+```
+
+**File**: `util/osdiag/zsyscall_windows.go` (modified, +2/-2)
+```diff
+@@ -52,8 +52,8 @@ var (
+ 
+ func regEnumValue(key registry.Key, index uint32, valueName *uint16, valueNameLen *uint32, reserved *uint32, valueType *uint32, pData *byte, cbData *uint32) (ret error) {
+ 	r0, _, _ := syscall.SyscallN(procRegEnumValueW.Addr(), uintptr(key), uintptr(index), uintptr(unsafe.Pointer(valueName)), uintptr(unsafe.Pointer(valueNameLen)), uintptr(unsafe.Pointer(reserved)), uintptr(unsafe.Pointer(valueType)), uintptr(unsafe.Pointer(pData)), uintptr(unsafe.Pointer(cbData)))
+-	if r0 != 0 {
+-		ret = syscall.Errno(r0)
++	if uint32(r0) != 0 {
++		ret = syscall.Errno(uint32(r0))
+ 	}
+ 	return
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22406** (2026-11-14): go.mod: bump golang.org/x/sys (@tailscale-code-updater[bot])
 - **PR #22393** (2026-11-14): cmd/testwrapper, .github/workflows: bound hung CI test jobs (@bradfitz)
 - **PR #22392** (2026-11-13): clientupdate: stop requesting the -winui MSI variant on Windows (@nickkhyl)
 - **PR #22382** (2026-11-13): derp/derpserver: fix data race on sclient.keepAliveTimer (@bradfitz)
 - **PR #22375** (2026-11-13): ipn/ipnlocal: add stub for LocalBackend.SetLogUploader (@dsnet)
 - **PR #22372** (2026-11-12): ipn/ipnstate,tailcfg: fix comment (@franbull)
-- **PR #22371** (2026-11-12): cmd/k8s-proxy: listen on the PORT that the operator sets (@ChaosInTheCRD)
 
 ---
 
@@ -998,35 +980,31 @@ Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. derp/derpserver: fix data race on sclient.keepAliveTimer
+## X. go.mod: bump golang.org/x/sys
 
 **RULE**:
-When implementing operations in `derp/derpserver/derpserver.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `283569e7`: derp/derpserver: fix data race on sclient.keepAliveTimer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d531366`: go.mod: bump golang.org/x/sys. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `derp/derpserver/derpserver.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Assign keepAliveTimer before arming it with Reset: its func
-	// resets it (in writePending), and Reset is what orders this
-	// assignment before the func runs.
-	c.keepAliveTimer = c.s.clock.AfterFunc(365*24*time.Hour, c.onKeepAliveTimer)
-	c.keepAliveTimer.Reset(keepAliveInterval())
+# nix-direnv cache busting line: sha256-lVBZo9FQC4BFAK1yQesPxjLzBqnzWk9CsMm8ixydnoo=
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	c.keepAliveTimer = c.s.clock.AfterFunc(keepAliveInterval(), c.onKeepAliveTimer)
+# nix-direnv cache busting line: sha256-Ackcupvrl5NqcyZZ7D3X3h/COrZ6Uz/rtxtzeu3ciU8=
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `283569e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d531366` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

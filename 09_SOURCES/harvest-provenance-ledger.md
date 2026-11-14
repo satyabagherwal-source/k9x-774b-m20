@@ -9970,3 +9970,9 @@ Every entry in this ledger must capture:
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `8279fa0d` | Multi-dimensional audit evidence | 2026-11-14T20:52:03.196Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `c5d2dbe7` | Multi-dimensional audit evidence | 2026-11-14T20:52:10.812Z |
 | `learn-dom-d-73a9b4fe` | `project://hf-autotrust-qwen3.8-flash-next-e384-fp4-v2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md` | 2026-11-14T20:52:48.097Z |
+| `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-11-14T21:20:50.489Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `4270327e` | Multi-dimensional audit evidence | 2026-11-14T21:20:52.895Z |
+| `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `acd88ce5` | Multi-dimensional audit evidence | 2026-11-14T21:20:58.607Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `9d531366` | Multi-dimensional audit evidence | 2026-11-14T21:21:02.315Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `76130045` | Multi-dimensional audit evidence | 2026-11-14T21:21:05.050Z |
+| `learn-dom-d-04705777` | `project://hf-phocinae-phocinae-largha-150m-v1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | 2026-11-14T21:21:32.664Z |

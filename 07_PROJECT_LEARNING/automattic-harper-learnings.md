@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `a498d472`  
+> **Source Version**: `4270327e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T06:33:14.832Z  
+> **Timestamp**: 2026-11-14T21:20:52.173Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T06:33:14.825Z  
+> **Harvest Timestamp**: 2026-11-14T21:20:52.168Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17650 stars
+- **Stars / Engagement**: 17709 stars
 
 ---
 
@@ -1408,11 +1408,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4919** (2026-11-14): **Incorrect "them" suggestion**
+  *Symptoms*: ## What got flagged? <img width="2649" height="413" alt="image" src="https://github.com/user-attachments/assets/bec27369-582a-409e-87cb-0a1741bda5c7" />  TEXT: I tried to tell them, I really did. At least their deaths are not meaningless, for they shall all be unified into the white and delightsome hosts of Heaven.  ERROR: It's saying _they_ should be _them_ but that makes the grammar wrong.  ## Why is this incorrect? Text above is correct as is.  ## Example of correct usage See above text.
+
 - **Issue #4904** (2026-11-11): **Broken correciton suggestions on Ellipsus**
   *Symptoms*: ## Describe the bug Harper is not working as intended on Ellipsus. It keeps placing autocorrect suggestions in misplaced spots, mostly in the case of it extending too far right to the next word(s) after the suggestion. Sometimes, the suggestion refuses to go away if you Dismiss it.  ## To Reproduce Steps to reproduce the behavior: 1. Go to '[write.ellipsus.com](https://write.ellipsus.com/)' 2. Write anything in a writing document 4. The autocorrect suggestions populate in a broken state  ## Expected behavior I expect Harper to behave as normal in Ellipsus, just like any other website with text-writing systems.   ## Platform Firefox (version 159, but also in previous versions, too) on Desktop 
-
-- **Issue #4878** (2026-11-12): **Words with a non-ASCII letter after a leading "Xs" are split in two ("así" → "as" + "í")**
-  *Symptoms*: ## What got flagged? The fragment after the `s` in words like `así`, `osé` and `usé` (flagged as `í` and `é`), and in Slovak text `ídli` in `usídli`.  ## Why is this incorrect? These are single words, but the lexer cuts them after the `s`. `lex_plural_digit` (added for #774 to keep `0s`, `1's` and similar together) ends its token whenever the character after the `s` is not ASCII alphanumeric. So any word that starts with one ASCII letter or digit plus `s` and continues with a letter like `í` or `é` is lexed as two tokens, and the spell checker then flags the leftover fragment. On current master (11f7925c5), `harper-cli lint` on `He only answered: "así es".` reports `í`, while `rosé` in the same text is checked as one word.  The curated English dictionary doesn't seem to contain words of this shape, so in English it mostly shows up with quoted foreign words and names. It matters more for languages with diacritics. I ran into it while working on Slovak support (#3658), where the correct sentence `Rodina sa usídli v meste.` gets a false positive for `ídli`. Czech (`osídlení`) and other languages that reuse the English lexer have the same problem.  Using `is_alphanumeric()` instead of `is_ascii_alphanumeric()` for the character after the `s` fixes it and keeps the #774 cases (`0s`, `1s`, `1's`, `1980s`) lexed as before. I have that change with tests ready and can open a PR if it's welcome.  ## Example of correct usage He only answered: "así es". The old coat looked usé. Rodina sa
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1429,829 +1429,208 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9b9bfe1` (2026-11-12)
-**Commit Message**: fix(core): accept British -ise and -yse forms (#4818)
+### Incident Patch 1: `4270327e` (2026-11-14)
+**Commit Message**: fix(TheyToThem): avoid flagging coordinating conjunction 'for they' (#4926)
 
-Correct British spellings were reported as misspellings because the
-dictionary had the -ize or -yze form of a word but not its counterpart,
-or had a British entry with fewer affix flags than its American pair.
-"customisable" was even corrected to "customizable", and "synthesised"
-failed even though "synthesise" was accepted.
+* fix(TheyToThem): avoid flagging coordinating conjunction 'for they'
 
-The new entries use the existing !_₹ dialect flags, so these spellings
-are still flagged in American and Canadian English.
+Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
 
-**File**: `harper-core/dictionary.dict` (modified, +129/-31)
+* test: update Alice snapshot for TheyToThem fix
+
+Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
+
+**File**: `harper-core/src/linting/weir_rules/TheyToThem.weir` (modified, +8/-2)
 ```diff
-@@ -12680,6 +12680,8 @@ anointment/Nmg
- anomalous/~JY
- anomaly/~NSg
- anon/~NSJ
-+anonymisation/Nmg!_₹
-+anonymise/VdSG!_₹
- anonymity/~Ng
- anonymization/Nmg
- anonymize/Vd
-@@ -12928,6 +12930,7 @@ apothecary/NSg
- apothegm/NSg
- apotheoses/N9V
- apotheosis/N0g
-+apotheosise/VdSG!_₹
- app/~NSg
- appal/VS!_₹
- appall/VGdS
-@@ -13632,7 +13635,7 @@ author/~NSgVdG
- authoress/NgS
- authorial/J
- authorisation/NwSg!_₹
--authorise/VGdS!_₹
-+authorise/VGdSr!_₹
- authorised/JVtT!_₹
- authoritarian/~JNgS
- authoritarianism/Nmg
-@@ -16569,6 +16572,7 @@ canoeist/NSg
- canola/Ng
- canon/~NgSJ
- canonical/~JYN
-+canonicalisation/Ng!_₹
- canonicalise/VGdS!_₹
- canonicalize/VGdS
- canonisation/NgS!_₹
-@@ -16921,6 +16925,7 @@ cataract/~NgS
- catarrh/Ng
- catastrophe/~NgS
- catastrophic/~JQ
-+catastrophise/VdSG!_₹
- catastrophize/VdSG
- catatonia/Ng
- catatonic/JNSg
-@@ -17824,6 +17829,7 @@ civics/~Nmg
- civil/~JYU
- civilian/~NgSJ
- civilisation/NSg!_₹
-+civilisational/J!_₹
- civilise/VGdS!_₹
- civilised/VJU!_₹tT
- civility/~Nmgi
-@@ -18368,6 +18374,7 @@ collard/NSg
- collarless/J
- collate/VdSGXn
- collateral/~JYNmg
-+collateralisation/Ng!_₹
- collateralise/V!_₹
- collateralization/Ng
- collateralize/V
-@@ -18609,6 +18616,7 @@ commode's
- commodification/NwSg
- commodify/VdSG
- commodious/JY
-+commoditise/VdSG!_₹
- commoditize/VdSG
- commodity/~NSg
- commodore/~NSg
-@@ -18811,8 +18819,8 @@ concept/~NSgV
- conception/~NwSg
- conceptional/J
- conceptual/~JY
--conceptualisation/NSg!_₹
--conceptualise/VdSG!_₹
-+conceptualisation/NSgr!_₹
-+conceptualise/VdSGr!_₹
- conceptualization/NgSr
- conceptualize/VdSGr
- concern/~Nw0gVdU
-@@ -20386,8 +20394,11 @@ customarily/~R8
- customary/~JNU
- customer/~NgS
- customhouse/NSg
-+customisability/Nmg!_₹
-+customisable/J!_₹
- customisation/NwgS!_₹
- customise/VdSG!_₹
-+customiser/NgS!_₹
- customizability/Nmg
- customizable/J
- customization/~NwgS
-@@ -20752,6 +20763,7 @@ decapitate/VGdSXn
- decapitator/NgS
- decapped/VtTJ
- decapping/V6N
-+decarbonise/VdSG!_₹
- decarbonize/VdSG
- decathlete/NS
- decathlon/NSg
-@@ -20847,6 +20859,8 @@ dedicate/~VbGdSJNr
- dedication/~NwSg
- dedicator/NSg
- dedicatory/JN
-+dedollarisation/Nmg!_₹
-+dedollarise/VSdG!_₹
- dedollarization/Nmg
- dedollarize/VSdG
- deduce/~VGdS
-@@ -21100,6 +21114,8 @@ denim/~NwgS
- denitrification/N
- denizen/NgSV
- denominational/~J
-+denormalisation/Nmg!_₹
-+denormalise/VGdS!_₹
- denormalization/Nmg
- denormalize/VGdS
- denotation/NSgQ
-@@ -21247,6 +21263,8 @@ descry/VGdS
- desecrate/VdSGJn
- desecration/Nmg
- deselection/Ng
-+deserialisation/NgS!_₹
-+deserialise/VSGd!_₹
- deserialization/NgS
- deserialize/VSGd
- desert/~NwSgJ>VdGZ
-@@ -21580,6 +21598,7 @@ digital/~JYN
- digitalis/Ng
- digitisation/N!_₹
- digitise/VGdS!_₹
-+digitiser/NgS!_₹
- digitization/N
- digitize/VGdS
- digitizer/NgS
-@@ -22131,6 +22150,8 @@ doleful/JYp
- dolefulness/Nmg
- doll/~NgSdG
- dollar/~NSg
-+dollarisation/Ng!_₹
-+dollarise/VdSG!_₹
- dollarization/Ng
- dollarize/VdSG
- dollhouse/NSg
-@@ -23297,7 +23318,7 @@ empathy/~Nmg
- emperor/~NgS
- emphases/N9
- emphasis/~N0g
--emphasise/VGdSr!_₹
-+emphasise/VGdSre!_₹
- emphasize/~VGdSre
- emphatic/~JNUQ
- emphysema/~Ng
-@@ -23946,6 +23967,7 @@ eulogizer/Ng
- eulogy/~NSg
- eunuch/~N0gV
- eunuchs/~N9
-+euphemise/VdGS!_₹
- euphemize/VdGS!_₹
- euphemism/~NwSg
- euphemistic/JQ
-@@ -23959,6 +23981,7 @@ euro/~NgS
- europium/Nmg
- eutectic/~JN
- euthanasia/~Nmg
-+euthanise/VdSG!_₹
- euthanize/VdSG
- euthenics/Ng
- eutrophy/Nmn
-@@ -24653,6 +24676,7 @@ far/~JVN
- far right/NgS
- far-right/J
- farad/NSg
-+faradise/VdG!_₹
- faradize/VdG
- faraway/~JN
- farce/~NwSgV
-@@ -24932,6 +24956,8 @@ fete/NgSVGd
- fetid/JpN
- fetidness/Ng
- fetish/~NgS
-+fetishisation/Ng!_₹
-+fetishise/VdSG!_₹
- fetishism/~Ng
- fetishist/NSg
- fetishistic/J
-@@ -25109,6 +25135,8 @@ finalize/~VdSG
- finance/~NwSVdGr
- finance's
- financial/~JY
-+financialisation/Ng!_₹
-+financialise/VdSG!_₹
- financialization/Ng
- financialize/VdSG
- financials/9
-@@ -26677,7 +26705,7 @@ genealogy/~NSg
- genera/~N9
- general/~JYNSgV
- generalisation/NgS!_₹
--generalise/VGdS!_₹
-+generalise/VGdSB!_₹
- generaliser/NgS!_₹
- generalissimo/NgS
- generalist/NgS
-@@ -29510,7 +29538,7 @@ hypothalamus/~Ng
- hypothermia/~Ng
- hypotheses/~N9
- hypothesis/~N0g
--hypothesise/V!_₹
-+hypothesise/VdSG!_₹
- hypothesize/VdSG
- hypothetical/~JYNS
- hypothyroid/Jg
-@@ -30222,8 +30250,8 @@ indulge/~VdSG
- indulgence/~NwSgV
- indulgent/JY
- industrial/~JYN
--industrialisation/Ng!_₹
--industrialise/VdSG!_₹
-+industrialisation/Nge!_₹
-+industrialise/VdSGr!_₹
- industrialism/Ng
- industrialist/~NSg
- industrialization/~Nge
-@@ -30961,6 +30989,7 @@ ion/~NSgU
- ionic/~J
- ionisation/NgU!_₹
- ionise/VdSGU!_₹
-+ioniser/NgS!_₹
- ionization/~NgU
- ionize/VdSGU
- ionizer/NgS
-@@ -32302,6 +32331,7 @@ legal/~JYNSg
- legalese/Nmg
- legalisation/Nmg!_₹
- legalise/VGdS!_₹
-+legaliser/NgS!_₹
- legalism/NgS
- legalist/JNS
- legalistic/JQ
-@@ -32338,8 +32368,8 @@ legitimacy/~Ng
- legitimate/~JYNSVdG
- legitimatise/VGdS!_₹
- legitimatize/VGdS
--legitimisation/Ng!_₹
--legitimise/VdSG!_₹
-+legitimisation/Nge!_₹
-+legitimise/VdSGe!_₹
- legitimization/Nge
- legitimize/~VdSGe
- legless/J
-@@ -32647,6 +32677,7 @@ lineage/~NgS
- lineal/~JY
- lineament/N
-```
-
-**File**: `harper-core/src/linting/spell_check.rs` (modified, +18/-0)
-```diff
-@@ -262,6 +262,24 @@ mod tests {
-         );
-     }
+@@ -1,7 +1,8 @@
+-expr prepositions [to, with, for, about, against, between, among, around, toward, towards, through, beyond, behind, across, near, inside, outside]
++expr prepositions [to, with, about, against, between, among, around, toward, towards, through, beyond, behind, across, near, inside, outside]
++# `for` can also act as a coordinating conjunction introducing a finite clause, where `they` is the subject
+ # Most of these are also nouns. In "the help they received", `they` is the subject of the verb that follows, so skip those
+ expr verbs [call, contact, invite, remind, ask, see, watch, help, trust, send, support, follow, visit, tell, thank, mention, show]
+-expr main [<(@prepositions they), they>, <[(@verbs they ![VERB, AUX]), (@verbs they.)], they>]
++expr main [<(@prepositions they), they>, <[(for they ![VERB, AUX]), (for they.)], they>, <[(@verbs they ![VERB, AUX]), (@verbs they.)], they>]
  
-+    #[test]
-+    fn british_ise_words_in_british_dialect() {
-+        assert_lint_count(
-+            "We anonymise it with the customisable tokeniser, then we synthesised the results.",
-+            SpellCheck::new(FstDictionary::curated(), Dialect::British),
-+            0,
-+        );
-+    }
-+
-+    #[test]
-+    fn british_ise_words_in_american_dialect() {
-+        assert_lint_count(
-+            "We anonymise it with the customisable tokeniser, then we synthesised the results.",
-+            SpellCheck::new(FstDictionary::curated(), Dialect::American),
-+            4,
-+        );
-+    }
-+
-     #[test]
-     fn canadian_words_in_australian_dialect() {
-         assert_lint_count(
+ let message "Use `them` when the pronoun follows a preposition or transitive verb."
+ let description "Converts `they` to `them` whenever the pronoun serves as an object after common prepositions or actions that take direct objects."
+@@ -28,6 +29,8 @@ test "Show they how the tool works." "Show them how the tool works."
+ 
+ test "Mention they in your update." "Mention them in your update."
+ test "I will call they." "I will call them."
++test "This gift is for they." "This gift is for them."
++test "Wait for they at the station." "Wait for them at the station."
+ 
+ # True negatives
+ 
+@@ -40,3 +43,6 @@ allows "Whether they had families could affect the help they received."
+ allows "We gave them the support they needed."
+ allows "That was the show they watched."
+ allows "The trust they built took years."
++allows "At least their deaths are not meaningless, for they shall all be unified into the white and delightsome hosts of Heaven."
++allows "For they know not what they do."
++allows "Rejoice, for they have returned safely."
 ```
 
-**File**: `harper-core/tests/run_tests.rs` (modified, +1/-0)
+**File**: `harper-core/tests/text/linters/Alice's Adventures in Wonderland.snap.yml` (modified, +0/-10)
 ```diff
-@@ -87,6 +87,7 @@ create_test!(hex_basic_dirty.md, 1, Dialect::American);
- create_test!(misc_closed_compound_clean.md, 0, Dialect::American);
- create_test!(statist_localist.md, 0, Dialect::American);
- create_test!(yogurt_british_clean.md, 0, Dialect::British);
-+create_test!(british_ise_spellings_clean.md, 0, Dialect::British);
- create_test!(issue_1581.md, 0, Dialect::British);
- create_test!(issue_2054.md, 6, Dialect::British);
- create_test!(issue_1988.md, 0, Dialect::American);
-```
-
-**File**: `harper-core/tests/test_sources/british_ise_spellings_clean.md` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+The following text should produce no errors when Harper is set to British English.
-+
-+Our team anonymises and pseudonymises customer records before we deserialise them. The customiser is highly customisable, and the tokeniser and optimisers run whenever we synthesise new data.
-+
-+Last year, we hypothesised that this would help. We then synthesised the results and deprioritised anything unrelated. Reauthorising each service was tedious, but it stopped us from weaponising a flaw in the serialiser.
-+
-+The summariser now handles tokenisation and memoisation. Researchers have long warned that decarbonising heavy industry will take time, and that financialisation is hard to measure. Those who catastrophise about it rarely offer a plan.
+@@ -3395,16 +3395,6 @@ Message: |
+ 
+ 
+ 
+-Lint:    Grammar (31 priority)
+-Message: |
+-    2741 | to see what the next witness would be like, “—for they haven’t got much evidence
+-         |                                                   ^~~~ Use `them` when the pronoun follows a preposition or transitive verb.
+-    2742 | yet,” she said to herself. Imagine her surprise, when the White Rabbit read out,
+-Suggest:
+-  - Replace with: “them”
+-
+-
+-
+ Lint:    Readability (127 priority)
+ Message: |
+     2747 | “Here!” cried Alice, quite forgetting in the flurry of the moment how large she
 ```
 
 ---
 
-### Incident Patch 2: `468fd0e0` (2026-11-12)
-**Commit Message**: fix(desktop): hide overlays while macOS Screenshot is running (#4929)
+### Incident Patch 2: `3ece2091` (2026-11-13)
+**Commit Message**: fix(core): mark "learnt", "burnt" and "leapt" as past forms (#4874)
 
-Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
+"He learnt the rules at school." was flagged by PronounVerbAgreement, because
+these forms were tagged as plain verbs.
 
-**File**: `harper-desktop/src-tauri/Cargo.toml` (modified, +2/-0)
+**File**: `harper-core/dictionary.dict` (modified, +3/-3)
 ```diff
-@@ -55,6 +55,8 @@ objc2-app-kit = { version = "0.3.2", default-features = false, features = [
-     "NSApplication",
-     "NSImage",
-     "NSRunningApplication",
-+    "NSView",
-+    "NSWindow",
-     "NSWorkspace",
- ] }
- objc2-foundation = { version = "0.3.2", default-features = false, features = [
+@@ -16169,7 +16169,7 @@ burnish/VGd>SNgZ
+ burnisher/Ng
+ burnoose/NgS
+ burnout/NgS
+-burnt/~VJU
++burnt/~VtTJU
+ burp/NgSVdG
+ burqa/NSg!@_₹
+ burr/~NgSVdG
+@@ -32265,14 +32265,14 @@ leaper/Ng
+ leapfrog/NgSV
+ leapfrogged/VtT
+ leapfrogging/NmV6
+-leapt/V
++leapt/VtT
+ learn/~VGdSNrU
+ learnability/N
+ learnable/JN
+ learnedly/Ry
+ learner/~NgS
+ learning's
+-learnt/~V
++learnt/~VtT
+ lease/~NSgVdGr
+ leaseback/NSg
+ leasehold/J>NgSZ
 ```
 
-**File**: `harper-desktop/src-tauri/src/debug_broker.rs` (modified, +4/-0)
+**File**: `harper-core/src/linting/pronoun_verb_agreement.rs` (modified, +5/-0)
 ```diff
-@@ -12,6 +12,10 @@ use crate::rect::ActionableLint;
- pub struct DebugBroker;
- 
- impl OsBroker for DebugBroker {
-+    fn should_hide_overlay(&mut self) -> bool {
-+        false
-+    }
-+
-     fn get_boxes(
-         &mut self,
-         _: &mut dyn FnMut(&str) -> BTreeMap<String, Vec<Lint>>,
-```
-
-**File**: `harper-desktop/src-tauri/src/highlighter/window.rs` (modified, +32/-1)
-```diff
-@@ -30,7 +30,11 @@ pub struct Window {
- }
- 
- impl Window {
--    pub async fn new(event_loop: &ActiveEventLoop, monitor: MonitorHandle) -> Result<Self, Error> {
-+    pub async fn new(
-+        event_loop: &ActiveEventLoop,
-+        monitor: MonitorHandle,
-+        visible: bool,
-+    ) -> Result<Self, Error> {
-         let context = super::fonts::context();
-         let position = monitor.position();
-         let size = monitor.size();
-@@ -45,6 +49,7 @@ impl Window {
-                     .with_decorations(false)
-                     .with_transparent(true)
-                     .with_window_level(WindowLevel::AlwaysOnTop)
-+                    .with_visible(visible)
-                     .with_active(false),
-             )?,
-         );
-@@ -95,6 +100,32 @@ impl Window {
-         self.inner.request_redraw();
+@@ -555,4 +555,9 @@ mod lints {
+     fn dont_flag_she_further_explained() {
+         assert_no_lints("She further explained the plan.", test_linter());
      }
- 
-+    /// Restore overlays without making them key or interrupting typing in the underlying app.
-+    #[cfg(target_os = "macos")]
-+    pub fn set_visible(&self, visible: bool) {
-+        use objc2_app_kit::NSView;
-+        use winit::raw_window_handle::{HasWindowHandle, RawWindowHandle};
-+
-+        let handle = self.inner.window_handle().expect("overlay window handle");
-+        let RawWindowHandle::AppKit(handle) = handle.as_raw() else {
-+            unreachable!("macOS overlay must have an AppKit window handle");
-+        };
-+        // SAFETY: Winit owns this live NSView, and overlay lifecycle operations run on the main
-+        // event-loop thread. Keep the window handle alive while accessing the view and its window.
-+        let view = unsafe { handle.ns_view.cast::<NSView>().as_ref() };
-+        let window = view.window().expect("overlay view must belong to a window");
-+        if visible {
-+            window.orderFrontRegardless();
-+        } else {
-+            window.orderOut(None);
-+        }
-+    }
-+
-+    #[cfg(not(target_os = "macos"))]
-+    pub fn set_visible(&self, visible: bool) {
-+        self.inner.set_visible(visible);
-+    }
-+
-     /// Controls whether the transparent overlay can receive pointer events.
-     ///
-     /// Highlight windows are click-through by default so the underlying app remains usable. The
-```
-
-**File**: `harper-desktop/src-tauri/src/highlighter/window_manager.rs` (modified, +57/-8)
-```diff
-@@ -120,6 +120,7 @@ struct WindowManagerApp {
-     cursor_hittest_enabled: bool,
-     occluded_windows: HashSet<WindowId>,
-     overlays_paused: bool,
-+    overlays_hidden: bool,
-     error: Option<Error>,
- }
- 
-@@ -148,6 +149,7 @@ impl WindowManagerApp {
-             cursor_hittest_enabled: false,
-             occluded_windows: HashSet::new(),
-             overlays_paused: false,
-+            overlays_hidden: false,
-             error: None,
-         }
-     }
-@@ -171,7 +173,8 @@ impl WindowManagerApp {
-     /// Configuration synchronization remains active. An empty window list alone does not imply
-     /// occlusion: windows may not have been created yet.
-     fn should_pause_overlays(&self) -> bool {
--        all_displays_asleep()
-+        self.overlays_hidden
-+            || all_displays_asleep()
-             || (!self.windows.is_empty()
-                 && self
-                     .windows
-@@ -183,7 +186,30 @@ impl WindowManagerApp {
-     /// latest window occlusion events. Apply this both when requesting and consuming redraws:
-     /// an already-queued redraw must not render an unavailable overlay.
-     fn can_render_window(&self, window_id: WindowId) -> bool {
--        !self.overlays_paused && !self.occluded_windows.contains(&window_id)
-+        !self.overlays_hidden
-+            && !self.overlays_paused
-+            && !self.occluded_windows.contains(&window_id)
-+    }
-+
-+    fn update_overlay_visibility(&mut self) -> Result<(), Error> {
-+        let hidden = self.os_broker.should_hide_overlay();
-+        if hidden == self.overlays_hidden {
-+            return Ok(());
-+        }
-+        self.overlays_hidden = hidden;
-+
-+        // Empty geometry also closes the popup. Do not resurrect an old selection or stale
-+        // highlights if the first accessibility read after restoring visibility fails.
-+        self.render_state.set_lints(Vec::new());
-+        self.hovered_lint = None;
-+        for window in &self.windows {
-+            // Restore visibility even if orderOut previously marked the window occluded. Waiting
-+            // for an unoccluded event before showing it would leave it permanently hidden.
-+            window.set_visible(!hidden);
-+            window.set_cursor_hittest(false)?;
-+        }
-+        self.cursor_hittest_enabled = false;
-+        Ok(())
-     }
- 
-     fn refresh_config(&mut self) {
-@@ -244,8 +270,13 @@ impl WindowManagerApp {
- 
- impl ApplicationHandler for WindowManagerApp {
-     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
--        let now = Instant::now();
-+        if let Err(error) = self.update_overlay_visibility() {
-+            self.error = Some(error);
-+            event_loop.exit();
-+            return;
-+        }
- 
-+        let now = Instant::now();
-         if now.duration_since(self.last_config_poll) >= CONFIG_POLL_INTERVAL {
-             self.refresh_config();
-             self.last_config_poll = now;
-@@ -255,8 +286,12 @@ impl ApplicationHandler for WindowManagerApp {
-         // Suspend overlay work until it can be displayed again, but keep config sync alive.
-         self.overlays_paused = self.should_pause_overlays();
-         if self.overlays_paused {
--            event_loop
--                .set_control_flow(ControlFlow::WaitUntil(now + OVERLAY_RESUME_CHECK_INTERVAL));
-+            // Unrelated events must not postpone the next visibility check while hidden.
-+            let next_check = match event_loop.control_flow() {
-+                ControlFlow::WaitUntil(deadline) if deadline > now => deadline,
-+                _ => now + OVERLAY_RESUME_CHECK_INTERVAL,
-+            };
-+            event_loop.set_control_flow(ControlFlow::WaitUntil(next_check));
-             return;
-         }
- 
-@@ -271,10 +306,17 @@ impl ApplicationHandler for WindowManagerApp {
-             return;
-         }
- 
-+        // Check before creating windows so overlays start hidden when the OS requires it.
-+        if let Err(error) = self.update_overlay_visibility() {
-+            self.error = Some(error);
-+            event_loop.exit();
-+            return;
-+        }
-+
-         let monitors = event_loop.available_monitors().collect::<Vec<_>>();
- 
-         for monitor in monitors {
--            match pollster::block_on(Window::new(event_loop, monitor)) {
-+            match pollster::block_on(Window::new(event_loop, monitor, !self.overlays_hidden)) {
-                 Ok(window) => self.windows.push(window),
-                 Err(error) => {
-                     self.error = Some(error);
-@@ -326,14 +368,21 @@ impl ApplicationHandler for WindowManagerApp {
-             .enumerate()
-             .find(|(_, window)| window.id() == window_id)
-         {
--            window.handle_event(&event);
-+            if !self.overlays_hidden
-+                || matches!(
-+                    &event,
-+                    WindowEvent::Resized(_) | WindowEvent::ScaleFactorChanged { .. }
-+                )
-+            {
-+                window.handle_event(&event);
-+            }
- 
-    
-```
-
-**File**: `harper-desktop/src-tauri/src/mac_broker/mod.rs` (modified, +8/-0)
-```diff
-@@ -6,6 +6,7 @@ mod app_icons;
- mod core_foundation_utilities;
- mod focused_target;
- mod focused_window_pid;
-+mod screenshot;
- mod window_stability;
- 
- use accessibility::TreeWalker;
-@@ -46,6 +47,7 @@ use self::accessibility_activation::{
- use self::accessibility_text::RectCollector;
- use self::core_foundation_utilities::ax_element_attribute;
- use self::focused_target::FocusedTarget;
-+use self::screenshot::ScreenshotPoll;
- use self::window_stability::{
-     WINDOW_MOVEMENT_SETTLE_DURATION, WindowMovementState, frontmost_window_frame_for_pid,
-     settled_window_state, window_frame_changed,
-@@ -67,6 +69,7 @@ pub struct MacBroker {
-     application_icon_cache: Mutex<HashMap<String, Vec<u8>>>,
-     window_movement: Option<WindowMovementState>,
-     accessibility_activation: Option<AccessibilityActivationState>,
-+    screenshot_poll: ScreenshotPoll,
- }
- 
- impl MacBroker {
-@@ -79,6 +82,7 @@ impl MacBroker {
-             application_icon_cache: Mutex::new(HashMap::new()),
-             window_movement: None,
-             accessibility_activation: None,
-+            screenshot_poll: ScreenshotPoll::new(Instant::now()),
-         }
-     }
- 
-@@ -295,6 +299,10 @@ impl OsBroker for MacBroker {
-         app_id == BUNDLE_ID
-     }
- 
-+    fn should_hide_overlay(&mut self) -> bool {
-+        self.screenshot_poll.is_running()
-+    }
-+
-     fn get_boxes(&mut self, lint_text: &mut LintCallback) -> Option<Vec<ActionableLint>> {
-         let focused_pid = match focused_window_pid::focused_window_pid() {
-             Ok(pid) => pid,
-```
-
-**File**: `harper-desktop/src-tauri/src/mac_broker/screenshot.rs` (added, +88/-0)
-```diff
-@@ -0,0 +1,88 @@
-+use std::time::{Duration, Instant};
-+
-+use objc2_app_kit::NSRunningApplication;
-+use objc2_foundation::ns_string;
-+
-+const SCREENSHOT_POLL_INTERVAL: Duration = Duration::from_millis(500);
-+
-+/// Cache Screenshot's process state between polls, including while overlays are hidden.
-+pub struct ScreenshotPoll {
-+    running: bool,
-+    next_check: Instant,
-+}
-+
-+impl ScreenshotPoll {
-+    pub fn new(now: Instant) -> Self {
-+        Self {
-+            running: false,
-+            next_check: now,
-+        }
-+    }
-+
-+    pub fn is_running(&mut self) -> bool {
-+        self.poll(Instant::now(), || {
-+            NSRunningApplication::runningApplicationsWithBundleIdentifier(ns_string!(
-+                "com.apple.screencaptureui"
-+            ))
-+            .iter()
-+            .any(|app| !app.isTerminated())
-+        })
-+    }
-+
-+    fn poll(&mut self, now: Instant, is_running: impl FnOnce() -> bool) -> bool {
-+        if now >= self.next_check {
-+            self.next_check = now + SCREENSHOT_POLL_INTERVAL;
-+            self.running = is_running();
-+        }
-+        self.running
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::{SCREENSHOT_POLL_INTERVAL, ScreenshotPoll};
-+    use std::time::{Duration, Instant};
 +
 +    #[test]
-+    fn screenshot_running_at_startup_hides_before_the_first_interval() {
-+        let now = Instant::now();
-+        let mut poll = ScreenshotPoll::new(now);
-+
-+        assert!(poll.poll(now, || true));
-+        assert_eq!(poll.next_check, now + SCREENSHOT_POLL_INTERVAL);
++    fn dont_flag_she_learnt() {
++        assert_no_lints("She learnt to swim.", test_linter());
 +    }
-+
-+    #[test]
-+    fn frequent_events_use_cached_state_without_postponing_the_next_check() {
-+        let now = Instant::now();
-+        let mut poll = ScreenshotPoll::new(now);
-+        assert!(!poll.poll(now, || false));
-+
-+        for millis in [1, 16, 250, 499] {
-+            assert!(!poll.poll(now + Duration::from_millis(millis), || {
-+                panic!("process query ran before its deadline")
-+            }));
-+            assert_eq!(poll.next_check, now + SCREENSHOT_POLL_INTERVAL);
-+        }
-+
-+        assert!(poll.poll(now + SCREENSHOT_POLL_INTERVAL, || true));
-+        assert!(poll.poll(now + Duration::from_millis(501), || {
-+            panic!("cached running state should be retained")
-+        }));
-+    }
-+
-+    #[test]
-+    fn hidden_overlays_keep_polling_until_exit_and_handle_another_capture() {
-+        let now = Instant::now();
-+        let mut poll = ScreenshotPoll::new(now);
-+        assert!(poll.poll(now, || true));
-+
-+        // An idle Screenshot process must keep overlays hidden until it exits.
-+        for tick in 1..=30 {
-+            assert!(poll.poll(now + SCREENSHOT_POLL_INTERVAL * tick, || true));
-+        }
-+        assert!(!poll.poll(now + SCREENSHOT_POLL_INTERVAL * 31, || false));
-+        assert!(!poll.poll(now + SCREENSHOT_POLL_INTERVAL * 32, || false));
-+        assert!(poll.poll(now + SCREENSHOT_POLL_INTERVAL * 33, || true));
-+    }
-+}
-```
-
-**File**: `harper-desktop/src-tauri/src/os_broker.rs` (modified, +8/-0)
-```diff
-@@ -42,6 +42,10 @@ pub trait OsBroker {
-     /// Grab the position of the user's cursor on the screen.
-     fn cursor_position(&self) -> Option<egui::Pos2>;
- 
-+    /// Whether the OS currently requires the overlay to be hidden.
-+    /// Implementations may cache platform checks between calls.
-+    fn should_hide_overlay(&mut self) -> bool;
-+
-     /// Check whether Harper has permission to access the OS' native accessibility API.
-     fn accessibility_permission_status(&self) -> AccessibilityPermissionStatus;
- 
-@@ -88,6 +92,10 @@ pub struct NoopBroker;
- 
- #[cfg(not(any(target_os = "macos", target_os = "windows")))]
- impl OsBroker for NoopBroker {
-+    fn should_hide_overlay(&mut self) -> bool {
-+        false
-+    }
-+
-     fn get_boxes(
-         &mut self,
-         _lint_text: &mut dyn FnMut(&str) -> BTreeMap<String, Vec<Lint>>,
-```
-
-**File**: `harper-desktop/src-tauri/src/windows_broker/mod.rs` (modified, +4/-0)
-```diff
-@@ -67,6 +67,10 @@ impl WindowsBroker {
  }
- 
- impl OsBroker for WindowsBroker {
-+    fn should_hide_overlay(&mut self) -> bool {
-+        false
-+    }
-+
-     fn is_harper_desktop(app_id: &str) -> bool {
-         let Ok(executable) = std::env::current_exe()
-             .and_then(std::fs::canonicalize)
+```
+
+**File**: `harper-core/tests/text/tagged/Alice's Adventures in Wonderland.md` (modified, +3/-3)
+```diff
+@@ -109,7 +109,7 @@
+ > centre      of the earth      . Let     me       see    : that      would be       four thousand miles  down        , I
+ # NSg/VB/Comm P  D+  NPr🅪Sg/VB+ . NSg/VBP NPr/ISg+ NSg/VB . I/C/Ddem+ VXB   NSg/VLXB NSg+ NSg+     NPrPl+ N🅪Sg/VB/J/P . ISg/#r+
+ > think  — ” ( for   , you    see    , Alice had learnt several things of this    sort    in        her
+-# NSg/VB . . . R/C/P . ISgPl+ NSg/VB . NPr+  VP  VB     J/Dq    NPl    P  I/Ddem+ NSg/VB+ NPr/J/R/P ISg/D$+
++# NSg/VB . . . R/C/P . ISgPl+ NSg/VB . NPr+  VP  VP     J/Dq    NPl    P  I/Ddem+ NSg/VB+ NPr/J/R/P ISg/D$+
+ > lessons in        the schoolroom , and  though this    was  not     a   very good     opportunity for
+ # NPl/V3+ NPr/J/R/P D   NSg        . VB/C C      I/Ddem+ VLPt NSg/R/C D/P J/R  NPr/VB/J N🅪Sg+       R/C/P
+ > showing  off        her     knowledge , as    there was  no       one      to listen to her     , still      it       was
+@@ -257,7 +257,7 @@
+ > marked ‘ poison   ’ or    not     ” ; for   she  had read    several nice  little     histories about
+ # VP/J   . N🅪Sg/VB+ . NPr/C NSg/R/C . . R/C/P ISg+ VP  NSg/VBP J/Dq    NPr/J NPr/I/J/Dq NPl       J/P
+ > children who    had got burnt , and  eaten up         by wild     beasts and  other    unpleasant
+-# NPl+     NPr/I+ VP  VP  VB/J  . VB/C VPp/J NSg/VB/J/P P  NSg/VB/J NPl/V3 VB/C NSg/VB/J J
++# NPl+     NPr/I+ VP  VP  VP/J  . VB/C VPp/J NSg/VB/J/P P  NSg/VB/J NPl/V3 VB/C NSg/VB/J J
+ > things , all          because they would not     remember the simple   rules   their friends   had
+ # NPl+   . NSg/I/J/C/Dq C/P     IPl+ VXB   NSg/R/C NSg/VB   D   NSg/VB/J NPl/V3+ D$+   NPrPl/V3+ VP
+ > taught them     : such  as    , that     a   red    - hot      poker   will    burn   you    if    you    hold     it       too
+@@ -4425,7 +4425,7 @@
+ > “ Well       , I       can’t show   it       you    myself , ” the Mock     Turtle  said : “ I’m too stiff    . And
+ # . NSg/VB/J/R . ISg/#r+ VXB   NSg/VB NSg/ISg+ ISgPl+ ISg+   . . D   NSg/VB/J NSg/VB+ VP/J . . K   R   NSg/VB/J . VB/C
+ > the Gryphon never learnt it       . ”
+-# D   ?       R     VB     NSg/ISg+ . .
++# D   ?       R     VP     NSg/ISg+ . .
+ >
+ #
+ > “ Hadn’t time       , ” said the Gryphon : “ I       went to the Classics master    , though . He       was
 ```
 
 ---
 
-### Incident Patch 3: `427855e6` (2026-11-12)
-**Commit Message**: fix(core): correct accidentally holding shift (#4890)
+### Incident Patch 3: `f814e682` (2026-11-13)
+**Commit Message**: fix(desktop): tighten update button spacing (#4933)
 
-**File**: `harper-core/src/linting/orthographic_consistency.rs` (modified, +73/-0)
+**File**: `harper-desktop/src/lib/settings/pages/GeneralPage.svelte` (modified, +11/-11)
 ```diff
-@@ -90,6 +90,31 @@ impl ExprLinter for OrthographicConsistency {
-         }
- 
-         let canonical_flags = metadata.orth_info;
-+
-+        // Correct an accidental second capital without changing the initial capital.
-+        if chars.len() >= 3
-+            && chars[0].is_ascii_uppercase()
-+            && chars[1].is_ascii_uppercase()
-+            && chars[2..].iter().all(char::is_ascii_lowercase)
-+            && let Some(canonical) = self.dict.get_correct_capitalization_of(chars)
-+            && OrthFlags::from_letters(canonical)
-+                .intersects(OrthFlags::LOWERCASE | OrthFlags::TITLECASE)
-+        {
-+            let mut corrected = chars.to_vec();
-+            corrected[1].make_ascii_lowercase();
-+
-+            return Some(Lint {
-+                span: word.span,
-+                lint_kind: LintKind::Capitalization,
-+                message: format!(
-+                    "Did you mean `{}`? Only the first letter should be capitalized.",
-+                    corrected.iter().collect::<String>()
-+                ),
-+                suggestions: vec![Suggestion::ReplaceWith(corrected)],
-+                priority: 31,
-+            });
-+        }
-+
-         let flags_to_check = [
-             OrthFlags::LOWER_CAMEL,
-             OrthFlags::UPPER_CAMEL,
-@@ -498,6 +523,54 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn corrects_accidental_double_initial_capitals() {
-+        for (input, expected) in [
-+            ("THe", "The"),
-+            ("LIzard", "Lizard"),
-+            ("DOor", "Door"),
-+            ("THe lizard opened the door.", "The lizard opened the door."),
-+            ("A LIzard opened the door.", "A Lizard opened the door."),
-+            ("Open the DOor.", "Open the Door."),
-+            ("\"THe\"", "\"The\""),
-+            ("LIzard!", "Lizard!"),
-+            ("DOor?", "Door?"),
-+            ("THe, DOor", "The, Door"),
-+            ("THe\nLIzard", "The\nLizard"),
-+            ("THe\tDOor", "The\tDoor"),
-+            ("HEllo", "Hello"),
-+            ("WOrld", "World"),
-+            ("ENgland", "England"),
-+        ] {
-+            assert_suggestion_result(input, OrthographicConsistency::default(), expected);
-+        }
-+    }
-+
-+    #[test]
-+    fn preserves_other_casing_and_unknown_words() {
-+        for input in [
-+            "The lizard opened the door.",
-+            "Lizard Door",
-+            "THE LIZARD DOOR",
-+            "NASA",
-+            "iPhone",
-+            "LinkedIn",
-+            "WordPress",
-+            "macOS",
-+            "YouTube",
-+            "DO",
-+            "PR",
-+            "QZxqzq",
-+            "tHe",
-+            "lIzard",
-+            "DOOr",
-+            "THe-like",
-+            "pre-DOor",
-+        ] {
-+            assert_no_lints(input, OrthographicConsistency::default());
-+        }
-+    }
-+
-     #[test]
-     fn allows_news() {
-         assert_no_lints(
+@@ -299,6 +299,17 @@ function settingsValueToDialect(value: string): Dialect {
+               <p class="result-summary">
+                 Current version: {currentVersion || 'loading...'} · Latest version: {latestVersion || 'loading...'}
+               </p>
++              <div class="inline-row">
++                <Button
++                  unstyled
++                  class="button"
++                  type="button"
++                  disabled={isCheckingForUpdates}
++                  on:click={checkForUpdates}
++                >
++                  {isCheckingForUpdates ? 'Checking...' : 'Check for updates'}
++                </Button>
++              </div>
+               <Checkbox
+                 slot="control"
+                 appearance="settings"
+@@ -309,17 +320,6 @@ function settingsValueToDialect(value: string): Dialect {
+                 {#if autoUpdate}<CheckIcon className="control-icon" />{/if}
+               </Checkbox>
+             </SettingRow>
+-            <div class="inline-row">
+-              <Button
+-                unstyled
+-                class="button"
+-                type="button"
+-                disabled={isCheckingForUpdates}
+-                on:click={checkForUpdates}
+-              >
+-                {isCheckingForUpdates ? 'Checking...' : 'Check for updates'}
+-              </Button>
+-            </div>
+             {#if isAutoUpdateLoading}
+               <p class="result-summary">Loading update setting...</p>
+             {:else if autoUpdateError}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4947** (2026-11-13): test(chrome-ext): stop stray blurs failing the iframe popup tests (@GaryJones)
 - **PR #4945** (2026-11-13): Bump CI toolkit to 7.1.1 for AWS cost saving (@mokagio)
 - **PR #4942** (2026-11-13): chore: more linters about confusable words into new config group (@hippietrail)
 - **PR #4939** (2026-11-13): feat: dabble down → double down (@hippietrail)
-- **PR #4929** (2026-11-12): fix(desktop): hide overlays while macOS Screenshot is running (@elijah-potter)
-- **PR #4928** (2026-11-12): fix(desktop): update indication and add link to system settings (@elijah-potter)
-- **PR #4924** (2026-11-12): test(chrome-ext): run Typst editor tests against a local CodeMirror page (@GaryJones)
+- **PR #4933** (2026-11-13): fix(desktop): tighten update button spacing (@elijah-potter)
+- **PR #4932** (2026-11-13): feat(desktop): enable Telegram integration by default (@elijah-potter)
 
 ---
 
@@ -2271,76 +1650,36 @@ Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): accept British -ise and -yse forms (#4818)
+## X. TheyToThem): avoid flagging coordinating conjunction 'for they'
 
 **RULE**:
-When implementing operations in `harper-core/dictionary.dict`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/src/linting/weir_rules/TheyToThem.weir`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9b9bfe1`: core): accept British -ise and -yse forms (#4818). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4270327e`: TheyToThem): avoid flagging coordinating conjunction 'for they'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/dictionary.dict`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/weir_rules/TheyToThem.weir`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-anonymisation/Nmg!_₹
-anonymise/VdSG!_₹
-apotheosise/VdSG!_₹
-authorise/VGdSr!_₹
-canonicalisation/Ng!_₹
-catastrophise/VdSG!_₹
-civilisational/J!_₹
-collateralisation/Ng!_₹
-commoditise/VdSG!_₹
-conceptualisation/NSgr!_₹
-conceptualise/VdSGr!_₹
-customisability/Nmg!_₹
-customisable/J!_₹
-customiser/NgS!_₹
-decarbonise/VdSG!_₹
-dedollarisation/Nmg!_₹
-dedollarise/VSdG!_₹
-denormalisation/Nmg!_₹
-denormalise/VGdS!_₹
-deserialisation/NgS!_₹
-deserialise/VSGd!_₹
-digitiser/NgS!_₹
-dollarisation/Ng!_₹
-dollarise/VdSG!_₹
-emphasise/VGdSre!_₹
-euphemise/VdGS!_₹
-euthanise/VdSG!_₹
-faradise/VdG!_₹
-fetishisation/Ng!_₹
-fetishise/VdSG!_₹
-financialisation/Ng!_₹
-financialise/VdSG!_₹
-generalise/VGdSB!_₹
-hypothesise/VdSG!_₹
-industrialisation/Nge!_₹
-industrialise/VdSGr!_₹
-ioniser/NgS!_₹
-legaliser/NgS!_₹
-legitimisation/Nge!_₹
-legitimise/VdSGe!_₹
+expr prepositions [to, with, about, against, between, among, around, toward, towards, through, beyond, behind, across, near, inside, outside]
+# `for` can also act as a coordinating conjunction introducing a finite clause, where `they` is the subject
+expr main [<(@prepositions they), they>, <[(for they ![VERB, AUX]), (for they.)], they>, <[(@verbs they ![VERB, AUX]), (@verbs they.)], they>]
+test "This gift is for they." "This gift is for them."
+test "Wait for they at the station." "Wait for them at the station."
+allows "At least their deaths are not meaningless, for they shall all be unified into the white and delightsome hosts of Heaven."
+allows "For they know not what they do."
+allows "Rejoice, for they have returned safely."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-authorise/VGdS!_₹
-conceptualisation/NSg!_₹
-conceptualise/VdSG!_₹
-emphasise/VGdSr!_₹
-generalise/VGdS!_₹
-hypothesise/V!_₹
-industrialisation/Ng!_₹
-industrialise/VdSG!_₹
-legitimisation/Ng!_₹
-legitimise/VdSG!_₹
+// Induced defect failure mode:
+expr prepositions [to, with, for, about, against, between, among, around, toward, towards, through, beyond, behind, across, near, inside, outside]
+expr main [<(@prepositions they), they>, <[(@verbs they ![VERB, AUX]), (@verbs they.)], they>]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9b9bfe1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4270327e` are properly handled with clean fallback behavior.

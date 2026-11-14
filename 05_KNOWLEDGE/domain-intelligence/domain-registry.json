@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T20:52:48.840Z",
-  "total_records": 833,
+  "last_updated": "2026-11-14T21:21:33.714Z",
+  "total_records": 841,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 407,
+      "total": 410,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -444,7 +444,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
         "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in",
         "DOM-D-73A9B4FE",
-        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-lear"
+        "domain_intelligence-research-knowledge-intelligence-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-lear",
+        "domain_intelligence-research-knowledge-intelligence-phocinae-phocinae-largha-150m-v1-core-invariants",
+        "DOM-D-04705777",
+        "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co"
       ]
     },
     "E": {
@@ -616,7 +619,7 @@
       ]
     },
     "H": {
-      "total": 177,
+      "total": 178,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -794,11 +797,12 @@
         "domain_intelligence-technical-construction-intelligence-zleap-ai-sag-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
         "DOM-H-ADE4819D",
-        "domain_intelligence-technical-construction-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-"
+        "domain_intelligence-technical-construction-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-",
+        "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-core-invariants"
       ]
     },
     "I": {
-      "total": 32,
+      "total": 34,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -831,7 +835,9 @@
         "domain_intelligence-content-information-intelligence-apache-arrow-core-invariants",
         "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-pulumi-pulumi-core-invariants",
-        "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants",
+        "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants"
       ]
     },
     "J": {
@@ -850,7 +856,7 @@
       ]
     },
     "K": {
-      "total": 25,
+      "total": 27,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -876,7 +882,9 @@
         "domain_intelligence-quality-verification-intelligence-apple-foundationdb-core-invariants",
         "domain_intelligence-quality-verification-intelligence-apple-foundationdb-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants"
       ]
     },
     "L": {
@@ -6720,8 +6728,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "be9e37e4220eeafad8a0adf4cb22c51f33072eb6f12f6923f1f5fc44ea311c71",
-      "created_at": "2026-11-14T03:32:25.848Z"
+      "content_hash": "e938946f2baf4047091f2199b793a220b267443f8a44acbc208c6010deae9c5f",
+      "created_at": "2026-11-14T21:21:02.528Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -16669,6 +16677,111 @@
       "repository": "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings",
       "content_hash": "24bac4e5d2b26ba662f9aeaef7d5449008ce22847782d39903031ceaf102f77c",
       "created_at": "2026-11-14T20:52:48.328Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-phocinae-phocinae-largha-150m-v1-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-phocinae-phocinae-largha-150m-v1-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Phocinae/Phocinae-Largha-150M-v1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-phocinae-phocinae-largha-150m-v1-research-knowledge-intelligence-phocinae-pho.md",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "content_hash": "167a58108c81bec764794ca328e567365fb0e09d78e239a7c6cb47ab46121c26",
+      "created_at": "2026-11-14T21:20:50.627Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: Automattic/harper Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-quality-verification-intelligence-automattic-harper-core-invar.md",
+      "repository": "Automattic/harper",
+      "content_hash": "981ded610d6c7ed83c7a9c3b82e64e0178526daf8694330ea84d769b5ebb329e",
+      "created_at": "2026-11-14T21:20:53.117Z"
+    },
+    "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: kotest/kotest Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kotest-kotest-content-information-intelligence-kotest-kotest-core-invariants.md",
+      "repository": "kotest/kotest",
+      "content_hash": "3307bf4775c6afa99a9deb50fa93b84bc9e23344477d1cffd6d17e4e4956abf1",
+      "created_at": "2026-11-14T21:20:58.812Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: genkit-ai/genkit Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-technical-construction-intelligence-genkit-ai-genkit-core-invar.md",
+      "repository": "genkit-ai/genkit",
+      "content_hash": "a4ca7fb00c656c24f426d896b9dbcf5b2ce4cae87a58a70a70c82d477af20635",
+      "created_at": "2026-11-14T21:21:05.281Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: automattic-harper-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-learnings-quality-verification-intelligence-automattic-harper-.md",
+      "repository": "automattic-harper-learnings",
+      "content_hash": "0c67cb33ded0e02aed662d3a0ec30044a0a4264b9652c9b26afa887e2f056066",
+      "created_at": "2026-11-14T21:21:08.314Z"
+    },
+    "DOM-D-04705777": {
+      "record_id": "DOM-D-04705777",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Phocinae/Phocinae-Largha-150M-v1",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1](https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1))  \n> **Source Version**: `hf-phocinae-`  \n> **Lice",
+      "content_hash": "d50e5fb22243dd5927a18d73a2587efe4f058d7549307db23bbb6e4009d4622d",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md`  \n> **Source**: huggingface ([http -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md`  \n> **Source**: huggingface ([http",
+      "provenance": {
+        "source_uri": "project://hf-phocinae-phocinae-largha-150m-v1/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T21:21:08.471Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-phocinae-phocinae-largha-150m-v1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-phocinae-phocinae-largha-150m-v1"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T21:21:32.649Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-phocinae-phocinae-largha-150m-v1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-phocinae-phocinae-largha-150m-v1-learnings-research-knowledge-intelligence-hf.md",
+      "repository": "hf-phocinae-phocinae-largha-150m-v1-learnings",
+      "content_hash": "8c06bf6bef7bd15267401c6ac2f98ce1a70befa60086e810973f0b6d92b92c1b",
+      "created_at": "2026-11-14T21:21:32.820Z"
+    },
+    "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-kotest-kotest-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: kotest-kotest-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kotest-kotest-learnings-content-information-intelligence-kotest-kotest-learnings.md",
+      "repository": "kotest-kotest-learnings",
+      "content_hash": "05226632263030610d0e3228e7fa4d12e1921bdc7762876c6f3c408ace0189b6",
+      "created_at": "2026-11-14T21:21:33.714Z"
     }
   }
 }

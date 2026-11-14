@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T20:52:48.122Z",
+  "updated_at": "2026-11-14T21:21:33.480Z",
   "stats": {
-    "total_discovered": 3411,
-    "approved_pending_harvest": 3205,
+    "total_discovered": 3438,
+    "approved_pending_harvest": 3232,
     "harvested_count": 0,
     "rejected_count": 206,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3185,
+      "COMMUNITY_AND_EXPERT": 3212,
       "OFFICIAL_DOCUMENTATION": 123,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -73620,6 +73620,600 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md",
         "fileName": "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md"
+      }
+    },
+    "SRC-8B00924F67ED": {
+      "id": "SRC-8B00924F67ED",
+      "url": "https://github.com/user-attachments/assets/bec27369-582a-409e-87cb-0a1741bda5c7",
+      "title": "https://github.com/user-attachments/assets/bec27369-582a-409e-87cb-0a1741bda5c7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:08.090Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-523611BC60EE": {
+      "id": "SRC-523611BC60EE",
+      "url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+      "title": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:32.674Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
+        "fileName": "hf-phocinae-phocinae-largha-150m-v1-learnings.md"
+      }
+    },
+    "SRC-066D45C4DCBE": {
+      "id": "SRC-066D45C4DCBE",
+      "url": "https://github.com/kotest/kotest",
+      "title": "https://github.com/kotest/kotest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:32.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-ABCAF135C151": {
+      "id": "SRC-ABCAF135C151",
+      "url": "https://kotest.io/",
+      "title": "https://kotest.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:32.987Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-5A5C1FD3F92B": {
+      "id": "SRC-5A5C1FD3F92B",
+      "url": "https://kotlinlang.slack.com/archives/CT0G9SD7Z",
+      "title": "https://kotlinlang.slack.com/archives/CT0G9SD7Z",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.004Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-B84281C5F7AB": {
+      "id": "SRC-B84281C5F7AB",
+      "url": "https://stackoverflow.com/questions/tagged/kotest",
+      "title": "https://stackoverflow.com/questions/tagged/kotest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.021Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-566F5C43E08B": {
+      "id": "SRC-566F5C43E08B",
+      "url": "https://github.com/kotest/kotest/releases",
+      "title": "https://github.com/kotest/kotest/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.039Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-5485B2B155C8": {
+      "id": "SRC-5485B2B155C8",
+      "url": "https://kotest.io/docs/next/blogs",
+      "title": "https://kotest.io/docs/next/blogs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.071Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-8E1A7F181E08": {
+      "id": "SRC-8E1A7F181E08",
+      "url": "https://github.com/kotest/kotest/blob/master/documentation",
+      "title": "https://github.com/kotest/kotest/blob/master/documentation",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-7274EA4145FA": {
+      "id": "SRC-7274EA4145FA",
+      "url": "https://ghbtns.com/github-btn.html?user=kotest&repo=kotest&type=star&count=true&size=large",
+      "title": "https://ghbtns.com/github-btn.html?user=kotest&repo=kotest&type=star&count=true&size=large",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.110Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-40A812EA6CC7": {
+      "id": "SRC-40A812EA6CC7",
+      "url": "https://img.shields.io/static/v1?label=kotlinlang&message=kotest&color=blue&logo=slack&style=for-the-badge",
+      "title": "https://img.shields.io/static/v1?label=kotlinlang&message=kotest&color=blue&logo=slack&style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.127Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-EFC23816A10F": {
+      "id": "SRC-EFC23816A10F",
+      "url": "https://search.maven.org/search?q=g%3Aio.kotest+OR+g%3Aio.kotest.extensions",
+      "title": "https://search.maven.org/search?q=g%3Aio.kotest+OR+g%3Aio.kotest.extensions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.158Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-2EC7DC4B8773": {
+      "id": "SRC-2EC7DC4B8773",
+      "url": "https://img.shields.io/maven-central/v/io.kotest/kotest-property.svg?label=release&style=for-the-badge",
+      "title": "https://img.shields.io/maven-central/v/io.kotest/kotest-property.svg?label=release&style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.176Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-D453AF786488": {
+      "id": "SRC-D453AF786488",
+      "url": "https://central.sonatype.com/repository/maven-snapshots/io/kotest/kotest-framework-engine/maven-metadata.xml",
+      "title": "https://central.sonatype.com/repository/maven-snapshots/io/kotest/kotest-framework-engine/maven-metadata.xml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.194Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-38F8139B4AF3": {
+      "id": "SRC-38F8139B4AF3",
+      "url": "https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fcentral.sonatype.com%2Frepository%2Fmaven-snapshots%2Fio%2Fkotest%2Fkotest-framework-engine%2Fmaven-metadata.xml&style=for-the-badge",
+      "title": "https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fcentral.sonatype.com%2Frepository%2Fmaven-snapshots%2Fio%2Fkotest%2Fkotest-framework-engine%2Fmaven-metadata.xml&style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.211Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-E82FDF573465": {
+      "id": "SRC-E82FDF573465",
+      "url": "https://github.com/kotest/kotest/blob/master/LICENSE",
+      "title": "https://github.com/kotest/kotest/blob/master/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-BB0000E971F6": {
+      "id": "SRC-BB0000E971F6",
+      "url": "https://img.shields.io/badge/license-apache2.0-green?style=for-the-badge",
+      "title": "https://img.shields.io/badge/license-apache2.0-green?style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.262Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-A239A6473E2A": {
+      "id": "SRC-A239A6473E2A",
+      "url": "https://img.shields.io/badge/stackoverflow-kotest-blue?style=for-the-badge",
+      "title": "https://img.shields.io/badge/stackoverflow-kotest-blue?style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.279Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-4D38C2D03147": {
+      "id": "SRC-4D38C2D03147",
+      "url": "https://github.com/kotest/kotest/tree/master/documentation/versioned_docs",
+      "title": "https://github.com/kotest/kotest/tree/master/documentation/versioned_docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.296Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-F46C2DD72D86": {
+      "id": "SRC-F46C2DD72D86",
+      "url": "https://github.com/kotest/kotest/tree/master/documentation/docs",
+      "title": "https://github.com/kotest/kotest/tree/master/documentation/docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.313Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-4906B52BE043": {
+      "id": "SRC-4906B52BE043",
+      "url": "https://redirect.github.com/reformator14/stacktrace-decoroutinator",
+      "title": "https://redirect.github.com/reformator14/stacktrace-decoroutinator",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.356Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-E5CF573EB209": {
+      "id": "SRC-E5CF573EB209",
+      "url": "https://developer.mend.io/api/mc/badges/age/maven/dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm/2.6.6?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/maven/dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm/2.6.6?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.374Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-393FEC780E7A": {
+      "id": "SRC-393FEC780E7A",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/maven/dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm/2.6.4/2.6.6?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/maven/dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm/2.6.4/2.6.6?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.391Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-10FE7F05A0B0": {
+      "id": "SRC-10FE7F05A0B0",
+      "url": "https://redirect.github.com/reformator14/stacktrace-decoroutinator/releases/tag/v2.6.6",
+      "title": "https://redirect.github.com/reformator14/stacktrace-decoroutinator/releases/tag/v2.6.6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.409Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-F474C356536E": {
+      "id": "SRC-F474C356536E",
+      "url": "https://redirect.github.com/reformator14/stacktrace-decoroutinator/issues/85",
+      "title": "https://redirect.github.com/reformator14/stacktrace-decoroutinator/issues/85",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.443Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-894CC29A631B": {
+      "id": "SRC-894CC29A631B",
+      "url": "https://developer.android.com/jetpack/androidx/versions/all-channel",
+      "title": "https://developer.android.com/jetpack/androidx/versions/all-channel",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.462Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-6121A559ADFF": {
+      "id": "SRC-6121A559ADFF",
+      "url": "https://github.com/kotest/kotest/pull/6203",
+      "title": "https://github.com/kotest/kotest/pull/6203",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T21:21:33.480Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T20:52:49.119Z",
+  "last_updated": "2026-11-14T21:21:33.896Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T20:09:45.155Z",
@@ -193,7 +193,7 @@
       "staged_for_review": 1
     },
     "kotest-kotest-learnings.md": {
-      "processed_at": "2026-11-11T10:52:42.156Z",
+      "processed_at": "2026-11-14T21:21:32.946Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -288,7 +288,7 @@
       "staged_for_review": 0
     },
     "automattic-harper-learnings.md": {
-      "processed_at": "2026-11-13T06:33:42.469Z",
+      "processed_at": "2026-11-14T21:21:08.072Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2751,9 +2751,14 @@
       "processed_at": "2026-11-14T20:52:48.098Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-phocinae-phocinae-largha-150m-v1-learnings.md": {
+      "processed_at": "2026-11-14T21:21:32.664Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 912,
-  "total_canonical_promoted": 220,
-  "total_staged_for_review": 692
+  "total_dossiers_evaluated": 915,
+  "total_canonical_promoted": 221,
+  "total_staged_for_review": 694
 }

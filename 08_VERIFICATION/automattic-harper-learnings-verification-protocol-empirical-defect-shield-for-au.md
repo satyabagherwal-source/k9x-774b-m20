@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:33:48.568Z",
+  "timestamp": "2026-11-14T21:21:08.162Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-automattic-harper-learnings",
+  "learning_id": "LEARN-EVO-automattic-harper-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [automattic-harper-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:33:48.568Z`  
-> **Learning ID**: `LEARN-REEXTRACT-automattic-harper-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T21:21:08.162Z`  
+> **Learning ID**: `LEARN-EVO-automattic-harper-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `2fac72e1`  
+> **Source Version**: `4270327e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T13:22:03.047Z  
+> **Timestamp**: 2026-11-14T21:20:52.173Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T13:17:02.214Z  
+> **Harvest Timestamp**: 2026-11-14T21:20:52.168Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17596 stars
+- **Stars / Engagement**: 17709 stars
 
 ---
 
@@ -1433,11 +1433,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4854** (2026-11-07): **False Positive: Incorrect they->them lint**
-  *Symptoms*: ## What got flagged?  "Whether they had families could affect the help they received."  The final 'they' -> 'them' (Harper TheyToThem)  ## Why is this incorrect?  Using the word 'them' in this context is very clearly grammatically incorrect. Harper should let 'they' be.  ## Example of correct usage  "Whether they had families could affect the help they received."
+- **Issue #4919** (2026-11-14): **Incorrect "them" suggestion**
+  *Symptoms*: ## What got flagged? <img width="2649" height="413" alt="image" src="https://github.com/user-attachments/assets/bec27369-582a-409e-87cb-0a1741bda5c7" />  TEXT: I tried to tell them, I really did. At least their deaths are not meaningless, for they shall all be unified into the white and delightsome hosts of Heaven.  ERROR: It's saying _they_ should be _them_ but that makes the grammar wrong.  ## Why is this incorrect? Text above is correct as is.  ## Example of correct usage See above text.
 
-- **Issue #4853** (2026-11-07): **Incorrect lint: out guesses -> outguesses**
-  *Symptoms*: ## What got flagged?  "Leave out guesses about how people felt."  'out guesses' -> 'outguesses' (Harper DisjointPrefixes)  ## Why is this incorrect?  As would be obvious to a human, 'out guesses' is valid and has a distinct meaning, whereas using 'outguesses' wouldn't make very much sense in this sentence, even outside of preserving the meaning.  ## Example of correct usage  "Leave out guesses about how people felt."
+- **Issue #4904** (2026-11-11): **Broken correciton suggestions on Ellipsus**
+  *Symptoms*: ## Describe the bug Harper is not working as intended on Ellipsus. It keeps placing autocorrect suggestions in misplaced spots, mostly in the case of it extending too far right to the next word(s) after the suggestion. Sometimes, the suggestion refuses to go away if you Dismiss it.  ## To Reproduce Steps to reproduce the behavior: 1. Go to '[write.ellipsus.com](https://write.ellipsus.com/)' 2. Write anything in a writing document 4. The autocorrect suggestions populate in a broken state  ## Expected behavior I expect Harper to behave as normal in Ellipsus, just like any other website with text-writing systems.   ## Platform Firefox (version 159, but also in previous versions, too) on Desktop 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1454,375 +1454,208 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b59b5ad2` (2026-11-10)
-**Commit Message**: fix(desktop): memory leak when the device goes to sleep (#4905)
+### Incident Patch 1: `4270327e` (2026-11-14)
+**Commit Message**: fix(TheyToThem): avoid flagging coordinating conjunction 'for they' (#4926)
 
-Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
+* fix(TheyToThem): avoid flagging coordinating conjunction 'for they'
 
-**File**: `harper-desktop/src-tauri/src/highlighter/window_manager.rs` (modified, +81/-6)
+Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
+
+* test: update Alice snapshot for TheyToThem fix
+
+Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
+
+**File**: `harper-core/src/linting/weir_rules/TheyToThem.weir` (modified, +8/-2)
 ```diff
-@@ -1,3 +1,4 @@
-+use std::collections::HashSet;
- use std::time::{Duration, Instant};
+@@ -1,7 +1,8 @@
+-expr prepositions [to, with, for, about, against, between, among, around, toward, towards, through, beyond, behind, across, near, inside, outside]
++expr prepositions [to, with, about, against, between, among, around, toward, towards, through, beyond, behind, across, near, inside, outside]
++# `for` can also act as a coordinating conjunction introducing a finite clause, where `they` is the subject
+ # Most of these are also nouns. In "the help they received", `they` is the subject of the verb that follows, so skip those
+ expr verbs [call, contact, invite, remind, ask, see, watch, help, trust, send, support, follow, visit, tell, thank, mention, show]
+-expr main [<(@prepositions they), they>, <[(@verbs they ![VERB, AUX]), (@verbs they.)], they>]
++expr main [<(@prepositions they), they>, <[(for they ![VERB, AUX]), (for they.)], they>, <[(@verbs they ![VERB, AUX]), (@verbs they.)], they>]
  
- use winit::application::ApplicationHandler;
-@@ -19,6 +20,7 @@ use crate::os_broker::{LintText, OsBroker};
- use crate::rect::ActionableLint;
+ let message "Use `them` when the pronoun follows a preposition or transitive verb."
+ let description "Converts `they` to `them` whenever the pronoun serves as an object after common prepositions or actions that take direct objects."
+@@ -28,6 +29,8 @@ test "Show they how the tool works." "Show them how the tool works."
  
- const CONFIG_POLL_INTERVAL: Duration = Duration::from_secs(1);
-+const OVERLAY_RESUME_CHECK_INTERVAL: Duration = Duration::from_millis(500);
+ test "Mention they in your update." "Mention them in your update."
+ test "I will call they." "I will call them."
++test "This gift is for they." "This gift is for them."
++test "Wait for they at the station." "Wait for them at the station."
  
- /// Owns the winit event loop and the overlay windows created for each monitor.
- ///
-@@ -94,7 +96,8 @@ impl WindowManager {
-             },
-         );
+ # True negatives
  
--        // Run continuously without a read timer; VSync presentation provides backpressure.
-+        // VSync provides backpressure while displays are awake. The handler waits while overlays
-+        // are paused instead of relying on presentation to throttle the loop during display sleep.
-         self.event_loop.set_control_flow(ControlFlow::Poll);
-         let result = self.event_loop.run_app(&mut app);
+@@ -40,3 +43,6 @@ allows "Whether they had families could affect the help they received."
+ allows "We gave them the support they needed."
+ allows "That was the show they watched."
+ allows "The trust they built took years."
++allows "At least their deaths are not meaningless, for they shall all be unified into the white and delightsome hosts of Heaven."
++allows "For they know not what they do."
++allows "Rejoice, for they have returned safely."
+```
+
+**File**: `harper-core/tests/text/linters/Alice's Adventures in Wonderland.snap.yml` (modified, +0/-10)
+```diff
+@@ -3395,16 +3395,6 @@ Message: |
  
-@@ -115,6 +118,8 @@ struct WindowManagerApp {
-     refresh_config: RefreshConfig,
-     hovered_lint: Option<usize>,
-     cursor_hittest_enabled: bool,
-+    occluded_windows: HashSet<WindowId>,
-+    overlays_paused: bool,
-     error: Option<Error>,
- }
  
-@@ -141,6 +146,8 @@ impl WindowManagerApp {
-             refresh_config: callbacks.refresh_config,
-             hovered_lint: None,
-             cursor_hittest_enabled: false,
-+            occluded_windows: HashSet::new(),
-+            overlays_paused: false,
-             error: None,
-         }
-     }
-@@ -154,10 +161,31 @@ impl WindowManagerApp {
-         }
  
-         for window in &self.windows {
--            window.request_redraw();
-+            if self.can_render_window(window.id()) {
-+                window.request_redraw();
-+            }
-         }
-     }
- 
-+    /// Whether to suspend overlay OS reads and rendering because no overlay can be seen.
-+    /// Configuration synchronization remains active. An empty window list alone does not imply
-+    /// occlusion: windows may not have been created yet.
-+    fn should_pause_overlays(&self) -> bool {
-+        all_displays_asleep()
-+            || (!self.windows.is_empty()
-+                && self
-+                    .windows
-+                    .iter()
-+                    .all(|window| self.occluded_windows.contains(&window.id())))
-+    }
-+
-+    /// Checks redraw eligibility using the pause state last refreshed in `about_to_wait` and the
-+    /// latest window occlusion events. Apply this both when requesting and consuming redraws:
-+    /// an already-queued redraw must not render an unavailable overlay.
-+    fn can_render_window(&self, window_id: WindowId) -> bool {
-+        !self.overlays_paused && !self.occluded_windows.contains(&window_id)
-+    }
-+
-     fn refresh_config(&mut self) {
-         (self.refresh_config)();
-     }
-@@ -207,7 +235,9 @@ impl WindowManagerApp {
-         self.render_state.set_highlighted_lint(Some(index));
- 
-         for window in &self.windows {
--            window.request_redraw();
-+            if self.can_render_window(window.id()) {
-+                window.request_redraw();
-+            }
-         }
-     }
- }
-@@ -216,13 +246,23 @@ impl ApplicationHandler for WindowManagerApp {
-     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
-         let now = Instant::now();
- 
--        self.read_rect_updates();
+-Lint:    Grammar (31 priority)
+-Message: |
+-    2741 | to see what the next witness would be like, “—for they haven’t got much evidence
+-         |                                                   ^~~~ Use `them` when the pronoun follows a preposition or transitive verb.
+-    2742 | yet,” she said to herself. Imagine her surprise, when the White Rabbit read out,
+-Suggest:
+-  - Replace with: “them”
 -
-         if now.duration_since(self.last_config_poll) >= CONFIG_POLL_INTERVAL {
-             self.refresh_config();
-             self.last_config_poll = now;
-         }
- 
-+        // Rendering while displays sleep can rapidly accumulate Metal drawables (#3874).
-+        // Suspend overlay work until it can be displayed again, but keep config sync alive.
-+        self.overlays_paused = self.should_pause_overlays();
-+        if self.overlays_paused {
-+            event_loop
-+                .set_control_flow(ControlFlow::WaitUntil(now + OVERLAY_RESUME_CHECK_INTERVAL));
-+            return;
-+        }
-+
-+        // Preserve VSync-driven polling while awake. This also requests a fresh frame on wake.
-+        event_loop.set_control_flow(ControlFlow::Poll);
-+        self.read_rect_updates();
-         self.update_cursor_hittest(event_loop);
+-
+-
+ Lint:    Readability (127 priority)
+ Message: |
+     2747 | “Here!” cried Alice, quite forgetting in the flurry of the moment how large she
+```
+
+---
+
+### Incident Patch 2: `3ece2091` (2026-11-13)
+**Commit Message**: fix(core): mark "learnt", "burnt" and "leapt" as past forms (#4874)
+
+"He learnt the rules at school." was flagged by PronounVerbAgreement, because
+these forms were tagged as plain verbs.
+
+**File**: `harper-core/dictionary.dict` (modified, +3/-3)
+```diff
+@@ -16169,7 +16169,7 @@ burnish/VGd>SNgZ
+ burnisher/Ng
+ burnoose/NgS
+ burnout/NgS
+-burnt/~VJU
++burnt/~VtTJU
+ burp/NgSVdG
+ burqa/NSg!@_₹
+ burr/~NgSVdG
+@@ -32265,14 +32265,14 @@ leaper/Ng
+ leapfrog/NgSV
+ leapfrogged/VtT
+ leapfrogging/NmV6
+-leapt/V
++leapt/VtT
+ learn/~VGdSNrU
+ learnability/N
+ learnable/JN
+ learnedly/Ry
+ learner/~NgS
+ learning's
+-learnt/~V
++learnt/~VtT
+ lease/~NSgVdGr
+ leaseback/NSg
+ leasehold/J>NgSZ
+```
+
+**File**: `harper-core/src/linting/pronoun_verb_agreement.rs` (modified, +5/-0)
+```diff
+@@ -555,4 +555,9 @@ mod lints {
+     fn dont_flag_she_further_explained() {
+         assert_no_lints("She further explained the plan.", test_linter());
      }
- 
-@@ -251,6 +291,20 @@ impl ApplicationHandler for WindowManagerApp {
-         window_id: WindowId,
-         event: WindowEvent,
-     ) {
-+        if let WindowEvent::Occluded(occluded) = &event {
-+            if *occluded {
-+                self.occluded_windows.insert(window_id);
-+            } else {
-+                self.occluded_windows.remove(&window_id);
-+            }
-+        }
 +
-+        // Do not pass paused redraws to egui: it requests another redraw in response, which
-+        // would keep waking the event loop even though no frame can be presented (#3874).
-+        if matches!(&event, WindowEvent::RedrawRequested) && !self.can_render_window(window_id) {
-+            return;
-+        }
-+
-         let should_select_hit_lint = matches!(
-             &event,
-             WindowEvent::MouseInput 
-```
-
----
-
-### Incident Patch 2: `62863ef7` (2026-11-10)
-**Commit Message**: fix(chrome-ext): handle a reset user dictionary (#4827)
-
-Opening the options page saves the user dictionary, which first stores
-null through resetDictionary and then rebuilds the linter. The default
-passed to chrome.storage.local.get only applies to missing keys, so
-getUserDictionary returned null and importWords threw an uncaught
-TypeError in the service worker.
-
-A null left in storage also stopped the linter initialising on startup.
-
-**File**: `packages/chrome-plugin/src/background/index.ts` (modified, +2/-1)
-```diff
-@@ -890,7 +890,8 @@ async function addToDictionary(words: string[]): Promise<void> {
- /** Grab the user dictionary from persistent storage. */
- async function getUserDictionary(): Promise<string[]> {
- 	const resp = await chrome.storage.local.get({ userDictionary: [] });
--	return resp.userDictionary;
-+	// `resetDictionary` stores null, which the default above does not replace.
-+	return resp.userDictionary ?? [];
++    #[test]
++    fn dont_flag_she_learnt() {
++        assert_no_lints("She learnt to swim.", test_linter());
++    }
  }
- 
- /** Record the date the extension was installed, if it's missing. */
+```
+
+**File**: `harper-core/tests/text/tagged/Alice's Adventures in Wonderland.md` (modified, +3/-3)
+```diff
+@@ -109,7 +109,7 @@
+ > centre      of the earth      . Let     me       see    : that      would be       four thousand miles  down        , I
+ # NSg/VB/Comm P  D+  NPr🅪Sg/VB+ . NSg/VBP NPr/ISg+ NSg/VB . I/C/Ddem+ VXB   NSg/VLXB NSg+ NSg+     NPrPl+ N🅪Sg/VB/J/P . ISg/#r+
+ > think  — ” ( for   , you    see    , Alice had learnt several things of this    sort    in        her
+-# NSg/VB . . . R/C/P . ISgPl+ NSg/VB . NPr+  VP  VB     J/Dq    NPl    P  I/Ddem+ NSg/VB+ NPr/J/R/P ISg/D$+
++# NSg/VB . . . R/C/P . ISgPl+ NSg/VB . NPr+  VP  VP     J/Dq    NPl    P  I/Ddem+ NSg/VB+ NPr/J/R/P ISg/D$+
+ > lessons in        the schoolroom , and  though this    was  not     a   very good     opportunity for
+ # NPl/V3+ NPr/J/R/P D   NSg        . VB/C C      I/Ddem+ VLPt NSg/R/C D/P J/R  NPr/VB/J N🅪Sg+       R/C/P
+ > showing  off        her     knowledge , as    there was  no       one      to listen to her     , still      it       was
+@@ -257,7 +257,7 @@
+ > marked ‘ poison   ’ or    not     ” ; for   she  had read    several nice  little     histories about
+ # VP/J   . N🅪Sg/VB+ . NPr/C NSg/R/C . . R/C/P ISg+ VP  NSg/VBP J/Dq    NPr/J NPr/I/J/Dq NPl       J/P
+ > children who    had got burnt , and  eaten up         by wild     beasts and  other    unpleasant
+-# NPl+     NPr/I+ VP  VP  VB/J  . VB/C VPp/J NSg/VB/J/P P  NSg/VB/J NPl/V3 VB/C NSg/VB/J J
++# NPl+     NPr/I+ VP  VP  VP/J  . VB/C VPp/J NSg/VB/J/P P  NSg/VB/J NPl/V3 VB/C NSg/VB/J J
+ > things , all          because they would not     remember the simple   rules   their friends   had
+ # NPl+   . NSg/I/J/C/Dq C/P     IPl+ VXB   NSg/R/C NSg/VB   D   NSg/VB/J NPl/V3+ D$+   NPrPl/V3+ VP
+ > taught them     : such  as    , that     a   red    - hot      poker   will    burn   you    if    you    hold     it       too
+@@ -4425,7 +4425,7 @@
+ > “ Well       , I       can’t show   it       you    myself , ” the Mock     Turtle  said : “ I’m too stiff    . And
+ # . NSg/VB/J/R . ISg/#r+ VXB   NSg/VB NSg/ISg+ ISgPl+ ISg+   . . D   NSg/VB/J NSg/VB+ VP/J . . K   R   NSg/VB/J . VB/C
+ > the Gryphon never learnt it       . ”
+-# D   ?       R     VB     NSg/ISg+ . .
++# D   ?       R     VP     NSg/ISg+ . .
+ >
+ #
+ > “ Hadn’t time       , ” said the Gryphon : “ I       went to the Classics master    , though . He       was
 ```
 
 ---
 
-### Incident Patch 3: `85403580` (2026-11-10)
-**Commit Message**: fix(ci): upgrade Playwright (#4902)
+### Incident Patch 3: `f814e682` (2026-11-13)
+**Commit Message**: fix(desktop): tighten update button spacing (#4933)
 
-**File**: `packages/chrome-plugin/package.json` (modified, +2/-2)
+**File**: `harper-desktop/src/lib/settings/pages/GeneralPage.svelte` (modified, +11/-11)
 ```diff
-@@ -29,7 +29,7 @@
- 	},
- 	"devDependencies": {
- 		"@crxjs/vite-plugin": "^2.3.0",
--		"@playwright/test": "1.60.0",
-+		"@playwright/test": "1.65.0",
- 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
- 		"@tailwindcss/vite": "^4.1.4",
- 		"@types/chrome": "^0.0.246",
-@@ -39,7 +39,7 @@
- 		"gulp": "^5.0.0",
- 		"gulp-zip": "^6.0.0",
- 		"http-server": "^14.1.1",
--		"playwright": "1.60.0",
-+		"playwright": "1.65.0",
- 		"playwright-webextext": "^0.0.5",
- 		"rollup-plugin-copy": "^3.5.0",
- 		"svelte": "^5.0.0",
-```
-
-**File**: `packages/components/package.json` (modified, +1/-1)
-```diff
-@@ -57,7 +57,7 @@
- 		"@vitest/coverage-v8": "4.1.12",
- 		"@vueless/storybook-dark-mode": "^10.0.8",
- 		"flowbite": "^3.1.2",
--		"playwright": "1.60.0",
-+		"playwright": "1.65.0",
- 		"publint": "^0.3.14",
- 		"storybook": "^10.6.3",
- 		"svelte": "^5.57.3",
-```
-
-**File**: `packages/harper-editor/package.json` (modified, +1/-1)
-```diff
-@@ -61,7 +61,7 @@
- 		"components": "workspace:*",
- 		"harper.js": "workspace:*",
- 		"lint-framework": "workspace:*",
--		"playwright": "1.60.0",
-+		"playwright": "1.65.0",
- 		"publint": "^0.3.14",
- 		"storybook": "^10.6.3",
- 		"quill": "^2.0.3",
-```
-
-**File**: `packages/harper.js/package.json` (modified, +1/-1)
-```diff
-@@ -33,7 +33,7 @@
- 		"marked": "^16.4.1",
- 		"p-lazy": "^5.0.0",
- 		"p-memoize": "^7.1.1",
--		"playwright": "1.60.0",
-+		"playwright": "1.65.0",
- 		"type-fest": "^4.37.0",
- 		"typescript": "catalog:",
- 		"vite": "^8.3.5",
-```
-
-**File**: `packages/obsidian-plugin/package.json` (modified, +2/-2)
-```diff
-@@ -4,15 +4,15 @@
- 	"version": "3.1.0",
- 	"main": "main.js",
- 	"devDependencies": {
--		"@playwright/test": "1.60.0",
-+		"@playwright/test": "1.65.0",
- 		"@rollup/plugin-node-resolve": "^16.0.0",
- 		"@types/lodash-es": "^4.17.12",
- 		"@types/node": "catalog:",
- 		"@types/rollup-plugin-peer-deps-external": "^2.2.6",
- 		"@vitest/browser": "^4.0.16",
- 		"@vitest/browser-playwright": "^4.0.16",
- 		"obsidian": "^1.7.2",
--		"playwright": "1.60.0",
-+		"playwright": "1.65.0",
- 		"rollup": "4.35.0",
- 		"rollup-plugin-peer-deps-external": "^2.2.4",
- 		"rollup-plugin-svg-import": "^3.0.0",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +50/-59)
-```diff
-@@ -130,8 +130,8 @@ importers:
-         specifier: ^2.3.0
-         version: 2.3.0
-       '@playwright/test':
--        specifier: 1.60.0
--        version: 1.60.0
-+        specifier: 1.65.0
-+        version: 1.65.0
-       '@sveltejs/vite-plugin-svelte':
-         specifier: ^4.0.0
-         version: 4.0.4(svelte@5.57.3)(vite@5.4.17(@types/node@22.13.10)(lightningcss@1.33.0)(sass@1.85.1)(terser@5.51.2))
-@@ -160,11 +160,11 @@ importers:
-         specifier: ^14.1.1
-         version: 14.1.1
-       playwright:
--        specifier: 1.60.0
--        version: 1.60.0
-+        specifier: 1.65.0
-+        version: 1.65.0
-       playwright-webextext:
-         specifier: ^0.0.5
--        version: 0.0.5(@playwright/test@1.60.0)(playwright@1.60.0)
-+        version: 0.0.5(@playwright/test@1.65.0)(playwright@1.65.0)
-       rollup-plugin-copy:
-         specifier: ^3.5.0
-         version: 3.5.0
-@@ -237,7 +237,7 @@ importers:
-         version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vitest/browser-playwright':
-         specifier: 4.1.12
--        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.60.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-+        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.65.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vitest/coverage-v8':
-         specifier: 4.1.12
-         version: 4.1.12(@vitest/browser@4.1.12)(vitest@4.1.12)
-@@ -248,8 +248,8 @@ importers:
-         specifier: ^3.1.2
-         version: 3.1.2(rollup@4.53.3)
-       playwright:
--        specifier: 1.60.0
--        version: 1.60.0
-+        specifier: 1.65.0
-+        version: 1.65.0
-       publint:
-         specifier: ^0.3.14
-         version: 0.3.15
-@@ -318,7 +318,7 @@ importers:
-         version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vitest/browser-playwright':
-         specifier: 4.1.12
--        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.60.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-+        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.65.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vueless/storybook-dark-mode':
-         specifier: ^10.0.8
-         version: 10.0.8(storybook@10.6.3(@types/react@18.3.18)(react@18.3.1))
-@@ -332,8 +332,8 @@ importers:
-         specifier: workspace:*
-         version: link:../lint-framework
-       playwright:
--        specifier: 1.60.0
--        version: 1.60.0
-+        specifier: 1.65.0
-+        version: 1.65.0
-       publint:
-         specifier: ^0.3.14
-         version: 0.3.15
-@@ -382,7 +382,7 @@ importers:
-         version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vitest/browser-playwright':
-         specifier: 4.1.12
--        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.60.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-+        version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(playwright@1.65.0)(vite@8.3.5(@types/node@22.13.10)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vitest/ui':
-         specifier: 4.1.12
-         version: 4.1.12(vitest@4.1.12)
-@@ -399,8 +399,8 @@ importers:
-         specifier: ^7.1.1
-         version: 7.1.1
-       playwright:
--        specifier: 1.60.0
--        version: 1.60.0
-+        specifier: 1.65.0
-+        version: 1.65.0
-       type-fest:
-         specifier: ^4.37.0
-         version: 4.37.0
-@@ -512,8 +512,8 @@ importers:
-         version: 2.8.1
-     devDependencies:
-       '@playwright/test':
--        specifier: 1.60.0
--        version: 1.60.0
-+        specifier: 1.65.0
-+        version: 1.65.0
-       '@rollup/plugin-node-resolve':
-         specifier: ^16.0.0
-         version: 16.0.3(rollup@4.35.0)
-@@ -531,13 +531,13 @@ importers:
-         version: 4.1.12(msw@2.7.3(@types/node@22.13.10)(typescript@5.9.3))(vite@6.3.5(@types/node@22.13.10)(jiti@2.7.0)(lightningcss@1.33.0)(sass@1.85.1)(terser@5.51.2)(tsx@4.20.6)(yaml@2.9.1))(vitest@4.1.12)
-       '@vitest/browser-playwright':
-         specifier: ^4.0.16
--        version: 4.1.12(msw@2.7.3(@t
+@@ -299,6 +299,17 @@ function settingsValueToDialect(value: string): Dialect {
+               <p class="result-summary">
+                 Current version: {currentVersion || 'loading...'} · Latest version: {latestVersion || 'loading...'}
+               </p>
++              <div class="inline-row">
++                <Button
++                  unstyled
++                  class="button"
++                  type="button"
++                  disabled={isCheckingForUpdates}
++                  on:click={checkForUpdates}
++                >
++                  {isCheckingForUpdates ? 'Checking...' : 'Check for updates'}
++                </Button>
++              </div>
+               <Checkbox
+                 slot="control"
+                 appearance="settings"
+@@ -309,17 +320,6 @@ function settingsValueToDialect(value: string): Dialect {
+                 {#if autoUpdate}<CheckIcon className="control-icon" />{/if}
+               </Checkbox>
+             </SettingRow>
+-            <div class="inline-row">
+-              <Button
+-                unstyled
+-                class="button"
+-                type="button"
+-                disabled={isCheckingForUpdates}
+-                on:click={checkForUpdates}
+-              >
+-                {isCheckingForUpdates ? 'Checking...' : 'Check for updates'}
+-              </Button>
+-            </div>
+             {#if isAutoUpdateLoading}
+               <p class="result-summary">Loading update setting...</p>
+             {:else if autoUpdateError}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4905** (2026-11-10): fix(desktop): memory leak when the device goes to sleep (@elijah-potter)
-- **PR #4902** (2026-11-10): fix(ci): upgrade Playwright (@elijah-potter)
-- **PR #4894** (2026-11-11): feat: moment(s) of truths → moments of truth (@hippietrail)
-- **PR #4886** (closed): fix(desktop): make the Windows highlighter overlay transparent (@hridyesh-gupta)
-- **PR #4885** (2026-11-11): feat: look forwards to → look forward to (@hippietrail)
-- **PR #4873** (2026-11-11): feat: if I where to → if I were to (@hippietrail)
+- **PR #4947** (2026-11-13): test(chrome-ext): stop stray blurs failing the iframe popup tests (@GaryJones)
+- **PR #4945** (2026-11-13): Bump CI toolkit to 7.1.1 for AWS cost saving (@mokagio)
+- **PR #4942** (2026-11-13): chore: more linters about confusable words into new config group (@hippietrail)
+- **PR #4939** (2026-11-13): feat: dabble down → double down (@hippietrail)
+- **PR #4933** (2026-11-13): fix(desktop): tighten update button spacing (@elijah-potter)
+- **PR #4932** (2026-11-13): feat(desktop): enable Telegram integration by default (@elijah-potter)
 
 ---
 
@@ -1842,59 +1675,39 @@ A null left in storage also stopped the linter initialising on startup.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. desktop): memory leak when the device goes to sleep (#4905)
+## X. TheyToThem): avoid flagging coordinating conjunction 'for they'
 
 **RULE**:
-When implementing operations in `harper-desktop/src-tauri/src/highlighter/window_manager.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/src/linting/weir_rules/TheyToThem.weir`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b59b5ad2`: desktop): memory leak when the device goes to sleep (#4905). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4270327e`: TheyToThem): avoid flagging coordinating conjunction 'for they'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-desktop/src-tauri/src/highlighter/window_manager.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/weir_rules/TheyToThem.weir`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::collections::HashSet;
-const OVERLAY_RESUME_CHECK_INTERVAL: Duration = Duration::from_millis(500);
-        // VSync provides backpressure while displays are awake. The handler waits while overlays
-        // are paused instead of relying on presentation to throttle the loop during display sleep.
-    occluded_windows: HashSet<WindowId>,
-    overlays_paused: bool,
-            occluded_windows: HashSet::new(),
-            overlays_paused: false,
-            if self.can_render_window(window.id()) {
-                window.request_redraw();
-            }
-    /// Whether to suspend overlay OS reads and rendering because no overlay can be seen.
-    /// Configuration synchronization remains active. An empty window list alone does not imply
-    /// occlusion: windows may not have been created yet.
-    fn should_pause_overlays(&self) -> bool {
-        all_displays_asleep()
-            || (!self.windows.is_empty()
-                && self
-                    .windows
-                    .iter()
-                    .all(|window| self.occluded_windows.contains(&window.id())))
-    }
-
-    /// Checks redraw eligibility using the pause state last refreshed in `about_to_wait` and the
-    /// l
+expr prepositions [to, with, about, against, between, among, around, toward, towards, through, beyond, behind, across, near, inside, outside]
+# `for` can also act as a coordinating conjunction introducing a finite clause, where `they` is the subject
+expr main [<(@prepositions they), they>, <[(for they ![VERB, AUX]), (for they.)], they>, <[(@verbs they ![VERB, AUX]), (@verbs they.)], they>]
+test "This gift is for they." "This gift is for them."
+test "Wait for they at the station." "Wait for them at the station."
+allows "At least their deaths are not meaningless, for they shall all be unified into the white and delightsome hosts of Heaven."
+allows "For they know not what they do."
+allows "Rejoice, for they have returned safely."
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        // Run continuously without a read timer; VSync presentation provides backpressure.
-            window.request_redraw();
-            window.request_redraw();
-        self.read_rect_updates();
-
+// Induced defect failure mode:
+expr prepositions [to, with, for, about, against, between, among, around, toward, towards, through, beyond, behind, across, near, inside, outside]
+expr main [<(@prepositions they), they>, <[(@verbs they ![VERB, AUX]), (@verbs they.)], they>]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b59b5ad2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4270327e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

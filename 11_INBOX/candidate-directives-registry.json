@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T20:52:48.700Z",
+  "last_updated": "2026-11-14T21:21:33.621Z",
   "directives": [
     {
       "id": "CD-001",
@@ -13565,6 +13565,70 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-14",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-U1IL",
+      "directive_title": "avoid flagging coordinating conjunction 'for they'",
+      "source_repo": "Automattic/harper",
+      "source_commit": "4270327e",
+      "staged_file": "11_INBOX/candidate-directives/CD-U1IL-avoid-flagging-coordinating-conjunction-for-they.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-UWTX",
+      "directive_title": "Update dependency dev.reformator.stacktracedecoroutinator:stacktrace-decoroutina",
+      "source_repo": "kotest-kotest-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UWTX-update-dependency-dev-reformator-stacktracedecoroutinator-stacktrace-decoroutina.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-U8S4",
+      "directive_title": "go.mod: bump golang.org/x/sys",
+      "source_repo": "tailscale/tailscale",
+      "source_commit": "9d531366",
+      "staged_file": "11_INBOX/candidate-directives/CD-U8S4-go-mod-bump-golang-org-x-sys.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-UAW5",
+      "directive_title": "install packed telemetry-server tarball in e2e cli harness",
+      "source_repo": "genkit-ai/genkit",
+      "source_commit": "76130045",
+      "staged_file": "11_INBOX/candidate-directives/CD-UAW5-install-packed-telemetry-server-tarball-in-e2e-cli-harness.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-UD8R",
+      "directive_title": "TheyToThem): avoid flagging coordinating conjunction 'for they'",
+      "source_repo": "automattic-harper-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UD8R-theytothem-avoid-flagging-coordinating-conjunction-for-they.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-147C98",
+      "directive_title": "Update dependency dev.reformator.stacktracedecoroutinator:stacktrace-decoroutina",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kotest-kotest",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-147C98-update-dependency-dev-reformator-stacktr.md",
+      "staged_date": "2026-11-14"
     }
   ]
 }

@@ -465,8 +465,8 @@
     "sourceUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceVersion": "hf-phocinae-phocinae-largha-150m-v1",
     "license": "Open-Source",
-    "contentHash": "70b4a33442d2093f8128a2cdf268a0ae058c6663157b247279b9252fa5868148",
-    "lastHarvestedAt": "2026-11-09T09:36:32.747Z",
+    "contentHash": "469ce49b104feb0188171ad278a275e11cb43be53bf442fcf85c08dd440410b3",
+    "lastHarvestedAt": "2026-11-14T21:20:50.489Z",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1"
   },
   "hf-comfy-org-qwen-image-2.1": {
@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "a498d472",
+    "sourceVersion": "4270327e",
     "license": "Apache-2.0",
-    "contentHash": "3d5ab151eccbcb518471ede917334e454122906dbd5b9f8df51d6b3eea57f2f5",
-    "lastHarvestedAt": "2026-11-13T06:33:25.296Z",
+    "contentHash": "5115026d4da69b31863943d5795d91b707569f08199ef5176ffccc9c171c0e8e",
+    "lastHarvestedAt": "2026-11-14T21:20:52.895Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "0d822c9d",
+    "sourceVersion": "9d531366",
     "license": "BSD-3-Clause",
-    "contentHash": "f5163ec5c888c88508c879ce7a8c9fa63a0490a7de09ad09381888cd5397f12f",
-    "lastHarvestedAt": "2026-11-14T03:32:25.581Z",
+    "contentHash": "71d9e7361ba3ec0b36c7e4fc831e06df1e3278f8f9163a08fc6f5c0f1de90297",
+    "lastHarvestedAt": "2026-11-14T21:21:02.315Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "9eadfa99",
+    "sourceVersion": "76130045",
     "license": "Apache-2.0",
-    "contentHash": "4e2e4029dce9b9e37ea6e87d9069dcc1e5a1ffca31f45c8e14adc37439c092ef",
-    "lastHarvestedAt": "2026-11-13T14:17:47.464Z",
+    "contentHash": "5f6536aad6d70f67809f5a02b7159ac023c91479d591011ce4e662207cc7179c",
+    "lastHarvestedAt": "2026-11-14T21:21:05.050Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -6783,10 +6783,10 @@
     "repository": "kotest/kotest",
     "platform": "github",
     "sourceUrl": "https://github.com/kotest/kotest",
-    "sourceVersion": "6a841463",
+    "sourceVersion": "acd88ce5",
     "license": "Apache-2.0",
-    "contentHash": "db757ba36434e5cbb78f5cc17611a47a03aea2352085f31e9a27b9a93365f3e4",
-    "lastHarvestedAt": "2026-11-11T10:52:22.657Z",
+    "contentHash": "e04f0a928feb63456a832ac0ef684c711c04dab3b3debb0d7112debac69b4aec",
+    "lastHarvestedAt": "2026-11-14T21:20:58.607Z",
     "learningId": "learn-github-kotest-kotest"
   },
   "projectcontour-contour": {

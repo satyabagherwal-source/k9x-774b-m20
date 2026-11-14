@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `9eadfa99`  
+> **Source Version**: `76130045`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T14:17:37.126Z  
+> **Timestamp**: 2026-11-14T21:21:04.364Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T14:17:37.121Z  
+> **Harvest Timestamp**: 2026-11-14T21:21:04.360Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6584 stars
+- **Stars / Engagement**: 6592 stars
 
 ---
 
@@ -2074,408 +2074,29 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `81c47a83` (2026-11-12)
-**Commit Message**: fix(deps): override undici and bump angular testapp to resolve airlock blocks (#7154)
+### Incident Patch 1: `76130045` (2026-11-13)
+**Commit Message**: fix(tests): install packed telemetry-server tarball in e2e cli harness (#7197)
 
-**File**: `js/package.json` (modified, +2/-1)
+**File**: `tests/src/utils.ts` (modified, +1/-1)
 ```diff
-@@ -32,7 +32,8 @@
-   },
-   "pnpm": {
-     "overrides": {
--      "cross-spawn": "^7.0.5"
-+      "cross-spawn": "^7.0.5",
-+      "undici": "^7.30.0"
-     },
-     "onlyBuiltDependencies": [
-       "@firebase/util",
-```
-
-**File**: `js/pnpm-lock.yaml` (modified, +187/-351)
-```diff
-@@ -6,6 +6,7 @@ settings:
- 
- overrides:
-   cross-spawn: ^7.0.5
-+  undici: ^7.30.0
- 
- pnpmfileChecksum: sha256-FjOE87LeGkxPQRMJmucwJTym6Cdt/bBLGBPg4PnfwgM=
- 
-@@ -302,7 +303,7 @@ importers:
-     dependencies:
-       '@anthropic-ai/sdk':
-         specifier: ^0.97.1
--        version: 0.97.1(zod@4.3.6)
-+        version: 0.97.1(zod@4.6.6)
-     devDependencies:
-       '@types/node':
-         specifier: ^20.11.16
-@@ -438,7 +439,7 @@ importers:
-         version: 6.1.3
-       ts-jest:
-         specifier: ^29.1.2
--        version: 29.4.6(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.37))(typescript@5.9.3)
-+        version: 29.4.6(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.37))(typescript@5.9.3)
-       tsup:
-         specifier: ^8.3.5
-         version: 8.5.1(jiti@2.7.0)(postcss@8.5.30)(tsx@4.20.3)(typescript@5.9.3)(yaml@2.9.1)
-@@ -884,7 +885,7 @@ importers:
-     dependencies:
-       '@modelcontextprotocol/sdk':
-         specifier: ^1.29.0
--        version: 1.29.0(@cfworker/json-schema@4.1.1)(zod@4.3.6)
-+        version: 1.29.0(@cfworker/json-schema@4.1.1)(zod@4.6.6)
-       genkit:
-         specifier: workspace:^
-         version: link:../../genkit
-@@ -1100,7 +1101,7 @@ importers:
-     devDependencies:
-       '@ai-sdk/react':
-         specifier: ^3.0.0
--        version: 3.0.194(react@19.2.4)(zod@4.3.6)
-+        version: 3.0.194(react@19.2.4)(zod@4.6.6)
-       '@genkit-ai/express':
-         specifier: workspace:*
-         version: link:../express
-@@ -1112,7 +1113,7 @@ importers:
-         version: 20.19.37
-       ai:
-         specifier: ^6.0.192
--        version: 6.0.192(zod@4.3.6)
-+        version: 6.0.192(zod@4.6.6)
-       express:
-         specifier: ^4.21.1
-         version: 4.22.1
-@@ -1381,8 +1382,8 @@ importers:
-         specifier: ^21.2.0
-         version: 21.2.25(@angular/common@21.2.25(@angular/core@21.2.25(@angular/compiler@21.2.25)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@21.2.25(@angular/compiler@21.2.25)(rxjs@7.8.2)(zone.js@0.16.3))(@angular/platform-browser@21.2.25(@angular/common@21.2.25(@angular/core@21.2.25(@angular/compiler@21.2.25)(rxjs@7.8.2)(zone.js@0.16.3))(rxjs@7.8.2))(@angular/core@21.2.25(@angular/compiler@21.2.25)(rxjs@7.8.2)(zone.js@0.16.3)))(rxjs@7.8.2)
-       '@angular/ssr':
--        specifier: ^21.2.0
--        version: 21.2.26(da6d4da7c1177d9db8a8bc54634eee10)
-+        specifier: ^21.2.27
-+        version: 21.2.27(da6d4da7c1177d9db8a8bc54634eee10)
-       '@genkit-ai/express':
-         specifier: workspace:*
-         version: link:../../plugins/express
-@@ -1406,11 +1407,11 @@ importers:
-         version: 0.16.3
-     devDependencies:
-       '@angular/build':
--        specifier: ^21.2.0
--        version: 21.2.26(3b282a43f5bae1d261901905c35d1e65)
-+        specifier: ^21.2.27
-+        version: 21.2.27(f0043736c7631abf1b67ca42ce722d33)
-       '@angular/cli':
--        specifier: ^21.2.0
--        version: 21.2.26(@cfworker/json-schema@4.1.1)(@types/node@22.15.32)(chokidar@5.0.0)
-+        specifier: ^21.2.27
-+        version: 21.2.27(@cfworker/json-schema@4.1.1)(@types/node@22.15.32)(chokidar@5.0.0)
-       '@angular/compiler-cli':
-         specifier: ^21.2.0
-         version: 21.2.25(@angular/compiler@21.2.25)(typescript@5.9.3)
-@@ -1453,7 +1454,7 @@ importers:
-         version: link:../../plugins/google-genai
-       '@google/genai':
-         specifier: ^1.30.0
--        version: 1.44.0(@modelcontextprotocol/sdk@1.32.1(@cfworker/json-schema@4.1.1)(zod@4.3.6))
-+        version: 1.44.0(@modelcontextprotocol/sdk@1.32.1(@cfworker/json-schema@4.1.1)(zod@4.6.6))
-       genkit:
-         specifier: workspace:*
-         version: link:../../genkit
-@@ -1815,7 +1816,7 @@ importers:
-         version: link:../../plugins/middleware
-       '@google/genai':
-         specifier: ^1.30.0
--        version: 1.44.0(@modelcontextprotocol/sdk@1.32.1(@cfworker/json-schema@4.1.1)(zod@4.3.6))
-+        version: 1.44.0(@modelcontextprotocol/sdk@1.32.1(@cfworker/json-schema@4.1.1)(zod@4.6.6))
-       firebase-admin:
-         specifier: ^13.8.0
-         version: 13.8.0(encoding@0.1.13)
-@@ -1902,7 +1903,7 @@ importers:
-         version: link:../../plugins/mcp
-       '@modelcontextprotocol/sdk':
-         specifier: ^1.32.1
--        version: 1.32.1(@cfworker/json-schema@4.1.1)(zod@4.3.6)
-+        version: 1.32.1(@cfworker/json-schema@4.1.1)(zod@4.6.6)
-       express:
-         specifier: ^5.1.0
-         version: 5.2.1
-@@ -1915,7 +1916,7 @@ importers:
-         version: 2026.1.26(@cfworker/json-schema@4.1.1)
-       '@modelcontextprotocol/server-filesystem':
-         specifier: ~2026.1.14
--        version: 2026.1.14(@cfworker/json-schema@4.1.1)(zod@4.3.6)
-+        version: 2026.1.14(@cfworker/json-schema@4.1.1)(zod@4.6.6)
-       '@types/express':
-         specifier: ^5.0.1
-         version: 5.0.6
-@@ -2247,7 +2248,7 @@ 
-```
-
-**File**: `js/testapps/angular/package.json` (modified, +3/-3)
-```diff
-@@ -19,7 +19,7 @@
-     "@angular/platform-browser": "^21.2.0",
-     "@angular/platform-server": "^21.2.0",
-     "@angular/router": "^21.2.0",
--    "@angular/ssr": "^21.2.0",
-+    "@angular/ssr": "^21.2.27",
-     "@genkit-ai/express": "workspace:*",
-     "@genkit-ai/google-genai": "workspace:*",
-     "express": "^5.1.0",
-@@ -29,8 +29,8 @@
-     "zone.js": "~0.16.0"
-   },
-   "devDependencies": {
--    "@angular/build": "^21.2.0",
--    "@angular/cli": "^21.2.0",
-+    "@angular/build": "^21.2.27",
-+    "@angular/cli": "^21.2.27",
-     "@angular/compiler-cli": "^21.2.0",
-     "@types/express": "^5.0.1",
-     "@types/node": "^22.0.0",
-```
-
----
-
-### Incident Patch 2: `99740333` (2026-11-12)
-**Commit Message**: perf(build): parallelize workspace setup and collapse build:libs into a single topological pipeline (#7162)
-
-**File**: `.github/workflows/builder.yml` (modified, +2/-2)
-```diff
-@@ -53,9 +53,9 @@ jobs:
-         node-version: 20.x
-         cache: pnpm
-     - name: Install dependencies
--      run: pnpm install
-+      run: pnpm install && pnpm pnpm-install-js
-     - name: Run build script
--      run: pnpm build:js
-+      run: pnpm build:js:all
-     - name: Run js tests
-       run: pnpm test:js
-     - name: Validate working directory is clean
-```
-
-**File**: `.github/workflows/e2e-tests.yml` (modified, +9/-4)
-```diff
-@@ -21,20 +21,25 @@ on:
-     branches:
-       - main
- 
-+permissions:
-+  contents: read
-+
- jobs:
-   build:
-     name: Run e2e tests
-     runs-on: ubuntu-latest
-     steps:
--      - uses: actions/checkout@v5
--      - uses: pnpm/action-setup@v4
-+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
-+        with:
-+          persist-credentials: false
-+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
-       - name: Set up node v20
--        uses: actions/setup-node@v6
-+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
-         with:
-           node-version: 20.x
-           cache: pnpm
-       - name: Install dependencies
--        run: pnpm install
-+        run: pnpm install && pnpm pnpm-install-workspaces
-       - name: Run build script
-         run: pnpm build
-       - name: Run pack:all script
-```
-
-**File**: `.github/workflows/release_js_main.yml` (modified, +6/-6)
-```diff
-@@ -35,10 +35,10 @@ jobs:
-     name: Run build tasks
-     runs-on: ubuntu-latest
-     steps:
--    - uses: actions/checkout@v5
--    - uses: pnpm/action-setup@v4
--    - name: Set up node v0
--      uses: actions/setup-node@v6
-+    - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
-+    - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
-+    - name: Set up node v20
-+      uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
-       with:
-         node-version: 20.x
-         cache: 'pnpm'
-@@ -47,15 +47,15 @@ jobs:
-       run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-       id: extract_branch
-     - name: Install dependencies
--      run: pnpm install
-+      run: pnpm install && pnpm pnpm-install-workspaces
-     - name: Run build script
-       run: pnpm build
-     - name: Run js tests
-       run: pnpm test:js
-     - name: Validate working directory is clean
-       run: .github/workflows/scripts/ensure-clean-working-tree.sh
-     - name: Set up node v20
--      uses: actions/setup-node@v6
-+      uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
-       with:
-         node-version: 20.x
-         cache: 'pnpm'
-```
-
-**File**: `.github/workflows/release_js_package.yml` (modified, +5/-5)
-```diff
-@@ -39,10 +39,10 @@ jobs:
-     name: Run build tasks
-     runs-on: ubuntu-latest
-     steps:
--    - uses: actions/checkout@v5
--    - uses: pnpm/action-setup@v4
-+    - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
-+    - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
-     - name: Set up node v20
--      uses: actions/setup-node@v6
-+      uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
-       with:
-         node-version: 20.x
-         cache: 'pnpm'
-@@ -51,13 +51,13 @@ jobs:
-       run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-       id: extract_branch
-     - name: Install dependencies
--      run: pnpm install
-+      run: pnpm install && pnpm pnpm-install-workspaces
-     - name: Run build script
-       run: pnpm build
-     - name: Validate working directory is clean
-       run: .github/workflows/scripts/ensure-clean-working-tree.sh
-     - name: Set up node v20
--      uses: actions/setup-node@v6
-+      uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
-       with:
-         node-version: 20.x
-         cache: 'pnpm'
-```
-
-**File**: `.github/workflows/tests.yml` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ jobs:
-         node-version: 20.x
-         cache: pnpm
-     - name: Install dependencies and build
--      run: pnpm build:genkit-tools
-+      run: cd genkit-tools && pnpm install && pnpm build
-     - name: Run tests
-       run: pnpm test:genkit-tools
-     - name: Validate working directory is clean
-```
-
-**File**: `CONTRIBUTING.md` (modified, +2/-2)
-```diff
-@@ -89,15 +89,15 @@ pnpm i
- pnpm run setup
- ```
- 
--This will install all dependencies and build all packages.
-+This will install workspace dependencies, build the core JS packages, plugins, and CLI tooling, and link the Genkit CLI.
- 
- ### Build it
- 
- ```
- pnpm build
- ```
- 
--This will build all packages in this repository. This is recommended the first time you check out a fresh repo or pull new revisions.
-+This will build the core JS packages, plugins, and CLI tooling in this repository (after dependencies have been installed via `pnpm run setup`). To also compile `doc-snippets` and all `testapps`, run `pnpm build:all`.
- 
- ### Pack it
- 
-```
-
-**File**: `genkit-tools/package.json` (modified, +6/-4)
-```diff
-@@ -6,12 +6,14 @@
-   },
-   "scripts": {
-     "preinstall": "npx only-allow pnpm",
--    "build": "pnpm install && pnpm build:common && pnpm build:telemetry-server && pnpm build:cli",
--    "build:cli": "pnpm build:md-context && cd cli && pnpm build",
-+    "build": "pnpm build:common-pkg && pnpm run \"/^(export:schemas|build:telemetry-server|build:md-context)$/\" && pnpm build:cli-pkg",
-+    "build:cli": "pnpm build:md-context && pnpm build:cli-pkg",
-+    "build:cli-pkg": "cd cli && pnpm build",
-     "build:telemetry-server": "cd telemetry-server && pnpm build",
--    "build:common": "cd common && pnpm build && cd .. && pnpm export:schemas",
-+    "build:common": "pnpm build:common-pkg && pnpm export:schemas",
-+    "build:common-pkg": "cd common && pnpm build",
-     "build:md-context": "node scripts/build-md.js",
--    "export:schemas": "npx tsx scripts/schema-exporter.ts .",
-+    "export:schemas": "tsx scripts/schema-exporter.ts .",
-     "pack:all": "pnpm run pack:cli && pnpm run pack:telemetry-server && pnpm run pack:common",
-     "pack:common": "cd common && pnpm pack --pack-destination ../../dist",
-     "pack:cli": "cd cli && pnpm pack --pack-destination ../../dist",
-```
-
-**File**: `js/package.json` (modified, +5/-4)
-```diff
-@@ -2,13 +2,14 @@
-   "private": true,
-   "scripts": {
-     "preinstall": "npx only-allow pnpm",
--    "build": "pnpm install && pnpm build:libs && pnpm build:docsnippets && pnpm build:testapps",
--    "build:libs": "pnpm build:core && pnpm build:genkit && pnpm build:noncore ",
--    "build:core": "pnpm -r --workspace-concurrency 1 -F core -F ai -F flow build",
-+    "build": "pnpm build:libs",
-+    "build:all": "pnpm build:libs && pnpm build:docsnippets && pnpm build:testapps",
-+    "build:libs": "pnpm -r --workspace-concurrency -1 -F core -F ai -F genkit -F \"./plugins/**\" build",
-+    "build:core": "pnpm -r -F core -F ai build",
-     "build:genkit": "pnpm -F genkit build",
-     "build:noncore": "pnpm -r --workspace-concurrency -1 -F \"./plugins/**\" build",
-     "build:testapps": "pnpm -r --workspace-concurrency -1 -F \"./testapps/**\" build",
--    "build:docsnippets": "cd doc-snippets && pnpm install && pnpm build",
-+    "build:docsnippets": "pnpm -F doc-snippets build",
-     "pack:all": "(mkdir ../dist || true) && npm-run-all pack:core pack:ai pack:genkit pack:plugins",
-     "pack:core": "cd core && pnpm pack --pack-destination ../../dist",
-     "pack:ai": "cd ai && pnpm pack --pack-destination ../../dist",
-```
-
----
-
-### Incident Patch 3: `12d552e9` (2026-11-12)
-**Commit Message**: chore(deps): approve onlyBuiltDependencies in js/package.json (#7164)
-
-**File**: `js/package.json` (modified, +6/-1)
-```diff
-@@ -37,10 +37,15 @@
-     },
-     "onlyBuiltDependencies": [
-       "@firebase/util",
-+      "@parcel/watcher",
-       "esbuild",
-+      "lmdb",
-+      "msgpackr-extract",
-+      "msw",
-       "protobufjs",
-       "re2",
--      "sharp"
-+      "sharp",
-+      "unrs-resolver"
-     ]
-   },
-   "packageManager": "pnpm@10.26.0+sha512.3b3f6c725ebe712506c0ab1ad4133cf86b1f4b687effce62a9b38b4d72e3954242e643190fc51fa1642949c735f403debd44f5cb0edd657abe63a8b6a7e1e402"
+@@ -99,7 +99,7 @@ export async function genkitStart(
+   });
+   const distDir = path.resolve(process.cwd(), '../dist');
+   execSync(
+-    `npm i --save ${distDir}/genkit-cli-?.?*.?*.tgz ${distDir}/genkit-ai-tools-common-*.tgz`,
++    `npm i --save ${distDir}/genkit-cli-?.?*.?*.tgz ${distDir}/genkit-ai-tools-common-*.tgz ${distDir}/genkit-ai-telemetry-server-*.tgz`,
+     {
+       stdio: 'inherit',
+       cwd: cliInstallRoot,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7196** (closed): build(deps-dev): bump the root-dependencies group across 1 directory with 7 updates (@dependabot[bot])
-- **PR #7195** (closed): build(deps): bump the go-dependencies group in /go with 30 updates (@dependabot[bot])
-- **PR #7194** (closed): build(deps): bump the tools-dependencies group in /genkit-tools with 5 updates (@dependabot[bot])
-- **PR #7191** (closed): feat(js/plugins/compat-oai): add Mistral provider (@adesinah)
-- **PR #7190** (closed): build(deps): bump node-forge from 1.3.3 to 1.4.3 in /samples/js-schoolAgent (@dependabot[bot])
-- **PR #7188** (2026-11-12): chore(ci): configure Dependabot cooldowns and scope routine updates to minor/patch (@MichaelDoyle)
+- **PR #7205** (closed): chore(py): release Python SDK v0.14.0 (@huangjeff5)
+- **PR #7204** (closed): docs(py): use bare decorators, docstrings, and model refs in README and migration guide (@huangjeff5)
+- **PR #7203** (closed): build(deps): bump opentelemetry-api from 1.44.0 to 1.45.2 in /py (@dependabot[bot])
+- **PR #7199** (closed): chore(ci): standardize Node and pin workflow actions (@yumin2002)
+- **PR #7198** (closed): build(deps): bump hono from 4.13.13 to 4.13.16 in /js (@dependabot[bot])
+- **PR #7197** (2026-11-13): fix(tests): install packed telemetry-server tarball in e2e cli harness (@MichaelDoyle)
 
 ---
 
@@ -2495,29 +2116,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): override undici and bump angular testapp to resolve airlock blocks (#7154
+## X. tests): install packed telemetry-server tarball in e2e cli harness
 
 **RULE**:
-When implementing operations in `js/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/src/utils.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `81c47a83`: deps): override undici and bump angular testapp to resolve airlock blocks (#7154). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `76130045`: tests): install packed telemetry-server tarball in e2e cli harness. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/src/utils.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      "cross-spawn": "^7.0.5",
-      "undici": "^7.30.0"
+    `npm i --save ${distDir}/genkit-cli-?.?*.?*.tgz ${distDir}/genkit-ai-tools-common-*.tgz ${distDir}/genkit-ai-telemetry-server-*.tgz`,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-      "cross-spawn": "^7.0.5"
+// Induced defect failure mode:
+    `npm i --save ${distDir}/genkit-cli-?.?*.?*.tgz ${distDir}/genkit-ai-tools-common-*.tgz`,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `81c47a83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `76130045` are properly handled with clean fallback behavior.

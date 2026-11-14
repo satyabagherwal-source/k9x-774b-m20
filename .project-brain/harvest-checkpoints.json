@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T20:52:10.824Z",
+  "last_updated": "2026-11-14T21:21:05.059Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1835,14 +1835,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "70b4a33442d2093f8128a2cdf268a0ae058c6663157b247279b9252fa5868148",
-      "verified_at": "2026-11-09T09:36:32.760Z",
+      "content_hash": "469ce49b104feb0188171ad278a275e11cb43be53bf442fcf85c08dd440410b3",
+      "verified_at": "2026-11-14T21:20:50.497Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T09:36:32.760Z"
+      "last_updated": "2026-11-14T21:20:50.497Z"
     },
     "microsoft/FrogNano-4B-2609": {
       "repository": "microsoft/FrogNano-4B-2609",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "3d5ab151eccbcb518471ede917334e454122906dbd5b9f8df51d6b3eea57f2f5",
-      "verified_at": "2026-11-13T06:33:25.318Z",
+      "content_hash": "5115026d4da69b31863943d5795d91b707569f08199ef5176ffccc9c171c0e8e",
+      "verified_at": "2026-11-14T21:20:52.902Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T06:33:25.318Z"
+      "last_updated": "2026-11-14T21:20:52.902Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "f5163ec5c888c88508c879ce7a8c9fa63a0490a7de09ad09381888cd5397f12f",
-      "verified_at": "2026-11-14T03:32:25.589Z",
+      "content_hash": "71d9e7361ba3ec0b36c7e4fc831e06df1e3278f8f9163a08fc6f5c0f1de90297",
+      "verified_at": "2026-11-14T21:21:02.322Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T03:32:25.589Z"
+      "last_updated": "2026-11-14T21:21:02.322Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "4e2e4029dce9b9e37ea6e87d9069dcc1e5a1ffca31f45c8e14adc37439c092ef",
-      "verified_at": "2026-11-13T14:17:47.490Z",
+      "content_hash": "5f6536aad6d70f67809f5a02b7159ac023c91479d591011ce4e662207cc7179c",
+      "verified_at": "2026-11-14T21:21:05.058Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:17:47.490Z"
+      "last_updated": "2026-11-14T21:21:05.058Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -10236,14 +10236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kotest-kotest",
-      "content_hash": "db757ba36434e5cbb78f5cc17611a47a03aea2352085f31e9a27b9a93365f3e4",
-      "verified_at": "2026-11-11T10:52:22.715Z",
+      "content_hash": "e04f0a928feb63456a832ac0ef684c711c04dab3b3debb0d7112debac69b4aec",
+      "verified_at": "2026-11-14T21:20:58.614Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T10:52:22.715Z"
+      "last_updated": "2026-11-14T21:20:58.614Z"
     },
     "projectcontour/contour": {
       "repository": "projectcontour/contour",

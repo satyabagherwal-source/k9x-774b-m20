@@ -4,45 +4,31 @@
 {
   "source_repository": "kotest/kotest",
   "source_url": "https://github.com/kotest/kotest",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "acd88ce5",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-14T21:20:58.739Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-kotest-kotest",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kotest/kotest](https://github.com/kotest/kotest) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [kotest/kotest](https://github.com/kotest/kotest) (Revision: `acd88ce5`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T21:20:58.739Z`  
+> **Learning ID**: `learn-github-kotest-kotest`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `kotest/kotest` (Commit: `historical`)
+- **Target Repository**: `kotest/kotest` (Commit: `acd88ce5`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
-> **Source**: github ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
-> **Source Version**: `6a841463`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:52:07.833Z  
-> **Learning ID**: `learn-github-kotest-kotest`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): kotest/kotest
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:52:07.502Z  
+> **Harvest Timestamp**: 2026-11-14T21:20:57.949Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Powerful, elegant and flexible test framework for Kotlin with assertions, property testing and data driven tests.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4787 stars
+- **Stars / Engagement**: 4790 stars
 
 ---
 
@@ -701,13 +687,11 @@ export default Home;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6271** (2026-11-09): **Restore compatibility with Gradle 9.9.0**
-  *Symptoms*: Fixes #6270.
-  **Post-Mortem & Fix Analysis**:
-  > nice thank you! will release a patch version with this.
+- **Issue #6278** (2026-11-14): **update docs from amper to kotlin toolchain**
+  *Symptoms*: <!--  If this PR updates documentation, please update all relevant versions of the docs, see: https://github.com/kotest/kotest/tree/master/documentation/versioned_docs The documentation at https://github.com/kotest/kotest/tree/master/documentation/docs is the documentation for the next minor or major version _TO BE RELEASED_ --> update docs from amper to kotlin toolchain
 
-- **Issue #6270** (2026-11-09): **Gradle 9.9.0: test retry reruns all specs because `ClassMethodNameFilter` isn't found anymore**
-  *Symptoms*: **Which version of Kotest are you using**  6.2.6 (`kotest-runner-junit6`) with Gradle 9.9.0. Works as expected with Gradle 9.8.2  [kotest-retry-repro.zip](https://github.com/user-attachments/files/34577806/kotest-retry-repro.zip)  .  Since Gradle 9.9.0, when the test retry plugin (`org.gradle.test-retry` or Develocity's test retry) retries a failed test, Kotest runs every spec again, not just the failed one:  ``` FlakyTest > flaky FAILED SuccessfulTest > successful PASSED FlakyTest > flaky PASSED SuccessfulTest > successful PASSED ```  `ClassMethodNameFilterUtils.resolveClassMethodNameFilters` looks for Gradle's `ClassMethodNameFilter` in the `delegates` map of `DelegatingByTypeFilter`. In Gradle 9.9.0 that class changed ([source](https://github.com/gradle/gradle/blob/v9.9.0/platforms/jvm/testing-jvm-infrastructure/src/main/java/org/gradle/api/internal/tasks/testing/junitplatform/filters/DelegatingByTypeFilter.java)). `ClassMethodNameFilter` is now passed to the constructor and stored in a `defaultDelegate` field, and `delegates` stays empty unless there are directory selectors.  I dumped the fields of the `DelegatingByTypeFilter` from a `LauncherDiscoveryListener` during the retry:  Gradle 9.8.2: ``` delegates = {ClassSource=ClassMethodNameFilter, MethodSource=ClassMethodNameFilter} ```  Gradle 9.9.0: ``` delegates = {} defaultDelegate = ClassMethodNameFilter ```  So Kotest gets no include patterns. Gradle's post-discovery filter removes the spec descriptors from the plan (o
+- **Issue #6277** (2026-11-13): **fix flaky tests 2**
+  *Symptoms*: <!--  If this PR updates documentation, please update all relevant versions of the docs, see: https://github.com/kotest/kotest/tree/master/documentation/versioned_docs The documentation at https://github.com/kotest/kotest/tree/master/documentation/docs is the documentation for the next minor or major version _TO BE RELEASED_ --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -724,257 +708,186 @@ export default Home;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a841463` (2026-11-10)
-**Commit Message**: Support com.android.kotlin.multiplatform.library in the Gradle plugin (#6132) (#6266)
+### Incident Patch 1: `8d2e4b47` (2026-11-13)
+**Commit Message**: Update dependency dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm to v2.6.6 (#6265)
 
-Fixes #6132
+This PR contains the following updates:
 
-## Summary
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+|
+[dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm](https://redirect.github.com/reformator14/stacktrace-decoroutinator)
+| `2.6.4` → `2.6.6` |
+![age](https://developer.mend.io/api/mc/badges/age/maven/dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm/2.6.6?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm/2.6.4/2.6.6?slim=true)
+|
 
-`handleMultiplatformAndroid` only detected the legacy
-`KotlinAndroidTarget`, so projects using the
-`com.android.kotlin.multiplatform.library` plugin (required for Android
-targets in KMP projects from AGP 9) got no kotest task. An `androidJvm`
-target that is not a `KotlinAndroidTarget` is now wired through the
-**`hostTest`** compilation, which is where that plugin hosts the unit
-tests (per the [official
-docs](https://developer.android.com/kotlin/multiplatform/plugin):
-compilations are `main`, `hostTest`, `deviceTest`).
+---
 
-## Change
+### Release Notes
 
-- registers a `kotestAndroidHostTest` task (`KotestAndroidTask`)
-mirroring the legacy android wiring: specs classpath from the
-compilation output, runtime classpath from the compilation's
-`runtimeDependencyConfigurationName` configuration + output, reports to
-`build/test-results/kotestAndroidHostTest`, depends on the standard
-`androidHostTest` task, and wired into the aggregate `kotest` task
-behind `customGradleTask`
-- the runtime classpath uses the compilation's runtime configuration
-**directly** — the new plugin exposes KGP-style configurations
+<details>
+<summary>reformator14/stacktrace-decoroutinator
+(dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm)</summary>
 
-**File**: `kotest-framework/kotest-framework-plugin-gradle/src/main/kotlin/io/kotest/framework/gradle/KotestPlugin.kt` (modified, +82/-2)
+###
+[`v2.6.6`](https://redirect.github.com/reformator14/stacktrace-decoroutinator/releases/tag/v2.6.6):
+2.6.6
+
+Fixes
+
+-
+[#&#8203;85](https://redirect.github.com/reformator14/stacktrace-decoroutinator/issues/85):
+fix a 2.6.5 regression where Ktor pipeli
+
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -73,6 +73,12 @@ abstract class KotestPlugin : Plugin<Project> {
-       internal const val FAIL_ON_NO_DISCOVERED_TESTS = "failOnNoDiscoveredTests"
-       internal const val JVM_TEST_SUITE = "JVM_TEST_SUITE"
+@@ -83,7 +83,7 @@ nmcp = "1.0.2"
+ xmlutil = "0.91.3"
  
-+      // the com.android.kotlin.multiplatform.library plugin hosts the unit tests of its android
-+      // target in the hostTest compilation, run by the androidHostTest task
-+      internal const val HOST_TEST_COMPILATION = "hostTest"
-+      internal const val ANDROID_HOST_TEST_TASK_NAME = "androidHostTest"
-+      internal const val KOTEST_ANDROID_HOST_TEST_NAME = "kotestAndroidHostTest"
-+
-       const val POWER_ASSERT_PLUGIN_ID = "org.jetbrains.kotlin.plugin.power-assert"
-    }
+ binary-compatibility-validator = "0.18.1"
+-decoroutinator = "2.6.4"
++decoroutinator = "2.6.6"
+ pitest = "1.23.1"
  
-@@ -425,8 +431,82 @@ abstract class KotestPlugin : Plugin<Project> {
-    }
- 
-    private fun handleMultiplatformAndroid(target: KotlinTarget, kotestExtension: KotestGradleExtension) {
--      if (target is KotlinAndroidTarget) {
--         configureAndroid(target.project, target.compilations, "android", kotestExtension)
-+      when (target) {
-+         is KotlinAndroidTarget -> configureAndroid(target.project, target.compilations, "android", kotestExtension)
-+
-+         // the com.android.kotlin.multiplatform.library plugin, required for Android in KMP projects
-+         // from AGP 9, registers an androidJvm target that is not a KotlinAndroidTarget (#6132);
-+         // its unit tests live in the hostTest compilation, run by the androidHostTest task
-+         else -> configureAndroidHostTest(target, kotestExtension)
-+      }
-+   }
-+
-+   /**
-+    * Wires a kotest task into the [HOST_TEST_COMPILATION] compilation of an android target created
-+    * by the `com.android.kotlin.multiplatform.library` plugin, which hosts the unit tests of that
-+    * target. Device tests (instrumentation) are not supported by Kotest.
-+    */
-+   private fun configureAndroidHostTest(target: KotlinTarget, kotestExtension: KotestGradleExtension) {
-+      val project = target.project
-+      val compilation = target.compilations.findByName(HOST_TEST_COMPILATION)
-+      if (compilation == null) {
-+         // host tests are disabled by default in the android multiplatform library plugin
-+         project.logger.info("> Skipping tests for ${target.name} because no $HOST_TEST_COMPILATION compilation found")
-+         return
-+      }
-+
-+      if (kotestExtension.customGradleTask.getOrElse(false)) {
-+         val runtimeConfigurationName = compilation.runtimeDependencyConfigurationName
-+            ?: error("No runtime dependency configuration found for compilation ${compilation.name}")
-+
-+         val runtimeConfiguration = project.configurations.findByName(runtimeConfigurationName)
-+            ?: error("No configuration found for $runtimeConfigurationName")
-+
-+         // to run specs we need to include dependencies and the compiled output
-+         val runtimeWithTests = project.objects.fileCollection()
-+            .from(runtimeConfiguration)
-+            .from(compilation.output.allOutputs)
-+
-+         val kotestTaskName = KOTEST_ANDROID_HOST_TEST_NAME
-+
-+         val task = project.tasks.register(kotestTaskName, KotestAndroidTask::class) {
-+
-+            group = JavaBasePlugin.VERIFICATION_GROUP
-+            description = TASK_DESCRIPTION
-+
-+            // I don't know why this has to be set here and not inside the exec method
-+            // it works for JVM but not KMP JVM
-+            // I think the KMP version must be shadowing the mainClass variable somewhere
-+            mainClass.set(LAUNCHER_MAIN_CLASS)
-+            classpath = runtimeWithTests
-+
-+            // we don't want to abort test runs when we have test failures for one target
-+            isIgnoreExitValue = true
-+
-+            // for specs we only care about what's outputted by this compilation
-+            specsClasspath.set(compilation.output.allOutputs)
-+
-+            // we set the test reports dir to the standard android test reports dir
-+            // this will result in something like build/test-results/kotestAndroidHostTest
-+            moduleTestReportsDir.set(getModuleTestReportsDir(project, name))
-+            rootTestReportsDir.set(getRootTestReportsDir(project, name))
-+            compilationName.set(compilation.name)
-+            targetName.set(target.name)
-+
-+            // we can execute check or test tasks with -Pkotest.include and this will then be
-+            // passed to the kotest runtime as an environment variable to filter specs and tests
-+            project.findProperty(KOTEST_INCLUDE_PROPERTY)?.let { include.set(it.toString()) }
-+
-+            // we depend on the standard android host test task to ensure compilation has happened
-+            dependsOn(ANDROID_HOST_TEST_TASK_NAME)
-+            inputs.files(project.tasks.named(ANDROID_HOST_TEST_TASK_NAME).map { it.outputs.files })
-+         }
-+
-+         // this means that this kotest task will be run when the user runs "gradle kotest"
-+         project.tasks.getByName(KOTEST_TASK_NAME) {
-+            pro
+ # https://developer.android.com/jetpack/androidx/versions/all-channel
 ```
 
 ---
 
-### Incident Patch 2: `5791e84b` (2026-11-09)
-**Commit Message**: Restore compatibility with Gradle 9.9.0 (#6271)
+### Incident Patch 2: `aa801abc` (2026-11-13)
+**Commit Message**: fix flaky tests 2 (#6277)
 
-Fixes #6270.
+<!-- 
+If this PR updates documentation, please update all relevant versions of
+the docs, see:
+https://github.com/kotest/kotest/tree/master/documentation/versioned_docs
+The documentation at
+https://github.com/kotest/kotest/tree/master/documentation/docs is the
+documentation for the next minor or major version _TO BE RELEASED_
+-->
 
-**File**: `kotest-runner/kotest-runner-junit-platform/src/jvmMain/kotlin/io/kotest/runner/junit/platform/gradle/ClassMethodNameFilterUtils.kt` (modified, +24/-19)
+**File**: `kotest-assertions/kotest-assertions-core/src/jvmTest/kotlin/io/kotest/assertions/nondeterministic/EventuallyTest.kt` (modified, +3/-1)
 ```diff
-@@ -102,30 +102,27 @@ internal object ClassMethodNameFilterUtils {
-     * Finds all `ClassMethodNameFilter` instances from the post-discovery filters list.
-     *
-     * In Gradle < 9.4, `ClassMethodNameFilter` appears directly in the list.
--    * In Gradle >= 9.4, `ClassMethodNameFilter` is wrapped inside a `DelegatingByTypeFilter`
--    * which has a `delegates` map of `TestSource` type → `PostDiscoveryFilter`. We extract
--    * the `ClassMethodNameFilter` instances from those delegate maps.
-+    * In Gradle 9.4–9.8, `ClassMethodNameFilter` is wrapped inside a `DelegatingByTypeFilter`
-+    * which has a `delegates` map of `TestSource` type → `PostDiscoveryFilter`.
-+    * In Gradle >= 9.9, it is stored in the `defaultDelegate` field of `DelegatingByTypeFilter`
-+    * instead, and `delegates` only contains filters for directory selectors.
-     */
-    private fun resolveClassMethodNameFilters(filters: List<Any>): List<Any> {
-       val result = mutableListOf<Any>()
- 
-       for (filter in filters) {
--         when (filter.javaClass.simpleName) {
--            "ClassMethodNameFilter" -> result.add(filter)
--            "DelegatingByTypeFilter" -> {
--               // Gradle >= 9.4: unwrap ClassMethodNameFilter from the DelegatingByTypeFilter's delegates map
--               runCatching {
--                  val delegatesField = filter::class.java.getDeclaredField("delegates")
--                  delegatesField.isAccessible = true
--                  val delegates = delegatesField.get(filter) as? Map<*, *> ?: emptyMap<Any, Any>()
--                  for ((_, delegate) in delegates) {
--                     if (delegate != null && delegate.javaClass.simpleName == "ClassMethodNameFilter") {
--                        result.add(delegate)
--                     }
--                  }
--               }.onFailure { e ->
--                  logger.log { "Failed to unwrap DelegatingByTypeFilter via reflection: $e" }
--               }
-+         when {
-+            filter.isClassMethodNameFilter() -> result.add(filter)
-+            filter.javaClass.simpleName == "DelegatingByTypeFilter" -> {
-+               // Gradle 9.4–9.8: ClassMethodNameFilter registered per TestSource type in `delegates`
-+               (filter.fieldValue("delegates") as? Map<*, *>)
-+                  ?.values
-+                  ?.filterNotNull()
-+                  ?.filterTo(result) { it.isClassMethodNameFilter() }
-+               // Gradle 9.9+: passed to the constructor as `defaultDelegate`; `delegates` only holds directory selectors
-+               filter.fieldValue("defaultDelegate")
-+                  ?.takeIf { it.isClassMethodNameFilter() }
-+                  ?.let(result::add)
-             }
+@@ -254,7 +254,9 @@ class EventuallyTest : FunSpec() {
+          var count = 0
+          val config = eventuallyConfig {
+             interval = 1.milliseconds
+-            duration = 10.milliseconds
++            // bound by retries, not time, so a slow runner still gets a second ("last") attempt
++            duration = 10.seconds
++            retries = 3
           }
-       }
-@@ -135,6 +132,14 @@ internal object ClassMethodNameFilterUtils {
-       return result.distinct()
-    }
- 
-+   /** Reads the declared field [name], or returns null if this class has no such field. */
-+   private fun Any.fieldValue(name: String): Any? =
-+      javaClass.declaredFields.firstOrNull { it.name == name }
-+         ?.apply { isAccessible = true }
-+         ?.get(this)
-+
-+   private fun Any.isClassMethodNameFilter() = javaClass.simpleName == "ClassMethodNameFilter"
-+
-    private fun testMatcher(obj: Any): Any {
-       val field = obj::class.java.getDeclaredField("matcher")
-       field.isAccessible = true
+          val message = shouldFail {
+             eventually(config) {
 ```
 
-**File**: `kotest-runner/kotest-runner-junit-platform/src/jvmTest/kotlin/io/kotest/runner/junit/platform/gradle/ClassMethodNameFilterUtilsTest.kt` (modified, +36/-0)
+**File**: `kotest-framework/kotest-framework-engine/src/jvmTest/kotlin/com/sksamuel/kotest/engine/config/KotestPropertiesTest.kt` (modified, +10/-5)
 ```diff
-@@ -97,4 +97,40 @@ class ClassMethodNameFilterUtilsTest : FunSpec({
-       ClassMethodNameFilterUtils.extractIncludePatterns(listOf(filter)).shouldBeEmpty()
+@@ -14,11 +14,16 @@ class KotestPropertiesTest : FunSpec() {
+       test("properties file should be applied") {
+          // override the kotest.properties filename so it's only applied to this test
+          withSystemProperty(KotestEngineProperties.PROPERTIES_FILENAME, "/test.kotest.properties") {
+-            TestEngineLauncher()
+-               .withListener(NoopTestEngineListener)
+-               .withSpecRefs(SpecRef.Reference(C::class))
+-               .execute()
+-            value shouldBe 123
++            try {
++               TestEngineLauncher()
++                  .withListener(NoopTestEngineListener)
++                  .withSpecRefs(SpecRef.Reference(C::class))
++                  .execute()
++               value shouldBe 123456
++            } finally {
++               // the loader applies the file as system properties, so don't leak the timeout into later engine runs
++               System.clearProperty(KotestEngineProperties.PROJECT_TIMEOUT)
++            }
+          }
+       }
     }
+```
+
+**File**: `kotest-framework/kotest-framework-engine/src/jvmTest/kotlin/com/sksamuel/kotest/engine/test/SourceRefTest.kt` (modified, +6/-2)
+```diff
+@@ -41,14 +41,18 @@ class SourceRefTest : FunSpec() {
+       // retune if flaky on CI - history:
+       // - before 13/11/26 it was set to 600ms and flaky
+       // - as of 13/11/2026 it was raised to 1000ms
++      // - after that, measured as best of 3 rounds after a warm-up, so one-off JIT/GC/CPU-contention stalls
++      //   on shared runners don't fail it, while a real regression (every round slow) still does
+       test("source ref should be performant").config(timeout = 20.seconds) {
+-         val duration = measureTime {
++         fun round() = measureTime {
+             repeat(5_000) {
+                val spec = MySpecForTestCaseSourceRefTest()
+                Materializer().materialize(spec, Reference(spec::class, spec::class.bestName())).first().source
+             }
+          }
+-         duration.inWholeMilliseconds shouldBeLessThan 1000L
++         round() // warm-up
++         val best = List(3) { round() }.min()
++         best.inWholeMilliseconds shouldBeLessThan 1000L
+       }
+    }
+ }
+```
+
+**File**: `kotest-framework/kotest-framework-engine/src/jvmTest/resources/test.kotest.properties` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-kotest.framework.projecttimeout=123
++kotest.framework.projecttimeout=123456
+```
+
+---
+
+### Incident Patch 3: `1d0057ed` (2026-11-13)
+**Commit Message**: fix flaky test (#6276)
+
+<!-- 
+If this PR updates documentation, please update all relevant versions of
+the docs, see:
+https://github.com/kotest/kotest/tree/master/documentation/versioned_docs
+The documentation at
+https://github.com/kotest/kotest/tree/master/documentation/docs is the
+documentation for the next minor or major version _TO BE RELEASED_
+-->
+
+**File**: `kotest-framework/kotest-framework-engine/src/jvmTest/kotlin/com/sksamuel/kotest/engine/test/SourceRefTest.kt` (modified, +4/-2)
+```diff
+@@ -38,15 +38,17 @@ class SourceRefTest : FunSpec() {
+       // after PR https://github.com/kotest/kotest/pull/6203:
+       // StackWalker + plain java.lang.Class based implementation
  
-+   test("unwraps ClassMethodNameFilter from DelegatingByTypeFilter.defaultDelegate (Gradle 9.9+)") {
-+      val filter = newClassMethodNameFilter(setOf("FlakyTest.flaky"))
-+      val wrapper = Gradle99.DelegatingByTypeFilter(emptyMap<Any, Any>(), filter)
-+
-+      ClassMethodNameFilterUtils.extractIncludePatterns(listOf(wrapper)) shouldBe listOf("\\QFlakyTest.flaky\\E")
-+
-+      ClassMethodNameFilterUtils.reset(listOf(wrapper))
-+
-+      ClassMethodNameFilterUtils.extractIncludePatterns(listOf(wrapper)).shouldBeEmpty()
-+   }
-+
-+   test("unwraps ClassMethodNameFilter from DelegatingByTypeFilter.delegates (Gradle 9.4-9.8)") {
-+      val filter = newClassMethodNameFilter(setOf("FlakyTest.flaky"))
-+      val wrapper = Gradle94.DelegatingByTypeFilter(mapOf("ClassSource" to filter, "MethodSource" to filter))
-+
-+      ClassMethodNameFilterUtils.extractIncludePatterns(listOf(wrapper)) shouldBe listOf("\\QFlakyTest.flaky\\E")
-+   }
-+
- })
-+
-+private fun newClassMethodNameFilter(includes: Set<String>): Any =
-+   resolveClassMethodNameFilterClass()
-+      .declaredConstructors.first { it.parameterCount == 1 }.let {
-+         it.isAccessible = true
-+         it.newInstance(TestSelectionMatcher(TestFilterSpec(includes, emptySet(), emptySet())))
-+      }
-+
-+// Mimic the layouts of Gradle's DelegatingByTypeFilter, which is matched by simple name
-+@Suppress("unused")
-+private object Gradle94 {
-+   class DelegatingByTypeFilter(private val delegates: Map<Any, Any>)
-+}
-+
-+@Suppress("unused")
-+private object Gradle99 {
-+   class DelegatingByTypeFilter(private val delegates: Map<Any, Any>, private val defaultDelegate: Any)
-+}
+-      // retune if flaky on CI
++      // retune if flaky on CI - history:
++      // - before 13/11/26 it was set to 600ms and flaky
++      // - as of 13/11/2026 it was raised to 1000ms
+       test("source ref should be performant").config(timeout = 20.seconds) {
+          val duration = measureTime {
+             repeat(5_000) {
+                val spec = MySpecForTestCaseSourceRefTest()
+                Materializer().materialize(spec, Reference(spec::class, spec::class.bestName())).first().source
+             }
+          }
+-         duration.inWholeMilliseconds shouldBeLessThan 600L
++         duration.inWholeMilliseconds shouldBeLessThan 1000L
+       }
+    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6271** (2026-11-09): Restore compatibility with Gradle 9.9.0 (@marcphilipp)
-- **PR #6269** (2026-11-08): docs: add Vercel skills CLI installation instructions (@alyssoncs)
-- **PR #6266** (2026-11-10): Support com.android.kotlin.multiplatform.library in the Gradle plugin (#6132) (@Inf1mum)
-- **PR #6261** (2026-11-02): Keep Gradle's no-discovered-tests check enabled on the JVM (#6257) (@Inf1mum)
-- **PR #6260** (2026-10-30): perf: short-circuit the contain matcher pass/fail decision (#6106) (@Inf1mum)
-- **PR #6259** (2026-10-29): Expose HikariCP as an api dependency of kotest-extensions-testcontainers (@PreAgile)
+- **PR #6278** (2026-11-14): update docs from amper to kotlin toolchain (@alfonsoristorato)
+- **PR #6277** (2026-11-13): fix flaky tests 2 (@alfonsoristorato)
+- **PR #6276** (2026-11-13): fix flaky test (@alfonsoristorato)
+- **PR #6275** (2026-11-14): pin more mockserver deps (@alfonsoristorato)
+- **PR #6274** (2026-11-12): update skill versions manually as release action failed step (@alfonsoristorato)
+- **PR #6273** (2026-11-11): Update build.gradle.kts to fix gradle plugin label (@sksamuel)
 
 ---
 
@@ -994,53 +907,31 @@ Fixes #6270.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Support com.android.kotlin.multiplatform.library in the Gradle plugin (#6132) (#
+## X. Update dependency dev.reformator.stacktracedecoroutinator:stacktrace-decoroutina
 
 **RULE**:
-When implementing operations in `kotest-framework/kotest-framework-plugin-gradle/src/main/kotlin/io/kotest/framework/gradle/KotestPlugin.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a841463`: Support com.android.kotlin.multiplatform.library in the Gradle plugin (#6132) (#6266). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8d2e4b47`: Update dependency dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm to v2.6.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotest-framework/kotest-framework-plugin-gradle/src/main/kotlin/io/kotest/framework/gradle/KotestPlugin.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-      // the com.android.kotlin.multiplatform.library plugin hosts the unit tests of its android
-      // target in the hostTest compilation, run by the androidHostTest task
-      internal const val HOST_TEST_COMPILATION = "hostTest"
-      internal const val ANDROID_HOST_TEST_TASK_NAME = "androidHostTest"
-      internal const val KOTEST_ANDROID_HOST_TEST_NAME = "kotestAndroidHostTest"
-
-      when (target) {
-         is KotlinAndroidTarget -> configureAndroid(target.project, target.compilations, "android", kotestExtension)
-
-         // the com.android.kotlin.multiplatform.library plugin, required for Android in KMP projects
-         // from AGP 9, registers an androidJvm target that is not a KotlinAndroidTarget (#6132);
-         // its unit tests live in the hostTest compilation, run by the androidHostTest task
-         else -> configureAndroidHostTest(target, kotestExtension)
-      }
-   }
-
-   /**
-    * Wires a kotest task into the [HOST_TEST_COMPILATION] compilation of an android target created
-    * by the `com.android.kotlin.multiplatform.library` plugin, which hosts the unit tests of that
-    * target. Device tests (instrumentation) are not supported by Kotest.
-    */
-   private
+decoroutinator = "2.6.6"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-      if (target is KotlinAndroidTarget) {
-         configureAndroid(target.project, target.compilations, "android", kotestExtension)
+// Induced defect failure mode:
+decoroutinator = "2.6.4"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a841463` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8d2e4b47` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

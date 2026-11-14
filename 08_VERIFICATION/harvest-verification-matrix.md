@@ -9937,3 +9937,9 @@
 | `CYCLE-20261114-SYRC` | `2026-11-14T20:52:03.192Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8532` | Yes (`e1212943...`) |
 | `CYCLE-20261114-T4MW` | `2026-11-14T20:52:10.808Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8533` | Yes (`8687381d...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T20:52:48.097Z` | `hf-autotrust-qwen3.8-flash-next-e384-fp4-v2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-73A9B4FE` [Domain D] | Yes (`bb7329d0...`) |
+| `CYCLE-20261114-TZJQ` | `2026-11-14T21:20:50.486Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`469ce49b...`) |
+| `CYCLE-20261114-U1EK` | `2026-11-14T21:20:52.892Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8534` | Yes (`5115026d...`) |
+| `CYCLE-20261114-U5T8` | `2026-11-14T21:20:58.604Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8535` | Yes (`e04f0a92...`) |
+| `CYCLE-20261114-U8O8` | `2026-11-14T21:21:02.312Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8536` | Yes (`71d9e736...`) |
+| `CYCLE-20261114-UAS7` | `2026-11-14T21:21:05.047Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8537` | Yes (`5f6536aa...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T21:21:32.664Z` | `hf-phocinae-phocinae-largha-150m-v1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-04705777` [Domain D] | Yes (`d50e5fb2...`) |

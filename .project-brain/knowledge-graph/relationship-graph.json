@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T20:52:48.095Z",
+  "updated_at": "2026-11-14T21:21:32.662Z",
   "statistics": {
-    "total_nodes": 216,
+    "total_nodes": 217,
     "total_edges": 117,
     "domain_distribution": {
-      "D": 169,
+      "D": 170,
       "M": 1,
       "H": 19,
       "J": 8,
@@ -4845,6 +4845,28 @@
       ],
       "created_at": "2026-11-14T20:52:48.095Z",
       "updated_at": "2026-11-14T20:52:48.095Z"
+    },
+    "DOM-D-04705777": {
+      "id": "DOM-D-04705777",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Phocinae/Phocinae-Largha-150M-v1",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md`  \n> **Source**: huggingface ([http -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md`  \n> **Source**: huggingface ([http",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-phocinae-phocinae-largha-150m-v1/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T21:21:08.471Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-phocinae-phocinae-largha-150m-v1)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-14T21:21:32.662Z",
+      "updated_at": "2026-11-14T21:21:32.662Z"
     }
   },
   "edges": [
