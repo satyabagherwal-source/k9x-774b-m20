@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T22:57:50.993Z",
-  "total_cycles_completed": 9620,
-  "total_learnings_persisted": 9620,
-  "total_rules_promoted": 9276,
+  "last_updated": "2026-11-14T23:43:13.630Z",
+  "total_cycles_completed": 9622,
+  "total_learnings_persisted": 9622,
+  "total_rules_promoted": 9277,
   "history": [
-    {
-      "timestamp": "2026-11-14T00:48:30.532Z",
-      "repository": "Scantist/GLM-5.3-SLIM-GGUF",
-      "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-14T00:48:51.160Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-14T01:26:20.112Z",
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-14T22:57:50.993Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T23:43:04.702Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T23:43:13.630Z",
+      "repository": "DNSControl/dnscontrol",
+      "learningId": "learn-github-dnscontrol-dnscontrol",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

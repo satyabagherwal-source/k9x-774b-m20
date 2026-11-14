@@ -10001,3 +10001,5 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `c718b2ad` | Multi-dimensional audit evidence | 2026-11-14T22:57:50.108Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `229979d6` | Multi-dimensional audit evidence | 2026-11-14T22:57:50.988Z |
 | `learn-dom-d-d6b073d5` | `project://hf-speridlabs-iris-3b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | 2026-11-14T22:58:30.106Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-14T23:43:04.695Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `5da338d6` | Multi-dimensional audit evidence | 2026-11-14T23:43:13.624Z |

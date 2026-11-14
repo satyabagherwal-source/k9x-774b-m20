@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T22:58:31.014Z",
-  "total_records": 873,
+  "last_updated": "2026-11-14T23:43:18.446Z",
+  "total_records": 877,
   "domains": {
     "A": {
       "total": 6,
@@ -36,7 +36,7 @@
       ]
     },
     "D": {
-      "total": 428,
+      "total": 430,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -465,7 +465,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gg",
         "domain_intelligence-research-knowledge-intelligence-speridlabs-iris-3b-core-invariants",
         "DOM-D-D6B073D5",
-        "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
+        "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized"
       ]
     },
     "E": {
@@ -499,7 +501,7 @@
       ]
     },
     "G": {
-      "total": 141,
+      "total": 143,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -641,7 +643,9 @@
         "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-core-invariants",
         "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-core-invariants",
         "domain_intelligence-architecture-intelligence-mikepenz-aboutlibraries-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-hmbown-codewhale-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-hmbown-codewhale-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
+        "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants"
       ]
     },
     "H": {
@@ -10264,8 +10268,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "e5b7a9127b9838278d68a6eb47402f5bbd0ac3c6e8ed5abb8265cf6785bdf2ef",
-      "created_at": "2026-11-14T09:53:26.915Z"
+      "content_hash": "564674781c2466aa3411b144d7a4462054637419dbe1d96e09089871d5346216",
+      "created_at": "2026-11-14T23:43:18.446Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -17267,6 +17271,42 @@
       "repository": "apollographql-apollo-kotlin-learnings",
       "content_hash": "34d43cc0dc5a1b4547a3467e5d5da63b69ab12ceff96d2664f6fe08f63dc7a90",
       "created_at": "2026-11-14T22:58:31.014Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "content_hash": "12a7d8b9924f2f55ef6775084726e6206c09567c561957698986a50581c63850",
+      "created_at": "2026-11-14T23:43:04.909Z"
+    },
+    "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: DNSControl/dnscontrol Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dnscontrol-dnscontrol-architecture-intelligence-dnscontrol-dnscontrol-core-invar.md",
+      "repository": "DNSControl/dnscontrol",
+      "content_hash": "645e1c36c245e86c2e7c155da2786456daf3d05f52ab409483cb1e45e69a1aca",
+      "created_at": "2026-11-14T23:43:13.974Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-learnings-research-knowledge-in.md",
+      "repository": "hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings",
+      "content_hash": "e9ea3125abc5d8fb403fbeec2be26f532b039279ed03f00f042f43c916338c01",
+      "created_at": "2026-11-14T23:43:17.178Z"
+    },
+    "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: dnscontrol-dnscontrol-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dnscontrol-dnscontrol-learnings-architecture-intelligence-dnscontrol-dnscontrol-.md",
+      "repository": "dnscontrol-dnscontrol-learnings",
+      "content_hash": "5901574a3b932c67070eed34c3eb9810402e203107b629282699fc0e130ba4a6",
+      "created_at": "2026-11-14T23:43:17.766Z"
     }
   }
 }

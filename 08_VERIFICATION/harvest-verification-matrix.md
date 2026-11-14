@@ -9968,3 +9968,5 @@
 | `CYCLE-20261114-APZS` | `2026-11-14T22:57:50.104Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8549` | Yes (`ff1b6b97...`) |
 | `CYCLE-20261114-AQO8` | `2026-11-14T22:57:50.984Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8550` | Yes (`26ea2b70...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T22:58:30.106Z` | `hf-speridlabs-iris-3b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D6B073D5` [Domain D] | Yes (`69042b81...`) |
+| `CYCLE-20261114-WWKY` | `2026-11-14T23:43:04.690Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`cb7b79ae...`) |
+| `CYCLE-20261114-X3GZ` | `2026-11-14T23:43:13.619Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8551` | Yes (`e79f3bda...`) |

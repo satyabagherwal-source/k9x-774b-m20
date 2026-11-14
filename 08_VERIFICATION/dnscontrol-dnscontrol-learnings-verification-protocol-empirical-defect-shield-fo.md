@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:35:04.746Z",
+  "timestamp": "2026-11-14T23:43:17.496Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-dnscontrol-dnscontrol-learnings",
+  "learning_id": "LEARN-EVO-dnscontrol-dnscontrol-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dnscontrol-dnscontrol-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:35:04.746Z`  
-> **Learning ID**: `LEARN-REEXTRACT-dnscontrol-dnscontrol-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-14T23:43:17.496Z`  
+> **Learning ID**: `LEARN-EVO-dnscontrol-dnscontrol-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `a866511c`  
+> **Source Version**: `5da338d6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T13:33:09.664Z  
+> **Timestamp**: 2026-11-14T23:43:12.529Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T13:33:09.467Z  
+> **Harvest Timestamp**: 2026-11-14T23:43:12.523Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Infrastructure as code for DNS!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4003 stars
+- **Stars / Engagement**: 4006 stars
 
 ---
 
@@ -678,11 +678,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5086** (2026-11-14): **refactor(normalize): move CAA and OPENPGPKEY checks to their makers**
+  *Symptoms*: First step in splitting `pkg/normalize` into separate normalize, transform and validate phases: remove type-specific work that the makers already do (or should do).  ## Changes  - **CAA:** `MakeCAA` already rejects unknown tags with the same allow-list, so the duplicate check in `ValidateAndNormalizeConfig` is removed. - **OPENPGPKEY:** `mustbe.OpenPGPKey` returned the text `Can not decode "..."` as the key when decoding failed, and normalize reported the failure when it tried to decode that text again. It now returns `(string, error)`, `MakeOPENPGPKEY` propagates the error, and the re-encoding pass in normalize is removed. A non-string argument now returns an error instead of panicking. - **Decoding moved:** `transform.OPENPGPKEY` and its hex/base64 helper move into `pkg/mustbe/openpgpkey.go`, since `mustbe.OpenPGPKey` was the only caller. `pkg/mustbe` no longer imports `pkg/transform`. The exported `transform.OPENPGPKEY` is gone; nothing in this repo used it. - New `pkg/mustbe/openpgpkey_test.go` covers hex, base64, invalid input and round trip.  ## Behavior changes  - A bad CAA tag is reported as `CAA tag (bogus) is not one of the valid types` (the maker's message) instead of `CAA tag bogus is invalid`. - A bad OPENPGPKEY now fails at import time, with the `dnsconfig.js` line number, and stops at the first error. Previously it was collected with the other validation errors.  ## Testing  - `go build ./...` and `go test` for `pkg/mustbe`, `pkg/normalize`, `models`, `pkg/js`,
+
 - **Issue #5083** (2026-11-12): **docs: clarify macOS sha check**
   *Symptoms*: <!-- ## Before submiting a pull request  Please make sure you've run the following commands from the root directory.      bin/generate-all.sh  (this runs commands like "go generate", fixes formatting, and so on)  ## Pull request title  The pull request title becomes the commit message on main and must follow Conventional Commits (the "PR: Commitlint" check enforces this). Provider-specific changes use the scope "p/PROVIDERNAME". The subject starts with a lowercase letter.  Some examples: * ci: add required GHA permissions for goreleaser * docs: fix providers with "contributor support" table * feat(p/ROUTE53): allow R53_ALIAS records to enable target health evaluation  More details can be found in CONTRIBUTING.md under "Pull request titles". !--> 
-
-- **Issue #5081** (2026-11-11): **build(deps): bump actions/download-artifact from 4.3.0 to 8.0.2**
-  *Symptoms*: Bumps [actions/download-artifact](https://github.com/actions/download-artifact) from 4.3.0 to 8.0.2. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/download-artifact/releases">actions/download-artifact's releases</a>.</em></p> <blockquote> <h2>v8.0.2</h2> <h2>What's Changed</h2> <ul> <li>Update the readme by <a href="https://github.com/danwkennedy"><code>@​danwkennedy</code></a> in <a href="https://redirect.github.com/actions/download-artifact/pull/473">actions/download-artifact#473</a></li> <li>Improves artifact download retries when the service returns HTTP 429 (rate limiting), including honoring valid Retry-After headers.</li> <li>Update <code>@​actions/artifact</code> to 6.3.1 by <a href="https://github.com/tunc-d"><code>@​tunc-d</code></a> in <a href="https://redirect.github.com/actions/download-artifact/pull/492">actions/download-artifact#492</a></li> <li>Prepare download-artifact v8.0.2 by <a href="https://github.com/tunc-d"><code>@​tunc-d</code></a> in <a href="https://redirect.github.com/actions/download-artifact/pull/493">actions/download-artifact#493</a></li> </ul> <h2>New Contributors</h2> <ul> <li><a href="https://github.com/tunc-d"><code>@​tunc-d</code></a> made their first contribution in <a href="https://redirect.github.com/actions/download-artifact/pull/492">actions/download-artifact#492</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/actions/download-artifact/compare/v8.0.1...
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -699,148 +699,354 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59cb1936` (2026-11-11)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.3 (#5080)
+### Incident Patch 1: `5da338d6` (2026-11-14)
+**Commit Message**: refactor(normalize): move CAA and OPENPGPKEY checks to their makers (#5086)
 
-Bumps
-[github/codeql-action/upload-sarif](https://github.com/github/codeql-action)
-from 4.39.1 to 4.39.3.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's
-releases</a>.</em></p>
-<blockquote>
-<h2>v4.39.3</h2>
-<ul>
-<li>Fixed diff-informed alert filtering incorrectly removing alerts in
-changed files whose paths contain spaces, special characters, or
-non-ASCII characters. <a
-href="https://redirect.github.com/github/codeql-action/pull/4283">#4283</a></li>
-</ul>
-<h2>v4.39.2</h2>
-<ul>
-<li>Update default CodeQL bundle version to <a
-href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.4">2.27.4</a>.
-<a
-href="https://redirect.github.com/github/codeql-action/pull/4284">#4284</a></li>
-<li><em>Upcoming breaking change</em>: CodeQL version 2.22.3 and earlier
-were discontinued on 16 October 2026 alongside GitHub Enterprise Server
-3.18, and will be unsupported by the next minor release of the CodeQL
-Action. Added a deprecation warning for customers using these versions
-of CodeQL. <a
+First step in splitting `pkg/normalize` into separate normalize,
+transform and validate phases: remove type-specific work that the makers
+already do (or should do).
 
+## Changes
 
-**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
+- **CAA:** `MakeCAA` already rejects unknown tags with the same
+allow-list, so the duplicate check in `ValidateAndNormalizeConfig` is
+removed.
+- **OPENPGPKEY:** `mustbe.OpenPGPKey` returned the text `Can not decode
+"..."` as the key when decoding failed, and normalize reported the
+failure when it tried to decode that text again. It now returns
+`(string, error)`, `MakeOPENPGPKEY` propagates the error, and the
+re-encoding pass in normalize is removed. A non-string argument now
+returns an error instead of panicking.
+- **Decoding moved:** `transform.OPENPGPKEY` and its hex/base64 helper
+move into `pkg/mustbe/openpgpkey.go`, since `mustbe.OpenPGPKey` was the
+only caller. `pkg/mustbe` no longer imports `pkg/transform`. The
+exported `transform.OPENPGPKEY` is gone; nothing in this repo used it.
+- New `pkg/mustbe/openpgpkey_test.go` covers hex, base64, invalid input
+and round trip.
+
+## Behavior changes
+
+- A bad CAA tag is reported as `CAA t
+
+**File**: `models/makers.go` (modified, +5/-1)
 ```diff
-@@ -76,6 +76,6 @@ jobs:
+@@ -289,7 +289,11 @@ func MakeOPENPGPKEY(origin string, _ map[string]string, isEnabled nrc.Flags, arg
+ 	if len(args) != 1 {
+ 		return nil, fmt.Errorf("MakeOPENPGPKEY expects exactly 1 argument, got %d: %+v", len(args), args)
+ 	}
+-	return dnsrdatav2.OPENPGPKEY{PublicKey: mustbe.OpenPGPKey(args[0])}, nil
++	key, err := mustbe.OpenPGPKey(args[0])
++	if err != nil {
++		return nil, err
++	}
++	return dnsrdatav2.OPENPGPKEY{PublicKey: key}, nil
+ }
  
-       # Upload the results to GitHub's code scanning dashboard.
-       - name: "Upload to code-scanning"
--        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-         with:
-           sarif_file: results.sarif
-\ No newline at end of file
+ func MakePORKBUNURLFWD(origin string, _ map[string]string, isEnabled nrc.Flags, args ...any) (dnsv2.RDATA, error) {
 ```
 
----
-
-### Incident Patch 2: `b94674c1` (2026-11-11)
-**Commit Message**: build(deps): bump actions/download-artifact from 4.3.0 to 8.0.2 (#5081)
-
-Bumps
-[actions/download-artifact](https://github.com/actions/download-artifact)
-from 4.3.0 to 8.0.2.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/actions/download-artifact/releases">actions/download-artifact's
-releases</a>.</em></p>
-<blockquote>
-<h2>v8.0.2</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>Update the readme by <a
-href="https://github.com/danwkennedy"><code>@​danwkennedy</code></a> in
-<a
-href="https://redirect.github.com/actions/download-artifact/pull/473">actions/download-artifact#473</a></li>
-<li>Improves artifact download retries when the service returns HTTP 429
-(rate limiting), including honoring valid Retry-After headers.</li>
-<li>Update <code>@​actions/artifact</code> to 6.3.1 by <a
-href="https://github.com/tunc-d"><code>@​tunc-d</code></a> in <a
-href="https://redirect.github.com/actions/download-artifact/pull/492">actions/download-artifact#492</a></li>
-<li>Prepare download-artifact v8.0.2 by <a
-href="https://github.com/tunc-d"><code>@​tunc-d</code></a> in <a
-href="https://redirect.github.com/actions/download-artifact/pull/493">actions/download-artifact#4
-
-**File**: `.github/workflows/release_draft.yml` (modified, +1/-1)
+**File**: `pkg/mustbe/openpgpkey.go` (modified, +89/-9)
 ```diff
-@@ -408,7 +408,7 @@ jobs:
-       contents: write # attach the provenance asset to the draft release
-     steps:
-       - name: Download the signed provenance
--        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0, same major as the generator's upload-artifact v4.6.0
-+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v4.3.0, same major as the generator's upload-artifact v4.6.0
-         with:
-           name: ${{ needs.provenance.outputs.provenance-name }}
+@@ -1,19 +1,99 @@
+ package mustbe
  
+ import (
++	"encoding/base64"
++	"encoding/hex"
++	"errors"
+ 	"fmt"
+-
+-	"github.com/DNSControl/dnscontrol/v5/pkg/transform"
++	"strings"
+ )
+ 
+-func OpenPGPKey(a any) string {
++// OpenPGPKey returns the key re-encoded as base64. The input may be hex or base64.
++func OpenPGPKey(a any) (string, error) {
+ 	switch v := a.(type) {
+ 	case string:
+-		k, err := transform.OPENPGPKEY(v)
+-		if err != nil {
+-			return fmt.Sprintf("Can not decode %q", v)
+-		}
+-		return k
++		return openPGPKeyFromString(v)
++	}
++	return "", fmt.Errorf("not a valid OPENPGPKEY: %v", a)
++}
++
++// openPGPKeyFromString decodes an OPENPGP key and re-encodes it as base64.
++func openPGPKeyFromString(encodedKey string) (string, error) {
++	// Decode the key, which can be either hex or base64.
++	decodedKey, err := decodeHexOrBase64(encodedKey)
++	if err != nil {
++		return "", fmt.Errorf("failed to decode OPENPGPKEY: %w", err)
++	}
++
++	// Re-encode the key as base64, since the input may have been hex.
++	encodedKey = b64.EncodeToString(decodedKey)
++	return encodedKey, nil
++}
++
++var b64 = base64.StdEncoding.Strict()
++
++// The target of an OPENPGPKEY record can be either hex or base64, so we need to
++// be able to decode both formats.
++//
++// PGP keys are quite long and are largely random, so the odds of the base64
++// encoding of a PGP key also being valid hex are very low. Therefore, we will
++// assume that if a string is both valid hex and valid base64, then it is hex.
++// The other cases where a string decodes as only hex, only base64, or neither
++// are all unambiguous.
++func decodeHexOrBase64(s string) ([]byte, error) {
++	// A string with mixed casing *could* be hex, but it's more likely to be
++	// base64. So we only try to decode as hex only if the string is all a
++	// single case.
++	var (
++		hexErr  error
++		hexData []byte
++	)
++	if s == strings.ToLower(s) || s == strings.ToUpper(s) {
++		hexData, hexErr = hex.DecodeString(s)
++	} else {
++		hexData, hexErr = nil, fmt.Errorf(
++			"hex string contains mixed case: %#v", s,
++		)
++	}
++
++	// Also try to decode the string as base64, using the strictest possible
++	// decoder (which is also used in the DNS "presentation" format and the "gpg
++	// --armor" format).
++	var (
++		b64Err  error
++		b64Data []byte
++	)
++	// Reject base64 strings that contain whitespace
++	if strings.ContainsAny(s, " \t\r\n") {
++		b64Data, b64Err = nil, fmt.Errorf(
++			"base64 string contains whitespace: %#v", s,
++		)
++	} else {
++		b64Data, b64Err = b64.DecodeString(s)
++	}
++
++	// Return the result.
++	if hexErr != nil && b64Err != nil {
++		// Both decodings failed, so there's nothing that we can do but return
++		// an error.
++		return nil, fmt.Errorf(
++			"string is neither valid hex nor valid base64: %w; %w",
++			hexErr, b64Err,
++		)
++	} else if hexErr == nil && b64Err != nil {
++		// Only the hex decoding succeeded, therefore the input must only be
++		// valid hex.
++		return hexData, nil
++	} else if hexErr != nil && b64Err == nil {
++		// Only the base64 decoding succeeded, therefore the input must only be
++		// valid base64.
++		return b64Data, nil
++	} else if hexErr == nil && b64Err == nil {
++		// Both decodings succeeded. This is theoretically ambiguous, but it's
++		// very unlikely that a valid base64 string would also be valid hex, so
++		// we will assume that the input is hex.
++		return hexData, nil
++	} else {
++		return nil, errors.New("unreachable")
+ 	}
+-	panic("mustbe.OpenPGPKey: unhandled type")
+ }
 ```
 
----
-
-### Incident Patch 3: `fd7c232b` (2026-11-11)
-**Commit Message**: build(deps): bump sigstore/cosign-installer from 4.1.2 to 4.1.3 (#5079)
-
-Bumps
-[sigstore/cosign-installer](https://github.com/sigstore/cosign-installer)
-from 4.1.2 to 4.1.3.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/sigstore/cosign-installer/releases">sigstore/cosign-installer's
-releases</a>.</em></p>
-<blockquote>
-<h2>v4.1.3</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>Bump Cosign to v3.1.4 (latest release) in <a
-href="https://redirect.github.com/sigstore/cosign-installer/pull/257">sigstore/cosign-installer#257</a></li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/sigstore/cosign-installer/compare/v4.1.2...v4.1.3">https://github.com/sigstore/cosign-installer/compare/v4.1.2...v4.1.3</a></p>
-</blockquote>
-</details>
-<details>
-<summary>Commits</summary>
-<ul>
-<li><a
-href="https://github.com/sigstore/cosign-installer/commit/756fe2d284c7292c4e9b62c8a28f1e5629c59532"><code>756fe2d</code></a>
-Bump Cosign to v3.1.4 (latest release) (<a
-href="https://redirect.github.com/sigstore/cosign-installer/issues/257">#257</a>)</li>
-<li><a
-href="https://github.com/sigstore/cosign-installer/commit/b9c35392b7c1401bcc77d30c9b07cf4b1c7a7b07
-
-**File**: `.github/workflows/release_draft.yml` (modified, +1/-1)
+**File**: `pkg/mustbe/openpgpkey_test.go` (added, +42/-0)
 ```diff
-@@ -294,7 +294,7 @@ jobs:
-           echo "hashes=$hashes" >> "$GITHUB_OUTPUT"
+@@ -0,0 +1,42 @@
++package mustbe_test
++
++import (
++	"testing"
++
++	"github.com/DNSControl/dnscontrol/v5/pkg/mustbe"
++)
++
++func TestOpenPGPKey(t *testing.T) {
++	tests := []struct {
++		name    string
++		a       any
++		want    string
++		wantErr bool
++	}{
++		{"base64", "mQENBA==", "mQENBA==", false},
++		{"hex lower", "99010d04", "mQENBA==", false},
++		{"hex upper", "99010D04", "mQENBA==", false},
++		{"neither", "not a key!", "", true},
++		{"base64 with whitespace", "mQEN BA==", "", true},
++		{"wrong type", 42.0, "", true},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			got, err := mustbe.OpenPGPKey(tt.a)
++			if (err != nil) != tt.wantErr {
++				t.Fatalf("OpenPGPKey(%v) err = %v, wantErr %v", tt.a, err, tt.wantErr)
++			}
++			if got != tt.want {
++				t.Errorf("OpenPGPKey(%v) = %q, want %q", tt.a, got, tt.want)
++			}
++			if tt.wantErr {
++				return
++			}
++			// Round Trip
++			second, err := mustbe.OpenPGPKey(got)
++			if err != nil || second != got {
++				t.Errorf("OpenPGPKey(%q) round trip = %q, %v", got, second, err)
++			}
++		})
++	}
++}
+```
+
+**File**: `pkg/normalize/validate.go` (modified, +0/-26)
+```diff
+@@ -381,32 +381,6 @@ func ValidateAndNormalizeConfig(config *models.DNSConfig) (errs []error) {
+ 					errs = append(errs, err)
+ 				}
+ 				rec.SetLabel(name, domain.Name)
+-			case "CAA":
+-				// Per: https://www.iana.org/assignments/pkix-parameters/pkix-parameters.xhtml#caa-properties excluding reserved tags
+-				allowedTags := []string{"issue", "issuewild", "iodef", "contactemail", "contactphone", "issuemail", "issuevmc"}
+-				f := rec.AsCAA()
+-				if !slices.Contains(allowedTags, f.Tag) {
+-					errs = append(errs, fmt.Errorf("CAA tag %s is invalid", f.Tag))
+-				}
+-			case "OPENPGPKEY":
+-				var orig, transformed, final string
+-				var err error
+-				orig = rec.AsOPENPGPKEY().PublicKey
+-				transformed, err = transform.OPENPGPKEY(orig)
+-				if err != nil {
+-					final = orig
+-					errs = append(errs, err)
+-				} else {
+-					final = transformed
+-				}
+-				if orig != final {
+-					rd, err := models.MakeOPENPGPKEY("", nil, nrc.Flags{}, final)
+-					if err != nil {
+-						errs = append(errs, err)
+-					}
+-					rec.SetRDATA(rd)
+-				}
+-
+ 			case "TLSA":
+ 				f := rec.AsTLSA()
+ 				if f.Usage > 3 {
+```
+
+**File**: `pkg/transform/transform.go` (modified, +0/-83)
+```diff
+@@ -1,8 +1,6 @@
+ package transform
  
-       - name: Install cosign
--        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-+        uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
- 
-       # Keyless (OIDC) signing: the signer identity is this workflow/job, so
-       # there are no signing keys to manage. checksums.txt covers every
+ import (
+-	"encoding/base64"
+-	"encoding/hex"
+ 	"errors"
+ 	"fmt"
+ 	"net/netip"
+@@ -143,84 +141,3 @@ func IPToList(address netip.Addr, transforms []IPConversion) ([]netip.Addr, erro
+ 	}
+ 	return []netip.Addr{address}, nil
+ }
+-
+-var b64 = base64.StdEncoding.Strict()
+-
+-// The target of an OPENPGPKEY record can be either hex or base64, so we need to
+-// be able to decode both formats.
+-//
+-// PGP keys are quite long and are largely random, so the odds of the base64
+-// encoding of a PGP key also being valid hex are very low. Therefore, we will
+-// assume that if a string is both valid hex and valid base64, then it is hex.
+-// The other cases where a string decodes as only hex, only base64, or neither
+-// are all unambiguous.
+-func decodeHexOrBase64(s string) ([]byte, error) {
+-	// A string with mixed casing *could* be hex, but it's more likely to be
+-	// base64. So we only try to decode as hex only if the string is all a
+-	// single case.
+-	var (
+-		hexErr  error
+-		hexData []byte
+-	)
+-	if s == strings.ToLower(s) || s == strings.ToUpper(s) {
+-		hexData, hexErr = hex.DecodeString(s)
+-	} else {
+-		hexData, hexErr = nil, fmt.Errorf(
+-			"hex string contains mixed case: %#v", s,
+-		)
+-	}
+-
+-	// Also try to decode the string as base64, using the strictest possible
+-	// decoder (which is also used in the DNS "presentation" format and the "gpg
+-	// --armor" format).
+-	var (
+-		b64Err  error
+-		b64Data []byte
+-	)
+-	// Reject base64 strings that contain whitespace
+-	if strings.ContainsAny(s, " \t\r\n") {
+-		b64Data, b64Err = nil, fmt.Errorf(
+-			"base64 string contains whitespace: %#v", s,
+-		)
+-	} else {
+-		b64Data, b64Err = b64.DecodeString(s)
+-	}
+-
+-	// Return the result.
+-	if hexErr != nil && b64Err != nil {
+-		// Both decodings failed, so there's nothing that we can do but return
+-		// an error.
+-		return nil, fmt.Errorf(
+-			"string is neither valid hex nor valid base64: %w; %w",
+-			hexErr, b64Err,
+-		)
+-	} else if hexErr == nil && b64Err != nil {
+-		// Only the hex decoding succeeded, therefore the input must only be
+-		// valid hex.
+-		return hexData, nil
+-	} else if hexErr != nil && b64Err == nil {
+-		// Only the base64 decoding succeeded, therefore the input must only be
+-		// valid base64.
+-		return b64Data, nil
+-	} else if hexErr == nil && b64Err == nil {
+-		// Both decodings succeeded. This is theoretically ambiguous, but it's
+-		// very unlikely that a valid base64 string would also be valid hex, so
+-		// we will assume that the input is hex.
+-		return hexData, nil
+-	} else {
+-		return nil, errors.New("unreachable")
+-	}
+-}
+-
+-// OPENPGPKEY decoded an OPENPGP key.
+-func OPENPGPKEY(encodedKey string) (string, error) {
+-	// Decode the key, which can be either hex or base64.
+-	decodedKey, err := decodeHexOrBase64(encodedKey)
+-	if err != nil {
+-		return "", fmt.Errorf("failed to decode OPENPGPKEY: %w", err)
+-	}
+-
+-	// Re-encode the key as base64, since the input may have been hex.
+-	encodedKey = b64.EncodeToString(decodedKey)
+-	return encodedKey, nil
+-}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5086** (2026-11-14): refactor(normalize): move CAA and OPENPGPKEY checks to their makers (@TomOnTime)
 - **PR #5083** (2026-11-12): docs: clarify macOS sha check (@TomOnTime)
 - **PR #5081** (2026-11-11): build(deps): bump actions/download-artifact from 4.3.0 to 8.0.2 (@dependabot[bot])
 - **PR #5080** (2026-11-11): build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.3 (@dependabot[bot])
 - **PR #5079** (2026-11-11): build(deps): bump sigstore/cosign-installer from 4.1.2 to 4.1.3 (@dependabot[bot])
 - **PR #5078** (2026-11-11): fix(release): set GH_REPO for the upload-provenance job (@TomOnTime)
-- **PR #5077** (2026-11-11): fix(release): grant contents:write to the SLSA provenance job (@TomOnTime)
 
 ---
 
@@ -860,31 +1066,35 @@ href="https://github.com/sigstore/cosign-installer/commit/b9c35392b7c1401bcc77d3
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.3 (#5080
+## X. normalize): move CAA and OPENPGPKEY checks to their makers
 
 **RULE**:
-When implementing operations in `.github/workflows/scorecard.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `models/makers.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59cb1936`: build(deps): bump github/codeql-action/upload-sarif from 4.39.1 to 4.39.3 (#5080). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5da338d6`: normalize): move CAA and OPENPGPKEY checks to their makers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/scorecard.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `models/makers.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+	key, err := mustbe.OpenPGPKey(args[0])
+	if err != nil {
+		return nil, err
+	}
+	return dnsrdatav2.OPENPGPKEY{PublicKey: key}, nil
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+// Induced defect failure mode:
+	return dnsrdatav2.OPENPGPKEY{PublicKey: mustbe.OpenPGPKey(args[0])}, nil
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59cb1936` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5da338d6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

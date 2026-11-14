@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-14T22:58:31.156Z",
-  "total_verified_learnings": 8624,
+  "last_updated": "2026-11-14T23:43:18.606Z",
+  "total_verified_learnings": 8626,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 17927,
+  "total_items": 17938,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217803,13 +217803,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9ZQ5-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-X72W-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8f611c83e7c0a6ff34c006ef7670ed429d7fe74cf38400491244b8efaf04f9a",
+      "content_hash": "1b8cdf9b2e99f25ca82e54870d99a8a07611235d9273a2e2665964dcde0e3913",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T09:53:26.813Z"
+      "persisted_at": "2026-11-14T23:43:18.296Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -217819,9 +217819,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "e5b7a9127b9838278d68a6eb47402f5bbd0ac3c6e8ed5abb8265cf6785bdf2ef",
+      "content_hash": "564674781c2466aa3411b144d7a4462054637419dbe1d96e09089871d5346216",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T09:53:26.915Z"
+      "persisted_at": "2026-11-14T23:43:18.446Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -217831,9 +217831,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "7a4c5cf3b8f88faefbda5a4708f4feeef5d8a79fb2978ae217ef1a21549c5a38",
+      "content_hash": "9125e138234f5de140f5ca676ea912f4bdb7fd2d6f5f5f3df251c369a6446755",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T09:53:27.011Z"
+      "persisted_at": "2026-11-14T23:43:18.606Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -236149,6 +236149,176 @@
       "content_hash": "f4a4b0ad972d22fd96508259202bf7cd299e97ba27eec86a2c66157c3cfe0e6c",
       "domain_letter": "K",
       "persisted_at": "2026-11-14T22:58:31.156Z"
+    },
+    "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized": {
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "slug": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "content_hash": "cb7b79ae36676659b25d50bed67fd64d549fc82b2f74f65b6399208168d1af53",
+      "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T23:43:04.455Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
+      "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "content_hash": "12a7d8b9924f2f55ef6775084726e6206c09567c561957698986a50581c63850",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T23:43:04.909Z"
+    },
+    "learn-github-dnscontrol-dnscontrol": {
+      "learning_id": "learn-github-dnscontrol-dnscontrol",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "DNSControl/dnscontrol",
+      "repository": "DNSControl/dnscontrol",
+      "slug": "dnscontrol-dnscontrol",
+      "platform": "github",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "5da338d6",
+      "content_hash": "e79f3bda488d8656be4e2316077b166afc8bf991e15106f80376674367e992bc",
+      "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8551,
+          "title": "move CAA and OPENPGPKEY checks to their makers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-14T23:43:13.411Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8551": {
+      "learning_id": "rule-8551",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8551,
+      "title": "move CAA and OPENPGPKEY checks to their makers",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "5da338d6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-14T23:43:13.411Z"
+    },
+    "candidate_directive-move-caa-and-openpgpkey-checks-to-their-makers": {
+      "item_id": "candidate_directive-move-caa-and-openpgpkey-checks-to-their-makers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X3N6-move-caa-and-openpgpkey-checks-to-their-makers.md",
+      "title": "move CAA and OPENPGPKEY checks to their makers",
+      "repository": "DNSControl/dnscontrol",
+      "source_version": "5da338d6",
+      "content_hash": "d05d3460d230a1a59dae19aa05b05001540e52fe67e80e7f852da29650864569",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T23:43:13.843Z"
+    },
+    "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dnscontrol-dnscontrol-architecture-intelligence-dnscontrol-dnscontrol-core-invar.md",
+      "title": "Architecture Intelligence: DNSControl/dnscontrol Core Invariants",
+      "repository": "DNSControl/dnscontrol",
+      "source_version": "5da338d6",
+      "content_hash": "645e1c36c245e86c2e7c155da2786456daf3d05f52ab409483cb1e45e69a1aca",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T23:43:13.974Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dnscontrol-dnscontrol": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dnscontrol-dnscontrol",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dnscontrol-dnscontrol-verification-protocol-empirical-defect-shield-for-dnscontr.md",
+      "title": "Verification Protocol: Empirical Defect Shield for DNSControl/dnscontrol",
+      "repository": "DNSControl/dnscontrol",
+      "source_version": "5da338d6",
+      "content_hash": "72a35ca2f61cee02b6659fa3b171c16e103cd7667355b2953d815bc0146ff03e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T23:43:14.124Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-learnings-research-knowledge-in.md",
+      "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings Core Invariants",
+      "repository": "hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e9ea3125abc5d8fb403fbeec2be26f532b039279ed03f00f042f43c916338c01",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-14T23:43:17.178Z"
+    },
+    "candidate_directive-normalize-move-caa-and-openpgpkey-checks-to-their-makers": {
+      "item_id": "candidate_directive-normalize-move-caa-and-openpgpkey-checks-to-their-makers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X6K3-normalize-move-caa-and-openpgpkey-checks-to-their-makers.md",
+      "title": "normalize): move CAA and OPENPGPKEY checks to their makers",
+      "repository": "dnscontrol-dnscontrol-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b9b9e2705fef1cc986567a14d9c04fe09a72fb7cc728d98bba8a4036446f45b9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T23:43:17.625Z"
+    },
+    "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dnscontrol-dnscontrol-learnings-architecture-intelligence-dnscontrol-dnscontrol-.md",
+      "title": "Architecture Intelligence: dnscontrol-dnscontrol-learnings Core Invariants",
+      "repository": "dnscontrol-dnscontrol-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5901574a3b932c67070eed34c3eb9810402e203107b629282699fc0e130ba4a6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-14T23:43:17.766Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dnscontrol-dnscontrol-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dnscontrol-dnscontrol-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dnscontrol-dnscontrol-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dnscontrol-dnscontrol-learnings",
+      "repository": "dnscontrol-dnscontrol-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c53238613fe7ba7ed9aab0e6986f0179d2729211f7fa9d70dc664fa968ba94eb",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-14T23:43:17.926Z"
     }
   },
   "ai-builder-brain": {

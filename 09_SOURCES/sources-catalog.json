@@ -1295,8 +1295,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
     "license": "Open-Source",
-    "contentHash": "11a6d5b82003e5b1f47619b52d4e86b7c92e57c3adfae86b3aa6941319118862",
-    "lastHarvestedAt": "2026-11-09T12:17:30.706Z",
+    "contentHash": "cb7b79ae36676659b25d50bed67fd64d549fc82b2f74f65b6399208168d1af53",
+    "lastHarvestedAt": "2026-11-14T23:43:04.695Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
   },
   "iliyami-macsai": {
@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "a866511c",
+    "sourceVersion": "5da338d6",
     "license": "MIT",
-    "contentHash": "c2420d1344f4f18bf6fc3ac89a13ab695fc6005e7279f0eb45f460494d6664b2",
-    "lastHarvestedAt": "2026-11-12T13:33:21.061Z",
+    "contentHash": "e79f3bda488d8656be4e2316077b166afc8bf991e15106f80376674367e992bc",
+    "lastHarvestedAt": "2026-11-14T23:43:13.624Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {

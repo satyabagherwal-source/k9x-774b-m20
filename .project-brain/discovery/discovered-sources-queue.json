@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T22:58:30.671Z",
+  "updated_at": "2026-11-14T23:43:17.399Z",
   "stats": {
-    "total_discovered": 3475,
-    "approved_pending_harvest": 3266,
+    "total_discovered": 3477,
+    "approved_pending_harvest": 3268,
     "harvested_count": 0,
     "rejected_count": 209,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 3246,
+      "COMMUNITY_AND_EXPERT": 3248,
       "OFFICIAL_DOCUMENTATION": 125,
       "STANDARDS_AND_SPECIFICATIONS": 88,
       "ENGINEERING_BLOGS": 2,
@@ -75008,6 +75008,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
         "fileName": "apollographql-apollo-kotlin-learnings.md"
+      }
+    },
+    "SRC-AFC305B6DB5C": {
+      "id": "SRC-AFC305B6DB5C",
+      "url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "title": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T23:43:16.973Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
+        "fileName": "hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md"
+      }
+    },
+    "SRC-C13F27EC3748": {
+      "id": "SRC-C13F27EC3748",
+      "url": "https://www.iana.org/assignments/pkix-parameters/pkix-parameters.xhtml",
+      "title": "https://www.iana.org/assignments/pkix-parameters/pkix-parameters.xhtml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T23:43:17.399Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
+        "fileName": "dnscontrol-dnscontrol-learnings.md"
       }
     }
   }
