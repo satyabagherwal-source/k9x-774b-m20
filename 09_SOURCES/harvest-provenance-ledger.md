@@ -9825,3 +9825,8 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `cfed3caa` | Multi-dimensional audit evidence | 2026-11-14T08:10:38.943Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `43f63ec0` | Multi-dimensional audit evidence | 2026-11-14T08:10:41.334Z |
 | `learn-dom-d-6d95f34c` | `project://hf-sentence-transformers-all-mpnet-base-v2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | 2026-11-14T08:11:05.089Z |
+| `learn-github-wix-react-native-ui-lib` | `https://github.com/wix/react-native-ui-lib` | `d9ab2e6a` | Multi-dimensional audit evidence | 2026-11-14T08:44:03.209Z |
+| `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-14T08:53:29.429Z |
+| `learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-14T08:53:30.555Z |
+| `learn-dom-h-dc52ff61` | `project://hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md` | 2026-11-14T08:54:02.005Z |
+| `learn-dom-h-538ce636` | `project://hf-baai-bge-reranker-v2-m3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | 2026-11-14T08:54:37.318Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T08:11:05.975Z",
+  "last_updated": "2026-11-14T08:54:38.332Z",
   "directives": [
     {
       "id": "CD-001",
@@ -12088,6 +12088,77 @@
       "source_repo": "typedb-typedb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E20FDC-update-error-messages-a-missed-warning-o.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-6D4S",
+      "directive_title": "View, FloatingButton, Toast - keep content clear of the iOS 26 bottom tab bar",
+      "source_repo": "wix-react-native-ui-lib-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6D4S-view-floatingbutton-toast-keep-content-clear-of-the-ios-26-bottom-tab-bar.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-00864A",
+      "directive_title": "MTP Head Desynchronization During Dynamic Context Switching (BUG-QWEN35-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-00864A-mtp-head-desynchronization-during-dynami.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-5L9U",
+      "directive_title": "Atomic KV-Cache Pointer Rollback Under Speculative Verification Faults",
+      "source_repo": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5L9U-atomic-kv-cache-pointer-rollback-under-speculative-verification-faults.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-5L9V",
+      "directive_title": "Orthogonal Feature Projection Invariant in Safety Abliteration",
+      "source_repo": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5L9V-orthogonal-feature-projection-invariant-in-safety-abliteration.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-93465F",
+      "directive_title": "Positional Embedding Table Index Overflow (BUG-BGE-M3-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-baai-bge-reranker-v2-m3",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-93465F-positional-embedding-table-index-overflo.md",
+      "staged_date": "2026-11-14"
+    },
+    {
+      "id": "CD-6CI9",
+      "directive_title": "Cross-Encoder Single-Logit Sigmoid Normalization Invariant",
+      "source_repo": "hf-baai-bge-reranker-v2-m3-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6CI9-cross-encoder-single-logit-sigmoid-normalization-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-14",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-67464D",
+      "directive_title": "View, FloatingButton, Toast - keep content clear of the iOS 26 bottom tab bar",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "wix-react-native-ui-lib",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-67464D-view-floatingbutton-toast-keep-content-c.md",
       "staged_date": "2026-11-14"
     }
   ]

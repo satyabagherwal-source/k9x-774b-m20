@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-14T08:10:41.341Z",
+  "last_updated": "2026-11-14T08:53:30.564Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1475,14 +1475,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "content_hash": "9848cfd07622d41ea8ea63b16fffac813dfab7df6950db697339c5f020887c05",
-      "verified_at": "2026-11-09T02:08:02.745Z",
+      "content_hash": "f9932d8d415ad9ae6cfc05e1a4b895e2848d739e72e01bcbb27c01fb1ab2d3c1",
+      "verified_at": "2026-11-14T08:53:29.438Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:08:02.745Z"
+      "last_updated": "2026-11-14T08:53:29.438Z"
     },
     "jonatasgrosman/wav2vec2-large-xlsr-53-japanese": {
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -7926,14 +7926,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wix-react-native-ui-lib",
-      "content_hash": "aef953e47fb48b07946aec190f4cfc96490c691452b7c03916f860baded59f5e",
-      "verified_at": "2026-11-04T10:20:13.912Z",
+      "content_hash": "82caa8d02f548514222563787a2f967029d4e2139b5a930cc1e6977a600a2240",
+      "verified_at": "2026-11-14T08:44:03.218Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T10:20:13.912Z"
+      "last_updated": "2026-11-14T08:44:03.218Z"
     },
     "goss-org/goss": {
       "repository": "goss-org/goss",
@@ -18839,6 +18839,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-14T07:39:20.734Z"
+    },
+    "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF": {
+      "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
+      "content_hash": "527aa9603848b11eafabb7aa0d3fef0a19bbf7934d9bbee197d6b0346e1f8ac0",
+      "verified_at": "2026-11-14T08:53:30.563Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-14T08:53:30.563Z"
     }
   },
   "repos": {

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-14T08:10:44.213Z",
-    "lastVerified": "2026-11-14T08:10:44.213Z",
+    "lastChecked": "2026-11-14T08:53:34.027Z",
+    "lastVerified": "2026-11-14T08:53:34.027Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -369,8 +369,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-14T07:30:48.813Z",
-    "lastVerified": "2026-11-14T07:30:48.813Z",
+    "lastChecked": "2026-11-14T08:44:04.486Z",
+    "lastVerified": "2026-11-14T08:44:04.486Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -1414,8 +1414,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-14T00:36:21.750Z",
-    "lastVerified": "2026-11-14T00:36:21.750Z",
+    "lastChecked": "2026-11-14T08:43:59.422Z",
+    "lastVerified": "2026-11-14T08:43:59.422Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -3465,9 +3465,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-13T07:18:01.441Z",
+    "lastChecked": "2026-11-14T08:43:56.922Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-13T07:18:01.441Z"
+    "lastVerified": "2026-11-14T08:43:56.922Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -4805,22 +4805,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "wix-react-native-ui-lib": {
-    "name": "react-native-ui-lib",
+    "name": "wix/react-native-ui-lib",
     "officialUrl": "https://github.com/wix/react-native-ui-lib",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-10T00:59:36.727Z",
-    "lastVerified": "2026-11-10T00:59:36.727Z",
+    "lastChecked": "2026-11-14T08:43:57.688Z",
+    "lastVerified": "2026-11-14T08:43:57.688Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-wix-react-native-ui-lib",
-    "contentHash": "aef953e47fb48b07946aec190f4cfc96490c691452b7c03916f860baded59f5e",
+    "contentHash": "82caa8d02f548514222563787a2f967029d4e2139b5a930cc1e6977a600a2240",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "999abfa6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sealerio-sealer": {
     "name": "sealer",
@@ -5105,9 +5104,9 @@
   "qovery-replibyte": {
     "name": "Replibyte",
     "officialUrl": "https://github.com/Qovery/Replibyte",
-    "lastChecked": "2026-11-13T06:06:46.479Z",
+    "lastChecked": "2026-11-14T08:44:01.922Z",
     "revisionIdentifier": "5504db91",
-    "lastVerified": "2026-11-13T06:06:46.479Z"
+    "lastVerified": "2026-11-14T08:44:01.922Z"
   },
   "grpc-grpc-rust": {
     "name": "grpc/grpc-rust",
@@ -6463,13 +6462,13 @@
     "officialUrl": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-09T02:08:01.640Z",
-    "lastVerified": "2026-11-09T02:08:01.640Z",
+    "lastChecked": "2026-11-14T08:43:51.971Z",
+    "lastVerified": "2026-11-14T08:43:51.971Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-    "contentHash": "9848cfd07622d41ea8ea63b16fffac813dfab7df6950db697339c5f020887c05",
-    "promotedRulesCount": 0,
+    "contentHash": "f9932d8d415ad9ae6cfc05e1a4b895e2848d739e72e01bcbb27c01fb1ab2d3c1",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -15271,6 +15270,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 17,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf": {
+    "name": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+    "officialUrl": "https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-14T08:43:49.453Z",
+    "lastVerified": "2026-11-14T08:43:49.453Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
+    "contentHash": "527aa9603848b11eafabb7aa0d3fef0a19bbf7934d9bbee197d6b0346e1f8ac0",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

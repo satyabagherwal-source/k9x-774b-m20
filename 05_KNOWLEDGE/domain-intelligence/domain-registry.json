@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-14T08:11:06.045Z",
-  "total_records": 609,
+  "last_updated": "2026-11-14T08:54:38.453Z",
+  "total_records": 617,
   "domains": {
     "A": {
       "total": 5,
@@ -343,7 +343,7 @@
       ]
     },
     "F": {
-      "total": 15,
+      "total": 17,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -359,7 +359,9 @@
         "domain_intelligence-design-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
         "domain_intelligence-design-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-core-invariants",
         "domain_intelligence-design-intelligence-naiveai-naive-n0-5-flash-core-invariants",
-        "domain_intelligence-design-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-baai-bge-reranker-v2-m3-core-invariants",
+        "domain_intelligence-design-intelligence-hf-baai-bge-reranker-v2-m3-learnings-core-invariants"
       ]
     },
     "G": {
@@ -456,7 +458,7 @@
       ]
     },
     "H": {
-      "total": 132,
+      "total": 138,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -589,7 +591,13 @@
         "domain_intelligence-technical-construction-intelligence-beclab-olares-core-invariants",
         "domain_intelligence-technical-construction-intelligence-beclab-olares-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-typedb-typedb-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-davidau-qwen3-5-9b-the-defiant-fable-uncenso",
+        "DOM-H-DC52FF61",
+        "domain_intelligence-technical-construction-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-unce",
+        "DOM-H-538CE636",
+        "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-learnings-core-invar"
       ]
     },
     "I": {
@@ -13133,6 +13141,128 @@
       "repository": "typedb-typedb-learnings",
       "content_hash": "7a7a15195ce6350cec0888dbe5ac2f1284c271742ec58fed277f9a45a026bf36",
       "created_at": "2026-11-14T08:11:06.045Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: wix/react-native-ui-lib Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wix-react-native-ui-lib-technical-construction-intelligence-wix-react-native-ui-.md",
+      "repository": "wix/react-native-ui-lib",
+      "content_hash": "cd9f5636c9ced1f19a47706985fae43a657097ccf7088ec05667ffb74c55d7c5",
+      "created_at": "2026-11-14T08:44:03.484Z"
+    },
+    "domain_intelligence-design-intelligence-baai-bge-reranker-v2-m3-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-baai-bge-reranker-v2-m3-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: BAAI/bge-reranker-v2-m3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-baai-bge-reranker-v2-m3-design-intelligence-baai-bge-reranker-v2-m3-core-inva.md",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "content_hash": "1d40ac39549884b121cb2bf158e71207edf081e7e4d7709ceaf898b95b0bedd1",
+      "created_at": "2026-11-14T08:53:29.755Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-davidau-qwen3-5-9b-the-defiant-fable-uncenso": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-davidau-qwen3-5-9b-the-defiant-fable-uncenso",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-g.md",
+      "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+      "content_hash": "ff9809b453ab9f47c0a1c6681f4635ca4cdd7cbe14045fc1b234a9acf6027888",
+      "created_at": "2026-11-14T08:53:30.938Z"
+    },
+    "DOM-H-DC52FF61": {
+      "record_id": "DOM-H-DC52FF61",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Infinite Reasoning Loop via `<think>` Tag Suppression Under Instruct Presets (BUG-QWEN35-02)",
+      "content": "When suppressing architectural reasoning loops, explicitly terminate the reasoning delimiters in the prefill cache rather than masking logits downstream.",
+      "content_hash": "5f76ef995d02757fd7087a845c440c5cf1df51a743002050b13a11668cb52073",
+      "summary": "The fine-tuned Qwen 3.5 base possesses strong priors routing attention to thought-block generation first. Suppressing `<think>` at the sampl -> When suppressing architectural reasoning loops, explicitly terminate the reasoning delimiters in the prefill cache rather than masking logit",
+      "provenance": {
+        "source_uri": "project://hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf/hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T08:53:34.133Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Model card explicit documentation: *\"5 instruct modes (2 new - Spoon / Einstein, all use ZERO REASONING TOKENS) all switchable on the fly via API, direct and 'in chat' (yes - model ctrl at the chat/message level).\"*"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T08:54:01.994Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-unce": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-unce",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-g.md",
+      "repository": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings",
+      "content_hash": "fe70f47891211e654a40ef64440d31191bb8e36e7abc43ee7a988a1a7b52a8b8",
+      "created_at": "2026-11-14T08:54:02.598Z"
+    },
+    "DOM-H-538CE636": {
+      "record_id": "DOM-H-538CE636",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Inverted Ranking Due to Uncalibrated Softmax Over Single Logit (BUG-BGE-M3-02)",
+      "content": "Dynamic inference adapters MUST inspect `logits.shape[-1]`. When `num_labels == 1`, univariate logistic sigmoid is mathematically required.",
+      "content_hash": "76f35927ec7c100b789963188bc0285dde8d199efdc6d3642da91924ffc92457",
+      "summary": "The evaluation pipeline reused a general classification inference wrapper that executed `torch.softmax(outputs.logits, dim=-1)`. Because `lo -> Dynamic inference adapters MUST inspect `logits.shape[-1]`. When `num_labels == 1`, univariate logistic sigmoid is mathematically required.",
+      "provenance": {
+        "source_uri": "project://hf-baai-bge-reranker-v2-m3/hf-baai-bge-reranker-v2-m3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T08:54:02.927Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baai-bge-reranker-v2-m3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json`: `\"id2label\": {\"0\": \"LABEL_0\"}`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-14T08:54:37.309Z"
+    },
+    "domain_intelligence-design-intelligence-hf-baai-bge-reranker-v2-m3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-hf-baai-bge-reranker-v2-m3-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: hf-baai-bge-reranker-v2-m3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-baai-bge-reranker-v2-m3-learnings-design-intelligence-hf-baai-bge-reranker-v2.md",
+      "repository": "hf-baai-bge-reranker-v2-m3-learnings",
+      "content_hash": "d405b31070486bc2dd4ac3dee43270832d20fbcf321c56d5e2fb0fb9b9318124",
+      "created_at": "2026-11-14T08:54:37.823Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-learnings-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-learnings-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: wix-react-native-ui-lib-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wix-react-native-ui-lib-learnings-technical-construction-intelligence-wix-react-.md",
+      "repository": "wix-react-native-ui-lib-learnings",
+      "content_hash": "aa97e0e5b3040d455cc13798032d1c658e96f7ec58e4c40405cb832c4b2dc208",
+      "created_at": "2026-11-14T08:54:38.453Z"
     }
   }
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-14T08:11:05.827Z",
+  "updated_at": "2026-11-14T08:54:38.157Z",
   "stats": {
-    "total_discovered": 3196,
-    "approved_pending_harvest": 2991,
+    "total_discovered": 3202,
+    "approved_pending_harvest": 2997,
     "harvested_count": 0,
     "rejected_count": 205,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 2985,
+      "COMMUNITY_AND_EXPERT": 2991,
       "OFFICIAL_DOCUMENTATION": 116,
       "STANDARDS_AND_SPECIFICATIONS": 81,
       "ENGINEERING_BLOGS": 1,
@@ -68897,6 +68897,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
         "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-4BC2F2133FC8": {
+      "id": "SRC-4BC2F2133FC8",
+      "url": "https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+      "title": "https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T08:54:02.018Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md",
+        "fileName": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md"
+      }
+    },
+    "SRC-3891D3DADFC5": {
+      "id": "SRC-3891D3DADFC5",
+      "url": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
+      "title": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T08:54:37.330Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
+        "fileName": "hf-baai-bge-reranker-v2-m3-learnings.md"
+      }
+    },
+    "SRC-85C7D7617096": {
+      "id": "SRC-85C7D7617096",
+      "url": "https://github.com/wix/react-native-ui-lib",
+      "title": "https://github.com/wix/react-native-ui-lib",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T08:54:38.076Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wix-react-native-ui-lib-learnings.md",
+        "fileName": "wix-react-native-ui-lib-learnings.md"
+      }
+    },
+    "SRC-ACED8D8900AB": {
+      "id": "SRC-ACED8D8900AB",
+      "url": "https://cdn.pixabay.com/photo/2017/04/19/20/10/morning-2243465_1280.jpg",
+      "title": "https://cdn.pixabay.com/photo/2017/04/19/20/10/morning-2243465_1280.jpg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T08:54:38.114Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wix-react-native-ui-lib-learnings.md",
+        "fileName": "wix-react-native-ui-lib-learnings.md"
+      }
+    },
+    "SRC-B95127CA9481": {
+      "id": "SRC-B95127CA9481",
+      "url": "https://github.com/wix-private/wix-react-native-ui-lib/pull/5960/changes",
+      "title": "https://github.com/wix-private/wix-react-native-ui-lib/pull/5960/changes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T08:54:38.136Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wix-react-native-ui-lib-learnings.md",
+        "fileName": "wix-react-native-ui-lib-learnings.md"
+      }
+    },
+    "SRC-367BED5121DF": {
+      "id": "SRC-367BED5121DF",
+      "url": "https://github.com/wix/react-native-ui-lib/blob/master/demo/src/screens/componentScreens/ViewScreen.js",
+      "title": "https://github.com/wix/react-native-ui-lib/blob/master/demo/src/screens/componentScreens/ViewScreen.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-14T08:54:38.157Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wix-react-native-ui-lib-learnings.md",
+        "fileName": "wix-react-native-ui-lib-learnings.md"
       }
     }
   }

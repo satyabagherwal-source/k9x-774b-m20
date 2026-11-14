@@ -1115,8 +1115,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
     "sourceVersion": "hf-baai-bge-reranker-v2-m3",
     "license": "Open-Source",
-    "contentHash": "9848cfd07622d41ea8ea63b16fffac813dfab7df6950db697339c5f020887c05",
-    "lastHarvestedAt": "2026-11-09T02:08:02.737Z",
+    "contentHash": "f9932d8d415ad9ae6cfc05e1a4b895e2848d739e72e01bcbb27c01fb1ab2d3c1",
+    "lastHarvestedAt": "2026-11-14T08:53:29.429Z",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
@@ -5203,10 +5203,10 @@
     "repository": "wix/react-native-ui-lib",
     "platform": "github",
     "sourceUrl": "https://github.com/wix/react-native-ui-lib",
-    "sourceVersion": "999abfa6",
+    "sourceVersion": "d9ab2e6a",
     "license": "MIT",
-    "contentHash": "aef953e47fb48b07946aec190f4cfc96490c691452b7c03916f860baded59f5e",
-    "lastHarvestedAt": "2026-11-04T10:20:13.904Z",
+    "contentHash": "82caa8d02f548514222563787a2f967029d4e2139b5a930cc1e6977a600a2240",
+    "lastHarvestedAt": "2026-11-14T08:44:03.209Z",
     "learningId": "learn-github-wix-react-native-ui-lib"
   },
   "goss-org-goss": {
@@ -12518,5 +12518,15 @@
     "contentHash": "ccd11aaf1de5d57ff4f6adbf6bdfff93545e0a036969a2e32195c1ff4a4a5254",
     "lastHarvestedAt": "2026-11-14T07:39:20.726Z",
     "learningId": "learn-github-lingyired-status-trio"
+  },
+  "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf": {
+    "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+    "sourceVersion": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
+    "license": "Open-Source",
+    "contentHash": "527aa9603848b11eafabb7aa0d3fef0a19bbf7934d9bbee197d6b0346e1f8ac0",
+    "lastHarvestedAt": "2026-11-14T08:53:30.555Z",
+    "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf"
   }
 }

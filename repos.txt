@@ -5066,3 +5066,7 @@ https://huggingface.co/Edge0/Edge0-145B-NVFP4
 # --- Automatically Discovered by AI Scout Engine [2026-11-14T07:39:10.699Z] ---
 # [MOBILE-CROSS-PLATFORM] lingyired/status-trio (1183 score) - Status Trio — a native macOS app that combines Wi-Fi, battery, and volume into o
 https://github.com/lingyired/status-trio
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-14T08:43:43.726Z] ---
+# [HUGGINGFACE-AI-MODELS] DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF (19420 score) - Verified Hugging Face Model: DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Her
+https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF

@@ -21088,5 +21088,17 @@
     "qualityScore": 1183,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-14T07:37:06.945Z"
+  },
+  {
+    "name": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+    "fullName": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+    "url": "https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF (1742 likes, 2137747 downloads)",
+    "likes": 1742,
+    "downloads": 2137747,
+    "qualityScore": 19420,
+    "discoveredAt": "2026-11-14T08:41:35.586Z"
   }
 ]

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-14T08:11:05.088Z",
+  "updated_at": "2026-11-14T08:54:37.317Z",
   "statistics": {
-    "total_nodes": 176,
+    "total_nodes": 178,
     "total_edges": 94,
     "domain_distribution": {
       "D": 135,
       "M": 1,
-      "H": 15,
+      "H": 17,
       "J": 8,
       "K": 10,
       "L": 2,
@@ -3942,6 +3942,50 @@
       ],
       "created_at": "2026-11-14T08:11:05.087Z",
       "updated_at": "2026-11-14T08:11:05.087Z"
+    },
+    "DOM-H-DC52FF61": {
+      "id": "DOM-H-DC52FF61",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Infinite Reasoning Loop via `<think>` Tag Suppression Under Instruct Presets (BUG-QWEN35-02)",
+      "summary": "The fine-tuned Qwen 3.5 base possesses strong priors routing attention to thought-block generation first. Suppressing `<think>` at the sampl -> When suppressing architectural reasoning loops, explicitly terminate the reasoning delimiters in the prefill cache rather than masking logit",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf/hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T08:53:34.133Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-14T08:54:02.003Z",
+      "updated_at": "2026-11-14T08:54:02.003Z"
+    },
+    "DOM-H-538CE636": {
+      "id": "DOM-H-538CE636",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Inverted Ranking Due to Uncalibrated Softmax Over Single Logit (BUG-BGE-M3-02)",
+      "summary": "The evaluation pipeline reused a general classification inference wrapper that executed `torch.softmax(outputs.logits, dim=-1)`. Because `lo -> Dynamic inference adapters MUST inspect `logits.shape[-1]`. When `num_labels == 1`, univariate logistic sigmoid is mathematically required.",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-baai-bge-reranker-v2-m3/hf-baai-bge-reranker-v2-m3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-14T08:54:02.927Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baai-bge-reranker-v2-m3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-14T08:54:37.317Z",
+      "updated_at": "2026-11-14T08:54:37.317Z"
     }
   },
   "edges": [

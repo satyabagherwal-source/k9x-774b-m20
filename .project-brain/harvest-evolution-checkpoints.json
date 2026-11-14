@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T08:11:06.208Z",
+  "last_updated": "2026-11-14T08:54:38.691Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-14T05:32:15.509Z",
@@ -2496,9 +2496,24 @@
       "processed_at": "2026-11-14T08:11:05.089Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md": {
+      "processed_at": "2026-11-14T08:54:02.005Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 1
+    },
+    "hf-baai-bge-reranker-v2-m3-learnings.md": {
+      "processed_at": "2026-11-14T08:54:37.318Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 1
+    },
+    "wix-react-native-ui-lib-learnings.md": {
+      "processed_at": "2026-11-14T08:54:38.065Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 801,
-  "total_canonical_promoted": 180,
-  "total_staged_for_review": 618
+  "total_dossiers_evaluated": 804,
+  "total_canonical_promoted": 182,
+  "total_staged_for_review": 621
 }

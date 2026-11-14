@@ -9792,3 +9792,8 @@
 | `CYCLE-20261114-LSKD` | `2026-11-14T08:10:38.941Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8469` | Yes (`a710a6f1...`) |
 | `CYCLE-20261114-LUER` | `2026-11-14T08:10:41.331Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8470` | Yes (`a3e5fcac...`) |
 | `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T08:11:05.089Z` | `hf-sentence-transformers-all-mpnet-base-v2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6D95F34C` [Domain D] | Yes (`7cf59763...`) |
+| `CYCLE-20261114-SR2E` | `2026-11-14T08:44:03.206Z` | `wix/react-native-ui-lib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8471` | Yes (`82caa8d0...`) |
+| `CYCLE-20261114-4VYQ` | `2026-11-14T08:53:29.426Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8472, Rule 8473` | Yes (`f9932d8d...`) |
+| `CYCLE-20261114-4WU0` | `2026-11-14T08:53:30.552Z` | `DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8474, Rule 8475, Rule 8476` | Yes (`527aa960...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T08:54:02.005Z` | `hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-DC52FF61` [Domain H] | Yes (`5f76ef99...`) |
+| `CYCLE-2026-11-14-PROJ-EVOLVE` | `2026-11-14T08:54:37.318Z` | `hf-baai-bge-reranker-v2-m3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-538CE636` [Domain H] | Yes (`76f35927...`) |

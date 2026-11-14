@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wix-react-native-ui-lib-learnings.md`  
 > **Source**: github ([https://github.com/wix/react-native-ui-lib](https://github.com/wix/react-native-ui-lib))  
-> **Source Version**: `999abfa6`  
+> **Source Version**: `d9ab2e6a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T10:20:13.257Z  
+> **Timestamp**: 2026-11-14T08:44:02.273Z  
 > **Learning ID**: `learn-github-wix-react-native-ui-lib`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wix-react-native-ui-lib-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wix/react-native-ui-lib](https://github.com/wix/react-native-ui-lib))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T10:20:12.998Z  
+> **Harvest Timestamp**: 2026-11-14T08:43:57.688Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: UI Components Library for React Native
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7158 stars
+- **Stars / Engagement**: 7160 stars
 
 ---
 
@@ -596,407 +596,508 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `999abfa6` (2026-11-02)
-**Commit Message**: ci(docs): auto-confirm npq prompt so docs deploy runs non-interactively (#4065)
+### Incident Patch 1: `d9ab2e6a` (2026-11-11)
+**Commit Message**: fix: View, FloatingButton, Toast - keep content clear of the iOS 26 bottom tab bar (#4052)
 
-**File**: `.github/workflows/deployDocs.yml` (modified, +2/-2)
+* fix: View - use React Native's position-aware SafeAreaView for useSafeArea on iOS
+
+react-native-safe-area-context's SafeAreaView pads every edge from the nearest
+SafeAreaProvider's insets regardless of where the view sits, so a header with
+useSafeArea gets bottom padding whenever the provider extends under a
+translucent tab bar (iOS 26 Liquid Glass). React Native's SafeAreaView insets
+only the edges the view actually touches, which is what useSafeArea means.
+Other platforms keep the safe-area-context SafeAreaView when it is installed.
+
+* fix: View - limit the position-aware useSafeArea container to iOS 26 and later
+
+Android, web and iOS < 26 keep react-native-safe-area-context's SafeAreaView when it is installed, exactly as before.
+
+* fix: FloatingButton - clear the iOS 26 bottom tab bar
+
+On iOS 26 and later the footer adds the bottom safe-area inset, so a FloatingButton on a screen that draws behind a translucent tab bar stays above it. Android, web and iOS < 26 are unchanged.
+
+* fix: Toast - keep the hidden attachment above the iOS 26 bottom tab bar
+
+On iOS 26 and later the attachment re
+
+**File**: `packages/react-native-ui-lib/src/commons/Constants.ts` (modified, +8/-0)
 ```diff
-@@ -22,7 +22,7 @@ jobs:
-           cache: 'yarn'
- 
-       - name: Install dependencies
--        run: NPQ_PKG_MGR=yarn npx npq install --immutable
-+        run: yes | NPQ_PKG_MGR=yarn npx npq install --immutable
- 
-       - name: Build documentation
-         run: yarn docs:build
-@@ -36,5 +36,5 @@ jobs:
-           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-           git config --global user.name "github-actions[bot]"
-           cd docuilib
--          NPQ_PKG_MGR=yarn npx npq install --immutable
-+          yes | NPQ_PKG_MGR=yarn npx npq install --immutable
-           yarn deploy
+@@ -26,7 +26,9 @@ function breakpointComparator(b1: Breakpoint, b2: Breakpoint) {
+ const isAndroid: boolean = Platform.OS === 'android';
+ const isIOS: boolean = Platform.OS === 'ios';
+ const isWeb: boolean = Platform.OS === 'web';
++const supportsLiquidGlass: boolean = isIOS && parseInt(String(Platform.Version), 10) >= 26;
+ let isTablet: boolean;
++let isLiquidGlass = supportsLiquidGlass;
+ let statusBarHeight: number;
+ let screenHeight: number = Dimensions.get('screen').height;
+ let screenWidth: number = Dimensions.get('screen').width;
+@@ -139,6 +141,12 @@ const constants = {
+   set isTablet(value: boolean) {
+     isTablet = value;
+   },
++  get isLiquidGlass() {
++    return isLiquidGlass;
++  },
++  set isLiquidGlass(value: boolean) {
++    isLiquidGlass = supportsLiquidGlass && value;
++  },
+   setBreakpoints(value: Breakpoint[], options?: {defaultMargin: number}) {
+     breakpoints = value.sort(breakpointComparator);
+     if (options) {
 ```
 
----
-
-### Incident Patch 2: `33bdf936` (2026-11-02)
-**Commit Message**: ci: move npm releases to admin-dispatched GitHub Actions (OIDC trusted publishing) (#4056)
-
-* ci: move npm releases to admin-dispatched GitHub Actions with OIDC trusted publishing
-
-Replaces the Buildkite-driven, NPM_TOKEN-based publisher of react-native-ui-lib
-and uilib-native with a manually dispatched Release workflow on master, ported
-from react-native-navigation's release contract: dry-run / publish / resume,
-immutable artifacts, npm trusted publishing via GitHub OIDC, registry-integrity
-recovery, package-qualified tags, GitHub release, and a version PR.
-
-* ci(release): wait for npm visibility, fix dry-run path, correct peer deps
-
-- Backport wix/react-native-navigation#8370: RELEASE_DIR without `..`
-  (upload-artifact rejects it), upload-artifact v7.0.2, Node 24.22.1.
-- Backport wix/react-native-navigation#8371: poll the registry until a
-  just-published version is visible instead of failing the run; publish
-  and finalize get 70 min for two packages.
-- Version PR lookup uses the repository owner instead of a hard-coded `wix:`.
-- peerDependencies: drop the self-peer and the stale uilib-native snapshot
-  range (published 9.1.3 has `^5.0.1`; the snapshot caused ERESOLVE with
-  ui
-
-**File**: `.github/workflows/deployDocs.yml` (modified, +0/-7)
+**File**: `packages/react-native-ui-lib/src/commons/__tests__/constants.spec.ts` (modified, +35/-0)
 ```diff
-@@ -4,7 +4,6 @@ on:
-   push:
-     branches:
-       - master
--      - release
- 
- jobs:
-   build-and-deploy:
-@@ -29,7 +28,6 @@ jobs:
-         run: yarn docs:build
- 
-       - name: Deploy documentation
--        if: github.ref == 'refs/heads/release'
-         env:
-           GIT_USER: github-actions[bot]
-           GIT_PASS: ${{ secrets.GITHUB_TOKEN }}
-@@ -40,8 +38,3 @@ jobs:
-           cd docuilib
-           NPQ_PKG_MGR=yarn npx npq install --immutable
-           yarn deploy
--
--      - name: Deploy disclaimer
--        if: github.ref != 'refs/heads/release'
--        run: |
--          echo "Deploying will only happen on release branch"
+@@ -86,4 +86,39 @@ describe('Constants', () => {
+       expect(Constants.getPageMargins()).toBe(5);
+     });
+   });
++
++  describe('isLiquidGlass', () => {
++    const loadConstants = (os: string, version: number | string) => {
++      let constants: typeof Constants;
++      jest.isolateModules(() => {
++        const {Platform} = require('react-native');
++        const original = {OS: Platform.OS, Version: Platform.Version};
++        Object.defineProperty(Platform, 'OS', {value: os, configurable: true, writable: true});
++        Object.defineProperty(Platform, 'Version', {value: version, configurable: true, writable: true});
++        constants = require('../Constants').default;
++        Object.defineProperty(Platform, 'OS', {value: original.OS, configurable: true, writable: true});
++        Object.defineProperty(Platform, 'Version', {value: original.Version, configurable: true, writable: true});
++      });
++      return constants!;
++    };
++
++    it('is on by default on iOS 26 and later', () => {
++      expect(loadConstants('ios', '26.0').isLiquidGlass).toBe(true);
++    });
++
++    it('can be turned off and back on by apps that opt out of Liquid Glass', () => {
++      const constants = loadConstants('ios', '26.0');
++      constants.isLiquidGlass = false;
++      expect(constants.isLiquidGlass).toBe(false);
++      constants.isLiquidGlass = true;
++      expect(constants.isLiquidGlass).toBe(true);
++    });
++
++    it('stays off below iOS 26', () => {
++      const constants = loadConstants('ios', '18.5');
++      expect(constants.isLiquidGlass).toBe(false);
++      constants.isLiquidGlass = true;
++      expect(constants.isLiquidGlass).toBe(false);
++    });
++  });
+ });
 ```
 
-**File**: `.github/workflows/release-checks.yml` (added, +33/-0)
+**File**: `packages/react-native-ui-lib/src/components/floatingButton/__tests__/liquidGlass.spec.tsx` (added, +91/-0)
 ```diff
-@@ -0,0 +1,33 @@
-+name: Release checks
+@@ -0,0 +1,91 @@
++import React from 'react';
++import {Keyboard, StyleSheet, ViewStyle} from 'react-native';
++import {act, render} from '@testing-library/react-native';
++import {Constants} from '../../../commons/new';
++import {Spacings} from '../../../style';
++import FloatingButton from '../index';
 +
-+on:
-+  pull_request:
-+    branches: [master]
-+  push:
-+    branches: [master]
++jest.mock('../../../optionalDependencies', () => {
++  const actualOptional = jest.requireActual('../../../optionalDependencies');
++  const MockReact = jest.requireActual('react');
++  return {...actualOptional, SafeAreaContextPackage: {SafeAreaInsetsContext: MockReact.createContext(null)}};
++});
 +
-+permissions:
-+  contents: read
++const {SafeAreaContextPackage} = jest.requireMock('../../../optionalDependencies');
++const INSETS = {top: 62, right: 0, bottom: 83, left: 0};
++const TEST_ID = 'floating_button';
 +
-+jobs:
-+  package:
-+    runs-on: ubuntu-24.04
-+    timeout-minutes: 30
-+    steps:
-+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
-+        with:
-+          persist-credentials: false
-+      - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
-+        with:
-+          node-version: '24.22.1'
-+          package-manager-cache: false
-+      - name: Test release authorization and recovery
-+        run: node --test scripts/release/*.test.cjs
-+      - name: Install and build the npm packages on Linux
-+        run: |
-+          node .yarn/releases/yarn-4.12.0.cjs install --immutable
-+          node .yarn/releases/yarn-4.12.0.cjs build
-+      - name: Verify package contents and entry points
-+        env:
-+          RELEASE_DIR: ${{ runner.temp }}/uilib-package
-+        run: node scripts/release/index.cjs pack-check
++const renderButton = (props: object = {}, insets: object | null = INSETS) => {
++  const tree = <FloatingButton visible hoisted={false} button={{label: 'First'}} testID={TEST_ID} {...props}/>;
++  const {SafeAreaInsetsContext} = SafeAreaContextPackage;
++  return render(insets ? <SafeAreaInsetsContext.Provider value={insets}>{tree}</SafeAreaInsetsContext.Provider> : tree);
++};
++
++const contentPaddingBottom = (renderTree: ReturnType<typeof render>) =>
++  (StyleSheet.flatten(renderTree.getByTestId(`${TEST_ID}.content`).props.style) as ViewStyle).paddingBottom;
++
++describe('FloatingButton with Liquid Glass', () => {
++  let liquidGlass: jest.SpyInstance;
++  let keyboardListeners: Record<string, () => void>;
++
++  beforeEach(() => {
++    liquidGlass = jest.spyOn(Constants, 'isLiquidGlass', 'get').mockReturnValue(true);
++    keyboardListeners = {};
++    jest.spyOn(Keyboard, 'addListener').mockImplementation(((event: string, listener: () => void) => {
++      keyboardListeners[event] = listener;
++      return {remove: jest.fn()};
++    }) as any);
++  });
++
++  afterEach(() => {
++    jest.restoreAllMocks();
++  });
++
++  it('should add the bottom safe-area inset', () => {
++    expect(contentPaddingBottom(renderButton())).toBe(Spacings.s8 + INSETS.bottom);
++  });
++
++  it('should add the bottom safe-area inset to bottomMargin', () => {
++    expect(contentPaddingBottom(renderButton({bottomMargin: 10}))).toBe(10 + INSETS.bottom);
++  });
++
++  it('should drop the inset of a hoisted button as the keyboard starts to show and restore it as it starts to hide', () => {
++    const renderTree = renderButton({hoisted: true});
++    act(() => keyboardListeners.keyboardWillShow());
++    expect(contentPaddingBottom(renderTree)).toBe(Spacings.s8);
++    act(() => keyboardListeners.keyboardWillHide());
++    expect(contentPaddingBottom(renderTree)).toBe(Spacings.s8 + INSETS.bottom);
++  });
++
++  it('should drop the inset of a hoisted button that mounts while the keyboard is shown', () => {
++    jest.spyOn(Keyboard, 'isVisible').mockReturnValue(true);
++    expect(contentPaddingBottom(renderButton({hoisted: true}))).toBe(Spacings.s8);
++  });
++
++  it('should keep the inset of a sticky button and not listen to the keyboard', () => {
++    const renderTree = renderButton();
++    expect(keyboardListeners.keyboardWillShow).toBeUndefined();
++    expect(contentPaddingBottom(renderTree)).toBe(Spacings.s8 + INSETS.bottom);
++  });
++
++  it('should not listen to the keyboard when Liquid Glass is off', () => {
++    liquidGlass.mockReturnValue(false);
++    renderButton({hoisted: true});
++    expect(keyboardListeners.keyboardWillShow).toBeUndefined();
++    expect(keyboardListeners.keyboardWillHide).toBeUndefined();
++  });
++
++  it('should not add an inset outside a safe area provider', () => {
++    expect(contentPaddingBottom(renderButton({}, null))).toBe(Spacings.s8);
++  });
++
++  it('should not add the inset when Liquid Glass is off', () => {
++    liquidGlass.mockReturnValue(false);
++    expect(contentPaddingBottom(renderButton())).toBe(Spacings.s8);
++  });
++
++  it('should render nothing without buttons outside a safe area provider', () => {
++    const renderTree = render(<FloatingButton visible testID={TEST_ID}/>);
++    expect(renderTree.queryByTestId(`${TEST_ID}.content`)).toBeNull();
++  });
++});
 ```
 
-**File**: `.github/workflows/release.yml` (added, +206/-0)
+**File**: `packages/react-native-ui-lib/src/components/floatingButton/floatingButton.api.json` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,206 @@
-+name: Release
-+run-name: ${{ inputs.operation }} RNUILib ${{ inputs.version || inputs.kind }} by @${{ github.actor }}
-+
-+on:
-+  workflow_dispatch:
-+    inputs:
-+      operation:
-+        description: 'Dry run, publish, or resume an interrupted publishing run'
-+        type: choice
-+        options: [dry-run, publish, resume]
-+        default: dry-run
-+      kind:
-+        description: 'Release or on-demand snapshot (ignored for resume)'
-+        type: choice
-+        options: [release, snapshot]
-+        default: release
-+      version:
-+        description: 'Exact react-native-ui-lib semver for release; leave empty for snapshots and resume'
-+        type: string
-+      native_version:
-+        description: 'Exact uilib-native semver to publish in the same run; empty = do not publish uilib-native (must be empty for snapshots)'
-+        type: string
-+      npm_tag:
-+        description: 'latest for stable, next for prerelease, snapshot for snapshots'
-+        type: choice
-+        options: [latest, next, snapshot]
-+        default: latest
-+      source_run_id:
-+        description: 'Original publish run ID, required only for resume'
-+        type: string
-+
-+permissions: {}
-+
-+concurrency:
-+  group: uilib-npm-release
-+  cancel-in-progress: false
-+
-+env:
-+  RELEASE_OPERATION: ${{ inputs.operation }}
-+  RELEASE_KIND: ${{ inputs.kind }}
-+  RELEASE_VERSION: ${{ inputs.version }}
-+  RELEASE_NATIVE_VERSION: ${{ inputs.native_version }}
-+  RELEASE_NPM_TAG: ${{ inputs.npm_tag }}
-+  RELEASE_SOURCE_RUN_ID: ${{ inputs.source_run_id }}
-+  RELEASE_PUBLISH_ENABLED: ${{ vars.RELEASE_PUBLISH_ENABLED }}
-+  RELEASE_DIR: /home/runner/work/_temp/release-artifacts
-+  GH_TOKEN: ${{ github.token }}
-+
-+jobs:
-+  prepare:
-+    if: github.repository == 'wix/react-native-ui-lib' && github.ref == 'refs/heads/master'
-+    runs-on: ubuntu-24.04
-+    timeout-minutes: 45
-+    permissions:
-+      contents: read
-+      actions: read
-+      statuses: read
-+      pull-requests: read
-+    outputs:
-+      artifact_id: ${{ steps.upload.outputs.artifact-id || steps.resume.outputs.artifact_id }}
-+      source_run_id: ${{ steps.resume.outputs.source_run_id || github.run_id }}
-+    steps:
-+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
-+        with:
-+          ref: ${{ github.sha }}
-+          fetch-depth: 0
-+          persist-credentials: false
-+      - uses: actions/setup-node@65d868f8d4d85d7d4abb7de0875cde3fcc8798f5
-+        with:
-+          node-version: '24.22.1'
-+          package-manager-cache: false
-+      - name: Check admin authorization
-+        run: node scripts/release/index.cjs authorize
-+      - name: Locate original release artifact
-+        if: inputs.operation == 'resume'
-+        id: resume
-+        run: node scripts/release/index.cjs resume-info
-+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-+        if: inputs.operation == 'resume'
-+        with:
-+          artifact-ids: ${{ steps.resume.outputs.artifact_id }}
-+          run-id: ${{ steps.resume.outputs.source_run_id }}
-+          github-token: ${{ github.token }}
-+          path: ${{ env.RELEASE_DIR }}
-+          merge-multiple: true
-+      - name: Verify recovery identity and native CI
-+        if: inputs.operation == 'resume'
-+        run: node scripts/release/index.cjs verify-resume
-+      - name: Plan exact versions and check native CI
-+        if: inputs.operation != 'resume'
-+        run: node scripts/release/index.cjs plan
-+      - name: Install locked dependencies
-+        if: inputs.operation != 'resume'
-+        run: node .yarn/releases/yarn-4.12.0.cjs install --immutable
-+      # The build rewrites package sources in place, so the release commit is
-+      # created from the clean tree before building.
-+      - name: Set versions and create the release commit
-+        if: inputs.operation != 'resume'
-+        run: node scripts/release/index.cjs set-version
-+      - name: Build and test release helpers
-+        if: inputs.operation != 'resume'
-+        run: |
-+          node --test scripts/release/*.test.cjs
-+          node .yarn/releases/yarn-4.12.0.cjs build
-+      - name: Pack and record immutable release inputs
-+        if: inputs.operation != 'resume'
-+        run: node scripts/release/index.cjs prepare-artifact
-+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-+        if: inputs.operation != 'resume'
-+        id: upload
-+        with:
-+          name: release-${{ github.run_id }}-${{ github.run_attempt }}
-+          path: ${{ env.RELEASE_DIR }}/
-+          if-no-files-found: error
-+          retention-days: 90
-+
-+  record:
-+    needs: prepare
-+    if: inputs.operation != 'dry-run'
-+    environment: npm-release
-+    runs-on: ubuntu-24.04
-+    timeout-minutes: 10
-+    permissions:
-+      contents: write
-+      actions: read
-+      statuses: read
-+    steps:
-+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
-+        with:
-+     
-```
-
-**File**: `README.md` (modified, +5/-0)
-```diff
-@@ -23,6 +23,11 @@ We are working on upgrading our UI Library to support the new React Native Archi
- Currently, we support React Native 0.73, and we plan to support React Native 0.77 next.
- While we don’t have a timeline yet, this is part of our roadmap.
- 
-+## Releases
-+
-+Repository administrators: see the [release runbook](docs/RELEASING.md) for manual releases,
-+npm trusted publishing setup, and recovery.
-+
- ## Links
- - [Docs](https://wix.github.io/react-native-ui-lib/)
- - [Figma library](https://www.figma.com/community/file/1379775092983284111/rnui-library)
-```
-
-**File**: `docs/RELEASING.md` (added, +224/-0)
-```diff
-@@ -0,0 +1,224 @@
-+# Releasing react-native-ui-lib
-+
-+The [Release workflow](https://github.com/wix/react-native-ui-lib/actions/workflows/release.yml)
-+is the only supported npm publisher for `react-native-ui-lib` and `uilib-native`. Repository
-+admins start it manually on `master`. Both regular releases and snapshots use npm trusted
-+publishing with GitHub OIDC. Buildkite keeps running native tests; it must no longer version
-+or publish packages, and its npm credentials must not be renewed as a fallback.
-+
-+The contract is a port of react-native-navigation's release tooling (`scripts/release/*.cjs`).
-+Repository-specific policy (package directories, publication order, expected tarball contents)
-+lives in `scripts/release/uilib.cjs`; tag naming lives in `scripts/release/policy.cjs`.
-+
-+## One-time configuration
-+
-+A repository admin and an npm administrator for both packages must complete these steps
-+before enabling publication. Creating or merging the workflow does not configure npm trust.
-+
-+1. Create the GitHub environment `npm-release`. Under deployment branches and tags, select
-+   only the **branch** `master`. Protect `master` and review changes to release workflows and
-+   helpers. Required environment reviewers are optional; enabling them introduces approvals
-+   for the record, publish, and finalize jobs.
-+2. Add a GitHub Actions trusted publisher in the npm settings of **each** package,
-+   `react-native-ui-lib` and `uilib-native`, with the same values:
-+
-+   | Field             | Value                 |
-+   | ----------------- | --------------------- |
-+   | Organization      | `wix`                 |
-+   | Repository        | `react-native-ui-lib` |
-+   | Workflow filename | `release.yml`         |
-+   | Environment       | `npm-release`         |
-+   | Allowed action    | Direct `npm publish`  |
-+
-+   Explicitly allow direct publication: a stage-only configuration cannot complete this
-+   workflow. Standalone `npm dist-tag` permission is not needed. See
-+   [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/). Provenance requires
-+   both package.json `repository.url` fields to point at this repository; they do.
-+
-+   From the CLI, this needs an npm with `--allow-publish` (11.17.0 has it, 11.12.1 does not
-+   and fails with an unexplained `E400`):
-+
-+   ```sh
-+   npm trust github <package> --file release.yml --repo wix/react-native-ui-lib \
-+     --env npm-release --allow-publish
-+   ```
-+
-+3. Enable GitHub Actions for this repository. Check Wix's Actions policy permits the pinned
-+   checkout, setup-node, upload-artifact, and download-artifact actions. Allow
-+   workflow-created pull requests. Ensure existing repository rules permit
-+   `infra/update-version-*` branches and `react-native-ui-lib@*` / `uilib-native@*` tags
-+   without a bypass. Branch rulesets do not cover tags: anyone with push access can
-+   pre-create a future `react-native-ui-lib@*` tag, which makes the workflow stop after npm
-+   publication ("Tag ... already points to a different commit") or narrows the release-notes
-+   range. Add a tag ruleset for both patterns that forbids creation and deletion, with a
-+   bypass for repository admins and the GitHub Actions app (the workflow creates tags with
-+   `GITHUB_TOKEN`), or record the accepted risk.
-+4. Check the GitHub commit status `buildkite/react-native-ui-lib` represents the Buildkite
-+   pipeline for this repository. It must finish successfully on the exact `master` commit
-+   selected by the release run. The status creator must match the Buildkite app ID/login
-+   pinned in `scripts/release/uilib.cjs`. A failed, absent, or pending status blocks real
-+   publication, including snapshots. A dry run reports it without publishing.
-+5. Define the release baseline on `master`. Release notes span from the newest stable
-+   `react-native-ui-lib@*` tag reachable from the selected `master` commit. Existing tags
-+   were created by the old flow on the `release` branch and are not reachable from `master`,
-+   so the first `kind=release` run fails with "No preceding reachable stable tag" until an
-+   admin creates an annotated `react-native-ui-lib@<npm latest>` tag on the `master` commit
-+   that corresponds to that published version. For 9.1.3 that commit is `2af5663e4`
-+   (`git tag -a react-native-ui-lib@9.1.3 -m react-native-ui-lib@9.1.3 2af5663e4` and push it).
-+   Snapshots need no baseline; without one their notes list no pull requests.
-+6. Verify a dry run and inspect its artifact. Then set the repository Actions variable
-+   `RELEASE_PUBLISH_ENABLED` to `true`. Without it, publish and resume fail closed.
-+7. Run an intentional snapshot publication and verify both npm versions, integrity,
-+   provenance, and the `snapshot` dist-tags. Confirm that `latest` did not change.
-+8. Clean up Buildkite (configured outside this repository, no `.buildkite/` directory):
-+   remove the `release` and `snapshot` publishing steps and the `NPM_TOKEN`, `NPM_EMAIL`,
-+   `GIT_US
-```
-
-**File**: `package.json` (modified, +2/-3)
-```diff
-@@ -11,12 +11,11 @@
-     "android": "yarn workspace react-native-ui-lib android",
-     "iPad": "yarn workspace react-native-ui-lib iPad",
-     "test": "yarn workspace react-native-ui-lib test",
--    "test:releaseScript": "jest scripts/release/__tests__",
-     "pretest": "yarn lint",
-     "lint": "eslint packages -c .eslintrc.js --ext .tsx,.ts,.js",
-     "lint:fix": "eslint packages -c .eslintrc.js --fix",
-     "build:dev": "tsc --p tsconfig.dev.json",
--    "pre-push": "yarn build:dev && yarn test && yarn test:releaseScript",
-+    "pre-push": "yarn build:dev && yarn test",
-     "prepush": "node ./scripts/prepush.js",
-     "build": "yarn workspace react-native-ui-lib build",
-     "build:local": "yarn workspace react-native-ui-lib build:local",
-@@ -26,7 +25,7 @@
-     "docs:deploy": "./scripts/docs/deployDocs.sh",
-     "docs:build": "node scripts/docs/buildDocs.js",
-     "docs:start": "(cd docuilib && yarn start)",
--    "release": "node ./scripts/release/release.js",
-+    "test-release": "node --test scripts/release/*.test.cjs",
-     "releaseDemo": "./scripts/release/releaseDemo.sh",
-     "releaseDocs": "./scripts/release/releaseDocs.sh",
-     "releaseEslint": "./scripts/release/releaseEslint.sh",
-```
-
-**File**: `packages/react-native-ui-lib/package.json` (modified, +2/-2)
-```diff
-@@ -107,8 +107,8 @@
-         "react-native": ">=0.77.3",
-         "react-native-gesture-handler": ">=2.24.0",
-         "react-native-reanimated": ">=3.19.4",
--        "react-native-ui-lib": "*",
--        "uilib-native": "5.1.0-snapshot.7635"
-+        "react-native-safe-area-context": ">=5.6.2",
-+        "uilib-native": "^5.0.1"
+@@ -26,7 +26,7 @@
+     {
+       "name": "bottomMargin",
+       "type": "number",
+-      "description": "The bottom margin of the button, or secondary button if passed"
++      "description": "The bottom margin of the button, or secondary button if passed. When Constants.isLiquidGlass is on, the bottom safe-area inset is added to it; a hoisted button drops it while the keyboard is shown"
      },
-     "jest": {
-         "preset": "react-native",
+     {
+       "name": "fullWidth",
 ```
 
-**File**: `packages/uilib-native/package.json` (modified, +4/-0)
+**File**: `packages/react-native-ui-lib/src/components/floatingButton/index.tsx` (modified, +32/-6)
 ```diff
-@@ -2,6 +2,10 @@
-     "name": "uilib-native",
-     "version": "5.1.2",
-     "homepage": "https://github.com/wix/react-native-ui-lib",
-+    "repository": {
-+        "type": "git",
-+        "url": "https://github.com/wix/react-native-ui-lib"
+@@ -1,7 +1,8 @@
+-import React, {PropsWithChildren, useEffect, useMemo} from 'react';
+-import {StyleSheet} from 'react-native';
++import React, {PropsWithChildren, useContext, useEffect, useMemo, useState} from 'react';
++import {Keyboard, StyleSheet} from 'react-native';
+ import {asBaseComponent, Constants} from '../../commons/new';
+ import {LogService} from '../../services';
++import {SafeAreaContextPackage} from '../../optionalDependencies';
+ import {Colors, Shadows, Spacings} from '../../style';
+ import Button, {ButtonProps} from '../button';
+ import ScreenFooter, {ScreenFooterProps, ScreenFooterLayouts, ScreenFooterBackgrounds, KeyboardBehavior, ItemsFit} from '../screenFooter';
+@@ -25,7 +26,8 @@ export interface FloatingButtonProps extends Pick<ScreenFooterProps, 'isAndroidE
+    */
+   secondaryButton?: PropsWithChildren<ButtonProps>;
+   /**
+-   * The bottom margin of the button, or secondary button if passed
++   * The bottom margin of the button, or secondary button if passed.
++   * When Constants.isLiquidGlass is on, the bottom safe-area inset is added to it; a hoisted button drops it while the keyboard is shown.
+    */
+   bottomMargin?: number;
+   /**
+@@ -63,6 +65,27 @@ export interface FloatingButtonProps extends Pick<ScreenFooterProps, 'isAndroidE
+   testID?: string;
+ }
+ 
++const useKeyboardWillBeShown = (enabled: boolean) => {
++  const [keyboardShown, setKeyboardShown] = useState(() => enabled && Keyboard.isVisible());
++  useEffect(() => {
++    if (!enabled) {
++      return;
++    }
++    setKeyboardShown(Keyboard.isVisible());
++    const showSubscription = Keyboard.addListener('keyboardWillShow', () => setKeyboardShown(true));
++    const hideSubscription = Keyboard.addListener('keyboardWillHide', () => setKeyboardShown(false));
++    return () => {
++      showSubscription.remove();
++      hideSubscription.remove();
++    };
++  }, [enabled]);
++  return enabled && keyboardShown;
++};
++
++const NoSafeAreaInsetsContext = React.createContext<{bottom: number} | null>(null);
++const SafeAreaInsetsContext: React.Context<{bottom: number} | null> =
++  SafeAreaContextPackage?.SafeAreaInsetsContext ?? NoSafeAreaInsetsContext;
++
+ /**
+  * @description: Hovering button with gradient background, backed by ScreenFooter
+  * @modifiers: margin, background, color
+@@ -93,16 +116,19 @@ const FloatingButton = (props: FloatingButtonProps) => {
+     );
+   }, []);
+ 
++  const insets = useContext(SafeAreaInsetsContext);
++  const keyboardShown = useKeyboardWillBeShown(Constants.isLiquidGlass && hoisted);
++  const bottomInset = Constants.isLiquidGlass && !keyboardShown ? insets?.bottom ?? 0 : 0;
+   const isSecondaryOnly = !!secondaryButton && !button;
+   const isHorizontal = buttonLayout === FloatingButtonLayouts.HORIZONTAL || isSecondaryOnly;
+ 
+   const footerContentContainerStyle = useMemo(() => {
+     if (bottomMargin !== undefined) {
+-      return {paddingBottom: bottomMargin};
++      return {paddingBottom: bottomMargin + bottomInset};
+     }
+     const isSecondaryAtBottom = !!secondaryButton && (isSecondaryOnly || !isHorizontal);
+-    return {paddingBottom: isSecondaryAtBottom ? Spacings.s7 : Spacings.s8};
+-  }, [bottomMargin, secondaryButton, isSecondaryOnly, isHorizontal]);
++    return {paddingBottom: (isSecondaryAtBottom ? Spacings.s7 : Spacings.s8) + bottomInset};
++  }, [bottomMargin, secondaryButton, isSecondaryOnly, isHorizontal, bottomInset]);
+ 
+   if (!button && !secondaryButton) {
+     return null;
+```
+
+**File**: `packages/react-native-ui-lib/src/components/view/__tests__/liquidGlass.spec.tsx` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++import React from 'react';
++import {SafeAreaView, View as RNView} from 'react-native';
++import {render} from '@testing-library/react-native';
++import {Constants} from '../../../commons/new';
++import {LogService} from '../../../services';
++import View from '../index';
++
++jest.mock('../../../optionalDependencies', () => {
++  const actualOptional = jest.requireActual('../../../optionalDependencies');
++  const {View: MockView} = jest.requireActual('react-native');
++  const MockReact = jest.requireActual('react');
++  const ContextSafeAreaView = (props: object) => MockReact.createElement(MockView, props);
++  ContextSafeAreaView.displayName = 'ContextSafeAreaView';
++  return {...actualOptional, SafeAreaContextPackage: {SafeAreaView: ContextSafeAreaView}};
++});
++
++const {SafeAreaContextPackage} = jest.requireMock('../../../optionalDependencies');
++
++describe('View useSafeArea with Liquid Glass', () => {
++  let liquidGlass: jest.SpyInstance;
++
++  beforeEach(() => {
++    liquidGlass = jest.spyOn(Constants, 'isLiquidGlass', 'get').mockReturnValue(true);
++  });
++
++  afterEach(() => {
++    liquidGlass.mockRestore();
++  });
++
++  it('should use the position-aware SafeAreaView when the view sets no padding', () => {
++    const {UNSAFE_queryByType} = render(<View useSafeArea testID="view"/>);
++    expect(UNSAFE_queryByType(SafeAreaView)).toBeTruthy();
++    expect(UNSAFE_queryByType(SafeAreaContextPackage.SafeAreaView)).toBeNull();
++  });
++
++  it.each([
++    ['a padding modifier', {'paddingT-16': true}],
++    ['a padding style', {style: {paddingHorizontal: 10}}],
++    ['edges', {edges: ['top']}],
++    ['mode', {mode: 'margin'}]
++  ])('should keep the safe-area-context SafeAreaView with %s', (_name, props) => {
++    const {UNSAFE_queryByType} = render(<View useSafeArea testID="view" {...props}/>);
++    expect(UNSAFE_queryByType(SafeAreaContextPackage.SafeAreaView)).toBeTruthy();
++    expect(UNSAFE_queryByType(SafeAreaView)).toBeNull();
++  });
++
++  it('should keep the safe-area-context SafeAreaView when Liquid Glass is off', () => {
++    liquidGlass.mockReturnValue(false);
++    const {UNSAFE_queryByType} = render(<View useSafeArea testID="view"/>);
++    expect(UNSAFE_queryByType(SafeAreaContextPackage.SafeAreaView)).toBeTruthy();
++    expect(UNSAFE_queryByType(SafeAreaView)).toBeNull();
++  });
++
++  it('should keep the container chosen at mount when the flag changes', () => {
++    liquidGlass.mockReturnValue(false);
++    const {UNSAFE_queryByType, rerender} = render(<View useSafeArea testID="view"/>);
++    expect(UNSAFE_queryByType(SafeAreaView)).toBeNull();
++    liquidGlass.mockReturnValue(true);
++    rerender(<View useSafeArea testID="view"/>);
++    expect(UNSAFE_queryByType(SafeAreaView)).toBeNull();
++    expect(UNSAFE_queryByType(SafeAreaContextPackage.SafeAreaView)).toBeTruthy();
++  });
++
++  it('should warn when padding is added after mount to a position-aware view', () => {
++    const warn = jest.spyOn(LogService, 'warn').mockImplementation(() => {});
++    const {rerender} = render(<View useSafeArea testID="view"/>);
++    expect(warn).not.toHaveBeenCalled();
++    rerender(<View useSafeArea testID="view" style={{paddingBottom: 20}}/>);
++    expect(warn).toHaveBeenCalledTimes(1);
++    warn.mockRestore();
++  });
++
++  it.each([
++    ['animated', {animated: true}],
++    ['reanimated', {reanimated: true}]
++  ])('should keep the safe-area-context SafeAreaView for an %s view', (_name, props) => {
++    const {UNSAFE_queryByType} = render(<View useSafeArea testID="view" {...props}/>);
++    expect(UNSAFE_queryByType(SafeAreaView)).toBeNull();
++    expect(UNSAFE_queryByType(SafeAreaContextPackage.SafeAreaView)).toBeTruthy();
++  });
++
++  it('should not remount its children when padding toggles', () => {
++    const mounts = jest.fn();
++    const Child = () => {
++      React.useEffect(() => mounts(), []);
++      return null;
++    };
++    const {rerender} = render(<View useSafeArea testID="view"><Child/></View>);
++    rerender(<View useSafeArea testID="view" style={{paddingBottom: 20}}><Child/></View>);
++    rerender(<View useSafeArea testID="view"><Child/></View>);
++    expect(mounts).toHaveBeenCalledTimes(1);
++  });
++
++  it('should render a plain view without useSafeArea', () => {
++    const {UNSAFE_queryByType} = render(<View testID="view"/>);
++    expect(UNSAFE_queryByType(SafeAreaView)).toBeNull();
++    expect(UNSAFE_queryByType(RNView)).toBeTruthy();
++  });
++});
+```
+
+**File**: `packages/react-native-ui-lib/src/components/view/index.tsx` (modified, +50/-4)
+```diff
+@@ -1,10 +1,20 @@
+ import {useModifiers, useThemeProps} from 'hooks';
+ import React, {useEffect, useMemo, useState} from 'react';
+-import {View as RNView, SafeAreaView, Animated, ViewProps as RNViewProps, type StyleProp, type ViewStyle, type DimensionValue} from 'react-native';
++import {
++  View as RNView,
++  SafeAreaView,
++  Animated,
++  StyleSheet,
++  ViewProps as RNViewProps,
++  type StyleProp,
++  type ViewStyle,
++  type DimensionValue
++} from 'react-native';
+ import type {AnimateProps as RNReanimatedProps} from 'react-native-reanimated';
+ import {Constants, ContainerModifiers} from '../../commons/new';
+ import type {RecorderProps} from '../../typings/recorderTypes';
+ import {SafeAreaContextPackage} from '../../optionalDependencies';
++import {LogService} from '../../services';
+ 
+ /**
+  * Extra props when using reanimated (only non experimental props)
+@@ -13,7 +23,11 @@ type ReanimatedProps = Partial<Pick<RNReanimatedProps<object>, 'entering' | 'exi
+ 
+ export interface ViewProps extends Omit<RNViewProps, 'style'>, ReanimatedProps, ContainerModifiers, RecorderProps {
+   /**
+-   * If true, will render as SafeAreaView
++   * If true, will render as SafeAreaView.
++   * When Constants.isLiquidGlass is on (the default on iOS 26 and later) and the view mounts with no padding, no
++   * edges/mode and no animated/reanimated container, this is React Native's SafeAreaView, which insets only the edges
++   * the view actually touches and ignores padding added later; otherwise it is react-native-safe-area-context's
++   * SafeAreaView when that package is installed. The choice is made when the view mounts.
+    */
+   useSafeArea?: boolean;
+   /**
+@@ -58,6 +72,18 @@ const modifiersOptions = {
+   gap: true
+ };
+ 
++function hasPadding(paddings: object | undefined, style: ViewProps['style']) {
++  if (paddings && Object.keys(paddings).length > 0) {
++    return true;
++  }
++  const flatStyle = StyleSheet.flatten(style as StyleProp<ViewStyle>);
++  return !!flatStyle && Object.keys(flatStyle).some(key => key.startsWith('padding'));
++}
++
++function hasSafeAreaEdges(props: object) {
++  return 'edges' in props || 'mode' in props;
++}
++
+ /**
+  * @description: An enhanced View component
+  * @extends: View
+@@ -97,6 +123,24 @@ function View(props: ViewProps, ref: any) {
+     gap
+   } = useModifiers(themeProps, modifiersOptions);
+   const [ready, setReady] = useState(!renderDelay);
++  const [usesPositionAwareSafeArea] = useState(() => {
++    return (
++      !!useSafeArea &&
++      Constants.isLiquidGlass &&
++      !!SafeAreaView &&
++      !animated &&
++      !reanimated &&
++      !hasPadding(paddings, style) &&
++      !hasSafeAreaEdges(others)
++    );
++  });
++
++  useEffect(() => {
++    if (__DEV__ && usesPositionAwareSafeArea && hasPadding(paddings, style)) {
++      // eslint-disable-next-line max-len
++      LogService.warn('RNUILib View: padding added after mount to a useSafeArea view is ignored on iOS 26 with Constants.isLiquidGlass on. Set the padding when the view mounts, or wrap the content in an inner View.');
++    }
++  }, [usesPositionAwareSafeArea, paddings, style]);
+ 
+   useEffect(() => {
+     if (renderDelay) {
+@@ -108,7 +152,9 @@ function View(props: ViewProps, ref: any) {
+ 
+   const ViewContainer = useMemo(() => {
+     let container: React.ComponentType<any> = RNView;
+-    if (useSafeArea && SafeAreaContextPackage?.SafeAreaView) {
++    if (usesPositionAwareSafeArea) {
++      container = SafeAreaView;
++    } else if (useSafeArea && SafeAreaContextPackage?.SafeAreaView) {
+       container = SafeAreaContextPackage.SafeAreaView;
+     } else if (useSafeArea && Constants.isIOS) {
+       container = SafeAreaView;
+@@ -122,7 +168,7 @@ function View(props: ViewProps, ref: any) {
+     }
+ 
+     return container;
+-  }, [useSafeArea, animated, reanimated]) as React.ComponentType<any>;
++  }, [useSafeArea, usesPositionAwareSafeArea, animated, reanimated]) as React.ComponentType<any>;
+ 
+   const _style = useMemo(() => {
+     const backgroundColor = backgroundColorProps || backgroundColorModifiers;
+```
+
+**File**: `packages/react-native-ui-lib/src/components/view/view.api.json` (modified, +5/-1)
+```diff
+@@ -8,7 +8,11 @@
+   "example": "https://github.com/wix/react-native-ui-lib/blob/master/demo/src/screens/componentScreens/ViewScreen.js",
+   "images": [],
+   "props": [
+-    {"name": "useSafeArea", "type": "boolean", "description": "If true, will render as SafeAreaView"},
++    {
++      "name": "useSafeArea",
++      "type": "boolean",
++      "description": "If true, will render as SafeAreaView. When Constants.isLiquidGlass is on (the default on iOS 26 and later) and the view mounts with no padding, no edges/mode and no animated/reanimated container, this is React Native's SafeAreaView, which insets only the edges the view actually touches and ignores padding added later; otherwise it is react-native-safe-area-context's SafeAreaView when that package is installed. The choice is made when the view mounts"
 +    },
-     "description": "uilib native components (separated from js components)",
-     "main": "components/index",
-     "scripts": {
+     {"name": "animated", "type": "boolean", "description": "Use Animate.View as a container"},
+     {
+       "name": "reanimated",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1004,8 +1105,8 @@ recovery, package-qualified tags, GitHub release, and a version PR.
 - **PR #4064** (2026-11-03): fix: Toast - keep the hidden attachment above the iOS 26 bottom tab bar (@yedidyak)
 - **PR #4063** (closed): fix: FloatingButton - clear the iOS 26 bottom tab bar (@yedidyak)
 - **PR #4056** (2026-11-02): ci: move npm releases to admin-dispatched GitHub Actions (OIDC trusted publishing) (@noomorph)
+- **PR #4052** (2026-11-11): fix: View, FloatingButton, Toast - keep content clear of the iOS 26 bottom tab bar (@yedidyak)
 - **PR #4048** (2026-10-12): fix: TouchableOpacity - don't swallow onPress on long holds when no onLongPress is provided (@yedidyak)
-- **PR #4046** (closed): Bump ip-address from 10.1.0 to 10.7.2 in /eslint-rules (@dependabot[bot])
 
 ---
 
@@ -1025,30 +1126,35 @@ recovery, package-qualified tags, GitHub release, and a version PR.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(docs): auto-confirm npq prompt so docs deploy runs non-interactively (#4065)
+## X. View, FloatingButton, Toast - keep content clear of the iOS 26 bottom tab bar
 
 **RULE**:
-When implementing operations in `.github/workflows/deployDocs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wix/react-native-ui-lib. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-ui-lib/src/commons/Constants.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wix/react-native-ui-lib. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `999abfa6`: ci(docs): auto-confirm npq prompt so docs deploy runs non-interactively (#4065). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9ab2e6a`: View, FloatingButton, Toast - keep content clear of the iOS 26 bottom tab bar. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/deployDocs.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-ui-lib/src/commons/Constants.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        run: yes | NPQ_PKG_MGR=yarn npx npq install --immutable
-          yes | NPQ_PKG_MGR=yarn npx npq install --immutable
+const supportsLiquidGlass: boolean = isIOS && parseInt(String(Platform.Version), 10) >= 26;
+let isLiquidGlass = supportsLiquidGlass;
+  get isLiquidGlass() {
+    return isLiquidGlass;
+  },
+  set isLiquidGlass(value: boolean) {
+    isLiquidGlass = supportsLiquidGlass && value;
+  },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-        run: NPQ_PKG_MGR=yarn npx npq install --immutable
-          NPQ_PKG_MGR=yarn npx npq install --immutable
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `999abfa6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9ab2e6a` are properly handled with clean fallback behavior.

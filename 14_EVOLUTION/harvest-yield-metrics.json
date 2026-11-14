@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-14T08:10:41.338Z",
-  "total_cycles_completed": 9490,
-  "total_learnings_persisted": 9490,
-  "total_rules_promoted": 9192,
+  "last_updated": "2026-11-14T08:53:30.560Z",
+  "total_cycles_completed": 9493,
+  "total_learnings_persisted": 9493,
+  "total_rules_promoted": 9198,
   "history": [
-    {
-      "timestamp": "2026-11-13T15:47:11.701Z",
-      "repository": "Saffsanity/sill",
-      "learningId": "learn-github-saffsanity-sill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T15:47:14.435Z",
-      "repository": "bridgecrewio/checkov",
-      "learningId": "learn-github-bridgecrewio-checkov",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-13T15:47:20.969Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-13T16:04:48.421Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1403,6 +1382,27 @@
       "repository": "typedb/typedb",
       "learningId": "learn-github-typedb-typedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T08:44:03.215Z",
+      "repository": "wix/react-native-ui-lib",
+      "learningId": "learn-github-wix-react-native-ui-lib",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T08:53:29.435Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-14T08:53:30.560Z",
+      "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
